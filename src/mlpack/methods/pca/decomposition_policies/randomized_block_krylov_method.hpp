@@ -1,5 +1,5 @@
 /**
- * @file randomized_block_krylov_method.hpp
+ * @file methods/pca/decomposition_policies/randomized_block_krylov_method.hpp
  * @author Marcus Edel
  *
  * Implementation of the randomized block krylov SVD method for use in the

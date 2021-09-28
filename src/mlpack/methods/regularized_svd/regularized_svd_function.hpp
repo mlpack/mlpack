@@ -1,5 +1,5 @@
 /**
- * @file regularized_svd_function.hpp
+ * @file methods/regularized_svd/regularized_svd_function.hpp
  * @author Siddharth Agrawal
  *
  * An implementation of the RegularizedSVDFunction class.
@@ -14,9 +14,7 @@
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -135,8 +133,11 @@ class RegularizedSVDFunction
 } // namespace svd
 } // namespace mlpack
 
-namespace mlpack {
-namespace optimization {
+/**
+ * @cond NO_DOXYGEN
+ */
+
+namespace ens {
 
   /**
    * Template specialization for the SGD and parallel SGD optimizer. Used
@@ -156,8 +157,11 @@ namespace optimization {
       mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
+
+/**
+ * @endcond
+ */
 
 #include "regularized_svd_function_impl.hpp"
 

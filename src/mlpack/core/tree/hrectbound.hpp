@@ -1,5 +1,5 @@
 /**
- * @file hrectbound.hpp
+ * @file core/tree/hrectbound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  *
@@ -66,16 +66,22 @@ class HRectBound
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
+   *
+   * @param dimension Dimensionality of bound.
    */
   HRectBound(const size_t dimension);
 
   //! Copy constructor; necessary to prevent memory leaks.
   HRectBound(const HRectBound& other);
+
   //! Same as copy constructor; necessary to prevent memory leaks.
   HRectBound& operator=(const HRectBound& other);
 
   //! Move constructor: take possession of another bound's information.
   HRectBound(HRectBound&& other);
+
+  //! Move assignment operator.
+  HRectBound& operator=(HRectBound&& other);
 
   //! Destructor: clean up memory.
   ~HRectBound();
@@ -100,6 +106,11 @@ class HRectBound
   ElemType MinWidth() const { return minWidth; }
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
+
+  //! Get the instantiated metric associated with the bound.
+  const MetricType& Metric() const { return metric; }
+  //! Modify the instantiated metric associated with the bound.
+  MetricType& Metric() { return metric; }
 
   /**
    * Calculates the center of the range, placing it into the given vector.
@@ -185,12 +196,16 @@ class HRectBound
 
   /**
    * Determines if a point is within this bound.
+   *
+   * @param point Point to check the condition.
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
 
   /**
    * Determines if this bound partially contains a bound.
+   *
+   * @param bound Bound to check the condition.
    */
   bool Contains(const HRectBound& bound) const;
 
@@ -218,7 +233,7 @@ class HRectBound
    * Serialize the bound object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! The dimensionality of the bound.
@@ -227,6 +242,8 @@ class HRectBound
   math::RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
+  //! Instantiated metric (likely has size 0).
+  MetricType metric;
 };
 
 // A specialization of BoundTraits for this class.

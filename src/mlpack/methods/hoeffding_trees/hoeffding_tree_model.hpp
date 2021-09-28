@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_model.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree_model.hpp
  * @author Ryan Curtin
  *
  * A serializable model for the mlpack_hoeffding_tree command-line program.
@@ -43,10 +43,10 @@ class HoeffdingTreeModel
   typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
       HoeffdingCategoricalSplit> GiniBinaryTreeType;
   //! Convenience typedef for INFO_HOEFFDING tree type.
-  typedef HoeffdingTree<InformationGain, HoeffdingDoubleNumericSplit,
+  typedef HoeffdingTree<HoeffdingInformationGain, HoeffdingDoubleNumericSplit,
       HoeffdingCategoricalSplit> InfoHoeffdingTreeType;
   //! Convenience typedef for INFO_BINARY tree type.
-  typedef HoeffdingTree<InformationGain, BinaryDoubleNumericSplit,
+  typedef HoeffdingTree<HoeffdingInformationGain, BinaryDoubleNumericSplit,
       HoeffdingCategoricalSplit> InfoBinaryTreeType;
 
   /**
@@ -166,10 +166,10 @@ class HoeffdingTreeModel
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     // Clear memory if needed.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       delete giniHoeffdingTree;
       delete giniBinaryTree;
@@ -182,38 +182,18 @@ class HoeffdingTreeModel
       infoBinaryTree = NULL;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(type);
+    ar(CEREAL_NVP(type));
 
     // Fake dataset info may be needed to create fake trees.
     data::DatasetInfo info;
     if (type == GINI_HOEFFDING)
-    {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        giniHoeffdingTree = new GiniHoeffdingTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(giniHoeffdingTree);
-    }
+      ar(CEREAL_POINTER(giniHoeffdingTree));
     else if (type == GINI_BINARY)
-    {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        giniBinaryTree = new GiniBinaryTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(giniBinaryTree);
-    }
+      ar(CEREAL_POINTER(giniBinaryTree));
     else if (type == INFO_HOEFFDING)
-    {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        infoHoeffdingTree = new InfoHoeffdingTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(infoHoeffdingTree);
-    }
+      ar(CEREAL_POINTER(infoHoeffdingTree));
     else if (type == INFO_BINARY)
-    {
-      // Create fake tree to load into if needed.
-      if (Archive::is_loading::value)
-        infoBinaryTree = new InfoBinaryTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(infoBinaryTree);
-    }
+      ar(CEREAL_POINTER(infoBinaryTree));
   }
 
  private:

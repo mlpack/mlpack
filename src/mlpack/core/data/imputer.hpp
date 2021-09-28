@@ -1,5 +1,5 @@
 /**
- * @file imputer.hpp
+ * @file core/data/imputer.hpp
  * @author Keon Kim
  *
  * Defines Imputer class a utility function to replace missing variables in a
@@ -54,7 +54,7 @@ class Imputer
   * overwrites the result into the input matrix.
   *
   * @param input Input dataset to apply imputation.
-  * @oaran missingValue User defined missing value; it can be anything.
+  * @param missingValue User defined missing value; it can be anything.
   * @param dimension Dimension to apply the imputation.
   */
   void Impute(arma::Mat<T>& input,
@@ -65,16 +65,16 @@ class Imputer
     strategy.Impute(input, mappedValue, dimension, columnMajor);
   }
 
-  //! Get the strategy
+  //! Get the strategy.
   const StrategyType& Strategy() const { return strategy; }
 
-  //! Modify the given given strategy (be careful!)
+  //! Modify the given strategy.
   StrategyType& Strategy() { return strategy; }
 
-  //! Get the mapper
+  //! Get the mapper.
   const MapperType& Mapper() const { return mapper; }
 
-  //! Modify the given mapper (be careful!)
+  //! Modify the given mapper.
   MapperType& Mapper() { return mapper; }
 
  private:

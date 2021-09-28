@@ -1,5 +1,5 @@
 /**
- * @file is_naninf.hpp
+ * @file core/data/is_naninf.hpp
  * @author Ryan Curtin
  *
  * This is an adapted version of Conrad Sanderson's implementation of
@@ -41,12 +41,12 @@ inline bool IsNaNInf(T& val, const std::string& token)
       if (std::numeric_limits<T>::has_infinity)
       {
         val = (!neg) ? std::numeric_limits<T>::infinity() :
-            -std::numeric_limits<T>::infinity();
+            -1 * std::numeric_limits<T>::infinity();
       }
       else
       {
         val = (!neg) ? std::numeric_limits<T>::max() :
-            -std::numeric_limits<T>::max();
+            -1 * std::numeric_limits<T>::max();
       }
 
       return true;

@@ -1,5 +1,5 @@
 /**
- * @file max_variance_new_cluster_impl.hpp
+ * @file methods/kmeans/max_variance_new_cluster_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of MaxVarianceNewCluster class.
@@ -99,7 +99,7 @@ void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
 //! Serialize the object.
 template<typename Archive>
 void MaxVarianceNewCluster::serialize(Archive& /* ar */,
-                                      const unsigned int /* version */)
+                                      const uint32_t /* version */)
 {
   // Serialization is useless here, because the only thing we store is
   // precalculated quantities, and if we're serializing, our precalculations are
@@ -107,7 +107,7 @@ void MaxVarianceNewCluster::serialize(Archive& /* ar */,
   // a different clustering, probably).  So there is no need to store anything,
   // and if we are loading, we just reset the assignments array so
   // precalculation will happen next time EmptyCluster() is called.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     assignments.set_size(0);
 }
 
@@ -131,7 +131,7 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
     double minDistance = std::numeric_limits<double>::infinity();
     size_t closestCluster = oldCentroids.n_cols; // Invalid value.
 
-    for (size_t j = 0; j < oldCentroids.n_cols; j++)
+    for (size_t j = 0; j < oldCentroids.n_cols; ++j)
     {
       const double distance = metric.Evaluate(data.col(i), oldCentroids.col(j));
 

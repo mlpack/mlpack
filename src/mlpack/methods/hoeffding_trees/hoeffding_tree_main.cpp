@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_main.cpp
+ * @file methods/hoeffding_trees/hoeffding_tree_main.cpp
  * @author Ryan Curtin
  *
  * A command-line executable that can build a streaming decision tree.
@@ -10,7 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME hoeffding_tree
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
@@ -25,7 +31,18 @@ using namespace mlpack::tree;
 using namespace mlpack::data;
 using namespace mlpack::util;
 
-PROGRAM_INFO("Hoeffding trees",
+// Program Name.
+BINDING_USER_NAME("Hoeffding trees");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of Hoeffding trees, a form of streaming decision tree "
+    "for classification.  Given labeled data, a Hoeffding tree can be trained "
+    "and saved for later use, or a pre-trained Hoeffding tree can be used for "
+    "predicting the classifications of new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements Hoeffding trees, a form of streaming decision tree"
     " suited best for large (or streaming) datasets.  This program supports "
     "both categorical and numeric data.  Given an input dataset, this program "
@@ -55,8 +72,10 @@ PROGRAM_INFO("Hoeffding trees",
     " parameter.  Predictions for each test point may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter, and class "
     "probabilities for each prediction may be saved with the " +
-    PRINT_PARAM_STRING("probabilities") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("probabilities") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a Hoeffding tree with confidence 0.99 with data " +
     PRINT_DATASET("dataset") + ", saving the trained tree to " +
     PRINT_MODEL("tree") + ", the following command may be used:"
@@ -71,6 +90,14 @@ PROGRAM_INFO("Hoeffding trees",
     "\n\n" +
     PRINT_CALL("hoeffding_tree", "input_model", "tree", "test", "test_set",
         "predictions", "predictions", "probabilities", "class_probs"));
+
+// See also...
+BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
+        "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
+BINDING_SEE_ALSO("mlpack::tree::HoeffdingTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1HoeffdingTree.html");
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");
@@ -113,79 +140,79 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check input parameters for validity.
   const string numericSplitStrategy =
-      CLI::GetParam<string>("numeric_split_strategy");
+      params.Get<string>("numeric_split_strategy");
 
-  RequireAtLeastOnePassed({ "training", "input_model" }, true);
+  RequireAtLeastOnePassed(params, { "training", "input_model" }, true);
 
-  RequireAtLeastOnePassed({ "output_model", "predictions", "probabilities",
-      "test_labels" }, false, "no output will be given");
+  RequireAtLeastOnePassed(params, { "output_model", "predictions",
+      "probabilities", "test_labels" }, false, "no output will be given");
 
-  ReportIgnoredParam({{ "test", false }}, "probabilities");
-  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
-  ReportIgnoredParam({{ "training", false }}, "batch_mode");
-  ReportIgnoredParam({{ "training", false }}, "passes");
+  ReportIgnoredParam(params, {{ "training", false }}, "batch_mode");
+  ReportIgnoredParam(params, {{ "training", false }}, "passes");
 
-  if (CLI::HasParam("test"))
+  if (params.Has("test"))
   {
-    RequireAtLeastOnePassed({ "predictions", "probabilities", "test_labels" },
-        false, "no output will be given");
+    RequireAtLeastOnePassed(params, { "predictions", "probabilities",
+        "test_labels" }, false, "no output will be given");
   }
 
-  RequireParamInSet<string>("numeric_split_strategy", { "domingos", "binary" },
-      true, "unrecognized numeric split strategy");
+  RequireParamInSet<string>(params, "numeric_split_strategy", { "domingos",
+      "binary" }, true, "unrecognized numeric split strategy");
 
   // Do we need to load a model or do we already have one?
   HoeffdingTreeModel* model;
   DatasetInfo datasetInfo;
   arma::mat trainingSet;
   arma::Row<size_t> labels;
-  if (CLI::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    model = CLI::GetParam<HoeffdingTreeModel*>("input_model");
+    model = params.Get<HoeffdingTreeModel*>("input_model");
   }
   else
   {
     // Initialize a model.
-    if (!CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
+    if (!params.Has("info_gain") && (numericSplitStrategy == "domingos"))
       model = new HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
-    else if (!CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
+    else if (!params.Has("info_gain") && (numericSplitStrategy == "binary"))
       model = new HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
-    else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
+    else if (params.Has("info_gain") && (numericSplitStrategy == "domingos"))
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
     else
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
   }
 
   // Now, do we need to train?
-  if (CLI::HasParam("training"))
+  if (params.Has("training"))
   {
     // Load necessary parameters for training.
-    const double confidence = CLI::GetParam<double>("confidence");
-    const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
-    const size_t minSamples = (size_t) CLI::GetParam<int>("min_samples");
-    bool batchTraining = CLI::HasParam("batch_mode");
-    const size_t bins = (size_t) CLI::GetParam<int>("bins");
+    const double confidence = params.Get<double>("confidence");
+    const size_t maxSamples = (size_t) params.Get<int>("max_samples");
+    const size_t minSamples = (size_t) params.Get<int>("min_samples");
+    bool batchTraining = params.Has("batch_mode");
+    const size_t bins = (size_t) params.Get<int>("bins");
     const size_t observationsBeforeBinning = (size_t)
-        CLI::GetParam<int>("observations_before_binning");
-    size_t passes = (size_t) CLI::GetParam<int>("passes");
+        params.Get<int>("observations_before_binning");
+    size_t passes = (size_t) params.Get<int>("passes");
     if (passes > 1)
       batchTraining = false; // We already warned about this earlier.
 
     // We need to train the model.  First, load the data.
-    datasetInfo = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
-    trainingSet = std::move(std::get<1>(CLI::GetParam<TupleType>("training")));
+    datasetInfo = std::move(std::get<0>(params.Get<TupleType>("training")));
+    trainingSet = std::move(std::get<1>(params.Get<TupleType>("training")));
     for (size_t i = 0; i < trainingSet.n_rows; ++i)
       Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
           << i << "." << endl;
 
-    if (CLI::HasParam("labels"))
+    if (params.Has("labels"))
     {
-      labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+      labels = std::move(params.Get<arma::Row<size_t>>("labels"));
     }
     else
     {
@@ -201,10 +228,10 @@ static void mlpackMain()
     // appropriate type of instantiated numeric split type.  This is a little
     // bit ugly.  Maybe there is a nicer way to get this numeric split
     // information to the trees, but this is ok for now.
-    Timer::Start("tree_training");
+    timers.Start("tree_training");
 
     // Do we need to initialize a model?
-    if (!CLI::HasParam("input_model"))
+    if (!params.Has("input_model"))
     {
       // Build the model.
       model->BuildModel(trainingSet, datasetInfo, labels,
@@ -218,7 +245,7 @@ static void mlpackMain()
     {
       // We only need to do batch training if we've not already called
       // BuildModel.
-      if (CLI::HasParam("input_model"))
+      if (params.Has("input_model"))
         model->Train(trainingSet, labels, true);
     }
     else
@@ -227,11 +254,11 @@ static void mlpackMain()
         model->Train(trainingSet, labels, false);
     }
 
-    Timer::Stop("tree_training");
+    timers.Stop("tree_training");
   }
 
   // Do we need to evaluate the training set error?
-  if (CLI::HasParam("training"))
+  if (params.Has("training"))
   {
     // Get training error.
     arma::Row<size_t> predictions;
@@ -251,24 +278,24 @@ static void mlpackMain()
   Log::Info << model->NumNodes() << " nodes in the tree." << endl;
 
   // The tree is trained or loaded.  Now do any testing if we need.
-  if (CLI::HasParam("test"))
+  if (params.Has("test"))
   {
     // Before loading, pre-set the dataset info by getting the raw parameter
     // (that doesn't call data::Load()).
-    std::get<0>(CLI::GetRawParam<TupleType>("test")) = datasetInfo;
-    arma::mat testSet = std::get<1>(CLI::GetParam<TupleType>("test"));
+    std::get<0>(params.GetRaw<TupleType>("test")) = datasetInfo;
+    arma::mat testSet = std::get<1>(params.Get<TupleType>("test"));
 
     arma::Row<size_t> predictions;
     arma::rowvec probabilities;
 
-    Timer::Start("tree_testing");
+    timers.Start("tree_testing");
     model->Classify(testSet, predictions, probabilities);
-    Timer::Stop("tree_testing");
+    timers.Stop("tree_testing");
 
-    if (CLI::HasParam("test_labels"))
+    if (params.Has("test_labels"))
     {
       arma::Row<size_t> testLabels =
-          std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
+          std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
       size_t correct = 0;
       for (size_t i = 0; i < testLabels.n_elem; ++i)
@@ -281,10 +308,10 @@ static void mlpackMain()
           100.0 << ")." << endl;
     }
 
-    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
-    CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    params.Get<arma::Row<size_t>>("predictions") = std::move(predictions);
+    params.Get<arma::mat>("probabilities") = std::move(probabilities);
   }
 
   // Check the accuracy on the training set.
-  CLI::GetParam<HoeffdingTreeModel*>("output_model") = model;
+  params.Get<HoeffdingTreeModel*>("output_model") = model;
 }

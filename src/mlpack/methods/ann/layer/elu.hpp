@@ -1,9 +1,9 @@
 /**
- * @file elu.hpp
+ * @file methods/ann/layer/elu.hpp
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
+ * Definition of the ELU activation function as described by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
  * Definition of the SELU function as introduced by
@@ -42,7 +42,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
- *     y + \alpha & : x \le 0
+ *     f(x) + \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -56,7 +56,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   title   = {Fast and Accurate Deep Network Learning by Exponential Linear
  *              Units (ELUs)},
  *   journal = {CoRR},
- *   year    = {2015}
+ *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1511.07289}
  * }
  * @endcode
  *
@@ -73,7 +74,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     \lambda & : x > 0 \\
- *     \lambda * (y + \alpha) & : x \le 0
+ *     f(x) + \lambda * \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -86,10 +87,15 @@ namespace ann /** Artificial Neural Network. */ {
  *              Andreas Mayr},
  *   title   = {Self-Normalizing Neural Networks},
  *   journal = {Advances in Neural Information Processing Systems},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url = {https://arxiv.org/abs/1706.02515}
  * }
  * @endcode
  *
+ * In the deterministic mode, there is no computation of the derivative.
+ *
+ * @note During training deterministic should be set to false and during
+ *       testing/inference deterministic should be set to true.
  * @note Make sure to use SELU activation function with normalized inputs and
  *       weights initialized with Lecun Normal Initialization.
  *
@@ -130,19 +136,19 @@ class ELU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -159,6 +165,11 @@ class ELU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }
 
@@ -166,75 +177,17 @@ class ELU
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  /**
-   * Computes the value of activation function.
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    if (x < DBL_MAX)
-    {
-      return (x > 0) ? lambda * x : lambda * alpha * (std::exp(x) - 1);
-    }
-
-    return 1.0;
-  }
-
-  /**
-   * Computes the value of activation function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y.set_size(size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Fn(x(i));
-    }
-  }
-
-  /**
-   * Computes the first derivative of the activation function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double y)
-  {
-    return (y > 0) ? lambda : lambda * (y + alpha);
-  }
-
-  /**
-   * Computes the first derivative of the activation function.
-   *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
-   */
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Deriv(x(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally stored first derivative of the activation function.
+  arma::mat derivative;
 
   //! ELU Hyperparameter (0 < alpha)
   //! SELU parameter fixed to 1.6732632423543774 for normalized inputs.
@@ -245,6 +198,9 @@ class ELU
   //! For SELU activation function, lambda = 1.0507009873554802 for normalized
   //! inputs.
   double lambda;
+
+  //! If true the derivative computation is disabled, see notes above.
+  bool deterministic;
 }; // class ELU
 
 // Template alias for SELU using ELU class.

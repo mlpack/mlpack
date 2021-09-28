@@ -1,5 +1,5 @@
 /**
- * @file ra_search.hpp
+ * @file methods/rann/ra_search.hpp
  * @author Parikshit Ram
  *
  * Defines the RASearch class, which performs an abstract rank-approximate
@@ -7,6 +7,7 @@
  *
  * The details of this method can be found in the following paper:
  *
+ * @code
  * @inproceedings{ram2009rank,
  *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
  *       Speed in High Dimensions}},
@@ -14,6 +15,7 @@
  *   booktitle={{Advances of Neural Information Processing Systems}},
  *   year={2009}
  * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,8 +39,10 @@ namespace mlpack {
 namespace neighbor {
 
 // Forward declaration.
-template<typename SortPolicy>
-class TrainVisitor;
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRAWrapper;
 
 /**
  * The RASearch class: This class provides a generic manner to perform
@@ -48,6 +52,7 @@ class TrainVisitor;
  * stratified manner in the tree as mentioned in the algorithms in Figure 2 of
  * the following paper:
  *
+ * @code
  * @inproceedings{ram2009rank,
  *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
  *       Speed in High Dimensions}},
@@ -55,6 +60,7 @@ class TrainVisitor;
  *   booktitle={{Advances of Neural Information Processing Systems}},
  *   year={2009}
  * }
+ * @endcode
  *
  * RASearch is currently known to not work with ball trees (#356).
  *
@@ -82,9 +88,9 @@ class RASearch
    * distance::MahalanobisDistance class).
    *
    * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and using the appropriate constructor, or by using the
-   * constructor that takes an rvalue reference to the data with std::move().
+   * during tree-building.  If you don't need to keep the reference dataset,
+   * you can use std::move() to remove the overhead of making copies. Using
+   * std::move() transfers the ownership of the dataset.
    *
    * tau, the rank-approximation parameter, specifies that we are looking for k
    * neighbors with probability alpha of being in the top tau percent of nearest
@@ -119,61 +125,7 @@ class RASearch
    * @param singleSampleLimit The limit on the largest node that can be
    *     approximated by sampling. This defaults to 20.
    */
-  RASearch(const MatType& referenceSet,
-           const bool naive = false,
-           const bool singleMode = false,
-           const double tau = 5,
-           const double alpha = 0.95,
-           const bool sampleAtLeaves = false,
-           const bool firstLeafExact = false,
-           const size_t singleSampleLimit = 20,
-           const MetricType metric = MetricType());
-
-  /**
-   * Initialize the RASearch object, passing both a reference dataset (this is
-   * the dataset that will be searched).  Optionally, perform the computation in
-   * naive mode or single-tree mode.  An initialized distance metric can be
-   * given, for cases where the metric has internal data (i.e. the
-   * distance::MahalanobisDistance class).
-   *
-   * This method will take ownership of the given reference set, avoiding a
-   * copy.  If you need to use the reference set for other purposes, too,
-   * consider using the constructor that takes a const reference.
-   *
-   * tau, the rank-approximation parameter, specifies that we are looking for k
-   * neighbors with probability alpha of being in the top tau percent of nearest
-   * neighbors.  So, as an example, if our dataset has 1000 points, and we want
-   * 5 nearest neighbors with 95% probability of being in the top 5% of nearest
-   * neighbors (or, the top 50 nearest neighbors), we set k = 5, tau = 5, and
-   * alpha = 0.95.
-   *
-   * The method will fail (and throw a std::invalid_argument exception) if the
-   * value of tau is too low: tau must be set such that the number of points in
-   * the corresponding percentile of the data is greater than k.  Thus, if we
-   * choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are
-   * attempting to choose 5 nearest neighbors out of the closest 1 point -- this
-   * is invalid.
-   *
-   * @param referenceSet Set of reference points.
-   * @param naive If true, the rank-approximate search will be performed by
-   *      directly sampling the whole set instead of using the stratified
-   *      sampling on the tree.
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).  This is useful when Search() will be called with
-   *      few query points.
-   * @param metric An optional instance of the MetricType class.
-   * @param tau The rank-approximation in percentile of the data. The default
-   *     value is 5%.
-   * @param alpha The desired success probability. The default value is 0.95.
-   * @param sampleAtLeaves Sample at leaves for faster but less accurate
-   *      computation. This defaults to 'false'.
-   * @param firstLeafExact Traverse to the first leaf without approximation.
-   *     This can ensure that the query definitely finds its (near) duplicate
-   *     if there exists one.  This defaults to 'false' for now.
-   * @param singleSampleLimit The limit on the largest node that can be
-   *     approximated by sampling. This defaults to 20.
-   */
-  RASearch(MatType&& referenceSet,
+  RASearch(MatType referenceSet,
            const bool naive = false,
            const bool singleMode = false,
            const double tau = 5,
@@ -214,7 +166,6 @@ class RASearch
    * Tree-building may (at least with BinarySpaceTree) modify the ordering
    * of a matrix, so be aware that the results you get from Search() will
    * correspond to the modified matrix.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
    * @param singleMode Whether single-tree computation should be used (as
@@ -276,25 +227,14 @@ class RASearch
 
   /**
    * "Train" the model on the given reference set.  If tree-based search is
-   * being used (if Naive() is false), this means rebuilding the reference tree.
-   * This particular method will make a copy of the given reference data.  To
-   * avoid that copy, use the Train() method that takes an rvalue reference with
-   * std::move().
+   * being used (if Naive() is false), the reference tree is rebuilt. Thus, a
+   * copy of the reference dataset is made. If you don't need to keep the
+   * dataset, you can avoid copying by using std::move(). This transfers the
+   * ownership of the dataset.
    *
    * @param referenceSet New reference set to use.
    */
-  void Train(const MatType& referenceSet);
-
-  /**
-   * "Train" the model on the given reference set, taking ownership of the data
-   * matrix.  If tree-based search is being used (if Naive() is false), this
-   * also means rebuilding the reference tree.  If you need to keep a copy of
-   * the reference data, use the Train() method that takes a const reference to
-   * the data.
-   *
-   * @param referenceSet New reference set to use.
-   */
-  void Train(MatType&& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
    * Set the reference tree to a new reference tree.
@@ -337,7 +277,6 @@ class RASearch
    * If the tree type you are using modifies the data matrix, be aware that the
    * results returned from this function will be with respect to the modified
    * data matrix.
-   * @endnote
    *
    * @param queryTree Tree built on query points.
    * @param k Number of neighbors to search for.
@@ -421,7 +360,7 @@ class RASearch
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Permutations of reference points during tree building.
@@ -457,8 +396,7 @@ class RASearch
   MetricType metric;
 
   //! For access to mappings when building models.
-  template<typename SortPol>
-  friend class TrainVisitor;
+  friend class LeafSizeRAWrapper<TreeType>;
 }; // class RASearch
 
 } // namespace neighbor

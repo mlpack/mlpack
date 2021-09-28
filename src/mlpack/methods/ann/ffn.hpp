@@ -1,5 +1,5 @@
 /**
- * @file ffn.hpp
+ * @file methods/ann/ffn.hpp
  * @author Marcus Edel
  * @author Shangtong Zhang
  *
@@ -28,8 +28,10 @@
 #include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -81,6 +83,35 @@ class FFN
   ~FFN();
 
   /**
+   * Check if the optimizer has MaxIterations() parameter, if it does
+   * then check if it's value is less than the number of datapoints
+   * in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it
+   * doesn't then simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
    * Train the feedforward network on the given input data using the given
    * optimizer.
    *
@@ -92,19 +123,24 @@ class FFN
    * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
-             OptimizerType& optimizer);
+  template<typename OptimizerType, typename... CallbackTypes>
+  double Train(arma::mat predictors,
+               arma::mat responses,
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the feedforward network on the given input data. By default, the
    * RMSProp optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::SGD).
+   * (such as ens::SGD).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -115,10 +151,16 @@ class FFN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = mlpack::optimization::RMSProp>
-  void Train(arma::mat predictors, arma::mat responses);
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  double Train(arma::mat predictors,
+               arma::mat responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -134,19 +176,28 @@ class FFN
   void Predict(arma::mat predictors, arma::mat& results);
 
   /**
+   * Evaluate the feedforward network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  template<typename PredictorsType, typename ResponsesType>
+  double Evaluate(const PredictorsType& predictors,
+                  const ResponsesType& responses);
+
+  /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
    */
   double Evaluate(const arma::mat& parameters);
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -163,9 +214,9 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.  This just calls the overload of Evaluate()
-   * with deterministic = true.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function. This just calls the overload of
+   * Evaluate() with deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -175,15 +226,41 @@ class FFN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize)
-  {
-    return Evaluate(parameters, begin, batchSize, true);
-  }
+                  const size_t batchSize);
+
+  /**
+   * Evaluate the feedforward network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters, GradType& gradient);
+
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only one point in the dataset. This is useful for
-   * optimizers such as SGD, which require a separable objective function.
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -218,6 +295,16 @@ class FFN
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
+  //! Get the network model.
+  const std::vector<LayerTypes<CustomLayers...> >& Model() const
+  {
+    return network;
+  }
+  //! Modify the network model.  Be careful!  If you change the structure of the
+  //! network or parameters for layers, its state may become invalid, so be sure
+  //! to call ResetParameters() afterwards.
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
+
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
@@ -243,7 +330,7 @@ class FFN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Perform the forward pass of the data in real batch mode.
@@ -255,7 +342,25 @@ class FFN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  void Forward(arma::mat inputs, arma::mat& results);
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs, ResponsesType& results);
+
+  /**
+   * Perform a partial forward pass of the data.
+   *
+   * This function is meant for the cases when users require a forward pass only
+   * through certain layers and not the entire network.
+   *
+   * @param inputs The input data for the specified first layer.
+   * @param results The predicted results from the specified last layer.
+   * @param begin The index of the first layer.
+   * @param end The index of the last layer.
+   */
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs ,
+               ResponsesType& results,
+               const size_t begin,
+               const size_t end);
 
   /**
    * Perform the backward pass of the data in real batch mode.
@@ -264,11 +369,17 @@ class FFN
    * for advanced users. User should try to use Predict and Train unless those
    * two functions can't satisfy some special requirements.
    *
+   * @param inputs Inputs of current pass.
    * @param targets The training target.
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
    */
-  double Backward(arma::mat targets, arma::mat& gradients);
+  template<typename PredictorsType,
+           typename TargetsType,
+           typename GradientsType>
+  double Backward(const PredictorsType& inputs,
+                  const TargetsType& targets,
+                  GradientsType& gradients);
 
   /**
    * Prepare the network for the given data.
@@ -287,7 +398,8 @@ class FFN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  template<typename InputType>
+  void Forward(const InputType& input);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -299,7 +411,8 @@ class FFN
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  void Gradient(arma::mat&& input);
+  template<typename InputType>
+  void Gradient(const InputType& input);
 
   /**
    * Reset the module status by setting the current deterministic parameter
@@ -353,9 +466,6 @@ class FFN
   //! The current error for the backward pass.
   arma::mat error;
 
-  //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
-
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
 
@@ -402,13 +512,15 @@ class FFN
   template<
     typename Model,
     typename InitializerType,
-    class NoiseType
+    typename NoiseType,
+    typename PolicyType
   >
   friend class GAN;
 }; // class FFN
 
 } // namespace ann
 } // namespace mlpack
+
 // Include implementation.
 #include "ffn_impl.hpp"
 

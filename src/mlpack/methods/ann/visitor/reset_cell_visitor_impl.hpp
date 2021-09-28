@@ -1,5 +1,5 @@
 /**
- * @file reset_cell_visitor_impl.hpp
+ * @file methods/ann/visitor/reset_cell_visitor_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the ResetCell() function layer abstraction.
@@ -29,6 +29,11 @@ template<typename LayerType>
 inline void ResetCellVisitor::operator()(LayerType* layer) const
 {
   ResetCell(layer);
+}
+
+inline void ResetCellVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>

@@ -1,5 +1,5 @@
 /**
- * @file dtnn_rules.hpp
+ * @file methods/kmeans/dual_tree_kmeans_rules.hpp
  * @author Ryan Curtin
  *
  * A set of rules for the dual-tree k-means algorithm which uses dual-tree
@@ -54,6 +54,10 @@ class DualTreeKMeansRules
 
   size_t Scores() const { return scores; }
   size_t& Scores() { return scores; }
+
+  //! Get the minimum number of base cases needed for correct results for each
+  //! query point.  This only matters in defeatist search mode.
+  size_t MinimumBaseCases() const { return 0; }
 
  private:
   const arma::mat& centroids;

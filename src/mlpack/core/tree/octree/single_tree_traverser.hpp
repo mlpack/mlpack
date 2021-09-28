@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser.hpp
+ * @file core/tree/octree/single_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * Definition of the single tree traverser for the octree.

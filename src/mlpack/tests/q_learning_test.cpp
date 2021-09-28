@@ -1,5 +1,5 @@
 /**
- * @file q_learning_test.hpp
+ * @file tests/q_learning_test.cpp
  * @author Shangtong Zhang
  * @author Rohan Raj
  *
@@ -17,78 +17,62 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
+#include <mlpack/methods/reinforcement_learning/sac.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/env_type.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/core/optimizers/adam/adam_update.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include <numeric>
+
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
+using namespace ens;
 using namespace mlpack::rl;
 
-BOOST_AUTO_TEST_SUITE(QLearningTest);
-
-//! Test DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
+template<typename AgentType>
+bool testAgent(AgentType& agent,
+               const double rewardThreshold,
+               const size_t noOfEpisodes,
+               const size_t consecutiveEpisodesTest = 50)
 {
-  // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-      GaussianInitialization(0, 0.001));
-  model.Add<Linear<>>(4, 128);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 128);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 2);
-
-  // Set up the policy and replay method.
-  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
-  RandomReplay<CartPole> replayMethod(10, 10000);
-
-  TrainingConfig config;
-  config.StepSize() = 0.01;
-  config.Discount() = 0.9;
-  config.TargetNetworkSyncInterval() = 100;
-  config.ExplorationSteps() = 100;
-  config.DoubleQLearning() = false;
-  config.StepLimit() = 200;
-
-  // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), std::move(model), std::move(policy),
-      std::move(replayMethod));
-
-  arma::running_stat<double> averageReturn;
+  bool converged = false;
+  std::vector<double> returnList;
   size_t episodes = 0;
-  bool converged = true;
   while (true)
   {
     double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
     episodes += 1;
+    returnList.push_back(episodeReturn);
 
-    if (episodes > 1000)
-    {
-      Log::Debug << "Cart Pole with DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
+    if (returnList.size() > consecutiveEpisodesTest)
+      returnList.erase(returnList.begin());
 
-    /**
-     * Reaching running average return 35 is enough to show it works.
-     * For the speed of the test case, I didn't set high criterion.
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
+    double averageReturn = std::accumulate(returnList.begin(),
+        returnList.end(), 0.0) / returnList.size();
+
+    Log::Debug << "Average return in last " << returnList.size()
+        << " consecutive episodes: " << averageReturn
         << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 35)
+
+    // For the speed of the test case, a high criterion should not be set
+    // for the rewardThreshold.
+    if (averageReturn > rewardThreshold &&
+        returnList.size() >= consecutiveEpisodesTest)
     {
+      converged = true;
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
       for (size_t i = 0; i < 10; ++i)
@@ -98,145 +82,512 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
           << testReturn.mean() << std::endl;
       break;
     }
+
+    if (episodes > noOfEpisodes)
+    {
+      Log::Debug << "Agent failed." << std::endl;
+      break;
+    }
   }
-  BOOST_REQUIRE(converged);
+
+  return converged;
+}
+
+//! Test DQN in Cart Pole task.
+TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
+{
+  // Set up the network.
+  SimpleDQN<> network(4, 128, 128, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  RandomReplay<CartPole> replayMethod(10, 10000);
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.9;
+  config.TargetNetworkSyncInterval() = 100;
+  config.ExplorationSteps() = 100;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 40, 1000);
+
+  // To check if the action returned by the agent is not nan and is finite.
+  REQUIRE(std::isfinite(double(agent.Action().action)));
+  REQUIRE(converged);
+}
+
+//! Test DQN in Cart Pole task with Prioritized Replay.
+TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest]")
+{
+  // Set up the network.
+  SimpleDQN<> network(4, 128, 128, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+  PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6);
+
+  TrainingConfig config;
+  config.ExplorationSteps() = 100;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 45, 1000);
+  REQUIRE(converged);
 }
 
 //! Test Double DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
+TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights. If this works 1 of 4 times, I'm fine
   // with that.
-  size_t episodes = 0;
   bool converged = false;
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(4, 20);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(20, 20);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(20, 2);
+    SimpleDQN<> network(4, 20, 20, 2);
 
     // Set up the policy and replay method.
-    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
     RandomReplay<CartPole> replayMethod(10, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.01;
-    config.Discount() = 0.9;
-    config.TargetNetworkSyncInterval() = 100;
     config.ExplorationSteps() = 100;
-    config.DoubleQLearning() = false;
+    config.DoubleQLearning() = true;
     config.StepLimit() = 200;
 
     // Set up the DQN agent.
-    QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
-        std::move(replayMethod));
+    QLearning<CartPole, decltype(network), RMSPropUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
 
-    arma::running_stat<double> averageReturn;
+    converged = testAgent<decltype(agent)>(agent, 45, 1000);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
 
-    for (episodes = 0; episodes <= 1000; ++episodes)
+//! Test DQN in Acrobot task.
+TEST_CASE("AcrobotWithDQN", "[QLearningTest]")
+{
+  // We will allow three trials, although it would be very uncommon for the test
+  // to use more than one.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    // Set up the network.
+    SimpleDQN<> network(4, 64, 32, 3);
+
+    // Set up the policy and replay method.
+    GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<Acrobot> replayMethod(20, 10000);
+
+    TrainingConfig config;
+    config.ExplorationSteps() = 100;
+    config.StepLimit() = 400;
+
+    // Set up DQN agent.
+    QLearning<Acrobot, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, -380, 1000);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test DQN in Mountain Car task.
+TEST_CASE("MountainCarWithDQN", "[QLearningTest]")
+{
+  // We will allow five trials total.
+  bool converged = false;
+  for (size_t trial = 0; trial < 5; trial++)
+  {
+    // Set up the network.
+    SimpleDQN<> network(2, 64, 32, 3);
+
+    // Set up the policy and replay method.
+    GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<MountainCar> replayMethod(20, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.0001;
+    config.ExplorationSteps() = 100;
+    config.StepLimit() = 400;
+
+    // Set up DQN agent.
+    QLearning<MountainCar, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, -380, 1000);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test DQN in DoublePoleCart task.
+TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
+{
+  bool converged = false;
+  // We will allow four trials total.
+  for (size_t trial = 0; trial < 4; trial++)
+  {
+    // Set up the module. Note that we use a custom network here.
+    FFN<MeanSquaredError<>, GaussianInitialization> module(
+        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
+    module.Add<Linear<>>(6, 256);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(256, 3);
+
+    // Adding the module to the SimpleDQN network containing required functions.
+    SimpleDQN<> network(module);
+
+    // Set up the policy and replay method.
+    GreedyPolicy<DoublePoleCart> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<DoublePoleCart> replayMethod(20, 10000);
+
+    TrainingConfig config;
+    config.ExplorationSteps() = 100;
+    config.StepLimit() = 600;
+
+    // Set up DQN agent.
+    QLearning<DoublePoleCart, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    size_t episodes = 0;
+    size_t episodeSuccesses = 0;
+    while (true)
     {
       double episodeReturn = agent.Episode();
-      averageReturn(episodeReturn);
+      episodes += 1;
 
-      /**
-       * Reaching running average return 35 is enough to show it works.
-       * For the speed of the test case, I didn't set high criterion.
-       */
-      Log::Debug << "Average return: " << averageReturn.mean()
-          << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > 40)
+      if (episodeReturn >= 280)
+        episodeSuccesses++;
+
+      if (episodes > 2000)
       {
-        agent.Deterministic() = true;
-        arma::running_stat<double> testReturn;
-        for (size_t i = 0; i < 10; ++i)
-          testReturn(agent.Episode());
-        Log::Debug << "Average return in deterministic test: "
-            << testReturn.mean() << std::endl;
+        Log::Debug << "Agent failed." << std::endl;
+        break;
+      }
+
+      // If the network can solve the environment in two trials this is fine for
+      // a simple test.
+      Log::Debug << " Episode return: " << episodeReturn << std::endl;
+      if (episodeSuccesses >= 2)
+      {
+        converged = true;
+        Log::Debug << "QLearning has succeeded in the multiple pole cart" <<
+            " environment." << std::endl;
         break;
       }
     }
-
-    if (episodes < 1000)
-    {
-      converged = true;
+    if (converged)
       break;
-    }
   }
-
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
-//! Test DQN in Acrobat task.
-BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
+//! Test Dueling DQN in Cart Pole task.
+TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 {
-    // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-      GaussianInitialization(0, 0.001));
-  model.Add<Linear<>>(4, 64);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(64, 32);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(32, 3);
+  // Set up the network.
+  DuelingDQN<> network(4, 128, 64, 2);
 
   // Set up the policy and replay method.
-  GreedyPolicy<Acrobat> policy(1.0, 1000, 0.1);
-  RandomReplay<Acrobat> replayMethod(20, 10000);
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  RandomReplay<CartPole> replayMethod(32, 2000);
 
   TrainingConfig config;
-  config.StepSize() = 0.01;
-  config.Discount() = 0.99;
-  config.TargetNetworkSyncInterval() = 100;
-  config.ExplorationSteps() = 100;
-  config.DoubleQLearning() = false;
-  config.StepLimit() = 400;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<Acrobat, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), std::move(model), std::move(policy),
-      std::move(replayMethod));
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
 
-  arma::running_stat<double> averageReturn;
-  size_t episodes = 0;
-  bool converged = true;
-  while (true)
-  {
-    double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
-    episodes += 1;
-
-    if (episodes > 1000)
-    {
-      Log::Debug << "Acrobat with DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
-
-    /**
-     * I am using a thresold of -380 to check convegence.
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > -380.00)
-    {
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 20; ++i)
-        testReturn(agent.Episode());
-
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
-    }
-  }
-
-  BOOST_REQUIRE(converged);
+  bool converged = testAgent<decltype(agent)>(agent, 45, 2000);
+  REQUIRE(converged);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+//! Test Dueling DQN in Cart Pole task with Prioritized Replay.
+TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest]")
+{
+  // Set up the network.
+  DuelingDQN<> network(4, 128, 64, 2);
+
+  // Set up the policy and replay method.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+  PrioritizedReplay<CartPole> replayMethod(32, 2000, 0.6);
+
+  TrainingConfig config;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 50, 2000);
+  REQUIRE(converged);
+}
+
+//! Test Noisy DQN in Cart Pole task.
+TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 2000);
+
+    TrainingConfig config;
+    config.StepLimit() = 200;
+    config.NoisyQLearning() = true;
+
+    // Set up the network with a flag to enable noisy layers.
+    SimpleDQN<> network(4, 64, 32, 2, config.NoisyQLearning());
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 45, 500, 30);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test Dueling-Double-Noisy DQN in Cart Pole task.
+TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 2000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 4000);
+
+    TrainingConfig config;
+    config.DoubleQLearning() = true;
+    config.StepLimit() = 200;
+    config.NoisyQLearning() = true;
+
+    // Set up the network with a flag to enable noisy layers.
+    DuelingDQN<> network(4, 64, 64, 2, config.NoisyQLearning());
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 45, 500, 30);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test N-step DQN in Cart Pole task.
+TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
+{
+  // Set up the network.
+  SimpleDQN<> network(4, 128, 128, 2);
+
+  // Set up the policy.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  /**
+   * For N-step learning, we need to specify n as the last parameter in
+   * the replay method. Here we use n = 3.
+   */
+  RandomReplay<CartPole> replayMethod(10, 10000, 3);
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  REQUIRE(converged);
+}
+
+//! Test N-step Prioritized DQN in Cart Pole task.
+TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest]")
+{
+  // Set up the network.
+  SimpleDQN<> network(4, 128, 128, 2);
+
+  // Set up the policy.
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  /**
+   * For N-step learning, we need to specify n as the last parameter in
+   * the replay method. Here we use n = 3.
+   */
+  PrioritizedReplay<CartPole> replayMethod(10, 10000, 0.6, 3);
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  REQUIRE(converged);
+}
+
+//! Test Categorical DQN in Cart Pole task.
+TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 4000);
+
+    TrainingConfig config;
+    config.IsCategorical() = true;
+    config.ExplorationSteps() = 32;
+
+    // Set up the module. Note that we use a custom network here.
+    FFN<EmptyLoss<>, GaussianInitialization> module(
+        EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    module.Add<Linear<>>(4, 128);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(128, 2 * config.AtomSize());
+
+    // Adding the module to the CategoricalDQN network.
+    CategoricalDQN<> network(module, config);
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 40, 1000, 20);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test SAC on Pendulum task.
+TEST_CASE("PendulumWithSAC", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.001;
+    config.TargetNetworkSyncInterval() = 1;
+    config.UpdateInterval() = 3;
+
+    FFN<EmptyLoss<>, GaussianInitialization>
+        policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear<>(3, 128));
+    policyNetwork.Add(new ReLULayer<>());
+    policyNetwork.Add(new Linear<>(128, 1));
+    policyNetwork.Add(new TanHLayer<>());
+
+    FFN<EmptyLoss<>, GaussianInitialization>
+        qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear<>(3+1, 128));
+    qNetwork.Add(new ReLULayer<>());
+    qNetwork.Add(new Linear<>(128, 1));
+
+    // Set up Soft actor-critic agent.
+    SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent(config, qNetwork, policyNetwork, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! A test to ensure SAC works with multiple actions in action space.
+TEST_CASE("SACForMultipleActions", "[QLearningTest]")
+{
+  ContinuousActionEnv::State::dimension = 3;
+  ContinuousActionEnv::Action::size = 4;
+
+  FFN<EmptyLoss<>, GaussianInitialization>
+      policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+  policyNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension, 128));
+  policyNetwork.Add(new ReLULayer<>());
+  policyNetwork.Add(new Linear<>(128, ContinuousActionEnv::Action::size));
+  policyNetwork.Add(new TanHLayer<>());
+
+  FFN<EmptyLoss<>, GaussianInitialization>
+      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+  qNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension +
+                            ContinuousActionEnv::Action::size, 128));
+  qNetwork.Add(new ReLULayer<>());
+  qNetwork.Add(new Linear<>(128, 1));
+
+  // Set up the replay method.
+  RandomReplay<ContinuousActionEnv> replayMethod(32, 10000);
+
+  TrainingConfig config;
+  config.StepSize() = 0.001;
+  config.TargetNetworkSyncInterval() = 1;
+  config.UpdateInterval() = 3;
+
+  // Set up Soft actor-critic agent.
+  SAC<ContinuousActionEnv, decltype(qNetwork), decltype(policyNetwork),
+      AdamUpdate>
+      agent(config, qNetwork, policyNetwork, replayMethod);
+
+  agent.State().Data() = arma::randu<arma::colvec>
+      (ContinuousActionEnv::State::dimension, 1);
+  agent.SelectAction();
+
+  // Test to check if the action dimension given by the agent is correct.
+  REQUIRE(agent.Action().action.size() == ContinuousActionEnv::Action::size);
+
+  replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
+  agent.TotalSteps()++;
+  agent.Update();
+  // If the agent is able to reach till this point of the test, it is assured
+  // that the agent can handle multiple actions in continuous space.
+}

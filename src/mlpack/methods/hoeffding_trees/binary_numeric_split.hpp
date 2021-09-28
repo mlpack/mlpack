@@ -1,5 +1,5 @@
 /**
- * @file binary_numeric_split.hpp
+ * @file methods/hoeffding_trees/binary_numeric_split.hpp
  * @author Ryan Curtin
  *
  * An implementation of the binary-tree-based numeric splitting procedure
@@ -108,7 +108,7 @@ class BinaryNumericSplit
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The elements seen so far, in sorted order.

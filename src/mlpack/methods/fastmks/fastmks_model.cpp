@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model.cpp
+ * @file methods/fastmks/fastmks_model.cpp
  * @author Ryan Curtin
  *
  * Implementation of non-templatized functions of FastMKSModel.
@@ -71,40 +71,68 @@ FastMKSModel::FastMKSModel(FastMKSModel&& other) :
 
 FastMKSModel& FastMKSModel::operator=(const FastMKSModel& other)
 {
-  // Clear memory.
-  delete linear;
-  delete polynomial;
-  delete cosine;
-  delete gaussian;
-  delete epan;
-  delete triangular;
-  delete hyptan;
+  if (this != &other)
+  {
+    // Clear memory.
+    delete linear;
+    delete polynomial;
+    delete cosine;
+    delete gaussian;
+    delete epan;
+    delete triangular;
+    delete hyptan;
 
-  // Set pointers to null.
-  linear = NULL;
-  polynomial = NULL;
-  cosine = NULL;
-  gaussian = NULL;
-  epan = NULL;
-  triangular = NULL;
-  hyptan = NULL;
+    // Set pointers to null.
+    linear = NULL;
+    polynomial = NULL;
+    cosine = NULL;
+    gaussian = NULL;
+    epan = NULL;
+    triangular = NULL;
+    hyptan = NULL;
 
-  kernelType = other.kernelType;
-  if (other.linear)
-    linear = new FastMKS<LinearKernel>(*other.linear);
-  if (other.polynomial)
-    polynomial = new FastMKS<PolynomialKernel>(*other.polynomial);
-  if (other.cosine)
-    cosine = new FastMKS<CosineDistance>(*other.cosine);
-  if (other.gaussian)
-    gaussian = new FastMKS<GaussianKernel>(*other.gaussian);
-  if (other.epan)
-    epan = new FastMKS<EpanechnikovKernel>(*other.epan);
-  if (other.triangular)
-    triangular = new FastMKS<TriangularKernel>(*other.triangular);
-  if (other.hyptan)
-    hyptan = new FastMKS<HyperbolicTangentKernel>(*other.hyptan);
+    kernelType = other.kernelType;
+    if (other.linear)
+      linear = new FastMKS<LinearKernel>(*other.linear);
+    if (other.polynomial)
+      polynomial = new FastMKS<PolynomialKernel>(*other.polynomial);
+    if (other.cosine)
+      cosine = new FastMKS<CosineDistance>(*other.cosine);
+    if (other.gaussian)
+      gaussian = new FastMKS<GaussianKernel>(*other.gaussian);
+    if (other.epan)
+      epan = new FastMKS<EpanechnikovKernel>(*other.epan);
+    if (other.triangular)
+      triangular = new FastMKS<TriangularKernel>(*other.triangular);
+    if (other.hyptan)
+      hyptan = new FastMKS<HyperbolicTangentKernel>(*other.hyptan);
+  }
+  return *this;
+}
 
+FastMKSModel& FastMKSModel::operator=(FastMKSModel&& other)
+{
+  if (this != &other)
+  {
+    kernelType = other.kernelType;
+    linear = other.linear;
+    polynomial = other.polynomial;
+    cosine = other.cosine;
+    gaussian = other.gaussian;
+    epan = other.epan;
+    triangular = other.triangular;
+    hyptan = other.hyptan;
+
+    // Clear other object.
+    other.kernelType = KernelTypes::LINEAR_KERNEL;
+    other.linear = nullptr;
+    other.polynomial = nullptr;
+    other.cosine = nullptr;
+    other.gaussian = nullptr;
+    other.epan = nullptr;
+    other.triangular = nullptr;
+    other.hyptan = nullptr;
+  }
   return *this;
 }
 
@@ -219,7 +247,8 @@ bool& FastMKSModel::SingleMode()
   throw std::runtime_error("invalid model type");
 }
 
-void FastMKSModel::Search(const arma::mat& querySet,
+void FastMKSModel::Search(util::Timers& timers,
+                          const arma::mat& querySet,
                           const size_t k,
                           arma::Mat<size_t>& indices,
                           arma::mat& kernels,
@@ -228,35 +257,37 @@ void FastMKSModel::Search(const arma::mat& querySet,
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      Search(*linear, querySet, k, indices, kernels, base);
+      Search(timers, *linear, querySet, k, indices, kernels, base);
       break;
     case POLYNOMIAL_KERNEL:
-      Search(*polynomial, querySet, k, indices, kernels, base);
+      Search(timers, *polynomial, querySet, k, indices, kernels, base);
       break;
     case COSINE_DISTANCE:
-      Search(*cosine, querySet, k, indices, kernels, base);
+      Search(timers, *cosine, querySet, k, indices, kernels, base);
       break;
     case GAUSSIAN_KERNEL:
-      Search(*gaussian, querySet, k, indices, kernels, base);
+      Search(timers, *gaussian, querySet, k, indices, kernels, base);
       break;
     case EPANECHNIKOV_KERNEL:
-      Search(*epan, querySet, k, indices, kernels, base);
+      Search(timers, *epan, querySet, k, indices, kernels, base);
       break;
     case TRIANGULAR_KERNEL:
-      Search(*triangular, querySet, k, indices, kernels, base);
+      Search(timers, *triangular, querySet, k, indices, kernels, base);
       break;
     case HYPTAN_KERNEL:
-      Search(*hyptan, querySet, k, indices, kernels, base);
+      Search(timers, *hyptan, querySet, k, indices, kernels, base);
       break;
     default:
       throw std::runtime_error("invalid model type");
   }
 }
 
-void FastMKSModel::Search(const size_t k,
+void FastMKSModel::Search(util::Timers& timers,
+                          const size_t k,
                           arma::Mat<size_t>& indices,
                           arma::mat& kernels)
 {
+  timers.Start("computing_products");
   switch (kernelType)
   {
     case LINEAR_KERNEL:
@@ -283,4 +314,5 @@ void FastMKSModel::Search(const size_t k,
     default:
       throw std::invalid_argument("invalid model type");
   }
+  timers.Stop("computing_products");
 }

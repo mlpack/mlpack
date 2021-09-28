@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding_impl.hpp
+ * @file methods/sparse_coding/sparse_coding_impl.hpp
  * @author Nishant Mehta
  *
  * Implementation of Sparse Coding with Dictionary Learning using l1 (LASSO) or
@@ -40,12 +40,11 @@ SparseCoding::SparseCoding(
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding::Train(
+double SparseCoding::Train(
     const arma::mat& data,
     const DictionaryInitializer& initializer)
 {
   // Now, train.
-  Timer::Start("sparse_coding");
 
   // Initialize the dictionary.
   initializer.Initialize(data, atoms, dictionary);
@@ -95,29 +94,29 @@ void SparseCoding::Train(
     Log::Info << "  Objective value: " << curObjVal << " (improvement "
         << std::scientific << improvement << ")." << std::endl;
 
+    lastObjVal = curObjVal;
+
     // Have we converged?
     if (improvement < objTolerance)
     {
       Log::Info << "Converged within tolerance " << objTolerance << ".\n";
       break;
     }
-
-    lastObjVal = curObjVal;
   }
 
-  Timer::Stop("sparse_coding");
+  return lastObjVal;
 }
 
 template<typename Archive>
-void SparseCoding::serialize(Archive& ar, const unsigned int /* version */)
+void SparseCoding::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(atoms);
-  ar & BOOST_SERIALIZATION_NVP(dictionary);
-  ar & BOOST_SERIALIZATION_NVP(lambda1);
-  ar & BOOST_SERIALIZATION_NVP(lambda2);
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(objTolerance);
-  ar & BOOST_SERIALIZATION_NVP(newtonTolerance);
+  ar(CEREAL_NVP(atoms));
+  ar(CEREAL_NVP(dictionary));
+  ar(CEREAL_NVP(lambda1));
+  ar(CEREAL_NVP(lambda2));
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(objTolerance));
+  ar(CEREAL_NVP(newtonTolerance));
 }
 
 } // namespace sparse_coding

@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser.hpp
+ * @file core/tree/cover_tree/dual_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * A dual-tree traverser for the cover tree.
@@ -86,20 +86,23 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   /**
    * Helper function for traversal of the two trees.
    */
-  void Traverse(CoverTree& queryNode,
-                std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                    referenceMap);
+  void Traverse(
+      CoverTree& queryNode,
+      std::map<int, std::vector<DualCoverTreeMapEntry>,
+          std::greater<int>>& referenceMap);
 
   //! Prepare map for recursion.
-  void PruneMap(CoverTree& queryNode,
-                std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                    referenceMap,
-                std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                    childMap);
+  void PruneMap(
+      CoverTree& queryNode,
+      std::map<int, std::vector<DualCoverTreeMapEntry>,
+          std::greater<int>>& referenceMap,
+      std::map<int, std::vector<DualCoverTreeMapEntry>,
+          std::greater<int>>& childMap);
 
-  void ReferenceRecursion(CoverTree& queryNode,
-                          std::map<int, std::vector<DualCoverTreeMapEntry> >&
-                              referenceMap);
+  void ReferenceRecursion(
+      CoverTree& queryNode,
+    std::map<int, std::vector<DualCoverTreeMapEntry>,
+        std::greater<int>>& referenceMap);
 };
 
 } // namespace tree

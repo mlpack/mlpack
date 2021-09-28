@@ -1,5 +1,5 @@
 /**
- * @file shuffle_data.hpp
+ * @file core/math/shuffle_data.hpp
  * @author Ryan Curtin
  *
  * Given data points and labels, shuffle their ordering.

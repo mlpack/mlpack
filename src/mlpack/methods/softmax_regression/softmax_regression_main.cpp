@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_main.cpp
+ * @file methods/softmax_regression/softmax_regression_main.cpp
  *
  * Main program for softmax regression.
  *
@@ -9,11 +9,17 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME softmax_regression
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 #include <memory>
 #include <set>
@@ -23,12 +29,23 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-// Define parameters for the executable.
-PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
-    "a generalization of logistic regression to the multiclass case, and has "
-    "support for L2 regularization.  The program is able to train a model, load"
-    " an existing model, and give predictions (and optionally their accuracy) "
-    "for test data."
+// Program Name.
+BINDING_USER_NAME("Softmax Regression");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of softmax regression for classification, which is a "
+    "multiclass generalization of logistic regression.  Given labeled data, a "
+    "softmax regression model can be trained and saved for future use, or, a "
+    "pre-trained softmax regression model can be used for classification of "
+    "new points.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "This program performs softmax regression, a generalization of logistic "
+    "regression to the multiclass case, and has support for L2 regularization. "
+    " The program is able to train a model, load  an existing model, and give "
+    "predictions (and optionally their accuracy) for test data."
     "\n\n"
     "Training a softmax regression model is done by giving a file of training "
     "points with the " + PRINT_PARAM_STRING("training") + " parameter and their"
@@ -56,8 +73,10 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "specified for the test data with the " +
     PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
     "print the accuracy of the predictions on the given test set and its "
-    "corresponding labels."
-    "\n\n"
+    "corresponding labels.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a softmax regression model on the data " +
     PRINT_DATASET("dataset") + " with labels " + PRINT_DATASET("labels") +
     " with a maximum of 1000 iterations for training, saving the trained model "
@@ -72,6 +91,16 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     "\n\n" +
     PRINT_CALL("softmax_regression", "input_model", "sr_model", "test",
         "test_points", "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("Multinomial logistic regression (softmax regression) on "
+        "Wikipedia",
+        "https://en.wikipedia.org/wiki/Multinomial_logistic_regression");
+BINDING_SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class "
+        "documentation",
+        "@doxygen/classmlpack_1_1regression_1_1SoftmaxRegression.html");
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
@@ -89,6 +118,8 @@ PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_OUT("predictions", "Matrix to save predictions for test dataset "
     "into.", "p");
+PARAM_MATRIX_OUT("probabilities", "Matrix to save class probabilities for test "
+    "dataset into.", "P");
 PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 
 // Softmax configuration options.
@@ -109,46 +140,52 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 // Test the accuracy of the model.
 template<typename Model>
-void TestClassifyAcc(const size_t numClasses, const Model& model);
+void TestClassifyAcc(util::Params& params,
+                     util::Timers& timers,
+                     const size_t numClasses,
+                     const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
-Model* TrainSoftmax(const size_t maxIterations);
+Model* TrainSoftmax(util::Params& params,
+                    util::Timers& timers,
+                    const size_t maxIterations);
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const int maxIterations = params.Get<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
-  RequireOnlyOnePassed({ "input_model", "training" }, true);
-  if (CLI::HasParam("training"))
+  RequireOnlyOnePassed(params, { "input_model", "training" }, true);
+  if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
-        " labels must also be specified");
+    RequireAtLeastOnePassed(params, { "labels" }, true, "if training data is "
+        "specified, labels must also be specified");
   }
-  ReportIgnoredParam({{ "training", false }}, "labels");
-  ReportIgnoredParam({{ "training", false }}, "max_iterations");
-  ReportIgnoredParam({{ "training", false }}, "number_of_classes");
-  ReportIgnoredParam({{ "training", false }}, "lambda");
-  ReportIgnoredParam({{ "training", false }}, "no_intercept");
+  ReportIgnoredParam(params, {{ "training", false }}, "labels");
+  ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
+  ReportIgnoredParam(params, {{ "training", false }}, "number_of_classes");
+  ReportIgnoredParam(params, {{ "training", false }}, "lambda");
+  ReportIgnoredParam(params, {{ "training", false }}, "no_intercept");
 
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
-      "maximum number of iterations must be greater than or equal to 0");
-  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; }, true,
-      "lambda penalty parameter must be greater than or equal to 0");
-  RequireParamValue<int>("number_of_classes", [](int x) { return x >= 0; },
-                         true, "number of classes must be greater than or "
-                         "equal to 0 (equal to 0 in case of unspecified.)");
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
+      true, "maximum number of iterations must be greater than or equal to 0");
+  RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0.0; },
+      true, "lambda penalty parameter must be greater than or equal to 0");
+  RequireParamValue<int>(params, "number_of_classes",
+      [](int x) { return x >= 0; }, true, "number of classes must be greater "
+      "than or equal to 0 (equal to 0 in case of unspecified.)");
 
   // Make sure we have an output file of some sort.
-  RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
-      " will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
+      "no results will be saved");
 
-  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(maxIterations);
+  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(params, timers,
+      maxIterations);
 
-  TestClassifyAcc(sm->NumClasses(), *sm);
+  TestClassifyAcc(params, timers, sm->NumClasses(), *sm);
 
-  CLI::GetParam<SoftmaxRegression*>("output_model") = sm;
+  params.Get<SoftmaxRegression*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -167,34 +204,35 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 }
 
 template<typename Model>
-void TestClassifyAcc(size_t numClasses, const Model& model)
+void TestClassifyAcc(util::Params& params,
+                     util::Timers& timers,
+                     const size_t numClasses,
+                     const Model& model)
 {
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (!CLI::HasParam("test"))
+  if (!params.Has("test"))
   {
-    ReportIgnoredParam({{ "test", false }}, "test_labels");
-    ReportIgnoredParam({{ "test", false }}, "predictions");
+    ReportIgnoredParam(params, {{ "test", false }}, "test_labels");
+    ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
     return;
   }
 
   // Get the test dataset, and get predictions.
-  arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+  arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
+  timers.Start("softmax_regression_classification");
   model.Classify(testData, predictLabels);
-
-  // Save predictions, if desired.
-  if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+  timers.Stop("softmax_regression_classification");
 
   // Calculate accuracy, if desired.
-  if (CLI::HasParam("test_labels"))
+  if (params.Has("test_labels"))
   {
     arma::Row<size_t> testLabels =
-      std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
+      std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
     {
@@ -228,38 +266,54 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
         << (totalBingo) / static_cast<double>(predictLabels.n_elem) << " ("
         << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
   }
+  // Save predictions, if desired.
+  if (params.Has("predictions"))
+    params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+
+  // Compute probabiltiies, if desired.
+  if (params.Has("probabilities"))
+  {
+    Log::Info << "Calculating class probabilities of points in '"
+        << params.GetPrintable<arma::mat>("test") << "'." << endl;
+    arma::mat probabilities;
+    model.Classify(testData, probabilities);
+    params.Get<arma::mat>("probabilities") = std::move(probabilities);
+  }
 }
 
 template<typename Model>
-Model* TrainSoftmax(const size_t maxIterations)
+Model* TrainSoftmax(util::Params& params,
+                    util::Timers& timers,
+                    const size_t maxIterations)
 {
   using namespace mlpack;
 
   Model* sm;
-  if (CLI::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    sm = CLI::GetParam<Model*>("input_model");
+    sm = params.Get<Model*>("input_model");
   }
   else
   {
-    arma::mat trainData = std::move(CLI::GetParam<arma::mat>("training"));
+    arma::mat trainData = std::move(params.Get<arma::mat>("training"));
     arma::Row<size_t> trainLabels =
-        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+        std::move(params.Get<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)
       Log::Fatal << "Samples of input_data should same as the size of "
           << "input_label." << endl;
 
     const size_t numClasses = CalculateNumberOfClasses(
-        (size_t) CLI::GetParam<int>("number_of_classes"), trainLabels);
+        (size_t) params.Get<int>("number_of_classes"), trainLabels);
 
-    const bool intercept = CLI::HasParam("no_intercept") ? false : true;
+    const bool intercept = params.Has("no_intercept") ? false : true;
 
     const size_t numBasis = 5;
-    optimization::L_BFGS optimizer(numBasis, maxIterations);
+    ens::L_BFGS optimizer(numBasis, maxIterations);
+    timers.Start("softmax_regression_optimization");
     sm = new Model(trainData, trainLabels, numClasses,
-        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
+        params.Get<double>("lambda"), intercept, std::move(optimizer));
+    timers.Stop("softmax_regression_optimization");
   }
-
   return sm;
 }

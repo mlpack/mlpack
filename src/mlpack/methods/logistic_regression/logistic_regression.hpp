@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression.hpp
+ * @file methods/logistic_regression/logistic_regression.hpp
  * @author Sumedh Ghaisas
  * @author Arun Reddy
  *
@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 #include "logistic_regression_function.hpp"
 
@@ -116,40 +116,48 @@ class LogisticRegression
   /**
    * Train the LogisticRegression model on the given input data.  By default,
    * the L-BFGS optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::SGD).
+   * (such as ens::SGD).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization.  If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = mlpack::optimization::L_BFGS>
-  void Train(const MatType& predictors,
-             const arma::Row<size_t>& responses);
+  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
+  double Train(const MatType& predictors,
+               const arma::Row<size_t>& responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
    * Using this overload allows configuring the instantiated optimizer before
    * training is performed.
    *
-   * Note that the initial point of the optimizer
-   * (optimizer.Function().GetInitialPoint()) will be used as the initial point
-   * of the optimization, overwriting any existing trained model.  If you don't
-   * want to overwrite the existing model, set
-   * optimizer.Function().GetInitialPoint() to the current parameters vector,
-   * accessible via Parameters().
+   * This will use the existing model parameters as a starting point for the
+   * optimization.  If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
    *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType>
-  void Train(const MatType& predictors,
-             const arma::Row<size_t>& responses,
-             OptimizerType& optimizer);
+  template<typename OptimizerType, typename... CallbackTypes>
+  double Train(const MatType& predictors,
+               const arma::Row<size_t>& responses,
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   //! Return the parameters (the b vector).
   const arma::rowvec& Parameters() const { return parameters; }
@@ -231,7 +239,7 @@ class LogisticRegression
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Vector of trained parameters (size: dimensionality plus one).

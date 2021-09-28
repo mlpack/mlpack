@@ -1,5 +1,5 @@
 /**
- * @file spill_dual_tree_traverser.hpp
+ * @file core/tree/spill_tree/spill_dual_tree_traverser.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *
@@ -46,10 +46,12 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
    *
    * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
-   * @param score The score of the current node combination.
+   * @param bruteForce If true, then do a brute-force search on the reference
+   *     node instead of traversing any further.
    */
   void Traverse(SpillTree& queryNode,
-                SpillTree& referenceNode);
+                SpillTree& referenceNode,
+                const bool bruteForce = false);
 
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
@@ -99,4 +101,3 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 #include "spill_dual_tree_traverser_impl.hpp"
 
 #endif // MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_HPP
-

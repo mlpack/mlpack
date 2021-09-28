@@ -1,7 +1,7 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Michael Fox
- * @file gmm.hpp
+ * @file methods/gmm/gmm.hpp
  *
  * Defines a Gaussian Mixture model and estimates the parameters of the model.
  *
@@ -140,14 +140,14 @@ class GMM
   /**
    * Return a const reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   const distribution::GaussianDistribution& Component(size_t i) const {
       return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   distribution::GaussianDistribution& Component(size_t i) { return dists[i]; }
 
@@ -160,9 +160,33 @@ class GMM
    * Return the probability that the given observation came from this
    * distribution.
    *
-   * @param observation Observation to evaluate the probability of.
+   * @param observation Observation vector to evaluate the probability of.
    */
   double Probability(const arma::vec& observation) const;
+
+  /**
+   * Return the probability of the given observation matrix.
+   *
+   * @param observation Observation matrix.
+   * @param probs Vector to store probability value of observation x.
+   */
+  void Probability(const arma::mat& observation, arma::vec& probs) const;
+
+  /**
+   * Return the log probability that the given observation came from this
+   * distribution.
+   *
+   * @param observation Observation vector to evaluate the probability of.
+   */
+  double LogProbability(const arma::vec& observation) const;
+
+  /**
+   * Return the log-probability of the given observation (x) matrix.
+   *
+   * @param observation Observation matrix.
+   * @param logProbs Vector to store log-probability value of observation.
+   */
+  void LogProbability(const arma::mat& observation, arma::vec& logProbs) const;
 
   /**
    * Return the probability that the given observation came from the given
@@ -174,6 +198,15 @@ class GMM
   double Probability(const arma::vec& observation,
                      const size_t component) const;
 
+  /**
+   * Return the log probability that the given observation came from the given
+   * Gaussian component in this distribution.
+   *
+   * @param observation Observation to evaluate the probability of.
+   * @param component Index of the component of the GMM to be considered.
+   */
+  double LogProbability(const arma::vec& observation,
+                        const size_t component) const;
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
@@ -202,6 +235,7 @@ class GMM
    *      the greatest log-likelihood will be selected.
    * @param useExistingModel If true, the existing model is used as an initial
    *      model for the estimation.
+   * @param fitter The fitter to use, optional.
    * @return The log-likelihood of the best fit.
    */
   template<typename FittingType = EMFit<>>
@@ -232,6 +266,7 @@ class GMM
    *     the greatest log-likelihood will be selected.
    * @param useExistingModel If true, the existing model is used as an initial
    *     model for the estimation.
+   * @param fitter The fitter to use, optional.
    * @return The log-likelihood of the best fit.
    */
   template<typename FittingType = EMFit<>>
@@ -264,7 +299,7 @@ class GMM
    * Serialize the GMM.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**
@@ -289,4 +324,3 @@ class GMM
 #include "gmm_impl.hpp"
 
 #endif
-

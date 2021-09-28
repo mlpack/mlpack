@@ -10,6 +10,8 @@ http://www.opensource.org/licenses/BSD-3-Clause for more information.
 import os
 import sys
 import numpy as np
+import re
+import platform
 
 # Process input argument --module={name} first if needed.
 module = None
@@ -21,60 +23,117 @@ from setuptools import setup
 from setuptools.extension import Extension
 from Cython.Distutils import build_ext
 
-pyxs='${MLPACK_PYXS}'.split(';')
+pyxs='${MLPACK_PYXS}'.split(' ')
+
+if not '${OpenMP_CXX_FLAGS}':
+  extra_link_args=[]
+else:
+  extra_link_args=['${OpenMP_CXX_FLAGS}']
+
+# Get list of library dirs.  Note that for the list of directories, any
+# directories with a (valid) space in the name will be given to us as '\ '; so,
+# in order to split these right, we first convert all spaces to ';', then
+# convert '\;' back to ' ', then split on ';'.
+library_dirs = ['${MLPACK_LIBDIR}']
+
+# We'll link with the exact paths to each library using extra_objects, instead
+# of linking with 'libraries' and 'library_dirs', because of differences in
+# Windows and Linux linking behavior.
+libraries = ['${MLPACK_LIBRARY}'] + \
+             '${ARMADILLO_LIBRARIES}'.split(' ')
+
+# Potentially faulty assumption: we can always link against libraries directly
+# by just specifying the full path to them on the command line.
+extra_link_args += libraries
 
 # Only build the extensions if we are asked to.
 if os.getenv('NO_BUILD') == '1':
   modules = []
 else:
+  cxx_flags = '${CMAKE_CXX_FLAGS}'.strip()
+  cxx_flags = re.sub(' +', ' ', cxx_flags)
+  extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX', '-std=c++11']
+  if '${OpenMP_CXX_FLAGS}' != '':
+    extra_args.append('${OpenMP_CXX_FLAGS}')
+  if cxx_flags:
+    extra_args.extend(cxx_flags.split(' '))
+
+  # Extra options for MSVC compiler.
+  if platform.system() == 'Windows':
+    extra_args.extend(['/MD', '/O2', '/Ob2', '/DNDEBUG'])
+
   # This is used for parallel builds; CMake will set PYX_TO_BUILD accordingly.
   if module is not None:
     modules=[\
         Extension('mlpack.' + name.split('.')[0],
-                  ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' +
-                      name],
+                  ['mlpack/' + name],
                   language='c++',
                   include_dirs=[ \
                       np.get_include(), \
-                      '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
-                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
-                  libraries=['mlpack', 'boost_serialization'],
-                  library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
+                                                     .replace('\;', ' ')
+                                                     .split(';'),
+                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
-                  extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
-                      '-std=c++11 ' + \
-                      '${CMAKE_CXX_FLAGS}'.lstrip().rstrip()).split(' '),
-                  extra_link_args=['${OpenMP_CXX_FLAGS}'],
+                  extra_compile_args=extra_args,
+                  extra_link_args=extra_link_args,
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
-                      else '${DISABLE_CFLAGS}'.split(';')) \
+                      else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs if name == module]
   else:
     modules=[\
         Extension('mlpack.' + name.split('.')[0],
-                  ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' +
-                      name],
+                  ['mlpack/' + name],
                   language='c++',
                   include_dirs=[ \
                       np.get_include(), \
-                      '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
-                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
-                  libraries=['mlpack', 'boost_serialization'],
-                  library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
+                                                     .replace('\;', ' ')
+                                                     .split(';'),
+                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
-                  extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
-                      '-std=c++11 ' + \
-                      '${CMAKE_CXX_FLAGS}'.lstrip().rstrip()).split(' '),
-                  extra_link_args=['${OpenMP_CXX_FLAGS}'],
+                  extra_compile_args=extra_args,
+                  extra_link_args=extra_link_args,
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
-                      else '${DISABLE_CFLAGS}'.split(';')) \
+                      else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs]
 
 setup(name='mlpack',
       version='${PACKAGE_VERSION}',
-      package_dir={ '': '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/' },
+      description='a flexible, fast machine learning library',
+      long_description='mlpack is a fast, flexible machine learning ' + \
+          'library, written in C++, that aims to provide fast, extensible ' + \
+          'implementations of cutting-edge machine learning algorithms. ' + \
+          'mlpack provides these algorithms as simple command-line ' + \
+          'programs, Python bindings, and C++ classes which can then be ' + \
+          'integrated into larger-scale machine learning solutions.',
+      long_description_content_type='text/plain',
+      url='http://www.mlpack.org/',
+      author='mlpack developers',
+      author_email='mlpack@lists.mlpack.org',
+      license='BSD',
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Science/Research',
+          'License :: OSI Approved :: BSD License',
+          'Topic :: Scientific/Engineering :: Artificial Intelligence',
+          'Topic :: Scientific/Engineering :: Mathematics',
+          'Topic :: Software Development :: Libraries',
+          'Topic :: Software Development :: Libraries :: Application Frameworks'],
+      keywords='machine learning, data mining, deep learning, optimization',
+      project_urls={
+          'Documentation': 'http://www.mlpack.org/docs/mlpack-${PACKAGE_VERSION}/python.html',
+          'Source': 'https://github.com/mlpack/mlpack/',
+          'Tracker': 'https://github.com/mlpack/mlpack/issues'},
+      install_requires=['cython>=0.24', 'numpy', 'pandas'],
+      package_dir={ '': '.' }, # Might be superfluous.
       packages=['mlpack'],
       cmdclass={ 'build_ext': build_ext },
       ext_modules = modules,
       setup_requires=['cython', 'pytest-runner'],
-      tests_require=['pytest'],
+      tests_require=['pytest>3;python_version>"3.4"', 'pytest>3,<=4.6;python_version<="3.4"',
+                     'more-itertools>=4.0.0,<6.0.0;python_version<="2.7"',
+                     'more-itertools>=4.0.0;python_version>"2.7"'],
       zip_safe = False)

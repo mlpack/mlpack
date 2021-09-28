@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model.hpp
+ * @file methods/fastmks/fastmks_model.hpp
  * @author Ryan Curtin
  *
  * A utility struct to contain all the possible FastMKS models.
@@ -60,6 +60,9 @@ class FastMKSModel
   //! Copy assignment operator.
   FastMKSModel& operator=(const FastMKSModel& other);
 
+  //! Move assignment operator.
+  FastMKSModel& operator=(FastMKSModel&& other);
+
   /**
    * Clean memory.
    */
@@ -70,7 +73,8 @@ class FastMKSModel
    * to the correct entry in KernelTypes for the given KernelType class!
    */
   template<typename TKernelType>
-  void BuildModel(const arma::mat& referenceData,
+  void BuildModel(util::Timers& timers,
+                  arma::mat&& referenceData,
                   TKernelType& kernel,
                   const bool singleMode,
                   const bool naive,
@@ -103,7 +107,8 @@ class FastMKSModel
    * @param base Base to use for cover tree building (if in dual-tree search
    *      mode).
    */
-  void Search(const arma::mat& querySet,
+  void Search(util::Timers& timers,
+              const arma::mat& querySet,
               const size_t k,
               arma::Mat<size_t>& indices,
               arma::mat& kernels,
@@ -118,7 +123,8 @@ class FastMKSModel
    * @param kernels A matrix in which to store the max-kernel candidate kernel
    *      values.
    */
-  void Search(const size_t k,
+  void Search(util::Timers& timers,
+              const size_t k,
               arma::Mat<size_t>& indices,
               arma::mat& kernels);
 
@@ -126,7 +132,7 @@ class FastMKSModel
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The type of kernel we are using.
@@ -149,7 +155,8 @@ class FastMKSModel
 
   //! Build a query tree and execute the search.
   template<typename FastMKSType>
-  void Search(FastMKSType& f,
+  void Search(util::Timers& timers,
+              FastMKSType& f,
               const arma::mat& querySet,
               const size_t k,
               arma::Mat<size_t>& indices,

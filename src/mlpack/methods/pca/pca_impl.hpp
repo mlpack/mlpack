@@ -1,5 +1,5 @@
 /**
- * @file pca_impl.hpp
+ * @file methods/pca/pca_impl.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel
@@ -19,8 +19,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
 #include "pca.hpp"
-
-using namespace std;
 
 namespace mlpack {
 namespace pca {
@@ -46,8 +44,6 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::vec& eigVal,
                                      arma::mat& eigvec)
 {
-  Timer::Start("pca");
-
   // Center the data into a temporary matrix.
   arma::mat centeredData;
   math::Center(data, centeredData);
@@ -57,8 +53,6 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
 
   decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
       data.n_rows);
-
-  Timer::Stop("pca");
 }
 
 /**
@@ -74,6 +68,21 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::vec& eigVal)
 {
   arma::mat eigvec;
+  Apply(data, transformedData, eigVal, eigvec);
+}
+
+/**
+ * Apply Principal Component Analysis to the provided data set.
+ *
+ * @param data - Data matrix.
+ * @param transformedData Data with PCA applied.
+ */
+template<typename DecompositionPolicy>
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
+                                     arma::mat& transformedData)
+{
+  arma::mat eigvec;
+  arma::vec eigVal;
   Apply(data, transformedData, eigVal, eigvec);
 }
 
@@ -95,16 +104,14 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // Parameter validation.
   if (newDimension == 0)
     Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
-        << "be zero!" << endl;
+        << "be zero!" << std::endl;
   if (newDimension > data.n_rows)
     Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
         << "be greater than the existing dimensionality of the data ("
-        << data.n_rows << ")!" << endl;
+        << data.n_rows << ")!" << std::endl;
 
   arma::mat eigvec;
   arma::vec eigVal;
-
-  Timer::Start("pca");
 
   // Center the data into a temporary matrix.
   arma::mat centeredData;
@@ -122,8 +129,6 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // The svd method returns only non-zero eigenvalues so we have to calculate
   // the right dimension before calculating the amount of variance retained.
   double eigDim = std::min(newDimension - 1, (size_t) eigVal.n_elem - 1);
-
-  Timer::Stop("pca");
 
   // Calculate the total amount of variance retained.
   return (sum(eigVal.subvec(0, eigDim)) / sum(eigVal));
@@ -146,10 +151,10 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // Parameter validation.
   if (varRetained < 0)
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") must be "
-        << "greater than or equal to 0." << endl;
+        << "greater than or equal to 0." << std::endl;
   if (varRetained > 1)
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
-        << "less than or equal to 1." << endl;
+        << "less than or equal to 1." << std::endl;
 
   arma::mat eigvec;
   arma::vec eigVal;

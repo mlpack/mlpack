@@ -1,5 +1,5 @@
 /**
- * @file ra_search_rules_impl.hpp
+ * @file methods/rann/ra_search_rules_impl.hpp
  * @author Parikshit Ram
  *
  * Implementation of RASearchRules.
@@ -58,9 +58,7 @@ RASearchRules(const arma::mat& referenceSet,
         << t << " points; because k = " << k << ", this is exact search!"
         << std::endl;
 
-  Timer::Start("computing_number_of_samples_reqd");
   numSamplesReqd = RAUtil::MinimumSamplesReqd(n, k, tau, alpha);
-  Timer::Stop("computing_number_of_samples_reqd");
 
   // Initialize some statistics to be collected during the search.
   numSamplesMade = arma::zeros<arma::Col<size_t> >(querySet.n_cols);
@@ -81,7 +79,7 @@ RASearchRules(const arma::mat& referenceSet,
   CandidateList pqueue(CandidateCmp(), std::move(vect));
 
   candidates.reserve(querySet.n_cols);
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; ++i)
     candidates.push_back(pqueue);
 
   if (naive) // No tree traversal; just do naive sampling here.
@@ -91,7 +89,7 @@ RASearchRules(const arma::mat& referenceSet,
     for (size_t i = 0; i < querySet.n_cols; ++i)
     {
       math::ObtainDistinctSamples(0, n, numSamplesReqd, distinctSamples);
-      for (size_t j = 0; j < distinctSamples.n_elem; j++)
+      for (size_t j = 0; j < distinctSamples.n_elem; ++j)
         BaseCase(i, (size_t) distinctSamples[j]);
     }
   }
@@ -105,10 +103,10 @@ void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
   neighbors.set_size(k, querySet.n_cols);
   distances.set_size(k, querySet.n_cols);
 
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; ++i)
   {
     CandidateList& pqueue = candidates[i];
-    for (size_t j = 1; j <= k; j++)
+    for (size_t j = 1; j <= k; ++j)
     {
       neighbors(k - j, i) = pqueue.top().second;
       distances(k - j, i) = pqueue.top().first;
@@ -206,7 +204,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           arma::uvec distinctSamples;
           math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
               samplesReqd, distinctSamples);
-          for (size_t i = 0; i < distinctSamples.n_elem; i++)
+          for (size_t i = 0; i < distinctSamples.n_elem; ++i)
             // The counting of the samples are done in the 'BaseCase' function
             // so no book-keeping is required here.
             BaseCase(queryIndex, referenceNode.Descendant(distinctSamples[i]));
@@ -222,7 +220,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
             arma::uvec distinctSamples;
             math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                 samplesReqd, distinctSamples);
-            for (size_t i = 0; i < distinctSamples.n_elem; i++)
+            for (size_t i = 0; i < distinctSamples.n_elem; ++i)
               // The counting of the samples are done in the 'BaseCase' function
               // so no book-keeping is required here.
               BaseCase(queryIndex,
@@ -310,7 +308,7 @@ Rescore(const size_t queryIndex,
         arma::uvec distinctSamples;
         math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
             samplesReqd, distinctSamples);
-        for (size_t i = 0; i < distinctSamples.n_elem; i++)
+        for (size_t i = 0; i < distinctSamples.n_elem; ++i)
           // The counting of the samples are done in the 'BaseCase' function so
           // no book-keeping is required here.
           BaseCase(queryIndex, referenceNode.Descendant(distinctSamples[i]));
@@ -326,7 +324,7 @@ Rescore(const size_t queryIndex,
           arma::uvec distinctSamples;
           math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
               samplesReqd, distinctSamples);
-          for (size_t i = 0; i < distinctSamples.n_elem; i++)
+          for (size_t i = 0; i < distinctSamples.n_elem; ++i)
             // The counting of the samples are done in the 'BaseCase' function
             // so no book-keeping is required here.
             BaseCase(queryIndex, referenceNode.Descendant(distinctSamples[i]));
@@ -372,7 +370,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   double childBound = DBL_MAX;
   const double maxDescendantDistance = queryNode.FurthestDescendantDistance();
 
-  for (size_t i = 0; i < queryNode.NumPoints(); i++)
+  for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
     const double bound = candidates[queryNode.Point(i)].top().first
         + maxDescendantDistance;
@@ -380,7 +378,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
       pointBound = bound;
   }
 
-  for (size_t i = 0; i < queryNode.NumChildren(); i++)
+  for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double bound = queryNode.Child(i).Stat().Bound();
     if (bound < childBound)
@@ -411,7 +409,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
   double childBound = DBL_MAX;
   const double maxDescendantDistance = queryNode.FurthestDescendantDistance();
 
-  for (size_t i = 0; i < queryNode.NumPoints(); i++)
+  for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
     const double bound = candidates[queryNode.Point(i)].top().first
         + maxDescendantDistance;
@@ -419,7 +417,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
       pointBound = bound;
   }
 
-  for (size_t i = 0; i < queryNode.NumChildren(); i++)
+  for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double bound = queryNode.Child(i).Stat().Bound();
     if (bound < childBound)
@@ -451,7 +449,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     size_t numSamplesMadeInChildNodes = std::numeric_limits<size_t>::max();
 
     // Find the minimum number of samples made among all children.
-    for (size_t i = 0; i < queryNode.NumChildren(); i++)
+    for (size_t i = 0; i < queryNode.NumChildren(); ++i)
     {
       const size_t numSamples = queryNode.Child(i).Stat().NumSamplesMade();
       if (numSamples < numSamplesMadeInChildNodes)
@@ -494,7 +492,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
         // Iterate through all children and propagate the number of samples made
         // to the children.  Only update if the parent node has made samples the
         // children have not seen.
-        for (size_t i = 0; i < queryNode.NumChildren(); i++)
+        for (size_t i = 0; i < queryNode.NumChildren(); ++i)
           queryNode.Child(i).Stat().NumSamplesMade() = std::max(
               queryNode.Stat().NumSamplesMade(),
               queryNode.Child(i).Stat().NumSamplesMade());
@@ -513,7 +511,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
             const size_t queryIndex = queryNode.Descendant(i);
             math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                 samplesReqd, distinctSamples);
-            for (size_t j = 0; j < distinctSamples.n_elem; j++)
+            for (size_t j = 0; j < distinctSamples.n_elem; ++j)
               // The counting of the samples are done in the 'BaseCase' function
               // so no book-keeping is required here.
               BaseCase(queryIndex,
@@ -543,7 +541,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
               const size_t queryIndex = queryNode.Descendant(i);
               math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                   samplesReqd, distinctSamples);
-              for (size_t j = 0; j < distinctSamples.n_elem; j++)
+              for (size_t j = 0; j < distinctSamples.n_elem; ++j)
                 // The counting of the samples are done in the 'BaseCase'
                 // function so no book-keeping is required here.
                 BaseCase(queryIndex,
@@ -568,7 +566,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
             // Go through all children and propagate the number of
             // samples made to the children.
-            for (size_t i = 0; i < queryNode.NumChildren(); i++)
+            for (size_t i = 0; i < queryNode.NumChildren(); ++i)
               queryNode.Child(i).Stat().NumSamplesMade() = std::max(
                   queryNode.Stat().NumSamplesMade(),
                   queryNode.Child(i).Stat().NumSamplesMade());
@@ -583,7 +581,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
       // We must first visit the first leaf to boost accuracy.
       // Go through all children and propagate the number of
       // samples made to the children.
-      for (size_t i = 0; i < queryNode.NumChildren(); i++)
+      for (size_t i = 0; i < queryNode.NumChildren(); ++i)
         queryNode.Child(i).Stat().NumSamplesMade() = std::max(
             queryNode.Stat().NumSamplesMade(),
             queryNode.Child(i).Stat().NumSamplesMade());
@@ -625,7 +623,7 @@ Rescore(TreeType& queryNode,
   double childBound = DBL_MAX;
   const double maxDescendantDistance = queryNode.FurthestDescendantDistance();
 
-  for (size_t i = 0; i < queryNode.NumPoints(); i++)
+  for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
     const double bound = candidates[queryNode.Point(i)].top().first
         + maxDescendantDistance;
@@ -633,7 +631,7 @@ Rescore(TreeType& queryNode,
       pointBound = bound;
   }
 
-  for (size_t i = 0; i < queryNode.NumChildren(); i++)
+  for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double bound = queryNode.Child(i).Stat().Bound();
     if (bound < childBound)
@@ -656,7 +654,7 @@ Rescore(TreeType& queryNode,
     size_t numSamplesMadeInChildNodes = std::numeric_limits<size_t>::max();
 
     // Find the minimum number of samples made among all children
-    for (size_t i = 0; i < queryNode.NumChildren(); i++)
+    for (size_t i = 0; i < queryNode.NumChildren(); ++i)
     {
       const size_t numSamples = queryNode.Child(i).Stat().NumSamplesMade();
       if (numSamples < numSamplesMadeInChildNodes)
@@ -699,7 +697,7 @@ Rescore(TreeType& queryNode,
       // Go through all children and propagate the number of samples made to the
       // children.  Only update if the parent node has made samples the children
       // have not seen.
-      for (size_t i = 0; i < queryNode.NumChildren(); i++)
+      for (size_t i = 0; i < queryNode.NumChildren(); ++i)
         queryNode.Child(i).Stat().NumSamplesMade() = std::max(
             queryNode.Stat().NumSamplesMade(),
             queryNode.Child(i).Stat().NumSamplesMade());
@@ -718,7 +716,7 @@ Rescore(TreeType& queryNode,
           const size_t queryIndex = queryNode.Descendant(i);
           math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
               samplesReqd, distinctSamples);
-          for (size_t j = 0; j < distinctSamples.n_elem; j++)
+          for (size_t j = 0; j < distinctSamples.n_elem; ++j)
             // The counting of the samples are done in the 'BaseCase'
             // function so no book-keeping is required here.
             BaseCase(queryIndex, referenceNode.Descendant(distinctSamples[j]));
@@ -747,7 +745,7 @@ Rescore(TreeType& queryNode,
             const size_t queryIndex = queryNode.Descendant(i);
             math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                 samplesReqd, distinctSamples);
-            for (size_t j = 0; j < distinctSamples.n_elem; j++)
+            for (size_t j = 0; j < distinctSamples.n_elem; ++j)
               // The counting of the samples are done in BaseCase() so no
               // book-keeping is required here.
               BaseCase(queryIndex,
@@ -769,7 +767,7 @@ Rescore(TreeType& queryNode,
         {
           // We cannot sample from leaves, so we cannot prune.
           // Propagate the number of samples made down to the children.
-          for (size_t i = 0; i < queryNode.NumChildren(); i++)
+          for (size_t i = 0; i < queryNode.NumChildren(); ++i)
             queryNode.Child(i).Stat().NumSamplesMade() = std::max(
                 queryNode.Stat().NumSamplesMade(),
                 queryNode.Child(i).Stat().NumSamplesMade());

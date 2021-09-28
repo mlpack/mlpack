@@ -1,5 +1,5 @@
 /**
- * @file delta_visitor.hpp
+ * @file methods/ann/visitor/delta_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Delta() function for different
@@ -30,6 +30,8 @@ class DeltaVisitor : public boost::static_visitor<arma::mat&>
   //! Return the delta parameter.
   template<typename LayerType>
   arma::mat& operator()(LayerType* layer) const;
+
+  arma::mat& operator()(MoreTypes layer) const;
 };
 
 } // namespace ann

@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser.hpp
+ * @file core/tree/binary_space_tree/dual_tree_traverser.hpp
  * @author Ryan Curtin
  *
  * Defines the DualTreeTraverser for the BinarySpaceTree tree type.  This is a
@@ -43,7 +43,6 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
    *
    * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
-   * @param score The score of the current node combination.
    */
   void Traverse(BinarySpaceTree& queryNode,
                 BinarySpaceTree& referenceNode);
@@ -96,4 +95,3 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
 #include "dual_tree_traverser_impl.hpp"
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_HPP
-

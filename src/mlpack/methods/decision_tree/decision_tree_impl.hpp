@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_impl.hpp
+ * @file methods/decision_tree/decision_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generic decision tree class.
@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 
+#include "decision_tree.hpp"
+
 namespace mlpack {
 namespace tree {
 
@@ -20,32 +22,37 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
-                                        const data::DatasetInfo& datasetInfo,
-                                        LabelsType&& labels,
-                                        const size_t numClasses,
-                                        const size_t minimumLeafSize,
-                                        const double minimumGainSplit)
+             NoRecursion>::DecisionTree(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      weights, minimumLeafSize, minimumGainSplit);
+      weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
 }
 
 //! Construct and train.
@@ -53,31 +60,35 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
-                                        LabelsType&& labels,
-                                        const size_t numClasses,
-                                        const size_t minimumLeafSize,
-                                        const double minimumGainSplit)
+             NoRecursion>::DecisionTree(
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, weights,
-      minimumLeafSize, minimumGainSplit);
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
 //! Construct and train with weights.
@@ -85,38 +96,80 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
-                                        const data::DatasetInfo& datasetInfo,
-                                        LabelsType&& labels,
-                                        const size_t numClasses,
-                                        WeightsType&& weights,
-                                        const size_t minimumLeafSize,
-                                        const double minimumGainSplit,
-                                        const std::enable_if_t<
-                                            arma::is_arma_type<
-                                            typename std::remove_reference<
-                                            WeightsType>::type>::value>*)
+             NoRecursion>::DecisionTree(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      tmpWeights, minimumLeafSize, minimumGainSplit);
+      tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
+}
+
+//! Construct and train with weights.
+template<typename FitnessFunction,
+        template<typename> class NumericSplitType,
+        template<typename> class CategoricalSplitType,
+        typename DimensionSelectionType,
+        bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        NoRecursion>::DecisionTree(
+    const DecisionTree& other,
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*):
+        NumericAuxiliarySplitInfo(other),
+        CategoricalAuxiliarySplitInfo(other)
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
+              tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct and train with weights.
@@ -124,37 +177,85 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
-                                        LabelsType&& labels,
-                                        const size_t numClasses,
-                                        WeightsType&& weights,
-                                        const size_t minimumLeafSize,
-                                        const double minimumGainSplit,
-                                        const std::enable_if_t<
-                                            arma::is_arma_type<
-                                            typename std::remove_reference<
-                                            WeightsType>::type>::value>*)
+             NoRecursion>::DecisionTree(
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<
+        arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-      minimumLeafSize, minimumGainSplit);
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+}
+
+//! Construct and train with weights.
+template<typename FitnessFunction,
+        template<typename> class NumericSplitType,
+        template<typename> class CategoricalSplitType,
+        typename DimensionSelectionType,
+        bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        NoRecursion>::DecisionTree(
+    const DecisionTree& other,
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*):
+        NumericAuxiliarySplitInfo(other),
+        CategoricalAuxiliarySplitInfo(other)  // other info does need to copy
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
 //! Construct, don't train.
@@ -162,13 +263,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(const size_t numClasses) :
     splitDimension(0),
     dimensionTypeOrMajorityClass(0),
@@ -183,13 +282,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(const DecisionTree& other) :
     NumericAuxiliarySplitInfo(other),
     CategoricalAuxiliarySplitInfo(other),
@@ -207,13 +304,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(DecisionTree&& other) :
     NumericAuxiliarySplitInfo(std::move(other)),
     CategoricalAuxiliarySplitInfo(std::move(other)),
@@ -231,19 +326,16 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>&
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::operator=(const DecisionTree& other)
 {
   if (this == &other)
@@ -275,19 +367,16 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>&
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::operator=(DecisionTree&& other)
 {
   if (this == &other)
@@ -319,13 +408,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::~DecisionTree()
 {
   for (size_t i = 0; i < children.size(); ++i)
@@ -337,42 +424,40 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      const data::DatasetInfo& datasetInfo,
-                                      LabelsType&& labels,
-                                      const size_t numClasses,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+double DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion>::Train(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
 {
   // Sanity check on data.
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      weights, minimumLeafSize, minimumGainSplit);
+  return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
+      numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -380,41 +465,39 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      LabelsType&& labels,
-                                      const size_t numClasses,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+double DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion>::Train(
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
 {
   // Sanity check on data.
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, weights,
-      minimumLeafSize, minimumGainSplit);
+  return Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
+      weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
 }
 
 //! Train on the given weighted data.
@@ -422,47 +505,46 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      const data::DatasetInfo& datasetInfo,
-                                      LabelsType&& labels,
-                                      const size_t numClasses,
-                                      WeightsType&& weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit,
-                                      const std::enable_if_t<arma::is_arma_type<
-                                          typename std::remove_reference<
-                                          WeightsType>::type>::value>*)
+double DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion>::Train(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<
+        arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*)
 {
   // Sanity check on data.
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      tmpWeights, minimumLeafSize, minimumGainSplit);
+  return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
+      numClasses, tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
 }
 
 //! Train on the given weighted data.
@@ -470,70 +552,70 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      LabelsType&& labels,
-                                      const size_t numClasses,
-                                      WeightsType&& weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit,
-                                      const std::enable_if_t<arma::is_arma_type<
-                                          typename std::remove_reference<
-                                          WeightsType>::type>::value>*)
+double DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion>::Train(
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<
+        arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*)
 {
   // Sanity check on data.
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << "DecisionTree::Train(): number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-      minimumLeafSize, minimumGainSplit);
+  return Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
+      tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
 }
 
-//! Train on the given data.
+//! Train on the given data, assuming all dimensions are numeric.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType& data,
-                                      const size_t begin,
-                                      const size_t count,
-                                      const data::DatasetInfo& datasetInfo,
-                                      arma::Row<size_t>& labels,
-                                      const size_t numClasses,
-                                      arma::rowvec& weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+double DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion>::Train(
+    MatType& data,
+    const size_t begin,
+    const size_t count,
+    const data::DatasetInfo& datasetInfo,
+    arma::Row<size_t>& labels,
+    const size_t numClasses,
+    arma::rowvec& weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType& dimensionSelector)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -550,47 +632,53 @@ void DecisionTree<FitnessFunction,
       numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
-  DimensionSelectionType dimensions(datasetInfo.Dimensionality());
-  for (size_t i = dimensions.Begin(); i != dimensions.End();
-       i = dimensions.Next())
-  {
-    double dimGain = -DBL_MAX;
-    if (datasetInfo.Type(i) == data::Datatype::categorical)
-    {
-      dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
-          data.cols(begin, begin + count - 1).row(i),
-          datasetInfo.NumMappings(i),
-          labels.subvec(begin, begin + count - 1),
-          numClasses,
-          UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
-          minimumLeafSize,
-          minimumGainSplit,
-          classProbabilities,
-          *this);
-    }
-    else if (datasetInfo.Type(i) == data::Datatype::numeric)
-    {
-      dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
-          data.cols(begin, begin + count - 1).row(i),
-          labels.subvec(begin, begin + count - 1),
-          numClasses,
-          UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
-          minimumLeafSize,
-          minimumGainSplit,
-          classProbabilities,
-          *this);
-    }
+  const size_t end = dimensionSelector.End();
 
-    // Was there an improvement?  If so mark that it's the new best dimension.
-    if (dimGain > bestGain)
+  if (maximumDepth != 1)
+  {
+    for (size_t i = dimensionSelector.Begin(); i != end;
+         i = dimensionSelector.Next())
     {
+      double dimGain = -DBL_MAX;
+      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      {
+        dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
+            data.cols(begin, begin + count - 1).row(i),
+            datasetInfo.NumMappings(i),
+            labels.subvec(begin, begin + count - 1),
+            numClasses,
+            UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
+            minimumLeafSize,
+            minimumGainSplit,
+            classProbabilities,
+            *this);
+      }
+      else if (datasetInfo.Type(i) == data::Datatype::numeric)
+      {
+        dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
+            data.cols(begin, begin + count - 1).row(i),
+            labels.subvec(begin, begin + count - 1),
+            numClasses,
+            UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
+            minimumLeafSize,
+            minimumGainSplit,
+            classProbabilities,
+            *this);
+      }
+
+      // If the splitter reported that it did not split, move to the next
+      // dimension.
+      if (dimGain == DBL_MAX)
+        continue;
+
+      // Was there an improvement?  If so mark that it's the new best dimension.
       bestDim = i;
       bestGain = dimGain;
-    }
 
-    // If the gain is the best possible, no need to keep looking.
-    if (bestGain >= 0.0)
-      break;
+      // If the gain is the best possible, no need to keep looking.
+      if (bestGain >= 0.0)
+        break;
+    }
   }
 
   // Did we split or not?  If so, then split the data and create the children.
@@ -602,9 +690,9 @@ void DecisionTree<FitnessFunction,
     // Get the number of children we will have.
     size_t numChildren = 0;
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
+      numChildren = CategoricalSplit::NumChildren(classProbabilities[0], *this);
     else
-      numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+      numChildren = NumericSplit::NumChildren(classProbabilities[0], *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -612,21 +700,27 @@ void DecisionTree<FitnessFunction,
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
+            data(bestDim, j), classProbabilities[0], *this);
     }
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
       {
         childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
+            data(bestDim, j), classProbabilities[0], *this);
       }
     }
 
     // Figure out counts of children.
-    arma::Row<size_t> childCounts(numClasses, arma::fill::zeros);
+    arma::Row<size_t> childCounts(numChildren, arma::fill::zeros);
     for (size_t i = begin; i < begin + count; ++i)
       childCounts[childAssignments[i - begin]]++;
+
+    // Initialize bestGain if recursive split is allowed.
+    if (!NoRecursion)
+    {
+      bestGain = 0.0;
+    }
 
     // Split into children.
     size_t currentCol = begin;
@@ -652,13 +746,17 @@ void DecisionTree<FitnessFunction,
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-            weights, currentCol - currentChildBegin, minimumGainSplit);
+            weights, currentCol - currentChildBegin, minimumGainSplit,
+            maximumDepth - 1, dimensionSelector);
       }
       else
       {
-        child->Train<UseWeights>(data, currentChildBegin,
+        // During recursion entropy of child node may change.
+        double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-            weights, minimumLeafSize, minimumGainSplit);
+            weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
+        bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);
     }
@@ -675,6 +773,8 @@ void DecisionTree<FitnessFunction,
         numClasses,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
+
+  return -bestGain;
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -682,22 +782,23 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
-void DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType& data,
-                                      const size_t begin,
-                                      const size_t count,
-                                      arma::Row<size_t>& labels,
-                                      const size_t numClasses,
-                                      arma::rowvec& weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+double DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion>::Train(
+    MatType& data,
+    const size_t begin,
+    const size_t count,
+    arma::Row<size_t>& labels,
+    const size_t numClasses,
+    arma::rowvec& weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType& dimensionSelector)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -717,37 +818,45 @@ void DecisionTree<FitnessFunction,
       numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
-  for (size_t i = 0; i < data.n_rows; ++i)
-  {
-    const double dimGain = NumericSplitType<FitnessFunction>::template
-        SplitIfBetter<UseWeights>(bestGain,
-                                  data.cols(begin, begin + count - 1).row(i),
-                                  labels.cols(begin, begin + count - 1),
-                                  numClasses,
-                                  UseWeights ?
-                                      weights.cols(begin, begin + count - 1) :
-                                      weights,
-                                  minimumLeafSize,
-                                  minimumGainSplit,
-                                  classProbabilities,
-                                  *this);
 
-    if (dimGain > bestGain)
+  if (maximumDepth != 1)
+  {
+    for (size_t i = dimensionSelector.Begin(); i != dimensionSelector.End();
+         i = dimensionSelector.Next())
     {
+      const double dimGain = NumericSplitType<FitnessFunction>::template
+          SplitIfBetter<UseWeights>(bestGain,
+                                    data.cols(begin, begin + count - 1).row(i),
+                                    labels.cols(begin, begin + count - 1),
+                                    numClasses,
+                                    UseWeights ?
+                                        weights.cols(begin, begin + count - 1) :
+                                        weights,
+                                    minimumLeafSize,
+                                    minimumGainSplit,
+                                    classProbabilities,
+                                    *this);
+
+      // If the splitter did not report that it improved, then move to the next
+      // dimension.
+      if (dimGain == DBL_MAX)
+        continue;
+
       bestDim = i;
       bestGain = dimGain;
-    }
 
-    // If the gain is the best possible, no need to keep looking.
-    if (bestGain >= 0.0)
-      break;
+      // If the gain is the best possible, no need to keep looking.
+      if (bestGain >= 0.0)
+        break;
+    }
   }
 
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != data.n_rows)
   {
     // We know that the split is numeric.
-    size_t numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+    size_t numChildren =
+        NumericSplit::NumChildren(classProbabilities[0], *this);
     splitDimension = bestDim;
     dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
 
@@ -757,7 +866,7 @@ void DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
     {
       childAssignments[j - begin] = NumericSplit::CalculateDirection(
-          data(bestDim, j), classProbabilities, *this);
+          data(bestDim, j), classProbabilities[0], *this);
     }
 
     // Calculate counts of children in each node.
@@ -765,6 +874,12 @@ void DecisionTree<FitnessFunction,
     childCounts.zeros();
     for (size_t j = begin; j < begin + count; ++j)
       childCounts[childAssignments[j - begin]]++;
+
+    // Initialize bestGain if recursive split is allowed.
+    if (!NoRecursion)
+    {
+      bestGain = 0.0;
+    }
 
     size_t currentCol = begin;
     for (size_t i = 0; i < numChildren; ++i)
@@ -789,13 +904,17 @@ void DecisionTree<FitnessFunction,
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
-            currentCol - currentChildBegin, minimumGainSplit);
+            currentCol - currentChildBegin, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
       }
       else
       {
-        child->Train<UseWeights>(data, currentChildBegin,
+        // During recursion entropy of child node may change.
+        double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
-            minimumLeafSize, minimumGainSplit);
+            minimumLeafSize, minimumGainSplit, maximumDepth - 1,
+            dimensionSelector);
+        bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);
     }
@@ -811,6 +930,8 @@ void DecisionTree<FitnessFunction,
         numClasses,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
+
+  return -bestGain;
 }
 
 //! Return the class.
@@ -818,14 +939,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Classify(const VecType& point) const
 {
   if (children.size() == 0)
@@ -842,14 +961,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename VecType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::Classify(const VecType& point,
                                          size_t& prediction,
                                          arma::vec& probabilities) const
@@ -870,14 +987,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::Classify(const MatType& data,
                                          arma::Row<size_t>& predictions) const
 {
@@ -898,14 +1013,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::Classify(const MatType& data,
                                          arma::Row<size_t>& predictions,
                                          arma::mat& probabilities) const
@@ -937,55 +1050,50 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename Archive>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::serialize(Archive& ar,
-                                          const unsigned int /* version */)
+                                          const uint32_t /* version */)
 {
   // Clean memory if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
     children.clear();
   }
-
   // Serialize the children first.
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar(CEREAL_VECTOR_POINTER(children));
 
   // Now serialize the rest of the object.
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
-  ar & BOOST_SERIALIZATION_NVP(dimensionTypeOrMajorityClass);
-  ar & BOOST_SERIALIZATION_NVP(classProbabilities);
+  ar(CEREAL_NVP(splitDimension));
+  ar(CEREAL_NVP(dimensionTypeOrMajorityClass));
+  ar(CEREAL_NVP(classProbabilities));
 }
 
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
 {
   if ((data::Datatype) dimensionTypeOrMajorityClass ==
       data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
-        classProbabilities, *this);
+        classProbabilities[0], *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
-        classProbabilities, *this);
+        classProbabilities[0], *this);
 }
 
 // Get the number of classes in the tree.
@@ -993,16 +1101,14 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::NumClasses() const
 {
-  // Recurse to the nearest child and return the number of elements in the
+  // Recurse to the nearest leaf and return the number of elements in the
   // probability vector.
   if (children.size() == 0)
     return classProbabilities.n_elem;
@@ -1014,14 +1120,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename RowType, typename WeightsRowType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::CalculateClassProbabilities(
     const RowType& labels,
     const size_t numClasses,

@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions_impl.hpp
+ * @file bindings/python/print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
@@ -20,6 +20,40 @@ namespace bindings {
 namespace python {
 
 /**
+ * Given the name of a binding, print its Python name.
+ */
+inline std::string GetBindingName(const std::string& bindingName)
+{
+  // No modification is needed to the name---we just use it as-is.
+  return bindingName + "()";
+}
+
+/**
+ * Print any import information for the Python binding.
+ */
+inline std::string PrintImport(const std::string& bindingName)
+{
+  return "from mlpack import " + bindingName;
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "";
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "Results are returned in a Python dictionary.  The keys of the "
+      "dictionary are the names of the output parameters.";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -29,6 +63,28 @@ inline std::string PrintValue(const T& value, bool quotes)
   if (quotes)
     oss << "'";
   oss << value;
+  if (quotes)
+    oss << "'";
+  return oss.str();
+}
+
+/**
+ * Given a vector parameter type, print the corresponding value.
+ */
+template<typename T>
+inline std::string PrintValue(const std::vector<T>& value, bool quotes)
+{
+  std::ostringstream oss;
+  if (quotes)
+    oss << "'";
+  oss << "[";
+  if (value.size() > 0)
+  {
+    oss << value[0];
+    for (size_t i = 1; i < value.size(); ++i)
+      oss << ", " << value[i];
+  }
+  oss << "]";
   if (quotes)
     oss << "'";
   return oss.str();
@@ -48,24 +104,45 @@ inline std::string PrintValue(const bool& value, bool quotes)
     return "False";
 }
 
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
+{
+  util::Params params = IO::Parameters(bindingName);
+
+  if (params.Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter " + paramName + "!");
+
+  util::ParamData& d = params.Parameters()[paramName];
+
+  std::string defaultValue;
+  params.functionMap[d.tname]["DefaultParam"](d, NULL,
+      (void*) &defaultValue);
+
+  return defaultValue;
+}
+
 // Recursion base case.
-std::string PrintInputOptions() { return ""; }
+std::string PrintInputOptions(util::Params& /* params */) { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.  For a parameter 'x' with value '5', this will print
+ * not exist in IO.  For a parameter 'x' with value '5', this will print
  * something like x=5.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& params,
+                              const std::string& paramName,
                               const T& value,
                               Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
-  if (CLI::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = CLI::Parameters()[paramName];
+    util::ParamData& d = params.Parameters()[paramName];
     if (d.input)
     {
       // Print the input option.
@@ -82,12 +159,12 @@ std::string PrintInputOptions(const std::string& paramName,
   {
     // Unknown parameter!
     throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
+        + " and BINDING_EXAMPLE() declaration.");
   }
 
   // Continue recursion.
-  std::string rest = PrintInputOptions(args...);
+  std::string rest = PrintInputOptions(params, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -97,18 +174,19 @@ std::string PrintInputOptions(const std::string& paramName,
 }
 
 // Recursion base case.
-inline std::string PrintOutputOptions() { return ""; }
+inline std::string PrintOutputOptions(util::Params& /* params */) { return ""; }
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
+std::string PrintOutputOptions(util::Params& params,
+                               const std::string& paramName,
                                const T& value,
                                Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
-  if (CLI::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = CLI::Parameters()[paramName];
+    util::ParamData& d = params.Parameters()[paramName];
     if (!d.input)
     {
       // Print a new line for the output option.
@@ -121,12 +199,12 @@ std::string PrintOutputOptions(const std::string& paramName,
   {
     // Unknown parameter!
     throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
+        + " and BINDING_EXAMPLE() declaration.");
   }
 
   // Continue recursion.
-  std::string rest = PrintOutputOptions(args...);
+  std::string rest = PrintOutputOptions(params, args...);
   if (rest != "" && result != "")
     result += '\n';
   result += rest;
@@ -136,34 +214,108 @@ std::string PrintOutputOptions(const std::string& paramName,
 
 /**
  * Given a name of a binding and a variable number of arguments (and their
- * contents), print the corresponding function call.
+ * contents), print the corresponding function call.  The given bindingName
+ * should not be the output of GetBindingName().
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args)
+std::string ProgramCall(const std::string& bindingName, Args... args)
 {
+  util::Params params = IO::Parameters(bindingName);
+
   std::ostringstream oss;
   oss << ">>> ";
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
-  ossOutput << PrintOutputOptions(args...);
+  ossOutput << PrintOutputOptions(params, args...);
   if (ossOutput.str() != "")
     oss << "output = ";
-  oss << programName << "(";
+  oss << bindingName << "(";
 
   // Now process each input option.
-  oss << PrintInputOptions(args...);
+  oss << PrintInputOptions(params, args...);
   oss << ")";
 
   std::string call = oss.str();
   oss.str(""); // Reset it.
 
   // Now process each output option.
-  oss << PrintOutputOptions(args...);
+  oss << PrintOutputOptions(params, args...);
   if (oss.str() == "")
     return util::HyphenateString(call, 2);
   else
     return util::HyphenateString(call, 2) + "\n" + oss.str();
+}
+
+/**
+ * Given the name of a binding, print a program call assuming that all options
+ * are specified.  The bindingName should not be the output of GetBindingName().
+ */
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& bindingName)
+{
+  std::ostringstream oss;
+  oss << ">>> ";
+
+  // Determine if we have any output options.
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
+  bool hasOutput = false;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input)
+    {
+      hasOutput = true;
+      break;
+    }
+  }
+
+  if (hasOutput)
+    oss << "d = ";
+
+  oss << bindingName << "(";
+
+  // Now iterate over every input option.
+  bool first = true;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input)
+      continue;
+
+    if (!first)
+      oss << ", ";
+    else
+      first = false;
+
+    // Print the input option.
+    if (it->second.name != "lambda") // Don't print Python keywords.
+      oss << it->second.name << "=";
+    else
+      oss << it->second.name << "_=";
+
+    std::string value;
+    params.functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    oss << value;
+  }
+  oss << ")";
+
+  std::string result = util::HyphenateString(oss.str(), 8);
+
+  oss.str("");
+  oss << result;
+
+  // Now print output lines.
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input)
+      continue;
+
+    // Print a new line for the output option.
+    oss << std::endl << ">>> " << it->second.name << " = d['"
+        << it->second.name << "']";
+  }
+
+  return oss.str();
 }
 
 /**
@@ -181,14 +333,6 @@ inline std::string PrintModel(const std::string& modelName)
 inline std::string PrintDataset(const std::string& datasetName)
 {
   return "'" + datasetName + "'";
-}
-
-/**
- * Given the name of a binding, print its invocation.
- */
-inline std::string ProgramCall(const std::string& programName)
-{
-  return ">>> " + programName + "(";
 }
 
 /**
@@ -230,16 +374,21 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
-inline bool IgnoreCheck(const std::string& paramName)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::string& paramName)
 {
-  return !CLI::Parameters()[paramName].input;
+  util::Params params = IO::Parameters(bindingName);
+  return !params.Parameters()[paramName].input;
 }
 
-inline bool IgnoreCheck(const std::vector<std::string>& constraints)
+inline bool IgnoreCheck(const std::string& bindingName,
+                        const std::vector<std::string>& constraints)
 {
+  util::Params params = IO::Parameters(bindingName);
+
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!CLI::Parameters()[constraints[i]].input)
+    if (!params.Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -247,16 +396,19 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 }
 
 inline bool IgnoreCheck(
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
+  util::Params params = IO::Parameters(bindingName);
+
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!CLI::Parameters()[constraints[i].first].input)
+    if (!params.Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !CLI::Parameters()[paramName].input;
+  return !params.Parameters()[paramName].input;
 }
 
 } // namespace python

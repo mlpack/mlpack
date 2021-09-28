@@ -1,5 +1,5 @@
 /**
- * @file gaussian_init.hpp
+ * @file methods/ann/init_rules/gaussian_init.hpp
  * @author Kris Singh
  *
  * Intialization rule for the neural networks. This simple initialization is
@@ -47,14 +47,28 @@ class GaussianInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  void Initialize(arma::mat& W,
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W,
                   const size_t rows,
                   const size_t cols)
   {
     if (W.is_empty())
-    {
-      W = arma::mat(rows, cols);
-    }
+      W.set_size(rows, cols);
+
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+  }
+
+  /**
+   * Initialize the elements weight matrix using a Gaussian Distribution.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+
     W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
@@ -64,17 +78,34 @@ class GaussianInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * @param slice Numbers of slices.
+   * @param slices Number of slices.
    */
-  void Initialize(arma::cube & W,
+  template<typename eT>
+  void Initialize(arma::Cube<eT> & W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::cube(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize randomly the elements of the specified weight 3rd order tensor.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT> & W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

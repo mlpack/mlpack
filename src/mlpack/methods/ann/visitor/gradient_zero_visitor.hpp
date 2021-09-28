@@ -1,5 +1,5 @@
 /**
- * @file gradient_zero_visitor.hpp
+ * @file methods/ann/visitor/gradient_zero_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Gradient() function for different
@@ -33,6 +33,8 @@ class GradientZeroVisitor : public boost::static_visitor<void>
   //! Set the gradient to zero.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   //! Set the gradient to zero if the module implements the Gradient() function.

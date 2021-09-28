@@ -1,5 +1,5 @@
 /**
- * @file gmm.cpp
+ * @file methods/gmm/gmm.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
@@ -12,6 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gmm.hpp"
+#include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
 namespace gmm {
@@ -51,29 +52,103 @@ GMM& GMM::operator=(const GMM& other)
 }
 
 /**
- * Return the probability of the given observation being from this GMM.
+ * Return the log probability of the given observation being from this GMM.
+ *
+ * @param observation Observation vector to compute log-probabilty.
  */
-double GMM::Probability(const arma::vec& observation) const
+double GMM::LogProbability(const arma::vec& observation) const
 {
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
-  double sum = 0;
-  for (size_t i = 0; i < gaussians; i++)
-    sum += weights[i] * dists[i].Probability(observation);
+  double sum = -std::numeric_limits<double>::infinity();
+  for (size_t i = 0; i < gaussians; ++i)
+    sum = math::LogAdd(sum, log(weights[i]) +
+        dists[i].LogProbability(observation));
 
   return sum;
 }
 
 /**
- * Return the probability of the given observation being from the given
- * component in the mixture.
+ * Return the log probability of the given observation GMM matrix.
+ *
+ * @param observation Observation matrix to compute log-probabilty.
+ * @param logProbs Stores the value of log-probability for Observation.
  */
-double GMM::Probability(const arma::vec& observation,
+void GMM::LogProbability(const arma::mat& observation,
+                         arma::vec& logProbs) const
+{
+  // Sum the probability for each Gaussian in our mixture (and we have to
+  // multiply by the prior for each Gaussian too).
+  logProbs.set_size(observation.n_cols);
+
+  // Store log-probability value in a matrix.
+  arma::mat logProb(observation.n_cols, gaussians);
+
+  // Assign value to the matrix.
+  for (size_t i = 0; i < gaussians; i++)
+  {
+    arma::vec temp(logProb.colptr(i), observation.n_cols, false, true);
+    dists[i].LogProbability(observation, temp);
+  }
+
+  // Save log(weights) as a vector.
+  arma::vec logWeights = arma::log(weights);
+
+  // Compute log-probability.
+  logProb += repmat(logWeights.t(), logProb.n_rows, 1);
+  math::LogSumExp(logProb, logProbs);
+}
+
+/**
+ * Return the probability of the given observation being from this GMM.
+ *
+ * @param observation Observation vector to compute probabilty.
+ */
+double GMM::Probability(const arma::vec& observation) const
+{
+  return exp(LogProbability(observation));
+}
+
+/**
+ * Return the probability of the given observation GMM matrix.
+ *
+ * @param observation Observation matrix to compute probabilty.
+ * @param probs Stores the value of probability for x.
+ */
+void GMM::Probability(const arma::mat& observation,
+                      arma::vec& probs) const
+{
+  LogProbability(observation, probs);
+  probs = exp(probs);
+}
+
+
+/**
+ * Return the log probability of the given observation being from the given
+ * component in the mixture.
+ *
+ * @param observation Observation vector to compute log-probabilty.
+ * @param component Calculate the log-probability for given observation vector.
+ */
+double GMM::LogProbability(const arma::vec& observation,
                         const size_t component) const
 {
   // We are only considering one Gaussian component -- so we only need to call
   // Probability() once.  We do consider the prior probability!
-  return weights[component] * dists[component].Probability(observation);
+  return log(weights[component]) + dists[component].LogProbability(observation);
+}
+
+/**
+ * Return the probability of the given observation being from the given
+ * component in the mixture.
+ *
+ * @param observation Observation matrix to compute probabilty.
+ * @param component Calculate the probability for given component. 
+ */
+double GMM::Probability(const arma::vec& observation,
+                        const size_t component) const
+{
+  return exp(LogProbability(observation, component));
 }
 
 /**
@@ -97,13 +172,21 @@ arma::vec GMM::Random() const
     }
   }
 
-  return trans(chol(dists[gaussian].Covariance())) *
+  arma::mat cholDecomp;
+  if (!arma::chol(cholDecomp, dists[gaussian].Covariance()))
+  {
+    Log::Fatal << "Cholesky decomposition failed." << std::endl;
+  }
+  return trans(cholDecomp) *
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 
 /**
  * Classify the given observations as being from an individual component in this
  * GMM.
+ *
+ * @param observation Observation matrix for classification.
+ * @param labels Save the labels for the given observation matrix.
  */
 void GMM::Classify(const arma::mat& observations,
                    arma::Row<size_t>& labels) const
@@ -116,10 +199,12 @@ void GMM::Classify(const arma::mat& observations,
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
     // Find maximum probability component.
-    double probability = 0;
+    double probability = -std::numeric_limits<double>::infinity();
     for (size_t j = 0; j < gaussians; ++j)
     {
-      double newProb = Probability(observations.unsafe_col(i), j);
+      // We have to use LogProbability() otherwise Probability() would overflow
+      // easily.
+      double newProb = LogProbability(observations.unsafe_col(i), j);
       if (newProb >= probability)
       {
         probability = newProb;
@@ -131,6 +216,10 @@ void GMM::Classify(const arma::mat& observations,
 
 /**
  * Get the log-likelihood of this data's fit to the model.
+ *
+ * @param data Data matrix to compute log-likelihood.
+ * @parma distsL Vector of Gaussian distribution. 
+ * @param weightsL Vector of weights for computing likelihoods.
  */
 double GMM::LogLikelihood(
     const arma::mat& data,
@@ -138,18 +227,19 @@ double GMM::LogLikelihood(
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
-  arma::vec phis;
-  arma::mat likelihoods(gaussians, data.n_cols);
+  arma::vec logPhis;
+  arma::mat logLikelihoods(gaussians, data.n_cols);
 
-  for (size_t i = 0; i < gaussians; i++)
+  // It has to be LogProbability() otherwise Probability() would overflow easily
+  for (size_t i = 0; i < gaussians; ++i)
   {
-    distsL[i].Probability(data, phis);
-    likelihoods.row(i) = weightsL(i) * trans(phis);
+    distsL[i].LogProbability(data, logPhis);
+    logLikelihoods.row(i) = log(weightsL(i)) + trans(logPhis);
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < data.n_cols; j++)
-    loglikelihood += log(accu(likelihoods.col(j)));
+  for (size_t j = 0; j < data.n_cols; ++j)
+    loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }
 

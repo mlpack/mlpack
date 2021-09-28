@@ -1,5 +1,5 @@
 /**
- * @file cosine_distance.hpp
+ * @file core/kernels/cosine_distance.hpp
  * @author Ryan Curtin
  *
  * This implements the cosine distance (or cosine similarity) between two
@@ -43,7 +43,7 @@ class CosineDistance
 
   //! Serialize the class (there's nothing to save).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 //! Kernel traits for the cosine distance.

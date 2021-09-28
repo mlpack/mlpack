@@ -1,5 +1,5 @@
 /**
- * @file string_type_param_impl.hpp
+ * @file bindings/cli/string_type_param_impl.hpp
  * @author Ryan Curtin
  *
  * Implementations of StringTypeParam().
@@ -23,8 +23,8 @@ namespace cli {
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */)
 {
   // Don't know what type this is.
   return "unknown";
@@ -35,7 +35,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
 {
   return "vector";
 }
@@ -45,14 +45,14 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
 {
   return "string";
 }
 
 //! Return "int".
 template<>
-inline void StringTypeParam<int>(const util::ParamData& /* data */,
+inline void StringTypeParam<int>(util::ParamData& /* data */,
                                  const void* /* input */,
                                  void* output)
 {
@@ -62,7 +62,7 @@ inline void StringTypeParam<int>(const util::ParamData& /* data */,
 
 //! Return "bool".
 template<>
-inline void StringTypeParam<bool>(const util::ParamData& /* data */,
+inline void StringTypeParam<bool>(util::ParamData& /* data */,
                                   const void* /* input */,
                                   void* output)
 {
@@ -72,7 +72,7 @@ inline void StringTypeParam<bool>(const util::ParamData& /* data */,
 
 //! Return "string".
 template<>
-inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
+inline void StringTypeParam<std::string>(util::ParamData& /* data */,
                                          const void* /* input */,
                                          void* output)
 {
@@ -80,19 +80,9 @@ inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
   *outstr = "string";
 }
 
-//! Return "float".
-template<>
-inline void StringTypeParam<float>(const util::ParamData& /* data */,
-                                   const void* /* input */,
-                                   void* output)
-{
-  std::string* outstr = (std::string*) output;
-  *outstr = "float";
-}
-
 //! Return "double".
 template<>
-inline void StringTypeParam<double>(const util::ParamData& /* data */,
+inline void StringTypeParam<double>(util::ParamData& /* data */,
                                     const void* /* input */,
                                     void* output)
 {
@@ -103,7 +93,7 @@ inline void StringTypeParam<double>(const util::ParamData& /* data */,
 //! Return "string";
 template<>
 inline void StringTypeParam<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const void* /* input */,
     void* output)
 {

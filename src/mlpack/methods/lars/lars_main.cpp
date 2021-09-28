@@ -1,5 +1,5 @@
 /**
- * @file lars_main.cpp
+ * @file methods/lars/lars_main.cpp
  * @author Nishant Mehta
  *
  * Executable for LARS.
@@ -10,7 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME lars
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "lars.hpp"
@@ -21,10 +27,21 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
-    "(Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for "
-    "L1-regularized linear regression (LASSO) and L1+L2-regularized linear "
-    "regression (Elastic Net)."
+// Program Name.
+BINDING_USER_NAME("LARS");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of Least Angle Regression (Stagewise/laSso), also known"
+    " as LARS.  This can train a LARS/LASSO/Elastic Net model and use that "
+    "model or a pre-trained model to output regression predictions for a test "
+    "set.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "An implementation of LARS: Least Angle Regression (Stagewise/laSso).  "
+    "This is a stage-wise homotopy-based algorithm for L1-regularized linear "
+    "regression (LASSO) and L1+L2-regularized linear regression (Elastic Net)."
     "\n\n"
     "This program is able to train a LARS/LASSO/Elastic Net model or load a "
     "model from file, output regression predictions for a test set, and save "
@@ -64,8 +81,10 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "trained model or the given input model.  Test points can be specified with"
     " the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted responses "
     "to the test points can be saved with the " +
-    PRINT_PARAM_STRING("output_predictions") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_predictions") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
     " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
@@ -81,6 +100,13 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "\n\n" +
     PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
         "output_predictions", "test_predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@linear_regression", "#linear_regression");
+BINDING_SEE_ALSO("Least angle regression (pdf)",
+        "http://mlpack.org/papers/lars.pdf");
+BINDING_SEE_ALSO("mlpack::regression::LARS C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LARS.html");
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
@@ -101,39 +127,39 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  double lambda1 = CLI::GetParam<double>("lambda1");
-  double lambda2 = CLI::GetParam<double>("lambda2");
-  bool useCholesky = CLI::HasParam("use_cholesky");
+  double lambda1 = params.Get<double>("lambda1");
+  double lambda2 = params.Get<double>("lambda2");
+  bool useCholesky = params.Has("use_cholesky");
 
   // Check parameters -- make sure everything given makes sense.
-  RequireOnlyOnePassed({ "input", "input_model" }, true);
-  if (CLI::HasParam("input"))
+  RequireOnlyOnePassed(params, { "input", "input_model" }, true);
+  if (params.Has("input"))
   {
-    RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
-        "responses must also be specified");
+    RequireOnlyOnePassed(params, { "responses" }, true, "if input data is "
+        "specified, responses must also be specified");
   }
-  ReportIgnoredParam({{ "input", false }}, "responses");
+  ReportIgnoredParam(params, {{ "input", false }}, "responses");
 
-  RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
-      "no results will be saved");
-  ReportIgnoredParam({{ "test", true }}, "output_predictions");
+  RequireAtLeastOnePassed(params, { "output_predictions", "output_model" },
+      false, "no results will be saved");
+  ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
   LARS* lars;
-  if (CLI::HasParam("input"))
+  if (params.Has("input"))
   {
     // Initialize the object.
     lars = new LARS(useCholesky, lambda1, lambda2);
 
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
-    mat matX = std::move(CLI::GetParam<arma::mat>("input"));
+    mat matX = std::move(params.Get<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
     // (one per row).  So we should not transpose upon loading.
-    mat matY = std::move(CLI::GetParam<arma::mat>("responses"));
+    mat matY = std::move(params.Get<arma::mat>("responses"));
 
     // Make sure y is oriented the right way.
     if (matY.n_cols == 1)
@@ -147,19 +173,21 @@ static void mlpackMain()
 
     vec beta;
     arma::rowvec y = std::move(matY);
+    timers.Start("lars_regression");
     lars->Train(matX, y, beta, false /* do not transpose */);
+    timers.Stop("lars_regression");
   }
   else // We must have --input_model_file.
   {
-    lars = CLI::GetParam<LARS*>("input_model");
+    lars = params.Get<LARS*>("input_model");
   }
 
-  if (CLI::HasParam("test"))
+  if (params.Has("test"))
   {
     Log::Info << "Regressing on test points." << endl;
 
     // Load test points.
-    mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
+    mat testPoints = std::move(params.Get<arma::mat>("test"));
 
     // Make sure the dimensionality is right.  We haven't transposed, so, we
     // check n_cols not n_rows.
@@ -172,8 +200,8 @@ static void mlpackMain()
     lars->Predict(testPoints.t(), predictions, false);
 
     // Save test predictions (one per line).
-    CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
+    params.Get<arma::mat>("output_predictions") = predictions.t();
   }
 
-  CLI::GetParam<LARS*>("output_model") = lars;
+  params.Get<LARS*>("output_model") = lars;
 }

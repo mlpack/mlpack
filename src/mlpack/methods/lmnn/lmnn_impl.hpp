@@ -1,5 +1,5 @@
 /**
- * @file lmnn_impl.hpp
+ * @file methods/lmnn/lmnn_impl.hpp
  * @author Manish Kumar
  *
  * Implementation of Large Margin Nearest Neighbor class.
@@ -36,7 +36,9 @@ LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
 { /* nothing to do */ }
 
 template<typename MetricType, typename OptimizerType>
-void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
+template<typename... CallbackTypes>
+void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
+    CallbackTypes&&... callbacks)
 {
   // LMNN objective function.
   LMNNFunction<MetricType> objFunction(dataset, labels, k,
@@ -54,11 +56,7 @@ void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
   }
 
-  Timer::Start("lmnn_optimization");
-
-  optimizer.Optimize(objFunction, outputMatrix);
-
-  Timer::Stop("lmnn_optimization");
+  optimizer.Optimize(objFunction, outputMatrix, callbacks...);
 }
 
 

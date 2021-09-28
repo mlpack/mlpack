@@ -11,6 +11,8 @@ set(SOURCES
   regression_distribution.cpp
   gamma_distribution.hpp
   gamma_distribution.cpp
+  diagonal_gaussian_distribution.hpp
+  diagonal_gaussian_distribution.cpp
 )
 
 # add directory name to sources

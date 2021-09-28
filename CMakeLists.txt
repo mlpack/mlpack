@@ -1,67 +1,140 @@
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.6)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
+include(CMake/CheckHash.cmake)
+include(CMake/Autodownload.cmake)
+include(CMake/ConfigureCrossCompile.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
-option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
-option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
-option(BUILD_WITH_COVERAGE
-    "Build with support for code coverage tools (gcc only)." OFF)
+option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
+option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
+
+# Set minimum library versions required by mlpack.
+#
+# For Armadillo, try to keep the minimum required version less than or equal to
+# what's available on the current Ubuntu LTS or most recent stable RHEL release.
+# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
+set(ARMADILLO_VERSION "9.800")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
+set(CEREAL_VERSION "1.1.2")
+
+# If BUILD_SHARED_LIBS is OFF then the mlpack library will be built statically.
+# In addition, all mlpack CLI bindings will be linked statically as well.
+if (WIN32)
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
+
+  set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
+  set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
+elseif(CMAKE_CROSSCOMPILING)
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
+else()
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
+endif()
+
+# Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES.
+if (NOT BUILD_SHARED_LIBS)
+  if(WIN32)
+    list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .lib .a)
+  else()
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+  endif()
+endif()
+
+# Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
+# we should fail if Python isn't found.
+if (BUILD_PYTHON_BINDINGS)
+  set(FORCE_BUILD_PYTHON_BINDINGS ON)
+else()
+  set(FORCE_BUILD_PYTHON_BINDINGS OFF)
+endif()
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
+
+# Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
+# we should fail if Go isn't found.
+if (BUILD_GO_BINDINGS)
+  set(FORCE_BUILD_GO_BINDINGS ON)
+else()
+  set(FORCE_BUILD_GO_BINDINGS OFF)
+endif()
+option(BUILD_GO_BINDINGS "Build Go bindings." OFF)
+
+# If building Go bindings then build go shared libraries.
+if (BUILD_GO_BINDINGS)
+  set(BUILD_GO_SHLIB ON)
+endif()
+
+# Detect whether the user passed BUILD_R_BINDINGS in order to determine if
+# we should fail if R isn't found.
+if (BUILD_R_BINDINGS)
+  set(FORCE_BUILD_R_BINDINGS ON)
+else()
+  set(FORCE_BUILD_R_BINDINGS OFF)
+endif()
+option(BUILD_R_BINDINGS "Build R bindings." OFF)
+# Build Markdown bindings for documentation.  This is used as part of website
+# generation.
+option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
+
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(FORCE_CXX11
     "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
+option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
-if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
-endif()
+# Set required standard to C++11.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
-# done with target_compile_features() when the mlpack library target is added in
-# src/mlpack/CMakeLists.txt.
-if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
-    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
-    AND NOT FORCE_CXX11)
-  # Older versions of CMake do not support target_compile_features(), so we have
-  # to use something kind of hacky.
-  include(CMake/CXX11.cmake)
-  check_for_cxx11_compiler(HAS_CXX11)
-  if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-  endif()
-  enable_cxx11()
-else()
-  # set required standard to c++11
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Ensure that GCC is new enough, if the compiler is GCC.
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
+  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 5.x or newer is required.")
 endif ()
-# Otherwise, we may have to set the C++11 mode after the mlpack target is
-# defined.
 
 # Include modules in the CMake directory.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
+# If we are on a Unix-like system, use the GNU install directories module.
+# Otherwise set the values manually.
+if (UNIX)
+  include(GNUInstallDirs)
+else ()
+  set(CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
+  set(CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_PREFIX}/man)
+  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/mlpack)
+  set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
+endif ()
 
 # This is as of yet unused.
-#option(PGO "Use profile-guided optimization if not a debug build" ON)
+# option(PGO "Use profile-guided optimization if not a debug build" ON)
 
 # Set the CFLAGS and CXXFLAGS depending on the options the user specified.
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
-if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Ensure that we can't compile with clang 3.4, since this causes strange
   # issues.
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.5)
@@ -71,6 +144,10 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+
+  # To remove unused functions warnings.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 endif()
 
 # These support libraries are used if we need to link against something
@@ -79,14 +156,21 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm400")
 endif ()
+
+# If we are using MINGW, we need sections and big-obj, otherwise we create too
+# many sections.
+if (CMAKE_COMPILER_IS_GNUCC AND WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
+endif()
 
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   if (APPLE)
     # Detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
     # extract V from '10.V.x'.
@@ -99,7 +183,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
      # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
      # select the right stdlib.
-    if(${MACOSX_VERSION} LESS 9)
+    if (${MACOSX_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_SHARED_LINKER_FLAGS
           "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
@@ -118,44 +202,16 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif()
 
-# Setup build for test coverage
-if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++
-  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # Find gcov and lcov
-    find_program(GCOV gcov)
-    find_program(LCOV lcov)
-
-    if(NOT GCOV)
-      message(FATAL_ERROR
-          "gcov not found! gcov is required when BUILD_WITH_COVERAGE=ON.")
-    endif()
-
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
-    message(STATUS "Adding debug compile options for code coverage.")
-    # Remove optimizations for better line coverage
-    set(DEBUG ON)
-
-    if(LCOV)
-      configure_file(CMake/mlpack_coverage.in mlpack_coverage @ONLY)
-      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
-    else()
-      message(WARNING "'lcov' not found; local coverage report is disabled. "
-          "Install 'lcov' and rerun cmake to generate local coverage report.")
-    endif()
-  else()
-    message(FATAL_ERROR "BUILD_WITH_COVERAGE can only work with GNU environment.")
-  endif()
+# If we're using gcc, then we need to link against pthreads to use std::thread,
+# which we do in the tests.
+if (CMAKE_COMPILER_IS_GNUCC)
+  find_package(Threads)
+  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
+      ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-# For clock_gettime().
-if (UNIX AND NOT APPLE AND NOT HAIKU)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
-endif ()
-
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
-if(DEBUG)
+if (DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
@@ -164,10 +220,10 @@ if(DEBUG)
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(Bfd)
     find_package(LibDL)
-    if(LIBBFD_FOUND AND LIBDL_FOUND)
+    if (LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
           ${LIBDL_INCLUDE_DIRS})
@@ -181,24 +237,29 @@ if(DEBUG)
 else()
   add_definitions(-DARMA_NO_DEBUG)
   add_definitions(-DNDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+  else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
+  endif ()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
-if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
+if (CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif()
 
 # If the user asked for running test cases with verbose output, turn that on.
-if(TEST_VERBOSE)
+if (TEST_VERBOSE)
   add_definitions(-DTEST_VERBOSE)
 endif()
 
 # If the user asked for extra Armadillo debugging output, turn that on.
-if(ARMA_EXTRA_DEBUG)
+if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
 endif()
 
@@ -210,89 +271,96 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
-#   BOOST_LIBRARYDIR - library directory for Boost
+#   CEREAL_INCLUDE_DIR - include directory for cereal
+#   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
+#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
-find_package(Armadillo 6.500.0 REQUIRED)
-
-# If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
-# system (where size_t will be 64 bits), suggest to the user that they should
-# compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
-# newer, ARMA_64BIT_WORD is enabled by default.
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Check the version, to see if ARMA_64BIT_WORD is enabled by default.
-  set(ARMA_HAS_64BIT_WORD 0)
-  if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-    set(ARMA_HAS_64BIT_WORD 1)
-  else()
-    # Can we open the configuration file?  If not, issue a warning.
-    if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-      message(WARNING "Armadillo configuration file "
-          "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-    else()
-      # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-      file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
-      string(REGEX MATCH
-          "[\r\n][ ]*#define ARMA_64BIT_WORD"
-          ARMA_HAS_64BIT_WORD_PRE
-          "${ARMA_CONFIG}")
-
-      string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-    endif()
-  endif()
-
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    message(WARNING "This is a 64-bit system, but Armadillo was compiled "
-        "without 64-bit index support.  Consider recompiling Armadillo with "
-        "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-        "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
-        "scale to matrices with more than 4 billion elements.")
-  endif()
-else()
-  # If we are on a 32-bit system, we must manually specify the size of the word
-  # to be 32 bits, since otherwise Armadillo will produce a warning that it is
-  # disabling 64-bit support.
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    add_definitions(-DARMA_32BIT_WORD)
-  endif ()
+# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
+# architecture. The function takes the version of OpenBLAS as variable.
+if (CMAKE_CROSSCOMPILING)
+  search_openblas(0.3.13)
 endif()
 
-# On Windows, Armadillo should be using LAPACK and BLAS but we still need to
-# link against it.  We don't want to use the FindLAPACK or FindBLAS modules
-# because then we are required to have a FORTRAN compiler (argh!) so we will try
-# and find LAPACK and BLAS ourselves, using a slightly modified variant of the
-# script Armadillo uses to find these.
-if (WIN32)
-  find_library(LAPACK_LIBRARY
-      NAMES lapack liblapack lapack_win32_MT lapack_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT LAPACK_LIBRARY)
-    message(FATAL_ERROR "Cannot find LAPACK library (.lib)!")
-  endif ()
-
-  find_library(BLAS_LIBRARY
-      NAMES blas libblas blas_win32_MT blas_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT BLAS_LIBRARY)
-    message(FATAL_ERROR "Cannot find BLAS library (.lib)!")
-  endif ()
-
-  # Piggyback LAPACK and BLAS linking into Armadillo link.
-  set(ARMADILLO_LIBRARIES
-       ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
-endif ()
-
+if (DOWNLOAD_DEPENDENCIES)
+  find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+else()
+  find_package(Armadillo "${ARMADILLO_VERSION}")
+  if (NOT ARMADILLO_FOUND)
+    if (NOT CMAKE_CROSSCOMPILING)
+      find_package(BLAS QUIET)
+      find_package(LAPACK QUIET)
+      if (NOT BLAS_FOUND AND NOT LAPACK_FOUND)
+        message(FATAL_ERROR "Can not find BLAS or LAPACK!  These are required for Armadillo.  Please install one of them---or install Armadillo---before installing mlpack.")
+      endif()
+    endif()
+    get_deps(http://files.mlpack.org/armadillo-10.3.0.tar.gz armadillo armadillo-10.3.0.tar.gz)
+    set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(Armadillo REQUIRED)
+  endif()
+endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Find stb_image.h and stb_image_write.h.
+if (DOWNLOAD_DEPENDENCIES)
+  find_package(StbImage)
+else()
+  find_package(StbImage)
+  if (NOT STB_IMAGE_FOUND)
+    get_deps(http://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
+    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(StbImage REQUIRED)
+  endif()
+endif()
+
+if (STB_IMAGE_FOUND)
+  add_definitions(-DHAS_STB)
+  set(STB_AVAILABLE "1")
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
+endif()
+
+# Find ensmallen.
+if (DOWNLOAD_DEPENDENCIES)
+  find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
+else()
+  find_package(Ensmallen "${ENSMALLEN_VERSION}")
+  if (NOT ENSMALLEN_FOUND)
+    get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
+    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(Ensmallen REQUIRED)
+  endif()
+endif()
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
+
+# Find cereal.
+if (DOWNLOAD_DEPENDENCIES)
+  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+else()
+  find_package(cereal "${CEREAL_VERSION}")
+  if (NOT CEREAL_FOUND)
+    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
+    set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(cereal REQUIRED)
+  endif()
+endif()
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.77.0" "1.77"
+  "1.76.0" "1.76"
+  "1.75.0" "1.75"
+  "1.74.0" "1.74"
+  "1.73.0" "1.73"
+  "1.72.0" "1.72"
+  "1.71.0" "1.71"
+  "1.70.0" "1.70"
+  "1.69.0" "1.69"
+  "1.68.0" "1.68"
+  "1.67.0" "1.67"
   "1.66.0" "1.66"
   "1.65.1" "1.65.0" "1.65"
   "1.64.1" "1.64.0" "1.64"
@@ -301,46 +369,33 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.61.1" "1.61.0" "1.61"
   "1.60.1" "1.60.0" "1.60"
   "1.59.1" "1.59.0" "1.59"
-  "1.58.1" "1.58.0" "1.58"
-  "1.57.1" "1.57.0" "1.57"
-  "1.56.1" "1.56.0" "1.56"
-  "1.55.1" "1.55.0" "1.55"
-  "1.54.1" "1.54.0" "1.54"
-  "1.53.1" "1.53.0" "1.53"
-  "1.52.1" "1.52.0" "1.52"
-  "1.51.1" "1.51.0" "1.51"
-  "1.50.1" "1.50.0" "1.50"
-  "1.49.1" "1.49.0" "1.49")
-find_package(Boost 1.49
-    COMPONENTS
-      program_options
-      unit_test_framework
-      serialization
-    REQUIRED
-)
-
-link_directories(${Boost_LIBRARY_DIRS})
-
-# In Visual Studio, automatic linking is performed, so we don't need to worry
-# about it.  Clear the list of libraries to link against and let Visual Studio
-# handle it.
-if (MSVC)
-  link_directories(${Boost_LIBRARY_DIRS})
-  set(Boost_LIBRARIES "")
-endif ()
-
+  "1.58.1" "1.58.0" "1.58")
+# Disable forced config-mode CMake search for Boost, which only imports targets
+# and does not set the variables that we need.
+#
+# TODO for the brave: transition all mlpack's CMake to 'target-based modern
+# CMake'.  Good luck!  You'll need it.
+set(Boost_NO_BOOST_CMAKE 1)
+if (DOWNLOAD_DEPENDENCIES)
+  find_package(Boost "${BOOST_VERSION}" REQUIRED)
+else()
+  find_package(Boost "${BOOST_VERSION}")
+  if (NOT Boost_FOUND)
+    if (CMAKE_COMPILER_IS_GNUCC AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0))
+      get_deps(http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz boost boost_1_58_0.tar.gz)
+    else()
+      get_deps(https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz boost boost_1_76_0.tar.gz)
+    endif()
+    find_package(Boost REQUIRED)
+  endif()
+endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
-set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
-
-# For Boost testing framework (will have no effect on non-testing executables).
-# This specifies to Boost that we are dynamically linking to the Boost test
-# library.
-add_definitions(-DBOOST_TEST_DYN_LINK)
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
-# to compile with OpenMP are returned and added and the HAS_OPENMP definition is
-# added for compilation.
+# to compile with OpenMP are returned and added and the HAS_OPENMP definition
+# is added for compilation.
 #
 # This way we can skip calls to functions defined in omp.h with code like:
 # #ifdef HAS_OPENMP
@@ -348,14 +403,25 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 #   ... openMP code here ...
 # }
 # #endif
-find_package(OpenMP)
+if (USE_OPENMP)
+  find_package(OpenMP)
+endif ()
+
 if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  if (OpenMP_CXX_FOUND)
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
+  endif ()
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
+  endif ()
+  set(OpenMP_CXX_FLAGS "")
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for
@@ -363,13 +429,28 @@ endif ()
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src/)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+  # Copy all necessary DLLs for runtime to the build directory.
+  # This is a little hackish, but I can't figure out clear ways to make CMake
+  # consistently link everything 100% statically across platforms or set the
+  # runtime path right always, so this is the best I know how to do for now.
+  foreach(dir ${DLL_COPY_DIRS})
+    file(GLOB dir_dll_list "${dir}/*.dll")
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach ()
+
+  foreach(file ${DLL_COPY_LIBS})
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
@@ -415,67 +496,13 @@ include(CMake/CreateArmaConfigInfo.cmake)
 add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
-        -D ARMADILLO_VERSION_MAJOR="${ARMADILLO_VERSION_MAJOR}"
         -D OPENMP_FOUND="${OPENMP_FOUND}"
+        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
         -P CMake/CreateArmaConfigInfo.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Updating arma_config.hpp (if necessary)")
 set(MLPACK_SRCS ${MLPACK_SRCS}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
-
-# Recurse into the rest of the project.
-add_subdirectory(src/mlpack)
-
-# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
-# depends on it.
-if (USING_GIT STREQUAL "YES")
-  add_dependencies(mlpack mlpack_gitversion)
-endif ()
-
-# Make the mlpack_arma_config target depend on mlpack (we couldn't do this
-# before the add_subdirectory() call because the mlpack target didn't exist
-# before that).
-add_dependencies(mlpack mlpack_arma_config)
-
-# Make a target to generate the documentation.  If Doxygen isn't installed, then
-# I guess this option will just be unavailable.
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-  if (MATHJAX)
-    find_package(MathJax)
-    if (NOT MATHJAX_FOUND)
-      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
-          "Be careful, formulas will not be shown without the internet.")
-    endif ()
-  endif ()
-  # Preprocess the Doxyfile.  This is done before 'make doc'.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR="${CMAKE_BINARY_DIR}"
-          -D MATHJAX="${MATHJAX}"
-          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
-          -D MATHJAX_PATH="${MATHJAX_PATH}"
-          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-      COMMENT "Creating Doxyfile to generate Doxygen documentation"
-  )
-
-  # Generate documentation.
-  add_custom_target(doc
-      COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
-      DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-      COMMENT "Generating API documentation with Doxygen"
-  )
-
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION share/doc/mlpack
-      COMPONENT doc
-      OPTIONAL
-  )
-endif ()
 
 # Make a target to generate the man page documentation, but only if we are on a
 # UNIX-like system.
@@ -493,52 +520,70 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
             ${CMAKE_BINARY_DIR}/share/man
         WORKING_DIRECTORY
           ${CMAKE_BINARY_DIR}/bin
-        DEPENDS
-          mlpack_adaboost
-          mlpack_approx_kfn
-          mlpack_kfn
-          mlpack_knn
-          mlpack_krann
-          mlpack_cf
-          mlpack_dbscan
-          mlpack_decision_stump
-          mlpack_decision_tree
-          mlpack_det
-          mlpack_emst
-          mlpack_fastmks
-          mlpack_gmm_train
-          mlpack_gmm_probability
-          mlpack_gmm_generate
-          mlpack_hmm_generate
-          mlpack_hmm_loglik
-          mlpack_hmm_train
-          mlpack_hmm_viterbi
-          mlpack_hoeffding_tree
-          mlpack_kernel_pca
-          mlpack_kmeans
-          mlpack_lars
-          mlpack_linear_regression
-          mlpack_local_coordinate_coding
-          mlpack_logistic_regression
-          mlpack_lsh
-          mlpack_mean_shift
-          mlpack_nbc
-          mlpack_nca
-          mlpack_nmf
-          mlpack_pca
-          mlpack_perceptron
-          mlpack_radical
-          mlpack_range_search
-          mlpack_softmax_regression
-          mlpack_sparse_coding
         COMMENT "Generating man pages from built executables."
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION share/man/man1/)
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
+
+# Recurse into the rest of the project.
+add_subdirectory(src/mlpack)
+
+# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
+# depends on it.
+if (USING_GIT STREQUAL "YES")
+  add_dependencies(mlpack_headers mlpack_gitversion)
+endif ()
+
+# Make the mlpack_arma_config target depend on mlpack (we couldn't do this
+# before the add_subdirectory() call because the mlpack target didn't exist
+# before that).
+add_dependencies(mlpack_headers mlpack_arma_config)
+
+# Make a target to generate the documentation.  If Doxygen isn't installed, then
+# I guess this option will just be unavailable.
+if (BUILD_DOCS)
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    if (MATHJAX)
+      find_package(MathJax)
+      if (NOT MATHJAX_FOUND)
+        message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+            "Be careful, formulas will not be shown without the internet.")
+      endif ()
+    endif ()
+    # Preprocess the Doxyfile.  This is done before 'make doc'.
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -D DESTDIR=${CMAKE_BINARY_DIR}
+            -D MATHJAX="${MATHJAX}"
+            -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+            -D MATHJAX_PATH="${MATHJAX_PATH}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+        COMMENT "Creating Doxyfile to generate Doxygen documentation"
+    )
+
+    # Generate documentation.
+    add_custom_target(doc
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
+        DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Generating API documentation with Doxygen"
+    )
+
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+        COMPONENT doc
+        OPTIONAL
+    )
+  endif ()
+endif()
 
 # Create the pkg-config file, if we have pkg-config.
 find_package(PkgConfig)
@@ -575,7 +620,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
@@ -613,7 +658,7 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  # Do we need a different directory?
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION lib/pkgconfig/)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+
 endif ()

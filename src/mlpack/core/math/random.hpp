@@ -1,5 +1,5 @@
 /**
- * @file random.hpp
+ * @file core/math/random.hpp
  *
  * Miscellaneous math random-related routines.
  *
@@ -39,9 +39,14 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
  */
 inline void RandomSeed(const size_t seed)
 {
-  #if (BINDING_TYPE != BINDING_TYPE_TEST)
+  #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
     randGen.seed((uint32_t) seed);
-    srand((unsigned int) seed);
+    #if (BINDING_TYPE == BINDING_TYPE_R)
+      // To suppress Found 'srand', possibly from 'srand' (C).
+      (void) seed;
+    #else
+      srand((unsigned int) seed);
+    #endif
     arma::arma_rng::set_seed(seed);
   #else
     (void) seed;
@@ -63,6 +68,13 @@ inline void FixedRandomSeed()
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
 }
+
+inline void CustomRandomSeed(const size_t seed)
+{
+  randGen.seed((uint32_t) seed);
+  srand((unsigned int) seed);
+  arma::arma_rng::set_seed(seed);
+}
 #endif
 
 /**
@@ -79,6 +91,17 @@ inline double Random()
 inline double Random(const double lo, const double hi)
 {
   return lo + (hi - lo) * randUniformDist(randGen);
+}
+
+/**
+ * Generates a 0/1 specified by the input.
+ */
+inline double RandBernoulli(const double input)
+{
+  if (Random() < input)
+    return 1;
+  else
+    return 0;
 }
 
 /**
@@ -140,7 +163,7 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
 
     samples.zeros(samplesRangeSize);
 
-    for (size_t i = 0; i < maxNumSamples; i++)
+    for (size_t i = 0; i < maxNumSamples; ++i)
       samples [ (size_t) math::RandInt(samplesRangeSize) ]++;
 
     distinctSamples = arma::find(samples > 0);
@@ -151,7 +174,7 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
   else
   {
     distinctSamples.set_size(samplesRangeSize);
-    for (size_t i = 0; i < samplesRangeSize; i++)
+    for (size_t i = 0; i < samplesRangeSize; ++i)
       distinctSamples[i] = loInclusive + i;
   }
 }

@@ -1,5 +1,5 @@
 /**
- * @file make_alias.hpp
+ * @file core/math/make_alias.hpp
  * @author Ryan Curtin
  *
  * Make an alias of a matrix.  For sparse matrices, unfortunately no alias can

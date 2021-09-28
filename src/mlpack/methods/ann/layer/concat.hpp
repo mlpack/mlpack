@@ -1,8 +1,9 @@
 /**
- * @file concat.hpp
+ * @file methods/ann/layer/concat.hpp
  * @author Marcus Edel
+ * @author Mehul Kumar Nirala
  *
- * Definition of the Concat class, which acts as a concatenation contain.
+ * Definition of the Concat class, which acts as a concatenation container.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,8 +18,6 @@
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
-
-#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "layer_types.hpp"
 
@@ -48,9 +47,23 @@ class Concat
    * Create the Concat object using the specified parameters.
    *
    * @param model Expose all network modules.
-   * @param same Merge the error in the backward pass.
+   * @param run Call the Forward/Backward method before the output is merged.
    */
-  Concat(const bool model = true, const bool same = true);
+  Concat(const bool model = false,
+         const bool run = true);
+
+  /**
+   * Create the Concat object using the specified parameters.
+   *
+   * @param inputSize A vector denoting input size of each layer added.
+   * @param axis Concat axis.
+   * @param model Expose all network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
+   */
+  Concat(arma::Row<size_t>& inputSize,
+         const size_t axis,
+         const bool model = false,
+         const bool run = true);
 
   /**
    * Destroy the layers held by the model.
@@ -65,21 +78,36 @@ class Concat
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
+
+  /**
+   * This is the overload of Backward() that runs only a specific layer with
+   * the given input.
+   *
+   * @param * (input) The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   * @param index The index of the layer to run.
+   */
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g,
+                const size_t index);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -89,9 +117,24 @@ class Concat
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& /* gradient */);
+
+  /*
+   * This is the overload of Gradient() that runs a specific layer with the
+   * given input.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   * @param The index of the layer to run.
+   */
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient,
+                const size_t index);
 
   /*
    * Add a new module to the model.
@@ -120,9 +163,14 @@ class Concat
   }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameters; }
+  const arma::mat& Parameters() const { return weights; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameters; }
+  arma::mat& Parameters() { return weights; }
+
+  //! Get the value of run parameter.
+  bool Run() const { return run; }
+  //! Modify the value of run parameter.
+  bool& Run() { return run; }
 
   arma::mat const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
@@ -143,24 +191,43 @@ class Concat
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  //! Get the axis of concatenation.
+  size_t const& ConcatAxis() const { return axis; }
+
+  //! Get the size of the weight matrix.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar,  const uint32_t /* version */);
 
  private:
+  //! Parameter which indicates the input size of modules.
+  arma::Row<size_t> inputSize;
+
+  //! Parameter which indicates the axis of concatenation.
+  size_t axis;
+
+  //! Parameter which indicates whether to use the axis of concatenation.
+  bool useAxis;
+
   //! Parameter which indicates if the modules should be exposed.
   bool model;
 
-  //! If true merge the error in the backward pass.
-  bool same;
+  //! Parameter which indicates if the Forward/Backward method should be called
+  //! before merging the output.
+  bool run;
+
+  //! Parameter to store channels.
+  size_t channels;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
 
-  //! Locally-stored model parameters.
-  arma::mat parameters;
+  //! Locally-stored model weights.
+  OutputDataType weights;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;

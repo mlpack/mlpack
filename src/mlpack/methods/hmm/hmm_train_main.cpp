@@ -1,5 +1,5 @@
 /**
- * @file hmm_train_main.cpp
+ * @file methods/hmm/hmm_train_main.cpp
  * @author Ryan Curtin
  *
  * Executable which trains an HMM and saves the trained HMM to file.
@@ -10,13 +10,20 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME hmm_train
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -27,30 +34,54 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
-    "Hidden Markov Model to be trained on labeled or unlabeled data.  It "
-    "support three types of HMMs: discrete HMMs, Gaussian HMMs, or GMM HMMs."
+// Program Name.
+BINDING_USER_NAME("Hidden Markov Model (HMM) Training");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of training algorithms for Hidden Markov Models (HMMs). "
+    "Given labeled or unlabeled data, an HMM can be trained for further use "
+    "with other mlpack HMM tools.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "This program allows a Hidden Markov Model to be trained on labeled or "
+    "unlabeled data.  It supports four types of HMMs: Discrete HMMs, "
+    "Gaussian HMMs, GMM HMMs, or Diagonal GMM HMMs"
     "\n\n"
-    "Either one input sequence can be specified (with --input_file), or, a "
-    "file containing files in which input sequences can be found (when "
-    "--input_file and --batch are used together).  In addition, labels can be "
-    "provided in the file specified by --labels_file, and if --batch is used, "
-    "the file given to --labels_file should contain a list of files of labels "
-    "corresponding to the sequences in the file given to --input_file."
+    "Either one input sequence can be specified (with " +
+    PRINT_PARAM_STRING("input_file") + "), or, a file containing files in "
+    "which input sequences can be found (when "+
+    PRINT_PARAM_STRING("input_file") + "and" + PRINT_PARAM_STRING("batch") +
+    " are used together).  In addition, labels can be "
+    "provided in the file specified by " + PRINT_PARAM_STRING("labels_file") +
+    ", and if " + PRINT_PARAM_STRING("batch") + " is used, "
+    "the file given to " + PRINT_PARAM_STRING("labels_file") +
+    " should contain a list of files of labels corresponding to the sequences"
+    " in the file given to " + PRINT_PARAM_STRING("input_file") + "."
     "\n\n"
     "The HMM is trained with the Baum-Welch algorithm if no labels are "
     "provided.  The tolerance of the Baum-Welch algorithm can be set with the "
-    "--tolerance option.  By default, the transition matrix is randomly "
-    "initialized and the emission distributions are initialized to fit the "
-    "extent of the data."
+    + PRINT_PARAM_STRING("tolerance") + "option.  By default, the transition "
+    "matrix is randomly initialized and the emission distributions are "
+    "initialized to fit the extent of the data."
     "\n\n"
     "Optionally, a pre-created HMM model can be used as a guess for the "
-    "transition matrix and emission probabilities; this is specifiable with "
-    "--model_file.");
+    "transition matrix and emission probabilities; this is specifiable with " +
+    PRINT_PARAM_STRING("output_model") + ".");
+
+// See also...
+BINDING_SEE_ALSO("@hmm_generate", "#hmm_generate");
+BINDING_SEE_ALSO("@hmm_loglik", "#hmm_loglik");
+BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
+BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model");
+BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html");
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
-PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm.", "t",
-    "gaussian");
+PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | diag_gmm | gmm.",
+    "t", "gaussian");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
@@ -73,21 +104,22 @@ PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
 struct Init
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, vector<mat>* trainSeq)
+  static void Apply(util::Params& params, HMMType& hmm, vector<mat>* trainSeq)
   {
-    const size_t states = CLI::GetParam<int>("states");
-    const double tolerance = CLI::GetParam<double>("tolerance");
+    const size_t states = params.Get<int>("states");
+    const double tolerance = params.Get<double>("tolerance");
 
     // Create the initialized-to-zero model.
-    Create(hmm, *trainSeq, states, tolerance);
+    Create(params, hmm, *trainSeq, states, tolerance);
 
     // Initializing the emission distribution depends on the distribution.
     // Therefore we have to use the helper functions.
-    RandomInitialize(hmm.Emission());
+    RandomInitialize(params, hmm.Emission());
   }
 
   //! Helper function to create discrete HMM.
-  static void Create(HMM<DiscreteDistribution>& hmm,
+  static void Create(util::Params& /* params */,
+                     HMM<DiscreteDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -109,7 +141,8 @@ struct Init
   }
 
   //! Helper function to create Gaussian HMM.
-  static void Create(HMM<GaussianDistribution>& hmm,
+  static void Create(util::Params& /* params */,
+                     HMM<GaussianDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -134,14 +167,15 @@ struct Init
   }
 
   //! Helper function to create GMM HMM.
-  static void Create(HMM<GMM>& hmm,
+  static void Create(util::Params& params,
+                     HMM<GMM>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
   {
     // Find dimension of the data.
     const size_t dimensionality = trainSeq[0].n_rows;
-    const int gaussians = CLI::GetParam<int>("gaussians");
+    const int gaussians = params.Get<int>("gaussians");
 
     if (gaussians == 0)
     {
@@ -160,15 +194,51 @@ struct Init
         tolerance);
 
     // Issue a warning if the user didn't give labels.
-    if (!CLI::HasParam("labels_file"))
+    if (!params.Has("labels_file"))
     {
       Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
           << "going to produce good results!" << endl;
     }
   }
 
+  //! Helper function to create Diagonal GMM HMM.
+  static void Create(util::Params& params,
+                     HMM<DiagonalGMM>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance)
+  {
+    // Find dimension of the data.
+    const size_t dimensionality = trainSeq[0].n_rows;
+    const int gaussians = params.Get<int>("gaussians");
+
+    if (gaussians == 0)
+    {
+      Log::Fatal << "Number of gaussians for each GMM must be specified "
+          << "when type = 'diag_gmm'!" << endl;
+    }
+
+    if (gaussians < 0)
+    {
+      Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
+          << "be greater than or equal to 1." << endl;
+    }
+
+    // Create HMM object.
+    hmm = HMM<DiagonalGMM>(size_t(states), DiagonalGMM(size_t(gaussians),
+        dimensionality), tolerance);
+
+    // Issue a warning if the user didn't give labels.
+    if (!params.Has("labels_file"))
+    {
+      Log::Warn << "Unlabeled training of Diagonal GMM HMMs is almost "
+          << "certainly not going to produce good results!" << endl;
+    }
+  }
+
   //! Helper function for discrete emission distributions.
-  static void RandomInitialize(vector<DiscreteDistribution>& e)
+  static void RandomInitialize(util::Params& /* params */,
+                               vector<DiscreteDistribution>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -178,7 +248,8 @@ struct Init
   }
 
   //! Helper function for Gaussian emission distributions.
-  static void RandomInitialize(vector<GaussianDistribution>& e)
+  static void RandomInitialize(util::Params& /* params */,
+                               vector<GaussianDistribution>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -191,7 +262,8 @@ struct Init
   }
 
   //! Helper function for GMM emission distributions.
-  static void RandomInitialize(vector<GMM>& e)
+  static void RandomInitialize(util::Params& params,
+                               vector<GMM>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -200,7 +272,7 @@ struct Init
       e[i].Weights() /= arma::accu(e[i].Weights());
 
       // Random means and covariances.
-      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      for (int g = 0; g < params.Get<int>("gaussians"); ++g)
       {
         const size_t dimensionality = e[i].Component(g).Mean().n_rows;
         e[i].Component(g).Mean().randu();
@@ -212,6 +284,29 @@ struct Init
       }
     }
   }
+
+  //! Helper function for Diagonal GMM emission distributions.
+  static void RandomInitialize(util::Params& params,
+                               vector<DiagonalGMM>& e)
+  {
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      // Random weights.
+      e[i].Weights().randu();
+      e[i].Weights() /= arma::accu(e[i].Weights());
+
+      // Random means and covariances.
+      for (int g = 0; g < params.Get<int>("gaussians"); ++g)
+      {
+        const size_t dimensionality = e[i].Component(g).Mean().n_rows;
+        e[i].Component(g).Mean().randu();
+
+        // Generate random diagonal covariance.
+        arma::vec r = arma::randu<arma::vec>(dimensionality);
+        e[i].Component(g).Covariance(r);
+      }
+    }
+  }
 };
 
 // Because we don't know what the type of our HMM is, we need to write a
@@ -219,16 +314,18 @@ struct Init
 struct Train
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, vector<mat>* trainSeqPtr)
+  static void Apply(util::Params& params,
+                    HMMType& hmm,
+                    vector<mat>* trainSeqPtr)
   {
-    const bool batch = CLI::HasParam("batch");
-    const double tolerance = CLI::GetParam<double>("tolerance");
+    const bool batch = params.Has("batch");
+    const double tolerance = params.Get<double>("tolerance");
 
     // Do we need to replace the tolerance?
-    if (CLI::HasParam("tolerance"))
+    if (params.Has("tolerance"))
       hmm.Tolerance() = tolerance;
 
-    const string labelsFile = CLI::GetParam<string>("labels_file");
+    const string labelsFile = params.Get<string>("labels_file");
 
     // Verify that the dimensionality of our observations is the same as the
     // dimensionality of our HMM's emissions.
@@ -245,7 +342,7 @@ struct Train
     }
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
-    if (CLI::HasParam("labels_file"))
+    if (params.Has("labels_file"))
     {
       // Do we have multiple label files to load?
       char lineBuf[1024];
@@ -340,47 +437,47 @@ struct Train
   }
 };
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Set random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
     RandomSeed((size_t) time(NULL));
 
   // Validate parameters.
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string type = CLI::GetParam<string>("type");
-  const bool batch = CLI::HasParam("batch");
-  const double tolerance = CLI::GetParam<double>("tolerance");
+  const string inputFile = params.Get<string>("input_file");
+  const string type = params.Get<string>("type");
+  const bool batch = params.Has("batch");
+  const double tolerance = params.Get<double>("tolerance");
 
   // If no model is specified, make sure we are training with valid parameters.
-  if (!CLI::HasParam("input_model"))
+  if (!params.Has("input_model"))
   {
     // Validate number of states.
-    RequireAtLeastOnePassed({ "states" }, true);
-    RequireAtLeastOnePassed({ "type" }, true);
-    RequireParamValue<int>("states", [](int x) { return x > 0; }, true,
+    RequireAtLeastOnePassed(params, { "states" }, true);
+    RequireAtLeastOnePassed(params, { "type" }, true);
+    RequireParamValue<int>(params, "states", [](int x) { return x > 0; }, true,
         "number of states must be positive");
   }
 
-  if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
+  if (params.Has("input_model") && params.Has("tolerance"))
   {
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetPrintableParam<HMMModel*>("input_model") << "' will be "
+        << params.GetPrintable<HMMModel*>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
   }
 
-  ReportIgnoredParam({{ "input_model", true }}, "type");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "type");
 
-  if (!CLI::HasParam("input_model"))
+  if (!params.Has("input_model"))
   {
-    RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm" }, true,
-        "unknown HMM type");
+    RequireParamInSet<string>(params, "type", { "discrete", "gaussian", "gmm",
+        "diag_gmm" }, true, "unknown HMM type");
   }
 
-  RequireParamValue<double>("tolerance", [](double x) { return x >= 0; }, true,
-      "tolerance must be non-negative");
+  RequireParamValue<double>(params, "tolerance",
+      [](double x) { return x >= 0; }, true, "tolerance must be non-negative");
 
   // Load the input data.
   vector<mat> trainSeq;
@@ -435,25 +532,37 @@ static void mlpackMain()
     typeId = HMMType::DiscreteHMM;
   else if (type == "gaussian")
     typeId = HMMType::GaussianHMM;
-  else
+  else if (type == "gmm")
     typeId = HMMType::GaussianMixtureModelHMM;
+  else
+    typeId = HMMType::DiagonalGaussianMixtureModelHMM;
 
   // If we have a model file, we can autodetect the type.
   HMMModel* hmm;
-  if (CLI::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    hmm = CLI::GetParam<HMMModel*>("input_model");
+    hmm = params.Get<HMMModel*>("input_model");
+
+    hmm->PerformAction<Train, vector<mat>>(params, &trainSeq);
   }
   else
   {
     // We need to initialize the model.
     hmm = new HMMModel(typeId);
-    hmm->PerformAction<Init, vector<mat>>(&trainSeq);
+
+    // Catch any exceptions so that we can clean the model if needed.
+    try
+    {
+      hmm->PerformAction<Init, vector<mat>>(params, &trainSeq);
+      hmm->PerformAction<Train, vector<mat>>(params, &trainSeq);
+    }
+    catch (std::exception& e)
+    {
+      delete hmm;
+      throw;
+    }
   }
 
-  // Train the model.
-  hmm->PerformAction<Train, vector<mat>>(&trainSeq);
-
   // If necessary, save the output.
-  CLI::GetParam<HMMModel*>("output_model") = hmm;
+  params.Get<HMMModel*>("output_model") = hmm;
 }

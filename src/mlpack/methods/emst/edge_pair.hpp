@@ -1,5 +1,5 @@
 /**
- * @file edge_pair.hpp
+ * @file methods/emst/edge_pair.hpp
  *
  * @author Bill March (march@gatech.edu)
  *

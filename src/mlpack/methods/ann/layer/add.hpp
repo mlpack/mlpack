@@ -1,5 +1,5 @@
 /**
- * @file add.hpp
+ * @file methods/ann/layer/add.hpp
  * @author Marcus Edel
  *
  * Definition of the Add class that applies a bias term to the incoming data.
@@ -49,33 +49,33 @@ class Add
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                const arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param input The propagated input.
+   * @param * (input) The propagated input.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -97,11 +97,17 @@ class Add
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
+  //! Get the size of weights.
+  size_t WeightSize() const { return outSize; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of output units.

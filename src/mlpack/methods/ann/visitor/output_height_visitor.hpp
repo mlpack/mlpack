@@ -1,5 +1,5 @@
 /**
- * @file output_height_visitor.hpp
+ * @file methods/ann/visitor/output_height_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputHeight() function for
@@ -30,6 +30,8 @@ class OutputHeightVisitor : public boost::static_visitor<size_t>
   //! Return the output height.
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
+
+  size_t operator()(MoreTypes layer) const;
 
  private:
   //! Return 0 if the module doesn't implement the InputHeight() or Model()

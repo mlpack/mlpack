@@ -1,5 +1,5 @@
 /**
- * @file randomized_block_krylov_svd.cpp
+ * @file methods/block_krylov_svd/randomized_block_krylov_svd.cpp
  * @author Marcus Edel
  *
  * Implementation of the randomized block krylov SVD method.
@@ -83,7 +83,7 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
 
   arma::qr_econ(Q, R, K);
 
-  // Approximate eigenvalues and eigenvectors using Rayleigh–Ritz method.
+  // Approximate eigenvalues and eigenvectors using Rayleigh-Ritz method.
   arma::svd_econ(u, s, v, Q.t() * data);
 
   // Do economical singular value decomposition and compute only the

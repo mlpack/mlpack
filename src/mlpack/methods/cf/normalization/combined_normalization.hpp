@@ -1,5 +1,5 @@
 /**
- * @file combined_normalization.hpp
+ * @file methods/cf/normalization/combined_normalization.hpp
  * @author Wenhao Huang
  *
  * CombinedNormalization is a class template for performing a sequence of data
@@ -30,7 +30,8 @@ namespace cf {
  * extern arma::Col<size_t> users;
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
- * CFType<CombinedNormalization<
+ * CFType<NMFPolicy,
+ *        CombinedNormalization<
  *            OverallMeanNormalization,
  *            UserMeanNormalization,
  *            ItemMeanNormalization>> cf(data);
@@ -92,7 +93,7 @@ class CombinedNormalization
   /**
    * Return normalizations tuple.
    */
-  TupleType Normalizations() const
+  const TupleType& Normalizations() const
   {
     return normalizations;
   }
@@ -101,7 +102,7 @@ class CombinedNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar, const uint32_t version)
   {
     SequenceSerialize<0, Archive>(ar, version);
   }
@@ -118,7 +119,7 @@ class CombinedNormalization
   void SequenceNormalize(MatType& data)
   {
     std::get<I>(normalizations).Normalize(data);
-    SequenceNormalize<I+1>(data);
+    SequenceNormalize<I + 1>(data);
   }
 
   //! End of tuple unpacking.
@@ -139,7 +140,7 @@ class CombinedNormalization
   {
     // The order of denormalization should be the reversed order
     // of normalization.
-    double realRating = SequenceDenormalize<I+1>(user, item, rating);
+    double realRating = SequenceDenormalize<I + 1>(user, item, rating);
     realRating =
         std::get<I>(normalizations).Denormalize(user, item, realRating);
     return realRating;
@@ -183,13 +184,13 @@ class CombinedNormalization
       int I, /* Which normalization in tuple to serialize */
       typename Archive,
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  void SequenceSerialize(Archive& ar, const unsigned int version)
+  void SequenceSerialize(Archive& ar, const uint32_t version)
   {
     std::string tagName = "normalization_";
     tagName += std::to_string(I);
-    ar & boost::serialization::make_nvp(
-        tagName.c_str(), std::get<I>(normalizations));
-    SequenceSerialize<I+1, Archive>(ar, version);
+    ar(cereal::make_nvp(
+        tagName.c_str(), std::get<I>(normalizations)));
+    SequenceSerialize<I + 1, Archive>(ar, version);
   }
 
   //! End of tuple unpacking.
@@ -198,7 +199,7 @@ class CombinedNormalization
       typename Archive,
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  void SequenceSerialize(Archive& /* ar */, const unsigned int /* version */)
+  void SequenceSerialize(Archive& /* ar */, const uint32_t /* version */)
   { }
 };
 

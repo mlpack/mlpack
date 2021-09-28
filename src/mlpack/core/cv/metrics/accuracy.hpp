@@ -1,5 +1,5 @@
 /**
- * @file accuracy.hpp
+ * @file core/cv/metrics/accuracy.hpp
  * @author Kirill Mishchenko
  *
  * The accuracy metric.
@@ -13,6 +13,7 @@
 #define MLPACK_CORE_CV_METRICS_ACCURACY_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace cv {

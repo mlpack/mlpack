@@ -1,0 +1,151 @@
+/*
+ * @file formatting.css
+ * @author Ryan Curtin
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+body
+{
+  background: #000000;
+}
+
+/* Don't display other languages by default. */
+div.language-title, div.language-header, div.language-decl,
+div.language-detail-link, div.language-types, div.language-section
+{
+  display: none;
+}
+
+/* Just display cli documentation. */
+div.language-title#cli, div.language-header#cli, div.language-decl#cli,
+div.language-detail-link#cli, div.language-types#cli, div.language-section#cli
+{
+  display: none;
+}
+
+div#header
+{
+  padding-top: 10px;
+  width: 200px;
+  background: #000000;
+  border-right: 2px solid #333333;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-y: scroll;
+}
+
+div#header .language-select-div select
+{
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  height: 29px;
+  padding: 5px;
+  width: 190px;
+}
+
+div#header .language-select-div
+{
+  color: #ffffff;
+  border: 2px solid #333333;
+  background: url('../res/menu_bg.png') no-repeat 96% 0;
+  height: 34px;
+  width: 180px;
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+div#header ul
+{
+  padding-top: 5px;
+  margin-bottom: 5px;
+  color: #bb2000;
+  display: table;
+  text-align: left;
+  padding-left: 0px;
+  margin-left: 15px;
+  font-size: 75%;
+}
+
+div#header ul li
+{
+  line-height: 1.3em;
+}
+
+div#header ul li a
+{
+  color: #eab72c;
+  font-weight: none;
+}
+
+div#header ul li a:hover
+{
+  color: #ffffff;
+  font-weight: none;
+}
+
+div#docs
+{
+  margin-left: 200px;
+}
+
+span.special
+{
+  font-size: 85%;
+  color: #eab72c;
+}
+
+div.category
+{
+  text-align: left;
+}
+
+div.category h5
+{
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #ffffff;
+  font-size: 100%;
+  font-weight: normal;
+  padding: 0;
+}
+
+h2#mlpack-overview, h2.language-types-h2
+{
+  padding-bottom: 0.75em;
+}
+
+div.language-header h1
+{
+  color: #ffffff;
+  text-align: center;
+  border-top: none;
+  border-bottom: 1px solid #eab72c;
+}
+
+div.language-types li code
+{
+  font-weight: bold;
+  color: #eab72c;
+}
+
+div.language-types li
+{
+  padding-bottom: 1em;
+}
+
+div.language-section table td a code:hover
+{
+  color: #bb2000;
+}

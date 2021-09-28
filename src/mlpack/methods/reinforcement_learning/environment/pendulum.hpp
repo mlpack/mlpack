@@ -1,5 +1,5 @@
 /**
- * @file pendulum.hpp
+ * @file methods/reinforcement_learning/environment/pendulum.hpp
  * @author Shashank Shekhar
  *
  * This file is an implementation of Pendulum task:
@@ -17,6 +17,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_PENDULUM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -32,7 +33,7 @@ class Pendulum
  public:
   /**
    * Implementation of state of Pendulum. Each state is a
-   * (theta, angular velocity) vector.
+   * (cos(theta), sin(theta), angular velocity) vector.
    */
   class State
   {
@@ -40,38 +41,49 @@ class Pendulum
     /**
      * Construct a state instance.
      */
-    State() : data(dimension, arma::fill::zeros)
+    State() : theta(0), data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
      * Construct a state based on the given data.
      *
-     * @param data Data for the theta and angular velocity.
+     * @param data Data for the cos(theta), sin(theta) and
+     *             angular velocity.
      */
-    State(const arma::colvec& data): data(data)
+    State(const arma::colvec& data): theta(0), data(data)
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
     arma::colvec& Data() { return data; }
 
     //! Get the theta.
-    double Theta() const { return data[0]; }
+    double Theta() const { return theta; }
     //! Modify the value of theta.
-    double& Theta() { return data[0]; }
+    double& Theta() { return theta; }
 
     //! Get the angular velocity.
-    double AngularVelocity() const { return data[1]; }
+    double AngularVelocity() const { return data[2]; }
     //! Modify the value of angular velocity.
-    double& AngularVelocity() { return data[1]; }
+    double& AngularVelocity() { return data[2]; }
 
     //! Encode the state to a column vector.
-    const arma::colvec& Encode() const { return data; }
+    const arma::colvec& Encode() { return data; }
+
+    //! Updates the theta transformations in data.
+    void SetState()
+    {
+      data[0] = std::sin(theta);
+      data[1] = std::cos(theta);
+    }
 
     //! Dimension of the encoded state.
-    static constexpr size_t dimension = 2;
+    static constexpr size_t dimension = 3;
 
    private:
-    //! Locally-stored (theta, angular velocity) vector
+    //! Locally-stored theta.
+    double theta;
+
+    //! Locally-stored (sin(theta), cos(theta), angular velocity) vector.
     arma::colvec data;
   };
 
@@ -80,26 +92,40 @@ class Pendulum
    * In Pendulum, the action represents the torque to be applied.
    * This value is bounded in range -2.0 to 2.0 by default.
    */
-  struct Action
+  class Action
   {
-    double action[1];
-    // Storing degree of freedom
-    const int size = 1;
+   public:
+    /**
+     * Construct an action instance.
+     */
+    Action() : action(1)
+    { /* Nothing to do here */ }
+    std::vector<double> action;
+    // Storing degree of freedom.
+    static const size_t size = 1;
   };
 
   /**
    * Construct a Pendulum instance using the given values.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit (Default: 200 steps). 
    * @param maxAngularVelocity Maximum angular velocity.
    * @param maxTorque Maximum torque.
    * @param dt The differential value.
+   * @param doneReward The reward recieved by the agent on success.
    */
-  Pendulum(const double maxAngularVelocity = 8,
+  Pendulum(const size_t maxSteps = 200,
+           const double maxAngularVelocity = 8,
            const double maxTorque = 2.0,
-           const double dt = 0.05) :
+           const double dt = 0.05,
+           const double doneReward = 0.0) :
+      maxSteps(maxSteps),
       maxAngularVelocity(maxAngularVelocity),
       maxTorque(maxTorque),
-      dt(dt)
+      dt(dt),
+      doneReward(doneReward),
+      stepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -113,8 +139,11 @@ class Pendulum
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState) const
+                State& nextState)
   {
+    // Update the number of steps performed.
+    stepsPerformed++;
+
     // Get current state.
     double theta = state.Theta();
     double angularVelocity = state.AngularVelocity();
@@ -125,8 +154,7 @@ class Pendulum
     const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
-    double torque = std::min(
-        std::max(action.action[0], -maxTorque), maxTorque);
+    double torque = math::ClampRange(action.action[0], -maxTorque, maxTorque);
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *
@@ -134,11 +162,13 @@ class Pendulum
 
     // Calculate new state values and assign to the next state.
     double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / std::pow(mass * length, 2) *
+        length) * std::sin(theta + M_PI) + 3.0 / (mass * std::pow(length, 2)) *
         torque) * dt;
-    nextState.AngularVelocity() = std::min(std::max(newAngularVelocity,
-        -maxAngularVelocity), maxAngularVelocity);
     nextState.Theta() = theta + newAngularVelocity * dt;
+    nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
+        -maxAngularVelocity, maxAngularVelocity);
+
+    nextState.SetState();
 
     // Return the reward of taking the action in current state.
     // The reward is simply the negative of cost incurred for the action.
@@ -152,7 +182,7 @@ class Pendulum
    * @param action The current action.
    * @return reward, The reward.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const State& state, const Action& action)
   {
     State nextState;
     return Sample(state, action, nextState);
@@ -164,26 +194,59 @@ class Pendulum
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  State InitialSample()
   {
     State state;
     state.Theta() = math::Random(-M_PI, M_PI);
     state.AngularVelocity() = math::Random(-1.0, 1.0);
+    stepsPerformed = 0;
+    state.SetState();
     return state;
   }
 
   /**
-   * This function calculates the normalized anlge for a particular theta.
+   * This function calculates the normalized angle for a particular theta.
    *
    * @param theta The un-normalized angle.
    */
   double AngleNormalize(double theta) const
   {
     // Scale angle within [-pi, pi).
-    return double(fmod(theta + M_PI, 2 * M_PI) - M_PI);
+    double x = fmod(theta + M_PI, 2 * M_PI);
+    if (x < 0)
+      x += 2 * M_PI;
+    return x - M_PI;
   }
 
+  /**
+   * This function checks if the pendulum has reaches a terminal state
+   * 
+   * @param * (state) desired state.
+   * @return true if state is a terminal state, otherwise false.
+   */
+  bool IsTerminal(const State& /* state */) const
+  {
+    if (maxSteps != 0 && stepsPerformed >= maxSteps)
+    {
+      Log::Info << "Episode terminated due to the maximum number of steps"
+          "being taken.";
+      return true;
+    }
+    return false;
+  }
+
+  //! Get the number of steps performed.
+  size_t StepsPerformed() const { return stepsPerformed; }
+
+  //! Get the maximum number of steps allowed.
+  size_t MaxSteps() const { return maxSteps; }
+  //! Set the maximum number of steps allowed.
+  size_t& MaxSteps() { return maxSteps; }
+
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored maximum legal angular velocity.
   double maxAngularVelocity;
 
@@ -192,6 +255,12 @@ class Pendulum
 
   //! Locally-stored dt.
   double dt;
+
+  //! Locally-stored done reward.
+  double doneReward;
+
+  //! Locally-stored number of steps performed.
+  size_t stepsPerformed;
 };
 
 } // namespace rl

@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_split.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_split.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the RPlusTreeSplit class, a class that splits the nodes of an
@@ -36,7 +36,7 @@ class RPlusTreeSplit
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
-   * @param node. The node that is being split.
+   * @param tree The node that is being split.
    * @param relevels Not used.
    */
   template<typename TreeType>
@@ -45,7 +45,7 @@ class RPlusTreeSplit
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
-   * @param node. The node that is being split.
+   * @param tree The node that is being split.
    * @param relevels Not used.
    */
   template<typename TreeType>

@@ -2,6 +2,7 @@
 set(DIRS
   arma_extend
   boost_backport
+  cereal
   cv
   data
   dists
@@ -9,7 +10,6 @@ set(DIRS
   kernels
   math
   metrics
-  optimizers
   tree
   util
 )

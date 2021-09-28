@@ -1,5 +1,5 @@
 /**
- * @file multiply_constant.hpp
+ * @file methods/ann/layer/multiply_constant.hpp
  * @author Marcus Edel
  *
  * Definition of the MultiplyConstantLayer class, which multiplies the input by
@@ -39,6 +39,18 @@ class MultiplyConstant
    */
   MultiplyConstant(const double scalar = 1.0);
 
+  //! Copy Constructor.
+  MultiplyConstant(const MultiplyConstant& layer);
+
+  //! Move Constructor.
+  MultiplyConstant(MultiplyConstant&& layer);
+
+  //! Copy assignment operator.
+  MultiplyConstant& operator=(const MultiplyConstant& layer);
+
+  //! Move assignment operator.
+  MultiplyConstant& operator=(MultiplyConstant&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
    * specified constant scalar value.
@@ -47,18 +59,18 @@ class MultiplyConstant
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network. The backward pass
    * multiplies the error with the specified constant scalar value.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& /* input */, DataType&& gy, DataType&& g);
+  void Backward(const DataType& /* input */, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -70,11 +82,19 @@ class MultiplyConstant
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the scalar multiplier.
+  double Scalar() const { return scalar; }
+  //! Modify the scalar multiplier.
+  double& Scalar() { return scalar; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored constant scalar value.

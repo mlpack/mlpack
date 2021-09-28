@@ -1,5 +1,5 @@
 /**
- * @file ballbound_impl.hpp
+ * @file core/tree/ballbound_impl.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of BallBound ball bound metric policy class.
@@ -71,10 +71,14 @@ template<typename MetricType, typename VecType>
 BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
     const BallBound& other)
 {
-  radius = other.radius;
-  center = other.center;
-  metric = other.metric;
-  ownsMetric = false;
+  if (this != &other)
+  {
+    radius = other.radius;
+    center = other.center;
+    metric = other.metric;
+    ownsMetric = false;
+  }
+  return *this;
 }
 
 //! Move constructor.
@@ -90,6 +94,26 @@ BallBound<MetricType, VecType>::BallBound(BallBound&& other) :
   other.center = VecType();
   other.metric = NULL;
   other.ownsMetric = false;
+}
+
+//! Move assignment operator.
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
+    BallBound&& other)
+{
+  if (this != &other)
+  {
+    radius = other.radius;
+    center = std::move(other.center);
+    metric = other.metric;
+    ownsMetric = other.ownsMetric;
+
+    other.radius = 0.0;
+    other.center = VecType();
+    other.metric = nullptr;
+    other.ownsMetric = false;
+  }
+  return *this;
 }
 
 //! Destructor to release allocated memory.
@@ -285,20 +309,20 @@ template<typename MetricType, typename VecType>
 template<typename Archive>
 void BallBound<MetricType, VecType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(radius);
-  ar & BOOST_SERIALIZATION_NVP(center);
+  ar(CEREAL_NVP(radius));
+  ar(CEREAL_NVP(center));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local metric since we'll have a new one.
     if (ownsMetric)
       delete metric;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(ownsMetric);
+  ar(CEREAL_POINTER(metric));
+  ar(CEREAL_NVP(ownsMetric));
 }
 
 } // namespace bound

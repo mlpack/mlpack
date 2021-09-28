@@ -1,5 +1,5 @@
 /**
- * @file dbscan_impl.hpp
+ * @file methods/dbscan/dbscan_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of DBSCAN.
@@ -192,9 +192,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   // Now loop over all points.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    // Union to all neighbors.
-    for (size_t j = 0; j < neighbors[i].size(); ++j)
-      uf.Union(i, neighbors[i][j]);
+    // Get the next index.
+    const size_t index = pointSelector.Select(i, data);
+    for (size_t j = 0; j < neighbors[index].size(); ++j)
+      uf.Union(index, neighbors[index][j]);
   }
 }
 

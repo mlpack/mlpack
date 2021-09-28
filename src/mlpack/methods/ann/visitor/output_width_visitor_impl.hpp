@@ -1,5 +1,5 @@
 /**
- * @file output_width_visitor_impl.hpp
+ * @file methods/ann/visitor/output_width_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the OutputWidth() function layer abstraction.
@@ -23,6 +23,11 @@ template<typename LayerType>
 inline size_t OutputWidthVisitor::operator()(LayerType* layer) const
 {
   return LayerOutputWidth(layer);
+}
+
+inline size_t OutputWidthVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 template<typename T>

@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of Neighbor-Search class to perform all-nearest-neighbors on
@@ -63,8 +63,6 @@ SingleTreeTraversalType>::NeighborSearch(MatType referenceSetIn,
         BuildTree<Tree>(std::move(referenceSetIn), oldFromNewReferences)),
     referenceSet(mode == NAIVE_MODE ?  new MatType(std::move(referenceSetIn)) :
         &referenceTree->Dataset()),
-    treeOwner(mode != NAIVE_MODE),
-    setOwner(mode == NAIVE_MODE),
     searchMode(mode),
     epsilon(epsilon),
     metric(metric),
@@ -92,8 +90,6 @@ SingleTreeTraversalType>::NeighborSearch(Tree referenceTree,
                                          const MetricType metric) :
     referenceTree(new Tree(std::move(referenceTree))),
     referenceSet(&this->referenceTree->Dataset()),
-    treeOwner(true),
-    setOwner(false),
     searchMode(mode),
     epsilon(epsilon),
     metric(metric),
@@ -119,9 +115,7 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(NULL),
-    referenceSet(new MatType()), // Empty matrix.
-    treeOwner(false),
-    setOwner(true),
+    referenceSet(mode == NAIVE_MODE ? new MatType() : NULL), // Empty matrix.
     searchMode(mode),
     epsilon(epsilon),
     metric(metric),
@@ -135,8 +129,9 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
   {
-    referenceTree = BuildTree<Tree>(*referenceSet, oldFromNewReferences);
-    treeOwner = true;
+    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
+        oldFromNewReferences);
+    referenceSet = &referenceTree->Dataset();
   }
 }
 
@@ -155,8 +150,6 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearch& other) :
     referenceTree(other.referenceTree ? new Tree(*other.referenceTree) : NULL),
     referenceSet(other.referenceTree ? &referenceTree->Dataset() :
         new MatType(*other.referenceSet)),
-    treeOwner(other.referenceTree),
-    setOwner(!other.referenceTree),
     searchMode(other.searchMode),
     epsilon(other.epsilon),
     metric(other.metric),
@@ -181,8 +174,6 @@ SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other) :
     oldFromNewReferences(std::move(other.oldFromNewReferences)),
     referenceTree(other.referenceTree),
     referenceSet(other.referenceSet),
-    treeOwner(other.treeOwner),
-    setOwner(other.setOwner),
     searchMode(other.searchMode),
     epsilon(other.epsilon),
     metric(std::move(other.metric)),
@@ -191,11 +182,9 @@ SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other) :
     treeNeedsReset(other.treeNeedsReset)
 {
   // Clear the other model.
-  other.referenceSet = new MatType();
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
+  other.referenceTree = BuildTree<Tree>(std::move(MatType()),
       other.oldFromNewReferences);
-  other.treeOwner = true;
-  other.setOwner = true;
+  other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,
   other.epsilon = 0.0;
   other.baseCases = 0;
@@ -229,17 +218,15 @@ NeighborSearch<SortPolicy,
     return *this; // Nothing to do.
 
   // Clean memory first.
-  if (treeOwner && referenceTree)
+  if (referenceTree)
     delete referenceTree;
-  if (setOwner && referenceSet)
+  else
     delete referenceSet;
 
   oldFromNewReferences = other.oldFromNewReferences;
   referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : NULL;
   referenceSet = other.referenceTree ? &referenceTree->Dataset() :
       new MatType(*other.referenceSet);
-  treeOwner = (other.referenceTree != NULL);
-  setOwner = (other.referenceTree == NULL);
   searchMode = other.searchMode;
   epsilon = other.epsilon;
   metric = other.metric;
@@ -274,16 +261,14 @@ NeighborSearch<SortPolicy,
     return *this; // Nothing to do.
 
   // Clean memory first.
-  if (treeOwner && referenceTree)
+  if (referenceTree)
     delete referenceTree;
-  if (setOwner && referenceSet)
+  else
     delete referenceSet;
 
   oldFromNewReferences = std::move(other.oldFromNewReferences);
   referenceTree = other.referenceTree;
   referenceSet = other.referenceSet;
-  treeOwner = other.treeOwner;
-  setOwner = other.setOwner;
   searchMode = other.searchMode;
   epsilon = other.epsilon;
   metric = other.metric;
@@ -291,12 +276,13 @@ NeighborSearch<SortPolicy,
   scores = other.scores;
   treeNeedsReset = other.treeNeedsReset;
 
-  // Reset the other object.
-  other.referenceSet = new MatType();
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
+  // Reset the other object.  Clean memory if needed.
+  if (!other.referenceTree)
+    delete other.referenceSet;
+
+  other.referenceTree = BuildTree<Tree>(std::move(arma::mat()),
       other.oldFromNewReferences);
-  other.treeOwner = true;
-  other.setOwner = true;
+  other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,
   other.epsilon = 0.0;
   other.baseCases = 0;
@@ -316,9 +302,9 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::~NeighborSearch()
 {
-  if (treeOwner && referenceTree)
+  if (referenceTree)
     delete referenceTree;
-  if (setOwner && referenceSet)
+  else
     delete referenceSet;
 }
 
@@ -331,72 +317,30 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(
-    const MatType& referenceSet)
+DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType referenceSetIn)
 {
   // Clean up the old tree, if we built one.
-  if (treeOwner && referenceTree)
+  if (referenceTree)
   {
     oldFromNewReferences.clear();
     delete referenceTree;
-  }
-
-  // Delete the old reference set, if we owned it.
-  if (setOwner && this->referenceSet)
-    delete this->referenceSet;
-
-  // We may need to rebuild the tree.
-  if (searchMode != NAIVE_MODE)
-  {
-    referenceTree = BuildTree<Tree>(referenceSet, oldFromNewReferences);
-    treeOwner = true;
-    this->referenceSet = &referenceTree->Dataset();
+    referenceTree = NULL;
   }
   else
   {
-    treeOwner = false;
-    this->referenceSet = &referenceSet;
-  }
-
-  setOwner = false; // We don't own the set in either case.
-}
-
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class DualTreeTraversalType,
-         template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
-{
-  // Clean up the old tree, if we built one.
-  if (treeOwner && referenceTree)
-  {
-    oldFromNewReferences.clear();
-    delete referenceTree;
-  }
-
-  // Delete the old reference set, if we owned it.
-  if (setOwner && referenceSet)
     delete referenceSet;
+  }
 
   // We may need to rebuild the tree.
   if (searchMode != NAIVE_MODE)
   {
     referenceTree = BuildTree<Tree>(std::move(referenceSetIn),
         oldFromNewReferences);
-    treeOwner = true;
     referenceSet = &referenceTree->Dataset();
-    setOwner = false;
   }
   else
   {
-    treeOwner = false;
     referenceSet = new MatType(std::move(referenceSetIn));
-    setOwner = true;
   }
 }
 
@@ -409,56 +353,24 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(
-    const Tree& referenceTree)
+DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree referenceTree)
 {
   if (searchMode == NAIVE_MODE)
     throw std::invalid_argument("cannot train on given reference tree when "
         "naive search (without trees) is desired");
 
-  if (treeOwner && this->referenceTree)
+  if (this->referenceTree)
   {
     oldFromNewReferences.clear();
     delete this->referenceTree;
   }
-
-  if (setOwner && referenceSet)
-    delete this->referenceSet;
-
-  this->referenceTree = new Tree(referenceTree);
-  this->referenceSet = &this->referenceTree->Dataset();
-  treeOwner = true;
-  setOwner = false;
-}
-
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class DualTreeTraversalType,
-         template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree&& referenceTree)
-{
-  if (searchMode == NAIVE_MODE)
-    throw std::invalid_argument("cannot train on given reference tree when "
-        "naive search (without trees) is desired");
-
-  if (treeOwner && this->referenceTree)
+  else
   {
-    oldFromNewReferences.clear();
-    delete this->referenceTree;
-  }
-
-  if (setOwner && referenceSet)
     delete this->referenceSet;
+  }
 
   this->referenceTree = new Tree(std::move(referenceTree));
   this->referenceSet = &this->referenceTree->Dataset();
-  treeOwner = true;
-  setOwner = false;
 }
 
 /**
@@ -487,8 +399,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
-
-  Timer::Start("computing_neighbors");
 
   baseCases = 0;
   scores = 0;
@@ -564,11 +474,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     case DUAL_TREE_MODE:
     {
       // Build the query tree.
-      Timer::Stop("computing_neighbors");
-      Timer::Start("tree_building");
       Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
-      Timer::Stop("tree_building");
-      Timer::Start("computing_neighbors");
 
       // Create the helper object for the tree traversal.
       RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, epsilon);
@@ -599,9 +505,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < querySet.n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -619,8 +522,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     }
   }
 
-  Timer::Stop("computing_neighbors");
-
   // Map points back to original indices, if necessary.
   if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
@@ -630,13 +531,13 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
       distances.set_size(k, querySet.n_cols);
 
-      for (size_t i = 0; i < distances.n_cols; i++)
+      for (size_t i = 0; i < distances.n_cols; ++i)
       {
         // Map distances (copy a column).
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
 
         // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
+        for (size_t j = 0; j < distances.n_rows; ++j)
         {
           neighbors(j, oldFromNewQueries[i]) =
               oldFromNewReferences[(*neighborPtr)(j, i)];
@@ -671,8 +572,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
 
       // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.n_cols; i++)
-        for (size_t j = 0; j < neighbors.n_rows; j++)
+      for (size_t i = 0; i < neighbors.n_cols; ++i)
+        for (size_t j = 0; j < neighbors.n_rows; ++j)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
       // Finished with temporary matrix.
@@ -710,8 +611,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     throw std::invalid_argument("cannot call NeighborSearch::Search() with a "
         "query tree when naive or singleMode are set to true");
 
-  Timer::Start("computing_neighbors");
-
   baseCases = 0;
   scores = 0;
 
@@ -747,8 +646,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   Log::Info << rules.Scores() << " node combinations were scored.\n";
   Log::Info << rules.BaseCases() << " base cases were calculated.\n";
 
-  Timer::Stop("computing_neighbors");
-
   // Do we need to map indices?
   if (!oldFromNewReferences.empty() &&
       tree::TreeTraits<Tree>::RearrangesDataset)
@@ -757,8 +654,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     neighbors.set_size(k, querySet.n_cols);
 
     // Map indices of neighbors.
-    for (size_t i = 0; i < neighbors.n_cols; i++)
-      for (size_t j = 0; j < neighbors.n_rows; j++)
+    for (size_t i = 0; i < neighbors.n_cols; ++i)
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
     // Finished with temporary matrix.
@@ -795,8 +692,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
         << "no query set has been provided.";
     throw std::invalid_argument(ss.str());
   }
-
-  Timer::Start("computing_neighbors");
 
   baseCases = 0;
   scores = 0;
@@ -907,9 +802,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -926,8 +818,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   }
 
   rules.GetResults(*neighborPtr, *distancePtr);
-
-  Timer::Stop("computing_neighbors");
 
   // Do we need to map the reference indices?
   if (!oldFromNewReferences.empty() &&
@@ -974,7 +864,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
   double effectiveError = 0;
   size_t numCases = 0;
 
-  for (size_t i = 0; i < foundDistances.n_elem; i++)
+  for (size_t i = 0; i < foundDistances.n_elem; ++i)
   {
     if (realDistances(i) != 0 &&
         foundDistances(i) != SortPolicy::WorstDistance())
@@ -1034,70 +924,57 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(searchMode);
-  ar & BOOST_SERIALIZATION_NVP(treeNeedsReset);
+  ar(CEREAL_NVP(searchMode));
+  ar(CEREAL_NVP(treeNeedsReset));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
   if (searchMode == NAIVE_MODE)
   {
     // Delete the current reference set, if necessary and if we are loading.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>() && referenceSet)
     {
-      if (setOwner && referenceSet)
-        delete referenceSet;
-
-      setOwner = true; // We will own the reference set when we load it.
+      delete referenceSet;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
-      if (treeOwner && referenceTree)
+      if (referenceTree)
         delete referenceTree;
 
       referenceTree = NULL;
       oldFromNewReferences.clear();
-      treeOwner = false;
     }
   }
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>() && referenceTree)
     {
-      if (treeOwner && referenceTree)
-        delete referenceTree;
-
-      // After we load the tree, we will own it.
-      treeOwner = true;
+      delete referenceTree;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
-      if (setOwner && referenceSet)
-        delete referenceSet;
-
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
-      setOwner = false;
     }
   }
 
   // Reset base cases and scores.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     baseCases = 0;
     scores = 0;

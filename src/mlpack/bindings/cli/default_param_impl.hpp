@@ -1,5 +1,5 @@
 /**
- * @file default_param_impl.hpp
+ * @file bindings/cli/default_param_impl.hpp
  * @author Ryan Curtin
  *
  * Return the default value of a parameter, depending on its type.
@@ -23,16 +23,19 @@ namespace cli {
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T, std::string>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    util::ParamData& data,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
+    const typename std::enable_if<!std::is_same<T,
+        std::string>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   std::ostringstream oss;
-  oss << boost::any_cast<T>(data.value);
+  if (!std::is_same<T, bool>::value)
+    oss << boost::any_cast<T>(data.value);
+
   return oss.str();
 }
 
@@ -41,16 +44,42 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
+    util::ParamData& data,
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;
   const T& vector = boost::any_cast<T>(data.value);
   oss << "[";
-  for (size_t i = 0; i < vector.size() - 1; ++i)
-    oss << vector[i] << " ";
-  oss << vector[vector.size() - 1] << "]";
+  if (std::is_same<T, std::vector<std::string>>::value)
+  {
+    if (vector.size() > 0)
+    {
+      for (size_t i = 0; i < vector.size() - 1; ++i)
+      {
+        oss << "'" << vector[i] << "', ";
+      }
+
+      oss << "'" << vector[vector.size() - 1] << "'";
+    }
+
+    oss << "]";
+  }
+  else
+  {
+    if (vector.size() > 0)
+    {
+      for (size_t i = 0; i < vector.size() - 1; ++i)
+      {
+        oss << vector[i] << ", ";
+      }
+
+      oss << vector[vector.size() - 1];
+    }
+
+    oss << "]";
+  }
+
   return oss.str();
 }
 
@@ -59,47 +88,38 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T, std::string>>::type*)
+    util::ParamData& data,
+    const typename std::enable_if<std::is_same<T, std::string>::value>::type*)
 {
   const std::string& s = *boost::any_cast<std::string>(&data.value);
   return "'" + s + "'";
 }
 
 /**
- * Return the default value of a matrix option (this returns the default
- * filename, or '' if the default is no file).
+ * Return the default value of a matrix option (an empty filename).
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
-    const typename boost::enable_if_c<
+    util::ParamData& /* data */,
+    const typename std::enable_if<
         arma::is_arma_type<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
                                    arma::mat>>::value>::type* /* junk */)
 {
-  // Get the filename and return it, or return an empty string.
-  typedef std::tuple<T, std::string> TupleType;
-  const TupleType& tuple = *boost::any_cast<TupleType>(&data.value);
-  const std::string& filename = std::get<1>(tuple);
-  return "'" + filename + "'";
+  // The filename will always be empty.
+  return "''";
 }
 
 /**
- * Return the default value of a model option (this returns the default
- * filename, or '' if the default is no file).
+ * Return the default value of a model option (an empty filename).
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    util::ParamData& /* data */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
 {
-  // Get the filename and return it, or return an empty string.
-  typedef std::tuple<T*, std::string> TupleType;
-  const TupleType& tuple = *boost::any_cast<TupleType>(&data.value);
-  const std::string& filename = std::get<1>(tuple);
-  return "'" + filename + "'";
+  return "''";
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * @file best_binary_numeric_split.hpp
+ * @file methods/decision_tree/best_binary_numeric_split.hpp
  * @author Ryan Curtin
  *
  * A tree splitter that finds the best binary numeric split.
@@ -13,9 +13,31 @@
 #define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "mse_gain.hpp"
+
+#include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
 namespace tree {
+
+// This gives us a HasBinaryGains<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a BinaryGains(...) function.
+HAS_MEM_FUNC(BinaryGains, HasBinaryGains);
+
+// This struct will have `value` set to `true` if a BinaryGains() function of
+// the right signature is detected.  We only check for BinaryGains(), and not
+// BinaryScanInitialize() or BinaryStep(), because those two are template
+// members functions and would make this check far more difficult.
+//
+// The unused UseWeights template parameter is necessary to ensure that the
+// compiler thinks the result `value` depends on a parameter specific to the
+// SplitIfBetter() function in BestBinaryNumericSplit().
+template<typename T, bool /* UseWeights */>
+struct HasOptimizedBinarySplitForms
+{
+  const static bool value = HasBinaryGains<T,
+      std::tuple<double, double>(T::*)()>::value;
+};
 
 /**
  * The BestBinaryNumericSplit is a splitting function for decision trees that
@@ -28,25 +50,26 @@ class BestBinaryNumericSplit
 {
  public:
   // No extra info needed for split.
-  template<typename ElemType>
   class AuxiliarySplitInfo { };
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
-   * return the value 'bestGain'.  If a split is made, then classProbabilities
-   * and aux may be modified.
+   * return the value 'bestGain'.  If a split is made, then splitInfo and aux
+   * may be modified.
+   *
+   * This overload is used only for classification tasks.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
    * @param data The dimension of data points to check for a split in.
-   * @param numCategories Number of categories in the categorical data.
    * @param labels Labels for each point.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
-   * @param classProbabilities Class probabilities vector, which may be filled
-   *      with split information a successful split.
+   * @param minimumGainSplit Minimum gain split.
+   * @param splitInfo Stores split information on a successful split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
@@ -59,15 +82,89 @@ class BestBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+      arma::vec& splitInfo,
+      AuxiliarySplitInfo& aux);
+
+  /**
+   * Check if we can split a node.  If we can split a node in a way that
+   * improves on 'bestGain', then we return the improved gain.  Otherwise we
+   * return the value 'bestGain'.  If a split is made, then splitInfo and aux
+   * may be modified.
+   *
+   * This overload is used only for regression tasks.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param responses Responses for each point.
+   * @param weights Weights associated with responses.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param minimumGainSplit Minimum gain split.
+   * @param splitInfo Stores split information on a successful split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
+   * @param fitnessFunction The FitnessFunction object instance. It it used to
+   *      evaluate the gain for the split.
+   */
+  template<bool UseWeights, typename VecType, typename ResponsesType,
+           typename WeightVecType>
+  static typename std::enable_if<
+      !HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
+      double>::type
+  SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const ResponsesType& responses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      double& splitInfo,
+      AuxiliarySplitInfo& aux,
+      FitnessFunction& fitnessFunction);
+
+  /**
+   * Check if we can split a node.  If we can split a node in a way that
+   * improves on 'bestGain', then we return the improved gain.  Otherwise we
+   * return the value 'bestGain'.  If a split is made, then splitInfo and aux
+   * may be modified.
+   *
+   * This overload is specialized for any fitness function that implements
+   * BinaryScanInitialize(), BinaryStep() and BinaryGains() functions.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param responses Responses for each point.
+   * @param weights Weights associated with responses.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param minimumGainSplit Minimum gain split.
+   * @param splitInfo Stores split information on a successful split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
+   */
+  template<bool UseWeights, typename VecType, typename ResponsesType,
+          typename WeightVecType>
+  static typename std::enable_if<
+      HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
+      double>::type
+  SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const ResponsesType& responses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      double& splitInfo,
+      AuxiliarySplitInfo& /* aux */,
+      FitnessFunction& fitnessFunction);
 
   /**
    * Returns 2, since the binary split always has two children.
    */
-  template<typename ElemType>
-  static size_t NumChildren(const arma::Col<ElemType>& /* classProbabilities */,
-                            const AuxiliarySplitInfo<ElemType>& /* aux */)
+  static size_t NumChildren(const double& /* splitInfo */,
+                            const AuxiliarySplitInfo& /* aux */)
   {
     return 2;
   }
@@ -76,14 +173,14 @@ class BestBinaryNumericSplit
    * Given a point, calculate which child it should go to (left or right).
    *
    * @param point Point to calculate direction of.
-   * @param classProbabilities Auxiliary information for the split.
-   * @param aux (Unused) auxiliary information for the split.
+   * @param splitInfo Auxiliary information for the split.
+   * @param * (aux) Auxiliary information for the split (Unused).
    */
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const arma::Col<ElemType>& classProbabilities,
-      const AuxiliarySplitInfo<ElemType>& /* aux */);
+      const double& splitInfo,
+      const AuxiliarySplitInfo& /* aux */);
 };
 
 } // namespace tree

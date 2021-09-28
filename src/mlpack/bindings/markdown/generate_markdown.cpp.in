@@ -1,0 +1,114 @@
+/**
+ * @file markdown/generate_markdown.cpp.in
+ * @author Ryan Curtin
+ *
+ * This file is configured by CMake to generate all of the Markdown required by
+ * the project.
+ */
+#include <mlpack/core.hpp>
+#include "binding_info.hpp"
+#include "print_doc_functions.hpp"
+${MARKDOWN_INCLUDE_CODE}
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::markdown;
+using namespace std;
+
+int main()
+{
+  // These come to use from CMake separated by semicolons.
+  string languageList = "${MARKDOWN_ALL_LANGUAGES_LIST}";
+  vector<string> languages;
+  size_t index;
+  while ((index = languageList.find(';')) != string::npos)
+  {
+    languages.push_back(languageList.substr(0, index));
+    languageList = languageList.substr(index + 1);
+  }
+  languages.push_back(languageList);
+
+  cout << "<div id=\"header\" markdown=\"1\">" << endl;
+
+  // We need to create the input form selector for the language.
+  cout << "<form>" << endl;
+  cout << "  <div class=\"language-select-div\">" << endl;
+  cout << "  <select id=\"language-select\" onchange=\"changeLanguage()\">"
+      << endl;
+
+  // Print the first manually, because it is selected.
+  cout << "    <option value=\"" << languages[0] << "\" selected>"
+      << languages[0] << "</option>" << endl;
+  for (size_t i = 1; i < languages.size(); ++i)
+  {
+    cout << "    <option value=\"" << languages[i] << "\">" << languages[i]
+        << "</option>" << endl;
+  }
+
+  cout << "  </select>" << endl;
+  cout << "  </div>" << endl;
+  cout << "</form>" << endl;
+  cout << endl;
+
+  // The links to the data type sections get put here.
+  cout << " - [mlpack overview](#mlpack-overview){: .language-link #always }"
+      << endl;
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    cout << " - [data formats](#" << languages[i] << "_data-formats){: "
+        << ".language-link #" << languages[i] << " }" << endl;
+  }
+
+  ${MARKDOWN_HEADER_CODE}
+
+  cout << endl << "</div>" << endl << endl;
+
+  cout << "<div id=\"docs\" markdown=\"1\">" << endl;
+  cout << endl;
+
+  // Create all the headers for each language.
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    cout << "<div id=\"" << languages[i] << "\" class=\"language-header\" "
+        << "markdown=\"1\">" << endl;
+    cout << "# " << util::GetVersion() << " " << PrintLanguage(languages[i])
+        << " binding documentation" << endl;
+    cout << "</div>" << endl;
+  }
+
+  /**
+   * "mlpack overview" section.  This will go at the top of the page.
+   */
+  cout << "## mlpack overview" << endl;
+  cout << endl;
+  cout << "mlpack is an intuitive, fast, and flexible C++ machine learning "
+      "library with bindings to other languages.  It is meant to be a machine "
+      "learning analog to LAPACK, and aims to implement a wide array of machine"
+      " learning methods and functions as a \"swiss army knife\" for machine "
+      "learning researchers.";
+  cout << endl << endl;
+  cout << "This reference page details mlpack's bindings to other languages. "
+      "Further useful mlpack documentation links are given below.";
+  cout << endl << endl;
+  cout << " - [mlpack homepage](https://www.mlpack.org/)" << endl;
+  cout << " - [mlpack on Github](https://github.com/mlpack/mlpack)" << endl;
+  cout << " - [mlpack main documentation page]"
+      << "(https://www.mlpack.org/docs.html)" << endl;
+  cout << endl;
+
+  /**
+   * Discussion of different data types section.  This goes just below the
+   * overview section at the top of the page.
+   */
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    BindingInfo::Language() = languages[i];
+    cout << PrintTypeDocs() << endl;
+  }
+
+  ${MARKDOWN_CALL_CODE}
+  cout << "</div>" << endl << endl;
+
+  // Make sure script gets included for changeLanguage().
+  cout << "<script src=\"res/change_language.js\"></script>" << endl;
+}

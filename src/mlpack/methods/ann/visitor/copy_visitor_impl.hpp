@@ -1,5 +1,5 @@
 /**
- * @file copy_visitor_impl.hpp
+ * @file methods/ann/visitor/copy_visitor_impl.hpp
  * @author Shangtong Zhang
  *
  * This file provides an implementation for copy between layers
@@ -26,8 +26,14 @@ CopyVisitor<CustomLayers...>::operator()(LayerType* layer) const
   return new LayerType(*layer);
 }
 
+template <typename... CustomLayers>
+inline LayerTypes<CustomLayers...>
+CopyVisitor<CustomLayers...>::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
+}
+
 } // namespace ann
 } // namespace mlpack
 
 #endif
-

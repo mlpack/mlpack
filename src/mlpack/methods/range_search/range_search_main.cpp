@@ -1,5 +1,5 @@
 /**
- * @file range_search_main.cpp
+ * @file methods/range_search/range_search_main.cpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *
@@ -12,7 +12,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME range_search
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
@@ -27,8 +33,19 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::util;
 
-// Information about the program itself.
-PROGRAM_INFO("Range Search",
+// Program Name.
+BINDING_USER_NAME("Range Search");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of range search with single-tree and dual-tree "
+    "algorithms.  Given a set of reference points and a set of query points and"
+    " a range, this can find the set of reference points within the desired "
+    "range for each query point, and any trees built during the computation can"
+    " be saved for reuse with future range searches.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements range search with a Euclidean distance metric. "
     "For a given query point, a given range, and a given set of reference "
     "points, the program will return all of the reference points with distance "
@@ -37,14 +54,17 @@ PROGRAM_INFO("Range Search",
     " points, or only a reference set -- which is then used as both the "
     "reference and query set.  The given range is taken to be inclusive (that "
     "is, points with a distance exactly equal to the minimum and maximum of the"
-    " range are included in the results)."
-    "\n\n"
+    " range are included in the results).");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will calculate the points within the range [2, "
-    "5] of each point in 'input.csv' and store the distances in 'distances.csv'"
-    " and the neighbors in 'neighbors.csv':"
-    "\n\n"
-    "$ range_search --min=2 --max=5 --reference_file=input.csv\n"
-    "  --distances_file=distances.csv --neighbors_file=neighbors.csv"
+    "5] of each point in "+ PRINT_DATASET("input") + " and store the"
+    " distances in" + PRINT_DATASET("distances") + " and the neighbors in "
+    + PRINT_DATASET("neighbors") +
+    "\n\n" +
+    PRINT_CALL("range_search", "min", 2, "max", 5, "distances_file", "input",
+    "distances_file", "distances", "neighbors_file", "neighbors") +
     "\n\n"
     "The output files are organized such that line i corresponds to the points "
     "found for query point i.  Because sometimes 0 points may be found in the "
@@ -56,6 +76,15 @@ PROGRAM_INFO("Range Search",
     "at this time a better way to store this non-square result is not known.  "
     "As a result, any output files will be written as CSVs in this manner, "
     "regardless of the given extension.");
+
+// See also...
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("Range searching on Wikipedia",
+        "https://en.wikipedia.org/wiki/Range_searching");
+BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf");
+BINDING_SEE_ALSO("mlpack::range::RangeSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1range_1_1RangeSearch.html");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -91,64 +120,65 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  RequireOnlyOnePassed({ "reference", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "reference", "input_model" }, true);
 
-  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
-  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
-  ReportIgnoredParam({{ "input_model", true }}, "leaf_size");
-  ReportIgnoredParam({{ "input_model", true }}, "naive");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "tree_type");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "random_basis");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "leaf_size");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "naive");
 
   // The user must give something to do...
-  RequireAtLeastOnePassed({ "min", "max", "output_model" }, false, "no results "
-      "will be saved");
+  RequireAtLeastOnePassed(params, { "min", "max", "output_model" }, false,
+      "no results will be saved");
 
   // If the user specifies a range but not output files, they should be warned.
-  if (CLI::HasParam("min") || CLI::HasParam("max"))
+  if (params.Has("min") || params.Has("max"))
   {
-    RequireAtLeastOnePassed({ "neighbors_file", "distances_file" }, false,
-        "no range search results will be saved");
+    RequireAtLeastOnePassed(params, { "neighbors_file", "distances_file" },
+        false, "no range search results will be saved");
   }
 
-  if (!CLI::HasParam("min") && !CLI::HasParam("max"))
+  if (!params.Has("min") && !params.Has("max"))
   {
-    ReportIgnoredParam("neighbors_file", "no range is specified for searching");
-    ReportIgnoredParam("distances_file", "no range is specified for searching");
+    ReportIgnoredParam(params, "neighbors_file", "no range is specified for "
+        "searching");
+    ReportIgnoredParam(params, "distances_file", "no range is specified for "
+        "searching");
   }
 
-  if (CLI::HasParam("input_model") &&
-      (CLI::HasParam("min") || CLI::HasParam("max")))
+  if (params.Has("input_model") && (params.Has("min") || params.Has("max")))
   {
-    RequireAtLeastOnePassed({ "query" }, true, "query set must be passed if "
-        "searching is to be done");
+    RequireAtLeastOnePassed(params, { "query" }, true, "query set must be "
+        "passed if searching is to be done");
   }
 
   // Sanity check on leaf size.
-  int lsInt = CLI::GetParam<int>("leaf_size");
-  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
+  int lsInt = params.Get<int>("leaf_size");
+  RequireParamValue<int>(params, "leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
   RSModel* rs;
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference"))
+  const bool naive = params.Has("naive");
+  const bool singleMode = params.Has("single_mode");
+  if (params.Has("reference"))
   {
-    rs = new RSModel();
-
     // Get all the parameters.
-    const string treeType = CLI::GetParam<string>("tree_type");
-    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
-        "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
-        "ub", "oct" }, true, "unknown tree type");
-    const bool randomBasis = CLI::HasParam("random_basis");
+    const string treeType = params.Get<string>("tree_type");
+    RequireParamInSet<string>(params, "tree_type", { "kd", "cover", "r",
+        "r-star", "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp",
+        "max-rp", "ub", "oct" }, true, "unknown tree type");
+    const bool randomBasis = params.Has("random_basis");
+
+    rs = new RSModel();
 
     RSModel::TreeTypes tree = RSModel::KD_TREE;
     if (treeType == "kd")
@@ -183,48 +213,46 @@ static void mlpackMain()
     rs->TreeType() = tree;
     rs->RandomBasis() = randomBasis;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    Log::Info << "Using reference data from "
+        << params.GetPrintable<arma::mat>("reference") << "." << endl;
 
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
+    arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
     const size_t leafSize = size_t(lsInt);
 
-    rs->BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
+    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive, singleMode);
   }
   else
   {
     // Load the model from file.
-    rs = CLI::GetParam<RSModel*>("input_model");
+    rs = params.Get<RSModel*>("input_model");
 
     Log::Info << "Using range search model from '"
-        << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
+        << params.GetPrintable<RSModel*>("input_model") << "' ("
         << "trained on " << rs->Dataset().n_rows << "x" << rs->Dataset().n_cols
         << " dataset)." << endl;
 
     // Adjust singleMode and naive if necessary.
-    rs->SingleMode() = CLI::HasParam("single_mode");
-    rs->Naive() = CLI::HasParam("naive");
+    rs->SingleMode() = params.Has("single_mode");
+    rs->Naive() = params.Has("naive");
     rs->LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
-  if (CLI::HasParam("min") || CLI::HasParam("max"))
+  if (params.Has("min") || params.Has("max"))
   {
-    const double min = CLI::GetParam<double>("min");
-    const double max = CLI::HasParam("max") ? CLI::GetParam<double>("max") :
+    const double min = params.Get<double>("min");
+    const double max = params.Has("max") ? params.Get<double>("max") :
         DBL_MAX;
 
     math::Range r(min, max);
 
     arma::mat queryData;
-    if (CLI::HasParam("query"))
+    if (params.Has("query"))
     {
-      queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      Log::Info << "Using query data from "
+          << params.GetPrintable<arma::mat>("query") << "." << endl;
+      queryData = std::move(params.Get<arma::mat>("query"));
     }
 
     // Naive mode overrides single mode.
@@ -236,17 +264,17 @@ static void mlpackMain()
     vector<vector<size_t>> neighbors;
     vector<vector<double>> distances;
 
-    if (CLI::HasParam("query"))
-      rs->Search(std::move(queryData), r, neighbors, distances);
+    if (params.Has("query"))
+      rs->Search(timers, std::move(queryData), r, neighbors, distances);
     else
-      rs->Search(r, neighbors, distances);
+      rs->Search(timers, r, neighbors, distances);
 
     Log::Info << "Search complete." << endl;
 
     // Save output, if desired.  We have to do this by hand.
-    if (CLI::HasParam("distances_file"))
+    if (params.Has("distances_file"))
     {
-      const string distancesFile = CLI::GetParam<string>("distances_file");
+      const string distancesFile = params.Get<string>("distances_file");
       fstream distancesStr(distancesFile.c_str(), fstream::out);
       if (!distancesStr.is_open())
       {
@@ -273,9 +301,9 @@ static void mlpackMain()
       }
     }
 
-    if (CLI::HasParam("neighbors_file"))
+    if (params.Has("neighbors_file"))
     {
-      const string neighborsFile = CLI::GetParam<string>("neighbors_file");
+      const string neighborsFile = params.Get<string>("neighbors_file");
       fstream neighborsStr(neighborsFile.c_str(), fstream::out);
       if (!neighborsStr.is_open())
       {
@@ -304,5 +332,5 @@ static void mlpackMain()
   }
 
   // Save the output model.
-  CLI::GetParam<RSModel*>("output_model") = rs;
+  params.Get<RSModel*>("output_model") = rs;
 }

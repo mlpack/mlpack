@@ -1,5 +1,5 @@
 /**
- * @file gmm_test.cpp
+ * @file tests/gmm_test.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -13,23 +13,24 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 #include <mlpack/methods/gmm/no_constraint.hpp>
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
 #include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::gmm;
 
-BOOST_AUTO_TEST_SUITE(GMMTest);
 /**
- * Test GMM::Probability() for a single observation for a few cases.
+ * Test GMM::Probability() with a single observation at a time for a few cases.
  */
-BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
+
+TEST_CASE("GMMProbabilityTest", "[GMMTest]")
 {
   // Create a GMM.
   GMM gmm(2, 2);
@@ -38,19 +39,19 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
   gmm.Weights() = "0.3 0.7";
 
   // Now test a couple observations.  These comparisons are calculated by hand.
-  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0"), 0.05094887202, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1"), 0.03451996667, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("2 2"), 0.04696302254, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("3 3"), 0.06432759685, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3"), 2.503171278804e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0"), 0.024676682176, 1e-5);
+  REQUIRE(gmm.Probability("0 0") == Approx(0.05094887202).epsilon(1e-7));
+  REQUIRE(gmm.Probability("1 1") == Approx(0.03451996667).epsilon(1e-7));
+  REQUIRE(gmm.Probability("2 2") == Approx(0.04696302254).epsilon(1e-7));
+  REQUIRE(gmm.Probability("3 3") == Approx(0.06432759685).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-1 5.3") == Approx(2.503171278804e-6).epsilon(1e-7));
+  REQUIRE(gmm.Probability("1.4 0") == Approx(0.024676682176).epsilon(1e-7));
 }
 
 /**
  * Test GMM::Probability() for a single observation being from a particular
  * component.
  */
-BOOST_AUTO_TEST_CASE(GMMProbabilityComponentTest)
+TEST_CASE("GMMProbabilityComponentTest", "[GMMTest]")
 {
   // Create a GMM (same as the last test).
   GMM gmm(2, 2);
@@ -59,23 +60,25 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityComponentTest)
   gmm.Weights() = "0.3 0.7";
 
   // Now test a couple observations.  These comparisons are calculated by hand.
-  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0", 0), 0.0477464829276, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0", 1), 0.0032023890978, 1e-5);
+  REQUIRE(gmm.Probability("0 0", 0) == Approx(0.0477464829276).epsilon(1e-7));
+  REQUIRE(gmm.Probability("0 0", 1) == Approx(0.0032023890978).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1", 0), 0.0175649494573, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1", 1), 0.0169550172159, 1e-5);
+  REQUIRE(gmm.Probability("1 1", 0) == Approx(0.0175649494573).epsilon(1e-7));
+  REQUIRE(gmm.Probability("1 1", 1) == Approx(0.0169550172159).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gmm.Probability("2 2", 0), 8.7450733951e-4, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("2 2", 1), 0.0460885151993, 1e-5);
+  REQUIRE(gmm.Probability("2 2", 0) == Approx(8.7450733951e-4).epsilon(1e-7));
+  REQUIRE(gmm.Probability("2 2", 1) == Approx(0.0460885151993).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gmm.Probability("3 3", 0), 5.8923841039e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("3 3", 1), 0.0643217044658, 1e-5);
+  REQUIRE(gmm.Probability("3 3", 0) == Approx(5.8923841039e-6).epsilon(1e-7));
+  REQUIRE(gmm.Probability("3 3", 1) == Approx(0.0643217044658).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3", 0), 2.30212100302e-8, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3", 1), 2.48015006877e-6, 1e-5);
+  REQUIRE(gmm.Probability("-1 5.3", 0) ==
+      Approx(2.30212100302e-8).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-1 5.3", 1) ==
+      Approx(2.48015006877e-6).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0", 0), 0.0179197849738, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0", 1), 0.0067568972024, 1e-5);
+  REQUIRE(gmm.Probability("1.4 0", 0) == Approx(0.0179197849738).epsilon(1e-7));
+  REQUIRE(gmm.Probability("1.4 0", 1) == Approx(0.0067568972024).epsilon(1e-7));
 }
 
 /**
@@ -83,7 +86,7 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityComponentTest)
  * dimensions.  We will vary the dataset size from small to large.  The EM
  * algorithm is used for training the GMM.
  */
-BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
+TEST_CASE("GMMTrainEMOneGaussian", "[GMMTest]")
 {
   for (size_t iterations = 0; iterations < 4; iterations++)
   {
@@ -108,13 +111,14 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
+    arma::mat actualCovar = mlpack::math::ColumnCovariance(data,
+        1 /* biased estimator */);
 
     // Check the model to see that it is correct.
-    CheckMatrices(gmm.Component(0).Mean(), actualMean);
-    CheckMatrices(gmm.Component(0).Covariance(), actualCovar);
+    REQUIRE(arma::norm(gmm.Component(0).Mean() - actualMean) < 1e-5);
+    REQUIRE(arma::norm(gmm.Component(0).Covariance() - actualCovar) < 1e-4);
 
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
+    REQUIRE(gmm.Weights()[0] == Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -123,104 +127,142 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
  * two.  We will hold the dataset size constant at 10k points.  The EM algorithm
  * is used for training the GMM.
  */
-BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
+TEST_CASE("GMMTrainEMMultipleGaussians", "[GMMTest]")
 {
   // Higher dimensionality gives us a greater chance of having separated
   // Gaussians.
   size_t dims = 8;
   size_t gaussians = 3;
 
-  // Generate dataset.
-  arma::mat data;
-  data.zeros(dims, 500);
-
-  std::vector<arma::vec> means(gaussians);
-  std::vector<arma::mat> covars(gaussians);
-  arma::vec weights(gaussians);
-  arma::Col<size_t> counts(gaussians);
-
-  // Choose weights randomly.
-  weights.zeros();
-  while (weights.min() < 0.02)
+  // We'll run three trials, and it needs to pass during at least one trial.
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
   {
-    weights.randu(gaussians);
-    weights /= accu(weights);
+    // Generate dataset.
+    arma::mat data;
+    data.zeros(dims, 500);
+
+    std::vector<arma::vec> means(gaussians);
+    std::vector<arma::mat> covars(gaussians);
+    arma::vec weights(gaussians);
+    arma::Col<size_t> counts(gaussians);
+
+    // Choose weights randomly.  We want each component to have somewhat
+    // significant weight, but we also need to make sure that no weights are too
+    // close.
+    double minDiff = DBL_MAX;
+    do
+    {
+      weights.zeros();
+      weights.randu(gaussians);
+      weights /= accu(weights);
+      weights *= 0.4;
+      weights += (0.6 / double(gaussians));
+      weights /= accu(weights); // Paranoia, just to be sure they sum to 1.
+
+      // Compute minimum element difference.
+      minDiff = DBL_MAX;
+      for (size_t i = 0; i < weights.n_elem; ++i)
+        for (size_t j = (i + 1); j < weights.n_elem; ++j)
+          if (std::abs(weights[i] - weights[j]) < minDiff)
+            minDiff = std::abs(weights[i] - weights[j]);
+    } while (minDiff < 0.02);
+
+    for (size_t i = 0; i < gaussians; ++i)
+      counts[i] = round(weights[i] * (data.n_cols - gaussians));
+    // Ensure one point minimum in each.
+    counts += 1;
+
+    // Account for rounding errors (possibly necessary).
+    counts[gaussians - 1] += (data.n_cols - arma::accu(counts));
+
+    // Build each Gaussian individually.
+    size_t point = 0;
+    for (size_t i = 0; i < gaussians; ++i)
+    {
+      arma::mat gaussian;
+      gaussian.randn(dims, counts[i]);
+
+      // Randomly generate mean and covariance.
+      means[i].randu(dims);
+      means[i] -= 0.5;
+      means[i] *= 50;
+
+      // We need to make sure the covariance is positive definite.  We will take
+      // a random matrix C and then set our covariance to 4 * C * C', which will
+      // be positive semidefinite.
+      covars[i].randu(dims, dims);
+      covars[i] *= 4 * trans(covars[i]);
+
+      data.cols(point, point + counts[i] - 1) = (covars[i] * gaussian + means[i]
+          * arma::ones<arma::rowvec>(counts[i]));
+
+      // Calculate the actual means and covariances because they will probably
+      // be different (this is easier to do before we shuffle the points).
+      means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
+      covars[i] = mlpack::math::ColumnCovariance(arma::mat(data.cols(point,
+          point + counts[i] - 1)), 1 /* biased */);
+
+      point += counts[i];
+    }
+
+    // Calculate actual weights.
+    for (size_t i = 0; i < gaussians; ++i)
+      weights[i] = (double) counts[i] / data.n_cols;
+
+    // Now train the model.
+    GMM gmm(gaussians, dims);
+    gmm.Train(data, 10);
+
+    arma::uvec sortRef = sort_index(weights);
+    arma::uvec sortTry = sort_index(gmm.Weights());
+
+    // If it's a bad match, try training again with a different seed.  We
+    // probably just fell into some bad local minimum or had a bad starting
+    // point.
+    gmm = GMM(gaussians, dims);
+    gmm.Train(data, 10);
+
+    sortTry = sort_index(gmm.Weights());
+
+    if (arma::norm(weights.elem(sortRef) - gmm.Weights().elem(sortTry)) > 0.1)
+      continue;
+
+    // Check the model to see that it is correct.
+    for (size_t i = 0; i < gaussians; ++i)
+    {
+      // Check the mean.
+      REQUIRE(
+          arma::norm(gmm.Component(sortTry[i]).Mean() - means[sortRef[i]]) <
+          0.05);
+      // Check the covariance.
+      REQUIRE(
+          arma::norm(gmm.Component(sortTry[i]).Covariance() -
+                                   covars[sortRef[i]]) < 0.2);
+      // Check the weight.
+      REQUIRE(gmm.Weights()[sortTry[i]] ==
+          Approx(weights[sortRef[i]]).epsilon(0.00005));
+    }
+
+    success = true;
+    break; // No need for multiple iterations.
   }
 
-  for (size_t i = 0; i < gaussians; i++)
-    counts[i] = round(weights[i] * (data.n_cols - gaussians));
-  // Ensure one point minimum in each.
-  counts += 1;
-
-  // Account for rounding errors (possibly necessary).
-  counts[gaussians - 1] += (data.n_cols - arma::accu(counts));
-
-  // Build each Gaussian individually.
-  size_t point = 0;
-  for (size_t i = 0; i < gaussians; i++)
-  {
-    arma::mat gaussian;
-    gaussian.randn(dims, counts[i]);
-
-    // Randomly generate mean and covariance.
-    means[i].randu(dims);
-    means[i] -= 0.5;
-    means[i] *= 50;
-
-    // We need to make sure the covariance is positive definite.  We will take a
-    // random matrix C and then set our covariance to 4 * C * C', which will be
-    // positive semidefinite.
-    covars[i].randu(dims, dims);
-    covars[i] *= 4 * trans(covars[i]);
-
-    data.cols(point, point + counts[i] - 1) = (covars[i] * gaussian + means[i]
-        * arma::ones<arma::rowvec>(counts[i]));
-
-    // Calculate the actual means and covariances because they will probably
-    // be different (this is easier to do before we shuffle the points).
-    means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-    covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
-
-    point += counts[i];
-  }
-
-  // Calculate actual weights.
-  for (size_t i = 0; i < gaussians; i++)
-    weights[i] = (double) counts[i] / data.n_cols;
-
-  // Now train the model.
-  GMM gmm(gaussians, dims);
-  gmm.Train(data, 10);
-
-  arma::uvec sortRef = sort_index(weights);
-  arma::uvec sortTry = sort_index(gmm.Weights());
-
-  // Check the model to see that it is correct.
-  for (size_t i = 0; i < gaussians; i++)
-  {
-    // Check the mean.
-    CheckMatrices(gmm.Component(sortTry[i]).Mean(), means[sortRef[i]], 1e-3);
-    // Check the covariance.
-    CheckMatrices(gmm.Component(sortTry[i]).Covariance(), covars[sortRef[i]],
-                  0.15);
-    // Check the weight.
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[sortTry[i]], weights[sortRef[i]],
-        0.005);
-  }
+  REQUIRE(success == true);
 }
 
 /**
  * Train a single-gaussian mixture, but using the overload of Train() where
  * probabilities of the observation are given.
  */
-BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
+TEST_CASE("GMMTrainEMSingleGaussianWithProbability", "[GMMTest]")
 {
   // Generate observations from a Gaussian distribution.
   distribution::GaussianDistribution d("0.5 1.0", "1.0 0.3; 0.3 1.0");
 
   // 10000 observations, each with random probability.
   arma::mat observations(2, 20000);
-  for (size_t i = 0; i < 20000; i++)
+  for (size_t i = 0; i < 20000; ++i)
     observations.col(i) = d.Random();
   arma::vec probabilities;
   probabilities.randu(20000); // Random probabilities.
@@ -231,23 +273,23 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 
   // Check that it is trained correctly.  5% tolerance because of random error
   // present in observations.
-  BOOST_REQUIRE_CLOSE(g.Component(0).Mean()[0], 0.5, 5.0);
-  BOOST_REQUIRE_CLOSE(g.Component(0).Mean()[1], 1.0, 5.0);
+  REQUIRE(g.Component(0).Mean()[0] == Approx(0.5).epsilon(0.05));
+  REQUIRE(g.Component(0).Mean()[1] == Approx(1.0).epsilon(0.05));
 
   // 6% tolerance on the large numbers, 10% on the smaller numbers.
-  BOOST_REQUIRE_CLOSE(g.Component(0).Covariance()(0, 0), 1.0, 6.0);
-  BOOST_REQUIRE_CLOSE(g.Component(0).Covariance()(0, 1), 0.3, 10.0);
-  BOOST_REQUIRE_CLOSE(g.Component(0).Covariance()(1, 0), 0.3, 10.0);
-  BOOST_REQUIRE_CLOSE(g.Component(0).Covariance()(1, 1), 1.0, 6.0);
+  REQUIRE(g.Component(0).Covariance()(0, 0) == Approx(1.0).epsilon(0.06));
+  REQUIRE(g.Component(0).Covariance()(0, 1) == Approx(0.3).epsilon(0.1));
+  REQUIRE(g.Component(0).Covariance()(1, 0) == Approx(0.3).epsilon(0.1));
+  REQUIRE(g.Component(0).Covariance()(1, 1) == Approx(1.0).epsilon(0.06));
 
-  BOOST_REQUIRE_CLOSE(g.Weights()[0], 1.0, 1e-5);
+  REQUIRE(g.Weights()[0] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Train a multi-Gaussian mixture, using the overload of Train() where
  * probabilities of the observation are given.
  */
-BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
+TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
 {
   // We'll have three Gaussian distributions from this mixture, and one Gaussian
   // not from this mixture (but we'll put some observations from it in).
@@ -269,7 +311,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   arma::mat points(3, 2000);
   arma::vec probabilities(2000);
 
-  for (size_t i = 0; i < 2000; i++)
+  for (size_t i = 0; i < 2000; ++i)
   {
     double randValue = math::Random();
 
@@ -311,40 +353,58 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // be a part of this mixture.
 
   // First Gaussian (d1).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2, 0.1);
-
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
-        - d1.Mean()[i]), 0.4);
-
-  for (size_t row = 0; row < 3; row++)
-    for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Covariance()(row, col)
-          - d1.Covariance()(row, col)), 0.7); // Big tolerance!  Lots of noise.
-
-  // Second Gaussian (d2).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3, 0.1);
-
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
-        - d2.Mean()[i]), 0.4);
-
-  for (size_t row = 0; row < 3; row++)
-    for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Covariance()(row, col)
-          - d2.Covariance()(row, col)), 0.7); // Big tolerance!  Lots of noise.
-
-  // Third Gaussian (d3).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.4, 0.1);
+  REQUIRE(g.Weights()[sortedIndices[0]] - 0.2 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
-        - d3.Mean()[i]), 0.4);
+  {
+    REQUIRE((g.Component(sortedIndices[0]).Mean()[i]
+        - d1.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
+
+  for (size_t row = 0; row < 3; row++)
+  {
+    for (size_t col = 0; col < 3; col++)
+    {
+      // Big tolerance!  Lots of noise.
+      REQUIRE((g.Component(sortedIndices[0]).Covariance()(row, col)
+          - d1.Covariance()(row, col)) == Approx(0.0).margin(0.7));
+    }
+  }
+
+  // Second Gaussian (d2).
+  REQUIRE(g.Weights()[sortedIndices[1]] - 0.3 == Approx(0.0).margin(0.1));
+
+  for (size_t i = 0; i < 3; ++i)
+    REQUIRE((g.Component(sortedIndices[1]).Mean()[i]
+        - d2.Mean()[i]) == Approx(0.0).margin(0.4));
+
+  for (size_t row = 0; row < 3; row++)
+  {
+    for (size_t col = 0; col < 3; col++)
+    {
+      // Big tolerance!  Lots of noise.
+      REQUIRE((g.Component(sortedIndices[1]).Covariance()(row, col)
+          - d2.Covariance()(row, col)) == Approx(0.0).margin(0.7));
+    }
+  }
+
+  // Third Gaussian (d3).
+  REQUIRE(g.Weights()[sortedIndices[2]] - 0.4 == Approx(0.0).margin(0.1));
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    REQUIRE((g.Component(sortedIndices[2]).Mean()[i]
+        - d3.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
 
   for (size_t row = 0; row < 3; ++row)
+  {
     for (size_t col = 0; col < 3; ++col)
-      BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Covariance()(row, col)
-          - d3.Covariance()(row, col)), 0.7);
+    {
+      REQUIRE((g.Component(sortedIndices[2]).Covariance()(row, col)
+          - d3.Covariance()(row, col)) == Approx(0.0).margin(0.7));
+    }
+  }
 }
 
 /**
@@ -352,7 +412,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
  * generating a bunch of random observations and then re-training on them, and
  * hope that our model is the same.
  */
-BOOST_AUTO_TEST_CASE(GMMRandomTest)
+TEST_CASE("GMMRandomTest", "[GMMTest]")
 {
   // Simple GMM distribution.
   GMM gmm(2, 2);
@@ -369,7 +429,7 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
 
   // Now generate a bunch of observations.
   arma::mat observations(2, 4000);
-  for (size_t i = 0; i < 4000; i++)
+  for (size_t i = 0; i < 4000; ++i)
     observations.col(i) = gmm.Random();
 
   // A new one which we'll train.
@@ -382,42 +442,52 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
 
   // Now check that the parameters are the same.  Tolerances are kind of big
   // because we only used 2000 observations.
-  BOOST_REQUIRE_CLOSE(gmm.Weights()[0], gmm2.Weights()[sortedIndices[0]], 7.0);
-  BOOST_REQUIRE_CLOSE(gmm.Weights()[1], gmm2.Weights()[sortedIndices[1]], 7.0);
+  REQUIRE(gmm.Weights()[0] ==
+      Approx(gmm2.Weights()[sortedIndices[0]]).epsilon(0.07));
+  REQUIRE(gmm.Weights()[1] ==
+      Approx(gmm2.Weights()[sortedIndices[1]]).epsilon(0.07));
 
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0],
-      gmm2.Component(sortedIndices[0]).Mean()[0], 7.5);
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1],
-      gmm2.Component(sortedIndices[0]).Mean()[1], 7.5);
+  REQUIRE(gmm.Component(0).Mean()[0] ==
+      Approx(gmm2.Component(sortedIndices[0]).Mean()[0]).epsilon(0.075));
+  REQUIRE(gmm.Component(0).Mean()[1] ==
+      Approx(gmm2.Component(sortedIndices[0]).Mean()[1]).epsilon(0.075));
 
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
-      gmm2.Component(sortedIndices[0]).Covariance()(0, 0), 13.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 1),
-      gmm2.Component(sortedIndices[0]).Covariance()(0, 1), 22.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 0),
-      gmm2.Component(sortedIndices[0]).Covariance()(1, 0), 22.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 1),
-      gmm2.Component(sortedIndices[0]).Covariance()(1, 1), 13.0);
+  REQUIRE(gmm.Component(0).Covariance()(0, 0) ==
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0,
+      0)).epsilon(0.13));
+  REQUIRE(gmm.Component(0).Covariance()(0, 1) ==
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0,
+      1)).epsilon(0.22));
+  REQUIRE(gmm.Component(0).Covariance()(1, 0) ==
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1,
+      0)).epsilon(0.22));
+  REQUIRE(gmm.Component(0).Covariance()(1, 1) ==
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1,
+      1)).epsilon(0.13));
 
-  BOOST_REQUIRE_CLOSE(gmm.Component(1).Mean()[0],
-      gmm2.Component(sortedIndices[1]).Mean()[0], 7.5);
-  BOOST_REQUIRE_CLOSE(gmm.Component(1).Mean()[1],
-      gmm2.Component(sortedIndices[1]).Mean()[1], 7.5);
+  REQUIRE(gmm.Component(1).Mean()[0] ==
+      Approx(gmm2.Component(sortedIndices[1]).Mean()[0]).epsilon(0.075));
+  REQUIRE(gmm.Component(1).Mean()[1] ==
+      Approx(gmm2.Component(sortedIndices[1]).Mean()[1]).epsilon(0.075));
 
-  BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(0, 0),
-      gmm2.Component(sortedIndices[1]).Covariance()(0, 0), 13.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(0, 1),
-      gmm2.Component(sortedIndices[1]).Covariance()(0, 1), 22.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(1, 0),
-      gmm2.Component(sortedIndices[1]).Covariance()(1, 0), 22.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(1, 1),
-      gmm2.Component(sortedIndices[1]).Covariance()(1, 1), 13.0);
+  REQUIRE(gmm.Component(1).Covariance()(0, 0) ==
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0,
+      0)).epsilon(0.13));
+  REQUIRE(gmm.Component(1).Covariance()(0, 1) ==
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0,
+      1)).epsilon(0.22));
+  REQUIRE(gmm.Component(1).Covariance()(1, 0) ==
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1,
+      0)).epsilon(0.22));
+  REQUIRE(gmm.Component(1).Covariance()(1, 1) ==
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1,
+      1)).epsilon(0.13));
 }
 
 /**
  * Test classification of observations by component.
  */
-BOOST_AUTO_TEST_CASE(GMMClassifyTest)
+TEST_CASE("GMMClassifyTest", "[GMMTest]")
 {
   // First create a Gaussian with a few components.
   GMM gmm(3, 2);
@@ -447,22 +517,22 @@ BOOST_AUTO_TEST_CASE(GMMClassifyTest)
   gmm.Classify(observations, classes);
 
   // Test classification of points.  Classifications produced by hand.
-  BOOST_REQUIRE_EQUAL(classes[ 0], 0);
-  BOOST_REQUIRE_EQUAL(classes[ 1], 0);
-  BOOST_REQUIRE_EQUAL(classes[ 2], 1);
-  BOOST_REQUIRE_EQUAL(classes[ 3], 0);
-  BOOST_REQUIRE_EQUAL(classes[ 4], 0);
-  BOOST_REQUIRE_EQUAL(classes[ 5], 0);
-  BOOST_REQUIRE_EQUAL(classes[ 6], 1);
-  BOOST_REQUIRE_EQUAL(classes[ 7], 2);
-  BOOST_REQUIRE_EQUAL(classes[ 8], 1);
-  BOOST_REQUIRE_EQUAL(classes[ 9], 1);
-  BOOST_REQUIRE_EQUAL(classes[10], 0);
-  BOOST_REQUIRE_EQUAL(classes[11], 2);
-  BOOST_REQUIRE_EQUAL(classes[12], 2);
+  REQUIRE(classes[ 0] == 0);
+  REQUIRE(classes[ 1] == 0);
+  REQUIRE(classes[ 2] == 1);
+  REQUIRE(classes[ 3] == 0);
+  REQUIRE(classes[ 4] == 0);
+  REQUIRE(classes[ 5] == 0);
+  REQUIRE(classes[ 6] == 1);
+  REQUIRE(classes[ 7] == 2);
+  REQUIRE(classes[ 8] == 1);
+  REQUIRE(classes[ 9] == 1);
+  REQUIRE(classes[10] == 0);
+  REQUIRE(classes[11] == 2);
+  REQUIRE(classes[12] == 2);
 }
 
-BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
+TEST_CASE("GMMLoadSaveTest", "[GMMTest]")
 {
   // Create a GMM, save it, and load it.
   GMM gmm(10, 4);
@@ -482,45 +552,47 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   // Save the GMM.
   {
     std::ofstream ofs("test-gmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(gmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(CEREAL_NVP(gmm));
   }
 
   // Load the GMM.
   GMM gmm2;
   {
     std::ifstream ifs("test-gmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(gmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("gmm", gmm2));
   }
 
   // Remove clutter.
   // remove("test-gmm-save.xml");
 
-  BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
-  BOOST_REQUIRE_EQUAL(gmm.Dimensionality(), gmm2.Dimensionality());
+  REQUIRE(gmm.Gaussians() == gmm2.Gaussians());
+  REQUIRE(gmm.Dimensionality() == gmm2.Dimensionality());
 
   for (size_t i = 0; i < gmm.Dimensionality(); ++i)
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], gmm2.Weights()[i], 1e-3);
+    REQUIRE(gmm.Weights()[i] == Approx(gmm2.Weights()[i]).epsilon(1e-5));
 
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
-      BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-          gmm2.Component(i).Mean()[j], 1e-3);
+    {
+      REQUIRE(gmm.Component(i).Mean()[j] ==
+          Approx(gmm2.Component(i).Mean()[j]).epsilon(1e-5));
+    }
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
       {
-        BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
-            gmm2.Component(i).Covariance()(j, k), 1e-3);
+        REQUIRE(gmm.Component(i).Covariance()(j, k) ==
+            Approx(gmm2.Component(i).Covariance()(j, k)).epsilon(1e-5));
       }
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(NoConstraintTest)
+TEST_CASE("NoConstraintTest", "[GMMTest]")
 {
   // Generate random matrices and make sure they end up the same.
   for (size_t i = 0; i < 30; ++i)
@@ -534,11 +606,11 @@ BOOST_AUTO_TEST_CASE(NoConstraintTest)
     NoConstraint::ApplyConstraint(newcov);
 
     for (size_t j = 0; j < cov.n_elem; ++j)
-      BOOST_REQUIRE_CLOSE(newcov(j), cov(j), 1e-20);
+      REQUIRE(newcov(j) == Approx(cov(j)).epsilon(1e-22));
   }
 }
 
-BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
+TEST_CASE("PositiveDefiniteConstraintTest", "[GMMTest]")
 {
   // Make sure matrices are made to be positive definite, or more specifically,
   // that they can be Cholesky decomposed.
@@ -551,11 +623,11 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     PositiveDefiniteConstraint::ApplyConstraint(cov);
 
     arma::mat c;
-    BOOST_REQUIRE(arma::chol(c, cov, "lower"));
+    REQUIRE(arma::chol(c, cov, "lower"));
   }
 }
 
-BOOST_AUTO_TEST_CASE(DiagonalConstraintTest)
+TEST_CASE("DiagonalConstraintTest", "[GMMTest]")
 {
   // Make sure matrices are made to be positive definite.
   for (size_t i = 0; i < 30; ++i)
@@ -569,11 +641,11 @@ BOOST_AUTO_TEST_CASE(DiagonalConstraintTest)
     for (size_t j = 0; j < elem; ++j)
       for (size_t k = 0; k < elem; ++k)
         if (j != k)
-          BOOST_REQUIRE_SMALL(cov(j, k), 1e-50);
+          REQUIRE(cov(j, k) == Approx(0.0).margin(1e-50));
   }
 }
 
-BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
+TEST_CASE("EigenvalueRatioConstraintTest", "[GMMTest]")
 {
   // Generate a list of eigenvalue ratios.
   arma::vec ratios("1.0 0.7 0.4 0.2 0.1 0.1 0.05 0.01");
@@ -591,11 +663,12 @@ BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
     arma::vec eigenvalues = arma::eig_sym(cov);
 
     for (size_t i = 0; i < eigenvalues.n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(eigenvalues[i] / eigenvalues[0], ratios[i], 1e-5);
+      REQUIRE(eigenvalues[i] / eigenvalues[0] ==
+          Approx(ratios[i]).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(UseExistingModelTest)
+TEST_CASE("UseExistingModelTest", "[GMMTest]")
 {
   // If we run a GMM and it converges, then if we run it again using the
   // converged results as the starting point, then it should terminate after one
@@ -623,7 +696,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     weights /= accu(weights);
   }
 
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     counts[i] = round(weights[i] * (data.n_cols - gaussians));
   // Ensure one point minimum in each.
   counts += 1;
@@ -633,7 +706,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
 
   // Build each Gaussian individually.
   size_t point = 0;
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     arma::mat gaussian;
     gaussian.randn(dims, counts[i]);
@@ -655,13 +728,14 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     // Calculate the actual means and covariances because they will probably
     // be different (this is easier to do before we shuffle the points).
     means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-    covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
+    covars[i] = mlpack::math::ColumnCovariance(arma::mat(data.cols(point,
+        point + counts[i] - 1)), 1 /* biased */);
 
     point += counts[i];
   }
 
   // Calculate actual weights.
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     weights[i] = (double) counts[i] / data.n_cols;
 
   // Now train the model.
@@ -676,16 +750,18 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-6));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
-      BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-                          oldgmm.Component(i).Mean()[j], 1e-3);
+      REQUIRE(gmm.Component(i).Mean()[j] ==
+          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
-        BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
-                            oldgmm.Component(i).Covariance()(j, k), 1e-3);
+      {
+        REQUIRE(gmm.Component(i).Covariance()(j, k) ==
+            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+      }
     }
   }
 
@@ -698,16 +774,18 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-7));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
-      BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-                          oldgmm.Component(i).Mean()[j], 1e-3);
+      REQUIRE(gmm.Component(i).Mean()[j] ==
+            Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
-        BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
-                            oldgmm.Component(i).Covariance()(j, k), 1e-3);
+      {
+        REQUIRE(gmm.Component(i).Covariance()(j, k) ==
+            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+      }
     }
   }
 
@@ -722,16 +800,18 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-7));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
-      BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-          oldgmm.Component(i).Mean()[j], 1e-3);
+      REQUIRE(gmm.Component(i).Mean()[j] ==
+          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
-        BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
-                            oldgmm.Component(i).Covariance()(j, k), 1e-3);
+      {
+        REQUIRE(gmm.Component(i).Covariance()(j, k) ==
+            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+      }
     }
   }
 
@@ -742,118 +822,420 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-7));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
-      BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-          oldgmm.Component(i).Mean()[j], 1e-3);
+      REQUIRE(gmm.Component(i).Mean()[j] ==
+          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
-        BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
-                            oldgmm.Component(i).Covariance()(j, k), 1e-3);
+      {
+        REQUIRE(gmm.Component(i).Covariance()(j, k) ==
+            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+      }
     }
   }
 }
 
+/********************************************************/
+/** Diagonal Gaussian Mixture Model(DiagonalGMM) Tests **/
+/********************************************************/
+
 /**
- * Make sure we can fit a diagonal GMM reasonably.
+ * Make sure Diagonal::Probability() of a specific Gaussian component works
+ * correctly in single observation.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
+TEST_CASE("DiagonalGMMProbabilityComponentTest", "[GMMTest]")
 {
-  // We'll have three diagonal-covariance Gaussian distributions from this
+  // Create DiagonalGMM.
+  DiagonalGMM gmm(2, 2);
+  gmm.Component(0) = distribution::DiagonalGaussianDistribution("0 0", "1 1");
+  gmm.Component(1) = distribution::DiagonalGaussianDistribution("2 3", "3 2");
+  gmm.Weights() = "0.2 0.8";
+
+  // The values are calculated using mlpack's GMM class.
+  REQUIRE(gmm.Probability("0 0", 0) == Approx(0.0318309886184).epsilon(1e-7));
+  REQUIRE(gmm.Probability("0 0", 1) == Approx(0.00281282202844).epsilon(1e-7));
+
+  REQUIRE(gmm.Probability("1 1", 0) == Approx(0.0117099663049).epsilon(1e-7));
+  REQUIRE(gmm.Probability("1 1", 1) == Approx(0.016186673172).epsilon(1e-7));
+
+  REQUIRE(gmm.Probability("3 3", 0) ==
+      Approx(3.92825606928e-06).epsilon(1e-7));
+  REQUIRE(gmm.Probability("3 3", 1) == Approx(0.0439999395467).epsilon(1e-7));
+
+  REQUIRE(gmm.Probability("2.6 3.2", 0) ==
+      Approx(6.47659933818e-06).epsilon(1e-7));
+  REQUIRE(gmm.Probability("2.6 3.2", 1) ==
+      Approx(0.0484656319247).epsilon(1e-7));
+
+  REQUIRE(gmm.Probability("-4.1 2.1", 0) ==
+      Approx(7.85209733164e-07).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-4.1 2.1", 1) ==
+      Approx(8.60082772711e-05).epsilon(1e-7));
+}
+
+/**
+ * Make sure we can train a model on only one Gaussian (randomly generated)
+ * in two dimensions.  We will vary the dataset size from small to large.
+ * The EM algorithm is used for training the DiagonalGMM.
+ */
+TEST_CASE("DiagonalGMMTrainEMOneGaussian", "[GMMTest]")
+{
+  for (size_t iterations = 0; iterations < 4; iterations++)
+  {
+    // Determine random mean, covariance, and observations.
+    arma::vec mean(2, arma::fill::randu);
+    arma::vec covar(2, arma::fill::randu);
+    arma::mat data(2, 150 * pow(10, (iterations / 3.0)), arma::fill::randn);
+
+    // Now apply mean and covariance.
+    data.row(0) *= covar(0);
+    data.row(1) *= covar(1);
+
+    data.row(0) += mean(0);
+    data.row(1) += mean(1);
+
+    // Now, train the model.
+    DiagonalGMM gmm(1, 2);
+    gmm.Train(data, 10);
+
+    arma::vec actualMean = arma::mean(data, 1);
+    arma::vec actualCovar = arma::diagvec(
+        mlpack::math::ColumnCovariance(data,
+        1 /* biased estimator */));
+
+    // Check the model to see that it is correct.
+    CheckMatrices(gmm.Component(0).Mean(), actualMean);
+    CheckMatrices(gmm.Component(0).Covariance(), actualCovar);
+
+    REQUIRE(gmm.Weights()[0] == Approx(1.0).epsilon(1e-7));
+  }
+}
+
+/**
+ * Make sure we can train a single Gaussian Mixture Model with diagonal
+ * covariance reasonably using Train() where probabilities of the observation
+ * are given.  The EM algorithm is used for training the DiagonalGMM.
+ */
+TEST_CASE("DiagonalGMMTrainEMOneGaussianWithProbability", "[GMMTest]")
+{
+  // Generate a diagonal covariance gaussian distribution.
+  distribution::DiagonalGaussianDistribution d("1.0 0.8", "1.0 2.0");
+
+  // Generate 20000 observations, each with random probabilities.
+  arma::mat observations(2, 20000);
+  for (size_t i = 0; i < 20000; ++i)
+    observations.col(i) = d.Random();
+
+  // Random probabilities.
+  arma::vec probabilities = arma::randu<arma::vec>(20000);
+
+  // Create DiagonalGMM.
+  DiagonalGMM gmm(1, 2);
+  size_t trials = 10;
+
+  // Train this model.
+  gmm.Train(observations, probabilities, trials);
+
+  // Check the model is trained correctly.
+  // 10% tolerance, because of possible noise.
+  REQUIRE(gmm.Component(0).Mean()[0] == Approx(1.0).epsilon(0.08));
+  REQUIRE(gmm.Component(0).Mean()[1] == Approx(0.8).epsilon(0.08));
+
+  // 6% tolerance, because of possible noise.
+  REQUIRE(gmm.Component(0).Covariance()[0] == Approx(1.0).epsilon(0.06));
+  REQUIRE(gmm.Component(0).Covariance()[1] == Approx(2.0).epsilon(0.06));
+
+  REQUIRE(gmm.Weights()[0] == Approx(1.0).epsilon(1e-7));
+}
+
+/**
+ * Make sure we can train multiple Gaussian Mixture Models with diagonal
+ * covariance reasonably.
+ * The EM algorithm is used for training the DiagonalGMM.
+ */
+TEST_CASE("DiagonalGMMTrainEMMultipleGaussians", "[GMMTest]")
+{
+  // We'll have three diagonal covariance Gaussian distributions from this
   // mixture.
-  distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.0;"
-                                                       "0.0 0.8 0.0;"
-                                                       "0.0 0.0 1.0");
-  distribution::GaussianDistribution d2("2.0 -1.0 5.0", "3.0 0.0 0.0;"
-                                                        "0.0 1.2 0.0;"
-                                                        "0.0 0.0 1.3");
-  distribution::GaussianDistribution d3("0.0 5.0 -3.0", "2.0 0.0 0.0;"
-                                                        "0.0 0.3 0.0;"
-                                                        "0.0 0.0 1.0");
+  distribution::DiagonalGaussianDistribution d1("0.0 1.0 0.0",
+      "1.0 0.8 1.0;");
+  distribution::DiagonalGaussianDistribution d2("2.0 -1.0 5.0",
+      "3.0 1.2 1.3;");
+  distribution::DiagonalGaussianDistribution d3("0.0 5.0 -3.0",
+      "2.0 0.3 1.0;");
 
-  // Now we'll generate points and probabilities.  1500 points.  Slower than I
-  // would like...
-  arma::mat points(3, 5000);
+  // Now we'll generate points and probabilities.
+  arma::mat observations(3, 5000);
 
-  for (size_t i = 0; i < 5000; i++)
+  for (size_t i = 0; i < 5000; ++i)
   {
     double randValue = math::Random();
 
     if (randValue <= 0.20) // p(d1) = 0.20
-      points.col(i) = d1.Random();
+      observations.col(i) = d1.Random();
     else if (randValue <= 0.50) // p(d2) = 0.30
-      points.col(i) = d2.Random();
+      observations.col(i) = d2.Random();
     else // p(d3) = 0.50
-      points.col(i) = d3.Random();
+      observations.col(i) = d3.Random();
   }
 
   // Now train the model.  3 dimensions, 3 components.
-  GMM g(3, 3);
-
-  g.Train<EMFit<kmeans::KMeans<>, DiagonalConstraint>>(points, 5);
+  DiagonalGMM g(3, 3);
+  size_t trials = 5;
+  g.Train(observations, trials);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
   arma::uvec sortedIndices = sort_index(g.Weights());
 
   // First Gaussian (d1).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2, 0.1);
+  REQUIRE(g.Weights()[sortedIndices[0]] - 0.2 == Approx(0.0).margin(0.1));
 
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
-        - d1.Mean()[i]), 0.4);
-
-  for (size_t row = 0; row < 3; ++row)
+  for (size_t i = 0; i < 3; ++i)
   {
-    for (size_t col = 0; col < 3; ++col)
-    {
-      const double v = g.Component(sortedIndices[0]).Covariance()(row, col);
-      if (row == col)
-        BOOST_REQUIRE_SMALL(v - d1.Covariance()(row, col), 0.5);
-      else
-        BOOST_REQUIRE_SMALL(v, 1e-5);
-    }
+    REQUIRE((g.Component(sortedIndices[0]).Mean()[i]
+        - d1.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    const double v = g.Component(sortedIndices[0]).Covariance()(i);
+    REQUIRE(v - d1.Covariance()(i) == Approx(0.0).margin(0.5));
   }
 
   // Second Gaussian (d2).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3, 0.1);
+  REQUIRE(g.Weights()[sortedIndices[1]] - 0.3 == Approx(0.0).margin(0.1));
 
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
-        - d2.Mean()[i]), 0.4);
-
-  for (size_t row = 0; row < 3; ++row)
+  for (size_t i = 0; i < 3; ++i)
   {
-    for (size_t col = 0; col < 3; ++col)
-    {
-      const double v = g.Component(sortedIndices[1]).Covariance()(row, col);
-      if (row == col)
-        BOOST_REQUIRE_SMALL(v - d2.Covariance()(row, col), 0.5);
-      else
-        BOOST_REQUIRE_SMALL(v, 1e-5);
-    }
+    REQUIRE((g.Component(sortedIndices[1]).Mean()[i]
+        - d2.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    const double v = g.Component(sortedIndices[1]).Covariance()(i);
+    REQUIRE(v - d2.Covariance()(i) == Approx(0.0).margin(0.5));
   }
 
   // Third Gaussian (d3).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.5, 0.1);
+  REQUIRE(g.Weights()[sortedIndices[2]] - 0.5 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
-        - d3.Mean()[i]), 0.4);
-
-  for (size_t row = 0; row < 3; ++row)
   {
-    for (size_t col = 0; col < 3; ++col)
-    {
-      const double v = g.Component(sortedIndices[2]).Covariance()(row, col);
-      if (row == col)
-        BOOST_REQUIRE_SMALL(v - d3.Covariance()(row, col), 0.5);
-      else
-        BOOST_REQUIRE_SMALL(v, 1e-5);
-    }
+    REQUIRE((g.Component(sortedIndices[2]).Mean()[i]
+        - d3.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    const double v = g.Component(sortedIndices[2]).Covariance()(i);
+    REQUIRE(v - d3.Covariance()(i) == Approx(0.0).margin(0.5));
   }
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Make sure we can train multiple Gaussian Mixture Models with diagonal
+ * covariance reasonably using Train() where probabilities of the observation
+ * are given.  The EM algorithm is used for training the DiagonalGMM.
+ */
+TEST_CASE("DiagonalGMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
+{
+  // We'll have three diagonal covariance Gaussian distributions from this
+  // mixture.
+  distribution::DiagonalGaussianDistribution d1("1.5 0.8 1.0",
+      "1.0 0.8 1.0;");
+  distribution::DiagonalGaussianDistribution d2("8.2 6.3 7.4",
+      "1.0 1.2 1.3;");
+  distribution::DiagonalGaussianDistribution d3("-4.5 -5.0 -3.0",
+      "2.0 2.3 1.0;");
+
+  // Now we'll generate observations and probabilities.
+  arma::mat observations(3, 10000);
+
+  for (size_t i = 0; i < 10000; ++i)
+  {
+    double randValue = math::Random();
+
+    if (randValue <= 0.20) // p(d1) = 0.20
+      observations.col(i) = d1.Random();
+    else if (randValue <= 0.50) // p(d2) = 0.30
+      observations.col(i) = d2.Random();
+    else // p(d3) = 0.50
+      observations.col(i) = d3.Random();
+  }
+
+  // Random probabilities.
+  arma::vec probabilities = arma::randu<arma::vec>(10000);
+
+  // Now train the model.  3 gaussians, 3 dimensions.
+  DiagonalGMM g(3, 3);
+  size_t trials = 5;
+  g.Train(observations, probabilities, trials);
+
+  // Now check the results.  We need to order by weights so that when we do the
+  // checking, things will be correct.
+  arma::uvec sortedIndices = sort_index(g.Weights());
+
+  // First Gaussian (d1).
+  REQUIRE(g.Weights()[sortedIndices[0]] == Approx(0.2).epsilon(0.1));
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    REQUIRE(g.Component(sortedIndices[0]).Mean()[i] ==
+        Approx(d1.Mean()[i]).epsilon(0.13));
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    const double v = g.Component(sortedIndices[0]).Covariance()(i);
+    REQUIRE(v == Approx(d1.Covariance()(i)).epsilon(0.17));
+  }
+
+  // Second Gaussian (d2).
+  REQUIRE(g.Weights()[sortedIndices[1]] == Approx(0.3).epsilon(0.1));
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    REQUIRE(g.Component(sortedIndices[1]).Mean()[i] ==
+        Approx(d2.Mean()[i]).epsilon(0.13));
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    const double v = g.Component(sortedIndices[1]).Covariance()(i);
+    REQUIRE(v == Approx(d2.Covariance()(i)).epsilon(0.17));
+  }
+
+  // Third Gaussian (d3).
+  REQUIRE(g.Weights()[sortedIndices[2]] == Approx(0.5).epsilon(0.1));
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    REQUIRE(g.Component(sortedIndices[2]).Mean()[i] ==
+        Approx(d3.Mean()[i]).epsilon(0.13));
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    const double v = g.Component(sortedIndices[2]).Covariance()(i);
+    REQUIRE(v == Approx(d3.Covariance()(i)).epsilon(0.17));
+  }
+}
+
+/**
+ * Make sure generating observations randomly works.  We'll do this by
+ * generating a bunch of random observations and then re-training on them, and
+ * hope that our model is the same.
+ */
+TEST_CASE("DiagonalGMMRandomTest", "[GMMTest]")
+{
+  // Simple GMM distribution.
+  DiagonalGMM gmm(2, 2);
+  gmm.Weights() = arma::vec("0.40 0.60");
+
+  gmm.Component(0) = distribution::DiagonalGaussianDistribution("1.05 2.60",
+      "0.95 1.01");
+
+  gmm.Component(1) = distribution::DiagonalGaussianDistribution("4.30 1.00",
+      "1.05 0.97");
+
+  // Now generate a bunch of observations.
+  arma::mat observations(2, 4000);
+  for (size_t i = 0; i < 4000; ++i)
+    observations.col(i) = gmm.Random();
+
+  // A new one which we'll train.
+  DiagonalGMM gmm2(2, 2);
+  gmm2.Train(observations, 10);
+
+  // Now check the results.  We need to order by weights so that when we do the
+  // checking, things will be correct.
+  arma::uvec sortedIndices = sort_index(gmm2.Weights());
+
+  // Check that the parameters are the same. Tolerances vary,
+  // because of possible noise.
+  REQUIRE(gmm.Weights()[0] ==
+      Approx(gmm2.Weights()[sortedIndices[0]]).epsilon(0.09));
+  REQUIRE(gmm.Weights()[1] ==
+      Approx(gmm2.Weights()[sortedIndices[1]]).epsilon(0.09));
+
+  // Check the means are the same.
+  REQUIRE(gmm.Component(0).Mean()[0] ==
+      Approx(gmm2.Component(sortedIndices[0]).Mean()[0]).epsilon(0.13));
+  REQUIRE(gmm.Component(0).Mean()[1] ==
+      Approx(gmm2.Component(sortedIndices[0]).Mean()[1]).epsilon(0.13));
+
+  REQUIRE(gmm.Component(1).Mean()[0] ==
+      Approx(gmm2.Component(sortedIndices[1]).Mean()[0]).epsilon(0.13));
+  REQUIRE(gmm.Component(1).Mean()[1] ==
+      Approx(gmm2.Component(sortedIndices[1]).Mean()[1]).epsilon(0.13));
+
+
+  // Check the covariances are the same.
+  REQUIRE(gmm.Component(0).Covariance()(0) ==
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0)).epsilon(0.22));
+  REQUIRE(gmm.Component(0).Covariance()(1) ==
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1)).epsilon(0.22));
+
+  REQUIRE(gmm.Component(1).Covariance()(0) ==
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0)).epsilon(0.22));
+  REQUIRE(gmm.Component(1).Covariance()(1) ==
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1)).epsilon(0.22));
+}
+
+//! Make sure load and save DiagonalGMM correctly.
+TEST_CASE("DiagonalGMMLoadSaveTest", "[GMMTest]")
+{
+  // Create a DiagonalGMM, save and load it.
+  DiagonalGMM gmm(10, 4);
+  gmm.Weights().randu();
+
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    gmm.Component(i).Mean().randu();
+    arma::vec covariance = arma::randu<arma::vec>(
+        gmm.Component(i).Covariance().n_elem);
+
+    gmm.Component(i).Covariance(std::move(covariance));
+  }
+
+  // Save the gmm.
+  {
+    std::ofstream ofs("test-diagonal-gmm-save.xml");
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("gmm", gmm));
+  }
+
+  // Load the gmm into gmm2.
+  DiagonalGMM gmm2;
+  {
+    std::ifstream ifs("test-diagonal-gmm-save.xml");
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("gmm", gmm2));
+  }
+
+  // Remove clutter.
+  remove("test-diagonal-gmm-save.xml");
+
+  // Check the parameters are the same.
+  REQUIRE(gmm.Gaussians() == gmm2.Gaussians());
+  REQUIRE(gmm.Dimensionality() == gmm2.Dimensionality());
+
+  for (size_t i = 0; i < gmm.Dimensionality(); ++i)
+    REQUIRE(gmm.Weights()[i] == Approx(gmm2.Weights()[i]).epsilon(1e-7));
+
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
+      REQUIRE(gmm.Component(i).Mean()[j] ==
+          Approx(gmm2.Component(i).Mean()[j]).epsilon(1e-5));
+      REQUIRE(gmm.Component(i).Covariance()(j) ==
+          Approx(gmm2.Component(i).Covariance()(j)).epsilon(1e-5));
+    }
+  }
+}

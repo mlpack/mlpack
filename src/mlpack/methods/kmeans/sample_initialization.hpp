@@ -1,5 +1,5 @@
 /**
- * @file sample_initialization.hpp
+ * @file methods/kmeans/sample_initialization.hpp
  * @author Ryan Curtin
  *
  * In order to construct initial centroids, randomly sample points from the

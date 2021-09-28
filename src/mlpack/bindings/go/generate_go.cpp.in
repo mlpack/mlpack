@@ -1,0 +1,49 @@
+/*
+ * @file bindings/go/generate_go_${PROGRAM_NAME}.cpp
+ * @author Yasmine Dumouchel
+ *
+ * This is an automatically-generated file that is used to generate the .go
+ * files that are used for the Go bindings.  This program will print the
+ * .go file on stdout when run and doesn't need any input parameters.
+ *
+ * The CMake variable ${PROGRAM_NAME} must be set for
+ * this to configure correctly.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#define BINDING_TYPE BINDING_TYPE_GO
+// Disable debug output.
+#ifdef DEBUG
+ #define HAD_DEBUG
+ #undef DEBUG
+#endif
+#include <mlpack/core/util/log.hpp>
+#ifdef HAD_DEBUG
+ #undef HAD_DEBUG
+ #define DEBUG
+#endif
+
+#include <mlpack/core.hpp>
+
+// This will include the ParamData options that are a part of the program.
+#include <${PROGRAM_MAIN_FILE}>
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include <mlpack/bindings/go/print_go.hpp>
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::go;
+using namespace std;
+using namespace mlpack::util;
+
+int main(int /* argc */, char** /* argv */)
+{
+  // All the parameters are registered.
+  util::Params p = IO::Parameters(STRINGIFY(BINDING_NAME));
+
+  PrintGo(p, p.Doc(), "${PROGRAM_NAME}", STRINGIFY(BINDING_NAME));
+}

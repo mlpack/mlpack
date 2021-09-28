@@ -1,5 +1,5 @@
 /**
- * @file no_constraint.hpp
+ * @file methods/gmm/no_constraint.hpp
  * @author Ryan Curtin
  *
  * No constraint on the covariance matrix.
@@ -30,7 +30,7 @@ class NoConstraint
 
   //! Serialize the object (nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace gmm

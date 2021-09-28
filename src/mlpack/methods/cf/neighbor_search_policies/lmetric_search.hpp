@@ -1,5 +1,5 @@
 /**
- * @file lmetric_search.hpp
+ * @file methods/cf/neighbor_search_policies/lmetric_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with L_p distance.
@@ -22,6 +22,20 @@ namespace cf {
 /**
  * Nearest neighbor search with L_p distance.
  *
+ * An example of how to use LMetricSearch in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<LMetricSearch<2>>(10, recommendations);
+ * @endcode
+ *
  * @tparam TPower Power of metric.
  */
 template<int TPower>
@@ -33,7 +47,7 @@ class LMetricSearch
       metric::LMetric<TPower, true>>;
 
   /**
-   * @param Set of reference points.
+   * @param referenceSet Set of reference points.
    */
   LMetricSearch(const arma::mat& referenceSet) : neighborSearch(referenceSet)
   { }
@@ -45,7 +59,7 @@ class LMetricSearch
    * @param query A set of query points.
    * @param k Number of neighbors to search.
    * @param neighbors Nearest neighbors.
-   * @param similarites Similarities between query point and its neighbors.
+   * @param similarities Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
               arma::Mat<size_t>& neighbors, arma::mat& similarities)

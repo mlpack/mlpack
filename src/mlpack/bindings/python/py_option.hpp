@@ -1,5 +1,5 @@
 /**
- * @file py_option.hpp
+ * @file bindings/python/py_option.hpp
  * @author Ryan Curtin
  *
  * The Python option type.
@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
+#include "default_param.hpp"
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
 #include "print_class_defn.hpp"
@@ -26,9 +27,6 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-// Defined in mlpack_main.hpp.
-extern std::string programName;
-
 /**
  * The Python option class.
  */
@@ -38,8 +36,7 @@ class PyOption
  public:
   /**
    * Construct a PyOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility 
-   * reasons.
+   * with IO.
    */
   PyOption(const T defaultValue,
            const std::string& identifier,
@@ -49,9 +46,9 @@ class PyOption
            const bool required = false,
            const bool input = true,
            const bool noTranspose = false,
-           const std::string& /*testName*/ = "")
+           const std::string& bindingName = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to IO.
     util::ParamData data;
 
     data.desc = description;
@@ -63,46 +60,31 @@ class PyOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Only "verbose" and "copy_all_inputs" will be persistent.
-    if (identifier == "verbose" || identifier == "copy_all_inputs")
-      data.persistent = true;
-    else
-      data.persistent = false;
     data.cppType = cppName;
 
     // Every parameter we'll get from Python will have the correct type.
     data.value = boost::any(defaultValue);
 
-    // Restore the parameters for this program.
-    if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::RestoreSettings(programName, false);
-
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
-        &GetPrintableParam<T>;
+    IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
+    IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);
 
     // These are used by the pyx generator.
-    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
-        &PrintClassDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefn"] = &PrintDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
-        &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
-        &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
+    IO::AddFunction(data.tname, "PrintClassDefn", &PrintClassDefn<T>);
+    IO::AddFunction(data.tname, "PrintDefn", &PrintDefn<T>);
+    IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
+    IO::AddFunction(data.tname, "PrintOutputProcessing",
+        &PrintOutputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintInputProcessing",
+        &PrintInputProcessing<T>);
+    IO::AddFunction(data.tname, "ImportDecl", &ImportDecl<T>);
 
-    // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses CLI, so we have to keep the options
-    // separate.  programName is a global variable from mlpack_main.hpp.
-    CLI::Add(std::move(data));
-    if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::StoreSettings(programName);
-    CLI::ClearSettings();
+    // Add the ParamData object to the IO class for the correct binding name.
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

@@ -1,5 +1,5 @@
 /**
- * @file gradient_zero_visitor_impl.hpp
+ * @file methods/ann/visitor/gradient_zero_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Gradient() function layer abstraction.
@@ -28,6 +28,11 @@ template<typename LayerType>
 inline void GradientZeroVisitor::operator()(LayerType* layer) const
 {
   LayerGradients(layer, layer->OutputParameter());
+}
+
+inline void GradientZeroVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>

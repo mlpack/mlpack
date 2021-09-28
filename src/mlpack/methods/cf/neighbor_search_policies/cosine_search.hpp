@@ -1,5 +1,5 @@
 /**
- * @file cosine_search.hpp
+ * @file methods/cf/neighbor_search_policies/cosine_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with cosine distance.
@@ -26,6 +26,20 @@ namespace cf {
  * normalize all vectors to unit length, and then use neighbor::KNN (i.e.
  * NeighborSearch with Euclidean distance, KDTree). Cosine similarities are
  * calculated from Euclidean distance.
+ *
+ * An example of how to use CosineSearch in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<CosineSearch>(10, recommendations);
+ * @endcode
  */
 class CosineSearch
 {
@@ -34,7 +48,7 @@ class CosineSearch
    * Constructor with reference set.
    * All vectors in reference set are normalized to unit length.
    *
-   * @param Set of reference points.
+   * @param referenceSet Set of reference points.
    */
   CosineSearch(const arma::mat& referenceSet)
   {
@@ -51,7 +65,7 @@ class CosineSearch
    * @param query A set of query points.
    * @param k Number of neighbors to search.
    * @param neighbors Nearest neighbors.
-   * @param similarites Similarities between query point and its neighbors.
+   * @param similarities Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
               arma::Mat<size_t>& neighbors, arma::mat& similarities)

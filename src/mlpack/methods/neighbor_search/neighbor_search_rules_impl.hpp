@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_rules_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_rules_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of NeighborSearchRules.
@@ -55,7 +55,7 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
   CandidateList pqueue(CandidateCmp(), std::move(vect));
 
   candidates.reserve(querySet.n_cols);
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; ++i)
     candidates.push_back(pqueue);
 }
 
@@ -67,10 +67,10 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
   neighbors.set_size(k, querySet.n_cols);
   distances.set_size(k, querySet.n_cols);
 
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; ++i)
   {
     CandidateList& pqueue = candidates[i];
-    for (size_t j = 1; j <= k; j++)
+    for (size_t j = 1; j <= k; ++j)
     {
       neighbors(k - j, i) = pqueue.top().second;
       distances(k - j, i) = pqueue.top().first;
@@ -397,9 +397,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   // take the better of the two.
 
   double worstDistance = SortPolicy::BestDistance();
-  double bestDistance = SortPolicy::WorstDistance();
   double bestPointDistance = SortPolicy::WorstDistance();
-  double auxDistance = SortPolicy::WorstDistance();
 
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
@@ -411,7 +409,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
       bestPointDistance = distance;
   }
 
-  auxDistance = bestPointDistance;
+  double auxDistance = bestPointDistance;
 
   // Loop over children of the node, and use their cached information to
   // assemble bounds.
@@ -428,7 +426,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 
   // Add triangle inequality adjustment to best distance.  It is possible this
   // could be tighter for some certain types of trees.
-  bestDistance = SortPolicy::CombineWorst(auxDistance,
+  double bestDistance = SortPolicy::CombineWorst(auxDistance,
       2 * queryNode.FurthestDescendantDistance());
 
   // Add triangle inequality adjustment to best distance of points in node.

@@ -1,5 +1,5 @@
 /**
- * @file reparametrization_impl.hpp
+ * @file methods/ann/layer/reparametrization_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Reparametrization layer class which samples from a
@@ -23,7 +23,8 @@ template<typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
     latentSize(0),
     stochastic(true),
-    includeKl(true)
+    includeKl(true),
+    beta(1)
 {
   // Nothing to do here.
 }
@@ -32,18 +33,77 @@ template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     const size_t latentSize,
     const bool stochastic,
-    const bool includeKl) :
+    const bool includeKl,
+    const double beta) :
     latentSize(latentSize),
     stochastic(stochastic),
-    includeKl(includeKl)
+    includeKl(includeKl),
+    beta(beta)
+{
+  if (includeKl == false && beta != 1)
+  {
+    Log::Info << "The beta parameter will be ignored as KL divergence is not "
+        << "included." << std::endl;
+  }
+}
+
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    const Reparametrization& layer) :
+    latentSize(layer.latentSize),
+    stochastic(layer.stochastic),
+    includeKl(layer.includeKl),
+    beta(layer.beta)
 {
   // Nothing to do here.
 }
 
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    Reparametrization&& layer) :
+    latentSize(std::move(layer.latentSize)),
+    stochastic(std::move(layer.stochastic)),
+    includeKl(std::move(layer.includeKl)),
+    beta(std::move(layer.beta))
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>&
+Reparametrization<InputDataType, OutputDataType>::
+operator=(const Reparametrization& layer)
+{
+  if (this != &layer)
+  {
+    latentSize = layer.latentSize;
+    stochastic = layer.stochastic;
+    includeKl = layer.includeKl;
+    beta = layer.beta;
+  }
+  return *this;
+}
+
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>&
+Reparametrization<InputDataType, OutputDataType>::
+operator=(Reparametrization&& layer)
+{
+  if (this != &layer)
+  {
+    latentSize = std::move(layer.latentSize);
+    stochastic = std::move(layer.stochastic);
+    includeKl = std::move(layer.includeKl);
+    beta = std::move(layer.beta);
+  }
+  return *this;
+}
+
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (input.n_rows != 2 * latentSize)
   {
@@ -67,14 +127,14 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   SoftplusFunction::Deriv(preStdDev, g);
 
   if (includeKl)
   {
     g = join_cols(gy % std::move(gaussianSample) % g + (-1 / stdDev + stdDev)
-        % g, gy + mean);
+        % g * beta, gy + mean * beta / mean.n_cols);
   }
   else
     g = join_cols(gy % std::move(gaussianSample) % g, gy);
@@ -83,11 +143,11 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(latentSize);
-  ar & BOOST_SERIALIZATION_NVP(stochastic);
-  ar & BOOST_SERIALIZATION_NVP(includeKl);
+  ar(CEREAL_NVP(latentSize));
+  ar(CEREAL_NVP(stochastic));
+  ar(CEREAL_NVP(includeKl));
 }
 
 } // namespace ann

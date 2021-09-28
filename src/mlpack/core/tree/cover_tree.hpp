@@ -1,5 +1,5 @@
 /**
- * @file cover_tree.hpp
+ * @file core/tree/cover_tree.hpp
  * @author Ryan Curtin
  *
  * Includes all the necessary files to use the CoverTree class.

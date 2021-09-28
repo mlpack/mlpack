@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_error_impl.hpp
+ * @file methods/ann/loss_functions/mean_squared_error_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the mean squared error performance function.
@@ -25,28 +25,30 @@ MeanSquaredError<InputDataType, OutputDataType>::MeanSquaredError()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double MeanSquaredError<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+MeanSquaredError<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  return arma::mean(arma::mean(arma::square(input - target)));
+  return arma::accu(arma::square(prediction - target)) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void MeanSquaredError<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
-  output = (input - target);
+  loss = 2 * (prediction - target) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredError<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_test.cpp
+ * @file tests/softmax_regression_test.cpp
  * @author Siddharth Agrawal
  *
  * Test the SoftmaxRegression class.
@@ -12,17 +12,13 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::distribution;
-using namespace mlpack::optimization;
 
-BOOST_AUTO_TEST_SUITE(SoftmaxRegressionTest);
-
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
+TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
 {
   const size_t points = 1000;
   const size_t trials = 50;
@@ -35,14 +31,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
   SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -51,7 +47,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
     double logLikelihood = 0;
 
     // Compute error for each training example.
-    for (size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; ++j)
     {
       arma::mat hypothesis, probabilities;
 
@@ -63,11 +59,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
     logLikelihood /= points;
 
     // Compare with the value returned by the function.
-    BOOST_REQUIRE_CLOSE(srf.Evaluate(parameters), -logLikelihood, 1e-5);
+    REQUIRE(srf.Evaluate(parameters) ==
+        Approx(-logLikelihood).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
+TEST_CASE("SoftmaxRegressionFunctionRegularizationEvaluate",
+          "[SoftmaxRegressionTest]")
 {
   const size_t points = 1000;
   const size_t trials = 50;
@@ -80,7 +78,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
@@ -89,7 +87,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
   SoftmaxRegressionFunction srfBigReg(data, labels, numClasses, 20);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -102,14 +100,15 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
     const double smallRegTerm = 0.5 * wL2SquaredNorm;
     const double bigRegTerm = 10 * wL2SquaredNorm;
 
-    BOOST_REQUIRE_CLOSE(srfNoReg.Evaluate(parameters) + smallRegTerm,
-        srfSmallReg.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(srfNoReg.Evaluate(parameters) + bigRegTerm,
-        srfBigReg.Evaluate(parameters), 1e-5);
+    REQUIRE(srfNoReg.Evaluate(parameters) + smallRegTerm ==
+        Approx(srfSmallReg.Evaluate(parameters)).epsilon(1e-7));
+    REQUIRE(srfNoReg.Evaluate(parameters) + bigRegTerm ==
+        Approx(srfBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
+TEST_CASE("SoftmaxRegressionFunctionGradient",
+          "[SoftmaxRegressionTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 10;
@@ -121,7 +120,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
@@ -144,9 +143,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   double costPlus2, costMinus2, numGradient2;
 
   // For each parameter.
-  for (size_t i = 0; i < numClasses; i++)
+  for (size_t i = 0; i < numClasses; ++i)
   {
-    for (size_t j = 0; j < inputSize; j++)
+    for (size_t j = 0; j < inputSize; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;
@@ -166,13 +165,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 1e-2);
-      BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 1e-2);
+    REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(1e-4));
+    REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(1e-4));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
+TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 3;
@@ -186,12 +185,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -202,15 +201,15 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+  REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) =  0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -218,10 +217,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
 
   // Compare test accuracy to 100.
   const double testAcc = sr.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
+TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]")
 {
   // Generate a two-Gaussian dataset,
   // which can't be separated without adding the intercept term.
@@ -246,7 +245,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
+  REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create a test set.
   for (size_t i = 0; i < 500; ++i)
@@ -262,10 +261,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
 
   // Ensure that the error is close to zero.
   const double testAcc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
+TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
   const size_t inputSize = 5;
@@ -283,27 +282,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -314,30 +313,30 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
+  REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -345,10 +344,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
 
   // Compare test accuracy to 100.
   const double testAcc = sr.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
+TEST_CASE("SoftmaxRegressionTrainTest", "[SoftmaxRegressionTest]")
 {
   // Test the stability of the SoftmaxRegression
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
@@ -361,23 +360,24 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   SoftmaxRegression sr(dataset.n_rows, 2);
   SoftmaxRegression sr2(dataset.n_rows, 2);
   sr.Parameters() = sr2.Parameters();
-  sr.Train(dataset, labels, 2);
-  L_BFGS lbfgs;
+  ens::L_BFGS lbfgs;
+  sr.Train(dataset, labels, 2, std::move(lbfgs));
   sr2.Train(dataset, labels, 2, std::move(lbfgs));
 
   // Ensure that the parameters are the same.
-  BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
-  BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
+  REQUIRE(sr.Parameters().n_rows == sr2.Parameters().n_rows);
+  REQUIRE(sr.Parameters().n_cols == sr2.Parameters().n_cols);
   for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
   {
     if (std::abs(sr.Parameters()[i]) < 1e-4)
-      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-4);
+      REQUIRE(sr2.Parameters()[i] == Approx(0.0).margin(1e-4));
     else
-      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-4);
+        REQUIRE(sr.Parameters()[i] ==
+            Approx(sr2.Parameters()[i]).epsilon(1e-6));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
+TEST_CASE("SoftmaxRegressionOptimizerTrainTest", "[SoftmaxRegressionTest]")
 {
   // The same as the previous test, just passing in an instantiated optimizer.
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
@@ -387,10 +387,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-  L_BFGS lbfgs;
+  ens::L_BFGS lbfgs;
   SoftmaxRegression sr(dataset.n_rows, 2, true);
 
-  L_BFGS lbfgs2;
+  ens::L_BFGS lbfgs2;
   SoftmaxRegression sr2(dataset.n_rows, 2, true);
 
   sr.Lambda() = sr2.Lambda() = 0.01;
@@ -400,18 +400,20 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   sr2.Train(dataset, labels, 2, lbfgs2);
 
   // Ensure that the parameters are the same.
-  BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
-  BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
+  REQUIRE(sr.Parameters().n_rows == sr2.Parameters().n_rows);
+  REQUIRE(sr.Parameters().n_cols == sr2.Parameters().n_cols);
   for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
   {
     if (std::abs(sr.Parameters()[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-5);
+      REQUIRE(sr2.Parameters()[i] == Approx(0.0).margin(1e-5));
     else
-      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
+        REQUIRE(sr.Parameters()[i] ==
+            Approx(sr2.Parameters()[i]).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
+TEST_CASE("SoftmaxRegressionClassifySinglePointTest",
+          "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
   const size_t inputSize = 5;
@@ -429,27 +431,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -459,27 +461,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -489,11 +491,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionClassifySinglePointTest)
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    BOOST_REQUIRE_EQUAL(sr.Classify(data.col(i)), labels(i));
+    REQUIRE(sr.Classify(data.col(i)) == labels(i));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
+TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
+          "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
   const size_t inputSize = 5;
@@ -511,27 +514,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -541,27 +544,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -570,16 +573,18 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesTest)
   arma::mat probabilities;
   sr.Classify(data, probabilities);
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(probabilities.n_rows, sr.NumClasses());
+  REQUIRE(probabilities.n_cols == data.n_cols);
+  REQUIRE(probabilities.n_rows == sr.NumClasses());
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
+    REQUIRE(arma::sum(probabilities.col(i)) ==
+        Approx(1.0).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
+TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
+          "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
   const size_t inputSize = 5;
@@ -597,27 +602,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -627,27 +632,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -659,14 +664,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionComputeProbabilitiesAndLabelsTest)
   sr.Classify(data, labels);
   sr.Classify(data, testLabels, probabilities);
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(probabilities.n_rows, sr.NumClasses());
+  REQUIRE(probabilities.n_cols == data.n_cols);
+  REQUIRE(probabilities.n_rows == sr.NumClasses());
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(arma::sum(probabilities.col(i)), 1.0, 1e-5);
-    BOOST_REQUIRE_EQUAL(testLabels(i), labels(i));
+    REQUIRE(arma::sum(probabilities.col(i)) ==
+        Approx(1.0).epsilon(1e-7));
+    REQUIRE(testLabels(i) == labels(i));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

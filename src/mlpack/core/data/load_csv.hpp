@@ -1,5 +1,5 @@
 /**
- * @file load_csv.hpp
+ * @file core/data/load_csv.hpp
  * @author ThamNgapWei
  *
  * This is a csv parsers which use to parse the csv file format
@@ -96,7 +96,20 @@ class LoadCSV
     {
       ++rows;
     }
-    info = DatasetMapper<MapPolicy>(rows);
+
+    // Reset the DatasetInfo object, if needed.
+    if (info.Dimensionality() == 0)
+    {
+      info.SetDimensionality(rows);
+    }
+    else if (info.Dimensionality() != rows)
+    {
+      std::ostringstream oss;
+      oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows;
+      throw std::invalid_argument(oss.str());
+    }
 
     // Now, jump back to the beginning of the file.
     inFile.clear();
@@ -179,8 +192,19 @@ class LoadCSV
         qi::parse(line.begin(), line.end(),
             stringRule[findRowSize] % delimiterRule);
 
-        // Now that we know the dimensionality, initialize the DatasetMapper.
-        info = DatasetMapper<MapPolicy>(rows);
+        // Reset the DatasetInfo object, if needed.
+        if (info.Dimensionality() == 0)
+        {
+          info.SetDimensionality(rows);
+        }
+        else if (info.Dimensionality() != rows)
+        {
+          std::ostringstream oss;
+          oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
+              << info.Dimensionality() << ", but data has dimensionality "
+              << rows;
+          throw std::invalid_argument(oss.str());
+        }
       }
 
       // If we need to do a first pass for the DatasetMapper, do it.

@@ -1,5 +1,5 @@
 /**
- * @file kathirvalavakumar_subavathi_init.hpp
+ * @file methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the initialization method by T.
@@ -91,12 +91,28 @@ class KathirvalavakumarSubavathiInitialization
   }
 
   /**
+   * Initialize the elements of the specified weight matrix with the
+   * Kathirvalavakumar-Subavathi method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    arma::Row<eT> b = s * arma::sqrt(3 / (W.n_rows * dataSum));
+    const double theta = b.min();
+    RandomInitialization randomInit(-theta, theta);
+    randomInit.Initialize(W);
+  }
+
+  /**
    * Initialize the elements of the specified weight 3rd order tensor with the
    * Kathirvalavakumar-Subavathi method.
    *
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
+   * @param slices Number of slices
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W,
@@ -104,10 +120,27 @@ class KathirvalavakumarSubavathiInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::Cube<eT>(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with the
+   * Kathirvalavakumar-Subavathi method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty cube." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

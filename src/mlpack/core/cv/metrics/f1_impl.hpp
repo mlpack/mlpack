@@ -1,5 +1,5 @@
 /**
- * @file f1_impl.hpp
+ * @file core/cv/metrics/f1_impl.hpp
  * @author Kirill Mishchenko
  *
  * Implementation of the class F1.
@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_METRICS_F1_IMPL_HPP
 
 #include <mlpack/core/cv/metrics/accuracy.hpp>
-#include <mlpack/core/cv/metrics/facilities.hpp>
 
 namespace mlpack {
 namespace cv {
@@ -33,7 +32,7 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
                             const DataType& data,
                             const arma::Row<size_t>& labels)
 {
-  AssertSizes(data, labels, "F1<Binary>::Evaluate()");
+  util::CheckSameSizes(data, labels, "F1<Binary>::Evaluate()");
 
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
@@ -56,7 +55,7 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
                             const DataType& data,
                             const arma::Row<size_t>& labels)
 {
-  AssertSizes(data, labels, "F1<Micro>::Evaluate()");
+  util::CheckSameSizes(data, labels, "F1<Micro>::Evaluate()");
 
   // Microaveraged F1 is really the same as microaveraged precision and
   // microaveraged recall, which are in turn the same as accuracy.
@@ -70,7 +69,7 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
                             const DataType& data,
                             const arma::Row<size_t>& labels)
 {
-  AssertSizes(data, labels, "F1<Macro>::Evaluate()");
+  util::CheckSameSizes(data, labels, "F1<Macro>::Evaluate()");
 
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
@@ -81,11 +80,11 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
   for (size_t c = 0; c < numClasses; ++c)
   {
     size_t tp = arma::sum((labels == c) % (predictedLabels == c));
-    size_t numberOfPositivePredictions = arma::sum(predictedLabels == c);
-    size_t numberOfClassInstances = arma::sum(labels == c);
+    size_t positivePredictions = arma::sum(predictedLabels == c);
+    size_t positiveLabels = arma::sum(labels == c);
 
-    double precision = double(tp) / numberOfPositivePredictions;
-    double recall = double(tp) / numberOfClassInstances;
+    double precision = double(tp) / positivePredictions;
+    double recall = double(tp) / positiveLabels;
     f1s(c) = (precision + recall == 0.0) ? 0.0 :
         2.0 * precision * recall / (precision + recall);
   }

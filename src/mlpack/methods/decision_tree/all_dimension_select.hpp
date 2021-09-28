@@ -1,5 +1,5 @@
 /**
- * @file all_dimension_select.hpp
+ * @file methods/decision_tree/all_dimension_select.hpp
  * @author Ryan Curtin
  *
  * Selects all dimensions for a split.
@@ -25,7 +25,7 @@ class AllDimensionSelect
   /**
    * Construct the AllDimensionSelect object for the given number of dimensions.
    */
-  AllDimensionSelect(const size_t dimensions) : i(0), dimensions(dimensions) { }
+  AllDimensionSelect() : i(0), dimensions(0) { }
 
   /**
    * Get the first dimension to select from.
@@ -46,11 +46,16 @@ class AllDimensionSelect
    */
   size_t Next() { return ++i; }
 
+  //! Get the number of dimensions.
+  size_t Dimensions() const { return dimensions; }
+  //! Modify the number of dimensions.
+  size_t& Dimensions() { return dimensions; }
+
  private:
   //! The current dimension we are looking at.
   size_t i;
   //! The number of dimensions to select from.
-  const size_t dimensions;
+  size_t dimensions;
 };
 
 } // namespace tree

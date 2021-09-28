@@ -1,5 +1,5 @@
 /**
- * @file output_width_visitor.hpp
+ * @file methods/ann/visitor/output_width_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputWidth() function for
@@ -30,6 +30,8 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   //! Return the output width.
   template<typename LayerType>
   size_t operator()(LayerType* layer) const;
+
+  size_t operator()(MoreTypes layer) const;
 
  private:
   //! Return 0 if the module doesn't implement the InputWidth() or Model()

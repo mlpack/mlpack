@@ -1,5 +1,5 @@
 /**
- * @file negative_log_likelihood_impl.hpp
+ * @file methods/ann/loss_functions/negative_log_likelihood_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the NegativeLogLikelihood class.
@@ -25,46 +25,46 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, TargetType&& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  double output = 0;
-  for (size_t i = 0; i < input.n_cols; ++i)
+  typedef typename PredictionType::elem_type ElemType;
+  ElemType output = 0;
+  for (size_t i = 0; i < prediction.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
-    output -= input(currentTarget, i);
+    output -= prediction(target(i), i);
   }
 
   return output;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
-      const InputType&& input,
-      const TargetType&& target,
-      OutputType&& output)
+      const PredictionType& prediction,
+      const TargetType& target,
+      LossType& loss)
 {
-  output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
-  for (size_t i = 0; i < input.n_cols; ++i)
+  loss = arma::zeros<LossType>(prediction.n_rows, prediction.n_cols);
+  for (size_t i = 0; i < prediction.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
-    output(currentTarget, i) = -1;
+    loss(target(i), i) = -1;
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
+    Archive& /* ar */, const uint32_t /* version */)
 {
   // Nothing to do here.
 }

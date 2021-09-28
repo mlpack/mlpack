@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions_impl.hpp
+ * @file bindings/cli/print_doc_functions_impl.hpp
  * @author Ryan Curtin
  *
  * This will generate a string representing what a user should type to invoke a
@@ -21,6 +21,38 @@ namespace bindings {
 namespace cli {
 
 /**
+ * Given the name of a binding, print its command-line name (this returns
+ * "mlpack_<bindingName>".
+ */
+inline std::string GetBindingName(const std::string& bindingName)
+{
+  return "mlpack_" + bindingName;
+}
+
+/**
+ * Print any imports for CLI (there are none, so this returns an empty string).
+ */
+inline std::string PrintImport(const std::string& /* bindingName */)
+{
+  return "";
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "";
+}
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -33,6 +65,44 @@ inline std::string PrintValue(const T& value, bool quotes)
   if (quotes)
     oss << "'";
   return oss.str();
+}
+
+/**
+ * Given a vector parameter type, print the corresponding value.
+ */
+template<typename T>
+inline std::string PrintValue(const std::vector<T>& value, bool quotes)
+{
+  std::ostringstream oss;
+  if (quotes)
+    oss << "'";
+  if (value.size() > 0)
+  {
+    oss << value[0];
+    for (size_t i = 1; i < value.size(); ++i)
+      oss << ", " << value[i];
+  }
+  if (quotes)
+    oss << "'";
+  return oss.str();
+}
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
+{
+  util::Params p = IO::Parameters(bindingName);
+  if (p.Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter " + paramName + "!");
+
+  util::ParamData& d = p.Parameters()[paramName];
+
+  std::string defaultValue;
+  p.functionMap[d.tname]["DefaultParam"](d, NULL, (void*) &defaultValue);
+
+  return defaultValue;
 }
 
 /**
@@ -52,32 +122,33 @@ inline std::string PrintModel(const std::string& model)
 }
 
 // Base case for recursion.
-inline std::string ProcessOptions() { return ""; }
+inline std::string ProcessOptions(util::Params& /* params */) { return ""; }
 
 /**
  * Print an option for a command-line argument.
  */
 template<typename T, typename... Args>
-std::string ProcessOptions(const std::string& paramName,
+std::string ProcessOptions(util::Params& params,
+                           const std::string& paramName,
                            const T& value,
                            Args... args)
 {
   // See if it is part of the program.
   std::string result = "";
-  if (CLI::Parameters().count(paramName) > 0)
+  if (params.Parameters().count(paramName) > 0)
   {
-    const util::ParamData& d = CLI::Parameters()[paramName];
+    util::ParamData& d = params.Parameters()[paramName];
 
     std::string name;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
+    params.functionMap[d.tname]["GetPrintableParamName"](d, NULL,
         (void*) &name);
 
     std::ostringstream ossValue;
     ossValue << value;
     std::string rawValue = ossValue.str();
     std::string fullValue;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
-        (void*) &rawValue, (void*) &fullValue);
+    params.functionMap[d.tname]["GetPrintableParamValue"](d, (void*) &rawValue,
+        (void*) &fullValue);
 
     std::ostringstream oss;
     if (d.tname != TYPENAME(bool))
@@ -89,11 +160,11 @@ std::string ProcessOptions(const std::string& paramName,
   else
   {
     throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
+        + " and BINDING_EXAMPLE() declaration.");
   }
 
-  std::string rest = ProcessOptions(args...);
+  std::string rest = ProcessOptions(params, args...);
   if (rest != "")
     result += " " + rest;
 
@@ -107,26 +178,96 @@ std::string ProcessOptions(const std::string& paramName,
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
-  return util::HyphenateString("$ " + programName + " " +
-      ProcessOptions(args...), 2);
+  util::Params params = IO::Parameters(programName);
+  return util::HyphenateString("$ " + GetBindingName(programName) + " " +
+      ProcessOptions(params, args...), 2);
+}
+
+/**
+ * Given a program name, print a program call invocation assuming that all
+ * options are specified.
+ */
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
+{
+  std::ostringstream oss;
+  oss << "$ " << GetBindingName(programName);
+
+  // Handle all options---first input options, then output options.
+  std::map<std::string, util::ParamData>& parameters = p.Parameters();
+
+  for (auto& it : parameters)
+  {
+    if (!it.second.input)
+      continue;
+
+    // Otherwise, print the name and the default value.
+    std::string name;
+    p.functionMap[it.second.tname]["GetPrintableParamName"]( it.second, NULL,
+        (void*) &name);
+
+    std::string value;
+    p.functionMap[it.second.tname]["DefaultParam"]( it.second, NULL,
+        (void*) &value);
+    if (value == "''")
+      value = "<string>";
+
+    oss << " ";
+    if (!it.second.required)
+      oss << "[";
+
+    oss << name;
+    if (it.second.cppType != "bool")
+      oss << " " << value;
+
+    if (!it.second.required)
+      oss << "]";
+  }
+
+  // Now get the output options.
+  for (auto& it : parameters)
+  {
+    if (it.second.input)
+      continue;
+
+    // Otherwise, print the name and the default value.
+    std::string name;
+    p.functionMap[it.second.tname]["GetPrintableParamName"]( it.second, NULL,
+        (void*) &name);
+
+    std::string value;
+    p.functionMap[it.second.tname]["DefaultParam"]( it.second, NULL,
+        (void*) &value);
+    if (value == "''")
+      value = "<string>";
+
+    oss << " [" << name;
+    if (it.second.cppType != "bool")
+      oss << " " << value;
+    oss << "]";
+  }
+
+  return util::HyphenateString(oss.str(), 8);
 }
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName)
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName)
 {
+  util::Params p = IO::Parameters(bindingName);
+
   // Return the correct parameter name.
-  if (CLI::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = CLI::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
 
     std::string output;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
-        (void*) &output);
+    p.functionMap[d.tname]["GetPrintableParamName"](d, NULL, (void*) &output);
     // Is there an alias?
     std::string alias = "";
     if (d.alias != '\0')
@@ -137,7 +278,7 @@ inline std::string ParamString(const std::string& paramName)
   else
   {
     throw std::runtime_error("Parameter '" + paramName + "' not known!  Check "
-        "PROGRAM_INFO() definition.");
+        "BINDING_LONG_DESC() and BINDING_EXAMPLE() definition.");
   }
 }
 

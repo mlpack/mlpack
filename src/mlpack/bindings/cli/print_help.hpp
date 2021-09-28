@@ -1,5 +1,5 @@
 /**
- * @file print_help.hpp
+ * @file bindings/cli/print_help.hpp
  * @author Ryan Curtin
  *
  * Print help for a command-line program.
@@ -24,7 +24,7 @@ namespace cli {
  *
  * @param param Parameter name to print help for.
  */
-void PrintHelp(const std::string& param = "");
+void PrintHelp(util::Params& params, const std::string& param = "");
 
 } // namespace cli
 } // namespace bindings

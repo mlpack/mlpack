@@ -1,5 +1,5 @@
 /**
- * @file cv_function.hpp
+ * @file core/hpt/cv_function.hpp
  * @author Kirill Mishchenko
  *
  * A cross-validation wrapper for optimizers.
@@ -43,6 +43,9 @@ class CVFunction
    * Initialize a CVFunction object.
    *
    * @param cv A cross-validation object.
+   * @param datasetInfo Information on each parameter (categorical/numeric).
+   *     Contains mappings from optimizer-passed size_t indices to double values
+   *     that should be used.
    * @param relativeDelta Relative increase of arguments for calculation of
    *     partial derivatives (by the definition). The exact increase for some
    *     particular argument is equal to the absolute value of the argument
@@ -52,11 +55,12 @@ class CVFunction
    *     derivatives (by the definition). This value is going to be used when it
    *     is greater than the increase calculated with the rules described in the
    *     documentation for the relativeDelta parameter.
-   * @param BoundArgs Arguments that should be passed into the Evaluate method
+   * @param args Arguments that should be passed into the Evaluate method
    *     of the CVType object but are not going to be passed into the Evaluate
    *     method of this object.
    */
   CVFunction(CVType& cv,
+             data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
              const double relativeDelta,
              const double minDelta,
              const BoundArgs&... args);
@@ -102,6 +106,9 @@ class CVFunction
 
   //! A reference to the cross-validation object.
   CVType& cv;
+
+  //! Information on each argument to be optimized.
+  data::DatasetMapper<data::IncrementPolicy, double> datasetInfo;
 
   //! The bound arguments.
   BoundArgsTupleType boundArgs;

@@ -1,5 +1,5 @@
 /**
- * @file sequential.hpp
+ * @file methods/ann/layer/sequential.hpp
  * @author Marcus Edel
  *
  * Definition of the Sequential class, which acts as a feed-forward fully
@@ -15,13 +15,13 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <boost/ptr_container/ptr_vector.hpp>
-
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 #include "../visitor/output_width_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -34,14 +34,38 @@ namespace ann /** Artificial Neural Network. */ {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
+ * This class can also be used as a container for a residual block. In that
+ * case, the sizes of the input and output matrices of this class should be
+ * equal. A typedef has been added for use as a Residual<> class.
+ *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{He15,
+ *   author    = {Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun},
+ *   title     = {Deep Residual Learning for Image Recognition},
+ *   year      = {2015},
+ *   url       = {https://arxiv.org/abs/1512.03385},
+ *   eprint    = {1512.03385},
+ * }
+ * @endcode
+ *
+ * Note: If this class is used as the first layer of a network, it should be
+ *       preceded by IdentityLayer<>.
+ *
+ * Note: This class should at least have two layers for a call to its Gradient()
+ *       function.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ * @tparam Residual If true, use the object as a Residual block.
  */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat,
+    bool Residual = false,
     typename... CustomLayers
 >
 class Sequential
@@ -54,6 +78,21 @@ class Sequential
    */
   Sequential(const bool model = true);
 
+  /**
+   * Create the Sequential object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param ownsLayers If true, then this module will delete its layers when
+   *      deallocated.
+   */
+  Sequential(const bool model, const bool ownsLayers);
+
+  //! Copy constructor.
+  Sequential(const Sequential& layer);
+
+  //! Copy assignment operator.
+  Sequential& operator = (const Sequential& layer);
+
   //! Destroy the Sequential object.
   ~Sequential();
 
@@ -65,21 +104,21 @@ class Sequential
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -89,9 +128,9 @@ class Sequential
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& /* gradient */);
 
   /*
    * Add a new module to the model.
@@ -134,7 +173,7 @@ class Sequential
   //! Modify the output parameter.
   arma::mat& OutputParameter() { return outputParameter; }
 
-  //! Get the delta.e
+  //! Get the delta.
   arma::mat const& Delta() const { return delta; }
   //! Modify the delta.
   arma::mat& Delta() { return delta; }
@@ -144,11 +183,13 @@ class Sequential
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  size_t InputShape() const;
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.
@@ -193,12 +234,29 @@ class Sequential
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
 
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! The input width.
   size_t width;
 
   //! The input height.
   size_t height;
+
+  //! Whether we are responsible for deleting the layers held in this module.
+  bool ownsLayers;
 }; // class Sequential
+
+/*
+ * Convenience typedef for use as Residual<> layer.
+ */
+template<
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat,
+  typename... CustomLayers
+>
+using Residual = Sequential<
+    InputDataType, OutputDataType, true, CustomLayers...>;
 
 } // namespace ann
 } // namespace mlpack

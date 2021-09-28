@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -18,10 +18,9 @@ exec2man="$1"
 outdir="$2"
 
 mkdir -p "$outdir"
-for program in $(find . -type f -executable -iname 'mlpack_*' | \
+for program in $(find . -type f -perm -u+x -iname 'mlpack_*' | \
                 grep -v '[.]$' | \
                 grep -v '_test$'); do
   echo "Generating man page for $program...";
   "$exec2man" "$program" "$outdir/$program.1"
-  gzip -f "$outdir/$program.1"
 done

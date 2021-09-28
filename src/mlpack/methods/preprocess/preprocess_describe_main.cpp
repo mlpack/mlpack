@@ -1,8 +1,8 @@
 /**
- * @file preprocess_describe_main.cpp
+ * @file methods/preprocess/preprocess_describe_main.cpp
  * @author Keon Kim
  *
- * Descriptive Statistics Class and CLI executable.
+ * Descriptive Statistics Class and binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME preprocess_describe
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <boost/format.hpp>
@@ -22,12 +28,22 @@ using namespace mlpack::util;
 using namespace std;
 using namespace boost;
 
-PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
-    "prints out the descriptive statistics of the data. Descriptive statistics "
-    "is the discipline of quantitatively describing the main features of a "
-    "collection of information, or the quantitative description itself. The "
-    "program does not modify the original file, but instead prints out the "
-    "statistics to the console. The printed result will look like a table."
+// Program Name.
+BINDING_USER_NAME("Descriptive Statistics");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "A utility for printing descriptive statistics about a dataset.  This "
+    "prints a number of details about a dataset in a tabular format.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "This utility takes a dataset and prints out the descriptive statistics "
+    "of the data. Descriptive statistics is the discipline of quantitatively "
+    "describing the main features of a collection of information, or the "
+    "quantitative description itself. The program does not modify the original "
+    "file, but instead prints out the statistics to the console. The printed "
+    "result will look like a table."
     "\n\n"
     "Optionally, width and precision of the output can be adjusted by a user "
     "using the " + PRINT_PARAM_STRING("width") + " and " +
@@ -35,8 +51,10 @@ PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
     "specific dimension to analyze if there are too many dimensions. The " +
     PRINT_PARAM_STRING("population") + " parameter can be specified when the "
     "dataset should be considered as a population.  Otherwise, the dataset "
-    "will be considered as a sample."
-    "\n\n"
+    "will be considered as a sample.");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to print out statistical facts about "
     "the dataset " + PRINT_DATASET("X") + " using the default settings, we "
     "could run "
@@ -48,6 +66,11 @@ PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
     "\n\n" +
     PRINT_CALL("preprocess_describe", "input", "X", "width", 10, "precision", 5,
         "verbose", true));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");
@@ -153,16 +176,16 @@ double StandardError(const size_t size, const double& fStd)
   return fStd / sqrt(size);
 }
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
-  const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
-  const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
-  const bool population = CLI::HasParam("population");
-  const bool rowMajor = CLI::HasParam("row_major");
+  const size_t dimension = static_cast<size_t>(params.Get<int>("dimension"));
+  const size_t precision = static_cast<size_t>(params.Get<int>("precision"));
+  const size_t width = static_cast<size_t>(params.Get<int>("width"));
+  const bool population = params.Has("population");
+  const bool rowMajor = params.Has("row_major");
 
   // Load the data.
-  arma::mat& data = CLI::GetParam<arma::mat>("input");
+  arma::mat& data = params.Get<arma::mat>("input");
 
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
@@ -178,7 +201,7 @@ static void mlpackMain()
     numberFormat += widthPrecision + "f";
   }
 
-  Timer::Start("statistics");
+  timers.Start("statistics");
   // Print the headers.
   Log::Info << boost::format(stringFormat)
       % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
@@ -217,7 +240,7 @@ static void mlpackMain()
 
   // If the user specified dimension, describe statistics of the given
   // dimension. If a dimension is not specified, describe all dimensions.
-  if (CLI::HasParam("dimension"))
+  if (params.Has("dimension"))
   {
     PrintStatResults(dimension, rowMajor);
   }
@@ -229,6 +252,5 @@ static void mlpackMain()
       PrintStatResults(i, rowMajor);
     }
   }
-  Timer::Stop("statistics");
+  timers.Stop("statistics");
 }
-

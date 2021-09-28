@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_function.cpp
+ * @file methods/logistic_regression/logistic_regression_function_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the LogisticRegressionFunction class.
@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
 
+#include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace regression {
 
@@ -29,8 +31,6 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
         false)),
     lambda(lambda)
 {
-  initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
-
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
   {
@@ -39,25 +39,6 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
         << "responses vector has " << responses.n_elem << " elements (should be"
         << " " << predictors.n_cols << ")!" << std::endl;
   }
-}
-
-template<typename MatType>
-LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
-    const arma::vec& initialPoint,
-    const double lambda) :
-    initialPoint(initialPoint),
-    // We promise to be well-behaved... the elements won't be modified.
-    predictors(math::MakeAlias(const_cast<MatType&>(predictors), false)),
-    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses),
-        false)),
-    lambda(lambda)
-{
-  // To check if initialPoint is compatible with predictors.
-  if (initialPoint.n_rows != (predictors.n_rows + 1) ||
-      initialPoint.n_cols != 1)
-    this->initialPoint = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
 }
 
 /**

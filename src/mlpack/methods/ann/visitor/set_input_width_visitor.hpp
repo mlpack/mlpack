@@ -1,5 +1,5 @@
 /**
- * @file set_input_width_visitor.hpp
+ * @file methods/ann/visitor/set_input_width_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the InputWidth() function for different
@@ -33,6 +33,8 @@ class SetInputWidthVisitor : public boost::static_visitor<bool>
   //! Update the input width parameter.
   template<typename LayerType>
   bool operator()(LayerType* layer) const;
+
+  bool operator()(MoreTypes layer) const;
 
  private:
   //! The input width parameter.

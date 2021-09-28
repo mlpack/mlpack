@@ -1,5 +1,5 @@
 /**
- * @file binarize.hpp
+ * @file core/data/binarize.hpp
  * @author Keon Kim
  *
  * Defines Binarize(), a utility function, sets values to 0 or 1

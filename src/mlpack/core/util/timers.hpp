@@ -1,5 +1,5 @@
 /**
- * @file timers.hpp
+ * @file core/util/timers.hpp
  * @author Matthew Amidon
  * @author Marcus Edel
  * @author Ryan Curtin
@@ -14,13 +14,14 @@
 #ifndef MLPACK_CORE_UTILITIES_TIMERS_HPP
 #define MLPACK_CORE_UTILITIES_TIMERS_HPP
 
-#include <map>
-#include <string>
-#include <chrono> // chrono library for cross platform timer calculation.
-#include <thread> // std::thread is used for thread safety.
-#include <mutex>
-#include <list>
 #include <atomic>
+#include <chrono> // chrono library for cross platform timer calculation.
+#include <iomanip>
+#include <list>
+#include <map>
+#include <mutex>
+#include <string>
+#include <thread> // std::thread is used for thread safety.
 
 #if defined(_WIN32)
   // uint64_t isn't defined on every windows.
@@ -28,9 +29,9 @@
     #if SIZEOF_UNSIGNED_LONG == 8
       typedef unsigned long uint64_t;
     #else
-      typedef unsigned long long  uint64_t;
-    #endif  // SIZEOF_UNSIGNED_LONG
-  #endif  // HAVE_UINT64_T
+      typedef unsigned long long uint64_t;
+    #endif // SIZEOF_UNSIGNED_LONG
+  #endif // HAVE_UINT64_T
 #endif
 
 namespace mlpack {
@@ -92,7 +93,14 @@ class Timer
    * existing timers.
    */
   static void ResetAll();
+
+  /**
+   * Returns a copy of all the timers used via this interface.
+   */
+  static std::map<std::string, std::chrono::microseconds> GetAllTimers();
 };
+
+namespace util {
 
 class Timers
 {
@@ -117,45 +125,36 @@ class Timers
    *
    * @param timerName The name of the timer in question.
    */
-  std::chrono::microseconds GetTimer(const std::string& timerName);
+  std::chrono::microseconds Get(const std::string& timerName);
 
   /**
    * Prints the specified timer.  If it took longer than a minute to complete
    * the timer will be displayed in days, hours, and minutes as well.
    *
-   * @param timerName The name of the timer in question.
+   * @param timerName The number of microseconds to print.
    */
-  void PrintTimer(const std::string& timerName);
+  static std::string Print(const std::chrono::microseconds& totalDuration);
 
   /**
-   * Initializes a timer, available like a normal value specified on
-   * the command line.  Timers are of type timeval.  If a timer is started, then
+   * Initializes a timer, available like a normal value specified on
+   * the command line.  Timers are of type timeval.  If a timer is started, then
    * stopped, then re-started, then stopped, the final timer value will be the
    * length of both runs of the timer.
-   *
-   * @param timerName The name of the timer in question.
-   * @param threadId Id of the thread accessing the timer.
-   */
-  void StartTimer(const std::string& timerName,
-                  const std::thread::id& threadId = std::thread::id());
-
-  /**
-   * Halts the timer, and replaces its value with the delta time from its start.
-   *
-   * @param timerName The name of the timer in question.
-   * @param threadId Id of the thread accessing the timer.
-   */
-  void StopTimer(const std::string& timerName,
-                 const std::thread::id& threadId = std::thread::id());
-
-  /**
-   * Returns state of the given timer.
    *
    * @param timerName The name of the timer in question.
    * @param threadId Id of the thread accessing the timer.
    */
-  bool GetState(const std::string& timerName,
-                const std::thread::id& threadId = std::thread::id());
+  void Start(const std::string& timerName,
+             const std::thread::id& threadId = std::thread::id());
+
+  /**
+   * Halts the timer, and replaces its value with the delta time from its start.
+   *
+   * @param timerName The name of the timer in question.
+   * @param threadId Id of the thread accessing the timer.
+   */
+  void Stop(const std::string& timerName,
+            const std::thread::id& threadId = std::thread::id());
 
   /**
    * Stop all timers.
@@ -180,6 +179,7 @@ class Timers
   std::atomic<bool> enabled;
 };
 
+} // namespace util
 } // namespace mlpack
 
 #endif // MLPACK_CORE_UTILITIES_TIMERS_HPP

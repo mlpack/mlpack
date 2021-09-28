@@ -1,5 +1,5 @@
 /**
- * @file positive_definite_constraint.hpp
+ * @file methods/gmm/positive_definite_constraint.hpp
  * @author Ryan Curtin
  *
  * Restricts a covariance matrix to being positive definite.
@@ -41,7 +41,12 @@ class PositiveDefiniteConstraint
     // eigenvalues are at least 1e-50).
     arma::vec eigval;
     arma::mat eigvec;
-    arma::eig_sym(eigval, eigvec, covariance);
+    covariance = arma::symmatu(covariance);
+    if (!arma::eig_sym(eigval, eigvec, covariance))
+    {
+      Log::Fatal << "applying to constraint could not be accomplished."
+          << std::endl;
+    }
 
     // If the matrix is not positive definite or if the condition number is
     // large, we must project it back onto the cone of positive definite
@@ -62,9 +67,37 @@ class PositiveDefiniteConstraint
     }
   }
 
+  /**
+   * Apply the positive definiteness constraint to the given diagonal
+   * covariance matrix (which is represented as a vector), and ensure
+   * each value on the diagonal is at least 1e-50.
+   */
+  static void ApplyConstraint(arma::vec& diagCovariance)
+  {
+    // If the matrix is not positive definite or if the condition number is
+    // large, we must project it back onto the cone of positive definite
+    // matrices with reasonable condition number (I'm picking 1e5 here, not for
+    // any particular reason).
+    double maxEigval = -DBL_MAX;
+    for (size_t i = 0; i < diagCovariance.n_elem; ++i)
+    {
+      if (diagCovariance[i] > maxEigval)
+        maxEigval = diagCovariance[i];
+    }
+
+    for (size_t i = 0; i < diagCovariance.n_elem; ++i)
+    {
+      if ((diagCovariance[i] < 0.0) || ((maxEigval / diagCovariance[i]) > 1e5)
+          || (maxEigval < 1e-50))
+      {
+        diagCovariance[i] = std::max(maxEigval / 1e5, 1e-50);
+      }
+    }
+  }
+
   //! Serialize the constraint (which stores nothing, so, nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace gmm

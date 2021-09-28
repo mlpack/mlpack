@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser_impl.hpp
+ * @file core/tree/binary_space_tree/single_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
  * A nested class of BinarySpaceTree which traverses the entire tree with a
@@ -57,6 +57,18 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
   else
   {
+    // If it's the root node, just score it.
+    if (referenceNode.Parent() == NULL)
+    {
+      const double rootScore = rule.Score(queryIndex, referenceNode);
+      // If root score is DBL_MAX, don't recurse into that node.
+      if (rootScore == DBL_MAX)
+      {
+        ++numPrunes;
+        return;
+      }
+    }
+
     // If either score is DBL_MAX, we do not recurse into that node.
     double leftScore = rule.Score(queryIndex, *referenceNode.Left());
     double rightScore = rule.Score(queryIndex, *referenceNode.Right());

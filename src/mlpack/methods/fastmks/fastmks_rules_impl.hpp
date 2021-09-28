@@ -1,5 +1,5 @@
 /**
- * @file fastmks_rules_impl.hpp
+ * @file methods/fastmks/fastmks_rules_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of FastMKSRules for cover tree search.
@@ -58,7 +58,7 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
 
   CandidateList pqueue;
   pqueue.reserve(k);
-  for (size_t i = 0; i < k; i++)
+  for (size_t i = 0; i < k; ++i)
     pqueue.push(def);
   std::vector<CandidateList> tmp(querySet.n_cols, pqueue);
   candidates.swap(tmp);
@@ -72,10 +72,10 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
   indices.set_size(k, querySet.n_cols);
   products.set_size(k, querySet.n_cols);
 
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < querySet.n_cols; ++i)
   {
     CandidateList& pqueue = candidates[i];
-    for (size_t j = 1; j <= k; j++)
+    for (size_t j = 1; j <= k; ++j)
     {
       indices(k - j, i) = pqueue.top().second;
       products(k - j, i) = pqueue.top().first;

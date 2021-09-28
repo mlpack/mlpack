@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search.hpp
+ * @file methods/neighbor_search/neighbor_search.hpp
  * @author Ryan Curtin
  *
  * Defines the NeighborSearch class, which performs an abstract
@@ -31,8 +31,13 @@ namespace mlpack {
 namespace neighbor  {
 
 // Forward declaration.
-template<typename SortPolicy>
-class TrainVisitor;
+template<typename SortPolicy,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class DualTreeTraversalType,
+         template<typename RuleType> class SingleTreeTraversalType>
+class LeafSizeNSWrapper;
 
 //! NeighborSearchMode represents the different neighbor search modes available.
 enum NeighborSearchMode
@@ -124,7 +129,6 @@ class NeighborSearch
    * when this constructor is used, so if the tree type you are using maps
    * points (like BinarySpaceTree), then you will have to perform the re-mapping
    * manually.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
    * @param mode Neighbor search mode.
@@ -187,42 +191,25 @@ class NeighborSearch
 
   /**
    * Set the reference set to a new reference set, and build a tree if
-   * necessary.  This method is called 'Train()' in order to match the rest of
-   * the mlpack abstractions, even though calling this "training" is maybe a bit
-   * of a stretch.
+   * necessary. The dataset is copied by default, but the copy can be avoided by
+   * transferring the ownership of the dataset using std::move().  This method
+   * is called 'Train()' in order to match the rest of the mlpack abstractions,
+   * even though calling this "training" is maybe a bit of a stretch.
    *
    * @param referenceSet New set of reference data.
    */
-  void Train(const MatType& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
-   * Set the reference set to a new reference set, taking ownership of the set,
-   * and build a tree if necessary.  This method is called 'Train()' in order to
-   * match the rest of the mlpack abstractions, even though calling this
-   * "training" is maybe a bit of a stretch.
-   *
-   * @param referenceSet New set of reference data.
-   */
-  void Train(MatType&& referenceSet);
-
-  /**
-   * Set the reference tree as a copy of the given reference tree.
-   *
-   * This method will copy the given tree.  You can avoid this copy by using the
-   * Train() method that takes a rvalue reference to the tree.
+   * Set the reference tree to a new reference tree.  The tree is copied by
+   * default, but the copy can be avoided by using std::move() to transfer the
+   * ownership of the tree.  This method is called 'Train()' in order to match
+   * the rest of the mlpack abstractions, even though calling this "training" is
+   * maybe a bit of a stretch.
    *
    * @param referenceTree Pre-built tree for reference points.
    */
-  void Train(const Tree& referenceTree);
-
-  /**
-   * Set the reference tree to a new reference tree.
-   *
-   * This method will take ownership of the given tree.
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   */
-  void Train(Tree&& referenceTree);
+  void Train(Tree referenceTree);
 
   /**
    * For each point in the query set, compute the nearest neighbors and store
@@ -256,7 +243,7 @@ class NeighborSearch
    * Note that if you are calling Search() multiple times with a single query
    * tree, you need to reset the bounds in the statistic of each query node,
    * otherwise the result may be wrong!  You can do this by calling
-   * TreeType::Stat()::Reset() on each node in the query tree.
+   * \c TreeType::Stat().Reset() on each node in the query tree.
    *
    * @param queryTree Tree built on query points.
    * @param k Number of neighbors to search for.
@@ -349,7 +336,7 @@ class NeighborSearch
 
   //! Serialize the NeighborSearch model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! Permutations of reference points during tree building.
@@ -358,11 +345,6 @@ class NeighborSearch
   Tree* referenceTree;
   //! Reference dataset.  In some situations we may be the owner of this.
   const MatType* referenceSet;
-
-  //! If true, this object created the trees and is responsible for them.
-  bool treeOwner;
-  //! If true, we own the reference set.
-  bool setOwner;
 
   //! Indicates the neighbor search mode.
   NeighborSearchMode searchMode;
@@ -382,8 +364,8 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  template<typename SortPol>
-  friend class TrainVisitor;
+  friend class LeafSizeNSWrapper<SortPolicy, TreeType, DualTreeTraversalType,
+      SingleTreeTraversalType>;
 }; // class NeighborSearch
 
 } // namespace neighbor

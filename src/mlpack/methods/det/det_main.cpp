@@ -1,5 +1,5 @@
 /**
- * @file det_main.cpp
+ * @file methods/det/det_main.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * This file runs density estimation trees.
@@ -10,7 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME det
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "dt_utils.hpp"
 
@@ -19,7 +25,17 @@ using namespace mlpack::det;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Density Estimation With Density Estimation Trees",
+// Program Name.
+BINDING_USER_NAME("Density Estimation With Density Estimation Trees");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of density estimation trees for the density estimation "
+    "task.  Density estimation trees can be trained or used to predict the "
+    "density at locations given by query points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs a number of functions related to Density Estimation "
     "Trees.  The optimal Density Estimation Tree (DET) can be trained on a set "
     "of data (specified by " + PRINT_PARAM_STRING("training") + ") using "
@@ -50,6 +66,16 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     PRINT_PARAM_STRING("input_model") + ".  The density estimates for the test"
     " points may be saved using the " +
     PRINT_PARAM_STRING("test_set_estimates") + " output parameter.");
+
+// See also...
+BINDING_SEE_ALSO("Density estimation tree (DET) tutorial",
+        "@doxygen/dettutorial.html");
+BINDING_SEE_ALSO("Density estimation on Wikipedia",
+        "https://en.wikipedia.org/wiki/Density_estimation");
+BINDING_SEE_ALSO("Density estimation trees (pdf)",
+        "http://www.mlpack.org/papers/det.pdf");
+BINDING_SEE_ALSO("mlpack::tree::DTree class documentation",
+        "@doxygen/classmlpack_1_1det_1_1DTree.html");
 
 // Input data files.
 PARAM_MATRIX_IN("training", "The data set on which to build a density "
@@ -99,128 +125,128 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "penalize low volume leaves.", "R");
 */
 
-
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Validate input parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
-  ReportIgnoredParam({{ "training", false }}, "training_set_estimates");
-  ReportIgnoredParam({{ "training", false }}, "folds");
-  ReportIgnoredParam({{ "training", false }}, "min_leaf_size");
-  ReportIgnoredParam({{ "training", false }}, "max_leaf_size");
+  ReportIgnoredParam(params, {{ "training", false }}, "training_set_estimates");
+  ReportIgnoredParam(params, {{ "training", false }}, "folds");
+  ReportIgnoredParam(params, {{ "training", false }}, "min_leaf_size");
+  ReportIgnoredParam(params, {{ "training", false }}, "max_leaf_size");
 
-  if (CLI::HasParam("tag_file"))
-    RequireAtLeastOnePassed({ "training", "test" }, true);
+  if (params.Has("tag_file"))
+    RequireAtLeastOnePassed(params, { "training", "test" }, true);
 
-  if (CLI::HasParam("training"))
+  if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "output_model", "training_set_estimates", "vi",
-        "tag_file", "tag_counters_file" }, false, "no output will be saved");
+    RequireAtLeastOnePassed(params, { "output_model", "training_set_estimates",
+        "vi", "tag_file", "tag_counters_file" }, false,
+        "no output will be saved");
   }
 
-  ReportIgnoredParam({{ "test", false }}, "test_set_estimates");
+  ReportIgnoredParam(params, {{ "test", false }}, "test_set_estimates");
 
-  RequireParamValue<int>("folds", [](int x) { return x >= 0; }, true,
+  RequireParamValue<int>(params, "folds", [](int x) { return x >= 0; }, true,
       "folds must be non-negative");
-  RequireParamValue<int>("max_leaf_size", [](int x) { return x > 0; }, true,
-      "maximum leaf size must be positive");
-  RequireParamValue<int>("min_leaf_size", [](int x) { return x > 0; }, true,
-      "minimum leaf size must be positive");
+  RequireParamValue<int>(params, "max_leaf_size", [](int x) { return x > 0; },
+      true, "maximum leaf size must be positive");
+  RequireParamValue<int>(params, "min_leaf_size", [](int x) { return x > 0; },
+      true, "minimum leaf size must be positive");
 
   // Are we training a DET or loading from file?
   DTree<arma::mat, int>* tree;
   arma::mat trainingData;
   arma::mat testData;
 
-  if (CLI::HasParam("training"))
+  if (params.Has("training"))
   {
-    trainingData = std::move(CLI::GetParam<arma::mat>("training"));
+    trainingData = std::move(params.Get<arma::mat>("training"));
 
     const bool regularization = false;
-//    const bool regularization = CLI::HasParam("volume_regularization");
-    const int maxLeafSize = CLI::GetParam<int>("max_leaf_size");
-    const int minLeafSize = CLI::GetParam<int>("min_leaf_size");
-    const bool skipPruning = CLI::HasParam("skip_pruning");
-    size_t folds = CLI::GetParam<int>("folds");
+//    const bool regularization = params.Has("volume_regularization");
+    const int maxLeafSize = params.Get<int>("max_leaf_size");
+    const int minLeafSize = params.Get<int>("min_leaf_size");
+    const bool skipPruning = params.Has("skip_pruning");
+    size_t folds = params.Get<int>("folds");
 
     if (folds == 0)
       folds = trainingData.n_cols;
 
     // Obtain the optimal tree.
-    Timer::Start("det_training");
+    timers.Start("det_training");
     tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
                                    maxLeafSize, minLeafSize,
-                                   skipPruning);
-    Timer::Stop("det_training");
+                                   skipPruning, timers);
+    timers.Stop("det_training");
 
     // Compute training set estimates, if desired.
-    if (CLI::HasParam("training_set_estimates"))
+    if (params.Has("training_set_estimates"))
     {
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);
-      Timer::Start("det_estimation_time");
-      for (size_t i = 0; i < trainingData.n_cols; i++)
+      timers.Start("det_estimation_time");
+      for (size_t i = 0; i < trainingData.n_cols; ++i)
         trainingDensities[i] = tree->ComputeValue(trainingData.unsafe_col(i));
-      Timer::Stop("det_estimation_time");
+      timers.Stop("det_estimation_time");
 
-      CLI::GetParam<arma::mat>("training_set_estimates") =
+      params.Get<arma::mat>("training_set_estimates") =
           std::move(trainingDensities);
     }
   }
   else
   {
-    tree = CLI::GetParam<DTree<arma::mat>*>("input_model");
+    tree = params.Get<DTree<arma::mat>*>("input_model");
   }
 
   // Compute the density at the provided test points and output the density in
   // the given file.
-  if (CLI::HasParam("test"))
+  if (params.Has("test"))
   {
-    testData = std::move(CLI::GetParam<arma::mat>("test"));
-    if (CLI::HasParam("test_set_estimates"))
+    testData = std::move(params.Get<arma::mat>("test"));
+    if (params.Has("test_set_estimates"))
     {
       // Compute test set densities.
-      Timer::Start("det_test_set_estimation");
+      timers.Start("det_test_set_estimation");
       arma::rowvec testDensities(testData.n_cols);
 
-      for (size_t i = 0; i < testData.n_cols; i++)
+      for (size_t i = 0; i < testData.n_cols; ++i)
         testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
 
-      Timer::Stop("det_test_set_estimation");
+      timers.Stop("det_test_set_estimation");
 
-      CLI::GetParam<arma::mat>("test_set_estimates") = std::move(testDensities);
+      params.Get<arma::mat>("test_set_estimates") = std::move(testDensities);
     }
 
     // Print variable importance.
-    if (CLI::HasParam("vi"))
+    if (params.Has("vi"))
     {
       arma::vec importances;
       tree->ComputeVariableImportance(importances);
-      CLI::GetParam<arma::mat>("vi") = importances.t();
+      params.Get<arma::mat>("vi") = importances.t();
     }
   }
 
-  if (CLI::HasParam("tag_file"))
+  if (params.Has("tag_file"))
   {
     const arma::mat& estimationData =
-        CLI::HasParam("test") ? testData : trainingData;
-    const string tagFile = CLI::GetParam<string>("tag_file");
+        params.Has("test") ? testData : trainingData;
+    const string tagFile = params.Get<string>("tag_file");
     std::ofstream ofs;
     ofs.open(tagFile, std::ofstream::out);
 
     arma::Row<size_t> counters;
 
-    Timer::Start("det_test_set_tagging");
+    timers.Start("det_test_set_tagging");
     if (!ofs.is_open())
     {
       Log::Warn << "Unable to open file '" << tagFile
           << "' to save tag membership info." << std::endl;
     }
-    else if (CLI::HasParam("path_format"))
+    else if (params.Has("path_format"))
     {
-      const bool reqCounters = CLI::HasParam("tag_counters_file");
-      const string pathFormat = CLI::GetParam<string>("path_format");
+      const bool reqCounters = params.Has("tag_counters_file");
+      const string pathFormat = params.Get<string>("path_format");
 
       PathCacher::PathFormat theFormat;
       if (pathFormat == "lr" || pathFormat == "LR")
@@ -239,7 +265,7 @@ static void mlpackMain()
       PathCacher path(theFormat, tree);
       counters.zeros(path.NumNodes());
 
-      for (size_t i = 0; i < estimationData.n_cols; i++)
+      for (size_t i = 0; i < estimationData.n_cols; ++i)
       {
         int tag = tree->FindBucket(estimationData.unsafe_col(i));
 
@@ -252,7 +278,7 @@ static void mlpackMain()
 
       if (reqCounters)
       {
-        ofs.open(CLI::GetParam<string>("tag_counters_file"),
+        ofs.open(params.Get<string>("tag_counters_file"),
                  std::ofstream::out);
 
         for (size_t j = 0; j < counters.n_elem; ++j)
@@ -268,7 +294,7 @@ static void mlpackMain()
       int numLeaves = tree->TagTree();
       counters.zeros(numLeaves);
 
-      for (size_t i = 0; i < estimationData.n_cols; i++)
+      for (size_t i = 0; i < estimationData.n_cols; ++i)
       {
         const int tag = tree->FindBucket(estimationData.unsafe_col(i));
 
@@ -276,14 +302,14 @@ static void mlpackMain()
         counters(tag) += 1;
       }
 
-      if (CLI::HasParam("tag_counters_file"))
-        data::Save(CLI::GetParam<string>("tag_counters_file"), counters);
+      if (params.Has("tag_counters_file"))
+        data::Save(params.Get<string>("tag_counters_file"), counters);
     }
 
-    Timer::Stop("det_test_set_tagging");
+    timers.Stop("det_test_set_tagging");
     ofs.close();
   }
 
   // Save the model, if desired.
-  CLI::GetParam<DTree<arma::mat>*>("output_model") = tree;
+  params.Get<DTree<arma::mat>*>("output_model") = tree;
 }

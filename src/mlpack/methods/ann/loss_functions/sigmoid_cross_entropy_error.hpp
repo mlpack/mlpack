@@ -1,5 +1,5 @@
 /**
- * @file sigmoid_cross_entropy_error.hpp
+ * @file methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -57,26 +57,30 @@ class SigmoidCrossEntropyError
    */
   SigmoidCrossEntropyError();
 
-  /*
+  /**
    * Computes the Sigmoid CrossEntropy Error functions.
    *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
+   * @param target The target vector.
    */
-  template<typename InputType, typename TargetType>
-  inline double Forward(const InputType&& input,
-                        const TargetType&& target);
+  template<typename PredictionType, typename TargetType>
+  inline typename PredictionType::elem_type Forward(
+      const PredictionType& prediction,
+      const TargetType& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  inline void Backward(const InputType&& input,
-                       const TargetType&& target,
-                       OutputType&& output);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  inline void Backward(const PredictionType& prediction,
+                       const TargetType& target,
+                       LossType& loss);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -87,7 +91,7 @@ class SigmoidCrossEntropyError
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

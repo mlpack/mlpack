@@ -1,5 +1,5 @@
 /**
- * @file emst_main.cpp
+ * @file methods/emst/emst_main.cpp
  * @author Bill March (march@gatech.edu)
  *
  * Calls the DualTreeBoruvka algorithm from dtb.hpp.
@@ -25,12 +25,27 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME emst
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "dtb.hpp"
 
-PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
+// Program Name.
+BINDING_USER_NAME("Fast Euclidean Minimum Spanning Tree");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of the Dual-Tree Boruvka algorithm for computing the "
+    "Euclidean minimum spanning tree of a set of input points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program can compute the Euclidean minimum spanning tree of a set of "
     "input points using the dual-tree Boruvka algorithm."
     "\n\n"
@@ -43,8 +58,10 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
     "and if the " + PRINT_PARAM_STRING("naive") + " option is given, then "
     "brute-force search is used (this is typically much slower in low "
     "dimensions).  The leaf size does not affect the results, but it may have "
-    "some effect on the runtime of the algorithm."
-    "\n\n"
+    "some effect on the runtime of the algorithm.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the minimum spanning tree of the input dataset " +
     PRINT_DATASET("data") + " can be calculated with a leaf size of 20 and "
     "stored as " + PRINT_DATASET("spanning_tree") + " using the following "
@@ -57,6 +74,15 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
     "an edge.  The first dimension corresponds to the lesser index of the edge;"
     " the second dimension corresponds to the greater index of the edge; and "
     "the third column corresponds to the distance between the two points.");
+
+// See also...
+BINDING_SEE_ALSO("EMST Tutorial", "@doxygen/emst_tutorial.html");
+BINDING_SEE_ALSO("Minimum spanning tree on Wikipedia",
+        "https://en.wikipedia.org/wiki/Minimum_spanning_tree");
+BINDING_SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,"
+        " and Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf");
+BINDING_SEE_ALSO("mlpack::emst::DualTreeBoruvka class documentation",
+        "@doxygen/classmlpack_1_1emst_1_1DualTreeBoruvka.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");
@@ -72,14 +98,15 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no output will be saved");
 
-  arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat dataPoints = std::move(params.Get<arma::mat>("input"));
 
   // Do naive computation if necessary.
-  if (CLI::GetParam<bool>("naive"))
+  if (params.Get<bool>("naive"))
   {
     Log::Info << "Running naive algorithm." << endl;
 
@@ -88,34 +115,36 @@ static void mlpackMain()
     arma::mat naiveResults;
     naive.ComputeMST(naiveResults);
 
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(naiveResults);
+    if (params.Has("output"))
+      params.Get<arma::mat>("output") = std::move(naiveResults);
   }
   else
   {
     Log::Info << "Building tree.\n";
 
     // Check that the leaf size is reasonable.
-    RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
-        "leaf size must be greater than or equal to 1");
+    RequireParamValue<int>(params, "leaf_size", [](int x) { return x > 0; },
+        true, "leaf size must be greater than or equal to 1");
 
     // Initialize the tree and get ready to compute the MST.  Compute the tree
     // by hand.
-    const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
+    const size_t leafSize = (size_t) params.Get<int>("leaf_size");
 
-    Timer::Start("tree_building");
+    timers.Start("tree_building");
     std::vector<size_t> oldFromNew;
     KDTree<EuclideanDistance, DTBStat, arma::mat> tree(dataPoints, oldFromNew,
         leafSize);
     metric::LMetric<2, true> metric;
-    Timer::Stop("tree_building");
+    timers.Stop("tree_building");
 
     DualTreeBoruvka<> dtb(&tree, metric);
 
     // Run the DTB algorithm.
     Log::Info << "Calculating minimum spanning tree." << endl;
     arma::mat results;
+    timers.Start("mst_computation");
     dtb.ComputeMST(results);
+    timers.Stop("mst_computation");
 
     // Unmap the results.
     arma::mat unmappedResults(results.n_rows, results.n_cols);
@@ -138,7 +167,7 @@ static void mlpackMain()
       unmappedResults(2, i) = results(2, i);
     }
 
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(unmappedResults);
+    if (params.Has("output"))
+      params.Get<arma::mat>("output") = std::move(unmappedResults);
   }
 }

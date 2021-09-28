@@ -1,5 +1,5 @@
 /**
- * @file reset_cell_visitor.hpp
+ * @file methods/ann/visitor/reset_cell_visitor.hpp
  * @author Sumedh Ghaisas
  *
  * Boost static visitor abstraction for calling ResetCell function on RNN cells. 
@@ -32,6 +32,8 @@ class ResetCellVisitor : public boost::static_visitor<void>
   //! Execute the ResetCell() function.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   size_t size;

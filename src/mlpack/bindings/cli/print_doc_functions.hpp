@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions.hpp
+ * @file bindings/cli/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This will generate a string representing what a user should type to invoke a
@@ -21,10 +21,42 @@ namespace bindings {
 namespace cli {
 
 /**
+ * Given the name of a binding, print its command-line name (this returns
+ * "mlpack_<bindingName>".
+ */
+inline std::string GetBindingName(const std::string& bindingName);
+
+/**
+ * Print any imports for CLI (there are none, so this returns an empty string).
+ */
+inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo();
+
+/**
+ * Print documentation for each of the types.
+ */
+inline std::string PrintTypeDocs();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
 inline std::string PrintValue(const T& value, bool quotes);
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 /**
  * Print a dataset type parameter (add .csv and return).
@@ -37,6 +69,12 @@ inline std::string PrintDataset(const std::string& dataset);
 inline std::string PrintModel(const std::string& model);
 
 /**
+ * Print the type of a parameter that a user would specify from the
+ * command-line.
+ */
+inline std::string PrintType(util::ParamData& param);
+
+/**
  * Base case for recursion.
  */
 inline std::string ProcessOptions();
@@ -45,7 +83,8 @@ inline std::string ProcessOptions();
  * Print an option for a command-line argument.
  */
 template<typename T, typename... Args>
-std::string ProcessOptions(const std::string& paramName,
+std::string ProcessOptions(util::Params& params,
+                           const std::string& paramName,
                            const T& value,
                            Args... args);
 
@@ -54,15 +93,24 @@ std::string ProcessOptions(const std::string& paramName,
  * be.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args);
+std::string ProgramCall(const std::string& programName,
+                        Args... args);
+
+/**
+ * Given a program name, print a program call invocation assuming that all
+ * options are specified.
+ */
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName);
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.  We

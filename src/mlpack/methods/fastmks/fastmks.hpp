@@ -1,5 +1,5 @@
 /**
- * @file fastmks.hpp
+ * @file methods/fastmks/fastmks.hpp
  * @author Ryan Curtin
  *
  * Definition of the FastMKS class, which implements fast exact max-kernel
@@ -96,10 +96,41 @@ class FastMKS
    *
    * @param referenceSet Reference set of data for FastMKS.
    * @param kernel Initialized kernel.
-   * @param single Whether or not to run single-tree search.
+   * @param singleMode Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
   FastMKS(const MatType& referenceSet,
+          KernelType& kernel,
+          const bool singleMode = false,
+          const bool naive = false);
+
+  /**
+   * Create the FastMKS object with the given reference set (this is the set
+   * that is searched), taking ownership of the reference set.  Optionally,
+   * specify whether or not single-tree search or naive (brute-force) search
+   * should be used.
+   *
+   * @param referenceSet Set of reference data.
+   * @param singleMode Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(MatType&& referenceSet,
+          const bool singleMode = false,
+          const bool naive = false);
+
+  /**
+   * Create the FastMKS object using the reference set (this is the set that is
+   * searched) with an initialized kernel, taking ownership of the reference
+   * set.  This is useful for when the kernel stores state.  Optionally, specify
+   * whether or not single-tree search or naive (brute-force) search should be
+   * used.
+   *
+   * @param referenceSet Reference set of data for FastMKS.
+   * @param kernel Initialized kernel.
+   * @param singleMode Whether or not to run single-tree search.
+   * @param naive Whether or not to run brute-force (naive) search.
+   */
+  FastMKS(MatType&& referenceSet,
           KernelType& kernel,
           const bool singleMode = false,
           const bool naive = false);
@@ -112,8 +143,7 @@ class FastMKS
    * constructor since a tree is given (use one of the other constructors).
    *
    * @param referenceTree Tree built on reference data.
-   * @param single Whether or not to run single-tree search.
-   * @param naive Whether or not to run brute-force (naive) search.
+   * @param singleMode Whether or not to run single-tree search.
    */
   FastMKS(Tree* referenceTree,
           const bool singleMode = false);
@@ -132,6 +162,11 @@ class FastMKS
    * Assign this model to be a copy of the given model.
    */
   FastMKS& operator=(const FastMKS& other);
+
+  /**
+   * Move assignment operator.
+   */
+  FastMKS& operator=(FastMKS&& other);
 
   //! Destructor for the FastMKS object.
   ~FastMKS();
@@ -155,11 +190,30 @@ class FastMKS
   void Train(const MatType& referenceSet, KernelType& kernel);
 
   /**
+   * "Train" the FastMKS model on the given reference set (this will just build
+   * a tree, if the current search mode is not naive mode).  This takes
+   * ownership of the reference set.
+   *
+   * @param referenceSet Set of reference points.
+   */
+  void Train(MatType&& referenceSet);
+
+  /**
+   * "Train" the FastMKS model on the given reference set and use the given
+   * kernel.  This will just build a tree and replace the metric, if the current
+   * search mode is not naive mode.  This takes ownership of the reference set.
+   *
+   * @param referenceSet Set of reference points.
+   * @param kernel Kernel to use for search.
+   */
+  void Train(MatType&& referenceSet, KernelType& kernel);
+
+  /**
    * Train the FastMKS model on the given reference tree.  This takes ownership
    * of the tree, so you do not need to delete it!  This will throw an exception
    * if the model is searching in naive mode (i.e. if Naive() == true).
    *
-   * @param tree Tree to use as reference data.
+   * @param referenceTree Tree to use as reference data.
    */
   void Train(Tree* referenceTree);
 
@@ -205,7 +259,7 @@ class FastMKS
    * here are with respect to the modified input matrix (that is,
    * queryTree->Dataset()).
    *
-   * @param queryTree Tree built on query points.
+   * @param querySet Tree built on query points.
    * @param k The number of maximum kernels to find.
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.
@@ -250,7 +304,7 @@ class FastMKS
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The reference dataset.  We never own this; only the tree or a higher level

@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram
- * @file gmm_train_main.cpp
+ * @file methods/gmm/gmm_train_main.cpp
  *
  * This program trains a mixture of Gaussians on a given data matrix.
  *
@@ -10,10 +10,17 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME gmm_train
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "gmm.hpp"
+#include "diagonal_gmm.hpp"
 #include "no_constraint.hpp"
 #include "diagonal_constraint.hpp"
 
@@ -25,7 +32,17 @@ using namespace mlpack::util;
 using namespace mlpack::kmeans;
 using namespace std;
 
-PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
+// Program Name.
+BINDING_USER_NAME("Gaussian Mixture Model (GMM) Training");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of the EM algorithm for training Gaussian mixture "
+    "models (GMMs).  Given a dataset, this can train a GMM for future use "
+    "with other tools.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
     " using the EM algorithm to find the maximum likelihood estimate.  The "
     "model may be saved and reused by other mlpack GMM tools."
@@ -46,6 +63,7 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     " specified with the " + PRINT_PARAM_STRING("input_model") + " parameter."
     " Otherwise, the model is initialized by running k-means on the data.  The "
     "k-means clustering initialization can be controlled with the " +
+    PRINT_PARAM_STRING("kmeans_max_iterations") + ", " +
     PRINT_PARAM_STRING("refined_start") + ", " +
     PRINT_PARAM_STRING("samplings") + ", and " +
     PRINT_PARAM_STRING("percentage") + " parameters.  If " +
@@ -70,8 +88,10 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "will avoid the checks after each iteration of the EM algorithm which "
     "ensure that the covariance matrices are positive definite.  Specifying "
     "the flag can cause faster runtime, but may also cause non-positive "
-    "definite covariance matrices, which will cause the program to crash."
-    "\n\n"
+    "definite covariance matrices, which will cause the program to crash.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to train a 6-Gaussian GMM on the data in " +
     PRINT_DATASET("data") + " with a maximum of 100 iterations of EM and 3 "
     "trials, saving the trained GMM to " + PRINT_MODEL("gmm") + ", the "
@@ -85,6 +105,14 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "\n\n" +
     PRINT_CALL("gmm_train", "input_model", "gmm", "input", "data2",
         "gaussians", 6, "output_model", "new_gmm"));
+
+// See also...
+BINDING_SEE_ALSO("@gmm_generate", "#gmm_generate");
+BINDING_SEE_ALSO("@gmm_probability", "#gmm_probability");
+BINDING_SEE_ALSO("Gaussian Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
+BINDING_SEE_ALSO("mlpack::gmm::GMM class documentation",
+        "@doxygen/classmlpack_1_1gmm_1_1GMM.html");
 
 // Parameters for training.
 PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "
@@ -108,6 +136,8 @@ PARAM_DOUBLE_IN("noise", "Variance of zero-mean Gaussian noise to add to data.",
     "N", 0);
 
 // Parameters for k-means initialization.
+PARAM_INT_IN("kmeans_max_iterations", "Maximum number of iterations for the "
+    "k-means algorithm (used to initialize EM).", "k", 1000);
 PARAM_FLAG("refined_start", "During the initialization, use refined initial "
     "positions for k-means clustering (Bradley and Fayyad, 1998).", "r");
 PARAM_INT_IN("samplings", "If using --refined_start, specify the number of "
@@ -121,43 +151,54 @@ PARAM_MODEL_IN(GMM, "input_model", "Initial input GMM model to start training "
     "with.", "m");
 PARAM_MODEL_OUT(GMM, "output_model", "Output for trained GMM model.", "M");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check parameters and load data.
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  RequireParamValue<int>("gaussians", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "gaussians", [](int x) { return x > 0; }, true,
       "number of Gaussians must be positive");
-  const int gaussians = CLI::GetParam<int>("gaussians");
+  const int gaussians = params.Get<int>("gaussians");
 
-  ReportIgnoredParam({{ "diagonal_covariance", true }}, "no_force_positive");
-  RequireAtLeastOnePassed({ "output_model" }, false, "no model will be saved");
+  RequireParamValue<int>(params, "trials", [](int x) { return x > 0; }, true,
+      "trials must be greater than 0");
 
-  RequireParamValue<double>("noise", [](double x) { return x >= 0.0; }, true,
-      "variance of noise must be greater than or equal to 0");
+  ReportIgnoredParam(params, {{ "diagonal_covariance", true }},
+      "no_force_positive");
+  RequireAtLeastOnePassed(params, { "output_model" }, false,
+      "no model will be saved");
 
-  arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
+  RequireParamValue<double>(params, "noise", [](double x) { return x >= 0.0; },
+      true, "variance of noise must be greater than or equal to 0");
+
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
+      true, "max_iterations must be greater than or equal to 0");
+  RequireParamValue<int>(params, "kmeans_max_iterations",
+      [](int x) { return x >= 0; }, true,
+      "kmeans_max_iterations must be greater than or equal to 0");
+
+  arma::mat dataPoints = std::move(params.Get<arma::mat>("input"));
 
   // Do we need to add noise to the dataset?
-  if (CLI::HasParam("noise"))
+  if (params.Has("noise"))
   {
-    Timer::Start("noise_addition");
-    const double noise = CLI::GetParam<double>("noise");
+    timers.Start("noise_addition");
+    const double noise = params.Get<double>("noise");
     dataPoints += noise * arma::randn(dataPoints.n_rows, dataPoints.n_cols);
     Log::Info << "Added zero-mean Gaussian noise with variance " << noise
         << " to dataset." << std::endl;
-    Timer::Stop("noise_addition");
+    timers.Stop("noise_addition");
   }
 
   // Initialize GMM.
-  GMM* gmm;
+  GMM* gmm = NULL;
 
-  if (CLI::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    gmm = CLI::GetParam<GMM*>("input_model");
+    gmm = params.Get<GMM*>("input_model");
 
     if (gmm->Dimensionality() != dataPoints.n_rows)
       Log::Fatal << "Given input data (with " << PRINT_PARAM_STRING("input")
@@ -165,101 +206,152 @@ static void mlpackMain()
           << " model (given with " << PRINT_PARAM_STRING("input_model")
           << " has dimensionality " << gmm->Dimensionality() << "!" << endl;
   }
-  else
-  {
-    gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
-  }
 
   // Gather parameters for EMFit object.
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool forcePositive = !CLI::HasParam("no_force_positive");
-  const bool diagonalCovariance = CLI::HasParam("diagonal_covariance");
+  const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
+  const double tolerance = params.Get<double>("tolerance");
+  const bool forcePositive = !params.Has("no_force_positive");
+  const bool diagonalCovariance = params.Has("diagonal_covariance");
+  const size_t kmeansMaxIterations =
+      (size_t) params.Get<int>("kmeans_max_iterations");
 
   // This gets a bit weird because we need different types depending on whether
   // --refined_start is specified.
   double likelihood;
-  if (CLI::HasParam("refined_start"))
+  if (params.Has("refined_start"))
   {
-    RequireParamValue<int>("samplings", [](int x) { return x > 0; }, true,
-        "number of samplings must be positive");
-    RequireParamValue<double>("percentage", [](double x) {
+    RequireParamValue<int>(params, "samplings", [](int x) { return x > 0; },
+        true, "number of samplings must be positive");
+    RequireParamValue<double>(params, "percentage", [](double x) {
         return x > 0.0 && x <= 1.0; }, true, "percentage to sample must be "
         "be greater than 0.0 and less than or equal to 1.0");
 
-    const int samplings = CLI::GetParam<int>("samplings");
-    const double percentage = CLI::GetParam<double>("percentage");
+    // Initialize the GMM if needed.  (We didn't do this earlier, because
+    // RequireParamValue() would leak the memory if the check failed.)
+    if (!params.Has("input_model"))
+      gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
+
+    const int samplings = params.Get<int>("samplings");
+    const double percentage = params.Get<double>("percentage");
 
     typedef KMeans<metric::SquaredEuclideanDistance, RefinedStart> KMeansType;
 
-    // These are default parameters.
-    KMeansType k(1000, metric::SquaredEuclideanDistance(),
+    KMeansType k(kmeansMaxIterations, metric::SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
 
     // Depending on the value of forcePositive and diagonalCovariance, we have
     // to use different types.
     if (diagonalCovariance)
     {
+      // Convert GMMs into DiagonalGMMs.
+      DiagonalGMM dgmm(gmm->Gaussians(), gmm->Dimensionality());
+      for (size_t i = 0; i < size_t(gaussians); ++i)
+      {
+        dgmm.Component(i).Mean() = gmm->Component(i).Mean();
+        dgmm.Component(i).Covariance(
+            std::move(arma::diagvec(gmm->Component(i).Covariance())));
+      }
+      dgmm.Weights() = gmm->Weights();
+
       // Compute the parameters of the model using the EM algorithm.
-      Timer::Start("em");
-      EMFit<KMeansType, DiagonalConstraint> em(maxIterations, tolerance, k);
-      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      timers.Start("em");
+      EMFit<KMeansType, PositiveDefiniteConstraint,
+          distribution::DiagonalGaussianDistribution> em(maxIterations,
+          tolerance, k);
+
+      likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
           em);
-      Timer::Stop("em");
+      timers.Stop("em");
+
+      // Convert DiagonalGMMs into GMMs.
+      for (size_t i = 0; i < size_t(gaussians); ++i)
+      {
+        gmm->Component(i).Mean() = dgmm.Component(i).Mean();
+        gmm->Component(i).Covariance(
+            arma::diagmat(dgmm.Component(i).Covariance()));
+      }
+      gmm->Weights() = dgmm.Weights();
     }
     else if (forcePositive)
     {
       // Compute the parameters of the model using the EM algorithm.
-      Timer::Start("em");
+      timers.Start("em");
       EMFit<KMeansType> em(maxIterations, tolerance, k);
-      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
-      Timer::Stop("em");
+      timers.Stop("em");
     }
     else
     {
       // Compute the parameters of the model using the EM algorithm.
-      Timer::Start("em");
+      timers.Start("em");
       EMFit<KMeansType, NoConstraint> em(maxIterations, tolerance, k);
-      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
-      Timer::Stop("em");
+      timers.Stop("em");
     }
   }
   else
   {
+    // Initialize the GMM if needed.
+    if (!params.Has("input_model"))
+      gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
+
     // Depending on the value of forcePositive and diagonalCovariance, we have
     // to use different types.
     if (diagonalCovariance)
     {
+      // Convert GMMs into DiagonalGMMs.
+      DiagonalGMM dgmm(gmm->Gaussians(), gmm->Dimensionality());
+      for (size_t i = 0; i < size_t(gaussians); ++i)
+      {
+        dgmm.Component(i).Mean() = gmm->Component(i).Mean();
+        dgmm.Component(i).Covariance(
+            std::move(arma::diagvec(gmm->Component(i).Covariance())));
+      }
+      dgmm.Weights() = gmm->Weights();
+
       // Compute the parameters of the model using the EM algorithm.
-      Timer::Start("em");
-      EMFit<kmeans::KMeans<>, DiagonalConstraint> em(maxIterations, tolerance);
-      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      timers.Start("em");
+      EMFit<KMeans<>, PositiveDefiniteConstraint,
+          distribution::DiagonalGaussianDistribution> em(maxIterations,
+          tolerance, KMeans<>(kmeansMaxIterations));
+
+      likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
           em);
-      Timer::Stop("em");
+      timers.Stop("em");
+
+      // Convert DiagonalGMMs into GMMs.
+      for (size_t i = 0; i < size_t(gaussians); ++i)
+      {
+        gmm->Component(i).Mean() = dgmm.Component(i).Mean();
+        gmm->Component(i).Covariance(
+            arma::diagmat(dgmm.Component(i).Covariance()));
+      }
+      gmm->Weights() = dgmm.Weights();
     }
     else if (forcePositive)
     {
       // Compute the parameters of the model using the EM algorithm.
-      Timer::Start("em");
-      EMFit<> em(maxIterations, tolerance);
-      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      timers.Start("em");
+      EMFit<> em(maxIterations, tolerance, KMeans<>(kmeansMaxIterations));
+      likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
-      Timer::Stop("em");
+      timers.Stop("em");
     }
     else
     {
       // Compute the parameters of the model using the EM algorithm.
-      Timer::Start("em");
-      EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance);
-      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      timers.Start("em");
+      KMeans<> k(kmeansMaxIterations);
+      EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance, k);
+      likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
-      Timer::Stop("em");
+      timers.Stop("em");
     }
   }
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << "." << endl;
 
-  CLI::GetParam<GMM*>("output_model") = gmm;
+  params.Get<GMM*>("output_model") = gmm;
 }

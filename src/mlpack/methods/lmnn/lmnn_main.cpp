@@ -1,5 +1,5 @@
 /**
- * @file lmnn_main.cpp
+ * @file methods/lmnn/lmnn_main.cpp
  * @author Manish Kumar
  *
  * Executable for Large Margin Nearest Neighbors.
@@ -10,21 +10,35 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME lmnn
+
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include "lmnn.hpp"
 
-#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
-// Define parameters.
-PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
+// Program Name.
+BINDING_USER_NAME("Large Margin Nearest Neighbors (LMNN)");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of Large Margin Nearest Neighbors (LMNN), a distance "
+    "learning technique.  Given a labeled dataset, this learns a transformation"
+    " of the data that improves k-nearest-neighbor performance; this can be "
+    "useful as a preprocessing step.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements Large Margin Nearest Neighbors, a distance "
     "learning technique.  The method seeks to improve k-nearest-neighbor "
     "classification on a dataset.  The method employes the strategy of "
@@ -53,12 +67,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "after which impostors must be re-calculated (specified with " +
     PRINT_PARAM_STRING("range") + ")."
     "\n\n"
-    "Output can be either the learned distance matrix (specified with " +
+    "Output can either be the learned distance matrix (specified with " +
     PRINT_PARAM_STRING("output") +"), or the transformed dataset "
     " (specified with " + PRINT_PARAM_STRING("transformed_data") + "), or "
-    "both.  Accuracy on initial dataset and final transformed dataset can "
-    "be printed by specifying the " + PRINT_PARAM_STRING("print_accuracy") +
-    "parameter. "
+    "both. Additionally mean-centered dataset (specified with " +
+    PRINT_PARAM_STRING("centered_data") + ") can be accessed given "
+    "mean-centering (specified with " + PRINT_PARAM_STRING("center") +
+    ") is performed on the dataset. Accuracy on initial dataset and final "
+    "transformed dataset can be printed by specifying the " +
+    PRINT_PARAM_STRING("print_accuracy") + "parameter. "
     "\n\n"
     "This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic "
     "gradient descent, mini-batch stochastic gradient descent, or the L_BFGS "
@@ -89,7 +106,9 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     PRINT_PARAM_STRING("batch_size") + "), and the maximum number of passes "
     "(specified with " + PRINT_PARAM_STRING("passes") + ").  In "
     "addition, a normalized starting point can be used by specifying the " +
-    PRINT_PARAM_STRING("normalize") + " parameter. "
+    PRINT_PARAM_STRING("normalize") + " parameter. Furthermore, " +
+    "mean-centering can be performed on the dataset by specifying the " +
+    PRINT_PARAM_STRING("center") + "parameter. "
     "\n\n"
     "The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter " +
     PRINT_PARAM_STRING("optimizer") + ", uses a back-tracking line search "
@@ -102,20 +121,32 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "literature on L-BFGS.  In addition, a normalized starting point can be "
     "used by specifying the " + PRINT_PARAM_STRING("normalize") + " parameter."
     "\n\n"
-    "By default, the AMSGrad optimizer is used."
-    "\n\n"
+    "By default, the AMSGrad optimizer is used.");
+
+// Example.
+BINDING_EXAMPLE(
     "Example - Let's say we want to learn distance on iris dataset with "
     "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
     "the same will look like: "
     "\n\n" +
-    PRINT_CALL("mlpack_lmnn", "input", "iris", "labels", "iris_labels",
-    "k", 3, "optimizer", "bbsgd", "output", "output") +
+    PRINT_CALL("lmnn", "input", "iris", "labels", "iris_labels", "k", 3,
+    "optimizer", "bbsgd", "output", "output") +
     "\n\n"
     "An another program call making use of range & regularization parameter "
     "with dataset having labels as last column can be made as: "
     "\n\n" +
-    PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
+    PRINT_CALL("lmnn", "input", "letter_recognition", "k", 5,
     "range", 10, "regularization", 0.4, "output", "output"));
+
+// See also...
+BINDING_SEE_ALSO("@nca", "#nca");
+BINDING_SEE_ALSO("Large margin nearest neighbor on Wikipedia",
+        "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor");
+BINDING_SEE_ALSO("Distance metric learning for large margin nearest neighbor "
+        "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-"
+        "metric-learning-for-large-margin-nearest-neighbor-classification.pdf");
+BINDING_SEE_ALSO("mlpack::lmnn::LMNN C++ class documentation",
+        "@doxygen/classmlpack_1_1lmnn_1_1LMNN.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
@@ -126,6 +157,8 @@ PARAM_INT_IN("k", "Number of target neighbors to use for each "
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_MATRIX_OUT("transformed_data", "Output matrix for transformed dataset.",
     "D");
+PARAM_MATRIX_OUT("centered_data", "Output matrix for mean-centered dataset.",
+    "c");
 PARAM_FLAG("print_accuracy", "Print accuracies on initial and transformed "
     "dataset", "P");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
@@ -136,6 +169,8 @@ PARAM_INT_IN("rank", "Rank of distance matrix to be optimized. ", "A", 0);
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
     "is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
+PARAM_FLAG("center", "Perform mean-centering on the dataset. It is useful "
+    "when the centroid of the data is far from the origin.", "C");
 PARAM_INT_IN("passes", "Maximum number of full passes over dataset for "
     "AMSGrad, BB_SGD and SGD.", "p", 50);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations for "
@@ -154,7 +189,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 using namespace mlpack;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
 
@@ -178,12 +212,12 @@ double KNNAccuracy(const arma::mat& dataset,
   // Keep count.
   size_t count = 0;
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     arma::vec Map;
     Map.zeros(uniqueLabels.n_cols);
 
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; ++j)
     {
       Map(labels(neighbors(j, i))) +=
           1 / std::pow(distances(j, i) + 1, 2);
@@ -201,86 +235,101 @@ double KNNAccuracy(const arma::mat& dataset,
   return ((double) count / dataset.n_cols) * 100;
 }
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no output will be saved");
 
-  const string optimizerType = CLI::GetParam<string>("optimizer");
-  RequireParamInSet<string>("optimizer", { "amsgrad", "bbsgd", "sgd",
+  const string optimizerType = params.Get<string>("optimizer");
+  RequireParamInSet<string>(params, "optimizer", { "amsgrad", "bbsgd", "sgd",
        "lbfgs" }, true, "unknown optimizer type");
 
   // Warn on unused parameters.
   if (optimizerType == "amsgrad")
   {
-    ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam(params, "max_iterations",
+        "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "bbsgd")
   {
-    ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam(params, "max_iterations",
+        "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "sgd")
   {
-    ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam(params, "max_iterations",
+        "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "lbfgs")
   {
-    ReportIgnoredParam("step_size", "SGD optimizer is not being used");
-    ReportIgnoredParam("linear_scan", "SGD optimizer is not being used");
-    ReportIgnoredParam("batch_size", "SGD optimizer is not being used");
+    ReportIgnoredParam(params, "step_size", "SGD optimizer is not being used");
+    ReportIgnoredParam(params, "linear_scan",
+        "SGD optimizer is not being used");
+    ReportIgnoredParam(params, "batch_size", "SGD optimizer is not being used");
   }
 
-  RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "k", [](int x) { return x > 0; }, true,
       "number of targets must be positive");
-  RequireParamValue<int>("range", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "range", [](int x) { return x > 0; }, true,
       "range must be positive");
-  RequireParamValue<int>("batch_size", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "batch_size", [](int x) { return x > 0; }, true,
       "batch size must be positive");
-  RequireParamValue<double>("regularization", [](double x)
+  RequireParamValue<double>(params, "regularization", [](double x)
       { return x >= 0.0; }, true, "regularization value must be non-negative");
-  RequireParamValue<double>("step_size", [](double x)
+  RequireParamValue<double>(params, "step_size", [](double x)
       { return x >= 0.0; }, true, "step size value must be non-negative");
-  RequireParamValue<int>("max_iterations", [](int x)
+  RequireParamValue<int>(params, "max_iterations", [](int x)
       { return x >= 0; }, true,
       "maximum number of iterations must be non-negative");
-  RequireParamValue<int>("passes", [](int x) { return x >= 0; }, true,
+  RequireParamValue<int>(params, "passes", [](int x) { return x >= 0; }, true,
       "maximum number of passes must be non-negative");
-  RequireParamValue<double>("tolerance",
+  RequireParamValue<double>(params, "tolerance",
       [](double x) { return x >= 0.0; }, true,
       "tolerance must be non-negative");
-  RequireParamValue<int>("rank", [](int x)
+  RequireParamValue<int>(params, "rank", [](int x)
       { return x >= 0; }, true, "rank must be nonnegative");
 
-  const size_t k = (size_t) CLI::GetParam<int>("k");
-  const double regularization = CLI::GetParam<double>("regularization");
-  const double stepSize = CLI::GetParam<double>("step_size");
-  const size_t passes = (size_t) CLI::GetParam<int>("passes");
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool normalize = CLI::HasParam("normalize");
-  const bool printAccuracy = CLI::HasParam("print_accuracy");
-  const bool shuffle = !CLI::HasParam("linear_scan");
-  const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
-  const size_t range = (size_t) CLI::GetParam<int>("range");
-  const size_t rank = (size_t) CLI::GetParam<int>("rank");
+  const size_t k = (size_t) params.Get<int>("k");
+  const double regularization = params.Get<double>("regularization");
+  const double stepSize = params.Get<double>("step_size");
+  const size_t passes = (size_t) params.Get<int>("passes");
+  const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
+  const double tolerance = params.Get<double>("tolerance");
+  const bool normalize = params.Has("normalize");
+  const bool center = params.Has("center");
+  const bool printAccuracy = params.Has("print_accuracy");
+  const bool shuffle = !params.Has("linear_scan");
+  const size_t batchSize = (size_t) params.Get<int>("batch_size");
+  const size_t range = (size_t) params.Get<int>("range");
+  const size_t rank = (size_t) params.Get<int>("rank");
 
   // Load data.
-  arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat data = std::move(params.Get<arma::mat>("input"));
+
+  // Carry out mean-centering on the dataset, if necessary.
+  if (center)
+  {
+    for (size_t i = 0; i < data.n_rows; ++i)
+    {
+      data.row(i) -= arma::mean(data.row(i));
+    }
+  }
 
   // Do we want to load labels separately?
   arma::Row<size_t> rawLabels(data.n_cols);
-  if (CLI::HasParam("labels"))
+  if (params.Has("labels"))
   {
-    rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    rawLabels = std::move(params.Get<arma::Row<size_t>>("labels"));
   }
   else
   {
     Log::Info << "Using last column of input dataset as labels." << endl;
-    for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t i = 0; i < data.n_cols; ++i)
       rawLabels[i] = (size_t) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
@@ -293,9 +342,9 @@ static void mlpackMain()
 
   arma::mat distance;
 
-  if (CLI::HasParam("distance"))
+  if (params.Has("distance"))
   {
-    distance = std::move(CLI::GetParam<arma::mat>("distance"));
+    distance = std::move(params.Get<arma::mat>("distance"));
   }
   else if (rank)
   {
@@ -320,6 +369,7 @@ static void mlpackMain()
   }
 
   // Now create the LMNN object and run the optimization.
+  timers.Start("lmnn_optimization");
   if (optimizerType == "amsgrad")
   {
     LMNN<LMetric<2>> lmnn(data, labels, k);
@@ -335,7 +385,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "bbsgd")
   {
-    LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::BBS_BB> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -350,7 +400,7 @@ static void mlpackMain()
   {
     // Using SGD is not recommended as the learning matrix can
     // diverge to inf causing serious memory problems.
-    LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::StandardSGD> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -363,7 +413,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "lbfgs")
   {
-    LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::L_BFGS> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().MaxIterations() = maxIterations;
@@ -371,6 +421,7 @@ static void mlpackMain()
 
     lmnn.LearnDistance(distance);
   }
+  timers.Stop("lmnn_optimization");
 
   // Print initial & final accuracies if required.
   if (printAccuracy)
@@ -385,8 +436,16 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = distance;
-  if (CLI::HasParam("transformed_data"))
-    CLI::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = distance;
+  if (params.Has("transformed_data"))
+    params.Get<arma::mat>("transformed_data") = distance * data;
+  if (params.Has("centered_data"))
+  {
+    if (center)
+      params.Get<arma::mat>("centered_data") = std::move(data);
+    else
+      Log::Info << "Mean-centering was not performed. Centered dataset "
+          "will not be saved." << endl;
+  }
 }

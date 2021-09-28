@@ -1,104 +1,85 @@
 /**
- * @file dbscan_test.cpp
+ * @file tests/main_tests/dbscan_test.cpp
  * @author Nikhil Goel
  *
- * Test mlpackMain() of dbscan_main.cpp.
+ * Test RUN_BINDING() of dbscan_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "DBSCAN";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/dbscan/dbscan_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct DBSCANTestFixture
-{
- public:
-  DBSCANTestFixture()
-  {
-    // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
-  }
-
-  ~DBSCANTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    CLI::ClearSettings();
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE(DBSCANMainTest, DBSCANTestFixture);
+BINDING_TEST_FIXTURE(DBSCANTestFixture);
 
 /**
  * Check that number of output labels and number of input
  * points are equal.
  */
-BOOST_AUTO_TEST_CASE(DBSCANOutputDimensionTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANOutputDimensionTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   size_t inputSize = inputData.n_cols;
 
   SetInputParam("input", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of predicted labels is equal to the input test points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("assignments").n_cols,
-                      inputSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("assignments").n_rows,
-                      1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroids").n_rows, 4);
-  BOOST_REQUIRE_GE(CLI::GetParam<arma::mat>("centroids").n_cols, 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("assignments").n_cols == inputSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("assignments").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("centroids").n_rows == 4);
+  REQUIRE(params.Get<arma::mat>("centroids").n_cols >= 1);
 }
 
 /**
  * Check that radius of search(epsilon) is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(DBSCANEpsilonTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANEpsilonTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) -0.5);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that minimum size of cluster is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(DBSCANMinSizeTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANMinSizeTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
   SetInputParam("min_size", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -106,94 +87,92 @@ BOOST_AUTO_TEST_CASE(DBSCANMinSizeTest)
  * Check that no point is labelled as noise point
  * when min_size is equal to 1.
  */
-BOOST_AUTO_TEST_CASE(DBSCANClusterNumberTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANClusterNumberTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
   SetInputParam("min_size", (int) 1);
   SetInputParam("epsilon", (double) 0.1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
   for (size_t i = 0; i < output.n_elem; ++i)
-    BOOST_REQUIRE_LT(output[i], inputData.n_cols);
+    REQUIRE(output[i] < inputData.n_cols);
 }
 
 /**
  * Check that the cluster assignment is different for different
  * values of epsilon.
  */
-BOOST_AUTO_TEST_CASE(DBSCANDiffEpsilonTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffEpsilonTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 1.0);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output1;
-  output1 = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output1 = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.5);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output2;
-  output2 = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output2 = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  BOOST_REQUIRE_GT(arma::accu(output1 != output2), 1);
+  REQUIRE(arma::accu(output1 != output2) > 1);
 }
 
 /**
  * Check that the cluster assignment is different for different
  * values of Min Size.
  */
-BOOST_AUTO_TEST_CASE(DBSCANDiffMinSizeTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffMinSizeTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.4);
   SetInputParam("min_size", (int) 5);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output1;
-  output1 = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output1 = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["min_size"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.5);
   SetInputParam("min_size", (int) 40);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output2;
-  output2 = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output2 = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  BOOST_REQUIRE_GT(arma::accu(output1 != output2), 1);
+  REQUIRE(arma::accu(output1 != output2) > 1);
 }
 
 /**
@@ -201,17 +180,18 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffMinSizeTest)
  * tree types. ’kd’, ’r’, ’r-star’, ’x’, ’hilbert-r’, ’r-plus’,
  * ’r-plus-plus’, ’cover’, ’ball’.
  */
-BOOST_AUTO_TEST_CASE(DBSCANTreeTypeTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANTreeTypeTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("tree_type", std::string("binary"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -219,141 +199,126 @@ BOOST_AUTO_TEST_CASE(DBSCANTreeTypeTest)
  * Check that the assignment of cluster is same if
  * different tree type is used for search.
  */
-BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffTreeTypeTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   // Tree type = kd tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("kd"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> kdOutput;
-  kdOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  kdOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = r tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> rOutput;
-  rOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  rOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree type = r-star tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r-star"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> rStarOutput;
-  rStarOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  rStarOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = x tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("x"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> xOutput;
-  xOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  xOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = hilbert-r tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("hilbert-r"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> hilbertROutput;
-  hilbertROutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  hilbertROutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = r-plus tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r-plus"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> rPlusOutput;
-  rPlusOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  rPlusOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = r-plus-plus tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r-plus-plus"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> rPlusPlusOutput;
-  rPlusPlusOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  rPlusPlusOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = cover tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("cover"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> coverOutput;
-  coverOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  coverOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Tree Type = ball tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("ball"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> ballOutput;
-  ballOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  ballOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(kdOutput, rOutput);
   CheckMatrices(kdOutput, rStarOutput);
@@ -369,30 +334,30 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
  * Check that the assignment of cluster is same if
  * single tree is used for search.
  */
-BOOST_AUTO_TEST_CASE(DBSCANSingleTreeTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANSingleTreeTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", inputData);
   SetInputParam("single_mode", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> singleModeOutput;
-  singleModeOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  singleModeOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(output, singleModeOutput);
 }
@@ -401,32 +366,67 @@ BOOST_AUTO_TEST_CASE(DBSCANSingleTreeTest)
  * Check that the assignment of cluster is same if
  * single tree is used for search.
  */
-BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANNaiveSearchTest",
+                 "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  output = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  bindings::tests::CleanMemory();
-
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", inputData);
   SetInputParam("naive", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> naiveOutput;
-  naiveOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  naiveOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(output, naiveOutput);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Check that the assignment of cluster is different if
+ * point selection policies are different.
+ */
+TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANRandomSelectionFlagTest",
+                 "[DBSCANMainTest][BindingTests]")
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    FAIL("Unable to load dataset iris.csv!");
+
+  SetInputParam("input", inputData);
+  SetInputParam("epsilon", (double) 0.358);
+  SetInputParam("min_size", 1);
+  SetInputParam("selection_type", std::string("ordered"));
+
+  RUN_BINDING();
+
+  arma::Row<size_t> orderedOutput;
+  orderedOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
+
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("input", inputData);
+  SetInputParam("epsilon", (double) 0.358);
+  SetInputParam("min_size", 1);
+  SetInputParam("selection_type", std::string("random"));
+
+  RUN_BINDING();
+
+  arma::Row<size_t> randomOutput;
+  randomOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
+
+  REQUIRE(arma::accu(orderedOutput != randomOutput) > 0);
+}

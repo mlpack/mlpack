@@ -1,5 +1,5 @@
 /**
- * @file kmeans_rules.hpp
+ * @file methods/kmeans/pelleg_moore_kmeans_rules.hpp
  * @author Ryan Curtin
  *
  * Defines the pruning rules and base cases rules necessary to perform

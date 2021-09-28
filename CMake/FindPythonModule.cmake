@@ -20,7 +20,7 @@ function(find_python_module module)
     endif ()
     # A module's location is usually a directory, but for binary modules
     # it's a .so file.
-    execute_process(COMMAND "${PYTHON}" "-c" 
+    execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c" 
       "import re, ${module}; print(re.compile('/__init__.py.*').sub('',${module}.__file__))"
       RESULT_VARIABLE _${module}_status
       OUTPUT_VARIABLE _${module}_location
@@ -28,7 +28,7 @@ function(find_python_module module)
     if (NOT _${module}_status)
       # Now we have to check the version.
       if (VERSION_REQ)
-        execute_process(COMMAND "${PYTHON}" "-c"
+        execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c"
             "import ${module}; from distutils.version import StrictVersion; print(StrictVersion(${module}.__version__) >= StrictVersion('${VERSION_REQ}'));"
             RESULT_VARIABLE _version_status
             OUTPUT_VARIABLE _version_compare

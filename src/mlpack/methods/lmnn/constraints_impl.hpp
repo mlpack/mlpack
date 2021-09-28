@@ -1,5 +1,5 @@
 /**
- * @file constraints_impl.h
+ * @file methods/lmnn/constraints_impl.hpp
  * @author Manish Kumar
  *
  * Implementation of the Constraints class.
@@ -29,7 +29,7 @@ Constraints<MetricType>::Constraints(
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
 
-  if (minCount < k)
+  if (minCount < k + 1)
   {
     Log::Fatal << "Constraints::Constraints(): One of the class contains only "
         << minCount << " instances, but value of k is " << k << "  "
@@ -37,11 +37,52 @@ Constraints<MetricType>::Constraints(
   }
 }
 
+template<typename MetricType>
+inline void Constraints<MetricType>::ReorderResults(
+                                            const arma::mat& distances,
+                                            arma::Mat<size_t>& neighbors,
+                                            const arma::vec& norms)
+{
+  // Shortcut...
+  if (neighbors.n_rows == 1)
+    return;
+
+  // Just a simple loop over the results---we want to make sure that the
+  // largest-norm point with identical distance has the last location.
+  for (size_t i = 0; i < neighbors.n_cols; ++i)
+  {
+    for (size_t start = 0; start < neighbors.n_rows - 1; start++)
+    {
+      size_t end = start + 1;
+      while (distances(start, i) == distances(end, i) &&
+          end < neighbors.n_rows)
+      {
+        end++;
+        if (end == neighbors.n_rows)
+          break;
+      }
+
+      if (start != end)
+      {
+        // We must sort these elements by norm.
+        arma::Col<size_t> newNeighbors =
+            neighbors.col(i).subvec(start, end - 1);
+        arma::uvec indices = arma::conv_to<arma::uvec>::from(newNeighbors);
+
+        arma::uvec order = arma::sort_index(norms.elem(indices));
+        neighbors.col(i).subvec(start, end - 1) =
+            newNeighbors.elem(order);
+      }
+    }
+  }
+}
+
 // Calculates k similar labeled nearest neighbors.
 template<typename MetricType>
 void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                                               const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels)
+                                              const arma::Row<size_t>& labels,
+                                              const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -52,15 +93,19 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Perform KNN search with same class points as both reference
     // set and query set.
     knn.Train(dataset.cols(indexSame[i]));
     knn.Search(k, neighbors, distances);
 
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexSame[i].at(neighbors(j));
 
     // Store target neihbors.
@@ -74,6 +119,7 @@ template<typename MetricType>
 void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                                               const arma::mat& dataset,
                                               const arma::Row<size_t>& labels,
+                                              const arma::vec& norms,
                                               const size_t begin,
                                               const size_t batchSize)
 {
@@ -92,7 +138,7 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate Target Neighbors.
     subIndexSame = arma::find(sublabels == uniqueLabels[i]);
@@ -102,8 +148,12 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
     knn.Train(dataset.cols(indexSame[i]));
     knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
 
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexSame[i].at(neighbors(j));
 
     // Store target neighbors.
@@ -115,7 +165,8 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels)
+                                        const arma::Row<size_t>& labels,
+                                        const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -126,19 +177,23 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Perform KNN search with differently labeled points as reference
     // set and  same class points as query set.
     knn.Train(dataset.cols(indexDiff[i]));
     knn.Search(dataset.cols(indexSame[i]), k, neighbors, distances);
 
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputMatrix.cols(indexSame[i]) =  neighbors;
+    outputMatrix.cols(indexSame[i]) = neighbors;
   }
 }
 
@@ -148,7 +203,8 @@ template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels)
+                                        const arma::Row<size_t>& labels,
+                                        const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -159,20 +215,24 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Perform KNN search with differently labeled points as reference
     // set and  same class points as query set.
     knn.Train(dataset.cols(indexDiff[i]));
     knn.Search(dataset.cols(indexSame[i]), k, neighbors, distances);
 
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputNeighbors.cols(indexSame[i]) =  neighbors;
-    outputDistance.cols(indexSame[i]) =  distances;
+    outputNeighbors.cols(indexSame[i]) = neighbors;
+    outputDistance.cols(indexSame[i]) = distances;
   }
 }
 
@@ -182,6 +242,7 @@ template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
                                         const size_t begin,
                                         const size_t batchSize)
 {
@@ -200,7 +261,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate impostors.
     subIndexSame = arma::find(sublabels == uniqueLabels[i]);
@@ -210,12 +271,16 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
     knn.Train(dataset.cols(indexDiff[i]));
     knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
 
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputMatrix.cols(begin + subIndexSame) =  neighbors;
+    outputMatrix.cols(begin + subIndexSame) = neighbors;
   }
 }
 
@@ -226,6 +291,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
                                         const size_t begin,
                                         const size_t batchSize)
 {
@@ -244,7 +310,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
   {
     // Calculate impostors.
     subIndexSame = arma::find(sublabels == uniqueLabels[i]);
@@ -254,13 +320,66 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
     knn.Train(dataset.cols(indexDiff[i]));
     knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
 
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputNeighbors.cols(begin + subIndexSame) =  neighbors;
-    outputDistance.cols(begin + subIndexSame) =  distances;
+    outputNeighbors.cols(begin + subIndexSame) = neighbors;
+    outputDistance.cols(begin + subIndexSame) = distances;
+  }
+}
+
+// Calculates k differently labeled nearest neighbors & distances over some
+// data points.
+template<typename MetricType>
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+                                        arma::mat& outputDistance,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
+                                        const arma::uvec& points,
+                                        const size_t numPoints)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  // KNN instance.
+  KNN knn;
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // Vectors to store indices.
+  arma::uvec subIndexSame;
+
+  for (size_t i = 0; i < uniqueLabels.n_cols; ++i)
+  {
+    // Calculate impostors.
+    subIndexSame = arma::find(labels.cols(points.head(numPoints)) ==
+        uniqueLabels[i]);
+
+    // Perform KNN search with differently labeled points as reference
+    // set and same class points as query set.
+    knn.Train(dataset.cols(indexDiff[i]));
+    knn.Search(dataset.cols(points.elem(subIndexSame)),
+        k, neighbors, distances);
+
+    // Re-order neighbors on the basis of increasing norm in case
+    // of ties among distances.
+    ReorderResults(distances, neighbors, norms);
+
+    // Re-map neighbors to their index.
+    for (size_t j = 0; j < neighbors.n_elem; ++j)
+      neighbors(j) = indexDiff[i].at(neighbors(j));
+
+    // Store impostors.
+    outputNeighbors.cols(points.elem(subIndexSame)) = neighbors;
+    outputDistance.cols(points.elem(subIndexSame)) = distances;
   }
 }
 
@@ -269,24 +388,25 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 template<typename MetricType>
 void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
                                        const arma::mat& dataset,
-                                       const arma::Row<size_t>& labels)
+                                       const arma::Row<size_t>& labels,
+                                       const arma::vec& norms)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
   size_t N = dataset.n_cols;
 
-  arma::Mat<size_t> impostors;
-  Impostors(impostors, dataset);
+  arma::Mat<size_t> impostors(k, dataset.n_cols);
+  Impostors(impostors, dataset, labels, norms);
 
-  arma::Mat<size_t> targetNeighbors;
-  TargetNeighbors(targetNeighbors, dataset);
+  arma::Mat<size_t> targetNeighbors(k, dataset.n_cols);;
+  TargetNeighbors(targetNeighbors, dataset, labels, norms);
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
 
-  for (size_t i = 0, r = 0; i < N; i++)
+  for (size_t i = 0, r = 0; i < N; ++i)
   {
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; ++j)
     {
       for (size_t l = 0; l < k; l++, r++)
       {
@@ -312,7 +432,7 @@ inline void Constraints<MetricType>::Precalculate(
   indexSame.resize(uniqueLabels.n_elem);
   indexDiff.resize(uniqueLabels.n_elem);
 
-  for (size_t i = 0; i < uniqueLabels.n_elem; i++)
+  for (size_t i = 0; i < uniqueLabels.n_elem; ++i)
   {
     // Store same and diff indices.
     indexSame[i] = arma::find(labels == uniqueLabels[i]);

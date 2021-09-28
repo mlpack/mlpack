@@ -1,5 +1,5 @@
 /**
- * @file max_pooling_impl.hpp
+ * @file methods/ann/layer/max_pooling_impl.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -27,26 +27,25 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling()
 
 template<typename InputDataType, typename OutputDataType>
 MaxPooling<InputDataType, OutputDataType>::MaxPooling(
-    const size_t kW,
-    const size_t kH,
-    const size_t dW,
-    const size_t dH,
+    const size_t kernelWidth,
+    const size_t kernelHeight,
+    const size_t strideWidth,
+    const size_t strideHeight,
     const bool floor) :
-    kW(kW),
-    kH(kH),
-    dW(dW),
-    dH(dH),
-    reset(false),
+    kernelWidth(kernelWidth),
+    kernelHeight(kernelHeight),
+    strideWidth(strideWidth),
+    strideHeight(strideHeight),
     floor(floor),
-    offset(0),
+    inSize(0),
+    outSize(0),
+    reset(false),
     inputWidth(0),
     inputHeight(0),
     outputWidth(0),
     outputHeight(0),
-    batchSize(0),
-    inSize(0),
-    outSize(0),
-    deterministic(false)
+    deterministic(false),
+    batchSize(0)
 {
   // Nothing to do here.
 }
@@ -54,24 +53,26 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Forward(
-  const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+  const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, batchSize * inSize, false, false);
 
   if (floor)
   {
-    outputWidth = std::floor((inputWidth - (double) kW) / (double) dW + 1);
-    outputHeight = std::floor((inputHeight - (double) kH) / (double) dH + 1);
-    offset = 0;
+    outputWidth = std::floor((inputWidth -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    outputHeight = std::floor((inputHeight -
+        (double) kernelHeight) / (double) strideHeight + 1);
   }
   else
   {
-    outputWidth = std::ceil((inputWidth - (double) kW) / (double) dW + 1);
-    outputHeight = std::ceil((inputHeight - (double) kH) / (double) dH + 1);
-    offset = 1;
+    outputWidth = std::ceil((inputWidth -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    outputHeight = std::ceil((inputHeight -
+        (double) kernelHeight) / (double) strideHeight + 1);
   }
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
@@ -118,10 +119,10 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize, false, false);
+  arma::cube mappedError = arma::cube(((arma::Mat<eT>&) gy).memptr(),
+      outputWidth, outputHeight, outSize, false, false);
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
@@ -141,13 +142,18 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MaxPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kW);
-  ar & BOOST_SERIALIZATION_NVP(kH);
-  ar & BOOST_SERIALIZATION_NVP(dW);
-  ar & BOOST_SERIALIZATION_NVP(dH);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
+  ar(CEREAL_NVP(kernelWidth));
+  ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(strideWidth));
+  ar(CEREAL_NVP(strideHeight));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(floor));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
 }
 
 } // namespace ann

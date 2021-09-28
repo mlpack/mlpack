@@ -1,5 +1,5 @@
 /**
- * @file hmm.hpp
+ * @file methods/hmm/hmm.hpp
  * @author Ryan Curtin
  * @author Tran Quoc Long
  * @author Michael Fox
@@ -41,12 +41,12 @@ namespace hmm /** Hidden Markov Models. */ {
  *   double Probability(const DataType& observation) const;
  *
  *   // Estimate the distribution based on the given observations.
- *   void Train(const std::vector<DataType>& observations);
+ *   double Train(const std::vector<DataType>& observations);
  *
  *   // Estimate the distribution based on the given observations, given also
  *   // the probability of each observation coming from this distribution.
- *   void Train(const std::vector<DataType>& observations,
- *              const std::vector<double>& probabilities);
+ *   double Train(const std::vector<DataType>& observations,
+ *                const std::vector<double>& probabilities);
  * };
  * @endcode
  *
@@ -162,11 +162,11 @@ class HMM
    * Train() can be called multiple times with different sequences; each time it
    * is called, it uses the current parameters of the HMM as a starting point
    * for training.
-   * @endnote
    *
    * @param dataSeq Vector of observation sequences.
+   * @return Log-likelihood of state sequence.
    */
-  void Train(const std::vector<arma::mat>& dataSeq);
+  double Train(const std::vector<arma::mat>& dataSeq);
 
   /**
    * Train the model using the given labeled observations; the transition and
@@ -183,7 +183,6 @@ class HMM
    * Train() can be called multiple times with different sequences; each time it
    * is called, it uses the current parameters of the HMM as a starting point
    * for training.
-   * @endnote
    *
    * @param dataSeq Vector of observation sequences.
    * @param stateSeq Vector of state sequences, corresponding to each
@@ -191,6 +190,30 @@ class HMM
    */
   void Train(const std::vector<arma::mat>& dataSeq,
              const std::vector<arma::Row<size_t> >& stateSeq);
+
+  /**
+   * Estimate the probabilities of each hidden state at each time step for each
+   * given data observation, using the Forward-Backward algorithm.  Each matrix
+   * which is returned has columns equal to the number of data observations, and
+   * rows equal to the number of hidden states in the model.  The log-likelihood
+   * of the most probable sequence is returned.
+   *
+   * @param dataSeq Sequence of observations.
+   * @param stateLogProb Matrix in which the log probabilities of each state at
+   *    each time interval will be stored.
+   * @param forwardLogProb Matrix in which the forward log probabilities of each
+   *    state at each time interval will be stored.
+   * @param backwardLogProb Matrix in which the backward log probabilities of each
+   *    state at each time interval will be stored.
+   * @param logScales Vector in which the log of scaling factors at each time
+   *    interval will be stored.
+   * @return Log-likelihood of most likely state sequence.
+   */
+  double LogEstimate(const arma::mat& dataSeq,
+                     arma::mat& stateLogProb,
+                     arma::mat& forwardLogProb,
+                     arma::mat& backwardLogProb,
+                     arma::vec& logScales) const;
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -268,6 +291,79 @@ class HMM
   double LogLikelihood(const arma::mat& dataSeq) const;
 
   /**
+   * Compute the log of the scaling factor of the given emission probability
+   * at time t. To calculate the log-likelihood for the whole sequence,
+   * accumulate log scale over the entire sequence
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
+   *
+   * @param emissionLogProb emission probability at time t.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
+   * @return Log scale factor of the given sequence of emission at time t.
+   */
+  double EmissionLogScaleFactor(const arma::vec& emissionLogProb,
+                                arma::vec& forwardLogProb) const;
+
+  /**
+   * Compute the log-likelihood of the given emission probability up to time t,
+   * storing the result in logLikelihood.
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
+   *
+   * @param emissionLogProb emission probability at time t.
+   * @param logLikelihood Log-likelihood of the given sequence of emission
+   *     probability up to time t-1.  This will be overwritten with the
+   *     log-likelihood of the given emission probability up to time t.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
+   * @return Log-likelihood of the given sequence of emission up to time t.
+   */
+  double EmissionLogLikelihood(const arma::vec& emissionLogProb,
+                               double &logLikelihood,
+                               arma::vec& forwardLogProb) const;
+
+  /**
+   * Compute the log of the scaling factor of the given data at time t.
+   * To calculate the log-likelihood for the whole sequence, accumulate the
+   * log scale factor (the return value of this function) over the entire
+   * sequence.
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
+   *
+   * @param data observation at time t.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
+   * @return Log scale factor of the given sequence of data up at time t.
+   */
+  double LogScaleFactor(const arma::vec &data,
+                        arma::vec& forwardLogProb) const;
+
+  /**
+   * Compute the log-likelihood of the given data up to time t, storing the
+   * result in logLikelihood.
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
+   *
+   * @param data observation at time t.
+   * @param logLikelihood Log-likelihood of the given sequence of data
+   *     up to time t-1.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
+   * @return Log-likelihood of the given sequence of data up to time t.
+   */
+  double LogLikelihood(const arma::vec &data,
+                       double &logLikelihood,
+                       arma::vec& forwardLogProb) const;
+  /**
    * HMM filtering. Computes the k-step-ahead expected emission at each time
    * conditioned only on prior observations. That is
    * E{ Y[t+k] | Y[0], ..., Y[t] }.
@@ -298,14 +394,22 @@ class HMM
               arma::mat& smoothSeq) const;
 
   //! Return the vector of initial state probabilities.
-  const arma::vec& Initial() const { return initial; }
+  const arma::vec& Initial() const { return initialProxy; }
   //! Modify the vector of initial state probabilities.
-  arma::vec& Initial() { return initial; }
+  arma::vec& Initial()
+  {
+    recalculateInitial = true;
+    return initialProxy;
+  }
 
   //! Return the transition matrix.
-  const arma::mat& Transition() const { return transition; }
+  const arma::mat& Transition() const { return transitionProxy; }
   //! Return a modifiable transition matrix reference.
-  arma::mat& Transition() { return transition; }
+  arma::mat& Transition()
+  {
+    recalculateTransition = true;
+    return transitionProxy;
+  }
 
   //! Return the emission distributions.
   const std::vector<Distribution>& Emission() const { return emission; }
@@ -323,12 +427,40 @@ class HMM
   double& Tolerance() { return tolerance; }
 
   /**
-   * Serialize the object.
+   * Load the object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void load(Archive& ar, const uint32_t version);
+
+  /**
+   * Save the object.
+   */
+  template<typename Archive>
+  void save(Archive& ar, const uint32_t version) const;
 
  protected:
+  /**
+   * Given emission probabilities, computes forward probabilities at time t=0.
+   *
+   * @param emissionLogProb Emission probability at time t=0.
+   * @param logScales Vector in which the log of scaling factors will be saved.
+   * @return Forward probabilities
+   */
+  arma::vec ForwardAtT0(const arma::vec& emissionLogProb,
+                        double& logScales) const;
+
+  /**
+   * Given emission probabilities, computes forward probabilities for time t>0.
+   *
+   * @param emissionLogProb Emission probability at time t>0.
+   * @param logScales Vector in which the log of scaling factors will be saved.
+   * @param prevForwardLogProb Previous forward probabilities.
+   * @return Forward probabilities
+   */
+  arma::vec ForwardAtTn(const arma::vec& emissionLogProb,
+                        double& logScales,
+                        const arma::vec& prevForwardLogProb) const;
+
   // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -337,12 +469,13 @@ class HMM
    * states and columns equal to the number of observations.
    *
    * @param dataSeq Data sequence to compute probabilities for.
-   * @param scales Vector in which scaling factors will be saved.
-   * @param forwardProb Matrix in which forward probabilities will be saved.
+   * @param logScales Vector in which the log of scaling factors will be saved.
+   * @param forwardLogProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
-               arma::vec& scales,
-               arma::mat& forwardProb) const;
+               arma::vec& logScales,
+               arma::mat& forwardLogProb,
+               arma::mat& logProbs) const;
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -352,28 +485,60 @@ class HMM
    * columns equal to the number of observations.
    *
    * @param dataSeq Data sequence to compute probabilities for.
-   * @param scales Vector of scaling factors.
-   * @param backwardProb Matrix in which backward probabilities will be saved.
+   * @param logScales Vector of log of scaling factors.
+   * @param backwardLogProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
-                const arma::vec& scales,
-                arma::mat& backwardProb) const;
+                const arma::vec& logScales,
+                arma::mat& backwardLogProb,
+                arma::mat& logProbs) const;
 
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
 
-  //! Transition probability matrix.
-  arma::mat transition;
+  /**
+   * A proxy variable in linear space for logTransition.
+   * Should be removed in mlpack 4.0.
+   */
+  arma::mat transitionProxy;
+
+  //! Transition probability matrix. No need to be mutable in mlpack 4.0.
+  mutable arma::mat logTransition;
 
  private:
-  //! Initial state probability vector.
-  arma::vec initial;
+  /**
+   * Make sure the variables in log space are in sync
+   * with the linear counter parts.
+   * Should be removed in mlpack 4.0.
+   */
+  void ConvertToLogSpace() const;
+
+  /**
+   * A proxy vriable in linear space for logInitial.
+   * Should be removed in mlpack 4.0.
+   */
+  arma::vec initialProxy;
+
+  //! Initial state probability vector. No need to be mutable in mlpack 4.0.
+  mutable arma::vec logInitial;
 
   //! Dimensionality of observations.
   size_t dimensionality;
 
   //! Tolerance of Baum-Welch algorithm.
   double tolerance;
+
+  /**
+   * Whether or not we need to update the logInitial from initialProxy.
+   * Should be removed in mlpack 4.0.
+   */
+  mutable bool recalculateInitial;
+
+  /**
+   * Whether or not we need to update the logTransition from transitionProxy.
+   * Should be removed in mlpack 4.0.
+   */
+  mutable bool recalculateTransition;
 };
 
 } // namespace hmm

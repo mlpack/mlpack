@@ -1,5 +1,5 @@
 /**
- * @file reparametrization.hpp
+ * @file methods/ann/layer/reparametrization.hpp
  * @author Atharva Khandait
  *
  * Definition of the Reparametrization layer class which samples from a gaussian
@@ -25,6 +25,25 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Reparametrization layer class. This layer samples from the
  * given parameters of a normal distribution.
  *
+ * This class also supports beta-VAE, a state-of-the-art framework for
+ * automated discovery of interpretable factorised latent representations from
+ * raw image data in a completely unsupervised manner.
+ *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{ICLR2017,
+ *   title   = {beta-VAE: Learning basic visual concepts with a constrained
+ *              variational framework},
+ *   author  = {Irina Higgins, Loic Matthey, Arka Pal, Christopher Burgess,
+ *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
+ *              Alexander Lerchner | Google DeepMind},
+ *   journal = {2017 International Conference on Learning Representations(ICLR)},
+ *   year    = {2017},
+ *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
+ * }
+ * @endcode
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -46,10 +65,24 @@ class Reparametrization
    * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
    * @param includeKl Whether we want to include KL loss in backward function.
+   * @param beta The beta (hyper)parameter for beta-VAE mentioned above.
    */
   Reparametrization(const size_t latentSize,
                     const bool stochastic = true,
-                    const bool includeKl = true);
+                    const bool includeKl = true,
+                    const double beta = 1);
+
+  //! Copy Constructor.
+  Reparametrization(const Reparametrization& layer);
+
+  //! Move Constructor.
+  Reparametrization(Reparametrization&& layer);
+
+  //! Copy assignment operator.
+  Reparametrization& operator=(const Reparametrization& layer);
+
+  //! Move assignment operator.
+  Reparametrization& operator=(Reparametrization&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -59,7 +92,7 @@ class Reparametrization
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -71,9 +104,9 @@ class Reparametrization
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -93,15 +126,32 @@ class Reparametrization
   //! Get the KL divergence with standard normal.
   double Loss()
   {
-    return -0.5 * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
-        - arma::pow(mean, 2) + 1);
+    if (!includeKl)
+      return 0;
+
+    return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
+        - arma::pow(mean, 2) + 1) / mean.n_cols;
+  }
+
+  //! Get the value of the stochastic parameter.
+  bool Stochastic() const { return stochastic; }
+
+  //! Get the value of the includeKl parameter.
+  bool IncludeKL() const { return includeKl; }
+
+  //! Get the value of the beta hyperparameter.
+  double Beta() const { return beta; }
+
+  size_t InputShape() const
+  {
+    return 2 * latentSize;
   }
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of output units.
@@ -112,6 +162,9 @@ class Reparametrization
 
   //! If false, KL error will not be included in Backward function.
   bool includeKl;
+
+  //! The beta hyperparameter for constrained variational frameworks.
+  double beta;
 
   //! Locally-stored delta object.
   OutputDataType delta;

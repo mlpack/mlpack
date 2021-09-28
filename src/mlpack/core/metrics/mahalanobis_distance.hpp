@@ -1,5 +1,5 @@
-/***
- * @file mahalanobis_dstance.h
+/**
+ * @file core/metrics/mahalanobis_distance.hpp
  * @author Ryan Curtin
  *
  * The Mahalanobis distance.
@@ -81,7 +81,8 @@ class MahalanobisDistance
    *
    * @param covariance The covariance matrix to use for this distance.
    */
-  MahalanobisDistance(const arma::mat& covariance) : covariance(covariance) { }
+  MahalanobisDistance(arma::mat covariance) :
+      covariance(std::move(covariance)) { }
 
   /**
    * Evaluate the distance between the two given points using this Mahalanobis
@@ -111,7 +112,7 @@ class MahalanobisDistance
 
   //! Serialize the Mahalanobis distance.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! The covariance matrix associated with this distance.

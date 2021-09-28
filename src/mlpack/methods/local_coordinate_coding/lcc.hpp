@@ -1,5 +1,5 @@
 /**
- * @file lcc.hpp
+ * @file methods/local_coordinate_coding/lcc.hpp
  * @author Nishant Mehta
  *
  * Definition of the LocalCoordinateCoding class, which performs the Local
@@ -98,6 +98,7 @@ class LocalCoordinateCoding
    * @param maxIterations Maximum number of iterations for training (0 runs
    *      until convergence).
    * @param tolerance Tolerance for the objective function.
+   * @param initializer Intializer to use.
    */
   template<
       typename DictionaryInitializer =
@@ -131,18 +132,17 @@ class LocalCoordinateCoding
   /**
    * Run local coordinate coding.
    *
-   * @param nIterations Maximum number of iterations to run algorithm.
-   * @param objTolerance Tolerance of objective function.  When the objective
-   *     function changes by a value lower than this tolerance, the optimization
-   *     terminates.
+   * @param data Data matrix.
+   * @param initializer Intializer to use.
+   * @return The final objective value.
    */
   template<
       typename DictionaryInitializer =
           sparse_coding::DataDependentRandomInitializer
   >
-  void Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+  double Train(const arma::mat& data,
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
    * Code each point via distance-weighted LARS.
@@ -155,6 +155,8 @@ class LocalCoordinateCoding
   /**
    * Learn dictionary by solving linear system.
    *
+   * @param data Matrix containing points to encode.
+   * @param codes Output matrix to store codes in.
    * @param adjacencies Indices of entries (unrolled column by column) of
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms)
@@ -165,6 +167,12 @@ class LocalCoordinateCoding
 
   /**
    * Compute objective function given the list of adjacencies.
+   *
+   * @param data Matrix containing points to encode.
+   * @param codes Output matrix to store codes in.
+   * @param adjacencies Indices of entries (unrolled column by column) of
+   *    the coding matrix Z that are non-zero (the adjacency matrix for the
+   *    bipartite graph of points and atoms)
    */
   double Objective(const arma::mat& data,
                    const arma::mat& codes,
@@ -197,7 +205,7 @@ class LocalCoordinateCoding
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Number of atoms in dictionary.

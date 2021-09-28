@@ -1,5 +1,5 @@
 /**
- * @file deterministic_set_visitor.hpp
+ * @file methods/ann/visitor/deterministic_set_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Deterministic() function for
@@ -34,6 +34,8 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   //! Set the deterministic parameter.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   //! The deterministic parameter.

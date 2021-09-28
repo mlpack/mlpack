@@ -1,6 +1,7 @@
 /**
- * @file facilities.hpp
+ * @file core/cv/metrics/facilities.hpp
  * @author Kirill Mishchenko
+ * @author Khizir Siddiqui
  *
  * Functionality that is used more than in one metric.
  *
@@ -13,31 +14,32 @@
 #define MLPACK_CORE_CV_METRICS_FACILITIES_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace cv {
 
 /**
-  * Assert there is the same number of the given data points and labels.
+  * Pairwise distance of the given data.
   *
-  * @param data Column-major data.
-  * @param labels Labels.
-  * @param callerDescription A description of the caller that can be used for
-  *     error generation.
+  * @param data Column-major matrix.
+  * @param metric Distance metric to be used.
   */
-template<typename DataType>
-void AssertSizes(const DataType& data,
-                 const arma::Row<size_t>& labels,
-                 const std::string& callerDescription)
+template<typename DataType, typename Metric>
+DataType PairwiseDistances(const DataType& data,
+                           const Metric& metric)
 {
-  if (data.n_cols != labels.n_elem)
+  DataType distances = DataType(data.n_cols, data.n_cols, arma::fill::none);
+  for (size_t i = 0; i < data.n_cols; i++)
   {
-    std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
+    for (size_t j = 0; j < i; j++)
+    {
+      distances(i, j) = metric.Evaluate(data.col(i), data.col(j));
+      distances(j, i) = distances(i, j);
+    }
   }
+  distances.diag().zeros();
+  return distances;
 }
 
 } // namespace cv

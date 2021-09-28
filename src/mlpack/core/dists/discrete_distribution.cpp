@@ -1,6 +1,7 @@
 /**
- * @file discrete_distribution.cpp
+ * @file core/dists/discrete_distribution.cpp
  * @author Ryan Curtin
+ * @author Rohan Raj
  *
  * Implementation of DiscreteDistribution probability distribution.
  *
@@ -57,18 +58,18 @@ void DiscreteDistribution::Train(const arma::mat& observations)
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
   {
-    throw std::invalid_argument("observations must have same dimensionality as "
-        "the DiscreteDistribution object");
+    throw std::invalid_argument("observations must have same dimensionality as"
+        " the DiscreteDistribution object");
   }
 
   // Get the dimension size of the distribution.
   const size_t dimensions = probabilities.size();
 
   // Clear the old probabilities.
-  for (size_t i = 0; i < dimensions; i++)
+  for (size_t i = 0; i < dimensions; ++i)
     probabilities[i].zeros();
 
-  // Iterate all the probabilities in each dimension
+  // Iterate over all the probabilities in each dimension.
   for (size_t r = 0; r < observations.n_cols; ++r)
   {
     for (size_t i = 0; i < dimensions; ++i)
@@ -112,21 +113,21 @@ void DiscreteDistribution::Train(const arma::mat& observations,
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
   {
-    throw std::invalid_argument("observations must have same dimensionality as "
-        "the DiscreteDistribution object");
+    throw std::invalid_argument("observations must have same dimensionality as"
+        " the DiscreteDistribution object");
   }
 
   // Get the dimension size of the distribution.
   size_t dimensions = probabilities.size();
 
   // Clear the old probabilities.
-  for (size_t i = 0; i < dimensions; i++)
+  for (size_t i = 0; i < dimensions; ++i)
     probabilities[i].zeros();
 
   // Ensure that the observation is within the bounds.
   for (size_t r = 0; r < observations.n_cols; r++)
   {
-    for (size_t i = 0; i < dimensions; i++)
+    for (size_t i = 0; i < dimensions; ++i)
     {
       // Add the probability of each observation. The addition of 0.5
       // to the observation is to turn the default flooring operation

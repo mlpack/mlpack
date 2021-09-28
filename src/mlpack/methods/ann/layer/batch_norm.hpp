@@ -1,5 +1,5 @@
 /**
- * @file batch_norm.hpp
+ * @file methods/ann/layer/batch_norm.hpp
  * @author Praveen Ch
  * @author Manthan-R-Sheth
  *
@@ -60,12 +60,18 @@ class BatchNorm
   BatchNorm();
 
   /**
-  * Create the BatchNorm layer object for a specified number of input units.
-  *
-  * @param size The number of input units.
-  * @param eps The epsilon added to variance to ensure numerical stability.
-  */
-  BatchNorm(const size_t size, const double eps = 1e-8);
+   * Create the BatchNorm layer object for a specified number of input units.
+   *
+   * @param size The number of input units / channels.
+   * @param eps The epsilon added to variance to ensure numerical stability.
+   * @param average Boolean to determine whether cumulative average is used for
+   *                updating the parameters or momentum is used.
+   * @param momentum Parameter used to to update the running mean and variance.
+   */
+  BatchNorm(const size_t size,
+            const double eps = 1e-8,
+            const bool average = true,
+            const double momentum = 0.1);
 
   /**
    * Reset the layer parameters
@@ -81,7 +87,7 @@ class BatchNorm
    * @param output Resulting output activations.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Backward pass through the layer.
@@ -91,9 +97,9 @@ class BatchNorm
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -103,9 +109,9 @@ class BatchNorm
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -133,16 +139,35 @@ class BatchNorm
   bool& Deterministic() { return deterministic; }
 
   //! Get the mean over the training data.
-  OutputDataType TrainingMean() { return stats.mean(); }
+  OutputDataType const& TrainingMean() const { return runningMean; }
+  //! Modify the mean over the training data.
+  OutputDataType& TrainingMean() { return runningMean; }
 
   //! Get the variance over the training data.
-  OutputDataType TrainingVariance() { return stats.var(1); }
+  OutputDataType const& TrainingVariance() const { return runningVariance; }
+  //! Modify the variance over the training data.
+  OutputDataType& TrainingVariance() { return runningVariance; }
+
+  //! Get the number of input units / channels.
+  size_t InputSize() const { return size; }
+
+  //! Get the epsilon value.
+  double Epsilon() const { return eps; }
+
+  //! Get the momentum value.
+  double Momentum() const { return momentum; }
+
+  //! Get the average parameter.
+  bool Average() const { return average; }
+
+  //! Get size of weights.
+  size_t WeightSize() const { return 2 * size; }
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -151,11 +176,27 @@ class BatchNorm
   //! Locally-stored epsilon value.
   double eps;
 
+  //! If true use average else use momentum for computing running mean
+  //! and variance
+  bool average;
+
+  //! Locally-stored value for momentum.
+  double momentum;
+
+  //! Variable to keep track of whether we are in loading or saving mode.
+  bool loading;
+
   //! Locally-stored scale parameter.
   OutputDataType gamma;
 
   //! Locally-stored shift parameter.
   OutputDataType beta;
+
+  //! Locally-stored mean object.
+  OutputDataType mean;
+
+  //! Locally-stored variance object.
+  OutputDataType variance;
 
   //! Locally-stored parameters.
   OutputDataType weights;
@@ -166,14 +207,18 @@ class BatchNorm
    */
   bool deterministic;
 
+  //! Locally-stored running mean/variance counter.
+  size_t count;
+
+  //! Locally-stored value for average factor which used to update running
+  //! mean and variance.
+  double averageFactor;
+
   //! Locally-stored mean object.
-  OutputDataType mean;
+  OutputDataType runningMean;
 
   //! Locally-stored variance object.
-  OutputDataType variance;
-
-  //! Locally-stored running statistics object.
-  arma::running_stat_vec<arma::colvec> stats;
+  OutputDataType runningVariance;
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
@@ -185,7 +230,10 @@ class BatchNorm
   OutputDataType outputParameter;
 
   //! Locally-stored normalized input.
-  OutputDataType normalized;
+  arma::cube normalized;
+
+  //! Locally-stored zero mean input.
+  arma::cube inputMean;
 }; // class BatchNorm
 
 } // namespace ann

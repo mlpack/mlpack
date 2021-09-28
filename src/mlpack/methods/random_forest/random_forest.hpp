@@ -1,5 +1,5 @@
 /**
- * @file random_forest.hpp
+ * @file methods/random_forest/random_forest.hpp
  * @author Ryan Curtin
  *
  * Definition of the RandomForest class.
@@ -19,46 +19,74 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The RandomForest class provides an implementation of random forests,
+ * described in Breiman's seminal paper:
+ *
+ * @code
+ * @article{breiman2001random,
+ *   title={Random forests},
+ *   author={Breiman, Leo},
+ *   journal={Machine Learning},
+ *   volume={45},
+ *   number={1},
+ *   pages={5--32},
+ *   year={2001},
+ *   publisher={Springer}
+ * }
+ * @endcode
+ */
 template<typename FitnessFunction = GiniGain,
-         typename DimensionSelectionType = MultipleRandomDimensionSelect<>,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         typename ElemType = double>
+         bool UseBootstrap = true>
 class RandomForest
 {
  public:
   //! Allow access to the underlying decision tree type.
   typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType, ElemType> DecisionTreeType;
+      DimensionSelectionType> DecisionTreeType;
 
   /**
    * Construct the random forest without any training or specifying the number
    * of trees.  Predict() will throw an exception until Train() is called.
    */
-  RandomForest() { }
+  RandomForest();
 
   /**
    * Create a random forest, training on the given labeled training data with
-   * the given number of trees.  The minimumLeafSize parameter is given to each
-   * individual decision tree during tree building.
+   * the given number of trees.  The minimumLeafSize and minimumGainSplit
+   * parameters are given to each individual decision tree during tree building.
+   * Optionally, you may specify a DimensionSelectionType to set parameters for
+   * the strategy used to choose dimensions.
    *
    * @param dataset Dataset to train on.
    * @param labels Labels for dataset.
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               const size_t numTrees = 50,
-               const size_t minimumLeafSize = 20);
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Create a random forest, training on the given labeled training data with
    * the given dataset info and the given number of trees.  The minimumLeafSize
-   * parameter is given to each individual decision tree during tree building.
+   * and minimumGainSplit parameters are given to each individual decision tree
+   * during tree building.  Optionally, you may specify a DimensionSelectionType
+   * to set parameters for the strategy used to choose dimensions.
    * This constructor can be used to train on categorical data.
    *
    * @param dataset Dataset to train on.
@@ -67,14 +95,21 @@ class RandomForest
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
-               const size_t numTrees = 50,
-               const size_t minimumLeafSize = 20);
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Create a random forest, training on the given weighted labeled training
@@ -87,20 +122,29 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
-               const size_t numTrees = 50,
-               const size_t minimumLeafSize = 20);
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Create a random forest, training on the given weighted labeled training
    * data with the given dataset info and the given number of trees.  The
-   * minimumLeafSize parameter is given to each individual decision tree during
-   * tree building.  This can be used for categorical weighted training.
+   * minimumLeafSize and minimumGainSplit parameters are given to each
+   * individual decision tree during tree building.  Optionally, you may specify
+   * a DimensionSelectionType to set parameters for the strategy used to choose
+   * dimensions.  This can be used for categorical weighted training.
    *
    * @param dataset Dataset to train on.
    * @param datasetInfo Dimension info for the dataset.
@@ -109,6 +153,9 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -116,31 +163,51 @@ class RandomForest
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
-               const size_t numTrees = 50,
-               const size_t minimumLeafSize = 20);
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given labeled training data with the given
-   * number of trees.  The minimumLeafSize parameter is given to each individual
-   * decision tree during tree building.
+   * number of trees.  The minimumLeafSize and minimumGainSplit parameters are
+   * given to each individual decision tree during tree building.  Optionally,
+   * you may specify a DimensionSelectionType to set parameters for the strategy
+   * used to choose dimensions.
    *
    * @param data Dataset to train on.
    * @param labels Labels for dataset.
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest otherwise a new forest is trained from scratch.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               const bool warmStart = false,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given labeled training data with the given
    * dataset info and the given number of trees.  The minimumLeafSize parameter
-   * is given to each individual decision tree during tree building.  This
+   * is given to each individual decision tree during tree building.
+   * Optionally, you may specify a DimensionSelectionType to set parameters for
+   * the strategy used to choose dimensions.
+   * This
    * overload can be used to train on categorical data.
    *
    * @param data Dataset to train on.
@@ -149,19 +216,32 @@ class RandomForest
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
-  void Train(const MatType& data,
-             const data::DatasetInfo& datasetInfo,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+  double Train(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               const bool warmStart = false,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given weighted labeled training data with
-   * the given number of trees.  The minimumLeafSize parameter is given to each
-   * individual decision tree during tree building.
+   * the given number of trees.  The minimumLeafSize and minimumGainSplit
+   * parameters are given to each individual decision tree during tree building.
+   * Optionally, you may specify a DimensionSelectionType to set parameters for
+   * the strategy used to choose dimensions.
    *
    * @param data Dataset to train on.
    * @param labels Labels for dataset.
@@ -169,20 +249,33 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& weights,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               const bool warmStart = false,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given weighted labeled training data with
    * the given dataset info and the given number of trees.  The minimumLeafSize
-   * parameter is given to each individual decision tree during tree building.
-   * This overload can be used for categorical weighted training.
+   * and minimumGainSplit parameters are given to each individual decision tree
+   * during tree building.  Optionally, you may specify a DimensionSelectionType
+   * to set parameters for the strategy used to choose dimensions.  This
+   * overload can be used for categorical weighted training.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Dimension info for the dataset.
@@ -191,15 +284,26 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
-  void Train(const MatType& data,
-             const data::DatasetInfo& datasetInfo,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& weights,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+  double Train(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t numTrees = 20,
+               const size_t minimumLeafSize = 1,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               const bool warmStart = false,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
 
   /**
    * Predict the class of the given point.  If the random forest has not been
@@ -261,7 +365,7 @@ class RandomForest
    * Serialize the random forest.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**
@@ -276,22 +380,67 @@ class RandomForest
    * @param weights Weights for each point in the dataset (may be ignored).
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
    * @tparam MatType The type of data matrix (i.e. arma::mat).
+   * @return The average entropy of all the decision trees trained under forest.
    */
   template<bool UseWeights, bool UseDatasetInfo, typename MatType>
-  void Train(const MatType& data,
-             const data::DatasetInfo& datasetInfo,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& weights,
-             const size_t numTrees,
-             const size_t minimumLeafSize);
+  double Train(const MatType& data,
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t numTrees,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               DimensionSelectionType& dimensionSelector,
+               const bool warmStart = false);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
+
+  //! The average gain of the forest.
+  double avgGain;
 };
+
+/**
+ * Convenience typedef for Extra Trees. (Extremely Randomized Trees Forest)
+ *
+ * @code
+ * @article{10.1007/s10994-006-6226-1,
+ *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
+ *   title = {Extremely Randomized Trees},
+ *   year = {2006},
+ *   issue_date = {April 2006},
+ *   publisher = {Kluwer Academic Publishers},
+ *   address = {USA},
+ *   volume = {63},
+ *   number = {1},
+ *   issn = {0885-6125},
+ *   url = {https://doi.org/10.1007/s10994-006-6226-1},
+ *   doi = {10.1007/s10994-006-6226-1},
+ *   journal = {Mach. Learn.},
+ *   month = apr,
+ *   pages = {3–42},
+ *   numpages = {40},
+ * }
+ * @endcode
+ */
+template<typename FitnessFunction = GiniGain,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit>
+using ExtraTrees = RandomForest<FitnessFunction,
+                                DimensionSelectionType,
+                                RandomBinaryNumericSplit,
+                                CategoricalSplitType,
+                                false>;
 
 } // namespace tree
 } // namespace mlpack

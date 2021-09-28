@@ -1,5 +1,5 @@
 /**
- * @file reset_visitor.hpp
+ * @file methods/ann/visitor/reset_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Reset() function for different
@@ -29,6 +29,8 @@ class ResetVisitor : public boost::static_visitor<void>
   //! Execute the Reset() function.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   //! Execute the Reset() function for a module which implements the Reset()

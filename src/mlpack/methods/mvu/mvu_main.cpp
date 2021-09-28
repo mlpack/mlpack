@@ -1,5 +1,5 @@
 /**
- * @file mvu_main.cpp
+ * @file methods/mvu/mvu_main.cpp
  * @author Ryan Curtin
  *
  * Executable for MVU.
@@ -12,10 +12,21 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME mvu
+
+#include <mlpack/methods/core/util/mlpack_main.hpp>
 #include "mvu.hpp"
 
-PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
+// Program Name.
+BINDING_USER_NAME("Maximum Variance Unfolding (MVU)");
+
+// Long description.
+BINDING_LONG_DESC("This program implements "
     "Maximum Variance Unfolding, a nonlinear dimensionality reduction "
     "technique.  The method minimizes dimensionality by unfolding a manifold "
     "such that the distances to the nearest neighbors of each point are held "
@@ -35,16 +46,14 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-int main(int argc, char **argv)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers);
 {
-  // Read from command line.
-  CLI::ParseCommandLine(argc, argv);
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
-  const int newDim = CLI::GetParam<int>("new_dim");
-  const int numNeighbors = CLI::GetParam<int>("num_neighbors");
+  const string inputFile = params.Get<string>("input_file");
+  const string outputFile = params.Get<string>("output_file");
+  const int newDim = params.Get<int>("new_dim");
+  const int numNeighbors = params.Get<int>("num_neighbors");
 
-  if (!CLI::HasParam("output"))
+  if (!params.Has("output"))
   {
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
@@ -53,7 +62,7 @@ int main(int argc, char **argv)
   RandomSeed(time(NULL));
 
   // Load input dataset.
-  mat data = std::move(CLI::GetParam<arma::mat>("input"));
+  mat data = std::move(params.Get<arma::mat>("input"));
 
   // Verify that the requested dimensionality is valid.
   if (newDim <= 0 || newDim > (int) data.n_rows)
@@ -78,6 +87,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = std::move(output);
 }

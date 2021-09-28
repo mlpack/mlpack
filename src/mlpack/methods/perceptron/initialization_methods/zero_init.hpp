@@ -1,5 +1,5 @@
 /**
- * @file zero_init.hpp
+ * @file methods/perceptron/initialization_methods/zero_init.hpp
  * @author Udit Saxena
  *
  * Implementation of ZeroInitialization policy for perceptrons.

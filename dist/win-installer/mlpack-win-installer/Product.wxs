@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- 1) DO NOT CHANGE the product GUID! It is forever -->
+  <!-- 2) %MLPACK_VERSION env var is set by .appveyor.yml -->
+  <Product Id="02A00C77-197D-4E91-B7D9-5836220E92E9"
+       UpgradeCode="6C2D7EC0-6F10-40CB-9703-1DC160A62662"
+       Name="mlpack"
+       Language="1033"
+       Version="$(env.MLPACK_VERSION)"
+       Manufacturer="mlpack">
+    <Package InstallerVersion="200"
+         Description="mlpack Windows Installer"
+         Compressed="yes"
+         InstallScope="perMachine"
+         Platform="x64"/>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
+        <Directory Id="INSTALLDIR" Name="mlpack">
+          <Directory Id="Sources" />
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="mlpackWindows" ConfigurableDirectory="INSTALLDIR" Level="1">
+      <ComponentGroupRef Id="Sources" />
+    </Feature>
+
+    <Property Id="MLPACK_VERSION">$(env.MLPACK_VERSION)</Property>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <WixVariable Id="WixUILicenseRtf" Value="..\staging\license.rtf"/>
+    <WixVariable Id="WixUIBannerBmp" Value="..\res\banner.jpg"/>
+    <WixVariable Id="WixUIDialogBmp" Value="..\res\dialog_white.jpg"/>
+    <UIRef Id="WixUI_InstallDir" />
+  </Product>
+</Wix>

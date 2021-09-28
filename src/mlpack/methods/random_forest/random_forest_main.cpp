@@ -1,5 +1,5 @@
 /**
- * @file random_forest_main.cpp
+ * @file methods/random_forest/random_forest_main.cpp
  * @author Ryan Curtin
  *
  * A program to build and evaluate random forests.
@@ -10,16 +10,34 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME random_forest
+
+#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Random forests",
+// Program Name.
+BINDING_USER_NAME("Random forests");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of the standard random forest algorithm by Leo Breiman "
+    "for classification.  Given labeled data, a random forest can be trained "
+    "and saved for future use; or, a pre-trained random forest can be used for "
+    "classification.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program is an implementation of the standard random forest "
     "classification algorithm by Leo Breiman.  A random forest can be "
     "trained and saved for later use, or a random forest may be loaded "
@@ -41,7 +59,14 @@ PROGRAM_INFO("Random forests",
     " parameter specifies the minimum number of training points that must fall "
     "into each leaf for it to be split.  The " +
     PRINT_PARAM_STRING("num_trees") +
-    " controls the number of trees in the random forest. If " +
+    " controls the number of trees in the random forest.  The " +
+    PRINT_PARAM_STRING("minimum_gain_split") + " parameter controls the minimum"
+    " required gain for a decision tree node to split.  Larger values will "
+    "force higher-confidence splits.  The " +
+    PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
+    "the maximum depth of the tree.  The " +
+    PRINT_PARAM_STRING("subspace_dim") + " parameter is used to control the "
+    "number of random dimensions chosen for an individual node's split.  If " +
     PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
     "calculated accuracy on the training set will be printed."
     "\n\n"
@@ -51,8 +76,10 @@ PROGRAM_INFO("Random forests",
     PRINT_PARAM_STRING("test_labels") + " parameter.  Predictions for each "
     "test point may be saved via the " + PRINT_PARAM_STRING("predictions") +
     "output parameter.  Class probabilities for each prediction may be saved "
-    "with the " + PRINT_PARAM_STRING("probabilities") + " output parameter."
-    "\n\n"
+    "with the " + PRINT_PARAM_STRING("probabilities") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a random forest with a minimum leaf size of 20 "
     "using 10 trees on the dataset contained in " + PRINT_DATASET("data") +
     "with labels " + PRINT_DATASET("labels") + ", saving the output random "
@@ -72,6 +99,17 @@ PROGRAM_INFO("Random forests",
     PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
         "test_labels", "test_labels", "predictions", "predictions"));
 
+// See also...
+BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
+BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
+BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
+BINDING_SEE_ALSO("Random forest on Wikipedia",
+        "https://en.wikipedia.org/wiki/Random_forest");
+BINDING_SEE_ALSO("Random forests (pdf)",
+        "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf");
+BINDING_SEE_ALSO("mlpack::tree::RandomForest C++ class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1RandomForest.html");
+
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
 PARAM_MATRIX_IN("test", "Test dataset to produce predictions for.", "T");
@@ -84,12 +122,23 @@ PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
 
 PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
-    "node.", "n", 20);
-
+    "node.", "n", 1);
+PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
+    "D", 0);
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "P");
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
     "set.", "p");
+
+PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain needed to make a split "
+    "when building a tree.", "g", 0);
+PARAM_INT_IN("subspace_dim", "Dimensionality of random subspace to use for "
+    "each split.  '0' will autoselect the square root of data dimensionality.",
+    "d", 0);
+
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_FLAG("warm_start", "If true and passed along with `training` and "
+    "`input_model` then trains more trees on top of existing model.", "w");
 
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
@@ -107,9 +156,9 @@ class RandomForestModel
 
   // Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(rf);
+    ar(CEREAL_NVP(rf));
   }
 };
 
@@ -118,54 +167,92 @@ PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
 PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
     "random forest to.", "M");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
+  // Initialize random seed if needed.
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
   // Check for incompatible input parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
-
-  ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
-
-  if (CLI::HasParam("test"))
+  if (!params.Has("warm_start"))
   {
-    RequireAtLeastOnePassed({ "probabilities", "predictions" }, "no test output"
-        " will be saved");
+    RequireOnlyOnePassed(params, { "training", "input_model" }, true);
+  }
+  else
+  {
+    // When warm_start is passed, training and input_model must also be passed.
+    RequireNoneOrAllPassed(params, {"warm_start", "training", "input_model"},
+        true);
   }
 
-  ReportIgnoredParam({{ "test", false }}, "test_labels");
+  ReportIgnoredParam(params, {{ "training", false }},
+      "print_training_accuracy");
+  ReportIgnoredParam(params, {{ "test", false }}, "test_labels");
 
-  RequireAtLeastOnePassed({ "test", "output_model", "print_training_accuracy" },
-      "the trained forest model will not be used or saved");
+  RequireAtLeastOnePassed(params, { "test", "output_model",
+      "print_training_accuracy" }, false, "the trained forest model will not "
+      "be used or saved");
 
-  if (CLI::HasParam("training"))
+  if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "labels" }, true, "must pass labels when training"
-        " set given");
+    RequireAtLeastOnePassed(params, { "labels" }, true, "must pass labels when "
+        "training set given");
   }
 
-  RequireParamValue<int>("num_trees", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "num_trees", [](int x) { return x > 0; }, true,
       "number of trees in forest must be positive");
 
-  ReportIgnoredParam({{ "test", false }}, "predictions");
-  ReportIgnoredParam({{ "test", false }}, "probabilities");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
 
-  RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
-      "minimum leaf size must be greater than 0");
+  RequireParamValue<int>(params, "minimum_leaf_size",
+      [](int x) { return x > 0; }, true, "minimum leaf size must be greater "
+      "than 0");
+  RequireParamValue<int>(params, "maximum_depth", [](int x) { return x >= 0; },
+      true, "maximum depth must not be negative");
+  RequireParamValue<int>(params, "subspace_dim", [](int x) { return x >= 0; },
+      true, "subspace dimensionality must be nonnegative");
+  RequireParamValue<double>(params, "minimum_gain_split",
+      [](double x) { return x >= 0.0; }, true,
+      "minimum gain for splitting must be nonnegative");
 
-  ReportIgnoredParam({{ "training", false }}, "num_trees");
-  ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
+  ReportIgnoredParam(params, {{ "training", false }}, "num_trees");
+  ReportIgnoredParam(params, {{ "training", false }}, "minimum_leaf_size");
 
   RandomForestModel* rfModel;
-  if (CLI::HasParam("training"))
-  {
+  // Input model is loaded when we are either doing warm-started training or
+  // else we are making predictions only or both.
+  if (params.Has("input_model"))
+    rfModel = params.Get<RandomForestModel*>("input_model");
+  // Handles the case when we are training new forest from scratch.
+  else
     rfModel = new RandomForestModel();
 
+  if (params.Has("training"))
+  {
+    timers.Start("rf_training");
+
     // Train the model on the given input data.
-    arma::mat data = std::move(CLI::GetParam<arma::mat>("training"));
+    arma::mat data = std::move(params.Get<arma::mat>("training"));
     arma::Row<size_t> labels =
-        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
-    const size_t numTrees = (size_t) CLI::GetParam<int>("num_trees");
+        std::move(params.Get<arma::Row<size_t>>("labels"));
+
+    // Make sure the subspace dimensionality is valid.
+    RequireParamValue<int>(params, "subspace_dim",
+        [data](int x) { return (size_t) x <= data.n_rows; }, true, "subspace "
+        "dimensionality must not be greater than data dimensionality");
+
+    const size_t numTrees = (size_t) params.Get<int>("num_trees");
     const size_t minimumLeafSize =
-        (size_t) CLI::GetParam<int>("minimum_leaf_size");
+        (size_t) params.Get<int>("minimum_leaf_size");
+    const size_t maxDepth = (size_t) params.Get<int>("maximum_depth");
+    const double minimumGainSplit = params.Get<double>("minimum_gain_split");
+    const size_t randomDims = (params.Get<int>("subspace_dim") == 0) ?
+        (size_t) std::sqrt(data.n_rows) :
+        (size_t) params.Get<int>("subspace_dim");
+    MultipleRandomDimensionSelect mrds(randomDims);
 
     Log::Info << "Training random forest with " << numTrees << " trees..."
         << endl;
@@ -173,11 +260,15 @@ static void mlpackMain()
     const size_t numClasses = arma::max(labels) + 1;
 
     // Train the model.
-    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize);
+    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
+        minimumGainSplit, maxDepth, params.Has("warm_start"), mrds);
+
+    timers.Stop("rf_training");
 
     // Did we want training accuracy?
-    if (CLI::HasParam("print_training_accuracy"))
+    if (params.Has("print_training_accuracy"))
     {
+      timers.Start("rf_prediction");
       arma::Row<size_t> predictions;
       rfModel->rf.Classify(data, predictions);
 
@@ -186,17 +277,14 @@ static void mlpackMain()
       Log::Info << correct << " of " << labels.n_elem << " correct on training"
           << " set (" << (double(correct) / double(labels.n_elem) * 100) << ")."
           << endl;
+      timers.Stop("rf_prediction");
     }
   }
-  else
-  {
-    // Then we must be loading a model.
-    rfModel = CLI::GetParam<RandomForestModel*>("input_model");
-  }
 
-  if (CLI::HasParam("test"))
+  if (params.Has("test"))
   {
-    arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+    arma::mat testData = std::move(params.Get<arma::mat>("test"));
+    timers.Start("rf_prediction");
 
     // Get predictions and probabilities.
     arma::Row<size_t> predictions;
@@ -204,23 +292,24 @@ static void mlpackMain()
     rfModel->rf.Classify(testData, predictions, probabilities);
 
     // Did we want to calculate test accuracy?
-    if (CLI::HasParam("test_labels"))
+    if (params.Has("test_labels"))
     {
       arma::Row<size_t> testLabels =
-          std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
+          std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
       const size_t correct = arma::accu(predictions == testLabels);
 
       Log::Info << correct << " of " << testLabels.n_elem << " correct on test"
           << " set (" << (double(correct) / double(testLabels.n_elem) * 100)
           << ")." << endl;
+      timers.Stop("rf_prediction");
     }
 
     // Save the outputs.
-    CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
-    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+    params.Get<arma::mat>("probabilities") = std::move(probabilities);
+    params.Get<arma::Row<size_t>>("predictions") = std::move(predictions);
   }
 
   // Save the output model.
-  CLI::GetParam<RandomForestModel*>("output_model") = rfModel;
+  params.Get<RandomForestModel*>("output_model") = rfModel;
 }

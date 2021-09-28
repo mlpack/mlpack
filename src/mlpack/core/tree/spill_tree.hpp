@@ -1,5 +1,5 @@
 /**
- * @file spill_tree.hpp
+ * @file core/tree/spill_tree.hpp
  * @author Marcos Pividori
  *
  * Include all the necessary files to use the SpillTree class.

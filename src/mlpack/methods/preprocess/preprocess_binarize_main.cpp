@@ -1,8 +1,8 @@
 /**
- * @file preprocess_binarize_main.cpp
+ * @file methods/preprocess/preprocess_binarize_main.cpp
  * @author Keon Kim
  *
- * binarize CLI executable
+ * A binding to binarize a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,11 +10,28 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME preprocess_binarize
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
-PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
+// Program Name.
+BINDING_USER_NAME("Binarize Data");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "A utility to binarize a dataset.  Given a dataset, this utility converts "
+    "each value in the desired dimension(s) to 0 or 1; this can be a useful "
+    "preprocessing step.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "This utility takes a dataset and binarizes the "
     "variables into either 0 or 1 given threshold. User can apply binarization "
     "on a dimension or the whole dataset.  The dimension to apply binarization "
     "to can be specified using the " + PRINT_PARAM_STRING("dimension") +
@@ -24,8 +41,10 @@ PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
     "0.0."
     "\n\n"
     "The binarized matrix may be saved with the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, if we want to set all variables greater than 5 in the "
     "dataset " + PRINT_DATASET("X") + " to 1 and variables less than or equal "
     "to 5.0 to 0, and save the result to " + PRINT_DATASET("Y") + ", we could "
@@ -39,6 +58,11 @@ PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
     "\n\n" +
     PRINT_CALL("preprocess_binarize", "input", "X", "threshold", 5.0,
         "dimension", 0, "output", "Y"));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
@@ -54,41 +78,42 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
-  const double threshold = CLI::GetParam<double>("threshold");
+  const size_t dimension = (size_t) params.Get<int>("dimension");
+  const double threshold = params.Get<double>("threshold");
 
   // Check on data parameters.
-  if (!CLI::HasParam("dimension"))
+  if (!params.Has("dimension"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
         << ", so the program will perform binarization on every dimension."
         << endl;
   }
 
-  if (!CLI::HasParam("threshold"))
+  if (!params.Has("threshold"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
         << ", so the threshold will be automatically set to '0.0'." << endl;
   }
 
-  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no output will be saved");
 
   // Load the data.
-  arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat input = std::move(params.Get<arma::mat>("input"));
   arma::mat output;
 
-  RequireParamValue<int>("dimension", [](int x) { return x >= 0; }, true,
-      "dimension to binarize must be nonnegative");
+  RequireParamValue<int>(params, "dimension", [](int x) { return x >= 0; },
+      true, "dimension to binarize must be nonnegative");
   std::ostringstream error;
   error << "dimension to binarize must be less than the number of dimensions "
       << "of the input data (" << input.n_rows << ")";
-  RequireParamValue<int>("dimension",
+  RequireParamValue<int>(params, "dimension",
       [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
-  Timer::Start("binarize");
-  if (CLI::HasParam("dimension"))
+  timers.Start("binarize");
+  if (params.Has("dimension"))
   {
     data::Binarize<double>(input, output, threshold, dimension);
   }
@@ -97,8 +122,8 @@ static void mlpackMain()
     // Binarize the whole dataset.
     data::Binarize<double>(input, output, threshold);
   }
-  Timer::Stop("binarize");
+  timers.Stop("binarize");
 
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = std::move(output);
 }

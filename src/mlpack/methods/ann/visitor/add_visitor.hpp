@@ -1,5 +1,5 @@
 /**
- * @file add_visitor.hpp
+ * @file methods/ann/visitor/add_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Add() function for different
@@ -35,6 +35,8 @@ class AddVisitor : public boost::static_visitor<void>
   //! Exposes the Add() method.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   //! The layer that should be added.

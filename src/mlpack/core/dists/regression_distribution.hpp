@@ -1,8 +1,9 @@
 /**
- * @file regression_distribution.hpp
+ * @file core/dists/regression_distribution.hpp
  * @author Michael Fox
  *
- * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
+ * Implementation of conditional Gaussian distribution for HMM regression
+ * (HMMR).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -74,10 +75,10 @@ class RegressionDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(rf);
-    ar & BOOST_SERIALIZATION_NVP(err);
+    ar(CEREAL_NVP(rf));
+    ar(CEREAL_NVP(err));
   }
 
   //! Return regression function.
@@ -98,41 +99,44 @@ class RegressionDistribution
   void Train(const arma::mat& observations);
 
   /**
-   * Estimate parameters using provided observation weights
+   * Estimate parameters using provided observation weights.
    *
-   * @param weights probability that given observation is from distribution
+   * @param observations List of observations.
+   * @param weights Probability that given observation is from distribution.
    */
   mlpack_deprecated void Train(const arma::mat& observations,
                                const arma::vec& weights);
 
   /**
-   * Estimate parameters using provided observation weights
+   * Estimate parameters using provided observation weights.
    *
-   * @param weights probability that given observation is from distribution
+   * @param observations List of observations.
+   * @param weights Probability that given observation is from distribution.
    */
   void Train(const arma::mat& observations, const arma::rowvec& weights);
 
   /**
-  * Evaluate probability density function of given observation
-  *
-  * @param observation point to evaluate probability at
-  */
+   * Evaluate probability density function of given observation.
+   *
+   * @param observation Point to evaluate probability at.
+   */
   double Probability(const arma::vec& observation) const;
 
   /**
-  * Evaluate log probability density function of given observation
-  *
-  * @param observation point to evaluate log probability at
-  */
-  double LogProbability(const arma::vec& observation) const {
+   * Evaluate log probability density function of given observation.
+   *
+   * @param observation Point to evaluate log probability at.
+   */
+  double LogProbability(const arma::vec& observation) const
+  {
     return log(Probability(observation));
   }
 
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param points the data points to calculate with.
-   * @param predictions y, will contain calculated values on completion.
+   * @param points The data points to calculate with.
+   * @param predictions Y, will contain calculated values on completion.
    */
   mlpack_deprecated void Predict(const arma::mat& points,
                                  arma::vec& predictions) const;
@@ -140,15 +144,15 @@ class RegressionDistribution
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param points the data points to calculate with.
-   * @param predictions y, will contain calculated values on completion.
+   * @param points The data points to calculate with.
+   * @param predictions Y, will contain calculated values on completion.
    */
   void Predict(const arma::mat& points, arma::rowvec& predictions) const;
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
-  //! Return the dimensionality
+  //! Return the dimensionality.
   size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
 

@@ -1,5 +1,5 @@
 /**
- * @file kfn_main.cpp
+ * @file methods/neighbor_search/kfn_main.cpp
  * @author Ryan Curtin
  *
  * Implementation of the KFN executable.  Allows some number of standard
@@ -11,7 +11,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME kfn
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <string>
@@ -30,15 +36,27 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Convenience typedef.
-typedef NSModel<FurthestNeighborSort> KFNModel;
+typedef NSModel<FurthestNS> KFNModel;
 
-// Information about the program itself.
-PROGRAM_INFO("k-Furthest-Neighbors Search",
+// Program Name.
+BINDING_USER_NAME("k-Furthest-Neighbors Search");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of k-furthest-neighbor search using single-tree and "
+    "dual-tree algorithms.  Given a set of reference points and query points, "
+    "this can find the k furthest neighbors in the reference set of each query"
+    " point using trees; trees that are built can be saved for future use.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program will calculate the k-furthest-neighbors of a set of "
     "points. You may specify a separate set of reference points and query "
     "points, or just a reference set which will be used as both the reference "
-    "and query set."
-    "\n\n"
+    "and query set.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will calculate the 5 furthest neighbors of each"
     "point in " + PRINT_DATASET("input") + " and store the distances in " +
     PRINT_DATASET("distances") + " and the neighbors in " +
@@ -52,6 +70,14 @@ PROGRAM_INFO("k-Furthest-Neighbors Search",
     "reference set which is the j'th furthest neighbor from the point in the "
     "query set with index i.  Row i and column j in the distances output file "
     "corresponds to the distance between those two points.");
+
+// See also...
+BINDING_SEE_ALSO("@approx_kfn", "#approx_kfn");
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf");
+BINDING_SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1NeighborSearch.html");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -95,22 +121,22 @@ PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
     "neighbors will be at least (p*100) % of the distance as the true furthest "
     "neighbor.", "p", 1);
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  RequireOnlyOnePassed({ "reference", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "reference", "input_model" }, true);
 
-  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
-  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "tree_type");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "random_basis");
 
   // Notify the user of parameters that will be only be considered for query
   // tree.
-  if (CLI::HasParam("input_model") && CLI::HasParam("leaf_size"))
+  if (params.Has("input_model") && params.Has("leaf_size"))
   {
     Log::Warn << PRINT_PARAM_STRING("leaf_size") << " will only be considered"
         << " for the query tree, because "
@@ -118,50 +144,51 @@ static void mlpackMain()
   }
 
   // The user should give something to do...
-  RequireAtLeastOnePassed({ "k", "output_model" }, false,
+  RequireAtLeastOnePassed(params, { "k", "output_model" }, false,
       "no results will be saved");
 
   // If the user specifies k but no output files, they should be warned.
-  if (CLI::HasParam("k"))
+  if (params.Has("k"))
   {
-    RequireAtLeastOnePassed({ "neighbors", "distances" }, false,
+    RequireAtLeastOnePassed(params, { "neighbors", "distances" }, false,
         "furthest neighbor search results will not be saved");
   }
 
   // If the user specifies output files but no k, they should be warned.
-  ReportIgnoredParam({{ "k", false }}, "neighbors");
-  ReportIgnoredParam({{ "k", false }}, "distances");
-  ReportIgnoredParam({{ "k", false }}, "true_neighbors");
-  ReportIgnoredParam({{ "k", false }}, "true_distances");
-  ReportIgnoredParam({{ "k", false }}, "query");
+  ReportIgnoredParam(params, {{ "k", false }}, "neighbors");
+  ReportIgnoredParam(params, {{ "k", false }}, "distances");
+  ReportIgnoredParam(params, {{ "k", false }}, "true_neighbors");
+  ReportIgnoredParam(params, {{ "k", false }}, "true_distances");
+  ReportIgnoredParam(params, {{ "k", false }}, "query");
 
   // Sanity check on leaf size.
-  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; },
+  RequireParamValue<int>(params, "leaf_size", [](int x) { return x > 0; },
       true, "leaf size must be positive");
-  const int lsInt = CLI::GetParam<int>("leaf_size");
+  const int lsInt = params.Get<int>("leaf_size");
 
   // Sanity check on epsilon.
-  double epsilon = CLI::GetParam<double>("epsilon");
-  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
-      "epsilon must be positive");
+  double epsilon = params.Get<double>("epsilon");
+  RequireParamValue<double>(params, "epsilon", [](double x)
+      { return x >= 0.0 && x < 1; }, true,
+          "epsilon must be in the range [0, 1).");
 
   // Sanity check on percentage.
-  const double percentage = CLI::GetParam<double>("percentage");
-  RequireParamValue<double>("percentage",
+  const double percentage = params.Get<double>("percentage");
+  RequireParamValue<double>(params, "percentage",
       [](double x) { return x > 0.0 && x <= 1.0; }, true,
       "percentage must be in the range (0, 1]");
 
-  ReportIgnoredParam({{ "epsilon", true }}, "percentage");
+  ReportIgnoredParam(params, {{ "epsilon", true }}, "percentage");
 
-  if (CLI::HasParam("percentage"))
+  if (params.Has("percentage"))
     epsilon = 1 - percentage;
 
   // We either have to load the reference data, or we have to load the model.
-  NSModel<FurthestNeighborSort>* kfn;
+  NSModel<FurthestNS>* kfn;
 
-  const string algorithm = CLI::GetParam<string>("algorithm");
-  RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",
-      "greedy" }, true, "unknown neighbor search algorithm");
+  const string algorithm = params.Get<string>("algorithm");
+  RequireParamInSet<string>(params, "algorithm", { "naive", "single_tree",
+      "dual_tree", "greedy" }, true, "unknown neighbor search algorithm");
   NeighborSearchMode searchMode = DUAL_TREE_MODE;
 
   if (algorithm == "naive")
@@ -173,16 +200,16 @@ static void mlpackMain()
   else if (algorithm == "greedy")
     searchMode = GREEDY_SINGLE_TREE_MODE;
 
-  if (CLI::HasParam("reference"))
+  if (params.Has("reference"))
   {
-    kfn = new KFNModel();
-
     // Get all the parameters.
-    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
-        "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
-        "ub", "oct" }, true, "unknown tree type");
-    const string treeType = CLI::GetParam<string>("tree_type");
-    const bool randomBasis = CLI::HasParam("random_basis");
+    RequireParamInSet<string>(params, "tree_type", { "kd", "cover", "r",
+        "r-star", "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp",
+        "max-rp", "ub", "oct" }, true, "unknown tree type");
+    const string treeType = params.Get<string>("tree_type");
+    const bool randomBasis = params.Has("random_basis");
+
+    kfn = new KFNModel();
 
     KFNModel::TreeTypes tree = KFNModel::KD_TREE;
     if (treeType == "kd")
@@ -216,20 +243,19 @@ static void mlpackMain()
 
     kfn->TreeType() = tree;
     kfn->RandomBasis() = randomBasis;
+    kfn->LeafSize() = size_t(lsInt);
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    Log::Info << "Using reference data from "
+        << params.GetPrintable<arma::mat>("reference") << "." << endl;
 
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
+    arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
-    kfn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
-        epsilon);
+    kfn->BuildModel(timers, std::move(referenceSet), searchMode, epsilon);
   }
   else
   {
     // Load the model from file.
-    kfn = CLI::GetParam<KFNModel*>("input_model");
+    kfn = params.Get<KFNModel*>("input_model");
 
     // Adjust search mode.
     kfn->SearchMode() = searchMode;
@@ -238,27 +264,35 @@ static void mlpackMain()
     // If leaf_size wasn't provided, let's consider the current value in the
     // loaded model.  Else, update it (only considered when building the query
     // tree).
-    if (CLI::HasParam("leaf_size"))
+    if (params.Has("leaf_size"))
       kfn->LeafSize() = size_t(lsInt);
 
     Log::Info << "Using kFN model from '"
-        << CLI::GetPrintableParam<KFNModel*>("input_model") << "' (trained on "
+        << params.GetPrintable<KFNModel*>("input_model") << "' (trained on "
         << kfn->Dataset().n_rows << "x" << kfn->Dataset().n_cols
         << " dataset)." << endl;
   }
 
   // Perform search, if desired.
-  if (CLI::HasParam("k"))
+  if (params.Has("k"))
   {
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t) params.Get<int>("k");
 
     arma::mat queryData;
-    if (CLI::HasParam("query"))
+    if (params.Has("query"))
     {
-      queryData = std::move(CLI::GetParam<arma::mat>("query"));
-      Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      Log::Info << "Using query data from "
+          << params.GetPrintable<arma::mat>("query") << "." << endl;
+      queryData = std::move(params.Get<arma::mat>("query"));
+      if (queryData.n_rows != kfn->Dataset().n_rows)
+      {
+        // Clean memory if needed.
+        const size_t dimensions = kfn->Dataset().n_rows;
+        if (params.Has("reference"))
+          delete kfn;
+        Log::Fatal << "Query has invalid dimensions (" << queryData.n_rows <<
+            "); should be " << dimensions << "!" << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
@@ -266,36 +300,40 @@ static void mlpackMain()
     // we only test the upper bound.
     if (k > kfn->Dataset().n_cols)
     {
+      // Clean memory if needed.
+      const size_t referencePoints = kfn->Dataset().n_cols;
+      if (params.Has("reference"))
+        delete kfn;
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
           << "than or equal to the number of reference points ("
-          << kfn->Dataset().n_cols << ")." << endl;
+          << referencePoints << ")." << endl;
     }
 
     // Sanity check on k value: must not be equal to the number of reference
     // points when query data has not been provided.
-    if (!CLI::HasParam("query") && k == kfn->Dataset().n_cols)
+    if (!params.Has("query") && k == kfn->Dataset().n_cols)
     {
+      // Clean memory if needed.
+      const size_t referencePoints = kfn->Dataset().n_cols;
+      if (params.Has("reference"))
+        delete kfn;
       Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
-          << "reference points (" << kfn->Dataset().n_cols << ") "
-          << "if query data has not been provided." << endl;
+          << "reference points (" << referencePoints << ") if query data has "
+          << "not been provided." << endl;
     }
 
     // Now run the search.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
-    if (CLI::HasParam("query"))
-      kfn->Search(std::move(queryData), k, neighbors, distances);
+    if (params.Has("query"))
+      kfn->Search(timers, std::move(queryData), k, neighbors, distances);
     else
-      kfn->Search(k, neighbors, distances);
+      kfn->Search(timers, k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
-    // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
-
     // Calculate the effective error, if desired.
-    if (CLI::HasParam("true_distances"))
+    if (params.Has("true_distances"))
     {
       if (kfn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_distances") << " specified, but "
@@ -303,19 +341,24 @@ static void mlpackMain()
             << "error!" << endl;
 
       arma::mat trueDistances =
-          std::move(CLI::GetParam<arma::mat>("true_distances"));
+          std::move(params.Get<arma::mat>("true_distances"));
 
       if (trueDistances.n_rows != distances.n_rows ||
           trueDistances.n_cols != distances.n_cols)
+      {
+        // Clean memory if needed.
+        if (params.Has("reference"))
+          delete kfn;
         Log::Fatal << "The true distances file must have the same number of "
             << "values than the set of distances being queried!" << endl;
+      }
 
       Log::Info << "Effective error: " << KFN::EffectiveError(distances,
           trueDistances) << endl;
     }
 
     // Calculate the recall, if desired.
-    if (CLI::HasParam("true_neighbors"))
+    if (params.Has("true_neighbors"))
     {
       if (kfn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
@@ -323,16 +366,25 @@ static void mlpackMain()
             << "recall!" << endl;
 
       arma::Mat<size_t> trueNeighbors =
-          std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
+          std::move(params.Get<arma::Mat<size_t>>("true_neighbors"));
 
       if (trueNeighbors.n_rows != neighbors.n_rows ||
           trueNeighbors.n_cols != neighbors.n_cols)
+      {
+        // Clean memory if needed.
+        if (params.Has("reference"))
+          delete kfn;
         Log::Fatal << "The true neighbors file must have the same number of "
             << "values than the set of neighbors being queried!" << endl;
+      }
 
       Log::Info << "Recall: " << KFN::Recall(neighbors, trueNeighbors) << endl;
     }
+
+    // Save output.
+    params.Get<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    params.Get<arma::mat>("distances") = std::move(distances);
   }
 
-  CLI::GetParam<KFNModel*>("output_model") = kfn;
+  params.Get<KFNModel*>("output_model") = kfn;
 }

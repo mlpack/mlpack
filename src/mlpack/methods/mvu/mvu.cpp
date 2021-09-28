@@ -1,5 +1,5 @@
 /**
- * @file mvu.cpp
+ * @file methods/mvu/mvu.cpp
  * @author Ryan Curtin
  *
  * Implementation of the MVU class and its auxiliary objective function class.

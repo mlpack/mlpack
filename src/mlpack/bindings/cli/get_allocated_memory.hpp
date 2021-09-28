@@ -1,5 +1,5 @@
 /**
- * @file get_allocated_memory.hpp
+ * @file bindings/cli/get_allocated_memory.hpp
  * @author Ryan Curtin
  *
  * If the parameter has a type that may need to be deleted, return the address
@@ -21,26 +21,26 @@ namespace cli {
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& /* d */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    util::ParamData& /* d */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    util::ParamData& /* d */,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    util::ParamData& d,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model, which is a tuple, and we need the address of the
   // memory.
@@ -49,7 +49,7 @@ void* GetAllocatedMemory(
 }
 
 template<typename T>
-void GetAllocatedMemory(const util::ParamData& d,
+void GetAllocatedMemory(util::ParamData& d,
                         const void* /* input */,
                         void* output)
 {

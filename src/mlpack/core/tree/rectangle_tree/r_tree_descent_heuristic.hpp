@@ -1,5 +1,5 @@
 /**
- * @file r_tree_descent_heuristic.hpp
+ * @file core/tree/rectangle_tree/r_tree_descent_heuristic.hpp
  * @author Andrew Wells
  *
  * Definition of RTreeDescentHeuristic, a class that chooses the best child of a

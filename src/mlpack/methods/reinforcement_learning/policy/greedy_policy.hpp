@@ -1,6 +1,7 @@
 /**
- * @file greedy_policy.hpp
+ * @file methods/reinforcement_learning/policy/greedy_policy.hpp
  * @author Shangtong Zhang
+ * @author Abhinav Sagar
  *
  * This file is an implementation of epsilon greedy policy.
  *
@@ -41,13 +42,16 @@ class GreedyPolicy
    * @param annealInterval The steps during which the probability to explore
    *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
+   * @param decayRate How much to change the model in response to the
+   *        estimated error each time the model weights are updated.
    */
   GreedyPolicy(const double initialEpsilon,
                const size_t annealInterval,
-               const double minEpsilon) :
+               const double minEpsilon,
+               const double decayRate = 1.0) :
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
-      delta((initialEpsilon - minEpsilon) / annealInterval)
+      delta(((initialEpsilon - minEpsilon) * decayRate) / annealInterval)
   { /* Nothing to do here. */ }
 
   /**
@@ -55,19 +59,29 @@ class GreedyPolicy
    *
    * @param actionValue Values for each action.
    * @param deterministic Always select the action greedily.
+   * @param isNoisy Specifies whether the network used is noisy.
    * @return Sampled action.
    */
-  ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
+  ActionType Sample(const arma::colvec& actionValue,
+                    bool deterministic = false,
+                    const bool isNoisy = false)
   {
     double exploration = math::Random();
+    ActionType action;
 
     // Select the action randomly.
-    if (!deterministic && exploration < epsilon)
-      return static_cast<ActionType>(math::RandInt(ActionType::size));
-
+    if (!deterministic && exploration < epsilon && isNoisy == false)
+    {
+      action.action = static_cast<decltype(action.action)>
+          (math::RandInt(ActionType::size));
+    }
     // Select the action greedily.
-    return static_cast<ActionType>(
-        arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
+    else
+    {
+      action.action = static_cast<decltype(action.action)>(
+          arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
+    }
+    return action;
   }
 
   /**

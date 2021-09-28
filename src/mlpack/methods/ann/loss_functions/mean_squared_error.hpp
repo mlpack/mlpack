@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_error.hpp
+ * @file methods/ann/loss_functions/mean_squared_error.hpp
  * @author Marcus Edel
  *
  * Definition of the mean squared error performance function.
@@ -39,25 +39,29 @@ class MeanSquaredError
    */
   MeanSquaredError();
 
-  /*
+  /**
    * Computes the mean squared error function.
    *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
+   * @param target The target vector.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   * function
    * @param target The target vector.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -68,7 +72,7 @@ class MeanSquaredError
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

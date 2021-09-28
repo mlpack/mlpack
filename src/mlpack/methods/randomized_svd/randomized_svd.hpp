@@ -1,5 +1,5 @@
 /**
- * @file randomized_svd.hpp
+ * @file methods/randomized_svd/randomized_svd.hpp
  * @author Marcus Edel
  *
  * An implementation of the randomized SVD method.
@@ -72,7 +72,7 @@ class RandomizedSVD
    * @param data Data matrix.
    * @param u First unitary matrix.
    * @param v Second unitary matrix.
-   * @param sigma Diagonal matrix of singular values.
+   * @param s Diagonal "Sigma" matrix of singular values.
    * @param iteratedPower Size of the normalized power iterations
    *        (Default: rank + 2).
    * @param maxIterations Number of iterations for the power method
@@ -111,7 +111,7 @@ class RandomizedSVD
    * @param data Sparse data matrix.
    * @param u First unitary matrix.
    * @param v Second unitary matrix.
-   * @param sigma Diagonal matrix of singular values.
+   * @param s Diagonal "Sigma" matrix of singular values.
    * @param rank Rank of the approximation.
    */
   void Apply(const arma::sp_mat& data,
@@ -127,7 +127,7 @@ class RandomizedSVD
    * @param data Data matrix.
    * @param u First unitary matrix.
    * @param v Second unitary matrix.
-   * @param sigma Diagonal matrix of singular values.
+   * @param s Diagonal "Sigma" matrix of singular values.
    * @param rank Rank of the approximation.
    */
   void Apply(const arma::mat& data,
@@ -143,7 +143,7 @@ class RandomizedSVD
    * @param data Data matrix.
    * @param u First unitary matrix.
    * @param v Second unitary matrix.
-   * @param sigma Diagonal matrix of singular values.
+   * @param s Diagonal "Sigma" matrix of singular values.
    * @param rank Rank of the approximation.
    * @param rowMean Centered mean value matrix.
    */

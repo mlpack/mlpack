@@ -1,8 +1,8 @@
 /**
- * @file clean_memory.hpp
+ * @file bindings/tests/clean_memory.hpp
  * @author Ryan Curtin
  *
- * Delete any unique pointers that are held by the CLI object.  This is similar
+ * Delete any unique pointers that are held by the IO object.  This is similar
  * to the code in end_program.hpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -13,14 +13,16 @@
 #ifndef MLPACK_BINDINGS_TESTS_CLEAN_MEMORY_HPP
 #define MLPACK_BINDINGS_TESTS_CLEAN_MEMORY_HPP
 
+#include <mlpack/core/util/params.hpp>
+
 namespace mlpack {
 namespace bindings {
 namespace tests {
 
 /**
- * Delete any unique pointers that are held by the CLI object.
+ * Delete any unique pointers that are held by the IO object.
  */
-void CleanMemory();
+void CleanMemory(util::Params& params);
 
 } // namespace tests
 } // namespace bindings

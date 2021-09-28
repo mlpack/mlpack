@@ -1,5 +1,5 @@
 /**
- * @file nearest_neighbor_sort_impl.hpp
+ * @file methods/neighbor_search/sort_policies/nearest_neighbor_sort_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated methods for the NearestNeighborSort SortPolicy
@@ -17,7 +17,7 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename TreeType>
-inline double NearestNeighborSort::BestNodeToNodeDistance(
+inline double NearestNS::BestNodeToNodeDistance(
     const TreeType* queryNode,
     const TreeType* referenceNode)
 {
@@ -27,7 +27,7 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename TreeType>
-inline double NearestNeighborSort::BestNodeToNodeDistance(
+inline double NearestNS::BestNodeToNodeDistance(
     const TreeType* queryNode,
     const TreeType* referenceNode,
     const double centerToCenterDistance)
@@ -36,7 +36,7 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename TreeType>
-inline double NearestNeighborSort::BestNodeToNodeDistance(
+inline double NearestNS::BestNodeToNodeDistance(
     const TreeType* queryNode,
     const TreeType* /* referenceNode */,
     const TreeType* referenceChildNode,
@@ -47,7 +47,7 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename VecType, typename TreeType>
-inline double NearestNeighborSort::BestPointToNodeDistance(
+inline double NearestNS::BestPointToNodeDistance(
     const VecType& point,
     const TreeType* referenceNode)
 {
@@ -57,7 +57,7 @@ inline double NearestNeighborSort::BestPointToNodeDistance(
 }
 
 template<typename VecType, typename TreeType>
-inline double NearestNeighborSort::BestPointToNodeDistance(
+inline double NearestNS::BestPointToNodeDistance(
     const VecType& point,
     const TreeType* referenceNode,
     const double pointToCenterDistance)

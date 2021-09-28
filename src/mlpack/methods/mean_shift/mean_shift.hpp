@@ -1,5 +1,5 @@
 /**
- * @file mean_shift.hpp
+ * @file methods/mean_shift/mean_shift.hpp
  * @author Shangtong Zhang
  *
  * Mean Shift clustering
@@ -17,7 +17,6 @@
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <boost/utility.hpp>
 
 namespace mlpack {
 namespace meanshift /** Mean shift clustering. */ {
@@ -84,6 +83,7 @@ class MeanShift
    * @param centroids Matrix in which centroids are stored.
    * @param forceConvergence Flag whether to force each centroid seed to
    * converge regardless of maxIterations.
+   * @param useSeeds Set true to use seeds.
    */
   void Cluster(const MatType& data,
                arma::Row<size_t>& assignments,

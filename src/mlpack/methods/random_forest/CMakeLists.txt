@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
@@ -19,3 +17,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(random_forest)
 add_python_binding(random_forest)
+add_julia_binding(random_forest)
+add_go_binding(random_forest)
+add_r_binding(random_forest)
+add_markdown_docs(random_forest "cli;python;julia;go;r" "classification")

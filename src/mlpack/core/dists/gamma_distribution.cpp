@@ -1,6 +1,7 @@
 /**
- * @file gamma_distribution.cpp
+ * @file core/dists/gamma_distribution.cpp
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Implementation of the methods of GammaDistribution.
  *
@@ -10,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gamma_distribution.hpp"
-// This will include digamma and trigamma.
-#include <mlpack/core/boost_backport/boost_backport_math.hpp>
+#include <boost/math/special_functions/trigamma.hpp>
+#include <boost/math/special_functions/polygamma.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -77,7 +78,7 @@ void GammaDistribution::Train(const arma::mat& rdata,
   arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
   arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
 
-  for (size_t i = 0; i < rdata.n_cols; i++)
+  for (size_t i = 0; i < rdata.n_cols; ++i)
   {
     meanLogxVec += probabilities(i) * arma::log(rdata.col(i));
     meanxVec += probabilities(i) * rdata.col(i);
@@ -196,12 +197,12 @@ double GammaDistribution::Probability(double x, size_t dim) const
 
 // Returns the log probability of the provided observations.
 void GammaDistribution::LogProbability(const arma::mat& observations,
-                                       arma::vec& LogProbabilities) const
+                                       arma::vec& logProbabilities) const
 {
   size_t numObs = observations.n_cols;
 
   // Set all equal to 0 (addition neutral).
-  LogProbabilities.zeros(numObs);
+  logProbabilities.zeros(numObs);
 
   // Compute denominator only once for each dimension.
   arma::vec denominators(alpha.n_elem);
@@ -218,9 +219,17 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
       double factor = std::exp(-observations(d, i) / beta(d));
       double numerator = std::pow(observations(d, i), alpha(d) - 1);
 
-      LogProbabilities(i) += std::log(numerator * factor / denominators(d));
+      logProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
   }
+}
+
+// Returns the log probability of one observation (x) for one of the Gamma's
+// dimensions.
+double GammaDistribution::LogProbability(double x, size_t dim) const
+{
+  return std::log(std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
+      (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim))));
 }
 
 // Returns a gamma-random d-dimensional vector.

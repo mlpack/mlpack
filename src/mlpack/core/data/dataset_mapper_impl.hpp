@@ -1,5 +1,5 @@
 /**
- * @file dataset_mapper_impl.hpp
+ * @file core/data/dataset_mapper_impl.hpp
  * @author Ryan Curtin
  * @author Keon Kim
  *
@@ -35,6 +35,14 @@ inline DatasetMapper<PolicyType, InputType>::DatasetMapper(PolicyType& policy,
     policy(std::move(policy))
 {
   // Nothing to initialize here.
+}
+
+template<typename PolicyType, typename InputType>
+inline void DatasetMapper<PolicyType, InputType>::SetDimensionality(
+    const size_t dimensionality)
+{
+  types = std::vector<Datatype>(dimensionality, Datatype::numeric);
+  maps.clear();
 }
 
 // Utility helper function to call MapFirstPass.

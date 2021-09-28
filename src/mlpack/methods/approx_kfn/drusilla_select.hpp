@@ -1,5 +1,5 @@
 /**
- * @file drusilla_select.hpp
+ * @file methods/approx_kfn/drusilla_select.hpp
  * @author Ryan Curtin
  *
  * An implementation of the approximate furthest neighbor algorithm specified in
@@ -97,7 +97,7 @@ class DrusillaSelect
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Access the candidate set.
   const MatType& CandidateSet() const { return candidateSet; }

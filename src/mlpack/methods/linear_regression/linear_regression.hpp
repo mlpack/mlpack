@@ -1,5 +1,5 @@
 /**
- * @file linear_regression.hpp
+ * @file methods/linear_regression/linear_regression.hpp
  * @author James Cline
  * @author Michael Fox
  *
@@ -71,10 +71,11 @@ class LinearRegression
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
    * @param intercept Whether or not to fit an intercept term.
+   * @return The least squares error after training.
    */
-  void Train(const arma::mat& predictors,
-             const arma::rowvec& responses,
-             const bool intercept = true);
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const bool intercept = true);
 
   /**
    * Train the LinearRegression model on the given data and weights. Careful!
@@ -85,13 +86,14 @@ class LinearRegression
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @param intercept Whether or not to fit an intercept term.
    * @param weights Observation weights (for boosting).
+   * @param intercept Whether or not to fit an intercept term.
+   * @return The least squares error after training.
    */
-  void Train(const arma::mat& predictors,
-             const arma::rowvec& responses,
-             const arma::rowvec& weights,
-             const bool intercept = true);
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const arma::rowvec& weights,
+               const bool intercept = true);
 
   /**
    * Calculate y_i for each data point in points.
@@ -138,11 +140,11 @@ class LinearRegression
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(intercept);
+    ar(CEREAL_NVP(parameters));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(intercept));
   }
 
  private:

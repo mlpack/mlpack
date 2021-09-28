@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser_impl.hpp
+ * @file core/tree/binary_space_tree/dual_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the DualTreeTraverser for BinarySpaceTree.  This is a way
@@ -55,6 +55,18 @@ DualTreeTraverser<RuleType>::Traverse(
 
   // Store the current traversal info.
   traversalInfo = rule.TraversalInfo();
+
+  // If both nodes are root nodes, just score them.
+  if (queryNode.Parent() == NULL && referenceNode.Parent() == NULL)
+  {
+    const double rootScore = rule.Score(queryNode, referenceNode);
+    // If root score is DBL_MAX, don't recurse.
+    if (rootScore == DBL_MAX)
+    {
+      ++numPrunes;
+      return;
+    }
+  }
 
   // If both are leaves, we must evaluate the base case.
   if (queryNode.IsLeaf() && referenceNode.IsLeaf())

@@ -1,5 +1,5 @@
 /**
- * @file minimal_coverage_sweep.hpp
+ * @file core/tree/rectangle_tree/minimal_coverage_sweep.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the MinimalCoverageSweep class, a class that finds a partition

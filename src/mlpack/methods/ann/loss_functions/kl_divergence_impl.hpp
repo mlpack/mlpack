@@ -1,5 +1,5 @@
 /**
- * @file kl_divergence_impl.hpp
+ * @file methods/ann/loss_functions/kl_divergence_impl.hpp
  * @author Dakshit Agrawal
  *
  * Implementation of the Kullback–Leibler Divergence error function.
@@ -27,45 +27,48 @@ KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double KLDivergence<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+KLDivergence<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
   if (takeMean)
   {
     return arma::as_scalar(arma::mean(
-        arma::mean(input % (arma::log(input) - arma::log(target)))));
+        arma::mean(prediction % (arma::log(prediction) - arma::log(target)))));
   }
   else
   {
-    return arma::accu(input % (arma::log(input) - arma::log(target)));
+    return arma::accu(prediction % (arma::log(prediction) - arma::log(target)));
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void KLDivergence<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
   if (takeMean)
   {
-    output = arma::mean(arma::mean(arma::log(input) - arma::log(target) + 1));
+    loss = arma::mean(arma::mean(
+        arma::log(prediction) - arma::log(target) + 1));
   }
   else
   {
-    output = arma::accu(arma::log(input) - arma::log(target) + 1);
+    loss = arma::accu(arma::log(prediction) - arma::log(target) + 1);
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void KLDivergence<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
+    Archive& ar,
+    const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(CEREAL_NVP(takeMean));
 }
 
 } // namespace ann

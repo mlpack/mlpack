@@ -1,5 +1,5 @@
 /**
- * @file ra_util.cpp
+ * @file methods/rann/ra_util.cpp
  * @author Parikshit Ram
  * @author Ryan Curtin
  *
@@ -132,7 +132,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       sum = std::pow(eps, (double) m);
     }
 
-    for (size_t j = lb; j < ub; j++)
+    for (size_t j = lb; j < ub; ++j)
     {
       // Compute Choose(m, j).
       double mCj = (double) m;
@@ -145,7 +145,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       else
         jTrans = m - j;
 
-      for (size_t i = 2; i <= jTrans; i++)
+      for (size_t i = 2; i <= jTrans; ++i)
       {
         mCj *= (double) (m - (i - 1));
         mCj /= (double) i;

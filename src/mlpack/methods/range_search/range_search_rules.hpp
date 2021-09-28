@@ -1,5 +1,5 @@
 /**
- * @file range_search_rules.hpp
+ * @file methods/range_search/range_search_rules.hpp
  * @author Ryan Curtin
  *
  * Rules for range search, so that it can be done with arbitrary tree types.
@@ -116,6 +116,10 @@ class RangeSearchRules
   size_t BaseCases() const { return baseCases; }
   //! Get the number of scores (that is, calls to RangeDistance()).
   size_t Scores() const { return scores; }
+
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.
+  size_t MinimumBaseCases() const { return 0; }
 
  private:
   //! The reference set.

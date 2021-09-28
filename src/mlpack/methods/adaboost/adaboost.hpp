@@ -1,5 +1,5 @@
 /**
- * @file adaboost.hpp
+ * @file methods/adaboost/adaboost.hpp
  * @author Udit Saxena
  *
  * The AdaBoost class.  AdaBoost is a boosting algorithm, meaning that it
@@ -30,7 +30,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
-#include <mlpack/methods/decision_stump/decision_stump.hpp>
+#include <mlpack/methods/decision_tree/decision_tree.hpp>
 
 namespace mlpack {
 namespace adaboost {
@@ -71,7 +71,7 @@ namespace adaboost {
  * @endcode
  *
  * For more information on and examples of weak learners, see
- * perceptron::Perceptron<> and decision_stump::DecisionStump<>.
+ * perceptron::Perceptron<> and tree::ID3DecisionStump.
  *
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  * @tparam WeakLearnerType Type of weak learner to use.
@@ -89,8 +89,9 @@ class AdaBoost
    *
    * @param data Input data.
    * @param labels Corresponding labels.
+   * @param numClasses The number of classes.
    * @param iterations Number of boosting rounds.
-   * @param tol The tolerance for change in values of rt.
+   * @param tolerance The tolerance for change in values of rt.
    * @param other Weak learner that has already been initialized.
    */
   AdaBoost(const MatType& data,
@@ -105,9 +106,6 @@ class AdaBoost
    * before calling Classify()!
    */
   AdaBoost(const double tolerance = 1e-6);
-
-  // Return the value of ztProduct.
-  double ZtProduct() { return ztProduct; }
 
   //! Get the tolerance for stopping the optimization during training.
   double Tolerance() const { return tolerance; }
@@ -139,29 +137,47 @@ class AdaBoost
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
+   * @param numClasses The number of classes.
    * @param learner Learner to use for training.
+   * @param iterations Number of boosting rounds.
+   * @param tolerance The tolerance for change in values of rt.
+   * @return The upper bound for training error.
    */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const WeakLearnerType& learner,
-             const size_t iterations = 100,
-             const double tolerance = 1e-6);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const WeakLearnerType& learner,
+               const size_t iterations = 100,
+               const double tolerance = 1e-6);
 
   /**
    * Classify the given test points.
    *
    * @param test Testing data.
-   * @param predictedLabels Vector in which to the predicted labels of the test
+   * @param predictedLabels Vector in which the predicted labels of the test
+   *      set will be stored.
+   * @param probabilities matrix to store the predicted class probabilities for
+   *      each point in the test set.
+   */
+  void Classify(const MatType& test,
+                arma::Row<size_t>& predictedLabels,
+                arma::mat& probabilities);
+
+  /**
+   * Classify the given test points.
+   *
+   * @param test Testing data.
+   * @param predictedLabels Vector in which the predicted labels of the test
    *      set will be stored.
    */
-  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  void Classify(const MatType& test,
+                arma::Row<size_t>& predictedLabels);
 
   /**
    * Serialize the AdaBoost model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The number of classes in the model.
@@ -173,14 +189,12 @@ class AdaBoost
   std::vector<WeakLearnerType> wl;
   //! The weights corresponding to each weak learner.
   std::vector<double> alpha;
-
-  //! To check for the bound for the Hamming loss.
-  double ztProduct;
 }; // class AdaBoost
 
 } // namespace adaboost
 } // namespace mlpack
 
+// Include implementation.
 #include "adaboost_impl.hpp"
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file pearson_search.hpp
+ * @file methods/cf/neighbor_search_policies/pearson_search.hpp
  * @author Wenhao Huang
  *
  * Nearest neighbor search with pearson distance.
@@ -27,6 +27,20 @@ namespace cf {
  * normalize all vectors, and then use neighbor::KNN (i.e. NeighborSearch with
  * Euclidean distance, KDTree). Pearson correlation are calculated from
  * Euclidean distance.
+ *
+ * An example of how to use PearsonSearch in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<PearsonSearch>(10, recommendations);
+ * @endcode
  */
 class PearsonSearch
 {
@@ -38,7 +52,7 @@ class PearsonSearch
    * x, we first subtract mean(x) from each element in x. Then, we normalize
    * the vector to unit length.
    *
-   * @param Set of reference points.
+   * @param referenceSet Set of reference points.
    */
   PearsonSearch(const arma::mat& referenceSet)
   {
@@ -59,7 +73,7 @@ class PearsonSearch
    * @param query A set of query points.
    * @param k Number of neighbors to search.
    * @param neighbors Nearest neighbors.
-   * @param similarites Similarities between query point and its neighbors.
+   * @param similarities Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
               arma::Mat<size_t>& neighbors, arma::mat& similarities)

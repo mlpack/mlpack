@@ -1,5 +1,5 @@
 /**
- * @file mean_space_split_impl.hpp
+ * @file core/tree/space_split/mean_space_split_impl.hpp
  * @author Marcos Pividori
  *
  * Implementation of MeanSpaceSplit, to create a splitting hyperplane
@@ -35,7 +35,7 @@ bool MeanSpaceSplit<MetricType, MatType>::SplitSpace(
     return false;
 
   double splitVal = 0.0;
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
     splitVal += projVector.Project(data.col(points[i]));
   splitVal /= points.n_elem;
 

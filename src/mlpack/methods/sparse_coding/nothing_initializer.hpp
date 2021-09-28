@@ -1,5 +1,5 @@
 /**
- * @file nothing_initializer.hpp
+ * @file methods/sparse_coding/nothing_initializer.hpp
  * @author Ryan Curtin
  *
  * An initializer for SparseCoding which does precisely nothing.  It is useful

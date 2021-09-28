@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_function.cpp
+ * @file methods/softmax_regression/softmax_regression_function.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of function to be optimized for softmax regression.
@@ -123,9 +123,12 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(
   arma::uvec rowPointers(labels.n_elem);
   arma::uvec colPointers(labels.n_elem + 1);
 
+  // colPointers[0] needs to be set to 0.
+  colPointers[0] = 0;
+
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
-  for (size_t i = 0; i < labels.n_elem; i++)
+  for (size_t i = 0; i < labels.n_elem; ++i)
   {
     rowPointers(i) = labels(i);
     colPointers(i + 1) = i + 1;

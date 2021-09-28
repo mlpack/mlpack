@@ -1,5 +1,5 @@
 /**
- * @file dt_utils.hpp
+ * @file methods/det/dt_utils.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * This file implements functions to perform different tasks with the Density
@@ -60,6 +60,7 @@ void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
  * @param maxLeafSize Maximum number of points allowed in a leaf.
  * @param minLeafSize Minimum number of points allowed in a leaf.
  * @param unprunedTreeOutput Filename to print unpruned tree to (optional).
+ * @param skipPruning Set true to skip pruning.
  */
 template <typename MatType, typename TagType>
 DTree<MatType, TagType>* Trainer(MatType& dataset,
@@ -68,7 +69,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const size_t maxLeafSize = 10,
                                  const size_t minLeafSize = 5,
                                  const std::string unprunedTreeOutput = "",
-                                 const bool skipPruning = false);
+                                 const bool skipPruning = false,
+                                 util::Timers& timers = IO::GetTimers());
 
 /**
  * This class is responsible for caching the path to each node of the tree. Its

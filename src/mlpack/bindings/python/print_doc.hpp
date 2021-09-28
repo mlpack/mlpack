@@ -1,5 +1,5 @@
 /**
- * @file print_doc.hpp
+ * @file bindings/python/print_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation (as part of a docstring) for a Python binding parameter.
@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
-#include "get_python_type.hpp"
+#include "get_printable_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -30,10 +30,10 @@ namespace python {
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t containing indent.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintDoc(const util::ParamData& d,
+void PrintDoc(util::ParamData& d,
               const void* input,
               void* /* output */)
 {
@@ -44,24 +44,20 @@ void PrintDoc(const util::ParamData& d,
     oss << d.name << "_ (";
   else
     oss << d.name << " (";
-  oss << GetPythonType<typename std::remove_pointer<T>::type>(d) << "): "
+  oss << GetPrintableType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 
   // Print a default, if possible.
   if (!d.required)
   {
-    if (d.cppType == "std::string")
+    // Call the correct overload to get the default value directly.
+    if (d.cppType == "std::string" || d.cppType == "double" ||
+        d.cppType == "int" || d.cppType == "std::vector<int>" ||
+        d.cppType == "std::vector<std::string>" ||
+        d.cppType == "std::vector<double>")
     {
-      oss << "  Default value '" << boost::any_cast<std::string>(d.value)
-          << "'.";
-    }
-    else if (d.cppType == "double")
-    {
-      oss << "  Default value " << boost::any_cast<double>(d.value) << ".";
-    }
-    else if (d.cppType == "int")
-    {
-      oss << "  Default value " << boost::any_cast<int>(d.value) << ".";
+      std::string defaultValue = DefaultParamImpl<T>(d);
+      oss << "  Default value " << defaultValue << ".";
     }
   }
 

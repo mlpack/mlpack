@@ -1,5 +1,5 @@
 /**
- * @file multiple_random_dimension_select.hpp
+ * @file methods/decision_tree/multiple_random_dimension_select.hpp
  * @author Ryan Curtin
  *
  * Select a number of random dimensions to pick from.
@@ -17,21 +17,36 @@ namespace tree {
 
 /**
  * This dimension selection policy allows the selection from a few random
- * dimensions.  The number of random dimensions to use is specified by the
- * NumDimensions template parameter.
- *
- * @tparam NumDimensions Number of random dimensions to select.
+ * dimensions.  The number of random dimensions to use is specified in the
+ * constructor.
  */
-template<size_t NumDimensions = 3>
 class MultipleRandomDimensionSelect
 {
  public:
   /**
    * Instantiate the MultipleRandomDimensionSelect object.
+   *
+   * @param numDimensions Number of random dimensions to try for each split.
    */
-  MultipleRandomDimensionSelect(const size_t dimensions)
+  MultipleRandomDimensionSelect(const size_t numDimensions = 0) :
+        numDimensions(numDimensions),
+        i(0),
+        dimensions(0)
+  { }
+
+  /**
+   * Get the first random value.
+   */
+  size_t Begin()
   {
-    for (size_t i = 0; i < NumDimensions; ++i)
+    // Reset if possible.
+    if (numDimensions == 0 || numDimensions > dimensions)
+      numDimensions = (size_t) std::sqrt(dimensions);
+
+    values.set_size(numDimensions + 1);
+
+    // Try setting new values.
+    for (size_t i = 0; i < numDimensions; ++i)
     {
       // Generate random different numbers.
       bool unique = false;
@@ -55,14 +70,8 @@ class MultipleRandomDimensionSelect
       values[i] = value;
     }
 
-    values[NumDimensions] = std::numeric_limits<size_t>::max();
-  }
+    values[numDimensions] = std::numeric_limits<size_t>::max();
 
-  /**
-   * Get the first random value.
-   */
-  size_t Begin()
-  {
     i = 0;
     return values[0];
   }
@@ -80,11 +89,20 @@ class MultipleRandomDimensionSelect
     return values[++i];
   }
 
+  //! Get the number of dimensions.
+  size_t Dimensions() const { return dimensions; }
+  //! Set the number of dimensions.
+  size_t& Dimensions() { return dimensions; }
+
  private:
+  //! The number of dimensions.
+  size_t numDimensions;
   //! The values we select from.
-  size_t values[NumDimensions + 1];
+  arma::Col<size_t> values;
   //! The current value we are looking at.
   size_t i;
+  //! Number of dimensions.
+  size_t dimensions;
 };
 
 } // namespace tree

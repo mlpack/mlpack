@@ -1,5 +1,5 @@
 /**
- * @file sfinae_utility.hpp
+ * @file core/util/sfinae_utility.hpp
  * @author Trironk Kiatkungwanglai, Kirill Mishchenko
  *
  * This file contains macro utilities for the SFINAE Paradigm. These utilities
@@ -99,11 +99,13 @@ struct MethodFormDetector<Class, MethodForm, 7>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
 };
 
+//! Utility struct for checking signatures.
+template<typename U, U> struct SigCheck : std::true_type {};
+
 } // namespace sfinae
 } // namespace mlpack
 
-//! Utility struct for checking signatures.
-template<typename U, U> struct SigCheck : std::true_type {};
+
 
 /*
  * Constructs a template supporting the SFINAE pattern.
@@ -132,7 +134,7 @@ struct NAME                                                                    \
 <                                                                              \
   T,                                                                           \
   sig,                                                                         \
-  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
+  std::integral_constant<bool, mlpack::sfinae::SigCheck<sig, &T::FUNC>::value> \
 > : std::true_type {};
 
 /**
@@ -218,7 +220,7 @@ struct NAME                                                                  \
 #define SINGLE_ARG(...) __VA_ARGS__
 
 /**
- * HAS_METHOD_FORM generates a template that allows to check at compile time
+ * HAS_METHOD_FORM generates a template that allows a compile time check for
  * whether a given class has a method of the requested form. For example, for
  * the following class
  *
@@ -246,14 +248,13 @@ struct NAME                                                                  \
  *
  * @param METHOD The name of the method to check for.
  * @param NAME The name of the struct to construct.
- * @param MAXN The maximum number of additional arguments.
  */
 #define HAS_METHOD_FORM(METHOD, NAME) \
     HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
 
 /**
- * HAS_EXACT_METHOD_FORM generates a template that allows to check at compile
- * time whether a given class has a method of the requested form. For example,
+ * HAS_EXACT_METHOD_FORM generates a template that allows a compile time check
+ * whether a given class has a method of the requested form. For example,
  * for the following class
  *
  * class A
@@ -280,7 +281,6 @@ struct NAME                                                                  \
  *
  * @param METHOD The name of the method to check for.
  * @param NAME The name of the struct to construct.
- * @param MAXN The maximum number of additional arguments.
  */
 #define HAS_EXACT_METHOD_FORM(METHOD, NAME) \
     HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 0)
@@ -289,7 +289,7 @@ struct NAME                                                                  \
  * A version of HAS_METHOD_FORM() where the maximum number of extra arguments is
  * set to the default of 7.
  *
- * HAS_METHOD_FORM generates a template that allows to check at compile time
+ * HAS_METHOD_FORM generates a template that allows a compile time check as to
  * whether a given class has a method of the requested form. For example, for
  * the following class
  *

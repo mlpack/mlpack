@@ -1,5 +1,5 @@
 /**
- * @file dbscan.hpp
+ * @file methods/dbscan/dbscan.hpp
  * @author Ryan Curtin
  *
  * An implementation of the DBSCAN clustering method, which is flexible enough
@@ -17,7 +17,7 @@
 #include <mlpack/methods/range_search/range_search.hpp>
 #include <mlpack/methods/emst/union_find.hpp>
 #include "random_point_selection.hpp"
-#include <boost/dynamic_bitset.hpp>
+#include "ordered_point_selection.hpp"
 
 namespace mlpack {
 namespace dbscan {
@@ -48,7 +48,7 @@ namespace dbscan {
  *      with.
  */
 template<typename RangeSearchType = range::RangeSearch<>,
-         typename PointSelectionPolicy = RandomPointSelection>
+         typename PointSelectionPolicy = OrderedPointSelection>
 class DBSCAN
 {
  public:

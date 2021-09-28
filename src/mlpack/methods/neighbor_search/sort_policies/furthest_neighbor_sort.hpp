@@ -1,5 +1,5 @@
 /**
- * @file furthest_neighbor_sort.hpp
+ * @file methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp
  * @author Ryan Curtin
  *
  * Implementation of the SortPolicy class for NeighborSearch; in this case, the
@@ -24,7 +24,7 @@ namespace neighbor {
  * minimum distance is the best (so, when used with NeighborSearch, the output
  * is furthest neighbors).
  */
-class FurthestNeighborSort
+class FurthestNS
 {
  public:
   /**
@@ -195,6 +195,10 @@ class FurthestNeighborSort
     return ConvertToScore(score);
   }
 };
+
+// Due to an internal MinGW compiler bug (string table overflow) we have to
+// truncate the class name. For backward compatibility we setup an alias here.
+using FurthestNeighborSort = FurthestNS;
 
 } // namespace neighbor
 } // namespace mlpack

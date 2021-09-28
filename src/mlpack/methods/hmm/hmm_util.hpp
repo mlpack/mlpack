@@ -1,5 +1,5 @@
 /**
- * @file hmm_util.hpp
+ * @file methods/hmm/hmm_util.hpp
  * @author Ryan Curtin
  *
  * Utility to read HMM type from file.
@@ -23,7 +23,8 @@ enum HMMType : char
 {
   DiscreteHMM = 0,
   GaussianHMM,
-  GaussianMixtureModelHMM
+  GaussianMixtureModelHMM,
+  DiagonalGaussianMixtureModelHMM
 };
 
 //! ActionType should implement static void Apply(HMMType&).

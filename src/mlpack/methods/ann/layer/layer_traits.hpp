@@ -1,5 +1,5 @@
 /**
- * @file layer_traits.hpp
+ * @file methods/ann/layer/layer_traits.hpp
  * @author Marcus Edel
  *
  * This provides the LayerTraits class, a template class to get information
@@ -107,6 +107,22 @@ HAS_MEM_FUNC(Rho, HasRho);
 // This gives us a HasLoss<T, U> type (where U is a function pointer) we
 // can use with SFINAE to catch when a type has a Loss() function.
 HAS_MEM_FUNC(Loss, HasLoss);
+
+// This gives us a HasRunCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a Run() function.
+HAS_MEM_FUNC(Run, HasRunCheck);
+
+// This gives us a HasBiasCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a Bias() function.
+HAS_MEM_FUNC(Bias, HasBiasCheck);
+
+// This gives us a HasMaxIterationsC<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a MaxIterations() function.
+HAS_MEM_FUNC(MaxIterations, HasMaxIterations);
+
+// This gives us a HasInShapeCheck<T> type we can use with SFINAE to catch when
+// a type has a function named InputShape.
+HAS_ANY_METHOD_FORM(InputShape, HasInputShapeCheck);
 
 } // namespace ann
 } // namespace mlpack

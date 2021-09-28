@@ -1,5 +1,5 @@
 /**
- * @file reward_set_visitor.hpp
+ * @file methods/ann/visitor/reward_set_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Reward() function for different
@@ -32,6 +32,8 @@ class RewardSetVisitor : public boost::static_visitor<void>
   //! Set the reward parameter.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   //! The reward value.

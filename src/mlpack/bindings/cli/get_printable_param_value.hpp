@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param_value.hpp
+ * @file bindings/cli/get_printable_param_value.hpp
  * @author Ryan Curtin
  *
  * Given a parameter value, print what the user might actually specify on the
@@ -25,12 +25,12 @@ namespace cli {
  */
 template<typename T>
 std::string GetPrintableParamValue(
-    const util::ParamData& data,
+    util::ParamData& data,
     const std::string& value,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Get the parameter name for a matrix type (where the user has to pass the file
@@ -38,9 +38,9 @@ std::string GetPrintableParamValue(
  */
 template<typename T>
 std::string GetPrintableParamValue(
-    const util::ParamData& data,
+    util::ParamData& data,
     const std::string& value,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
 
 /**
  * Get the parameter name for a serializable model type (where the user has to
@@ -48,10 +48,10 @@ std::string GetPrintableParamValue(
  */
 template<typename T>
 std::string GetPrintableParamValue(
-    const util::ParamData& data,
+    util::ParamData& data,
     const std::string& value,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
 
 /**
  * Get the parameter name for a mapped matrix type (where the user has to pass
@@ -59,17 +59,17 @@ std::string GetPrintableParamValue(
  */
 template<typename T>
 std::string GetPrintableParamValue(
-    const util::ParamData& data,
+    util::ParamData& data,
     const std::string& value,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Get the parameter's name as seen by the user.
  */
 template<typename T>
 void GetPrintableParamValue(
-    const util::ParamData& d,
+    util::ParamData& d,
     const void* input,
     void* output)
 {

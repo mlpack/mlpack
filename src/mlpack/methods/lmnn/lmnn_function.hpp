@@ -1,5 +1,5 @@
 /**
- * @file lmnn_function.hpp
+ * @file methods/lmnn/lmnn_function.hpp
  * @author Manish Kumar
  *
  * Declaration of the LMNNFunction class.
@@ -26,9 +26,9 @@ namespace lmnn {
  *
  * The actual function is
  *
- * \epsilon(M) = \sum_{ij}\eta_{ij}|| L x_i - L x_j ||^2 +
+ * @f$ \epsilon(M) = \sum_{ij}\eta_{ij}|| L x_i - L x_j ||^2 +
  *     c\sum_{ijl}\eta_{ij}(1-y_{il})[1 + || L x_i - L x_j ||^2 -
- *     || L x_i - L x_l ||^2)]_{+}
+ *     || L x_i - L x_l ||^2)]_{+} @f$
  *
  * where x_n represents a point and A is the current scaling matrix.
  *
@@ -40,7 +40,7 @@ namespace lmnn {
  * In addition to the standard Evaluate() and Gradient() functions which mlpack
  * optimizers use, overloads of Evaluate() and Gradient() are given which only
  * operate on one point in the dataset.  This is useful for optimizers like
- * stochastic gradient descent (see mlpack::optimization::SGD).
+ * stochastic gradient descent (see ens::SGD).
  */
 template<typename MetricType = metric::SquaredEuclideanDistance>
 class LMNNFunction
@@ -63,6 +63,7 @@ class LMNNFunction
                size_t range,
                MetricType metric = MetricType());
 
+
   /**
    * Shuffle the points in the dataset. This may be used by optimizers.
    */
@@ -80,7 +81,7 @@ class LMNNFunction
   /**
    * Evaluate the LMNN objective function for the given transformation matrix on
    * the given batch size from a given inital point of the dataset.
-   * This is the separable implementation, where the objective 
+   * This is the separable implementation, where the objective
    * function is decomposed into the sum of many objective
    * functions, and here, only one of those constituent objective functions is
    * returned.
@@ -217,12 +218,39 @@ class LMNNFunction
   Constraints<MetricType> constraint;
   //! Holds pre-calculated cij.
   arma::mat pCij;
+  //! Holds the norm of each data point.
+  arma::vec norm;
+  //! Hold previous eval values for each datapoint.
+  arma::cube evalOld;
+  //! Hold previous maximum norm of impostor.
+  arma::mat maxImpNorm;
+  //! Holds previous transformation matrix. Used for L-BFGS like optimizer.
+  arma::mat transformationOld;
+  //! Holds previous transformation matrices.
+  std::vector<arma::mat> oldTransformationMatrices;
+  //! Holds number of points which are using each transformation matrix.
+  std::vector<size_t> oldTransformationCounts;
+  //! Holds points to transformation matrix mapping.
+  arma::vec lastTransformationIndices;
+  //! Used for storing points to re-calculate impostors for.
+  arma::uvec points;
+  //! Flag for controlling use of bounds over impostors.
+  bool impBounds;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not
   * uses batches.
   */
   inline void Precalculate();
+  //! Update cache transformation matrices.
+  inline void UpdateCache(const arma::mat& transformation,
+                          const size_t begin,
+                          const size_t batchSize);
+  //! Calculate norm of change in transformation.
+  inline void TransDiff(std::map<size_t, double>& transformationDiffs,
+                        const arma::mat& transformation,
+                        const size_t begin,
+                        const size_t batchSize);
 };
 
 } // namespace lmnn

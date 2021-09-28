@@ -1,5 +1,5 @@
 /**
- * @file copy_visitor.hpp
+ * @file methods/ann/visitor/copy_visitor.hpp
  * @author Shangtong Zhang
  *
  * This file provides an abstraction for copy between layers.
@@ -28,6 +28,8 @@ class CopyVisitor : public boost::static_visitor<LayerTypes<CustomLayers...> >
  public:
   template <typename LayerType>
   LayerTypes<CustomLayers...> operator()(LayerType*) const;
+
+  LayerTypes<CustomLayers...> operator()(MoreTypes) const;
 };
 
 } // namespace ann

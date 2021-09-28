@@ -1,5 +1,5 @@
 /**
- * @file radical.cpp
+ * @file methods/radical/radical.cpp
  * @author Nishant Mehta
  *
  * Implementation of Radical class
@@ -36,10 +36,8 @@ Radical::Radical(const double noiseStdDev,
 
 void Radical::CopyAndPerturb(mat& xNew, const mat& x) const
 {
-  Timer::Start("radical_copy_and_perturb");
   xNew = repmat(x, replicates, 1) + noiseStdDev * randn(replicates * x.n_rows,
       x.n_cols);
-  Timer::Stop("radical_copy_and_perturb");
 }
 
 
@@ -57,24 +55,26 @@ double Radical::Vasicek(vec& z) const
   // Apparently faster.
   double sum = 0;
   uword range = z.n_elem - m;
-  for (uword i = 0; i < range; i++)
+  for (uword i = 0; i < range; ++i)
   {
-    sum += log(z(i + m) - z(i));
+    sum += log(max(z(i + m) - z(i), DBL_MIN));
   }
 
   return sum;
 }
 
 
-double Radical::DoRadical2D(const mat& matX)
+double Radical::DoRadical2D(const mat& matX, util::Timers& timers)
 {
+  timers.Start("radical_copy_and_perturb");
   CopyAndPerturb(perturbed, matX);
+  timers.Stop("radical_copy_and_perturb");
 
   mat::fixed<2, 2> matJacobi;
 
   vec values(angles);
 
-  for (size_t i = 0; i < angles; i++)
+  for (size_t i = 0; i < angles; ++i)
   {
     const double theta = (i / (double) angles) * M_PI / 2.0;
     const double cosTheta = cos(theta);
@@ -98,15 +98,18 @@ double Radical::DoRadical2D(const mat& matX)
 }
 
 
-void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
+void Radical::DoRadical(const mat& matXT,
+                        mat& matY,
+                        mat& matW,
+                        util::Timers& timers)
 {
   // matX is nPoints by nDims (although less intuitive than columns being
   // points, and although this is the transpose of the ICA literature, this
   // choice is for computational efficiency when repeatedly generating
   // two-dimensional coordinate projections for Radical2D).
-  Timer::Start("radical_transpose_data");
+  timers.Start("radical_transpose_data");
   mat matX = trans(matXT);
-  Timer::Stop("radical_transpose_data");
+  timers.Stop("radical_transpose_data");
 
   // If m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003).
@@ -116,11 +119,11 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;
 
-  Timer::Start("radical_whiten_data");
+  timers.Start("radical_whiten_data");
   mat matXWhitened;
   mat matWhitening;
   WhitenFeatureMajorMatrix(matX, matY, matWhitening);
-  Timer::Stop("radical_whiten_data");
+  timers.Stop("radical_whiten_data");
   // matY is now the whitened form of matX.
 
   // In the RADICAL code, they do not copy and perturb initially, although the
@@ -129,7 +132,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   // GeneratePerturbedX(X, X);
 
   // Initialize the unmixing matrix to the whitening matrix.
-  Timer::Start("radical_do_radical");
+  timers.Start("radical_do_radical");
   matW = matWhitening;
 
   mat matYSubspace(nPoints, 2);
@@ -140,9 +143,9 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   {
     Log::Info << "RADICAL: sweep " << sweepNum << "." << std::endl;
 
-    for (size_t i = 0; i < nDims - 1; i++)
+    for (size_t i = 0; i < nDims - 1; ++i)
     {
-      for (size_t j = i + 1; j < nDims; j++)
+      for (size_t j = i + 1; j < nDims; ++j)
       {
         Log::Debug << "RADICAL 2D on dimensions " << i << " and " << j << "."
             << std::endl;
@@ -150,7 +153,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
         matYSubspace.col(0) = matY.col(i);
         matYSubspace.col(1) = matY.col(j);
 
-        const double thetaOpt = DoRadical2D(matYSubspace);
+        const double thetaOpt = DoRadical2D(matYSubspace, timers);
 
         const double cosThetaOpt = cos(thetaOpt);
         const double sinThetaOpt = sin(thetaOpt);
@@ -171,14 +174,14 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
       }
     }
   }
-  Timer::Stop("radical_do_radical");
+  timers.Stop("radical_do_radical");
 
   // The final transposes provide W and Y in the typical form from the ICA
   // literature.
-  Timer::Start("radical_transpose_data");
+  timers.Start("radical_transpose_data");
   matW = trans(matW);
   matY = trans(matY);
-  Timer::Stop("radical_transpose_data");
+  timers.Stop("radical_transpose_data");
 }
 
 void mlpack::radical::WhitenFeatureMajorMatrix(const mat& matX,

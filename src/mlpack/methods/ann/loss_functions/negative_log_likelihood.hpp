@@ -1,5 +1,5 @@
 /**
- * @file negative_log_likelihood.hpp
+ * @file methods/ann/loss_functions/negative_log_likelihood.hpp
  * @author Marcus Edel
  *
  * Definition of the NegativeLogLikelihood class.
@@ -40,30 +40,34 @@ class NegativeLogLikelihood
    */
   NegativeLogLikelihood();
 
-  /*
+  /**
    * Computes the Negative log likelihood.
    *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param iprediction Predictions used for evaluating the specified loss
+   *     function.
+   * @param target The target vector, that contains the class index in the range
+   *        between 1 and the number of classes.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, TargetType&& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
-   * likelihood layer expectes that the input contains log-probabilities for
+   * likelihood layer expects that the input contains log-probabilities for
    * each class. The layer also expects a class index, in the range between 1
    * and the number of classes, as target when calling the Forward function.
    *
-   * @param input The propagated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -84,7 +88,7 @@ class NegativeLogLikelihood
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

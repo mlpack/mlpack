@@ -1,5 +1,5 @@
 /**
- * @file lmnn.hpp
+ * @file methods/lmnn/lmnn.hpp
  * @author Manish Kumar
  *
  * Declaration of Large Margin Nearest Neighbor class.
@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
+#include <ensmallen.hpp>
 
 #include "lmnn_function.hpp"
 
@@ -51,7 +51,7 @@ namespace lmnn /** Large Margin Nearest Neighbor. */ {
  * @tparam OptimizerType Optimizer to use for developing distance.
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
-         typename OptimizerType = optimization::AMSGrad>
+         typename OptimizerType = ens::AMSGrad>
 class LMNN
 {
  public:
@@ -77,9 +77,13 @@ class LMNN
    * LearnDistance() is called with an outputMatrix with correct dimensions,
    * then that matrix will be used as the starting point for optimization.
    *
+   * @tparam CallbackTypes Types of Callback functions.
    * @param outputMatrix Covariance matrix of Mahalanobis distance.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  void LearnDistance(arma::mat& outputMatrix);
+  template<typename... CallbackTypes>
+  void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
 
 
   //! Get the dataset reference.

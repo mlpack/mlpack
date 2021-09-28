@@ -1,5 +1,5 @@
 /**
- * @file example_tree.hpp
+ * @file core/tree/example_tree.hpp
  * @author Ryan Curtin
  *
  * An example tree.  This contains all the functions that mlpack trees must
@@ -148,7 +148,7 @@ class ExampleTree
    * but instead a lower bound on the minimum distance will suffice.  See the
    * definitions in @ref trees for more information.
    *
-   * @param node Node to return [lower bound on] minimum distance to.
+   * @param other Node to return [lower bound on] minimum distance to.
    */
   double MinDistance(const ExampleTree& other) const;
 
@@ -168,7 +168,7 @@ class ExampleTree
    * but instead an upper bound on the maximum distance will suffice.  See the
    * definitions in @ref trees for more information.
    *
-   * @param node Node to return [upper bound on] maximum distance to.
+   * @param other Node to return [upper bound on] maximum distance to.
    */
   double MaxDistance(const ExampleTree& other) const;
 
@@ -194,7 +194,7 @@ class ExampleTree
    * lower bound on the minimum distance and an upper bound on the maximum
    * distance.  See the definitions in @ref trees for more information.
    *
-   * @param node Node to return [bounds on] minimum and maximum distances to.
+   * @param other Node to return [bounds on] minimum and maximum distances to.
    */
   math::Range RangeDistance(const ExampleTree& other) const;
 

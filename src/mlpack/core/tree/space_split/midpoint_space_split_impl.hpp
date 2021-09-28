@@ -1,5 +1,5 @@
 /**
- * @file midpoint_space_split_impl.hpp
+ * @file core/tree/space_split/midpoint_space_split_impl.hpp
  * @author Marcos Pividori
  *
  * Implementation of MidpointSpaceSplit, to create a splitting hyperplane

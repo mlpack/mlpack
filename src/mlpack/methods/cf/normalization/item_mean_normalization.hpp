@@ -1,5 +1,5 @@
 /**
- * @file item_mean_normalization.hpp
+ * @file methods/cf/normalization/item_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs item mean normalization on raw ratings. In another
@@ -30,7 +30,7 @@ namespace cf {
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * // Use ItemMeanNormalization as normalization method.
- * CFType<ItemMeanNormalization> cf(data);
+ * CFType<NMFPolicy, ItemMeanNormalization> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -65,7 +65,7 @@ class ItemMeanNormalization
 
     // Calculate item mean and subtract item mean from ratings.
     // Set item mean to 0 if the item has no rating.
-    for (size_t i = 0; i < itemNum; i++)
+    for (size_t i = 0; i < itemNum; ++i)
     {
       if (ratingNum(i) != 0)
         itemMean(i) /= ratingNum(i);
@@ -76,9 +76,9 @@ class ItemMeanNormalization
       const size_t item = (size_t) datapoint(1);
       datapoint(2) -= itemMean(item);
       // The algorithm omits rating of zero. If normalized rating equals zero,
-      // it is set to the smallest positive double value.
+      // it is set to the smallest positive float value.
       if (datapoint(2) == 0)
-        datapoint(2) = std::numeric_limits<double>::min();
+        datapoint(2) = std::numeric_limits<float>::min();
     });
   }
 
@@ -89,24 +89,41 @@ class ItemMeanNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    itemMean = arma::vec(arma::mean(cleanedData, 1));
-
+    // Calculate itemMean.
+    itemMean = arma::vec(cleanedData.n_rows, arma::fill::zeros);
+    arma::Col<size_t> ratingNum(cleanedData.n_rows, arma::fill::zeros);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
-      *it = *it - itemMean(it.row());
+      itemMean(it.row()) += *it;
+      ratingNum(it.row()) += 1;
+    }
+    for (size_t i = 0; i < itemMean.n_elem; ++i)
+    {
+      if (ratingNum(i) != 0)
+        itemMean(i) /= ratingNum(i);
+    }
+
+    // Normalize the data.
+    it = cleanedData.begin();
+    for (; it != cleanedData.end(); ++it)
+    {
+      double tmp = *it - itemMean(it.row());
+
       // The algorithm omits rating of zero. If normalized rating equals zero,
       // it is set to the smallest positive double value.
-      if (*it == 0)
-        *it = std::numeric_limits<double>::min();
+      if (tmp == 0)
+        tmp = std::numeric_limits<float>::min();
+
+      *it = tmp;
     }
   }
 
   /**
    * Denormalize computed rating by adding item mean.
    *
-   * @param user User ID.
+   * @param * (user) User ID.
    * @param item Item ID.
    * @param rating Computed rating before denormalization.
    */
@@ -126,7 +143,7 @@ class ItemMeanNormalization
   void Denormalize(const arma::Mat<size_t>& combinations,
                    arma::vec& predictions) const
   {
-    for (size_t i = 0; i < predictions.n_elem; i++)
+    for (size_t i = 0; i < predictions.n_elem; ++i)
     {
       const size_t item = combinations(1, i);
       predictions(i) += itemMean(item);
@@ -142,9 +159,9 @@ class ItemMeanNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(itemMean);
+    ar(CEREAL_NVP(itemMean));
   }
 
  private:

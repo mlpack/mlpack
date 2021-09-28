@@ -1,5 +1,5 @@
 /**
- * @file add.hpp
+ * @file methods/ann/augmented/tasks/add.hpp
  * @author Konstantin Sidorov
  *
  * Definition of the AddTask class, which implements a generator of
@@ -26,18 +26,18 @@ namespace tasks /* Task utilities for augmented */ {
  * Generator of instances of the binary addition task.
  * The parameters are:
  * - macimum binary length;
- * 
+ *
  * Every element of sequence is encoded as 1-dimensional vector
  * (possible vector elements are {0, 1, 0.5} -
  * the latter corresponds to '+' sign').
  * Generated datasets are compliant with mlpack format -
  * every dataset element is shaped as a vector of
  * length 3 * (sequence length),
- * 
+ *
  * Example of generated dataset (binary length = 2):
  * - Input sequence: [0,1,0,0,0,1,0,1,0,1,0,0]
  * - Output sequences: [0,1,0,0,1,0]
- * 
+ *
  */
 class AddTask
 {
@@ -66,7 +66,7 @@ class AddTask
   /**
    * Generate dataset of a given size and store it in
    * arma::mat object.
-   * 
+   *
    * @param input The variable to store input sequences.
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
@@ -83,11 +83,11 @@ class AddTask
    * Function for converting intermediate sequence representation
    * to one-hot representation produced
    * on the final stage of Generate function.
-   * 
+   *
    * @param input Reference parameter with intermediate representations,
    *              in which 0 and 1 corrrespond to the corresponding number bits,
    *              and 2 corresponds to `+` sign, which acts as a separator.
-   * @param output Reference parameter for storing final representations. 
+   * @param output Reference parameter for storing final representations.
    */
   void Binarize(const arma::field<arma::vec>& input,
                 arma::field<arma::mat>& output) const;

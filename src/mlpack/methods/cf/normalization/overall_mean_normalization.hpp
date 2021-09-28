@@ -1,5 +1,5 @@
 /**
- * @file overall_mean_normalization.hpp
+ * @file methods/cf/normalization/overall_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs overall mean normalization on raw ratings. In another
@@ -30,7 +30,7 @@ namespace cf {
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * // Use OverallMeanNormalization as normalization method.
- * CFType<OverallMeanNormalization> cf(data);
+ * CFType<NMFPolicy, OverallMeanNormalization> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -52,7 +52,7 @@ class OverallMeanNormalization
     mean = arma::mean(data.row(2));
     data.row(2) -= mean;
     // The algorithm omits rating of zero. If normalized rating equals zero,
-    // it is set to the smallest positive double value.
+    // it is set to the smallest positive float value.
     data.row(2).for_each([](double& x)
     {
       if (x == 0)
@@ -74,13 +74,16 @@ class OverallMeanNormalization
       // Subtract mean from all non zero ratings.
       arma::sp_mat::iterator it = cleanedData.begin();
       arma::sp_mat::iterator it_end = cleanedData.end();
-      for (; it != it_end; it++)
+      for (; it != it_end; ++it)
       {
-        *it = *it - mean;
+        double tmp = *it - mean;
+
         // The algorithm omits rating of zero. If normalized rating equals zero,
-        // it is set to the smallest positive double value.
-        if (*it == 0)
-          *it = std::numeric_limits<double>::min();
+        // it is set to the smallest positive float value.
+        if (tmp == 0)
+          tmp = std::numeric_limits<float>::min();
+
+        *it = tmp;
       }
     }
     else
@@ -93,8 +96,8 @@ class OverallMeanNormalization
   /**
    * Denormalize computed rating by adding mean.
    *
-   * @param user User ID.
-   * @param item Item ID.
+   * @param * (user) User ID.
+   * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */
   double Denormalize(const size_t /* user */,
@@ -107,7 +110,7 @@ class OverallMeanNormalization
   /**
    * Denormalize computed rating by adding mean.
    *
-   * @param combinations User/Item combinations.
+   * @param * (combinations) User/Item combinations.
    * @param predictions Predicted ratings for each user/item combination.
    */
   void Denormalize(const arma::Mat<size_t>& /* combinations */,
@@ -128,9 +131,9 @@ class OverallMeanNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mean);
+    ar(CEREAL_NVP(mean));
   }
 
  private:

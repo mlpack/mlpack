@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_descent_heuristic.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_descent_heuristic.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of RPlusTreeDescentHeuristic, a class that chooses the best child
@@ -37,8 +37,8 @@ class RPlusTreeDescentHeuristic
    * with minimum largest Hilbert value is greater than the largest
    * Hilbert value of the point being inserted.
    *
-   * @param node The node that is being evaluated.
-   * @param insertedNode The node that is being inserted.
+   * @param * (node) The node that is being evaluated.
+   * @param * (insertedNode) The node that is being inserted.
    */
   template<typename TreeType>
   static size_t ChooseDescentNode(const TreeType* /* node */,

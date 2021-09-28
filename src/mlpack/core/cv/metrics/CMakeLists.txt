@@ -13,6 +13,8 @@ set(SOURCES
   precision_impl.hpp
   recall.hpp
   recall_impl.hpp
+  r2_score.hpp
+  r2_score_impl.hpp
 )
 
 # Add directory name to sources.

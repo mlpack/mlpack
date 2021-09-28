@@ -1,16 +1,17 @@
 /**
- * @file option.cpp
+ * @file core/util/program_doc.cpp
+ * @author Yashwant Singh Parihar
  * @author Ryan Curtin
  *
- * Implementation of the ProgramDoc class.  The class registers itself with CLI
- * when constructed.
+ * Implementation of mutiple classes that store information related to a
+ * binding.  The classes register themselves with IO when constructed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "cli.hpp"
+#include "io.hpp"
 #include "program_doc.hpp"
 
 #include <string>
@@ -20,20 +21,80 @@ using namespace mlpack::util;
 using namespace std;
 
 /**
- * Construct a ProgramDoc object.  When constructed, it will register itself
- * with CLI.  A fatal error will be thrown if more than one is constructed.
+ * Construct a BindingName object.  When constructed, it will register itself
+ * with IO.  A fatal error will be thrown if more than one is constructed for
+ * a given bindingName.
  *
- * @param programName Short string representing the name of the program.
- * @param documentation Long string containing documentation on how to use the
- *    program and what it is.  No newline characters are necessary; this is
- *    taken care of by CLI later.
- * @param defaultModule Name of the default module.
+ * @param bindingName Name of the binding.
+ * @param name Name displayed to user of the binding.
  */
-ProgramDoc::ProgramDoc(const std::string& programName,
-                       const std::function<std::string()>& documentation) :
-    programName(programName),
-    documentation(documentation)
+BindingName::BindingName(const std::string& bindingName,
+                         const std::string& name)
 {
-  // Register this with CLI.
-  CLI::RegisterProgramDoc(this);
+  // Register this with IO.
+  IO::AddBindingName(bindingName, name);
+}
+
+/**
+ * Construct a ShortDescription object.  When constructed, it will register
+ * itself with IO.  A fatal error will be thrown if more than one is
+ * constructed for a given `bindingName`.
+ *
+ * @param bindingName Name of the binding.
+ * @param shortDescription A short two-sentence description of the binding,
+ *     what it does, and what it is useful for.
+ */
+ShortDescription::ShortDescription(const std::string& bindingName,
+                                   const std::string& shortDescription)
+{
+  // Register this with IO.
+  IO::AddShortDescription(bindingName, shortDescription);
+}
+
+/**
+ * Construct a LongDescription object. When constructed, it will register itself
+ * with IO.  A fatal error will be thrown if more than one is constructed for a
+ * given `bindingName`.
+ *
+ * @param bindingName Name of the binding.
+ * @param longDescription Long string containing documentation on
+ *     what it is.  No newline characters are necessary; this is
+ *     taken care of by IO later.
+ */
+LongDescription::LongDescription(
+    const std::string& bindingName,
+    const std::function<std::string()>& longDescription)
+{
+  // Register this with IO.
+  IO::AddLongDescription(bindingName, longDescription);
+}
+
+/**
+ * Construct a Example object.  When constructed, it will register itself
+ * with IO for the given `bindingName`.
+ *
+ * @param bindingName Name of the binding.
+ * @param example Documentation on how to use the binding.
+ */
+Example::Example(const std::string& bindingName,
+                 const std::function<std::string()>& example)
+{
+  // Register this with IO.
+  IO::AddExample(bindingName, example);
+}
+
+/**
+ * Construct a SeeAlso object.  When constructed, it will register itself
+ * with IO.
+ *
+ * @param bindingName Name of the binding.
+ * @param description Description of SeeAlso.
+ * @param link Link of SeeAlso.
+ */
+SeeAlso::SeeAlso(const std::string& bindingName,
+                 const std::string& description,
+                 const std::string& link)
+{
+  // Register this with IO.
+  IO::AddSeeAlso(bindingName, description, link);
 }

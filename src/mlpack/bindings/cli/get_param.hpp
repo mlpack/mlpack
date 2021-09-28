@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/cli/get_param.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to get the right type of parameter.
@@ -28,10 +28,10 @@ namespace cli {
 template<typename T>
 T& GetParam(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // No mapping is needed, so just cast it directly.
   return *boost::any_cast<T>(&d.value);
@@ -45,7 +45,7 @@ T& GetParam(
 template<typename T>
 T& GetParam(
     util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // If the matrix is an input matrix, we have to load the matrix.  'value'
   // contains the filename.  It's possible we could load empty matrices many
@@ -53,8 +53,10 @@ T& GetParam(
   // happens.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
   TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
-  const std::string& value = std::get<1>(tuple);
+  const std::string& value = std::get<0>(std::get<1>(tuple));
   T& matrix = std::get<0>(tuple);
+  size_t& n_rows = std::get<1>(std::get<1>(tuple));
+  size_t& n_cols = std::get<2>(std::get<1>(tuple));
   if (d.input && !d.loaded)
   {
     // Call correct data::Load() function.
@@ -62,6 +64,8 @@ T& GetParam(
       data::Load(value, matrix, true);
     else
       data::Load(value, matrix, true, !d.noTranspose);
+    n_rows = matrix.n_rows;
+    n_cols = matrix.n_cols;
     d.loaded = true;
   }
 
@@ -76,18 +80,22 @@ T& GetParam(
 template<typename T>
 T& GetParam(
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // If this is an input parameter, we need to load both the matrix and the
   // dataset info.
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T, std::tuple<std::string, size_t, size_t>> TupleType;
   TupleType* tuple = boost::any_cast<TupleType>(&d.value);
-  const std::string& value = std::get<1>(*tuple);
+  const std::string& value = std::get<0>(std::get<1>(*tuple));
   T& t = std::get<0>(*tuple);
+  size_t& n_rows = std::get<1>(std::get<1>(*tuple));
+  size_t& n_cols = std::get<2>(std::get<1>(*tuple));
   if (d.input && !d.loaded)
   {
     data::Load(value, std::get<1>(t), std::get<0>(t), true, !d.noTranspose);
+    n_rows = std::get<1>(t).n_rows;
+    n_cols = std::get<1>(t).n_cols;
     d.loaded = true;
   }
 
@@ -102,8 +110,8 @@ T& GetParam(
 template<typename T>
 T*& GetParam(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
@@ -125,15 +133,14 @@ T*& GetParam(
  * here!
  *
  * @param d Parameter information.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Place to store pointer to value.
  */
 template<typename T>
-void GetParam(const util::ParamData& d, const void* /* input */, void* output)
+void GetParam(util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
-  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(
-      const_cast<util::ParamData&>(d));
+  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace cli

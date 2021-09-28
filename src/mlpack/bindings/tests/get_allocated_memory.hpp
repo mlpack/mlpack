@@ -1,5 +1,5 @@
 /**
- * @file get_allocated_memory.hpp
+ * @file bindings/tests/get_allocated_memory.hpp
  * @author Ryan Curtin
  *
  * If the parameter has a type that may need to be deleted, return the address
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_GET_ALLOCATED_MEMORY_HPP
-#define MLPACK_BINDINGS_CLI_GET_ALLOCATED_MEMORY_HPP
+#ifndef MLPACK_BINDINGS_IO_GET_ALLOCATED_MEMORY_HPP
+#define MLPACK_BINDINGS_IO_GET_ALLOCATED_MEMORY_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 
@@ -21,33 +21,33 @@ namespace tests {
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& /* d */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    util::ParamData& /* d */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    util::ParamData& /* d */,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
 
 template<typename T>
 void* GetAllocatedMemory(
-    const util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    util::ParamData& d,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model; return its memory location.
   return *boost::any_cast<T*>(&d.value);
 }
 
 template<typename T>
-void GetAllocatedMemory(const util::ParamData& d,
+void GetAllocatedMemory(util::ParamData& d,
                         const void* /* input */,
                         void* output)
 {

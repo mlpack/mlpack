@@ -1,5 +1,5 @@
 /**
- * @file octree.hpp
+ * @file core/tree/octree.hpp
  * @author Ryan Curtin
  *
  * Include all the necessary files to use the Octree class.

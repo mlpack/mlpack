@@ -1,5 +1,5 @@
 /**
- * @file hollow_ball_bound.hpp
+ * @file core/tree/hollow_ball_bound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
@@ -86,6 +86,9 @@ class HollowBallBound
   //! Move constructor: take possession of another bound.
   HollowBallBound(HollowBallBound&& other);
 
+  //! Move assignment operator.
+  HollowBallBound& operator=(HollowBallBound&& other);
+
   //! Destructor to release allocated memory.
   ~HollowBallBound();
 
@@ -123,12 +126,16 @@ class HollowBallBound
 
   /**
    * Determines if a point is within this bound.
+   *
+   * @param point Point to check the condition.
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
 
   /**
    * Determines if another bound is within this bound.
+   *
+   * @param other Bound to check the condition.
    */
   bool Contains(const HollowBallBound& other) const;
 
@@ -142,6 +149,8 @@ class HollowBallBound
 
   /**
    * Calculates minimum bound-to-point squared distance.
+   *
+   * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
   ElemType MinDistance(const VecType& point,
@@ -150,11 +159,15 @@ class HollowBallBound
 
   /**
    * Calculates minimum bound-to-bound squared distance.
+   *
+   * @param other Bound to which the minimum distance is requested.
    */
   ElemType MinDistance(const HollowBallBound& other) const;
 
   /**
    * Computes maximum distance.
+   *
+   * @param point Point to which the maximum distance is requested.
    */
   template<typename VecType>
   ElemType MaxDistance(const VecType& point,
@@ -163,11 +176,16 @@ class HollowBallBound
 
   /**
    * Computes maximum distance.
+   *
+   * @param other Bound to which the maximum distance is requested.
    */
   ElemType MaxDistance(const HollowBallBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point distance.
+   *
+   * @param other Point to which the minimum and maximum distances are
+   *     requested.
    */
   template<typename VecType>
   math::RangeType<ElemType> RangeDistance(
@@ -178,6 +196,9 @@ class HollowBallBound
    * Calculates minimum and maximum bound-to-bound distance.
    *
    * Example: bound1.MinDistanceSq(other) for minimum distance.
+   *
+   * @param other Bound to which the minimum and maximum distances are
+   *     requested.
    */
   math::RangeType<ElemType> RangeDistance(const HollowBallBound& other) const;
 
@@ -214,7 +235,7 @@ class HollowBallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 //! A specialization of BoundTraits for this bound type.

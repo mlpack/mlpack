@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model_impl.hpp
+ * @file methods/fastmks/fastmks_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated functions of FastMKSModel.
@@ -19,24 +19,31 @@ namespace fastmks {
 
 //! This is called when the KernelType is the same as the model.
 template<typename KernelType>
-void BuildFastMKSModel(FastMKS<KernelType>& f,
+void BuildFastMKSModel(util::Timers& timers,
+                       FastMKS<KernelType>& f,
                        KernelType& k,
-                       const arma::mat& referenceData,
+                       arma::mat&& referenceData,
                        const double base)
 {
   // Do we need to build the tree?
+  if (base <= 1.0)
+  {
+    throw std::invalid_argument("base must be greater than 1");
+  }
+
   if (f.Naive())
   {
-    f.Train(referenceData, k);
+    f.Train(std::move(referenceData), k);
   }
   else
   {
     // Create the tree with the specified base.
-    Timer::Start("tree_building");
+    timers.Start("tree_building");
     metric::IPMetric<KernelType> metric(k);
     typename FastMKS<KernelType>::Tree* tree =
-        new typename FastMKS<KernelType>::Tree(referenceData, metric, base);
-    Timer::Stop("tree_building");
+        new typename FastMKS<KernelType>::Tree(std::move(referenceData),
+                                                metric, base);
+    timers.Stop("tree_building");
 
     f.Train(tree);
   }
@@ -45,9 +52,10 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
 //! This is only called when something goes wrong.
 template<typename KernelType,
          typename FastMKSType>
-void BuildFastMKSModel(FastMKSType& /* f */,
+void BuildFastMKSModel(util::Timers& /* timers */,
+                       FastMKSType& /* f */,
                        KernelType& /* k */,
-                       const arma::mat& /* referenceData */,
+                       arma::mat&& /* referenceData */,
                        const double /* base */)
 {
   throw std::invalid_argument("FastMKSModel::BuildModel(): given kernel type is"
@@ -55,7 +63,8 @@ void BuildFastMKSModel(FastMKSType& /* f */,
 }
 
 template<typename TKernelType>
-void FastMKSModel::BuildModel(const arma::mat& referenceData,
+void FastMKSModel::BuildModel(util::Timers& timers,
+                              arma::mat&& referenceData,
                               TKernelType& kernel,
                               const bool singleMode,
                               const bool naive,
@@ -90,47 +99,50 @@ void FastMKSModel::BuildModel(const arma::mat& referenceData,
   {
     case LINEAR_KERNEL:
       linear = new FastMKS<kernel::LinearKernel>(singleMode, naive);
-      BuildFastMKSModel(*linear, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *linear, kernel, std::move(referenceData), base);
       break;
 
     case POLYNOMIAL_KERNEL:
       polynomial = new FastMKS<kernel::PolynomialKernel>(singleMode, naive);
-      BuildFastMKSModel(*polynomial, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *polynomial, kernel, std::move(referenceData),
+          base);
       break;
 
     case COSINE_DISTANCE:
       cosine = new FastMKS<kernel::CosineDistance>(singleMode, naive);
-      BuildFastMKSModel(*cosine, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *cosine, kernel, std::move(referenceData), base);
       break;
 
     case GAUSSIAN_KERNEL:
       gaussian = new FastMKS<kernel::GaussianKernel>(singleMode, naive);
-      BuildFastMKSModel(*gaussian, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *gaussian, kernel, std::move(referenceData),
+          base);
       break;
 
     case EPANECHNIKOV_KERNEL:
       epan = new FastMKS<kernel::EpanechnikovKernel>(singleMode, naive);
-      BuildFastMKSModel(*epan, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *epan, kernel, std::move(referenceData), base);
       break;
 
     case TRIANGULAR_KERNEL:
       triangular = new FastMKS<kernel::TriangularKernel>(singleMode, naive);
-      BuildFastMKSModel(*triangular, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *triangular, kernel, std::move(referenceData),
+          base);
       break;
 
     case HYPTAN_KERNEL:
       hyptan = new FastMKS<kernel::HyperbolicTangentKernel>(singleMode, naive);
-      BuildFastMKSModel(*hyptan, kernel, referenceData, base);
+      BuildFastMKSModel(timers, *hyptan, kernel, std::move(referenceData), base);
       break;
   }
 }
 
 template<typename Archive>
-void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
+void FastMKSModel::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kernelType);
+  ar(CEREAL_NVP(kernelType));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Clean memory.
     if (linear)
@@ -161,37 +173,38 @@ void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(linear);
+      ar(CEREAL_POINTER(linear));
       break;
 
     case POLYNOMIAL_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(polynomial);
+      ar(CEREAL_POINTER(polynomial));
       break;
 
     case COSINE_DISTANCE:
-      ar & BOOST_SERIALIZATION_NVP(cosine);
+      ar(CEREAL_POINTER(cosine));
       break;
 
     case GAUSSIAN_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(gaussian);
+      ar(CEREAL_POINTER(gaussian));
       break;
 
     case EPANECHNIKOV_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(epan);
+      ar(CEREAL_POINTER(epan));
       break;
 
     case TRIANGULAR_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(triangular);
+      ar(CEREAL_POINTER(triangular));
       break;
 
     case HYPTAN_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(hyptan);
+      ar(CEREAL_POINTER(hyptan));
       break;
   }
 }
 
 template<typename FastMKSType>
-void FastMKSModel::Search(FastMKSType& f,
+void FastMKSModel::Search(util::Timers& timers,
+                          FastMKSType& f,
                           const arma::mat& querySet,
                           const size_t k,
                           arma::Mat<size_t>& indices,
@@ -200,15 +213,19 @@ void FastMKSModel::Search(FastMKSType& f,
 {
   if (f.Naive() || f.SingleMode())
   {
+    timers.Start("computing_products");
     f.Search(querySet, k, indices, kernels);
+    timers.Stop("computing_products");
   }
   else
   {
-    Timer::Start("tree_building");
+    timers.Start("tree_building");
     typename FastMKSType::Tree queryTree(querySet, base);
-    Timer::Stop("tree_building");
+    timers.Stop("tree_building");
 
+    timers.Start("computing_products");
     f.Search(&queryTree, k, indices, kernels);
+    timers.Stop("computing_products");
   }
 }
 

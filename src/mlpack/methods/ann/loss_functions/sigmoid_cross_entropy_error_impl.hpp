@@ -1,5 +1,5 @@
 /**
- * @file sigmoid_cross_entropy_error_impl.hpp
+ * @file methods/ann/loss_functions/sigmoid_cross_entropy_error_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -28,35 +28,38 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+template<typename PredictionType, typename TargetType>
+inline typename PredictionType::elem_type
+SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  double maximum = 0;
-  for (size_t i = 0; i < input.n_elem; ++i)
+  typedef typename PredictionType::elem_type ElemType;
+  ElemType maximum = 0;
+  for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-    maximum += std::max(input[i], 0.0) +
-        std::log(1 + std::exp(-std::abs(input[i])));
+    maximum += std::max(prediction[i], 0.0) +
+        std::log(1 + std::exp(-std::abs(prediction[i])));
   }
 
-  return maximum - arma::accu(input % target);
+  return maximum - arma::accu(prediction % target);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
-  output = 1.0 / (1.0 + arma::exp(-input)) - target;
+  loss = 1.0 / (1.0 + arma::exp(-prediction)) - target;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void SigmoidCrossEntropyError<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here
 }

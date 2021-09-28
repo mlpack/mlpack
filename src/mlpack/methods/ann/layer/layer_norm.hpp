@@ -1,5 +1,5 @@
 /**
- * @file layer_norm.hpp
+ * @file methods/ann/layer/layer_norm.hpp
  * @author Shikhar Jaiswal
  *
  * Definition of the Layer Normalization class.
@@ -69,11 +69,11 @@ class LayerNorm
   LayerNorm();
 
   /**
-  * Create the LayerNorm object for a specified number of input units.
-  *
-  * @param size The number of input units.
-  * @param eps The epsilon added to variance to ensure numerical stability.
-  */
+   * Create the LayerNorm object for a specified number of input units.
+   *
+   * @param size The number of input units.
+   * @param eps The epsilon added to variance to ensure numerical stability.
+   */
   LayerNorm(const size_t size, const double eps = 1e-8);
 
   /**
@@ -90,7 +90,7 @@ class LayerNorm
    * @param output Resulting output activations.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Backward pass through the layer.
@@ -100,9 +100,9 @@ class LayerNorm
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -112,9 +112,9 @@ class LayerNorm
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -142,11 +142,23 @@ class LayerNorm
   //! Get the variance across single training data.
   OutputDataType Variance() { return variance; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return size; }
+
+  //! Get the value of epsilon.
+  double Epsilon() const { return eps; }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return size;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -154,6 +166,9 @@ class LayerNorm
 
   //! Locally-stored epsilon value.
   double eps;
+
+  //! Variable to keep track of whether we are in loading or saving mode.
+  bool loading;
 
   //! Locally-stored scale parameter.
   OutputDataType gamma;
@@ -181,6 +196,9 @@ class LayerNorm
 
   //! Locally-stored normalized input.
   OutputDataType normalized;
+
+  //! Locally-stored zero mean input.
+  OutputDataType inputMean;
 }; // class LayerNorm
 
 } // namespace ann

@@ -1,5 +1,5 @@
 /**
- * @file set_input_width_visitor_impl.hpp
+ * @file methods/ann/visitor/set_input_width_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the InputWidth() function layer abstraction.
@@ -31,6 +31,11 @@ template<typename LayerType>
 inline bool SetInputWidthVisitor::operator()(LayerType* layer) const
 {
   return LayerInputWidth(layer);
+}
+
+inline bool SetInputWidthVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 template<typename T>

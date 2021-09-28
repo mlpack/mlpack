@@ -1,5 +1,5 @@
 /**
- * @file print_output_processing.hpp
+ * @file bindings/python/print_output_processing.hpp
  * @author Ryan Curtin
  *
  * Print the output processing in a Python binding .pyx file for a given
@@ -27,13 +27,14 @@ namespace python {
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::Params& /* params */,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -42,9 +43,9 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = CLI.GetParam[int]('param_name')
+     * result = p.Get[int]('param_name')
      */
-    std::cout << prefix << "result = " << "CLI.GetParam[" << GetCythonType<T>(d)
+    std::cout << prefix << "result = " << "p.Get[" << GetCythonType<T>(d)
         << "](\"" << d.name << "\")";
     if (GetCythonType<T>(d) == "string")
     {
@@ -61,9 +62,9 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result['param_name'] = CLI.GetParam[int]('param_name')
+     * result['param_name'] = p.Get[int]('param_name')
      */
-    std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
+    std::cout << prefix << "result['" << d.name << "'] = p.Get["
         << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
     if (GetCythonType<T>(d) == "string")
     {
@@ -83,10 +84,11 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::Params& /* params */,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -95,12 +97,12 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = arma_numpy.mat_to_numpy_X(CLI.GetParam[mat]("name"))
+     * result = arma_numpy.mat_to_numpy_X(p.Get[mat]("name"))
      *
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
-        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
+        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(p.Get["
         << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
   }
   else
@@ -109,13 +111,13 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result['param_name'] =
-     *     arma_numpy.mat_to_numpy_X(CLI.GetParam[mat]('name')
+     *     arma_numpy.mat_to_numpy_X(p.Get[mat]('name')
      *
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result['" << d.name
         << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetCythonType<T>(d)
+        << GetNumpyTypeChar<T>() << "(p.Get[" << GetCythonType<T>(d)
         << "]('" << d.name << "'))" << std::endl;
   }
 }
@@ -125,11 +127,12 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::Params& /* params */,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -140,11 +143,11 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
+     * result = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat](p, 'name'))
      */
     std::cout << prefix << "result = arma_numpy.mat_to_numpy_"
         << GetNumpyTypeChar<arma::mat>()
-        << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
+        << "(GetParamWithInfo[arma.Mat[double]](p, '" << d.name << "'))"
         << std::endl;
   }
   else
@@ -153,11 +156,11 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result['param_name'] =
-     *     arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
+     *     arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat](p, 'name'))
      */
     std::cout << prefix << "result['" << d.name
         << "'] = arma_numpy.mat_to_numpy_" << GetNumpyTypeChar<arma::mat>()
-        << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
+        << "(GetParamWithInfo[arma.Mat[double]](p, '" << d.name << "'))"
         << std::endl;
   }
 }
@@ -167,11 +170,12 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::Params& params,
+    util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Get the type names we need to use.
   std::string strippedType, printedType, defaultsType;
@@ -185,11 +189,11 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result = ModelType()
-     * (<ModelType?> result).modelptr = GetParamPtr[Model]('name')
+     * (<ModelType?> result).modelptr = GetParamPtr[Model](p, 'name')
      */
     std::cout << prefix << "result = " << strippedType << "Type()" << std::endl;
     std::cout << prefix << "(<" << strippedType << "Type?> result).modelptr = "
-        << "GetParamPtr[" << strippedType << "]('" << d.name << "')"
+        << "GetParamPtr[" << strippedType << "](p, '" << d.name << "')"
         << std::endl;
 
     /**
@@ -198,11 +202,11 @@ void PrintOutputProcessing(
      * So we need to loop through all input parameters that have the same type,
      * and double-check.
      */
-    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+    std::map<std::string, util::ParamData>& parameters = params.Parameters();
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
-      const util::ParamData& data = it->second;
+      util::ParamData& data = it->second;
       if (data.input && data.cppType == d.cppType && data.required)
       {
         std::cout << prefix << "if (<" << strippedType
@@ -233,12 +237,12 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result['name'] = ModelType()
-     * (<ModelType?> result['name']).modelptr = GetParamPtr[Model]('name'))
+     * (<ModelType?> result['name']).modelptr = GetParamPtr[Model](p, 'name'))
      */
     std::cout << prefix << "result['" << d.name << "'] = " << strippedType
         << "Type()" << std::endl;
     std::cout << prefix << "(<" << strippedType << "Type?> result['" << d.name
-        << "']).modelptr = GetParamPtr[" << strippedType << "]('" << d.name
+        << "']).modelptr = GetParamPtr[" << strippedType << "](p, '" << d.name
         << "')" << std::endl;
 
     /**
@@ -247,11 +251,11 @@ void PrintOutputProcessing(
      * So we need to loop through all input parameters that have the same type,
      * and double-check.
      */
-    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+    std::map<std::string, util::ParamData>& parameters = params.Parameters();
     for (auto it = parameters.begin(); it != parameters.end(); ++it)
     {
       // Is it an input parameter of the same type?
-      const util::ParamData& data = it->second;
+      util::ParamData& data = it->second;
       if (data.input && data.cppType == d.cppType && data.required)
       {
         std::cout << prefix << "if (<" << strippedType << "Type> result['"
@@ -286,23 +290,26 @@ void PrintOutputProcessing(
  * data.input is false, and should not be called when data.input is true.  If
  * this is the only output, the results will be different.
  *
- * The input pointer should be a pointer to a std::tuple<size_t, bool> where the
+ * The input pointer should be a pointer to a 
+ * std::tuple<util::Params, std::tuple<size_t, bool>> where the first element is
+ * the parameters of the binding and the second element is a tuple where the
  * first element is the indentation and the second element is a boolean
  * representing whether or not this is the only output parameter.
  *
  * @param d Parameter data struct.
  * @param input Pointer to size_t holding the indentation.
- * @param output Unused parameter.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintOutputProcessing(const util::ParamData& d,
+void PrintOutputProcessing(util::ParamData& d,
                            const void* input,
                            void* /* output */)
 {
-  std::tuple<size_t, bool>* tuple = (std::tuple<size_t, bool>*) input;
+  typedef std::tuple<util::Params, std::tuple<size_t, bool>> TupleType;
+  TupleType* tuple = (TupleType*) input;
 
-  PrintOutputProcessing<typename std::remove_pointer<T>::type>(d,
-      std::get<0>(*tuple), std::get<1>(*tuple));
+  PrintOutputProcessing<typename std::remove_pointer<T>::type>(std::get<0>(*tuple),
+      d, std::get<0>(std::get<1>(*tuple)), std::get<1>(std::get<1>(*tuple)));
 }
 
 } // namespace python
