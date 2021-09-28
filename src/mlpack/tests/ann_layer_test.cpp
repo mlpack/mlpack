@@ -4539,7 +4539,7 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
 
   REQUIRE(module.Weight().n_rows == kernelWidth);
   REQUIRE(module.Weight().n_cols == kernelHeight);
-  REQUIRE(module.Weight().n_slices == outSize);
+  REQUIRE(module.Weight().n_slices == outSize * inSize);
   REQUIRE(module.Bias().n_rows == outSize);
   REQUIRE(module.Bias().n_cols == 1);
   REQUIRE(module.Parameters().n_rows

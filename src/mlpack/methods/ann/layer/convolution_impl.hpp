@@ -124,7 +124,7 @@ void ConvolutionType<
 {
   weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
       kernelWidth, kernelHeight, maps * inMaps, false, false);
-  bias = OutputType(weightPtr + weight.n_elem, maps * inMaps, 1, false, false);
+  bias = OutputType(weightPtr + weight.n_elem, maps, 1, false, false);
   weights = OutputType(weightPtr, weight.n_elem + bias.n_elem, 1, false, false);
 }
 

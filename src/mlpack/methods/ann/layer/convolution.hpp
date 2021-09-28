@@ -202,7 +202,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
   size_t WeightSize() const
   {
     return (maps * inMaps * higherInDimensions * kernelWidth * kernelHeight) +
-        (maps * inMaps);
+        maps;
   }
 
   void ComputeOutputDimensions()
