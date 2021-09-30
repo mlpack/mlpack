@@ -227,7 +227,6 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
   STRING_VIEW line(stringEncodingUtf8Input[2]);
   SplitByAnyOf tokenizer(" ,.");
   STRING_VIEW token = tokenizer(line);
-  
   while (!token.empty())
   {
     tokens.push_back(token);
