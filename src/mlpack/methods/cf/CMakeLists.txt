@@ -6,6 +6,9 @@ set(SOURCES
   cf_model.hpp
   cf_model_impl.hpp
   cf_model.cpp
+  ncf.hpp
+  ncf_main.hpp
+  ncf_impl.hpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
