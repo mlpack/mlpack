@@ -12,10 +12,11 @@
 #ifndef MLPACK_METHODS_EXPONENTIAL_SMOOTHING_SES_HPP
 #define MLPACK_METHODS_EXPONENTIAL_SMOOTHING_SES_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/prereqs.hpp> 
+#include <armadillo>
 
 namespace mlpack {
-namespace single_exponential_smoothing /** Single Exponential smoothing method. */ {
+namespace ts /** Single Exponential smoothing method of time series. */ {
 
 /**
  * Single Exponential Smoothing, SES for short, also called
@@ -24,22 +25,20 @@ namespace single_exponential_smoothing /** Single Exponential smoothing method. 
  */
 
 // function for calculating mean absolute error
-double calc_mae(std::vector<double>&); 
+double calc_mae(const arma::rowvec& errors); 
 // function for calculating mean squared error
-double calc_mse(std::vector<double>&); 
+double calc_mse(const arma::rowvec& errors); 
 // function for calculating mean absolute percentage error
-double calc_mape(std::vector<double>&, std::vector<double>&); 
+double calc_mape(const arma::rowvec& data, const arma::rowvec& errors); 
 
 class SingleES
 {
  //forecasts for past periods
- std::vector<double> forecast_past; 
+ arma::rowvec forecastPast; 
  //errors of forecasting past periods
- std::vector<double> error_forecast_past; 
+ arma::rowvec errorForecastPast; 
  //the smoothing parameter
  double alpha; 
- // Implementation of the single exponential smoothing
- void update(const double&, const double&);
  
  public:
   /**
@@ -48,16 +47,19 @@ class SingleES
    * @param data, usually demand which varies with time.
    * @param alpha, the constant which determine the smoothing of the data points.
    */
-  SingleES(std::vector<double>& data, const double& alpha);
+  SingleES(arma::rowvec& data, const double& alpha);
   //Below is used to fetch the forecast vector
-  std::vector<double>& forecast_vector_ref();
+  arma::rowvec& GetForecastVector();
   //Below is used to fetch the error matrix w.r.t to forecast and the actual predictions
-  std::vector<double>& error_vector_ref();
-  double getalpha() const;
+  arma::rowvec& GetErrorVector();
+  //Below to get the smoothing parameter alpha
+  double Getalpha() const;
+  //Below to get the overall summary of the object created and trained
+  void SesForecastSummary(arma::rowvec& data, SingleES& sesObject);
 
 };
 
-} // namespace single_exponential_smoothing
+} // namespace ts
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_EXPONENTIAL_SMOOTHING_SES_HPP

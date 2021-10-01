@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+// #include <mlpack/prereqs.hpp>
+// #include <mlpack/core/util/io.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -22,7 +22,7 @@
 #include "ses.hpp"
 
 using namespace mlpack;
-using namespace mlpack::single_exponential_smoothing;
+using namespace mlpack::ts;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
