@@ -17,7 +17,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace cf {
@@ -55,7 +55,7 @@ class NCF
    * @param epochs Number of epochs to train the model on.
    * @param implicit Whether to convert data to implicit feedback rating form.
    */
-  template<typename OptimizerType = mlpack::optimization::SGD<>>
+  template<typename OptimizerType = ens::StandardSGD>
   NCF(arma::mat& dataset,
       std::string algorithm,
       OptimizerType& optimizer = OptimizerType(),

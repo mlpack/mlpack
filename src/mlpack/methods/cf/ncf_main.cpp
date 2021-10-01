@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -19,12 +19,8 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <ensmallen.hpp>
 
-using namespace mlpack;
 using namespace mlpack::cf;
 using namespace mlpack::util;
 using namespace mlpack::optimization;
@@ -208,22 +204,22 @@ void AssembleOptimizerType(const std::string& algorithm,
 {
   if (optimizerType == "adagrad")
   {
-    AdaGrad optimizer;
+    ens::AdaGrad optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
   else if (optimizerType == "rmsprop")
   {
-    RMSProp optimizer;
+    ens::RMSProp optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
   else if (optimizerType == "adam")
   {
-    Adam optimizer;
+    ens::Adam optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
   else
   {
-    SGD<> optimizer;
+    ens::StandardSGD<> optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
 }
