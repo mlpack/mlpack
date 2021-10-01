@@ -17,7 +17,7 @@
 
 using namespace mlpack;
 using namespace mlpack::ts;
-// using namespace mlpack::util;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
