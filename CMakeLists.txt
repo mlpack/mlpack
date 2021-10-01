@@ -14,12 +14,16 @@ option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
-option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
+option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
-# Set minimum library version required by mlpack.
-set(ARMADILLO_VERSION "8.400.0")
+# Set minimum library versions required by mlpack.
+#
+# For Armadillo, try to keep the minimum required version less than or equal to
+# what's available on the current Ubuntu LTS or most recent stable RHEL release.
+# See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
+set(ARMADILLO_VERSION "9.800")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
@@ -110,7 +114,7 @@ if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
 endif ()
 
 # Include modules in the CMake directory.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -278,7 +282,7 @@ if (CMAKE_CROSSCOMPILING)
   search_openblas(0.3.13)
 endif()
 
-if (DISABLE_DOWNLOADS)
+if (DOWNLOAD_DEPENDENCIES)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
   find_package(Armadillo "${ARMADILLO_VERSION}")
@@ -300,7 +304,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
-if (DISABLE_DOWNLOADS)
+if (DOWNLOAD_DEPENDENCIES)
   find_package(StbImage)
 else()
   find_package(StbImage)
@@ -314,11 +318,11 @@ endif()
 if (STB_IMAGE_FOUND)
   add_definitions(-DHAS_STB)
   set(STB_AVAILABLE "1")
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 endif()
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
 # Find ensmallen.
-if (DISABLE_DOWNLOADS)
+if (DOWNLOAD_DEPENDENCIES)
   find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
 else()
   find_package(Ensmallen "${ENSMALLEN_VERSION}")
@@ -331,7 +335,7 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
 # Find cereal.
-if (DISABLE_DOWNLOADS)
+if (DOWNLOAD_DEPENDENCIES)
   find_package(cereal "${CEREAL_VERSION}" REQUIRED)
 else()
   find_package(cereal "${CEREAL_VERSION}")
@@ -372,7 +376,7 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-if (DISABLE_DOWNLOADS)
+if (DOWNLOAD_DEPENDENCIES)
   find_package(Boost "${BOOST_VERSION}" REQUIRED)
 else()
   find_package(Boost "${BOOST_VERSION}")
@@ -425,7 +429,7 @@ endif ()
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(BEFORE ${MLPACK_INCLUDE_DIRS})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src/)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # On Windows, things end up under Debug/ or Release/.
 if (WIN32)

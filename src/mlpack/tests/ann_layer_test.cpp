@@ -3044,6 +3044,85 @@ TEST_CASE("AtrousConvolutionLayerPaddingTest", "[ANNLayerTest]")
 }
 
 /**
+ * Tests the GroupNorm layer.
+ */
+TEST_CASE("GroupNormTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, backwardOutput;
+  input = {
+    { 2, 0, 1 },
+    { 3, 1, 2 },
+    { 5, 1, 3 },
+    { 7, 2, 4 },
+    { 11, 3, 5 },
+    { 13, 5, 6 },
+    { 17, 8, 7 },
+    { 19, 13, 8 }
+  };
+
+  GroupNorm<> model(2, 4);
+  model.Reset();
+
+  model.Forward(input, output);
+  arma::mat result;
+  result = {
+    { -1.1717001972, -1.4142135482, -1.3416407811 },
+    { -0.6509445540, 0.0000000000 , -0.4472135937 },
+    { 0.3905667324 , 0.0000000000 , 0.4472135937  },
+    { 1.4320780188 , 1.4142135482 , 1.341640781   },
+    { -1.2649110634, -1.1283296293, -1.3416407811 },
+    { -0.6324555317, -0.5973509802, -0.4472135937 },
+    { 0.6324555317 , 0.1991169934 , 0.4472135937  },
+    { 1.2649110634 , 1.5265636161 , 1.3416407811  }
+  };
+
+  CheckMatrices(output, result, 1e-5);
+}
+
+/**
+ * GroupNorm layer numerical gradient test.
+ */
+TEST_CASE("GradientGroupNormTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(10, 256)),
+        target(arma::zeros(1, 256))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 10);
+      model->Add<GroupNorm<> >(1, 10);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 256, false);
+      model->Gradient(model->Parameters(), 0, gradient, 256);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
+
+/**
  * Tests the LayerNorm layer.
  */
 TEST_CASE("LayerNormTest", "[ANNLayerTest]")
