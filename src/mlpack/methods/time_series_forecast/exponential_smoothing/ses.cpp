@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-// #include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/log.hpp>
 #include "ses.hpp"
 #include <cmath>
 #include <numeric>
