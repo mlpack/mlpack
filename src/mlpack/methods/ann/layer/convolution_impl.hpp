@@ -249,6 +249,7 @@ operator=(const Convolution& layer)
     padding = layer.padding;
     weights = layer.weights;
   }
+
   return *this;
 }
 template<
@@ -293,6 +294,7 @@ operator=(Convolution&& layer)
     padding = std::move(layer.padding);
     weights = std::move(layer.weights);
   }
+
   return *this;
 }
 
