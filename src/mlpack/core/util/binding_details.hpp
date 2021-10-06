@@ -23,8 +23,8 @@ namespace util {
  */
 struct BindingDetails
 {
-  //! Name of the binding.
-  std::string programName;
+  //! User-friendly name of the binding.
+  std::string name;
   //! A short two-sentence description of the binding, what it does, and what
   //! it is useful for.
   std::string shortDescription;

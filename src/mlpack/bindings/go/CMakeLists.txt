@@ -91,6 +91,7 @@ if (BUILD_GO_SHLIB)
     mlpack/arma_util.hpp
     mlpack/io_util.h
     mlpack/io_util.hpp
+    mlpack_main.hpp
     print_class_defn.hpp
     print_defn_input.hpp
     print_defn_output.hpp

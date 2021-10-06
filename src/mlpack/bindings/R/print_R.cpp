@@ -21,20 +21,20 @@ namespace mlpack {
 namespace bindings {
 namespace r {
 
-
 /**
  * Print the code for a .R binding for an mlpack program to stdout.
  *
- * @param doc Documentation for the binding.
+ * @param params Instantiated Params object for this binding.
  * @param functionName Name of the function (i.e. "pca").
+ * @param bindingName Name of the binding (as specified by BINDING_NAME).
  */
-void PrintR(const util::BindingDetails& doc,
-            const string& functionName)
+void PrintR(util::Params& params,
+            const string& functionName,
+            const string& bindingName)
 {
-  // Restore parameters.
-  IO::RestoreSettings(doc.programName);
+  const util::BindingDetails& doc = params.Doc();
 
-  map<string, util::ParamData>& parameters = IO::Parameters();
+  map<string, util::ParamData>& parameters = params.Parameters();
   typedef map<string, util::ParamData>::iterator ParamIter;
 
   // First, let's get a list of input and output options.  We'll take two passes
@@ -68,7 +68,7 @@ void PrintR(const util::BindingDetails& doc,
   // Print the documentation.
   // Print programName as @title.
   cout << "#' @title ";
-  cout << util::HyphenateString(doc.programName, "#'   ") << endl;
+  cout << util::HyphenateString(doc.name, "#'   ") << endl;
   cout << "#'" << endl;
 
   // Next print the short description as @description.
@@ -85,7 +85,7 @@ void PrintR(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(opt);
 
     bool out = false;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &out);
+    params.functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &out);
 
     cout << endl;
   }
@@ -101,7 +101,7 @@ void PrintR(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(opt);
 
     bool out = true;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &out);
+    params.functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &out);
 
     cout << endl;
   }
@@ -162,36 +162,40 @@ void PrintR(const util::BindingDetails& doc,
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
 
-    IO::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL, NULL);
+    params.functionMap[d.tname]["PrintInputParam"](d, NULL, NULL);
   }
 
   // Print closing brace for function definition.
   cout << ") {" << endl;
 
-  // Restore IO settings.
-  cout << "  # Restore IO settings." << endl;
-  cout << "  IO_RestoreSettings(\"" << IO::ProgramName()
-       << "\")" << endl;
+  // Create timers and parameters objects.
+  cout << "  # Create parameters and timers objects." << endl;
+  cout << "  p <- CreateParams(\"" << bindingName << "\")" << endl;
+  cout << "  t <- CreateTimers()" << endl;
+  cout << "  # Initialize an empty list that will hold all input models the "
+       << "user gave us," << endl;
+  cout << "  # so that we don't accidentally create two XPtrs that point to the"
+       << "same model." << endl;
+  cout << "  inputModels <- vector()" << endl;
   cout << endl;
 
-  // Handle each input argument's processing before calling mlpackMain().
-  cout << "  # Process each input argument before calling mlpackMain()."
+  // Handle each input argument's processing before calling the binding.
+  cout << "  # Process each input argument before calling the binding."
        << endl;
   for (const string& opt : inputOptions)
   {
     if (opt != "verbose")
     {
       util::ParamData& d = parameters.at(opt);
-      IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
-          NULL, NULL);
+      params.functionMap[d.tname]["PrintInputProcessing"](d, NULL, NULL);
     }
   }
 
   // Special handling for verbose output.
   cout << "  if (verbose) {" << endl;
-  cout << "    IO_EnableVerbose()" << endl;
+  cout << "    EnableVerbose()" << endl;
   cout << "  } else {" << endl;
-  cout << "    IO_DisableVerbose()" << endl;
+  cout << "    DisableVerbose()" << endl;
   cout << "  }" << endl;
   cout << endl;
 
@@ -200,13 +204,13 @@ void PrintR(const util::BindingDetails& doc,
   for (const string& opt : outputOptions)
   {
     util::ParamData& d = parameters.at(opt);
-    cout << "  IO_SetPassed(\"" << d.name << "\")" << endl;
+    cout << "  SetPassed(p, \"" << d.name << "\")" << endl;
   }
   cout << endl;
 
   // Call the program.
   cout << "  # Call the program." << endl;
-  cout << "  " << functionName << "_mlpackMain()" << endl << endl;
+  cout << "  " << functionName << "_call(p, t)" << endl << endl;
 
   // Add ModelType as attr to the model pointer.
   cout << "  # Add ModelType as attribute to the model pointer, if needed."
@@ -214,8 +218,7 @@ void PrintR(const util::BindingDetails& doc,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     util::ParamData& d = parameters.at(outputOptions[i]);
-    IO::GetSingleton().functionMap[d.tname]["PrintSerializeUtil"](d,
-        NULL, NULL);
+    params.functionMap[d.tname]["PrintSerializeUtil"](d, NULL, NULL);
   }
   cout << endl;
 
@@ -228,17 +231,13 @@ void PrintR(const util::BindingDetails& doc,
     if (i == 0)
        cout << indentStr;
     util::ParamData& d = parameters.at(outputOptions[i]);
-    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
-        NULL, NULL);
+    params.functionMap[d.tname]["PrintOutputProcessing"](d, NULL, NULL);
     // Print newlines if we are returning multiple output options.
     if (i + 1 < outputOptions.size())
       cout << "," << endl << indentStr;
   }
   cout << endl << "  )" << endl << endl;
 
-  // Clear the parameters.
-  cout << "  # Clear the parameters." << endl;
-  cout << "  IO_ClearSettings()" << endl;
   cout << endl;
   cout << "  return(out)" << endl << "}" << endl;
 }

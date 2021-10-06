@@ -34,12 +34,12 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *     "<param_name>" = IO_GetParam<Type>("param_name")
+   *     "<param_name>" = GetParam<Type>(p, "param_name")
    *
    */
 
-  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = IO_GetParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")";
+  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = GetParam" << GetType<T>(d)
+            << "(p, \"" << d.name << "\")";
 }
 
 /**
@@ -55,12 +55,12 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *     "<param_name>" = IO_GetParam<Type>("param_name")
+   *     "<param_name>" = GetParam<Type>(p, "param_name")
    *
    */
 
-  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = IO_GetParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")";
+  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = GetParam" << GetType<T>(d)
+            << "(p, \"" << d.name << "\")";
 }
 
 /**
@@ -75,12 +75,12 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *     "<param_name>" = IO_GetParam<Type>("param_name")
+   *     "<param_name>" = GetParam<Type>(p, "param_name")
    *
    */
 
-  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = IO_GetParam" << GetType<T>(d)
-            << "(\"" << d.name << "\")";
+  MLPACK_COUT_STREAM << "  \"" << d.name << "\" = GetParam" << GetType<T>(d)
+            << "(p, \"" << d.name << "\")";
 }
 
 /**

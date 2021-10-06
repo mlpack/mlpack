@@ -2,46 +2,27 @@
   * @file logistic_regression_test.cpp
   * @author B Kartheek Reddy
   *
-  * Test mlpackMain() of logistic_regression_main.cpp
+  * Test RUN_BINDING() of logistic_regression_main.cpp
   *
   * mlpack is free software; you may redistribute it and/or modify it under the
   * terms of the 3-clause BSD license.  You should have received a copy of the
   * 3-clause BSD license along with mlpack.  If not, see
   * http://www.opensource.org/licenses/BSD-3-Clause for more information.
   */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-
-static const std::string testName = "LogisticRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-
-struct LogisticRegressionTestFixture
-{
- public:
-  LogisticRegressionTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~LogisticRegressionTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(LogisticRegressionTestFixture);
 
 /**
   * Ensuring that absence of training data is checked.
@@ -58,7 +39,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
   // Training data is not provided. Should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -78,7 +59,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   // Labels to the training data is not provided. It should throw
   // a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -103,11 +84,11 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPridictionSizeCheck",
   SetInputParam("test", std::move(testX));
 
   // Training the model.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output predictions of the test data.
-  const arma::Row<size_t> &testY =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t>& testY =
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   REQUIRE(testY.n_rows == 1);
@@ -135,7 +116,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
   // Labels with incorrect size. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -154,16 +135,15 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   SetInputParam("test", testX);
 
   // The first solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Now train by providing labels as extra parameter.
   arma::mat trainX2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
@@ -174,11 +154,11 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   SetInputParam("test", std::move(testX));
 
   // The second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // get the output
-  const arma::Row<size_t> &testY2 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t>& testY2 =
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testY1, testY2);
@@ -209,29 +189,27 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   SetInputParam("test", testX);
 
   // First solution
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained from training.
   LogisticRegression<>* model =
-      IO::GetParam<LogisticRegression<>*>("output_model");
+      params.Get<LogisticRegression<>*>("output_model");
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output.
-  const arma::Row<size_t> &testY2 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t>& testY2 =
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
   CheckMatrices(testY1, testY2);
@@ -261,7 +239,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData",
 
   // Dimensionality of test data is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -284,15 +262,14 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData2",
   SetInputParam("labels", std::move(trainY));
 
   // Training the model.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained from training.
   LogisticRegression<>* model =
-      IO::GetParam<LogisticRegression<>*>("output_model");
+      params.Get<LogisticRegression<>*>("output_model");
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  ResetSettings();
 
   // Test data with Wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);
@@ -301,7 +278,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData2",
 
   // Test data dimensionality is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -327,7 +304,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   // Training data contains more than two classes. It should throw
   // a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -353,7 +330,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
   // Maximum iterations is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -379,7 +356,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeStepSizeTest",
 
   // Step size for optimizer is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -404,7 +381,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeToleranceTest",
 
   // Tolerance is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -428,28 +405,27 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRMaxIterationsChangeTest",
   SetInputParam("max_iterations", int(1));
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
+      std::move(params.Get<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
   SetInputParam("max_iterations", int(100));
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
-  const arma::rowvec &parameters2 =
-      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Max Iteration changes the output model.
@@ -481,28 +457,27 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRLambdaChangeTest",
   SetInputParam("lambda", double(0));
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
+      std::move(params.Get<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
   SetInputParam("lambda", double(1000));
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
-  const arma::rowvec &parameters2 =
-      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures lambda changes the output model.
@@ -535,17 +510,16 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRStepSizeChangeTest",
   SetInputParam("step_size", double(0.02));
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
   const arma::rowvec parameters1 =
-      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
+      std::move(params.Get<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -553,11 +527,11 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRStepSizeChangeTest",
   SetInputParam("step_size", double(1.02));
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
-  const arma::rowvec &parameters2 =
-      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Step Size changes the output model.
@@ -590,17 +564,15 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROptimizerChangeTest",
   SetInputParam("max_iterations", int(1000));
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
-  const arma::rowvec parameters1 =
-      std::move(IO::GetParam<LogisticRegression<>*>("output_model")
-                ->Parameters());
+  const arma::rowvec parameters1 = std::move(
+      params.Get<LogisticRegression<>*>("output_model")->Parameters());
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -608,16 +580,16 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROptimizerChangeTest",
   SetInputParam("max_iterations", int(1000));
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
-  const arma::rowvec &parameters2 =
-      IO::GetParam<LogisticRegression<>*>("output_model")->Parameters();
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal which
   // ensures that different optimizer converge to different results.
   // arma::all function checks that each element of the vector is equal to zero.
-  if (arma::all((parameters1-parameters2) == 0))
+  if (arma::all((parameters1 - parameters2) == 0))
   {
     FAIL("parameters1 and parameters2 are equal. \
          Parameter(Step Size) has no effect on the output");
@@ -648,16 +620,15 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
   SetInputParam("test", testX);
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output after first training.
   const arma::Row<size_t> output1 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
@@ -665,11 +636,11 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
   SetInputParam("test", testX);
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output after second training.
-  const arma::Row<size_t> &output2 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t>& output2 =
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
   REQUIRE(arma::accu(output1 != output2) > 0);
@@ -693,15 +664,15 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROPtionConsistencyTest",
   SetInputParam("test", testX);
 
   // The solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output from 'predictions' parameter
   const arma::Row<size_t> testY1 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Get output from 'output' parameter
   const arma::Row<size_t> testY2 =
-      std::move(IO::GetParam<arma::Row<size_t>>("output"));
+      std::move(params.Get<arma::Row<size_t>>("output"));
 
   // Both solutions must be equal.
   CheckMatrices(testY1, testY2);
@@ -725,15 +696,13 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROPtionConsistencyTest2",
   SetInputParam("test", testX);
 
   // The solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output from 'predictions' parameter
-  const arma::mat testY1 =
-      IO::GetParam<arma::mat>("output_probabilities");
+  const arma::mat testY1 = params.Get<arma::mat>("output_probabilities");
 
   // Get output from 'output' parameter
-  const arma::mat testY2 =
-      std::move(IO::GetParam<arma::mat>("probabilities"));
+  const arma::mat testY2 = std::move(params.Get<arma::mat>("probabilities"));
 
   // Both solutions must be equal.
   CheckMatrices(testY1, testY2);

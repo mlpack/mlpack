@@ -84,7 +84,7 @@ class ReLU6
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

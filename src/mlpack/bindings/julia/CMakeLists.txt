@@ -73,11 +73,13 @@ if (BUILD_JULIA_BINDINGS)
 
   get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       PROPERTY INCLUDE_DIRECTORIES)
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml.in
-                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml)
-  # Configure io.jl.in with the right suffix for libraries.
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/io.jl.in
-                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/io.jl)
+  configure_file(
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml.in
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml)
+  # Configure params.jl.in with the right suffix for libraries.
+  configure_file(
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/params.jl.in
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/params.jl)
 
   # Create the empty mlpack.jl file that we will fill with includes using the
   # exsiting template.  Unfortunately COPY doesn't let us change the extension
@@ -209,6 +211,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_param.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_printable_param.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_option.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack_main.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_doc_functions.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_doc_functions_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_param.hpp

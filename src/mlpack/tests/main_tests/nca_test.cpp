@@ -2,48 +2,28 @@
  * @file tests/main_tests/nca_test.cpp
  * @author Yasmine Dumouchel
  *
- * Test mlpackMain() of nca_main.cpp.
+ * Test RUN_BINDING() of nca_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "nca";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include <ensmallen.hpp>
+#include "main_test_fixture.hpp"
 
-#include "test_helper.hpp"
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct NCATestFixture
-{
- public:
-  NCATestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~NCATestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(NCATestFixture);
 
 /**
  * Ensure that, when labels are implicitily given with input,
@@ -59,16 +39,16 @@ TEST_CASE_METHOD(NCATestFixture, "NCAExplicitImplicitLabelsTest",
 
   SetInputParam("input", std::move(x));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that last row was treated as label by checking that
   // the output has 1 less row.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 2);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 2);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 2);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 2);
 
   // Reset Settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Now check that when labels are explicitely given, the last column
   // of input is not treated as labels.
@@ -79,11 +59,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCAExplicitImplicitLabelsTest",
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 2);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 2);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 2);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 2);
 }
 
 /**
@@ -103,11 +83,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCALBFGSTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("optimizer",  std::string("lbfgs"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 3);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 3);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 3);
 }
 
 /**
@@ -127,7 +107,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCALabelSizeTest",
 
   // Check that an error is thrown.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -152,13 +132,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  arma::mat output = params.Get<arma::mat>("output");
 
   // Reset rettings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   arma::mat inputData2;
   if (!data::Load("vc2.csv", inputData2))
@@ -175,10 +155,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -198,13 +178,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
   SetInputParam("step_size", (double) 1.2);
   SetInputParam("linear_scan", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  arma::mat output = params.Get<arma::mat>("output");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -217,10 +197,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
   SetInputParam("step_size", (double) 20.5);
   SetInputParam("linear_scan", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -251,13 +231,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
     SetInputParam("max_iterations", (int) 0);
     SetInputParam("tolerance", (double) 1e-8);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    arma::mat output = IO::GetParam<arma::mat>("output");
+    arma::mat output = params.Get<arma::mat>("output");
 
     // Reset settings.
-    IO::ClearSettings();
-    IO::RestoreSettings(testName);
+    CleanMemory();
+    ResetSettings();
 
     // Set parameters using the same input but with a larger tolerance.
     SetInputParam("input", std::move(y));
@@ -266,10 +246,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
     SetInputParam("max_iterations", (int) 0);
     SetInputParam("tolerance", (double) 100.0);
 
-    mlpackMain();
+    RUN_BINDING();
 
     // Check that the output matrices are different.
-    success = (arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+    success = (arma::accu(params.Get<arma::mat>("output") != output) > 0);
     if (success)
       break;
 
@@ -297,13 +277,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentBatchSizeTest",
   SetInputParam("batch_size", (int) 2);
   SetInputParam("linear_scan", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  arma::mat output = params.Get<arma::mat>("output");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Input the same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -317,10 +297,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentBatchSizeTest",
   SetInputParam("batch_size", (int) 3);
   SetInputParam("linear_scan", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -339,13 +319,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
   SetInputParam("labels", labels);
   SetInputParam("optimizer", std::string("sgd"));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  arma::mat output = params.Get<arma::mat>("output");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Input the same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -358,10 +338,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
   SetInputParam("optimizer", std::string("sgd"));
   SetInputParam("linear_scan", false);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -380,13 +360,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest2",
   SetInputParam("labels", labels);
   SetInputParam("linear_scan", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  arma::mat output = params.Get<arma::mat>("output");
 
   // Reset Settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Set same parameter using the same data.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -396,10 +376,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest2",
   SetInputParam("input", std::move(y));
   SetInputParam("labels", labels2);
   SetInputParam("linear_scan", true);
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are equal.
-  CheckMatrices(output, IO::GetParam<arma::mat>("output"));
+  CheckMatrices(output, params.Get<arma::mat>("output"));
 }
 
 /**
@@ -430,13 +410,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
     SetInputParam("optimizer",  std::string("lbfgs"));
     SetInputParam("num_basis", (int) 5);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    arma::mat output = IO::GetParam<arma::mat>("output");
+    arma::mat output = params.Get<arma::mat>("output");
 
     // Reset Settings.
-    IO::ClearSettings();
-    IO::RestoreSettings(testName);
+    CleanMemory();
+    ResetSettings();
 
     // Set parameters with a smaller num_basis.
     SetInputParam("input", std::move(y));
@@ -444,10 +424,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
     SetInputParam("optimizer",  std::string("lbfgs"));
     SetInputParam("num_basis", (int) 1);
 
-    mlpackMain();
+    RUN_BINDING();
 
     // Check that the output matrices are different.
-    success = (arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+    success = (arma::accu(params.Get<arma::mat>("output") != output) > 0);
     if (success)
       break;
 
@@ -485,13 +465,13 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentMaxIterationTest",
     SetInputParam("optimizer",  std::string("lbfgs"));
     SetInputParam("max_iterations", (int) 3);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    arma::mat output = IO::GetParam<arma::mat>("output");
+    arma::mat output = params.Get<arma::mat>("output");
 
     // Reset settings.
-    IO::ClearSettings();
-    IO::RestoreSettings(testName);
+    CleanMemory();
+    ResetSettings();
 
     // Set parameters using the same input but with a larger max_iterations.
     SetInputParam("input", std::move(y));
@@ -499,10 +479,10 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentMaxIterationTest",
     SetInputParam("optimizer",  std::string("lbfgs"));
     SetInputParam("max_iterations", (int) 500);
 
-    mlpackMain();
+    RUN_BINDING();
 
     // Check that the output matrices are different.
-    success = (arma::accu(IO::GetParam<arma::mat>("output") != output) > 0);
+    success = (arma::accu(params.Get<arma::mat>("output") != output) > 0);
     if (success)
       break;
 

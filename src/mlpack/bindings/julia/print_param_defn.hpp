@@ -58,15 +58,19 @@ void PrintParamDefn(
   //
   // import ...<Type>
   //
-  // function IOGetParam<Type>(paramName::String, modelPtrs::Set{Ptr{Nothing}})
-  //   ptr = ccall((:IO_GetParam<Type>Ptr, <programName>Library),
-  //       Ptr{Nothing}, (Cstring,), paramName)
+  // function GetParam<Type>(params::Ptr{Nothing},
+  //                         paramName::String,
+  //                         modelPtrs::Set{Ptr{Nothing}})
+  //   ptr = ccall((:GetParam<Type>Ptr, <programName>Library),
+  //       Ptr{Nothing}, (Ptr{Nothing}, Cstring,), params, paramName)
   //   return <Type>(ptr; finalize=!(ptr in modelPtrs))
   // end
   //
-  // function IOSetParam<Type>(paramName::String, model::<Type>)
-  //   ccall((:IO_SetParam<Type>Ptr, <programName>Library), Nothing,
-  //       (Cstring, Ptr{Nothing}), paramName, model.ptr)
+  // function SetParam<Type>(params::Ptr{Nothing},
+  //                         paramName::String,
+  //                         model::<Type>)
+  //   ccall((:SetParam<Type>Ptr, <programName>Library), Nothing,
+  //       (Ptr{Nothing}, Cstring, Ptr{Nothing}), params, paramName, model.ptr)
   // end
   //
   // function Delete<Type>(ptr::Ptr{Nothing})
@@ -97,14 +101,15 @@ void PrintParamDefn(
   std::cout << "import ..." << type << std::endl;
   std::cout << std::endl;
 
-  // Now, IOGetParam<Type>().
+  // Now, GetParam<Type>().
   std::cout << "# Get the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function IOGetParam" << type << "(paramName::String, "
-      << "modelPtrs::Set{Ptr{Nothing}})::" << type << std::endl;
-  std::cout << "  ptr = ccall((:IO_GetParam" << type
-      << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
-      << "paramName)" << std::endl;
+  std::cout << "function GetParam" << type << "(params::Ptr{Nothing}, "
+      << "paramName::String, modelPtrs::Set{Ptr{Nothing}})::" << type
+      << std::endl;
+  std::cout << "  ptr = ccall((:GetParam" << type
+      << "Ptr, " << programName << "Library), Ptr{Nothing}, (Ptr{Nothing}, "
+      << "Cstring,), params, paramName)" << std::endl;
   std::cout << "  return " << type << "(ptr; finalize=!(ptr in modelPtrs))"
       << std::endl;
   std::cout << "end" << std::endl;
@@ -113,11 +118,11 @@ void PrintParamDefn(
   // Next, IOSetParam<Type>().
   std::cout << "# Set the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function IOSetParam" << type << "(paramName::String, "
-      << "model::" << type << ")" << std::endl;
-  std::cout << "  ccall((:IO_SetParam" << type << "Ptr, "
-      << programName << "Library), Nothing, (Cstring, "
-      << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
+  std::cout << "function SetParam" << type << "(params::Ptr{Nothing}, "
+      << "paramName::String, model::" << type << ")" << std::endl;
+  std::cout << "  ccall((:SetParam" << type << "Ptr, "
+      << programName << "Library), Nothing, (Ptr{Nothing}, Cstring, "
+      << "Ptr{Nothing}), params, paramName, model.ptr)" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 

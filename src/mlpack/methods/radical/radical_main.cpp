@@ -12,12 +12,18 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME radical
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include "radical.hpp"
 
 // Program Name.
-BINDING_NAME("RADICAL");
+BINDING_USER_NAME("RADICAL");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -81,36 +87,36 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Set random seed.
-  if (IO::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
 
-  RequireAtLeastOnePassed({ "output_ic", "output_unmixing" }, false, "no output"
-      " will be saved");
+  RequireAtLeastOnePassed(params, { "output_ic", "output_unmixing" }, false,
+      "no output will be saved");
 
   // Check validity of parameters.
-  RequireParamValue<int>("replicates", [](int x) { return x > 0; }, true,
-      "number of replicates must be positive");
-  RequireParamValue<double>("noise_std_dev", [](double x) { return x >= 0.0; },
-      true, "standard deviation of Gaussian noise must be greater than or equal"
-      " to 0");
-  RequireParamValue<int>("angles", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "replicates", [](int x) { return x > 0; },
+      true, "number of replicates must be positive");
+  RequireParamValue<double>(params, "noise_std_dev",
+      [](double x) { return x >= 0.0; }, true, "standard deviation of Gaussian "
+      "noise must be greater than or equal to 0");
+  RequireParamValue<int>(params, "angles", [](int x) { return x > 0; }, true,
       "number of angles must be positive");
-  RequireParamValue<int>("sweeps", [](int x) { return x >= 0; }, true,
+  RequireParamValue<int>(params, "sweeps", [](int x) { return x >= 0; }, true,
       "number of sweeps must be 0 or greater");
 
   // Load the data.
-  mat matX = std::move(IO::GetParam<mat>("input"));
+  mat matX = std::move(params.Get<mat>("input"));
 
   // Load parameters.
-  double noiseStdDev = IO::GetParam<double>("noise_std_dev");
-  size_t nReplicates = IO::GetParam<int>("replicates");
-  size_t nAngles = IO::GetParam<int>("angles");
-  size_t nSweeps = IO::GetParam<int>("sweeps");
+  double noiseStdDev = params.Get<double>("noise_std_dev");
+  size_t nReplicates = params.Get<int>("replicates");
+  size_t nAngles = params.Get<int>("angles");
+  size_t nSweeps = params.Get<int>("sweeps");
 
   if (nSweeps == 0)
   {
@@ -121,16 +127,16 @@ static void mlpackMain()
   Radical rad(noiseStdDev, nReplicates, nAngles, nSweeps);
   mat matY;
   mat matW;
-  rad.DoRadical(matX, matY, matW);
+  rad.DoRadical(matX, matY, matW, timers);
 
   // Save results.
-  if (IO::HasParam("output_ic"))
-    IO::GetParam<mat>("output_ic") = std::move(matY);
+  if (params.Has("output_ic"))
+    params.Get<mat>("output_ic") = std::move(matY);
 
-  if (IO::HasParam("output_unmixing"))
-    IO::GetParam<mat>("output_unmixing") = std::move(matW);
+  if (params.Has("output_unmixing"))
+    params.Get<mat>("output_unmixing") = std::move(matW);
 
-  if (IO::HasParam("objective"))
+  if (params.Has("objective"))
   {
     // Compute and print objective.
     mat matYT = trans(matY);

@@ -10,9 +10,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef BINDING_TYPE
+#define BINDING_TYPE BINDING_TYPE_GO
+#endif
+
 #include "print_go.hpp"
 #include <mlpack/bindings/util/camel_case.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/util/param.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include <set>
 
@@ -27,16 +32,17 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
  *
+ * @param params Instantiated Params struct with program options.
  * @param doc Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
+ * @param bindingName Name of the binding (as registered with IO).
  */
-void PrintGo(const util::BindingDetails& doc,
-             const std::string& functionName)
+void PrintGo(util::Params& params,
+             const util::BindingDetails& doc,
+             const std::string& functionName,
+             const std::string& bindingName)
 {
-  // Restore parameters.
-  IO::RestoreSettings(doc.programName);
-
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
@@ -100,8 +106,7 @@ void PrintGo(const util::BindingDetails& doc,
   {
     util::ParamData& d = parameters.at(inputOptions[i]);
     size_t indent = 4;
-    IO::GetSingleton().functionMap[d.tname]["PrintMethodConfig"](d,
-        (void*) &indent, NULL);
+    params.functionMap[d.tname]["PrintMethodConfig"](d, (void*) &indent, NULL);
   }
   cout << "}" << endl;
   cout << endl;
@@ -115,8 +120,7 @@ void PrintGo(const util::BindingDetails& doc,
   {
     util::ParamData& d = parameters.at(inputOptions[i]);
     size_t indent = 4;
-    IO::GetSingleton().functionMap[d.tname]["PrintMethodInit"](d,
-        (void*) &indent, NULL);
+    params.functionMap[d.tname]["PrintMethodInit"](d, (void*) &indent, NULL);
   }
   cout << "  " << "}" << endl;
   cout << "}" << endl;
@@ -144,14 +148,12 @@ void PrintGo(const util::BindingDetails& doc,
     if (!d.required)
     {
       bool isLower = false;
-      IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-           &isLower);
+      params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent, &isLower);
     }
     else
     {
       bool isLower = true;
-      IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-          &isLower);
+      params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent, &isLower);
     }
     cout << endl;
   }
@@ -165,8 +167,7 @@ void PrintGo(const util::BindingDetails& doc,
     cout << "  ";
     size_t indent = 4;
     bool isLower = true;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-        &isLower);
+    params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent, &isLower);
     cout << endl;
   }
   cout << endl;
@@ -185,7 +186,7 @@ void PrintGo(const util::BindingDetails& doc,
       if (i != 0)
         cout << ", ";
 
-      IO::GetSingleton().functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
+      params.functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
       counter++;
     }
   }
@@ -209,7 +210,7 @@ void PrintGo(const util::BindingDetails& doc,
       cout << ", ";
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    IO::GetSingleton().functionMap[d.tname]["PrintDefnOutput"](d,
+    params.functionMap[d.tname]["PrintDefnOutput"](d,
       (void*) &t, NULL);
   }
 
@@ -217,14 +218,11 @@ void PrintGo(const util::BindingDetails& doc,
   cout << ") {" << endl;
 
   // Reset any timers and disable backtraces.
-  cout << "  " << "resetTimers()" << endl;
-  cout << "  " << "enableTimers()" << endl;
-  cout << "  " << "disableBacktrace()" << endl;
-  cout << "  " << "disableVerbose()" << endl;
-
-  // Restore the parameters.
-  cout << "  " << "restoreSettings(\"" << doc.programName << "\")" << endl;
+  cout << "  params := getParams(\"" << bindingName << "\")" << endl;
+  cout << "  timers := getTimers()" << endl;
   cout << endl;
+  cout << "  disableBacktrace()" << endl;
+  cout << "  disableVerbose()" << endl;
 
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -232,8 +230,8 @@ void PrintGo(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
-        (void*) &indent, NULL);
+    params.functionMap[d.tname]["PrintInputProcessing"](d, (void*) &indent,
+        NULL);
   }
 
   // Set all output options as passed.
@@ -241,13 +239,14 @@ void PrintGo(const util::BindingDetails& doc,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << "  " << "setPassed(\"" << d.name << "\")" << endl;
+    cout << "  " << "setPassed(params, \"" << d.name << "\")" << endl;
   }
   cout << endl;
 
   // Call the method.
   cout << "  " << "// Call the mlpack program." << endl;
-  cout << "  " << "C.mlpack" << goFunctionName << "()" << endl;
+  cout << "  " << "C.mlpack" << goFunctionName << "(params.mem, timers.mem)"
+      << endl;
   cout << endl;
 
   // Do any output processing and return.
@@ -257,15 +256,13 @@ void PrintGo(const util::BindingDetails& doc,
   {
     util::ParamData& d = parameters.at(outputOptions[i]);
 
-    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
-        NULL, NULL);
+    params.functionMap[d.tname]["PrintOutputProcessing"](d, NULL, NULL);
   }
 
-  // Clear the parameters.
-  cout << endl;
-  cout << "  " << "// Clear settings." << endl;
-  cout << "  " << "clearSettings()" << endl;
-  cout << endl;
+  // Clean up memory.
+  cout << "  // Clean memory." << endl;
+  cout << "  cleanParams(params)" << endl;
+  cout << "  cleanTimers(timers)" << endl;
 
   // Return output parameters.
   cout << "  " << "// Return output(s)." << endl;
