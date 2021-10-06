@@ -450,14 +450,12 @@ class DecisionTreeRegressor :
   //! The type of the dimension that we have split on (only meaningful if this
   //! is a non-leaf in a trained tree).
   size_t dimensionType;
-  /**
-   * This variable may hold different things. If the node has no children, then
-   * it is guaranteed to hold the prediction value for that node.  If the node
-   * has children, then it may be used arbitrarily by the split type's
-   * CalculateDirection() and SplitIfBetter() function. In this case, it stores
-   * the point at which the split was made.
-   */
-  double splitPointOrPrediction;
+
+  union
+  {
+      double splitPoint;
+      double prediction;
+  };
 
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
