@@ -55,7 +55,14 @@ void PrintHeaders(const string& bindingName,
       anchorName = anchorName.substr(0, anchorName.size() - 2);
 
     cout << " - [" << langBindingName << "](#" << languages[i]
-        << "_" << anchorName << "){: .language-link #" << languages[i] << " }"
+        << "_";
+
+    if (addWrappers[i])
+      cout << GetWrapperLink(bindingName);
+    else
+      cout << anchorName;
+
+    cout << "){: .language-link #" << languages[i] << " }"
         << endl;
   }
 }
