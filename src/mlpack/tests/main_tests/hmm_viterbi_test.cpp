@@ -2,52 +2,35 @@
  * @file tests/main_tests/hmm_viterbi_test.cpp
  * @author Daivik Nema
  *
- * Test mlpackMain() of hmm_viterbi_main.cpp
+ * Test RUN_BINDING() of hmm_viterbi_main.cpp
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "HMMViterbi";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/hmm/hmm_model.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/hmm/hmm_viterbi_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "main_test_fixture.hpp"
+
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 #include "hmm_test_utils.hpp"
 
 using namespace mlpack;
 
-struct HMMViterbiTestFixture
-{
- public:
-  HMMViterbiTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
+BINDING_TEST_FIXTURE(HMMViterbiTestFixture);
 
-  ~HMMViterbiTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE(HMMViterbiMainTest, HMMViterbiTestFixture);
-
-BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiDiscreteHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   // Load data to train a discrete HMM model with.
   arma::mat inp;
@@ -56,8 +39,8 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
 
   // Initialize and train a discrete HMM model.
   HMMModel* h = new HMMModel(DiscreteHMM);
-  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
-  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(params, &trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(params, &trainSeq);
 
   // Now that we have a trained HMM model, we can use it to predict the state
   // sequence for a given observation sequence - using the Viterbi algorithm.
@@ -67,18 +50,20 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
   SetInputParam("input", inp);
 
   // Call to hmm_viterbi_main.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = params.Get<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == inp.n_cols);
 }
 
-BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiGaussianHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   // Load data to train a gaussian HMM model with.
   arma::mat inp;
@@ -87,8 +72,8 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
 
   // Initialize and train a gaussian HMM model.
   HMMModel* h = new HMMModel(GaussianHMM);
-  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
-  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(params, &trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(params, &trainSeq);
 
   // Now that we have a trained HMM model, we can use it to predict the state
   // sequence for a given observation sequence - using the Viterbi algorithm.
@@ -98,18 +83,20 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
   SetInputParam("input", inp);
 
   // Call to hmm_viterbi_main.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = params.Get<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == inp.n_cols);
 }
 
-BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiGMMHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -163,18 +150,20 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
   SetInputParam("input", observations);
 
   // Call to hmm_viterbi_main.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = params.Get<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, observations.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == observations.n_cols);
 }
 
-BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiDiagonalGMMHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.2 0.8");
@@ -228,15 +217,13 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
   SetInputParam("input", observations);
 
   // Call to hmm_viterbi_main.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = params.Get<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, observations.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == observations.n_cols);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

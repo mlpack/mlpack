@@ -342,6 +342,27 @@ end
                          model_in=newModel)
 end
 
+# Test that we can serialize a model as part of a larger tuple.
+@testset "TestStreamTupleSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  stream = IOBuffer()
+  serialize(stream, (modelOut, 3, 4, 5))
+
+  newStream = IOBuffer(copy(stream.data))
+  (newModel, a, b, c) = deserialize(newStream)
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+
+  @test a == 3
+  @test b == 4
+  @test c == 5
+end
+
 @testset "TestFileSerialization" begin
   _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -376,4 +397,21 @@ end
                          model_in=newModel)
 
   Filesystem.rm("model.bin")
+end
+
+# Ensure that we don't accidentally free a model multiple times.
+@testset "TestMultipleModelDealloc" begin
+  _, _, _, _, _, _, model, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello", build_model=true)
+
+  begin
+    for i = 1:100
+      out = test_julia_binding(4.0, 12, "hello", model_in=model,
+          duplicate_model=true)
+    end
+  end
+
+  # This should free the other models.  It's likely to crash if a model might be
+  # freed multiple times.
+  GC.gc()
 end

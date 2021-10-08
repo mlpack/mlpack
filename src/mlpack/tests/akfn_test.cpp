@@ -166,7 +166,8 @@ TEST_CASE("AKFNSingleCoverTreeTest", "[AKFNTest]")
 TEST_CASE("AKFNDualCoverTreeTest", "[AKFNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -223,7 +224,8 @@ TEST_CASE("AKFNSingleBallTreeTest", "[AKFNTest]")
 TEST_CASE("AKFNDualBallTreeTest", "[AKFNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KFN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -239,4 +241,3 @@ TEST_CASE("AKFNDualBallTreeTest", "[AKFNTest]")
   for (size_t i = 0; i < neighborsBallTree.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
-

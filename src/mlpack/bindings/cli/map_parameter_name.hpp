@@ -27,10 +27,10 @@ namespace cli {
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   return identifier;
 }
@@ -43,7 +43,7 @@ std::string MapParameterName(
 template<typename T>
 std::string MapParameterName(
     const std::string& identifier,
-    const typename boost::enable_if_c<
+    const typename std::enable_if<
         arma::is_arma_type<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
                                    arma::mat>>::value ||

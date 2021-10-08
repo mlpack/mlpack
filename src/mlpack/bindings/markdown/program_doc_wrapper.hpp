@@ -2,7 +2,7 @@
  * @file bindings/markdown/program_doc_wrapper.hpp
  * @author Ryan Curtin
  *
- * A simple wrapper around programName, shortDescription, longDescription,
+ * A simple wrapper around name, shortDescription, longDescription,
  * example and seeAlso that also respectively register all the macros upon
  * construction.
  *
@@ -27,10 +27,10 @@ class ProgramNameWrapper
    * Register programName.
    */
   ProgramNameWrapper(const std::string& bindingName,
-                     const std::string& programName)
+                     const std::string& name)
   {
-    BindingInfo::GetSingleton().map[bindingName].programName =
-        std::move(programName);
+    BindingInfo::GetSingleton().map[bindingName].name =
+        std::move(name);
   }
 };
 

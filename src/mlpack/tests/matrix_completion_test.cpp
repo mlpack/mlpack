@@ -12,13 +12,10 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/matrix_completion/matrix_completion.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::matrix_completion;
-
-BOOST_AUTO_TEST_SUITE(MatrixCompletionTest);
 
 /**
  * A matrix completion test.
@@ -32,13 +29,15 @@ BOOST_AUTO_TEST_SUITE(MatrixCompletionTest);
  * file "completion_indices.csv". Recovery was verified by solving the SDP with
  * Mosek.
  */
-BOOST_AUTO_TEST_CASE(UniformMatrixCompletionSDP)
+TEST_CASE("UniformMatrixCompletionSDP", "[MatrixCompletionTest]")
 {
   arma::mat Xorig, values;
   arma::umat indices;
 
-  data::Load("completion_X.csv", Xorig, true, false);
-  data::Load("completion_indices.csv", indices, true, false);
+  if (!data::Load("completion_X.csv", Xorig, false, false))
+    FAIL("Cannot load dataset completion_X.csv");
+  if (!data::Load("completion_indices.csv", indices, false, false))
+    FAIL("Cannot load dataset completion_indices.csv");
 
   values.set_size(indices.n_cols);
   for (size_t i = 0; i < indices.n_cols; ++i)
@@ -53,15 +52,11 @@ BOOST_AUTO_TEST_CASE(UniformMatrixCompletionSDP)
   const double err =
     arma::norm(Xorig - recovered, "fro") /
     arma::norm(Xorig, "fro");
-  BOOST_REQUIRE_SMALL(err, 1e-5);
+  REQUIRE(err == Approx(0.0).margin(1e-5));
 
   for (size_t i = 0; i < indices.n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(
-      recovered(indices(0, i), indices(1, i)),
-      Xorig(indices(0, i), indices(1, i)),
-      1e-5);
+    REQUIRE(recovered(indices(0, i), indices(1, i)) ==
+       Approx(Xorig(indices(0, i), indices(1, i))).epsilon(1e-7));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

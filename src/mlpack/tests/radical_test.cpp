@@ -11,20 +11,18 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/radical/radical.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(RadicalTest);
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::radical;
 using namespace std;
 using namespace arma;
 
-BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D)
+TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]")
 {
   mat matX;
-  data::Load("data_3d_mixed.txt", matX);
+  if (!data::Load("data_3d_mixed.txt", matX))
+    FAIL("Cannot load dataset data_3d_mixed.txt");
 
   Radical rad(0.175, 5, 100, matX.n_rows - 1);
 
@@ -42,7 +40,8 @@ BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D)
   }
 
   mat matS;
-  data::Load("data_3d_ind.txt", matS);
+  if (!data::Load("data_3d_ind.txt", matS))
+    FAIL("Cannot load dataset data_3d_ind.txt");
   rad.DoRadical(matS, matY, matW);
 
   matYT = trans(matY);
@@ -55,7 +54,5 @@ BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D)
   }
 
   // Larger tolerance is sometimes needed.
-  BOOST_REQUIRE_CLOSE(valBest, valEst, 2.0);
+  REQUIRE(valBest == Approx(valEst).epsilon(0.02));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -14,6 +14,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME nbc
+
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -26,7 +32,7 @@ using namespace std;
 using namespace arma;
 
 // Program Name.
-BINDING_NAME("Parametric Naive Bayes Classifier");
+BINDING_USER_NAME("Parametric Naive Bayes Classifier");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -104,10 +110,10 @@ struct NBCModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(nbc);
-    ar & BOOST_SERIALIZATION_NVP(mappings);
+    ar(CEREAL_NVP(nbc));
+    ar(CEREAL_NVP(mappings));
   }
 };
 
@@ -137,33 +143,33 @@ PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
 PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
     " probability of labels for the test set will be written.", "p");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check input parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
-  ReportIgnoredParam({{ "training", false }}, "labels");
-  ReportIgnoredParam({{ "training", false }}, "incremental_variance");
-  RequireAtLeastOnePassed({ "output", "predictions", "output_model",
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
+  ReportIgnoredParam(params, {{ "training", false }}, "labels");
+  ReportIgnoredParam(params, {{ "training", false }}, "incremental_variance");
+  RequireAtLeastOnePassed(params, { "output", "predictions", "output_model",
       "output_probs", "probabilities" }, false, "no output will be saved");
-  ReportIgnoredParam({{ "test", false }}, "output");
-  ReportIgnoredParam({{ "test", false }}, "predictions");
-  if (IO::HasParam("input_model") && !IO::HasParam("test"))
+  ReportIgnoredParam(params, {{ "test", false }}, "output");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
+  if (params.Has("input_model") && !params.Has("test"))
     Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
   // Either we have to train a model, or load a model.
   NBCModel* model;
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
     model = new NBCModel();
-    mat trainingData = std::move(IO::GetParam<mat>("training"));
+    mat trainingData = std::move(params.Get<mat>("training"));
 
     Row<size_t> labels;
 
     // Did the user pass in labels?
-    if (IO::HasParam("labels"))
+    if (params.Has("labels"))
     {
       // Load labels.
-      Row<size_t> rawLabels = std::move(IO::GetParam<Row<size_t>>("labels"));
+      Row<size_t> rawLabels = std::move(params.Get<Row<size_t>>("labels"));
       data::NormalizeLabels(rawLabels, labels, model->mappings);
     }
     else
@@ -176,23 +182,23 @@ static void mlpackMain()
       // Remove the label row.
       trainingData.shed_row(trainingData.n_rows - 1);
     }
-    const bool incrementalVariance = IO::HasParam("incremental_variance");
+    const bool incrementalVariance = params.Has("incremental_variance");
 
-    Timer::Start("nbc_training");
+    timers.Start("nbc_training");
     model->nbc = NaiveBayesClassifier<>(trainingData, labels,
         model->mappings.n_elem, incrementalVariance);
-    Timer::Stop("nbc_training");
+    timers.Stop("nbc_training");
   }
   else
   {
     // Load the model from file.
-    model = IO::GetParam<NBCModel*>("input_model");
+    model = params.Get<NBCModel*>("input_model");
   }
 
   // Do we need to do testing?
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    mat testingData = std::move(IO::GetParam<mat>("test"));
+    mat testingData = std::move(params.Get<mat>("test"));
 
     if (testingData.n_rows != model->nbc.Means().n_rows)
     {
@@ -204,29 +210,29 @@ static void mlpackMain()
     // Time the running of the Naive Bayes Classifier.
     Row<size_t> predictions;
     mat probabilities;
-    Timer::Start("nbc_testing");
+    timers.Start("nbc_testing");
     model->nbc.Classify(testingData, predictions, probabilities);
-    Timer::Stop("nbc_testing");
+    timers.Stop("nbc_testing");
 
-    if (IO::HasParam("output") || IO::HasParam("predictions"))
+    if (params.Has("output") || params.Has("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
 
-      if (IO::HasParam("predictions"))
-        IO::GetParam<Row<size_t>>("predictions") = rawResults;
-      if (IO::HasParam("output"))
-        IO::GetParam<Row<size_t>>("output") = std::move(rawResults);
+      if (params.Has("predictions"))
+        params.Get<Row<size_t>>("predictions") = rawResults;
+      if (params.Has("output"))
+        params.Get<Row<size_t>>("output") = std::move(rawResults);
     }
-    if (IO::HasParam("output_probs") || IO::HasParam("probabilities"))
+    if (params.Has("output_probs") || params.Has("probabilities"))
     {
-      if (IO::HasParam("probabilities"))
-        IO::GetParam<mat>("probabilities") = probabilities;
-      if (IO::HasParam("output_probs"))
-        IO::GetParam<mat>("output_probs") = std::move(probabilities);
+      if (params.Has("probabilities"))
+        params.Get<mat>("probabilities") = probabilities;
+      if (params.Has("output_probs"))
+        params.Get<mat>("output_probs") = std::move(probabilities);
     }
   }
 
-  IO::GetParam<NBCModel*>("output_model") = model;
+  params.Get<NBCModel*>("output_model") = model;
 }

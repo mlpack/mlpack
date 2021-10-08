@@ -79,11 +79,17 @@ class Constant
   //! Get the output size.
   size_t OutSize() const { return outSize; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return 0;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

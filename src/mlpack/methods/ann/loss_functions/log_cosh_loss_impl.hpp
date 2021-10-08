@@ -27,31 +27,32 @@ LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(const double a) :
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
-LogCoshLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
-                                                    const TargetType& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+LogCoshLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  return arma::accu(arma::log(arma::cosh(a * (target - input)))) / a;
+  return arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void LogCoshLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = arma::tanh(a * (target - input));
+  loss = arma::tanh(a * (target - prediction));
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LogCoshLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(a);
+  ar(CEREAL_NVP(a));
 }
 
 } // namespace ann

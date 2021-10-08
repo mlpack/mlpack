@@ -27,6 +27,9 @@
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
+#include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -50,6 +53,9 @@ namespace ann /** Artificial Neural Network. */ {
  *  - ELiSHLayer
  *  - ElliotLayer
  *  - GaussianLayer
+ *  - HardSwishLayer
+ *  - TanhExpLayer
+ *  - SILULayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -119,7 +125,7 @@ class BaseLayer
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& /* ar */, const uint32_t /* version */)
   {
     /* Nothing to do here */
   }
@@ -276,6 +282,40 @@ template <
 >
 using GaussianFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard HardSwish-Layer using the HardSwish activation function.
+ */
+template <
+    class ActivationFunction = HardSwishFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using HardSwishFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard TanhExp-Layer using the TanhExp activation function.
+ */
+template <
+    class ActivationFunction = TanhExpFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using TanhExpFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard SILU-Layer using the SILU activation function.
+ */
+template <
+    class ActivationFunction = SILUFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using SILUFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType
+>;
 
 } // namespace ann
 } // namespace mlpack

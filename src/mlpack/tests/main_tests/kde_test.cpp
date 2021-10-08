@@ -2,59 +2,33 @@
  * @file tests/main_tests/kde_test.cpp
  * @author Roberto Hueso
  *
- * Test mlpackMain() of kde_main.cpp
+ * Test RUN_BINDING() of kde_main.cpp
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
 
-static const std::string testName = "KDE";
-
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/kde/kde_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "main_test_fixture.hpp"
+
+#include "../catch.hpp"
 
 using namespace mlpack;
 
-struct KDETestFixture
-{
- public:
-  KDETestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~KDETestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-void ResetKDESettings()
-{
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
-}
-
-BOOST_FIXTURE_TEST_SUITE(KDEMainTest, KDETestFixture);
+BINDING_TEST_FIXTURE(KDETestFixture);
 
 /**
-  * Ensure that the estimations we get for KDEMain, are the same as the ones we
-  * get from the KDE class without any wrappers. Requires normalization.
- **/
-BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
+ * Ensure that the estimations we get for KDEMain, are the same as the ones we
+ * get from the KDE class without any wrappers. Requires normalization.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEGaussianRTreeResultsMain",
+                "[KDEMainTest][BindingTests]")
 {
   // Datasets.
   arma::mat reference = arma::randu(3, 500);
@@ -83,20 +57,21 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
   SetInputParam("rel_error", relError);
   SetInputParam("bandwidth", kernelBandwidth);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(params.Get<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
-  * Ensure that the estimations we get for KDEMain, are the same as the ones we
-  * get from the KDE class without any wrappers. Doesn't require normalization.
- **/
-BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
+ * Ensure that the estimations we get for KDEMain, are the same as the ones we
+ * get from the KDE class without any wrappers. Doesn't require normalization.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
+                "[KDEMainTest][BindingTests]")
 {
   // Datasets.
   arma::mat reference = arma::randu(3, 300);
@@ -123,20 +98,21 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
   SetInputParam("rel_error", relError);
   SetInputParam("bandwidth", kernelBandwidth);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(params.Get<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
-  * Ensure that the estimations we get for KDEMain, are the same as the ones we
-  * get from the KDE class without any wrappers in the monochromatic case.
- **/
-BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
+ * Ensure that the estimations we get for KDEMain, are the same as the ones we
+ * get from the KDE class without any wrappers in the monochromatic case.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
+                "[KDEMainTest][BindingTests]")
 {
   // Datasets.
   arma::mat reference = arma::randu(2, 300);
@@ -164,30 +140,32 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
   SetInputParam("rel_error", relError);
   SetInputParam("bandwidth", kernelBandwidth);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(params.Get<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < reference.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
   * Ensuring that absence of input data is checked.
- **/
-BOOST_AUTO_TEST_CASE(KDENoInputData)
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDENoInputData",
+                "[KDEMainTest][BindingTests]")
 {
   // No input data is not provided. Should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Check result has as many densities as query points.
- **/
-BOOST_AUTO_TEST_CASE(KDEOutputSize)
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEOutputSize",
+                "[KDEMainTest][BindingTests]")
 {
   const size_t dim = 3;
   const size_t samples = 110;
@@ -198,15 +176,16 @@ BOOST_AUTO_TEST_CASE(KDEOutputSize)
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
-  mlpackMain();
+  RUN_BINDING();
   // Check number of output elements.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::vec>("predictions").size(), samples);
+  REQUIRE(params.Get<arma::vec>("predictions").size() == samples);
 }
 
 /**
   * Check that saved model can be reused.
- **/
-BOOST_AUTO_TEST_CASE(KDEModelReuse)
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEModelReuse",
+                "[KDEMainTest][BindingTests]")
 {
   const size_t dim = 3;
   const size_t samples = 100;
@@ -220,30 +199,36 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
   SetInputParam("bandwidth", 2.4);
   SetInputParam("rel_error", 0.05);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::vec oldEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
+  arma::vec oldEstimations = std::move(params.Get<arma::vec>("predictions"));
+
+  KDEModel* m = params.Get<KDEModel*>("output_model");
+  params.Get<KDEModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Change parameters and load model.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   SetInputParam("query", query);
-  SetInputParam("input_model",
-      std::move(IO::GetParam<KDEModel*>("output_model")));
+  SetInputParam("input_model", m);
+  SetInputParam("bandwidth", 2.4);
+  SetInputParam("rel_error", 0.05);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::vec newEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
+  arma::vec newEstimations = std::move(params.Get<arma::vec>("predictions"));
 
   // Check estimations are the same.
   for (size_t i = 0; i < samples; ++i)
-    BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], 100 * relError);
+    REQUIRE(oldEstimations[i] == Approx(newEstimations[i]).epsilon(relError));
 }
 
 /**
-  * Ensure that the estimations we get for KDEMain, are the same as the ones we
-  * get from the KDE class without any wrappers using single-tree mode.
- **/
-BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
+ * Ensure that the estimations we get for KDEMain, are the same as the ones we
+ * get from the KDE class without any wrappers using single-tree mode.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEGaussianSingleKDTreeResultsMain",
+                "[KDEMainTest][BindingTests]")
 {
   // Datasets.
   arma::mat reference = arma::randu(3, 400);
@@ -272,19 +257,20 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
   SetInputParam("rel_error", relError);
   SetInputParam("bandwidth", kernelBandwidth);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(params.Get<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
-  * Ensure we get an exception when an invalid kernel is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidKernel)
+ * Ensure we get an exception when an invalid kernel is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidKernel",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
@@ -295,14 +281,15 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidKernel)
   SetInputParam("kernel", std::string("linux"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid tree is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidTree)
+ * Ensure we get an exception when an invalid tree is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidTree",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
@@ -313,14 +300,15 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidTree)
   SetInputParam("tree", std::string("olive"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid algorithm is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidAlgorithm)
+ * Ensure we get an exception when an invalid algorithm is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAlgorithm",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
@@ -331,15 +319,16 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidAlgorithm)
   SetInputParam("algorithm", std::string("bogosort"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when both reference and input_model are
-  * specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainReferenceAndModel)
+ * Ensure we get an exception when both reference and input_model are
+ * specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainReferenceAndModel",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
@@ -351,14 +340,15 @@ BOOST_AUTO_TEST_CASE(KDEMainReferenceAndModel)
   SetInputParam("input_model", model);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid absolute error is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidAbsoluteError)
+ * Ensure we get an exception when an invalid absolute error is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAbsoluteError",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
@@ -370,18 +360,19 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidAbsoluteError)
   Log::Fatal.ignoreInput = true;
   // Invalid value.
   SetInputParam("abs_error", -0.1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Valid value.
   SetInputParam("abs_error", 5.8);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid relative error is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidRelativeError)
+ * Ensure we get an exception when an invalid relative error is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidRelativeError",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
@@ -393,23 +384,24 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidRelativeError)
   Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("rel_error", -0.1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Invalid over 1.
   SetInputParam("rel_error", 1.1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Valid value.
   SetInputParam("rel_error", 0.3);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid Monte Carlo probability is
-  * specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidMCProbability)
+ * Ensure we get an exception when an invalid Monte Carlo probability is
+ * specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCProbability",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
@@ -423,23 +415,24 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidMCProbability)
   Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("mc_probability", -0.1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Invalid over 1.
   SetInputParam("mc_probability", 1.1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Valid value.
   SetInputParam("mc_probability", 0.3);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid Monte Carlo initial sample size
-  * is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidMCInitialSampleSize)
+ * Ensure we get an exception when an invalid Monte Carlo initial sample size
+ * is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCInitialSampleSize",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
@@ -453,23 +446,24 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidMCInitialSampleSize)
   Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("initial_sample_size", -1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Invalid 0.
   SetInputParam("initial_sample_size", 0);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Valid value.
   SetInputParam("initial_sample_size", 20);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid Monte Carlo entry coefficient
-  * is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidMCEntryCoef)
+ * Ensure we get an exception when an invalid Monte Carlo entry coefficient
+ * is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCEntryCoef",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
@@ -483,19 +477,20 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidMCEntryCoef)
   Log::Fatal.ignoreInput = true;
   // Invalid under 1.
   SetInputParam("mc_entry_coef", 0.5);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Valid greater than 1.
   SetInputParam("mc_entry_coef", 1.1);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure we get an exception when an invalid Monte Carlo break coefficient
-  * is specified.
- **/
-BOOST_AUTO_TEST_CASE(KDEMainInvalidMCBreakCoef)
+ * Ensure we get an exception when an invalid Monte Carlo break coefficient
+ * is specified.
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCBreakCoef",
+                "[KDEMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
@@ -509,24 +504,25 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidMCBreakCoef)
   Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("mc_break_coef", -0.5);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Valid between 0 and 1.
   SetInputParam("mc_break_coef", 0.3);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 
   // Invalid greater than 1.
   SetInputParam("mc_break_coef", 1.1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
-  * Ensure when --monte_carlo flag is true, then KDEMain actually uses Monte
-  * Carlo estimations. Since this test has a random component, it might fail
-  * (although it's unlikely).
- **/
-BOOST_AUTO_TEST_CASE(KDEMainMonteCarloFlag)
+ * Ensure when --monte_carlo flag is true, then KDEMain actually uses Monte
+ * Carlo estimations. Since this test has a random component, it might fail
+ * (although it's unlikely).
+ */
+TEST_CASE_METHOD(KDETestFixture, "KDEMainMonteCarloFlag",
+                "[KDEMainTest][BindingTests]")
 {
   // Datasets.
   arma::mat reference = arma::randu(1, 5000);
@@ -543,21 +539,19 @@ BOOST_AUTO_TEST_CASE(KDEMainMonteCarloFlag)
   SetInputParam("monte_carlo", true);
 
   // Compute estimations 1.
-  mlpackMain();
-  estimations1 = std::move(IO::GetParam<arma::vec>("predictions"));
+  RUN_BINDING();
+  estimations1 = std::move(params.Get<arma::vec>("predictions"));
 
-  delete IO::GetParam<KDEModel*>("output_model");
+  delete params.Get<KDEModel*>("output_model");
 
   // Compute estimations 2.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
-  mlpackMain();
-  estimations2 = std::move(IO::GetParam<arma::vec>("predictions"));
+  RUN_BINDING();
+  estimations2 = std::move(params.Get<arma::vec>("predictions"));
 
   // Check whether results are equal.
   differences = arma::abs(estimations1 - estimations2);
   const double sumDifferences = arma::accu(differences);
-  BOOST_REQUIRE_GT(sumDifferences, 0);
+  REQUIRE(sumDifferences > 0);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

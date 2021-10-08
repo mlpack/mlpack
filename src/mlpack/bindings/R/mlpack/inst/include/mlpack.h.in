@@ -41,31 +41,20 @@
 // To suppress warnings related to core/util/arma_util.hpp.
 #define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
 
+// Undefine macro due to macro collision.
+#undef Realloc
+#undef Free
+
 @R_SRC@
 
 #include <mlpack/core.hpp>
 
-// These are all the boost files, we need to compile R bindings for mlpack that
-// are not a part of mlpack itself.
-#include <boost/serialization/archive_exception.cpp>
-#include <boost/serialization/basic_archive.cpp>
-#include <boost/serialization/basic_oarchive.cpp>
-#include <boost/serialization/basic_oserializer.cpp>
-#include <boost/serialization/basic_iarchive.cpp>
-#include <boost/serialization/basic_iserializer.cpp>
-#include <boost/serialization/basic_pointer_iserializer.cpp>
-#include <boost/serialization/basic_pointer_oserializer.cpp>
-#include <boost/serialization/basic_text_oprimitive.cpp>
-#include <boost/serialization/binary_iarchive.cpp>
-#include <boost/serialization/binary_oarchive.cpp>
-#include <boost/serialization/extended_type_info_typeid.cpp>
-#include <boost/serialization/extended_type_info.cpp>
-#include <boost/serialization/basic_serializer_map.cpp>
-#include <boost/serialization/void_cast.cpp>
-#include <boost/serialization/utf8_codecvt_facet.cpp>
-
 #undef ARMA_EXTRA_MAT_PROTO
 #undef ARMA_EXTRA_MAT_MEAT
+
+// Define R Internal macro again after including cereal headers.
+#define Realloc(p,n,t) (t *) R_chk_realloc( (void *)(p), (R_SIZE_T)((n) * sizeof(t)) )
+#define Free(p)        (R_chk_free( (void *)(p) ), (p) = NULL)
 
 // instead of including RcppArmadillo.h -- which re-includes parts
 // of Armadillo already brought in by mlpack, we just include pieces

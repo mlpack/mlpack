@@ -55,7 +55,8 @@ inline std::string PrintValue(const T& value, bool quotes);
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 /**
  * Print a dataset type parameter (add .csv and return).
@@ -82,7 +83,8 @@ inline std::string ProcessOptions();
  * Print an option for a command-line argument.
  */
 template<typename T, typename... Args>
-std::string ProcessOptions(const std::string& paramName,
+std::string ProcessOptions(util::Params& params,
+                           const std::string& paramName,
                            const T& value,
                            Args... args);
 
@@ -91,13 +93,14 @@ std::string ProcessOptions(const std::string& paramName,
  * be.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args);
+std::string ProgramCall(const std::string& programName,
+                        Args... args);
 
 /**
  * Given a program name, print a program call invocation assuming that all
  * options are specified.
  */
-inline std::string ProgramCall(const std::string& programName);
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
@@ -106,7 +109,8 @@ inline std::string ProgramCall(const std::string& programName);
  * that all of the PARAM_*() declarataions need to come before
  * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName);
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.  We

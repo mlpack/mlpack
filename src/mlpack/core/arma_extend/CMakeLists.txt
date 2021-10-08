@@ -1,13 +1,10 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  serialize_armadillo.hpp
   arma_extend.hpp
-  SpMat_extra_bones.hpp
-  SpMat_extra_meat.hpp
   Mat_extra_bones.hpp
-  Mat_extra_meat.hpp
-  Cube_extra_bones.hpp
-  Cube_extra_meat.hpp
+  SpMat_extra_bones.hpp
 )
 
 # add directory name to sources

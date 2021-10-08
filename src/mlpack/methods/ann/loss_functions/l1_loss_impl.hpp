@@ -26,35 +26,35 @@ L1Loss<InputDataType, OutputDataType>::L1Loss(const bool mean):
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 L1Loss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
   if (mean)
-    return arma::accu(arma::mean(input - target));
+    return arma::accu(arma::mean(prediction - target));
 
-  return arma::accu(input - target);
+  return arma::accu(prediction - target);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void L1Loss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = arma::sign(input - target);
+  loss = arma::sign(prediction - target);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void L1Loss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(mean);
+  ar(CEREAL_NVP(mean));
 }
 
 } // namespace ann

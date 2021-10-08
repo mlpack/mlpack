@@ -15,7 +15,7 @@
 
 #include <Rcpp.h>
 
-// To suppress Found ‘__assert_fail’, possibly from ‘assert’ (C).
+// To suppress Found '__assert_fail', possibly from 'assert' (C).
 #define BOOST_DISABLE_ASSERTS
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
@@ -41,5 +41,9 @@
 
 // To suppress warnings related to core/util/arma_util.hpp.
 #define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
+
+// Undefine macro due to macro collision.
+#undef Realloc
+#undef Free
 
 #endif

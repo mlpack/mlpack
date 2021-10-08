@@ -400,8 +400,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     throw std::invalid_argument(ss.str());
   }
 
-  Timer::Start("computing_neighbors");
-
   baseCases = 0;
   scores = 0;
 
@@ -476,11 +474,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     case DUAL_TREE_MODE:
     {
       // Build the query tree.
-      Timer::Stop("computing_neighbors");
-      Timer::Start("tree_building");
       Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
-      Timer::Stop("tree_building");
-      Timer::Start("computing_neighbors");
 
       // Create the helper object for the tree traversal.
       RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, epsilon);
@@ -527,8 +521,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       break;
     }
   }
-
-  Timer::Stop("computing_neighbors");
 
   // Map points back to original indices, if necessary.
   if (tree::TreeTraits<Tree>::RearrangesDataset)
@@ -619,8 +611,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     throw std::invalid_argument("cannot call NeighborSearch::Search() with a "
         "query tree when naive or singleMode are set to true");
 
-  Timer::Start("computing_neighbors");
-
   baseCases = 0;
   scores = 0;
 
@@ -655,8 +645,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   Log::Info << rules.Scores() << " node combinations were scored.\n";
   Log::Info << rules.BaseCases() << " base cases were calculated.\n";
-
-  Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
   if (!oldFromNewReferences.empty() &&
@@ -704,8 +692,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
         << "no query set has been provided.";
     throw std::invalid_argument(ss.str());
   }
-
-  Timer::Start("computing_neighbors");
 
   baseCases = 0;
   scores = 0;
@@ -833,8 +819,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   rules.GetResults(*neighborPtr, *distancePtr);
 
-  Timer::Stop("computing_neighbors");
-
   // Do we need to map the reference indices?
   if (!oldFromNewReferences.empty() &&
       tree::TreeTraits<Tree>::RearrangesDataset)
@@ -940,28 +924,27 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(searchMode);
-  ar & BOOST_SERIALIZATION_NVP(treeNeedsReset);
+  ar(CEREAL_NVP(searchMode));
+  ar(CEREAL_NVP(treeNeedsReset));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
   if (searchMode == NAIVE_MODE)
   {
     // Delete the current reference set, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceSet)
+    if (cereal::is_loading<Archive>() && referenceSet)
     {
       delete referenceSet;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (referenceTree)
         delete referenceTree;
@@ -973,17 +956,17 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceTree)
+    if (cereal::is_loading<Archive>() && referenceTree)
     {
       delete referenceTree;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
@@ -991,7 +974,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   }
 
   // Reset base cases and scores.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     baseCases = 0;
     scores = 0;

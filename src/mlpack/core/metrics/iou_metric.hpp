@@ -63,7 +63,7 @@ class IoU
 
   //! Serialize the metric.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 }; // class IoU
 
 } // namespace metric

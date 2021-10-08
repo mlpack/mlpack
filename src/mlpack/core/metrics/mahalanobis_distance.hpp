@@ -112,7 +112,7 @@ class MahalanobisDistance
 
   //! Serialize the Mahalanobis distance.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! The covariance matrix associated with this distance.

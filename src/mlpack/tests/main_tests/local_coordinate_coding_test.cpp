@@ -2,52 +2,34 @@
  * @file tests/main_tests/local_coordinate_coding_test.cpp
  * @author Bhavya Bahl
  *
- * Test mlpackMain() of local_coordinate_coding_main.cpp.
+ * Test RUN_BINDING() of local_coordinate_coding_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "LocalCoordinateCoding";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/local_coordinate_coding/local_coordinate_coding_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "main_test_fixture.hpp"
+
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct LCCTestFixture
-{
- public:
-  LCCTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~LCCTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE(LCCMainTest, LCCTestFixture);
+BINDING_TEST_FIXTURE(LCCTestFixture);
 
 /**
  * Ensure that the dimensions of encoded test points
  * and output dictionary are correct.
  */
-BOOST_AUTO_TEST_CASE(LCCDimensionsTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCDimensionsTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
@@ -60,19 +42,20 @@ BOOST_AUTO_TEST_CASE(LCCDimensionsTest)
   SetInputParam("atoms", atoms);
   SetInputParam("max_iterations", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output has correct dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("codes").n_rows, atoms);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("codes").n_cols, cols);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("dictionary").n_rows, rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("dictionary").n_cols, atoms);
+  REQUIRE(params.Get<arma::mat>("codes").n_rows == (arma::uword) atoms);
+  REQUIRE(params.Get<arma::mat>("codes").n_cols == (arma::uword) cols);
+  REQUIRE(params.Get<arma::mat>("dictionary").n_rows == (arma::uword) rows);
+  REQUIRE(params.Get<arma::mat>("dictionary").n_cols == (arma::uword) atoms);
 }
 
 /**
  * Ensure that trained model can be reused.
  */
-BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCOutputModelTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
@@ -83,32 +66,33 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
   SetInputParam("atoms", (int) 10);
   SetInputParam("max_iterations", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the encoded output and dictionary after training.
-  arma::mat initCodes = std::move(IO::GetParam<arma::mat>("codes"));
-  arma::mat initDict = std::move(IO::GetParam<arma::mat>("dictionary"));
+  arma::mat initCodes = std::move(params.Get<arma::mat>("codes"));
+  arma::mat initDict = std::move(params.Get<arma::mat>("dictionary"));
   LocalCoordinateCoding* outputModel =
-      std::move(IO::GetParam<LocalCoordinateCoding*>("output_model"));
+      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
 
-  IO::Parameters()["training"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Compare the output after reusing the trained model
   // to the original matrices.
-  CheckMatrices(initCodes, IO::GetParam<arma::mat>("codes"));
-  CheckMatrices(initDict, IO::GetParam<arma::mat>("dictionary"));
+  CheckMatrices(initCodes, params.Get<arma::mat>("codes"));
+  CheckMatrices(initDict, params.Get<arma::mat>("dictionary"));
 }
 
 /**
  * Ensure that the number of rows in initial dictionary is same as 
  * the dimension of the points.
  */
-BOOST_AUTO_TEST_CASE(LCCInitDictTrainTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCInitDictTrainTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
   arma::mat initDict = {{1, 1}, {2, 2}, {3, 3}};
@@ -118,7 +102,7 @@ BOOST_AUTO_TEST_CASE(LCCInitDictTrainTest)
   SetInputParam("atoms", (int) 2);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -126,7 +110,8 @@ BOOST_AUTO_TEST_CASE(LCCInitDictTrainTest)
  * Ensure that the number of columns in initial dictionary is same as 
  * the number of atoms.
  */
-BOOST_AUTO_TEST_CASE(LCCInitDictAtomTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCInitDictAtomTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
   arma::mat initDict = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
@@ -136,7 +121,7 @@ BOOST_AUTO_TEST_CASE(LCCInitDictAtomTest)
   SetInputParam("atoms", (int) 3);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -144,7 +129,8 @@ BOOST_AUTO_TEST_CASE(LCCInitDictAtomTest)
  * Ensure that training data and test data points
  * have same dimensionality.
  */
-BOOST_AUTO_TEST_CASE(LCCTrainAndTestDataDimTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndTestDataDimTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
@@ -159,14 +145,15 @@ BOOST_AUTO_TEST_CASE(LCCTrainAndTestDataDimTest)
   SetInputParam("test", std::move(t));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that only one out of training and input_model are specified.
  */
-BOOST_AUTO_TEST_CASE(LCCTrainAndInputModelTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndInputModelTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
@@ -175,16 +162,16 @@ BOOST_AUTO_TEST_CASE(LCCTrainAndInputModelTest)
   SetInputParam("atoms", (int) 10);
   SetInputParam("max_iterations", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   LocalCoordinateCoding* outputModel =
-      std::move(IO::GetParam<LocalCoordinateCoding*>("output_model"));
+      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
 
   // No need to input training data again.
   SetInputParam("input_model", std::move(outputModel));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -192,7 +179,8 @@ BOOST_AUTO_TEST_CASE(LCCTrainAndInputModelTest)
  * Ensure that dimensionality of the trained model matches
  * the dimensionality of the test points.
  */
-BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCTrainedModelDimTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
@@ -203,16 +191,16 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
   SetInputParam("atoms", (int) 10);
   SetInputParam("max_iterations", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   LocalCoordinateCoding* outputModel =
-      std::move(IO::GetParam<LocalCoordinateCoding*>("output_model"));
+      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -220,24 +208,26 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
 * Ensure that the number of atoms is positive and
 * less than the number of training points.
 */
-BOOST_AUTO_TEST_CASE(LCCAtomsBoundTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCAtomsBoundTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
   SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 5);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   SetInputParam("atoms", (int) -1);
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
 * Ensure that the program throws error for negative regularization parameter.
 */
-BOOST_AUTO_TEST_CASE(LCCNegativeLambdaTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCNegativeLambdaTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
   SetInputParam("training", std::move(x));
@@ -245,14 +235,15 @@ BOOST_AUTO_TEST_CASE(LCCNegativeLambdaTest)
   SetInputParam("lambda", -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
 * Ensure that the program throws error for negative tolerance.
 */
-BOOST_AUTO_TEST_CASE(LCCNegativeToleranceTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCNegativeToleranceTest",
+                 "[LCCMainTest][BindingTests]")
 {
   arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
   SetInputParam("training", std::move(x));
@@ -260,14 +251,15 @@ BOOST_AUTO_TEST_CASE(LCCNegativeToleranceTest)
   SetInputParam("tolerance", -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
 * Ensure that the normalize parameter works.
 */
-BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCNormalizationTest",
+                 "[LCCMainTest][BindingTests]")
 {
   // Minimum required difference between the encodings of the test data.
   double delta = 1.0;
@@ -282,11 +274,12 @@ BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
   SetInputParam("max_iterations", 2);
   SetInputParam("test", t);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat codes = std::move(IO::GetParam<arma::mat>("codes"));
+  arma::mat codes = std::move(params.Get<arma::mat>("codes"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 2);
@@ -295,18 +288,19 @@ BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
   SetInputParam("test", std::move(t));
   SetInputParam("normalize", (bool) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   double normDiff =
-      arma::norm(IO::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(params.Get<arma::mat>("codes") - codes, "fro");
 
-  BOOST_REQUIRE_GT(normDiff, delta);
+  REQUIRE(normDiff > delta);
 }
 
 /*
 * Ensure that changing max iterations changes the output.
 */
-BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCMaxIterTest",
+                 "[LCCMainTest][BindingTests]")
 {
   // Minimum required difference between the encodings of the test data.
   double delta = 1.0;
@@ -322,10 +316,11 @@ BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
   SetInputParam("max_iterations", 2);
   SetInputParam("test", t);
 
-  mlpackMain();
-  arma::mat codes = std::move(IO::GetParam<arma::mat>("codes"));
+  RUN_BINDING();
+  arma::mat codes = std::move(params.Get<arma::mat>("codes"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 2);
@@ -333,18 +328,19 @@ BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
   SetInputParam("max_iterations", (int) 4);
   SetInputParam("test", std::move(t));
 
-  mlpackMain();
+  RUN_BINDING();
 
   double normDiff =
-      arma::norm(IO::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(params.Get<arma::mat>("codes") - codes, "fro");
 
-  BOOST_REQUIRE_GT(normDiff, delta);
+  REQUIRE(normDiff > delta);
 }
 
 /*
 * Ensure that changing tolerance changes the output.
 */
-BOOST_AUTO_TEST_CASE(LCCToleranceTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCToleranceTest",
+                 "[LCCMainTest][BindingTests]")
 {
   // Minimum required difference between the encodings of the test data.
   double delta = 0.05;
@@ -359,10 +355,11 @@ BOOST_AUTO_TEST_CASE(LCCToleranceTest)
   SetInputParam("test", t);
   SetInputParam("tolerance", (double) 0.01);
 
-  mlpackMain();
-  arma::mat codes = std::move(IO::GetParam<arma::mat>("codes"));
+  RUN_BINDING();
+  arma::mat codes = std::move(params.Get<arma::mat>("codes"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 2);
@@ -370,18 +367,19 @@ BOOST_AUTO_TEST_CASE(LCCToleranceTest)
   SetInputParam("test", std::move(t));
   SetInputParam("tolerance", (double) 100.0);
 
-  mlpackMain();
+  RUN_BINDING();
 
   double normDiff =
-      arma::norm(IO::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(params.Get<arma::mat>("codes") - codes, "fro");
 
-  BOOST_REQUIRE_GT(normDiff, delta);
+  REQUIRE(normDiff > delta);
 }
 
 /*
 * Ensure that changing regularization parameter changes the output.
 */
-BOOST_AUTO_TEST_CASE(LCCLambdaTest)
+TEST_CASE_METHOD(LCCTestFixture, "LCCLambdaTest",
+                 "[LCCMainTest][BindingTests]")
 {
   // Minimum required difference between the encodings of the test data.
   double delta = 1.0;
@@ -396,10 +394,11 @@ BOOST_AUTO_TEST_CASE(LCCLambdaTest)
   SetInputParam("test", t);
   SetInputParam("lambda", (double) 0.0);
 
-  mlpackMain();
-  arma::mat codes = std::move(IO::GetParam<arma::mat>("codes"));
+  RUN_BINDING();
+  arma::mat codes = std::move(params.Get<arma::mat>("codes"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 2);
@@ -407,12 +406,10 @@ BOOST_AUTO_TEST_CASE(LCCLambdaTest)
   SetInputParam("test", std::move(t));
   SetInputParam("lambda", (double) 1.0);
 
-  mlpackMain();
+  RUN_BINDING();
 
   double normDiff =
-      arma::norm(IO::GetParam<arma::mat>("codes") - codes, "fro");
+      arma::norm(params.Get<arma::mat>("codes") - codes, "fro");
 
-  BOOST_REQUIRE_GT(normDiff, delta);
+  REQUIRE(normDiff > delta);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

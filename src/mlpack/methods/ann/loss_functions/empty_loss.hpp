@@ -43,23 +43,25 @@ class EmptyLoss
   /**
    * Computes the Empty loss function.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param prediction Prediction used for evaluating the specified loss
+   *     function.
    * @param target The target vector.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  template<typename PredictionType, typename TargetType>
+  double Forward(const PredictionType& input, const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated input activation.
+   * @param prediction Prediction used for evaluating the specified loss
+   *     function.
    * @param target The target vector.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType& input,
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
                 const TargetType& target,
-                OutputType& output);
+                LossType& loss);
 }; // class EmptyLoss
 
 } // namespace ann

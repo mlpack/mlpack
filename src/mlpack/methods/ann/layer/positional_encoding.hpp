@@ -93,11 +93,16 @@ class PositionalEncoding
   //! Get the positional encoding vector.
   InputDataType const& Encoding() const { return positionalEncoding; }
 
+  size_t InputShape() const
+  {
+    return embedDim * maxSequenceLength;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**

@@ -120,7 +120,25 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     weights = arma::sum(D);
 
     // Use the existing weak learner to train a new one with new weights.
+    // API requirement: there is a constructor with this signature:
+    //
+    //    WeakLearnerType(const WeakLearnerType&,
+    //                    MatType& data,
+    //                    LabelsType& labels,
+    //                    const size_t numClasses,
+    //                    WeightsType& weights)
+    //
+    // This trains the new WeakLearnerType using the hyperparameters from the
+    // given WeakLearnerType.
+
     WeakLearnerType w(other, tempData, labels, numClasses, weights);
+    // There is a bug with Adaboost!  It will not use the specified
+    // hyperparameters for the decision tree because they are not properly
+    // passed to the new weak learners!  (And: it's a hard bug, because the
+    // decision tree itself doesn't even store the hyperparameters it was
+    // trained with!)
+
+    // DecisionTree(DecisionTree&, MatType&, LabelsType&, size_t, WeightsType&, double = 0.0, double = 0.0, ...);
     w.Classify(tempData, predictedLabels);
 
     // Now from predictedLabels, build ht, the weak hypothesis
@@ -256,25 +274,19 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                                   const unsigned int version)
+                                                   const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(numClasses);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  if (version == 0 && Archive::is_loading::value)
-  {
-    // Load unused ztProduct double and forget it.
-    double tmpZtProduct = 0.0;
-    ar & BOOST_SERIALIZATION_NVP(tmpZtProduct);
-  }
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar(CEREAL_NVP(numClasses));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(alpha));
 
   // Now serialize each weak learner.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     wl.clear();
     wl.resize(alpha.size());
   }
-  ar & BOOST_SERIALIZATION_NVP(wl);
+  ar(CEREAL_NVP(wl));
 }
 
 } // namespace adaboost

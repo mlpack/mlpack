@@ -58,14 +58,24 @@ void PrintParamDefn(
   //
   // import ...<Type>
   //
-  // function IOGetParam<Type>(paramName::String)
-  //   <Type>(ccall((:IOGetParam<Type>Ptr, <programName>Library),
-  //       Ptr{Nothing}, (Cstring,), paramName))
+  // function GetParam<Type>(params::Ptr{Nothing},
+  //                         paramName::String,
+  //                         modelPtrs::Set{Ptr{Nothing}})
+  //   ptr = ccall((:GetParam<Type>Ptr, <programName>Library),
+  //       Ptr{Nothing}, (Ptr{Nothing}, Cstring,), params, paramName)
+  //   return <Type>(ptr; finalize=!(ptr in modelPtrs))
   // end
   //
-  // function IOSetParam<Type>(paramName::String, model::<Type>)
-  //   ccall((:IOSetParam<Type>Ptr, <programName>Library), Nothing,
-  //       (Cstring, Ptr{Nothing}), paramName, model.ptr)
+  // function SetParam<Type>(params::Ptr{Nothing},
+  //                         paramName::String,
+  //                         model::<Type>)
+  //   ccall((:SetParam<Type>Ptr, <programName>Library), Nothing,
+  //       (Ptr{Nothing}, Cstring, Ptr{Nothing}), params, paramName, model.ptr)
+  // end
+  //
+  // function Delete<Type>(ptr::Ptr{Nothing})
+  //   ccall((:Delete<Type>Ptr, <programName>Library), Nothing,
+  //       (Ptr{Nothing},), ptr)
   // end
   //
   // function serialize<Type>(stream::IO, model::<Type>)
@@ -73,12 +83,14 @@ void PrintParamDefn(
   //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
   //       Vector{UInt8}, (Ptr{Nothing}, Ptr{UInt8}), model.ptr,
   //       Base.pointer(buf_len))
-  //   buf = Base.unsafe_wrap(buf_ptr, buf_len[0]; own=true)
+  //   buf = Base.unsafe_wrap(buf_ptr, buf_len[1]; own=true)
+  //   write(stream, buf_len[1])
   //   write(stream, buf)
   // end
   //
   // function deserialize<Type>(stream::IO)::<Type>
-  //   buffer = read(stream)
+  //   buf_len = read(stream, UInt)
+  //   buffer = read(stream, buf_len)
   //   <Type>(ccall((:Deserialize<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
   // end
@@ -89,25 +101,37 @@ void PrintParamDefn(
   std::cout << "import ..." << type << std::endl;
   std::cout << std::endl;
 
-  // Now, IOGetParam<Type>().
+  // Now, GetParam<Type>().
   std::cout << "# Get the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function IOGetParam" << type << "(paramName::String)::"
-      << type << std::endl;
-  std::cout << "  " << type << "(ccall((:IO_GetParam" << type
-      << "Ptr, " << programName << "Library), Ptr{Nothing}, (Cstring,), "
-      << "paramName))" << std::endl;
+  std::cout << "function GetParam" << type << "(params::Ptr{Nothing}, "
+      << "paramName::String, modelPtrs::Set{Ptr{Nothing}})::" << type
+      << std::endl;
+  std::cout << "  ptr = ccall((:GetParam" << type
+      << "Ptr, " << programName << "Library), Ptr{Nothing}, (Ptr{Nothing}, "
+      << "Cstring,), params, paramName)" << std::endl;
+  std::cout << "  return " << type << "(ptr; finalize=!(ptr in modelPtrs))"
+      << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
   // Next, IOSetParam<Type>().
   std::cout << "# Set the value of a model pointer parameter of type " << type
       << "." << std::endl;
-  std::cout << "function IOSetParam" << type << "(paramName::String, "
-      << "model::" << type << ")" << std::endl;
-  std::cout << "  ccall((:IO_SetParam" << type << "Ptr, "
-      << programName << "Library), Nothing, (Cstring, "
-      << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
+  std::cout << "function SetParam" << type << "(params::Ptr{Nothing}, "
+      << "paramName::String, model::" << type << ")" << std::endl;
+  std::cout << "  ccall((:SetParam" << type << "Ptr, "
+      << programName << "Library), Nothing, (Ptr{Nothing}, Cstring, "
+      << "Ptr{Nothing}), params, paramName, model.ptr)" << std::endl;
+  std::cout << "end" << std::endl;
+  std::cout << std::endl;
+
+  // Next, Delete<Type>().
+  std::cout << "# Delete an instantiated model pointer." << std::endl;
+  std::cout << "function Delete" << type << "(ptr::Ptr{Nothing})"
+      << std::endl;
+  std::cout << "  ccall((:Delete" << type << "Ptr, " << programName
+      << "Library), Nothing, (Ptr{Nothing},), ptr)" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
@@ -121,6 +145,7 @@ void PrintParamDefn(
       << "Base.pointer(buf_len))" << std::endl;
   std::cout << "  buf = Base.unsafe_wrap(Vector{UInt8}, buf_ptr, buf_len[1]; "
       << "own=true)" << std::endl;
+  std::cout << "  write(stream, buf_len[1])" << std::endl;
   std::cout << "  write(stream, buf)" << std::endl;
   std::cout << "end" << std::endl;
 
@@ -128,7 +153,8 @@ void PrintParamDefn(
   std::cout << "# Deserialize a model from the given stream." << std::endl;
   std::cout << "function deserialize" << type << "(stream::IO)::" << type
       << std::endl;
-  std::cout << "  buffer = read(stream)" << std::endl;
+  std::cout << "  buf_len = read(stream, UInt)" << std::endl;
+  std::cout << "  buffer = read(stream, buf_len)" << std::endl;
   std::cout << "  " << type << "(ccall((:Deserialize" << type << "Ptr, "
       << programName << "Library), Ptr{Nothing}, (Ptr{UInt8}, UInt), "
       << "Base.pointer(buffer), length(buffer)))" << std::endl;

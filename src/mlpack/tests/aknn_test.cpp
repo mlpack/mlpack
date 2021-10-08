@@ -169,7 +169,8 @@ TEST_CASE("AKNNSingleCoverTreeTest", "[AKNNTest]")
 TEST_CASE("AKNNDualCoverTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -223,7 +224,8 @@ TEST_CASE("AKNNSingleBallTreeTest", "[AKNNTest]")
 TEST_CASE("AKNNDualBallTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -322,6 +324,7 @@ TEST_CASE("AKNNSparseKNNKDTreeTest", "[AKNNTest]")
 TEST_CASE("AKNNModelTest", "[AKNNTest]")
 {
   typedef NSModel<NearestNeighborSort> KNNModel;
+  util::Timers timers;
 
   arma::mat queryData = arma::randu<arma::mat>(10, 50);
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
@@ -368,19 +371,26 @@ TEST_CASE("AKNNModelTest", "[AKNNTest]")
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
+      models[i].LeafSize() = 20;
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE,
             0.05);
+      }
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE, 0.05);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), SINGLE_TREE_MODE,
+            0.05);
+      }
       if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE_MODE);
+      }
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;
 
-      models[i].Search(std::move(queryCopy), 3, neighborsApprox,
+      models[i].Search(timers, std::move(queryCopy), 3, neighborsApprox,
           distancesApprox);
 
       REQUIRE(neighborsApprox.n_rows == neighborsExact.n_rows);
@@ -402,6 +412,7 @@ TEST_CASE("AKNNModelTest", "[AKNNTest]")
 TEST_CASE("AKNNModelMonochromaticTest", "[AKNNTest]")
 {
   typedef NSModel<NearestNeighborSort> KNNModel;
+  util::Timers timers;
 
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
@@ -446,17 +457,22 @@ TEST_CASE("AKNNModelMonochromaticTest", "[AKNNTest]")
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
+      models[i].LeafSize() = 20;
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE,
             0.05);
+      }
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE, 0.05);
+      {
+        models[i].BuildModel(timers, std::move(referenceCopy), SINGLE_TREE_MODE,
+            0.05);
+      }
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;
 
-      models[i].Search(3, neighborsApprox, distancesApprox);
+      models[i].Search(timers, 3, neighborsApprox, distancesApprox);
 
       REQUIRE(neighborsApprox.n_rows == neighborsExact.n_rows);
       REQUIRE(neighborsApprox.n_cols == neighborsExact.n_cols);

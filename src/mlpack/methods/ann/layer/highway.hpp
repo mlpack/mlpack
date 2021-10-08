@@ -15,8 +15,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <boost/ptr_container/ptr_vector.hpp>
-
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
@@ -177,11 +175,17 @@ class Highway
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

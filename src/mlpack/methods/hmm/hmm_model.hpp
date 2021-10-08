@@ -15,6 +15,7 @@
 #include "hmm.hpp"
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
+#include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -129,6 +130,26 @@ class HMMModel
     return *this;
   }
 
+  //! Move assignment operator.
+  HMMModel& operator=(HMMModel&& other)
+  {
+    if (this != &other)
+    {
+      type = other.type;
+      discreteHMM = other.discreteHMM;
+      gaussianHMM = other.gaussianHMM;
+      gmmHMM = other.gmmHMM;
+      diagGMMHMM = other.diagGMMHMM;
+
+      other.type = HMMType::DiscreteHMM;
+      other.discreteHMM = new HMM<distribution::DiscreteDistribution>();
+      other.gaussianHMM = nullptr;
+      other.gmmHMM = nullptr;
+      other.diagGMMHMM = nullptr;
+    }
+    return *this;
+  }
+
   //! Clean memory.
   ~HMMModel()
   {
@@ -144,26 +165,26 @@ class HMMModel
    */
   template<typename ActionType,
            typename ExtraInfoType>
-  void PerformAction(ExtraInfoType* x)
+  void PerformAction(util::Params& params, ExtraInfoType* x)
   {
     if (type == HMMType::DiscreteHMM)
-      ActionType::Apply(*discreteHMM, x);
+      ActionType::Apply(params, *discreteHMM, x);
     else if (type == HMMType::GaussianHMM)
-      ActionType::Apply(*gaussianHMM, x);
+      ActionType::Apply(params, *gaussianHMM, x);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ActionType::Apply(*gmmHMM, x);
+      ActionType::Apply(params, *gmmHMM, x);
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-      ActionType::Apply(*diagGMMHMM, x);
+      ActionType::Apply(params, *diagGMMHMM, x);
   }
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(type);
+    ar(CEREAL_NVP(type));
 
     // If necessary, clean memory.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       delete discreteHMM;
       delete gaussianHMM;
@@ -177,18 +198,13 @@ class HMMModel
     }
 
     if (type == HMMType::DiscreteHMM)
-      ar & BOOST_SERIALIZATION_NVP(discreteHMM);
+      ar(CEREAL_POINTER(discreteHMM));
     else if (type == HMMType::GaussianHMM)
-      ar & BOOST_SERIALIZATION_NVP(gaussianHMM);
+      ar(CEREAL_POINTER(gaussianHMM));
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ar & BOOST_SERIALIZATION_NVP(gmmHMM);
-
-    // Backward compatibility: new versions of HMM has a Diagonal GMM type.
-    if (version > 0)
-    {
-      if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-        ar & BOOST_SERIALIZATION_NVP(diagGMMHMM);
-    }
+      ar(CEREAL_POINTER(gmmHMM));
+    else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+      ar(CEREAL_POINTER(diagGMMHMM));
   }
 
   // Accessor method for type of HMM
@@ -221,8 +237,5 @@ class HMMModel
 
 } // namespace hmm
 } // namespace mlpack
-
-//! Set the serialization version of the HMMModel class.
-BOOST_CLASS_VERSION(mlpack::hmm::HMMModel, 1);
 
 #endif

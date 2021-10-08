@@ -289,13 +289,12 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest", "[DecisionTreeTest]")
   weights.ones();
 
   arma::vec classProbabilities;
-  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
-      aux);
+      bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities, aux);
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
       labels, 2, weights, 3, 1e-7, classProbabilities, aux);
@@ -327,7 +326,7 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
   arma::rowvec weights(labels.n_elem);
 
   arma::vec classProbabilities;
-  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
@@ -363,7 +362,7 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   }
 
   arma::vec classProbabilities;
-  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
@@ -374,6 +373,105 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
   REQUIRE(classProbabilities.n_elem == 0);
+}
+
+/**
+ * Check that the RandomBinaryNumericSplit won't split if not enough points are
+ * given.
+ */
+TEST_CASE("RandomBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
+{
+  arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
+  arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1 1");
+  arma::rowvec weights(labels.n_elem);
+
+  arma::vec classProbabilities(1);
+  RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities, aux);
+  // This should make no difference because it won't split at all.
+  const double weightedGain =
+      RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
+      labels, 2, weights, 8, 1e-7, classProbabilities, aux);
+
+  // Make sure that no split was made.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+}
+
+/**
+ * Check that the RandomBinaryNumericSplit doesn't split a dimension that gives
+ * no gain when splitIfBetterGain is true.
+ */
+TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
+{
+  arma::vec values(100);
+  arma::Row<size_t> labels(100);
+  arma::rowvec weights;
+  for (size_t i = 0; i < 100; i += 2)
+  {
+    values[i] = i;
+    labels[i] = 0;
+    values[i + 1] = i;
+    labels[i + 1] = 1;
+  }
+
+  arma::vec classProbabilities;
+  RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities,
+      aux, true);
+
+  // Make sure there was no split.
+  REQUIRE(gain == DBL_MAX);
+}
+
+/**
+ * Check that RandomBinaryNumericSplit generally gives a split different than
+ * the BestBinaryNumericSplit.
+ */
+TEST_CASE("RandomBinaryNumericSplitDiffSplitTest", "[DecisionTreeTest]")
+{
+  arma::vec values(1000);
+  arma::Row<size_t> labels(1000);
+  arma::rowvec weights;
+  for (size_t i = 0; i < 1000; i += 2)
+  {
+    values[i] = math::Random(0, 5);
+    labels[i] = 0;
+    values[i + 1] = math::Random(0, 5);
+    labels[i + 1] = 1;
+  }
+
+  arma::vec classProbabilities, classProbabilities1;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
+  RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux1;
+
+  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+
+  for (int i = 0; i < 5; ++i)
+  {
+    // Call BestBinaryNumericSplit to do the splitting.
+    (void) BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
+        aux);
+
+    // Call RandomBinaryNumericSplit to do the splitting.
+    (void) RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
+        aux1);
+
+    if (classProbabilities[0] == classProbabilities1[0])
+      break;
+  }
+
+  REQUIRE(classProbabilities[0] != classProbabilities1[0]);
 }
 
 /**
@@ -388,7 +486,7 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest", "[DecisionTreeTest]")
   weights.ones();
 
   arma::vec classProbabilities;
-  AllCategoricalSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
@@ -424,13 +522,13 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest", "[DecisionTreeTest]")
   weights.ones();
 
   arma::vec classProbabilities;
-  AllCategoricalSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, weights, 4, 1e-7, classProbabilities,
-      aux);
+      bestGain, values, 4, labels, 3, weights, 4, 1e-7,
+      classProbabilities, aux);
 
   // Make sure it's not split.
   REQUIRE(gain == DBL_MAX);
@@ -457,7 +555,7 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
   }
 
   arma::vec classProbabilities;
-  AllCategoricalSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
@@ -702,6 +800,66 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 }
 
 /**
+ * Test that the decision tree generalizes reasonably when built on float data.
+ */
+TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
+{
+  arma::fmat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
+
+  // Build decision tree.
+  DecisionTree<> d(inputData, labels, 3, 10 /* Leaf size of 10. */);
+  DecisionTree<> wd(inputData, labels, 3, weights, 10 /* Leaf size of 10. */);
+
+  // Load testing data.
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+
+  arma::Mat<size_t> trueTestLabels;
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt");
+
+  // Get the predicted test labels.
+  arma::Row<size_t> predictions;
+  d.Classify(testData, predictions);
+
+  REQUIRE(predictions.n_elem == testData.n_cols);
+
+  // Figure out the accuracy.
+  double correct = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == trueTestLabels[i])
+      ++correct;
+  correct /= predictions.n_elem;
+
+  REQUIRE(correct > 0.75);
+
+  // Reset the prediction.
+  predictions.zeros();
+  wd.Classify(testData, predictions);
+
+  REQUIRE(predictions.n_elem == testData.n_cols);
+
+  // Figure out the accuracy.
+  double wdcorrect = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == trueTestLabels[i])
+      ++wdcorrect;
+  wdcorrect /= predictions.n_elem;
+
+  REQUIRE(wdcorrect > 0.75);
+}
+
+/**
  * Test that we can build a decision tree on a simple categorical dataset.
  */
 TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest]")
@@ -774,28 +932,6 @@ TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 }
 
 /**
- * Make sure that when we ask for a decision stump, we get one.
- */
-TEST_CASE("DecisionStumpTest", "[DecisionTreeTest]")
-{
-  // Use a random dataset.
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
-
-  // Build a decision stump.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
-      AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
-
-  // Check that it has children.
-  REQUIRE(stump.NumChildren() == 2);
-  // Check that its children doesn't have children.
-  REQUIRE(stump.Child(0).NumChildren() == 0);
-  REQUIRE(stump.Child(1).NumChildren() == 0);
-}
-
-/**
  * Test that we can build a decision tree using weighted data (where the
  * low-weighted data is random noise), and that the tree still builds correctly
  * enough to get good results.
@@ -804,8 +940,10 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -830,8 +968,10 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  data::Load("vc2_test.csv", testData);
-  data::Load("vc2_test_labels.txt", testLabels);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -913,8 +1053,10 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -939,8 +1081,10 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  data::Load("vc2_test.csv", testData);
-  data::Load("vc2_test_labels.txt", testLabels);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -1099,8 +1243,10 @@ TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
   // Load a dataset to train with.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> dt(dataset, labels, 3);
 
@@ -1229,8 +1375,10 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
 

@@ -3,49 +3,33 @@
  * @author Ryan Curtin
  * @author Utkarsh Rai
  *
- * Test mlpackMain() of krann_main.cpp.
+ * Test RUN_BINDING() of krann_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
  * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "K-RankApproximateNearestNeighborsSearch";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/rann/krann_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct KRANNTestFixture
-{
-  KRANNTestFixture()
-  {
-    IO::RestoreSettings(testName);
-  }
-
-  ~KRANNTestFixture()
-  {
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE(KRANNMainTest, KRANNTestFixture);
+BINDING_TEST_FIXTURE(KRANNTestFixture);
 
 /*
  * Check that we can't provide reference and query matrices
  * with different dimensions.
  */
-BOOST_AUTO_TEST_CASE(KRANNEqualDimensionTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNEqualDimensionTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -62,7 +46,7 @@ BOOST_AUTO_TEST_CASE(KRANNEqualDimensionTest)
   SetInputParam("k", (int) 5);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -70,7 +54,8 @@ BOOST_AUTO_TEST_CASE(KRANNEqualDimensionTest)
  * Check that we can't specify an invalid k when only reference
  * matrix is given.
  */
-BOOST_AUTO_TEST_CASE(KRANNInvalidKTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidKTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -80,32 +65,29 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKTest)
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) -1); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 6); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  ResetSettings();
 
   // Test on empty reference matrix since referenceData has been moved.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -113,7 +95,8 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKTest)
  * Check that we can't specify an invalid k when both reference
  * and query matrices are given.
  */
-BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidKQueryDataTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -127,39 +110,37 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("reference",  referenceData);
   SetInputParam("k", (int) -1); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 6); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["k"].wasPassed = false;
+  ResetSettings();
 
   // Test on empty reference marix since referenceData has been moved.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int)  5);
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify a negative leaf size.
  */
-BOOST_AUTO_TEST_CASE(KRANNLeafSizeTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNLeafSizeTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -169,14 +150,15 @@ BOOST_AUTO_TEST_CASE(KRANNLeafSizeTest)
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass both input_model and reference matrix.
  */
-BOOST_AUTO_TEST_CASE(KRANNRefModelTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNRefModelTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -185,21 +167,22 @@ BOOST_AUTO_TEST_CASE(KRANNRefModelTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Input pre-trained model.
   SetInputParam("input_model",
-      std::move(IO::GetParam<RANNModel*>("output_model")));
+      std::move(params.Get<RAModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid tree type.
  */
-BOOST_AUTO_TEST_CASE(KRANNInvalidTreeTypeTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidTreeTypeTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -210,14 +193,15 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidTreeTypeTest)
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid value of tau.
  */
-BOOST_AUTO_TEST_CASE(KRANNInvalidTauTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidTauTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -228,7 +212,7 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidTauTest)
   SetInputParam("tau", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -236,7 +220,8 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidTauTest)
  * Make sure that dimensions of the neighbors and distances matrices are correct
  * given a value of k.
  */
-BOOST_AUTO_TEST_CASE(KRANNOutputDimensionTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNOutputDimensionTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -246,23 +231,22 @@ BOOST_AUTO_TEST_CASE(KRANNOutputDimensionTest)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check the neighbors matrix has 5 points for each input point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows,
-      5);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
-      100);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_rows == 5);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_cols == 100);
 
   // Check the distances matrix has 10 points for each input point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
+  REQUIRE(params.Get<arma::mat>("distances").n_rows == 5);
+  REQUIRE(params.Get<arma::mat>("distances").n_cols == 100);
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNModelReuseTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -276,36 +260,39 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  RANNModel* output_model;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["query"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", output_model);
   SetInputParam("query", queryData);
+  SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, params.Get<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, params.Get<arma::mat>("distances"));
 }
 
 /**
  * Ensure that different leaf sizes give different results.
  */
-BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentLeafSizes",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -316,13 +303,15 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   SetInputParam("leaf_size", (int) 1);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -330,20 +319,20 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   SetInputParam("leaf_size", (int) 10);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
-  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->LeafSize(),
-      (int) 10);
+  CHECK(output_model->LeafSize() == (int) 1);
+  CHECK(params.Get<RAModel*>("output_model")->LeafSize() == (int) 10);
   delete output_model;
 }
 
 /**
  * Ensure that different tau give different results.
  */
-BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTau",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -353,13 +342,15 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset the passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Changing value of tau and keeping everything else unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -367,12 +358,12 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
   SetInputParam("tau", (double) 10);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal
-  BOOST_CHECK_EQUAL(output_model->Tau(), (double) 5);
-  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->Tau(),
+  CHECK(output_model->Tau() == (double) 5);
+  CHECK(params.Get<RAModel*>("output_model")->Tau() ==
       (double) 10);
   delete output_model;
 }
@@ -380,7 +371,8 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
 /**
  * Ensure that different alpha give different results.
  */
-BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentAlpha",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -390,13 +382,15 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset the passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Changing value of tau and keeping everything else unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -404,12 +398,12 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
   SetInputParam("alpha", (double) 0.80);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal
-  BOOST_CHECK_EQUAL(output_model->Alpha(), (double) 0.95);
-  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->Alpha(),
+  CHECK(output_model->Alpha() == (double) 0.95);
+  CHECK(params.Get<RAModel*>("output_model")->Alpha() ==
       (double) 0.80);
   delete output_model;
 }
@@ -417,7 +411,8 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
 /**
  * Ensure that different tree-type give different results.
  */
-BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTreeType",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -427,13 +422,15 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset the passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Changing value of tau and keeping everything else unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -441,12 +438,13 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
   SetInputParam("tree_type", (string) "ub");
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal
-  BOOST_CHECK_EQUAL(output_model->TreeType(), 0);
-  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->TreeType(),
+  const bool check = output_model->TreeType() == 0;
+  CHECK(check == true);
+  CHECK(params.Get<RAModel*>("output_model")->TreeType() ==
       8);
   delete output_model;
 }
@@ -454,7 +452,8 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
 /**
  * Ensure that different single_sample_limit gives different results.
  */
-BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSingleSampleLimit",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -464,13 +463,15 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -478,20 +479,21 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
   SetInputParam("single_sample_limit", (int)15);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(
-    IO::GetParam<RANNModel*>("output_model")->SingleSampleLimit(), (int) 15);
-  BOOST_CHECK_EQUAL(output_model->SingleSampleLimit(), (int) 20);
+  CHECK(params.Get<RAModel*>("output_model")->SingleSampleLimit() ==
+      (int) 15);
+  CHECK(output_model->SingleSampleLimit() == (int) 20);
   delete output_model;
 }
 
 /**
  * Ensure that toggling sample_at_leaves gives different results.
  */
-BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSampleAtLeaves",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -501,13 +503,15 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
   SetInputParam("k", (int) 5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(params.Get<RAModel*>("output_model"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  params.Get<RAModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -515,20 +519,21 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
   SetInputParam("sample_at_leaves", (bool) true);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->SampleAtLeaves(),
+  CHECK(params.Get<RAModel*>("output_model")->SampleAtLeaves() ==
       (bool) true);
-  BOOST_CHECK_EQUAL(output_model->SampleAtLeaves(), (bool) false);
+  CHECK(output_model->SampleAtLeaves() == (bool) false);
   delete output_model;
 }
 
 /**
  * Ensure that alpha out of range throws an error.
 */
-BOOST_AUTO_TEST_CASE(KRANNInvalidAlphaTest)
+TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidAlphaTest",
+                "[KRANNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100);
@@ -538,16 +543,13 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidAlphaTest)
   SetInputParam("alpha", (double) 1.2);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["alpha"].wasPassed = false;
+  ResetSettings();
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("alpha", (double) -1);
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

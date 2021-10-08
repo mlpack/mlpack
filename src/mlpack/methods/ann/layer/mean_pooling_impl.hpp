@@ -45,7 +45,6 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     outputHeight(0),
     reset(false),
     deterministic(false),
-    offset(0),
     batchSize(0)
 {
   // Nothing to do here.
@@ -67,8 +66,6 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelWidth) / (double) strideWidth + 1);
     outputHeight = std::floor((inputHeight -
         (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 0;
   }
   else
   {
@@ -76,8 +73,6 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelWidth) / (double) strideWidth + 1);
     outputHeight = std::ceil((inputHeight -
         (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 1;
   }
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
@@ -119,18 +114,18 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
-  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
-  ar & BOOST_SERIALIZATION_NVP(strideWidth);
-  ar & BOOST_SERIALIZATION_NVP(strideHeight);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(floor);
-  ar & BOOST_SERIALIZATION_NVP(inputWidth);
-  ar & BOOST_SERIALIZATION_NVP(inputHeight);
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar(CEREAL_NVP(kernelWidth));
+  ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(strideWidth));
+  ar(CEREAL_NVP(strideHeight));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(floor));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
 }
 
 } // namespace ann

@@ -28,7 +28,17 @@ function(find_r_module module)
         string(REGEX MATCHALL "‘[0-9._]*’" _version_compare "${_version_compare}")
         string(REGEX REPLACE "‘" "" _version_compare "${_version_compare}")
         string(REGEX REPLACE "’" "" _version_compare "${_version_compare}")
-        if ("${_version_compare}" GREATER_EQUAL "${VERSION_REQ}")
+
+        # Compare the version of the package using compareVersion().
+        execute_process(COMMAND ${RSCRIPT_EXECUTABLE} "-e"
+            "compareVersion('${_version_compare}', '${VERSION_REQ}')"
+            RESULT_VARIABLE _compareVersion_status
+            OUTPUT_VARIABLE _compareVersion_result
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+        # Extract compareVersion() result i.e. 1 -> Newer, 0 -> Equal and -1 -> Later.
+        string(REGEX REPLACE "\\[\\1\\]" "" _compareVersion_result "${_compareVersion_result}")
+        if ("${_compareVersion_result}" GREATER "-1")
           set(R_${module_upper}
             "${_${module}_location} (found suitable version \"${_version_compare}\", minimum required is \"${VERSION_REQ}\")"
             CACHE STRING "Location of R module ${module}"

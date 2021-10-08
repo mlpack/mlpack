@@ -2,102 +2,81 @@
  * @file tests/main_tests/lmnn_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of lmnn_main.cpp.
+ * Test RUN_BINDING() of lmnn_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "LMNN";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-
-#include "test_helper.hpp"
 #include <mlpack/methods/lmnn/lmnn_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "main_test_fixture.hpp"
+
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
-struct LMNNTestFixture
-{
- public:
-  LMNNTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~LMNNTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE(LMNNMainTest, LMNNTestFixture);
+BINDING_TEST_FIXTURE(LMNNTestFixture);
 
 /**
  * Ensure that, when labels are implicitily given with input,
  * the last column is treated as labels and that we get the
  * desired shape of output.
  */
-BOOST_AUTO_TEST_CASE(LMNNExplicitImplicitLabelsTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNExplicitImplicitLabelsTest",
+                "[LMNNMainTest][BindingTests]")
 {
   // Dataset containing labels as last column.
   arma::mat inputData;
   if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   SetInputParam("input", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 
   // Reset Settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Now check that when labels are explicitely given, the last column
   // of input is not treated as labels.
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   SetInputParam("input", inputData);
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 }
 
@@ -105,15 +84,16 @@ BOOST_AUTO_TEST_CASE(LMNNExplicitImplicitLabelsTest)
  * Ensure that when we pass optimizer of type lbfgs, we also get the desired
  * shape of output.
  */
-BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNOptimizerTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Input random data points.
   SetInputParam("input", inputData);
@@ -122,58 +102,56 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
   // when that is fixed.
   SetInputParam("optimizer",  std::string("amsgrad"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 
   // Reset rettings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Input random data points.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("sgd"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 
-  // Reset rettings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  // Reset settings.
+  ResetSettings();
 
   // Input random data points.
   SetInputParam("input", inputData);
   SetInputParam("labels", std::move(labels));
   SetInputParam("optimizer",  std::string("lbfgs"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 }
 
@@ -181,15 +159,16 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
  * Ensure that when we pass a valid initial learning point, we get
  * output of the same dimensions.
  */
-BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNValidDistanceTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Initial learning point.
   arma::mat distance;
@@ -200,16 +179,16 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest)
   SetInputParam("labels", std::move(labels));
   SetInputParam("distance", std::move(distance));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 }
 
@@ -217,15 +196,16 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest)
  * Ensure that when we pass a valid initial square matrix as the learning
  * point, we get output of the same dimensions.
  */
-BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest2)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNValidDistanceTest2",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Initial learning point (square matrix).
   arma::mat distance;
@@ -236,16 +216,16 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest2)
   SetInputParam("labels", std::move(labels));
   SetInputParam("distance", std::move(distance));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 }
 
@@ -253,15 +233,16 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest2)
  * Ensure that when we pass an invalid initial learning point, we get
  * output as the square matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNInvalidDistanceTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNInvalidDistanceTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Initial learning point.
   arma::mat distance;
@@ -272,16 +253,16 @@ BOOST_AUTO_TEST_CASE(LMNNInvalidDistanceTest)
   SetInputParam("labels", std::move(labels));
   SetInputParam("distance", std::move(distance));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows,
+  REQUIRE(params.Get<arma::mat>("output").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols,
+  REQUIRE(params.Get<arma::mat>("output").n_cols ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_rows,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_rows ==
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("transformed_data").n_cols,
+  REQUIRE(params.Get<arma::mat>("transformed_data").n_cols ==
       inputData.n_cols);
 }
 
@@ -289,7 +270,8 @@ BOOST_AUTO_TEST_CASE(LMNNInvalidDistanceTest)
  * Ensure that if number of available labels in a class is less than
  * the number of targets, an error occurs.
  */
-BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNNumTargetsTest",
+                "[LMNNMainTest][BindingTests]")
 {
   // Input Dataset
   arma::mat inputData      = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -302,7 +284,7 @@ BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
 
   // Check that an error is thrown.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -310,15 +292,16 @@ BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
  * Ensure that setting normalize as true results in a
  * different output matrix then when set to false.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters and set normalize to true.
   SetInputParam("input", inputData);
@@ -326,14 +309,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
-  // Reset rettings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  // Reset settings.
+  ResetSettings();
 
   // Use the same input but set normalize to false.
   SetInputParam("input", std::move(inputData));
@@ -342,27 +324,27 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that output is different when step_size is different.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small step_size.
   SetInputParam("input", inputData);
@@ -370,14 +352,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
   SetInputParam("step_size", (double) 0.01);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set parameters using the same input but with a larger step_size.
   SetInputParam("input", std::move(inputData));
@@ -385,69 +366,68 @@ BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
   SetInputParam("step_size", (double) 20.5);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
-BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  RUN_BINDING();
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that output is different when the tolerance is different.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffToleranceTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small tolerance.
   SetInputParam("input", inputData);
   SetInputParam("tolerance", (double) 1e-6);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set parameters using the same input but with a larger tolerance.
   SetInputParam("input", std::move(inputData));
   SetInputParam("tolerance", (double) 0.3);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that output is different when batch_size is different.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small batch_size.
   SetInputParam("input", inputData);
@@ -455,14 +435,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
   SetInputParam("batch_size", (int) 20);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set parameters using the same input but with a larger batch_size.
   SetInputParam("input", std::move(inputData));
@@ -470,28 +449,28 @@ BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
   SetInputParam("batch_size", (int) 30);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that different value of number of targets results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters.
   SetInputParam("input", inputData);
@@ -499,14 +478,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
   SetInputParam("k", 1);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set different parameters.
   SetInputParam("input", std::move(inputData));
@@ -514,28 +492,28 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
   SetInputParam("k", 5);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that different value of regularization results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters.
   SetInputParam("input", inputData);
@@ -543,14 +521,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("regularization", 1.0);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set different parameters.
   SetInputParam("input", std::move(inputData));
@@ -558,42 +535,41 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("regularization", 0.1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that different value of range results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set different parameters.
   SetInputParam("input", std::move(inputData));
@@ -601,28 +577,28 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("range", 100);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that using a different value of max_iteration
  * results in a different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small max_iterations.
   SetInputParam("input", inputData);
@@ -632,14 +608,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set parameters using the same input but with a larger max_iterations.
   SetInputParam("input", std::move(inputData));
@@ -649,28 +624,28 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 500);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
  * Ensure that using a different value of passes
  * results in a different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Set parameters with a small passes.
   SetInputParam("input", inputData);
@@ -678,14 +653,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("passes", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  arma::mat transformedData = IO::GetParam<arma::mat>("transformed_data");
+  arma::mat output = params.Get<arma::mat>("output");
+  arma::mat transformedData = params.Get<arma::mat>("transformed_data");
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Set parameters using the same input but with a larger passes.
   SetInputParam("input", std::move(inputData));
@@ -693,13 +667,12 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("passes", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(IO::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(IO::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+      transformedData) > 0);
 }
 
 /**
@@ -707,15 +680,16 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
  * and regularization, step size, max iterations, rank, passes & tolerance are
  * always non-negative 
  */
-BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
+TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
+                "[LMNNMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
+    FAIL("Cannot load iris.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
+    FAIL("Cannot load iris_labels.txt!");
 
   // Test for number of targets value.
 
@@ -725,12 +699,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("k", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for range value.
 
@@ -740,12 +713,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("range", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for batch size value.
 
@@ -755,12 +727,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("batch_size", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for regularization value.
 
@@ -770,12 +741,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("regularization", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for step size value.
 
@@ -785,12 +755,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("step_size", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for max iterations value.
 
@@ -800,12 +769,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("max_iterations", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for passes value.
 
@@ -815,12 +783,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("passes", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for max iterations value.
 
@@ -830,12 +797,11 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("rank", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Reset settings.
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  ResetSettings();
 
   // Test for tolerance value.
 
@@ -845,8 +811,6 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("tolerance", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

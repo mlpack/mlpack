@@ -26,26 +26,26 @@ MeanAbsolutePercentageError()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 MeanAbsolutePercentageError<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  InputType loss = arma::abs((input - target) / target); 
+  PredictionType loss = arma::abs((prediction - target) / target);
   return arma::accu(loss) * (100 / target.n_cols);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 
-{ 
-  output = (((arma::conv_to<arma::mat>::from(input < target) * -2) + 1) /
-      target) * (100 / target.n_cols) ;
+{
+  loss = (((arma::conv_to<arma::mat>::from(prediction < target) * -2) + 1) /
+      target) * (100 / target.n_cols);
 }
 
 template<typename InputDataType, typename OutputDataType>

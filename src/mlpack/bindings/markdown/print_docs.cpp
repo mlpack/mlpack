@@ -9,11 +9,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "print_docs.hpp"
-
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/binding_details.hpp>
+
+#include <boost/algorithm/string/replace.hpp>
+
 #include "binding_info.hpp"
+#include "print_docs.hpp"
 #include "print_doc_functions.hpp"
 
 // Make sure that this is defined.
@@ -36,8 +38,18 @@ void PrintHeaders(const std::string& bindingName,
   {
     BindingInfo::Language() = languages[i];
 
-    cout << " - [" << GetBindingName(bindingName) << "](#" << languages[i]
-        << "_" << bindingName << "){: .language-link #" << languages[i] << " }"
+    // Get the name of the binding in the target language, and convert it to
+    // lowercase (since the anchor link will be in lowercase).
+    const std::string langBindingName = GetBindingName(bindingName);
+    std::string anchorName = langBindingName;
+    std::transform(anchorName.begin(), anchorName.end(), anchorName.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+    // Strip '()' from the end if needed.
+    if (anchorName.substr(anchorName.size() - 2, 2) == "()")
+      anchorName = anchorName.substr(0, anchorName.size() - 2);
+
+    cout << " - [" << langBindingName << "](#" << languages[i]
+        << "_" << anchorName << "){: .language-link #" << languages[i] << " }"
         << endl;
   }
 }
@@ -45,9 +57,8 @@ void PrintHeaders(const std::string& bindingName,
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {
-  BindingDetails& doc = BindingInfo::GetBindingDetails(bindingName);
-
-  IO::RestoreSettings(bindingName);
+  Params params = IO::Parameters(bindingName);
+  const BindingDetails& doc = params.Doc();
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -64,7 +75,7 @@ void PrintDocs(const std::string& bindingName,
 
   // Next, print the logical name of the binding (that's known by
   // ProgramInfo).
-  cout << "#### " << doc.programName << endl;
+  cout << "#### " << doc.name << endl;
   cout << endl;
 
   for (size_t i = 0; i < languages.size(); ++i)
@@ -110,7 +121,7 @@ void PrintDocs(const std::string& bindingName,
         << endl;
     cout << "|------------|------------|-------------------|---------------|"
         << endl;
-    map<string, ParamData>& parameters = IO::Parameters();
+    map<string, ParamData>& parameters = params.Parameters();
     for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -133,20 +144,20 @@ void PrintDocs(const std::string& bindingName,
       {
         if (!it->second.required)
         {
-          cout << ParamString(it->second.name) << " | ";
+          cout << ParamString(bindingName, it->second.name) << " | ";
         }
         else
         {
-          std::string name = ParamString(it->second.name);
+          std::string name = ParamString(bindingName, it->second.name);
           name[1] = std::tolower(name[1]);
           cout << name << " | ";
         }
       }
       else
       {
-        cout << ParamString(it->second.name) << " | ";
+        cout << ParamString(bindingName, it->second.name) << " | ";
       }
-      cout << ParamType(it->second) << " | ";
+      cout << ParamType(params, it->second) << " | ";
       string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
       cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
@@ -157,7 +168,7 @@ void PrintDocs(const std::string& bindingName,
             << PrintLanguage(languages[i]) << " binding.</span>";
       }
       cout << " | ";
-      string def = PrintDefault(it->second.name);
+      string def = PrintDefault(bindingName, it->second.name);
       if (def.size() > 0)
         cout << "`" << def << "` |";
       else
@@ -166,15 +177,31 @@ void PrintDocs(const std::string& bindingName,
     }
     cout << endl;
 
-    // Next, iterate through the list of output options.
-    cout << "### Output options" << endl;
-    cout << endl;
-    string outputInfo = PrintOutputOptionInfo();
-    if (outputInfo.size() > 0)
-      cout << outputInfo << endl;
-    cout << endl;
-    cout << "| ***name*** | ***type*** | ***description*** |" << endl;
-    cout << "|------------|------------|-------------------|" << endl;
+    // Determine if there are any output options, to see if we need
+    // to print the header of the output options table.
+    bool hasOutputOptions = false;
+    for (map<string, ParamData>::iterator it = parameters.begin();
+        it != parameters.end(); ++it)
+    {
+      if (!it->second.input)
+      {
+        hasOutputOptions = true;
+        break;
+      }
+    }
+
+    if (hasOutputOptions)
+    {
+      // Next, iterate through the list of output options.
+      cout << "### Output options" << endl;
+      cout << endl;
+      string outputInfo = PrintOutputOptionInfo();
+      if (outputInfo.size() > 0)
+        cout << outputInfo << endl;
+      cout << endl;
+      cout << "| ***name*** | ***type*** | ***description*** |" << endl;
+      cout << "|------------|------------|-------------------|" << endl;
+    }
     for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -187,15 +214,15 @@ void PrintDocs(const std::string& bindingName,
       // parameter will be lowerCamelCase.
       if (languages[i] == "go")
       {
-        std::string name = ParamString(it->second.name);
+        std::string name = ParamString(bindingName, it->second.name);
         name[1] = std::tolower(name[1]);
         cout << name << " | ";
       }
       else
       {
-        cout << ParamString(it->second.name) << " | ";
+        cout << ParamString(bindingName, it->second.name) << " | ";
       }
-      cout << ParamType(it->second) << " | ";
+      cout << ParamType(params, it->second) << " | ";
       cout << it->second.desc;
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
@@ -260,6 +287,4 @@ void PrintDocs(const std::string& bindingName,
     cout << "</div>" << endl;
     cout << endl;
   }
-
-  IO::ClearSettings();
 }

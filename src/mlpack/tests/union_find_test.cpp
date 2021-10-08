@@ -12,29 +12,26 @@
 #include <mlpack/methods/emst/union_find.hpp>
 
 #include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::emst;
 
-BOOST_AUTO_TEST_SUITE(UnionFindTest);
-
-BOOST_AUTO_TEST_CASE(TestFind)
+TEST_CASE("TestFind", "[UnionFindTest]")
 {
   static const size_t testSize = 10;
   UnionFind testUnionFind(testSize);
 
   for (size_t i = 0; i < testSize; ++i)
-    BOOST_REQUIRE(testUnionFind.Find(i) == i);
+    REQUIRE(testUnionFind.Find(i) == i);
 
   testUnionFind.Union(0, 1);
   testUnionFind.Union(1, 2);
 
-  BOOST_REQUIRE(testUnionFind.Find(2) == testUnionFind.Find(0));
+  REQUIRE(testUnionFind.Find(2) == testUnionFind.Find(0));
 }
 
-BOOST_AUTO_TEST_CASE(TestUnion)
+TEST_CASE("TestUnion", "[UnionFindTest]")
 {
   static const size_t testSize = 10;
   UnionFind testUnionFind(testSize);
@@ -45,10 +42,8 @@ BOOST_AUTO_TEST_CASE(TestUnion)
   testUnionFind.Union(5, 0);
   testUnionFind.Union(0, 6);
 
-  BOOST_REQUIRE(testUnionFind.Find(0) == testUnionFind.Find(1));
-  BOOST_REQUIRE(testUnionFind.Find(2) == testUnionFind.Find(3));
-  BOOST_REQUIRE(testUnionFind.Find(1) == testUnionFind.Find(5));
-  BOOST_REQUIRE(testUnionFind.Find(6) == testUnionFind.Find(3));
+  REQUIRE(testUnionFind.Find(0) == testUnionFind.Find(1));
+  REQUIRE(testUnionFind.Find(2) == testUnionFind.Find(3));
+  REQUIRE(testUnionFind.Find(1) == testUnionFind.Find(5));
+  REQUIRE(testUnionFind.Find(6) == testUnionFind.Find(3));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

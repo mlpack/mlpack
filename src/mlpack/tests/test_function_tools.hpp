@@ -15,6 +15,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/core/data/split_data.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -78,6 +79,38 @@ inline void LogisticRegressionTestData(arma::mat& data,
     testData.col(i) = g2.Random();
     testResponses[i] = 1;
   }
+}
+
+template<typename MatType>
+void LoadBostonHousingDataset(MatType& trainData,
+                              MatType& testData,
+                              arma::rowvec& trainResponses,
+                              arma::rowvec& testResponses,
+                              data::DatasetInfo& info)
+{
+  MatType dataset;
+  arma::rowvec responses;
+
+  // Defining categorical deimensions.
+  info.SetDimensionality(13);
+  info.Type(3) = data::Datatype::categorical;
+  info.Type(8) = data::Datatype::categorical;
+
+  if (!data::Load("boston_housing_price.csv", dataset, info))
+    FAIL("Cannot load test dataset boston_housing_price.csv!");
+  if (!data::Load("boston_housing_price_responses.csv", responses))
+    FAIL("Cannot load test dataset boston_housing_price_responses.csv!");
+
+  data::Split(dataset, responses, trainData, testData,
+      trainResponses, testResponses, 0.3);
+}
+
+inline double RMSE(const arma::Row<double>& predictions,
+                   const arma::Row<double>& trueResponses)
+{
+  double mse = arma::accu(arma::square(predictions - trueResponses)) /
+      predictions.n_elem;
+  return sqrt(mse);
 }
 
 #endif

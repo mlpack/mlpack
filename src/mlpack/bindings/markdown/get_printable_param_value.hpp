@@ -27,10 +27,10 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& data,
     const std::string& value,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Get the parameter name for a matrix type (where the user has to pass the file
@@ -40,7 +40,7 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& data,
     const std::string& value,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
 
 /**
  * Get the parameter name for a serializable model type (where the user has to
@@ -50,8 +50,8 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& data,
     const std::string& value,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
 
 /**
  * Get the parameter name for a mapped matrix type (where the user has to pass
@@ -61,8 +61,8 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& data,
     const std::string& value,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Get the parameter's name as seen by the user.

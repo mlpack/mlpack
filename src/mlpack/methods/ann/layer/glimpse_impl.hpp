@@ -217,17 +217,17 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Glimpse<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(size);
-  ar & BOOST_SERIALIZATION_NVP(depth);
-  ar & BOOST_SERIALIZATION_NVP(scale);
-  ar & BOOST_SERIALIZATION_NVP(inputWidth);
-  ar & BOOST_SERIALIZATION_NVP(inputHeight);
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
-  ar & BOOST_SERIALIZATION_NVP(location);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(depth));
+  ar(CEREAL_NVP(scale));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(location));
 }
 
 } // namespace ann

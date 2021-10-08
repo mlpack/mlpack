@@ -167,8 +167,6 @@ double LARS::Train(const arma::mat& matX,
                    arma::vec& beta,
                    const bool transposeData)
 {
-  Timer::Start("lars_regression");
-
   // Clear any previous solution information.
   betaPath.clear();
   lambdaPath.clear();
@@ -177,6 +175,10 @@ double LARS::Train(const arma::mat& matX,
   ignoreSet.clear();
   isIgnored.clear();
   matUtriCholFactor.reset();
+
+  // Update values in case lambda1 or lambda2 changed.
+  lasso = (lambda1 != 0);
+  elasticNet = (lambda1 != 0 && lambda2 != 0);
 
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
@@ -222,7 +224,6 @@ double LARS::Train(const arma::mat& matX,
   if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
-    Timer::Stop("lars_regression");
     return maxCorr;
   }
 
@@ -366,13 +367,16 @@ double LARS::Train(const arma::mat& matX,
         if (isActive[ind] || isIgnored[ind])
           continue;
 
-        double dirCorr = dot(dataRef.col(ind), yHatDirection);
-        double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
-        double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
-        if ((val1 > 0) && (val1 < gamma))
-          gamma = val1;
-        if ((val2 > 0) && (val2 < gamma))
-          gamma = val2;
+        const double dirCorr = dot(dataRef.col(ind), yHatDirection);
+        const double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
+        const double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
+        if ((val1 > 0.0) && (val1 < gamma))
+           gamma = val1;
+        if ((val2 > 0.0) && (val2 < gamma))
+           gamma = val2;
+        // Handle edge case where the largest actually is equal to 0.
+        if (std::max(val1, val2) == 0.0)
+          gamma = 0.0;
       }
     }
 
@@ -454,7 +458,6 @@ double LARS::Train(const arma::mat& matX,
   // Unfortunate copy...
   beta = betaPath.back();
 
-  Timer::Stop("lars_regression");
   return ComputeError(matX, y, !transposeData);
 }
 

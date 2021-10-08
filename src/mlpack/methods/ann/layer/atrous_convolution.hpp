@@ -71,7 +71,8 @@ class AtrousConvolution
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
    * @param dilationWidth The space between the cells of filters in x direction.
-   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param dilationHeight The space between the cells of filters in y
+   *      direction.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
@@ -108,7 +109,8 @@ class AtrousConvolution
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
    * @param dilationWidth The space between the cells of filters in x direction.
-   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param dilationHeight The space between the cells of filters in y
+   *      direction.
    * @param paddingType The type of padding (Valid/Same/None). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
@@ -263,11 +265,17 @@ class AtrousConvolution
     return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
   }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /*
@@ -403,28 +411,6 @@ class AtrousConvolution
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the AtrousConvolution class.
-namespace boost {
-namespace serialization {
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-struct version<
-    mlpack::ann::AtrousConvolution<ForwardConvolutionRule,
-        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
-        OutputDataType> >
-{
-  BOOST_STATIC_CONSTANT(int, value = 2);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "atrous_convolution_impl.hpp"

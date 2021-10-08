@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -150,7 +149,7 @@ class RecurrentAttention
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Calculate the gradient of the attention module.

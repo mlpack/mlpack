@@ -10,13 +10,6 @@
 // Written by Matthew Amidon
 
 /**
- * Add a batch constructor for SpMat, if the version is older than 3.810.0, and
- * also a serialize() function for Armadillo.
- */
-template<typename Archive>
-void serialize(Archive& ar, const unsigned int version);
-
-/**
  * These will help us refer the proper vector / column types, only with
  * specifying the matrix type we want to use.
  */

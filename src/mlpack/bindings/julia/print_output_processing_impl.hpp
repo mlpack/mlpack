@@ -22,13 +22,14 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the output processing (basically calling IO::GetParam<>()) for a
+ * Print the output processing (basically calling params.GetParam<>()) for a
  * non-serializable type.
  */
 template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -53,7 +54,7 @@ void PrintOutputProcessing(
   if (std::is_same<T, std::string>::value)
     std::cout << "Base.unsafe_string(";
 
-  std::cout << "IOGetParam" << type << "(\"" << d.name << "\")";
+  std::cout << "GetParam" << type << "(p, \"" << d.name << "\")";
 
   if (std::is_same<T, std::string>::value)
     std::cout << ")";
@@ -88,7 +89,7 @@ void PrintOutputProcessing(
     extra = ", points_are_rows";
   }
 
-  std::cout << "IOGetParam" << uChar << matTypeSuffix << "(\"" << d.name
+  std::cout << "GetParam" << uChar << matTypeSuffix << "(p, \"" << d.name
       << "\"" << extra << ")";
 }
 
@@ -105,8 +106,8 @@ void PrintOutputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::string type = util::StripType(d.cppType);
-  std::cout << functionName << "_internal.IOGetParam"
-      << type << "(\"" << d.name << "\")";
+  std::cout << functionName << "_internal.GetParam"
+      << type << "(p, \"" << d.name << "\", modelPtrs)";
 }
 
 /**
@@ -119,7 +120,7 @@ void PrintOutputProcessing(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << "IOGetParamMatWithInfo(\"" << d.name << "\")";
+  std::cout << "GetParamMatWithInfo(p, \"" << d.name << "\")";
 }
 
 } // namespace julia

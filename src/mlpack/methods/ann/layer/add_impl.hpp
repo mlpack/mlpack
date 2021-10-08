@@ -23,7 +23,7 @@ template<typename InputDataType, typename OutputDataType>
 Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
     outSize(outSize)
 {
-  weights.set_size(outSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -58,11 +58,11 @@ void Add<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar(CEREAL_NVP(outSize));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(outSize, 1);
 }
 

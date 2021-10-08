@@ -378,7 +378,7 @@ operator=(RectangleTree&& other)
 }
 
 /**
- * Construct the tree from a boost::serialization archive.
+ * Construct the tree from a cereal archive.
  */
 template<typename MetricType,
          typename StatisticType,
@@ -391,11 +391,11 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 /**
@@ -1036,7 +1036,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   }
 }
 
-//! Default constructor for boost::serialization.
+//! Default constructor for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -1048,7 +1048,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 RectangleTree() :
     maxNumChildren(0), // Try to give sensible defaults, but it shouldn't matter
     minNumChildren(0), // because this tree isn't valid anyway and is only used
-    numChildren(0),    // by boost::serialization.
+    numChildren(0),    // by cereal.
     parent(NULL),
     begin(0),
     count(0),
@@ -1394,10 +1394,10 @@ template<typename Archive>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Clean up memory, if necessary.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < numChildren; ++i)
       delete children[i];
@@ -1409,25 +1409,32 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     parent = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(maxNumChildren);
-  ar & BOOST_SERIALIZATION_NVP(minNumChildren);
-  ar & BOOST_SERIALIZATION_NVP(numChildren);
-  if (Archive::is_loading::value)
+  bool hasParent = (parent != NULL);
+
+  ar(CEREAL_NVP(maxNumChildren));
+  ar(CEREAL_NVP(minNumChildren));
+  ar(CEREAL_NVP(numChildren));
+  if (cereal::is_loading<Archive>())
     children.resize(maxNumChildren + 1);
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(numDescendants);
-  ar & BOOST_SERIALIZATION_NVP(maxLeafSize);
-  ar & BOOST_SERIALIZATION_NVP(minLeafSize);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
-  ar & BOOST_SERIALIZATION_NVP(ownsDataset);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(numDescendants));
+  ar(CEREAL_NVP(maxLeafSize));
+  ar(CEREAL_NVP(minLeafSize));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(hasParent));
 
-  ar & BOOST_SERIALIZATION_NVP(points);
-  ar & BOOST_SERIALIZATION_NVP(auxiliaryInfo);
+  if (!hasParent)
+  {
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
+    ar(CEREAL_POINTER(datasetTemp));
+  }
+
+  ar(CEREAL_NVP(points));
+  ar(CEREAL_NVP(auxiliaryInfo));
 
   // Since we may or may not be holding children, we need to serialize _only_
   // numChildren children.
@@ -1435,14 +1442,34 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   {
     std::ostringstream oss;
     oss << "children" << i;
-    ar & boost::serialization::make_nvp(oss.str().c_str(), children[i]);
+    ar(CEREAL_POINTER(children[i]));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
       children[i]->parent = this;
   }
   for (size_t i = numChildren; i < maxNumChildren + 1; ++i)
   {
     children[i] = NULL;
+  }
+
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<RectangleTree*> stack;
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      stack.push(children[i]);
+    }
+    while (!stack.empty())
+    {
+      RectangleTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->numChildren; ++i)
+      {
+        stack.push(node->children[i]);
+      }
+    }
   }
 }
 

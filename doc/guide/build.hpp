@@ -2,11 +2,25 @@
 
 @section build_buildintro Introduction
 
-This document discusses how to build mlpack from source. These build directions 
+This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
-FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
-and so it may be easier to use the package manager for your system.  For example, 
-on Ubuntu, you can install mlpack with the following command:
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions
+and so it may be easier to use the package manager for your system.  For example,
+on Ubuntu, you can install the mlpack library and command-line executables (e.g.
+mlpack_pca, mlpack_kmeans, etc.) with the following command:
+
+@code
+$ sudo apt-get install libmlpack-dev mlpack-bin
+@endcode
+
+On Fedora or Red Hat(EPEL):
+
+@code
+$ sudo dnf install mlpack-devel mlpack-bin
+@endcode
+
+For installing only the header files and library for building C++ applications
+on top of mlpack, one could use:
 
 @code
 $ sudo apt-get install libmlpack-dev
@@ -25,12 +39,12 @@ mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed on most Linux and UNIX-like systems (including OS X).  If you want
-to build mlpack on Windows, see \ref build_windows (alternatively, you can read 
+to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 <a href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a> which
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">mlpack-3.4.1</a>
+<a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz">mlpack-3.4.2</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -38,9 +52,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.4.1.tar.gz
-$ tar -xvzpf mlpack-3.4.1.tar.gz
-$ mkdir mlpack-3.4.1/build && cd mlpack-3.4.1/build
+$ wget https://www.mlpack.org/files/mlpack-3.4.2.tar.gz
+$ tar -xvzpf mlpack-3.4.2.tar.gz
+$ mkdir mlpack-3.4.2/build && cd mlpack-3.4.2/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -48,6 +62,10 @@ $ sudo make install
 
 If the \c cmake \c .. command fails, you are probably missing a dependency, so
 check the output and install any necessary libraries.  (See \ref build_dep.)
+
+@note If you are using RHEL7/CentOS 7, the default version of gcc is too old.
+One solution is to use \c devtoolset-8; more information is available at
+https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/ .
 
 On many Linux systems, mlpack will install by default to @c /usr/local/lib and
 you may need to set the @c LD_LIBRARY_PATH environment variable:
@@ -65,8 +83,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.4.1.tar.gz
-$ cd mlpack-3.4.1
+$ tar -xvzpf mlpack-3.4.2.tar.gz
+$ cd mlpack-3.4.2
 $ mkdir build
 @endcode
 
@@ -77,9 +95,9 @@ The directory can have any name, not just 'build', but 'build' is sufficient.
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - Armadillo >= 8.400.0 (with LAPACK support)
- - Boost (math_c99, serialization, unit_test_framework, heap,
-          spirit) >= 1.58
+ - Armadillo >= 9.800 (with LAPACK support)
+ - Boost (math_c99, spirit) >= 1.58
+ - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
 In addition, mlpack has the following optional dependencies:
@@ -95,11 +113,11 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
+In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be
 installed through apt:
 
 @code
-# apt-get install libboost-math-dev libboost-test-dev libboost-serialization-dev
+# apt-get install libboost-math-dev libcereal-dev
   libarmadillo-dev binutils-dev python3-pandas python3-numpy cython3
   python3-setuptools
 @endcode
@@ -112,19 +130,19 @@ packages:
 # apt-get install libensmallen-dev libstb-dev
 @endcode
 
-@note For older versions of Ubuntu and Debian, Armadillo needs to be built from 
-source as apt installs an older version. So you need to omit 
+@note For older versions of Ubuntu and Debian, Armadillo needs to be built from
+source as apt installs an older version. So you need to omit
 \c libarmadillo-dev from the code snippet above and instead use
 <a href="http://arma.sourceforge.net/download.html">this link</a>
- to download the required file. Extract this file and follow the README in the 
+ to download the required file. Extract this file and follow the README in the
  uncompressed folder to build and install Armadillo.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
-# dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
-  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel 
-  stbi-devel
+# dnf install boost-devel boost-math armadillo-devel binutils-devel
+  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel
+  stbi-devel cereal-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack
@@ -156,29 +174,32 @@ The full list of options mlpack allows:
  - PROFILE=(ON/OFF): compile with profiling symbols (default OFF)
  - ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
        (default OFF)
- - BUILD_TESTS=(ON/OFF): compile the \c mlpack_test program (default ON)
+ - BUILD_TESTS=(ON/OFF): compile the \c mlpack_test program when `make` is run
+       (default ON)
  - BUILD_CLI_EXECUTABLES=(ON/OFF): compile the mlpack command-line executables
        (i.e. \c mlpack_knn, \c mlpack_kfn, \c mlpack_logistic_regression, etc.)
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the
-       necessary Python libraries are available (default ON except on Windows)
+       necessary Python libraries are available (default OFF)
+ - BUILD_R_BINDINGS=(ON/OFF): compile the bindings for R, if R is found
+       (default OFF)
+ - BUILD_GO_BINDINGS=(ON/OFF): compile Go bindings, if Go and the necessary Go
+       and Gonum exist. (default OFF)
  - BUILD_JULIA_BINDINGS=(ON/OFF): compile Julia bindings, if Julia is found
-       (default ON)
- - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
+       (default OFF)
+ - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
        (default OFF)
  - DISABLE_DOWNLOADS=(ON/OFF): Disable downloads of dependencies during build
        (default OFF)
- - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
-       (default ON)
- - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
- - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
-      (gcc only) (default OFF)
  - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+ - PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
  - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
+ - BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
        OFF)
  - FORCE_CXX11=(ON/OFF): assume that the compiler supports C++11 instead of
@@ -190,6 +211,14 @@ The full list of options mlpack allows:
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
 
+For example, if you would like to build mlpack and its CLI bindings statically, then
+you need to execute the following commands:
+
+@code
+$ cd build
+$ cmake -D BUILD_SHARED_LIBS=OFF ../
+@endcode
+
 In addition, the following directories may be specified, to find include files
 and libraries. These also use the '-D' flag.
 
@@ -197,27 +226,26 @@ and libraries. These also use the '-D' flag.
  - ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): location of Armadillo
        library
  - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
+ - CEREAL_INCLUDE_DIR=(/path/to/cereal/include): path to include directory for
+       cereal
  - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
  - STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
-      STB image library
+       STB image library
  - MATHJAX_ROOT=(/path/to/mathjax): path to root of MathJax installation
 
 @section build_build Building mlpack
 
 Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components as well as 'mlpack_test'.
+This will build all library components.
 
 @code
 $ make
-Scanning dependencies of target mlpack
-[  1%] Building CXX object
-src/mlpack/CMakeFiles/mlpack.dir/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.cpp.o
-<...>
 @endcode
 
 It's often useful to specify \c -jN to the \c make command, which will build on
-\c N processor cores.  That can accelerate the build significantly.
+\c N processor cores. That can accelerate the build significantly. Sometimes
+using many cores may exhaust the memory so choose accordingly.
 
 You can specify individual components which you want to build, if you do not
 want to build everything in the library:
@@ -227,17 +255,50 @@ $ make mlpack_pca mlpack_knn mlpack_kfn
 @endcode
 
 One particular component of interest is mlpack_test, which runs the mlpack test
-suite.  You can build this component with
+suite.  This is not built when @c make is run.  You can build this component
+with
 
 @code
 $ make mlpack_test
 @endcode
 
-and then run all of the tests, or an individual test suite:
+We use <a href="https://github.com/catchorg/Catch2">Catch2</a> to write our tests.
+To run all tests, you can simply use CTest:
+
+@code
+$ ctest .
+@endcode
+
+Or, you can run the test suite manually:
 
 @code
 $ bin/mlpack_test
-$ bin/mlpack_test -t KNNTest
+@endcode
+
+To run all tests in a particular file you can run:
+
+@code
+$ ./bin/mlpack_test "[testname]"
+@endcode
+
+where testname is the name of the test suite.
+For example to run all collaborative filtering tests implemented in cf_test.cpp you can run:
+
+@code
+./bin/mlpack_test "[CFTest]"
+@endcode
+
+Now similarly you can run all the binding related tests using:
+
+@code
+./bin/mlpack_test "[BindingTests]"
+@endcode
+
+To run a single test, you can explicitly provide the name of the test; for example,
+to run BinaryClassificationMetricsTest implemented in cv_test.cpp you can run the following:
+
+@code
+./bin/mlpack_test BinaryClassificationMetricsTest
 @endcode
 
 If the build fails and you cannot figure out why, register an account on Github

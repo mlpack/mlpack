@@ -35,17 +35,33 @@ if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
       set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
 // [[Rcpp::export]]
-SEXP IO_GetParam${MODEL_SAFE_TYPE}Ptr(const std::string& paramName)
+SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params,
+                                   const std::string& paramName,
+                                   SEXP inputModels)
 {
-  return std::move((${MODEL_PTR_TYPEDEF}) IO::GetParam<${MODEL_TYPE}*>(paramName));
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  Rcpp::List inputModelsList(inputModels);
+  ${MODEL_TYPE}* modelPtr = p.Get<${MODEL_TYPE}*>(paramName);
+  for (int i = 0; i < inputModelsList.length(); ++i)
+  {
+    ${MODEL_PTR_TYPEDEF} inputModel =
+        Rcpp::as<${MODEL_PTR_TYPEDEF}>(inputModelsList[i]);
+    // Don't create a new XPtr---just reuse the one given as input, so that we
+    // don't end up deleting it twice.
+    if (inputModel.get() == modelPtr)
+      return inputModel;
+  }
+
+  return std::move((${MODEL_PTR_TYPEDEF}) p.Get<${MODEL_TYPE}*>(paramName));
 }
 
 // Set the pointer to a ${MODEL_TYPE} parameter.
 // [[Rcpp::export]]
-void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const std::string& paramName, SEXP ptr)
+void SetParam${MODEL_SAFE_TYPE}Ptr(SEXP params, const std::string& paramName, SEXP ptr)
 {
-  IO::GetParam<${MODEL_TYPE}*>(paramName) =  Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr);
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<${MODEL_TYPE}*>(paramName) = Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr);
+  p.SetPassed(paramName);
 }
 
 // Serialize a ${MODEL_TYPE} pointer.
@@ -54,9 +70,9 @@ Rcpp::RawVector Serialize${MODEL_SAFE_TYPE}Ptr(SEXP ptr)
 {
   std::ostringstream oss;
   {
-    boost::archive::binary_oarchive oa(oss);
-    oa << boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\",
-          *Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr));
+    cereal::BinaryOutputArchive oa(oss);
+    oa(cereal::make_nvp(\"${MODEL_SAFE_TYPE}\",
+          *Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr)));
   }
 
   Rcpp::RawVector raw_vec(oss.str().size());
@@ -76,8 +92,8 @@ SEXP Deserialize${MODEL_SAFE_TYPE}Ptr(Rcpp::RawVector str)
 
   std::istringstream iss(std::string((char *) &str[0], str.size()));
   {
-    boost::archive::binary_iarchive ia(iss);
-    ia >> boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", *ptr);
+    cereal::BinaryInputArchive ia(iss);
+    ia(cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", *ptr));
   }
 
   // R will be responsible for freeing this.

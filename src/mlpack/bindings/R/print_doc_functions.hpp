@@ -54,29 +54,33 @@ inline std::string PrintValue(const bool& value, bool quotes);
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 /**
  * Recursion base case.
  */
-inline std::string PrintInputOptions();
+inline std::string PrintInputOptions(util::Params& /* p */);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
  * not exist in IO.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& p,
+                              const std::string& paramName,
                               const T& value,
                               Args... args);
 
 /**
  * Recursion base case.
  */
-inline std::string PrintOutputOptions(const bool /* markdown */);
+inline std::string PrintOutputOptions(util::Params& /* p */,
+                                      const bool /* markdown */);
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const bool markdown,
+std::string PrintOutputOptions(util::Params& p,
+                               const bool markdown,
                                const std::string& paramName,
                                const T& value,
                                Args... args);
@@ -94,7 +98,7 @@ std::string ProgramCall(const bool markdown,
  * Given the name of a binding, print a program call assuming that all options
  * are specified.
  */
-inline std::string ProgramCall(const std::string& programName);
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Given the name of a model, print it.  Here we do not need to modify anything.

@@ -26,8 +26,6 @@
 #include "visitor/weight_set_visitor.hpp"
 #include "visitor/run_set_visitor.hpp"
 
-#include <boost/serialization/variant.hpp>
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -141,9 +139,7 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
-  Timer::Start("BRNN_optimization");
   const double out = optimizer.Optimize(*this, parameter);
-  Timer::Stop("BRNN_optimization");
 
   Log::Info << "BRNN::BRNN(): final objective of trained model is " << out
       << "." << std::endl;
@@ -721,11 +717,11 @@ template<typename OutputLayerType, typename MergeLayerType,
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t version)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(backwardRNN);
-  ar & BOOST_SERIALIZATION_NVP(forwardRNN);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(backwardRNN));
+  ar(CEREAL_NVP(forwardRNN));
 
   // TODO: are there more parameters to be serialized?
 }

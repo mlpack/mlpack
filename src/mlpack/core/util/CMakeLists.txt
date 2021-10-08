@@ -9,7 +9,6 @@ set(SOURCES
   binding_details.hpp
   io.hpp
   io.cpp
-  io_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
@@ -21,11 +20,15 @@ set(SOURCES
   param_checks.hpp
   param_checks_impl.hpp
   param_data.hpp
+  params.hpp
+  params_impl.hpp
+  params.cpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
   program_doc.hpp
   program_doc.cpp
+  size_checks.hpp
   sfinae_utility.hpp
   singletons.cpp
   timers.hpp

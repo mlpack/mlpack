@@ -31,7 +31,7 @@ namespace amf {
  * }
  * @endcode
  *
- * This is a multiplicative rule that ensures that the Kullback–Leibler
+ * This is a multiplicative rule that ensures that the Kullback-Leibler
  * divergence
  *
  * \f[
@@ -151,7 +151,7 @@ class NMFMultiplicativeDivergenceUpdate
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace amf

@@ -224,14 +224,14 @@ class SpillTree
   SpillTree& operator=(SpillTree&& other);
 
   /**
-   * Initialize the tree from a boost::serialization archive.
+   * Initialize the tree from a cereal archive.
    *
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
    */
   template<typename Archive>
   SpillTree(
       Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+      const typename std::enable_if_t<cereal::is_loading<Archive>()>* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -469,21 +469,21 @@ class SpillTree
  protected:
   /**
    * A default constructor.  This is meant to only be used with
-   * boost::serialization, which is allowed with the friend declaration below.
+   * cereal, which is allowed with the friend declaration below.
    * This does not return a valid tree!  The method must be protected, so that
    * the serialization shim can work with the default constructor.
    */
   SpillTree();
 
   //! Friend access is given for the default constructor.
-  friend class boost::serialization::access;
+  friend class cereal::access;
 
  public:
   /**
    * Serialize the tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 } // namespace tree

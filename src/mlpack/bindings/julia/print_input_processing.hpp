@@ -17,13 +17,14 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the input processing (basically calling IO::GetParam<>()) for a
+ * Print the input processing (basically calling params.Get<>()) for a
  * non-serializable type.
  */
 template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
@@ -52,7 +53,7 @@ void PrintInputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
- * Print the input processing (basically calling IO::GetParam<>()) for a
+ * Print the input processing (basically calling params.Get<>()) for a
  * matrix with DatasetInfo type.
  */
 template<typename T>
@@ -63,7 +64,7 @@ void PrintInputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
- * Print the input processing (basically calling IO::GetParam<>()) for a type.
+ * Print the input processing (basically calling params.Get<>()) for a type.
  */
 template<typename T>
 void PrintInputProcessing(util::ParamData& d,

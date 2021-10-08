@@ -34,26 +34,26 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
+template<typename PredictionType, typename TargetType>
 typename InputDataType::elem_type
 PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  InputType loss(arma::size(input));
+  PredictionType loss(arma::size(prediction));
 
   if (logInput)
-    loss = arma::exp(input) - target % input;
+    loss = arma::exp(prediction) - target % prediction;
   else
   {
-    CheckProbs(input);
-    loss = input - target % arma::log(input + eps);
+    CheckProbs(prediction);
+    loss = prediction - target % arma::log(prediction + eps);
   }
 
   if (full)
   {
     const auto mask = target > 1.0;
-    const InputType approx = target % arma::log(target) - target
+    const PredictionType approx = target % arma::log(target) - target
         + 0.5 * arma::log(2 * M_PI * target);
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
@@ -62,33 +62,33 @@ PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output.set_size(size(input));
+  loss.set_size(size(prediction));
 
   if (logInput)
-    output = (arma::exp(input) - target);
+    loss = (arma::exp(prediction) - target);
   else
-    output = (1 - target / (input + eps));
+    loss = (1 - target / (prediction + eps));
 
   if (mean)
-    output = output / output.n_elem;
+    loss = loss / loss.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(logInput);
-  ar & BOOST_SERIALIZATION_NVP(full);
-  ar & BOOST_SERIALIZATION_NVP(eps);
-  ar & BOOST_SERIALIZATION_NVP(mean);
+  ar(CEREAL_NVP(logInput));
+  ar(CEREAL_NVP(full));
+  ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(mean));
 }
 
 } // namespace ann

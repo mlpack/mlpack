@@ -85,14 +85,14 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(vocabSize);
-  ar & BOOST_SERIALIZATION_NVP(embeddingSize);
+  ar(CEREAL_NVP(vocabSize));
+  ar(CEREAL_NVP(embeddingSize));
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(embeddingSize, vocabSize);
 }
 

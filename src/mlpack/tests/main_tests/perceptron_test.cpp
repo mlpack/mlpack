@@ -2,7 +2,7 @@
  * @file tests/main_tests/perceptron_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of perceptron_main.cpp.
+ * Test RUN_BINDING() of perceptron_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,46 +12,28 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "Perceptron";
-
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/perceptron/perceptron_main.cpp>
-#include "test_helper.hpp"
+#include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "main_test_fixture.hpp"
+
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct PerceptronTestFixture
-{
- public:
-  PerceptronTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~PerceptronTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-BOOST_FIXTURE_TEST_SUITE(PerceptronMainTest,
-                         PerceptronTestFixture);
+BINDING_TEST_FIXTURE(PerceptronTestFixture);
 
 /**
  * Ensure that we get desired dimensions when both training
  * data and labels are passed.
  */
-BOOST_AUTO_TEST_CASE(PerceptronOutputDimensionTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputDimensionTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -63,7 +45,7 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -77,14 +59,13 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputDimensionTest)
   // Input test data.
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 }
 
 /**
@@ -92,12 +73,13 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputDimensionTest)
  * when labels are not passed specifically and results
  * are same from both label and labeless models.
  */
-BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronLabelsLessDimensionTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   // Train perceptron without providing labels.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -106,7 +88,7 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -119,26 +101,23 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-
-  // Reset data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 
   inputData.shed_row(inputData.n_rows - 1);
 
   // Store outputs.
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
-  bindings::tests::CleanMemory();
+  // Reset data passed.
+  CleanMemory();
+  ResetSettings();
 
   // Now train perceptron with labels provided.
 
@@ -148,25 +127,25 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
 }
 
 /**
  * This test can be removed in mlpack 4.0.0. This tests that the output and
  * predictions outputs are the same.
  */
-BOOST_AUTO_TEST_CASE(PerceptronOutputPredictionsCheck)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronOutputPredictionsCheck",
+                 "[PerceptronMainTest][BindingTests]")
 {
   arma::mat trainX1;
   arma::Row<size_t> labelsX1;
@@ -174,13 +153,13 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputPredictionsCheck)
   // Loading a train data set with 3 classes.
   if (!data::Load("vc2.csv", trainX1))
   {
-    BOOST_FAIL("Could not load the train data (vc2.csv)");
+    FAIL("Could not load the train data (vc2.csv)");
   }
 
   // Loading the corresponding labels to the dataset.
   if (!data::Load("vc2_labels.txt", labelsX1))
   {
-    BOOST_FAIL("Could not load the train data (vc2_labels.csv)");
+    FAIL("Could not load the train data (vc2_labels.csv)");
   }
 
   SetInputParam("training", std::move(trainX1)); // Training data.
@@ -188,25 +167,26 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputPredictionsCheck)
   SetInputParam("labels", std::move(labelsX1));
 
   // Training model using first training dataset.
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that the outputs are the same.
-  CheckMatrices(IO::GetParam<arma::Row<size_t>>("output"),
-                IO::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(params.Get<arma::Row<size_t>>("output"),
+                params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronModelReuseTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -219,49 +199,50 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  PerceptronModel* m = params.Get<PerceptronModel*>("output_model");
+  params.Get<PerceptronModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model",
-                IO::GetParam<PerceptronModel*>("output_model"));
+  SetInputParam("input_model", m);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
 
   // Check that initial output and final output matrix
   // using saved model are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
 }
 
 /**
  * Ensure that max_iterations is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(PerceptronMaxItrTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronMaxItrTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("max_iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -269,7 +250,8 @@ BOOST_AUTO_TEST_CASE(PerceptronMaxItrTest)
   * Ensuring that re-training of an existing model
   * with different of classes is checked.
  **/
-BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronReTrainWithWrongClasses",
+                 "[PerceptronMainTest][BindingTests]")
 {
   arma::mat trainX1;
   arma::Row<size_t> labelsX1;
@@ -277,13 +259,13 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   // Loading a train data set with 3 classes.
   if (!data::Load("vc2.csv", trainX1))
   {
-    BOOST_FAIL("Could not load the train data (vc2.csv)");
+    FAIL("Could not load the train data (vc2.csv)");
   }
 
   // Loading the corresponding labels to the dataset.
   if (!data::Load("vc2_labels.txt", labelsX1))
   {
-    BOOST_FAIL("Could not load the train data (vc2_labels.csv)");
+    FAIL("Could not load the train data (vc2_labels.csv)");
   }
 
   SetInputParam("training", std::move(trainX1)); // Training data.
@@ -291,15 +273,15 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   SetInputParam("labels", std::move(labelsX1));
 
   // Training model using first training dataset.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained after training.
-  PerceptronModel* model =
-      IO::GetParam<PerceptronModel*>("output_model");
+  PerceptronModel* model = params.Get<PerceptronModel*>("output_model");
+  params.Get<PerceptronModel*>("output_model") = NULL;
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Creating training data with five classes.
   constexpr int D = 3;
@@ -308,7 +290,7 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   arma::Row<size_t> labelsX2;
 
   // 10 responses.
-  labelsX2 << 0 << 1 << 4 << 1 << 2 << 1 << 0 << 3 << 3 << 0 << endr;
+  labelsX2 = { 0, 1, 4, 1, 2, 1, 0, 3, 3, 0 };
 
   // Last column of trainX2 contains the class labels.
   SetInputParam("training", std::move(trainX2));
@@ -317,14 +299,15 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   // Re-training an existing model of 3 classes
   // with training data of 5 classes. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Checking for dimensionality of the test data set.
  **/
-BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData",
+                 "[PerceptronMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 4;
@@ -334,7 +317,7 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr;
+  trainY = { 0 , 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   // Test data with wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D-3, M);
@@ -345,14 +328,15 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData)
 
   // Test data set with wrong dimensionality. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Ensuring that the response size is checked.
  **/
-BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongResponseSizeTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   constexpr int D = 2;
   constexpr int N = 10;
@@ -361,21 +345,22 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest)
   arma::Row<size_t> trainY; // Response vector with wrong size.
 
   // 8 responses.
-  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << endr;
+  trainY = { 0, 0, 1, 0, 1, 1, 1, 0 };
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
 
   // Labels for training data have wrong size. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that absence of responses is checked.
  */
-BOOST_AUTO_TEST_CASE(PerceptronNoResponsesTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoResponsesTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 1;
@@ -385,30 +370,32 @@ BOOST_AUTO_TEST_CASE(PerceptronNoResponsesTest)
 
   // No labels for training data. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that absence of training data is checked.
  */
-BOOST_AUTO_TEST_CASE(PerceptronNoTrainingDataTest)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoTrainingDataTest",
+                 "[PerceptronMainTest][BindingTests]")
 {
   arma::Row<size_t> trainY;
-  trainY << 1 << 1 << 0 << 1 << 0 << 0 <<endr;
+  trainY = { 1, 1, 0, 1, 0, 0 };
 
   SetInputParam("labels", std::move(trainY));
 
   // No training data. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that test data dimensionality is checked when model is loaded.
  */
-BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
+TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData2",
+                 "[PerceptronMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -418,21 +405,21 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr;
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
 
   // Training the model.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output model obtained after the training.
-  PerceptronModel* model =
-      IO::GetParam<PerceptronModel*>("output_model");
+  PerceptronModel* model = params.Get<PerceptronModel*>("output_model");
+  params.Get<PerceptronModel*>("output_model") = NULL;
 
   // Reset the data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Test data with Wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);
@@ -441,8 +428,6 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
 
   // Wrong dimensionality of test data. It should give runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

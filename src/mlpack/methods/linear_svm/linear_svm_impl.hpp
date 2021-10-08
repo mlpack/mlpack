@@ -105,9 +105,7 @@ double LinearSVM<MatType>::Train(
     parameters = svm.InitialPoint();
 
   // Train the model.
-  Timer::Start("linear_svm_optimization");
   const double out = optimizer.Optimize(svm, parameters, callbacks...);
-  Timer::Stop("linear_svm_optimization");
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;
@@ -134,9 +132,7 @@ double LinearSVM<MatType>::Train(
     parameters = svm.InitialPoint();
 
   // Train the model.
-  Timer::Start("linear_svm_optimization");
   const double out = optimizer.Optimize(svm, parameters);
-  Timer::Stop("linear_svm_optimization");
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;
@@ -173,13 +169,7 @@ void LinearSVM<MatType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (data.n_rows != FeatureSize())
-  {
-    std::ostringstream oss;
-    oss << "LinearSVM::Classify(): dataset has " << data.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameDimensionality(data, FeatureSize(), "LinearSVM::Classify()");
 
   if (fitIntercept)
   {

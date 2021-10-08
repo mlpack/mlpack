@@ -178,7 +178,10 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
   else
     geometricMean = 0.0;
 
-  ratio = ElemType(translationLength) / referenceLength;
+  ratio = ElemType(translationLength);
+  if (referenceLength > 0)
+    ratio /= referenceLength;
+
   brevityPenalty = (ratio > 1.0) ? 1.0 : std::exp(1.0 - 1.0 / ratio);
   bleuScore = geometricMean * brevityPenalty;
 
@@ -187,11 +190,10 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
 
 template <typename ElemType, typename PrecisionType>
 template <typename Archive>
-void BLEU<ElemType, PrecisionType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void BLEU<ElemType, PrecisionType>::serialize(Archive& ar,
+    const uint32_t version)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxOrder);
+  ar(CEREAL_NVP(maxOrder));
 }
 
 } // namespace metric

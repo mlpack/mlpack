@@ -44,8 +44,8 @@ function(append_model SERIALIZATION_FILE PROGRAM_MAIN_FILE)
           else ()
             string(APPEND GOMODEL_SAFE_TYPE ${MODEL_CHAR})
           endif()
-        endif()
-     endforeach()
+        endforeach()
+      endif()
 
       # See if the model type already exists.
       file(READ "${SERIALIZATION_FILE}" SERIALIZATION_FILE_CONTENTS)
@@ -64,20 +64,22 @@ function(append_model SERIALIZATION_FILE PROGRAM_MAIN_FILE)
             "  mem unsafe.Pointer \n"
             "}\n\n"
             "func (m *${GOMODEL_SAFE_TYPE}) alloc"
-            "${MODEL_SAFE_TYPE}(identifier string) {\n"
-            "  m.mem = C.mlpackGet${MODEL_SAFE_TYPE}Ptr(C.CString(identifier))\n"
+            "${MODEL_SAFE_TYPE}(params *params, identifier string) {\n"
+            "  m.mem = C.mlpackGet${MODEL_SAFE_TYPE}Ptr(params.mem,\n"
+            "      C.CString(identifier))\n"
             "  runtime.KeepAlive(m)\n"
             "}\n\n"
             "func (m *${GOMODEL_SAFE_TYPE}) get"
-            "${MODEL_SAFE_TYPE}(identifier string) {\n"
-            "  m.alloc${MODEL_SAFE_TYPE}(identifier)\n"
+            "${MODEL_SAFE_TYPE}(params *params, identifier string) {\n"
+            "  m.alloc${MODEL_SAFE_TYPE}(params, identifier)\n"
             "}\n\n"
-            "func set${MODEL_SAFE_TYPE}(identifier string, ptr *"
-            "${GOMODEL_SAFE_TYPE}) {\n"
-            " C.mlpackSet${MODEL_SAFE_TYPE}"
-            "Ptr(C.CString(identifier), (unsafe.Pointer)(ptr.mem))\n"
+            "func set${MODEL_SAFE_TYPE}(params* params,\n"
+            "                           identifier string,\n"
+            "                           ptr *${GOMODEL_SAFE_TYPE}) {\n"
+            "  C.mlpackSet${MODEL_SAFE_TYPE}Ptr(params.mem,\n"
+            "      C.CString(identifier), ptr.mem)\n"
             "}\n\n")
-      endif ()
+      endif()
     endforeach ()
   endif()
 endfunction()

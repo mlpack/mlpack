@@ -102,7 +102,7 @@ class BLEU
 
   //! Serialize the metric.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t version);
 
   //! Get the value of maximum length of tokens in n-grams.
   size_t MaxOrder() const { return maxOrder; }
