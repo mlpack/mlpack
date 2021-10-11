@@ -35,6 +35,7 @@ add_executable(mlpack_test
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
+  extra_trees_test.cpp
   facilities_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
