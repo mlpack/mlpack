@@ -1,7 +1,7 @@
 /**
  * @file size_checks_test.cpp
  * @author Bisakh Mondal
- * 
+ *
  * Test file for Utility size_checks.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -21,8 +21,8 @@ using namespace mlpack::util;
 TEST_CASE("CheckSizeTest", "[SizeCheckTest]")
 {
   arma::mat data = arma::randu<arma::mat>(20, 30);
-  arma::colvec firstLabels = arma::randu<arma::colvec>(20);
-  arma::colvec secondLabels = arma::randu<arma::colvec>(30);
+  arma::rowvec firstLabels = arma::randu<arma::rowvec>(20);
+  arma::rowvec secondLabels = arma::randu<arma::rowvec>(30);
   arma::mat thirdLabels = arma::randu<arma::mat>(40, 30);
 
   REQUIRE_THROWS_AS(CheckSameSizes(data, firstLabels, "TestChecking"),
