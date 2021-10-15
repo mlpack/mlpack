@@ -6,20 +6,17 @@
 #include <ensmallen.hpp>
 
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::regression;
 
-BOOST_AUTO_TEST_SUITE(DBNetworkTest);
-
 /*
  * Tests the Single Layer DBN implementation on the Digits dataset.
  */
-BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
+TEST_CASE("DBNetworkTest", "[SingleLayerDBNClassificationTest]")
 {
   // Normalised dataset.
   int hiddenLayerSize = 256;
@@ -67,7 +64,7 @@ BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
   double objVal = model.Train(msgd);
 
   // Test that objective value returned by DBN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   model.Forward(trainData, output);
   XRbm = output;
@@ -97,7 +94,6 @@ BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
 
   // We allow a 6% tolerance because the RBM may not reconstruct samples as
   // well.  (Typically it does, but we have no guarantee.)
-  BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuracy - 6.0);
+  REQUIRE(rbmClassificationAccuracy >= classificationAccuracy - 6.0);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
