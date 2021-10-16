@@ -74,6 +74,8 @@
 
   * Fix thread safety issues in mlpack bindings to other languages (#2995).
 
+  * Fix double-free of model pointers in R bindings (#3034).
+
   * Fix Julia, Python, R, and Go handling of categorical data for
     `decision_tree()` and `hoeffding_tree()` (#2971).
 

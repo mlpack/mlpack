@@ -307,7 +307,4 @@ class IO
 
 } // namespace mlpack
 
-// Include the actual definitions of templated methods
-#include "io_impl.hpp"
-
 #endif
