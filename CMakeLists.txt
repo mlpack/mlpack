@@ -282,7 +282,7 @@ if (CMAKE_CROSSCOMPILING)
   search_openblas(0.3.13)
 endif()
 
-if (DOWNLOAD_DEPENDENCIES)
+if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
   find_package(Armadillo "${ARMADILLO_VERSION}")
@@ -304,7 +304,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
-if (DOWNLOAD_DEPENDENCIES)
+if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(StbImage)
 else()
   find_package(StbImage)
@@ -322,7 +322,7 @@ if (STB_IMAGE_FOUND)
 endif()
 
 # Find ensmallen.
-if (DOWNLOAD_DEPENDENCIES)
+if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
 else()
   find_package(Ensmallen "${ENSMALLEN_VERSION}")
@@ -335,7 +335,7 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
 # Find cereal.
-if (DOWNLOAD_DEPENDENCIES)
+if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(cereal "${CEREAL_VERSION}" REQUIRED)
 else()
   find_package(cereal "${CEREAL_VERSION}")
@@ -376,7 +376,7 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-if (DOWNLOAD_DEPENDENCIES)
+if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(Boost "${BOOST_VERSION}" REQUIRED)
 else()
   find_package(Boost "${BOOST_VERSION}")
