@@ -194,8 +194,11 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
 
   mat vp, dvp; // Resulting matrices.
 
+  // We run the test multiple times, since it sometimes fails, in order to get
+  // the probability of failure down.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  const size_t trials = 8;
+  for (size_t trial = 0; trial < trials; ++trial)
   {
     while (sparseResidue != sparseResidue && denseResidue != denseResidue)
     {

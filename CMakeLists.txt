@@ -44,6 +44,11 @@ else()
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
+# Enable auto-download if we are cross compiling.
+if (CMAKE_CROSSCOMPILING)
+  set(DOWNLOAD_DEPENDENCIES ON)
+endif()
+
 # Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES.
 if (NOT BUILD_SHARED_LIBS)
   if(WIN32)
@@ -156,7 +161,7 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm200")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm800")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
@@ -282,7 +287,7 @@ if (CMAKE_CROSSCOMPILING)
   search_openblas(0.3.13)
 endif()
 
-if (NOT DOWNLOAD_DEPENDENCIES AND NOT CMAKE_CROSSCOMPILING)
+if (NOT DOWNLOAD_DEPENDENCIES)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
   find_package(Armadillo "${ARMADILLO_VERSION}")
