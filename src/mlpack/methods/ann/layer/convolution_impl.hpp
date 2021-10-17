@@ -166,8 +166,8 @@ Convolution<
     inputHeight(layer.inputHeight),
     outputWidth(layer.outputWidth),
     outputHeight(layer.outputHeight),
-    padding(layer.padding),
-    weights(layer.weights)
+    weights(layer.weights),
+    padding(layer.padding)
 {
   // Nothing to do here.
 }
@@ -201,8 +201,8 @@ Convolution<
     inputHeight(layer.inputHeight),
     outputWidth(layer.outputWidth),
     outputHeight(layer.outputHeight),
-    padding(std::move(layer.padding)),
-    weights(std::move(layer.weights))
+    weights(std::move(layer.weights)),
+    padding(std::move(layer.padding))
 {
   // Nothing to do here.
 }
