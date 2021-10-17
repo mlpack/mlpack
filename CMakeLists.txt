@@ -282,7 +282,7 @@ if (CMAKE_CROSSCOMPILING)
   search_openblas(0.3.13)
 endif()
 
-if (NOT DOWNLOAD_DEPENDENCIES)
+if (NOT DOWNLOAD_DEPENDENCIES AND NOT CMAKE_CROSSCOMPILING)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
   find_package(Armadillo "${ARMADILLO_VERSION}")
