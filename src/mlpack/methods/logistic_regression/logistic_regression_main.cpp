@@ -102,8 +102,10 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("output_probabilities") +
     "\n\n"
     "This implementation of logistic regression does not support the general "
-    "multi-class case but instead only the two-class case.  For more classes, "
-    "see the softmax_regression program.");
+    "multi-class case but instead only the two-class case.  Any labels must be "
+    "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
+    std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
+    "softmax regression implementation.");
 
 // Example.
 BINDING_EXAMPLE(
