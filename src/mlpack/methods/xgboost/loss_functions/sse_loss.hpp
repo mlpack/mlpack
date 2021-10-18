@@ -94,10 +94,10 @@ class SSELoss
         (arma::accu(hessians) + lambda);
   }
  private:
-  //! The L2 regularization parameter.
-  const double lambda;
   //! The L1 regularization parameter.
   const double alpha;
+  //! The L2 regularization parameter.
+  const double lambda;
   //! First order gradients.
   arma::vec gradients;
   //! Second order gradients (hessians).

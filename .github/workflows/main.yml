@@ -68,7 +68,7 @@ jobs:
 
         - name: Build
           run: |
-            cd build && make -j2 && make -j2 mlpack_test
+            cd build && make && make mlpack_test
 
         - name: Run tests via ctest
           run: |
