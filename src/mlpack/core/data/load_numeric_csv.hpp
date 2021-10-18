@@ -136,6 +136,14 @@ bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
         x.at(row, col) = tmp_val;
         ++col;
       }
+      else
+      {
+        // Printing failed token and it's location.
+        Log::Warn << "Failed to convert token " << token << ", at row " << row << ", column "
+                  << col << " of matrix!";
+
+        return false;
+      }
     }
     ++row;
   }
