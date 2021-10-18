@@ -82,7 +82,7 @@ steps:
   displayName: 'Build'
 
 # Build mlpack
-- script: cd build && make && make mlpack_test
+- script: cd build && make && make mlpack_test -j2
   condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF')
   displayName: 'Build'
 
