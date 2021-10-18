@@ -45,7 +45,7 @@ steps:
     # Install ensmallen.
     wget --no-check-certificate https://ensmallen.org/files/ensmallen-latest.tar.gz
         tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
-        cd ensmallen-* && \
+        cd ./ensmallen-* && \
         sudo cp -vr include/* /usr/include/ && \
         cd ..
 
