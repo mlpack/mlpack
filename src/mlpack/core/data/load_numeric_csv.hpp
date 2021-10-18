@@ -90,6 +90,9 @@ bool LoadCSV::ConvertToken(eT& val,
   else
     return false;
 
+  // If any of strtod() or strtoll() fails, str will
+  // be set to nullptr and this condition will be
+  // executed.
   if (str == endptr)
     return false;
 
