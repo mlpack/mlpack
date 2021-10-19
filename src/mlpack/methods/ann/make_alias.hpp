@@ -29,6 +29,24 @@ void MakeAlias(MatType& m,
   new (&m) MatType(newMem, numRows, numCols, false, true);
 }
 
+/**
+ * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
+ * `numCols` x `numSlices`.
+ */
+template<typename CubeType>
+void MakeAlias(CubeType& c,
+               typename CubeType::elem_type* newMem,
+               const size_t numRows,
+               const size_t numCols,
+               const size_t numSlices)
+{
+  // We use placement new to reinitialize the object, since the copy and move
+  // assignment operators in Armadillo will end up copying memory instead of
+  // making an alias.
+  c.~CubeType();
+  new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
+}
+
 } // namespace ann
 } // namespace mlpack
 

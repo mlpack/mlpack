@@ -122,10 +122,9 @@ void ConvolutionType<
     OutputType
 >::SetWeights(typename OutputType::elem_type* weightPtr)
 {
-  weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
-      kernelWidth, kernelHeight, maps * inMaps, false, false);
-  bias = OutputType(weightPtr + weight.n_elem, maps, 1, false, false);
-  weights = OutputType(weightPtr, weight.n_elem + bias.n_elem, 1, false, false);
+  MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, maps * inMaps);
+  MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
+  MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
 }
 
 template<
@@ -156,14 +155,13 @@ void ConvolutionType<
     padding.Forward(input, inputPadded);
   }
 
-  arma::Cube<typename InputType::elem_type> inputTemp(
+  arma::Cube<typename InputType::elem_type> inputTemp;
+  MakeAlias(inputTemp,
       const_cast<InputType&>(usingPadding ? inputPadded : input).memptr(),
-      paddedRows, paddedCols, higherInDimensions * batchSize, false, false);
+      paddedRows, paddedCols, inMaps * higherInDimensions * batchSize);
 
-  outputTemp = arma::Cube<typename OutputType::elem_type>(output.memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      maps * higherInDimensions * batchSize,
-      false, false);
+  MakeAlias(outputTemp, output.memptr(), this->outputDimensions[0],
+      this->outputDimensions[1], maps * higherInDimensions * batchSize);
 
   outputTemp.zeros();
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -175,7 +173,8 @@ void ConvolutionType<
       outMapIdx = 0;
     }
 
-    for (size_t inMap = 0; inMap < inMaps; inMap++, outMapIdx++)
+    for (size_t inMap = 0; inMap < (inMaps * higherInDimensions); inMap++,
+        outMapIdx++)
     {
       OutputType convOutput;
 
@@ -206,16 +205,14 @@ void ConvolutionType<
 >::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  arma::Cube<typename OutputType::elem_type> mappedError(
-      ((OutputType&) gy).memptr(), this->outputDimensions[0],
-      this->outputDimensions[1], higherInDimensions * maps * batchSize, false,
-      false);
+  arma::Cube<typename OutputType::elem_type> mappedError;
+  MakeAlias(mappedError, ((OutputType&) gy).memptr(), this->outputDimensions[0],
+      this->outputDimensions[1], higherInDimensions * maps * batchSize);
 
   g.set_size(this->inputDimensions[0] * this->inputDimensions[1] * inMaps,
       batchSize);
-  gTemp = arma::Cube<typename OutputType::elem_type>(g.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1], inMaps * batchSize,
-      false, false);
+  MakeAlias(gTemp, g.memptr(), this->inputDimensions[0],
+      this->inputDimensions[1], inMaps * batchSize);
   gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -266,9 +263,10 @@ void ConvolutionType<
     const OutputType& error,
     OutputType& gradient)
 {
-  arma::Cube<typename OutputType::elem_type> mappedError(
-      ((OutputType&) error).memptr(), this->outputDimensions[0],
-      this->outputDimensions[1], inMaps * maps * batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> mappedError;
+  MakeAlias(mappedError, ((OutputType&) error).memptr(),
+      this->outputDimensions[0], this->outputDimensions[1], inMaps * maps *
+      batchSize);
 
   // We are depending here on `inputPadded` being properly set from a call to
   // Forward().
@@ -281,8 +279,8 @@ void ConvolutionType<
       const_cast<InputType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * batchSize, false, false);
 
-  gradientTemp = arma::Cube<typename OutputType::elem_type>(gradient.memptr(),
-      weight.n_rows, weight.n_cols, weight.n_slices, false, false);
+  MakeAlias(gradientTemp, gradient.memptr(), weight.n_rows, weight.n_cols,
+      weight.n_slices);
   gradientTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <

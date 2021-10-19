@@ -179,7 +179,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
     // Train for only 8 epochs.
     ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
 
-    double objVal = model.Train(X, Y, opt);
+    double objVal = model.Train(X, Y, opt, ens::PrintLoss());
 
     // Test that objective value returned by FFN::Train() is finite.
     REQUIRE(std::isfinite(objVal) == true);
