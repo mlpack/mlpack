@@ -13,6 +13,12 @@ steps:
 - script: |
     free -h
     df -h
+    dd if=/dev/zero of=/usr/swapfile.img bs=1024 count=10M
+    mkswap /usr/swapfile.img
+    swapon /usr/swapfile.img
+    free -h
+    df -h
+
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
     sudo add-apt-repository ppa:mhier/libboost-latest
