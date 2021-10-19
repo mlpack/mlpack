@@ -186,15 +186,41 @@ void SetParamMatWithInfo(SEXP params,
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   data::DatasetInfo d(paramValue.n_cols);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
+
+  arma::mat m = paramValue.t();
+
+  // Do we need to find how many categories we have?
+  if (hasCategoricals)
+  {
+    arma::vec maxs = arma::max(paramValue, 1) + 1;
+
+    for (size_t i = 0; i < d.Dimensionality(); ++i)
+    {
+      if (dimensions[i])
+      {
+        // Map the right number of objects.
+        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        {
+          std::ostringstream oss;
+          oss << j;
+          d.MapString<double>(oss.str(), i);
+        }
+      }
+    }
+  }
+
   std::get<0>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = paramValue.t();
+      paramName)) = std::move(m);
   p.SetPassed(paramName);
 }
 
