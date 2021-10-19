@@ -13,9 +13,9 @@ steps:
 - script: |
     free -h
     df -h
-    dd if=/dev/zero of=/usr/swapfile.img bs=1024 count=10M
-    mkswap /usr/swapfile.img
-    swapon /usr/swapfile.img
+    sudo dd if=/dev/zero of=/usr/swapfile.img bs=1024 count=10M
+    sudo mkswap /usr/swapfile.img
+    sudo swapon /usr/swapfile.img
     free -h
     df -h
 
