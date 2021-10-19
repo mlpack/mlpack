@@ -11,9 +11,10 @@ steps:
 
 # Install build dependencies.
 - script: |
+    # Workaround to avoid a build failure, because we run out of memory.
     free -h
     df -h
-    sudo dd if=/dev/zero of=/usr/swapfile.img bs=1024 count=10M
+    sudo dd if=/dev/zero of=/usr/swapfile.img bs=1024 count=12M
     sudo mkswap /usr/swapfile.img
     sudo swapon /usr/swapfile.img
     free -h
@@ -85,13 +86,7 @@ steps:
   displayName: 'CMake'
 
 # Build mlpack
-- script: cd build && make && make mlpack_test
-  condition: eq(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF')
-  displayName: 'Build'
-
-# Build mlpack
-- script: cd build && make && make mlpack_test -j2
-  condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF')
+- script: cd build && make -j2 && make mlpack_test -j2
   displayName: 'Build'
 
 # Run tests via ctest.
