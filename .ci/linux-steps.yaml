@@ -11,6 +11,8 @@ steps:
 
 # Install build dependencies.
 - script: |
+    free -h
+    df -h
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
     sudo add-apt-repository ppa:mhier/libboost-latest
