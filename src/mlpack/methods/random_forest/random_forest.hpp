@@ -40,14 +40,15 @@ template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         bool UseBootstrap = true>
+         bool UseBootstrap = true,
+         typename DecisionTreeType = DecisionTree<FitnessFunction,
+                                                  NumericSplitType,
+                                                  CategoricalSplitType,
+                                                  DimensionSelectionType>
+        >
 class RandomForest
 {
  public:
-  //! Allow access to the underlying decision tree type.
-  typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType> DecisionTreeType;
-
   /**
    * Construct the random forest without any training or specifying the number
    * of trees.  Predict() will throw an exception until Train() is called.
