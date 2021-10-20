@@ -1231,8 +1231,9 @@ TEST_CASE("CFPredictSimilarityInterpolation", "[CFTest]")
  */
 TEST_CASE("CFPredictRegressionInterpolation", "[CFTest]")
 {
+  // Larger tolerance is sometimes needed.
   CFPredict<RegSVDPolicy,
             OverallMeanNormalization,
             EuclideanSearch,
-            RegressionInterpolation>(2.0);
+            RegressionInterpolation>(2.2);
 }
