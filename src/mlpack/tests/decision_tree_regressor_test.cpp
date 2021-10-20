@@ -959,7 +959,7 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 
   // Figure out rmse.
   double rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 6.0);
+  REQUIRE(rmse < 6.1);
 
   // Reset the predictions.
   predictions.zeros();
@@ -969,7 +969,7 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 
   // Figure out rmse.
   rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 6.0);
+  REQUIRE(rmse < 6.1);
 }
 
 /**
