@@ -24,7 +24,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 RandomForest<
     FitnessFunction,
@@ -32,7 +33,8 @@ RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::RandomForest() :
     avgGain(0.0)
 {
@@ -45,7 +47,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 RandomForest<
@@ -54,9 +57,10 @@ RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::RandomForest(const MatType& dataset,
-                const arma::Row<size_t>& labels,
+                const LabelsType& labels,
                 const size_t numClasses,
                 const size_t numTrees,
                 const size_t minimumLeafSize,
@@ -79,7 +83,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 RandomForest<
@@ -88,10 +93,11 @@ RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
-                const arma::Row<size_t>& labels,
+                const LabelsType& labels,
                 const size_t numClasses,
                 const size_t numTrees,
                 const size_t minimumLeafSize,
@@ -113,7 +119,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 RandomForest<
@@ -122,9 +129,10 @@ RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::RandomForest(const MatType& dataset,
-                const arma::Row<size_t>& labels,
+                const LabelsType& labels,
                 const size_t numClasses,
                 const arma::rowvec& weights,
                 const size_t numTrees,
@@ -147,7 +155,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 RandomForest<
@@ -156,10 +165,11 @@ RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
-                const arma::Row<size_t>& labels,
+                const LabelsType& labels,
                 const size_t numClasses,
                 const arma::rowvec& weights,
                 const size_t numTrees,
@@ -181,7 +191,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 double RandomForest<
@@ -190,9 +201,10 @@ double RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Train(const MatType& dataset,
-         const arma::Row<size_t>& labels,
+         const LabelsType& labels,
          const size_t numClasses,
          const size_t numTrees,
          const size_t minimumLeafSize,
@@ -215,7 +227,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 double RandomForest<
@@ -224,10 +237,11 @@ double RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<size_t>& labels,
+         const LabelsType& labels,
          const size_t numClasses,
          const size_t numTrees,
          const size_t minimumLeafSize,
@@ -249,7 +263,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 double RandomForest<
@@ -258,9 +273,10 @@ double RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Train(const MatType& dataset,
-         const arma::Row<size_t>& labels,
+         const LabelsType& labels,
          const size_t numClasses,
          const arma::rowvec& weights,
          const size_t numTrees,
@@ -283,7 +299,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 double RandomForest<
@@ -292,10 +309,11 @@ double RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<size_t>& labels,
+         const LabelsType& labels,
          const size_t numClasses,
          const arma::rowvec& weights,
          const size_t numTrees,
@@ -317,7 +335,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename VecType>
 size_t RandomForest<
@@ -326,7 +345,8 @@ size_t RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Classify(const VecType& point) const
 {
   // Pass off to another Classify() overload.
@@ -343,7 +363,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename VecType>
 void RandomForest<
@@ -352,7 +373,8 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Classify(const VecType& point,
             size_t& prediction,
             arma::vec& probabilities) const
@@ -392,7 +414,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 void RandomForest<
@@ -401,9 +424,10 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Classify(const MatType& data,
-            arma::Row<size_t>& predictions) const
+            LabelsType& predictions) const
 {
   // Check edge case.
   if (trees.size() == 0)
@@ -429,7 +453,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename MatType>
 void RandomForest<
@@ -438,9 +463,10 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Classify(const MatType& data,
-            arma::Row<size_t>& predictions,
+            LabelsType& predictions,
             arma::mat& probabilities) const
 {
   // Check edge case.
@@ -469,7 +495,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<typename Archive>
 void RandomForest<
@@ -478,7 +505,8 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   size_t numTrees;
@@ -503,7 +531,8 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType
+    typename DecisionTreeType,
+    typename LabelsType
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
@@ -512,10 +541,11 @@ double RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType
+    DecisionTreeType,
+    LabelsType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<size_t>& labels,
+         const LabelsType& labels,
          const size_t numClasses,
          const arma::rowvec& weights,
          const size_t numTrees,
@@ -539,7 +569,7 @@ double RandomForest<
   for (omp_size_t i = 0; i < numTrees; ++i)
   {
     MatType bootstrapDataset;
-    arma::Row<size_t> bootstrapLabels;
+    LabelsType bootstrapLabels;
     arma::rowvec bootstrapWeights;
     if (UseBootstrap)
     {

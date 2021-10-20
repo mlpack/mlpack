@@ -44,7 +44,8 @@ template<typename FitnessFunction = GiniGain,
          typename DecisionTreeType = DecisionTree<FitnessFunction,
                                                   NumericSplitType,
                                                   CategoricalSplitType,
-                                                  DimensionSelectionType>
+                                                  DimensionSelectionType>,
+         typename LabelsType = arma::Row<size_t>
         >
 class RandomForest
 {
@@ -73,7 +74,7 @@ class RandomForest
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -103,7 +104,7 @@ class RandomForest
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -129,7 +130,7 @@ class RandomForest
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
@@ -161,7 +162,7 @@ class RandomForest
   template<typename MatType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
@@ -192,7 +193,7 @@ class RandomForest
    */
   template<typename MatType>
   double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -227,7 +228,7 @@ class RandomForest
   template<typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -259,7 +260,7 @@ class RandomForest
    */
   template<typename MatType>
   double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
@@ -295,7 +296,7 @@ class RandomForest
   template<typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
@@ -338,7 +339,7 @@ class RandomForest
    */
   template<typename MatType>
   void Classify(const MatType& data,
-                arma::Row<size_t>& predictions) const;
+                LabelsType& predictions) const;
 
   /**
    * Predict the classes of each point in the given dataset, also returning the
@@ -351,7 +352,7 @@ class RandomForest
    */
   template<typename MatType>
   void Classify(const MatType& data,
-                arma::Row<size_t>& predictions,
+                LabelsType& predictions,
                 arma::mat& probabilities) const;
 
   //! Access a tree in the forest.
@@ -394,7 +395,7 @@ class RandomForest
   template<bool UseWeights, bool UseDatasetInfo, typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<size_t>& labels,
+               const LabelsType& labels,
                const size_t numClasses,
                const arma::rowvec& weights,
                const size_t numTrees,
