@@ -106,6 +106,17 @@ class SAC
   SAC(const SAC& other);
 
   /**
+   * Copy assignment operator.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, you can use the operator= in order to assign paramters from the
+   * first class to the second one.
+   *
+   * @param other SAC object to copy.
+   */
+  SAC& operator=(const SAC& other);
+
+  /**
     * Clean memory.
     */
   ~SAC();
