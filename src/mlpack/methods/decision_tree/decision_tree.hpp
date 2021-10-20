@@ -487,7 +487,10 @@ class DecisionTree :
 
   union
   {
+      //! Stores the type of dimension on which the split is done for internal
+      //! nodes of the tree.
       size_t dimensionType;
+      //! Stores the majority class for leaf nodes of the tree.
       size_t majorityClass;
   };
   /**
