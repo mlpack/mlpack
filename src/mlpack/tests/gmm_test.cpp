@@ -750,17 +750,17 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-6));
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-4));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       REQUIRE(gmm.Component(i).Mean()[j] ==
-          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
+          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-4));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
       {
         REQUIRE(gmm.Component(i).Covariance()(j, k) ==
-            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-4));
       }
     }
   }
