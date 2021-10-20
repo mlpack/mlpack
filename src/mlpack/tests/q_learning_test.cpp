@@ -545,6 +545,95 @@ TEST_CASE("PendulumWithSAC", "[QLearningTest]")
   REQUIRE(converged);
 }
 
+//! Test SAC on Pendulum task.
+TEST_CASE("PendulumWithCopySAC", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.001;
+    config.TargetNetworkSyncInterval() = 1;
+    config.UpdateInterval() = 3;
+
+    FFN<EmptyLoss<>, GaussianInitialization>
+        policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear<>(3, 128));
+    policyNetwork.Add(new ReLULayer<>());
+    policyNetwork.Add(new Linear<>(128, 1));
+    policyNetwork.Add(new TanHLayer<>());
+
+    FFN<EmptyLoss<>, GaussianInitialization>
+        qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear<>(3+1, 128));
+    qNetwork.Add(new ReLULayer<>());
+    qNetwork.Add(new Linear<>(128, 1));
+
+    // Set up Soft actor-critic agent.
+    SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent(config, qNetwork, policyNetwork, replayMethod);
+
+    SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent2(agent);
+ 
+    converged = testAgent<decltype(agent2)>(agent2, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test SAC on Pendulum task.
+TEST_CASE("PendulumWithAssignOperatorSAC", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.001;
+    config.TargetNetworkSyncInterval() = 1;
+    config.UpdateInterval() = 3;
+
+    FFN<EmptyLoss<>, GaussianInitialization>
+        policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear<>(3, 128));
+    policyNetwork.Add(new ReLULayer<>());
+    policyNetwork.Add(new Linear<>(128, 1));
+    policyNetwork.Add(new TanHLayer<>());
+
+    FFN<EmptyLoss<>, GaussianInitialization>
+        qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear<>(3+1, 128));
+    qNetwork.Add(new ReLULayer<>());
+    qNetwork.Add(new Linear<>(128, 1));
+
+    // Set up Soft actor-critic agent.
+    SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent(config, qNetwork, policyNetwork, replayMethod);
+
+    // Copy the SAC agent using operator=.
+    SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent2 = agent;
+ 
+    converged = testAgent<decltype(agent2)>(agent2, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
 //! A test to ensure SAC works with multiple actions in action space.
 TEST_CASE("SACForMultipleActions", "[QLearningTest]")
 {
