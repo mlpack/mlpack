@@ -484,9 +484,12 @@ class DecisionTree :
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
   size_t splitDimension;
-  //! The type of the dimension that we have split on (if we are not a leaf).
-  //! If we are a leaf, then this is the index of the majority class.
-  size_t dimensionTypeOrMajorityClass;
+
+  union
+  {
+      size_t dimensionType;
+      size_t majorityClass;
+  };
   /**
    * This vector may hold different things.  If the node has no children, then
    * it is guaranteed to hold the probabilities of each class.  If the node has
