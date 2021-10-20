@@ -4420,7 +4420,7 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
         << 32 << 13 << 42 << arma::endr;
 
   Convolution layer(4, 1, 1, 1, 1, 0, 0);
-  layer.InputDimensions() = std::vector<size_t>({ 4, 1 });
+  layer.InputDimensions() = std::vector<size_t>({ 4, 1, 2 });
   layer.ComputeOutputDimensions();
   arma::mat layerWeights(layer.WeightSize(), 1);
   layer.SetWeights(layerWeights.memptr());
