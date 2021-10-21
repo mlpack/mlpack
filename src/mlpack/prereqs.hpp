@@ -73,6 +73,23 @@ using enable_if_t = typename enable_if<B, T>::type;
 #endif
 #endif
 
+// Backport std::any from C+17 to C++11 to replace boost::any.
+// Use mnmlstc backport implementation only if compiler does not
+// support C++17.
+#if __cplusplus < 201703L
+  #include <mlpack/core/std_backport/any.hpp>
+  #include <mlpack/core/std_backport/string_view.hpp>
+  #define ANY core::v2::any
+  #define ANY_CAST core::v2::any_cast
+  #define STRING_VIEW core::v2::string_view
+#else
+  #include <any>
+  #include <string_view>
+  #define ANY std::any
+  #define ANY_CAST std::any_cast
+  #define STRING_VIEW std::string_view
+#endif 
+
 // Increase the number of template arguments for the boost list class.
 #undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #undef BOOST_MPL_LIMIT_LIST_SIZE
