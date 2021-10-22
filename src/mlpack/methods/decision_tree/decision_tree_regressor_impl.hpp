@@ -1035,7 +1035,8 @@ void DecisionTreeRegressor<FitnessFunction,
   ar(CEREAL_NVP(splitDimension));
   ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(splitPoint));
-  ar(CEREAL_NVP(prediction));
+  // Since splitPoint and prediction are a union, we only need to serialize one of them.
+  ar(CEREAL_NVP(splitPoint));
 }
 
 //! Return the number of leaves.
