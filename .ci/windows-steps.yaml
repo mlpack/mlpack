@@ -61,7 +61,7 @@ steps:
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
     -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
-    -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.66.0\lib\native\include `
+    -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.66.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
     -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
     -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include `
