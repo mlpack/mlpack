@@ -41,21 +41,21 @@ bool LoadCSV::ConvertToken(eT& val,
 
     const size_t offset = ((neg || pos) && (N == 4)) ? 1 : 0;
 
-    const char sig_a = str[offset];
-    const char sig_b = str[offset+1];
-    const char sig_c = str[offset+2];
+    const char sigA = str[offset];
+    const char sigB = str[offset + 1];
+    const char sigC = str[offset + 2];
 
-    if (((sig_a == 'i') || (sig_a == 'I')) &&
-        ((sig_b == 'n') || (sig_b == 'N')) &&
-        ((sig_c == 'f') || (sig_c == 'F')))
+    if (((sigA == 'i') || (sigA == 'I')) &&
+        ((sigB == 'n') || (sigB == 'N')) &&
+        ((sigC == 'f') || (sigC == 'F')))
     {
       val = neg ? -(std::numeric_limits<eT>
                     ::infinity()) : std::numeric_limits<eT>::infinity();
       return true;
     }
-    else if (((sig_a == 'n') || (sig_a == 'N')) &&
-             ((sig_b == 'a') || (sig_b == 'A')) &&
-             ((sig_c == 'n') || (sig_c == 'N')))
+    else if (((sigA == 'n') || (sigA == 'N')) &&
+             ((sigB == 'a') || (sigB == 'A')) &&
+             ((sigC == 'n') || (sigC == 'N')))
     {
       val = std::numeric_limits<eT>::quiet_NaN();
       return true;
@@ -102,7 +102,7 @@ bool LoadCSV::ConvertToken(eT& val,
 template<typename eT>
 bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
 {
-  bool load_okay = f.good();
+  bool loadOkay = f.good();
   f.clear();
   std::pair<size_t, size_t> mat_size = GetMatrixSize<true>(f);
   x.zeros(mat_size.first, mat_size.second);
@@ -132,28 +132,30 @@ bool LoadCSV::LoadNumericCSV(arma::Mat<eT>& x, std::fstream& f)
 
       // This will handle loading of both dense and sparse.
       // Initialize tmp_val of type eT with value 0.
-      eT tmp_val = eT(0);
+      eT tmpVal = eT(0);
 
-      if (ConvertToken<eT>(tmp_val, token))
+      if (ConvertToken<eT>(tmpVal, token))
       {
-        x.at(row, col) = tmp_val;
+        x.at(row, col) = tmpVal;
         ++col;
       }
       else
       {
         // Printing failed token and it's location.
-        Log::Warn << "Failed to convert token " << token << ", at row " << row << ", column "
-                  << col << " of matrix!";
+        Log::Warn << "Failed to convert token " << token << ", at row " << row
+            << ", column " << col << " of matrix!";
 
         return false;
       }
     }
     ++row;
   }
-  return load_okay;
+  return loadOkay;
 }
 
-inline void LoadCSV::NumericMatSize(std::stringstream& lineStream, size_t& col, const char delim)
+inline void LoadCSV::NumericMatSize(std::stringstream& lineStream,
+                                    size_t& col,
+                                    const char delim)
 {
   std::string token;
   while (lineStream.good())

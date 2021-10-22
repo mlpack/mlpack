@@ -270,7 +270,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
     {
       std::ostringstream oss;
       oss << "LoadCSV::TransposeParse(): wrong number of dimensions (" << row
-      << ") on line " << col << "; should be " << rows << " dimensions.";
+          << ") on line " << col << "; should be " << rows << " dimensions.";
       throw std::runtime_error(oss.str());
     }
     // Increment the column index.
