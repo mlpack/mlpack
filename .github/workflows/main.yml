@@ -51,7 +51,7 @@ jobs:
         - name: Install Build Dependencies
           run: |
             sudo apt-get update
-            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl-dev
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
 
         - name: Install R-bindings dependencies
           run: |
@@ -124,6 +124,12 @@ jobs:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+
+      - name: Install check dependencies
+        if: runner.os != 'Windows' && runner.os != 'macOS'
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev
 
       - name: Install dependencies
         run: |
