@@ -89,7 +89,7 @@ steps:
 # Run tests via ctest.
 - bash: |
     cd build
-    cmake --build . --target mlpack_test -C Release
+    cmake --build . --target mlpack_test
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 
