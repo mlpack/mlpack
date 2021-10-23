@@ -1106,8 +1106,7 @@ size_t DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
 {
-  if ((data::Datatype) dimensionType ==
-      data::Datatype::categorical)
+  if ((data::Datatype) dimensionType == data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
         classProbabilities[0], *this);
   else
