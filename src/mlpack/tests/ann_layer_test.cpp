@@ -31,6 +31,8 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
+#ifndef _WIN32
+
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::cube, typename ModelType>
 void CheckRNNCopyFunction(ModelType* network1,
@@ -5408,3 +5410,5 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 3e-06);
 }
+
+#endif
