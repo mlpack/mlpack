@@ -117,9 +117,9 @@ const size_t numClasses = 2;
 const size_t minimumLeafSize = 5;
 const size_t numTrees = 10;
 
-RandomForest<GiniGain, RandomDimensionSelect> rf;
+RandomForestClassifier<GiniGain, RandomDimensionSelect> rf;
 
-rf = RandomForest<GiniGain, RandomDimensionSelect>(dataset, labels,
+rf = RandomForestClassifier<GiniGain, RandomDimensionSelect>(dataset, labels,
     numClasses, numTrees, minimumLeafSize);
 @endcode
 
@@ -141,7 +141,7 @@ to assess the quality of the trained model.
 
 @code
 const size_t k = 10;
-KFoldCV<RandomForest<GiniGain, RandomDimensionSelect>, Accuracy> cv(k, 
+KFoldCV<RandomForestClassifier<GiniGain, RandomDimensionSelect>, Accuracy> cv(k, 
     dataset, labels, numClasses);
 double cvAcc = cv.Evaluate(numTrees, minimumLeafSize);
 cout << "\nKFoldCV Accuracy: " << cvAcc;

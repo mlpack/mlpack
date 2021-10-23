@@ -149,7 +149,7 @@ class RandomForestModel
 {
  public:
   // The tree itself, left public for direct access by this program.
-  RandomForest<> rf;
+  RandomForestClassifier<> rf;
 
   // Create the model.
   RandomForestModel() { /* Nothing to do. */ }

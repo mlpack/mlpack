@@ -99,7 +99,7 @@ TEST_CASE("BootstrapWeightsTest", "[RandomForestTest]")
  */
 TEST_CASE("EmptyClassifyTest", "[RandomForestTest]")
 {
-  RandomForest<> rf; // No training.
+  RandomForestClassifier<> rf; // No training.
 
   arma::mat points(10, 100, arma::fill::randu);
   arma::Row<size_t> predictions;
@@ -129,7 +129,7 @@ TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest]")
     FAIL("Cannot load dataset vc2.csv");
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(dataset, labels, 3, 20 /* 20 trees */, 1, 1e-7);
+  RandomForestClassifier<> rf(dataset, labels, 3, 20 /* 20 trees */, 1, 1e-7);
   DecisionTree<> dt(dataset, labels, 3, 5);
 
   // Get performance statistics on test data.
@@ -185,7 +185,7 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Train decision tree and random forest.
-  RandomForest<> rf(dataset, labels, 3, weights, 20, 1);
+  RandomForestClassifier<> rf(dataset, labels, 3, weights, 20, 1);
   DecisionTree<> dt(dataset, labels, 3, weights, 5);
 
   // Get performance statistics on test data.
@@ -228,7 +228,7 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest]")
   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Train a random forest and a decision tree.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
+  RandomForestClassifier<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(trainingData, di, trainingLabels, 5, 5);
 
@@ -286,7 +286,7 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest]")
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 25 trees */, 1,
+  RandomForestClassifier<> rf(fullData, di, fullLabels, 5, weights, 25 /* 25 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
@@ -320,7 +320,7 @@ TEST_CASE("LeafSizeDatasetTest", "[RandomForestTest]")
 
   // Build a random forest with a leaf size equal to the number of points in the
   // dataset.
-  RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, dataset.n_cols);
+  RandomForestClassifier<> rf(dataset, labels, 3, 10 /* 10 trees */, dataset.n_cols);
 
   // Predict on the training set.
   arma::Row<size_t> predictions;
@@ -354,13 +354,13 @@ TEST_CASE("RandomForestSerializationTest", "[RandomForestTest]")
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Cannot load dataset vc2.csv");
 
-  RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, 1);
+  RandomForestClassifier<> rf(dataset, labels, 3, 10 /* 10 trees */, 1);
 
   arma::Row<size_t> beforePredictions;
   arma::mat beforeProbabilities;
   rf.Classify(dataset, beforePredictions, beforeProbabilities);
 
-  RandomForest<> xmlForest, jsonForest, binaryForest;
+  RandomForestClassifier<> xmlForest, jsonForest, binaryForest;
   binaryForest.Train(dataset, labels, 3, 3, 5, 1);
   SerializeObjectAll(rf, xmlForest, jsonForest, binaryForest);
 
@@ -409,13 +409,13 @@ TEST_CASE("RandomForestNumericTrainReturnEntropy", "[RandomForestTest]")
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Test random forest on unweighted numeric dataset.
-  RandomForest<GiniGain, RandomDimensionSelect> rf;
+  RandomForestClassifier<GiniGain, RandomDimensionSelect> rf;
   double entropy = rf.Train(dataset, labels, 3, 10, 1);
 
   REQUIRE(std::isfinite(entropy) == true);
 
   // Test random forest on weighted numeric dataset.
-  RandomForest<GiniGain, RandomDimensionSelect> wrf;
+  RandomForestClassifier<GiniGain, RandomDimensionSelect> wrf;
   entropy = wrf.Train(dataset, labels, 3, weights, 10, 1);
 
   REQUIRE(std::isfinite(entropy) == true);
@@ -455,14 +455,14 @@ TEST_CASE("RandomForestCategoricalTrainReturnEntropy", "[RandomForestTest]")
   arma::Row<size_t> fullLabels = arma::join_rows(l, randomLabels);
 
   // Test random forest on unweighted categorical dataset.
-  RandomForest<> rf;
+  RandomForestClassifier<> rf;
   double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 1,
       1e-7, 0, false, MultipleRandomDimensionSelect(3));
 
   REQUIRE(std::isfinite(entropy) == true);
 
   // Test random forest on weighted categorical dataset.
-  RandomForest<> wrf;
+  RandomForestClassifier<> wrf;
   entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
       1, 1e-7, 0, false, MultipleRandomDimensionSelect(3));
 
@@ -488,7 +488,7 @@ TEST_CASE("DifferentTreesTest", "[RandomForestTest]")
   // multiple trials.
   while (!success && trial < 5)
   {
-    RandomForest<GiniGain, RandomDimensionSelect> rf;
+    RandomForestClassifier<GiniGain, RandomDimensionSelect> rf;
     rf.Train(d, l, 2, 2, 5);
 
     success = (rf.Tree(0).SplitDimension() != rf.Tree(1).SplitDimension());
@@ -512,7 +512,7 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
   MockCategoricalData(trainingData, trainingLabels, di);
 
   // Train a random forest.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
+  RandomForestClassifier<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
 
   REQUIRE(rf.NumTrees() == 25);
@@ -536,7 +536,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   MockCategoricalData(trainingData, trainingLabels, di);
 
   // Train a random forest.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 3 /* 3 trees */, 1,
+  RandomForestClassifier<> rf(trainingData, di, trainingLabels, 5, 3 /* 3 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
 
   // Get performance statistics on train data.
@@ -590,7 +590,7 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Train extra tree.
-  ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);
+  ExtraTreesClassifier<> et(data, fullLabels, 3, weights, 20, 1);
 
   // Get performance statistics on test data.
   arma::mat testDataset;
