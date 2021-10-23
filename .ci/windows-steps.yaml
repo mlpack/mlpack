@@ -8,6 +8,12 @@ steps:
 
 # Fetch build dependencies
 - powershell: |
+    wmic pagefile list /format:list
+    wmic computersystem where name="%computername%" set AutomaticManagedPagefile=false
+    wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=9216,MaximumSize=12288
+    wmic pagefile list /format:list
+
+
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install boost -o $(Agent.ToolsDirectory) -Version 1.66.0
     nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
