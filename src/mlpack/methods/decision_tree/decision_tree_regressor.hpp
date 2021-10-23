@@ -453,10 +453,10 @@ class DecisionTreeRegressor :
 
   union
   {
-      //! Stores the split point for internal nodes of the tree.
-      double splitPoint;
-      //! Stores the prediction value for leaf nodes of the tree.
-      double prediction;
+    //! Stores the split point for internal nodes of the tree.
+    double splitPoint;
+    //! Stores the prediction value for leaf nodes of the tree.
+    double prediction;
   };
 
   //! Note that this class will also hold the members of the NumericSplit and
