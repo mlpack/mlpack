@@ -24,8 +24,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
 RandomForest<
     FitnessFunction,
@@ -33,8 +32,7 @@ RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::RandomForest() :
     avgGain(0.0)
 {
@@ -47,18 +45,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::RandomForest(const MatType& dataset,
                 const LabelsType& labels,
                 const size_t numClasses,
@@ -83,18 +79,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const LabelsType& labels,
@@ -119,18 +113,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::RandomForest(const MatType& dataset,
                 const LabelsType& labels,
                 const size_t numClasses,
@@ -155,18 +147,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const LabelsType& labels,
@@ -191,18 +181,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Train(const MatType& dataset,
          const LabelsType& labels,
          const size_t numClasses,
@@ -227,18 +215,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const LabelsType& labels,
@@ -263,18 +249,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Train(const MatType& dataset,
          const LabelsType& labels,
          const size_t numClasses,
@@ -299,18 +283,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const LabelsType& labels,
@@ -335,8 +317,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
 template<typename VecType>
 size_t RandomForest<
@@ -345,8 +326,7 @@ size_t RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Classify(const VecType& point) const
 {
   // Pass off to another Classify() overload.
@@ -363,8 +343,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
 template<typename VecType>
 void RandomForest<
@@ -373,8 +352,7 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Classify(const VecType& point,
             size_t& prediction,
             arma::vec& probabilities) const
@@ -414,18 +392,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 void RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Classify(const MatType& data,
             LabelsType& predictions) const
 {
@@ -453,18 +429,16 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<typename MatType>
+template<typename MatType, typename LabelsType>
 void RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Classify(const MatType& data,
             LabelsType& predictions,
             arma::mat& probabilities) const
@@ -495,8 +469,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
 template<typename Archive>
 void RandomForest<
@@ -505,8 +478,7 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   size_t numTrees;
@@ -531,18 +503,17 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
     bool UseBootstrap,
-    typename DecisionTreeType,
-    typename LabelsType
+    typename DecisionTreeType
 >
-template<bool UseWeights, bool UseDatasetInfo, typename MatType>
+template<bool UseWeights, bool UseDatasetInfo, typename MatType,
+    typename LabelsType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
     UseBootstrap,
-    DecisionTreeType,
-    LabelsType
+    DecisionTreeType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const LabelsType& labels,
