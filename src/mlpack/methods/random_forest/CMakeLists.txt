@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   bootstrap.hpp
+  random_forest_classifier.hpp
+  random_forest_classifier_impl.hpp
   random_forest.hpp
   random_forest_impl.hpp
 )

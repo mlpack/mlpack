@@ -417,18 +417,6 @@ template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          bool UseBootstrap = true>
-using RandomForestClassifier =
-    RandomForest<FitnessFunction,
-                 DimensionSelectionType,
-                 NumericSplitType,
-                 CategoricalSplitType,
-                 UseBootstrap>;
-
-template<typename FitnessFunction = GiniGain,
-         typename DimensionSelectionType = MultipleRandomDimensionSelect,
-         template<typename> class NumericSplitType = BestBinaryNumericSplit,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         bool UseBootstrap = true>
 using RandomForestRegressor =
     RandomForest<FitnessFunction,
                  DimensionSelectionType,
@@ -466,11 +454,11 @@ using RandomForestRegressor =
 template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class CategoricalSplitType = AllCategoricalSplit>
-using ExtraTreesClassifier = RandomForestClassifier<FitnessFunction,
-                                                    DimensionSelectionType,
-                                                    RandomBinaryNumericSplit,
-                                                    CategoricalSplitType,
-                                                    false>;
+using ExtraTreesClassifier = RandomForest<FitnessFunction,
+                                          DimensionSelectionType,
+                                          RandomBinaryNumericSplit,
+                                          CategoricalSplitType,
+                                          false>;
 
 } // namespace tree
 } // namespace mlpack

@@ -18,7 +18,7 @@
 #define BINDING_NAME random_forest
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/random_forest/random_forest.hpp>
+#include <mlpack/methods/random_forest/random_forest_classifier.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
 using namespace mlpack;
