@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_RANDOM_FOREST_RANDOM_FOREST_HPP
 
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
+#include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 #include "bootstrap.hpp"
 
@@ -411,6 +412,34 @@ class RandomForest
   double avgGain;
 };
 
+template<typename FitnessFunction = GiniGain,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
+         template<typename> class NumericSplitType = BestBinaryNumericSplit,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         bool UseBootstrap = true>
+using RandomForestClassifier =
+    RandomForest<FitnessFunction,
+                 DimensionSelectionType,
+                 NumericSplitType,
+                 CategoricalSplitType,
+                 UseBootstrap>;
+
+template<typename FitnessFunction = GiniGain,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
+         template<typename> class NumericSplitType = BestBinaryNumericSplit,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         bool UseBootstrap = true>
+using RandomForestRegressor =
+    RandomForest<FitnessFunction,
+                 DimensionSelectionType,
+                 NumericSplitType,
+                 CategoricalSplitType,
+                 UseBootstrap,
+                 DecisionTreeRegressor<FitnessFunction,
+                                       NumericSplitType,
+                                       CategoricalSplitType,
+                                       DimensionSelectionType>>;
+
 /**
  * Convenience typedef for Extra Trees. (Extremely Randomized Trees Forest)
  *
@@ -437,11 +466,11 @@ class RandomForest
 template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class CategoricalSplitType = AllCategoricalSplit>
-using ExtraTrees = RandomForest<FitnessFunction,
-                                DimensionSelectionType,
-                                RandomBinaryNumericSplit,
-                                CategoricalSplitType,
-                                false>;
+using ExtraTreesClassifier = RandomForestClassifier<FitnessFunction,
+                                                    DimensionSelectionType,
+                                                    RandomBinaryNumericSplit,
+                                                    CategoricalSplitType,
+                                                    false>;
 
 } // namespace tree
 } // namespace mlpack
