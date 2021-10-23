@@ -931,7 +931,7 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
 
   // Make sure we get reasonable rmse.
   const double rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 1.0);
+  REQUIRE(rmse < 1.05);
 }
 
 /**
