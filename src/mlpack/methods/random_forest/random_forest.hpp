@@ -306,54 +306,6 @@ class RandomForest
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
-  /**
-   * Predict the class of the given point.  If the random forest has not been
-   * trained, this will throw an exception.
-   *
-   * @param point Point to be classified.
-   */
-  template<typename VecType>
-  size_t Classify(const VecType& point) const;
-
-  /**
-   * Predict the class of the given point and return the predicted class
-   * probabilities for each class.  If the random forest has not been trained,
-   * this will throw an exception.
-   *
-   * @param point Point to be classified.
-   * @param prediction size_t to store predicted class in.
-   * @param probabilities Output vector of class probabilities.
-   */
-  template<typename VecType>
-  void Classify(const VecType& point,
-                size_t& prediction,
-                arma::vec& probabilities) const;
-
-  /**
-   * Predict the classes of each point in the given dataset.  If the random
-   * forest has not been trained, this will throw an exception.
-   *
-   * @param data Dataset to be classified.
-   * @param predictions Output predictions for each point in the dataset.
-   */
-  template<typename MatType, typename LabelsType>
-  void Classify(const MatType& data,
-                LabelsType& predictions) const;
-
-  /**
-   * Predict the classes of each point in the given dataset, also returning the
-   * predicted class probabilities for each point.  If the random forest has not
-   * been trained, this will throw an exception.
-   *
-   * @param data Dataset to be classified.
-   * @param predictions Output predictions for each point in the dataset.
-   * @param probabilities Output matrix of class probabilities for each point.
-   */
-  template<typename MatType, typename LabelsType>
-  void Classify(const MatType& data,
-                LabelsType& predictions,
-                arma::mat& probabilities) const;
-
   //! Access a tree in the forest.
   const DecisionTreeType& Tree(const size_t i) const { return trees[i]; }
   //! Modify a tree in the forest (be careful!).
@@ -405,6 +357,7 @@ class RandomForest
                DimensionSelectionType& dimensionSelector,
                const bool warmStart = false);
 
+ protected:
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
 
@@ -427,38 +380,6 @@ using RandomForestRegressor =
                                        NumericSplitType,
                                        CategoricalSplitType,
                                        DimensionSelectionType>>;
-
-/**
- * Convenience typedef for Extra Trees. (Extremely Randomized Trees Forest)
- *
- * @code
- * @article{10.1007/s10994-006-6226-1,
- *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
- *   title = {Extremely Randomized Trees},
- *   year = {2006},
- *   issue_date = {April 2006},
- *   publisher = {Kluwer Academic Publishers},
- *   address = {USA},
- *   volume = {63},
- *   number = {1},
- *   issn = {0885-6125},
- *   url = {https://doi.org/10.1007/s10994-006-6226-1},
- *   doi = {10.1007/s10994-006-6226-1},
- *   journal = {Mach. Learn.},
- *   month = apr,
- *   pages = {3–42},
- *   numpages = {40},
- * }
- * @endcode
- */
-template<typename FitnessFunction = GiniGain,
-         typename DimensionSelectionType = MultipleRandomDimensionSelect,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit>
-using ExtraTreesClassifier = RandomForest<FitnessFunction,
-                                          DimensionSelectionType,
-                                          RandomBinaryNumericSplit,
-                                          CategoricalSplitType,
-                                          false>;
 
 } // namespace tree
 } // namespace mlpack
