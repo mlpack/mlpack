@@ -9,9 +9,7 @@ steps:
 # Fetch build dependencies
 - powershell: |
     wmic pagefile list
-    wmic computersystem set AutomaticManagedPagefile=False
-    wmic pagefileset where name="D:\\pagefile.sys" set InitialSize=9216,MaximumSize=12288
-    wmic pagefile list /format:list
+    wmic pagefileset where name="D:\pagefile.sys" set InitialSize=9216,MaximumSize=12288
     wmic pagefile list
 
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
