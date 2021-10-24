@@ -639,7 +639,7 @@ TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
   arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  CreateMultiSplitData(dataset, responses, 200, values);
+  CreateMultiSplitData(dataset, responses, 1000, values);
 
   arma::rowvec weights(responses.n_elem);
   weights.ones();
