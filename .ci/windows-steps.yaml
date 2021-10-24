@@ -9,7 +9,8 @@ steps:
 # Fetch build dependencies
 - powershell: |
     wmic pagefile list /format:list
-    wmic computersystem where name="%computername%" set AutomaticManagedPagefile=false
+    wmic computersystem set AutomaticManagedPagefile=False
+    wmic pagefileset create name="C:\pagefile.sys"
     wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=9216,MaximumSize=12288
     wmic pagefile list /format:list
 
