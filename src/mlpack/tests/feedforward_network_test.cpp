@@ -25,8 +25,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-#ifndef _WIN32
-
 /**
  * Train and evaluate a model with the specified structure.
  */
@@ -1012,5 +1010,3 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 
   REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
 }
-
-#endif

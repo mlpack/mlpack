@@ -10,8 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#if !defined _WIN32 && !defined _WIN64
-
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -1381,5 +1379,3 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
   CheckFlattenTSwishActivationCorrect(input, desiredActivation);
   CheckFlattenTSwishDerivateCorrect(desiredActivation, desiredDerivation);
 }
-
-#endif

@@ -28,8 +28,6 @@ using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::kmeans;
 
-#ifndef _WIN32
-
 /**
  * Train and evaluate a model with the specified structure.
  */
@@ -142,5 +140,3 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
 }
-
-#endif
