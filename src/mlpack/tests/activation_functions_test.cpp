@@ -10,7 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef _WIN32
+#if !defined _WIN32 && !defined _WIN64
 
 #include <mlpack/core.hpp>
 
