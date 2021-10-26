@@ -41,9 +41,12 @@ inline void Trim(std::string& str)
   while (std::isspace(str[endIndex]))
     endIndex--;
 
-  std::string trimmedStr = (endIndex - startIndex == str.size()) ? 
-    std::move(str) : str.substr(startIndex,
-                                endIndex - startIndex + 1);
+  std::string trimmedStr;
+  
+  if (endIndex - startIndex == str.size())
+    trimmedStr = std::move(str);
+  else
+    trimmedStr = str.substr(startIndex, endIndex - startIndex + 1);
 
   str = trimmedStr;
 }
@@ -87,6 +90,8 @@ inline void TrimIf(std::string &str, std::function<bool(char)> func)
     else
       break;
   }
+
+  std::string trimmedStr;
 
   if (endIndex - startIndex == str.size())
     trimmedStr = std::move(str);
