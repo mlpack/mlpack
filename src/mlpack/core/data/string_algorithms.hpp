@@ -23,7 +23,7 @@ namespace data {
  *
  * @param str the string to be trimmed.
  */
-inline void trim(std::string& str)
+inline void Trim(std::string& str)
 {
   if (str.find_first_not_of(' ') == std::string::npos)
   {
@@ -57,7 +57,7 @@ inline void trim(std::string& str)
  * @param str the string to be trimmed.
  * @param func function to determine the characters which should be trimmed.
  */
-inline void trim_if(std::string &str, std::function<bool(char)> func)
+inline void TrimIf(std::string &str, std::function<bool(char)> func)
 {
   if (str.find_first_not_of(' ') == std::string::npos)
   {
@@ -88,8 +88,10 @@ inline void trim_if(std::string &str, std::function<bool(char)> func)
       break;
   }
 
-  std::string trimmedStr = (endIndex - startIndex == str.size()) ?
-  std::move(str) : str.substr(startIndex, endIndex - startIndex + 1);
+  if (endIndex - startIndex == str.size())
+    trimmedStr = std::move(str);
+  else
+    trimmedStr = str.substr(startIndex, endIndex - startIndex + 1);
 
   str = trimmedStr;
 }
