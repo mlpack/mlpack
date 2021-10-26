@@ -39,7 +39,7 @@ std::vector<std::string> ToTokens(Tokenizer& lineTok)
                  [&tokens](std::string const &str)
   {
     std::string trimmedToken(str);
-    trim(trimmedToken);
+    Trim(trimmedToken);
     return std::move(trimmedToken);
   });
 

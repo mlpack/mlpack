@@ -211,7 +211,7 @@ FileType AutoDetect(std::fstream& stream, const std::string& filename)
         const std::streampos pos = stream.tellg();
         std::string line;
         std::getline(stream, line, '\n');
-        trim(line);
+        Trim(line);
 
         // Reset stream position.
         stream.seekg(pos);

@@ -46,7 +46,7 @@ void LoadARFF(const std::string& filename,
   {
     // Read the next line, then strip whitespace from either side.
     std::getline(ifs, line, '\n');
-    trim(line);
+    Trim(line);
     ++headerLines;
 
     // Is the first character a comment, or is the line empty?
@@ -102,7 +102,7 @@ void LoadARFF(const std::string& filename,
           // `origDimType` string here instead (which has not had ::tolower used
           // on it).
           types.push_back(true);
-          trim_if(origDimType,
+          TrimIf(origDimType,
               [](char c)
               {
                 return c == '{' || c == '}' || c == ' ' || c == '\t';
@@ -116,7 +116,7 @@ void LoadARFF(const std::string& filename,
           while (it != dimTok.end())
           {
             std::string category = (*it);
-            trim(category);
+            Trim(category);
             categories.push_back(category);
 
             ++it;
@@ -198,7 +198,7 @@ void LoadARFF(const std::string& filename,
   while (ifs.good())
   {
     std::getline(ifs, line, '\n');
-    trim(line);
+    Trim(line);
     // Each line of the @data section must be a CSV (except sparse data, which
     // we will handle later).  So now we can tokenize the
     // CSV and parse it.  The '?' representing a missing value is not allowed,
@@ -232,7 +232,7 @@ void LoadARFF(const std::string& filename,
       {
         // Strip spaces before mapping.
         std::string token = *it;
-        trim(token);
+        Trim(token);
         const size_t currentNumMappings = info.NumMappings(col);
         const eT result = info.template MapString<eT>(token, col);
 
@@ -272,7 +272,7 @@ void LoadARFF(const std::string& filename,
             // error, otherwise we issue a general error.
             std::stringstream error;
             std::string tokenStr = token.str();
-            trim(tokenStr);
+            Trim(tokenStr);
             if (tokenStr == "?")
               error << "Missing values ('?') not supported, ";
             else

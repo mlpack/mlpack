@@ -88,7 +88,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
 
      std::getline(inFile, line);
      // Remove whitespaces from either side
-     trim(line);
+     Trim(line);
 
     // If it's an empty line decrease cols and break
     if (line.size() == 0)
@@ -112,7 +112,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
       {
         std::getline(lineStream, token, delim);
         // Remove whitespace from either side
-        trim(token);
+        Trim(token);
 
         if (token[0] == '"' && token[token.size() - 1] != '"')
         {
@@ -173,7 +173,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
   {
     ++rows;
     // Remove whitespaces from either side
-    trim(line);
+    Trim(line);
     if (rows == 1)
     {
       // Extract the number of columns.
@@ -196,7 +196,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
       {
         std::getline(lineStream, token, delim);
         // Remove whitespace from either side
-        trim(token);
+        Trim(token);
 
         if (token[0] == '"' && token[token.size() - 1] != '"')
         {
@@ -235,7 +235,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
   while (std::getline(inFile, line))
   {
     // Remove whitespaces from either side
-    trim(line);
+    Trim(line);
     // Reset the row we are looking at.  (Remember this is transposed.)
     row = 0;
     std::stringstream lineStream;
@@ -247,7 +247,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
     {
       std::getline(lineStream, token, delim);
       // Remove whitespaces from either side
-      trim(token);
+      Trim(token);
 
       if (token[0] == '"' && token[token.size() - 1] != '"')
       {
@@ -299,7 +299,7 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
   while (std::getline(inFile, line))
   {
     // Remove whitespaces from either side
-    trim(line);
+    Trim(line);
 
     std::stringstream lineStream;
     std::string token;
@@ -314,7 +314,7 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
 
       std::getline(lineStream, token, delim);
       // Remove whitespace from either side
-      trim(token);
+      Trim(token);
 
       if (token[0] == '"' && token[token.size() - 1] != '"')
       {

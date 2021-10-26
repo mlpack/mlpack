@@ -77,9 +77,9 @@ class LoadCSV
   * @param file path of the dataset.
   */
   LoadCSV(const std::string& file) :
-    extension(Extension(file)),
-    filename(file),
-    inFile(file)
+      extension(Extension(file)),
+      filename(file),
+      inFile(file)
   {
     if (extension == "csv")
     {
@@ -208,7 +208,7 @@ class LoadCSV
   inline std::pair<size_t, size_t> GetMatrixSize(std::fstream& f,
                                                  const char delim = ',')
   {
-    bool load_okay = f.good();
+    bool loadOkay = f.good();
 
     f.clear();
     const std::fstream::pos_type pos1 = f.tellg();
@@ -219,7 +219,7 @@ class LoadCSV
     std::stringstream lineStream;
     std::string token;
 
-    while (f.good() && load_okay)
+    while (f.good() && loadOkay)
     {
       // Get a row of data.
       std::getline(f, lineString);
@@ -228,20 +228,20 @@ class LoadCSV
 
       lineStream.clear();
       lineStream.str(lineString);
-      size_t line_n_cols = 0;
+      size_t lineNCols = 0;
 
       // Get number of columns based on the type of data.
       if (isNumeric)
-        NumericMatSize(lineStream, line_n_cols, delim);
+        NumericMatSize(lineStream, lineNCols, delim);
       else
-        CategoricalMatSize(lineStream, line_n_cols, delim);
+        CategoricalMatSize(lineStream, lineNCols, delim);
 
       // If there are different number of columns in each
       // row, then the highest number of cols will be
       // considered as the size of the matrix. Missing
       // elements will be filled as 0.
-      if (fnCols < line_n_cols)
-        fnCols = line_n_cols;
+      if (fnCols < lineNCols)
+        fnCols = lineNCols;
 
       ++fnRows;
     }
