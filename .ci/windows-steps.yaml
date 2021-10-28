@@ -18,8 +18,6 @@ steps:
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
 
-    ls $(Agent.ToolsDirectory)\
-
   displayName: 'Fetch build dependencies'
 
 # Configure armadillo
