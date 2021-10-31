@@ -57,7 +57,7 @@ class QUICSVDPolicy
              arma::mat& eigvec,
              const size_t /* rank */)
   {
-    // This matrix will store the right singular values; we do not need them.
+    // This matrix will store the right singular vectors; we do not need them.
     arma::mat v, sigma;
 
     // Do singular value decomposition using the QUIC-SVD algorithm.
