@@ -26,8 +26,9 @@ function(find_r_module module)
             OUTPUT_STRIP_TRAILING_WHITESPACE)
 
         # Different versions of R may enclose the version number in different
-        # delimiters.
+        # delimiters.  Sometimes, semicolons show up too.
         string(REGEX MATCHALL "[‘'][0-9._]*[’']" _version_compare "${_version_compare}")
+        string(REGEX REPLACE ";" "" _version_compare "${_version_compare}")
         string(REGEX REPLACE "[‘']" "" _version_compare "${_version_compare}")
         string(REGEX REPLACE "[’']" "" _version_compare "${_version_compare}")
 
