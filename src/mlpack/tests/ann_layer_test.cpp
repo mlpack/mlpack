@@ -3740,6 +3740,48 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
 }
 
 /**
+ * Convolution layer numerical gradient test.
+ */
+TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::linspace<arma::colvec>(0, 35, 36)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Convolution>(1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
+          std::tuple<size_t, size_t>(0, 0), "same");
+      model->Add<LogSoftMax>();
+
+      model->InputDimensions() = std::vector<size_t>({ 6, 6 });
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) < 1e3);
+}
+
+/**
  * Test that the padding options in Transposed Convolution layer.
  *
 TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
