@@ -35,7 +35,6 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
 SEXP CreateParams(const std::string& bindingName)
 {
   util::Params* p = new util::Params(IO::Parameters(bindingName));
-  std::cout << "create params " << p << "\n";
   return std::move(Rcpp::XPtr<util::Params>(p));
 }
 
@@ -44,7 +43,6 @@ SEXP CreateParams(const std::string& bindingName)
 SEXP CreateTimers()
 {
   util::Timers* t = new util::Timers();
-  std::cout << "create timers " << t << "\n";
   return std::move(Rcpp::XPtr<util::Timers>(t));
 }
 
@@ -91,8 +89,8 @@ void SetParamBool(SEXP params, const std::string& paramName, bool paramValue)
 // Call params.Get<std::vector<std::string>>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamVecString(SEXP params,
-                          const std::string& paramName,
-                          const std::vector<std::string>& str)
+                       const std::string& paramName,
+                       const std::vector<std::string>& str)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.Get<std::vector<std::string>>(paramName) = std::move(str);
@@ -102,8 +100,8 @@ void SetParamVecString(SEXP params,
 // Call params.Get<std::vector<int>>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamVecInt(SEXP params,
-                       const std::string& paramName,
-                       const std::vector<int>& ints)
+                    const std::string& paramName,
+                    const std::vector<int>& ints)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.Get<std::vector<int>>(paramName) = std::move(ints);
@@ -113,8 +111,8 @@ void SetParamVecInt(SEXP params,
 // Call params.Get<arma::mat>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamMat(SEXP params,
-                    const std::string& paramName,
-                    const arma::mat& paramValue)
+                 const std::string& paramName,
+                 const arma::mat& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.Get<arma::mat>(paramName) = paramValue.t();
@@ -124,8 +122,8 @@ void SetParamMat(SEXP params,
 // Call params.Get<arma::Mat<size_t>>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamUMat(SEXP params,
-                     const std::string& paramName,
-                     const arma::Mat<size_t>& paramValue)
+                  const std::string& paramName,
+                  const arma::Mat<size_t>& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.Get<arma::Mat<size_t>>(paramName) = paramValue.t();
@@ -135,8 +133,8 @@ void SetParamUMat(SEXP params,
 // Call params.Get<arma::rowvec>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamRow(SEXP params,
-                    const std::string& paramName,
-                    const arma::rowvec& paramValue)
+                 const std::string& paramName,
+                 const arma::rowvec& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.Get<arma::rowvec>(paramName) = std::move(paramValue);
@@ -146,10 +144,19 @@ void SetParamRow(SEXP params,
 // Call params.Get<arma::Row<size_t>>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamURow(SEXP params,
-                     const std::string& paramName,
-                     const arma::Row<size_t>& paramValue)
+                  const std::string& paramName,
+                  const arma::Row<size_t>& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+
+  // Check for zeros in the input---if we received these, the user is mistaken,
+  // because in R labels should start from 1.
+  if (arma::any(paramValue == 0))
+  {
+    Log::Fatal << "When passing labels from R to mlpack, labels should be in "
+        << "the range from 1 to the number of classes!" << std::endl;
+  }
+
   p.Get<arma::Row<size_t>>(paramName) = paramValue - 1;
   p.SetPassed(paramName);
 }
@@ -157,8 +164,8 @@ void SetParamURow(SEXP params,
 // Call params.Get<arma::vec>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamCol(SEXP params,
-                    const std::string& paramName,
-                    const arma::vec& paramValue)
+                 const std::string& paramName,
+                 const arma::vec& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.Get<arma::vec>(paramName) = std::move(paramValue);
@@ -168,10 +175,19 @@ void SetParamCol(SEXP params,
 // Call params.Get<arma::Col<size_t>>() to set the value of a parameter.
 // [[Rcpp::export]]
 void SetParamUCol(SEXP params,
-                     const std::string& paramName,
-                     const arma::Col<size_t>& paramValue)
+                  const std::string& paramName,
+                  const arma::Col<size_t>& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+
+  // Check for zeros in the input---if we received these, the user is mistaken,
+  // because in R labels should start from 1.
+  if (arma::any(paramValue == 0))
+  {
+    Log::Fatal << "When passing labels from R to mlpack, labels should be in "
+        << "the range from 1 to the number of classes!" << std::endl;
+  }
+
   p.Get<arma::Col<size_t>>(paramName) = paramValue - 1;
   p.SetPassed(paramName);
 }
@@ -180,21 +196,47 @@ void SetParamUCol(SEXP params,
 // of a parameter.
 // [[Rcpp::export]]
 void SetParamMatWithInfo(SEXP params,
-                            const std::string& paramName,
-                            const LogicalVector& dimensions,
-                            const arma::mat& paramValue)
+                         const std::string& paramName,
+                         const LogicalVector& dimensions,
+                         const arma::mat& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   data::DatasetInfo d(paramValue.n_cols);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
+
+  arma::mat m = paramValue.t();
+
+  // Do we need to find how many categories we have?
+  if (hasCategoricals)
+  {
+    arma::vec maxs = arma::max(paramValue, 1) + 1;
+
+    for (size_t i = 0; i < d.Dimensionality(); ++i)
+    {
+      if (dimensions[i])
+      {
+        // Map the right number of objects.
+        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        {
+          std::ostringstream oss;
+          oss << j;
+          d.MapString<double>(oss.str(), i);
+        }
+      }
+    }
+  }
+
   std::get<0>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = paramValue.t();
+      paramName)) = std::move(m);
   p.SetPassed(paramName);
 }
 

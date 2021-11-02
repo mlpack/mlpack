@@ -71,7 +71,7 @@ void mlpackSetParamString(void* params,
 /**
  * Set the parameter to the given value, given that the type is a pointer.
  */
-void mlpackSetParamPtr(void* params, const char* identifier, const double* ptr);
+void mlpackSetParamPtr(void* params, const char* identifier, double* ptr);
 
 /**
  * Set the int vector parameter to the given value.

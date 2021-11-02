@@ -574,6 +574,58 @@ func TestGonumMatrixWithInfo(t *testing.T) {
   }
 }
 
+func TestGonumMatrixWithInfoCategorical(t *testing.T) {
+  t.Log("Test that the matrix with info option works when we pass categorical ",
+        "data.")
+
+  x := mlpack.DataAndInfo()
+  x.Categoricals = []bool{
+    false, false, true, true, false,
+  }
+
+  x.Data = mat.NewDense(6, 5, []float64{
+       0.1,  0.2, 3, 2, 0.3,
+       0.5, -0.3, 1, 1, 0.5,
+       -3,   0.1, 0, 0, 0.6,
+       0.7,  0.0, 2, 4, 0.4,
+       0.8,  0.1, 2, 3, 0.1,
+       0.3,  0.0, 1, 1, 0.6,
+  })
+
+  param := mlpack.TestGoBindingOptions()
+  param.MatrixAndInfoIn = x
+  d := 4.0
+  i := 12
+  s := "hello"
+  _, _, _, MatrixAndInfoOut, _, _, _, _, _, _, _, _, _, _ :=
+      mlpack.TestGoBinding(d, i, s, param)
+
+  rows, cols := MatrixAndInfoOut.Dims()
+
+  if rows != 6 || cols != 5 {
+    t.Errorf("Error. Wrong shape. %v, %v", rows, cols)
+  }
+  for i := 0; i < rows; i++ {
+    for j := 0; j < cols; j++ {
+      if j == 0 || j == 1 || j == 4 {
+        if x.Data.At(i, j) * 2 != MatrixAndInfoOut.At(i, j) {
+          val := MatrixAndInfoOut.At(i, j)
+          expected := x.Data.At(i, j)*2
+          t.Errorf("Error. Value at [%v,%v] : %v. Expected value : %v",
+                   i, j, val, expected)
+        }
+      } else {
+        if x.Data.At(i, j) != MatrixAndInfoOut.At(i, j) {
+          val := MatrixAndInfoOut.At(i, j)
+          expected := x.Data.At(i, j)
+          t.Errorf("Error. Value at [%v,%v] : %v. Expected value: %v",
+                   i, j, val, expected)
+        }
+      }
+    }
+  }
+}
+
 func TestModel(t *testing.T) {
   t.Log("First create a GaussianKernel object, then send it back and",
         "make sure we get the right double value.")

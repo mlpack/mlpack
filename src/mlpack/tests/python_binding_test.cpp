@@ -87,7 +87,7 @@ TEST_CASE("PyGetParamDoubleTest", "[PythonBindingsTest]")
 {
   util::ParamData d;
   double x = 5.0;
-  d.value = boost::any(x);
+  d.value = ANY(x);
 
   double* output = NULL;
   GetParam<double>(d, (void*) NULL, (void*) &output);
@@ -99,7 +99,7 @@ TEST_CASE("GetParamMatTest", "[PythonBindingsTest]")
 {
   util::ParamData d;
   arma::mat m(5, 5, arma::fill::ones);
-  d.value = boost::any(m);
+  d.value = ANY(m);
 
   arma::mat* output = NULL;
   GetParam<arma::mat>(d, (void*) NULL, (void*) &output);

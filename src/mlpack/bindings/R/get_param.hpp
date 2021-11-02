@@ -27,7 +27,7 @@ void GetParam(util::ParamData& d,
               const void* /* input */,
               void* output)
 {
-  *((T**) output) = const_cast<T*>(boost::any_cast<T>(&d.value));
+  *((T**) output) = const_cast<T*>(ANY_CAST<T>(&d.value));
 }
 
 } // namespace r
