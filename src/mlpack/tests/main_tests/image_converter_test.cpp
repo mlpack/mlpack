@@ -22,6 +22,8 @@
 
 using namespace mlpack;
 
+#ifdef HAS_STB // Compile this only if stb is present.
+
 BINDING_TEST_FIXTURE(ImageConverterTestFixture);
 
 TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
@@ -172,3 +174,5 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
+#endif // HAS_STB.
