@@ -83,7 +83,7 @@ class TestOption
     data.input = input;
     data.loaded = false;
     data.cppType = cppName;
-    data.value = boost::any(defaultValue);
+    data.value = ANY(defaultValue);
 
     const std::string tname = data.tname;
 

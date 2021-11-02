@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_STRING_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
 #include <mlpack/core/data/string_encoding_dictionary.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
 #include <vector>
@@ -75,7 +74,7 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
@@ -109,7 +108,7 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
@@ -159,7 +158,7 @@ class StringEncoding
    * @param policy The policy object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
@@ -188,7 +187,7 @@ class StringEncoding
    * @param policy The policy object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given

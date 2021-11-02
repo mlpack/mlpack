@@ -18,8 +18,6 @@
 #include <map>
 #include <string>
 
-#include <boost/any.hpp>
-
 #include <mlpack/prereqs.hpp>
 
 #include "timers.hpp"

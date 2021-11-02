@@ -238,7 +238,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::Row<size_t> counters;
 
     timers.Start("det_test_set_tagging");
-    if (!ofs.is_open())
+    if (!ofs.is_open() && tagFile != "")
     {
       Log::Warn << "Unable to open file '" << tagFile
           << "' to save tag membership info." << std::endl;
