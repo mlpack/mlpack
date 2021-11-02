@@ -43,6 +43,10 @@ inline void Trim(std::string& str)
 
   std::string trimmedStr;
   
+  // Using ternary operator is not recommended here.
+  // Ternary operator is only useful for simple expressions
+  // that don't involve varrying types.
+  // https://en.cppreference.com/w/cpp/language/operator_other
   if (endIndex - startIndex == str.size())
     trimmedStr = std::move(str);
   else
@@ -93,6 +97,10 @@ inline void TrimIf(std::string &str, std::function<bool(char)> func)
 
   std::string trimmedStr;
 
+  // Using ternary operator is not recommended here.
+  // Ternary operator is only useful for simple expressions
+  // that don't involve varrying types.
+  // https://en.cppreference.com/w/cpp/language/operator_other
   if (endIndex - startIndex == str.size())
     trimmedStr = std::move(str);
   else
