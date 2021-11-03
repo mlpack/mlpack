@@ -113,7 +113,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-        "output", "predictions"));
+        "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
