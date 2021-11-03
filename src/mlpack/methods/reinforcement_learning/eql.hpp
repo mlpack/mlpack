@@ -16,15 +16,14 @@
 #include <mlpack/prereqs.hpp>
 #include <ensmallen.hpp>
 
-#include "replay/random_replay.hpp"
-#include "replay/prioritized_replay.hpp"
+#include "replay/prioritized_eql_replay.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of EQL.
+ * Implementation of Envelope Q-Learning. A multi-objective reinforcement learning algorithm.
  *
  * For more details, see the following:
  * @code
@@ -53,7 +52,7 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType = PrioritizedReplay<EnvironmentType>
+  typename ReplayType = PrioritizedEQLReplay<EnvironmentType>
 >
 class EQL
 {
@@ -140,7 +139,7 @@ class EQL
 
  private:
   /**
-   * Select the best action based on given action value.
+   * Select the best action based on given action value and weightSpace.
    * @param actionValues Action values.
    * @param weightSpace The preference direction repository.
    * @return Selected actions.

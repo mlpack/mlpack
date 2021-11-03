@@ -113,8 +113,8 @@ arma::uvec EQL<
 
   // Each preference vector is repeated batchSize * actionSize
   // number of times. Shape: (rewardSize, inputSize * actionSize).
-  const arma::mat extWeights = [&]()
-  {
+  const arma::mat extWeights = [batchSize, actionSize, &weightSpace]()
+  { //TODO: rewardSize is not defined.
     arma::mat retval(rewardSize, inputSize * actionSize);
     size_t colIdx = 0, start = 0;
     const size_t gap = batchSize * actionSize;
@@ -173,9 +173,9 @@ void EQL<
   size_t batchSize = sampledStates.n_cols;.
   // Count of total state-preference pairs.
   size_t inputSize = batchSize * numWeights
-  size_t actionSize = sampledActions.n_rows;
+  size_t actionSize = sampledActions.size();
 
-  // For each state-preference pair, the network outputs
+  // For each state-preference pair, the target network outputs
   // actionSize number of reward vectors.
   arma::mat nextActionValues(rewardSize, inputSize * actionSize);
   targetNetwork.Predict(sampledNextStatePref, nextActionValues);
@@ -186,11 +186,11 @@ void EQL<
     // If use double Q-Learning, use learning network to select the best action.
     arma::mat nextActionValues;
     learningNetwork.Predict(sampledNextStatePref, nextActionValues);
-    bestActions = BestAction(nextActionValues);
+    bestActions = BestAction(nextActionValues, weightSpace);
   }
   else
   {
-    bestActions = BestAction(nextActionValues);
+    bestActions = BestAction(nextActionValues, weightSpace);
   }
 
   arma::mat target(rewardSize, inputSize * actionSize);
@@ -258,6 +258,7 @@ void EQL<
   // Stores the Q vector of each action.
   arma::mat actionMatrix;
   // Get the unrolled form of the matrix.
+  // TODO: wrong, both current state and current preference is passed to the neural network.
   learningNetwork.Predict(state.Encode(), actionMatrix);
   actionMatrix.resize(ActionType::size, rewardSize);
 
