@@ -35,7 +35,11 @@ EQL<
        PolicyType& policy,
        ReplayType& replayMethod,
        UpdaterType updater,
-       EnvironmentType environment):
+       EnvironmentType environment,
+       double lambda,
+       double lambdaInit,
+       double lambdaExpBase,
+       double lambdaDelta):
     config(config),
     learningNetwork(network),
     policy(policy),
@@ -104,38 +108,15 @@ arma::uvec EQL<
   UpdaterType,
   PolicyType,
   ReplayType
->::BestAction(const arma::mat& actionValues, const arma::mat& weightSpace)
+>::BestAction(const arma::mat& actionValues, const arma::mat& extendedWeightSpace)
 {
-  size_t numWeights = weightSpace.n_cols;
-  size_t actionSize = EnvironmentType::Action::size;
-  size_t batchSize = actionValues.n_cols / (numWeights * actionSize);
-  size_t inputSize = batchSize * numWeights
-
-  // Each preference vector is repeated batchSize * actionSize
-  // number of times. Shape: (rewardSize, inputSize * actionSize).
-  const arma::mat extWeights = [batchSize, actionSize, &weightSpace]()
-  { //TODO: rewardSize is not defined.
-    arma::mat retval(rewardSize, inputSize * actionSize);
-    size_t colIdx = 0, start = 0;
-    const size_t gap = batchSize * actionSize;
-
-    while (colIdx < numWeights)
-    {
-      retval.submat(arma::span(0, rewardSize),
-                    arma::span(start, start + gap - 1)) =
-          arma::repmat(weightSpace.col(colIdx), 1, gap);
-      start += gap;
-      ++colIdx;
-    }
-
-    return retval;
-  }();
-
   // Perform batch dot product between extWeights and actionValues
   // followed by storing the index of max elements.
   return arma::index_max(arma::reshape(
-      arma::sum(extWeights % actionValues),
-      actionSize, inputSize));
+      arma::sum(extendedWeightSpace % actionValues),
+      EnvironmentType::Action::size,                             // Action size.
+      extendedWeightSpace.n_cols / EnvironmentType::Action::size // Input size.
+      ));
 };
 
 template <
@@ -162,22 +143,42 @@ void EQL<
   arma::mat sampledNextStatePref;
   arma::irowvec isTerminal;
 
+
+  size_t batchSize = sampledStates.n_cols;.
+  // Count of total state-preference pairs.
+  size_t inputSize = batchSize * numWeights;
+
   // Generate a repository of preference vectors.
   const arma::mat weightSpace =
-      arma::normalise(arma::abs(arma::randn(rewardSize, numWeights)), 1, 1);
+      arma::normalise(arma::abs(arma::randn(EnvironmentType::rewardSize, numWeights)), 1, 1);
+
+  // Each preference vector is repeated batchSize * actionSize
+  // number of times. Shape: (rewardSize, inputSize * actionSize).
+  const arma::mat extendedWeightSpace = [batchSize, inputSize, &weightSpace]()
+  {
+    arma::mat retval(EnvironmentType::rewardSize, inputSize * actionSize);
+    size_t colIdx = 0, start = 0;
+    const size_t gap = batchSize * actionSize;
+
+    while (colIdx < numWeights)
+    {
+      retval.submat(arma::span(0, EnvironmentType::rewardSize),
+                    arma::span(start, start + gap - 1)) =
+          arma::repmat(weightSpace.col(colIdx), 1, gap);
+      start += gap;
+      ++colIdx;
+    }
+
+    return retval;
+  }();
 
   learningNetwork.Forward(sampledStatePref, target);
   replayMethod.SampleEQL(sampledStatePref, sampledActions, sampledRewardLists,
       sampledNextStatePref, weightSpace, isTerminal);
 
-  size_t batchSize = sampledStates.n_cols;.
-  // Count of total state-preference pairs.
-  size_t inputSize = batchSize * numWeights
-  size_t actionSize = sampledActions.size();
-
   // For each state-preference pair, the target network outputs
   // actionSize number of reward vectors.
-  arma::mat nextActionValues(rewardSize, inputSize * actionSize);
+  arma::mat nextActionValues(EnvironmentType::rewardSize, inputSize * actionSize);
   targetNetwork.Predict(sampledNextStatePref, nextActionValues);
 
   arma::uvec bestActions{};
@@ -186,22 +187,22 @@ void EQL<
     // If use double Q-Learning, use learning network to select the best action.
     arma::mat nextActionValues;
     learningNetwork.Predict(sampledNextStatePref, nextActionValues);
-    bestActions = BestAction(nextActionValues, weightSpace);
+    bestActions = BestAction(nextActionValues, extendedWeightSpace);
   }
   else
   {
-    bestActions = BestAction(nextActionValues, weightSpace);
+    bestActions = BestAction(nextActionValues, extendedWeightSpace);
   }
 
-  arma::mat target(rewardSize, inputSize * actionSize);
+  arma::mat target(EnvironmentType::rewardSize, inputSize * actionSize);
   learningNetwork.Forward(sampledStatePref, target);
 
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
   // Each slice of the cube holds the action vectors of a state-preference pair.
-  arma::cube targetCube(target.memptr(), rewardSize, actionSize, inputSize,
-                        false, true);
-  arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize,
+  arma::cube targetCube(target.memptr(), EnvironmentType::rewardSize, actionSize,
+                        inputSize, false, true);
+  arma::cube nextActionValCube(nextActionValues.memptr(), EnvironmentType::rewardSize,
                                actionSize, inputSize, false, true);
 
   // Iterate over state-preference indexes (spIdx).
@@ -216,7 +217,31 @@ void EQL<
 
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.BackwardEQL(sampledStatePref, target, gradients, weightSpace);
+  learningNetwork.Backward(
+      sampledStatePref, target, extendedWeightSpace,
+      [&lambda, &extendedWeightSpace](const arma::mat& predictions,
+                                      const arma::mat& targets)
+      {
+        const size_t numElem = arma::sum((predictions - targets) != 0);
+        const double lossA =
+            std::pow(arma::norm((predictions - targets).vectorise()), 2) /
+            numElem;
+        const double lossB =
+            std::pow(arma::norm(arma::sum(extendedWeightSpace %
+                                          (predictions - targets))),
+                     2) /
+            numElem;
+
+        const double homotopyLoss = (1 - lambda) * lossA + lambda * lossB;
+
+        // Store the error.
+        arma::mat errorA = (predictions - targets) / numElem;
+        arma::mat errorB =
+            arma::sum(extendedWeightSpace % (predictions - targets)) % extendedWeightSpace;
+        const double error = 2 * ((1 - lambda) * errorA + lambda * errorB);
+        return std::make_tuple(error, homotopyLoss);
+      },
+      gradients);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 
@@ -238,6 +263,13 @@ void EQL<
 
   if (totalSteps > config.ExplorationSteps())
     policy.Anneal();
+
+  if (totalSteps > config.LambdaUpdateSteps())
+  {
+    // Lambda anneal.
+    lambda += lambda_delta;
+    lambda_delta = (lambda - lambdaInit) * lambdaExpBase + lambdaInit - lambda;
+  }
 }
 
 template <
@@ -254,13 +286,11 @@ void EQL<
   BehaviorPolicyType,
   ReplayType
 >::SelectAction()
-{
+{ //TODO: Complete this.
   // Stores the Q vector of each action.
   arma::mat actionMatrix;
-  // Get the unrolled form of the matrix.
-  // TODO: wrong, both current state and current preference is passed to the neural network.
-  learningNetwork.Predict(state.Encode(), actionMatrix);
-  actionMatrix.resize(ActionType::size, rewardSize);
+  learningNetwork.Predict(arma::join_cols(state, preference), actionMatrix);
+  actionMatrix.resize(ActionType::size, EnvironmentType::rewardSize);
 
   arma::vec utilityValue = actionMatrix * preference;
   // Select an action according to the behavior policy.
@@ -284,10 +314,9 @@ double EQL<
 {
   // Get the initial state from environment.
   state = environment.InitialSample();
-
+  preference = arma::randn<arma::vec>(EnvironmentType::rewardSize, 1); //TODO: Normalize it
   // Track the return of this episode.
   double totalReturn = 0.0;
-
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
@@ -310,7 +339,12 @@ double EQL<
       continue;
 
     TrainAgent();
+
+    if (totalSteps > config.MaxEpisodeSteps())
+      break;
   }
+  // Reset preference vector at the end of episode.
+  preference = arma::zeros<arma::vec>();
   return totalReturn;
 }
 
