@@ -90,7 +90,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
      // Remove whitespaces from either side.
      Trim(line);
 
-    // If it's an empty line decrease cols and break
+    // If it's an empty line decrease cols and break.
     if (line.size() == 0)
     {
       --cols;
