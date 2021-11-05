@@ -30,7 +30,8 @@ void LoadCSV::LoadCategoricalCSV(arma::Mat<eT> &inout,
     NonTransposeParse(inout, infoSet);
 }
 
-inline void LoadCSV::CategoricalMatSize(std::stringstream& lineStream, size_t& col, const char delim)
+inline void LoadCSV::CategoricalMatSize(
+    std::stringstream& lineStream, size_t& col, const char delim)
 {
   std::string token;
   while (lineStream.good())
