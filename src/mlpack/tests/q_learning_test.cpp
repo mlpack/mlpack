@@ -510,7 +510,7 @@ TEST_CASE("PendulumWithSAC", "[QLearningTest]")
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
   bool converged = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 8; ++trial)
   {
     Log::Debug << "Trial number: " << trial << std::endl;
     // Set up the replay method.
@@ -530,7 +530,7 @@ TEST_CASE("PendulumWithSAC", "[QLearningTest]")
 
     FFN<EmptyLoss<>, GaussianInitialization>
         qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear<>(3+1, 128));
+    qNetwork.Add(new Linear<>(3 + 1, 128));
     qNetwork.Add(new ReLULayer<>());
     qNetwork.Add(new Linear<>(128, 1));
 

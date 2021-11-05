@@ -14,10 +14,11 @@
 #define MLPACK_CORE_DATA_STRING_ENCODING_DICTIONARY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
-#include <unordered_map>
-#include <deque>
+
 #include <array>
+#include <deque>
+#include <functional>
+#include <unordered_map>
 
 namespace mlpack {
 namespace data {
@@ -105,20 +106,20 @@ class StringEncodingDictionary
 };
 
 /*
- * Specialization of the StringEncodingDictionary class for boost::string_view.
+ * Specialization of the StringEncodingDictionary class for STRING_VIEW.
  */
 template<>
-class StringEncodingDictionary<boost::string_view>
+class StringEncodingDictionary<STRING_VIEW>
 {
  public:
   //! A convenient alias for the internal type of the map.
   using MapType = std::unordered_map<
-      boost::string_view,
+      STRING_VIEW,
       size_t,
-      boost::hash<boost::string_view>>;
+      std::hash<STRING_VIEW>>;
 
   //! The type of the token that the dictionary stores.
-  using TokenType = boost::string_view;
+  using TokenType = STRING_VIEW;
 
   //! Construct the default class.
   StringEncodingDictionary() = default;
@@ -155,7 +156,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  bool HasToken(const boost::string_view token) const
+  bool HasToken(const STRING_VIEW token) const
   {
     return mapping.find(token) != mapping.end();
   }
@@ -167,7 +168,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  size_t AddToken(const boost::string_view token)
+  size_t AddToken(const STRING_VIEW token)
   {
     tokens.emplace_back(token);
 
@@ -184,7 +185,7 @@ class StringEncodingDictionary<boost::string_view>
    *
    * @param token The given token.
    */
-  size_t Value(const boost::string_view token) const
+  size_t Value(const STRING_VIEW token) const
   {
     return mapping.at(token);
   }

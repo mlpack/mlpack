@@ -43,7 +43,7 @@ void* GetAllocatedMemory(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model; return its memory location.
-  return *boost::any_cast<T*>(&d.value);
+  return *ANY_CAST<T*>(&d.value);
 }
 
 template<typename T>

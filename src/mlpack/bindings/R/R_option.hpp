@@ -73,7 +73,7 @@ class ROption
     data.cppType = cppName;
 
     // Every parameter we'll get from R will have the correct type.
-    data.value = boost::any(defaultValue);
+    data.value = ANY(defaultValue);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the R, and
