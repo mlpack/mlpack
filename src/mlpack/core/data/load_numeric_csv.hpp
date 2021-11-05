@@ -22,7 +22,7 @@ bool LoadCSV::ConvertToken(eT& val,
                            const std::string& token)
 {
   const size_t N = size_t(token.length());
-  // Fill empty data points with 0
+  // Fill empty data points with 0.
   if (N == 0)
   {
     val = eT(0);
