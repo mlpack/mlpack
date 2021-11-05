@@ -247,7 +247,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
     while (lineStream.good())
     {
       std::getline(lineStream, token, delim);
-      // Remove whitespaces from either side
+      // Remove whitespaces from either side.
       Trim(token);
 
       if (token[0] == '"' && token[token.size() - 1] != '"')
