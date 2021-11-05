@@ -25,6 +25,7 @@ class TrainingConfig
       targetNetworkSyncInterval(100),
       stepLimit(200),
       explorationSteps(1),
+      MaxEpisodeSteps(100),
       stepSize(0.01),
       discount(0.99),
       gradientLimit(40),
