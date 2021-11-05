@@ -16,8 +16,10 @@
 #include <mlpack/prereqs.hpp>
 #include <ensmallen.hpp>
 
-#include "replay/prioritized_eql_replay.hpp"
-#include "training_config.hpp"
+#include "../replay/prioritized_eql_replay.hpp"
+#include "update_policies/exponential_policy.hpp"
+#include "../training_config.hpp"
+
 
 namespace mlpack {
 namespace rl {
@@ -44,14 +46,16 @@ namespace rl {
  * @tparam EnvironmentType The environment of the reinforcement learning task.
  * @tparam NetworkType The network to compute utility value.
  * @tparam UpdaterType How to apply gradients when training.
- * @tparam PolicyType Behavior policy of the agent.
+ * @tparam ActionPolicyType Behavior policy of the agent.
+ * @tparam LambdaUpdatePolicyType Policy to guide lambda annealing.
  * @tparam ReplayType Experience replay method.
  */
 template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename PolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType = PrioritizedEQLReplay<EnvironmentType>
 >
 class EQL
@@ -72,13 +76,15 @@ class EQL
    * @param config Hyper-parameters for training.
    * @param network The network to compute utility value.
    * @param actionPolicy Behavior policy of the agent.
+   * @param lambdaUpdatePolicy Policy to guide lambda annealing.
    * @param replayMethod Experience replay method.
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
   EQL(TrainingConfig& config,
       NetworkType& network,
-      PolicyType& actionPolicy,
+      ActionPolicyType& actionPolicy,
+      LambdaUpdatePolicyType& lambdaUpdatePolicy,
       ReplayType& replayMethod,
       UpdaterType updater = UpdaterType(),
       EnvironmentType environment = EnvironmentType(),
@@ -159,7 +165,10 @@ class EQL
   NetworkType targetNetwork;
 
   //! Locally-stored behavior policy.
-  PolicyType& actionPolicy;
+  ActionPolicyType& actionPolicy;
+
+  //! Locally-stored lambda update policy.
+  LambdaUpdatePolicyType& lambdaUpdatePolicy;
 
   //! Locally-stored experience method.
   ReplayType& replayMethod;
@@ -178,18 +187,6 @@ class EQL
 
   // The number of preference vectors to generate.
   size_t numWeights;
-
-  // Homotopy loss parameter.
-  double lambda;
-
-  // Initial value of the the lambda parameter.
-  double lambdaInit;
-
-  // .
-  double lambdaDelta;
-
-  // 
-  double lambdaExpBase;
 
   //! Locally-stored current state of the agent.
   StateType state;

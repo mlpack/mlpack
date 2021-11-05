@@ -75,14 +75,16 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename PolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType
 >
 EQL<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  PolicyType,
+  ActionPolicyType,
+  LambdaUpdatePolicyType,
   ReplayType
 >::~EQL()
 {
@@ -95,14 +97,16 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename PolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType
 >
 arma::uvec EQL<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  PolicyType,
+  ActionPolicyType,
+  LambdaUpdatePolicyType,
   ReplayType
 >::BestAction(const arma::mat& actionValues, const arma::mat& extendedWeightSpace)
 {
@@ -119,14 +123,16 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename BehaviorPolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType
 >
 void EQL<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  BehaviorPolicyType,
+  ActionPolicyType,
+  LambdaUpdatePolicyType,
   ReplayType
 >::TrainAgent()
 {
@@ -269,14 +275,16 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename BehaviorPolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType
 >
 void EQL<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  BehaviorPolicyType,
+  ActionPolicyType,
+  LambdaUpdatePolicyType,
   ReplayType
 >::SelectAction()
 {
@@ -293,14 +301,16 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename BehaviorPolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType
 >
 void EQL<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  BehaviorPolicyType,
+  ActionPolicyType,
+  LambdaUpdatePolicyType,
   ReplayType
 >::AgentReset()
 {
@@ -313,14 +323,16 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename BehaviorPolicyType,
+  typename ActionPolicyType,
+  typename LambdaUpdatePolicyType,
   typename ReplayType
 >
 double EQL<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  BehaviorPolicyType,
+  ActionPolicyType,
+  LambdaUpdatePolicyType,
   ReplayType
 >::Episode()
 {
