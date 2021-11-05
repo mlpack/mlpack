@@ -2,7 +2,7 @@
  * @file methods/ann/morl_network_impl.hpp
  * @author Nanubala Gnana Sai
  *
- * Definition of the MOQN class, which implements feed forward neural networks.
+ * Definition of the Multi-objective Q-network (MOQN) class, extends feed forward neural networks.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
