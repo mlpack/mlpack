@@ -127,7 +127,7 @@ std::cout << info.Type(3) << "\n";
 
 @section numofmappings Number of Mappings
 
-If the type of a dimention is `data::Datatype::categorical`, then during the
+If the type of a dimension is `data::Datatype::categorical`, then during
 loading, each unique token in that dimension will be mapped to an integer
 starting with 0.
 
