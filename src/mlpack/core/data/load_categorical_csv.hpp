@@ -87,7 +87,7 @@ void LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
     }
 
      std::getline(inFile, line);
-     // Remove whitespaces from either side
+     // Remove whitespaces from either side.
      Trim(line);
 
     // If it's an empty line decrease cols and break
