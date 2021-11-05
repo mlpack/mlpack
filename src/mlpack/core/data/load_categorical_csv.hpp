@@ -196,7 +196,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
       while (lineStream.good())
       {
         std::getline(lineStream, token, delim);
-        // Remove whitespace from either side
+        // Remove whitespace from either side.
         Trim(token);
 
         if (token[0] == '"' && token[token.size() - 1] != '"')
