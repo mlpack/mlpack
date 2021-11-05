@@ -173,7 +173,7 @@ void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPoli
   while (std::getline(inFile, line))
   {
     ++rows;
-    // Remove whitespaces from either side
+    // Remove whitespaces from either side.
     Trim(line);
     if (rows == 1)
     {
