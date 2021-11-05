@@ -352,7 +352,7 @@ double EQL<
 
     TrainAgent();
 
-    if (totalSteps > config.MaxEpisodeSteps())
+    if (totalSteps > config.StepLimit())
     {
       AgentReset();
       break;
