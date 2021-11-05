@@ -252,7 +252,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
 
       if (token[0] == '"' && token[token.size() - 1] != '"')
       {
-        // first part of the string
+        // First part of the string.
         std::string tok = token;
         while (token[token.size() - 1] != '"')
         {
