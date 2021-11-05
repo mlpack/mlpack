@@ -235,7 +235,7 @@ void LoadCSV::TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& inf
 
   while (std::getline(inFile, line))
   {
-    // Remove whitespaces from either side
+    // Remove whitespaces from either side.
     Trim(line);
     // Reset the row we are looking at.  (Remember this is transposed.)
     row = 0;
