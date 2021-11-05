@@ -132,7 +132,7 @@ loading, each unique token in that dimension will be mapped to an integer
 starting with 0.
 
 \b NumMappings(size_t dimension) takes dimension as an argument and returns the number of
-mappings in that dimension, if the dimension is number or there are no mappings then it
+mappings in that dimension, if the dimension is a number or there are no mappings then it
 will return 0.
 
 @code
