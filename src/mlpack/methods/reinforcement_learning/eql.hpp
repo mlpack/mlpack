@@ -71,17 +71,18 @@ class EQL
    *
    * @param config Hyper-parameters for training.
    * @param network The network to compute utility value.
-   * @param policy Behavior policy of the agent.
+   * @param actionPolicy Behavior policy of the agent.
    * @param replayMethod Experience replay method.
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
   EQL(TrainingConfig& config,
       NetworkType& network,
-      PolicyType& policy,
+      PolicyType& actionPolicy,
       ReplayType& replayMethod,
       UpdaterType updater = UpdaterType(),
-      EnvironmentType environment = EnvironmentType());
+      EnvironmentType environment = EnvironmentType(),
+      size_t numWeights);
 
   /**
    * Clean memory.
@@ -146,6 +147,8 @@ class EQL
    */
   arma::uvec BestAction(const arma::mat& actionValues, const arma::mat& weightSpace);
 
+  void AgentReset();
+
   //! Locally-stored hyper-parameters.
   TrainingConfig& config;
 
@@ -156,7 +159,7 @@ class EQL
   NetworkType targetNetwork;
 
   //! Locally-stored behavior policy.
-  PolicyType& policy;
+  PolicyType& actionPolicy;
 
   //! Locally-stored experience method.
   ReplayType& replayMethod;
@@ -173,6 +176,21 @@ class EQL
   //! Total steps from the beginning of the task.
   size_t totalSteps;
 
+  // The number of preference vectors to generate.
+  size_t numWeights;
+
+  // Homotopy loss parameter.
+  double lambda;
+
+  // Initial value of the the lambda parameter.
+  double lambdaInit;
+
+  // .
+  double lambdaDelta;
+
+  // 
+  double lambdaExpBase;
+
   //! Locally-stored current state of the agent.
   StateType state;
 
@@ -185,8 +203,6 @@ class EQL
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
 
-  //! Locally stored reward size for convenience.
-  const size_t rewardSize = EnvironmentType::rewardSize;
 };
 
 } // namespace rl

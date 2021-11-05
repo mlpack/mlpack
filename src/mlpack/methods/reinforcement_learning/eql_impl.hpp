@@ -32,17 +32,13 @@ EQL<
   ReplayType
 >::EQL(TrainingConfig& config,
        NetworkType& network,
-       PolicyType& policy,
+       PolicyType& actionPolicy,
        ReplayType& replayMethod,
        UpdaterType updater,
-       EnvironmentType environment,
-       double lambda,
-       double lambdaInit,
-       double lambdaExpBase,
-       double lambdaDelta):
+       EnvironmentType environment):
     config(config),
     learningNetwork(network),
-    policy(policy),
+    actionPolicy(actionPolicy),
     replayMethod(replayMethod),
     updater(std::move(updater)),
     #if ENS_VERSION_MAJOR >= 2
@@ -219,8 +215,8 @@ void EQL<
   arma::mat gradients;
   learningNetwork.Backward(
       sampledStatePref, target, extendedWeightSpace,
-      [&lambda, &extendedWeightSpace](const arma::mat& predictions,
-                                      const arma::mat& targets)
+      [&lambdaUpdatePolicy.Lambda(), &extendedWeightSpace](
+          const arma::mat &predictions, const arma::mat &targets)
       {
         const size_t numElem = arma::sum((predictions - targets) != 0);
         const double lossA =
@@ -237,7 +233,8 @@ void EQL<
         // Store the error.
         arma::mat errorA = (predictions - targets) / numElem;
         arma::mat errorB =
-            arma::sum(extendedWeightSpace % (predictions - targets)) % extendedWeightSpace;
+            arma::sum(extendedWeightSpace % (predictions - targets)) %
+            extendedWeightSpace;
         const double error = 2 * ((1 - lambda) * errorA + lambda * errorB);
         return std::make_tuple(error, homotopyLoss);
       },
@@ -262,13 +259,9 @@ void EQL<
     targetNetwork.Parameters() = learningNetwork.Parameters();
 
   if (totalSteps > config.ExplorationSteps())
-    policy.Anneal();
-
-  if (totalSteps > config.LambdaUpdateSteps())
   {
-    // Lambda anneal.
-    lambda += lambda_delta;
-    lambda_delta = (lambda - lambdaInit) * lambdaExpBase + lambdaInit - lambda;
+    actionPolicy.Anneal();
+    lambdaUpdatePolicy.Anneal();
   }
 }
 
@@ -293,7 +286,27 @@ void EQL<
   arma::inplace_trans(actionValueMatrix);
   arma::vec utilityValue = actionValueMatrix * preference;
   // Select an action according to the behavior policy.
-  action = policy.Sample(utilityValue, deterministic, config.NoisyEQL());
+  action = actionPolicy.Sample(utilityValue, deterministic, config.NoisyEQL());
+}
+
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename BehaviorPolicyType,
+  typename ReplayType
+>
+void EQL<
+  EnvironmentType,
+  NetworkType,
+  UpdaterType,
+  BehaviorPolicyType,
+  ReplayType
+>::AgentReset()
+{
+  preference.reset();
+  lambdaUpdatePolicy.Anneal();
+  actionPolicy.Anneal();
 }
 
 template <
@@ -313,7 +326,7 @@ double EQL<
 {
   // Get the initial state from environment.
   state = environment.InitialSample();
-  preference = arma::randn<arma::vec>(EnvironmentType::rewardSize, 1); //TODO: Normalize it
+  preference = arma::normalise(arma::abs(arma::randn(EnvironmentType::rewardSize, 1)), 1);
   // Track the return of this episode.
   double totalReturn = 0.0;
   // Running until get to the terminal state.
@@ -340,10 +353,11 @@ double EQL<
     TrainAgent();
 
     if (totalSteps > config.MaxEpisodeSteps())
+    {
+      AgentReset();
       break;
+    }
   }
-  // Reset preference vector at the end of episode.
-  preference = arma::zeros<arma::vec>();
   return totalReturn;
 }
 
