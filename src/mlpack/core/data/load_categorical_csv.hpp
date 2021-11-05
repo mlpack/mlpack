@@ -136,7 +136,7 @@ template<typename T, typename MapPolicy>
 void LoadCSV::InitializeMapper(size_t& rows, size_t& cols, DatasetMapper<MapPolicy>& info)
 {
   // Take a pass through the file.  If the DatasetMapper policy requires it,
-  // we will pass everything string through MapString().  This might be useful
+  // we will pass everything as string through MapString().  This might be useful
   // if, e.g., the MapPolicy needs to find which dimensions are numeric or
   // categorical.
 
