@@ -298,7 +298,7 @@ void LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
 
   while (std::getline(inFile, line))
   {
-    // Remove whitespaces from either side
+    // Remove whitespaces from either side.
     Trim(line);
 
     std::stringstream lineStream;
