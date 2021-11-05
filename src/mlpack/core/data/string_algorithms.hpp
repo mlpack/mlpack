@@ -18,7 +18,7 @@ namespace data {
 
 /**
  * A simple trim function to strip off whitespaces 
- * from both the side of string. If input is a string
+ * from both the sides of a string. If input is a string
  * with all spaces then str will be empty string.
  *
  * @param str the string to be trimmed.
