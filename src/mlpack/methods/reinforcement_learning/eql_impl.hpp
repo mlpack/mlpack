@@ -286,13 +286,12 @@ void EQL<
   BehaviorPolicyType,
   ReplayType
 >::SelectAction()
-{ //TODO: Complete this.
-  // Stores the Q vector of each action.
-  arma::mat actionMatrix;
-  learningNetwork.Predict(arma::join_cols(state, preference), actionMatrix);
-  actionMatrix.resize(ActionType::size, EnvironmentType::rewardSize);
-
-  arma::vec utilityValue = actionMatrix * preference;
+{
+  // Stores the Q vector of each action. Shape: (rewardSize, actionSize).
+  arma::mat actionValueMatrix;
+  learningNetwork.Predict(arma::join_cols(state, preference), actionValueMatrix);
+  arma::inplace_trans(actionValueMatrix);
+  arma::vec utilityValue = actionValueMatrix * preference;
   // Select an action according to the behavior policy.
   action = policy.Sample(utilityValue, deterministic, config.NoisyEQL());
 }
