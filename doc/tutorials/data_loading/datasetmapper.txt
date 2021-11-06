@@ -1,0 +1,192 @@
+/*!
+
+@file datasetmapper.txt
+@author Gopi Tatiraju
+@breif Introduction and tutorial for how to use DatasetMapper in mlpack.
+
+@page datasetmapper DatasetMapper Tutorial 
+
+@section intro_datasetmapper Introduction
+
+DatasetMapper is a class which holds information about a dataset. This can be
+used when dataset contains categorical non-numeric features which should be
+mapped to numeric features. A simple example can be
+
+```
+7,5,True,3
+6,3,False,4
+4,8,False,2
+9,3,True,3
+```
+
+The above dataset will be represented as
+
+```
+7,5,0,3
+6,3,1,4
+4,8,1,2
+9,3,0,3
+```
+
+Here Mappings are
+
+- `True` mapped to `0`
+- `False` mapped to `1`
+
+```
+**Note** DatasetMapper converts non-numeric values in the order
+in which it encounters them in dataset. Therefore there is a chance that
+`True` might get mapped to `0` if it encounters `True` before `False`.
+This `0` and `1` are not to be confused with C++ bool notations. These
+are mapping created by `mpack::DatasetMapper`.
+```
+
+DatasetMapper provides an easy API to load such data and stores all the
+necessary information of the dataset.
+
+@section toc_datasetmapper Table of Contents
+
+A list of all sections
+
+ - \ref intro_datasetmapper
+ - \ref toc_datasetmapper
+ - \ref load
+ - \ref dimensions
+ - \ref type
+ - \ref numofmappings
+ - \ref checkmappings
+   - \ref unmapstring
+   - \ref unmapvalue  
+       
+@section load Loading data 
+
+To use \b DatasetMapper we have to call a specific overload of `data::Load()`
+fucntion.
+
+@code
+using namespace mlpack;
+
+arma::mat data;
+data::DatasetMapper info;
+data::Load("dataset.csv", data, info);
+@endcode
+
+Dataset
+```
+7, 5, True, 3
+6, 3, False, 4
+4, 8, False, 2
+9, 3, True, 3
+```
+
+@section dimensions Dimensionality
+
+There are two ways to initialize a DatasetMapper object.
+
+* First is to initialize the object and set each property yourself.
+
+* Second is to pass the object to Load() in which case mlpack will populate
+the object. If we use the latter option then the dimensionality will be same
+as what's in the data file.
+
+@code
+std::cout << info.Dimensionality();
+@endcode
+
+@code
+4
+@endcode
+
+@section type Type of each Dimension
+
+Each dimension can be of either of the two types
+  - data::Datatype::numeric
+  - data::Datatype::categorical
+
+\c `Type(size_t dimension)` takes an argument dimension which is the row
+number for which you want to know the type
+
+This will return an enum `data::Datatype`, which is casted to
+`size_t` when we print them using `std::cout`
+  - 0 represents `data::Datatype::numeric`
+  - 1 represents `data::Datatype::categorical`
+ 
+@code
+std::cout << info.Type(0) << "\n";
+std::cout << info.Type(1) << "\n";
+std::cout << info.Type(2) << "\n";
+std::cout << info.Type(3) << "\n";
+@endcode
+
+@code
+0
+0
+1
+0
+@endcode
+
+@section numofmappings Number of Mappings
+
+If the type of a dimension is `data::Datatype::categorical`, then during
+loading, each unique token in that dimension will be mapped to an integer
+starting with 0.
+
+\b NumMappings(size_t dimension) takes dimension as an argument and returns the number of
+mappings in that dimension, if the dimension is a number or there are no mappings then it
+will return 0.
+
+@code
+std::cout << info.NumMappings(0) << "\n";
+std::cout << info.NumMappings(1) << "\n";
+std::cout << info.NumMappings(2) << "\n";
+std::cout << info.NumMappings(3) << "\n";
+@endcode
+
+@code
+0
+0
+2
+0
+@endcode
+
+@section checkmappings Check Mappings
+
+There are two ways to check the mappings.
+  - Enter the string to get mapped integer
+  - Enter the mapped integer to get string
+
+@subsection unmapstring UnmapString
+
+\b UnmapString(int value, size_t dimension, size_t unmappingIndex = 0UL)
+  - value is the integer for which you want to find the mapped value
+  - dimension is the dimension in which you want to check the mappings
+
+@code
+std::cout << info.UnmapString(0, 2) << "\n";
+std::cout << info.UnmapString(1, 2) << "\n";
+@endcode
+
+@code
+T
+F
+@endcode
+
+@subsection unmapvalue UnmapValue
+
+\b UnmapValue(const std::string &input, size_t dimension)
+  - input is the mapped value for which you want to find mapping
+  - dimension is the dimension in which you want to find the mapped value
+
+@code
+std::cout << info.UnmapValue("T", 2) << "\n";
+std::cout << info.UnmapValue("F", 2) << "\n";
+@endcode
+
+@code
+0
+1
+@endcode
+
+These are basic uses of DatasetMapper. Some advance use cases will be added soon.
+
+*/
