@@ -253,19 +253,18 @@ class MOQN : public FFN<OutputLayerType, InitializationRuleType, CustomLayers...
    * @param inputs Inputs of current pass.
    * @param targets The training target.
    * @param extendedWeightSpace The extended preference vectors repository.
-   * @param HomotopyLoss The custom loss function for EQL.
+   * @param lambda The parameter controlling loss surface.
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
    */
   template<typename PredictorsType,
            typename TargetsType,
            typename WeightsType,
-           typename LossFunctionType,
            typename GradientsType>
   double Backward(const PredictorsType& inputs,
                   const TargetsType& targets,
                   const WeightsType& extendedWeightSpace,
-                  LossFunctionType HomotopyLoss,
+                  double lambda,
                   GradientsType& gradients);
 }; // class MOQN
 

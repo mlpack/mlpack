@@ -219,32 +219,8 @@ void EQL<
 
   // Learn from experience.
   arma::mat gradients;
-  learningNetwork.Backward(
-      sampledStatePref, target, extendedWeightSpace,
-      [&lambdaUpdatePolicy.Lambda(), &extendedWeightSpace](
-          const arma::mat &predictions, const arma::mat &targets)
-      {
-        const size_t numElem = arma::sum((predictions - targets) != 0);
-        const double lossA =
-            std::pow(arma::norm((predictions - targets).vectorise()), 2) /
-            numElem;
-        const double lossB =
-            std::pow(arma::norm(arma::sum(extendedWeightSpace %
-                                          (predictions - targets))),
-                     2) /
-            numElem;
-
-        const double homotopyLoss = (1 - lambda) * lossA + lambda * lossB;
-
-        // Store the error.
-        arma::mat errorA = (predictions - targets) / numElem;
-        arma::mat errorB =
-            arma::sum(extendedWeightSpace % (predictions - targets)) %
-            extendedWeightSpace;
-        const double error = 2 * ((1 - lambda) * errorA + lambda * errorB);
-        return std::make_tuple(error, homotopyLoss);
-      },
-      gradients);
+  learningNetwork.Backward(sampledStatePref, target, extendedWeightSpace,
+                           lambdaUpdatePolicy.Lambda(), gradients);
 
   replayMethod.Update(target, sampledActions, nextActionValues, gradients);
 
@@ -267,7 +243,7 @@ void EQL<
   if (totalSteps > config.ExplorationSteps())
   {
     actionPolicy.Anneal();
-    lambdaUpdatePolicy.Anneal();
+    lambdaUpdatePolicy.Accumulate();
   }
 }
 
@@ -315,7 +291,7 @@ void EQL<
 >::AgentReset()
 {
   preference.reset();
-  lambdaUpdatePolicy.Anneal();
+  lambdaUpdatePolicy.Accumulate();
   actionPolicy.Anneal();
 }
 
