@@ -121,14 +121,14 @@ class RandomForestClassifier :
  * }
  * @endcode
  */
-// template<typename FitnessFunction = GiniGain,
-//          typename DimensionSelectionType = MultipleRandomDimensionSelect,
-//          template<typename> class CategoricalSplitType = AllCategoricalSplit>
-// using ExtraTreesClassifier = RandomForestClassifier<FitnessFunction,
-//                                                     DimensionSelectionType,
-//                                                     RandomBinaryNumericSplit,
-//                                                     CategoricalSplitType,
-//                                                     false>;
+template<typename FitnessFunction = GiniGain,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit>
+using ExtraTreesClassifier = RandomForestClassifier<FitnessFunction,
+                                                    DimensionSelectionType,
+                                                    RandomBinaryNumericSplit,
+                                                    CategoricalSplitType,
+                                                    false>;
 
 } // namespace tree
 } // namespace mlpack

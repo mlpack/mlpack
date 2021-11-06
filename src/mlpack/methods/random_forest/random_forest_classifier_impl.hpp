@@ -61,7 +61,7 @@ void RandomForestClassifier<
             arma::vec& probabilities) const
 {
   // Check edge case.
-  if (trees.size() == 0)
+  if (this->trees.size() == 0)
   {
     probabilities.clear();
     prediction = 0;
@@ -70,18 +70,18 @@ void RandomForestClassifier<
         "trained!");
   }
 
-  probabilities.zeros(trees[0].NumClasses());
-  for (size_t i = 0; i < trees.size(); ++i)
+  probabilities.zeros(this->trees[0].NumClasses());
+  for (size_t i = 0; i < this->trees.size(); ++i)
   {
     arma::vec treeProbs;
     size_t treePrediction; // Ignored.
-    trees[i].Classify(point, treePrediction, treeProbs);
+    this->trees[i].Classify(point, treePrediction, treeProbs);
 
     probabilities += treeProbs;
   }
 
   // Find maximum element after renormalizing probabilities.
-  probabilities /= trees.size();
+  probabilities /= this->trees.size();
   arma::uword maxIndex = 0;
   probabilities.max(maxIndex);
 
@@ -107,7 +107,7 @@ void RandomForestClassifier<
             LabelsType& predictions) const
 {
   // Check edge case.
-  if (trees.size() == 0)
+  if (this->trees.size() == 0)
   {
     predictions.clear();
 
@@ -143,7 +143,7 @@ void RandomForestClassifier<
             arma::mat& probabilities) const
 {
   // Check edge case.
-  if (trees.size() == 0)
+  if (this->trees.size() == 0)
   {
     predictions.clear();
     probabilities.clear();
@@ -152,7 +152,7 @@ void RandomForestClassifier<
         " forest trained!");
   }
 
-  probabilities.set_size(trees[0].NumClasses(), data.n_cols);
+  probabilities.set_size(this->trees[0].NumClasses(), data.n_cols);
   predictions.set_size(data.n_cols);
   #pragma omp parallel for
   for (omp_size_t i = 0; i < data.n_cols; ++i)
