@@ -23,18 +23,32 @@ template<typename OutputLayerType, typename InitializationRuleType,
 template<typename PredictorsType,
          typename TargetsType,
          typename WeightsType,
-         typename LossFunctionType,
          typename GradientsType>
 double MOQN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
     const PredictorsType& inputs,
     const TargetsType& targets,
     const WeightsType& extendedWeightSpace,
-    LossFunctionType HomotopyLoss,
+    double lambda,
     GradientsType& gradients)
 {
   double loss = 0.0;
-  std::tie(error, loss) = HomotopyLoss(
-      boost::apply_visitor(outputParameterVisitor, network.back()), target);
+  arma::mat predictions =
+      boost::apply_visitor(outputParameterVisitor, network.back());
+  const size_t numElem = arma::sum((predictions - targets) != 0);
+  // Homotopy loss.
+  const double lossA =
+      std::pow(arma::norm((predictions - targets).vectorise()), 2) / numElem;
+  const double lossB =
+    std::pow(arma::norm(arma::sum(extendedWeightSpace %
+                                 (predictions - targets))), 2) / numElem;
+
+  const double homotopyLoss = (1 - lambda) * lossA + lambda * lossB;
+
+  // Store the error.
+  arma::mat errorA = (predictions - targets) / numElem;
+  arma::mat errorB = arma::sum(extendedWeightSpace % (predictions - targets)) %
+                     extendedWeightSpace;
+  error = 2 * ((1 - lambda) * errorA + lambda * errorB);
 
   gradients = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
 
