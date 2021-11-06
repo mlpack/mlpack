@@ -114,8 +114,8 @@ arma::uvec EQL<
   // followed by storing the index of max elements.
   return arma::index_max(arma::reshape(
       arma::sum(extendedWeightSpace % actionValues),
-      EnvironmentType::Action::size,                             // Action size.
-      extendedWeightSpace.n_cols / EnvironmentType::Action::size // Input size.
+      ActionType::size,                             // Action size.
+      extendedWeightSpace.n_cols / ActionType::size // Input size.
       ));
 };
 
@@ -154,13 +154,13 @@ void EQL<
   const arma::mat weightSpace =
       arma::normalise(arma::abs(arma::randn(EnvironmentType::rewardSize, numWeights)), 1, 1);
 
-  // Each preference vector is repeated batchSize * actionSize
+  // Each preference vector is repeated batchSize * actionSize.
   // number of times. Shape: (rewardSize, inputSize * actionSize).
   const arma::mat extendedWeightSpace = [batchSize, inputSize, &weightSpace]()
   {
-    arma::mat retval(EnvironmentType::rewardSize, inputSize * actionSize);
+    arma::mat retval(EnvironmentType::rewardSize, inputSize * ActionType::size);
     size_t colIdx = 0, start = 0;
-    const size_t gap = batchSize * actionSize;
+    const size_t gap = batchSize * ActionType::size;
 
     while (colIdx < numWeights)
     {
@@ -180,7 +180,7 @@ void EQL<
 
   // For each state-preference pair, the target network outputs
   // actionSize number of reward vectors.
-  arma::mat nextActionValues(EnvironmentType::rewardSize, inputSize * actionSize);
+  arma::mat nextActionValues(EnvironmentType::rewardSize, inputSize * ActionType::size);
   targetNetwork.Predict(sampledNextStatePref, nextActionValues);
 
   arma::uvec bestActions{};
@@ -196,16 +196,16 @@ void EQL<
     bestActions = BestAction(nextActionValues, extendedWeightSpace);
   }
 
-  arma::mat target(EnvironmentType::rewardSize, inputSize * actionSize);
+  arma::mat target(EnvironmentType::rewardSize, inputSize * ActionType::size);
   learningNetwork.Forward(sampledStatePref, target);
 
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
   // Each slice of the cube holds the action vectors of a state-preference pair.
-  arma::cube targetCube(target.memptr(), EnvironmentType::rewardSize, actionSize,
+  arma::cube targetCube(target.memptr(), EnvironmentType::rewardSize, ActionType::size,
                         inputSize, false, true);
   arma::cube nextActionValCube(nextActionValues.memptr(), EnvironmentType::rewardSize,
-                               actionSize, inputSize, false, true);
+                               ActionType::size, inputSize, false, true);
 
   // Iterate over state-preference indexes (spIdx).
   for (size_t spIdx = 0; spIdx < inputSize; ++spIdx)
@@ -264,7 +264,7 @@ void EQL<
   ReplayType
 >::SelectAction()
 {
-  // Stores the Q vector of each action. Shape: (rewardSize, actionSize).
+  // Stores the Q vector of each action. Shape: (rewardSize, ActionType::size).
   arma::mat actionValueMatrix;
   learningNetwork.Predict(arma::join_cols(state, preference), actionValueMatrix);
   arma::inplace_trans(actionValueMatrix);
