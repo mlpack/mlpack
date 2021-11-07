@@ -17,6 +17,7 @@
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
+#include <mlpack/core/cv/metrics/roc_auc_score.hpp>
 #include <mlpack/core/cv/metrics/r2_score.hpp>
 #include <mlpack/core/cv/metrics/silhouette_score.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
@@ -74,6 +75,9 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
+
+  REQUIRE(ROC_AUC<>::Evaluate(lr, data, labels)
+          == Approx((double) 2 / 3).epsilon(1e-7));
 }
 
 /**
