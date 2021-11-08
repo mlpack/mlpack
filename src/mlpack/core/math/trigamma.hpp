@@ -152,17 +152,17 @@ T TrigammaPrec(T x)
                        0.022892987908906897L
                       };
 
-  // For 1 < x <= 2
+  // For 1 < x <= 2.
   if (x <= 2)
     return (offset + EvaluatePolyPrec(P_1_2, x) / EvaluatePolyPrec(Q_1_2, x)) / (x * x);
-  // For 2 < x <= 4
+  // For 2 < x <= 4.
   else if (x <= 4)
   {
     T y = 1 / x;
     return (1 + EvaluatePolyPrec(P_2_4, y) / EvaluatePolyPrec(Q_2_4, y)) / x;
   }
 
-  // For x > 4
+  // For x > 4.
   T y = 1 / x;
   return (1 + EvaluatePolyPrec(P_4_INF, y) / EvaluatePolyPrec(Q_4_INF, y)) / x;
 }
@@ -181,10 +181,10 @@ T Trigamma(T x)
 
   if (x <= 0)
   {
-    // Reflect
+    // Reflect.
     T z = 1 - x;
 
-    // Check for evaluation on pole
+    // Check for evaluation on pole.
     if (floor(x) == x)
       throw std::runtime_error("Evaluation of the function at pole.");
     
@@ -195,12 +195,12 @@ T Trigamma(T x)
 
   if (x < 1)
   {
-    // Make x > 1
+    // Make x > 1.
     result = 1 / (x * x);
     x += 1;
   }
 
-  // For x >= 1
+  // For x >= 1.
   return result + TrigammaPrec(x);
 }
 
