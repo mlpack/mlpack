@@ -33,11 +33,11 @@ inline void CheckSameSizes(const DataType& data,
                            const std::string& callerDescription,
                            const std::string& addInfo = "labels")
 {
-  if (data.n_cols != label.n_elem)
+  if (data.n_cols != label.n_cols)
   {
     std::ostringstream oss;
     oss << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of " << addInfo << " (" << label.n_elem
+        << "does not match number of " << addInfo << " (" << label.n_cols
         << ")!" << std::endl;
     throw std::invalid_argument(oss.str());
   }

@@ -53,16 +53,16 @@ void PrintDoc(util::ParamData& d,
   {
     if (d.cppType == "std::string")
     {
-      oss << "  Default value '" << boost::any_cast<std::string>(d.value)
+      oss << "  Default value '" << ANY_CAST<std::string>(d.value)
           << "'.";
     }
     else if (d.cppType == "double")
     {
-      oss << "  Default value " << boost::any_cast<double>(d.value) << ".";
+      oss << "  Default value " << ANY_CAST<double>(d.value) << ".";
     }
     else if (d.cppType == "int")
     {
-      oss << "  Default value " << boost::any_cast<int>(d.value) << ".";
+      oss << "  Default value " << ANY_CAST<int>(d.value) << ".";
     }
   }
 

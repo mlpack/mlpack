@@ -85,7 +85,7 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
 
   // Now reload through our interface.
   REQUIRE(
-      data::Load("test_file.csv", test, false, true, arma::arma_binary)
+      data::Load("test_file.csv", test, false, true, FileType::ArmaBinary)
       == true);
 
   REQUIRE(test.n_rows == 4);
@@ -269,7 +269,7 @@ TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.blah", test, false, true, arma::raw_ascii));
+  REQUIRE(data::Load("test_file.blah", test, false, true, FileType::RawASCII));
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -979,10 +979,10 @@ TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest]")
                    "4 8;";
 
   REQUIRE(data::Save("test_file.blerp.blah", test, false, true,
-      arma::arma_binary) == true);
+      FileType::ArmaBinary) == true);
 
   REQUIRE(data::Load("test_file.blerp.blah", test, false, true,
-      arma::arma_binary) == true);
+      FileType::ArmaBinary) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);

@@ -1,9 +1,12 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  string_view.hpp
-  string_view_fwd.hpp
-  boost_backport_string_view.hpp
+  bernoulli.hpp
+  detail/bernoulli_details.hpp
+  detail/polygamma.hpp
+  detail/unchecked_bernoulli.hpp
+  math_fwd.hpp
+  policy.hpp
 )
 
 # add directory name to sources

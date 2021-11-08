@@ -18,8 +18,6 @@
 #include <map>
 #include <string>
 
-#include <boost/any.hpp>
-
 #include <mlpack/prereqs.hpp>
 
 #include "timers.hpp"
@@ -306,8 +304,5 @@ class IO
 };
 
 } // namespace mlpack
-
-// Include the actual definitions of templated methods
-#include "io_impl.hpp"
 
 #endif
