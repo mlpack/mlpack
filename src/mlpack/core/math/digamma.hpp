@@ -19,7 +19,6 @@
 namespace mlpack {
 namespace math {
 
-
 /**
  * This function evaluates the polynomial based on the
  * constants passed to the function.
@@ -63,7 +62,7 @@ EvaluatePolyLarge(const T(&a)[N], const T& x)
  */
 template<std::size_t N, typename T>
 typename std::enable_if<N == 7, T>::type
-EvaluatePoly_1_2(const T(&a)[N], const T& x)
+EvaluatePoly12(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
   T t[2];
@@ -94,7 +93,7 @@ EvaluatePoly_1_2(const T(&a)[N], const T& x)
  */
 template<std::size_t N, typename T>
 typename std::enable_if<N == 6, T>::type
-EvaluatePoly_1_2(const T(&a)[N], const T& x)
+EvaluatePoly12(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
   T t[2];
@@ -118,38 +117,38 @@ EvaluatePoly_1_2(const T(&a)[N], const T& x)
  * @param x Input for which digamma will be calculated.
  */
 template<typename T>
-T Digamma_1_2(T x)
+T Digamma12(T x)
 {
   T y = 0.99558162689208984F;
 
-  const T root_1 = T(1569415565) / 1073741824uL;
-  const T root_2 = (T(381566830) / 1073741824uL) / 1073741824uL;
-  const T root_3 = 0.9016312093258695918615325266959189453125e-19;
+  const T root1 = T(1569415565) / 1073741824uL;
+  const T root2 = (T(381566830) / 1073741824uL) / 1073741824uL;
+  const T root3 = 0.9016312093258695918615325266959189453125e-19;
 
   const T P[] = {
-                 0.25479851061131551,
-                 -0.32555031186804491,
-                 -0.65031853770896507,
-                 -0.28919126444774784,
-                 -0.045251321448739056,
-                 -0.0020713321167745952
+                    0.25479851061131551,
+                    -0.32555031186804491,
+                    -0.65031853770896507,
+                    -0.28919126444774784,
+                    -0.045251321448739056,
+                    -0.0020713321167745952
                 };
 
   const T Q[] = {
-                 1.0,
-                 2.0767117023730469,
-                 1.4606242909763515,
-                 0.43593529692665969,
-                 0.054151797245674225,
-                 0.0021284987017821144,
-                 -0.55789841321675513e-6
+                    1.0,
+                    2.0767117023730469,
+                    1.4606242909763515,
+                    0.43593529692665969,
+                    0.054151797245674225,
+                    0.0021284987017821144,
+                    -0.55789841321675513e-6
                 };
 
-  T g = x - root_1;
-  g -= root_2;
-  g -= root_3;
+  T g = x - root1;
+  g -= root2;
+  g -= root3;
 
-  T r = EvaluatePoly_1_2(P, T(x-1)) / EvaluatePoly_1_2(Q, T(x-1));
+  T r = EvaluatePoly12(P, T(x - 1)) / EvaluatePoly12(Q, T(x - 1));
 
   T result = (g * y) + (g * r);
 
@@ -166,20 +165,20 @@ template<typename T>
 T DigammaLarge(T x)
 {
   const T P[] = {
-                 0.083333333333333333333333333333333333333333333333333,
-                 -0.0083333333333333333333333333333333333333333333333333,
-                 0.003968253968253968253968253968253968253968253968254,
-                 -0.0041666666666666666666666666666666666666666666666667,
-                 0.0075757575757575757575757575757575757575757575757576,
-                 -0.021092796092796092796092796092796092796092796092796,
-                 0.083333333333333333333333333333333333333333333333333,
-                 -0.44325980392156862745098039215686274509803921568627
+                    0.083333333333333333333333333333333333333333333333333,
+                    -0.0083333333333333333333333333333333333333333333333333,
+                    0.003968253968253968253968253968253968253968253968254,
+                    -0.0041666666666666666666666666666666666666666666666667,
+                    0.0075757575757575757575757575757575757575757575757576,
+                    -0.021092796092796092796092796092796092796092796092796,
+                    0.083333333333333333333333333333333333333333333333333,
+                    -0.44325980392156862745098039215686274509803921568627
                 };
 
   x -= 1;
   T result = std::log(x);
   result += 1 / (2 * x);
-  T z = 1 / (x * x);
+  const T z = 1 / (x * x);
   result -= z * EvaluatePolyLarge(P, z); 
 
   return result;
@@ -209,7 +208,7 @@ T Digamma(T x)
     // Check for evaluation of the function on poles.
     T remainder = x - floor(x);
 
-    if(remainder > 0.5)
+    if (remainder > 0.5)
     {
       remainder -= 1;
     }
@@ -237,14 +236,14 @@ T Digamma(T x)
       result += 1 / x;
     }
 
-    // If x < 1, shift to x > 1
+    // If x < 1, shift to x > 1.
     while (x < 1)
     {
       result -= 1 / x;
       x += 1;
     }
 
-    result += Digamma_1_2(x);
+    result += Digamma12(x);
   }
 
   return result;
