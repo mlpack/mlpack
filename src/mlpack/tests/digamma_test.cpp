@@ -29,7 +29,7 @@ TEST_CASE("DigammaLarge", "[DigammaTest]")
     FAIL("Cannot load data digamma_data.csv");
   
   for (size_t i = 0; i < data.n_rows; i++)
-    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1).epsilon(1e-7)));
+    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
 
 /**
@@ -43,7 +43,7 @@ TEST_CASE("DigammaNegative", "[DigammaTest]")
     FAIL("Cannot load data digamma_neg_data.csv");
   
   for (size_t i = 0; i < data.n_rows; i++)
-    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1).epsilon(1e-7)));
+    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
 
 /**
@@ -57,7 +57,7 @@ TEST_CASE("DigammaSmall", "[DigammaTest]")
     FAIL("Cannot load data digamma_small_data.csv");
   
   for (size_t i = 0; i < data.n_rows; i++)
-    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1).epsilon(1e-7)));
+    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
 
 /**
@@ -71,5 +71,5 @@ TEST_CASE("DigammaNearPositiveRoots", "[DigammaTest]")
     FAIL("Cannot load data digamma_root_data.csv");
   
   for (size_t i = 0; i < data.n_rows; i++)
-    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1).epsilon(1e-7)));
+    REQUIRE(Digamma(data(i, 0)) == Approx(data(i, 1)).epsilon(1e-7));
 }
