@@ -16,7 +16,7 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace arma;
+using namespace math;
 
 /**
  * Test the output of digamma for large input values.
@@ -25,10 +25,10 @@ TEST_CASE("DigammaLarge", "[DigammaTest]")
 {
   arma::mat data;
 
-  if (!data::Load("digamma_data.csv", data));
+  if (!data::Load("digamma_data.csv", data))
     FAIL("Cannot load data digamma_data.csv");
   
-  for (int i = 0; i < data.n_rows; i++)
+  for (size_t i = 0; i < data.n_rows; i++)
     REQUIRE(Digamma(data(i, 0) == Approx(data(i, 1).epsilon(1e-7)));
 }
 
@@ -37,7 +37,13 @@ TEST_CASE("DigammaLarge", "[DigammaTest]")
  */
 TEST_CASE("DigammaNegative", "[DigammaTest]")
 {
+  arma::mat data;
+
+  if (!data::Load("digamma_neg_data.csv", data))
+    FAIL("Cannot load data digamma_neg_data.csv");
   
+  for (size_t i = 0; i < data.n_rows; i++)
+    REQUIRE(Digamma(data(i, 0) == Approx(data(i, 1).epsilon(1e-7)));
 }
 
 /**
@@ -45,7 +51,13 @@ TEST_CASE("DigammaNegative", "[DigammaTest]")
  */
 TEST_CASE("DigammaSmall", "[DigammaTest]")
 {
+  arma::mat data;
+
+  if (!data::Load("digamma_small_data.csv", data))
+    FAIL("Cannot load data digamma_small_data.csv");
   
+  for (size_t i = 0; i < data.n_rows; i++)
+    REQUIRE(Digamma(data(i, 0) == Approx(data(i, 1).epsilon(1e-7)));
 }
 
 /**
@@ -53,5 +65,11 @@ TEST_CASE("DigammaSmall", "[DigammaTest]")
  */
 TEST_CASE("DigammaNearPositiveRoots", "[DigammaTest]")
 {
+  arma::mat data;
+
+  if (!data::Load("digamma_root_data.csv", data))
+    FAIL("Cannot load data digamma_root_data.csv");
   
+  for (size_t i = 0; i < data.n_rows; i++)
+    REQUIRE(Digamma(data(i, 0) == Approx(data(i, 1).epsilon(1e-7)));
 }
