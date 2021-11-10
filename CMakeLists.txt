@@ -121,9 +121,9 @@ endif ()
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
-# If we are on a Unix-like system, use the GNU install directories module.
+# If we are not using Visual Studio, use the GNU install directories module.
 # Otherwise set the values manually.
-if (UNIX)
+if (NOT MSVC)
   include(GNUInstallDirs)
 else ()
   set(CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
@@ -168,8 +168,8 @@ endif ()
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
 # many sections.
 if (CMAKE_COMPILER_IS_GNUCC AND WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wa,-mbig-obj")
 endif()
 
 # If using clang, we have to link against libc++ depending on the
