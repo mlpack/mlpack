@@ -427,11 +427,11 @@ void NCF::GetRecommendations(const size_t numRecs,
 template<typename Archive>
 void NCF::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(neg);
-  ar & BOOST_SERIALIZATION_NVP(epochs);
-  ar & BOOST_SERIALIZATION_NVP(embedSize);
-  ar & BOOST_SERIALIZATION_NVP(numUsers);
-  ar & BOOST_SERIALIZATION_NVP(numItems);
+  ar(CEREAL_NVP(neg));
+  ar(CEREAL_NVP(epochs));
+  ar(CEREAL_NVP(embedSize));
+  ar(CEREAL_NVP(numUsers));
+  ar(CEREAL_NVP(numItems));
 }
 
 } // namespace cf
