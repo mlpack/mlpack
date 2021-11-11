@@ -208,4 +208,3 @@ T Trigamma(T x)
 } // namespace mlpack
 
 #endif
-
