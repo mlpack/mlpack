@@ -63,7 +63,7 @@ class MDOption
     data.cppType = cppName;
 
     // Every parameter we'll get from Markdown will have the correct type.
-    data.value = boost::any(defaultValue);
+    data.value = ANY(defaultValue);
 
     // Set the function pointers that we'll need.  Most of these simply delegate
     // to the current binding type's implementation.  Any new language will need

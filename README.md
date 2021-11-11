@@ -151,6 +151,7 @@ mlpack_pca, mlpack_kmeans etc.) with the following command:
     $ sudo apt-get install libmlpack-dev mlpack-bin
 
 On Fedora or Red Hat (EPEL):
+
     $ sudo dnf install mlpack-devel mlpack-bin
 
 *Note*: Older Ubuntu versions may not have the most recent version of mlpack

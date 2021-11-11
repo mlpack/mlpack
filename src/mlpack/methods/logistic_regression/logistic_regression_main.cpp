@@ -43,9 +43,9 @@ BINDING_LONG_DESC(
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
     "\n\n"
-    "  y = (1 / 1 + e^-(X * b))"
+    "  y = (1 / 1 + e^-(X * b))."
     "\n\n"
-    "where y takes values 0 or 1."
+    "In this setting, y corresponds to class labels and X corresponds to data."
     "\n\n"
     "This program allows loading a logistic regression model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -102,9 +102,10 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("output_probabilities") +
     "\n\n"
     "This implementation of logistic regression does not support the general "
-    "multi-class case but instead only the two-class case.  Any labels must "
-    "be either 0 or 1.  For more classes, see the softmax_regression "
-    "program.");
+    "multi-class case but instead only the two-class case.  Any labels must be "
+    "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
+    std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
+    "softmax regression implementation.");
 
 // Example.
 BINDING_EXAMPLE(

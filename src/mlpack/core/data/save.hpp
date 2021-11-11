@@ -20,6 +20,7 @@
 
 #include "format.hpp"
 #include "image_info.hpp"
+#include "detect_file_type.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
@@ -64,7 +65,7 @@ bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal = false,
           bool transpose = true,
-          arma::file_type inputSaveType = arma::auto_detect);
+          FileType inputSaveType = FileType::AutoDetect);
 
 /**
  * Saves a sparse matrix to file, guessing the filetype from the

@@ -76,6 +76,11 @@
 
   * Fix double-free of model pointers in R bindings (#3034).
 
+  * Fix Julia, Python, R, and Go handling of categorical data for
+    `decision_tree()` and `hoeffding_tree()` (#2971).
+
+  * Depend on `pkgbuild` for R bindings (#3081).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.

@@ -639,7 +639,7 @@ TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
   arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  CreateMultiSplitData(dataset, responses, 100, values);
+  CreateMultiSplitData(dataset, responses, 1000, values);
 
   arma::rowvec weights(responses.n_elem);
   weights.ones();
@@ -931,7 +931,7 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
 
   // Make sure we get reasonable rmse.
   const double rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 1.0);
+  REQUIRE(rmse < 1.05);
 }
 
 /**
@@ -959,7 +959,7 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 
   // Figure out rmse.
   double rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 6.0);
+  REQUIRE(rmse < 6.1);
 
   // Reset the predictions.
   predictions.zeros();
@@ -969,7 +969,7 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 
   // Figure out rmse.
   rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 6.0);
+  REQUIRE(rmse < 6.1);
 }
 
 /**
