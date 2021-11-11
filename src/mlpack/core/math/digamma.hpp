@@ -83,7 +83,7 @@ EvaluatePoly12(const T(&a)[N], const T& x)
 
 /**
  * This function evaluates the polynomial based on the
- * constants passed to the fucntion.
+ * constants passed to the function.
  * This gets executed when size of the array of constants is 6.
  * This function is to evaluate the polynomial when x
  * is in the interval [1, 2].
