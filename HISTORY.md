@@ -1,10 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Migrate from boost tests to Catch2 framework (2523), (#2584).
+  * Migrate from boost tests to Catch2 framework (#2523), (#2584).
 
-  * Update NumFOCUS team voting responsibilities (3071).
+  * Update NumFOCUS team voting responsibilities (#3071).
 
-  * Add armadillo bump version policy (3048).
+  * Add armadillo bump version policy (#3048).
 
   * Bump minimum armadillo version from 8.400 to 9.800 (#3043).
 
