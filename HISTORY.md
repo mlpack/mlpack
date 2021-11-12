@@ -26,7 +26,7 @@
 
   * Remove non valid option for emsmallen and stb (#2960).
 
-  * Check for armadillo dependecies before downloading armadillo (#2954).
+  * Check for armadillo dependencies before downloading armadillo (#2954).
 
   * Disable the usage of autodownloader by default (#2953).
 
