@@ -15,7 +15,8 @@
 
   * Disable correctly the autodownloader + fix tests stability (#3076).
 
-  * Replace boost::any with core::v2::any (#3006).
+  * Replace boost::any with core::v2::any or std::any if available
+    (#3006).
 
   * Remove old non used Boost headers (#3005)
 
