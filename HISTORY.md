@@ -34,8 +34,7 @@
 
   * Add support for embedded systems (#2531).
 
-  * Build mlpack executable statically if the library is statically linked
-   (#2931).
+  * Build mlpack executable statically if the library is statically linked (#2931).
 
   * Fix cover tree loop bug on embedded arm systems (#2869).
 
