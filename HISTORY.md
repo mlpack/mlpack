@@ -18,7 +18,7 @@
   * Replace boost::any with core::v2::any or std::any if available
     (#3006).
 
-  * Remove old non used Boost headers (#3005)
+  * Remove old non used Boost headers (#3005).
 
   * Replace boost::enable_if with std::enable_if (#2998).
 
