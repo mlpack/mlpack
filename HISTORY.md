@@ -24,7 +24,7 @@
 
   * Replace boost::is_same with std::is_same (#2993).
 
-  * Remove non valid option for emsmallen and stb (#2960).
+  * Remove invalid option for emsmallen and STB (#2960).
 
   * Check for armadillo dependencies before downloading armadillo (#2954).
 
