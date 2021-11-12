@@ -30,7 +30,7 @@
 
   * Disable the usage of autodownloader by default (#2953).
 
-  * Install dependecies downloaded with the autodownloader (#2952).
+  * Install dependencies downloaded with the autodownloader (#2952).
  
   * Download older Boost if the compiler is old (#2940). 
 
