@@ -55,21 +55,21 @@ class EpanechnikovKernel
    * Evaluate the Epanechnikov kernel given that the distance between the two
    * input points is known.
    */
-  double Evaluate(const double distance) const;
+  inline double Evaluate(const double distance) const;
 
   /**
    * Evaluate the Gradient of Epanechnikov kernel
    * given that the distance between the two
    * input points is known.
    */
-  double Gradient(const double distance) const;
+  inline double Gradient(const double distance) const;
 
   /**
    * Evaluate the Gradient of Epanechnikov kernel
    * given that the squared distance between the two
    * input points is known.
    */
-  double GradientForSquaredDistance(const double distanceSquared) const;
+  inline double GradientForSquaredDistance(const double distanceSquared) const;
   /**
    * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
    * for the two vectors.
@@ -87,7 +87,7 @@ class EpanechnikovKernel
    *
    * @param dimension Dimension to calculate the normalizer for.
    */
-  double Normalizer(const size_t dimension);
+  inline double Normalizer(const size_t dimension);
 
   /**
    * Serialize the kernel.

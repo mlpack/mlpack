@@ -361,7 +361,6 @@ bool Save(const std::string& filename,
   arma::Mat<unsigned char> tmpMatrix =
       arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
 
-  // Call out to .cpp implementation.
   return SaveImage(filename, tmpMatrix, info, fatal);
 }
 

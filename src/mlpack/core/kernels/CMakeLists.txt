@@ -6,7 +6,6 @@ set(SOURCES
   cosine_distance_impl.hpp
   epanechnikov_kernel.hpp
   epanechnikov_kernel_impl.hpp
-  epanechnikov_kernel.cpp
   example_kernel.hpp
   gaussian_kernel.hpp
   hyperbolic_tangent_kernel.hpp

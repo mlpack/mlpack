@@ -16,7 +16,7 @@ set(SOURCES
   random.hpp
   random.cpp
   random_basis.hpp
-  random_basis.cpp
+  random_basis_impl.hpp
   range.hpp
   range_impl.hpp
   round.hpp
