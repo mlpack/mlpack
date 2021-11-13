@@ -2,11 +2,7 @@
 ###### ????-??-??
   * Migrate from boost tests to Catch2 framework (#2523), (#2584).
 
-  * Update NumFOCUS team voting responsibilities (#3071).
-
-  * Add armadillo bump version policy (#3048).
-
-  * Bump minimum armadillo version from 8.400 to 9.800 (#3043).
+  * Bump minimum armadillo version from 8.400 to 9.800 (#3043), (#3048).
 
   * Adding a copy constructor in the Convolution layer (#3067).
 
@@ -40,14 +36,10 @@
 
   * Fix a LAPACK bug in FindArmadillo.cmake (#2929).
 
-  * Fix Boost installation on the CI (#2928).
-
   * Add an autodownloader to get mlpack dependencies (#2927).
 
   * Remove Coverage files and configurations from CMakeLists (#2866).
 
-  * Remove the double installation of Armadillo in the CI (#2837).
- 
   * Added `Multi Label Soft Margin Loss` loss function for neural networks
    (#2345).
 
