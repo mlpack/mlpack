@@ -25,7 +25,7 @@ namespace data {
  *
  * @param type Type to get the logical name of.
  */
-std::string GetStringType(const FileType& type);
+inline std::string GetStringType(const FileType& type);
 
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
@@ -38,7 +38,7 @@ std::string GetStringType(const FileType& type);
  *
  * @param f Opened istream to look into to guess the file type.
  */
-FileType GuessFileType(std::istream& f);
+inline FileType GuessInline FileType(std::istream& f);
 
 /**
  * Attempt to auto-detect the type of a file given its extension, and by
@@ -53,7 +53,7 @@ FileType GuessFileType(std::istream& f);
  * @param filename Name of the file.
  * @return The detected file type.  arma::file_type_unknown if unknown.
  */
-FileType AutoDetect(std::fstream& stream,
+inline FileType AutoDetect(std::fstream& stream,
                     const std::string& filename);
 
 /**
@@ -62,9 +62,11 @@ FileType AutoDetect(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
-FileType DetectFromExtension(const std::string& filename);
+inline FileType DetectFromExtension(const std::string& filename);
 
 } // namespace data
 } // namespace mlpack
+
+#include "detect_file_type_impl.hpp"
 
 #endif
