@@ -100,7 +100,7 @@ class PSpectrumStringKernel
         size_t start = 0;
         while ((start + p) <= str.length())
         {
-          string sub = str.substr(start, p);
+          std::string sub = str.substr(start, p);
 
           // Convert all characters to lowercase.
           bool invalid = false;
