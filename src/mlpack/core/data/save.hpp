@@ -163,10 +163,10 @@ bool Save(const std::vector<std::string>& files,
 /**
  * Helper function to save files.  Implementation in save_image.cpp.
  */
-bool SaveImage(const std::string& filename,
-               arma::Mat<unsigned char>& image,
-               ImageInfo& info,
-               const bool fatal = false);
+inline bool SaveImage(const std::string& filename,
+                      arma::Mat<unsigned char>& image,
+                      ImageInfo& info,
+                      const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack
