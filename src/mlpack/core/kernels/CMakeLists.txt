@@ -15,7 +15,6 @@ set(SOURCES
   polynomial_kernel.hpp
   pspectrum_string_kernel.hpp
   pspectrum_string_kernel_impl.hpp
-  pspectrum_string_kernel.cpp
   spherical_kernel.hpp
   triangular_kernel.hpp
 )
