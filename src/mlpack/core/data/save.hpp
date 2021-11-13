@@ -173,5 +173,6 @@ inline bool SaveImage(const std::string& filename,
 
 // Include implementation.
 #include "save_impl.hpp"
+#include "save_image.hpp"
 
 #endif
