@@ -1,5 +1,5 @@
 /**
- * @file core/data/save_image.cpp
+ * @file core/data/save_image.hpp
  * @author Mehul Kumar Nirala
  *
  * Implementation of image saving functionality via STB.

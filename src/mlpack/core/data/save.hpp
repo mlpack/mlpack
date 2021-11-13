@@ -161,7 +161,7 @@ bool Save(const std::vector<std::string>& files,
           const bool fatal = false);
 
 /**
- * Helper function to save files.  Implementation in save_image.cpp.
+ * Helper function to save files.  Implementation in save_image.hpp.
  */
 inline bool SaveImage(const std::string& filename,
                       arma::Mat<unsigned char>& image,
