@@ -24,10 +24,10 @@
 namespace mlpack {
 namespace data {
 
-bool LoadImage(const std::string& filename,
-               arma::Mat<unsigned char>& matrix,
-               ImageInfo& info,
-               const bool fatal)
+inline bool LoadImage(const std::string& filename,
+                      arma::Mat<unsigned char>& matrix,
+                      ImageInfo& info,
+                      const bool fatal)
 {
   unsigned char* image;
 
@@ -104,10 +104,10 @@ bool LoadImage(const std::string& filename,
 namespace mlpack {
 namespace data {
 
-bool LoadImage(const std::string& /* filename */,
-               arma::Mat<unsigned char>& /* matrix */,
-               ImageInfo& /* info */,
-               const bool fatal)
+inline bool LoadImage(const std::string& /* filename */,
+                      arma::Mat<unsigned char>& /* matrix */,
+                      ImageInfo& /* info */,
+                      const bool fatal)
 {
   if (fatal)
   {
