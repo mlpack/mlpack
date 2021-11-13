@@ -284,11 +284,11 @@ bool Load(const std::vector<std::string>& files,
           ImageInfo& info,
           const bool fatal = false);
 
-// Implementation found in load_image.cpp.
-bool LoadImage(const std::string& filename,
-               arma::Mat<unsigned char>& matrix,
-               ImageInfo& info,
-               const bool fatal = false);
+// Implementation found in load_image.hpp.
+inline bool LoadImage(const std::string& filename,
+                      arma::Mat<unsigned char>& matrix,
+                      ImageInfo& info,
+                      const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack

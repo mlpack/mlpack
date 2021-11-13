@@ -38,7 +38,7 @@ inline std::string GetStringType(const FileType& type);
  *
  * @param f Opened istream to look into to guess the file type.
  */
-inline FileType GuessInline FileType(std::istream& f);
+inline FileType GuessFileType(std::istream& f);
 
 /**
  * Attempt to auto-detect the type of a file given its extension, and by

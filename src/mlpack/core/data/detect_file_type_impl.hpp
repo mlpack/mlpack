@@ -1,5 +1,5 @@
 /**
- * @file core/data/detect_file_type.cpp
+ * @file core/data/detect_file_type_impl.hpp
  * @author Conrad Sanderson
  * @author Ryan Curtin
  *
