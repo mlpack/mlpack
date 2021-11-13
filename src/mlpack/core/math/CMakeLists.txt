@@ -7,7 +7,6 @@ set(SOURCES
   digamma.hpp
   lin_alg.hpp
   lin_alg_impl.hpp
-  lin_alg.cpp
   log_add.hpp
   log_add_impl.hpp
   make_alias.hpp
