@@ -301,5 +301,7 @@ inline bool LoadImage(const std::string& filename,
 #include "load_vec_impl.hpp"
 // Include implementation of Load() for images.
 #include "load_image_impl.hpp"
+// Include implementation of Load() for images.
+#include "load_image.hpp"
 
 #endif
