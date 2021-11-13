@@ -16,7 +16,7 @@ using namespace arma;
 namespace mlpack {
 namespace math {
 
-void RandomBasis(mat& basis, const size_t d)
+inline void RandomBasis(mat& basis, const size_t d)
 {
   while (true)
   {
