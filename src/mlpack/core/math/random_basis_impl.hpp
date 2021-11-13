@@ -1,5 +1,5 @@
 /**
- * @file core/math/random_basis.cpp
+ * @file core/math/random_basis_impl.hpp
  * @author Ryan Curtin
  *
  * Generate a random d-dimensional basis.
