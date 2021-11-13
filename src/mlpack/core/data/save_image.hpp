@@ -30,10 +30,10 @@
 namespace mlpack {
 namespace data {
 
-bool SaveImage(const std::string& filename,
-               arma::Mat<unsigned char>& image,
-               ImageInfo& info,
-               const bool fatal)
+inline bool SaveImage(const std::string& filename,
+                      arma::Mat<unsigned char>& image,
+                      ImageInfo& info,
+                      const bool fatal)
 {
   // Check to see if the file type is supported.
   if (!ImageFormatSupported(filename, true))
@@ -127,10 +127,10 @@ bool SaveImage(const std::string& filename,
 namespace mlpack {
 namespace data {
 
-bool SaveImage(const std::string& /* filename */,
-               arma::Mat<unsigned char>& /* image */,
-               ImageInfo& /* info */,
-               const bool fatal)
+inline bool SaveImage(const std::string& /* filename */,
+                      arma::Mat<unsigned char>& /* image */,
+                      ImageInfo& /* info */,
+                      const bool fatal)
 {
   if (fatal)
   {

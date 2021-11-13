@@ -24,7 +24,7 @@ set(SOURCES
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
-  save_image.cpp
+  save_image.hpp
   split_data.hpp
   string_algorithms.hpp
   imputer.hpp
