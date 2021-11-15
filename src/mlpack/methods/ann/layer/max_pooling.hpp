@@ -28,12 +28,24 @@ class MaxPoolingRule
   /*
    * Return the maximum value within the receptive block.
    *
-   * @param input Input used to perform the pooling operation.
+   * @param input Input used to perform the pooling operation.  Could be an
+   *     Armadillo subview.
    */
-  template<typename MatType>
-  size_t Pooling(const MatType& input)
+  template<typename InputType>
+  typename InputType::elem_type Pooling(const InputType& input)
   {
-    return arma::as_scalar(arma::find(input.max() == input, 1));
+    return arma::max(arma::vectorise(input));
+  }
+
+  template<typename InputType>
+  std::tuple<size_t, typename InputType::elem_type> PoolingWithIndex(
+      const InputType& input)
+  {
+    const typename InputType::elem_type maxVal =
+        arma::max(arma::vectorise(input));
+    const size_t index = arma::as_scalar(arma::find(input == maxVal, 1));
+
+    return std::tuple<size_t, typename InputType::elem_type>(index, maxVal);
   }
 };
 
@@ -166,46 +178,87 @@ class MaxPoolingType : public Layer<InputType, OutputType>
    * @param output The pooled result.
    * @param poolingIndices The pooled indices.
    */
-  void PoolingOperation(const InputType& input,
-                        OutputType& output,
-                        OutputType& poolingIndices)
+  void PoolingOperation(
+      const arma::Cube<typename InputType::elem_type>& input,
+      arma::Cube<typename OutputType::elem_type>& output,
+      arma::Cube<size_t>& poolingIndices)
   {
-    for (size_t j = 0, colidx = 0; j < output.n_cols;
-        ++j, colidx += strideHeight)
+    // Iterate over all slices individually.
+    for (size_t s = 0; s < input.n_slices; ++s)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows;
-          ++i, rowidx += strideWidth)
+      for (size_t j = 0, colidx = 0; j < output.n_cols;
+          ++j, colidx += strideHeight)
       {
-        InputType subInput = input(
-            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
-            arma::span(colidx, colidx + kernelHeight - 1 - offset));
-
-        const size_t idx = pooling.Pooling(subInput);
-        output(i, j) = subInput(idx);
-
-        if (this->training)
+        for (size_t i = 0, rowidx = 0; i < output.n_rows;
+            ++i, rowidx += strideWidth)
         {
-          arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + kernelWidth - 1 - offset),
-              arma::span(colidx, colidx + kernelHeight - 1 - offset));
+          const std::tuple<size_t, typename InputType::elem_type> poolResult =
+              pooling.PoolingWithIndex(input.slice(s).submat(
+                  rowidx,
+                  colidx,
+                  rowidx + kernelWidth - 1 - offset,
+                  colidx + kernelHeight - 1 - offset));
 
-          poolingIndices(i, j) = subIndices(idx);
+          // Now map the returned pooling index, which corresponds to the
+          // submatrix we gave, back to its position in the (linearized) input.
+          const size_t poolIndex = std::get<0>(poolResult);
+          const size_t poolingCol = poolIndex / (kernelWidth - offset);
+          const size_t poolingRow = poolIndex % (kernelWidth - offset);
+          const size_t unmappedPoolingIndex = (rowidx + poolingRow) +
+              input.n_rows * (colidx + poolingCol) +
+              input.n_rows * input.n_cols * s;
+
+          poolingIndices(i, j, s) = unmappedPoolingIndex;
+          output(i, j, s) = std::get<1>(poolResult);
         }
       }
     }
   }
 
   /**
-   * Apply unpooling to the input and store the results.
+   * Apply pooling to all slices of the input and store the results, but not the
+   * indices used.
+   *
+   * @param input The input to apply the pooling rule to.
+   * @param output The pooled result.
+   */
+  void PoolingOperation(
+      const arma::Cube<typename InputType::elem_type>& input,
+      arma::Cube<typename OutputType::elem_type>& output)
+  {
+    // Iterate over all slices individually.
+    for (size_t s = 0; s < input.n_slices; ++s)
+    {
+      for (size_t j = 0, colidx = 0; j < output.n_cols;
+          ++j, colidx += strideHeight)
+      {
+        for (size_t i = 0, rowidx = 0; i < output.n_rows;
+            ++i, rowidx += strideWidth)
+        {
+          output(i, j, s) = pooling.Pooling(input.slice(s).submat(
+              rowidx,
+              colidx,
+              rowidx + kernelWidth - 1 - offset,
+              colidx + kernelHeight - 1 - offset));
+        }
+      }
+    }
+  }
+
+  /**
+   * Apply unpooling to all slices of the input and store the results.
    *
    * @param error The backward error.
    * @param output The pooled result.
-   * @param poolingIndices The pooled indices.
+   * @param poolingIndices The pooled indices (from `PoolingOperation()`).
    */
-  void Unpooling(const InputType& error,
-                 OutputType& output,
-                 OutputType& poolingIndices)
+  void UnpoolingOperation(
+      const arma::Cube<typename InputType::elem_type>& error,
+      arma::Cube<typename OutputType::elem_type>& output,
+      const arma::Cube<size_t>& poolingIndices)
   {
+    output.zeros();
+
     for (size_t i = 0; i < poolingIndices.n_elem; ++i)
     {
       output(poolingIndices(i)) += error(i);
@@ -230,26 +283,14 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Locally-stored number of channels.
   size_t channels;
 
-  //! Locally-stored reset parameter used to initialize the module once.
-  bool reset;
-
   //! Locally-stored stored rounding offset.
   size_t offset;
-
-  //! Locally-stored number of input units.
-  size_t batchSize;
 
   //! Locally-stored pooling strategy.
   MaxPoolingRule pooling;
 
-  //! Locally-stored indices matrix parameter.
-  arma::Mat<size_t> indices;
-
-  //! Locally-stored indices column parameter.
-  arma::Col<size_t> indicesCol;
-
   //! Locally-stored pooling indicies.
-  std::vector<arma::Cube<typename InputType::elem_type>> poolingIndices;
+  arma::Cube<size_t> poolingIndices;
 }; // class MaxPoolingType
 
 // Standard MaxPooling layer.

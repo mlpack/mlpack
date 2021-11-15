@@ -38,9 +38,7 @@ MaxPoolingType<InputType, OutputType>::MaxPoolingType(
     strideHeight(strideHeight),
     floor(floor),
     channels(0),
-    reset(false),
-    offset(0),
-    batchSize(0)
+    offset(0)
 {
   // Nothing to do here.
 }
@@ -49,67 +47,45 @@ template<typename InputType, typename OutputType>
 void MaxPoolingType<InputType, OutputType>::Forward(
   const InputType& input, OutputType& output)
 {
-  batchSize = input.n_cols;
   arma::Cube<typename InputType::elem_type> inputTemp(
       const_cast<InputType&>(input).memptr(), this->inputDimensions[0],
-      this->inputDimensions[1], batchSize * channels, false, false);
+      this->inputDimensions[1], input.n_cols * channels, false, false);
 
   arma::Cube<typename OutputType::elem_type> outputTemp(output.memptr(),
       this->outputDimensions[0], this->outputDimensions[1],
-      batchSize * channels, false, true);
+      input.n_cols * channels, false, true);
 
   if (this->training)
   {
-    poolingIndices.push_back(outputTemp);
+    // If we are training, we'll do a backwards pass, so we need to ensure that
+    // we know what indices we used.
+    poolingIndices.set_size(this->outputDimensions[0],
+        this->outputDimensions[1], input.n_cols * channels);
+
+    PoolingOperation(inputTemp, outputTemp, poolingIndices);
   }
-
-  if (!reset)
+  else
   {
-    const size_t elements = this->inputDimensions[0] * this->inputDimensions[1];
-    indicesCol = arma::linspace<arma::Col<size_t> >(0, (elements - 1),
-        elements);
-
-    indices = arma::Mat<size_t>(indicesCol.memptr(), this->inputDimensions[0],
-        this->inputDimensions[1]);
-
-    reset = true;
-  }
-
-  for (size_t s = 0; s < inputTemp.n_slices; s++)
-  {
-    if (this->training)
-    {
-      PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-          poolingIndices.back().slice(s));
-    }
-    else
-    {
-      PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-          inputTemp.slice(s));
-    }
+    PoolingOperation(inputTemp, outputTemp);
   }
 }
 
 template<typename InputType, typename OutputType>
 void MaxPoolingType<InputType, OutputType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
   arma::Cube<typename OutputType::elem_type> mappedError =
       arma::Cube<typename OutputType::elem_type>(((OutputType&) gy).memptr(),
       this->outputDimensions[0], this->outputDimensions[1],
-      channels * batchSize, false, false);
+      channels * input.n_cols, false, false);
 
   arma::Cube<typename OutputType::elem_type> gTemp(g.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1], channels * batchSize,
-      false, true);
+      this->inputDimensions[0], this->inputDimensions[1],
+      channels * input.n_cols, false, true);
 
-  for (size_t s = 0; s < mappedError.n_slices; s++)
-  {
-    Unpooling(mappedError.slice(s), gTemp.slice(s),
-        poolingIndices.back().slice(s));
-  }
-
-  poolingIndices.pop_back();
+  // There's no version of UnpoolingOperation without pooling indices, because
+  // if we call `Backward()`, we know for sure we are training.
+  UnpoolingOperation(mappedError, gTemp, poolingIndices);
 }
 
 template<typename InputType, typename OutputType>
@@ -117,6 +93,7 @@ template<typename Archive>
 void MaxPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
+
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
@@ -124,13 +101,15 @@ void MaxPoolingType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(kernelHeight));
   ar(CEREAL_NVP(strideWidth));
   ar(CEREAL_NVP(strideHeight));
-  ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(channels));
   ar(CEREAL_NVP(floor));
   ar(CEREAL_NVP(offset));
 
   if (Archive::is_loading::value)
-    reset = false;
+  {
+    // Clear any memory used by `poolingIndices`.
+    poolingIndices.clear();
+  }
 }
 
 } // namespace ann
