@@ -34,7 +34,7 @@
 
   * Fix cover tree loop bug on embedded arm systems (#2869).
 
-  * Fix a LAPACK bug in FindArmadillo.cmake (#2929).
+  * Fix a LAPACK bug in `FindArmadillo.cmake` (#2929).
 
   * Add an autodownloader to get mlpack dependencies (#2927).
 
