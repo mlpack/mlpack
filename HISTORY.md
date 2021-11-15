@@ -16,7 +16,7 @@
 
   * Replace `boost::enable_if` with `std::enable_if` (#2998).
 
-  * Replace boost::is_same with std::is_same (#2993).
+  * Replace `boost::is_same` with `std::is_same` (#2993).
 
   * Remove invalid option for emsmallen and STB (#2960).
 
