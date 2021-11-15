@@ -151,7 +151,9 @@ void ConvolutionType<
   const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
   if (usingPadding)
   {
-    inputPadded.set_size(paddedRows * paddedCols, input.n_cols);
+    // TODO: double-check with a padding test?
+    inputPadded.set_size(paddedRows * paddedCols * inMaps * higherInDimensions,
+        input.n_cols);
     padding.Forward(input, inputPadded);
   }
 
@@ -162,30 +164,36 @@ void ConvolutionType<
 
   MakeAlias(outputTemp, output.memptr(), this->outputDimensions[0],
       this->outputDimensions[1], maps * higherInDimensions * batchSize);
-
   outputTemp.zeros();
-  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      maps * batchSize; outMap++)
+
+  // We "ignore" dimensions higher than the third---that means that we just pass
+  // them through and treat them like different input points.
+  //
+  // If we eventually have a way to do convolutions for a single kernel
+  // in-batch, then this strategy may not be the most efficient solution.
+  for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
-    if (outMap != 0 && outMap % maps == 0)
+    const size_t fullInputOffset = offset * inMaps;
+    const size_t fullOutputOffset = offset * maps;
+
+    // Iterate over output maps.
+    for (size_t outMap = 0; outMap < maps; ++outMap)
     {
-      batchCount++;
-      outMapIdx = 0;
+      // Iterate over input maps (we will apply the filter and sum).
+      for (size_t inMap = 0; inMap < inMaps; ++inMap)
+      {
+        OutputType convOutput;
+
+        ForwardConvolutionRule::Convolution(
+            inputTemp.slice(inMap + fullInputOffset),
+            weight.slice(outMap),
+            convOutput,
+            strideWidth,
+            strideHeight);
+
+        outputTemp.slice(outMap + fullOutputOffset) += convOutput;
+      }
     }
-
-    for (size_t inMap = 0; inMap < (inMaps * higherInDimensions); inMap++,
-        outMapIdx++)
-    {
-      OutputType convOutput;
-
-      ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
-          batchCount * inMaps), weight.slice(outMapIdx), convOutput,
-          strideWidth, strideHeight);
-
-      outputTemp.slice(outMap) += convOutput;
-    }
-
-    outputTemp.slice(outMap) += bias(outMap % maps);
   }
 }
 
@@ -209,37 +217,51 @@ void ConvolutionType<
   MakeAlias(mappedError, ((OutputType&) gy).memptr(), this->outputDimensions[0],
       this->outputDimensions[1], higherInDimensions * maps * batchSize);
 
-  g.set_size(this->inputDimensions[0] * this->inputDimensions[1] * inMaps,
-      batchSize);
   MakeAlias(gTemp, g.memptr(), this->inputDimensions[0],
-      this->inputDimensions[1], inMaps * batchSize);
+      this->inputDimensions[1], inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
 
-  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      maps * batchSize; outMap++)
+  const bool usingPadding =
+      (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
+
+  // To perform the backward pass, we need to rotate all the filters.
+  arma::Cube<typename OutputType::elem_type> rotatedFilters(weight.n_cols,
+      weight.n_rows, weight.n_slices);
+  for (size_t map = 0; map < maps; ++map)
   {
-    if (outMap != 0 && outMap % maps == 0)
+    Rotate180(weight.slice(map), rotatedFilters.slice(map));
+  }
+
+  // See Forward() for the overall iteration strategy.
+  for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
+  {
+    const size_t fullInputOffset = offset * inMaps;
+    const size_t fullOutputOffset = offset * maps;
+
+    // Iterate over input maps.
+    for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {
-      batchCount++;
-      outMapIdx = 0;
-    }
-
-    for (size_t inMap = 0; inMap < inMaps; inMap++, outMapIdx++)
-    {
-      OutputType output, rotatedFilter;
-      Rotate180(weight.slice(outMapIdx), rotatedFilter);
-
-      BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, strideWidth, strideHeight);
-
-      if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
+      // Iterate over output maps.
+      for (size_t outMap = 0; outMap < maps; ++outMap)
       {
-        gTemp.slice(inMap + batchCount * inMaps) += output.submat(padWLeft,
-            padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
-      }
-      else
-      {
-        gTemp.slice(inMap + batchCount * inMaps) += output;
+        OutputType output;
+
+        BackwardConvolutionRule::Convolution(
+            mappedError.slice(outMap + fullOutputOffset),
+            rotatedFilters.slice(outMap),
+            output,
+            strideWidth,
+            strideHeight);
+
+        if (usingPadding)
+        {
+          gTemp.slice(inMap + fullInputOffset) += output.submat(padWLeft,
+              padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
+        }
+        else
+        {
+          gTemp.slice(inMap + fullInputOffset) += output;
+        }
       }
     }
   }
@@ -265,8 +287,8 @@ void ConvolutionType<
 {
   arma::Cube<typename OutputType::elem_type> mappedError;
   MakeAlias(mappedError, ((OutputType&) error).memptr(),
-      this->outputDimensions[0], this->outputDimensions[1], inMaps * maps *
-      batchSize);
+      this->outputDimensions[0], this->outputDimensions[1],
+      higherInDimensions * maps * batchSize);
 
   // We are depending here on `inputPadded` being properly set from a call to
   // Forward().
@@ -283,44 +305,46 @@ void ConvolutionType<
       weight.n_slices);
   gradientTemp.zeros();
 
-  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
-      maps * batchSize; outMap++)
+  // See Forward() for our iteration strategy.
+  for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
-    if (outMap != 0 && outMap % maps == 0)
+    const size_t fullInputOffset = offset * inMaps;
+    const size_t fullOutputOffset = offset * maps;
+
+    for (size_t outMap = 0; outMap < maps; ++outMap)
     {
-      batchCount++;
-      outMapIdx = 0;
+      for (size_t inMap = 0; inMap < inMaps; ++inMap)
+      {
+        OutputType output;
+        GradientConvolutionRule::Convolution(
+            inputTemp.slice(inMap + fullInputOffset),
+            mappedError.slice(outMap),
+            output,
+            strideWidth,
+            strideHeight);
+
+        // TODO: understand this conditional.  Is it needed?
+        if (gradientTemp.n_rows < output.n_rows ||
+            gradientTemp.n_cols < output.n_cols)
+        {
+          gradientTemp.slice(outMap) += output.submat(0, 0,
+              gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
+        }
+        else if (gradientTemp.n_rows > output.n_rows ||
+                 gradientTemp.n_cols > output.n_cols)
+        {
+          gradientTemp.slice(outMap).submat(0, 0, output.n_rows - 1,
+              output.n_cols - 1) += output;
+        }
+        else
+        {
+          gradientTemp.slice(outMap) += output;
+        }
+      }
+
+//     gradient.submat(weight.n_elem + (outMap % maps), 0, weight.n_elem +
+//          (outMap % maps), 0) = arma::accu(mappedError.slice(outMap));
     }
-
-    for (size_t inMap = 0; inMap < inMaps; inMap++, outMapIdx++)
-    {
-      InputType inputSlice = inputTemp.slice(inMap + batchCount * inMaps);
-      OutputType deltaSlice = mappedError.slice(outMap);
-
-      OutputType output;
-      GradientConvolutionRule::Convolution(inputSlice, deltaSlice, output,
-          strideWidth, strideHeight);
-
-      if (gradientTemp.n_rows < output.n_rows ||
-          gradientTemp.n_cols < output.n_cols)
-      {
-        gradientTemp.slice(outMapIdx) += output.submat(0, 0,
-            gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
-      }
-      else if (gradientTemp.n_rows > output.n_rows ||
-          gradientTemp.n_cols > output.n_cols)
-      {
-        gradientTemp.slice(outMapIdx).submat(0, 0, output.n_rows - 1,
-            output.n_cols - 1) += output;
-      }
-      else
-      {
-        gradientTemp.slice(outMapIdx) += output;
-      }
-    }
-
-    gradient.submat(weight.n_elem + (outMap % maps), 0, weight.n_elem +
-        (outMap % maps), 0) = arma::accu(mappedError.slice(outMap));
   }
 }
 
