@@ -14,7 +14,7 @@
 
   * Remove old non used Boost headers (#3005).
 
-  * Replace boost::enable_if with std::enable_if (#2998).
+  * Replace `boost::enable_if` with `std::enable_if` (#2998).
 
   * Replace boost::is_same with std::is_same (#2993).
 
