@@ -38,7 +38,7 @@
 #include <mlpack/methods/ann/layer/highway.hpp>
 //#include <mlpack/methods/ann/layer/join.hpp>
 //#include <mlpack/methods/ann/layer/layer_norm.hpp>
-//#include <mlpack/methods/ann/layer/leaky_relu.hpp>
+#include <mlpack/methods/ann/layer/leaky_relu.hpp>
 //#include <mlpack/methods/ann/layer/c_relu.hpp>
 //#include <mlpack/methods/ann/layer/fast_lstm.hpp>
 //#include <mlpack/methods/ann/layer/flexible_relu.hpp>
