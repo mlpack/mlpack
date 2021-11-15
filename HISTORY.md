@@ -6,7 +6,7 @@
 
   * Adding a copy constructor in the Convolution layer (#3067).
 
-  * Replace boost::spirit parser by a local efficient implementation (#2942).
+  * Replace `boost::spirit` parser by a local efficient implementation (#2942).
 
   * Disable correctly the autodownloader + fix tests stability (#3076).
 
