@@ -61,7 +61,20 @@ typename VecTypeA::elem_type LMetric<2, true>::Evaluate(
     const VecTypeA& a,
     const VecTypeB& b)
 {
-  return arma::norm(a - b, 2);
+  // if ((std::is_same<typename VecTypeA::elem_type, double>::value or
+  //     std::is_same<typename VecTypeA::elem_type, float>::value) and
+  //     (std::is_same<typename VecTypeB::elem_type, double>::value or
+  //     std::is_same<typename VecTypeB::elem_type, float>::value))
+  // {
+    //std::cout << "EXECUTED" << std::endl;
+    return arma::norm(a - b, 2);
+  // }
+  // else
+  // {
+  //   arma::mat new_a = arma::conv_to<arma::mat>::from(a);
+  //   arma::mat new_b = arma::conv_to<arma::mat>::from(b);
+  //   return arma::norm(new_a - new_b, 2);
+  // }
 }
 
 template<>
