@@ -60,6 +60,11 @@ class AlphaDropout : public Layer<InputType, OutputType>
                const double alphaDash = -alpha * lambda);
 
   /**
+   * Clone the DropoutType object. This handles polymorphism correctly.
+   */
+  AlphaDropout* Clone() const { return new AlphaDropout(*this); }
+
+  /**
    * Ordinary feed forward pass of the alpha_dropout layer.
    *
    * @param input Input data used for evaluating the specified function.
