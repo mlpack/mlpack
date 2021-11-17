@@ -12,8 +12,14 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME ncf
+#define BINDING_TYPE 0
+
+#include <mlpack/core/util/mlpack_main.hpp>
 #include "ncf.hpp"
 
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -23,11 +29,21 @@
 
 using namespace mlpack::cf;
 using namespace mlpack::util;
-using namespace mlpack::optimization;
 using namespace std;
 
-// Document program.
-PROGRAM_INFO("Neural collaborative Filtering", "This program performs "
+// Program Name.
+BINDING_USER_NAME("Neural Collaborative Filtering");
+
+// Short Description.
+BINDING_SHORT_DESC(
+    "Matrix factorization is the most used variation of Collaborative "
+    "filtering. It uses a fixed inner product of the user-item matrix "
+    "to learn user-item interactions. Neural Collaborative Filtering(NCF) "
+    "replaces the user-item inner product with a neural architecture.");
+
+// Long Description.
+BINDING_LONG_DESC(
+    "This program performs "
     "collaborative filtering (CF) on the given dataset. Given a list of user, "
     "item and ratings (the " + PRINT_PARAM_STRING("training") + " parameter), "
     "and the kind of network to be used, the program will train and use the "
@@ -73,10 +89,12 @@ PROGRAM_INFO("Neural collaborative Filtering", "This program performs "
     "can be set using the " + PRINT_PARAM_STRING("neg") + "parameter. Also "
     "the number of epochs for which training is to be performed can be "
     "specified using the " + PRINT_PARAM_STRING("epochs") + "parameter."
-    "\n\n"
+    "\n"
     "A trained model may be saved to with the " +
-    PRINT_PARAM_STRING("output_model") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_model") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "To train a NCF model on a dataset " + PRINT_DATASET("training_set") + " "
     "using GMF as algorithm using SGD optimizer and saving the trained model "
     "to " + PRINT_MODEL("model") + ", one could call: "
@@ -91,6 +109,7 @@ PROGRAM_INFO("Neural collaborative Filtering", "This program performs "
     "\n\n" +
     PRINT_CALL("ncf", "input_model", "model", "query", "users",
         "recommendations", 5, "output", "recommendations"));
+
 
 // Parameters for training a model.
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");
@@ -122,7 +141,7 @@ PARAM_FLAG("implicit", "If true, treat the ratings as implicit feedback data.",
     "i");
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
-
+/*
 void ComputeRecommendations(NCF* ncf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
@@ -276,3 +295,4 @@ static void mlpackMain()
     PerformAction(c);
   }
 }
+*/
