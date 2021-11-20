@@ -144,6 +144,7 @@ PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace mlpack::util;
@@ -152,9 +153,9 @@ using namespace std;
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   RequireAtLeastOnePassed(params, { "output" }, false,
       "no output will be saved");
