@@ -18,6 +18,7 @@
 #define BINDING_NAME gmm_train
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #include "gmm.hpp"
 #include "diagonal_gmm.hpp"
@@ -27,6 +28,7 @@
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::gmm;
 using namespace mlpack::util;
 using namespace mlpack::kmeans;
@@ -155,9 +157,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check parameters and load data.
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   RequireParamValue<int>(params, "gaussians", [](int x) { return x > 0; }, true,
       "number of Gaussians must be positive");
