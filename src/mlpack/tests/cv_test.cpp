@@ -83,7 +83,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
       LogisticRegression<>, mat, arma::Row<size_t>>(
           lr, data, labels) == Approx(0.708333).epsilon(1e-7));
  
-} //0.5833
+} 
 
 /**
  * Test for confusion matrix.
