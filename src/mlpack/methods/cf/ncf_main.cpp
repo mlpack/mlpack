@@ -27,6 +27,7 @@
 
 #include <ensmallen.hpp>
 
+using namespace mlpack;
 using namespace mlpack::cf;
 using namespace mlpack::util;
 using namespace std;
@@ -141,17 +142,18 @@ PARAM_FLAG("implicit", "If true, treat the ratings as implicit feedback data.",
     "i");
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
-/*
-void ComputeRecommendations(NCF* ncf,
+
+void ComputeRecommendations(util::Params& params,
+                            NCF* ncf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
   // Reading users.
-  if (CLI::HasParam("query"))
+  if (params.Has("query"))
   {
     // User matrix.
     arma::Mat<size_t> users =
-        std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
+        std::move(params.Get<arma::Mat<size_t>>("query"));
     if (users.n_rows > 1)
       users = users.t();
     if (users.n_rows > 1)
@@ -168,10 +170,10 @@ void ComputeRecommendations(NCF* ncf,
   }
 }
 
-void ComputeRMSE(NCF* ncf)
+void ComputeRMSE(util::Params& params, NCF* ncf)
 {
   // Now, compute each test point.
-  arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+  arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
   // Now compute the RMSE.
   size_t hitRatio, rmse;
@@ -180,119 +182,121 @@ void ComputeRMSE(NCF* ncf)
   Log::Info << "Hit Ratio is "<< hitRatio << "and RMSE is " << rmse << "." << endl;
 }
 
-void PerformAction(NCF* c)
+void PerformAction(util::Params& params, NCF* c)
 {
-  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+  if (params.Has("query") || params.Has("all_user_recommendations"))
   {
     // Get parameters for generating recommendations.
-    const size_t numRecs = (size_t) CLI::GetParam<int>("recommendations");
+    const size_t numRecs = (size_t) params.Get<int>("recommendations");
 
     // Get the recommendations.
     arma::Mat<size_t> recommendations;
-    ComputeRecommendations(c, numRecs, recommendations);
+    ComputeRecommendations(params, c, numRecs, recommendations);
 
     // Save the output.
-    CLI::GetParam<arma::Mat<size_t>>("output") = recommendations;
+    params.Get<arma::Mat<size_t>>("output") = recommendations;
   }
 
-  if (CLI::HasParam("test"))
-    ComputeRMSE(c);
+  if (params.Has("test"))
+    ComputeRMSE(params, c);
 
-  CLI::GetParam<NCF*>("output_model") = c;
+  params.Get<NCF*>("output_model") = c;
 }
 
 template<typename OptimizerType>
-void PerformAction(arma::mat& dataset,
+void PerformAction(util::Params& params,
+                   arma::mat& dataset,
                    std::string algorithm,
                    OptimizerType& optimizer)
 {
-  const size_t embedSize = (size_t) CLI::GetParam<int>("embedsize");
-  const size_t neg = (size_t) CLI::GetParam<int>("neg");
-  const size_t epochs = (size_t) CLI::GetParam<int>("epochs");
-  const bool implicit = CLI::HasParam("implicit");
+  const size_t embedSize = (size_t) params.Get<int>("embedsize");
+  const size_t neg = (size_t) params.Get<int>("neg");
+  const size_t epochs = (size_t) params.Get<int>("epochs");
+  const bool implicit = params.Has("implicit");
 
   NCF* c = new NCF(dataset, algorithm, optimizer, embedSize,
       neg, epochs, implicit);
 
-  PerformAction(c);
+  PerformAction(params, c);
 }
 
-void AssembleOptimizerType(const std::string& algorithm,
+void AssembleOptimizerType(util::Params& params,
+                           const std::string& algorithm,
                            const std::string& optimizerType,
                            arma::mat& dataset)
 {
   if (optimizerType == "adagrad")
   {
     ens::AdaGrad optimizer;
-    PerformAction(dataset, algorithm, optimizer);
+    PerformAction(params, dataset, algorithm, optimizer);
   }
   else if (optimizerType == "rmsprop")
   {
     ens::RMSProp optimizer;
-    PerformAction(dataset, algorithm, optimizer);
+    PerformAction(params, dataset, algorithm, optimizer);
   }
   else if (optimizerType == "adam")
   {
     ens::Adam optimizer;
-    PerformAction(dataset, algorithm, optimizer);
+    PerformAction(params, dataset, algorithm, optimizer);
   }
   else
   {
-    ens::StandardSGD<> optimizer;
-    PerformAction(dataset, algorithm, optimizer);
+    ens::StandardSGD optimizer;
+    PerformAction(params, dataset, algorithm, optimizer);
   }
 }
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
-  if (CLI::GetParam<int>("seed") == 0)
+  if (params.Get<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));
   else
-    math::RandomSeed(CLI::GetParam<int>("seed"));
+    math::RandomSeed(params.Get<int>("seed"));
 
-  const string optimizerType = CLI::GetParam<string>("optimizer");
+  const string optimizerType = params.Get<string>("optimizer");
 
   // Validate parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
   // Check that nothing stupid is happening.
-  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
-    RequireOnlyOnePassed({ "query", "all_user_recommendations" }, true);
+  if (params.Has("query") || params.Has("all_user_recommendations"))
+    RequireOnlyOnePassed(params, { "query", "all_user_recommendations" }, true);
 
-  RequireAtLeastOnePassed({ "output", "output_model" }, false,
+
+  RequireAtLeastOnePassed(params, { "output", "output_model" }, false,
       "no output will be saved");
-  if (!CLI::HasParam("query") && !CLI::HasParam("all_user_recommendations"))
-    ReportIgnoredParam("output", "no recommendations requested");
+  if (!params.Has("query") && !params.Has("all_user_recommendations"))
+    ReportIgnoredParam(params, "output", "no recommendations requested");
 
-  RequireParamValue<int>("recommendations", [](int x) { return x > 0; }, true,
-        "recommendations must be positive");
+  RequireParamValue<int>(params, "recommendations",
+      [](int x) { return x > 0; }, true, "recommendations must be positive");
 
   // Either load from a model, or train a model.
-  if (CLI::HasParam("training"))
+  if (params.Has("training"))
   {
     // Train a model.
 
     // Read from the input file.
-    arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
+    arma::mat dataset = std::move(params.Get<arma::mat>("training"));
 
     // Recommendation matrix.
     arma::Mat<size_t> recommendations;
 
-    const string algo = CLI::GetParam<string>("algorithm");
+    const string algo = params.Get<string>("algorithm");
 
     // Perform the factorization and do whatever the user wanted.
-    AssembleOptimizerType(algo, optimizerType, dataset);
+    AssembleOptimizerType(params, algo, optimizerType, dataset);
   }
   else
   {
     // Load from a model after validating parameters.
-    RequireAtLeastOnePassed({ "query", "all_user_recommendations",
+    RequireAtLeastOnePassed(params, { "query", "all_user_recommendations",
         "test" }, true);
 
     // Load an input model.
-    NCF* c = std::move(CLI::GetParam<NCF*>("input_model"));
+    NCF* c = std::move(params.Get<NCF*>("input_model"));
 
-    PerformAction(c);
+    PerformAction(params, c);
   }
 }
-*/
