@@ -191,12 +191,13 @@ TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
     dummyTree.ModifiedGramSchmidt(basisQueue, centroid, newBasisVector);
 
     // Check if the obtained vector is orthonormal to the basis vectors.
-    CosineNodeQueue::const_iterator j = basisQueue.begin();
+    CosineNodeQueue temp = basisQueue;
     CosineTree* currentNode;
 
-    for (; j != basisQueue.end(); ++j)
+    while (!temp.empty())
     {
-      currentNode = *j;
+      currentNode = temp.top();
+      temp.pop();
       REQUIRE(arma::dot(currentNode->BasisVector(), newBasisVector) ==
           Approx(0.0).margin(1e-5));
     }

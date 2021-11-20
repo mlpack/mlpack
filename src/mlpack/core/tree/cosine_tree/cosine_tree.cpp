@@ -367,7 +367,7 @@ CosineTree::~CosineTree()
     delete right;
 }
 
-void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
+void CosineTree::ModifiedGramSchmidt(CosineNodeQueue treeQueue,
                                      arma::vec& centroid,
                                      arma::vec& newBasisVector,
                                      arma::vec* addBasisVector)
@@ -377,13 +377,13 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
 
   // Variables for iterating throught the priority queue.
   CosineTree *currentNode;
-  CosineNodeQueue::const_iterator i = treeQueue.begin();
 
   // For every vector in the current basis, remove its projection from the
   // centroid.
-  for ( ; i != treeQueue.end(); ++i)
+  while (!treeQueue.empty())
   {
-    currentNode = *i;
+    currentNode = treeQueue.top();
+    treeQueue.pop();
 
     double projection = arma::dot(currentNode->BasisVector(), centroid);
     newBasisVector -= projection * currentNode->BasisVector();
@@ -402,7 +402,7 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
 }
 
 double CosineTree::MonteCarloError(CosineTree* node,
-                                   CosineNodeQueue& treeQueue,
+                                   CosineNodeQueue treeQueue,
                                    arma::vec* addBasisVector1,
                                    arma::vec* addBasisVector2)
 {
@@ -437,13 +437,13 @@ double CosineTree::MonteCarloError(CosineTree* node,
     projection.zeros(projectionSize);
 
     CosineTree *currentNode;
-    CosineNodeQueue::const_iterator j = treeQueue.begin();
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for ( ; j != treeQueue.end(); ++j, ++k)
+    while (!treeQueue.empty())
     {
-      currentNode = *j;
+      currentNode = treeQueue.top();
+      treeQueue.pop();
 
       projection(k) = arma::dot(dataset.col(sampledIndices[i]),
                                 currentNode->BasisVector());
@@ -486,20 +486,20 @@ double CosineTree::MonteCarloError(CosineTree* node,
   return (node->FrobNormSquared() - lowerBound);
 }
 
-void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
+void CosineTree::ConstructBasis(CosineNodeQueue treeQueue)
 {
   // Initialize basis as matrix of zeros.
   basis.zeros(dataset->n_rows, treeQueue.size());
 
   // Variables for iterating through the priority queue.
   CosineTree *currentNode;
-  CosineNodeQueue::const_iterator i = treeQueue.begin();
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for ( ; i != treeQueue.end(); ++i, ++j)
+  while (!treeQueue.empty())
   {
-    currentNode = *i;
+    currentNode = treeQueue.top();
+    treeQueue.pop();
     basis.col(j) = currentNode->BasisVector();
   }
 }
