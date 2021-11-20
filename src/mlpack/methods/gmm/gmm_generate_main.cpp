@@ -76,9 +76,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       "no results will be saved");
 
   if (params.Get<int>("seed") == 0)
-    mlpack::RandomSeed(time(NULL));
+    RandomSeed(time(NULL));
   else
-    mlpack::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
 
   RequireParamValue<int>(params, "samples", [](int x) { return x > 0; }, true,
       "number of samples must be greater than 0");
