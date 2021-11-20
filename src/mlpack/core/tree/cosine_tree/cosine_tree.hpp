@@ -111,7 +111,7 @@ class CosineTree
    * @param newBasisVector Orthonormalized centroid of the node.
    * @param addBasisVector Address to additional basis vector.
    */
-  void ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
+  void ModifiedGramSchmidt(CosineNodeQueue treeQueue,
                            arma::vec& centroid,
                            arma::vec& newBasisVector,
                            arma::vec* addBasisVector = NULL);
@@ -129,7 +129,7 @@ class CosineTree
    * @param addBasisVector2 Address to second additional basis vector.
    */
   double MonteCarloError(CosineTree* node,
-                         CosineNodeQueue& treeQueue,
+                         CosineNodeQueue treeQueue,
                          arma::vec* addBasisVector1 = NULL,
                          arma::vec* addBasisVector2 = NULL);
 
@@ -138,7 +138,7 @@ class CosineTree
    *
    * @param treeQueue Priority queue of cosine nodes.
    */
-  void ConstructBasis(CosineNodeQueue& treeQueue);
+  void ConstructBasis(CosineNodeQueue treeQueue);
 
   /**
    * This function splits the cosine node into two children based on the cosines
