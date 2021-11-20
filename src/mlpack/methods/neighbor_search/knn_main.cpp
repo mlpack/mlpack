@@ -12,6 +12,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -32,6 +33,7 @@
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
@@ -132,9 +134,9 @@ PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
   RequireOnlyOnePassed(params, { "reference", "input_model" }, true);

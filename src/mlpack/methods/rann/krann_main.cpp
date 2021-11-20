@@ -19,13 +19,14 @@
 #define BINDING_NAME krann
 
 #include <mlpack/core/util/mlpack_main.hpp>
-
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/methods/neighbor_search/unmap.hpp>
 #include "ra_search.hpp"
 #include "ra_model.hpp"
-#include <mlpack/methods/neighbor_search/unmap.hpp>
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
@@ -127,9 +128,9 @@ PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   // A user cannot specify both reference data and a model.
   RequireOnlyOnePassed(params, { "reference", "input_model" }, true);
