@@ -15,6 +15,8 @@ set(SOURCES
   recall_impl.hpp
   r2_score.hpp
   r2_score_impl.hpp
+  roc_auc.hpp
+  roc_auc_impl.hpp
 )
 
 # Add directory name to sources.
