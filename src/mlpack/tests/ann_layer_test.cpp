@@ -1852,28 +1852,8 @@ TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
   REQUIRE(arma::accu(output) == 7.5);
 
   // Test the Backward function.
-<<<<<<< HEAD
-  module.Backward(std::move(input), std::move(input), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
-
-  // Test the Gradient function.
-  arma::mat error = arma::zeros(12, 5);
-  error = error.t();
-  error.col(0) += 1;
-  error.col(1) *= 0.5;
-
-  module.Gradient(std::move(input), std::move(error), std::move(gradient));
-
-  // The Lookup module uses index - 1 for the cols.
-  const double gradientSum = arma::accu(gradient.col(0)) +
-      arma::accu(gradient.col(2));
-
-  BOOST_REQUIRE_CLOSE(gradientSum, arma::accu(error), 1e-3);
-  BOOST_REQUIRE_CLOSE(arma::accu(gradient), arma::accu(error), 1e-3);
-=======
   module.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 5);
->>>>>>> master
 }
 
 /**
