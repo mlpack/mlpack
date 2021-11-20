@@ -4979,13 +4979,6 @@ TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
   module1.Backward(output1, output1, outputBackward1);
   CheckMatrices(input1, outputBackward1);
 
-<<<<<<< HEAD
-  // Test the Backward function.
-  moduleMat.Backward(std::move(input), std::move(outputMat), std::move(delta));
-  BOOST_REQUIRE_EQUAL(accu(delta), 24);
-  BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
-=======
->>>>>>> master
 }
 
 /**
