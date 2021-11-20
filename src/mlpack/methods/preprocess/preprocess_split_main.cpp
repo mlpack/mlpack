@@ -120,9 +120,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const bool stratifyData = params.Get<bool>("stratify_data");
 
   if (params.Get<int>("seed") == 0)
-    mlpack::RandomSeed(std::time(NULL));
+    RandomSeed(std::time(NULL));
   else
-    mlpack::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed(params, { "training" }, false, "no training set will "
