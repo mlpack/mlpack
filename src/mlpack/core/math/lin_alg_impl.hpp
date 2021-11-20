@@ -91,8 +91,8 @@ inline void RandVector(arma::vec& v)
 
   for (size_t i = 0; i + 1 < v.n_elem; i += 2)
   {
-    double a = Random();
-    double b = Random();
+    double a = math::Random();
+    double b = math::Random();
     double first_term = sqrt(-2 * log(a));
     double second_term = 2 * M_PI * b;
     v[i]     = first_term * cos(second_term);
