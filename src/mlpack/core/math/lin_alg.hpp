@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "ccov.hpp"
+#include "random.hpp"
 
 /**
  * Linear algebra utility functions, generally performed on matrices or vectors.
