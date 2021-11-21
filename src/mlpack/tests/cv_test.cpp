@@ -19,6 +19,7 @@
 #include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/cv/metrics/r2_score.hpp>
 #include <mlpack/core/cv/metrics/silhouette_score.hpp>
+#include <mlpack/core/cv/metrics/roc_auc.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -55,6 +56,10 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   // Using the same data for training and testing.
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
 
+  //Data for testing the ROC AUC metric under a 
+  //binary classification problem
+  arma::mat data2 = arma::linspace<arma::rowvec>(-0.000001, 0.000001, 10);
+
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
 
@@ -74,6 +79,11 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
+
+  REQUIRE(ROC_AUC<(size_t)1>::Evaluate<
+      LogisticRegression<>, mat, arma::Row<size_t>>(
+          lr, data, labels) == Approx(0.708333).epsilon(1e-7));
+ 
 }
 
 /**
@@ -144,6 +154,10 @@ TEST_CASE("MulticlassClassificationMetricsTest", "[CVTest]")
       2 * 1.0 * 1.0 / (1.0 + 1.0)) / 4;
   REQUIRE(F1<Macro>::Evaluate(nb, data, labels)
           == Approx(macroaveragedF1).epsilon(1e-7));
+
+  REQUIRE(ROC_AUC<(size_t)2>::Evaluate<
+      NaiveBayesClassifier<>, mat, arma::Row<size_t>>(
+          nb, data, labels) == Approx(0.884259).epsilon(1e-7));
 }
 
 /**
