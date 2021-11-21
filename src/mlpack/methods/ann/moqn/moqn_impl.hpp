@@ -50,6 +50,7 @@ double MOQN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
                      extendedWeightSpace;
   error = 2 * ((1 - lambda) * errorA + lambda * errorB);
 
+  // Reset previous gradients.
   gradients = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
 
   Backward();
