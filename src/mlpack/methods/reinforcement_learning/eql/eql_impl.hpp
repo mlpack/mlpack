@@ -138,20 +138,13 @@ void EQL<
 {
   // Begin experience replay. Sample from past experiences.
   // Each input is a unique state-preference pair.
-  arma::mat sampledStatePref;
+  arma::mat sampledStates;
   std::vector<ActionType> sampledActions;
   // Each action results a list of reward.
   arma::mat sampledRewardLists;
-  arma::mat sampledNextStatePref;
+  arma::mat sampledNextStates;
   arma::mat sampledWeights;
   arma::irowvec isTerminal;
-
-  // Store current and next statePref actionValues over learningNetwork
-  // for replay.
-  arma::mat learningActionValue;
-  arma::mat nextLearningActionValue;
-  learningNetwork.Forward(sampledStatePref, learningActionValues);
-  learningNetwork.Forward(sampledNextStatePref, nextLearningActionValues);
 
   size_t batchSize = sampledStates.n_cols;.
   // Count of total state-preference pairs.
@@ -181,8 +174,30 @@ void EQL<
     return retval;
   }();
 
-  replayMethod.SampleEQL(sampledStatePref, sampledActions, sampledRewardLists,
-                         sampledNextStatePref, sampledWeights, isTerminal);
+  replayMethod.SampleEQL(sampledStates, sampledActions, sampledRewardLists,
+                         sampledNextStates, sampledWeights, isTerminal);
+
+  // Generate the state-pref matrix with sampled states and weightSpace.
+  arma::mat sampledStatePref(sampledStates.n_rows + EnvironmentType::rewardSize, inputSize);
+  arma::mat sampledNextStatePref(sampledNextStates.n_rows + EnvironmentType::rewardSize, inputSize);
+  size_t colIdx = 0, start = 0;
+  while (colIdx < numWeights)
+  {
+    const arma::mat preferenceBatch = arma::repmat(weightSpace.col(colIdx), 1, batchSize);
+    sampledStatePref(arma::span::all, arma::span(start, start + batchSize - 1)) = 
+        arma::join_rows(sampledStates, preferenceBatch);
+    sampledNextStatePref(arma::span::all, arma::span(start, start + batchSize - 1)) = 
+        arma::join_rows(sampledNextStates, preferenceBatch);
+    start += batchSize;
+    ++colIdx;
+  }
+
+  // Store current and next state-pref actionValues over learningNetwork.
+  // The state-pref pair here is the one sampled during exploration.
+  arma::mat learningActionValue;
+  arma::mat nextLearningActionValue;
+  learningNetwork.Forward(arma::join_rows(sampledStates, sampledWeights), learningActionValues);
+  learningNetwork.Forward(arma::join_rows(sampledNextStates, sampledWeights), nextLearningActionValues);
 
   // For each state-preference pair, the target network outputs
   // actionSize number of reward vectors.
@@ -202,7 +217,8 @@ void EQL<
     bestActions = BestAction(nextActionValues, extendedWeightSpace);
   }
 
-  arma::mat target { learningActionValue };
+  arma::mat target;
+  learningNetwork.Forward(sampledStatePref, target);
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
   // Each slice of the cube holds the action vectors of a state-preference pair.
