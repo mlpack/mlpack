@@ -80,6 +80,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
 
+  //Use data2 instead of data
   REQUIRE(ROC_AUC<(size_t)1>::Evaluate<
       LogisticRegression<>, mat, arma::Row<size_t>>(
           lr, data2, labels) == Approx(0.708333).epsilon(1e-7));
