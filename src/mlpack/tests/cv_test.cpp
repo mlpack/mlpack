@@ -83,7 +83,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   //Use data2 instead of data
   REQUIRE(ROC_AUC<(size_t)1>::Evaluate<
       LogisticRegression<>, arma::mat, arma::Row<size_t>>(
-          lr, data2, labels) == Approx(0.708333).epsilon(1e-7));
+          lr, data2, labels) == Approx(0.70833333333).epsilon(1e-7));
  
 }
 
@@ -158,7 +158,7 @@ TEST_CASE("MulticlassClassificationMetricsTest", "[CVTest]")
 
   REQUIRE(ROC_AUC<(size_t)2>::Evaluate<
       NaiveBayesClassifier<>, arma::mat, arma::Row<size_t>>(
-          nb, data, labels) == Approx(0.884259).epsilon(1e-7));
+          nb, data, labels) == Approx(0.88425925925).epsilon(1e-7));
 }
 
 /**
