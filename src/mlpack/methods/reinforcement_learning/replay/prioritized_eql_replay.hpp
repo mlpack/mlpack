@@ -1,6 +1,6 @@
 /**
  * @file methods/reinforcement_learning/replay/prioritized_replay.hpp
- * @author Xiaohong
+ * @author Nanubala Gnana Sai
  *
  * This file is an implementation of prioritized experience replay.
  *
@@ -36,7 +36,7 @@ namespace rl {
  * @tparam EnvironmentType Desired task.
  */
 template <typename EnvironmentType>
-class PrioritizedReplay
+class PrioritizedEQLReplay
 {
  public:
   //! Convenient typedef for action.
@@ -97,6 +97,7 @@ class PrioritizedReplay
       actions(capacity),
       rewards(capacity),
       nextStates(dimension, capacity),
+      weights(EnvironmentType::rewardSize, capacity),
       isTerminal(capacity)
   {
     size_t size = 1;
@@ -116,6 +117,7 @@ class PrioritizedReplay
    * @param action Given action.
    * @param reward Given reward.
    * @param nextState Given next state.
+   * @param preference Given preference.
    * @param isEnd Whether next state is terminal state.
    * @param discount The discount parameter.
    */
@@ -123,10 +125,11 @@ class PrioritizedReplay
              ActionType action,
              double reward,
              StateType nextState,
+             WeightType preference,
              bool isEnd,
              const double& discount)
   {
-    nStepBuffer.push_back({state, action, reward, nextState, isEnd});
+    nStepBuffer.push_back({state, action, reward, nextState, preference, isEnd});
 
     // Single step transition is not ready.
     if (nStepBuffer.size() < nSteps)
@@ -148,6 +151,7 @@ class PrioritizedReplay
     actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
+    weights.col(position) = preference;
     isTerminal(position) = isEnd;
 
     idxSum.Set(position, maxPriority * alpha);
@@ -323,30 +327,39 @@ class PrioritizedReplay
   }
 
   /**
-   * Update the priorities of transitions and Update the gradients.
+   * Update the priorities of transitions and the gradients.
    *
-   * @param target The learned value.
+   * @param learningActionValue Sampled statePref's learningNetwork action-value.
    * @param sampledActions Agent's sampled action.
-   * @param nextActionValues Agent's next action.
+   * @param nextLearningActionValue Sampled next statePref's learningNetwork action-value.
+   * @param sampledWeights Agent's current preference.
+   * @param discount The current discount factor.
    * @param gradients The model's gradients.
    */
-  void Update(arma::mat target,
-              std::vector<ActionType> sampledActions,
-              arma::mat nextActionValues,
+  void Update(const arma::mat& learningActionValue,
+              const std::vector<ActionType>& sampledActions,
+              const arma::mat& nextLearningActionValue,
+              const arma::mat& sampledWeights,
+              const double discount,
               arma::mat& gradients)
   {
-    arma::vec tdError(target.n_cols);
-    arma::vec preference = arma::normalise(arma::abs(arma::randn(rewardSize)), 1);
-    arma::cube targetCube(target.memptr(), rewardSize, actionSize, inputSize,
-                          false, true);
-    arma::cube nextActionValCube(nextActionValues.memptr(), rewardSize,
-                                 actionSize, inputSize, false, true);
-    for (size_t i = 0; i < target.n_cols; i ++)
+    size_t inputSize = sampledActions.size();
+    arma::vec tdError(inputSize);
+    arma::cube actionValCube(learningActionValue.memptr(), EnvironmentType::rewardSize,
+                             ActionType::size, inputSize);
+    arma::cube nextActionValCube(nextLearningActionValue.memptr(), EnvironmentType::rewardSize,
+                                 ActionType::size, inputSize);
+    for (size_t i = 0; i < inputSize; ++i)
     {
-      tdError(i) = nextActionValCube.slice(i).col(sampledActions[i].action) -
-          targetCube.slice(i).col(sampledActions[i].action);
+      double wq = arma::dot(sampledWeights.col(i), actionValCube.slice(i).col(sampledActions[i].action));
+      double wr = arma::dot(sampledWeights.col(i), sampledRewards.col(i));
+      size_t bestAction = arma::max_index(nextActionValCube.slice(i).each_col() % sampledWeights.col(i));
+      double whq = arma::dot(sampledWeights.col(i), nextActionValueCube.slice(i).col(bestAction));
+
+      tdError(i) = arma::abs(wr - wq + discount * whq * (1 - isTerminal(i)));
     }
-    tdError = arma::abs(tdError);
+
+    tdError += epsilon;
     UpdatePriorities(sampledIndices, tdError);
 
     // Update the gradient
@@ -411,6 +424,9 @@ class PrioritizedReplay
 
   //! Locally-stored encoded previous next states.
   arma::mat nextStates;
+
+  //! Locally-stored encoded previous preferences.
+  arma::mat weights;
 
   //! Locally-stored termination information of previous experience.
   arma::irowvec isTerminal;
