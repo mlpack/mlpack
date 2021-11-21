@@ -82,7 +82,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
 
   REQUIRE(ROC_AUC<(size_t)1>::Evaluate<
       LogisticRegression<>, mat, arma::Row<size_t>>(
-          lr, data, labels) == Approx(0.708333).epsilon(1e-7));
+          lr, data2, labels) == Approx(0.708333).epsilon(1e-7));
  
 }
 
