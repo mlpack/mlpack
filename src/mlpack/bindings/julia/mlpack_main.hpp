@@ -62,6 +62,14 @@
 #define BINDING_IGNORE_CHECK(...) mlpack::bindings::julia::IgnoreCheck( \
     STRINGIFY(BINDING_NAME), __VA_ARGS__)
 
+/**
+ * BINDING_MIN_LABEL is the minimum value a label can take, as represented in
+ * the input binding language.  For Julia bindings, we expect the user to
+ * provide their classes in the range [1, numClasses], since Julia is a
+ * one-indexed language.
+ */
+#define BINDING_MIN_LABEL 1
+
 namespace mlpack {
 namespace util {
 

@@ -14,7 +14,7 @@ steps:
     set -e
     sudo xcode-select --switch /Applications/Xcode_12.2.app/Contents/Developer
     unset BOOST_ROOT
-    brew install libomp openblas armadillo boost cereal
+    brew install libomp openblas armadillo boost cereal ensmallen
 
     if [ "$(binding)" == "python" ]; then
       pip install --upgrade pip
@@ -25,7 +25,6 @@ steps:
       brew install --cask julia
     fi
 
-    git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)

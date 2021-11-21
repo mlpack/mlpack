@@ -15,7 +15,6 @@
 // In case it hasn't already been included.
 #include "save.hpp"
 #include "extension.hpp"
-#include "detect_file_type.hpp"
 
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>
@@ -28,7 +27,7 @@ template<typename eT>
 bool Save(const std::string& filename,
           const arma::Col<eT>& vec,
           const bool fatal,
-          arma::file_type inputSaveType)
+          FileType inputSaveType)
 {
   // Don't transpose: one observation per line (for CSVs at least).
   return Save(filename, vec, fatal, false, inputSaveType);
@@ -38,7 +37,7 @@ template<typename eT>
 bool Save(const std::string& filename,
           const arma::Row<eT>& rowvec,
           const bool fatal,
-          arma::file_type inputSaveType)
+          FileType inputSaveType)
 {
   return Save(filename, rowvec, fatal, true, inputSaveType);
 }
@@ -48,18 +47,18 @@ bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal,
           bool transpose,
-          arma::file_type inputSaveType)
+          FileType inputSaveType)
 {
   Timer::Start("saving_data");
 
-  arma::file_type saveType = inputSaveType;
+  FileType saveType = inputSaveType;
   std::string stringType = "";
 
-  if (inputSaveType == arma::auto_detect)
+  if (inputSaveType == FileType::AutoDetect)
   {
     // Detect the file type using only the extension.
     saveType = DetectFromExtension(filename);
-    if (saveType == arma::file_type_unknown)
+    if (saveType == FileType::FileTypeUnknown)
     {
       if (fatal)
         Log::Fatal << "Could not detect type of file '" << filename << "' for "
@@ -105,11 +104,11 @@ bool Save(const std::string& filename,
 
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    const bool success = (saveType == arma::hdf5_binary) ?
-        tmp.quiet_save(filename, saveType) :
-        tmp.quiet_save(stream, saveType);
+    const bool success = (saveType == FileType::HDF5Binary) ?
+        tmp.quiet_save(filename, ToArmaFileType(saveType)) :
+        tmp.quiet_save(stream, ToArmaFileType(saveType));
 #else
-    const bool success = tmp.quiet_save(stream, saveType);
+    const bool success = tmp.quiet_save(stream, ToArmaFileType(saveType));
 #endif
     if (!success)
     {
@@ -126,11 +125,11 @@ bool Save(const std::string& filename,
   {
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    const bool success = (saveType == arma::hdf5_binary) ?
-        matrix.quiet_save(filename, saveType) :
-        matrix.quiet_save(stream, saveType);
+    const bool success = (saveType == FileType::HDF5Binary) ?
+        matrix.quiet_save(filename, ToArmaFileType(saveType)) :
+        matrix.quiet_save(stream, ToArmaFileType(saveType));
 #else
-    const bool success = matrix.quiet_save(stream, saveType);
+    const bool success = matrix.quiet_save(stream, ToArmaFileType(saveType));
 #endif
     if (!success)
     {
@@ -195,23 +194,23 @@ bool Save(const std::string& filename,
   }
 
   bool unknownType = false;
-  arma::file_type saveType;
+  FileType saveType;
   std::string stringType;
 
   if (extension == "txt" || extension == "tsv")
   {
-    saveType = arma::coord_ascii;
+    saveType = FileType::CoordASCII;
     stringType = "raw ASCII formatted data";
   }
   else if (extension == "bin")
   {
-    saveType = arma::arma_binary;
+    saveType = FileType::ArmaBinary;
     stringType = "Armadillo binary formatted data";
   }
   else
   {
     unknownType = true;
-    saveType = arma::raw_binary; // Won't be used; prevent a warning.
+    saveType = FileType::RawBinary; // Won't be used; prevent a warning.
     stringType = "";
   }
 
@@ -241,7 +240,7 @@ bool Save(const std::string& filename,
     tmp = trans(matrix);
   }
 
-  const bool success = tmp.quiet_save(stream, saveType);
+  const bool success = tmp.quiet_save(stream, ToArmaFileType(saveType));
   if (!success)
   {
     Timer::Stop("saving_data");

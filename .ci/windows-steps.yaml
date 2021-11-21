@@ -9,25 +9,25 @@ steps:
 # Fetch build dependencies
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
+    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.66.0
     nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
-
+    nuget install ensmallen -o $(Agent.ToolsDirectory) -Version 2.17.0
+    ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
+    Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
+    Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
+    Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
-    cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
-    cp $(Agent.ToolsDirectory)/boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+
   displayName: 'Fetch build dependencies'
 
 # Configure armadillo
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
-    curl -O http://www.ratml.org/misc/armadillo-8.400.0.tar.gz -o armadillo-8.400.0.tar.gz
-    tar -xzvf armadillo-8.400.0.tar.gz
+    curl -O -L https://sourceforge.net/projects/arma/files/armadillo-9.800.6.tar.xz -o armadillo-9.800.6.tar.xz
+    tar -xvf armadillo-9.800.6.tar.xz
 
-    cd armadillo-8.400.0/ && cmake $(CMakeGenerator) \
+    cd armadillo-9.800.6/ && cmake $(CMakeGenerator) \
     -DBLAS_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DCMAKE_PREFIX:FILEPATH=../../armadillo \
@@ -38,7 +38,7 @@ steps:
 # Build armadillo
 - task: MSBuild@1
   inputs:
-    solution: 'armadillo-8.400.0/*.sln'
+    solution: 'armadillo-9.800.6/*.sln'
     msbuildLocationMethod: 'location'
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
@@ -57,11 +57,12 @@ steps:
     $(CMakeArgs) `
     -DBLAS_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
-    -DARMADILLO_INCLUDE_DIR="..\armadillo-8.400.0\include" `
-    -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
-    -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
+    -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
+    -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
+    -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.66.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
     -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
+    -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
@@ -80,15 +81,13 @@ steps:
 
 # Configure mlpack
 - powershell: |
-    cp $(Agent.ToolsDirectory)\boost_libs\*.* build\Release\
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\*.* build\Release\
-    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
   displayName: 'Configure mlpack'
 
 # Run tests via ctest.
 - bash: |
     cd build
-    cmake --build . --target mlpack_test -C Release
+    cmake --build . --target mlpack_test
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 

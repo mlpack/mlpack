@@ -31,6 +31,9 @@
 #define PRINT_CALL(...) std::string(" ")
 #define BINDING_IGNORE_CHECK mlpack::bindings::tests::IgnoreCheck
 
+// This doesn't actually matter for this binding type.
+#define BINDING_MIN_LABEL 0
+
 namespace mlpack {
 namespace util {
 

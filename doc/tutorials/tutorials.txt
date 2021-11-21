@@ -59,6 +59,7 @@ mlpack.
  - \ref bindings
  - \ref cv
  - \ref hpt_guide
+ - \ref datasetmapper
 
 @section policy_tut Policy Class Documentation
 

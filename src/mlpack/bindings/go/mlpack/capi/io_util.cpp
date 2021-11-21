@@ -152,7 +152,7 @@ void mlpackSetParamVectorStr(void* params,
  */
 void mlpackSetParamPtr(void* params,
                        const char* identifier,
-                       const double* ptr)
+                       double* ptr)
 {
   util::Params& p = *((util::Params*) params);
   util::SetParamPtr(p, identifier, ptr);

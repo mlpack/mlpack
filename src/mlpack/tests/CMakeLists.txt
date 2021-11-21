@@ -32,6 +32,7 @@ add_executable(mlpack_test
   decision_tree_regressor_test.cpp
   decision_tree_test.cpp
   det_test.cpp
+  digamma_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
@@ -125,6 +126,7 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
+  trigamma_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp

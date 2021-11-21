@@ -25,9 +25,12 @@ function(find_r_module module)
             OUTPUT_VARIABLE _version_compare
             OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-        string(REGEX MATCHALL "‘[0-9._]*’" _version_compare "${_version_compare}")
-        string(REGEX REPLACE "‘" "" _version_compare "${_version_compare}")
-        string(REGEX REPLACE "’" "" _version_compare "${_version_compare}")
+        # Different versions of R may enclose the version number in different
+        # delimiters.  Sometimes, semicolons show up too.
+        string(REGEX MATCHALL "[‘'][0-9._]*[’']" _version_compare "${_version_compare}")
+        string(REGEX REPLACE ";" "" _version_compare "${_version_compare}")
+        string(REGEX REPLACE "[‘']" "" _version_compare "${_version_compare}")
+        string(REGEX REPLACE "[’']" "" _version_compare "${_version_compare}")
 
         # Compare the version of the package using compareVersion().
         execute_process(COMMAND ${RSCRIPT_EXECUTABLE} "-e"

@@ -270,7 +270,7 @@ DecisionTree<FitnessFunction,
              DimensionSelectionType,
              NoRecursion>::DecisionTree(const size_t numClasses) :
     splitDimension(0),
-    dimensionTypeOrMajorityClass(0),
+    dimensionType(0),
     classProbabilities(numClasses)
 {
   // Initialize utility vector.
@@ -291,12 +291,16 @@ DecisionTree<FitnessFunction,
     NumericAuxiliarySplitInfo(other),
     CategoricalAuxiliarySplitInfo(other),
     splitDimension(other.splitDimension),
-    dimensionTypeOrMajorityClass(other.dimensionTypeOrMajorityClass),
     classProbabilities(other.classProbabilities)
 {
   // Copy each child.
   for (size_t i = 0; i < other.children.size(); ++i)
     children.push_back(new DecisionTree(*other.children[i]));
+
+  if (children.size() != 0)
+    dimensionType = other.dimensionType;
+  else
+    majorityClass = other.majorityClass;
 }
 
 //! Take ownership of another tree.
@@ -314,9 +318,13 @@ DecisionTree<FitnessFunction,
     CategoricalAuxiliarySplitInfo(std::move(other)),
     children(std::move(other.children)),
     splitDimension(other.splitDimension),
-    dimensionTypeOrMajorityClass(other.dimensionTypeOrMajorityClass),
     classProbabilities(std::move(other.classProbabilities))
 {
+  if (children.size() != 0)
+    dimensionType = other.dimensionType;
+  else
+    majorityClass = other.majorityClass;
+
   // Reset the other object.
   other.classProbabilities.ones(1); // One class, P(1) = 1.
 }
@@ -348,7 +356,12 @@ DecisionTree<FitnessFunction,
 
   // Copy everything from the other tree.
   splitDimension = other.splitDimension;
-  dimensionTypeOrMajorityClass = other.dimensionTypeOrMajorityClass;
+
+  if (children.size() != 0)
+    dimensionType = other.dimensionType;
+  else
+    majorityClass = other.majorityClass;
+
   classProbabilities = other.classProbabilities;
 
   // Copy the children.
@@ -390,7 +403,12 @@ DecisionTree<FitnessFunction,
   // Take ownership of the other tree's components.
   children = std::move(other.children);
   splitDimension = other.splitDimension;
-  dimensionTypeOrMajorityClass = other.dimensionTypeOrMajorityClass;
+
+  if (children.size() != 0)
+    dimensionType = other.dimensionType;
+  else
+    majorityClass = other.majorityClass;
+
   classProbabilities = std::move(other.classProbabilities);
 
   // Reset the class probabilities of the other object.
@@ -684,7 +702,7 @@ double DecisionTree<FitnessFunction,
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != datasetInfo.Dimensionality())
   {
-    dimensionTypeOrMajorityClass = (size_t) datasetInfo.Type(bestDim);
+    dimensionType = (size_t) datasetInfo.Type(bestDim);
     splitDimension = bestDim;
 
     // Get the number of children we will have.
@@ -858,7 +876,7 @@ double DecisionTree<FitnessFunction,
     size_t numChildren =
         NumericSplit::NumChildren(classProbabilities[0], *this);
     splitDimension = bestDim;
-    dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
+    dimensionType = (size_t) data::Datatype::numeric;
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -950,7 +968,7 @@ size_t DecisionTree<FitnessFunction,
   if (children.size() == 0)
   {
     // Return cached max of probabilities.
-    return dimensionTypeOrMajorityClass;
+    return majorityClass;
   }
 
   return children[CalculateDirection(point)]->Classify(point);
@@ -973,7 +991,7 @@ void DecisionTree<FitnessFunction,
 {
   if (children.size() == 0)
   {
-    prediction = dimensionTypeOrMajorityClass;
+    prediction = majorityClass;
     probabilities = classProbabilities;
     return;
   }
@@ -999,7 +1017,7 @@ void DecisionTree<FitnessFunction,
   predictions.set_size(data.n_cols);
   if (children.size() == 0)
   {
-    predictions.fill(dimensionTypeOrMajorityClass);
+    predictions.fill(majorityClass);
     return;
   }
 
@@ -1026,7 +1044,7 @@ void DecisionTree<FitnessFunction,
   predictions.set_size(data.n_cols);
   if (children.size() == 0)
   {
-    predictions.fill(dimensionTypeOrMajorityClass);
+    predictions.fill(majorityClass);
     probabilities = arma::repmat(classProbabilities, 1, data.n_cols);
     return;
   }
@@ -1071,7 +1089,8 @@ void DecisionTree<FitnessFunction,
 
   // Now serialize the rest of the object.
   ar(CEREAL_NVP(splitDimension));
-  ar(CEREAL_NVP(dimensionTypeOrMajorityClass));
+  // Since dimensionType and majorityClass are a union, we only need to serialize one.
+  ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(classProbabilities));
 }
 
@@ -1087,8 +1106,7 @@ size_t DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
 {
-  if ((data::Datatype) dimensionTypeOrMajorityClass ==
-      data::Datatype::categorical)
+  if ((data::Datatype) dimensionType == data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
         classProbabilities[0], *this);
   else
@@ -1150,7 +1168,7 @@ void DecisionTree<FitnessFunction,
   classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
   arma::uword maxIndex = 0;
   classProbabilities.max(maxIndex);
-  dimensionTypeOrMajorityClass = (size_t) maxIndex;
+  majorityClass = (size_t) maxIndex;
 }
 
 } // namespace tree

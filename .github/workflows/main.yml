@@ -51,9 +51,7 @@ jobs:
         - name: Install Build Dependencies
           run: |
             sudo apt-get update
-            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev
-            curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
-            cmake . && make && sudo make install && cd ..
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
 
         - name: Install R-bindings dependencies
           run: |
@@ -64,11 +62,11 @@ jobs:
         - name: CMake
           run: |
             mkdir build
-            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON -DDOWNLOAD_DEPENDENCIES=ON ..
 
         - name: Build
           run: |
-            cd build && make -j2 && make -j2 mlpack_test
+            cd build && make && make mlpack_test
 
         - name: Run tests via ctest
           run: |
@@ -126,6 +124,12 @@ jobs:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+
+      - name: Install check dependencies
+        if: runner.os != 'Windows' && runner.os != 'macOS'
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev
 
       - name: Install dependencies
         run: |

@@ -99,7 +99,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo      >= 8.400.0
+      Armadillo      >= 9.800
       Boost (math_c99, spirit) >= 1.58.0
       CMake          >= 3.6
       ensmallen      >= 2.10.0
@@ -151,6 +151,7 @@ mlpack_pca, mlpack_kmeans etc.) with the following command:
     $ sudo apt-get install libmlpack-dev mlpack-bin
 
 On Fedora or Red Hat (EPEL):
+
     $ sudo dnf install mlpack-devel mlpack-bin
 
 *Note*: Older Ubuntu versions may not have the most recent version of mlpack

@@ -142,9 +142,10 @@ std::string PrintTypeDoc(
       "indicating which dimensions are categorical (represented by `true`) and "
       "which are numeric (represented by `false`).  The number of elements in "
       "the boolean array should be the same as the dimensionality of the data "
-      "matrix.  It is expected that each row of the matrix corresponds to a "
-      "single data point, unless `points_are_rows` is set to `false` when "
-      "calling mlpack bindings.";
+      "matrix.  Categorical dimensions should take integer values between 1 "
+      "and the number of categories.  It is expected that each row of the "
+      "matrix corresponds to a single data point, unless `points_are_rows` is "
+      "set to `false` when calling mlpack bindings.";
 }
 
 /**

@@ -1,6 +1,7 @@
 /**
  * @file core/data/load_impl.hpp
  * @author Ryan Curtin
+ * @author Gopi Tatiraju
  *
  * Implementation of templatized load() function defined in load.hpp.
  *
@@ -13,21 +14,16 @@
 #define MLPACK_CORE_DATA_LOAD_IMPL_HPP
 
 // In case it hasn't already been included.
+#include "load.hpp"
 
 #include <exception>
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
-#include "load_csv.hpp"
-#include "load.hpp"
 #include "extension.hpp"
 #include "detect_file_type.hpp"
 
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
-
-#include "load_arff.hpp"
+#include "string_algorithms.hpp"
 
 namespace mlpack {
 namespace data {
@@ -43,7 +39,7 @@ std::vector<std::string> ToTokens(Tokenizer& lineTok)
                  [&tokens](std::string const &str)
   {
     std::string trimmedToken(str);
-    boost::trim(trimmedToken);
+    Trim(trimmedToken);
     return std::move(trimmedToken);
   });
 
@@ -90,12 +86,13 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose,
-          const arma::file_type inputLoadType)
+          const FileType inputLoadType)
 {
   Timer::Start("loading_data");
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
+
 #ifdef  _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
 #else
@@ -113,14 +110,14 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  arma::file_type loadType = inputLoadType;
+  FileType loadType = inputLoadType;
   std::string stringType;
-  if (inputLoadType == arma::auto_detect)
+  if (inputLoadType == FileType::AutoDetect)
   {
     // Attempt to auto-detect the type from the given file.
     loadType = AutoDetect(stream, filename);
     // Provide error if we don't know the type.
-    if (loadType == arma::file_type_unknown)
+    if (loadType == FileType::FileTypeUnknown)
     {
       Timer::Stop("loading_data");
       if (fatal)
@@ -137,7 +134,7 @@ bool Load(const std::string& filename,
   stringType = GetStringType(loadType);
 
 #ifndef ARMA_USE_HDF5
-  if (inputLoadType == arma::hdf5_binary)
+  if (inputLoadType == FileType::HDF5Binary)
   {
     // Ensure that HDF5 is supported.
     Timer::Stop("loading_data");
@@ -155,7 +152,7 @@ bool Load(const std::string& filename,
 #endif
 
   // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == arma::raw_binary)
+  if (loadType == FileType::RawBinary)
     Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
         << "but this may not be the actual filetype!" << std::endl;
   else
@@ -164,10 +161,17 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-  if (loadType != arma::hdf5_binary)
-    success = matrix.load(stream, loadType);
+  LoadCSV loader;
+  
+  if (loadType != FileType::HDF5Binary)
+  {
+    if (loadType == FileType::CSVASCII)
+      success = loader.LoadNumericCSV(matrix, stream);
+    else
+      success = matrix.load(stream, ToArmaFileType(loadType));
+  }
   else
-    success = matrix.load(filename, loadType);
+    success = matrix.load(filename, ToArmaFileType(loadType));
 
   if (!success)
   {
@@ -232,7 +236,7 @@ bool Load(const std::string& filename,
     try
     {
       LoadCSV loader(filename);
-      loader.Load(matrix, info, transpose);
+      loader.LoadCategoricalCSV(matrix, info, transpose);
     }
     catch (std::exception& e)
     {
