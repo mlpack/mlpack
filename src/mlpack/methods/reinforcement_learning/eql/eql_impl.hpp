@@ -143,8 +143,15 @@ void EQL<
   // Each action results a list of reward.
   arma::mat sampledRewardLists;
   arma::mat sampledNextStatePref;
+  arma::mat sampledWeights;
   arma::irowvec isTerminal;
 
+  // Store current and next statePref actionValues over learningNetwork
+  // for replay.
+  arma::mat learningActionValue;
+  arma::mat nextLearningActionValue;
+  learningNetwork.Forward(sampledStatePref, learningActionValues);
+  learningNetwork.Forward(sampledNextStatePref, nextLearningActionValues);
 
   size_t batchSize = sampledStates.n_cols;.
   // Count of total state-preference pairs.
@@ -174,9 +181,8 @@ void EQL<
     return retval;
   }();
 
-  learningNetwork.Forward(sampledStatePref, target);
   replayMethod.SampleEQL(sampledStatePref, sampledActions, sampledRewardLists,
-      sampledNextStatePref, weightSpace, isTerminal);
+                         sampledNextStatePref, sampledWeights, isTerminal);
 
   // For each state-preference pair, the target network outputs
   // actionSize number of reward vectors.
@@ -196,9 +202,7 @@ void EQL<
     bestActions = BestAction(nextActionValues, extendedWeightSpace);
   }
 
-  arma::mat target(EnvironmentType::rewardSize, inputSize * ActionType::size);
-  learningNetwork.Forward(sampledStatePref, target);
-
+  arma::mat target { learningActionValue };
   const double discount = std::pow(config.Discount(), replayMethod.NSteps());
 
   // Each slice of the cube holds the action vectors of a state-preference pair.
@@ -221,8 +225,8 @@ void EQL<
   arma::mat gradients;
   learningNetwork.Backward(sampledStatePref, target, extendedWeightSpace,
                            lambdaUpdatePolicy.Lambda(), gradients);
-
-  replayMethod.Update(target, sampledActions, nextActionValues, gradients);
+  replayMethod.Update(learningActionValue, sampledActions, nextLearningActionValue, 
+                      sampledWeights, gradients, discount);
 
   #if ENS_VERSION_MAJOR == 1
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
@@ -331,6 +335,7 @@ double EQL<
 
     // Store the transition for replay.
     replayMethod.Store(state, action, reward, nextState,
+        arma::normalise(arma::abs(arma::randn(EnvironmentType::rewardSize, 1)), 1), // Random preference.
         environment.IsTerminal(nextState), config.Discount());
     // Update current state.
     state = nextState;
