@@ -171,7 +171,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath TeX/AMSsymbols
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
-GENERATE_LATEX         = NO
+GENERATE_LATEX         = YES
 LATEX_OUTPUT           = latex
 LATEX_CMD_NAME         = latex
 MAKEINDEX_CMD_NAME     = makeindex

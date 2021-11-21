@@ -58,7 +58,8 @@ exhale_args = {
     # "treeViewIsBootstrap": True,
     "exhaleExecutesDoxygen": True,
     "exhaleUseDoxyfile": True,
-    "generateBreatheFileDirectives" : True
+    # Use this for debugging.
+    "generateBreatheFileDirectives" : False
 }
 
 # Tell sphinx what the primary language being documented is.
