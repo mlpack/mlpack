@@ -190,7 +190,7 @@ void EQL<
         arma::join_rows(sampledNextStates, preferenceBatch);
     start += batchSize;
     ++colIdx;
-  }
+  } 
 
   // Store current and next state-pref actionValues over learningNetwork.
   // The state-pref pair here is the one sampled during exploration.
@@ -286,7 +286,7 @@ void EQL<
 {
   // Stores the Q vector of each action. Shape: (rewardSize, ActionType::size).
   arma::mat actionValueMatrix;
-  learningNetwork.Predict(arma::join_cols(state, preference), actionValueMatrix);
+  learningNetwork.Predict(arma::join_rows(state, preference), actionValueMatrix);
   arma::inplace_trans(actionValueMatrix);
   arma::vec utilityValue = actionValueMatrix * preference;
   // Select an action according to the behavior policy.
