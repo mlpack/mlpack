@@ -1,8 +1,8 @@
 /**
- * @file methods/reinforcement_learning/replay/prioritized_replay.hpp
+ * @file methods/reinforcement_learning/replay/prioritized_eql_replay.hpp
  * @author Nanubala Gnana Sai
  *
- * This file is an implementation of prioritized experience replay.
+ * This file is an implementation of prioritized EQL experience replay.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,18 +19,24 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of prioritized experience replay. Prioritized experience
- * replay can replay important transitions more frequently by prioritizing
- * transitions, and make agent learn more efficiently.
- *
+ * Implementation of the EQL variation of prioritized experience replay. The update
+ * is handled similar to Hindsight Experience Replay(HER) and the priorities are assigned
+ * based on the errors.
+ * 
+ * For more details, see the following:
  * @code
- * @article{schaul2015prioritized,
- *  title   = {Prioritized experience replay},
- *  author  = {Schaul, Tom and Quan, John and Antonoglou,
- *             Ioannis and Silver, David},
- *  journal = {arXiv preprint arXiv:1511.05952},
- *  year    = {2015}
- *  }
+ * @article{yang2019generalized,
+ *  author    = {Yang and
+ *               Runzhe and
+ *               Sun and
+ *               Xingyuan and
+ *               Narasimhan and
+ *               Karthik},
+ *  title     = {A generalized algorithm for multi-objective reinforcement learning and policy adaptation},
+ *  journal   = {arXiv preprint arXiv:1908.08342},
+ *  year      = {2019},
+ *  url       = {https://arxiv.org/abs/1908.08342}
+ * }
  * @endcode
  *
  * @tparam EnvironmentType Desired task.
@@ -79,7 +85,7 @@ class PrioritizedEQLReplay
    * @param nSteps Number of steps to look in the future.
    * @param dimension The dimension of an encoded state.
    */
-  PrioritizedReplay(const size_t batchSize,
+  PrioritizedEQLReplay(const size_t batchSize,
                     const size_t capacity,
                     const double alpha,
                     const size_t nSteps = 1,
@@ -97,7 +103,7 @@ class PrioritizedEQLReplay
       actions(capacity),
       rewards(capacity),
       nextStates(dimension, capacity),
-      weights(EnvironmentType::rewardSize, capacity),
+      preferences(EnvironmentType::rewardSize, capacity),
       isTerminal(capacity)
   {
     size_t size = 1;
@@ -125,10 +131,11 @@ class PrioritizedEQLReplay
              ActionType action,
              double reward,
              StateType nextState,
-             WeightType preference,
+             PreferenceType preference,
              bool isEnd,
              const double& discount)
   {
+    // TODO: Do we need to handle N-step buffer.
     nStepBuffer.push_back({state, action, reward, nextState, preference, isEnd});
 
     // Single step transition is not ready.
@@ -151,7 +158,7 @@ class PrioritizedEQLReplay
     actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
-    weights.col(position) = preference;
+    preferences.col(position) = preference;
     isTerminal(position) = isEnd;
 
     idxSum.Set(position, maxPriority * alpha);
@@ -230,57 +237,32 @@ class PrioritizedEQLReplay
   { /* Nothing to do here */ }
 
   /**
-   * Sample some experience according to their priorities. Multi-objective case.
+   * Sample some experience according to their priorities.
    *
-   * @param sampledStatePref Sampled state-preference pair.
+   * @param sampledStates Sampled encoded states.
    * @param sampledActions Sampled actions.
-   * @param sampledRewardLists Sampled reward lists.
-   * @param sampledNextStatePref Sampled next state-preference pair.
-   * @param weightSpace The preference direction repository.
+   * @param sampledRewards Sampled rewards.
+   * @param sampledNextStates Sampled encoded next states.
+   * @param sampledPreferences Sampled preferences.
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    */
-  void SampleEQL(arma::mat& sampledStatePref,
+  void SampleEQL(arma::mat& sampledStates,
                  std::vector<ActionType>& sampledActions,
-                 arma::mat& sampledRewardList,
-                 arma::mat& sampledNextStatePref,
-                 const arma::mat& weightSpace,
+                 arma::rowvec& sampledRewards,
+                 arma::mat& sampledNextStates,
+                 arma::mat& samplePreferences,
                  arma::irowvec& isTerminal)
   {
     sampledIndices = SampleProportional();
     BetaAnneal();
 
-    size_t numWeights = weightSpace.n_cols;
-    size_t batchSize = sampledIndices.n_cols;
-
-    const arma::mat batchWeights = [&]()
-    {
-      arma::mat retval(rewardSize, inputSize);
-      size_t colIdx = 0, start = 0;
-
-      while (colIdx < numWeights)
-      {
-        retval.submat(arma::span(0, rewardSize),
-                      arma::span(start, start + batchSize - 1)) =
-            arma::repmat(weightSpace.col(colIdx), 1, batchSize);
-        start += batchSize;
-        ++colIdx;
-      }
-
-      return retval;
-    }();
-
-    // Each input is a unique combination of weights and states.
-    // Shape: (stateSize + rewardSize, inputSize).
-    sampledStatePref = arma::join_cols(
-        arma::repmat(states.cols(sampledIndices), 1, batchSize), batchWeights);
-
-    sampledNextStatePref = arma::join_cols(
-        arma::repmat(nextStates.cols(sampledIndices), 1, batchSize), batchWeights);
-
+    sampledStates = states.cols(sampledIndices);
     for (size_t t = 0; t < sampledIndices.n_rows; t ++)
       sampledActions.push_back(actions[sampledIndices[t]]);
-    sampledRewards = rewardList.cols(sampledIndices);
+    sampledRewards = rewards.elem(sampledIndices).t();
+    sampledNextStates = nextStates.cols(sampledIndices);
+    sampledPreferences = preferences.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices).t();
 
     // Calculate the weights of sampled transitions.
@@ -332,14 +314,14 @@ class PrioritizedEQLReplay
    * @param learningActionValue Sampled statePref's learningNetwork action-value.
    * @param sampledActions Agent's sampled action.
    * @param nextLearningActionValue Sampled next statePref's learningNetwork action-value.
-   * @param sampledWeights Agent's current preference.
+   * @param sampledPreferences Agent's current preference.
    * @param discount The current discount factor.
    * @param gradients The model's gradients.
    */
   void Update(const arma::mat& learningActionValue,
               const std::vector<ActionType>& sampledActions,
               const arma::mat& nextLearningActionValue,
-              const arma::mat& sampledWeights,
+              const arma::mat& sampledPreferences,
               const double discount,
               arma::mat& gradients)
   {
@@ -351,10 +333,10 @@ class PrioritizedEQLReplay
                                  ActionType::size, inputSize);
     for (size_t i = 0; i < inputSize; ++i)
     {
-      double wq = arma::dot(sampledWeights.col(i), actionValCube.slice(i).col(sampledActions[i].action));
-      double wr = arma::dot(sampledWeights.col(i), sampledRewards.col(i));
-      size_t bestAction = arma::max_index(nextActionValCube.slice(i).each_col() % sampledWeights.col(i));
-      double whq = arma::dot(sampledWeights.col(i), nextActionValueCube.slice(i).col(bestAction));
+      double wq = arma::dot(sampledPreferences.col(i), actionValCube.slice(i).col(sampledActions[i].action));
+      double wr = arma::dot(sampledPreferences.col(i), sampledRewards.col(i));
+      size_t bestAction = arma::max_index(nextActionValCube.slice(i).each_col() % sampledPreferences.col(i));
+      double whq = arma::dot(sampledPreferences.col(i), nextActionValueCube.slice(i).col(bestAction));
 
       tdError(i) = arma::abs(wr - wq + discount * whq * (1 - isTerminal(i)));
     }
@@ -425,8 +407,8 @@ class PrioritizedEQLReplay
   //! Locally-stored encoded previous next states.
   arma::mat nextStates;
 
-  //! Locally-stored encoded previous preferences.
-  arma::mat weights;
+  //! Locally-stored encoded previous preferenecs.
+  arma::mat preferences;
 
   //! Locally-stored termination information of previous experience.
   arma::irowvec isTerminal;
