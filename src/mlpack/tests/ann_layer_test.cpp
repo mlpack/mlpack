@@ -3714,6 +3714,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
 
   // Test the Backward function.
+  delta.set_size(arma::size(input));
   module1.Backward(input, output, delta);
 
   // Check same padding option.
@@ -3736,6 +3737,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
 
   // Test the backward function.
+  delta.set_size(arma::size(input));
   module2.Backward(input, output, delta);
 }
 
@@ -4469,17 +4471,15 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   output.set_size(layer.OutputSize(), 3);
 
   // Set weights to 1.0 and bias to 0.0.
-  layer.Parameters().zeros();
-  arma::mat weight(2 * 4, 1);
-  weight.fill(1.0);
-  layer.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
+  layer.Weight().fill(1.0);
+  layer.Bias().zeros();
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
   REQUIRE(arma::accu(output) == 4108);
 
   // Set bias to one.
-  layer.Parameters().fill(1.0);
+  layer.Bias().fill(1.0);
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
