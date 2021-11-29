@@ -193,6 +193,9 @@ void ConvolutionType<
 
         outputTemp.slice(outMap + fullOutputOffset) += convOutput;
       }
+
+      // Make sure to add the bias.
+      outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
     }
   }
 }

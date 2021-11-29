@@ -145,9 +145,9 @@ class ConvolutionType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the weight of the layer.
+  //! Get the weight of the layer as a cube.
   arma::cube const& Weight() const { return weight; }
-  //! Modify the weight of the layer.
+  //! Modify the weight of the layer as a cube.
   arma::cube& Weight() { return weight; }
 
   //! Get the bias of the layer.
