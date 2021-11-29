@@ -32,7 +32,7 @@ double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
   double output = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
+    size_t currentTarget = target(i);
     Log::Assert(currentTarget < prediction.n_rows,
         "Target class out of range.");
 
@@ -52,7 +52,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
   loss = arma::zeros<LossType>(prediction.n_rows, prediction.n_cols);
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
+    size_t currentTarget = target(i);
     Log::Assert(currentTarget < prediction.n_rows,
         "Target class out of range.");
 
