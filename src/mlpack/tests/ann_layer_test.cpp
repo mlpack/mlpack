@@ -3703,11 +3703,8 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
   output.set_size(module1.OutputSize(), 1);
-  std::cout << "first output memptr: " << output.memptr() << "\n";
   module1.Parameters().zeros();
   module1.Forward(input, output);
-  std::cout << "input: " << input.t() << "\n";
-  std::cout << "output: " << output.t() << "\n";
 
   REQUIRE(arma::accu(output) == 0);
   REQUIRE(output.n_rows == 25);
