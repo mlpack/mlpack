@@ -72,8 +72,7 @@ class PrioritizedEQLReplay
       maxPriority(0),
       initialBeta(0),
       beta(0),
-      replayBetaIters(0),
-      nSteps(0)
+      replayBetaIters(0)
   { /* Nothing to do here. */ }
 
   /**
@@ -82,13 +81,11 @@ class PrioritizedEQLReplay
    * @param batchSize Number of examples returned at each sample.
    * @param capacity Total memory size in terms of number of examples.
    * @param alpha How much prioritization is used.
-   * @param nSteps Number of steps to look in the future.
    * @param dimension The dimension of an encoded state.
    */
   PrioritizedEQLReplay(const size_t batchSize,
                     const size_t capacity,
                     const double alpha,
-                    const size_t nSteps = 1,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
@@ -98,7 +95,6 @@ class PrioritizedEQLReplay
       maxPriority(1.0),
       initialBeta(0.6),
       replayBetaIters(10000),
-      nSteps(nSteps),
       states(dimension, capacity),
       actions(capacity),
       rewards(capacity),
@@ -135,25 +131,6 @@ class PrioritizedEQLReplay
              bool isEnd,
              const double& discount)
   {
-    // TODO: Do we need to handle N-step buffer.
-    nStepBuffer.push_back({state, action, reward, nextState, preference, isEnd});
-
-    // Single step transition is not ready.
-    if (nStepBuffer.size() < nSteps)
-      return;
-
-    // To keep the queue size fixed to nSteps.
-    if (nStepBuffer.size() > nSteps)
-      nStepBuffer.pop_front();
-
-    // Before moving ahead, lets confirm if our fixed size buffer works.
-    assert(nStepBuffer.size() == nSteps);
-
-    // Make a n-step transition.
-    GetNStepInfo(reward, nextState, isEnd, discount);
-
-    state = nStepBuffer.front().state;
-    action = nStepBuffer.front().action;
     states.col(position) = state.Encode();
     actions[position] = action;
     rewards(position) = reward;
@@ -168,36 +145,6 @@ class PrioritizedEQLReplay
     {
       full = true;
       position = 0;
-    }
-  }
-
-  /**
-   * Get the reward, next state and terminal boolean for nth step.
-   *
-   * @param reward Given reward.
-   * @param nextState Given next state.
-   * @param isEnd Whether next state is terminal state.
-   * @param discount The discount parameter.
-   */
-  void GetNStepInfo(double& reward,
-                    StateType& nextState,
-                    bool& isEnd,
-                    const double& discount)
-  {
-    reward = nStepBuffer.back().reward;
-    nextState = nStepBuffer.back().nextState;
-    isEnd = nStepBuffer.back().isEnd;
-
-    // Should start from the second last transition in buffer.
-    for (int i = nStepBuffer.size() - 2; i >= 0; i--)
-    {
-      bool iE = nStepBuffer[i].isEnd;
-      reward = nStepBuffer[i].reward + discount * reward * (1 - iE);
-      if (iE)
-      {
-        nextState = nStepBuffer[i].nextState;
-        isEnd = iE;
-      }
     }
   }
 
@@ -348,9 +295,6 @@ class PrioritizedEQLReplay
     gradients = arma::mean(weights) * gradients;
   }
 
-  //! Get the number of steps for n-step agent.
-  const size_t& NSteps() const { return nSteps; }
-
  private:
   //! Locally-stored number of examples of each sample.
   size_t batchSize;
@@ -388,12 +332,6 @@ class PrioritizedEQLReplay
 
   //! Locally-stored the weights of sampled transitions.
   arma::rowvec weights;
-
-  //! Locally-stored number of steps to look into the future.
-  size_t nSteps;
-
-  //! Locally-stored buffer containing n consecutive steps.
-  std::deque<Transition> nStepBuffer;
 
   //! Locally-stored encoded previous states.
   arma::mat states;
