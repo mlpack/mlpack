@@ -22,8 +22,6 @@
 namespace mlpack {
 namespace rl {
 
-using namespace mlpack::ann;
-
 /**
  * Implementation of the Dueling Deep Q-Learning network.
  * For more information, see the following.
@@ -46,12 +44,12 @@ using namespace mlpack::ann;
  * @tparam ValueNetworkType The type of network used for value network.
  */
 template <
-  typename OutputLayerType = EmptyLoss<>,
-  typename InitType = GaussianInitialization,
-  typename CompleteNetworkType = FFN<OutputLayerType, InitType>,
-  typename FeatureNetworkType = Sequential<>,
-  typename AdvantageNetworkType = Sequential<>,
-  typename ValueNetworkType = Sequential<>
+  typename OutputLayerType = mlpack::ann::EmptyLoss<>,
+  typename InitType = mlpack::ann::GaussianInitialization,
+  typename CompleteNetworkType = mlpack::ann::FFN<OutputLayerType, InitType>,
+  typename FeatureNetworkType = mlpack::ann::Sequential<>,
+  typename AdvantageNetworkType = mlpack::ann::Sequential<>,
+  typename ValueNetworkType = mlpack::ann::Sequential<>
 >
 class DuelingDQN
 {
@@ -59,14 +57,14 @@ class DuelingDQN
   //! Default constructor.
   DuelingDQN() : isNoisy(false)
   {
-    featureNetwork = new Sequential<>();
-    valueNetwork = new Sequential<>();
-    advantageNetwork = new Sequential<>();
-    concat = new Concat<>(true);
+    featureNetwork = new mlpack::ann::Sequential<>();
+    valueNetwork = new mlpack::ann::Sequential<>();
+    advantageNetwork = new mlpack::ann::Sequential<>();
+    concat = new mlpack::ann::Concat<>(true);
 
     concat->Add(valueNetwork);
     concat->Add(advantageNetwork);
-    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(new mlpack::ann::IdentityLayer<>());
     completeNetwork.Add(featureNetwork);
     completeNetwork.Add(concat);
   }
@@ -92,42 +90,42 @@ class DuelingDQN
       completeNetwork(outputLayer, init),
       isNoisy(isNoisy)
   {
-    featureNetwork = new Sequential<>();
-    featureNetwork->Add(new Linear<>(inputDim, h1));
-    featureNetwork->Add(new ReLULayer<>());
+    featureNetwork = new mlpack::ann::Sequential<>();
+    featureNetwork->Add(new mlpack::ann::Linear<>(inputDim, h1));
+    featureNetwork->Add(new mlpack::ann::ReLULayer<>());
 
-    valueNetwork = new Sequential<>();
-    advantageNetwork = new Sequential<>();
+    valueNetwork = new mlpack::ann::Sequential<>();
+    advantageNetwork = new mlpack::ann::Sequential<>();
 
     if (isNoisy)
     {
       noisyLayerIndex.push_back(valueNetwork->Model().size());
-      valueNetwork->Add(new NoisyLinear<>(h1, h2));
-      advantageNetwork->Add(new NoisyLinear<>(h1, h2));
+      valueNetwork->Add(new mlpack::ann::NoisyLinear<>(h1, h2));
+      advantageNetwork->Add(new mlpack::ann::NoisyLinear<>(h1, h2));
 
-      valueNetwork->Add(new ReLULayer<>());
-      advantageNetwork->Add(new ReLULayer<>());
+      valueNetwork->Add(new mlpack::ann::ReLULayer<>());
+      advantageNetwork->Add(new mlpack::ann::ReLULayer<>());
 
       noisyLayerIndex.push_back(valueNetwork->Model().size());
-      valueNetwork->Add(new NoisyLinear<>(h2, 1));
-      advantageNetwork->Add(new NoisyLinear<>(h2, outputDim));
+      valueNetwork->Add(new mlpack::ann::NoisyLinear<>(h2, 1));
+      advantageNetwork->Add(new mlpack::ann::NoisyLinear<>(h2, outputDim));
     }
     else
     {
-      valueNetwork->Add(new Linear<>(h1, h2));
-      valueNetwork->Add(new ReLULayer<>());
-      valueNetwork->Add(new Linear<>(h2, 1));
+      valueNetwork->Add(new mlpack::ann::Linear<>(h1, h2));
+      valueNetwork->Add(new mlpack::ann::ReLULayer<>());
+      valueNetwork->Add(new mlpack::ann::Linear<>(h2, 1));
 
-      advantageNetwork->Add(new Linear<>(h1, h2));
-      advantageNetwork->Add(new ReLULayer<>());
-      advantageNetwork->Add(new Linear<>(h2, outputDim));
+      advantageNetwork->Add(new mlpack::ann::Linear<>(h1, h2));
+      advantageNetwork->Add(new mlpack::ann::ReLULayer<>());
+      advantageNetwork->Add(new mlpack::ann::Linear<>(h2, outputDim));
     }
 
-    concat = new Concat<>(true);
+    concat = new mlpack::ann::Concat<>(true);
     concat->Add(valueNetwork);
     concat->Add(advantageNetwork);
 
-    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(new mlpack::ann::IdentityLayer<>());
     completeNetwork.Add(featureNetwork);
     completeNetwork.Add(concat);
     this->ResetParameters();
@@ -150,10 +148,10 @@ class DuelingDQN
       valueNetwork(valueNetwork),
       isNoisy(isNoisy)
   {
-    concat = new Concat<>(true);
+    concat = new mlpack::ann::Concat<>(true);
     concat->Add(valueNetwork);
     concat->Add(advantageNetwork);
-    completeNetwork.Add(new IdentityLayer<>());
+    completeNetwork.Add(new mlpack::ann::IdentityLayer<>());
     completeNetwork.Add(featureNetwork);
     completeNetwork.Add(concat);
     this->ResetParameters();
@@ -245,9 +243,9 @@ class DuelingDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      boost::get<NoisyLinear<>*>
+      boost::get<mlpack::ann::NoisyLinear<>*>
           (valueNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
-      boost::get<NoisyLinear<>*>
+      boost::get<mlpack::ann::NoisyLinear<>*>
           (advantageNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
     }
   }
@@ -262,7 +260,7 @@ class DuelingDQN
   CompleteNetworkType completeNetwork;
 
   //! Locally-stored concat network.
-  Concat<>* concat;
+  mlpack::ann::Concat<>* concat;
 
   //! Locally-stored feature network.
   FeatureNetworkType* featureNetwork;
@@ -283,7 +281,7 @@ class DuelingDQN
   arma::mat actionValues;
 
   //! Locally-stored loss function.
-  MeanSquaredError<> lossFunction;
+  mlpack::ann::MeanSquaredError<> lossFunction;
 };
 
 } // namespace rl
