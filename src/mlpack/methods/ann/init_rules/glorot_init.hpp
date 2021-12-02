@@ -18,8 +18,6 @@
 #include "random_init.hpp"
 #include "gaussian_init.hpp"
 
-using namespace mlpack::math;
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

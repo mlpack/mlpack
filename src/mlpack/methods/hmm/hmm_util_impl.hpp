@@ -78,18 +78,16 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
   char type;
   ar(CEREAL_NVP(type));
 
-  using namespace mlpack::distribution;
-
   switch (type)
   {
     case HMMType::DiscreteHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<DiscreteDistribution>>(ar, x);
+          HMM<mlpack::distribution::DiscreteDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<GaussianDistribution>>(ar, x);
+          HMM<mlpack::distribution::GaussianDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianMixtureModelHMM:
