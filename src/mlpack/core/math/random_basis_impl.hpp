@@ -11,21 +11,19 @@
  */
 #include "random_basis.hpp"
 
-using namespace arma;
-
 namespace mlpack {
 namespace math {
 
-inline void RandomBasis(mat& basis, const size_t d)
+inline void RandomBasis(arma::mat& basis, const size_t d)
 {
   while (true)
   {
     // [Q, R] = qr(randn(d, d));
     // Q = Q * diag(sign(diag(R)));
-    mat r;
-    if (qr(basis, r, randn<mat>(d, d)))
+    arma::mat r;
+    if (qr(basis, r, arma::randn<arma::mat>(d, d)))
     {
-      vec rDiag(r.n_rows);
+      arma::vec rDiag(r.n_rows);
       for (size_t i = 0; i < rDiag.n_elem; ++i)
       {
         if (r(i, i) < 0)
