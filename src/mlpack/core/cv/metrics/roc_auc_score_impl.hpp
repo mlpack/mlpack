@@ -26,6 +26,12 @@ double ROCAUCScore<PositiveClass>::Evaluate(MLAlgorithm& model,
 {
   util::CheckSameSizes(data, labels, "ROCAUCScore::Evaluate()");
 
+  if (data.n_cols == 0) {
+    throw std::invalid_argument(
+        "ROCAUCScore::Evaluate(): "
+        "number of points in input data cannot be zero");
+  }
+
   arma::mat probabilities;
   model.Classify(data, probabilities);
 
@@ -64,8 +70,12 @@ double ROCAUCScore<PositiveClass>::Evaluate(MLAlgorithm& model,
   arma::Col<double> tpr, fpr;
   tpr = arma::conv_to<arma::Col<double>>::from(cumulativeSum);
   fpr = 1 + uniqueScoreIndices - tpr;
-  tpr /= numberOfTrueLabels;
-  fpr /= numberOfFalseLabels;
+
+  // Check for "0" to avoid "nan".
+  if (numberOfTrueLabels != 0)
+    tpr /= numberOfTrueLabels;
+  if (numberOfFalseLabels != 0)
+    fpr /= numberOfFalseLabels;
 
   // To ensure that the (fpr, tpr) starts at (0, 0).
   tpr.insert_rows(0, 1);

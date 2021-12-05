@@ -76,10 +76,67 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
 
-  double rocAuc =
-      ((1.0/3 - 0) * 0) + ((2.0/3 - 1.0/3) * 0.75) + ((1 - 2.0/3) * 1);
-  REQUIRE(ROCAUCScore<>::Evaluate(lr, data, labels)
+
+  // Testing binary ROC-AUC Score.
+  double rocAuc;
+
+  // With "0" as PositiveClass.
+  rocAuc = ((0.25 - 0) * 0) + ((0.5 - 0.25) * 2.0/3) + ((1 - 0.5) * 2.0/3);
+  REQUIRE(ROCAUCScore<0>::Evaluate(lr, data, labels)
           == Approx(rocAuc).epsilon(1e-7));
+
+  // With "1" as PositiveClass.
+  rocAuc = ((1.0/3 - 0) * 0) + ((2.0/3 - 1.0/3) * 0.75) + ((1 - 2.0/3) * 1);
+  REQUIRE(ROCAUCScore<1>::Evaluate(lr, data, labels)
+          == Approx(rocAuc).epsilon(1e-7));
+
+  // Using perfect classifier.
+  arma::mat data2 = arma::linspace<arma::rowvec>(1.0, 10.0, 20);
+  arma::Row<size_t> correctLabels(
+      "0 0 0 0 0  0 0 0 0 0  1 1 1 1 1  1 1 1 1 1");
+  arma::Row<size_t> incorrectLabels(
+      "1 1 1 1 1  1 1 1 1 1  0 0 0 0 0  0 0 0 0 0");
+  LogisticRegression<> lr2(data2, correctLabels);
+
+  // Testing perfect and perfectly incorrect classification.
+  REQUIRE(ROCAUCScore<1>::Evaluate(lr2, data2, correctLabels)
+          == Approx(1).epsilon(1e-7));
+  REQUIRE(ROCAUCScore<1>::Evaluate(lr2, data2, incorrectLabels)
+          == Approx(0).epsilon(1e-7));
+
+  // Testing mismatched input data and label size.
+  arma::Row<size_t> smallLabels("0 0 0 0 0  1 1 1 1 1");
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(lr2, data2, smallLabels),
+                    std::invalid_argument);
+  REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(lr2, data2, smallLabels),
+                    std::invalid_argument);
+  Log::Fatal.ignoreInput = false;
+
+  // Testing with input data and labels, of size zero.
+  arma::mat zeroData;
+  arma::Row<size_t> zeroLabels;
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(
+      ROCAUCScore<1>::Evaluate(lr2, zeroData, zeroLabels),
+      std::invalid_argument);
+  Log::Fatal.ignoreInput = false;
+
+  // Testing with input data and labels, of size one.
+  arma::mat oneData("1");
+  arma::Row<size_t> oneLabels("1");
+  REQUIRE(ROCAUCScore<1>::Evaluate(lr2, oneData, oneLabels)
+          == Approx(0).epsilon(1e-7));
+
+  // Testing with same labels.
+  arma::Row<size_t> sameLabels("1 1 1 1 1  1 1 1 1 1");
+  LogisticRegression<> lr3(data, sameLabels);
+  // All the labels as positive labels.
+  REQUIRE(ROCAUCScore<1>::Evaluate(lr3, data, sameLabels)
+          == Approx(0).epsilon(1e-7));
+  // All the labels as non-positive labels.
+  REQUIRE(ROCAUCScore<0>::Evaluate(lr3, data, sameLabels)
+          == Approx(0).epsilon(1e-7));
 }
 
 /**
