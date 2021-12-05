@@ -47,9 +47,15 @@ double ROCAUCScore<PositiveClass>::Evaluate(MLAlgorithm& model,
   arma::Col<double> sortedScores = scoresOfPC(sortedScoreIndices);
 
   // Compute indices of unique probability scores.
-  arma::ucolvec uniqueScoreIndices = arma::find(arma::diff(sortedScores));
-  uniqueScoreIndices.insert_rows(uniqueScoreIndices.n_rows, 1);
-  uniqueScoreIndices(uniqueScoreIndices.n_rows - 1) = scoresOfPC.n_rows - 1;
+  arma::uword uniqueScoreIndicesLength = 0;
+  arma::ucolvec uniqueScoreIndices(sortedScores.n_rows);
+  for (arma::uword idx = 0; idx < sortedScores.n_rows - 1; idx++) {
+    if (sortedScores(idx) != sortedScores(idx + 1)) {
+      uniqueScoreIndices(uniqueScoreIndicesLength++) = idx;
+    }
+  }
+  uniqueScoreIndices(uniqueScoreIndicesLength++) = sortedScores.n_rows - 1;
+  uniqueScoreIndices.resize(uniqueScoreIndicesLength);
 
   // Compute true positive rate, and false positive rate.
   arma::Col<size_t> cumulativeSum = arma::cumsum(sortedLabels);
