@@ -76,7 +76,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
 
-  REQUIRE(ROC_AUC<>::Evaluate(lr, data, labels)
+  REQUIRE(ROCAUCScore<>::Evaluate(lr, data, labels)
           == Approx((double) 2 / 3).epsilon(1e-7));
 }
 

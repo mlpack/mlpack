@@ -29,10 +29,10 @@ namespace cv {
  * respectively.
  *
  * @tparam PositiveClass Positives are assumed to have labels equal to this
- *     value.
+ *     value. Defaults to 1.
  */
 template<size_t PositiveClass = 1>
-class ROC_AUC
+class ROCAUCScore
 {
  public:
   /**

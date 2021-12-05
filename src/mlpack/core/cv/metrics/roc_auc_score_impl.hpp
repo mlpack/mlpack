@@ -14,60 +14,59 @@
 #define MLPACK_CORE_CV_METRICS_ROCAUCSCORE_IMPL_HPP
 
 #include <mlpack/core/cv/metrics/accuracy.hpp>
-#include <iostream>
 
 namespace mlpack {
 namespace cv {
 
-template<size_t PC /* PositiveClass */>
+template<size_t PositiveClass>
 template<typename MLAlgorithm, typename DataType>
-double ROC_AUC<PC>::Evaluate(MLAlgorithm& model,
-                              const DataType& data,
-                              const arma::Row<size_t>& labels)
+double ROCAUCScore<PositiveClass>::Evaluate(MLAlgorithm& model,
+                                            const DataType& data,
+                                            const arma::Row<size_t>& labels)
 {
-  util::CheckSameSizes(data, labels, "ROC_AUC::Evaluate()");
+  util::CheckSameSizes(data, labels, "ROCAUCScore::Evaluate()");
 
   arma::mat probabilities;
   model.Classify(data, probabilities);
 
-  // compute labels with "1" for positive class and "0" for the other
+  // Compute labels with "1" for positive class and "0" for the other.
   arma::Col<size_t> binaryLabels = arma::conv_to<arma::Col<size_t>>::from(
-                                        ((arma::umat) (labels == PC)).row(0));
+      (labels == PositiveClass));
 
-  // probability scores of positive class
-  arma::Col<double> scoresOfPC   = arma::conv_to<arma::Col<double>>::from(
-                                        probabilities.row(PC));
+  // Probability scores of positive class.
+  arma::Col<double> scoresOfPC = arma::conv_to<arma::Col<double>>::from(
+      probabilities.row(PositiveClass));
 
   size_t numberOfTrueLabels  = arma::sum(binaryLabels);
   size_t numberOfFalseLabels = binaryLabels.n_rows - numberOfTrueLabels;
 
-  // sort labels and probabilities, using probability scores
+  // Sort labels and probabilities, using probability scores.
   arma::ucolvec sortedScoreIndices = arma::stable_sort_index(
-                                        scoresOfPC, "descend");
+      scoresOfPC, "descend");
   arma::Col<size_t> sortedLabels = binaryLabels(sortedScoreIndices);
   arma::Col<double> sortedScores = scoresOfPC(sortedScoreIndices);
 
-  // compute indices of unique probability scores
+  // Compute indices of unique probability scores.
   arma::ucolvec uniqueScoreIndices = arma::find(arma::diff(sortedScores));
   uniqueScoreIndices.insert_rows(uniqueScoreIndices.n_rows, 1);
   uniqueScoreIndices(uniqueScoreIndices.n_rows - 1) = scoresOfPC.n_rows - 1;
 
-  // compute true positive rate, and false positive rate
-  arma::Col<size_t> cummulativeSum = arma::cumsum(sortedLabels);
-  cummulativeSum = cummulativeSum(uniqueScoreIndices);
+  // Compute true positive rate, and false positive rate.
+  arma::Col<size_t> cumulativeSum = arma::cumsum(sortedLabels);
+  cumulativeSum = cumulativeSum(uniqueScoreIndices);
 
   arma::Col<double> tpr, fpr;
-  tpr = arma::conv_to<arma::Col<double>>::from(cummulativeSum);
+  tpr = arma::conv_to<arma::Col<double>>::from(cumulativeSum);
   fpr = 1 + uniqueScoreIndices - tpr;
   tpr /= numberOfTrueLabels;
   fpr /= numberOfFalseLabels;
 
-  // to ensure that the (fpr, tpr) starts at (0, 0)
+  // To ensure that the (fpr, tpr) starts at (0, 0).
   tpr.insert_rows(0, 1);
   fpr.insert_rows(0, 1);
   tpr(0) = fpr(0) = 0;
 
-  // compute area under the curve using trapezoidal rule
+  // Compute area under the curve using trapezoidal rule.
   arma::mat auc = arma::trapz(fpr, tpr);
   return auc(0, 0);
 }
