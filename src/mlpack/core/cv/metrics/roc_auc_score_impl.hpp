@@ -72,9 +72,12 @@ double ROCAUCScore<PositiveClass>::Evaluate(MLAlgorithm& model,
   fpr.insert_rows(0, 1);
   tpr(0) = fpr(0) = 0;
 
-  // Compute area under the curve using trapezoidal rule.
-  arma::mat auc = arma::trapz(fpr, tpr);
-  return auc(0, 0);
+  // Compute area under the curve using rectangular integration.
+  double auc = 0;
+  for (arma::uword idx = 0; idx < tpr.n_rows - 1; idx++) {
+    auc += (fpr(idx + 1) - fpr(idx)) * tpr(idx);
+  }
+  return auc;
 }
 
 } // namespace cv
