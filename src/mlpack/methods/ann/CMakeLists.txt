@@ -7,6 +7,8 @@ set(SOURCES
   rnn_impl.hpp
   brnn.hpp
   brnn_impl.hpp
+  moqn.hpp
+  moqn_impl.hpp
   layer_names.hpp
 )
 
