@@ -57,11 +57,9 @@ void LoadARFF(const std::string& filename,
     // @data.
     if (line[0] == '@')
     {
-      typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-      std::string separators = " \t%"; // Split on comments too.
-      boost::escaped_list_separator<char> sep("\\", separators, "\"'");
-      Tokenizer tok(line, sep);
-      Tokenizer::iterator it = tok.begin();
+      std::string separators = "\t% \\ \"'";
+      std::vector<std::string> tok = Tokenize(line, separators);
+      std::vector<std::string>::iterator it = tok.begin();
 
       // Get the annotation we are looking at.
       std::string annotation(*it);
@@ -108,9 +106,9 @@ void LoadARFF(const std::string& filename,
                 return c == '{' || c == '}' || c == ' ' || c == '\t';
               });
 
-          boost::escaped_list_separator<char> sep("\\", ",", "\"'");
-          Tokenizer dimTok(origDimType, sep);
-          Tokenizer::iterator it = dimTok.begin();
+          std::string sep = "\\ , \"'";
+          std::vector<std::string> dimTok = Tokenize(origDimType, sep);
+          std::vector<std::string>::iterator it = dimTok.begin();
           std::vector<std::string> categories;
 
           while (it != dimTok.end())
@@ -211,13 +209,12 @@ void LoadARFF(const std::string& filename,
       throw std::runtime_error("cannot yet parse sparse ARFF data");
 
     // Tokenize the line.
-    typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-    boost::escaped_list_separator<char> sep("\\", ",", "\"");
-    Tokenizer tok(line, sep);
+    std::string sep = "\\ , \"";
+    std::vector<std::string> tok = Tokenize(line, sep);
 
     size_t col = 0;
     std::stringstream token;
-    for (Tokenizer::iterator it = tok.begin(); it != tok.end(); ++it)
+    for (std::vector<std::string>::iterator it = tok.begin(); it != tok.end(); ++it)
     {
       // Check that we are not too many columns in.
       if (col >= matrix.n_rows)
