@@ -109,6 +109,32 @@ inline void TrimIf(std::string &str, std::function<bool(char)> func)
   str = trimmedStr;
 }
 
+/**
+ * Splits the given string into tokens. String will be separated
+ * by all the characters that are part of delimiters(string delim).
+ *
+ * You can have a single delimiter or a group of delimiters.
+ * Multiple delimiters: string delim = "| ? @ , /"
+ *
+ * @param line string which need to be tokenized
+ * @param delims delimiter characters
+ */
+inline std::vector<std::string> Tokenize(std::string& line, std::string& delims)
+{
+    std::vector<std::string> vec;
+    char* token;
+
+    token = strtok(&line[0], &delims[0]);
+
+    while (token != NULL)
+    {
+        vec.push_back(token);
+        token = strtok(NULL, &delims[0]);
+    }
+
+    return vec;
+}
+
 }  // namespace data
 }  // namespace mlpack
 
