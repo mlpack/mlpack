@@ -16,9 +16,9 @@
 #include <mlpack/prereqs.hpp>
 #include <ensmallen.hpp>
 
-#include "../replay/prioritized_eql_replay.hpp"
-#include "update_policies/exponential_policy.hpp"
-#include "../training_config.hpp"
+#include "replay/prioritized_eql_replay.hpp"
+#include "lambda_update_policies/exponential_policy.hpp"
+#include "training_config.hpp"
 
 
 namespace mlpack {

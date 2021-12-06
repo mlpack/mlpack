@@ -1,22 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  async_learning.hpp
-  async_learning_impl.hpp
-  q_learning.hpp
-  q_learning_impl.hpp
-  sac.hpp
-  sac_impl.hpp
-  eql.hpp
-  eql_impl.hpp
-  training_config.hpp
+    exponential_policy.hpp
 )
-
-add_subdirectory(environment)
-add_subdirectory(policy)
-add_subdirectory(replay)
-add_subdirectory(worker)
-add_subdirectory(lambda_update_policies)
 
 # Add directory name to sources.
 set(DIR_SRCS)

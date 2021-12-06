@@ -1,5 +1,5 @@
 /**
- * @file methods/reinforcement_learning/policy/exponential_policy.hpp
+ * @file methods/reinforcement_learning/lambda_update_policies/exponential_policy.hpp
  * @author Nanubala Gnana Sai
  *
  * This file is the implementation of ExponentialPolicy class.
