@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "dataset_mapper.hpp"
-#include <boost/tokenizer.hpp>
+#include "string_algorithms.hpp"
 
 namespace mlpack {
 namespace data {
