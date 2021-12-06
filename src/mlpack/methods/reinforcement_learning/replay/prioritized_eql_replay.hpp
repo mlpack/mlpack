@@ -84,9 +84,9 @@ class PrioritizedEQLReplay
    * @param dimension The dimension of an encoded state.
    */
   PrioritizedEQLReplay(const size_t batchSize,
-                    const size_t capacity,
-                    const double alpha,
-                    const size_t dimension = StateType::dimension) :
+                       const size_t capacity,
+                       const double alpha,
+                       const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
       position(0),
