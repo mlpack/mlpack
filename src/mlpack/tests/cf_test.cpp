@@ -730,12 +730,10 @@ TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
  * Make sure recommendations that are generated are reasonably accurate
  * for SVDPlusPlus method.
  */
-// This test is commented out because it fails and we haven't solved it yet.
-// Please refer to issue #1501 for more info about this test.
-// TEST_CASE("RecommendationAccuracySVDPPTest", "[CFTest]")
-// {
-//   RecommendationAccuracy<SVDPlusPlusPolicy>();
-// }
+TEST_CASE("RecommendationAccuracySVDPPTest", "[CFTest]")
+{
+  RecommendationAccuracy<SVDPlusPlusPolicy, OverallMeanNormalization>();
+}
 
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 TEST_CASE("CFPredictRandSVDTest", "[CFTest]")
