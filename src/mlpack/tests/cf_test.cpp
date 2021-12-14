@@ -34,7 +34,7 @@
 #include <mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp>
 
 #include <iostream>
-
+#include <math.h>
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
 #include "serialization.hpp"
@@ -160,10 +160,8 @@ void GetRecommendationsQueriedUser()
  */
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void RecommendationAccuracy(const size_t allowedFailures = 17)
+void RecommendationAccuracy(size_t allowedFailures = 17, DecompositionPolicy& decomposition = DecompositionPolicy())
 {
-  DecompositionPolicy decomposition;
-
   // Small GroupLens dataset.
   arma::mat dataset;
 
@@ -173,7 +171,7 @@ void RecommendationAccuracy(const size_t allowedFailures = 17)
   GetDatasets(dataset, savedCols);
 
   CFType<DecompositionPolicy,
-      NormalizationType> c(dataset, decomposition, 5, 5, 30);
+      NormalizationType> c(dataset, decomposition, 5, 10, 30);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -183,7 +181,7 @@ void RecommendationAccuracy(const size_t allowedFailures = 17)
     users(i) = (size_t) savedCols(0, i);
   arma::Mat<size_t> recommendations;
   size_t numRecs = 150;
-  c.GetRecommendations(numRecs, recommendations, users);
+  c.template GetRecommendations<PearsonSearch, SimilarityInterpolation>(numRecs, recommendations, users);
 
   REQUIRE(recommendations.n_rows == numRecs);
   REQUIRE(recommendations.n_cols == 50);
@@ -732,7 +730,11 @@ TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
  */
 TEST_CASE("RecommendationAccuracySVDPPTest", "[CFTest]")
 {
-  RecommendationAccuracy<SVDPlusPlusPolicy, OverallMeanNormalization>();
+  math::RandomSeed(23);
+  SVDPlusPlusPolicy decomposition;
+  decomposition.MaxIterations()=25;
+  decomposition.Alpha()=0.002;
+  RecommendationAccuracy<SVDPlusPlusPolicy, UserMeanNormalization>(17, decomposition);
 }
 
 // Make sure that Predict() is returning reasonable results for randomized SVD.
