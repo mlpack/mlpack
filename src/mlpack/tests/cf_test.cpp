@@ -160,7 +160,7 @@ void GetRecommendationsQueriedUser()
  */
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void RecommendationAccuracy(size_t allowedFailures = 17, DecompositionPolicy& decomposition = DecompositionPolicy())
+void RecommendationAccuracy(const size_t allowedFailures = 17, const DecompositionPolicy& decomposition = DecompositionPolicy())
 {
   // Small GroupLens dataset.
   arma::mat dataset;
@@ -171,7 +171,7 @@ void RecommendationAccuracy(size_t allowedFailures = 17, DecompositionPolicy& de
   GetDatasets(dataset, savedCols);
 
   CFType<DecompositionPolicy,
-      NormalizationType> c(dataset, decomposition, 5, 10, 30);
+      NormalizationType> c(dataset, decomposition, 5, 13, 100);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -181,7 +181,7 @@ void RecommendationAccuracy(size_t allowedFailures = 17, DecompositionPolicy& de
     users(i) = (size_t) savedCols(0, i);
   arma::Mat<size_t> recommendations;
   size_t numRecs = 150;
-  c.template GetRecommendations<PearsonSearch, SimilarityInterpolation>(numRecs, recommendations, users);
+  c.template GetRecommendations<CosineSearch, AverageInterpolation>(numRecs, recommendations, users);
 
   REQUIRE(recommendations.n_rows == numRecs);
   REQUIRE(recommendations.n_cols == 50);
@@ -730,11 +730,10 @@ TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
  */
 TEST_CASE("RecommendationAccuracySVDPPTest", "[CFTest]")
 {
-  math::RandomSeed(23);
   SVDPlusPlusPolicy decomposition;
-  decomposition.MaxIterations()=25;
-  decomposition.Alpha()=0.002;
-  RecommendationAccuracy<SVDPlusPlusPolicy, UserMeanNormalization>(17, decomposition);
+  decomposition.MaxIterations()=100;
+  decomposition.Alpha()=0.0001;
+  RecommendationAccuracy<SVDPlusPlusPolicy, OverallMeanNormalization>(18, decomposition);
 }
 
 // Make sure that Predict() is returning reasonable results for randomized SVD.
