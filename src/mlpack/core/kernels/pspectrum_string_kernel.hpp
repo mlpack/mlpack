@@ -129,6 +129,7 @@ class PSpectrumStringKernel
 
     Log::Info << "Substring extraction complete." << std::endl;
   }
+  
   /**
    * Evaluate the kernel for the string indices given.  As mentioned in the
    * class documentation, a and b should be 2-element vectors, where the first
