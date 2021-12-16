@@ -245,7 +245,6 @@ inline void Smat(const arma::vec& input, arma::mat& output)
   const size_t n = static_cast<size_t>
       (ceil((-1. + sqrt(1. + 8. * input.n_elem))/2.));
 
-
   output.zeros(n, n);
 
   size_t idx = 0;
