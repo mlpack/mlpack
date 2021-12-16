@@ -65,8 +65,8 @@ inline void Center(const arma::mat& x, arma::mat& xCentered)
  * matrix.
  */
 inline void WhitenUsingSVD(const arma::mat& x,
-                                  arma::mat& xWhitened,
-                                  arma::mat& whiteningMatrix)
+                           arma::mat& xWhitened,
+                           arma::mat& whiteningMatrix)
 {
   arma::mat covX, u, v, invSMatrix, temp1;
   arma::vec sVector;
