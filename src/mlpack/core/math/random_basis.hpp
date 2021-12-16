@@ -29,7 +29,7 @@ inline void RandomBasis(arma::mat& basis, const size_t d);
 } // namespace math
 } // namespace mlpack
 
-//! Include the implementation file
+//! Include the implementation file.
 #include "random_basis_impl.hpp"
 
 #endif
