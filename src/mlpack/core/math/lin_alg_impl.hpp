@@ -35,8 +35,10 @@ inline void VectorPower(arma::vec& vec, const double power)
   for (size_t i = 0; i < vec.n_elem; ++i)
   {
     if (std::abs(vec(i)) > 1e-12)
+    {
       vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) :
           -std::pow(-vec(i), (double) power);
+     }
     else
       vec(i) = 0;
   }
