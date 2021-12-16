@@ -148,8 +148,8 @@ inline void Orthogonalize(arma::mat& x)
  * @param output Matrix to copy non-removed rows into.
  */
 inline void RemoveRows(const arma::mat& input,
-                              const std::vector<size_t>& rowsToRemove,
-                              arma::mat& output)
+                       const std::vector<size_t>& rowsToRemove,
+                       arma::mat& output)
 {
   const size_t nRemove = rowsToRemove.size();
   const size_t nKeep = input.n_rows - nRemove;
