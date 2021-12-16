@@ -127,7 +127,7 @@ inline double EpanechnikovKernel::GradientForSquaredDistance(const double
     return -1 * inverseBandwidthSquared;
   }
   else if (distanceSquared > bandwidthSquared &&
-             distanceSquared >= 0)
+           distanceSquared >= 0)
   {
     return  0;
   }
