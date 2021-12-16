@@ -118,8 +118,8 @@ inline double EpanechnikovKernel::Gradient(const double distance) const
  * Evaluate gradient of the kernel not for two points
  * but for a numerical value.
  */
-inline double EpanechnikovKernel::GradientForSquaredDistance(const double
-                                                             distanceSquared) const
+inline double EpanechnikovKernel::GradientForSquaredDistance(
+    const double distanceSquared) const
 {
   double bandwidthSquared = bandwidth * bandwidth;
   if (distanceSquared < bandwidthSquared)
