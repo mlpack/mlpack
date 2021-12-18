@@ -32,6 +32,8 @@
 #include <mlpack/methods/ann/activation_functions/spline_function.hpp>
 #include <mlpack/methods/ann/activation_functions/poisson1_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 
 #include "catch.hpp"
 
@@ -559,6 +561,54 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the ISRLU activation function test. The function is
+ * implemented as ISRLU layer in the file isrlu.hpp.
+ *
+ * @param input Input data used for evaluating the ISRLU activation function.
+ * @param target Target data used to evaluate the ISRLU activation.
+ */
+void CheckISRLUActivationCorrect(const arma::colvec input,
+                                 const arma::colvec target)
+{
+  // Initialize ISRLU object with alpha = 1.0.
+  ISRLU<> lrf(1.0);
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  lrf.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the ISRLU activation function derivative test. The function
+ * is implemented as ISRLU layer in the file isrlu.hpp.
+ *
+ * @param input Input data used for evaluating the ISRLU activation function.
+ * @param target Target data used to evaluate the ISRLU activation.
+ */
+void CheckISRLUDerivativeCorrect(const arma::colvec input,
+                                 const arma::colvec target)
+{
+  // Initialize ISRLU object with alpha = 1.0.
+  ISRLU<> lrf(1.0);
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  lrf.Forward(input, activations);
+  lrf.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
  * Implementation of the Softmin activation function test. The function is
  * implemented as Softmin layer in the file softmin.hpp.
  *
@@ -992,6 +1042,22 @@ TEST_CASE("CELUFunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
+ * Basic test of the ISRLU activation function.
+ */
+TEST_CASE("ISRLUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec desiredActivations("-0.89442719 3.2 4.5 \
+                                         -0.99995020 1 -0.70710678 2 0");
+
+  const arma::colvec desiredDerivatives("0.41408666 1 1 \
+                                         0.35357980 1 \
+                                         0.54433105 1 1");
+
+  CheckISRLUActivationCorrect(activationData, desiredActivations);
+  CheckISRLUDerivativeCorrect(activationData, desiredDerivatives);
+}
+
+/**
  * Basic test of the inverse quadratic function.
  */
 TEST_CASE("InverseQuadraticFunctionTest", "[ActivationFunctionsTest]")
@@ -1133,4 +1199,45 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
                                 desiredActivations);
   CheckSoftminDerivativeCorrect(activationData,
                                 desiredDerivatives);
+}
+
+/**
+ * Basic test of the Hard Swish function.
+ */
+TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Randomly generated data.
+  const arma::colvec activationData("3.6544 -1.9714 -5.2277 1.5448 2.1164");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("3.6544 -0.3379636 0.0 \
+                                         1.1701345 1.8047248");
+
+  // Hand-calculated values.
+  const arma::colvec desiredDerivatives("1.0 0.38734546 0.5 \
+                                         0.89004483 1.1015749");
+
+  CheckActivationCorrect<HardSwishFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<HardSwishFunction>
+      (desiredActivations, desiredDerivatives);
+}
+
+/**
+ * Basic test of the TanhExp function.
+ */
+TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
+{
+
+  const arma::colvec activationData("-2 3.2 4.5 1 -1 2 0");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("-0.26903 3.20000 4.50000 \
+                                         0.991329 -0.352135 2.0 0.0000");
+
+  // Hand-calculated values.
+  const arma::colvec desiredDerivatives("0.523051 1.0000 1.0000 \
+                                         1.03924 0.449818 1.00002 0.761594");
+
+  CheckActivationCorrect<TanhExpFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<TanhExpFunction>(desiredActivations, desiredDerivatives);
 }

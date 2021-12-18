@@ -39,6 +39,18 @@ class MultiplyConstant
    */
   MultiplyConstant(const double scalar = 1.0);
 
+  //! Copy Constructor.
+  MultiplyConstant(const MultiplyConstant& layer);
+
+  //! Move Constructor.
+  MultiplyConstant(MultiplyConstant&& layer);
+
+  //! Copy assignment operator.
+  MultiplyConstant& operator=(const MultiplyConstant& layer);
+
+  //! Move assignment operator.
+  MultiplyConstant& operator=(MultiplyConstant&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
    * specified constant scalar value.

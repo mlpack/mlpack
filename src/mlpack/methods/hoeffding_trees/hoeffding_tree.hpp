@@ -156,6 +156,27 @@ class HoeffdingTree
   HoeffdingTree(const HoeffdingTree& other);
 
   /**
+   * Move another tree.
+   *
+   * @param other Tree to move.
+   */
+  HoeffdingTree(HoeffdingTree&& other);
+
+  /**
+   * Copy assignment operator.
+   * 
+   * @param other Tree to copy.
+   */
+  HoeffdingTree& operator=(const HoeffdingTree& other);
+
+  /**
+   * Move assignment operator.
+   * 
+   * @param other Tree to move.
+   */
+  HoeffdingTree& operator=(HoeffdingTree&& other);
+
+  /**
    * Clean up memory.
    */
   ~HoeffdingTree();

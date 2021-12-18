@@ -42,7 +42,7 @@ inline void RandomSeed(const size_t seed)
   #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
     randGen.seed((uint32_t) seed);
     #if (BINDING_TYPE == BINDING_TYPE_R)
-      // To suppress Found ‘srand’, possibly from ‘srand’ (C).
+      // To suppress Found 'srand', possibly from 'srand' (C).
       (void) seed;
     #else
       srand((unsigned int) seed);

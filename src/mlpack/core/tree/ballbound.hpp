@@ -81,6 +81,9 @@ class BallBound
   //! Move constructor: take possession of another bound.
   BallBound(BallBound&& other);
 
+  //! Move assignment operator.
+  BallBound& operator=(BallBound&& other);
+
   //! Destructor to release allocated memory.
   ~BallBound();
 

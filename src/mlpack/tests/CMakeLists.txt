@@ -34,6 +34,7 @@ add_executable(mlpack_test
   facilities_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
+  feedforward_network_2_test.cpp
   gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
@@ -99,6 +100,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rvm_regression_test.cpp
   scaling_test.cpp
+  size_checks_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp

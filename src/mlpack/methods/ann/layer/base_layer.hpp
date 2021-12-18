@@ -27,6 +27,8 @@
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -50,6 +52,8 @@ namespace ann /** Artificial Neural Network. */ {
  *  - ELiSHLayer
  *  - ElliotLayer
  *  - GaussianLayer
+ *  - HardSwishLayer
+ *  - TanhExpLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -275,6 +279,28 @@ template <
     typename OutputDataType = arma::mat
 >
 using GaussianFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard HardSwish-Layer using the HardSwish activation function.
+ */
+template <
+    class ActivationFunction = HardSwishFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using HardSwishFunctionLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard TanhExp-Layer using the TanhExp activation function.
+ */
+template <
+    class ActivationFunction = TanhExpFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using TanhExpFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann

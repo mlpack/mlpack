@@ -14,8 +14,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h5>
 
 <p align="center">
-  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
-  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
+  <a href="https://dev.azure.com/mlpack/mlpack/_build?definitionId=1"><img alt="Azure DevOps builds (job)" src="https://img.shields.io/azure-devops/build/mlpack/84320e87-76e3-4b6e-8b6e-3adaf6b36eed/1/master?job=Linux&label=Linux%20Build&style=flat-square"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
   <a href="http://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
@@ -142,10 +141,10 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ### 4. Building mlpack from source
 
-This document discusses how to build mlpack from source. These build directions 
+This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
-FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
-and so it may be easier to use the package manager for your system.  For example, 
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions
+and so it may be easier to use the package manager for your system.  For example,
 on Ubuntu, you can install the mlpack library and command-line executables (e.g.
 mlpack_pca, mlpack_kmeans etc.) with the following command:
 
@@ -183,7 +182,7 @@ sufficient.
 
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
-options, it will configure the project to build with no debugging symbols and 
+options, it will configure the project to build with no debugging symbols and
 no profiling information:
 
     $ cmake ../
@@ -203,6 +202,7 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+    PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
     BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
     JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
     BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
@@ -238,7 +238,7 @@ This will build all library components as well as 'mlpack_test'.
 
     $ make
 
-If you do not want to build everything in the library, individual components 
+If you do not want to build everything in the library, individual components
 of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
@@ -251,7 +251,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
 
 If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
-and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
+and `/usr/local/bin/`, make sure you have root privileges (or write permissions
 to those three directories), and simply type
 
     $ make install
