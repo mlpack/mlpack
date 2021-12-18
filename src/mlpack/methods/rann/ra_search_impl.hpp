@@ -259,8 +259,6 @@ Search(const MatType& querySet,
     throw std::invalid_argument(ss.str());
   }
 
-  Timer::Start("computing_neighbors");
-
   // This will hold mappings for query points, if necessary.
   std::vector<size_t> oldFromNewQueries;
 
@@ -343,12 +341,8 @@ Search(const MatType& querySet,
     Log::Info << "Performing dual-tree traversal..." << std::endl;
 
     // Build the query tree.
-    Timer::Stop("computing_neighbors");
-    Timer::Start("tree_building");
     Tree* queryTree = aux::BuildTree<Tree>(const_cast<MatType&>(querySet),
         oldFromNewQueries);
-    Timer::Stop("tree_building");
-    Timer::Start("computing_neighbors");
 
     RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, tau, alpha,
         naive, sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
@@ -367,8 +361,6 @@ Search(const MatType& querySet,
 
     delete queryTree;
   }
-
-  Timer::Stop("computing_neighbors");
 
   // Map points back to original indices, if necessary.
   if (tree::TreeTraits<Tree>::RearrangesDataset)
@@ -442,8 +434,6 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
-  Timer::Start("computing_neighbors");
-
   // Get a reference to the query set.
   const MatType& querySet = queryTree->Dataset();
 
@@ -472,8 +462,6 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 
   rules.GetResults(*neighborPtr, distances);
 
-  Timer::Stop("computing_neighbors");
-
   // Do we need to map indices?
   if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
@@ -501,8 +489,6 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
-  Timer::Start("computing_neighbors");
-
   arma::Mat<size_t>* neighborPtr = &neighbors;
   arma::mat* distancePtr = &distances;
 
@@ -555,8 +541,6 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   }
 
   rules.GetResults(*neighborPtr, *distancePtr);
-
-  Timer::Stop("computing_neighbors");
 
   // Do we need to map the reference indices?
   if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)

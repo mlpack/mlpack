@@ -33,7 +33,10 @@ RVMRegression<KernelType>::RVMRegression(const KernelType& kernel,
   ard(ard),
   alphaThresh(1e4),
   tolerance(1e-5),
-  maxIterations(50) 
+  maxIterations(50),
+  responsesOffset(0.0),
+  beta(0.0),
+  gamma(0.0)
   { /*Nothing to do */ }
 
 template <typename KernelType>
@@ -47,7 +50,10 @@ RVMRegression<KernelType>::RVMRegression(const KernelType& kernel,
   ard(ard),
   alphaThresh(1e4),
   tolerance(1e-5),
-  maxIterations(50) 
+  maxIterations(50),
+  responsesOffset(0.0),
+  beta(0.0),
+  gamma(0.0)
   { /*Nothing to do*/ }
 
 template<typename KernelType>
@@ -185,7 +191,7 @@ void RVMRegression<KernelType>::Predict(const arma::mat& points,
   
   predictions = omega.t() * matX;
   if (centerData) predictions += responsesOffset;
-  // Compute standard devaiations.
+  // Compute standard deviations.
   std = sqrt(Variance() + sum(matX % (matCovariance * matX)));
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression_main.cpp
+ * @file rvm_regression_main.cpp
  * @author Clement Mercier
  *
  * Executable for BayesianLinearRegression.
@@ -11,9 +11,25 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME rvm_regression
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+// #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+
+
+#include <mlpack/core/util/mlpack_main.hpp>
+
 #include "rvm_regression_model.hpp"
 
 using namespace arma;
@@ -24,7 +40,7 @@ using namespace mlpack::util;
 using namespace mlpack::kernel;
 
 // Program Name.
-BINDING_NAME("Relevance Vector Machine for regression");
+BINDING_USER_NAME("Relevance Vector Machine for regression");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -56,8 +72,8 @@ BINDING_LONG_DESC(
     "responses to the test points can be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter. The "
     "corresponding standard deviations can be saved by precising the " +
-    PRINT_PARAM_STRING("stds") + " parameter."
-    "If the " + PRINT_PARAM_STRING("kernel") + "is not specified the model "
+    PRINT_PARAM_STRING("stds") + " parameter. "
+    "If the " + PRINT_PARAM_STRING("kernel") + " is not specified the model "
     "optimized is a bayesian linear regression whose the solution is associa- "
     "ted to an ARD prior leading to sparse solution in the features domain."
     "\n"
@@ -69,20 +85,23 @@ BINDING_LONG_DESC(
     " * 'gaussian': a Gaussian kernel; requires bandwidth:\n"
     "    K(x, y) = exp(-(|| x - y || ^ 2) / (2 * (bandwidth ^ 2)))\n"
     "\n"
-    " * 'polynomial': polynomial kernel; requires offset and degree:\n"
+    " * 'polynomial': Polynomial kernel; requires offset and degree:\n"
     "    K(x, y) = (x^T y + offset) ^ degree\n"
     "\n"
-    " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
-    "    K(x, y) = tanh(scale * (x^T y) + offset)\n"
-    "\n"
+    // " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
+    // "    K(x, y) = tanh(scale * (x^T y) + offset)\n"
+    // "\n"
     " * 'laplacian': Laplacian kernel; requires bandwidth:\n"
     "    K(x, y) = exp(-(|| x - y ||) / bandwidth)\n"
     "\n"
     " * 'epanechnikov': Epanechnikov kernel; requires bandwidth:\n"
     "    K(x, y) = max(0, 1 - || x - y ||^2 / bandwidth^2)\n"
     "\n"
-    " * 'cosine': cosine distance:\n"
+    " * 'cosine': Cosine distance:\n"
     "    K(x, y) = 1 - (x^T y) / (|| x || * || y ||)\n"
+    "\n"
+    " * 'sperical': Spherical kernel; requires bandwidth:\n"
+    "                                                \n"
     "\n"
     "The parameters for each of the kernels should be specified with the "
     "options " + PRINT_PARAM_STRING("bandwidth") + ", " +
@@ -135,34 +154,34 @@ PARAM_MATRIX_OUT("stds", "If specified, this is where the standard deviations "
 PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
            "enabled.", "s");
+PARAM_DOUBLE_IN("bandwidth", "Bandwidth, for 'gaussian', 'laplacian', "
+		"'spherical' and 'epanechnikov' kernels.", "b", 1.0);
 PARAM_STRING_IN("kernel", "The kernel to use; see the above documentation "
     "for the list of usable kernels.", "k", "");
 PARAM_DOUBLE_IN("kernel_scale", "Scale, for 'hyptan' kernel.", "S", 1.0);
 PARAM_DOUBLE_IN("offset", "Offset, for 'hyptan' and 'polynomial' kernels.", "O",
     0.0);
-PARAM_DOUBLE_IN("bandwidth", "Bandwidth, for 'gaussian' and 'laplacian' "
-    "kernels.", "b", 1.0);
 PARAM_DOUBLE_IN("degree", "Degree of polynomial, for 'polynomial' kernel.", "D",
-    1.0);
+    2.0);
 
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  bool center = IO::GetParam<bool>("center");
-  bool scale = IO::GetParam<bool>("scale");
+  bool center = params.Get<bool>("center");
+  bool scale = params.Get<bool>("scale");
 
   // Check parameters -- make sure everything given make sense.
-  RequireOnlyOnePassed({"input", "input_model"}, true, 
+  RequireOnlyOnePassed(params, {"input", "input_model"}, true, 
       "Pass eihter input data or input model");
 
   mat matX;
   rowvec responses;
-  if (IO::HasParam("input"))
+  if (params.Has("input"))
   {
-    RequireOnlyOnePassed({"responses"}, true, "if input data is specified, " 
-        "reponses must also be specified");
-    matX = std::move(IO::GetParam<arma::mat>("input"));
-    responses = std::move(IO::GetParam<arma::rowvec>("responses"));
+    RequireOnlyOnePassed(params, {"responses"}, true,
+        "if input data is specified, reponses must also be specified");
+    matX = std::move(params.Get<arma::mat>("input"));
+    responses = std::move(params.Get<arma::rowvec>("responses"));
 
     if (responses.n_elem != matX.n_cols)
     {
@@ -171,23 +190,26 @@ static void mlpackMain()
     }
   }
 
-  ReportIgnoredParam({{"input", false }}, "responses");
+  ReportIgnoredParam(params, {{"input", false }}, "responses");
 
-  RequireAtLeastOnePassed({"predictions", "output_model", "stds"}, false, 
-      "no result will be saved");
+  RequireAtLeastOnePassed(params, {"predictions", "output_model", "stds"},
+      false, "no result will be saved");
 
   // Ignore predictions unless test is specified.
-  ReportIgnoredParam({{"test", false}}, "predictions");
+  ReportIgnoredParam(params, {{"test", false}}, "predictions");
 
   // If kernel is passed, ensure it is valid.
   string kernelType;
-  if (IO::HasParam("kernel"))
+  if (params.Has("kernel"))
   {
     // Get the kernel type and make sure it is valid.
-    RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
-        "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
-        "unknown kernel type");
-    kernelType = IO::GetParam<string>("kernel");
+    RequireParamInSet<string>(params, "kernel",
+			      { "linear", "gaussian", "polynomial",
+				"hyptan", "laplacian", "epanechnikov",
+				"cosine", "spherical" },
+			      true, "unknown kernel type");
+    
+    kernelType = params.Get<string>("kernel");
   }
   else
   {
@@ -196,31 +218,36 @@ static void mlpackMain()
 
   RVMRegressionModel* estimator;
   
-  if (IO::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    estimator = IO::GetParam<RVMRegressionModel*>("input_model");
+    estimator = params.Get<RVMRegressionModel*>("input_model");
   }
   else 
   {
     // Create and train the RVM.
-    estimator = new RVMRegressionModel(kernelType, center, scale);
+    estimator = new RVMRegressionModel(kernelType, center, scale,
+				       params.Get<double>("bandwidth"),
+				       params.Get<double>("offset"),
+				       params.Get<double>("kernel_scale"),
+				       params.Get<double>("degree"));
     estimator->Train(matX, responses);
   }
   
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
-    mat testPoints = std::move(IO::GetParam<mat>("test"));
+    mat testPoints = std::move(params.Get<mat>("test"));
     rowvec predictions;
 
-    if (IO::HasParam("stds"))
+    if (params.Has("stds"))
     {
+      Log::Info << "Uncertainties computed." << endl;
       rowvec std;
       estimator->Predict(testPoints, predictions, std);
 
       // Save the standard deviation of the test points (one per line).
-      IO::GetParam<mat>("stds") = std::move(std);
+      params.Get<mat>("stds") = std::move(std);
     }
     else
     {
@@ -228,9 +255,9 @@ static void mlpackMain()
     }
 
     // Save test predictions (one per line).
-    IO::GetParam<mat>("predictions") = std::move(predictions);
+    params.Get<mat>("predictions") = std::move(predictions);
   }
 
-  IO::GetParam<RVMRegressionModel*>("output_model") = estimator;
+  params.Get<RVMRegressionModel*>("output_model") = estimator;
 }
 

@@ -52,10 +52,11 @@ inline std::string PrintValue(const bool& value, bool quotes);
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 // Recursion base case.
-inline std::string PrintInputOptions();
+inline std::string PrintInputOptions(util::Params& params);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -63,15 +64,17 @@ inline std::string PrintInputOptions();
  * something like x=5.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(util::Params& params,
+                              const std::string& paramName,
                               const T& value,
                               Args... args);
 
 // Recursion base case.
-inline std::string PrintOutputOptions();
+inline std::string PrintOutputOptions(util::Params& params);
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
+std::string PrintOutputOptions(util::Params& params,
+                               const std::string& paramName,
                                const T& value,
                                Args... args);
 
@@ -86,7 +89,7 @@ std::string ProgramCall(const std::string& programName, Args... args);
  * Given the name of a binding, print a program call assuming that all options
  * are specified.
  */
-inline std::string ProgramCall(const std::string& programName);
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Given the name of a model, print it.  Here we do not need to modify anything.
@@ -110,14 +113,16 @@ inline std::string ParamString(const std::string& paramName);
  * Python bindings, we ignore any checks on output parameters, so if paramName
  * is an output parameter, this returns true.
  */
-inline bool IgnoreCheck(const std::string& paramName);
+inline bool IgnoreCheck(const std::string& bindingName,
+                          const std::string& paramName);
 
 /**
  * Print whether or not we should ignore a check on the given set of
  * constraints.  For Python bindings, we ignore any checks on output parameters,
  * so if any parameter is an output parameter, this returns true.
  */
-inline bool IgnoreCheck(const std::vector<std::string>& constraints);
+inline bool IgnoreCheck(const std::string& bindingName,
+                          const std::vector<std::string>& constraints);
 
 /**
  * Print whether or not we should ignore a check on the given set of
@@ -126,6 +131,7 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints);
  * this returns true.
  */
 inline bool IgnoreCheck(
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName);
 

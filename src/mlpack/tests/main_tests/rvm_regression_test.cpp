@@ -12,37 +12,21 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "RVMRegression";
+
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/rvm_regression/rvm_regression_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 #include <mlpack/core/kernels/linear_kernel.hpp>
-#include "test_helper.hpp"
-
-
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct RVMRegressionTestFixture
-{
- public:
-  RVMRegressionTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
+static const std::string testName = "RVMRegression";
 
-  ~RVMRegressionTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
+BINDING_TEST_FIXTURE(RVMRegressionTestFixture);
 /**
  * Check the center and scale options.
  */
@@ -61,17 +45,16 @@ TEST_CASE_METHOD(RVMRegressionTestFixture,
   SetInputParam("scale", false);
   SetInputParam("kernel", std::string("linear"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   const RVMRegressionModel* estimator =
-      IO::GetParam<RVMRegressionModel*>("output_model");
+      params.Get<RVMRegressionModel*>("output_model");
 
   REQUIRE(estimator->template
           RVMPtr<mlpack::kernel::LinearKernel>()->DataOffset().n_elem == 0);
   REQUIRE(estimator->template
 	  RVMPtr<mlpack::kernel::LinearKernel>()->DataScale().n_elem == 0);
 }
-
 
 // Check predictions of saved model and in code model are equal.
 TEST_CASE_METHOD(RVMRegressionTestFixture,
@@ -96,23 +79,23 @@ TEST_CASE_METHOD(RVMRegressionTestFixture,
   SetInputParam("center", true);
   SetInputParam("scale", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  IO::GetSingleton().Parameters()["input"].wasPassed = false;
-  IO::GetSingleton().Parameters()["responses"].wasPassed = false;
+  RVMRegressionModel* mOut = params.Get<RVMRegressionModel*>("output_model");
 
-  SetInputParam("input_model",
-                IO::GetParam<RVMRegressionModel*>("output_model"));
+  ResetSettings();
+
+  SetInputParam("input_model", mOut);
   SetInputParam("test", std::move(matXtest));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat ytest = std::move(responses);
   arma::mat uncertaintiesTest = std::move(uncertainties);
 
   // Check that initial output and output using saved model are same.
-  CheckMatrices(ytest, IO::GetParam<arma::mat>("predictions"));
-  CheckMatrices(uncertaintiesTest, IO::GetParam<arma::mat>("stds"));
+  CheckMatrices(ytest, params.Get<arma::mat>("predictions"));
+  CheckMatrices(uncertaintiesTest, params.Get<arma::mat>("stds"));
 }
 
 /**
@@ -135,21 +118,21 @@ TEST_CASE_METHOD(RVMRegressionTestFixture,
   SetInputParam("responses", std::move(y));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Continue only with input passed.
   SetInputParam("input", std::move(matX));
-  mlpackMain();
+  RUN_BINDING();
 
   // Now pass the previous trained model and one input matrix at the same time.
   // An error should occur.
   SetInputParam("input", std::move(matX));
   SetInputParam("input_model",
-                IO::GetParam<RVMRegressionModel*>("output_model"));
+                params.Get<RVMRegressionModel*>("output_model"));
   SetInputParam("test", std::move(matXtest));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

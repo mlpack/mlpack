@@ -2,51 +2,26 @@
  * @file tests/main_tests/gmm_train_test.cpp
  * @author Yashwant Singh
  *
- * Test mlpackMain() of gmm_train_main.cpp.
+ * Test RUN_BINDING() of gmm_train_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include<string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "GmmTrain";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/gmm/gmm_train_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct GmmTrainTestFixture
-{
- public:
-  GmmTrainTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~GmmTrainTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-void ResetGmmTrainSetting()
-{
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
-}
+BINDING_TEST_FIXTURE(GmmTrainTestFixture);
 
 inline bool CheckDifferent(GMM* gmm1, GMM* gmm2)
 {
@@ -84,7 +59,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainValidGaussianTest",
   SetInputParam("gaussians", 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -101,9 +76,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainOutputModelGaussianTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("trials", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
   REQUIRE(gmm->Gaussians() == (int) 2);
 }
 
@@ -119,7 +94,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainMaxIterationsTest",
   SetInputParam("max_iterations", (int)-1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -134,7 +109,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPositiveTrialsTest",
   SetInputParam("trials", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -149,10 +124,10 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
 
   Log::Fatal.ignoreInput = true;
   SetInputParam("percentage", (double) 2.0); // Invalid
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   SetInputParam("percentage", (double) -1.0); // Invalid
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   Log::Fatal.ignoreInput = false;
 }
@@ -168,7 +143,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplings",
   SetInputParam("samplings", (int) 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -181,19 +156,19 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNumberOfGaussian",
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+
+  ResetSettings();
 
   SetInputParam("input_model", gmm);
-
-  IO::GetSingleton().Parameters()["input"].wasPassed = false;
-
   SetInputParam("input", std::move(inputData));
+  SetInputParam("gaussians", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(gmm1->Gaussians() == (int) 2);
 }
@@ -208,19 +183,20 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoForcePositiveTest",
   SetInputParam("gaussians", (int) 1);
   SetInputParam("no_force_positive", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+
+  ResetSettings();
 
   SetInputParam("input_model", gmm);
-
-  IO::GetSingleton().Parameters()["input"].wasPassed = false;
-
   SetInputParam("input", std::move(inputData));
+  SetInputParam("gaussians", (int) 1);
+  SetInputParam("no_force_positive", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(gmm1->Gaussians() == (int) 1);
 }
@@ -239,11 +215,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("noise", (double) 0.0);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+  params.Get<GMM*>("output_model") = NULL;
 
-  ResetGmmTrainSetting();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
@@ -251,9 +229,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
 
   math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -281,11 +259,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainTrialsTest",
     SetInputParam("max_iterations", (int) 1);
     SetInputParam("kmeans_max_iterations", (int) 1);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    GMM* gmm = IO::GetParam<GMM*>("output_model");
+    GMM* gmm = params.Get<GMM*>("output_model");
+    params.Get<GMM*>("output_model") = NULL;
 
-    ResetGmmTrainSetting();
+    CleanMemory();
+    ResetSettings();
 
     SetInputParam("input", inputData);
     SetInputParam("gaussians", (int) 5);
@@ -295,9 +275,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainTrialsTest",
 
     math::CustomRandomSeed(trial);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+    GMM* gmm1 = params.Get<GMM*>("output_model");
 
     success = CheckDifferent(gmm, gmm1);
 
@@ -306,7 +286,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainTrialsTest",
     if (success)
       break;
 
-    bindings::tests::CleanMemory();
+    CleanMemory();
   }
 
   REQUIRE(success == true);
@@ -326,11 +306,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffMaxIterationsTest",
   SetInputParam("max_iterations", (int) 1);
   SetInputParam("kmeans_max_iterations", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+  params.Get<GMM*>("output_model") = NULL;
 
-  ResetGmmTrainSetting();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 3);
@@ -340,9 +322,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffMaxIterationsTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -370,11 +352,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
     SetInputParam("max_iterations", (int) 1);
     SetInputParam("kmeans_max_iterations", (int) 1);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    GMM* gmm = IO::GetParam<GMM*>("output_model");
+    GMM* gmm = params.Get<GMM*>("output_model");
+    params.Get<GMM*>("output_model") = NULL;
 
-    ResetGmmTrainSetting();
+    CleanMemory();
+    ResetSettings();
 
     SetInputParam("input", std::move(inputData));
     SetInputParam("gaussians", (int) 3);
@@ -384,11 +368,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
 
     math::CustomRandomSeed(trial);
 
-    mlpackMain();
+    RUN_BINDING();
 
-    GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+    GMM* gmm1 = params.Get<GMM*>("output_model");
+    params.Get<GMM*>("output_model") = NULL;
 
-    ResetGmmTrainSetting();
+    CleanMemory();
+    ResetSettings();
 
     success = CheckDifferent(gmm, gmm1);
 
@@ -398,7 +384,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
     if (success)
       break;
 
-    bindings::tests::CleanMemory();
+    CleanMemory();
   }
 
   REQUIRE(success == true);
@@ -420,11 +406,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+  params.Get<GMM*>("output_model") = NULL;
 
-  ResetGmmTrainSetting();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
@@ -434,9 +422,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -459,11 +447,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+  params.Get<GMM*>("output_model") = NULL;
 
-  ResetGmmTrainSetting();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 8);
@@ -473,9 +463,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -496,11 +486,13 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+  params.Get<GMM*>("output_model") = NULL;
 
-  ResetGmmTrainSetting();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
@@ -508,9 +500,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
 
   mlpack::math::FixedRandomSeed();
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
 
   REQUIRE(CheckDifferent(gmm, gmm1));
 
@@ -526,29 +518,29 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainModelReuseTest",
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
+
+  ResetSettings();
 
   SetInputParam("input_model", gmm);
-
-  IO::GetSingleton().Parameters()["input"].wasPassed = false;
-
   SetInputParam("input", inputData);
+  SetInputParam("gaussians", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm1 = params.Get<GMM*>("output_model");
+
+  ResetSettings();
 
   SetInputParam("input_model", gmm1);
-
-  IO::GetSingleton().Parameters()["input"].wasPassed = false;
-
   SetInputParam("input", std::move(inputData));
+  SetInputParam("gaussians", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm2 = IO::GetParam<GMM*>("output_model");
+  GMM* gmm2 = params.Get<GMM*>("output_model");
 
   REQUIRE(gmm1 == gmm2);
 }
@@ -563,9 +555,9 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiagCovariance",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("diagonal_covariance", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  GMM* gmm = params.Get<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
 

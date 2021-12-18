@@ -1,6 +1,6 @@
 /**
  * @file tests/rvm_regression_test.cpp
- * @author Clement Mercoer
+ * @author Clement Mercier
  *
  * Tests for RVMRegression class.
  *
@@ -9,11 +9,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
+//#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
-
 #include <mlpack/methods/rvm_regression/rvm_regression.hpp>
 
 #include "serialization.hpp"
@@ -21,13 +22,13 @@
 using namespace mlpack::regression;
 
 void GenerateProblemSparse(arma::mat& matX,
-                     arma::rowvec& y,
-                     size_t nPoints,
-                     size_t nDims,
-                     float sigma = 0.0)
+                           arma::rowvec& y,
+	                   size_t nPoints,
+			   size_t nDims,
+			   float sigma = 0.0)
 {
   matX = arma::randn(nDims, nPoints);
-  arma::colvec omega = arma::zeros<arma::rowvec>(nDims);
+  arma::colvec omega = arma::zeros<arma::colvec>(nDims);
   omega.head(nDims / 5) = arma::randn(nDims / 5) * 10; 
   
   // Compute y and add noise.
@@ -63,7 +64,7 @@ TEST_CASE("OptionsMakeRVMDifferent", "[RVMRegressionTest]")
 
 // Check that Train() does not fail with two colinear vectors. Try it for ARD
 // regression, Linear RVM and Gaussian RVM.
-TEST_CASE("SingularMatixRVM", "[RVMRegressionTest]")
+TEST_CASE("SingularMatrixRVM", "[RVMRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
@@ -72,13 +73,12 @@ TEST_CASE("SingularMatixRVM", "[RVMRegressionTest]")
 
   // Now the first and the second rows are indentical.
   matX.row(1) = matX.row(0);
-
   
   mlpack::kernel::LinearKernel linear;
   mlpack::kernel::GaussianKernel gaussian(10);
 
   // ARD regression.
-    RVMRegression<mlpack::kernel::LinearKernel> ard11(linear, true, true, true);
+  RVMRegression<mlpack::kernel::LinearKernel> ard11(linear, true, true, true);
   // Linear kernel RVM.
   RVMRegression<mlpack::kernel::LinearKernel>
     rvm10(linear, true, false, false);

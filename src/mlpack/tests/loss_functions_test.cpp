@@ -31,6 +31,7 @@
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/multilabel_softmargin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
 #include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
@@ -1032,4 +1033,120 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
   REQUIRE(arma::accu(output) == Approx(-0.41667).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
+}
+
+/**
+ * Simple test for the MultiLabel Softmargin Loss function.
+ */
+TEST_CASE("MultiLabelSoftMarginLossTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, output, expectedOutput;
+  double loss;
+  MultiLabelSoftMarginLoss<> module1;
+  MultiLabelSoftMarginLoss<> module2(false);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
+      "-0.3336");
+  target = arma::mat("0 1 0 1 0 0 0 0 1");
+  input.reshape(3, 3);
+  target.reshape(3, 3);
+
+  // Test for sum reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("0.1814 -0.1587 0.1783 -0.1567 0.1866 0.1827 "
+      "0.1479 0.1386 -0.1942");
+  expectedOutput.reshape(3, 3);
+
+  // Test the Forward function. Loss should be 2.14829.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(2.14829).epsilon(1e-5));
+
+  // Test the Backward function.
+  module1.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(0.505909).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("0.0605 -0.0529 0.0594 -0.0522 0.0622 0.0609 "
+      "0.0493 0.0462 -0.0647");
+  expectedOutput.reshape(3, 3);
+
+  // Test the Forward function. Loss should be 0.716095.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(0.716095).epsilon(1e-5));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(0.168636).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/**
+ * Simple test for the MultiLabel Softmargin Loss function.
+ */
+TEST_CASE("MultiLabelSoftMarginLossWeightedTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, output, expectedOutput;
+  arma::rowvec weights;
+  double loss;
+  weights = arma::mat("1 2 3");
+  MultiLabelSoftMarginLoss<> module1(true, weights);
+  MultiLabelSoftMarginLoss<> module2(false, weights);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
+      "-0.2264 -0.3400 -0.3336 -0.8695");
+  target = arma::mat("0 1 0 1 1 0 0 0 0 0 1 0");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+
+  // Test for sum reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("0.1814 -0.1587 0.1783 -0.1479 -0.3133 0.3732 "
+      "0.3653 0.3853 0.4436 0.4158 -0.5826 0.2954");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 5.35057.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(5.35057).epsilon(1e-5));
+
+  // Test the Backward function.
+  module1.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(1.43577).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("0.0454 -0.0397 0.0446 -0.0370 -0.0783 0.0933 "
+      "0.0913 0.0963 0.1109 0.1040 -0.1457 0.0738");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 1.33764.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(1.33764).epsilon(1e-5));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(0.358943).epsilon(1e-5));
+  REQUIRE(output.n_rows ==input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }

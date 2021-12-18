@@ -17,6 +17,7 @@
 #include "gini_gain.hpp"
 #include "information_gain.hpp"
 #include "best_binary_numeric_split.hpp"
+#include "random_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "all_dimension_select.hpp"
 #include <type_traits>
@@ -30,11 +31,6 @@ namespace tree {
  *
  * The class inherits from the auxiliary split information in order to prevent
  * an empty auxiliary split information struct from taking any extra size.
- *
- * Note that `ElemType` is a template parameter controlling the type that is
- * used to store split information.  In general, you would want to set this to
- * be the same as the type of the data that you will be using, but it's not
- * required to do that.
  */
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
@@ -141,10 +137,11 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and
-   * labels with weights, where the data can be both numeric and categorical.
-   * Setting minimumLeafSize and minimumGainSplit too small may cause the
-   * tree to overfit, but setting them too large may cause it to underfit.
+   * Using the hyperparameters of another decision tree, train on the given data
+   * and labels with weights, where the data can be both numeric and
+   * categorical.  Setting minimumLeafSize and minimumGainSplit too small may
+   * cause the tree to overfit, but setting them too large may cause it to
+   * underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
    * copies.
@@ -202,10 +199,10 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and labels
-   * with weights, assuming that the data is all of the numeric type. Setting
-   * minimumLeafSize and minimumGainSplit too small may cause the tree to
-   * overfit, but setting them too large may cause it to underfit.
+   * Take ownership of another decision tree and train on the given data and
+   * labels with weights, assuming that the data is all of the numeric type.
+   * Setting minimumLeafSize and minimumGainSplit too small may cause the tree
+   * to overfit, but setting them too large may cause it to underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
    * copies.

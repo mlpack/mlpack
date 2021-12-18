@@ -99,9 +99,9 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-      Armadillo      >= 8.400.0
+      Armadillo      >= 9.800
       Boost (math_c99, spirit) >= 1.58.0
-      CMake          >= 3.2.2
+      CMake          >= 3.6
       ensmallen      >= 2.10.0
       cereal         >= 1.1.2
 
@@ -153,10 +153,15 @@ mlpack_pca, mlpack_kmeans etc.) with the following command:
 On Fedora or Red Hat (EPEL):
     $ sudo dnf install mlpack-devel mlpack-bin
 
-Note: Older Ubuntu versions may not have the most recent version of mlpack
+*Note*: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
 mlpack 3.4.2 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
+
+*Note*: If you are using RHEL7/CentOS 7, gcc 4.8 is too old to compile mlpack.
+One option is to use `devtoolset-8`; see
+[here](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/) for more
+information.
 
 There are some useful pages to consult in addition to this section:
 
@@ -211,18 +216,21 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
     R_EXECUTABLE=(/path/to/R): Path to specific R executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
-    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
-       static libraries
+    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as
+        opposed to static libraries
     DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
-    DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
-    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
     BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
        (default ON)
+
+For example, to build mlpack library and CLI bindings statically the following
+command can be used:
+
+    $ cmake  -D BUILD_SHARED_LIBS=OFF ../
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)
@@ -234,7 +242,7 @@ also be built.  OpenMP will be used for parallelization when possible by
 default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components as well as 'mlpack_test'.
+This will build all library components and bindings.
 
     $ make
 
@@ -242,6 +250,12 @@ If you do not want to build everything in the library, individual components
 of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
+
+If you want to build the tests, just make the `mlpack_test` target, and use
+`ctest` to run the tests:
+
+    $ make mlpack_test
+    $ ctest .
 
 If the build fails and you cannot figure out why, register an account on Github
 and submit an issue. The mlpack developers will quickly help you figure it out:
@@ -354,6 +368,9 @@ older versions of mlpack:
   - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+
+To learn about the development goals of mlpack in the short- and medium-term
+future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
 ### 8. Bug reporting
 

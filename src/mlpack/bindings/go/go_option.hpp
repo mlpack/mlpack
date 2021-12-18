@@ -29,9 +29,6 @@ namespace mlpack {
 namespace bindings {
 namespace go {
 
-// Defined in mlpack_main.hpp.
-extern std::string programName;
-
 /**
  * The Go option class.
  */
@@ -65,7 +62,7 @@ class GoOption
            const bool required = false,
            const bool input = true,
            const bool noTranspose = false,
-           const std::string& /*testName*/ = "")
+           const std::string& bindingName = "")
   {
     // Create the ParamData object to give to IO.
     util::ParamData data;
@@ -79,50 +76,29 @@ class GoOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Only "verbose" and "copy_all_inputs" will be persistent.
-    if (identifier == "verbose" /*|| identifier == "copy_all_inputs"*/)
-      data.persistent = true;
-    else
-      data.persistent = false;
     data.cppType = cppName;
 
     data.value = boost::any(defaultValue);
 
-    // Restore the parameters for this program.
-    if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)
-      IO::RestoreSettings(programName, false);
-
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the .cpp,
     // the .h, and the .go binding files.
-    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
-        &GetPrintableParam<T>;
+    IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
+    IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);
+    IO::AddFunction(data.tname, "PrintDefnInput", &PrintDefnInput<T>);
+    IO::AddFunction(data.tname, "PrintDefnOutput", &PrintDefnOutput<T>);
+    IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
+    IO::AddFunction(data.tname, "PrintOutputProcessing",
+        &PrintOutputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintMethodConfig", &PrintMethodConfig<T>);
+    IO::AddFunction(data.tname, "PrintMethodInit", &PrintMethodInit<T>);
+    IO::AddFunction(data.tname, "PrintInputProcessing",
+        &PrintInputProcessing<T>);
+    IO::AddFunction(data.tname, "GetType", &GetType<T>);
 
-    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
-        &DefaultParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
-        &PrintDefnInput<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
-        &PrintDefnOutput<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
-        &PrintOutputProcessing<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintMethodConfig"] =
-        &PrintMethodConfig<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
-        &PrintMethodInit<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
-        &PrintInputProcessing<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
-
-    // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses IO, so we have to keep the options
-    // separate.  programName is a global variable from mlpack_main.hpp.
-    IO::Add(std::move(data));
-    if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)
-      IO::StoreSettings(programName);
-    IO::ClearSettings();
+    // Add the ParamData object to the IO class for the correct binding name.
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

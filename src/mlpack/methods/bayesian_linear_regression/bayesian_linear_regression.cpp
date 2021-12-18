@@ -1,6 +1,6 @@
 /**
  * @file methods/bayesian_linear_regression/bayesian_linear_regression.cpp
- * @author Clement Mercier 
+ * @author Clement Mercier
  *
  * Implementation of Bayesian linear regression.
  *
@@ -33,8 +33,6 @@ BayesianLinearRegression::BayesianLinearRegression(const bool centerData,
 double BayesianLinearRegression::Train(const arma::mat& data,
                                        const arma::rowvec& responses)
 {
-  Timer::Start("bayesian_linear_regression");
-
   arma::mat phi;
   arma::rowvec t;
   arma::colvec eigVal;
@@ -58,12 +56,12 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   beta =  1 / (var(t, 1) * 0.1);
 
   unsigned short i = 0;
-  double deltaAlpha = 1.0, deltaBeta = 1.0, crit = 1.0;
+  double deltaAlpha = 1.0, crit = 1.0;
 
   while ((crit > tolerance) && (i < maxIterations))
   {
     deltaAlpha = -alpha;
-    deltaBeta = -beta;
+    double deltaBeta = -beta;
 
     // Update the solution.
     omega = eigVec * diagmat(1 / (eigVal + (alpha / beta))) * eigVecInvPhitT;
@@ -84,8 +82,6 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   }
   // Compute the covariance matrix for the uncertainties later.
   matCovariance = eigVec * diagmat(1 / (beta * eigVal + alpha)) * eigVecInv;
-
-  Timer::Stop("bayesian_linear_regression");
 
   return RMSE(data, responses);
 }

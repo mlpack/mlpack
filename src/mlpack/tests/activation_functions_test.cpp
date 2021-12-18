@@ -34,6 +34,7 @@
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
+#include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 
 #include "catch.hpp"
 
@@ -660,6 +661,97 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the Flatten T Swish activation function test. The function is
+ * implemented as Flatten T Swish layer in the file flatten_t_swish.hpp.
+ *
+ * @param input Input data used for evaluating the Flatten T Swish activation
+ *     function.
+ * @param target Target data used to evaluate the Flatten T Swish activation.
+ */
+void CheckFlattenTSwishActivationCorrect(const arma::colvec input,
+                                         const arma::colvec target)
+{
+  FlattenTSwish<> fts(0.4);
+  arma::colvec activations;
+
+  fts.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the Softmin activation function derivative test.
+ * The function is implemented as Softmin layer in the file softmin.hpp.
+ *
+ * @param input Input data used for evaluating the Softmin activation function.
+ * @param target Target data used to evaluate the Softmin activation.
+ */
+void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
+                                       const arma::colvec target)
+{
+  FlattenTSwish<> fts;
+
+  // Set the error to 1 to get the actual derivative.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+
+  arma::colvec derivate;
+  fts.Backward(input, error, derivate);
+  for (size_t i = 0; i < derivate.n_elem; ++i)
+  {
+    REQUIRE(derivate.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the ReLU6 activation function derivative test. The function
+ * is implemented as ReLU6 layer in the file relu6.hpp.
+ *
+ * @param input Input data used for evaluating the ReLU6 activation function.
+ * @param target Target data used to evaluate the ReLU6 activation.
+ */
+void CheckReLU6Correct(const arma::colvec input,
+                       const arma::colvec ActivationTarget,
+                       const arma::colvec DerivativeTarget)
+{
+  // Initialize ReLU6 object.
+  ReLU6<> relu6;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  relu6.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(ActivationTarget.at(i)).epsilon(1e-5));
+  }
+  relu6.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(DerivativeTarget.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Basic test of the ReLU6 function.
+ */
+TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
+
+  // desiredActivations taken from PyTorch.
+  const arma::colvec desiredActivations("0.0 3.0 0.0 6.0 6.0");
+
+  // desiredDerivatives taken from PyTorch.
+  const arma::colvec desiredDerivatives("0.0 1.0 0.0 0.0 0.0");
+
+  CheckReLU6Correct(activationData, desiredActivations, desiredDerivatives);
+}
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
@@ -1227,7 +1319,6 @@ TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
 {
-
   const arma::colvec activationData("-2 3.2 4.5 1 -1 2 0");
 
   // Hand-calculated values.
@@ -1239,5 +1330,52 @@ TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
                                          1.03924 0.449818 1.00002 0.761594");
 
   CheckActivationCorrect<TanhExpFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<TanhExpFunction>(desiredActivations, desiredDerivatives);
+  CheckDerivativeCorrect<TanhExpFunction>(desiredActivations,
+      desiredDerivatives);
+}
+
+/**
+ * Basic test of the SILU(Sigmoid Weighted Linear Unit) Function
+ */
+TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Random generated values.
+  const arma::colvec activationData("-2 2 4.5 -5.7 -1 1 0 10");
+
+  // Calculated with PyTorch.
+  arma::colvec desiredActivation(
+      "-0.23840583860874176 1.7615940570831299 4.450558662414551 \
+       -0.01900840364396572 -0.2689414322376251 0.7310585975646973 \
+       0.0 9.99954605102539");
+
+  // Calculated with PyTorch.
+  arma::colvec desiredDerivate(
+      "0.38191673159599304 1.073788046836853 1.0392179489135742 \
+       0.49049633741378784 0.36713290214538574 0.8354039788246155 \
+       0.5 1.0004087686538696");
+
+  CheckActivationCorrect<SILUFunction>(activationData, desiredActivation);
+  CheckDerivativeCorrect<SILUFunction>(desiredActivation, desiredDerivate);
+}
+
+/**
+ * Basic test of Flatten T Swish function.
+ */
+TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Random Value.
+  arma::colvec input("-4.0 -1.0 2 3 4 5 6");
+
+  // Hand Calculated and using PyTorch.
+  arma::colvec desiredActivation(
+      "0.4000000059604645 0.4000000059604645 2.1615941524505615 \
+       3.2577223777770996 4.328054904937744 5.3665361404418945 \
+       6.385164737701416");
+
+  // Hand Calculated and using PyTorch.
+  arma::colvec desiredDerivation("0.694792 0.694792 1.096893 1.079178 1.042602 \
+                                  1.020182 1.009048");
+
+  CheckFlattenTSwishActivationCorrect(input, desiredActivation);
+  CheckFlattenTSwishDerivateCorrect(desiredActivation, desiredDerivation);
 }

@@ -39,7 +39,8 @@ namespace tree {
 template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit>
+         template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         bool UseBootstrap = true>
 class RandomForest
 {
  public:
@@ -408,6 +409,38 @@ class RandomForest
   //! The average gain of the forest.
   double avgGain;
 };
+
+/**
+ * Convenience typedef for Extra Trees. (Extremely Randomized Trees Forest)
+ *
+ * @code
+ * @article{10.1007/s10994-006-6226-1,
+ *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
+ *   title = {Extremely Randomized Trees},
+ *   year = {2006},
+ *   issue_date = {April 2006},
+ *   publisher = {Kluwer Academic Publishers},
+ *   address = {USA},
+ *   volume = {63},
+ *   number = {1},
+ *   issn = {0885-6125},
+ *   url = {https://doi.org/10.1007/s10994-006-6226-1},
+ *   doi = {10.1007/s10994-006-6226-1},
+ *   journal = {Mach. Learn.},
+ *   month = apr,
+ *   pages = {3–42},
+ *   numpages = {40},
+ * }
+ * @endcode
+ */
+template<typename FitnessFunction = GiniGain,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit>
+using ExtraTrees = RandomForest<FitnessFunction,
+                                DimensionSelectionType,
+                                RandomBinaryNumericSplit,
+                                CategoricalSplitType,
+                                false>;
 
 } // namespace tree
 } // namespace mlpack

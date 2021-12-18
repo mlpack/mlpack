@@ -24,8 +24,6 @@ steps:
     if [ "a$(julia.version)" != "a" ]; then
       brew install --cask julia
     fi
-
-    git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
@@ -45,7 +43,7 @@ steps:
   displayName: 'CMake'
 
 # Build mlpack
-- script: cd build && make -j2
+- script: cd build && make -j2 && make -j2 mlpack_test
   displayName: 'Build'
 
 # Run tests via ctest.
