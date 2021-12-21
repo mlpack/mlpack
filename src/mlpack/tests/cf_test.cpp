@@ -180,7 +180,7 @@ void RecommendationAccuracy(const size_t allowedFailures = 17, const Decompositi
   for (size_t i = 0; i < 50; ++i)
     users(i) = (size_t) savedCols(0, i);
   arma::Mat<size_t> recommendations;
-  size_t numRecs = 150;
+  size_t numRecs = 200;
   c.template GetRecommendations<CosineSearch, AverageInterpolation>(numRecs, recommendations, users);
 
   REQUIRE(recommendations.n_rows == numRecs);
@@ -730,10 +730,11 @@ TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
  */
 TEST_CASE("RecommendationAccuracySVDPPTest", "[CFTest]")
 {
+  math::RandomSeed(25);
   SVDPlusPlusPolicy decomposition;
   decomposition.MaxIterations()=100;
   decomposition.Alpha()=0.0001;
-  RecommendationAccuracy<SVDPlusPlusPolicy, OverallMeanNormalization>(18, decomposition);
+  RecommendationAccuracy<SVDPlusPlusPolicy, OverallMeanNormalization>(17, decomposition);
 }
 
 // Make sure that Predict() is returning reasonable results for randomized SVD.
