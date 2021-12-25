@@ -21,7 +21,7 @@ namespace rl{
 /**
  * Implementation of Fruit Tree Navigation Task. 
  */
-class FTN
+class FruitTreeNavigation
 {
  public:
   /*
