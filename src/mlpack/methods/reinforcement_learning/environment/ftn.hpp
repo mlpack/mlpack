@@ -90,7 +90,7 @@ class FTN
    *    terminates. If the value is 0, there is no limit.
    * @param depth The maximum depth of the full binary tree.
    */
-  FTN(const size_t maxSteps = 500,
+  FruitTreeNavigation(const size_t maxSteps = 500,
       const size_t depth = 6) :
       maxSteps(maxSteps),
       stepsPerformed(0)
