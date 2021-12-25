@@ -1442,6 +1442,6 @@ TEST_CASE("ISRUFunctionTest", "[ActivationFunctionsTest]")
                                          0.35357980 0.54433105 \
                                          0.54433105 0.41408666 1");
 
-  CheckISRLUActivationCorrect(activationData, desiredActivations);
-  CheckISRLUDerivativeCorrect(activationData, desiredDerivatives);
+  CheckISRUActivationCorrect(activationData, desiredActivations);
+  CheckISRUDerivativeCorrect(activationData, desiredDerivatives);
 }
