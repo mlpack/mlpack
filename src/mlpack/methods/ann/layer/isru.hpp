@@ -118,6 +118,6 @@ class ISRU
 } // namespace mlpack
 
 // Include implementation.
-#include "ISRU_impl.hpp"
+#include "isru_impl.hpp"
 
 #endif
