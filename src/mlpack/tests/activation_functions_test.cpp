@@ -736,6 +736,55 @@ void CheckReLU6Correct(const arma::colvec input,
 }
 
 /**
+ * Implementation of the ISRU activation function test. The function is
+ * implemented as ISRU layer in the file isru.hpp.
+ *
+ * @param input Input data used for evaluating the ISRU activation function.
+ * @param target Target data used to evaluate the ISRU activation.
+ */
+
+void CheckISRUActivationCorrect(const arma::colvec input,
+                                 const arma::colvec target)
+{
+  // Initialize ISRU object with alpha = 1.0.
+  ISRU<> isru(1.0);
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  isru.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the ISRU activation function derivative test. The function
+ * is implemented as ISRU layer in the file isru.hpp.
+ *
+ * @param input Input data used for evaluating the ISRU activation function.
+ * @param target Target data used to evaluate the ISRU activation.
+ */
+void CheckISRUDerivativeCorrect(const arma::colvec input,
+                                 const arma::colvec target)
+{
+  // Initialize ISRU object with alpha = 1.0.
+  ISRU<> isru(1.0);
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  isru.Forward(input, activations);
+  isru.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
  * Basic test of the ReLU6 function.
  */
 TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
@@ -1378,4 +1427,21 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 
   CheckFlattenTSwishActivationCorrect(input, desiredActivation);
   CheckFlattenTSwishDerivateCorrect(desiredActivation, desiredDerivation);
+}
+
+
+/**
+ * Basic test of the ISRU activation function.
+ */
+TEST_CASE("ISRUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec desiredActivations("-0.89442719 0.95447998 0.97618706 \
+                                         -0.99995020 0.70710678 -0.70710678 0.89442719 0");
+
+  const arma::colvec desiredDerivatives("0.41408666 0.37852804 0.36640910 \
+                                         0.35357980 0.54433105 \
+                                         0.54433105 0.41408666 1");
+
+  CheckISRLUActivationCorrect(activationData, desiredActivations);
+  CheckISRLUDerivativeCorrect(activationData, desiredDerivatives);
 }

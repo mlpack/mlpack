@@ -62,6 +62,7 @@
 #include <mlpack/methods/ann/layer/isrlu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
+#include <mlpack/methods/ann/layer/isru.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -251,7 +252,8 @@ using MoreTypes = boost::variant<
         ISRLU<arma::mat, arma::mat>*,
         BicubicInterpolation<arma::mat, arma::mat>*,
         NearestInterpolation<arma::mat, arma::mat>*,
-        GroupNorm<arma::mat, arma::mat>*
+        GroupNorm<arma::mat, arma::mat>*,
+        ISRU<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
