@@ -171,7 +171,7 @@ class FruitTreeNavigation
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+          " being taken.";
       return true;
     }
     else if (state.Row() == fruitTree.Depth())
