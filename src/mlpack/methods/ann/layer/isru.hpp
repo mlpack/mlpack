@@ -2,7 +2,7 @@
  * @file methods/ann/layer/isru.hpp
  * @author Suvarsha Chennareddy
  *
- * Definition of the ISRLU and ISRU activation function as described by Jonathan T. Barron.
+ * Definition of the ISRU activation function as described by Jonathan T. Barron.
  *
  * For more information, read the following paper (page 6).
  *
@@ -33,8 +33,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The ISRU activation function, defined by
  *
  * @f{eqnarray*}{
- * f(x) &=& x(\frac{1}{1 + \alpha x^2}) \\
- * f'(x) &=& \frac{1}{1 + \alpha x^2}^3 \\
+ * f(x) &=& \frac{x}{\sqrt{1 + \alpha x^2}} \\
+ * f'(x) &=& \frac{1}{\sqrt{1 + \alpha x^2}^3} \\
  * @f}
  *
  *
@@ -52,7 +52,7 @@ class ISRU
  /**
    * Create the ISRU object using the specified parameter.
    *
-   * @param alpha Scale parameter.
+   * @param alpha Positive scale parameter.
   */
   ISRU(const double alpha = 1.0);
 
@@ -88,10 +88,10 @@ class ISRU
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
   
-    //! Get the non zero gradient.
+    //! Get the positive scale parameter.
   double const& Alpha() const { return alpha; }
   
-  //! Modify the non zero gradient.
+  //! Modify the positive scale parameter.
   double& Alpha() { return alpha; }
 
   //! Get size of weights.

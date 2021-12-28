@@ -2,7 +2,7 @@
  * @file methods/ann/layer/isru_impl.hpp
  * @author Suvarsha Chennareddy
  *
- * Definition of the ISRLU and ISRU activation function as described by Jonathan T. Barron.
+ * Definition of the ISRU activation function as described by Jonathan T. Barron.
  *
  * For more information, read the following paper (page 6).
  *
@@ -62,7 +62,6 @@ void ISRU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  
   ar(CEREAL_NVP(alpha));
 }
 
