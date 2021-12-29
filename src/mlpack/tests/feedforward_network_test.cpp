@@ -189,7 +189,7 @@ TEST_CASE("PReLULoadSaveTest", "[FeedForwardNetworkTest]")
   // Use the Predict method to get the predictions
   arma::mat predictionTemp;
   model.Predict(testData, predictionTemp);
-  arma::mat prediction = arma::zerosarma::mat(1, predictionTemp.n_cols);
+  arma::mat prediction = arma::zeros(1, predictionTemp.n_cols);
 
   // Find index of max prediction for each data point and store in "prediction"
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
