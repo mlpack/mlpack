@@ -62,6 +62,7 @@
 #include <mlpack/methods/ann/layer/isrlu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
+#include <mlpack/methods/ann/layer/threshold_fn.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -88,6 +89,7 @@ template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
 template<typename InputDataType, typename OutputDataType> class Padding;
 template<typename InputDataType, typename OutputDataType> class ReLU6;
+template<typename InputDataType, typename OutputDataType> class Threshold;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -251,7 +253,8 @@ using MoreTypes = boost::variant<
         ISRLU<arma::mat, arma::mat>*,
         BicubicInterpolation<arma::mat, arma::mat>*,
         NearestInterpolation<arma::mat, arma::mat>*,
-        GroupNorm<arma::mat, arma::mat>*
+        GroupNorm<arma::mat, arma::mat>*,
+        Threshold<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>

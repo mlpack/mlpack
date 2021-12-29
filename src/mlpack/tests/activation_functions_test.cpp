@@ -752,6 +752,54 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
+ * Implementation of the Threshold activation function derivative test. The function
+ * is implemented as Threshold layer in the file threshold_fn.hpp.
+ *
+ * @param input Input data used for evaluating the ReLU6 activation function.
+ * @param target Target data used to evaluate the ReLU6 activation.
+ */
+void CheckThresholdCorrect(const arma::colvec input,
+                       const arma::colvec ActivationTarget,
+                       const arma::colvec DerivativeTarget)
+{
+  // Initialize Threshold object.
+  Threshold<> thresh(1.0, 0.5);
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  thresh.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(ActivationTarget.at(i)).epsilon(1e-5));
+  }
+  thresh.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(DerivativeTarget.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Basic test of the Threshold function.
+ */
+TEST_CASE("ThresholdFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0 1.0");
+
+  // desiredActivations taken from PyTorch.
+  const arma::colvec desiredActivations("0.5 3.0 0.5 6.0 24.0 0.5");
+
+  // desiredDerivatives taken from PyTorch.
+  const arma::colvec desiredDerivatives("0.0 1.0 0.0 1.0 1.0 0.0");
+
+  CheckThresholdCorrect(activationData, desiredActivations, desiredDerivatives);
+}
+
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
