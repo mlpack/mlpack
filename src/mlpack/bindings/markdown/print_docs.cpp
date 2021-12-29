@@ -12,8 +12,6 @@
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/binding_details.hpp>
 
-#include <boost/algorithm/string/replace.hpp>
-
 #include "binding_info.hpp"
 #include "print_docs.hpp"
 #include "print_doc_functions.hpp"
@@ -158,7 +156,7 @@ void PrintDocs(const std::string& bindingName,
         cout << ParamString(bindingName, it->second.name) << " | ";
       }
       cout << ParamType(params, it->second) << " | ";
-      string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
+      string desc = ReplaceAll(it->second.desc, string("|"), string("\\|"));
       cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
@@ -240,16 +238,16 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    string desc = boost::replace_all_copy(doc.longDescription(),
-                                          "|", "\\|");
+    string desc = ReplaceAll(doc.longDescription(),
+                              string("|"), string("\\|"));
     cout << desc << endl << endl;
 
     if (doc.example.size() > 0)
       cout << "### Example" << endl;
     for (size_t j = 0; j < doc.example.size(); ++j)
     {
-      string eg = boost::replace_all_copy(doc.example[j](),
-                                          "|", "\\|");
+      string eg = ReplaceAll(doc.example[j](),
+                              string("|"), string("\\|"));
       cout << eg << endl << endl;
     }
     cout << "### See also" << endl;
