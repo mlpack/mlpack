@@ -166,15 +166,9 @@ TEST_CASE("PReLULoadSaveTest", "[FeedForwardNetworkTest]")
   if (!data::Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
-  arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
-    FAIL("Cannot open thyroid_test.csv");
-
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
-  testData.shed_row(testData.n_rows - 1);
 
   // Initialize the network
   FFN<> model;
@@ -188,18 +182,7 @@ TEST_CASE("PReLULoadSaveTest", "[FeedForwardNetworkTest]")
 
   // Use the Predict method to get the predictions
   arma::mat predictionTemp;
-  model.Predict(testData, predictionTemp);
-  arma::mat prediction = arma::zeros(1, predictionTemp.n_cols);
-
-  // Find index of max prediction for each data point and store in "prediction"
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    // we add 1 to the max index, so that it matches the actual test labels
-    prediction(i) = arma::as_scalar(arma::find(
-    arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
-  size_t correct = arma::accu(prediction == testLabels);
-  double oldClassificationError = 1 - double(correct) / testData.n_cols;
+  model.Predict(trainData, predictionTemp);
   
   // Save the model
   data::Save("model.bin", "model", model, false);
@@ -209,18 +192,10 @@ TEST_CASE("PReLULoadSaveTest", "[FeedForwardNetworkTest]")
   data::Load("model.bin", "model", loadedModel);
   
   // Compute predictions of the loaded model on the same data set
-  loadedModel.Predict(testData, predictionTemp);
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    // we add 1 to the max index, so that it matches the actual test labels
-    prediction(i) = arma::as_scalar(arma::find(
-    arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
-  correct = arma::accu(prediction == testLabels);
-  double newClassificationError = 1 - double(correct) / testData.n_cols;
-  
-  REQUIRE(oldClassificationError == 
-      Approx(newClassificationError).epsilon(1e-5));
+  arma::mat predictionTemp2;
+  loadedModel.Predict(trainData, predictionTemp2);
+
+  CheckMatrices(predictionTemp, predictionTemp2);
 }
 
 /**
