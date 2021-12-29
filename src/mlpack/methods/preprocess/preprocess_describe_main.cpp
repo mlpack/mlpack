@@ -19,14 +19,12 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
+#include <memory>
 
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace mlpack::util;
 using namespace std;
-using namespace boost;
 
 // Program Name.
 BINDING_USER_NAME("Descriptive Statistics");
@@ -84,6 +82,23 @@ PARAM_FLAG("population", "If specified, the program will calculate statistics "
 PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
     "across rows, not across columns.  (Remember that in mlpack, a column "
     "represents a point, so this option is generally not necessary.)", "r");
+
+/**
+ * Formats string similar to printf.
+ *
+ * @param format Format of string desired.
+ * @param args Args for inserting as parameter.
+ * @return Desired Formatted String.
+ */
+template<typename ... Args>
+std::string string_format(const std::string& format, Args ... args)
+{
+    size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
+    if( size <= 0 ){ throw std::runtime_error( "Error during formatting." ); }
+    std::unique_ptr<char[]> buf( new char[ size ] ); 
+    snprintf( buf.get(), size, format.c_str(), args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}
 
 /**
  * Calculates the sum of deviations to the Nth Power.
@@ -187,8 +202,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Load the data.
   arma::mat& data = params.Get<arma::mat>("input");
 
-  // Generate boost format recipe.
-  const string widthPrecision("%-" + to_string(width) + "." +
+  // Generate format recipe.
+  const string widthPrecision("%-" + to_string(width) +
       to_string(precision));
   const string widthOnly("%-" + to_string(width) + ".");
   string stringFormat = "";
@@ -203,9 +218,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   timers.Start("statistics");
   // Print the headers.
-  Log::Info << boost::format(stringFormat)
-      % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
-      % "range" % "skew" % "kurt" % "SE" << endl;
+  Log::Info << string_format(stringFormat, "dim", "var", "mean",
+      "std", "median", "min", "max", "range", "skew", "kurt", "SE") << endl;
 
   // Lambda function to print out the results.
   auto PrintStatResults = [&](size_t dim, bool rowMajor)
@@ -223,19 +237,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << boost::format(numberFormat)
-        % dim
-        % arma::var(feature, population)
-        % fMean
-        % fStd
-        % arma::median(feature)
-        % fMin
-        % fMax
-        % (fMax - fMin) // range
-        % Skewness(feature, fStd, fMean, population)
-        % Kurtosis(feature, fStd, fMean, population)
-        % StandardError(feature.n_elem, fStd)
-        << endl;
+    Log::Info << string_format(numberFormat,
+        dim, arma::var(feature, population), fMean, fStd,
+        arma::median(feature), fMin, fMax, (fMax - fMin),
+        Skewness(feature, fStd, fMean, population),
+        Kurtosis(feature, fStd, fMean, population),
+        StandardError(feature.n_elem, fStd)) << endl;
   };
 
   // If the user specified dimension, describe statistics of the given
