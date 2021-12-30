@@ -47,7 +47,7 @@ void Threshold<InputDataType, OutputDataType>::Backward(
   DataType derivative;
   derivative.set_size(arma::size(gy));
   derivative.fill(0.0);
-  derivative(positive) = 1.0;
+  derivative.elem(positive).ones();
 
   g = gy % derivative;
 }
