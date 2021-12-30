@@ -33,9 +33,9 @@ Padding<InputDataType, OutputDataType>::Padding(
     padHBottom(padHBottom),
     nRows(0),
     nCols(0),
-    inSize(0),
     inputHeight(inputWidth),
-    inputWidth(inputHeight)
+    inputWidth(inputHeight),
+    inSize(0)
 {
   // Nothing to do here.
 }
