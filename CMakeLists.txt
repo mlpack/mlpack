@@ -179,11 +179,11 @@ endif()
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   if (APPLE)
     # Detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
-    # extract V from '10.V.x'.
+    # extract V from '11.V.x'.
     exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
-        "10\\.([0-9]+).*" "\\1"
+        "11\\.([0-9]+).*" "\\1"
         MACOSX_VERSION
         "${MACOSX_VERSION_RAW}")
 
