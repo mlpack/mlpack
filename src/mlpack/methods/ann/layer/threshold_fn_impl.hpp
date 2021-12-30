@@ -42,7 +42,7 @@ void Threshold<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void Threshold<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+    const DataType& /* input */, const DataType& gy, DataType& g)
 {
   DataType derivative;
   derivative.set_size(arma::size(gy));
