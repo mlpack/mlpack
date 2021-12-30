@@ -156,49 +156,6 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
- * Special test case for PReLU layer.
- * To be removed once PReLU is corrected.
- */
-TEST_CASE("PReLULoadSaveTest", "[FeedForwardNetworkTest]")
-{
-  // Load the dataset.
-  arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
-    FAIL("Cannot open thyroid_train.csv");
-
-  // Normalize labels to [0, 2].
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-  trainData.shed_row(trainData.n_rows - 1);
-
-  // Initialize the network
-  FFN<> model;
-  model.Add<Linear<> >(trainData.n_rows, 8);
-  model.Add<PReLU<> >();
-  model.Add<Linear<> >(8, 3);
-  model.Add<LogSoftMax<> >();
-
-  // Train the model
-  model.Train(trainData, trainLabels);
-
-  // Use the Predict method to get the predictions
-  arma::mat predictionTemp;
-  model.Predict(trainData, predictionTemp);
-  
-  // Save the model
-  data::Save("model.bin", "model", model, false);
-  
-  // Load the model
-  FFN<> loadedModel;
-  data::Load("model.bin", "model", loadedModel);
-  
-  // Compute predictions of the loaded model on the same data set
-  arma::mat predictionTemp2;
-  loadedModel.Predict(trainData, predictionTemp2);
-
-  CheckMatrices(predictionTemp, predictionTemp2);
-}
-
-/**
  * Check whether copying and moving network with Reparametrization is working or not.
  */
 TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
@@ -801,6 +758,58 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  model.Train(trainData, trainLabels, opt);
+
+  FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
+  xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
+
+  // Serialize into other models.
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  model.Predict(testData, predictions);
+  xmlModel.Predict(testData, xmlPredictions);
+  jsonModel.Predict(testData, jsonPredictions);
+  jsonModel.Predict(testData, binaryPredictions);
+
+  CheckMatrices(predictions, xmlPredictions, jsonPredictions,
+      binaryPredictions);
+}
+
+/**
+ * Test that serialization works ok for PReLU.
+ */
+TEST_CASE("PReLUSerializationTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  arma::mat testData;
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<PReLU<> >();
   model.Add<Dropout<> >();
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
