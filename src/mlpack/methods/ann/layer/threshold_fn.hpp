@@ -112,6 +112,9 @@ class Threshold
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
+  //! Locally-stored +ve output indexes object.
+  arma::uvec positive;
+
   //! Threshold Parameter
   double threshold;
 

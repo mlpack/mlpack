@@ -33,11 +33,10 @@ template<typename InputType, typename OutputType>
 void Threshold<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = arma::ones<OutputDataType>(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; ++i)
-  {
-    output(i) = (input(i) > threshold) ? input(i) : value;
-  }
+  output.set_size(arma::size(input));
+  output.fill(value);
+  positive = arma::find(input > threshold);
+  output(positive) = input(positive);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -48,11 +47,7 @@ void Threshold<InputDataType, OutputDataType>::Backward(
   DataType derivative;
   derivative.set_size(arma::size(gy));
   derivative.fill(0.0);
-  for (size_t i = 0; i < input.n_elem; ++i)
-  {
-    if (input(i) > threshold)
-      derivative(i) = 1.0;
-  }
+  derivative(positive) = 1.0;
 
   g = gy % derivative;
 }
