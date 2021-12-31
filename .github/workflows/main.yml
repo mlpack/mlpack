@@ -90,7 +90,7 @@ jobs:
       matrix:
         config:
         - {os: windows-latest, r: '4.0', name: 'Windows R'}
-        - {os: macOS-latest, r: '4.0', name: 'macOS R'}
+        - {os: macOS-latest, r: 'release', name: 'macOS R'}
         - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest", name: 'Linux R'}
 
 
@@ -132,8 +132,17 @@ jobs:
             sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev
 
       - name: Install dependencies
+        if: runner.os != 'macOS'
         run: |
           install.packages('remotes')
+          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Install dependencies (From Source)
+        if: runner.os == 'macOS'
+        run: |
+          install.packages('https://cloud.r-project.org/bin/macosx/contrib/4.1/remotes_2.4.1.tgz', repos=NULL, type="source")
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
