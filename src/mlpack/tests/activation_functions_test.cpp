@@ -759,8 +759,8 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
  * @param target Target data used to evaluate the Threshold activation.
  */
 void CheckThresholdCorrect(const arma::colvec input,
-                       const arma::colvec ActivationTarget,
-                       const arma::colvec DerivativeTarget)
+                           const arma::colvec ActivationTarget,
+                           const arma::colvec DerivativeTarget)
 {
   // Initialize Threshold object.
   Threshold<> thresh(1.0, 0.5);

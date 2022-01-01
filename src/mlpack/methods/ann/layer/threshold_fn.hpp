@@ -44,9 +44,9 @@ class Threshold
   /**
    * Create the Threshold object using the specified parameters.
    * The non zero gradient region can be adjusted by specifying the parameter
-   * threshold. Default (alpha = 0.0)
+   * threshold. Default (threshold = 0.0)
    * The value when x < threshold can be adjusted by specifying the parameter
-   * value. Default (alpha = 0.0)
+   * value. Default (value = 0.0)
    *
    * @param threshold Non zero gradient region threshold
    * @param value Value when x < threshold
@@ -87,9 +87,9 @@ class Threshold
   OutputDataType& Delta() { return delta; }
 
   //! Get the non zero gradient region threshold.
-  double const& Threshold_var() const { return threshold; }
+  double const& ThresholdVar() const { return threshold; }
   //! Modify the non zero gradient region threshold.
-  double& Threshold_var() { return threshold; }
+  double& ThresholdVar() { return threshold; }
 
   //! Get the zero gradient region value.
   double const& Value() const { return value; }
