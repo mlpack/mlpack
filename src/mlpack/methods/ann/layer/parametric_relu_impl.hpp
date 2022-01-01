@@ -33,7 +33,7 @@ template<typename InputDataType, typename OutputDataType>
 void PReLU<InputDataType, OutputDataType>::Reset()
 {
   //! Set value of alpha to the one given by user.
-  alpha(0) = userAlpha;
+  alpha = arma::mat(alpha.memptr(), 1, 1, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,9 +41,7 @@ template<typename InputType, typename OutputType>
 void PReLU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = input;
-  arma::uvec negative = arma::find(input < 0);
-  output(negative) = input(negative) * alpha(0);
+  output = arma::max(input, alpha(0) * input);
 }
 
 template<typename InputDataType, typename OutputDataType>
