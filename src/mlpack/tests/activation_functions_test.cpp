@@ -752,6 +752,64 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
+ * Implementation of the RReLU activation function derivative test. The function
+ * is implemented as ReLU6 layer in the file randomized_relu.hpp.
+ *
+ * @param input Input data used for evaluating the RReLU activation function.
+ * @param target Target data used to evaluate the RReLU activation.
+ */
+void CheckRReLUCorrect(const arma::colvec input,
+                       const arma::colvec ActivationTarget,
+                       const arma::colvec DerivativeTarget,
+                       const bool deterministic)
+{
+  // Initialize RReLU object.
+  RReLU<> rrelu;
+
+  math::RandomSeed(2);
+  rrelu.Deterministic() = deterministic;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  rrelu.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(ActivationTarget.at(i)).epsilon(1e-5));
+  }
+  rrelu.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(DerivativeTarget.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Basic test of the RReLU function.
+ */
+TEST_CASE("RReLUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
+
+  // desiredActivations taken from PyTorch.
+  const arma::colvec desiredActivations("-0.5095 3.0 0.0 6.0 24.0");
+
+  // desiredDerivatives taken from PyTorch.
+  const arma::colvec desiredDerivatives("0.25475 1.0 1.0 1.0 1.0");
+
+  // desiredActivations taken from PyTorch.
+  const arma::colvec desiredActivationsD("-0.363636 3.0 0.0 6.0 24.0");
+
+  // desiredDerivatives taken from PyTorch.
+  const arma::colvec desiredDerivativesD("0.181818 1.0 1.0 1.0 1.0");
+
+  CheckRReLUCorrect(activationData, desiredActivations, desiredDerivatives, false);
+  CheckRReLUCorrect(activationData, desiredActivationsD, desiredDerivativesD, true);
+}
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")

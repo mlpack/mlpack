@@ -136,6 +136,8 @@ set(SOURCES
   softshrink_impl.hpp
   softmin.hpp
   softmin_impl.hpp
+  randomized_relu.hpp
+  randomized_relu_impl.hpp
 )
 
 # Add directory name to sources.
