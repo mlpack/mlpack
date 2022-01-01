@@ -21,7 +21,7 @@ namespace ann { /** Artificial Neural Network. */
 
 
 template<typename InputDataType, typename OutputDataType>
-LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
+LayerNorm<InputDataType, OutputDataType>::LayerNorm():
     size(0),
     eps(1e-8),
     loading(false)
@@ -31,12 +31,65 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
 
 template <typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm(
-    const size_t size, const double eps) :
+    const size_t size, const double eps):
     size(size),
     eps(eps),
     loading(false)
 {
   weights.set_size(size + size, 1);
+}
+
+
+template<typename InputDataType, typename OutputDataType>
+LayerNorm<InputDataType, OutputDataType>::LayerNorm(
+    const LayerNorm& layer):
+    size(layer.size),
+    eps(layer.eps),
+    weights(layer.weights),
+    loading(true)
+{
+    // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+LayerNorm<InputDataType, OutputDataType>::LayerNorm(
+    LayerNorm&& layer):
+    size(0),
+    eps(1e-8),
+    weights(std::move(layer.weights)),
+    loading(false)
+{
+    // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+LayerNorm<InputDataType, OutputDataType>&
+LayerNorm<InputDataType, OutputDataType>::
+operator=(const LayerNorm& layer)
+{
+    if (this != &layer)
+    {
+        size = layer.size;
+        eps = layer.eps;
+        weights = layer.weights;
+        loading = true;
+    }
+    return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+LayerNorm<InputDataType, OutputDataType>&
+LayerNorm<InputDataType, OutputDataType>::
+operator=(LayerNorm&& layer)
+{
+    if (this != &layer)
+    {
+        size = 0;
+        eps = 1e-8;
+        weights = std::move(layer.weights);
+        loading = false;
+    }
+    return *this;
 }
 
 template<typename InputDataType, typename OutputDataType>
