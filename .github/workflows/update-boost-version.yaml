@@ -21,7 +21,7 @@ jobs:
         run: |
           # CMake for extracting present boost version.
           mkdir build && cd build
-          cmake ..
+          cmake -DDOWNLOAD_DEPENDENCIES=ON ..
 
           # Ping version information upstream.
           BOOST_RELEASE_JSON=$(curl -sL https://api.github.com/repos/boostorg/boost/tags)
