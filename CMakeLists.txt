@@ -176,20 +176,26 @@ endif()
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
+# https://stackoverflow.com/questions/19774778/when-is-it-necessary-to-use-the-flag-stdlib-libstdc
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   if (APPLE)
     # Detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
-    # extract V from '11.V.x'.
+    # extract V from '10.V.x'.
     exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
-        "11\\.([0-9]+).*" "\\1"
-        MACOSX_VERSION
+        "([0-9]+)(?:\\.([0-9]+).*)*" "\\1"
+        MACOSX_MAJOR_VERSION
+        "${MACOSX_VERSION_RAW}")
+
+    string(REGEX REPLACE
+        "([0-9]+)(?:\\.([0-9]+).*)*" "\\2"
+        MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
 
      # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
      # select the right stdlib.
-    if (${MACOSX_VERSION} LESS 9)
+    if (${MACOSX_MAJOR_VERSION} LESS 11 AND ${MACOSX_MINOR_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_SHARED_LINKER_FLAGS
           "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
