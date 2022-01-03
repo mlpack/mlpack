@@ -482,7 +482,7 @@ void PrintInputProcessing(
         << "_tuple[2]" << std::endl;
     std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](p, <const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
-        << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
+        << "<const cbool*> PyArray_DATA(" << d.name << "_dims)" << std::endl;
     std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
@@ -502,7 +502,7 @@ void PrintInputProcessing(
         << std::endl;
     std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](p, <const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
-        << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
+        << "<const cbool*> PyArray_DATA(" << d.name << "_dims)" << std::endl;
     std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
     std::cout << prefix << "del " << d.name << "_mat" << std::endl;
