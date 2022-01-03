@@ -469,7 +469,7 @@ void PrintInputProcessing(
   if (!d.required)
   {
     std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
-    std::cout << prefix << "  void* PyArray_DATA(numpy.ndarray arr)" << std::endl;
+    std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
         << d.name << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
@@ -492,7 +492,7 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
-    std::cout << prefix << "  void* PyArray_DATA(numpy.ndarray arr)" << std::endl;
+    std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
         << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
         << std::endl;
