@@ -33,13 +33,13 @@ RReLU<InputDataType, OutputDataType>::RReLU(
     lowerbound(lowerbound),
     higherbound(higherbound),
     deterministic(false),
-		alpha(0.0)
+    alpha(0.0)
 {
   if (lowerbound < 1.0 || higherbound < 1.0)
-	{
-		Log::Fatal << "Lowerbound and higherbound must be greater than 1."
-				<< std::endl;
-	}
+  {
+    Log::Fatal << "Lowerbound and higherbound must be greater than 1."
+        << std::endl;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -47,14 +47,14 @@ template<typename InputType, typename OutputType>
 void RReLU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-	if (deterministic)
-	{
-		alpha = 2.0 / (higherbound + lowerbound);
-	}
-	else
-	{
-		alpha = 1.0 / math::Random(lowerbound, higherbound);
-	}
+  if (deterministic)
+  {
+    alpha = 2.0 / (higherbound + lowerbound);
+  }
+  else
+  {
+    alpha = 1.0 / math::Random(lowerbound, higherbound);
+  }
   output = arma::max(input, alpha * input);
 }
 
@@ -78,7 +78,7 @@ void RReLU<InputDataType, OutputDataType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(lowerbound));
-	ar(CEREAL_NVP(higherbound));
+  ar(CEREAL_NVP(higherbound));
 }
 
 } // namespace ann

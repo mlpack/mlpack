@@ -100,30 +100,30 @@ class RReLU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
-	 //! The value of the deterministic parameter.
+  //! The value of the deterministic parameter.
   bool const& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
-	//! Get the lowerbound parameter.
+  //! Get the lowerbound parameter.
   double const& LowerBound() const { return lowerbound; }
   //! Modify the lowerbound parameter.
   void LowerBound(const double lo)
-	{
-		if (lo < 1.0)
-			Log::Fatal << "Lowerbound must be greater than 1.0" << std::endl;
-		lowerbound = lo;
-	}
+  {
+    if (lo < 1.0)
+      Log::Fatal << "Lowerbound must be greater than 1.0" << std::endl;
+    lowerbound = lo;
+  }
 
-	//! Get the higherbound parameter.
+  //! Get the higherbound parameter.
   double const& HigherBound() const { return higherbound; }
   //! Modify the upperbound parameter.
   void HigherBound(const double hi)
-	{
-		if (hi < 1.0)
-			Log::Fatal << "Higherbound must be greater than 1.0" << std::endl;
-		higherbound = hi;
-	}
+  {
+    if (hi < 1.0)
+      Log::Fatal << "Higherbound must be greater than 1.0" << std::endl;
+    higherbound = hi;
+  }
 
   //! Get size of weights.
   size_t WeightSize() const { return 0; }
@@ -141,11 +141,11 @@ class RReLU
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-	//! Lower bound of uniform distribution
-	double lowerbound;
+  //! Lower bound of uniform distribution
+  double lowerbound;
 
-	//! Higher bound of uniform distribution
-	double higherbound;
+  //! Higher bound of uniform distribution
+  double higherbound;
 
   //! If true randomization of alpha is disabled, see notes above.
   bool deterministic;
