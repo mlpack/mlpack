@@ -735,7 +735,7 @@ layer @c x can be accessed via @c boost::visitor:
 
 @code
 arma::mat parametersX;
-boost::apply_visitor(ParametersVisitor(parametersX), model.Model()[x];
+boost::apply_visitor(ParametersVisitor(parametersX), model.Model()[x]);
 @endcode
 
 In the example above, we get the weights of the second layer.
