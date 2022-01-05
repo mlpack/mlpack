@@ -205,3 +205,93 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
 
   REQUIRE(success == true);
 }
+
+TEST_CASE("VanillaNetworkBatchSizeTest")
+{
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+
+  model.Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
+  model.Add<ReLULayer<>>();
+  model.Add<MaxPooling>(2, 2);
+  model.Add<Convolution>(12, 2, 2);
+  model.Add<ReLULayer<> >();
+  model.Add<MaxPooling>(2, 2);
+  model.Add<Linear>(20);
+  model.Add<ReLULayer<> >();
+  model.Add<Linear>(10);
+  model.Add<ReLULayer<> >();
+  model.Add<Linear>(2);
+  model.Add<LogSoftMax>();
+
+  model.InputDimensions() = std::vector<size_t>({ 28, 28 });
+
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "1" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "2" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  size_t trials = 5;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    const size_t batchSize = std::pow(2.0, (double) trial + 1.0);
+
+    // First, check the forward pass.
+    arma::mat results;
+    model.Forward(X.cols(0, batchSize - 1), results);
+
+    REQUIRE(results.n_cols == batchSize);
+
+    // Now compute results with a batch size of 1.
+    arma::mat singleResults(results.n_rows, results.n_cols);
+    for (size_t i = 0; i < batchSize; ++i)
+    {
+      arma::mat tmpResult;
+      model.Forward(X.cols(i, i), tmpResult);
+
+      REQUIRE(tmpResult.n_cols == 1);
+
+      singleResults.col(i) = tmpResult;
+    }
+
+    CheckMatrices(results, singleResults);
+
+    // Now, check EvaluateWithGradient()'s results.
+    arma::mat gradient(1, X.n_rows);
+    const double obj = model.EvaluateWithGradient(X.cols(0, batchSize - 1),
+        gradient);
+
+    arma::mat singleGradient(gradient.n_rows, gradient.n_cols);
+    double singleObj = 0.0;
+    for (size_t i = 0; i < batchSize; ++i)
+    {
+      arma::mat tmpGradient(1, X.n_rows);
+      singleObj += model.EvaluateWithGradient(X.cols(i, i), tmpGradient);
+
+      singleGradient += tmpGradient;
+    }
+
+    REQUIRE(obj == Approx(singleObj));
+    CheckMatrices(gradient, singleGradient);
+  }
+}
