@@ -392,17 +392,15 @@ network.Network(); }
    * TODO: better comment.  You would call this when you want to, e.g., pass an
    * n-dimensional tensor, so that you can specify each of those n dimensions.
    */
-  // Note: we don't need to invalidate any caches, because any forward pass will
-  // already check if the input dimensions have changed.
-  std::vector<size_t>& InputDimensions() { return inputDimensions; }
-  //! Get the logical dimensions of the input.
-  const std::vector<size_t>& InputDimensions() const
+  std::vector<size_t>& InputDimensions()
   {
     // The user may change the input dimensions, so we will have to propagate
     // these changes to the network.
     inputDimensionsAreSet = false;
     return inputDimensions;
   }
+  //! Get the logical dimensions of the input.
+  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
  private:
   // Helper functions.
