@@ -90,7 +90,7 @@ jobs:
       matrix:
         config:
         - {os: windows-latest, r: '4.0', name: 'Windows R'}
-        - {os: macOS-latest, r: 'release', name: 'macOS R'}
+        - {os: macos-10.15, r: 'release', name: 'macOS R'}
         - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest", name: 'Linux R'}
 
 
