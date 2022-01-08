@@ -58,7 +58,6 @@ namespace rl {
             })
         }
       };
-
 } // namespace rl
 } // namespace mlpack
 
