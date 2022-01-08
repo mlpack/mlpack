@@ -53,7 +53,7 @@ class FruitTreeNavigation
      * @param data Data for the zero based index of the current node.
      */
     State(const arma::colvec& data) : data(data)
-    { /* nothing to do here */ }
+    { /* Nothing to do here. */ }
 
     //! Modify the state representation.
     arma::vec& Data() { return data; }
