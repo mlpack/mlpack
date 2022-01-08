@@ -35,7 +35,7 @@ namespace rl{
 class FruitTreeNavigation
 {
  public:
-  /*
+  /**
    * Implementation of Fruit Tree Navigation state. Each State is a tuple 
    * {(row, column)} representing zero based index of a node in the tree.
    */
