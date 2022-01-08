@@ -76,7 +76,7 @@ class FruitTreeNavigation
     arma::vec data;
   };
 
-  /*
+  /**
    * Implementation of action for Fruit Tree Navigation task.
    */
   class Action
