@@ -45,7 +45,7 @@ class FruitTreeNavigation
     /**
      * Construct a state instance.
      */
-    State(): data(dimension) { /* nothing to do here */ }
+    State(): data(dimension) { /* Nothing to do here. */ }
 
     /**
      * Construct a state instance from given data.
