@@ -51,6 +51,18 @@ class MeanPooling
               const size_t strideHeight = 1,
               const bool floor = true);
 
+   //! Copy Constructor.
+  MeanPooling(const MeanPooling& layer);
+    
+  //! Move Constructor.
+  MeanPooling(MeanPooling&& layer);
+    
+  //! Copy assignment operator.
+  MeanPooling& operator=(const MeanPooling& layer);
+    
+  //! Move assignment operator.
+  MeanPooling& operator=(MeanPooling&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

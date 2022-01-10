@@ -51,6 +51,99 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MaxPooling<InputDataType, OutputDataType>::MaxPooling(
+  const MaxPooling& layer) :
+  kernelWidth(layer.kernelWidth),
+  kernelHeight(layer.kernelHeight),
+  strideWidth(layer.strideWidth),
+  strideHeight(layer.strideHeight),
+  floor(layer.floor),
+  inSize(layer.inSize),
+  outSize(layer.outSize),
+  reset(layer.reset),
+  inputWidth(layer.inputWidth),
+  inputHeight(layer.inputHeight),
+  outputWidth(layer.outputWidth),
+  outputHeight(layer.outputHeight),
+  deterministic(layer.deterministic),
+  batchSize(layer.batchSize)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+MaxPooling<InputDataType, OutputDataType>::MaxPooling(
+    MaxPooling&& layer) :
+    kernelWidth(std::move(layer.kernelWidth)),
+    kernelHeight(std::move(layer.kernelHeight)),
+    strideWidth(std::move(layer.strideWidth)),
+    strideHeight(std::move(layer.strideHeight)),
+    floor(std::move(layer.floor)),
+    inSize(0),
+    outSize(0),
+    reset(false),
+    inputWidth(0),
+    inputHeight(0),
+    outputWidth(0),
+    outputHeight(0),
+    deterministic(false),
+    batchSize(0)
+{
+   // Nothing to do here.
+}
+    
+template <typename InputDataType, typename OutputDataType>
+MaxPooling<InputDataType, OutputDataType>&
+MaxPooling<InputDataType, OutputDataType>::
+operator=(const MaxPooling& layer) 
+{
+  if (this != &layer)
+  {
+    kernelWidth = layer.kernelWidth;
+    kernelHeight = layer.kernelHeight;
+    strideWidth = layer.strideWidth;
+    strideHeight = layer.strideHeight;
+    floor = layer.floor;
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    reset = layer.reset;
+    inputWidth = layer.inputWidth;
+    inputHeight = layer.inputHeight;
+    outputWidth = layer.outputWidth;
+    outputHeight = layer.outputHeight;
+    deterministic = layer.deterministic;
+    batchSize = layer.batchSize;
+  }
+  return *this;
+}
+    
+template <typename InputDataType, typename OutputDataType>
+MaxPooling<InputDataType, OutputDataType>&
+MaxPooling<InputDataType, OutputDataType>::
+operator=(MaxPooling&& layer) 
+{
+  if (this != &layer)
+  {
+    kernelWidth = std::move(layer.kernelWidth);
+    kernelHeight = std::move(layer.kernelHeight);
+    strideWidth = std::move(layer.strideWidth);
+    strideHeight = std::move(layer.strideHeight);
+    floor = std::move(layer.floor);
+    inSize = 0;
+    outSize = 0;
+    reset = false;
+    inputWidth = 0;
+    inputHeight = 0;
+    outputWidth = 0;
+    outputHeight = 0;
+    deterministic = false;
+    batchSize = 0;
+
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>& input, arma::Mat<eT>& output)

@@ -51,6 +51,99 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MeanPooling<InputDataType, OutputDataType>::MeanPooling(
+  const MeanPooling& layer) :
+  kernelWidth(layer.kernelWidth),
+  kernelHeight(layer.kernelHeight),
+  strideWidth(layer.strideWidth),
+  strideHeight(layer.strideHeight),
+  floor(layer.floor),
+  inSize(layer.inSize),
+  outSize(layer.outSize),
+  inputWidth(layer.inputWidth),
+  inputHeight(layer.inputHeight),
+  outputWidth(layer.outputWidth),
+  outputHeight(layer.outputHeight),
+  reset(layer.reset),
+  deterministic(layer.deterministic),
+  batchSize(layer.batchSize)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+MeanPooling<InputDataType, OutputDataType>::MeanPooling(
+    MeanPooling&& layer) :
+    kernelWidth(std::move(layer.kernelWidth)),
+    kernelHeight(std::move(layer.kernelHeight)),
+    strideWidth(std::move(layer.strideWidth)),
+    strideHeight(std::move(layer.strideHeight)),
+    floor(std::move(layer.floor)),
+    inSize(0),
+    outSize(0),
+    inputWidth(0),
+    inputHeight(0),
+    outputWidth(0),
+    outputHeight(0),
+    reset(false),
+    deterministic(false),
+    batchSize(0)
+{
+   // Nothing to do here.
+}
+    
+template <typename InputDataType, typename OutputDataType>
+MeanPooling<InputDataType, OutputDataType>&
+MeanPooling<InputDataType, OutputDataType>::
+operator=(const MeanPooling& layer) 
+{
+  if (this != &layer)
+  {
+    kernelWidth = layer.kernelWidth;
+    kernelHeight = layer.kernelHeight;
+    strideWidth = layer.strideWidth;
+    strideHeight = layer.strideHeight;
+    floor = layer.floor;
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    inputWidth = layer.inputWidth;
+    inputHeight = layer.inputHeight;
+    outputWidth = layer.outputWidth;
+    outputHeight = layer.outputHeight;
+    reset = layer.reset;
+    deterministic = layer.deterministic;
+    batchSize = layer.batchSize;
+  }
+  return *this;
+}
+    
+template <typename InputDataType, typename OutputDataType>
+MeanPooling<InputDataType, OutputDataType>&
+MeanPooling<InputDataType, OutputDataType>::
+operator=(MeanPooling&& layer) 
+{
+  if (this != &layer)
+  {
+    kernelWidth = std::move(layer.kernelWidth);
+    kernelHeight = std::move(layer.kernelHeight);
+    strideWidth = std::move(layer.strideWidth);
+    strideHeight = std::move(layer.strideHeight);
+    floor = std::move(layer.floor);
+    inSize = 0;
+    outSize = 0;
+    inputWidth = 0;
+    inputHeight = 0;
+    outputWidth = 0;
+    outputHeight = 0;
+    reset = false;
+    deterministic = false;
+    batchSize = 0;
+
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)

@@ -53,6 +53,18 @@ class AdaptiveMeanPooling
    */
   AdaptiveMeanPooling(const std::tuple<size_t, size_t>& outputShape);
 
+   //! Copy Constructor.
+  AdaptiveMeanPooling(const AdaptiveMeanPooling& layer);
+    
+  //! Move Constructor.
+  AdaptiveMeanPooling(AdaptiveMeanPooling&& layer);
+    
+  //! Copy assignment operator.
+  AdaptiveMeanPooling& operator=(const AdaptiveMeanPooling& layer);
+    
+  //! Move assignment operator.
+  AdaptiveMeanPooling& operator=(AdaptiveMeanPooling&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

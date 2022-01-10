@@ -70,6 +70,18 @@ class MaxPooling
              const size_t strideHeight = 1,
              const bool floor = true);
 
+   //! Copy Constructor.
+  MaxPooling(const MaxPooling& layer);
+    
+  //! Move Constructor.
+  MaxPooling(MaxPooling&& layer);
+    
+  //! Copy assignment operator.
+  MaxPooling& operator=(const MaxPooling& layer);
+    
+  //! Move assignment operator.
+  MaxPooling& operator=(MaxPooling&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

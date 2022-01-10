@@ -44,6 +44,59 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
+  const AdaptiveMaxPooling& layer) :
+  outputWidth(layer.outputWidth),
+  outputHeight(layer.outputHeight),
+  reset(layer.reset),
+  poolingLayer(layer.poolingLayer)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
+    AdaptiveMaxPooling&& layer) :
+    outputWidth(std::move(layer.outputWidth)),
+    outputHeight(std::move(layer.outputHeight)),
+    reset(std::move(layer.reset)),
+    poolingLayer(std::move(layer.poolingLayer))
+{
+   // Nothing to do here.
+}
+    
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>&
+AdaptiveMaxPooling<InputDataType, OutputDataType>::
+operator=(const AdaptiveMaxPooling& layer) 
+{
+  if (this != &layer)
+  {
+    outputWidth = layer.outputWidth;
+    outputHeight = layer.outputHeight;
+    reset = layer.reset;
+    poolingLayer = layer.poolingLayer;
+  }
+  return *this;
+}
+    
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>&
+AdaptiveMaxPooling<InputDataType, OutputDataType>::
+operator=(AdaptiveMaxPooling&& layer) 
+{
+  if (this != &layer)
+  {
+    outputWidth = std::move(layer.outputWidth);
+    outputHeight = std::move(layer.outputHeight);
+    reset = false;
+    poolingLayer = std::move(layer.poolingLayer);
+
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AdaptiveMaxPooling<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
