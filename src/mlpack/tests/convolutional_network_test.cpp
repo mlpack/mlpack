@@ -258,3 +258,347 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   // Check whether move constructor is working or not.
   CheckMoveFunction<>(model1, X, Y, 8);
 }
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("CheckCopyMovingMaxPoolingNetworkTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  /*
+   * Construct a convolutional neural network with a 28x28x1 input layer,
+   * 24x24x8 convolution layer, 12x12x8 pooling layer, 8x8x12 convolution layer
+   * and a 4x4x12 pooling layer which is fully connected with the output layer.
+   * The network structure looks like:
+   *
+   * Input    Convolution  Pooling      Convolution  Pooling      Output
+   * Layer    Layer        Layer        Layer        Layer        Layer
+   *
+   *          +---+        +---+        +---+        +---+
+   *          | +---+      | +---+      | +---+      | +---+
+   * +---+    | | +---+    | | +---+    | | +---+    | | +---+    +---+
+   * |   |    | | |   |    | | |   |    | | |   |    | | |   |    |   |
+   * |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> |   |
+   * |   |      +-+   |      +-+   |      +-+   |      +-+   |    |   |
+   * +---+        +---+        +---+        +---+        +---+    +---+
+   */
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights. If this works 1 of 5 times, I'm fine
+  // with that. All I want to know is that the network is able to escape from
+  // local minima and to solve the task.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<ReLULayer<> >();
+  model->Add<MaxPooling<> >(8, 8, 2, 2);
+  model->Add<Convolution<> >(8, 12, 2, 2);
+  model->Add<ReLULayer<> >();
+  model->Add<MaxPooling<> >(2, 2, 2, 2);
+  model->Add<Linear<> >(192, 20);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(20, 10);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(10, 2);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MaxPooling<> >(8, 8, 2, 2);
+  model1->Add<Convolution<> >(8, 12, 2, 2);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MaxPooling<> >(2, 2, 2, 2);
+  model1->Add<Linear<> >(192, 20);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(20, 10);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(10, 2);
+  model1->Add<LogSoftMax<> >();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, X, Y, 8);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, X, Y, 8);
+}
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("CheckCopyMovingMeanNetworkTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  /*
+   * Construct a convolutional neural network with a 28x28x1 input layer,
+   * 24x24x8 convolution layer, 12x12x8 pooling layer, 8x8x12 convolution layer
+   * and a 4x4x12 pooling layer which is fully connected with the output layer.
+   * The network structure looks like:
+   *
+   * Input    Convolution  Pooling      Convolution  Pooling      Output
+   * Layer    Layer        Layer        Layer        Layer        Layer
+   *
+   *          +---+        +---+        +---+        +---+
+   *          | +---+      | +---+      | +---+      | +---+
+   * +---+    | | +---+    | | +---+    | | +---+    | | +---+    +---+
+   * |   |    | | |   |    | | |   |    | | |   |    | | |   |    |   |
+   * |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> |   |
+   * |   |      +-+   |      +-+   |      +-+   |      +-+   |    |   |
+   * +---+        +---+        +---+        +---+        +---+    +---+
+   */
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights. If this works 1 of 5 times, I'm fine
+  // with that. All I want to know is that the network is able to escape from
+  // local minima and to solve the task.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<ReLULayer<> >();
+  model->Add<MeanPooling<> >(8, 8, 2, 2);
+  model->Add<Convolution<> >(8, 12, 2, 2);
+  model->Add<ReLULayer<> >();
+  model->Add<MeanPooling<> >(2, 2, 2, 2);
+  model->Add<Linear<> >(192, 20);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(20, 10);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(10, 2);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MeanPooling<> >(8, 8, 2, 2);
+  model1->Add<Convolution<> >(8, 12, 2, 2);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MeanPooling<> >(2, 2, 2, 2);
+  model1->Add<Linear<> >(192, 20);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(20, 10);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(10, 2);
+  model1->Add<LogSoftMax<> >();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, X, Y, 8);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, X, Y, 8);
+}
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("CheckCopyMovingAdaptiveMaxNetworkTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  /*
+   * Construct a convolutional neural network with a 28x28x1 input layer,
+   * 24x24x8 convolution layer, 12x12x8 pooling layer, 8x8x12 convolution layer
+   * and a 4x4x12 pooling layer which is fully connected with the output layer.
+   * The network structure looks like:
+   *
+   * Input    Convolution  Pooling      Convolution  Pooling      Output
+   * Layer    Layer        Layer        Layer        Layer        Layer
+   *
+   *          +---+        +---+        +---+        +---+
+   *          | +---+      | +---+      | +---+      | +---+
+   * +---+    | | +---+    | | +---+    | | +---+    | | +---+    +---+
+   * |   |    | | |   |    | | |   |    | | |   |    | | |   |    |   |
+   * |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> |   |
+   * |   |      +-+   |      +-+   |      +-+   |      +-+   |    |   |
+   * +---+        +---+        +---+        +---+        +---+    +---+
+   */
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights. If this works 1 of 5 times, I'm fine
+  // with that. All I want to know is that the network is able to escape from
+  // local minima and to solve the task.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<ReLULayer<> >();
+  model->Add<AdaptiveMaxPooling<> >(1, 1);
+  model->Add<Linear<> >(192, 20);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(20, 10);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(10, 2);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<ReLULayer<> >();
+  model1->Add<AdaptiveMaxPooling<> >(1, 1);
+  model1->Add<Linear<> >(192, 20);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(20, 10);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(10, 2);
+  model1->Add<LogSoftMax<> >();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, X, Y, 8);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, X, Y, 8);
+}
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("CheckCopyMovingAdaptiveMeanNetworkTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  /*
+   * Construct a convolutional neural network with a 28x28x1 input layer,
+   * 24x24x8 convolution layer, 12x12x8 pooling layer, 8x8x12 convolution layer
+   * and a 4x4x12 pooling layer which is fully connected with the output layer.
+   * The network structure looks like:
+   *
+   * Input    Convolution  Pooling      Convolution  Pooling      Output
+   * Layer    Layer        Layer        Layer        Layer        Layer
+   *
+   *          +---+        +---+        +---+        +---+
+   *          | +---+      | +---+      | +---+      | +---+
+   * +---+    | | +---+    | | +---+    | | +---+    | | +---+    +---+
+   * |   |    | | |   |    | | |   |    | | |   |    | | |   |    |   |
+   * |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> +-+ |   +--> |   |
+   * |   |      +-+   |      +-+   |      +-+   |      +-+   |    |   |
+   * +---+        +---+        +---+        +---+        +---+    +---+
+   */
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights. If this works 1 of 5 times, I'm fine
+  // with that. All I want to know is that the network is able to escape from
+  // local minima and to solve the task.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<ReLULayer<> >();
+  model->Add<AdaptiveMeanPooling<> >(1, 1);
+  model->Add<Linear<> >(192, 20);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(20, 10);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(10, 2);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<ReLULayer<> >();
+  model1->Add<AdaptiveMeanPooling<> >(1, 1);
+  model1->Add<Linear<> >(192, 20);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(20, 10);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(10, 2);
+  model1->Add<LogSoftMax<> >();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, X, Y, 8);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, X, Y, 8);
+}
