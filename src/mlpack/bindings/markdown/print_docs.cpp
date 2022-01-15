@@ -57,7 +57,7 @@ void PrintHeaders(const string& bindingName,
     cout << " - [" << langBindingName << "](#" << languages[i]
         << "_";
 
-    if (addWrappers[i])
+    if (addWrapperDocs[i])
       cout << GetWrapperLink(bindingName);
     else
       cout << anchorName;
@@ -106,7 +106,7 @@ void PrintDocs(const string& bindingName,
     cout << "{: #" << languages[i] << "_";
 
     if (addWrapperDocs[i])
-      cout  << GetWrapperLink(bindingName);
+      cout << GetWrapperLink(bindingName);
     else
       cout << bindingName;
 
@@ -250,8 +250,7 @@ void PrintDocs(const string& bindingName,
         cout << "### Example" << endl;
       for (size_t j = 0; j < doc.example.size(); ++j)
       {
-        string eg = ReplaceAllCopy(doc.example[j](),
-                                     "|", "\\|");
+        string eg = ReplaceAllCopy(doc.example[j](), "|", "\\|");
         cout << eg << endl << endl;
       }
       cout << "### See also" << endl;
