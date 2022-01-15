@@ -462,7 +462,8 @@ void PrintInputProcessing(
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
    *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
    *   SetParamWithInfo[mat](p, \<const string\> 'param_name',
-   *       dereference(param_name_mat), \<const cbool*\> PyArray_DATA(param_name_dims))
+   *       dereference(param_name_mat), 
+   *       \<const cbool*\> PyArray_DATA(param_name_dims))
    *   p.SetPassed(\<const string\> 'param_name')
    */
   std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
