@@ -58,7 +58,7 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Mat[double]* m = new arma.Mat[double](<double*> PyArray_DATA(X), \
+  cdef arma.Mat[double]* m = new arma.Mat[double](<double*> PyArray_DATA(X),
       PyArray_SHAPE(X)[1], PyArray_SHAPE(X)[0], isWin, False)
 
   # Take ownership of the memory, if we need to and we are not on Windows.
@@ -81,7 +81,7 @@ cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Mat[size_t]* m = new arma.Mat[size_t](<size_t*> PyArray_DATA(X),\ 
+  cdef arma.Mat[size_t]* m = new arma.Mat[size_t](<size_t*> PyArray_DATA(X),
       PyArray_SHAPE(X)[1], PyArray_SHAPE(X)[0], isWin, False)
 
   # Take ownership of the memory, if we need to.
@@ -147,7 +147,7 @@ cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Row[double]* m = new arma.Row[double](<double*> PyArray_DATA(X), \
+  cdef arma.Row[double]* m = new arma.Row[double](<double*> PyArray_DATA(X),
     PyArray_SHAPE(X)[0], isWin, False)
 
   # Transfer memory ownership, if needed.
@@ -171,7 +171,7 @@ cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Row[size_t]* m = new arma.Row[size_t](<size_t*> PyArray_DATA(X), \
+  cdef arma.Row[size_t]* m = new arma.Row[size_t](<size_t*> PyArray_DATA(X),
       PyArray_SHAPE(X)[0], isWin, False)
 
   # Transfer memory ownership, if needed.
@@ -234,7 +234,7 @@ cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Col[double]* m = new arma.Col[double](<double*> PyArray_DATA(X),\
+  cdef arma.Col[double]* m = new arma.Col[double](<double*> PyArray_DATA(X),
       PyArray_SHAPE(X)[0], isWin, False)
 
   # Transfer memory ownership, if needed.
