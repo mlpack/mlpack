@@ -23,7 +23,7 @@ namespace math /** Miscellaneous math routines. */ {
  *
  * @param x Input value.
  */
-double erfinv(double x)
+double erfinverse(double x)
 {
   const double a[] = {0.886226899, -1.645349621, 0.914624893, -0.140543331};
   const double b[] = {1.0, -2.118377725, 1.442710462, -0.329097515, 0.012229801};
@@ -78,7 +78,7 @@ double erfinv(double x)
  */
 inline double quantile(double p, double mu = 0.0, double sigma = 1.0)
 {
-  return mu + sigma * std::sqrt(2.0) * erfinv(2 * p - 1);
+  return mu + sigma * std::sqrt(2.0) * erfinverse(2 * p - 1);
 }
 
 } // namespace math
