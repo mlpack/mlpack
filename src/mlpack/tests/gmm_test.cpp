@@ -257,32 +257,42 @@ TEST_CASE("GMMTrainEMMultipleGaussians", "[GMMTest]")
  */
 TEST_CASE("GMMTrainEMSingleGaussianWithProbability", "[GMMTest]")
 {
-  // Generate observations from a Gaussian distribution.
-  distribution::GaussianDistribution d("0.5 1.0", "1.0 0.3; 0.3 1.0");
+  // We run the test multiple times, since it sometimes fails, in order to get
+  // the probability of failure down.
+  bool success = false;
+  const size_t trials = 3;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    // Generate observations from a Gaussian distribution.
+    distribution::GaussianDistribution d("0.5 1.0", "1.0 0.3; 0.3 1.0");
 
-  // 10000 observations, each with random probability.
-  arma::mat observations(2, 20000);
-  for (size_t i = 0; i < 20000; ++i)
-    observations.col(i) = d.Random();
-  arma::vec probabilities;
-  probabilities.randu(20000); // Random probabilities.
+    // 10000 observations, each with random probability.
+    arma::mat observations(2, 20000);
+    for (size_t i = 0; i < 20000; ++i)
+      observations.col(i) = d.Random();
+    arma::vec probabilities;
+    probabilities.randu(20000); // Random probabilities.
 
-  // Now train the model.
-  GMM g(1, 2);
-  g.Train(observations, probabilities, 10);
+    // Now train the model.
+    GMM g(1, 2);
+    g.Train(observations, probabilities, 10);
 
-  // Check that it is trained correctly.  5% tolerance because of random error
-  // present in observations.
-  REQUIRE(g.Component(0).Mean()[0] == Approx(0.5).epsilon(0.05));
-  REQUIRE(g.Component(0).Mean()[1] == Approx(1.0).epsilon(0.05));
+    // Check that it is trained correctly.  5% tolerance because of random error
+    // present in observations.
+    if (g.Component(0).Mean()[0] == Approx(0.5).epsilon(0.05) &&
+        g.Component(0).Mean()[1] == Approx(1.0).epsilon(0.05) &&
+        g.Component(0).Covariance()(0, 0) == Approx(1.0).epsilon(0.06) &&
+        g.Component(0).Covariance()(0, 1) == Approx(0.3).epsilon(0.1) &&
+        g.Component(0).Covariance()(1, 0) == Approx(0.3).epsilon(0.1) &&
+        g.Component(0).Covariance()(1, 1) == Approx(1.0).epsilon(0.06) &&
+        g.Weights()[0] == Approx(1.0).epsilon(1e-7))
+    {
+      success = true;
+      break;
+    }
+  }
 
-  // 6% tolerance on the large numbers, 10% on the smaller numbers.
-  REQUIRE(g.Component(0).Covariance()(0, 0) == Approx(1.0).epsilon(0.06));
-  REQUIRE(g.Component(0).Covariance()(0, 1) == Approx(0.3).epsilon(0.1));
-  REQUIRE(g.Component(0).Covariance()(1, 0) == Approx(0.3).epsilon(0.1));
-  REQUIRE(g.Component(0).Covariance()(1, 1) == Approx(1.0).epsilon(0.06));
-
-  REQUIRE(g.Weights()[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(success == true);
 }
 
 /**
@@ -750,17 +760,17 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-6));
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-4));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       REQUIRE(gmm.Component(i).Mean()[j] ==
-          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
+          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-4));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
       {
         REQUIRE(gmm.Component(i).Covariance()(j, k) ==
-            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+            Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-4));
       }
     }
   }

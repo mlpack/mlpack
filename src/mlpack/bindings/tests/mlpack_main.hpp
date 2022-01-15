@@ -38,6 +38,9 @@
 #define CREATE_OBJECT(...) std::string(" ")
 #define CALL_METHOD(...) std::string(" ")
 
+// This doesn't actually matter for this binding type.
+#define BINDING_MIN_LABEL 0
+
 namespace mlpack {
 namespace util {
 

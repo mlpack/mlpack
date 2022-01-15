@@ -15,6 +15,8 @@
 #ifndef MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
 #define MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
 
+#include "types.hpp"
+
 namespace mlpack {
 namespace data {
 
@@ -23,7 +25,7 @@ namespace data {
  *
  * @param type Type to get the logical name of.
  */
-std::string GetStringType(const arma::file_type& type);
+std::string GetStringType(const FileType& type);
 
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
@@ -36,7 +38,7 @@ std::string GetStringType(const arma::file_type& type);
  *
  * @param f Opened istream to look into to guess the file type.
  */
-arma::file_type GuessFileType(std::istream& f);
+FileType GuessFileType(std::istream& f);
 
 /**
  * Attempt to auto-detect the type of a file given its extension, and by
@@ -51,8 +53,8 @@ arma::file_type GuessFileType(std::istream& f);
  * @param filename Name of the file.
  * @return The detected file type.  arma::file_type_unknown if unknown.
  */
-arma::file_type AutoDetect(std::fstream& stream,
-                           const std::string& filename);
+FileType AutoDetect(std::fstream& stream,
+                    const std::string& filename);
 
 /**
  * Return the type based only on the extension.
@@ -60,7 +62,7 @@ arma::file_type AutoDetect(std::fstream& stream,
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
-arma::file_type DetectFromExtension(const std::string& filename);
+FileType DetectFromExtension(const std::string& filename);
 
 } // namespace data
 } // namespace mlpack

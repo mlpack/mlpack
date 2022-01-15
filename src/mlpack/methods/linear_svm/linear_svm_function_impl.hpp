@@ -115,7 +115,7 @@ void LinearSVMFunction<MatType>::Shuffle()
       dataset.n_cols - 1, dataset.n_cols));
 
   // Re-sort data.
-  arma::mat newData = dataset.cols(ordering);
+  MatType newData = dataset.cols(ordering);
   math::ClearAlias(dataset);
   dataset = std::move(newData);
 

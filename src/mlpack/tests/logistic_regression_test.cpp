@@ -802,7 +802,7 @@ TEST_CASE("LogisticRegressionSparseLBFGSTest", "[LogisticRegressionTest]")
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
     REQUIRE(lr.Parameters()[i] ==
-        Approx(lrSparse.Parameters()[i]).epsilon(1e-5));
+        Approx(lrSparse.Parameters()[i]).epsilon(1e-2));
 }
 
 /**

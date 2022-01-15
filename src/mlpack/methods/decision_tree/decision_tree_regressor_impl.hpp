@@ -31,7 +31,7 @@ DecisionTreeRegressor<FitnessFunction,
                       NoRecursion>::DecisionTreeRegressor() :
     splitDimension(0),
     dimensionType(0),
-    splitPointOrPrediction(0.0)
+    splitPoint(0.0)
 {
   // Nothing to do here.
 }
@@ -286,12 +286,16 @@ DecisionTreeRegressor<FitnessFunction,
     NumericAuxiliarySplitInfo(other),
     CategoricalAuxiliarySplitInfo(other),
     splitDimension(other.splitDimension),
-    dimensionType(other.dimensionType),
-    splitPointOrPrediction(other.splitPointOrPrediction)
+    dimensionType(other.dimensionType)
 {
   // Copy each child.
   for (size_t i = 0; i < other.children.size(); ++i)
     children.push_back(new DecisionTreeRegressor(*other.children[i]));
+
+  if (children.size() != 0)
+    splitPoint = other.splitPoint;
+  else
+    prediction = other.prediction;
 }
 
 //! Take ownership of another tree.
@@ -311,10 +315,12 @@ DecisionTreeRegressor<FitnessFunction,
     CategoricalAuxiliarySplitInfo(std::move(other)),
     children(std::move(other.children)),
     splitDimension(other.splitDimension),
-    dimensionType(other.dimensionType),
-    splitPointOrPrediction(other.splitPointOrPrediction)
+    dimensionType(other.dimensionType)
 {
-  // Nothing to do here.
+  if (children.size() != 0)
+    splitPoint = other.splitPoint;
+  else
+    prediction = other.prediction;
 }
 
 //! Copy another tree.
@@ -346,7 +352,11 @@ DecisionTreeRegressor<FitnessFunction,
   // Copy everything from the other tree.
   splitDimension = other.splitDimension;
   dimensionType = other.dimensionType;
-  splitPointOrPrediction = other.splitPointOrPrediction;
+
+  if (other.children.size() != 0)
+    splitPoint = other.splitPoint;
+  else
+    prediction = other.prediction;
 
   // Copy the children.
   for (size_t i = 0; i < other.children.size(); ++i)
@@ -389,7 +399,11 @@ DecisionTreeRegressor<FitnessFunction,
   children = std::move(other.children);
   splitDimension = other.splitDimension;
   dimensionType = other.dimensionType;
-  splitPointOrPrediction = other.splitPointOrPrediction;
+
+  if (children.size() != 0)
+    splitPoint = other.splitPoint;
+  else
+    prediction = other.prediction;
 
   // Take ownership of the auxiliary info.
   NumericAuxiliarySplitInfo::operator=(std::move(other));
@@ -643,7 +657,7 @@ double DecisionTreeRegressor<FitnessFunction,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
-            splitPointOrPrediction,
+            splitPoint,
             *this,
             fitnessFunction);
       }
@@ -655,7 +669,7 @@ double DecisionTreeRegressor<FitnessFunction,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
-            splitPointOrPrediction,
+            splitPoint,
             *this,
             fitnessFunction);
       }
@@ -684,10 +698,9 @@ double DecisionTreeRegressor<FitnessFunction,
     // Get the number of children we will have.
     size_t numChildren = 0;
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(splitPointOrPrediction,
-          *this);
+      numChildren = CategoricalSplit::NumChildren(splitPoint, *this);
     else
-      numChildren = NumericSplit::NumChildren(splitPointOrPrediction, *this);
+      numChildren = NumericSplit::NumChildren(splitPoint, *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -695,14 +708,14 @@ double DecisionTreeRegressor<FitnessFunction,
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-            data(bestDim, j), splitPointOrPrediction, *this);
+            data(bestDim, j), splitPoint, *this);
     }
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
       {
         childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), splitPointOrPrediction, *this);
+            data(bestDim, j), splitPoint, *this);
       }
     }
 
@@ -763,10 +776,9 @@ double DecisionTreeRegressor<FitnessFunction,
     CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
     // Calculate prediction value because we are a leaf.
-    splitPointOrPrediction =
-        fitnessFunction.template OutputLeafValue<UseWeights>(
-            responses.cols(begin, begin + count - 1),
-            UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    prediction = fitnessFunction.template OutputLeafValue<UseWeights>(
+        responses.cols(begin, begin + count - 1),
+        UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
   return -bestGain;
@@ -826,7 +838,7 @@ double DecisionTreeRegressor<FitnessFunction,
                                         weights,
                                     minimumLeafSize,
                                     minimumGainSplit,
-                                    splitPointOrPrediction,
+                                    splitPoint,
                                     *this,
                                     fitnessFunction);
 
@@ -848,8 +860,7 @@ double DecisionTreeRegressor<FitnessFunction,
   if (bestDim != data.n_rows)
   {
     // We know that the split is numeric.
-    size_t numChildren = NumericSplit::NumChildren(splitPointOrPrediction,
-        *this);
+    size_t numChildren = NumericSplit::NumChildren(splitPoint, *this);
     splitDimension = bestDim;
     dimensionType = (size_t) data::Datatype::numeric;
 
@@ -859,7 +870,7 @@ double DecisionTreeRegressor<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
     {
       childAssignments[j - begin] = NumericSplit::CalculateDirection(
-          data(bestDim, j), splitPointOrPrediction, *this);
+          data(bestDim, j), splitPoint, *this);
     }
 
     // Calculate counts of children in each node.
@@ -918,10 +929,9 @@ double DecisionTreeRegressor<FitnessFunction,
     NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
 
     // Calculate prediction value because we are a leaf.
-    splitPointOrPrediction =
-        fitnessFunction.template OutputLeafValue<UseWeights>(
-            responses.cols(begin, begin + count - 1),
-            UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    prediction = fitnessFunction.template OutputLeafValue<UseWeights>(
+        responses.cols(begin, begin + count - 1),
+        UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
   return -bestGain;
@@ -943,7 +953,7 @@ double DecisionTreeRegressor<FitnessFunction,
   if (children.size() == 0)
   {
     // Return cached prediction.
-    return splitPointOrPrediction;
+    return prediction;
   }
 
   return children[CalculateDirection(point)]->Predict(point);
@@ -967,7 +977,7 @@ void DecisionTreeRegressor<FitnessFunction,
   // If the tree's root is leaf.
   if (children.size() == 0)
   {
-    predictions.fill(splitPointOrPrediction);
+    predictions.fill(prediction);
     return;
   }
 
@@ -991,10 +1001,10 @@ size_t DecisionTreeRegressor<FitnessFunction,
 {
   if ((data::Datatype) dimensionType == data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
-        splitPointOrPrediction, *this);
+        splitPoint, *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
-        splitPointOrPrediction, *this);
+        splitPoint, *this);
 }
 
 //! Serialize the tree.
@@ -1024,7 +1034,9 @@ void DecisionTreeRegressor<FitnessFunction,
   // Now serialize the rest of the object.
   ar(CEREAL_NVP(splitDimension));
   ar(CEREAL_NVP(dimensionType));
-  ar(CEREAL_NVP(splitPointOrPrediction));
+  ar(CEREAL_NVP(splitPoint));
+  // Since splitPoint and prediction are a union, we only need to serialize one of them.
+  ar(CEREAL_NVP(splitPoint));
 }
 
 //! Return the number of leaves.

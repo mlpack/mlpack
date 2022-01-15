@@ -12,6 +12,11 @@ licensed under the Boost Software License, version 1.0.  This code is found in
 src/mlpack/core/boost_backport/ and more details on the licensing are available
 there.
 
+mlpack contain some usage of the source code of MNMLSTC Core library, which is
+a backport of C++17 features to C++11. MNMLSTC is licensed under the Apache 2.0
+License. This code can be found in src/mlpack/core/std_backport/ and more
+details about licensing can be found there.
+
 mlpack may contain some usage of the source code of stb, which is licensed 
 under the MIT License and the Public Domain (www.unlicense.org). This code
 is used in src/mlpack/core/data/load_image.hpp.

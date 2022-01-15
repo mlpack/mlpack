@@ -43,9 +43,9 @@ BINDING_LONG_DESC(
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
     "\n\n"
-    "  y = (1 / 1 + e^-(X * b))"
+    "  y = (1 / 1 + e^-(X * b))."
     "\n\n"
-    "where y takes values 0 or 1."
+    "In this setting, y corresponds to class labels and X corresponds to data."
     "\n\n"
     "This program allows loading a logistic regression model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -93,18 +93,11 @@ BINDING_LONG_DESC(
     "from the logistic regression model may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " parameter." +
     "\n\n"
-    "Note : The following parameters are deprecated and "
-    "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
-    ", " + PRINT_PARAM_STRING("output_probabilities") +
-    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + "\nUse " +
-    PRINT_PARAM_STRING("probabilities") + " instead of " +
-    PRINT_PARAM_STRING("output_probabilities") +
-    "\n\n"
     "This implementation of logistic regression does not support the general "
-    "multi-class case but instead only the two-class case.  Any labels must "
-    "be either 0 or 1.  For more classes, see the softmax_regression "
-    "program.");
+    "multi-class case but instead only the two-class case.  Any labels must be "
+    "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
+    std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
+    "softmax regression implementation.");
 
 // Example.
 BINDING_EXAMPLE(
@@ -121,7 +114,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-        "output", "predictions"));
+        "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
@@ -159,17 +152,8 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-// The PARAM_UROW_OUT("output"..) is deprecated and can be removed
-// in mlpack 4.0.0
-PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
-    "the predictions for the test set will be saved.", "o");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
-// PARAM_MATRIX_OUT("output_probabilities"..) is deprecated
-// and it can be removed in mlpack 4
-PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
-    "matrix is where the class probabilities for the test set will be saved.",
-    "x");
 PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
@@ -199,16 +183,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "will not be saved");
   }
 
-  // options "output" and "output_probabilities" are deprecated and replaced by
-  // "predictions" and "probabilities" respectively
-  // options "output" and "output_probabilities" can be removed in mlpack 4
-  RequireAtLeastOnePassed(params, { "output_model", "output",
-      "output_probabilities", "predictions", "probabilities"}, false,
-      "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "predictions",
+      "probabilities"}, false, "no output will be saved");
 
-  // "output" and "output_probabilities" lines can be removed in mlpack 4
-  ReportIgnoredParam(params, {{ "test", false }}, "output");
-  ReportIgnoredParam(params, {{ "test", false }}, "output_probabilities");
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
   ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
 
@@ -376,32 +353,23 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (params.Has("predictions") || params.Has("output"))
+    if (params.Has("predictions"))
     {
       Log::Info << "Predicting classes of points in '"
           << params.GetPrintable<arma::mat>("test") << "'." << endl;
       model->Classify(testSet, predictions, decisionBoundary);
 
-      // The IO param "output" is deprecated and replaced by "predictions"
-      // "output" parameter will be removed in mlpack 4.
       if (params.Has("predictions"))
         params.Get<arma::Row<size_t>>("predictions") = predictions;
-      if (params.Has("output"))
-        params.Get<arma::Row<size_t>>("output") = std::move(predictions);
     }
 
-    // The IO param "output_probabilities" is deprecated
-    // and replaced by "probabilities"
-    // "output_probabilities" parameter will be removed in mlpack 4.
-    if (params.Has("output_probabilities") || params.Has("probabilities"))
+    if (params.Has("probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
           << params.GetPrintable<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model->Classify(testSet, probabilities);
 
-      if (params.Has("output_probabilities"))
-        params.Get<arma::mat>("output_probabilities") = probabilities;
       if (params.Has("probabilities"))
         params.Get<arma::mat>("probabilities") = std::move(probabilities);
     }

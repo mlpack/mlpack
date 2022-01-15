@@ -35,9 +35,23 @@ if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
       set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
 // [[Rcpp::export]]
-SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params, const std::string& paramName)
+SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params,
+                                   const std::string& paramName,
+                                   SEXP inputModels)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  Rcpp::List inputModelsList(inputModels);
+  ${MODEL_TYPE}* modelPtr = p.Get<${MODEL_TYPE}*>(paramName);
+  for (int i = 0; i < inputModelsList.length(); ++i)
+  {
+    ${MODEL_PTR_TYPEDEF} inputModel =
+        Rcpp::as<${MODEL_PTR_TYPEDEF}>(inputModelsList[i]);
+    // Don't create a new XPtr---just reuse the one given as input, so that we
+    // don't end up deleting it twice.
+    if (inputModel.get() == modelPtr)
+      return inputModel;
+  }
+
   return std::move((${MODEL_PTR_TYPEDEF}) p.Get<${MODEL_TYPE}*>(paramName));
 }
 
@@ -46,7 +60,7 @@ SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params, const std::string& paramName)
 void SetParam${MODEL_SAFE_TYPE}Ptr(SEXP params, const std::string& paramName, SEXP ptr)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
-  p.Get<${MODEL_TYPE}*>(paramName) =  Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr);
+  p.Get<${MODEL_TYPE}*>(paramName) = Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr);
   p.SetPassed(paramName);
 }
 

@@ -152,11 +152,11 @@ class GroupNorm
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t size;
-
   //! Locally-stored group count.
   size_t groupCount;
+
+  //! Locally-stored number of input units.
+  size_t size;
 
   //! Locally-stored epsilon value.
   double eps;

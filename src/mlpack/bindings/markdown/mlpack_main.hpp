@@ -106,6 +106,9 @@
 // This doesn't actually matter for this binding type.
 #define BINDING_MATRIX_TRANSPOSED true
 
+// This doesn't actually matter for this binding type.
+#define BINDING_MIN_LABEL 0
+
 namespace mlpack {
 namespace util {
 

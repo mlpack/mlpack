@@ -145,6 +145,8 @@ Copyright:
   Copyright 2021, Mark Fischinger <markfischinger@gmail.com>
   Copyright 2021, Muhammad Fawwaz Mayda <maydafawwaz@gmail.com>
   Copyright 2021, Roshan Nrusing Swain <swainroshan001@gmail.com>
+  Copyright 2021, Suvarsha Chennareddy <suvarshachennareddy@gmail.com>
+  Copyright 2021, Shubham Agrawal <shubham.agra1206@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
