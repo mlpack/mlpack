@@ -14,6 +14,7 @@
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 namespace kmeans {
@@ -161,15 +162,9 @@ Cluster(const MatType& data,
   // Check validity of initial guess.
   if (initialGuess)
   {
-    if (centroids.n_cols != clusters)
-      Log::Fatal << "KMeans::Cluster(): wrong number of initial cluster "
-        << "centroids (" << centroids.n_cols << ", should be " << clusters
-        << ")!" << std::endl;
+    util::CheckSameSizes(centroids, clusters, "KMeans::Cluster()");
 
-    if (centroids.n_rows != data.n_rows)
-      Log::Fatal << "KMeans::Cluster(): initial cluster centroids have wrong "
-        << " dimensionality (" << centroids.n_rows << ", should be "
-        << data.n_rows << ")!" << std::endl;
+    util::CheckSameDimensionality(centroids, data, "KMeans::Cluster()");
   }
 
   // Use the partitioner to come up with the partition assignments and calculate
