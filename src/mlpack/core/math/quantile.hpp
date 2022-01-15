@@ -76,7 +76,7 @@ double erfinverse(double x)
  * @param mu Mean of the distribution. (Default 0)
  * @param sigma Standard deviation of the distribution. (Default 1)
  */
-inline double quantile(double p, double mu = 0.0, double sigma = 1.0)
+double quantile(double p, double mu = 0.0, double sigma = 1.0)
 {
   return mu + sigma * std::sqrt(2.0) * erfinverse(2 * p - 1);
 }
