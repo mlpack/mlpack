@@ -491,26 +491,46 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxNetworkTest", "[ConvolutionalNetworkTest]")
   // local minima and to solve the task.
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
-  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2, 28, 28);
   model->Add<ReLULayer<> >();
-  model->Add<AdaptiveMaxPooling<> >(1, 1);
-  model->Add<Linear<> >(192, 20);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
   model->Add<ReLULayer<> >();
-  model->Add<Linear<> >(20, 10);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<AdaptiveMaxPooling<> >(6, 6);
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(9216, 4096);
   model->Add<ReLULayer<> >();
-  model->Add<Linear<> >(10, 2);
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(4096, 4096);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(4096, 1000);
   model->Add<LogSoftMax<> >();
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
-  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2, 28, 28);
   model1->Add<ReLULayer<> >();
-  model1->Add<AdaptiveMaxPooling<> >(1, 1);
-  model1->Add<Linear<> >(192, 20);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
   model1->Add<ReLULayer<> >();
-  model1->Add<Linear<> >(20, 10);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<AdaptiveMeanPooling<> >(6, 6);
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(9216, 4096);
   model1->Add<ReLULayer<> >();
-  model1->Add<Linear<> >(10, 2);
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(4096, 4096);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(4096, 1000);
   model1->Add<LogSoftMax<> >();
   
   // Check whether copy constructor is working or not.
@@ -574,26 +594,46 @@ TEST_CASE("CheckCopyMovingAdaptiveMeanNetworkTest", "[ConvolutionalNetworkTest]"
   // local minima and to solve the task.
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
-  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2, 28, 28);
   model->Add<ReLULayer<> >();
-  model->Add<AdaptiveMeanPooling<> >(1, 1);
-  model->Add<Linear<> >(192, 20);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
   model->Add<ReLULayer<> >();
-  model->Add<Linear<> >(20, 10);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<AdaptiveMeanPooling<> >(6, 6);
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(9216, 4096);
   model->Add<ReLULayer<> >();
-  model->Add<Linear<> >(10, 2);
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(4096, 4096);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(4096, 1000);
   model->Add<LogSoftMax<> >();
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
-  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2, 28, 28);
   model1->Add<ReLULayer<> >();
-  model1->Add<AdaptiveMeanPooling<> >(1, 1);
-  model1->Add<Linear<> >(192, 20);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
   model1->Add<ReLULayer<> >();
-  model1->Add<Linear<> >(20, 10);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<AdaptiveMeanPooling<> >(6, 6);
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(9216, 4096);
   model1->Add<ReLULayer<> >();
-  model1->Add<Linear<> >(10, 2);
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(4096, 4096);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(4096, 1000);
   model1->Add<LogSoftMax<> >();
   
   // Check whether copy constructor is working or not.
