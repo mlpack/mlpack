@@ -29,6 +29,39 @@ using namespace mlpack::util;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::markdown;
 
+
+void KMP(std::string pat,std::string txt,std::vector<int> &pos){
+	int M = pat.size();int N = txt.size();int lps[M];
+	int len = 0; lps[0] = 0; int i = 1;
+	while (i < M) {
+		if (pat[i] == pat[len]) {len++; lps[i] = len; i++;}
+		else{
+			if (len != 0) len = lps[len - 1];
+			else lps[i]=0 , i++;
+		}
+	}
+	i=0;int j=0;
+	while (i < N) {
+		if (pat[j] == txt[i]) j++,i++;
+		if (j == M) { pos.push_back(i-j); j = lps[j - 1];}
+		else if (i < N && pat[j] != txt[i]) {
+			if (j != 0) j = lps[j - 1];
+			else i = i + 1;
+		}
+	}
+}
+
+std::string replace_all_copy(std::string txt,std::string from,std::string to){
+    std::vector<int>pos;
+    KMP(from,txt,pos);
+    int N=txt.size();int M=from.size();std::string new_txt;std::vector<int>::iterator itr=pos.begin();
+    for(int i=0;i<N;i++){
+        if(itr!=pos.end() && i==(*itr)){ new_txt+=to; i+=M; itr++;}
+        new_txt+=txt[i];
+    }
+    return new_txt;
+}
+
 void PrintHeaders(const std::string& bindingName,
                   const std::vector<std::string>& languages)
 {
@@ -158,7 +191,7 @@ void PrintDocs(const std::string& bindingName,
         cout << ParamString(bindingName, it->second.name) << " | ";
       }
       cout << ParamType(params, it->second) << " | ";
-      string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
+      string desc = replace_all_copy(it->second.desc, "|", "\\|");
       cout << desc; // just a string
       // Print whether or not it's a "special" language-only parameter.
       if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
@@ -240,7 +273,7 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    string desc = boost::replace_all_copy(doc.longDescription(),
+    string desc = replace_all_copy(doc.longDescription(),
                                           "|", "\\|");
     cout << desc << endl << endl;
 
@@ -248,7 +281,7 @@ void PrintDocs(const std::string& bindingName,
       cout << "### Example" << endl;
     for (size_t j = 0; j < doc.example.size(); ++j)
     {
-      string eg = boost::replace_all_copy(doc.example[j](),
+      string eg = replace_all_copy(doc.example[j](),
                                           "|", "\\|");
       cout << eg << endl << endl;
     }
