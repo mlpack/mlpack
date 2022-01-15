@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/threshold_fn.hpp
+ * @file methods/ann/layer/threshold.hpp
  * @author Shubham Agrawal
  *
  * Definition of the Threshold activation function
@@ -48,8 +48,8 @@ class Threshold
    * The value when x < threshold can be adjusted by specifying the parameter
    * value. Default (value = 0.0)
    *
-   * @param threshold Non zero gradient region threshold
-   * @param value Value when x < threshold
+   * @param threshold Non zero gradient region threshold.
+   * @param value Value when x < threshold.
    */
   Threshold(const double threshold = 0.0,
             const double value = 0.0);
@@ -115,10 +115,10 @@ class Threshold
   //! Locally-stored +ve output indexes object.
   arma::uvec positive;
 
-  //! Threshold Parameter
+  //! Threshold parameter.
   double threshold;
 
-  //! Value Parameter
+  //! Value parameter.
   double value;
 }; // class Threshold
 
@@ -126,6 +126,6 @@ class Threshold
 } // namespace mlpack
 
 // Include implementation.
-#include "threshold_fn_impl.hpp"
+#include "threshold_impl.hpp"
 
 #endif

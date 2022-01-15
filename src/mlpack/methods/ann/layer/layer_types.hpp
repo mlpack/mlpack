@@ -62,7 +62,7 @@
 #include <mlpack/methods/ann/layer/isrlu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
-#include <mlpack/methods/ann/layer/threshold_fn.hpp>
+#include <mlpack/methods/ann/layer/threshold.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>

@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/threshold_fn_impl.hpp
+ * @file methods/ann/layer/threshold_impl.hpp
  * @author Shubham Agrawal
  *
  * Implementation of Threshold activation function
@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_THRESHOLD_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "threshold_fn.hpp"
+#include "threshold.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

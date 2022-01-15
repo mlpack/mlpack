@@ -753,9 +753,9 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Implementation of the Threshold activation function derivative test. The function
- * is implemented as Threshold layer in the file threshold_fn.hpp.
+ * is implemented as Threshold layer in the file threshold.hpp.
  *
- * @param input Input data used for evaluating the Threwshold activation function.
+ * @param input Input data used for evaluating the Threshold activation function.
  * @param target Target data used to evaluate the Threshold activation.
  */
 void CheckThresholdCorrect(const arma::colvec input,
