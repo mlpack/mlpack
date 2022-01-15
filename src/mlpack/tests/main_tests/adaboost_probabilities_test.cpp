@@ -2,7 +2,7 @@
  * @file tests/main_tests/adaboost_probabilities_test.cpp
  * @author Nippun Sharma
  *
- * Test RUN_BINDING() of adaboost_predict_proba_main.cpp.
+ * Test RUN_BINDING() of adaboost_probabilities_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -63,4 +63,37 @@ TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
 
   for (size_t i = 0; i < testSize; ++i)
     REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
+}
+
+/**
+ * Check that an exception is thrown when the number of features of
+ * input data is not equal to the number of features of the test data.
+ */
+TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
+                 "AdaBoostPredictProbaShapeTest",
+                 "[AdaBoostPredictProbaMainTest][BindingTests]")
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Unable to load test dataset vc2.csv!");
+
+  // reducing the number of features in test data.
+  testData.shed_row(testData.n_rows - 1);
+
+  arma::Col<size_t> mappings = {0, 1, 2};
+  AdaBoostModel* model = new AdaBoostModel(mappings, 0);
+  model->Train(trainData, labels, 3, (int) 20, (double) 0.0001);
+
+  SetInputParam("input_model", model);
+  SetInputParam("test", std::move(testData));
+
+  REQUIRE_THROW_AS(RUN_BINDING(), std::runtime_error);
 }

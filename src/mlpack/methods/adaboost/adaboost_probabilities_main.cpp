@@ -1,5 +1,5 @@
 /**
- * @file methods/adaboost/adaboost_prbabilities_main.cpp
+ * @file methods/adaboost/adaboost_probabilities_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
