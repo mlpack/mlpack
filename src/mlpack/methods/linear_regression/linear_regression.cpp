@@ -82,15 +82,7 @@ double LinearRegression::Train(const arma::mat& predictors,
   }
 
   // Convert to this form:
-  // a * (X X^T) = y X^T.{
-  if (data.n_cols != size)
-  {
-    std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of " << addInfo << " (" << size << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  // a * (X X^T) = y X^T.
   // Then we'll use Armadillo to solve it.
   // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
   // (assuming the SVD is used to solve it)

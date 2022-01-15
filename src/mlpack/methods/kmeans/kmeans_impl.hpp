@@ -162,9 +162,9 @@ Cluster(const MatType& data,
   // Check validity of initial guess.
   if (initialGuess)
   {
-    util::CheckSameSizes(centroids, clusters, "KMeans::Cluster()");
+    util::CheckSameSizes(centroids, clusters, "KMeans::Cluster()", "clusters");
 
-    util::CheckSameDimensionality(centroids, data, "KMeans::Cluster()");
+    util::CheckSameDimensionality(data, centroids, "KMeans::Cluster()");
   }
 
   // Use the partitioner to come up with the partition assignments and calculate
