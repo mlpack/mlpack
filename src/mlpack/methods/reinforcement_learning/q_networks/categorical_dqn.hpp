@@ -41,9 +41,9 @@ namespace rl {
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = mlpack::ann::EmptyLoss<>,
-  typename InitType = mlpack::ann::GaussianInitialization,
-  typename NetworkType = mlpack::ann::FFN<OutputLayerType, InitType>
+  typename OutputLayerType = ann::EmptyLoss<>,
+  typename InitType = ann::GaussianInitialization,
+  typename NetworkType = ann::FFN<OutputLayerType, InitType>
 >
 class CategoricalDQN
 {
