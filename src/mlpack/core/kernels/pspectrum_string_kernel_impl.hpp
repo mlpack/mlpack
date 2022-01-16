@@ -77,7 +77,6 @@ inline PSpectrumStringKernel::PSpectrumStringKernel(
       }
     }
   }
-
   Log::Info << "Substring extraction complete." << std::endl;
 }
 
