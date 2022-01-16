@@ -118,3 +118,23 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitNoTrainingData",
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
+/**
+ * Ensuring that error is thrown when negative regularization
+ * is passed.
+ */
+TEST_CASE_METHOD(LRFitTestFixture, "LRFitNegRegularization",
+                "[LinearRegressionFitMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 1;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("lambda", double(-1)); // negative regularization.
+
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
