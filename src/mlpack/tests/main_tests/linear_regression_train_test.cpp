@@ -138,3 +138,22 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitNegRegularization",
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
+/**
+ * Ensuring that the when no responses are given then last
+ * row is automatically considered as responses.
+ */
+TEST_CASE_METHOD(LRFitTestFixture, "LRFitNoResponses2",
+                "[LinearRegressionFitMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+
+  SetInputParam("training", std::move(trainX));
+
+  // Intentionally not passing training_responses.
+
+  RUN_BINDING();
+}
