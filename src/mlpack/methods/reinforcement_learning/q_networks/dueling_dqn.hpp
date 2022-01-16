@@ -44,12 +44,12 @@ namespace rl {
  * @tparam ValueNetworkType The type of network used for value network.
  */
 template <
-  typename OutputLayerType = mlpack::ann::EmptyLoss<>,
-  typename InitType = mlpack::ann::GaussianInitialization,
-  typename CompleteNetworkType = mlpack::ann::FFN<OutputLayerType, InitType>,
-  typename FeatureNetworkType = mlpack::ann::Sequential<>,
-  typename AdvantageNetworkType = mlpack::ann::Sequential<>,
-  typename ValueNetworkType = mlpack::ann::Sequential<>
+  typename OutputLayerType = ann::EmptyLoss<>,
+  typename InitType = ann::GaussianInitialization,
+  typename CompleteNetworkType = ann::FFN<OutputLayerType, InitType>,
+  typename FeatureNetworkType = ann::Sequential<>,
+  typename AdvantageNetworkType = ann::Sequential<>,
+  typename ValueNetworkType = ann::Sequential<>
 >
 class DuelingDQN
 {
