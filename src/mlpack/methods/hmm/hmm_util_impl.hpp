@@ -87,7 +87,7 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
 
     case HMMType::GaussianHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<mlpack::distribution::GaussianDistribution>>(ar, x);
+          HMM<distribution::GaussianDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianMixtureModelHMM:
