@@ -15,8 +15,9 @@
 #include <stack>
 #include <vector>
 
-namespace details
-{
+namespace mlpack {
+namespace det {
+namespace details {
 
 /**
  * This one sorts and scand the given per-dimension extract and puts all splits
