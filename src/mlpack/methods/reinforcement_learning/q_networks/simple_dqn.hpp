@@ -27,9 +27,9 @@ namespace rl {
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = mlpack::ann::MeanSquaredError<>,
-  typename InitType = mlpack::ann::GaussianInitialization,
-  typename NetworkType = mlpack::ann::FFN<OutputLayerType, InitType>
+  typename OutputLayerType = ann::MeanSquaredError<>,
+  typename InitType = ann::GaussianInitialization,
+  typename NetworkType = ann::FFN<OutputLayerType, InitType>
 >
 class SimpleDQN
 {
