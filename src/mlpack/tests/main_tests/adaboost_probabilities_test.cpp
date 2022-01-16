@@ -95,5 +95,5 @@ TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
 
-  REQUIRE_THROW_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
