@@ -1285,8 +1285,9 @@ binding.
 
 @subsection bindings_python_testing Testing the Python bindings
 
-We cannot do our tests only from the Catch in C++ because we need to see that we
-are able to load parameters properly from Python and return output correctly.
+In addition to the C++ tests we have implemented for each binding, we also have
+tests from Python that ensure that we can successfully transfer parameter values
+from Python to C++ and return output correctly.
 
 The tests are in @c src/mlpack/bindings/python/tests/ and test both the actual
 bindings and also the auxiliary Python code included in
