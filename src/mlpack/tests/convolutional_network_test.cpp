@@ -258,3 +258,167 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   // Check whether move constructor is working or not.
   CheckMoveFunction<>(model1, X, Y, 8);
 }
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("CheckCopyMovingAdaptiveMaxNetworkTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2);
+  model->Add<ReLULayer<> >();
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
+  model->Add<ReLULayer<> >();
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<AdaptiveMaxPooling<> >(6, 6); // add a flatten layer 
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(9216, 4096);
+  model->Add<ReLULayer<> >();
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(4096, 4096);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(4096, 1000);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model1->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<AdaptiveMeanPooling<> >(6, 6);  // add a flatten layer 
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(9216, 4096);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(4096, 4096);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(4096, 1000);
+  model1->Add<LogSoftMax<> >();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, X, Y, 8);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, X, Y, 8);
+}
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("CheckCopyMovingAdaptiveMeanNetworkTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  arma::uword nPoints = X.n_cols;
+  for (arma::uword i = 0; i < nPoints; ++i)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  // Build the target matrix.
+  arma::mat Y = arma::zeros<arma::mat>(1, nPoints);
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    if (i < nPoints / 2)
+    {
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
+    }
+    else
+    {
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
+    }
+  }
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2);
+  model->Add<ReLULayer<> >();
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
+  model->Add<ReLULayer<> >();
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model->Add<MaxPooling<> >(3, 3, 2, 2);
+  model->Add<AdaptiveMeanPooling<> >(6, 6);  // add a flatten layer 
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(9216, 4096);
+  model->Add<ReLULayer<> >();
+  model->Add<Dropout<>>(0.5);
+  model->Add<Linear<> >(4096, 4096);
+  model->Add<ReLULayer<> >();
+  model->Add<Linear<> >(4096, 1000);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 = new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+
+  model1->Add<Convolution<> >(3, 64, 11, 11, 4, 4, 2, 2);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(64, 192, 5, 5, 1, 1, 2, 2);
+  model1->Add<ReLULayer<> >();
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<Convolution<> >(192, 384, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(384, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<Convolution<> >(256, 256, 3, 3, 1, 1, 1, 1);
+  model1->Add<MaxPooling<> >(3, 3, 2, 2);
+  model1->Add<AdaptiveMeanPooling<> >(6, 6);  // add a flatten layer 
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(9216, 4096);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Dropout<>>(0.5);
+  model1->Add<Linear<> >(4096, 4096);
+  model1->Add<ReLULayer<> >();
+  model1->Add<Linear<> >(4096, 1000);
+  model1->Add<LogSoftMax<> >();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, X, Y, 8);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, X, Y, 8);
+}
