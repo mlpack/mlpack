@@ -206,7 +206,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
   REQUIRE(success == true);
 }
 
-TEST_CASE("VanillaNetworkBatchSizeTest")
+TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
@@ -242,55 +242,62 @@ TEST_CASE("VanillaNetworkBatchSizeTest")
     if (i < nPoints / 2)
     {
       // Assign label "1" to all samples with digit = 4
-      Y(i) = 0;
+      Y(i) = 1;
     }
     else
     {
-      // Assign label "2" to all samples with digit = 9
-      Y(i) = 1;
+      // Assign label "0" to all samples with digit = 9
+      Y(i) = 0;
     }
   }
 
-  size_t trials = 5;
+  // Perform one epoch of training to get the weights to somewhere reasonable.
+  ens::RMSProp opt(0.001, 1, 0.88, 1e-8, nPoints, -1);
+  model.Train(X, Y, opt);
+
+  size_t trials = 7;
   for (size_t trial = 0; trial < trials; ++trial)
   {
     const size_t batchSize = std::pow(2.0, (double) trial + 1.0);
 
-    // First, check the forward pass.
+    // Check the forward pass, and then call EvaluateWithGradient() to compute
+    // the gradient.
     arma::mat results;
+    arma::mat batchData = X.cols(0, batchSize - 1);
+    arma::mat batchResponses = Y.cols(0, batchSize - 1);
+    model.ResetData(std::move(batchData), std::move(batchResponses));
     model.Forward(X.cols(0, batchSize - 1), results);
+
+    arma::mat gradient(1, model.WeightSize());
+    const double obj = model.EvaluateWithGradient(model.Parameters(), gradient);
 
     REQUIRE(results.n_cols == batchSize);
 
     // Now compute results with a batch size of 1.
     arma::mat singleResults(results.n_rows, results.n_cols);
+    arma::mat singleGradient(gradient.n_rows, gradient.n_cols);
+    double singleObj = 0.0;
+
     for (size_t i = 0; i < batchSize; ++i)
     {
       arma::mat tmpResult;
+      arma::mat singleData = X.cols(i, i);
+      arma::mat singleResponses = Y.cols(i, i);
+      model.ResetData(std::move(singleData), std::move(singleResponses));
       model.Forward(X.cols(i, i), tmpResult);
-
       REQUIRE(tmpResult.n_cols == 1);
-
       singleResults.col(i) = tmpResult;
-    }
 
-    CheckMatrices(results, singleResults);
-
-    // Now, check EvaluateWithGradient()'s results.
-    arma::mat gradient(1, X.n_rows);
-    const double obj = model.EvaluateWithGradient(X.cols(0, batchSize - 1),
-        gradient);
-
-    arma::mat singleGradient(gradient.n_rows, gradient.n_cols);
-    double singleObj = 0.0;
-    for (size_t i = 0; i < batchSize; ++i)
-    {
-      arma::mat tmpGradient(1, X.n_rows);
-      singleObj += model.EvaluateWithGradient(X.cols(i, i), tmpGradient);
+      arma::mat tmpGradient(1, model.WeightSize());
+      singleObj += model.EvaluateWithGradient(model.Parameters(), tmpGradient);
 
       singleGradient += tmpGradient;
     }
 
+    // Check the forward pass results.
+    CheckMatrices(results, singleResults);
+
+    // Now, check EvaluateWithGradient()'s results.
     REQUIRE(obj == Approx(singleObj));
     CheckMatrices(gradient, singleGradient);
   }

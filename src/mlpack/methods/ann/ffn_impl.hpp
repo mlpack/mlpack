@@ -416,8 +416,13 @@ double FFN<
 >::EvaluateWithGradient(const OutputType& parameters, OutputType& gradient)
 {
   double res = 0;
-  for (size_t i = 0; i < predictors.n_cols; ++i)
-    res += EvaluateWithGradient(parameters, i, gradient, 1);
+  res += EvaluateWithGradient(parameters, 0, gradient, 1);
+  for (size_t i = 1; i < predictors.n_cols; ++i)
+  {
+    arma::mat tmpGradient(gradient.n_rows, gradient.n_cols);
+    res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
+    gradient += tmpGradient;
+  }
 
   return res;
 }

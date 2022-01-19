@@ -296,6 +296,9 @@ class FFN
   std::vector<Layer<InputType, OutputType>*>& Network() { return
 network.Network(); }
 
+  // TODO: check validity
+  size_t WeightSize() const { return network.WeightSize(); }
+
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return responses.n_cols; }
 
@@ -412,8 +415,10 @@ network.Network(); }
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
    */
+ public:
   void ResetData(InputType predictors, InputType responses);
 
+ private:
   //! Use the InitializationPolicy to initialize all the weights in the network.
   void InitializeWeights();
 
