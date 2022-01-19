@@ -304,9 +304,12 @@ void ConvolutionType<
       const_cast<InputType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * batchSize, false, false);
 
+  // We will make an alias for the gradient, but note that this is only for the
+  // convolution map weights!  The bias will be handled by direct accesses into
+  // `gradient`.
+  gradient.zeros();
   MakeAlias(gradientTemp, gradient.memptr(), weight.n_rows, weight.n_cols,
       weight.n_slices);
-  gradientTemp.zeros();
 
   // See Forward() for our iteration strategy.
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
@@ -321,7 +324,7 @@ void ConvolutionType<
         OutputType output;
         GradientConvolutionRule::Convolution(
             inputTemp.slice(inMap + fullInputOffset),
-            mappedError.slice(outMap),
+            mappedError.slice(outMap + fullOutputOffset),
             output,
             strideWidth,
             strideHeight);
