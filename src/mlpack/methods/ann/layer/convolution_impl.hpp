@@ -345,8 +345,8 @@ void ConvolutionType<
         }
       }
 
-//     gradient.submat(weight.n_elem + (outMap % maps), 0, weight.n_elem +
-//          (outMap % maps), 0) = arma::accu(mappedError.slice(outMap));
+      gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
+          fullOutputOffset));
     }
   }
 }
