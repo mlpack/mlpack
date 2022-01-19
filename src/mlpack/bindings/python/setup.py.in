@@ -78,6 +78,7 @@ else:
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
+                  define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs if name == module]
@@ -96,6 +97,7 @@ else:
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
+                  define_macros=[('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs]

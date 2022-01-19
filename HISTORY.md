@@ -120,6 +120,8 @@
     `decision_tree()` and `hoeffding_tree()` (#2971).
 
   * Depend on `pkgbuild` for R bindings (#3081).
+ 
+  * Replaced Numpy deprecated code in Python bindings (#3126).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
