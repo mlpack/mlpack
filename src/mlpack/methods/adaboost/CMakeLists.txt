@@ -16,9 +16,12 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(adaboost "classification")
+group_bindings(adaboost "train;classify;probabilities")
+add_python_wrapper(adaboost)
+
 add_cli_executable(adaboost)
-add_python_binding(adaboost)
 add_julia_binding(adaboost)
 add_go_binding(adaboost)
 add_r_binding(adaboost)
-add_markdown_docs(adaboost "cli;python;julia;go;r" "classification")
+add_markdown_docs(adaboost "cli;python;julia;go;r" "python")

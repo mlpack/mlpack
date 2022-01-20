@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_DEFN_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -28,7 +29,7 @@ void PrintDefn(util::ParamData& d,
                void* /* output */)
 {
   // Make sure that we don't use names that are Python keywords.
-  std::string name = (d.name == "lambda") ? "lambda_" : d.name;
+  std::string name = GetValidName(d.name);
 
   std::cout << name;
   if (std::is_same<T, bool>::value)

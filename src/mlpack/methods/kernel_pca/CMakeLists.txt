@@ -16,9 +16,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(kernel_pca "transformations")
 add_cli_executable(kernel_pca)
 add_python_binding(kernel_pca)
 add_julia_binding(kernel_pca)
 add_go_binding(kernel_pca)
 add_r_binding(kernel_pca)
-add_markdown_docs(kernel_pca "cli;python;julia;go;r" "transformations")
+add_markdown_docs(kernel_pca "cli;python;julia;go;r" "")

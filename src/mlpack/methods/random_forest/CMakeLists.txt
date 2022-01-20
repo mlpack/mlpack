@@ -15,9 +15,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(random_forest "classification")
 add_cli_executable(random_forest)
 add_python_binding(random_forest)
 add_julia_binding(random_forest)
 add_go_binding(random_forest)
 add_r_binding(random_forest)
-add_markdown_docs(random_forest "cli;python;julia;go;r" "classification")
+add_markdown_docs(random_forest "cli;python;julia;go;r" "")
