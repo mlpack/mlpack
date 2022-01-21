@@ -70,6 +70,7 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
     Log::Fatal<<"Must use the same BatchSize that was used in the constructor"
                 <<std::endl;
   }
+
   if (!reset)
   {
     batchNorm.Reset();
@@ -82,8 +83,8 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   if (deterministic)
     batchNorm.Deterministic() = true;
 
-  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
-        1, false, false);
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
+        shapeA * shapeB, 1, false, false);
   batchNorm.Forward(inputTemp, output);
   output.reshape(shapeA, shapeB);
   runningMean = batchNorm.TrainingMean();
@@ -101,10 +102,10 @@ void InstanceNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
-      1, false, false);
-  arma::mat gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), shapeA*shapeB,
-      1, false, false);
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
+      shapeA * shapeB, 1, false, false);
+  arma::mat gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(),
+      shapeA * shapeB, 1, false, false);
   batchNorm.Backward(inputTemp, gyTemp, g);
   g.reshape(shapeA, shapeB);
 }
@@ -116,10 +117,10 @@ void InstanceNorm<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
-      1, false, false);
-  arma::mat errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), shapeA*shapeB,
-      1, false, false);
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), 
+      shapeA * shapeB, 1, false, false);
+  arma::mat errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), 
+      shapeA * shapeB, 1, false, false);
   batchNorm.Gradient(inputTemp, errorTemp, gradient);
 }
 
