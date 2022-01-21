@@ -107,11 +107,6 @@ inline std::string ParamType(util::Params& p, util::ParamData& d);
 template<typename T>
 inline bool IgnoreCheck(const std::string& bindingName, const T& t);
 
-/**
- * Replace string utility function.
- */
-inline std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
 } // namespace markdown
 } // namespace bindings
 } // namespace mlpack
