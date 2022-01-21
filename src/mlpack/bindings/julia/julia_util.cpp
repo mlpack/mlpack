@@ -19,78 +19,120 @@ using namespace mlpack;
 extern "C" {
 
 /**
- * Call IO::RestoreSettings() for a given program name.
+ * Get a new util::Params object, encoded as a stack-allocated void pointer.
+ * You are responsible for freeing this!
  */
-void IO_RestoreSettings(const char* programName)
+void* GetParameters(const char* bindingName)
 {
-  IO::RestoreSettings(programName);
+  util::Params* p = new util::Params(IO::Parameters(bindingName));
+  return (void*) p;
 }
 
 /**
- * Call IO::SetParam<int>().
+ * Delete a util::Params object that has been encoded as a void pointer.
  */
-void IO_SetParamInt(const char* paramName, int paramValue)
+void DeleteParameters(void* in)
 {
-  IO::GetParam<int>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Params* p = (util::Params*) in;
+  delete p;
 }
 
 /**
- * Call IO::SetParam<double>().
+ * Get a new util::Timers object, encoded as a heap-allocated void pointer.  You
+ * are responsible for freeing this!  You can use `DeleteTimers(void*)`.
  */
-void IO_SetParamDouble(const char* paramName, double paramValue)
+void* Timers()
 {
-  IO::GetParam<double>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Timers* t = new util::Timers();
+  return (void*) t;
 }
 
 /**
- * Call IO::SetParam<std::string>().
+ * Delete a util::Timers object that has been encoded as a void pointer.
  */
-void IO_SetParamString(const char* paramName, const char* paramValue)
+void DeleteTimers(void* in)
 {
-  IO::GetParam<std::string>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Timers* t = (util::Timers*) in;
+  delete t;
 }
 
 /**
- * Call IO::SetParam<bool>().
+ * Call params.SetParam<int>().
  */
-void IO_SetParamBool(const char* paramName, bool paramValue)
+void SetParamInt(void* params, const char* paramName, int paramValue)
 {
-  IO::GetParam<bool>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Params* p = (util::Params*) params;
+  p->Get<int>(paramName) = paramValue;
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<std::vector<std::string>>() to set the length.
+ * Call params.SetParam<double>().
  */
-void IO_SetParamVectorStrLen(const char* paramName,
-                             const size_t length)
+void SetParamDouble(void* params, const char* paramName, double paramValue)
 {
-  IO::GetParam<std::vector<std::string>>(paramName).clear();
-  IO::GetParam<std::vector<std::string>>(paramName).resize(length);
-  IO::SetPassed(paramName);
+  util::Params* p = (util::Params*) params;
+  p->Get<double>(paramName) = paramValue;
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<std::vector<std::string>>() to set an individual element.
+ * Call params.SetParam<std::string>().
  */
-void IO_SetParamVectorStrStr(const char* paramName,
-                             const char* str,
-                             const size_t element)
+void SetParamString(void* params, const char* paramName, const char* paramValue)
 {
-  IO::GetParam<std::vector<std::string>>(paramName)[element] =
+  util::Params* p = (util::Params*) params;
+  p->Get<std::string>(paramName) = paramValue;
+  p->SetPassed(paramName);
+}
+
+/**
+ * Call params.SetParam<bool>().
+ */
+void SetParamBool(void* params, const char* paramName, bool paramValue)
+{
+  util::Params* p = (util::Params*) params;
+  p->Get<bool>(paramName) = paramValue;
+  p->SetPassed(paramName);
+}
+
+/**
+ * Call params.SetParam<std::vector<std::string>>() to set the length.
+ */
+void SetParamVectorStrLen(void* params,
+                          const char* paramName,
+                          const size_t length)
+{
+  util::Params* p = (util::Params*) params;
+  p->Get<std::vector<std::string>>(paramName).clear();
+  p->Get<std::vector<std::string>>(paramName).resize(length);
+  p->SetPassed(paramName);
+}
+
+/**
+ * Call params.SetParam<std::vector<std::string>>() to set an individual
+ * element.
+ */
+void SetParamVectorStrStr(void* params,
+                          const char* paramName,
+                          const char* str,
+                          const size_t element)
+{
+  util::Params* p = (util::Params*) params;
+  p->Get<std::vector<std::string>>(paramName)[element] =
       std::string(str);
 }
 
 /**
- * Call IO::SetParam<std::vector<int>>().
+ * Call params.SetParam<std::vector<int>>().
  */
-void IO_SetParamVectorInt(const char* paramName,
-                          int* ints,
-                          const size_t length)
+void SetParamVectorInt(void* params,
+                       const char* paramName,
+                       int* ints,
+                       const size_t length)
 {
+  util::Params* p = (util::Params*) params;
+
   // Create a std::vector<int> object; unfortunately this requires copying the
   // vector elements.
   std::vector<int> vec;
@@ -98,184 +140,239 @@ void IO_SetParamVectorInt(const char* paramName,
   for (size_t i = 0; i < length; ++i)
     vec[i] = ints[i];
 
-  IO::GetParam<std::vector<int>>(paramName) = std::move(vec);
-  IO::SetPassed(paramName);
+  p->Get<std::vector<int>>(paramName) = std::move(vec);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<arma::mat>().
+ * Call params.SetParam<arma::mat>().
  */
-void IO_SetParamMat(const char* paramName,
-                    double* memptr,
-                    const size_t rows,
-                    const size_t cols,
-                    const bool pointsAsRows)
+void SetParamMat(void* params,
+                 const char* paramName,
+                 double* memptr,
+                 const size_t rows,
+                 const size_t cols,
+                 const bool pointsAsRows)
 {
+  util::Params* p = (util::Params*) params;
+
   // Create the matrix as an alias.
   arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
-  IO::GetParam<arma::mat>(paramName) = pointsAsRows ? m.t() : std::move(m);
-  IO::SetPassed(paramName);
+  p->Get<arma::mat>(paramName) = pointsAsRows ? m.t() : std::move(m);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<arma::Mat<size_t>>().
+ * Call params.SetParam<arma::Mat<size_t>>().
  */
-void IO_SetParamUMat(const char* paramName,
-                     size_t* memptr,
-                     const size_t rows,
-                     const size_t cols,
-                     const bool pointsAsRows)
+void SetParamUMat(void* params,
+                  const char* paramName,
+                  size_t* memptr,
+                  const size_t rows,
+                  const size_t cols,
+                  const bool pointsAsRows)
 {
+  util::Params* p = (util::Params*) params;
+
   // Create the matrix as an alias.
   arma::Mat<size_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
       true);
-  IO::GetParam<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
+  p->Get<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
       std::move(m);
-  IO::SetPassed(paramName);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<arma::rowvec>().
+ * Call params.SetParam<arma::rowvec>().
  */
-void IO_SetParamRow(const char* paramName,
-                    double* memptr,
-                    const size_t cols)
+void SetParamRow(void* params,
+                 const char* paramName,
+                 double* memptr,
+                 const size_t cols)
 {
+  util::Params* p = (util::Params*) params;
   arma::rowvec m(memptr, arma::uword(cols), false, true);
-  IO::GetParam<arma::rowvec>(paramName) = std::move(m);
-  IO::SetPassed(paramName);
+  p->Get<arma::rowvec>(paramName) = std::move(m);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<arma::Row<size_t>>().
+ * Call params.SetParam<arma::Row<size_t>>().
  */
-void IO_SetParamURow(const char* paramName,
-                     size_t* memptr,
-                     const size_t cols)
+void SetParamURow(void* params,
+                  const char* paramName,
+                  size_t* memptr,
+                  const size_t cols)
 {
+  util::Params* p = (util::Params*) params;
   arma::Row<size_t> m(memptr, arma::uword(cols), false, true);
-  IO::GetParam<arma::Row<size_t>>(paramName) = std::move(m);
-  IO::SetPassed(paramName);
+  p->Get<arma::Row<size_t>>(paramName) = std::move(m);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<arma::vec>().
+ * Call params.SetParam<arma::vec>().
  */
-void IO_SetParamCol(const char* paramName,
-                    double* memptr,
-                    const size_t rows)
+void SetParamCol(void* params,
+                 const char* paramName,
+                 double* memptr,
+                 const size_t rows)
 {
+  util::Params* p = (util::Params*) params;
   arma::vec m(memptr, arma::uword(rows), false, true);
-  IO::GetParam<arma::vec>(paramName) = std::move(m);
-  IO::SetPassed(paramName);
+  p->Get<arma::vec>(paramName) = std::move(m);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<arma::Row<size_t>>().
+ * Call params.SetParam<arma::Row<size_t>>().
  */
-void IO_SetParamUCol(const char* paramName,
-                     size_t* memptr,
-                     const size_t rows)
+void SetParamUCol(void* params,
+                  const char* paramName,
+                  size_t* memptr,
+                  const size_t rows)
 {
+  util::Params* p = (util::Params*) params;
   arma::Col<size_t> m(memptr, arma::uword(rows), false, true);
-  IO::GetParam<arma::Col<size_t>>(paramName) = std::move(m);
-  IO::SetPassed(paramName);
+  p->Get<arma::Col<size_t>>(paramName) = std::move(m);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call params.SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
  */
-void IO_SetParamMatWithInfo(const char* paramName,
-                            bool* dimensions,
-                            double* memptr,
-                            const size_t rows,
-                            const size_t cols,
-                            const bool pointsAreRows)
+void SetParamMatWithInfo(void* params,
+                         const char* paramName,
+                         bool* dimensions,
+                         double* memptr,
+                         const size_t rows,
+                         const size_t cols,
+                         const bool pointsAreRows)
 {
+  util::Params* p = (util::Params*) params;
   data::DatasetInfo d(pointsAreRows ? cols : rows);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
 
   arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
-  std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+
+  // Do we need to find how many categories we have?
+  if (hasCategoricals)
+  {
+    // Compute the maximum in each dimension.
+    arma::vec maxs;
+    if (pointsAreRows)
+      maxs = arma::max(m, 0).t();
+    else
+      maxs = arma::max(m, 1);
+
+    for (size_t i = 0; i < d.Dimensionality(); ++i)
+    {
+      if (dimensions[i])
+      {
+        // Map the right number of objects.
+        for (size_t j = 1; j <= (size_t) maxs[i]; ++j)
+        {
+          std::ostringstream oss;
+          oss << j;
+          d.MapString<double>(oss.str(), i);
+        }
+      }
+    }
+  }
+
+  std::get<0>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
-  std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = pointsAreRows ? m.t() : std::move(m);
-  IO::SetPassed(paramName);
+  p->SetPassed(paramName);
 }
 
 /**
- * Call IO::GetParam<int>().
+ * Call params.GetParam<int>().
  */
-int IO_GetParamInt(const char* paramName)
+int GetParamInt(void* params, const char* paramName)
 {
-  return IO::GetParam<int>(paramName);
+  util::Params* p = (util::Params*) params;
+  return p->Get<int>(paramName);
 }
 
 /**
- * Call IO::GetParam<double>().
+ * Call params.GetParam<double>().
  */
-double IO_GetParamDouble(const char* paramName)
+double GetParamDouble(void* params, const char* paramName)
 {
-  return IO::GetParam<double>(paramName);
+  util::Params* p = (util::Params*) params;
+  return p->Get<double>(paramName);
 }
 
 /**
- * Call IO::GetParam<std::string>().
+ * Call params.GetParam<std::string>().
  */
-const char* IO_GetParamString(const char* paramName)
+const char* GetParamString(void* params, const char* paramName)
 {
-  return IO::GetParam<std::string>(paramName).c_str();
+  util::Params* p = (util::Params*) params;
+  return p->Get<std::string>(paramName).c_str();
 }
 
 /**
- * Call IO::GetParam<bool>().
+ * Call params.GetParam<bool>().
  */
-bool IO_GetParamBool(const char* paramName)
+bool GetParamBool(void* params, const char* paramName)
 {
-  return IO::GetParam<bool>(paramName);
+  util::Params* p = (util::Params*) params;
+  return p->Get<bool>(paramName);
 }
 
 /**
- * Call IO::GetParam<std::vector<std::string>>() and get the length of the
+ * Call params.GetParam<std::vector<std::string>>() and get the length of the
  * vector.
  */
-size_t IO_GetParamVectorStrLen(const char* paramName)
+size_t GetParamVectorStrLen(void* params, const char* paramName)
 {
-  return IO::GetParam<std::vector<std::string>>(paramName).size();
+  util::Params* p = (util::Params*) params;
+  return p->Get<std::vector<std::string>>(paramName).size();
 }
 
 /**
- * Call IO::GetParam<std::vector<std::string>>() and get the i'th string.
+ * Call params.GetParam<std::vector<std::string>>() and get the i'th string.
  */
-const char* IO_GetParamVectorStrStr(const char* paramName, const size_t i)
+const char* GetParamVectorStrStr(void* params,
+                                 const char* paramName,
+                                 const size_t i)
 {
-  return IO::GetParam<std::vector<std::string>>(paramName)[i].c_str();
+  util::Params* p = (util::Params*) params;
+  return p->Get<std::vector<std::string>>(paramName)[i].c_str();
 }
 
 /**
- * Call IO::GetParam<std::vector<int>>() and get the length of the vector.
+ * Call params.GetParam<std::vector<int>>() and get the length of the vector.
  */
-size_t IO_GetParamVectorIntLen(const char* paramName)
+size_t GetParamVectorIntLen(void* params, const char* paramName)
 {
-  return IO::GetParam<std::vector<int>>(paramName).size();
+  util::Params* p = (util::Params*) params;
+  return p->Get<std::vector<int>>(paramName).size();
 }
 
 /**
- * Call IO::GetParam<std::vector<int>>() and return a pointer to the vector.
+ * Call params.GetParam<std::vector<int>>() and return a pointer to the vector.
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-int* IO_GetParamVectorIntPtr(const char* paramName)
+int* GetParamVectorIntPtr(void* params, const char* paramName)
 {
-  const size_t size = IO::GetParam<std::vector<int>>(paramName).size();
+  util::Params* p = (util::Params*) params;
+  const size_t size = p->Get<std::vector<int>>(paramName).size();
   int* ints = new int[size];
 
   for (size_t i = 0; i < size; ++i)
-    ints[i] = IO::GetParam<std::vector<int>>(paramName)[i];
+    ints[i] = p->Get<std::vector<int>>(paramName)[i];
 
   return ints;
 }
@@ -283,17 +380,19 @@ int* IO_GetParamVectorIntPtr(const char* paramName)
 /**
  * Get the number of rows in a matrix parameter.
  */
-size_t IO_GetParamMatRows(const char* paramName)
+size_t GetParamMatRows(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::mat>(paramName).n_rows;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::mat>(paramName).n_rows;
 }
 
 /**
  * Get the number of columns in a matrix parameter.
  */
-size_t IO_GetParamMatCols(const char* paramName)
+size_t GetParamMatCols(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::mat>(paramName).n_cols;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::mat>(paramName).n_cols;
 }
 
 /**
@@ -301,11 +400,13 @@ size_t IO_GetParamMatCols(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-double* IO_GetParamMat(const char* paramName)
+double* GetParamMat(void* params, const char* paramName)
 {
+  util::Params* p = (util::Params*) params;
+
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
-  arma::mat& mat = IO::GetParam<arma::mat>(paramName);
+  arma::mat& mat = p->Get<arma::mat>(paramName);
   if (mat.n_elem <= arma::arma_config::mat_prealloc)
   {
     // Copy the memory to something that we can give back to Julia.
@@ -326,17 +427,19 @@ double* IO_GetParamMat(const char* paramName)
 /**
  * Get the number of rows in an unsigned matrix parameter.
  */
-size_t IO_GetParamUMatRows(const char* paramName)
+size_t GetParamUMatRows(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::Mat<size_t>>(paramName).n_rows;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::Mat<size_t>>(paramName).n_rows;
 }
 
 /**
  * Get the number of columns in an unsigned matrix parameter.
  */
-size_t IO_GetParamUMatCols(const char* paramName)
+size_t GetParamUMatCols(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::Mat<size_t>>(paramName).n_cols;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::Mat<size_t>>(paramName).n_cols;
 }
 
 /**
@@ -344,9 +447,10 @@ size_t IO_GetParamUMatCols(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* IO_GetParamUMat(const char* paramName)
+size_t* GetParamUMat(void* params, const char* paramName)
 {
-  arma::Mat<size_t>& mat = IO::GetParam<arma::Mat<size_t>>(paramName);
+  util::Params* p = (util::Params*) params;
+  arma::Mat<size_t>& mat = p->Get<arma::Mat<size_t>>(paramName);
 
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
@@ -370,9 +474,10 @@ size_t* IO_GetParamUMat(const char* paramName)
 /**
  * Get the number of rows in a column vector parameter.
  */
-size_t IO_GetParamColRows(const char* paramName)
+size_t GetParamColRows(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::vec>(paramName).n_rows;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::vec>(paramName).n_rows;
 }
 
 /**
@@ -380,11 +485,13 @@ size_t IO_GetParamColRows(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-double* IO_GetParamCol(const char* paramName)
+double* GetParamCol(void* params, const char* paramName)
 {
+  util::Params* p = (util::Params*) params;
+
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
-  arma::vec& vec = IO::GetParam<arma::vec>(paramName);
+  arma::vec& vec = p->Get<arma::vec>(paramName);
   if (vec.n_elem <= arma::arma_config::mat_prealloc)
   {
     // Copy the memory to something we can give back to Julia.
@@ -405,9 +512,10 @@ double* IO_GetParamCol(const char* paramName)
 /**
  * Get the number of columns in an unsigned column vector parameter.
  */
-size_t IO_GetParamUColRows(const char* paramName)
+size_t GetParamUColRows(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::Col<size_t>>(paramName).n_rows;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::Col<size_t>>(paramName).n_rows;
 }
 
 /**
@@ -415,9 +523,11 @@ size_t IO_GetParamUColRows(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* IO_GetParamUCol(const char* paramName)
+size_t* GetParamUCol(void* params, const char* paramName)
 {
-  arma::Col<size_t>& vec = IO::GetParam<arma::Col<size_t>>(paramName);
+  util::Params* p = (util::Params*) params;
+
+  arma::Col<size_t>& vec = p->Get<arma::Col<size_t>>(paramName);
 
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
@@ -441,9 +551,10 @@ size_t* IO_GetParamUCol(const char* paramName)
 /**
  * Get the number of columns in a row parameter.
  */
-size_t IO_GetParamRowCols(const char* paramName)
+size_t GetParamRowCols(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::rowvec>(paramName).n_cols;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::rowvec>(paramName).n_cols;
 }
 
 /**
@@ -451,11 +562,13 @@ size_t IO_GetParamRowCols(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-double* IO_GetParamRow(const char* paramName)
+double* GetParamRow(void* params, const char* paramName)
 {
+  util::Params* p = (util::Params*) params;
+
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
-  arma::rowvec& vec = IO::GetParam<arma::rowvec>(paramName);
+  arma::rowvec& vec = p->Get<arma::rowvec>(paramName);
   if (vec.n_elem <= arma::arma_config::mat_prealloc)
   {
     // Copy the memory to something we can give back to Julia.
@@ -476,9 +589,10 @@ double* IO_GetParamRow(const char* paramName)
 /**
  * Get the number of columns in a row parameter.
  */
-size_t IO_GetParamURowCols(const char* paramName)
+size_t GetParamURowCols(void* params, const char* paramName)
 {
-  return IO::GetParam<arma::Row<size_t>>(paramName).n_cols;
+  util::Params* p = (util::Params*) params;
+  return p->Get<arma::Row<size_t>>(paramName).n_cols;
 }
 
 /**
@@ -486,9 +600,11 @@ size_t IO_GetParamURowCols(const char* paramName)
  * Note that this will assume that whatever is calling will take ownership of
  * the memory!
  */
-size_t* IO_GetParamURow(const char* paramName)
+size_t* GetParamURow(void* params, const char* paramName)
 {
-  arma::Row<size_t>& vec = IO::GetParam<arma::Row<size_t>>(paramName);
+  util::Params* p = (util::Params*) params;
+
+  arma::Row<size_t>& vec = p->Get<arma::Row<size_t>>(paramName);
 
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
@@ -512,18 +628,20 @@ size_t* IO_GetParamURow(const char* paramName)
 /**
  * Get the number of rows in a matrix with DatasetInfo parameter.
  */
-size_t IO_GetParamMatWithInfoRows(const char* paramName)
+size_t GetParamMatWithInfoRows(void* params, const char* paramName)
 {
-  return std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  util::Params* p = (util::Params*) params;
+  return std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)).n_rows;
 }
 
 /**
  * Get the number of columns in a matrix with DatasetInfo parameter.
  */
-size_t IO_GetParamMatWithInfoCols(const char* paramName)
+size_t GetParamMatWithInfoCols(void* params, const char* paramName)
 {
-  return std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  util::Params* p = (util::Params*) params;
+  return std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)).n_cols;
 }
 
@@ -532,10 +650,12 @@ size_t IO_GetParamMatWithInfoCols(const char* paramName)
  * are categorical.  The calling function is expected to handle the memory
  * management.
  */
-bool* IO_GetParamMatWithInfoBoolPtr(const char* paramName)
+bool* GetParamMatWithInfoBoolPtr(void* params, const char* paramName)
 {
+  util::Params* p = (util::Params*) params;
+
   const data::DatasetInfo& d = std::get<0>(
-      IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+      p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
 
   bool* dims = new bool[d.Dimensionality()];
   for (size_t i = 0; i < d.Dimensionality(); ++i)
@@ -548,12 +668,14 @@ bool* IO_GetParamMatWithInfoBoolPtr(const char* paramName)
  * Get a pointer to the memory of the matrix.  The calling function is expected
  * to own the memory.
  */
-double* IO_GetParamMatWithInfoPtr(const char* paramName)
+double* GetParamMatWithInfoPtr(void* params, const char* paramName)
 {
+  util::Params* p = (util::Params*) params;
+
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
   arma::mat& m = std::get<1>(
-      IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+      p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
   if (m.n_elem <= arma::arma_config::mat_prealloc)
   {
     double* newMem = new double[m.n_elem];
@@ -573,7 +695,7 @@ double* IO_GetParamMatWithInfoPtr(const char* paramName)
 /**
  * Enable verbose output.
  */
-void IO_EnableVerbose()
+void EnableVerbose()
 {
   Log::Info.ignoreInput = false;
 }
@@ -581,25 +703,18 @@ void IO_EnableVerbose()
 /**
  * Disable verbose output.
  */
-void IO_DisableVerbose()
+void DisableVerbose()
 {
   Log::Info.ignoreInput = true;
 }
 
 /**
- * Reset the state of all timers.
- */
-void IO_ResetTimers()
-{
-  IO::GetSingleton().timer.Reset();
-}
-
-/**
  * Set an argument as passed to the IO object.
  */
-void IO_SetPassed(const char* paramName)
+void SetPassed(void* params, const char* paramName)
 {
-  IO::SetPassed(paramName);
+  util::Params* p = (util::Params*) params;
+  p->SetPassed(paramName);
 }
 
 } // extern "C"

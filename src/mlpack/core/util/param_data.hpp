@@ -14,7 +14,6 @@
 #define MLPACK_CORE_UTIL_PARAM_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/any.hpp>
 
 /**
  * The TYPENAME macro is used internally to convert a type into a string.
@@ -74,12 +73,9 @@ struct ParamData
   //! If this is an input parameter that needs extra loading, this indicates
   //! whether or not it has been loaded.
   bool loaded;
-  //! If this should be preserved across different settings (i.e. if it should
-  //! exist for every binding), this should be set to true.
-  bool persistent;
   //! The actual value that is held.  If the user has passed a different type,
   //! this may be a tuple containing multiple values.
-  boost::any value;
+  ANY value;
   //! The true name of the type, as it would be written in C++.
   std::string cppType;
 };

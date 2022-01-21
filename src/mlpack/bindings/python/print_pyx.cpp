@@ -29,16 +29,17 @@ namespace python {
  * @param doc Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
- * @param functionName Name of the function (i.e. "pca").
+ * @param bindingName Name of the binding (i.e. "pca").
  */
 void PrintPYX(const util::BindingDetails& doc,
               const string& mainFilename,
-              const string& functionName)
+              const string& bindingName)
 {
-  // Restore parameters.
-  IO::RestoreSettings(doc.programName);
+  std::string functionName = bindingName;
 
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  util::Params params = IO::Parameters(bindingName);
+
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
@@ -75,12 +76,17 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
   cout << "from io cimport IO" << endl;
+  cout << "from params cimport Params" << endl;
+  cout << "from timers cimport Timers" << endl;
   cout << "from io cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
   cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
       << "ResetTimers, EnableTimers" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
-  cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
+  cout << "from preprocess_json_params import process_params_out, "
+      << "process_params_in" << endl;
+  cout << "from serialization cimport SerializeIn, SerializeOut, "
+      << "SerializeOutJSON, SerializeInJSON" << endl;
   cout << endl;
   cout << "import numpy as np" << endl;
   cout << "cimport numpy as np" << endl;
@@ -96,7 +102,8 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Import the program we will be using.
   cout << "cdef extern from \"<" << mainFilename << ">\" nogil:" << endl;
-  cout << "  cdef void mlpackMain() nogil except +RuntimeError" << endl;
+  cout << "  cdef void mlpack_" << bindingName << "(Params, Timers)"
+      << " nogil except +RuntimeError" << endl;
   cout << "  " << endl;
   // Print any class definitions we need to have.
   std::set<std::string> classes;
@@ -106,7 +113,7 @@ void PrintPYX(const util::BindingDetails& doc,
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
-      IO::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
+      params.functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
           NULL);
 
       // Make sure we don't double-print the definition.
@@ -116,12 +123,16 @@ void PrintPYX(const util::BindingDetails& doc,
 
   cout << endl;
 
+  unordered_set<std::string> extraDefnSet; // to print defns only once.
   // Print any extra class definitions we might need.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
-    if (d.input)
-      IO::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+    if (extraDefnSet.find(d.tname) == extraDefnSet.end())
+    {
+      params.functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+      extraDefnSet.insert(d.tname);
+    }
   }
 
   // Print the definition.
@@ -130,11 +141,10 @@ void PrintPYX(const util::BindingDetails& doc,
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     util::ParamData& d = parameters.at(inputOptions[i]);
-
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
 
-    IO::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
+    params.functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
   }
 
   // Print closing brace for function definition.
@@ -142,7 +152,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Print the comment describing the function and its parameters.
   cout << "  \"\"\"" << endl;
-  cout << "  " << doc.programName << endl;
+  cout << "  " << doc.name << endl;
   cout << endl;
 
   // Print the description.
@@ -163,7 +173,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
     cout << "  ";
     size_t indent = 4;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -176,7 +186,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
     cout << "  ";
     size_t indent = 4;
-    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -191,16 +201,17 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "  DisableBacktrace()" << endl;
   cout << "  DisableVerbose()" << endl;
 
-  // Restore the parameters.
-  cout << "  IO.RestoreSettings(\"" << doc.programName << "\")"
+  // Get the Params object from IO.
+  cout << "  cdef Params p = IO.Parameters(\"" << bindingName << "\")"
       << endl;
+  cout << "  cdef Timers t" << endl;
 
   // Determine whether or not we need to copy parameters.
   cout << "  if isinstance(copy_all_inputs, bool):" << endl;
   cout << "    if copy_all_inputs:" << endl;
-  cout << "      SetParam[cbool](<const string> 'copy_all_inputs', "
+  cout << "      SetParam[cbool](p, <const string> 'copy_all_inputs', "
       << "copy_all_inputs)" << endl;
-  cout << "      IO.SetPassed(<const string> 'copy_all_inputs')" << endl;
+  cout << "      p.SetPassed(<const string> 'copy_all_inputs')" << endl;
   cout << "  else:" << endl;
   cout << "    raise TypeError(" <<"\"'copy_all_inputs\' must have type "
       << "\'bool'!\")" << endl;
@@ -212,7 +223,7 @@ void PrintPYX(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+    params.functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -221,30 +232,40 @@ void PrintPYX(const util::BindingDetails& doc,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
+    cout << "  p.SetPassed(<const string> '" << d.name << "')" << endl;
   }
+
+  // Checking the type of check_input_matrices parameter.
+  cout << "  if not isinstance(check_input_matrices, bool):" << endl;
+  cout << "    raise TypeError(" <<"\"'check_input_matrices\' must have type "
+      << "\'bool'!\")" << endl;
+  cout << endl;
+
+  // Before calling mlpackMain(), we check input matrices for NaN values if
+  // needed.
+  cout << "  if check_input_matrices:" << endl;
+  cout << "    p.CheckInputMatrices()" << endl;
 
   // Call the method.
   cout << "  # Call the mlpack program." << endl;
-  cout << "  mlpackMain()" << endl;
+  cout << "  mlpack_" << bindingName << "(p, t)" << endl;
 
   // Do any output processing and return.
   cout << "  # Initialize result dictionary." << endl;
   cout << "  result = {}" << endl;
   cout << endl;
 
+  typedef std::tuple<util::Params, std::tuple<size_t, bool>> TupleType;
+
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
-        (void*) &t, NULL);
+    TupleType tWithParams = std::make_tuple(params, t);
+    params.functionMap[d.tname]["PrintOutputProcessing"](d,
+        (void*) &tWithParams, NULL);
   }
-
-  // Clear the parameters.
-  cout << endl;
-  cout << "  IO.ClearSettings()" << endl;
   cout << endl;
 
   cout << "  return result" << endl;

@@ -38,13 +38,13 @@ mark_categorical_variable = function(x) {
 # Given some matrix-like x (which should be either a matrix or
 # data.frame), convert it into a matrix.
 to_matrix_with_info <- function(x) {
-  
+
   # Handle transformation
   transformed_x <- to_matrix(x)
 
   # Figure out categoricals
   info <- mark_categorical_variable(x)
-  
-  # Return needed data. 
+
+  # Return needed data.
   return(list("info" = info, "data" = transformed_x))
 }

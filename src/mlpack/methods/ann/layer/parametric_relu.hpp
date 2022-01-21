@@ -102,9 +102,12 @@ class PReLUType : public Layer<InputType, OutputType>
   //! Modify the non zero gradient.
   double& Alpha() { return alpha(0); }
 
-  const size_t WeightSize() const { return 1; }
+  //! Get size of weights.
+  size_t WeightSize() const { return 1; }
 
-  //! Serialize the layer.
+  /**
+   * Serialize the layer.
+   */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 

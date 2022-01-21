@@ -29,10 +29,10 @@ template<typename T>
 void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -54,23 +54,23 @@ void PrintMethodInit(
   {
     if (d.cppType == "std::string")
     {
-      std::string value = boost::any_cast<std::string>(d.value);
+      std::string value = ANY_CAST<std::string>(d.value);
       std::cout << prefix << goParamName << ": \""
                 << value << "\"," << std::endl;
     }
     else if (d.cppType == "double")
     {
-      double value = boost::any_cast<double>(d.value);
+      double value = ANY_CAST<double>(d.value);
       std::cout << prefix << goParamName << ": " << value << "," << std::endl;
     }
     else if (d.cppType == "int")
     {
-      int value = boost::any_cast<int>(d.value);
+      int value = ANY_CAST<int>(d.value);
       std::cout << prefix << goParamName << ": " << value << "," << std::endl;
     }
     else if (d.cppType == "bool")
     {
-      bool value = boost::any_cast<bool>(d.value);
+      bool value = ANY_CAST<bool>(d.value);
       if (value == 0)
         std::cout << prefix << goParamName << ": false," << std::endl;
       else
@@ -86,7 +86,7 @@ template<typename T>
 void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -118,8 +118,8 @@ template<typename T>
 void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -151,8 +151,8 @@ template<typename T>
 void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 

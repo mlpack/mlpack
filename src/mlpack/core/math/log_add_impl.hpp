@@ -47,8 +47,10 @@ T LogAdd(T x, T y)
     r = y;
   }
 
-  return (r == -std::numeric_limits<T>::infinity() ||
-          d == -std::numeric_limits<T>::infinity()) ? r : r + log(1 + exp(d));
+  if (std::isinf(d) || std::isinf(r))
+    return r;
+
+  return r + log(1 + exp(d));
 }
 
 /**
@@ -60,15 +62,77 @@ T LogAdd(T x, T y)
 template<typename T>
 typename T::elem_type AccuLog(const T& x)
 {
-  typename T::elem_type sum =
-      -std::numeric_limits<typename T::elem_type>::infinity();
+  typename T::elem_type maxVal = max(x);
+  if (maxVal == -std::numeric_limits<typename T::elem_type>::infinity())
+    return maxVal;
 
-  for (size_t i = 0; i < x.n_elem; ++i)
+  return maxVal + log(sum(exp(x - maxVal)));;
+}
+
+/**
+ * Compute the sum of exponentials of each element in each column, then compute
+ * the log of that.  If InPlace is true, then the values of `y` will also be
+ * added to the sum.
+ */
+template<typename T, bool InPlace>
+void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y)
+{
+  arma::Col<typename T::elem_type> maxs;
+
+  if (InPlace)
   {
-    sum = LogAdd(sum, x[i]);
+    // Compute the maximum in each column (treating y as a column too).
+    maxs = max(max(x, 1), y);
+
+    y = maxs + log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1) +
+        exp(y - maxs));
+  }
+  else
+  {
+    // Compute the maximum element in each column.
+    maxs = max(x, 1);
+
+    y = maxs + log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1));
   }
 
-  return sum;
+  if (maxs.has_inf())
+  {
+    y.replace(-std::numeric_limits<typename T::elem_type>::quiet_NaN(),
+              -std::numeric_limits<typename T::elem_type>::infinity());
+  }
+}
+
+/**
+ * Compute the sum of exponentials of each element in each row, then compute the
+ * log of that.  If InPlace is true, then the values of `y` will also be added
+ * to the sum.
+ */
+template<typename T, bool InPlace>
+void LogSumExpT(const T& x, arma::Col<typename T::elem_type>& y)
+{
+  arma::Row<typename T::elem_type> maxs;
+
+  if (InPlace)
+  {
+    // Compute the maximum element in each column.
+    maxs = max(max(x, 0), y.t());
+
+    y = maxs.t() + log(sum(exp(x - repmat(maxs, x.n_rows, 1)), 0) +
+        exp(y.t() - maxs)).t();
+  }
+  else
+  {
+    // Compute the maximum element in each column.
+    arma::Row<typename T::elem_type> maxs = max(x, 0);
+
+    y = (maxs + log(sum(exp(x - repmat(maxs, x.n_rows, 1)), 0))).t();
+  }
+
+  if (maxs.has_inf())
+  {
+    y.replace(-std::numeric_limits<typename T::elem_type>::quiet_NaN(),
+              -std::numeric_limits<typename T::elem_type>::infinity());
+  }
 }
 
 } // namespace math

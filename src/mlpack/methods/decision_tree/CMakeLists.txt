@@ -4,6 +4,8 @@ set(SOURCES
   all_dimension_select.hpp
   decision_tree.hpp
   decision_tree_impl.hpp
+  decision_tree_regressor.hpp
+  decision_tree_regressor_impl.hpp
   all_categorical_split.hpp
   all_categorical_split_impl.hpp
   best_binary_numeric_split.hpp
@@ -11,6 +13,8 @@ set(SOURCES
   gini_gain.hpp
   information_gain.hpp
   multiple_random_dimension_select.hpp
+  random_binary_numeric_split.hpp
+  random_binary_numeric_split_impl.hpp
   random_dimension_select.hpp
 )
 
@@ -23,9 +27,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(decision_tree "classification")
 add_cli_executable(decision_tree)
 add_python_binding(decision_tree)
 add_julia_binding(decision_tree)
 add_go_binding(decision_tree)
 add_r_binding(decision_tree)
-add_markdown_docs(decision_tree "cli;python;julia;go;r" "classification")
+add_markdown_docs(decision_tree "cli;python;julia;go;r" "")

@@ -1,11 +1,127 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Migrate from boost tests to Catch2 framework (#2523), (#2584).
+
+  * Bump minimum armadillo version from 8.400 to 9.800 (#3043), (#3048).
+
+  * Adding a copy constructor in the Convolution layer (#3067).
+
+  * Replace `boost::spirit` parser by a local efficient implementation (#2942).
+
+  * Disable correctly the autodownloader + fix tests stability (#3076).
+
+  * Replace `boost::any` with `core::v2::any` or `std::any` if available (#3006).
+
+  * Remove old non used Boost headers (#3005).
+
+  * Replace `boost::enable_if` with `std::enable_if` (#2998).
+
+  * Replace `boost::is_same` with `std::is_same` (#2993).
+
+  * Remove invalid option for emsmallen and STB (#2960).
+
+  * Check for armadillo dependencies before downloading armadillo (#2954).
+
+  * Disable the usage of autodownloader by default (#2953).
+
+  * Install dependencies downloaded with the autodownloader (#2952).
+ 
+  * Download older Boost if the compiler is old (#2940). 
+
+  * Add support for embedded systems (#2531).
+
+  * Build mlpack executable statically if the library is statically linked (#2931).
+
+  * Fix cover tree loop bug on embedded arm systems (#2869).
+
+  * Fix a LAPACK bug in `FindArmadillo.cmake` (#2929).
+
+  * Add an autodownloader to get mlpack dependencies (#2927).
+
+  * Remove Coverage files and configurations from CMakeLists (#2866).
+
+  * Added `Multi Label Soft Margin Loss` loss function for neural networks
+   (#2345).
+
+  * Added Decision Tree Regressor (#2905). It can be used using the class
+    `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
+
+  * Added dict-style inspection of mlpack models in python bindings (#2868).
+
+  * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
+    class `mlpack::tree::ExtraTrees`, but only through C++.
+
+  * Add Flatten T Swish activation function (`flatten-t-swish.hpp`)
+
+  * Added warm start feature to Random Forest (#2881); this feature is
+    accessible from mlpack's bindings to different languages.
+
+  * Added Pixel Shuffle layer (#2563).
+
+  * Add "check_input_matrices" option to python bindings that checks
+    for NaN and inf values in all the input matrices (#2787).
+
+  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
+
+  * Disabled all the bindings by default in CMake (#2782).
+
   * Added an implementation to Stratify Data (#2671).
 
   * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
     built (default ON) (#2730).
 
+  * Add Triplet Margin Loss function (#2762).
+
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
+
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
+
+  * Replace Boost serialization library with Cereal (#2458).
+
+  * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
+    Python bindings (#2797).
+
+  * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
+    `range_search`, `krann`, and `kde` bindings (#2803).
+
+  * Add k-means++ initialization strategy (#2813).
+
+  * `NegativeLogLikelihood<>` now expects classes in the range `0` to
+    `numClasses - 1` (#2534).
+
+  * Add `Lambda1()`, `Lambda2()`, `UseCholesky()`, and `Tolerance()` members to
+    `LARS` so parameters for training can be modified (#2861).
+
+  * Remove unused `ElemType` template parameter from `DecisionTree` and
+    `RandomForest` (#2874).
+
+  * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
+    `OFF` (#2884).
+
+  * The `mlpack_test` target is no longer built as part of `make all`.  Use
+    `make mlpack_test` to build the tests.
+
+  * Fixes to `HoeffdingTree`: ensure that training still works when empty
+    constructor is used (#2964).
+
+  * Fix Julia model serialization bug (#2970).
+
+  * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
+
+  * Add `probabilities` option to softmax regression binding, to get class
+    probabilities for test points (#3001).
+
+  * Fix thread safety issues in mlpack bindings to other languages (#2995).
+
+  * Fix double-free of model pointers in R bindings (#3034).
+
+  * Fix Julia, Python, R, and Go handling of categorical data for
+    `decision_tree()` and `hoeffding_tree()` (#2971).
+
+  * Depend on `pkgbuild` for R bindings (#3081).
+ 
+  * Replaced Numpy deprecated code in Python bindings (#3126).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
@@ -27,7 +143,6 @@
 
 ### mlpack 3.4.0
 ###### 2020-09-01
-
   * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
 
   * Added bindings for _R_ during Google Summer of Code (#2556).

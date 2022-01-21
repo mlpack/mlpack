@@ -22,8 +22,8 @@ namespace cli {
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
@@ -31,7 +31,7 @@ void* GetAllocatedMemory(
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
@@ -39,13 +39,13 @@ void* GetAllocatedMemory(
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model, which is a tuple, and we need the address of the
   // memory.
   typedef std::tuple<T*, std::string> TupleType;
-  return std::get<0>(*boost::any_cast<TupleType>(&d.value));
+  return std::get<0>(*ANY_CAST<TupleType>(&d.value));
 }
 
 template<typename T>

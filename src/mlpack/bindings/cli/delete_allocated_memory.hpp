@@ -21,8 +21,8 @@ namespace cli {
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& /* d */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
 }
@@ -30,7 +30,7 @@ void DeleteAllocatedMemoryImpl(
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
 }
@@ -38,12 +38,12 @@ void DeleteAllocatedMemoryImpl(
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
   typedef std::tuple<T*, std::string> TupleType;
-  delete std::get<0>(*boost::any_cast<TupleType>(&d.value));
+  delete std::get<0>(*ANY_CAST<TupleType>(&d.value));
 }
 
 template<typename T>

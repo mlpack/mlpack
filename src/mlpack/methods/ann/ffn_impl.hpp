@@ -17,6 +17,8 @@
 
 #include "make_alias.hpp"
 
+#include "util/check_input_shape.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -185,6 +187,10 @@ double FFN<
          OptimizerType& optimizer,
          CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network,
+                                                              predictors.n_rows,
+                                                              "FFN<>::Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
@@ -216,6 +222,10 @@ double FFN<
          InputType responses,
          CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network,
+                                                              predictors.n_rows,
+                                                              "FFN<>::Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
@@ -422,6 +432,36 @@ double FFN<
     arma::mat tmpGradient(gradient.n_rows, gradient.n_cols);
     res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
     gradient += tmpGradient;
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename PredictorsType, typename ResponsesType>
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
+    const PredictorsType& predictors, const ResponsesType& responses)
+{
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "FFN<>::Evaluate()");
+
+  if (parameter.is_empty())
+    ResetParameters();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
+  Forward(predictors);
+
+  double res = outputLayer.Forward(boost::apply_visitor(
+      outputParameterVisitor, network.back()), responses);
+
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    res += boost::apply_visitor(lossVisitor, network[i]);
+>>>>>>> origin/master
   }
 
   return res;

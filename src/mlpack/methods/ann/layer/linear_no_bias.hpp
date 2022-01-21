@@ -59,6 +59,18 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   //! Reset the layer parameter.
   void SetWeights(typename OutputType::elem_type* weightsPtr);
 
+  //! Copy constructor.
+  LinearNoBias(const LinearNoBias& layer);
+
+  //! Move constructor.
+  LinearNoBias(LinearNoBias&&);
+
+  //! Copy assignment operator.
+  LinearNoBias& operator=(const LinearNoBias& layer);
+
+  //! Move assignment operator.
+  LinearNoBias& operator=(LinearNoBias&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -37,10 +37,8 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const bool singleMode,
     singleMode(singleMode),
     naive(naive)
 {
-  Timer::Start("tree_building");
   if (!naive)
     referenceTree = new Tree(*referenceSet);
-  Timer::Stop("tree_building");
 }
 
 // No instantiated kernel.
@@ -60,10 +58,8 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
     singleMode(singleMode),
     naive(naive)
 {
-  Timer::Start("tree_building");
   if (!naive)
     referenceTree = new Tree(referenceSet);
-  Timer::Stop("tree_building");
 }
 
 // Instantiated kernel.
@@ -84,13 +80,9 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
     naive(naive),
     metric(kernel)
 {
-  Timer::Start("tree_building");
-
   // If necessary, the reference tree should be built.  There is no query tree.
   if (!naive)
     referenceTree = new Tree(referenceSet, metric);
-
-  Timer::Stop("tree_building");
 }
 
 // No instantiated kernel.
@@ -110,13 +102,11 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
     singleMode(singleMode),
     naive(naive)
 {
-  Timer::Start("tree_building");
   if (!naive)
   {
     referenceTree = new Tree(std::move(referenceSet));
     referenceSet = &referenceTree->Dataset();
   }
-  Timer::Stop("tree_building");
 }
 
 // Instantiated kernel.
@@ -137,16 +127,12 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(MatType&& referenceSet,
     naive(naive),
     metric(kernel)
 {
-  Timer::Start("tree_building");
-
   // If necessary, the reference tree should be built.  There is no query tree.
   if (!naive)
   {
     referenceTree = new Tree(referenceSet, metric);
     referenceSet = &referenceTree->Dataset();
   }
-
-  Timer::Stop("tree_building");
 }
 
 // One dataset, pre-built tree.
@@ -248,6 +234,35 @@ FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
 
   singleMode = other.singleMode;
   naive = other.naive;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>&
+FastMKS<KernelType, MatType, TreeType>::operator=(FastMKS&& other)
+{
+  if (this != &other)
+  {
+    referenceSet = other.referenceSet;
+    referenceTree = other.referenceTree;
+    treeOwner = other.treeOwner;
+    setOwner = other.setOwner;
+    singleMode = other.singleMode;
+    naive = other.naive;
+    metric = std::move(other.metric);
+
+    // Clear information from the other.
+    other.referenceSet = nullptr;
+    other.referenceTree = nullptr;
+    other.treeOwner = false;
+    other.setOwner = false;
+    other.singleMode = false;
+    other.naive = false;
+  }
+  return *this;
 }
 
 template<typename KernelType,
@@ -417,8 +432,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     throw std::invalid_argument(ss.str());
   }
 
-  Timer::Start("computing_products");
-
   // No remapping will be necessary because we are using the cover tree.
   indices.set_size(k, querySet.n_cols);
   kernels.set_size(k, querySet.n_cols);
@@ -454,8 +467,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
       }
     }
 
-    Timer::Stop("computing_products");
-
     return;
   }
 
@@ -477,16 +488,12 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
     rules.GetResults(indices, kernels);
 
-    Timer::Stop("computing_products");
     return;
   }
 
   // Dual-tree implementation.  First, we need to build the query tree.  We are
   // assuming it doesn't map anything...
-  Timer::Stop("computing_products");
-  Timer::Start("tree_building");
   Tree queryTree(querySet);
-  Timer::Stop("tree_building");
 
   Search(&queryTree, k, indices, kernels);
 }
@@ -529,7 +536,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   indices.set_size(k, queryTree->Dataset().n_cols);
   kernels.set_size(k, queryTree->Dataset().n_cols);
 
-  Timer::Start("computing_products");
   typedef FastMKSRules<KernelType, Tree> RuleType;
   RuleType rules(*referenceSet, queryTree->Dataset(), k, metric.Kernel());
 
@@ -541,8 +547,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   Log::Info << rules.Scores() << " scores." << std::endl;
 
   rules.GetResults(indices, kernels);
-
-  Timer::Stop("computing_products");
 }
 
 template<typename KernelType,
@@ -556,7 +560,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     arma::mat& kernels)
 {
   // No remapping will be necessary because we are using the cover tree.
-  Timer::Start("computing_products");
   indices.set_size(k, referenceSet->n_cols);
   kernels.set_size(k, referenceSet->n_cols);
 
@@ -594,8 +597,6 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
       }
     }
 
-    Timer::Stop("computing_products");
-
     return;
   }
 
@@ -622,13 +623,10 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
     rules.GetResults(indices, kernels);
 
-    Timer::Stop("computing_products");
     return;
   }
 
   // Dual-tree implementation.
-  Timer::Stop("computing_products");
-
   Search(referenceTree, k, indices, kernels);
 }
 

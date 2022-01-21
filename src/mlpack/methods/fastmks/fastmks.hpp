@@ -163,6 +163,11 @@ class FastMKS
    */
   FastMKS& operator=(const FastMKS& other);
 
+  /**
+   * Move assignment operator.
+   */
+  FastMKS& operator=(FastMKS&& other);
+
   //! Destructor for the FastMKS object.
   ~FastMKS();
 

@@ -22,8 +22,8 @@ namespace tests {
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
@@ -31,7 +31,7 @@ void* GetAllocatedMemory(
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   return NULL;
 }
@@ -39,11 +39,11 @@ void* GetAllocatedMemory(
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model; return its memory location.
-  return *boost::any_cast<T*>(&d.value);
+  return *ANY_CAST<T*>(&d.value);
 }
 
 template<typename T>

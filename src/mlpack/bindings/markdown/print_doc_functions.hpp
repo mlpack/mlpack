@@ -27,6 +27,12 @@ namespace markdown {
 inline std::string GetBindingName(const std::string& bindingName);
 
 /**
+ * Given the name of the binding, print the name for the wrapper for
+ * current language.
+ */
+inline std::string GetWrapperName(const std::string& bindingName);
+
+/**
  * Print the name of the given language.
  */
 inline std::string PrintLanguage(const std::string& language);
@@ -61,7 +67,8 @@ inline std::string PrintValue(const T& value, bool quotes);
  * Print the default value of an option, unless it is required (in which case
  * Markdown italicized '--' is printed).
  */
-inline std::string PrintDefault(const std::string& paramName);
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName);
 
 /**
  * Print a dataset type parameter (add .csv and return).
@@ -92,18 +99,86 @@ inline std::string ProgramCall(const std::string& programName);
  * that all of the PARAM_*() declarataions need to come before
  * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
-inline std::string ParamString(const std::string& paramName);
+inline std::string ParamString(const std::string& bindingName,
+                               const std::string& paramName);
 
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(util::ParamData& d);
+inline std::string ParamType(util::Params& p, util::ParamData& d);
+
+/**
+ * Print the import string that imports any external libs.
+ */
+inline std::string ImportExtLib();
+
+/**
+ * Print the import string that imports mlpack's preprocess_split
+ * method.
+ */
+inline std::string ImportSplit();
+
+/**
+ * Import the current method.
+ */
+inline std::string ImportThis(const std::string& groupName);
+
+/**
+ * Print the string that splits dataset into training and testing.
+ */
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio);
+
+/**
+ * Print the string that reads dataset from an online source.
+ */
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url);
+
+/**
+ * Print the string that creates object of the given method
+ * with the given parameters.
+ */
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args);
+
+/**
+ * Print the string that creates object of the given method
+ * with default parameters.
+ */
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName);
+
+/**
+ * Print the string that calls a method from the object created.
+ */
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args);
+
+/**
+ * Get the mapped name in the corresponding language.
+ */
+inline std::string GetMappedName(const std::string& methodName);
+
+inline std::string GetWrapperLink(const std::string& bindingName);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.
  */
 template<typename T>
-inline bool IgnoreCheck(const T& t);
+inline bool IgnoreCheck(const std::string& bindingName, const T& t);
 
 } // namespace markdown
 } // namespace bindings

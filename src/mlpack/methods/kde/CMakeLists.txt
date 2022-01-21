@@ -8,6 +8,7 @@ set(SOURCES
   kde_stat.hpp
   kde_model.hpp
   kde_model_impl.hpp
+  kde_model.cpp
 )
 
 # Add directory name to sources.
@@ -19,9 +20,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(kde "misc. / other")
 add_cli_executable(kde)
 add_python_binding(kde)
 add_julia_binding(kde)
 add_go_binding(kde)
 add_r_binding(kde)
-add_markdown_docs(kde "cli;python;julia;go;r" "misc. / other")
+add_markdown_docs(kde "cli;python;julia;go;r" "")

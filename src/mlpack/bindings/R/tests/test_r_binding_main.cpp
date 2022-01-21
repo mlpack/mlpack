@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME test_R_binding
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 
@@ -19,7 +25,7 @@ using namespace mlpack;
 using namespace mlpack::kernel;
 
 // Program Name.
-BINDING_NAME("R binding test");
+BINDING_USER_NAME("R binding test");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -65,110 +71,110 @@ PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
     "bandwidth.", "");
 PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
-  const string s = IO::GetParam<string>("string_in");
-  const int i = IO::GetParam<int>("int_in");
-  const double d = IO::GetParam<double>("double_in");
+  const string s = params.Get<string>("string_in");
+  const int i = params.Get<int>("int_in");
+  const double d = params.Get<double>("double_in");
 
-  IO::GetParam<string>("string_out") = "wrong";
-  IO::GetParam<int>("int_out") = 11;
-  IO::GetParam<double>("double_out") = 3.0;
+  params.Get<string>("string_out") = "wrong";
+  params.Get<int>("int_out") = 11;
+  params.Get<double>("double_out") = 3.0;
 
   // Check that everything is right on the input, and then set output
   // accordingly.
-  if (!IO::HasParam("flag2") && IO::HasParam("flag1"))
+  if (!params.Has("flag2") && params.Has("flag1"))
   {
     if (s == "hello")
-      IO::GetParam<string>("string_out") = "hello2";
+      params.Get<string>("string_out") = "hello2";
 
     if (i == 12)
-      IO::GetParam<int>("int_out") = 13;
+      params.Get<int>("int_out") = 13;
 
     if (d == 4.0)
-      IO::GetParam<double>("double_out") = 5.0;
+      params.Get<double>("double_out") = 5.0;
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
   // the 3rd row will be multiplied by two.
-  if (IO::HasParam("matrix_in"))
+  if (params.Has("matrix_in"))
   {
-    arma::mat out = move(IO::GetParam<arma::mat>("matrix_in"));
+    arma::mat out = move(params.Get<arma::mat>("matrix_in"));
     out.shed_row(4);
     out.row(2) *= 2.0;
 
-    IO::GetParam<arma::mat>("matrix_out") = move(out);
+    params.Get<arma::mat>("matrix_out") = move(out);
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
   // the 3rd row will be multiplied by two.
-  if (IO::HasParam("umatrix_in"))
+  if (params.Has("umatrix_in"))
   {
     arma::Mat<size_t> out =
-        move(IO::GetParam<arma::Mat<size_t>>("umatrix_in"));
+        move(params.Get<arma::Mat<size_t>>("umatrix_in"));
     out.shed_row(4);
     out.row(2) *= 2;
 
-    IO::GetParam<arma::Mat<size_t>>("umatrix_out") = move(out);
+    params.Get<arma::Mat<size_t>>("umatrix_out") = move(out);
   }
 
   // An input column or row should have all elements multiplied by two.
-  if (IO::HasParam("col_in"))
+  if (params.Has("col_in"))
   {
-    arma::vec out = move(IO::GetParam<arma::vec>("col_in"));
+    arma::vec out = move(params.Get<arma::vec>("col_in"));
     out *= 2.0;
 
-    IO::GetParam<arma::vec>("col_out") = move(out);
+    params.Get<arma::vec>("col_out") = move(out);
   }
 
-  if (IO::HasParam("ucol_in"))
+  if (params.Has("ucol_in"))
   {
     arma::Col<size_t> out =
-        move(IO::GetParam<arma::Col<size_t>>("ucol_in"));
+        move(params.Get<arma::Col<size_t>>("ucol_in"));
     out += 1;
 
-    IO::GetParam<arma::Col<size_t>>("ucol_out") = move(out);
+    params.Get<arma::Col<size_t>>("ucol_out") = move(out);
   }
 
-  if (IO::HasParam("row_in"))
+  if (params.Has("row_in"))
   {
-    arma::rowvec out = move(IO::GetParam<arma::rowvec>("row_in"));
+    arma::rowvec out = move(params.Get<arma::rowvec>("row_in"));
     out *= 2.0;
 
-    IO::GetParam<arma::rowvec>("row_out") = move(out);
+    params.Get<arma::rowvec>("row_out") = move(out);
   }
 
-  if (IO::HasParam("urow_in"))
+  if (params.Has("urow_in"))
   {
     arma::Row<size_t> out =
-        move(IO::GetParam<arma::Row<size_t>>("urow_in"));
+        move(params.Get<arma::Row<size_t>>("urow_in"));
     out += 1;
 
-    IO::GetParam<arma::Row<size_t>>("urow_out") = move(out);
+    params.Get<arma::Row<size_t>>("urow_out") = move(out);
   }
 
   // Vector arguments should have the last element removed.
-  if (IO::HasParam("vector_in"))
+  if (params.Has("vector_in"))
   {
-    vector<int> out = move(IO::GetParam<vector<int>>("vector_in"));
+    vector<int> out = move(params.Get<vector<int>>("vector_in"));
     out.pop_back();
 
-    IO::GetParam<vector<int>>("vector_out") = move(out);
+    params.Get<vector<int>>("vector_out") = move(out);
   }
 
-  if (IO::HasParam("str_vector_in"))
+  if (params.Has("str_vector_in"))
   {
-    vector<string> out = move(IO::GetParam<vector<string>>("str_vector_in"));
+    vector<string> out = move(params.Get<vector<string>>("str_vector_in"));
     out.pop_back();
 
-    IO::GetParam<vector<string>>("str_vector_out") = move(out);
+    params.Get<vector<string>>("str_vector_out") = move(out);
   }
 
   // All numeric elements should be multiplied by 3.
-  if (IO::HasParam("matrix_and_info_in"))
+  if (params.Has("matrix_and_info_in"))
   {
     typedef tuple<data::DatasetInfo, arma::mat> TupleType;
-    TupleType tuple = move(IO::GetParam<TupleType>("matrix_and_info_in"));
+    TupleType tuple = move(params.Get<TupleType>("matrix_and_info_in"));
 
     const data::DatasetInfo& di = std::get<0>(tuple);
     arma::mat& m = std::get<1>(tuple);
@@ -176,22 +182,37 @@ static void mlpackMain()
     for (size_t i = 0; i < m.n_rows; ++i)
     {
       if (di.Type(i) == data::Datatype::numeric)
+      {
         m.row(i) *= 2.0;
+      }
+      else
+      {
+        // Make sure input data is valid.
+        for (size_t c = 0; c < m.n_cols; ++c)
+        {
+          if (ceil(m(i, c)) != m(i, c))
+            throw std::invalid_argument("non-integer value in categorical!");
+          else if (m(i, c) < 0)
+            throw std::invalid_argument("negative value in categorical!");
+          else if (size_t(m(i, c)) >= di.NumMappings(i))
+            throw std::invalid_argument("value outside number of categories!");
+        }
+      }
     }
 
-    IO::GetParam<arma::mat>("matrix_and_info_out") = move(m);
+    params.Get<arma::mat>("matrix_and_info_out") = move(m);
   }
 
   // If we got a request to build a model, then build it.
-  if (IO::HasParam("build_model"))
+  if (params.Has("build_model"))
   {
-    IO::GetParam<GaussianKernel*>("model_out") = new GaussianKernel(10.0);
+    params.Get<GaussianKernel*>("model_out") = new GaussianKernel(10.0);
   }
 
   // If we got an input model, double the bandwidth and output that.
-  if (IO::HasParam("model_in"))
+  if (params.Has("model_in"))
   {
-    IO::GetParam<double>("model_bw_out") =
-        IO::GetParam<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
+    params.Get<double>("model_bw_out") =
+        params.Get<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
   }
 }

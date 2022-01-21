@@ -19,9 +19,9 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-ReinforceNormalType<InputType, OutputType>::ReinforceNormalType(
-    const double stdev) : stdev(stdev)
+template<typename InputDataType, typename OutputDataType>
+ReinforceNormalType<InputDataType, OutputDataType>::ReinforceNormalType(
+    const double stdev) : stdev(stdev), reward(0.0), deterministic(false)
 {
   // Nothing to do here.
 }

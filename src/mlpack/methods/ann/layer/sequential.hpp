@@ -15,8 +15,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-//#include <boost/ptr_container/ptr_vector.hpp>
-
 #include "layer.hpp"
 
 namespace mlpack {
@@ -120,6 +118,8 @@ class SequentialType : public MultiLayer<InputType, OutputType>
   void Gradient(const InputType& input,
                 const OutputType& error,
                 OutputType& /* gradient */);
+
+  size_t InputShape() const;
 
   /**
    * Serialize the layer

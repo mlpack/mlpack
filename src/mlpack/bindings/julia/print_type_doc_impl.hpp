@@ -24,11 +24,11 @@ namespace julia {
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::disable_if<util::IsStdVector<T>>::type*,
-    const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // A flag type.
   if (std::is_same<T, bool>::value)
@@ -142,9 +142,10 @@ std::string PrintTypeDoc(
       "indicating which dimensions are categorical (represented by `true`) and "
       "which are numeric (represented by `false`).  The number of elements in "
       "the boolean array should be the same as the dimensionality of the data "
-      "matrix.  It is expected that each row of the matrix corresponds to a "
-      "single data point, unless `points_are_rows` is set to `false` when "
-      "calling mlpack bindings.";
+      "matrix.  Categorical dimensions should take integer values between 1 "
+      "and the number of categories.  It is expected that each row of the "
+      "matrix corresponds to a single data point, unless `points_are_rows` is "
+      "set to `false` when calling mlpack bindings.";
 }
 
 /**
@@ -153,8 +154,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return "An mlpack model pointer.  `<Model>` refers to the type of model that "
       "is being stored, so, e.g., for `CF()`, the type will be `CFModel`. "

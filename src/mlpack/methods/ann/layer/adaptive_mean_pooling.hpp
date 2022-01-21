@@ -97,6 +97,9 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
     return result;
   }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */

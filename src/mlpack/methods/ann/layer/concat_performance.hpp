@@ -14,8 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-//#include <boost/ptr_container/ptr_vector.hpp>
-
 #include "layer_types.hpp"
 
 namespace mlpack {

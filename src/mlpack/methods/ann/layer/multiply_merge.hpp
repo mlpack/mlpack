@@ -48,6 +48,18 @@ class MultiplyMergeType : public MultiLayer<InputType, OutputType>
    */
   MultiplyMergeType(const bool model = false, const bool run = true);
 
+  //! Copy Constructor.
+  MultiplyMerge(const MultiplyMerge& layer);
+
+  //! Move Constructor.
+  MultiplyMerge(MultiplyMerge&& layer);
+
+  //! Copy assignment operator.
+  MultiplyMerge& operator=(const MultiplyMerge& layer);
+
+  //! Move assignment operator.
+  MultiplyMerge& operator=(MultiplyMerge&& layer);
+
   //! Destructor to release allocated memory.
   ~MultiplyMergeType();
 
@@ -91,6 +103,9 @@ class MultiplyMergeType : public MultiLayer<InputType, OutputType>
   OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
 
   /**
    * Serialize the layer.

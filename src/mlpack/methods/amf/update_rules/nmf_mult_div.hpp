@@ -31,7 +31,7 @@ namespace amf {
  * }
  * @endcode
  *
- * This is a multiplicative rule that ensures that the Kullback–Leibler
+ * This is a multiplicative rule that ensures that the Kullback-Leibler
  * divergence
  *
  * \f[

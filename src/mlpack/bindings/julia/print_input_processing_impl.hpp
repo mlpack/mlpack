@@ -35,14 +35,14 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  // Here we can just call IOSetParam() directly; we don't need a separate
+  // Here we can just call SetParam() directly; we don't need a separate
   // overload.
   if (d.required)
   {
     // This gives us code like the following:
     //
-    // IOSetParam("<param_name>", <paramName>)
-    std::cout << "  IOSetParam(\"" << d.name << "\", " << juliaName << ")"
+    // SetParam(p, "<param_name>", <paramName>)
+    std::cout << "  SetParam(p, \"" << d.name << "\", " << juliaName << ")"
         << std::endl;
   }
   else
@@ -50,10 +50,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+    //   SetParam(p, "<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
+    std::cout << "    SetParam(p, \"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
@@ -102,8 +102,8 @@ void PrintInputProcessing(
     extra = ", points_are_rows";
   }
 
-  // Now print the IOSetParam call.
-  std::cout << indent << "IOSetParam" << uChar << matTypeModifier << "(\""
+  // Now print the SetParam call.
+  std::cout << indent << "SetParam" << uChar << matTypeModifier << "(p, \""
       << d.name << "\", " << juliaName << extra << ")" << std::endl;
 
   if (!d.required)
@@ -131,7 +131,7 @@ void PrintInputProcessing(
   //
   // if !ismissing(<param_name>)
   //   push!(model_ptrs, convert(<type>, <param_name>).ptr)
-  //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+  //   SetParam("<param_name>", convert(<type>, <param_name>))
   // end
 
   // If the argument is not required, then we have to encase the code in an if.
@@ -147,8 +147,8 @@ void PrintInputProcessing(
   std::cout << indent << "push!(modelPtrs, convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << ").ptr)" << std::endl;
-  std::cout << indent << functionName << "_internal.IOSetParam" << type
-      << "(\"" << d.name << "\", convert("
+  std::cout << indent << functionName << "_internal.SetParam" << type
+      << "(p, \"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
       << juliaName << "))" << std::endl;
 
@@ -172,14 +172,14 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
-  // Here we can just call IOSetParam() directly; we don't need a separate
+  // Here we can just call SetParam() directly; we don't need a separate
   // overload.  But we do have to pass in points_are_rows.
   if (d.required)
   {
     // This gives us code like the following:
     //
-    // IOSetParam("<param_name>", convert(<type>, <paramName>))
-    std::cout << "  IOSetParam(\"" << d.name << "\", convert("
+    // SetParam(p, "<param_name>", convert(<type>, <paramName>))
+    std::cout << "  SetParam(p, \"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
   }
@@ -188,10 +188,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+    //   SetParam(p, "<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
+    std::cout << "    SetParam(p, \"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
     std::cout << "  end" << std::endl;

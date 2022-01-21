@@ -35,6 +35,58 @@ ReparametrizationType<InputType, OutputType>::ReparametrizationType(
   }
 }
 
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    const Reparametrization& layer) :
+    latentSize(layer.latentSize),
+    stochastic(layer.stochastic),
+    includeKl(layer.includeKl),
+    beta(layer.beta)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    Reparametrization&& layer) :
+    latentSize(std::move(layer.latentSize)),
+    stochastic(std::move(layer.stochastic)),
+    includeKl(std::move(layer.includeKl)),
+    beta(std::move(layer.beta))
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>&
+Reparametrization<InputDataType, OutputDataType>::
+operator=(const Reparametrization& layer)
+{
+  if (this != &layer)
+  {
+    latentSize = layer.latentSize;
+    stochastic = layer.stochastic;
+    includeKl = layer.includeKl;
+    beta = layer.beta;
+  }
+  return *this;
+}
+
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>&
+Reparametrization<InputDataType, OutputDataType>::
+operator=(Reparametrization&& layer)
+{
+  if (this != &layer)
+  {
+    latentSize = std::move(layer.latentSize);
+    stochastic = std::move(layer.stochastic);
+    includeKl = std::move(layer.includeKl);
+    beta = std::move(layer.beta);
+  }
+  return *this;
+}
+
 template<typename InputType, typename OutputType>
 void ReparametrizationType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)

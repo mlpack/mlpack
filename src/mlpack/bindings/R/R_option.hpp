@@ -47,7 +47,7 @@ class ROption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param * (testName) Is not used and added for compatibility reasons.
+   * @param bindingName Name of the binding that this parameter is for.
    */
   ROption(const T defaultValue,
           const std::string& identifier,
@@ -57,7 +57,7 @@ class ROption
           const bool required = false,
           const bool input = true,
           const bool noTranspose = false,
-          const std::string& /* testName */ = "")
+          const std::string& bindingName = "")
   {
     // Create the ParamData object to give to IO.
     util::ParamData data;
@@ -70,47 +70,29 @@ class ROption
     data.required = required;
     data.input = input;
     data.loaded = false;
-
-    // Only "verbose" will be persistent.
-    if (identifier == "verbose")
-      data.persistent = true;
-    else
-      data.persistent = false;
     data.cppType = cppName;
 
     // Every parameter we'll get from R will have the correct type.
-    data.value = boost::any(defaultValue);
-
-    // Restore the parameters for this program.
-    if (identifier != "verbose")
-      IO::RestoreSettings(IO::ProgramName(), false);
+    data.value = ANY(defaultValue);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the R, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
-        &GetPrintableParam<T>;
+    IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
 
     // These are used by the R generator.
-    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
-        &PrintInputParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
-        &PrintOutputProcessing<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
-        &PrintInputProcessing<T>;
-    IO::GetSingleton().functionMap[data.tname]["PrintSerializeUtil"] =
-        &PrintSerializeUtil<T>;
+    IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
+    IO::AddFunction(data.tname, "PrintInputParam", &PrintInputParam<T>);
+    IO::AddFunction(data.tname, "PrintOutputProcessing",
+        &PrintOutputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintInputProcessing",
+        &PrintInputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintSerializeUtil", &PrintSerializeUtil<T>);
 
-    // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so or .o that uses IO, so we have to keep the
-    // options separate.  programName is a global variable from mlpack_main.hpp.
-    IO::Add(std::move(data));
-    if (identifier != "verbose")
-      IO::StoreSettings(IO::ProgramName());
-    IO::ClearSettings();
+    // Add the ParamData object.
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType>
 ConcatenateType<InputType, OutputType>::
 ConcatenateType(const InputType& concat) :
-  concat(concat)
+    concat(concat)
 {
   // Nothing to do here.
 }

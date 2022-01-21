@@ -60,45 +60,37 @@ class MDOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Several options from Python and CLI bindings are persistent.
-    if (identifier == "verbose" || identifier == "copy_all_inputs" ||
-        identifier == "help" || identifier == "info" || identifier == "version")
-      data.persistent = true;
-    else
-      data.persistent = false;
     data.cppType = cppName;
 
     // Every parameter we'll get from Markdown will have the correct type.
-    data.value = boost::any(defaultValue);
-
-    // Restore the parameters for this program.
-    if (identifier != "verbose" && identifier != "copy_all_inputs")
-      IO::RestoreSettings(bindingName, false);
+    data.value = ANY(defaultValue);
 
     // Set the function pointers that we'll need.  Most of these simply delegate
     // to the current binding type's implementation.  Any new language will need
     // to have all of these implemented, and the Markdown implementation will
     // need to properly delegate.
-    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
-        &DefaultParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
-        &GetPrintableParam<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableParamName"] =
-        &GetPrintableParamName<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
-        &GetPrintableParamValue<T>;
-    IO::GetSingleton().functionMap[data.tname]["GetPrintableType"] =
-        &GetPrintableType<T>;
-    IO::GetSingleton().functionMap[data.tname]["IsSerializable"] =
-        &IsSerializable<T>;
+    IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);
+    IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableParamName",
+        &GetPrintableParamName<T>);
+    IO::AddFunction(data.tname, "GetPrintableParamValue",
+        &GetPrintableParamValue<T>);
+    IO::AddFunction(data.tname, "GetPrintableType", &GetPrintableType<T>);
+    IO::AddFunction(data.tname, "IsSerializable", &IsSerializable<T>);
 
     // Add the option.
-    IO::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs" &&
         identifier != "help" && identifier != "info" && identifier != "version")
-      IO::StoreSettings(bindingName);
-    IO::ClearSettings();
+    {
+      IO::AddParameter(bindingName, std::move(data));
+    }
+    else
+    {
+      util::Params p = IO::Parameters("");
+      if (p.Parameters().count(identifier) == 0)
+        IO::AddParameter("", std::move(data));
+    }
   }
 };
 

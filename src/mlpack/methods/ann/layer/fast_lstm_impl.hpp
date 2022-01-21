@@ -159,33 +159,20 @@ void FastLSTMType<InputType, OutputType>::ResetCell(const size_t size)
   gradientStep = batchSize * size - 1;
 
   const size_t rhoBatchSize = size * batchSize;
-  if (gate.is_empty() || gate.n_cols != rhoBatchSize)
-  {
-    gate.set_size(4 * outSize, rhoBatchSize);
-    gateActivation.set_size(outSize * 3, rhoBatchSize);
-    stateActivation.set_size(outSize, rhoBatchSize);
-    cellActivation.set_size(outSize, rhoBatchSize);
-    prevError.set_size(4 * outSize, batchSize);
 
-    if (prevOutput.is_empty())
-    {
-      prevOutput = arma::zeros<OutputType>(outSize, batchSize);
-      cell = arma::zeros(outSize, size * batchSize);
-      cellActivationError = arma::zeros<OutputType>(outSize, batchSize);
-      outParameter = arma::zeros<OutputType>(
-          outSize, (size + 1) * batchSize);
-    }
-    else
-    {
-      // To preserve the leading zeros, recreate the object according to given
-      // size specifications, while preserving the elements as well as the
-      // layout of the elements.
-      prevOutput.resize(outSize, batchSize);
-      cell.resize(outSize, size * batchSize);
-      cellActivationError.resize(outSize, batchSize);
-      outParameter.resize(outSize, (size + 1) * batchSize);
-    }
-  }
+  // Make sure all of the matrices we use to store state are at least as large
+  // as we need.
+  gate.set_size(4 * outSize, rhoBatchSize);
+  gateActivation.set_size(outSize * 3, rhoBatchSize);
+  stateActivation.set_size(outSize, rhoBatchSize);
+  cellActivation.set_size(outSize, rhoBatchSize);
+  prevError.set_size(4 * outSize, batchSize);
+
+  // Reset stored state to zeros.
+  prevOutput.zeros(outSize, batchSize);
+  cell.zeros(outSize, size * batchSize);
+  cellActivationError.zeros(outSize, batchSize);
+  outParameter.zeros(outSize, (size + 1) * batchSize);
 }
 
 template<typename InputType, typename OutputType>

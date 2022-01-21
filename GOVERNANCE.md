@@ -109,4 +109,7 @@ The NumFOCUS leadership team is responsible for this governance document, and
 thus any changes to this document, NumFOCUS membership, or the NumFOCUS
 leadership team must be approved by that team, also by a simple majority vote.
 Because every member of the NumFOCUS leadership team should be an active
-Committer, any proposal requires votes (or abstentions) by all five members.
+Committer, efforts should be made to collect votes from all five members.
+Voting for any proposal should be open for at least five days to allow
+sufficient time. If necessary, every active member of the NumFOCUS leadership
+team can ask for an extension of the voting deadline.

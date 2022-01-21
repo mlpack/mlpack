@@ -29,9 +29,11 @@ namespace util {
  * @param value Value to set parameter to.
  */
 template<typename T>
-inline void SetParam(const std::string& identifier, T& value)
+inline void SetParam(util::Params& params,
+                     const std::string& identifier,
+                     T& value)
 {
-  IO::GetParam<T>(identifier) = std::move(value);
+  params.Get<T>(identifier) = std::move(value);
 }
 
 /**
@@ -45,18 +47,20 @@ inline void SetParam(const std::string& identifier, T& value)
  * @param copy Whether or not the object should be copied.
  */
 template<typename T>
-inline void SetParamPtr(const std::string& identifier,
+inline void SetParamPtr(util::Params& params,
+                        const std::string& identifier,
                         T* value,
                         const bool copy)
 {
-  IO::GetParam<T*>(identifier) = copy ? new T(*value) : value;
+  params.Get<T*>(identifier) = copy ? new T(*value) : value;
 }
 
 /**
  * Set the parameter (which is a matrix/DatasetInfo tuple) to the given value.
  */
 template<typename T>
-inline void SetParamWithInfo(const std::string& identifier,
+inline void SetParamWithInfo(util::Params& params,
+                             const std::string& identifier,
                              T& matrix,
                              const bool* dims)
 {
@@ -65,8 +69,8 @@ inline void SetParamWithInfo(const std::string& identifier,
 
   // The true type of the parameter is std::tuple<T, DatasetInfo>.
   const size_t dimensions = matrix.n_rows;
-  std::get<1>(IO::GetParam<TupleType>(identifier)) = std::move(matrix);
-  data::DatasetInfo& di = std::get<0>(IO::GetParam<TupleType>(identifier));
+  std::get<1>(params.Get<TupleType>(identifier)) = std::move(matrix);
+  data::DatasetInfo& di = std::get<0>(params.Get<TupleType>(identifier));
   di = data::DatasetInfo(dimensions);
 
   bool hasCategoricals = false;
@@ -83,7 +87,7 @@ inline void SetParamWithInfo(const std::string& identifier,
   if (hasCategoricals)
   {
     arma::vec maxs = arma::max(
-        std::get<1>(IO::GetParam<TupleType>(identifier)), 1);
+        std::get<1>(params.Get<TupleType>(identifier)), 1) + 1;
 
     for (size_t i = 0; i < dimensions; ++i)
     {
@@ -106,20 +110,22 @@ inline void SetParamWithInfo(const std::string& identifier,
  * of support for template pointer types.
  */
 template<typename T>
-T* GetParamPtr(const std::string& paramName)
+T* GetParamPtr(util::Params& params,
+               const std::string& paramName)
 {
-  return IO::GetParam<T*>(paramName);
+  return params.Get<T*>(paramName);
 }
 
 /**
  * Return the matrix part of a matrix + dataset info parameter.
  */
 template<typename T>
-T& GetParamWithInfo(const std::string& paramName)
+T& GetParamWithInfo(util::Params& params,
+                    const std::string& paramName)
 {
   // T will be the Armadillo type.
   typedef std::tuple<data::DatasetInfo, T> TupleType;
-  return std::get<1>(IO::GetParam<TupleType>(paramName));
+  return std::get<1>(params.Get<TupleType>(paramName));
 }
 
 /**
@@ -152,7 +158,7 @@ inline void DisableBacktrace()
 inline void ResetTimers()
 {
   // Just get a new object---removes all old timers.
-  IO::GetSingleton().timer.Reset();
+  Timer::ResetAll();
 }
 
 /**

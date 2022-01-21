@@ -101,6 +101,9 @@ class Recurrent : public MultiLayer<InputType, OutputType>
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const;
+
   /**
    * Serialize the layer
    */

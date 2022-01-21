@@ -2,49 +2,26 @@
  * @file tests/main_tests/kmeans_test.cpp
  * @author Prabhat Sharma
  *
- * Test mlpackMain() of kmeans_main.cpp
+ * Test RUN_BINDING() of kmeans_main.cpp
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "Kmeans";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/kmeans/kmeans_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct KmTestFixture
-{
- public:
-  KmTestFixture()
-  {
-      // Cache in the options for this program.
-      IO::RestoreSettings(testName);
-  }
-
-  ~KmTestFixture()
-  {
-      // Clear the settings.
-      IO::ClearSettings();
-  }
-};
-
-void ResetKmSettings()
-{
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
-}
+BINDING_TEST_FIXTURE(KmTestFixture);
 
 /**
  * Checking that number of Clusters are non negative
@@ -60,7 +37,7 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativeClustersTest",
   SetInputParam("clusters", (int) -1); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -80,7 +57,7 @@ TEST_CASE_METHOD(KmTestFixture, "AutoDetectClusterTest",
   SetInputParam("clusters", (int) 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -103,7 +80,7 @@ TEST_CASE_METHOD(KmTestFixture, "RefinedStartPercentageTest",
   SetInputParam("percentage", std::move(P));     // Invalid
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -126,7 +103,7 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativePercentageTest",
   SetInputParam("percentage", P);     // Invalid
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -148,12 +125,12 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheck",
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", c);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == row+1);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == col);
-  REQUIRE(IO::GetParam<arma::mat>("centroid").n_rows == row);
-  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == c);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == row+1);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == col);
+  REQUIRE(params.Get<arma::mat>("centroid").n_rows == row);
+  REQUIRE(params.Get<arma::mat>("centroid").n_cols == (arma::uword) c);
 }
 
 /**
@@ -174,12 +151,12 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
   SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == col);
-  REQUIRE(IO::GetParam<arma::mat>("centroid").n_rows == row);
-  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == c);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == col);
+  REQUIRE(params.Get<arma::mat>("centroid").n_rows == row);
+  REQUIRE(params.Get<arma::mat>("centroid").n_cols == (arma::uword) c);
 }
 
 
@@ -203,12 +180,13 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
   SetInputParam("max_iterations", iterations);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat normalOutput;
-  normalOutput = std::move(IO::GetParam<arma::mat>("centroid"));
+  normalOutput = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
@@ -217,12 +195,13 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
   SetInputParam("max_iterations", iterations);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat allowEmptyOutput;
-  allowEmptyOutput = std::move(IO::GetParam<arma::mat>("centroid"));
+  allowEmptyOutput = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
@@ -231,12 +210,13 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
   SetInputParam("max_iterations", iterations);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat killEmptyOutput;
-  killEmptyOutput = std::move(IO::GetParam<arma::mat>("centroid"));
+  killEmptyOutput = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   if (killEmptyOutput.n_elem == allowEmptyOutput.n_elem)
   {
@@ -266,8 +246,8 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringResultSizeCheck",
   SetInputParam("clusters", c);
   SetInputParam("in_place", true);
 
-  mlpackMain();
-  arma::mat processedInput = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat processedInput = params.Get<arma::mat>("output");
   // here input is actually accessed through output
   // due to a little trick in kmeans_main
 
@@ -288,7 +268,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
   SetInputParam("input", std::move(inputData));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -314,14 +294,15 @@ TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat naiveOutput;
   arma::mat naiveCentroid;
-  naiveOutput = std::move(IO::GetParam<arma::mat>("output"));
-  naiveCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
+  naiveOutput = std::move(params.Get<arma::mat>("output"));
+  naiveCentroid = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   algo = "elkan";
 
@@ -331,14 +312,15 @@ TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat elkanOutput;
   arma::mat elkanCentroid;
-  elkanOutput = std::move(IO::GetParam<arma::mat>("output"));
-  elkanCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
+  elkanOutput = std::move(params.Get<arma::mat>("output"));
+  elkanCentroid = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   algo = "hamerly";
 
@@ -348,14 +330,15 @@ TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat hamerlyOutput;
   arma::mat hamerlyCentroid;
-  hamerlyOutput = std::move(IO::GetParam<arma::mat>("output"));
-  hamerlyCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
+  hamerlyOutput = std::move(params.Get<arma::mat>("output"));
+  hamerlyCentroid = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   algo = "dualtree";
 
@@ -365,14 +348,15 @@ TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat dualTreeOutput;
   arma::mat dualTreeCentroid;
-  dualTreeOutput = std::move(IO::GetParam<arma::mat>("output"));
-  dualTreeCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
+  dualTreeOutput = std::move(params.Get<arma::mat>("output"));
+  dualTreeCentroid = std::move(params.Get<arma::mat>("centroid"));
 
-  ResetKmSettings();
+  CleanMemory();
+  ResetSettings();
 
   algo = "dualtree-covertree";
 
@@ -382,12 +366,12 @@ TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", std::move(initCentroid));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat dualCoverTreeOutput;
   arma::mat dualCoverTreeCentroid;
-  dualCoverTreeOutput = std::move(IO::GetParam<arma::mat>("output"));
-  dualCoverTreeCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
+  dualCoverTreeOutput = std::move(params.Get<arma::mat>("output"));
+  dualCoverTreeCentroid = std::move(params.Get<arma::mat>("centroid"));
 
   // Checking all the algorithms return same assignments
   CheckMatrices(naiveOutput, hamerlyOutput);

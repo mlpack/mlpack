@@ -107,6 +107,8 @@ ConvolutionType<
   util::ToLower(paddingTypeIn, this->paddingType);
 }
 
+// TODO: copy/move constructor/operator
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,

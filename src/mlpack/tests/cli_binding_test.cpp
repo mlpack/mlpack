@@ -22,42 +22,73 @@ using namespace mlpack::bindings;
 using namespace mlpack::bindings::cli;
 using namespace mlpack::kernel;
 
+// If multiple binding types are used in the same test file, we may get the
+// wrong function map.  These functions are utilities to ensure that for these
+// tests, the function maps are accurate.
+
+template<typename N>
+void AddCLIMapFunctions(util::Params& p)
+{
+  p.functionMap[TYPENAME(N)]["DefaultParam"] = &cli::DefaultParam<N>;
+  p.functionMap[TYPENAME(N)]["OutputParam"] = &cli::OutputParam<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParam"] = &cli::GetPrintableParam<N>;
+  p.functionMap[TYPENAME(N)]["StringTypeParam"] = &cli::StringTypeParam<N>;
+  p.functionMap[TYPENAME(N)]["GetParam"] = &cli::GetParam<N>;
+  p.functionMap[TYPENAME(N)]["GetRawParam"] = &cli::GetRawParam<N>;
+  p.functionMap[TYPENAME(N)]["AddToCLI11"] = &cli::AddToCLI11<N>;
+  p.functionMap[TYPENAME(N)]["MapParameterName"] = &cli::MapParameterName<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParamName"] =
+      &cli::GetPrintableParamName<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParamValue"] =
+      &cli::GetPrintableParamValue<N>;
+  p.functionMap[TYPENAME(N)]["GetAllocatedMemory"] =
+      &cli::GetAllocatedMemory<N>;
+  p.functionMap[TYPENAME(N)]["DeleteAllocatedMemory"] =
+      &cli::DeleteAllocatedMemory<N>;
+  p.functionMap[TYPENAME(N)]["InPlaceCopy"] = &cli::InPlaceCopy<N>;
+}
+
 /**
  * Ensure that we can construct a CLIOption object, and that it will add itself
  * to the CLI instance.
  */
 TEST_CASE("CLIOptionTest", "[CLIOptionTest]")
 {
-  IO::ClearSettings();
   CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
-      false);
+      false, "CLIOptionTest");
 
   // Now check that it's in CLI.
-  REQUIRE(IO::Parameters().count("test") > 0);
-  REQUIRE(IO::Aliases().count('t') > 0);
-  REQUIRE(IO::Parameters()["test"].desc == "test2");
-  REQUIRE(IO::Parameters()["test"].name == "test");
-  REQUIRE(IO::Parameters()["test"].alias == 't');
-  REQUIRE(IO::Parameters()["test"].noTranspose == false);
-  REQUIRE(IO::Parameters()["test"].required == false);
-  REQUIRE(IO::Parameters()["test"].input == true);
-  REQUIRE(IO::Parameters()["test"].cppType == "double");
+  util::Params p = IO::Parameters("CLIOptionTest");
+  p.functionMap.clear();
+  AddCLIMapFunctions<double>(p);
+
+  REQUIRE(p.Parameters().count("test") > 0);
+  REQUIRE(p.Aliases().count('t') > 0);
+  REQUIRE(p.Parameters()["test"].desc == "test2");
+  REQUIRE(p.Parameters()["test"].name == "test");
+  REQUIRE(p.Parameters()["test"].alias == 't');
+  REQUIRE(p.Parameters()["test"].noTranspose == false);
+  REQUIRE(p.Parameters()["test"].required == false);
+  REQUIRE(p.Parameters()["test"].input == true);
+  REQUIRE(p.Parameters()["test"].cppType == "double");
 
   CLIOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
-      true, true);
+      true, true, "CLIOptionTest");
 
   // Now check that it's in CLI.
-  REQUIRE(IO::Parameters().count("mat") > 0);
-  REQUIRE(IO::Aliases().count('m') > 0);
-  REQUIRE(IO::Parameters()["mat"].desc == "mat2");
-  REQUIRE(IO::Parameters()["mat"].name == "mat");
-  REQUIRE(IO::Parameters()["mat"].alias == 'm');
-  REQUIRE(IO::Parameters()["mat"].noTranspose == true);
-  REQUIRE(IO::Parameters()["mat"].required == true);
-  REQUIRE(IO::Parameters()["mat"].input == true);
-  REQUIRE(IO::Parameters()["mat"].cppType == "arma::mat");
+  p = IO::Parameters("CLIOptionTest");
+  p.functionMap.clear();
+  AddCLIMapFunctions<arma::mat>(p);
 
-  IO::ClearSettings();
+  REQUIRE(p.Parameters().count("mat") > 0);
+  REQUIRE(p.Aliases().count('m') > 0);
+  REQUIRE(p.Parameters()["mat"].desc == "mat2");
+  REQUIRE(p.Parameters()["mat"].name == "mat");
+  REQUIRE(p.Parameters()["mat"].alias == 'm');
+  REQUIRE(p.Parameters()["mat"].noTranspose == true);
+  REQUIRE(p.Parameters()["mat"].required == true);
+  REQUIRE(p.Parameters()["mat"].input == true);
+  REQUIRE(p.Parameters()["mat"].cppType == "arma::mat");
 }
 
 /**
@@ -67,7 +98,7 @@ TEST_CASE("GetParamDoubleTest", "[CLIOptionTest]")
 {
   util::ParamData d;
   double x = 5.0;
-  d.value = boost::any(x);
+  d.value = ANY(x);
 
   double* output = NULL;
   GetParam<double>((util::ParamData&) d, (const void*) NULL,
@@ -82,8 +113,10 @@ TEST_CASE("GetParamLoadedMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::ones);
-  tuple<arma::mat, string> tuple = make_tuple(m, filename);
-  d.value = boost::any(tuple);
+  typedef std::tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
+  d.value = ANY(tuple);
   // Mark it as already loaded.
   d.input = true;
   d.loaded = true;
@@ -106,8 +139,10 @@ TEST_CASE("GetParamUnloadedMatTest", "[CLIOptionTest]")
   arma::mat test(5, 5, arma::fill::ones);
   data::Save("test.csv", test);
   arma::mat m;
-  tuple<arma::mat, string> tuple = make_tuple(m, filename);
-  d.value = boost::any(tuple);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
+  d.value = ANY(tuple);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -132,8 +167,10 @@ TEST_CASE("GetParamUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::Mat<size_t> m(5, 5, arma::fill::ones);
-  tuple<arma::Mat<size_t>, string> tuple = make_tuple(m, filename);
-  d.value = boost::any(tuple);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::Mat<size_t>, TupleType> tuple = make_tuple(m, testTuple);
+  d.value = ANY(tuple);
   // Mark it as already loaded.
   d.input = true;
   d.loaded = true;
@@ -157,8 +194,10 @@ TEST_CASE("GetParamUnloadedUmatTest", "[CLIOptionTest]")
   arma::Mat<size_t> test(5, 5, arma::fill::ones);
   data::Save("test.csv", test);
   arma::Mat<size_t> m;
-  tuple<arma::Mat<size_t>, string> tuple = make_tuple(m, filename);
-  d.value = boost::any(tuple);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::Mat<size_t>, TupleType> tuple = make_tuple(m, testTuple);
+  d.value = ANY(tuple);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -199,10 +238,12 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   data::DatasetInfo dd;
   arma::mat m;
 
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
-  tuple<decltype(tuple1), string> tuple2 = make_tuple(tuple1, filename);
+  tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
 
-  d.value = boost::any(tuple2);
+  d.value = ANY(tuple2);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -238,7 +279,7 @@ TEST_CASE("GetParamModelTest", "[CLIOptionTest]")
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
       filename);
-  d.value = boost::any(t);
+  d.value = ANY(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -258,7 +299,7 @@ TEST_CASE("RawParamDoubleTest", "[CLIOptionTest]")
   // This should function the same as GetParam for doubles.
   util::ParamData d;
   double x = 5.0;
-  d.value = boost::any(x);
+  d.value = ANY(x);
 
   double* output = NULL;
   GetParam<double>((util::ParamData&) d, (const void*) NULL,
@@ -274,8 +315,10 @@ TEST_CASE("RawParamMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::ones);
-  tuple<arma::mat, string> tuple = make_tuple(m, filename);
-  d.value = boost::any(tuple);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
+  d.value = ANY(tuple);
   d.input = true;
   d.loaded = false;
   d.noTranspose = false;
@@ -300,7 +343,7 @@ TEST_CASE("GetRawParamModelTest", "[CLIOptionTest]")
 
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
-  d.value = boost::any(t);
+  d.value = ANY(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -322,11 +365,12 @@ TEST_CASE("GetRawParamDatasetInfoTest", "[CLIOptionTest]")
   // Create tuples.
   data::DatasetInfo dd(3);
   arma::mat m(3, 3, arma::fill::randu);
-
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
-  tuple<decltype(tuple1), string> tuple2 = make_tuple(tuple1, filename);
+  tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
 
-  d.value = boost::any(tuple2);
+  d.value = ANY(tuple2);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -350,9 +394,11 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::mat m(3, 3, arma::fill::randu);
-  tuple<arma::mat, string> t = make_tuple(m, filename);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::mat, TupleType> t = make_tuple(m, testTuple);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
   d.noTranspose = false;
 
@@ -376,9 +422,11 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::Mat<size_t> m(3, 3, arma::fill::randu);
-  tuple<arma::Mat<size_t>, string> t = make_tuple(m, filename);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::Mat<size_t>, TupleType> t = make_tuple(m, testTuple);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
   d.noTranspose = false;
 
@@ -404,7 +452,7 @@ TEST_CASE("OutputParamModelTest", "[CLIOptionTest]")
   GaussianKernel gk(5.0);
   tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
 
   // Now save it.
@@ -426,11 +474,11 @@ TEST_CASE("SetParamDoubleTest", "[CLIOptionTest]")
 
   // Create initial value.
   double dd = 5.0;
-  d.value = boost::any(dd);
+  d.value = ANY(dd);
 
   // Now create second value.
   double dd2 = 1.0;
-  boost::any a(dd2);
+  ANY a(dd2);
   SetParam<double>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
   // Make sure it's the right thing.
@@ -448,15 +496,15 @@ TEST_CASE("SetParamBoolTest", "[CLIOptionTest]")
 
   // Create initial value.
   bool b = false;
-  d.value = boost::any(b);
+  d.value = ANY(b);
   d.wasPassed = true;
 
   // Now create second value.
   bool b2 = true;
-  boost::any a(b2);
+  ANY a(b2);
   SetParam<bool>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
-  REQUIRE(boost::any_cast<bool>(d.value) == true);
+  REQUIRE(ANY_CAST<bool>(d.value) == true);
 }
 
 // Test that calling SetParam on a matrix sets the string correctly.
@@ -467,19 +515,21 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
   // Create initial value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::randu);
-  d.value = boost::any(make_tuple(m, filename));
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  d.value = ANY(make_tuple(m, testTuple));
 
   // Get a new string.
   string newFilename = "new.csv";
-  boost::any a2(newFilename);
+  ANY a2(newFilename);
 
   SetParam<arma::mat>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
 
   // Make sure the change went through.
-  tuple<arma::mat, string>& t =
-      *boost::any_cast<tuple<arma::mat, string>>(&d.value);
-  REQUIRE(get<1>(t) == "new.csv");
+  tuple<arma::mat, TupleType>& t =
+      *ANY_CAST<tuple<arma::mat, TupleType>>(&d.value);
+  REQUIRE(get<0>(get<1>(t)) == "new.csv");
 }
 
 // Test that calling SetParam on a model sets the string correctly.
@@ -490,18 +540,18 @@ TEST_CASE("SetParamModelTest", "[CLIOptionTest]")
   // Create initial value.
   string filename = "kernel.bin";
   GaussianKernel gk(2.0);
-  d.value = boost::any(make_tuple(&gk, filename));
+  d.value = ANY(make_tuple(&gk, filename));
 
   // Get a new string.
   string newFilename = "new_kernel.bin";
-  boost::any a2(newFilename);
+  ANY a2(newFilename);
 
   SetParam<GaussianKernel>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
 
   // Make sure the change went through.
   tuple<GaussianKernel*, string>& t =
-      *boost::any_cast<tuple<GaussianKernel*, string>>(&d.value);
+      *ANY_CAST<tuple<GaussianKernel*, string>>(&d.value);
 
   REQUIRE(get<1>(t) == "new_kernel.bin");
 }
@@ -517,23 +567,27 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
   string filename = "test.csv";
   arma::mat m(3, 3, arma::fill::randu);
   DatasetInfo di(3);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
   tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
-  tuple<tuple<DatasetInfo, arma::mat>, string> t2 = make_tuple(t1, filename);
-  d.value = boost::any(t2);
+  tuple<tuple<DatasetInfo, arma::mat>, TupleType> t2 = make_tuple(t1,
+      testTuple);
+  d.value = ANY(t2);
   d.noTranspose = false;
 
   // Now get new filename.
   string newFilename = "new_filename.csv";
-  boost::any a2(newFilename);
+  ANY a2(newFilename);
 
   SetParam<tuple<DatasetInfo, arma::mat>>((util::ParamData&) d,
       (const void*) &a2, (void*) NULL);
 
   // Check that the name is right.
-  tuple<tuple<DatasetInfo, arma::mat>, string>& t3 =
-      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, string>>(&d.value);
+  tuple<tuple<DatasetInfo, arma::mat>, TupleType>& t3 =
+      *ANY_CAST<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(
+      &d.value);
 
-  REQUIRE(get<1>(t3) == "new_filename.csv");
+  REQUIRE(get<0>(get<1>(t3)) == "new_filename.csv");
 }
 
 // Test that GetAllocatedMemory() will properly return NULL for a non-model
@@ -543,7 +597,7 @@ TEST_CASE("GetAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   util::ParamData d;
 
   bool b = true;
-  d.value = boost::any(b);
+  d.value = ANY(b);
   d.input = true;
 
   void* result = (void*) 1; // Invalid pointer, should be overwritten.
@@ -556,8 +610,10 @@ TEST_CASE("GetAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   // Also test with a matrix type.
   arma::mat test(10, 10, arma::fill::ones);
   string filename = "test.csv";
-  tuple<arma::mat, string> t = make_tuple(test, filename);
-  d.value = boost::any(t);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::mat, TupleType> t = make_tuple(test, testTuple);
+  d.value = ANY(t);
 
   result = (void*) 1;
 
@@ -576,7 +632,7 @@ TEST_CASE("GetAllocatedMemoryModelTest", "[CLIOptionTest]")
   GaussianKernel g(2.0);
   string filename = "hello.bin";
   tuple<GaussianKernel*, string> t = make_tuple(&g, filename);
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = true;
 
   void* result = NULL;
@@ -594,7 +650,7 @@ TEST_CASE("DeleteAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   util::ParamData d;
 
   bool b = true;
-  d.value = boost::any(b);
+  d.value = ANY(b);
   d.input = true;
 
   DeleteAllocatedMemory<bool>((util::ParamData&) d,
@@ -602,8 +658,10 @@ TEST_CASE("DeleteAllocatedMemoryNonModelTest", "[CLIOptionTest]")
 
   arma::mat test(10, 10, arma::fill::ones);
   string filename = "test.csv";
-  tuple<arma::mat, string> t = make_tuple(test, filename);
-  d.value = boost::any(t);
+  typedef tuple<string, size_t, size_t> TupleType;
+  TupleType testTuple{filename, 0, 0};
+  tuple<arma::mat, TupleType> t = make_tuple(test, testTuple);
+  d.value = ANY(t);
 
   DeleteAllocatedMemory<arma::mat>((util::ParamData&) d,
       (const void*) NULL, (void*) NULL);
@@ -622,7 +680,7 @@ TEST_CASE("DeleteAllocatedMemoryModelTest", "[CLIOptionTest]")
   string filename = "hello.bin";
   tuple<GaussianKernel*, string> t = make_tuple(g, filename);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
 
   DeleteAllocatedMemory<GaussianKernel*>((util::ParamData&) d,

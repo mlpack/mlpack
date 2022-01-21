@@ -17,6 +17,7 @@
 #include "gini_gain.hpp"
 #include "information_gain.hpp"
 #include "best_binary_numeric_split.hpp"
+#include "random_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "all_dimension_select.hpp"
 #include <type_traits>
@@ -35,13 +36,10 @@ template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename DimensionSelectionType = AllDimensionSelect,
-         typename ElemType = double,
          bool NoRecursion = false>
 class DecisionTree :
-    public NumericSplitType<FitnessFunction>::template
-        AuxiliarySplitInfo<ElemType>,
-    public CategoricalSplitType<FitnessFunction>::template
-        AuxiliarySplitInfo<ElemType>
+    public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
+    public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
 {
  public:
   //! Allow access to the numeric split type.
@@ -139,10 +137,11 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and
-   * labels with weights, where the data can be both numeric and categorical.
-   * Setting minimumLeafSize and minimumGainSplit too small may cause the
-   * tree to overfit, but setting them too large may cause it to underfit.
+   * Using the hyperparameters of another decision tree, train on the given data
+   * and labels with weights, where the data can be both numeric and
+   * categorical.  Setting minimumLeafSize and minimumGainSplit too small may
+   * cause the tree to overfit, but setting them too large may cause it to
+   * underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
    * copies.
@@ -200,10 +199,10 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and labels
-   * with weights, assuming that the data is all of the numeric type. Setting
-   * minimumLeafSize and minimumGainSplit too small may cause the tree to
-   * overfit, but setting them too large may cause it to underfit.
+   * Take ownership of another decision tree and train on the given data and
+   * labels with weights, assuming that the data is all of the numeric type.
+   * Setting minimumLeafSize and minimumGainSplit too small may cause the tree
+   * to overfit, but setting them too large may cause it to underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
    * copies.
@@ -485,9 +484,15 @@ class DecisionTree :
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
   size_t splitDimension;
-  //! The type of the dimension that we have split on (if we are not a leaf).
-  //! If we are a leaf, then this is the index of the majority class.
-  size_t dimensionTypeOrMajorityClass;
+
+  union
+  {
+    //! Stores the type of dimension on which the split is done for internal
+    //! nodes of the tree.
+    size_t dimensionType;
+    //! Stores the majority class for leaf nodes of the tree.
+    size_t majorityClass;
+  };
   /**
    * This vector may hold different things.  If the node has no children, then
    * it is guaranteed to hold the probabilities of each class.  If the node has
@@ -500,9 +505,9 @@ class DecisionTree :
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::template AuxiliarySplitInfo<ElemType>
+  typedef typename NumericSplit::AuxiliarySplitInfo
       NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::template AuxiliarySplitInfo<ElemType>
+  typedef typename CategoricalSplit::AuxiliarySplitInfo
       CategoricalAuxiliarySplitInfo;
 
   /**
@@ -578,13 +583,11 @@ class DecisionTree :
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         typename DimensionSelectType = AllDimensionSelect,
-         typename ElemType = double>
+         typename DimensionSelectType = AllDimensionSelect>
 using DecisionStump = DecisionTree<FitnessFunction,
                                    NumericSplitType,
                                    CategoricalSplitType,
                                    DimensionSelectType,
-                                   ElemType,
                                    false>;
 
 /**
@@ -595,7 +598,6 @@ typedef DecisionTree<InformationGain,
                      BestBinaryNumericSplit,
                      AllCategoricalSplit,
                      AllDimensionSelect,
-                     double,
                      true> ID3DecisionStump;
 } // namespace tree
 } // namespace mlpack

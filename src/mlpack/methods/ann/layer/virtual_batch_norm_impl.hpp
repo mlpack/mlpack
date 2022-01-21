@@ -141,6 +141,7 @@ void VirtualBatchNormType<InputType, OutputType>::serialize(
 
   if (cereal::is_loading<Archive>())
   {
+    weights.set_size(size + size, 1);
     loading = true;
   }
 }

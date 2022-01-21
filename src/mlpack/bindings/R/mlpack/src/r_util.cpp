@@ -30,271 +30,363 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
 }
 
-// Call IO::RestoreSettings() for a given program name.
+// Create a new util::Params object.
 // [[Rcpp::export]]
-void IO_RestoreSettings(const std::string& programName)
+SEXP CreateParams(const std::string& bindingName)
 {
-  IO::RestoreSettings(programName);
+  util::Params* p = new util::Params(IO::Parameters(bindingName));
+  return std::move(Rcpp::XPtr<util::Params>(p));
 }
 
-// Call IO::SetParam<int>().
+// Create a new util::Timers object.
 // [[Rcpp::export]]
-void IO_SetParamInt(const std::string& paramName, int paramValue)
+SEXP CreateTimers()
 {
-  IO::GetParam<int>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Timers* t = new util::Timers();
+  return std::move(Rcpp::XPtr<util::Timers>(t));
 }
 
-// Call IO::SetParam<double>().
+// Call params.Get<int>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamDouble(const std::string& paramName, double paramValue)
+void SetParamInt(SEXP params, const std::string& paramName, int paramValue)
 {
-  IO::GetParam<double>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<int>(paramName) = paramValue;
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<std::string>().
+// Call params.Get<double>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamString(const std::string& paramName, std::string& paramValue)
+void SetParamDouble(SEXP params,
+                    const std::string& paramName,
+                    double paramValue)
 {
-  IO::GetParam<std::string>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<double>(paramName) = paramValue;
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<bool>().
+// Call params.Get<std::string>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamBool(const std::string& paramName, bool paramValue)
+void SetParamString(SEXP params,
+                    const std::string& paramName,
+                    std::string& paramValue)
 {
-  IO::GetParam<bool>(paramName) = paramValue;
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<std::string>(paramName) = paramValue;
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<std::vector<std::string>>().
+// Call params.Get<bool>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamVecString(const std::string& paramName,
-                          const std::vector<std::string>& str)
+void SetParamBool(SEXP params, const std::string& paramName, bool paramValue)
 {
-  IO::GetParam<std::vector<std::string>>(paramName) = std::move(str);
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<bool>(paramName) = paramValue;
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<std::vector<int>>().
+// Call params.Get<std::vector<std::string>>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamVecInt(const std::string& paramName,
-                       const std::vector<int>& ints)
+void SetParamVecString(SEXP params,
+                       const std::string& paramName,
+                       const std::vector<std::string>& str)
 {
-  IO::GetParam<std::vector<int>>(paramName) = std::move(ints);
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<std::vector<std::string>>(paramName) = std::move(str);
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<arma::mat>().
+// Call params.Get<std::vector<int>>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamMat(const std::string& paramName,
-                    const arma::mat& paramValue)
+void SetParamVecInt(SEXP params,
+                    const std::string& paramName,
+                    const std::vector<int>& ints)
 {
-  IO::GetParam<arma::mat>(paramName) = paramValue.t();
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<std::vector<int>>(paramName) = std::move(ints);
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<arma::Mat<size_t>>().
+// Call params.Get<arma::mat>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamUMat(const std::string& paramName,
-                     const arma::Mat<size_t>& paramValue)
+void SetParamMat(SEXP params,
+                 const std::string& paramName,
+                 const arma::mat& paramValue)
 {
-  IO::GetParam<arma::Mat<size_t>>(paramName) = paramValue.t();
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<arma::mat>(paramName) = paramValue.t();
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<arma::rowvec>().
+// Call params.Get<arma::Mat<size_t>>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamRow(const std::string& paramName,
-                    const arma::rowvec& paramValue)
+void SetParamUMat(SEXP params,
+                  const std::string& paramName,
+                  const arma::Mat<size_t>& paramValue)
 {
-  IO::GetParam<arma::rowvec>(paramName) = std::move(paramValue);
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<arma::Mat<size_t>>(paramName) = paramValue.t();
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<arma::Row<size_t>>().
+// Call params.Get<arma::rowvec>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamURow(const std::string& paramName,
-                     const arma::Row<size_t>& paramValue)
+void SetParamRow(SEXP params,
+                 const std::string& paramName,
+                 const arma::rowvec& paramValue)
 {
-  IO::GetParam<arma::Row<size_t>>(paramName) = paramValue - 1;
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<arma::rowvec>(paramName) = std::move(paramValue);
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<arma::vec>().
+// Call params.Get<arma::Row<size_t>>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamCol(const std::string& paramName,
-                    const arma::vec& paramValue)
+void SetParamURow(SEXP params,
+                  const std::string& paramName,
+                  const arma::Row<size_t>& paramValue)
 {
-  IO::GetParam<arma::vec>(paramName) = std::move(paramValue);
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+
+  // Check for zeros in the input---if we received these, the user is mistaken,
+  // because in R labels should start from 1.
+  if (arma::any(paramValue == 0))
+  {
+    Log::Fatal << "When passing labels from R to mlpack, labels should be in "
+        << "the range from 1 to the number of classes!" << std::endl;
+  }
+
+  p.Get<arma::Row<size_t>>(paramName) = paramValue - 1;
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<arma::Col<size_t>>().
+// Call params.Get<arma::vec>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamUCol(const std::string& paramName,
-                     const arma::Col<size_t>& paramValue)
+void SetParamCol(SEXP params,
+                 const std::string& paramName,
+                 const arma::vec& paramValue)
 {
-  IO::GetParam<arma::Col<size_t>>(paramName) = paramValue - 1;
-  IO::SetPassed(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.Get<arma::vec>(paramName) = std::move(paramValue);
+  p.SetPassed(paramName);
 }
 
-// Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+// Call params.Get<arma::Col<size_t>>() to set the value of a parameter.
 // [[Rcpp::export]]
-void IO_SetParamMatWithInfo(const std::string& paramName,
-                            const LogicalVector& dimensions,
-                            const arma::mat& paramValue)
+void SetParamUCol(SEXP params,
+                  const std::string& paramName,
+                  const arma::Col<size_t>& paramValue)
 {
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+
+  // Check for zeros in the input---if we received these, the user is mistaken,
+  // because in R labels should start from 1.
+  if (arma::any(paramValue == 0))
+  {
+    Log::Fatal << "When passing labels from R to mlpack, labels should be in "
+        << "the range from 1 to the number of classes!" << std::endl;
+  }
+
+  p.Get<arma::Col<size_t>>(paramName) = paramValue - 1;
+  p.SetPassed(paramName);
+}
+
+// Call params.Get<std::tuple<data::DatasetInfo, arma::mat>>() to set the value
+// of a parameter.
+// [[Rcpp::export]]
+void SetParamMatWithInfo(SEXP params,
+                         const std::string& paramName,
+                         const LogicalVector& dimensions,
+                         const arma::mat& paramValue)
+{
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   data::DatasetInfo d(paramValue.n_cols);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
-  std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+
+  arma::mat m = paramValue.t();
+
+  // Do we need to find how many categories we have?
+  if (hasCategoricals)
+  {
+    arma::vec maxs = arma::max(paramValue, 1) + 1;
+
+    for (size_t i = 0; i < d.Dimensionality(); ++i)
+    {
+      if (dimensions[i])
+      {
+        // Map the right number of objects.
+        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        {
+          std::ostringstream oss;
+          oss << j;
+          d.MapString<double>(oss.str(), i);
+        }
+      }
+    }
+  }
+
+  std::get<0>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
-  std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = paramValue.t();
-  IO::SetPassed(paramName);
+  std::get<1>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
+      paramName)) = std::move(m);
+  p.SetPassed(paramName);
 }
 
-// Call IO::GetParam<int>().
+// Call p.Get<int>().
 // [[Rcpp::export]]
-int IO_GetParamInt(const std::string& paramName)
+int GetParamInt(SEXP params, const std::string& paramName)
 {
-  return IO::GetParam<int>(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<int>(paramName);
 }
 
-// Call IO::GetParam<double>().
+// Call p.Get<double>().
 // [[Rcpp::export]]
-double IO_GetParamDouble(const std::string& paramName)
+double GetParamDouble(SEXP params, const std::string& paramName)
 {
-  return IO::GetParam<double>(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<double>(paramName);
 }
 
-// Call IO::GetParam<std::string>().
+// Call p.Get<std::string>().
 // [[Rcpp::export]]
-std::string& IO_GetParamString(const std::string& paramName)
+std::string& GetParamString(SEXP params, const std::string& paramName)
 {
-  return IO::GetParam<std::string>(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<std::string>(paramName);
 }
 
-// Call IO::GetParam<bool>().
+// Call p.Get<bool>().
 // [[Rcpp::export]]
-bool IO_GetParamBool(const std::string& paramName)
+bool GetParamBool(SEXP params, const std::string& paramName)
 {
-  return IO::GetParam<bool>(paramName);
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<bool>(paramName);
 }
 
-// Call IO::GetParam<std::vector<std::string>>().
+// Call p.Get<std::vector<std::string>>().
 // [[Rcpp::export]]
-const std::vector<std::string>& IO_GetParamVecString(const
-                                    std::string& paramName)
+const std::vector<std::string>& GetParamVecString(
+    SEXP params,
+    const std::string& paramName)
 {
-  return std::move(IO::GetParam<std::vector<std::string>>(paramName));
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return std::move(p.Get<std::vector<std::string>>(paramName));
 }
 
-// Call IO::GetParam<std::vector<int>>().
+// Call p.Get<std::vector<int>>().
 // [[Rcpp::export]]
-const std::vector<int>& IO_GetParamVecInt(const std::string& paramName)
+const std::vector<int>& GetParamVecInt(SEXP params,
+                                       const std::string& paramName)
 {
-  return std::move(IO::GetParam<std::vector<int>>(paramName));
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return std::move(p.Get<std::vector<int>>(paramName));
 }
 
-// Call IO::GetParam<arma::mat>().
+// Call p.Get<arma::mat>().
 // [[Rcpp::export]]
-const arma::mat& IO_GetParamMat(const std::string& paramName)
+const arma::mat& GetParamMat(SEXP params, const std::string& paramName)
 {
-  inplace_transpose(IO::GetParam<arma::mat>(paramName));
-  return std::move(IO::GetParam<arma::mat>(paramName));
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  inplace_transpose(p.Get<arma::mat>(paramName));
+  return std::move(p.Get<arma::mat>(paramName));
 }
 
-// Call IO::GetParam<arma::Mat<size_t>>().
+// Call p.Get<arma::Mat<size_t>>().
 // [[Rcpp::export]]
-const arma::Mat<size_t>& IO_GetParamUMat(const std::string& paramName)
+const arma::Mat<size_t>& GetParamUMat(SEXP params,
+                                      const std::string& paramName)
 {
-  inplace_transpose(IO::GetParam<arma::Mat<size_t>>(paramName));
-  return std::move(IO::GetParam<arma::Mat<size_t>>(paramName));
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  inplace_transpose(p.Get<arma::Mat<size_t>>(paramName));
+  return std::move(p.Get<arma::Mat<size_t>>(paramName));
 }
 
-// Call IO::GetParam<arma::rowvec>().
+// Call p.Get<arma::rowvec>().
 // [[Rcpp::export]]
-const arma::vec IO_GetParamRow(const std::string& paramName)
+const arma::vec GetParamRow(SEXP params, const std::string& paramName)
 {
-  return IO::GetParam<arma::rowvec>(paramName).t();
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<arma::rowvec>(paramName).t();
 }
 
-// Call IO::GetParam<arma::Row<size_t>>().
+// Call p.Get<arma::Row<size_t>>().
 // [[Rcpp::export]]
-const arma::Col<size_t> IO_GetParamURow(const std::string& paramName)
+const arma::Col<size_t> GetParamURow(SEXP params,
+                                     const std::string& paramName)
 {
-  return IO::GetParam<arma::Row<size_t>>(paramName).t() + 1;
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<arma::Row<size_t>>(paramName).t() + 1;
 }
 
-// Call IO::GetParam<arma::vec>().
+// Call p.Get<arma::vec>().
 // [[Rcpp::export]]
-const arma::rowvec IO_GetParamCol(const std::string& paramName)
+const arma::rowvec GetParamCol(SEXP params, const std::string& paramName)
 {
-  return IO::GetParam<arma::vec>(paramName).t();
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<arma::vec>(paramName).t();
 }
 
-// Call IO::GetParam<arma::Col<size_t>>().
+// Call p.Get<arma::Col<size_t>>().
 // [[Rcpp::export]]
-const arma::Row<size_t> IO_GetParamUCol(const std::string& paramName)
+const arma::Row<size_t> GetParamUCol(SEXP params,
+                                     const std::string& paramName)
 {
-  return IO::GetParam<arma::Col<size_t>>(paramName).t() + 1;
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  return p.Get<arma::Col<size_t>>(paramName).t() + 1;
 }
 
-// Call IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+// Call p.Get<std::tuple<data::DatasetInfo, arma::mat>>().
 // [[Rcpp::export]]
-List IO_GetParamMatWithInfo(const std::string& paramName)
+List IO_GetParamMatWithInfo(SEXP params, const std::string& paramName)
 {
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   const data::DatasetInfo& d = std::get<0>(
-      IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+      p.Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
   const arma::mat& m = std::get<1>(
-      IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName)).t();
+      p.Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName)).t();
 
   LogicalVector dims(d.Dimensionality());
   for (size_t i = 0; i < d.Dimensionality(); ++i)
     dims[i] = (d.Type(i) == data::Datatype::numeric) ? false : true;
 
-  return List::create (Rcpp::Named("Info") = std::move(dims),
-                       Rcpp::Named("Data") = std::move(m));
+  return List::create(Rcpp::Named("Info") = std::move(dims),
+                      Rcpp::Named("Data") = std::move(m));
 }
 
 // Enable verbose output.
 // [[Rcpp::export]]
-void IO_EnableVerbose()
+void EnableVerbose()
 {
   Log::Info.ignoreInput = false;
 }
 
 // Disable verbose output.
 // [[Rcpp::export]]
-void IO_DisableVerbose()
+void DisableVerbose()
 {
   Log::Info.ignoreInput = true;
 }
 
 // Reset the state of all timers.
 // [[Rcpp::export]]
-void IO_ResetTimers()
+void ResetTimers()
 {
-  IO::GetSingleton().timer.Reset();
+  Timer::ResetAll();
 }
 
 // Set an argument as passed to the IO object.
 // [[Rcpp::export]]
-void IO_SetPassed(const std::string& paramName)
+void SetPassed(SEXP params, const std::string& paramName)
 {
-  IO::SetPassed(paramName);
-}
-
-// Clear settings.
-// [[Rcpp::export]]
-void IO_ClearSettings()
-{
-  IO::ClearSettings();
+  util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
+  p.SetPassed(paramName);
 }

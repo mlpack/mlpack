@@ -91,6 +91,12 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
 

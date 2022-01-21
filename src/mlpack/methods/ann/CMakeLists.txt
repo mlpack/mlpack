@@ -21,6 +21,7 @@ add_subdirectory(loss_functions)
 #add_subdirectory(rbm)
 #add_subdirectory(augmented)
 add_subdirectory(regularizer)
+add_subdirectory(util)
 
 # Add directory name to sources.
 set(DIR_SRCS)

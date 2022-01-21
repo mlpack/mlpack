@@ -20,6 +20,7 @@
 
 #include "format.hpp"
 #include "image_info.hpp"
+#include "detect_file_type.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
@@ -32,7 +33,7 @@ namespace data /** Functions to load and save matrices. */ {
  * The supported types of files are the same as found in Armadillo:
  *
  *  - CSV (arma::csv_ascii), denoted by .csv, or optionally .txt
- *  - ASCII (arma::raw_ascii), denoted by .json
+ *  - ASCII (arma::raw_ascii), denoted by .txt
  *  - Armadillo ASCII (arma::arma_ascii), also denoted by .txt
  *  - PGM (arma::pgm_binary), denoted by .pgm
  *  - PPM (arma::ppm_binary), denoted by .ppm
@@ -64,7 +65,7 @@ bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal = false,
           bool transpose = true,
-          arma::file_type inputSaveType = arma::auto_detect);
+          FileType inputSaveType = FileType::AutoDetect);
 
 /**
  * Saves a sparse matrix to file, guessing the filetype from the

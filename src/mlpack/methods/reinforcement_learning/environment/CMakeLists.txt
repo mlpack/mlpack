@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   env_type.hpp
+  env_type.cpp
   mountain_car.hpp
   cart_pole.hpp
   continuous_mountain_car.hpp
@@ -10,6 +11,7 @@ set(SOURCES
   acrobot.hpp
   pendulum.hpp
   reward_clipping.hpp
+  ftn.hpp
 )
 
 # Add directory name to sources.

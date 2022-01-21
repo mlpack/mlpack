@@ -40,6 +40,63 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
   // Nothing to do.
 }
 
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    const LinearNoBias& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    LinearNoBias&& layer) :
+    inSize(0),
+    outSize(0),
+    weights(std::move(layer.weights)),
+    regularizer(std::move(layer.regularizer))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>&
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::
+operator=(const LinearNoBias& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    regularizer = layer.regularizer;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>&
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::
+operator=(LinearNoBias&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = std::move(layer.weights);
+    regularizer = std::move(layer.regularizer);
+  }
+  return *this;
+>>>>>>> origin/master
+}
+
 template<typename InputType, typename OutputType, typename RegularizerType>
 void LinearNoBiasType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)

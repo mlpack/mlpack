@@ -65,8 +65,10 @@ class SigmoidCrossEntropyError
    * @param target The target vector.
    */
   template<typename PredictionType, typename TargetType>
-  inline typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                                    const TargetType& target);
+  inline typename PredictionType::elem_type Forward(
+      const PredictionType& prediction,
+      const TargetType& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *

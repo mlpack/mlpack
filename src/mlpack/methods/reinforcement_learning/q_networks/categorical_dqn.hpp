@@ -37,7 +37,7 @@ using namespace mlpack::ann;
  *   url     = {http://arxiv.org/abs/1707.06887}
  * }
  * @endcode
- * 
+ *
  * @tparam OutputLayerType The output layer type of the network.
  * @tparam InitType The initialization type used for the network.
  * @tparam NetworkType The type of network used for simple dqn.
@@ -53,7 +53,8 @@ class CategoricalDQN
   /**
    * Default constructor.
    */
-  CategoricalDQN() : network(), isNoisy(false)
+  CategoricalDQN() :
+      network(), atomSize(0), vMin(0.0), vMax(0.0), isNoisy(false)
   { /* Nothing to do here. */ }
 
   /**
@@ -101,7 +102,8 @@ class CategoricalDQN
   }
 
   /**
-   * Construct an instance of CategoricalDQN class from a pre-constructed network.
+   * Construct an instance of CategoricalDQN class from a pre-constructed
+   * network.
    *
    * @param network The network to be used by CategoricalDQN class.
    * @param config Hyper-parameters for categorical dqn.

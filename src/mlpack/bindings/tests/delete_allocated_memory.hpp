@@ -21,8 +21,8 @@ namespace tests {
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& /* d */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
 }
@@ -30,7 +30,7 @@ void DeleteAllocatedMemoryImpl(
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
 }
@@ -38,11 +38,11 @@ void DeleteAllocatedMemoryImpl(
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
-  delete *boost::any_cast<T*>(&d.value);
+  delete *ANY_CAST<T*>(&d.value);
 }
 
 template<typename T>

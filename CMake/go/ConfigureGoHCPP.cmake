@@ -24,10 +24,13 @@ if (${NUM_MODEL_TYPES} GREATER 0)
     # Generate the definition.
     set(MODEL_PTR_DEFNS "${MODEL_PTR_DEFNS}
 // Set the pointer to a ${MODEL_TYPE} parameter.
-extern void mlpackSet${MODEL_SAFE_TYPE}Ptr(const char* identifier, void* value);
+extern void mlpackSet${MODEL_SAFE_TYPE}Ptr(void* params,
+                                           const char* identifier,
+                                           void* value);
 
 // Get the pointer to a ${MODEL_TYPE} parameter.
-extern void* mlpackGet${MODEL_SAFE_TYPE}Ptr(const char* identifier);
+extern void* mlpackGet${MODEL_SAFE_TYPE}Ptr(void* params,
+                                            const char* identifier);
 "
 )
 
@@ -35,17 +38,22 @@ extern void* mlpackGet${MODEL_SAFE_TYPE}Ptr(const char* identifier);
     set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Set the pointer to a ${MODEL_TYPE} parameter.
 extern \"C\"  void mlpackSet${MODEL_SAFE_TYPE}Ptr(
+    void* params,
     const char* identifier,
     void* value)
 {
-  mlpack::util::SetParamPtr<${MODEL_TYPE}>(identifier,
-  static_cast<${MODEL_TYPE}*>(value));
+  util::Params& p = *((util::Params*) params);
+  mlpack::util::SetParamPtr<${MODEL_TYPE}>(p, identifier,
+      static_cast<${MODEL_TYPE}*>(value));
 }
 
 // Get the pointer to a ${MODEL_TYPE} parameter.
-extern \"C\" void *mlpackGet${MODEL_SAFE_TYPE}Ptr(const char* identifier)
+extern \"C\" void *mlpackGet${MODEL_SAFE_TYPE}Ptr(
+    void* params,
+    const char* identifier)
 {
-  ${MODEL_TYPE} *modelptr = IO::GetParam<${MODEL_TYPE}*>(identifier);
+  util::Params& p = *((util::Params*) params);
+  ${MODEL_TYPE} *modelptr = p.Get<${MODEL_TYPE}*>(identifier);
   return modelptr;
 }
 ")

@@ -122,6 +122,12 @@ class MiniBatchDiscrimination : public Layer<InputType, OutputType>
     return outputDimensions;
   }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return A;
+  }
+
   /**
    * Serialize the layer.
    */

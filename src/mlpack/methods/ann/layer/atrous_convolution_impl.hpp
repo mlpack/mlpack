@@ -125,8 +125,7 @@ AtrousConvolution<
   weights.set_size(WeightSize(), 1);
 
   // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  util::ToLower(paddingType, paddingTypeLow);
+  const std::string paddingTypeLow = util::ToLower(paddingType);
 
   size_t padWLeft = std::get<0>(padW);
   size_t padWRight = std::get<1>(padW);

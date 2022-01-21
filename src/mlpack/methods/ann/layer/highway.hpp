@@ -110,6 +110,12 @@ class HighwayType : public MultiLayer<InputType, OutputType>
     return result;
   }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */

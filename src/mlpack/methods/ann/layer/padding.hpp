@@ -41,6 +41,8 @@ class PaddingType : public Layer<InputType, OutputType>
    * @param padWRight Right padding width of the input.
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
+   * @param inputWidth Width of the input.
+   * @param inputHeight Height of the input.
    */
   PaddingType(const size_t padWLeft = 0,
               const size_t padWRight = 0,

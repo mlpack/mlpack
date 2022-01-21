@@ -26,9 +26,11 @@ namespace util {
  * @param value Value to set parameter to.
  */
 template<typename T>
-inline void SetParam(const std::string& identifier, T& value)
+inline void SetParam(util::Params& p,
+                     const std::string& identifier,
+                     T& value)
 {
-  IO::GetParam<T>(identifier) = std::move(value);
+  p.Get<T>(identifier) = std::move(value);
 }
 
 /**
@@ -38,10 +40,11 @@ inline void SetParam(const std::string& identifier, T& value)
  * @param value Value to set parameter to.
  */
 template<typename T>
-inline void SetParamPtr(const std::string& identifier,
+inline void SetParamPtr(util::Params& p,
+                        const std::string& identifier,
                         T* value)
 {
-  IO::GetParam<T*>(identifier) = value;
+  p.Get<T*>(identifier) = value;
 }
 
 /**
@@ -49,9 +52,9 @@ inline void SetParamPtr(const std::string& identifier,
  * of support for template pointer types.
  */
 template<typename T>
-T* GetParamPtr(const std::string& paramName)
+T* GetParamPtr(util::Params& p, const std::string& paramName)
 {
-  return IO::GetParam<T*>(paramName);
+  return p.Get<T*>(paramName);
 }
 
 /**
@@ -78,13 +81,9 @@ inline void DisableBacktrace()
   Log::Fatal.backtrace = false;
 }
 
-/**
- * Reset the status of all timers.
- */
 inline void ResetTimers()
 {
-  // Just get a new object---removes all old timers.
-  IO::GetSingleton().timer.Reset();
+  Timer::ResetAll();
 }
 
 /**

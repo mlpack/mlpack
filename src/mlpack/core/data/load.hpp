@@ -21,6 +21,9 @@
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "image_info.hpp"
+#include "load_csv.hpp"
+#include "load_arff.hpp"
+#include "detect_file_type.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -34,7 +37,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  *
  *  - CSV (arma::csv_ascii), denoted by .csv, or optionally .txt
  *  - TSV (arma::raw_ascii), denoted by .tsv, .csv, or .txt
- *  - ASCII (arma::raw_ascii), denoted by .json
+ *  - ASCII (arma::raw_ascii), denoted by .txt
  *  - Armadillo ASCII (arma::arma_ascii), also denoted by .txt
  *  - PGM (arma::pgm_binary), denoted by .pgm
  *  - PPM (arma::ppm_binary), denoted by .ppm
@@ -47,6 +50,10 @@ namespace data /** Functions to load and save matrices and models. */ {
  * the file type and want to specify it manually, override the default
  * `inputLoadType` parameter with the correct type above (e.g.
  * `arma::csv_ascii`.)
+ *
+ * If the detected file type is CSV (`arma::csv_ascii`), the first row will be
+ * checked for a CSV header.  If a CSV header is not detected, the first row
+ * will be treated as data; otherwise, the first row will be skipped.
  *
  * If the parameter 'fatal' is set to true, a std::runtime_error exception will
  * be thrown if the matrix does not load successfully.  The parameter
@@ -67,7 +74,7 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
-          const arma::file_type inputLoadType = arma::auto_detect);
+          const FileType inputLoadType = FileType::AutoDetect);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
@@ -103,85 +110,6 @@ bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true);
-
-/**
- * Don't document these with doxygen; these declarations aren't helpful to
- * users.
- *
- * @cond
- */
-
-extern template bool Load<int>(const std::string&,
-                               arma::Mat<int>&,
-                               const bool,
-                               const bool,
-                               const arma::file_type);
-
-// size_t and uword should be one of these three typedefs.
-extern template bool Load<unsigned int>(const std::string&,
-                                        arma::Mat<unsigned int>&,
-                                        const bool,
-                                        const bool,
-                                        const arma::file_type);
-
-extern template bool Load<unsigned long>(const std::string&,
-                                         arma::Mat<unsigned long>&,
-                                         const bool,
-                                         const bool,
-                                         const arma::file_type);
-
-extern template bool Load<unsigned long long>(const std::string&,
-                                              arma::Mat<unsigned long long>&,
-                                              const bool,
-                                              const bool,
-                                              const arma::file_type);
-
-extern template bool Load<float>(const std::string&,
-                                 arma::Mat<float>&,
-                                 const bool,
-                                 const bool,
-                                 const arma::file_type);
-
-extern template bool Load<double>(const std::string&,
-                                  arma::Mat<double>&,
-                                  const bool,
-                                  const bool,
-                                  const arma::file_type);
-
-extern template bool Load<int>(const std::string&,
-                               arma::Mat<int>&,
-                               const bool,
-                               const bool,
-                               const arma::file_type);
-
-extern template bool Load<unsigned int>(const std::string&,
-                                        arma::SpMat<unsigned int>&,
-                                        const bool,
-                                        const bool);
-
-extern template bool Load<unsigned long>(const std::string&,
-                                         arma::SpMat<unsigned long>&,
-                                         const bool,
-                                         const bool);
-
-extern template bool Load<unsigned long long>(const std::string&,
-                                              arma::SpMat<unsigned long long>&,
-                                              const bool,
-                                              const bool);
-
-extern template bool Load<float>(const std::string&,
-                                 arma::SpMat<float>&,
-                                 const bool,
-                                 const bool);
-
-extern template bool Load<double>(const std::string&,
-                                  arma::SpMat<double>&,
-                                  const bool,
-                                  const bool);
-
-/**
- * @endcond
- */
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
@@ -269,8 +197,12 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * The DatasetMapper object passed to this function will be re-created, so any
- * mappings from previous loads will be lost.
+ * If the given `info` has already been used with a different `data::Load()`
+ * call where the dataset has the same dimensionality, then the mappings and
+ * dimension types inside of `info` will be *re-used*.  If the given `info` is a
+ * new `DatasetMapper` object (e.g. its dimensionality is 0), then new mappings
+ * will be created.  If the given `info` has a different dimensionality of data
+ * than what is present in `filename`, an exception will be thrown.
  *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
@@ -285,52 +217,6 @@ bool Load(const std::string& filename,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
           const bool transpose = true);
-
-/**
- * Don't document these with doxygen; they aren't helpful for users to know
- * about.
- *
- * @cond
- */
-
-extern template bool Load<int, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<int>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<arma::u32, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<arma::u32>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<arma::u64, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<arma::u64>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<float, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<float>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<double, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<double>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-/**
- * @endcond
- */
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
@@ -407,6 +293,8 @@ bool LoadImage(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
+// Include implementation of Load() for matrix.
+#include "load_impl.hpp"
 // Include implementation of model-loading Load() overload.
 #include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.

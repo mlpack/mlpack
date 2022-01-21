@@ -187,8 +187,29 @@ TEST_CASE("R2ScoreTest", "[CVTest]")
 
   double expectedR2 = 0.99999779;
 
-  REQUIRE(R2Score::Evaluate(lr, data, responses)
+  REQUIRE(R2Score<false>::Evaluate(lr, data, responses)
           == Approx(expectedR2).epsilon(1e-7));
+}
+
+/**
+ * Test the Adjusted R squared metric.
+ */
+TEST_CASE("AdjR2ScoreTest", "[CVTest]")
+{
+  // Making two variables that define the linear function is
+  // f(x1, x2) = x1 + x2.
+  arma::mat X;
+  X = { { 1, 2, 3, 4, 5, 6 },
+        { 2, 3, 4, 5, 6, 7 } };
+  arma::rowvec Y;
+  Y = { 3, 5, 7, 9, 11, 13 };
+
+  LinearRegression lr(X, Y);
+
+  // Theoretically Adjusted R squared should be equal 1
+  double expAdjR2 = 1;
+  REQUIRE(std::abs(R2Score<true>::Evaluate(lr, X, Y) - expAdjR2)
+          <= 1e-7);
 }
 
 /**

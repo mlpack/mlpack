@@ -10,14 +10,14 @@ set(SOURCES
   has_serialize.hpp
   is_naninf.hpp
   load_csv.hpp
-  load_csv.cpp
+  load_numeric_csv.hpp
+  load_categorical_csv.hpp
   load.hpp
   load_image_impl.hpp
   load_image.cpp
   load_model_impl.hpp
   load_vec_impl.hpp
   load_impl.hpp
-  load.cpp
   load_arff.hpp
   load_arff_impl.hpp
   normalize_labels.hpp
@@ -26,6 +26,7 @@ set(SOURCES
   save_impl.hpp
   save_image.cpp
   split_data.hpp
+  string_algorithms.hpp
   imputer.hpp
   binarize.hpp
   string_encoding.hpp
@@ -34,6 +35,8 @@ set(SOURCES
   confusion_matrix.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
+  types.hpp
+  types_impl.hpp
 )
 
 # add directory name to sources

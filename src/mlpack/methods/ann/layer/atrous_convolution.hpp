@@ -72,7 +72,8 @@ class AtrousConvolution : public Layer<InputType, OutputType>
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
    * @param dilationWidth The space between the cells of filters in x direction.
-   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param dilationHeight The space between the cells of filters in y
+   *      direction.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
@@ -109,7 +110,8 @@ class AtrousConvolution : public Layer<InputType, OutputType>
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
    * @param dilationWidth The space between the cells of filters in x direction.
-   * @param dilationHeight The space between the cells of filters in y direction.
+   * @param dilationHeight The space between the cells of filters in y
+   *      direction.
    * @param paddingType The type of padding (Valid/Same/None). Defaults to None.
    */
   AtrousConvolution(const size_t inSize,
@@ -249,6 +251,12 @@ class AtrousConvolution : public Layer<InputType, OutputType>
   size_t WeightSize() const
   {
     return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
   }
 
   /**

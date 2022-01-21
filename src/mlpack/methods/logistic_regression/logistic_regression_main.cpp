@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME logistic_regression
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "logistic_regression.hpp"
@@ -23,7 +29,7 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("L2-regularized Logistic Regression and Prediction");
+BINDING_USER_NAME("L2-regularized Logistic Regression and Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -37,9 +43,9 @@ BINDING_LONG_DESC(
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
     "\n\n"
-    "  y = (1 / 1 + e^-(X * b))"
+    "  y = (1 / 1 + e^-(X * b))."
     "\n\n"
-    "where y takes values 0 or 1."
+    "In this setting, y corresponds to class labels and X corresponds to data."
     "\n\n"
     "This program allows loading a logistic regression model (via the " +
     PRINT_PARAM_STRING("input_model") + " parameter) "
@@ -87,18 +93,11 @@ BINDING_LONG_DESC(
     "from the logistic regression model may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " parameter." +
     "\n\n"
-    "Note : The following parameters are deprecated and "
-    "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
-    ", " + PRINT_PARAM_STRING("output_probabilities") +
-    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + "\nUse " +
-    PRINT_PARAM_STRING("probabilities") + " instead of " +
-    PRINT_PARAM_STRING("output_probabilities") +
-    "\n\n"
     "This implementation of logistic regression does not support the general "
-    "multi-class case but instead only the two-class case.  Any labels must "
-    "be either 0 or 1.  For more classes, see the softmax_regression "
-    "program.");
+    "multi-class case but instead only the two-class case.  Any labels must be "
+    "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
+    std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
+    "softmax regression implementation.");
 
 // Example.
 BINDING_EXAMPLE(
@@ -115,7 +114,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-        "output", "predictions"));
+        "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
@@ -153,17 +152,8 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-// The PARAM_UROW_OUT("output"..) is deprecated and can be removed
-// in mlpack 4.0.0
-PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
-    "the predictions for the test set will be saved.", "o");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
-// PARAM_MATRIX_OUT("output_probabilities"..) is deprecated
-// and it can be removed in mlpack 4
-PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
-    "matrix is where the class probabilities for the test set will be saved.",
-    "x");
 PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
@@ -171,76 +161,71 @@ PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
 
-static void mlpackMain()
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Collect command-line options.
-  const double lambda = IO::GetParam<double>("lambda");
-  const string optimizerType = IO::GetParam<string>("optimizer");
-  const double tolerance = IO::GetParam<double>("tolerance");
-  const double stepSize = IO::GetParam<double>("step_size");
-  const size_t batchSize = (size_t) IO::GetParam<int>("batch_size");
-  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
-  const double decisionBoundary = IO::GetParam<double>("decision_boundary");
+  const double lambda = params.Get<double>("lambda");
+  const string optimizerType = params.Get<string>("optimizer");
+  const double tolerance = params.Get<double>("tolerance");
+  const double stepSize = params.Get<double>("step_size");
+  const size_t batchSize = (size_t) params.Get<int>("batch_size");
+  const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
+  const double decisionBoundary = params.Get<double>("decision_boundary");
 
   // One of training and input_model must be specified.
-  RequireAtLeastOnePassed({ "training", "input_model" }, true);
+  RequireAtLeastOnePassed(params, { "training", "input_model" }, true);
 
   // If no output file is given, the user should know that the model will not be
   // saved, but only if a model is being trained.
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "output_model" }, false, "trained model will not "
-        "be saved");
+    RequireAtLeastOnePassed(params, { "output_model" }, false, "trained model "
+        "will not be saved");
   }
 
-  // options "output" and "output_probabilities" are deprecated and replaced by
-  // "predictions" and "probabilities" respectively
-  // options "output" and "output_probabilities" can be removed in mlpack 4
-  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities",
-      "predictions", "probabilities"}, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "predictions",
+      "probabilities"}, false, "no output will be saved");
 
-  // "output" and "output_probabilities" lines can be removed in mlpack 4
-  ReportIgnoredParam({{ "test", false }}, "output");
-  ReportIgnoredParam({{ "test", false }}, "output_probabilities");
-  ReportIgnoredParam({{ "test", false }}, "predictions");
-  ReportIgnoredParam({{ "test", false }}, "probabilities");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
 
   // Max Iterations needs to be positive.
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
       true, "max_iterations must be positive or zero");
 
   // Batch Size needs to be greater than zero.
-  RequireParamValue<int>("batch_size", [](int x) { return x > 0; },
+  RequireParamValue<int>(params, "batch_size", [](int x) { return x > 0; },
       true, "batch_size must be greater than zero");
 
   // Tolerance needs to be positive.
-  RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
+  RequireParamValue<double>(params, "tolerance",
+      [](double x) { return x >= 0.0; },
       true, "tolerance must be positive or zero");
 
   // Optimizer has to be L-BFGS or SGD.
-  RequireParamInSet<string>("optimizer", { "lbfgs", "sgd" },
+  RequireParamInSet<string>(params, "optimizer", { "lbfgs", "sgd" },
       true, "unknown optimizer");
 
   // Lambda must be positive.
-  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; },
+  RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0.0; },
       true, "lambda must be positive or zero");
 
   // Decision boundary must be between 0 and 1.
-  RequireParamValue<double>("decision_boundary",
+  RequireParamValue<double>(params, "decision_boundary",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "decision boundary must be between 0.0 and 1.0");
 
-  RequireParamValue<double>("step_size", [](double x) { return x >= 0.0; },
-      true, "step size must be positive");
+  RequireParamValue<double>(params, "step_size",
+      [](double x) { return x >= 0.0; }, true, "step size must be positive");
 
   if (optimizerType != "sgd")
   {
-    if (IO::HasParam("step_size"))
+    if (params.Has("step_size"))
     {
       Log::Warn << PRINT_PARAM_STRING("step_size") << " ignored because "
           << "optimizer type is not 'sgd'." << std::endl;
     }
-    if (IO::HasParam("batch_size"))
+    if (params.Has("batch_size"))
     {
       Log::Warn << PRINT_PARAM_STRING("batch_size") << " ignored because "
           << "optimizer type is not 'sgd'." << std::endl;
@@ -254,45 +239,45 @@ static void mlpackMain()
   arma::Row<size_t> predictions;
 
   // Load data matrix.
-  if (IO::HasParam("training"))
-    regressors = std::move(IO::GetParam<arma::mat>("training"));
+  if (params.Has("training"))
+    regressors = std::move(params.Get<arma::mat>("training"));
 
   // Load the model, if necessary.
   LogisticRegression<>* model;
-  if (IO::HasParam("input_model"))
-    model = IO::GetParam<LogisticRegression<>*>("input_model");
+  if (params.Has("input_model"))
+    model = params.Get<LogisticRegression<>*>("input_model");
   else
   {
     model = new LogisticRegression<>(0, 0);
 
     // Set the size of the parameters vector, if necessary.
-    if (!IO::HasParam("labels"))
+    if (!params.Has("labels"))
       model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
     else
       model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.
-  if (IO::HasParam("training") && IO::HasParam("labels"))
+  if (params.Has("training") && params.Has("labels"))
   {
-    responses = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
+    responses = std::move(params.Get<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
     {
       // Clean memory if needed.
-      if (!IO::HasParam("input_model"))
+      if (!params.Has("input_model"))
         delete model;
 
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
     }
   }
-  else if (IO::HasParam("training"))
+  else if (params.Has("training"))
   {
     // Checking the size of training data if no labels are passed.
     if (regressors.n_rows < 2)
     {
       // Clean memory if needed.
-      if (!IO::HasParam("input_model"))
+      if (!params.Has("input_model"))
         delete model;
 
       Log::Fatal << "Can't get responses from training data since it has less "
@@ -306,10 +291,10 @@ static void mlpackMain()
   }
 
   // Verify the labels.
-  if (IO::HasParam("training") && max(responses) > 1)
+  if (params.Has("training") && max(responses) > 1)
   {
     // Clean memory if needed.
-    if (!IO::HasParam("input_model"))
+    if (!params.Has("input_model"))
       delete model;
 
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
@@ -317,7 +302,7 @@ static void mlpackMain()
   }
 
   // Now, do the training.
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
     model->Lambda() = lambda;
 
@@ -331,7 +316,9 @@ static void mlpackMain()
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
+      timers.Start("logistic_regression_optimization");
       model->Train(regressors, responses, sgdOpt);
+      timers.Stop("logistic_regression_optimization");
     }
     else if (optimizerType == "lbfgs")
     {
@@ -341,20 +328,22 @@ static void mlpackMain()
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
+      timers.Start("logistic_regression_optimization");
       model->Train(regressors, responses, lbfgsOpt);
+      timers.Stop("logistic_regression_optimization");
     }
   }
 
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    const arma::mat& testSet = IO::GetParam<arma::mat>("test");
+    const arma::mat& testSet = params.Get<arma::mat>("test");
 
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != model->Parameters().n_cols - 1)
     {
       // Clean memory if needed.
       const size_t trainingDimensionality = model->Parameters().n_cols - 1;
-      if (!IO::HasParam("input_model"))
+      if (!params.Has("input_model"))
         delete model;
 
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
@@ -364,36 +353,27 @@ static void mlpackMain()
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (IO::HasParam("predictions") || IO::HasParam("output"))
+    if (params.Has("predictions"))
     {
       Log::Info << "Predicting classes of points in '"
-          << IO::GetPrintableParam<arma::mat>("test") << "'." << endl;
+          << params.GetPrintable<arma::mat>("test") << "'." << endl;
       model->Classify(testSet, predictions, decisionBoundary);
 
-      // The IO param "output" is deprecated and replaced by "predictions"
-      // "output" parameter will be removed in mlpack 4.
-      if (IO::HasParam("predictions"))
-        IO::GetParam<arma::Row<size_t>>("predictions") = predictions;
-      if (IO::HasParam("output"))
-        IO::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
+      if (params.Has("predictions"))
+        params.Get<arma::Row<size_t>>("predictions") = predictions;
     }
 
-    // The IO param "output_probabilities" is deprecated
-    // and replaced by "probabilities"
-    // "output_probabilities" parameter will be removed in mlpack 4.
-    if (IO::HasParam("output_probabilities") || IO::HasParam("probabilities"))
+    if (params.Has("probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
-          << IO::GetPrintableParam<arma::mat>("test") << "'." << endl;
+          << params.GetPrintable<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model->Classify(testSet, probabilities);
 
-      if (IO::HasParam("output_probabilities"))
-        IO::GetParam<arma::mat>("output_probabilities") = probabilities;
-      if (IO::HasParam("probabilities"))
-        IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+      if (params.Has("probabilities"))
+        params.Get<arma::mat>("probabilities") = std::move(probabilities);
     }
   }
 
-  IO::GetParam<LogisticRegression<>*>("output_model") = model;
+  params.Get<LogisticRegression<>*>("output_model") = model;
 }

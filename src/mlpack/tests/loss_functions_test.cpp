@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -31,9 +31,12 @@
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/multilabel_softmargin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
 #include <mlpack/methods/ann/loss_functions/vr_class_reward.hpp>
+#include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/hinge_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -268,27 +271,36 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 }
 
 /*
- * Simple test for the cross-entropy error performance function.
+ * Simple test for the binary-cross-entropy lossfunction.
  */
-TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
-  arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
-
+  arma::mat input1, input2, input3, output, target1, target2, target3;
+  BCELoss<> module1(1e-6, false);
+  BCELoss<> module2(1e-6, true);
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(input1, target1);
+  double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 8 * std::log(2) == Approx(0.0).margin(2e-5));
+
+  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
+  target2 = arma::zeros(1, 6);
+  input2.reshape(2, 3);
+  target2.reshape(2, 3);
+  double error2 = module2.Forward(input2, target2);
+  REQUIRE(error2 - std::log(2) == Approx(0.0).margin(2e-5));
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(input2, target2);
-  REQUIRE(error2 == Approx(0.0).margin(1e-5));
+  double error3 = module1.Forward(input2, target2);
+  REQUIRE(error3 == Approx(0.0).margin(1e-5));
+  double error4 = module2.Forward(input2, target2);
+  REQUIRE(error4 == Approx(0.0).margin(1e-5));
 
   // Test the Backward function.
-  module.Backward(input1, target1, output);
+  module1.Backward(input1, target1, output);
   for (double el : output)
   {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
@@ -297,7 +309,7 @@ TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
 
-  module.Backward(input2, target2, output);
+  module1.Backward(input2, target2, output);
   for (size_t i = 0; i < 8; ++i)
   {
     double el = output.at(0, i);
@@ -911,4 +923,245 @@ TEST_CASE("VRClassRewardLayerParametersTest", "[LossFunctionsTest]")
   // Make sure we can get the parameters successfully.
   REQUIRE(layer.Scale() == 2);
   REQUIRE(layer.SizeAverage() == false);
+}
+
+/*
+ * Simple test for the Triplet Margin Loss function.
+ */
+TEST_CASE("TripletMarginLossTest")
+{
+  arma::mat anchor, positive, negative;
+  arma::mat input, target, output;
+  TripletMarginLoss<> module;
+
+  // Test the Forward function on a user generated input and compare it against
+  // the manually calculated result.
+  anchor = arma::mat("2 3 5");
+  positive = arma::mat("10 12 13");
+  negative = arma::mat("4 5 7");
+
+  input = { {2, 3, 5}, {10, 12, 13} };
+
+  double loss = module.Forward(input, negative);
+  REQUIRE(loss == 66);
+
+  // Test the Backward function.
+  module.Backward(input, negative, output);
+  // According to the used backward formula:
+  // output = 2 * (negative - positive) / anchor.n_cols,
+  // output * nofColumns / 2 + positive should be equal to negative.
+  CheckMatrices(negative, output * output.n_cols / 2 + positive);
+  REQUIRE(output.n_rows == anchor.n_rows);
+  REQUIRE(output.n_cols == anchor.n_cols);
+
+  // Test the loss function on a single input.
+  anchor = arma::mat("4");
+  positive = arma::mat("7");
+  negative = arma::mat("1");
+
+  input = arma::mat(2, 1);
+  input[0] = 4;
+  input[1] = 7;
+
+  loss = module.Forward(input, negative);
+  REQUIRE(loss == 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(input, negative, output);
+  // Test whether the output is negative.
+  REQUIRE(arma::accu(output) == -12);
+  REQUIRE(output.n_elem == 1);
+}
+
+/**
+ * Simple test for the Hinge loss function.
+ */
+TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, target_b, output;
+  double loss, loss_b;
+  HingeLoss<> module1;
+  HingeLoss<> module2(false);
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == 0);
+
+  // Test the Backward function for input = target.
+  module1.Backward(input, target, output);
+  for (double el : output)
+  {
+    // For input = target we should get 0.0 everywhere.
+    REQUIRE(el == Approx(0.0).epsilon(1e-5));
+  }
+
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+  // Randomly generated input.
+  input = { { 0.90599973, -0.33040298, 0.07123354},
+            { 0.71988434, 0.49657596, 0.39873373},
+            { -0.57646927, 0.3951491 , -0.1003365},
+            { 0.12528634, 0.68122971, 0.85448826} };
+
+  // Randomly generated target.
+  target = { { -1, -1, 1},
+             { -1, 1, 1},
+             { 1, -1, -1},
+             { 1, -1, -1} };
+
+  // Binary target can be obtained by replacing -1 with 0 in target.
+  target_b = { { 0, 0, 1},
+               { 0, 1, 1},
+               { 1, 0, 0},
+               { 1, 0, 0} };
+
+  // Test for binary labels as target.
+  loss = module1.Forward(input, target);
+  loss_b = module1.Forward(input, target_b);
+
+  // Loss should be same due to internal conversion of binary labels.
+  REQUIRE(loss == loss_b);
+
+  // Test for sum reduction.
+  // Test the Forward function.
+  // Loss calculated by referring to implementation of tf.keras.losses.hinge.
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(14.61065).epsilon(1e-3));
+
+  // Test the Backward function
+  module1.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(-5).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+  // Test for mean reduction.
+  // Test for the Forward function.
+  // Loss calculated by referring to implementation of tf.keras.losses.hinge.
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(1.21755).epsilon(1e-3));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(-0.41667).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+}
+
+/**
+ * Simple test for the MultiLabel Softmargin Loss function.
+ */
+TEST_CASE("MultiLabelSoftMarginLossTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, output, expectedOutput;
+  double loss;
+  MultiLabelSoftMarginLoss<> module1;
+  MultiLabelSoftMarginLoss<> module2(false);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
+      "-0.3336");
+  target = arma::mat("0 1 0 1 0 0 0 0 1");
+  input.reshape(3, 3);
+  target.reshape(3, 3);
+
+  // Test for sum reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("0.1814 -0.1587 0.1783 -0.1567 0.1866 0.1827 "
+      "0.1479 0.1386 -0.1942");
+  expectedOutput.reshape(3, 3);
+
+  // Test the Forward function. Loss should be 2.14829.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(2.14829).epsilon(1e-5));
+
+  // Test the Backward function.
+  module1.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(0.505909).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("0.0605 -0.0529 0.0594 -0.0522 0.0622 0.0609 "
+      "0.0493 0.0462 -0.0647");
+  expectedOutput.reshape(3, 3);
+
+  // Test the Forward function. Loss should be 0.716095.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(0.716095).epsilon(1e-5));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(0.168636).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/**
+ * Simple test for the MultiLabel Softmargin Loss function.
+ */
+TEST_CASE("MultiLabelSoftMarginLossWeightedTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, output, expectedOutput;
+  arma::rowvec weights;
+  double loss;
+  weights = arma::mat("1 2 3");
+  MultiLabelSoftMarginLoss<> module1(true, weights);
+  MultiLabelSoftMarginLoss<> module2(false, weights);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
+      "-0.2264 -0.3400 -0.3336 -0.8695");
+  target = arma::mat("0 1 0 1 1 0 0 0 0 0 1 0");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+
+  // Test for sum reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("0.1814 -0.1587 0.1783 -0.1479 -0.3133 0.3732 "
+      "0.3653 0.3853 0.4436 0.4158 -0.5826 0.2954");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 5.35057.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='sum').
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(5.35057).epsilon(1e-5));
+
+  // Test the Backward function.
+  module1.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(1.43577).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction.
+
+  // Calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("0.0454 -0.0397 0.0446 -0.0370 -0.0783 0.0933 "
+      "0.0913 0.0963 0.1109 0.1040 -0.1457 0.0738");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 1.33764.
+  // Value calculated using torch.nn.MultiLabelSoftMarginLoss(reduction='mean').
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(1.33764).epsilon(1e-5));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(0.358943).epsilon(1e-5));
+  REQUIRE(output.n_rows ==input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }

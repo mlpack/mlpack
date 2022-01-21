@@ -181,7 +181,7 @@ class LSTM : public Layer<InputType, OutputType>
 
   const size_t WeightSize() const
   {
-    // TODO ...
+    return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize);
   }
 
   /**

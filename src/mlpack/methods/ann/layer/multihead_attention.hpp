@@ -130,6 +130,9 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 4 * (embedDim + 1) * embedDim; }
+
   /**
    * Serialize the layer.
    */
@@ -177,6 +180,11 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
     outputDimensions[1] = tgtSeqLen;
 
     return outputDimensions;
+  }
+
+  size_t InputShape() const
+  {
+    return embedDim * (tgtSeqLen + 2 * srcSeqLen);
   }
 
  private:
