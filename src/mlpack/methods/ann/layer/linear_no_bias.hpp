@@ -60,16 +60,16 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   //! Copy constructor.
-  LinearNoBias(const LinearNoBias& layer);
+  LinearNoBiasType(const LinearNoBiasType& layer);
 
   //! Move constructor.
-  LinearNoBias(LinearNoBias&&);
+  LinearNoBiasType(LinearNoBiasType&&);
 
   //! Copy assignment operator.
-  LinearNoBias& operator=(const LinearNoBias& layer);
+  LinearNoBiasType& operator=(const LinearNoBiasType& layer);
 
   //! Move assignment operator.
-  LinearNoBias& operator=(LinearNoBias&& layer);
+  LinearNoBiasType& operator=(LinearNoBiasType&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

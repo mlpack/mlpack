@@ -132,16 +132,16 @@ class ConvolutionType : public Layer<InputType, OutputType>
   ConvolutionType* Clone() const { return new ConvolutionType(*this); }
 
   //! Copy constructor.
-  Convolution(const Convolution& layer);
+//  ConvolutionType(const ConvolutionType& layer);
 
   //! Move constructor.
-  Convolution(Convolution&&);
+//  ConvolutionType(ConvolutionType&&);
 
   //! Copy assignment operator.
-  Convolution& operator=(const Convolution& layer);
+//  ConvolutionType& operator=(const ConvolutionType& layer);
 
   //! Move assignment operator.
-  Convolution& operator=(Convolution&& layer);
+//  ConvolutionType& operator=(ConvolutionType&& layer);
 
   /*
    * Set the weight and bias term.
@@ -286,12 +286,6 @@ class ConvolutionType : public Layer<InputType, OutputType>
     }
 
     this->outputDimensions[2] = maps;
-  }
-
-  //! Get the shape of the input.
-  size_t InputShape() const
-  {
-    return inputHeight * inputWidth * inSize;
   }
 
   /**

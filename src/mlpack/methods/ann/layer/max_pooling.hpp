@@ -283,6 +283,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Locally-stored number of channels.
   size_t channels;
 
+  size_t offset;
 
   //! Locally-stored pooling strategy.
   MaxPoolingRule pooling;

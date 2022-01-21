@@ -93,16 +93,16 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   }
 
   //! Copy Constructor.
-  Reparametrization(const Reparametrization& layer);
+  ReparametrizationType(const ReparametrizationType& layer);
 
   //! Move Constructor.
-  Reparametrization(Reparametrization&& layer);
+  ReparametrizationType(ReparametrizationType&& layer);
 
   //! Copy assignment operator.
-  Reparametrization& operator=(const Reparametrization& layer);
+  ReparametrizationType& operator=(const ReparametrizationType& layer);
 
   //! Move assignment operator.
-  Reparametrization& operator=(Reparametrization&& layer);
+  ReparametrizationType& operator=(ReparametrizationType&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -168,11 +168,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
         this->inputDimensions.size(), 1);
     // This flattens the input, and removes half the elements.
     this->outputDimensions[0] = inputElem / 2;
-  }
-
-  size_t InputShape() const
-  {
-    return 2 * latentSize;
   }
 
   /**

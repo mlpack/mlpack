@@ -122,12 +122,6 @@ class Linear3DType : public Layer<InputType, OutputType>
     this->outputDimensions[0] = outSize;
   }
 
-  //! Get the shape of the input.
-  size_t InputShape() const
-  {
-    return inSize;
-  }
-
   /**
    * Serialize the layer
    */

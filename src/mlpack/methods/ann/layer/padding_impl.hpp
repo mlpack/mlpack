@@ -24,9 +24,7 @@ PaddingType<InputType, OutputType>::PaddingType(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom,
-    const size_t inputWidth,
-    const size_t inputHeight) :
+    const size_t padHBottom) :
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),

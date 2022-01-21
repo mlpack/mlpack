@@ -36,9 +36,8 @@ ReparametrizationType<InputType, OutputType>::ReparametrizationType(
 }
 
 template <typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-    const Reparametrization& layer) :
-    latentSize(layer.latentSize),
+ReparametrizationType<InputDataType, OutputDataType>::ReparametrizationType(
+    const ReparametrizationType& layer) :
     stochastic(layer.stochastic),
     includeKl(layer.includeKl),
     beta(layer.beta)
@@ -47,9 +46,8 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 }
 
 template <typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-    Reparametrization&& layer) :
-    latentSize(std::move(layer.latentSize)),
+ReparametrizationType<InputDataType, OutputDataType>::ReparametrizationType(
+    ReparametrizationType&& layer) :
     stochastic(std::move(layer.stochastic)),
     includeKl(std::move(layer.includeKl)),
     beta(std::move(layer.beta))
@@ -58,13 +56,12 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 }
 
 template <typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>&
-Reparametrization<InputDataType, OutputDataType>::
-operator=(const Reparametrization& layer)
+ReparametrizationType<InputDataType, OutputDataType>&
+ReparametrizationType<InputDataType, OutputDataType>::
+operator=(const ReparametrizationType& layer)
 {
   if (this != &layer)
   {
-    latentSize = layer.latentSize;
     stochastic = layer.stochastic;
     includeKl = layer.includeKl;
     beta = layer.beta;
@@ -73,13 +70,12 @@ operator=(const Reparametrization& layer)
 }
 
 template <typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>&
-Reparametrization<InputDataType, OutputDataType>::
-operator=(Reparametrization&& layer)
+ReparametrizationType<InputDataType, OutputDataType>&
+ReparametrizationType<InputDataType, OutputDataType>::
+operator=(ReparametrizationType&& layer)
 {
   if (this != &layer)
   {
-    latentSize = std::move(layer.latentSize);
     stochastic = std::move(layer.stochastic);
     includeKl = std::move(layer.includeKl);
     beta = std::move(layer.beta);

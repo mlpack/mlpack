@@ -403,34 +403,34 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model =
       new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
-  model->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model->Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
+  model->Add<ReLULayer<>>();
+  model->Add<MaxPooling>(2, 2);
+  model->Add<Convolution>(12, 2, 2);
   model->Add<ReLULayer<> >();
-  model->Add<MaxPooling<> >(8, 8, 2, 2);
-  model->Add<Convolution<> >(8, 12, 2, 2);
+  model->Add<MaxPooling>(2, 2);
+  model->Add<Linear>(20);
   model->Add<ReLULayer<> >();
-  model->Add<MaxPooling<> >(2, 2, 2, 2);
-  model->Add<Linear<> >(192, 20);
+  model->Add<Linear>(10);
   model->Add<ReLULayer<> >();
-  model->Add<Linear<> >(20, 10);
-  model->Add<ReLULayer<> >();
-  model->Add<Linear<> >(10, 2);
-  model->Add<LogSoftMax<> >();
+  model->Add<Linear>(2);
+  model->Add<LogSoftMax>();
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 =
       new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
-  model1->Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model1->Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
+  model1->Add<ReLULayer<>>();
+  model1->Add<MaxPooling>(2, 2);
+  model1->Add<Convolution>(12, 2, 2);
   model1->Add<ReLULayer<> >();
-  model1->Add<MaxPooling<> >(8, 8, 2, 2);
-  model1->Add<Convolution<> >(8, 12, 2, 2);
+  model1->Add<MaxPooling>(2, 2);
+  model1->Add<Linear>(20);
   model1->Add<ReLULayer<> >();
-  model1->Add<MaxPooling<> >(2, 2, 2, 2);
-  model1->Add<Linear<> >(192, 20);
+  model1->Add<Linear>(10);
   model1->Add<ReLULayer<> >();
-  model1->Add<Linear<> >(20, 10);
-  model1->Add<ReLULayer<> >();
-  model1->Add<Linear<> >(10, 2);
-  model1->Add<LogSoftMax<> >();
+  model1->Add<Linear>(2);
+  model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model, X, Y, 8);

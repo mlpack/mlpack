@@ -23,7 +23,7 @@
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
@@ -222,7 +222,7 @@ TEST_CASE("MSEMatResponsesTest", "[CVTest]")
 
   FFN<MeanSquaredError<>, ConstInitialization> ffn(MeanSquaredError<>(),
     ConstInitialization(0));
-  ffn.Add<Linear<>>(1, 2);
+  ffn.Add<Linear>(2);
   ffn.Add<IdentityLayer<>>();
 
   ens::RMSProp opt(0.2);

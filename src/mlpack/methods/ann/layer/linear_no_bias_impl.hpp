@@ -42,11 +42,12 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
-    const LinearNoBias& layer) :
+LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+LinearNoBiasType(
+    const LinearNoBiasType& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
-    weights(layer.weights),
+    weight(layer.weight),
     regularizer(layer.regularizer)
 {
   // Nothing to do here.
@@ -54,11 +55,12 @@ LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
-    LinearNoBias&& layer) :
+LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+LinearNoBiasType(
+    LinearNoBiasType&& layer) :
     inSize(0),
     outSize(0),
-    weights(std::move(layer.weights)),
+    weight(std::move(layer.weight)), // TODO: but weight is an alias anyway...
     regularizer(std::move(layer.regularizer))
 {
   // Nothing to do here.
@@ -66,15 +68,15 @@ LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-LinearNoBias<InputDataType, OutputDataType, RegularizerType>&
-LinearNoBias<InputDataType, OutputDataType, RegularizerType>::
-operator=(const LinearNoBias& layer)
+LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>&
+LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+operator=(const LinearNoBiasType& layer)
 {
   if (this != &layer)
   {
     inSize = layer.inSize;
     outSize = layer.outSize;
-    weights = layer.weights;
+    weight = layer.weight;
     regularizer = layer.regularizer;
   }
   return *this;
@@ -82,19 +84,18 @@ operator=(const LinearNoBias& layer)
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-LinearNoBias<InputDataType, OutputDataType, RegularizerType>&
-LinearNoBias<InputDataType, OutputDataType, RegularizerType>::
-operator=(LinearNoBias&& layer)
+LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>&
+LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+operator=(LinearNoBiasType&& layer)
 {
   if (this != &layer)
   {
     inSize = layer.inSize;
     outSize = layer.outSize;
-    weights = std::move(layer.weights);
+    weight = std::move(layer.weight);
     regularizer = std::move(layer.regularizer);
   }
   return *this;
->>>>>>> origin/master
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>

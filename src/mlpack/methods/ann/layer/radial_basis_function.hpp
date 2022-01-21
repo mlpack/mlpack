@@ -100,12 +100,6 @@ class RBF : public Layer<InputType, OutputType>
     return 0;
   }
 
-  //! Get the shape of the input.
-  size_t InputShape() const
-  {
-    return inSize;
-  }
-
   /**
    * Serialize the layer.
    */

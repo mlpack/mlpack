@@ -104,7 +104,7 @@ ConvolutionType<
     padHTop(std::get<0>(padH))
 {
   // Transform paddingType to lowercase.
-  util::ToLower(paddingTypeIn, this->paddingType);
+  this->paddingType = util::ToLower(paddingTypeIn);
 }
 
 // TODO: copy/move constructor/operator
