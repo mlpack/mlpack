@@ -79,7 +79,7 @@ class ConcatenateType : public Layer<InputType, OutputType>
   void ComputeOutputDimensions()
   {
     // This flattens the input.
-    size_t inSize = this->inputDimensions[1];
+    size_t inSize = this->inputDimensions[0];
     for (size_t i = 1; i < this->inputDimensions.size(); ++i)
         inSize *= this->inputDimensions[i];
 

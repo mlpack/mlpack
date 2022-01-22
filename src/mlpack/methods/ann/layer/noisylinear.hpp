@@ -104,7 +104,7 @@ class NoisyLinearType : public Layer<InputType, OutputType>
 
   void ComputeOutputDimensions()
   {
-    inSize = this->inputDimensions[1];
+    inSize = this->inputDimensions[0];
     for (size_t i = 1; i < this->inputDimensions.size(); ++i)
         inSize *= this->inputDimensions[i];
 
