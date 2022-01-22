@@ -98,8 +98,8 @@ class PaddingType : public Layer<InputType, OutputType>
   {
     this->outputDimensions = this->inputDimensions;
 
-    this->outputDimensions[0] += padWLeft + padWRight;
-    this->outputDimensions[1] += padHTop + padHBottom;
+    this->outputDimensions[0] += padHTop + padHBottom;
+    this->outputDimensions[1] += padWLeft + padWRight;
 
     // Higher dimensions remain unchanged.  But, we will cache the product of
     // these higher dimensions.

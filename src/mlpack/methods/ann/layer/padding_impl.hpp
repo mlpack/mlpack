@@ -53,39 +53,39 @@ void PaddingType<InputType, OutputType>::Forward(
   {
     reshapedOutput.tube(0,
                         0,
-                        padWLeft - 1,
-                        reshapedOutput.n_cols - 1).zeros();
+                        reshapedOutput.n_rows - 1,
+                        padWLeft - 1).zeros();
   }
 
   if (padHTop > 0)
   {
-    reshapedOutput.tube(padWLeft,
-                        0,
-                        padWLeft + this->inputDimensions[0] - 1,
-                        padHTop - 1).zeros();
+    reshapedOutput.tube(0,
+                        padWLeft,
+                        padHTop - 1,
+                        padWLeft + this->inputDimensions[1] - 1).zeros();
   }
 
   if (padWRight > 0)
   {
-    reshapedOutput.tube(padWLeft + this->inputDimensions[0],
-                        padHTop + this->inputDimensions[1],
+    reshapedOutput.tube(0,
+                        padWLeft + this->inputDimensions[1],
                         reshapedOutput.n_rows - 1,
                         reshapedOutput.n_cols - 1).zeros();
   }
 
   if (padHBottom > 0)
   {
-    reshapedOutput.tube(padWLeft,
-                        0,
-                        padWLeft + this->inputDimensions[0] - 1,
-                        reshapedOutput.n_cols - 1).zeros();
+    reshapedOutput.tube(padHTop + this->inputDimensions[0],
+                        padWLeft,
+                        reshapedOutput.n_rows - 1,
+                        padWLeft + this->inputDimensions[1] - 1).zeros();
   }
 
   // Copy the input matrix.
-  reshapedOutput.tube(padWLeft,
-                      padHTop,
-                      padWLeft + this->inputDimensions[0] - 1,
-                      padHTop + this->inputDimensions[1] - 1) = reshapedInput;
+  reshapedOutput.tube(padHTop,
+                      padWLeft,
+                      padHTop + this->inputDimensions[0] - 1,
+                      padWLeft + this->inputDimensions[1] - 1) = reshapedInput;
 }
 
 template<typename InputType, typename OutputType>
@@ -103,10 +103,10 @@ void PaddingType<InputType, OutputType>::Backward(
       this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
       g.n_cols, false, true);
 
-  reshapedG = reshapedGy.tube(padWLeft,
-                              padHTop,
-                              padWLeft + this->inputDimensions[0] - 1,
-                              padHTop + this->inputDimensions[1] - 1);
+  reshapedG = reshapedGy.tube(padHTop,
+                              padWLeft,
+                              padHTop + this->inputDimensions[0] - 1,
+                              padWLeft + this->inputDimensions[1] - 1);
 }
 
 template<typename InputType, typename OutputType>

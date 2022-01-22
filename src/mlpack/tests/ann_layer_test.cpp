@@ -717,7 +717,7 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
 {
-  arma::mat output, input, delta, input1, output1;
+  arma::mat output, input, delta;
   Padding module(1, 2, 3, 4);
   module.InputDimensions() = std::vector<size_t>({ 2, 5 });
   module.ComputeOutputDimensions();
@@ -728,9 +728,10 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   for (size_t i = 1; i < module.OutputDimensions().size(); ++i)
     totalOutputDimensions *= module.OutputDimensions()[i];
   output.set_size(totalOutputDimensions, input.n_cols);
+  output.randu();
   module.Forward(input, output);
   REQUIRE(arma::accu(input) == arma::accu(output));
-  REQUIRE(output.n_rows == (5 * 12)); // 2x5 --> 5x12
+  REQUIRE(output.n_rows == (9 * 8)); // 2x5 --> 9x8
 
   // Test the Backward function.
   delta.set_size(input.n_rows, input.n_cols);
@@ -740,28 +741,37 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // Test forward function for multiple filters.
   // Here it's 3 filters with height = 224, width = 224
   // the output should be [226 * 226 * 3, 1] with 1 padding.
-  Padding module1(1, 1, 1, 1);
-  module1.InputDimensions() = std::vector<size_t>({ 224, 224 });
-  module1.ComputeOutputDimensions();
+  module = Padding(1, 1, 1, 1);
+  module.InputDimensions() = std::vector<size_t>({ 224, 224, 3 });
+  module.ComputeOutputDimensions();
 
-  input1 = arma::randu(224 * 224 * 3, 1);
-  module1.Forward(input1, output1);
-  REQUIRE(arma::accu(input1) == arma::accu(output1));
-  REQUIRE(output1.n_rows == (226 * 226 * 3));
-  REQUIRE(output1.n_cols == 1);
+  input = arma::randu(224 * 224 * 3, 1);
+  totalOutputDimensions = module.OutputDimensions()[0];
+  for (size_t i = 1; i < module.OutputDimensions().size(); ++i)
+    totalOutputDimensions *= module.OutputDimensions()[i];
+  output.set_size(totalOutputDimensions, input.n_cols);
+  output.randu();
+  module.Forward(input, output);
+  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(output.n_rows == (226 * 226 * 3));
+  REQUIRE(output.n_cols == 1);
 
   // Test forward function for multiple batches with multiple filters.
   // Here it's 3 filters with height = 244, width = 244
   // the output should be [246 * 246 * 3, 3] with 1 padding.
-  Padding module2(1, 1, 1, 1);
-  module2.InputDimensions() = std::vector<size_t>({ 224, 224 });
-  module2.ComputeOutputDimensions();
+  module.InputDimensions() = std::vector<size_t>({ 244, 244, 3 });
+  module.ComputeOutputDimensions();
+  totalOutputDimensions = module.OutputDimensions()[0];
+  for (size_t i = 1; i < module.OutputDimensions().size(); ++i)
+    totalOutputDimensions *= module.OutputDimensions()[i];
 
-  input1 = arma::randu(244 * 244 * 3, 3);
-  module2.Forward(input1, output1);
-  REQUIRE(arma::accu(input1) == arma::accu(output1));
-  REQUIRE(output1.n_rows == (246 * 246 * 3));
-  REQUIRE(output1.n_cols == 3);
+  input = arma::randu(244 * 244 * 3, 3);
+  output.set_size(totalOutputDimensions, input.n_cols);
+  output.randu();
+  module.Forward(input, output);
+  REQUIRE(output.n_rows == (246 * 246 * 3));
+  REQUIRE(output.n_cols == 3);
+  REQUIRE(arma::accu(input) == arma::accu(output));
 }
 
 /**
