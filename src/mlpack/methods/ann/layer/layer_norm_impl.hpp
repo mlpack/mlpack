@@ -54,14 +54,12 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
 template<typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     LayerNorm&& layer):
-    size(std::move(layer.size)),
-    eps(std::move(layer.eps)),
+    size(layer.size),
+    eps(layer.eps),
     weights(std::move(layer.weights)),
-    loading(std::move(layer.loading))
+    loading(layer.loading)
 {
-    layer.size = 0;
-    layer.eps = 0;
-    layer.weights = nullptr;
+   //Nothing to do here
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -86,13 +84,11 @@ operator=(LayerNorm&& layer)
 {
     if (this != &layer)
     {
-        size = std::move(layer.size);
-        eps = std::move(layer.eps);
+        size = layer.size;
+        eps = layer.eps;
         weights = std::move(layer.weights);
-        loading = std::move(layer.loading);
-        layer.size = 0;
-        layer.eps = 0;
-        layer.weights = nullptr;
+        loading = layer.loading;
+      
 
     }
     return *this;
