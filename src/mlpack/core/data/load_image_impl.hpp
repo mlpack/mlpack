@@ -9,12 +9,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 #define MLPACK_CORE_DATA_LOAD_IMAGE_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "load_image.hpp"
+#include "image_info.hpp"
 
 namespace mlpack {
 namespace data {
@@ -90,14 +90,7 @@ bool Load(const std::vector<std::string>& files,
   return true;
 }
 
-// #ifdef HAS_STB
-
-// // The definition of STB_IMAGE_IMPLEMENTATION means that the implementation will
-// // be included here directly.
-// #define STB_IMAGE_STATIC
-// #define STB_IMAGE_IMPLEMENTATION
-
-#include <stb_image.h>
+#ifdef HAS_STB
 
 inline bool LoadImage(const std::string& filename,
                       arma::Mat<unsigned char>& matrix,
@@ -111,7 +104,8 @@ inline bool LoadImage(const std::string& filename,
     std::ostringstream oss;
     oss << "Load(): file type " << Extension(filename) << " not supported. ";
     oss << "Currently it supports: ";
-    for (auto extension : loadFileTypes)
+    auto x = LoadFileTypes();
+    for (auto extension : x)
       oss << " " << extension;
     oss << "." << std::endl;
 
@@ -171,36 +165,30 @@ inline bool LoadImage(const std::string& filename,
   return true;
 }
 
+#else // HAS_STB
+
+inline bool LoadImage(const std::string& /* filename */,
+                      arma::Mat<unsigned char>& /* matrix */,
+                      ImageInfo& /* info */,
+                      const bool fatal)
+{
+  if (fatal)
+  {
+    Log::Fatal << "Load(): mlpack was not compiled with STB support, so images "
+        << "cannot be loaded!" << std::endl;
+  }
+  else
+  {
+    Log::Warn << "Load(): mlpack was not compiled with STB support, so images "
+        << "cannot be loaded!" << std::endl;
+  }
+
+  return false;
+}
+
+#endif
+
 }
 }
 
-//#else
-
-// namespace mlpack {
-// namespace data {
-
-
-// inline bool LoadImage(const std::string& /* filename */,
-//                       arma::Mat<unsigned char>& /* matrix */,
-//                       ImageInfo& /* info */,
-//                       const bool fatal)
-// {
-//   if (fatal)
-//   {
-//     Log::Fatal << "Load(): mlpack was not compiled with STB support, so images "
-//         << "cannot be loaded!" << std::endl;
-//   }
-//   else
-//   {
-//     Log::Warn << "Load(): mlpack was not compiled with STB support, so images "
-//         << "cannot be loaded!" << std::endl;
-//   }
-
-//   return false;
-// }
-
-// } // namespace data
-// } // namespace mlpack
-
-//#endif
 #endif
