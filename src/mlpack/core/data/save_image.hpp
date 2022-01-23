@@ -9,23 +9,18 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_DATA_SAVE_IMAGE_HPP
+#define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
+
 #include "save.hpp"
 
 #ifdef HAS_STB
 
-// The implementation of the functions is included directly, so we need to make
-// sure it doesn't get included twice.  This is to work around a bug in old
-// versions of STB where not all functions were correctly marked static.
+// Include STB functions.  Note that we include the implementations, too, and
+// all functions will be marked as static.
 #define STB_IMAGE_WRITE_STATIC
-#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
-  #define STB_IMAGE_WRITE_IMPLEMENTATION
-#else
-  #undef STB_IMAGE_WRITE_IMPLEMENTATION
-#endif
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
-#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
-  #define STB_IMAGE_WRITE_IMPLEMENTATION
-#endif
 
 namespace mlpack {
 namespace data {
@@ -41,7 +36,7 @@ inline bool SaveImage(const std::string& filename,
     std::ostringstream oss;
     oss << "Save(): file type " << Extension(filename) << " not supported.\n";
     oss << "Currently image saving supports ";
-    for (auto extension : saveFileTypes)
+    for (auto extension : SaveFileTypes())
       oss << ", " << extension;
     oss << "." << std::endl;
 
@@ -148,5 +143,7 @@ inline bool SaveImage(const std::string& /* filename */,
 
 } // namespace data
 } // namespace mlpack
+
+#endif
 
 #endif
