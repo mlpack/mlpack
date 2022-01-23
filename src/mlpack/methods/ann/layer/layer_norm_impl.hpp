@@ -48,7 +48,7 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     weights(layer.weights),
     loading(layer.loading)
 {
-    Reset();
+    // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -62,7 +62,6 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     layer.size = 0;
     layer.eps = 0;
     layer.weights = nullptr;
-    Reset();
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -76,7 +75,6 @@ operator=(const LayerNorm& layer)
         eps = layer.eps;
         weights = layer.weights;
         loading = layer.loading;
-        Reset();
     }
     return *this;
 }
@@ -95,7 +93,6 @@ operator=(LayerNorm&& layer)
         layer.size = 0;
         layer.eps = 0;
         layer.weights = nullptr;
-        Reset();
 
     }
     return *this;
