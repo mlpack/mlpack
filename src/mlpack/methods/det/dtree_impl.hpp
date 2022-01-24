@@ -93,7 +93,7 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
                    const size_t minLeafSize)
 {
   // It's common sense, but we also use it in a check later.
-  mlpack::Log::Assert(minLeafSize > 0);
+  Log::Assert(minLeafSize > 0);
 
   typedef std::pair<ElemType, size_t> SplitItem;
   const size_t n_elem = end - start;
@@ -116,7 +116,7 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
     const ElemType newVal = valsVec[i];
     if (lastVal < ElemType(0) && newVal > ElemType(0) && zeroes > 0)
     {
-      mlpack::Log::Assert(padding == 0); // We should arrive here once!
+      Log::Assert(padding == 0); // We should arrive here once!
 
       // The minLeafSize > 0 also guarantees we're not entering right at the
       // start.
@@ -148,9 +148,8 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
 } // namespace details
 
 template<typename MatType, typename TagType>
-mlpack::det::DTree<MatType, TagType>::DTree() :
-    start(0),
-    end(0),
+DTree<MatType, TagType>::DTree() :
+     end(0),
     splitDim(size_t(-1)),
     splitValue(std::numeric_limits<ElemType>::max()),
     logNegError(-DBL_MAX),
@@ -188,10 +187,8 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
 }
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>& mlpack::det::DTree<MatType, TagType>::operator=(
-    const mlpack::det::DTree<MatType, TagType>& obj)
-{
-  if (this == &obj)
+DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
+    const DTree<MatType, TagT== &obj)
     return *this;
 
   // Copy the values from the other tree.
@@ -332,9 +329,8 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
 { /* Nothing to do. */ }
 
 template<typename MatType, typename TagType>
-mlpack::det::DTree<MatType, TagType>::DTree(MatType & data) :
-    start(0),
-    end(data.n_cols),
+DTree<MatType, TagType>::DTree(MatType & data) :
+     end(data.n_cols),
     maxVals(arma::max(data, 1)),
     minVals(arma::min(data, 1)),
     splitDim(size_t(-1)),
@@ -443,8 +439,8 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
-  mlpack::Log::Assert(data.n_rows == maxVals.n_elem);
-  mlpack::Log::Assert(data.n_rows == minVals.n_elem);
+  Log::Assert(data.n_rows == maxVals.n_elem);
+  Log::Assert(data.n_rows == minVals.n_elem);
 
   const size_t points = end - start;
 
@@ -503,7 +499,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
       {
         // Ensure that the right node will have at least the minimum number of
         // points.
-        mlpack::Log::Assert((points - position) >= minLeafSize);
+        Log::Assert((points - position) >= minLeafSize);
 
         // Now we have to see if the error will be reduced.  Simple manipulation
         // of the error function gives us the condition we must satisfy:
@@ -592,8 +588,8 @@ double DTree<MatType, TagType>::Grow(MatType& data,
                                      const size_t maxLeafSize,
                                      const size_t minLeafSize)
 {
-  mlpack::Log::Assert(data.n_rows == maxVals.n_elem);
-  mlpack::Log::Assert(data.n_rows == minVals.n_elem);
+  Log::Assert(data.n_rows == maxVals.n_elem);
+  Log::Assert(data.n_rows == minVals.n_elem);
 
   double leftG, rightG;
 
@@ -667,7 +663,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
   else
   {
     // We can make this a leaf node.
-    mlpack::Log::Assert((size_t) (end - start) >= minLeafSize);
+    Log::Assert((size_t) (end - start) >= minLeafSize);
     subtreeLeaves = 1;
     subtreeLeavesLogNegError = logNegError;
   }
@@ -821,7 +817,7 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
         gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
       }
 
-      mlpack::Log::Assert(gT < std::numeric_limits<double>::max());
+      Log::Assert(gT < std::numeric_limits<double>::max());
 
       return std::min((double) gT, std::min(leftG, rightG));
     }
@@ -863,7 +859,7 @@ bool DTree<MatType, TagType>::WithinRange(const VecType& query) const
 template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 {
-  mlpack::Log::Assert(query.n_elem == maxVals.n_elem);
+  Log::Assert(query.n_elem == maxVals.n_elem);
 
   if (root == 1) // If we are the root...
   {
@@ -908,7 +904,7 @@ TagType DTree<MatType, TagType>::TagTree(const TagType& tag, bool every)
 template<typename MatType, typename TagType>
 TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
 {
-  mlpack::Log::Assert(query.n_elem == maxVals.n_elem);
+  Log::Assert(query.n_elem == maxVals.n_elem);
 
   if (root == 1) // If we are the root...
   {
@@ -985,8 +981,8 @@ void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
 
 template <typename MatType, typename TagType>
 template <typename Archive>
-void mlpack::det::DTree<MatType, TagType>::serialize(Archive& ar,
-                                                     const uint32_t /* version */)
+void DTree<MatType, TagType>::serialize(Archive& ar,
+                                        const uint32_t /* version */)
 {
   ar(CEREAL_NVP(start));
   ar(CEREAL_NVP(end));
