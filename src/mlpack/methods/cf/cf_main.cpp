@@ -209,6 +209,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Validate parameters.
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // Check that nothing stupid is happening.
   if (params.Has("query") || params.Has("all_user_recommendations"))
     RequireOnlyOnePassed(params, { "query", "all_user_recommendations" }, true);

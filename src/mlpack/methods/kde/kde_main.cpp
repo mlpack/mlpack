@@ -232,6 +232,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
                        "Monte Carlo only works with Gaussian kernel");
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   // Requirements for parameter values.
   RequireParamInSet<string>(params, "kernel", { "gaussian", "epanechnikov",
       "laplacian", "spherical", "triangular" }, true, "unknown kernel type");

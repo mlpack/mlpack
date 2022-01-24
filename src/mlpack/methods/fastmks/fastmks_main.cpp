@@ -131,6 +131,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "no output will be saved");
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   // Check on kernel type.
   RequireParamInSet<string>(params, "kernel", { "linear", "polynomial",
       "cosine", "gaussian", "triangular", "hyptan", "epanechnikov" }, true,

@@ -145,6 +145,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "no output will be saved");
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   ReportIgnoredParam(params, {{ "test", false }}, "test_set_estimates");
 
   RequireParamValue<int>(params, "folds", [](int x) { return x >= 0; }, true,

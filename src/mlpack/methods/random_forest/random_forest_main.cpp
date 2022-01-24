@@ -221,6 +221,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "training", false }}, "num_trees");
   ReportIgnoredParam(params, {{ "training", false }}, "minimum_leaf_size");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   RandomForestModel* rfModel;
   // Input model is loaded when we are either doing warm-started training or
   // else we are making predictions only or both.

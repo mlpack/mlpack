@@ -195,6 +195,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   RequireAtLeastOnePassed(params, { "output" }, false,
       "no output will be saved");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   // Load input dataset.
   mat dataset = std::move(params.Get<arma::mat>("input"));
 

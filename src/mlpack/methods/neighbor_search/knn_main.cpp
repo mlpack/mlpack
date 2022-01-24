@@ -178,6 +178,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       true, "tau must be positive");
   const double tau = params.Get<double>("tau");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
 
   // Sanity check on rho.
   const double rho = params.Get<double>("rho");

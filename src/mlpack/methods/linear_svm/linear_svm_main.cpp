@@ -248,6 +248,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // Step Size must be positive.
   RequireParamValue<double>(params, "step_size",
       [](double x) { return x > 0.0; }, true, "step size must be positive");

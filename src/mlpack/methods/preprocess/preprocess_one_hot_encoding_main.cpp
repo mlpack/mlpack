@@ -67,6 +67,9 @@ using namespace std;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   // Load the data.
   const arma::mat& data = params.Get<arma::mat>("input");
   vector<int>& indices = params.Get<vector<int> >("dimensions");

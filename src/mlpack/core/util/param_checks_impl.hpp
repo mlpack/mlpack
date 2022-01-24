@@ -57,7 +57,7 @@ inline void RequireOnlyOnePassed(
     // Append a custom message.
     if (!errorMessage.empty())
       stream << "; " << errorMessage;
-    stream << "!" << std::endl;
+      stream << "!" << std::endl;
   }
   else if (set == 0 && !allowNone)
   {
@@ -303,6 +303,51 @@ inline void ReportIgnoredParam(util::Params& params,
   {
     Log::Warn << PRINT_PARAM_STRING(paramName) << " ignored because "
         << reason << "!" << std::endl;
+  }
+}
+
+// Check if the given input data points aren't empty
+template<typename T>
+inline void RequireNonEmptyInputValue(
+    util::Params& params,
+    const std::string& paramName,
+    const bool fatal,
+    const std::string& errorMessage)
+{
+  if (BINDING_IGNORE_CHECK(paramName))
+    return;
+
+  if (params.Has(paramName))
+  {
+    mat trainingData = std::move(params.Get<arma::mat>(paramName));
+    if (trainingData.empty())
+    {
+      util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+      if (!errorMessage.empty())
+        stream << paramName << errorMessage << std::endl;
+    }
+  }
+}
+
+inline void RequireNonEmptyInputValue(
+    util::Params& params,
+    const std::string& paramName,
+    const std::pair<std::string, bool>& constraints,
+    const bool fatal,
+    const std::string& errorMessage)
+{
+  if (BINDING_IGNORE_CHECK(paramName))
+    return;
+
+  if (params.Has(paramName) && constraints.second)
+  {
+    mat trainingData = std::move(std::get<1>(params.Get<TupleType>(paramName)));
+    if (trainingData.empty())
+    {
+      util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+      if (!errorMessage.empty())
+        stream << paramName << errorMessage << std::endl;
+    }
   }
 }
 

@@ -61,6 +61,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers);
 
   RandomSeed(time(NULL));
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   // Load input dataset.
   mat data = std::move(params.Get<arma::mat>("input"));
 

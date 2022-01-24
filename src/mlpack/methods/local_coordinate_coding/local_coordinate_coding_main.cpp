@@ -147,6 +147,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "training", false }}, "normalize");
   ReportIgnoredParam(params, {{ "training", false }}, "tolerance");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // Do we have an existing model?
   LocalCoordinateCoding* lcc = NULL;
   if (params.Has("input_model"))

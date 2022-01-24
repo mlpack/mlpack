@@ -166,6 +166,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // --labels can't be specified without --training.
   ReportIgnoredParam(params, {{ "training", false }}, "labels");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // Sanity check on iterations.
   RequireParamValue<int>(params, "iterations", [](int x) { return x > 0; },
       true, "invalid number of iterations specified");

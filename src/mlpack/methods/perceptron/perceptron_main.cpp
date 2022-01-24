@@ -174,6 +174,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
       true, "maximum number of iterations must be nonnegative");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // Now, load our model, if there is one.
   PerceptronModel* p;
   if (params.Has("input_model"))

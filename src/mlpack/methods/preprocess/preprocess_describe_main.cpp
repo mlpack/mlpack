@@ -184,6 +184,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const bool population = params.Has("population");
   const bool rowMajor = params.Has("row_major");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   // Load the data.
   arma::mat& data = params.Get<arma::mat>("input");
 

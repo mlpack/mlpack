@@ -187,6 +187,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     ReportIgnoredParam(params, "batch_size", "SGD optimizer is not being used");
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   const double stepSize = params.Get<double>("step_size");
   const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
   const double tolerance = params.Get<double>("tolerance");

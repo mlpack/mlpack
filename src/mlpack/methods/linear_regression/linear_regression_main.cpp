@@ -147,6 +147,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
   if (computeModel)
   {
     timer.Start("load_regressors");
+
+    // input data can't be empty
+    RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
     regressors = std::move(params.Get<mat>("training"));
     timer.Stop("load_regressors");
 

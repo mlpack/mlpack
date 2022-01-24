@@ -174,6 +174,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", {{ "tree", true }}, true, " can not be empty!");
+
   RequireParamValue<int>(params, "minimum_leaf_size",
       [](int x) { return x > 0; }, true, "leaf size must be positive");
 

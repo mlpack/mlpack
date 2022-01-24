@@ -146,6 +146,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       false, "no results will be saved");
   ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   LARS* lars;
   if (params.Has("input"))
   {

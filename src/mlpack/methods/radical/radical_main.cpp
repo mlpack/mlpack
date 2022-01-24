@@ -109,6 +109,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "sweeps", [](int x) { return x >= 0; }, true,
       "number of sweeps must be 0 or greater");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   // Load the data.
   mat matX = std::move(params.Get<mat>("input"));
 

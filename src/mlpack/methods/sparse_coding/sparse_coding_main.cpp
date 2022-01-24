@@ -165,6 +165,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "training", false }}, "objective_tolerance");
   ReportIgnoredParam(params, {{ "training", false }}, "newton_tolerance");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   RequireParamValue<int>(params, "atoms", [](int x) { return x > 0; }, true,
       "number of atoms must be positive");
   RequireParamValue<double>(params, "lambda1",

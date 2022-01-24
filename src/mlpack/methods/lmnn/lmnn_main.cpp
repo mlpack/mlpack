@@ -273,6 +273,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     ReportIgnoredParam(params, "batch_size", "SGD optimizer is not being used");
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   RequireParamValue<int>(params, "k", [](int x) { return x > 0; }, true,
       "number of targets must be positive");
   RequireParamValue<int>(params, "range", [](int x) { return x > 0; }, true,

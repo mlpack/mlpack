@@ -134,6 +134,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     "standard_scaler", "max_abs_scaler", "mean_normalization", "pca_whitening",
     "zca_whitening" }, true, "unknown scaler type");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   // Load the data.
   arma::mat& input = params.Get<arma::mat>("input");
   arma::mat output;

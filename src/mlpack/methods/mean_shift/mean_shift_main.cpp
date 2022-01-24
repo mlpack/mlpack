@@ -113,6 +113,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "in_place", true }}, "output");
   ReportIgnoredParam(params, {{ "in_place", true }}, "labels_only");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   arma::mat dataset = std::move(params.Get<arma::mat>("input"));
   arma::mat centroids;
   arma::Row<size_t> assignments;

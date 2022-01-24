@@ -156,6 +156,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("input_model") && !params.Has("test"))
     Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // Either we have to train a model, or load a model.
   NBCModel* model;
   if (params.Has("training"))

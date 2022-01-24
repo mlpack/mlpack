@@ -232,6 +232,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   // These are the matrices we might use.
   arma::mat regressors;
   arma::Row<size_t> responses;

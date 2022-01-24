@@ -161,6 +161,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "k", false }}, "true_distances");
   ReportIgnoredParam(params, {{ "k", false }}, "query");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   // Sanity check on leaf size.
   RequireParamValue<int>(params, "leaf_size", [](int x) { return x > 0; },
       true, "leaf size must be positive");

@@ -159,6 +159,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "reference", false }}, "second_hash_size");
   ReportIgnoredParam(params, {{ "reference", false }}, "hash_width");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   if (params.Has("input_model") && !params.Has("k"))
   {
     Log::Warn << PRINT_PARAM_STRING("k") << " not passed; no search will be "

@@ -154,6 +154,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "training", {{ "tree", true }}, true, " can not be empty!");
+
   ReportIgnoredParam(params, {{ "training", false }}, "batch_mode");
   ReportIgnoredParam(params, {{ "training", false }}, "passes");
 

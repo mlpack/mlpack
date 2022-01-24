@@ -309,6 +309,10 @@ void RunKMeans(util::Params& params,
                util::Timers& timers,
                const InitialPartitionPolicy& ipp)
 {
+
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+  
   // Now, do validation of input options.
   if (!params.Has("initial_centroids"))
   {

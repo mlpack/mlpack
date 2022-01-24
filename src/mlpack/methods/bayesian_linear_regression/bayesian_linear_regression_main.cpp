@@ -147,6 +147,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   ReportIgnoredParam(params, {{"input", false }}, "responses");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   RequireAtLeastOnePassed(params, {"predictions", "output_model", "stds"},
       false, "no results will be saved");
 

@@ -160,6 +160,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "passed if searching is to be done");
   }
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   // Sanity check on leaf size.
   int lsInt = params.Get<int>("leaf_size");
   RequireParamValue<int>(params, "leaf_size", [](int x) { return x > 0; }, true,

@@ -166,6 +166,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "trials", [](int x) { return x > 0; }, true,
       "trials must be greater than 0");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+
   ReportIgnoredParam(params, {{ "diagonal_covariance", true }},
       "no_force_positive");
   RequireAtLeastOnePassed(params, { "output_model" }, false,

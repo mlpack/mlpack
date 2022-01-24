@@ -288,6 +288,9 @@ Model* TrainSoftmax(util::Params& params,
 {
   using namespace mlpack;
 
+// input data can't be empty
+  RequireNonEmptyInputValue(params, "training", true, " can not be empty!");
+
   Model* sm;
   if (params.Has("input_model"))
   {

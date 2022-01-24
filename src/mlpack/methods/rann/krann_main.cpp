@@ -172,6 +172,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       return (x >= 0.0 && x <=1.0); }, true,
       "alpha must be in range [0.0, 1.0]");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   // We either have to load the reference data, or we have to load the model.
   RAModel* rann;
   const bool naive = params.Has("naive");

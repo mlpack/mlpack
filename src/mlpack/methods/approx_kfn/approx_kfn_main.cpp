@@ -190,6 +190,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireAtLeastOnePassed(params, { "neighbors", "distances", "output_model" },
       false, "no output will be saved");
 
+  // input data can't be empty
+  RequireNonEmptyInputValue(params, "reference", true, " can not be empty!");
+
   // Check that the user specified a valid algorithm.
   RequireParamInSet<string>(params, "algorithm", { "ds", "qdafn" }, true,
       "unknown algorithm");
