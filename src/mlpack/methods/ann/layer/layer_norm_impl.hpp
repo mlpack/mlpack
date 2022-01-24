@@ -46,7 +46,7 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     size(layer.size),
     eps(layer.eps),
     weights(layer.weights),
-    loading(layer.loading)
+    loading(true)
 {
     // Nothing to do here.
 }
@@ -57,7 +57,7 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     size(layer.size),
     eps(layer.eps),
     weights(std::move(layer.weights)),
-    loading(layer.loading)
+    loading(true)
 {
    //Nothing to do here
 }
@@ -72,7 +72,7 @@ operator=(const LayerNorm& layer)
         size = layer.size;
         eps = layer.eps;
         weights = layer.weights;
-        loading = layer.loading;
+        loading = true;
     }
     return *this;
 }
@@ -87,7 +87,7 @@ operator=(LayerNorm&& layer)
         size = layer.size;
         eps = layer.eps;
         weights = std::move(layer.weights);
-        loading = layer.loading;
+        loading = true;
       
 
     }
