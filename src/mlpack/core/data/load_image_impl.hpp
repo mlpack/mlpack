@@ -2,7 +2,7 @@
  * @file core/data/load_image_impl.hpp
  * @author Mehul Kumar Nirala
  *
- * An image loading utility implementation.
+ * An image loading utility implementation via STB.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -188,7 +188,7 @@ inline bool LoadImage(const std::string& /* filename */,
 
 #endif
 
-}
-}
+} // namespace data
+} // namespace mlpack
 
 #endif
