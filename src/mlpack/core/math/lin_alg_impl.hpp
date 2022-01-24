@@ -89,8 +89,6 @@ inline void WhitenUsingSVD(const arma::mat& x,
  */
 inline void RandVector(arma::vec& v)
 {
-  v.zeros();
-
   for (size_t i = 0; i + 1 < v.n_elem; i += 2)
   {
     double a = math::Random();
