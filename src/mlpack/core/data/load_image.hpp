@@ -23,7 +23,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#endif
+#endif // HAS_STB
 
 namespace mlpack {
 namespace data {

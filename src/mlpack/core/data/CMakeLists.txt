@@ -25,6 +25,7 @@ set(SOURCES
   save.hpp
   save_impl.hpp
   save_image.hpp
+  save_image_impl.hpp
   split_data.hpp
   string_algorithms.hpp
   imputer.hpp

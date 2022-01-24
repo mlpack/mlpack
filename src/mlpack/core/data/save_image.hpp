@@ -1,8 +1,8 @@
 /**
- * @file core/data/save_image.hpp
- * @author Mehul Kumar Nirala
+ * @file core/data/save_image_impl.hpp
+ * @author Ryan Curtin
  *
- * Implementation of image saving functionality via STB.
+ * Implementation of save functionality.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,138 +12,61 @@
 #ifndef MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 #define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 
-#include "save.hpp"
+#include "image_info.hpp"
 
 #ifdef HAS_STB
 
-// Include STB functions.  Note that we include the implementations, too, and
-// all functions will be marked as static.
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
+#endif // HAS_STB
+
 namespace mlpack {
 namespace data {
 
+/**
+ * Save the image file from the given matrix.
+ *
+ * @param filename Name of the image file.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Save(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false);
+
+/**
+ * Save the image file from the given matrix.
+ *
+ * @param files A vector consisting of filenames.
+ * @param matrix Matrix to save the image from.
+ * @param info An object of ImageInfo class.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Save(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal = false);
+
+/**
+ * Helper function to save files.  Implementation in save_image.hpp.
+ */
 inline bool SaveImage(const std::string& filename,
                       arma::Mat<unsigned char>& image,
                       ImageInfo& info,
-                      const bool fatal)
-{
-  // Check to see if the file type is supported.
-  if (!ImageFormatSupported(filename, true))
-  {
-    std::ostringstream oss;
-    oss << "Save(): file type " << Extension(filename) << " not supported.\n";
-    oss << "Currently image saving supports ";
-    for (auto extension : SaveFileTypes())
-      oss << ", " << extension;
-    oss << "." << std::endl;
+                      const bool fatal = false);
 
-    if (fatal)
-    {
-      Log::Fatal << oss.str();
-    }
-    else
-    {
-      Log::Warn << oss.str();
-    }
+} //namespace data
+} //namespace mlpack
 
-    return false;
-  }
-
-  // Ensure the shape of the matrix is correct.
-  if (image.n_cols > 1)
-  {
-    Log::Warn << "Save(): given input image matrix contains more than 1 image."
-        << std::endl;
-    Log::Warn << "Only the first image will be saved!" << std::endl;
-  }
-
-  if (info.Width() * info.Height() * info.Channels() != image.n_elem)
-  {
-    Log::Fatal << "data::Save(): The given image dimensions do not match the "
-        << "dimensions of the matrix to be saved!" << std::endl;
-  }
-
-  bool status = false;
-  unsigned char* imageMem = image.memptr();
-
-  if ("png" == Extension(filename))
-  {
-    status = stbi_write_png(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem, info.Width() * info.Channels());
-  }
-  else if ("bmp" == Extension(filename))
-  {
-    status = stbi_write_bmp(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem);
-  }
-  else if ("tga" == Extension(filename))
-  {
-    status = stbi_write_tga(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem);
-  }
-  else if ("hdr" == Extension(filename))
-  {
-    // We'll have to convert to float...
-    arma::fmat tmpImage = arma::conv_to<arma::fmat>::from(image);
-    status = stbi_write_hdr(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), tmpImage.memptr());
-  }
-  else if ("jpg" == Extension(filename))
-  {
-    status = stbi_write_jpg(filename.c_str(), info.Width(), info.Height(),
-        info.Channels(), imageMem, info.Quality());
-  }
-
-  if (!status)
-  {
-    if (fatal)
-    {
-      Log::Fatal << "Save(): error saving image to '" << filename << "'."
-          << std::endl;
-    }
-    else
-    {
-      Log::Warn << "Save(): error saving image to '" << filename << "'."
-          << std::endl;
-    }
-  }
-
-  return status;
-}
-
-} // namespace data
-} // namespace mlpack
-
-#else
-
-namespace mlpack {
-namespace data {
-
-inline bool SaveImage(const std::string& /* filename */,
-                      arma::Mat<unsigned char>& /* image */,
-                      ImageInfo& /* info */,
-                      const bool fatal)
-{
-  if (fatal)
-  {
-    Log::Fatal << "Save(): mlpack was not compiled with STB support, so images "
-        << "cannot be saved!" << std::endl;
-  }
-  else
-  {
-    Log::Warn << "Save(): mlpack was not compiled with STB support, so images "
-        << "cannot be saved!" << std::endl;
-  }
-
-  return false;
-}
-
-} // namespace data
-} // namespace mlpack
-
-#endif
+// Include implementation of Save() for images.
+#include "save_image_impl.hpp"
 
 #endif
