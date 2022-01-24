@@ -24,8 +24,7 @@ inline const std::vector<std::string> LoadFileTypes()
 
 inline const std::vector<std::string> SaveFileTypes()
 {
-  return std::vector<std::string>({"jpg", "png", "tga",
-    "bmp", "hdr"});
+  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
 }
 
 }
