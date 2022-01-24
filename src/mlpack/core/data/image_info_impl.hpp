@@ -18,8 +18,8 @@ namespace data {
 
 inline const std::vector<std::string> LoadFileTypes()
 {
-  return std::vector<std::string>({"jpg", "png", "tga",
-    "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"});
+  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
+      "hdr", "pic", "pnm", "jpeg"});
 }
 
 inline const std::vector<std::string> SaveFileTypes()
