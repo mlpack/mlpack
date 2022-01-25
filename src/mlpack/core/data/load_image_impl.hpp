@@ -103,7 +103,7 @@ inline bool LoadImage(const std::string& filename,
   {
     std::ostringstream oss;
     oss << "Load(): file type " << Extension(filename) << " not supported. ";
-    oss << "Currently it supports: ";
+    oss << "Currently it supports:";
     auto x = LoadFileTypes();
     for (auto extension : x)
       oss << " " << extension;

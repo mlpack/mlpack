@@ -188,7 +188,9 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
 
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
-    const DTree<MatType, TagT== &obj)
+    const DTree<MatType, TagType>& obj)
+{
+  if (this == &obj)
     return *this;
 
   // Copy the values from the other tree.
