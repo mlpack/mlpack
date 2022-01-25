@@ -84,7 +84,7 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
     batchNorm.Deterministic() = true;
 
   arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
-        shapeA * shapeB, 1, false, false);
+      shapeA * shapeB, 1, false, false);
   batchNorm.Forward(inputTemp, output);
   output.reshape(shapeA, shapeB);
   runningMean = batchNorm.TrainingMean();
