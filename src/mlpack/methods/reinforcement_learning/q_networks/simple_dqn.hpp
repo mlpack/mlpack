@@ -61,21 +61,21 @@ class SimpleDQN
       network(outputLayer, init),
       isNoisy(isNoisy)
   {
-    network.Add(new mlpack::ann::Linear<>(inputDim, h1));
-    network.Add(new mlpack::ann::ReLULayer<>());
+    network.Add(new ann::Linear<>(inputDim, h1));
+    network.Add(new ann::ReLULayer<>());
     if (isNoisy)
     {
       noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new mlpack::ann::NoisyLinear<>(h1, h2));
-      network.Add(new mlpack::ann::ReLULayer<>());
+      network.Add(new ann::NoisyLinear<>(h1, h2));
+      network.Add(new ann::ReLULayer<>());
       noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new mlpack::ann::NoisyLinear<>(h2, outputDim));
+      network.Add(new ann::NoisyLinear<>(h2, outputDim));
     }
     else
     {
-      network.Add(new mlpack::ann::Linear<>(h1, h2));
-      network.Add(new mlpack::ann::ReLULayer<>());
-      network.Add(new mlpack::ann::Linear<>(h2, outputDim));
+      network.Add(new ann::Linear<>(h1, h2));
+      network.Add(new ann::ReLULayer<>());
+      network.Add(new ann::Linear<>(h2, outputDim));
     }
   }
 
@@ -132,7 +132,7 @@ class SimpleDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      boost::get<mlpack::ann::NoisyLinear<>*>
+      boost::get<ann::NoisyLinear<>*>
           (network.Model()[noisyLayerIndex[i]])->ResetNoise();
     }
   }

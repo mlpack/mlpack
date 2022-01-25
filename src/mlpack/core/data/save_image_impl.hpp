@@ -89,7 +89,7 @@ inline bool SaveImage(const std::string& filename,
     oss << "Save(): file type " << Extension(filename) << " not supported.\n";
     oss << "Currently image saving supports ";
     for (auto extension : SaveFileTypes())
-      oss << ", " << extension;
+      oss << "  " << extension;
     oss << "." << std::endl;
 
     if (fatal)
