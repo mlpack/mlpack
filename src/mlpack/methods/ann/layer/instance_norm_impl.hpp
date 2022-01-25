@@ -67,8 +67,8 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   // height and width of each image respectively.
   if (input.n_cols != batchSize)
   {
-    Log::Fatal<<"Must use the same BatchSize that was used in the constructor"
-                <<std::endl;
+    Log::Fatal << "Must use the same BatchSize that was used in the constructor."
+        << std::endl;
   }
 
   if (!reset)
