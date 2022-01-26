@@ -185,12 +185,6 @@ class InstanceNorm
   //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;
 
-  //! Number of input rows.
-  size_t shapeA;
-
-  //! Number of input columns.
-  size_t shapeB;
-
   //! Locally-stored number of input units.
   size_t size;
 

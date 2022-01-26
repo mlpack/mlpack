@@ -77,8 +77,8 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
     reset = true;
   }
 
-  shapeA = input.n_rows;
-  shapeB = input.n_cols;
+  const size_t shapeA = input.n_rows;
+  const size_t shapeB = input.n_cols;
 
   if (deterministic)
     batchNorm.Deterministic() = true;
@@ -102,6 +102,9 @@ void InstanceNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
+  const size_t shapeA = input.n_rows;
+  const size_t shapeB = input.n_cols;
+
   arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
       shapeA * shapeB, 1, false, false);
   arma::mat gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(),
@@ -117,6 +120,9 @@ void InstanceNorm<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
+  const size_t shapeA = input.n_rows;
+  const size_t shapeB = input.n_cols;
+
   arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), 
       shapeA * shapeB, 1, false, false);
   arma::mat errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), 
@@ -137,8 +143,6 @@ void InstanceNorm<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(runningMean));
   ar(CEREAL_NVP(runningVariance));
   ar(CEREAL_NVP(reset));
-  ar(CEREAL_NVP(shapeA));
-  ar(CEREAL_NVP(shapeB));
   ar(CEREAL_NVP(batchNorm));
 }
 
