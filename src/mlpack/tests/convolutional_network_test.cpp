@@ -415,6 +415,7 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   model->Add<ReLULayer<> >();
   model->Add<Linear>(2);
   model->Add<LogSoftMax>();
+  model->InputDimensions() = std::vector<size_t>({ 28, 28 });
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 =
       new FFN<NegativeLogLikelihood<>, RandomInitialization>;
@@ -431,6 +432,7 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   model1->Add<ReLULayer<> >();
   model1->Add<Linear>(2);
   model1->Add<LogSoftMax>();
+  model1->InputDimensions() = std::vector<size_t>({ 28, 28 });
 
   // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model, X, Y, 8);
