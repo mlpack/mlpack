@@ -40,6 +40,62 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType(
   weights.set_size(WeightSize(), 1);
 }
 
+// Copy constructor.
+template<typename InputType, typename OutputType, typename RegularizerType>
+LinearType<InputType, OutputType, RegularizerType>::LinearType(
+    const LinearType& layer) :
+    Layer<InputType, OutputType>(layer),
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    regularizer(layer.regularizer)
+{
+  // Nothing else to do.
+}
+
+// Move constructor.
+template<typename InputType, typename OutputType, typename RegularizerType>
+LinearType<InputType, OutputType, RegularizerType>::LinearType(
+    LinearType&& layer) :
+    Layer<InputType, OutputType>(std::move(layer)),
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    regularizer(std::move(layer.regularizer))
+{
+  // Nothing else to do.
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
+LinearType<InputType, OutputType, RegularizerType>&
+LinearType<InputType, OutputType, RegularizerType>::operator=(
+    const LinearType& layer)
+{
+  if (&layer != this)
+  {
+    Layer<InputType, OutputType>::operator=(layer);
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    regularizer = layer.regularizer;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
+LinearType<InputType, OutputType, RegularizerType>&
+LinearType<InputType, OutputType, RegularizerType>::operator=(
+    LinearType&& layer)
+{
+  if (&layer != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(layer));
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    regularizer = std::move(layer.regularizer);
+  }
+
+  return *this;
+}
+
 template<typename InputType, typename OutputType, typename RegularizerType>
 void LinearType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)

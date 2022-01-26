@@ -132,16 +132,16 @@ class ConvolutionType : public Layer<InputType, OutputType>
   ConvolutionType* Clone() const { return new ConvolutionType(*this); }
 
   //! Copy constructor.
-//  ConvolutionType(const ConvolutionType& layer);
+  ConvolutionType(const ConvolutionType& layer);
 
   //! Move constructor.
-//  ConvolutionType(ConvolutionType&&);
+  ConvolutionType(ConvolutionType&&);
 
   //! Copy assignment operator.
-//  ConvolutionType& operator=(const ConvolutionType& layer);
+  ConvolutionType& operator=(const ConvolutionType& layer);
 
   //! Move assignment operator.
-//  ConvolutionType& operator=(ConvolutionType&& layer);
+  ConvolutionType& operator=(ConvolutionType&& layer);
 
   /*
    * Set the weight and bias term.

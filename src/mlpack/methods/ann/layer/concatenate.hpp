@@ -49,6 +49,18 @@ class ConcatenateType : public Layer<InputType, OutputType>
   //! Clone the ConcatenateType object. This handles polymorphism correctly.
   ConcatenateType* Clone() const { return new ConcatenateType(*this); }
 
+  // Virtual destructor.
+  virtual ~ConcatenateType() { }
+
+  //! Copy the given ConcatenateType layer.
+  ConcatenateType(const ConcatenateType& other);
+  //! Take ownership of the given ConcatenateType layer.
+  ConcatenateType(ConcatenateType&& other);
+  //! Copy the given ConcatenateType layer.
+  ConcatenateType& operator=(const ConcatenateType& other);
+  //! Take ownership of the given ConcatenateType layer.
+  ConcatenateType& operator=(ConcatenateType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -26,6 +26,48 @@ AddType<InputType, OutputType>::AddType() : outSize(0)
 }
 
 template<typename InputType, typename OutputType>
+AddType<InputType, OutputType>::AddType(const AddType& other) :
+    Layer<InputType, OutputType>(other),
+    outSize(other.outSize)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+AddType<InputType, OutputType>::AddType(AddType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    outSize(std::move(other.outSize))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+AddType<InputType, OutputType>&
+AddType<InputType, OutputType>::operator=(const AddType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    outSize = other.outSize;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+AddType<InputType, OutputType>&
+AddType<InputType, OutputType>::operator=(AddType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    outSIze = std::move(other.outSize);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 void AddType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {

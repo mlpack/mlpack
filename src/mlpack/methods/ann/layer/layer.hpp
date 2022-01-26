@@ -60,25 +60,58 @@ class Layer
 {
  public:
   //! Default constructor.
-  Layer() : validOutputDimensions(false) { /* Nothing to do here */ }
+  Layer() : validOutputDimensions(false), training(false)
+  { /* Nothing to do here */ }
 
   //! Default deconstructor.
   virtual ~Layer() { }
 
-  //! Copy constructor.
-  Layer(const Layer& /* layer */) { /* Nothing to do here */ }
+  //! Copy constructor.  This is not responsible for copying weights!
+  Layer(const Layer& layer) :
+      inputDimensions(layer.inputDimensions),
+      outputDimensions(layer.outputDimensions),
+      validOutputDimensions(layer.validOutputDimensions),
+      training(layer.training)
+  { }
 
   //! Make a copy of the object.
   virtual Layer* Clone() const = 0;
 
-  //! Move constructor.
-  Layer(Layer&& /* layer */) { /* Nothing to do here */ }
+  //! Move constructor.  This is not responsible for moving weights!
+  Layer(Layer&& layer) :
+      inputDimensions(std::move(layer.inputDimensions)),
+      outputDimensions(std::move(layer.outputDimensions)),
+      validOutputDimensions(std::move(layer.validOutputDimensions)),
+      training(std::move(layer.training))
+  { }
 
-  //! Copy assignment operator.
-  virtual Layer& operator=(const Layer& /* layer */) { return *this; }
+  //! Copy assignment operator.  This is not responsible for copying weights!
+  virtual Layer& operator=(const Layer& layer)
+  {
+    if (&layer != this)
+    {
+      inputDimensions = layer.inputDimensions;
+      outputDimensions = layer.outputDimensions;
+      validOutputDimensions = layer.validOutputDimensions;
+      training = layer.training;
+    }
 
-  //! Move assignment operator.
-  virtual Layer& operator=(Layer&& /* layer */) { return *this; }
+    return *this;
+  }
+
+  //! Move assignment operator.  This is not responsible for moving weights!
+  virtual Layer& operator=(Layer&& layer)
+  {
+    if (&layer != this)
+    {
+      inputDimensions = std::move(layer.inputDimensions);
+      outputDimensions = std::move(layer.outputDimensions);
+      validOutputDimensions = std::move(layer.validOutputDimensions);
+      training = std::move(layer.training);
+    }
+
+    return *this;
+  }
 
   /**
    * Takes an input object, and computes the corresponding output of the layer.

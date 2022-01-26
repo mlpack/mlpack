@@ -45,6 +45,18 @@ class AddType : public Layer<InputType, OutputType>
   //! Clone the AddType object. This handles polymorphism correctly.
   AddType* Clone() const { return new AddType(*this); }
 
+  // Virtual destructor.
+  virtual ~AddType();
+
+  //! Copy the given AddType layer.
+  AddType(const AddType& other);
+  //! Take ownership of the given AddType layer.
+  AddType(AddType&& other);
+  //! Copy the given AddType layer.
+  AddType& operator=(const AddType& other);
+  //! Take ownership of the given AddType layer.
+  AddType& operator=(AddType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

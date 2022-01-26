@@ -107,7 +107,63 @@ ConvolutionType<
   this->paddingType = util::ToLower(paddingTypeIn);
 }
 
-// TODO: copy/move constructor/operator
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputType,
+    typename OutputType
+>
+ConvolutionType<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputType,
+    OutputType
+>::ConvolutionType(const ConvolutionType& other) :
+    Layer<InputType, OutputType>(other),
+    maps(other.maps),
+    kernelWidth(other.kernelWidth),
+    kernelHeight(other.kernelHeight),
+    strideWidth(other.strideWidth),
+    strideHeight(other.strideHeight),
+    padWLeft(other.padWLeft),
+    padWRight(other.padWRight),
+    padHBottom(other.padHBottom),
+    padHTop(other.padHTop),
+    paddingType(other.paddingType)
+{
+  // Nothing to do.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputType,
+    typename OutputType
+>
+ConvolutionType<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputType,
+    OutputType
+>::ConvolutionType(ConvolutionType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    maps(other.maps),
+    kernelWidth(other.kernelWidth),
+    kernelHeight(other.kernelHeight),
+    strideWidth(other.strideWidth),
+    strideHeight(other.strideHeight),
+    padWLeft(other.padWLeft),
+    padWRight(other.padWRight),
+    padHBottom(other.padHBottom),
+    padHTop(other.padHTop),
+    paddingType(std::move(other.paddingType))
+{
+  // Nothing to do.
+}
 
 template<
     typename ForwardConvolutionRule,

@@ -28,6 +28,51 @@ ConcatenateType(const InputType& concat) :
 }
 
 template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>::
+ConcatenateType(const ConcatenateType& other) :
+    Layer<InputType, OutputType>(other),
+    concat(other.concat)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>::
+ConcatenateType(ConcatenateType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    concat(other.concat)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>&
+ConcatenateType<InputType, OutputType>::operator=(const ConcatenateType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    concat = other.concat;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>&
+ConcatenateType<InputType, OutputType>::operator=(ConcatenateType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    concat = std::move(other.concat);
+  }
+
+  return *this;
+  }
+}
+
+template<typename InputType, typename OutputType>
 void ConcatenateType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {

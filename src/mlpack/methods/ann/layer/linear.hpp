@@ -60,8 +60,22 @@ class LinearType: public Layer<InputType, OutputType>
   LinearType(const size_t outSize,
              RegularizerType regularizer = RegularizerType());
 
+  virtual ~LinearType() { }
+
   //! Clone the LinearType object. This handles polymorphism correctly.
   LinearType* Clone() const { return new LinearType(*this); }
+
+  //! Copy the other Linear layer (but not weights).
+  LinearType(const LinearType& layer);
+
+  //! Take ownership of the members of the other Linear layer (but not weights).
+  LinearType(LinearType&& layer);
+
+  //! Copy the other Linear layer (but not weights).
+  LinearType& operator=(const LinearType& layer);
+
+  //! Take ownership of the members of the other Linear layer (but not weights).
+  LinearType& operator=(LinearType&& layer);
 
   /**
    * Reset the layer parameter (weights and bias). The method is called to

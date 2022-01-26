@@ -33,6 +33,64 @@ AlphaDropout<InputType, OutputType>::AlphaDropout(
 }
 
 template<typename InputType, typename OutputType>
+AlphaDropout<InputType, OutputType>::AlphaDropout(const AlphaDropout& other) :
+    Layer<InputType, OutputType>(other),
+    mask(other.mask),
+    ratio(other.ratio),
+    alphaDash(other.alphaDash),
+    a(other.a),
+    b(other.b)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+AlphaDropout<InputType, OutputType>::AlphaDropout(AlphaDropout&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    mask(std::move(other.mask)),
+    ratio(std::move(other.ratio)),
+    alphaDash(std::move(other.alphaDash)),
+    a(std::move(other.a)),
+    b(std::move(other.b))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+AlphaDropout<InputType, OutputType>&
+AlphaDropout<InputType, OutputType>::operator=(const AlphaDropout& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    mask = other.mask;
+    ratio = other.ratio;
+    alphaDash = other.alphaDash;
+    a = other.a;
+    b = other.b;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+AlphaDropout<InputType, OutputType>&
+AlphaDropout<InputType, OutputType>::operator=(AlphaDropout&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    mask = std::move(other.mask);
+    ratio = std::move(other.ratio);
+    alphaDash = std::move(other.alphaDash);
+    a = std::move(other.a);
+    b = std::move(other.b);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 void AlphaDropout<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {

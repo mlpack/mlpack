@@ -79,6 +79,12 @@ class BaseLayer : public Layer<InputType, OutputType>
     // Nothing to do here.
   }
 
+  // Virtual destructor.
+  virtual ~BaseLayer() { }
+
+  // No copy constructor or operators needed here, since the class has no
+  // members.
+
   //! Clone the BaseLayer object. This handles polymorphism correctly.
   BaseLayer* Clone() const { return new BaseLayer(*this); }
 

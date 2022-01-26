@@ -45,8 +45,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <typename InputType = arma::mat,
-          typename OutputType = arma::mat>
+template<typename InputType = arma::mat,
+         typename OutputType = arma::mat>
 class AlphaDropout : public Layer<InputType, OutputType>
 {
  public:
@@ -63,6 +63,18 @@ class AlphaDropout : public Layer<InputType, OutputType>
    * Clone the DropoutType object. This handles polymorphism correctly.
    */
   AlphaDropout* Clone() const { return new AlphaDropout(*this); }
+
+  // Virtual destructor.
+  virtual ~AlphaDropout() { }
+
+  //! Copy the given AlphaDropout layer.
+  AlphaDropout(const AlphaDropout& other);
+  //! Take ownership of the given AlphaDropout layer.
+  AlphaDropout(AlphaDropout&& other);
+  //! Copy the given AlphaDropout layer.
+  AlphaDropout& operator=(const AlphaDropout& other);
+  //! Take ownership of the given AlphaDropout layer.
+  AlphaDropout& operator=(AlphaDropout&& other);
 
   /**
    * Ordinary feed forward pass of the alpha_dropout layer.
