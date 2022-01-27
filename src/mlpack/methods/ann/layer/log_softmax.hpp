@@ -44,6 +44,18 @@ class LogSoftMaxType : public Layer<InputType, OutputType>
   //! Clone the LogSoftMaxType object. This handles polymorphism correctly.
   LogSoftMaxType* Clone() const { return new LogSoftMaxType(*this); }
 
+  // Virtual destructor.
+  virtual ~LogSoftMaxType() { }
+
+  //! Copy the given LogSoftMaxType.
+  LogSoftMaxType(const LogSoftMaxType& other);
+  //! Take ownership of the given LogSoftMaxType.
+  LogSoftMaxType(LogSoftMaxType&& other);
+  //! Copy the given LogSoftMaxType.
+  LogSoftMaxType& operator=(const LogSoftMaxType& other);
+  //! Take ownership of the given LogSoftMaxType.
+  LogSoftMaxType& operator=(LogSoftMaxType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

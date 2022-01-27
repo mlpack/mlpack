@@ -43,11 +43,10 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
-LinearNoBiasType(
-    const LinearNoBiasType& layer) :
+LinearNoBiasType(const LinearNoBiasType& layer) :
+    Layer<InputType, OutputType>(layer),
     inSize(layer.inSize),
     outSize(layer.outSize),
-    weight(layer.weight),
     regularizer(layer.regularizer)
 {
   // Nothing to do here.
@@ -56,11 +55,10 @@ LinearNoBiasType(
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
-LinearNoBiasType(
-    LinearNoBiasType&& layer) :
+LinearNoBiasType(LinearNoBiasType&& layer) :
+    Layer<InputType, OutputType>(std::move(layer)),
     inSize(0),
     outSize(0),
-    weight(std::move(layer.weight)), // TODO: but weight is an alias anyway...
     regularizer(std::move(layer.regularizer))
 {
   // Nothing to do here.
@@ -74,11 +72,12 @@ operator=(const LinearNoBiasType& layer)
 {
   if (this != &layer)
   {
+    Layer<InputType, OutputType>::operator=(layer);
     inSize = layer.inSize;
     outSize = layer.outSize;
-    weight = layer.weight;
     regularizer = layer.regularizer;
   }
+
   return *this;
 }
 
@@ -90,11 +89,12 @@ operator=(LinearNoBiasType&& layer)
 {
   if (this != &layer)
   {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weight = std::move(layer.weight);
+    Layer<InputType, OutputType>::operator=(std::move(layer));
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
     regularizer = std::move(layer.regularizer);
   }
+
   return *this;
 }
 

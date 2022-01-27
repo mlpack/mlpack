@@ -82,7 +82,17 @@ class MaxPoolingType : public Layer<InputType, OutputType>
                  const size_t strideHeight = 1,
                  const bool floor = true);
 
-  // TODO: copy constructor / move constructor
+  // Virtual destructor.
+  virtual ~MaxPoolingType() { }
+
+  //! Copy the given MaxPoolingType.
+  MaxPoolingType(const MaxPoolingType& other);
+  //! Take ownership of the given MaxPoolingType.
+  MaxPoolingType(MaxPoolingType&& other);
+  //! Copy the given MaxPoolingType.
+  MaxPoolingType& operator=(const MaxPoolingType& other);
+  //! Take ownership of the given MaxPoolingType.
+  MaxPoolingType& operator=(MaxPoolingType&& other);
 
   MaxPoolingType* Clone() const { return new MaxPoolingType(*this); }
 

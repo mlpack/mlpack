@@ -69,9 +69,17 @@ class DropConnectType : public Layer<InputType, OutputType>
   //! Clone the DropConnectType object. This handles polymorphism correctly.
   DropConnectType* Clone() const { return new DropConnectType(*this); }
 
-  // TODO: copy constructor, move constructor, operators
+  // Virtual destructor.
+  virtual ~DropConnectType();
 
-  ~DropConnectType();
+  //! Copy the given DropConnectType (except for weights).
+  DropConnectType(const DropConnectType& other);
+  //! Take ownership of the given DropConnectType (except for weights).
+  DropConnectType(DropConnectType&& other);
+  //! Copy the given DropConnectType (except for weights).
+  DropConnectType& operator=(const DropConnectType& other);
+  //! Take ownership of the given DropConnectType (except for weights).
+  DropConnectType& operator=(DropConnectType&& other);
 
   /**
    * Ordinary feed forward pass of the DropConnect layer.

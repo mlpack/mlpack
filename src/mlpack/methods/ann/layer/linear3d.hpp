@@ -58,6 +58,18 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Clone the Linear3DType object. This handles polymorphism correctly.
   Linear3DType* Clone() const { return new Linear3DType(*this); }
 
+  // Virtual destructor.
+  virtual ~Linear3DType() { }
+
+  //! Copy the given Linear3DType (but not weights).
+  Linear3DType(const Linear3DType& other);
+  //! Take ownership of the given Linear3DType (but not weights).
+  Linear3DType(Linear3DType&& other);
+  //! Copy the given Linear3DType (but not weights).
+  Linear3DType& operator=(const Linear3DType& other);
+  //! Take ownership of the given Linear3DType (but not weights).
+  Linear3DType& operator=(Linear3DType&& other);
+
   /*
    * Reset the layer parameter.
    */

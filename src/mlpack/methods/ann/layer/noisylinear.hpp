@@ -44,6 +44,18 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Clone the NoisyLinearType object. This handles polymorphism correctly.
   NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
 
+  // Virtual destructor.
+  virtual ~NoisyLinearType() { }
+
+  //! Copy the given NoisyLinear layer (but not weights).
+  NoisyLinearType(const NoisyLinearType& other);
+  //! Take ownership of the given NoisyLinear layer (but not weights).
+  NoisyLinearType(NoisyLinearType&& other);
+  //! Copy the given NoisyLinear layer (but not weights).
+  NoisyLinearType& operator=(const NoisyLinearType& other);
+  //! Take ownership of the given NoisyLinear layer (but not weights).
+  NoisyLinearType& operator=(NoisyLinearType&& other);
+
   //! Reset the layer parameter.
   void SetWeights(typename OutputType::elem_type* weightsPtr);
 
@@ -92,11 +104,6 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return weights; }
 
   //! Get the shape of the input.
-  size_t InputShape() const
-  {
-    return inSize;
-  }
-
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
 
@@ -120,9 +127,6 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Cached size of input.
-  size_t inSize;
-
   //! Locally-stored number of output units.
   size_t outSize;
 

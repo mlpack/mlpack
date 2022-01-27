@@ -29,6 +29,45 @@ HighwayType<InputType, OutputType>::HighwayType()
 template<typename InputType, typename OutputType>
 HighwayType<InputType, OutputType>::~HighwayType()
 {
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>::HighwayType(const HighwayType& other) :
+    MultiLayer<InputType, OutputType>(other)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>::HighwayType(HighwayType&& other) :
+    MultiLayer<InputType, OutputType>(std::move(other))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>&
+HighwayType<InputType, OutputType>::operator=(const HighwayType& other)
+{
+  if (&other == this)
+  {
+    MultiLayer<InputType, OutputType>::operator=(other);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>&
+HighwayType<InputType, OutputType>::operator=(HighwayType&& other)
+{
+  if (&other == this)
+  {
+    MultiLayer<InputType, OutputType>::operator=(std::move(other));
+  }
+
+  return *this;
 }
 
 template<typename InputType, typename OutputType>

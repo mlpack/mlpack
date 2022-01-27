@@ -131,7 +131,10 @@ ConvolutionType<
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
-    paddingType(other.paddingType)
+    padding(other.padding),
+    paddingType(other.paddingType),
+    inMaps(other.inMaps),
+    higherInDimensions(other.higherInDimensions)
 {
   // Nothing to do.
 }
@@ -151,18 +154,107 @@ ConvolutionType<
     OutputType
 >::ConvolutionType(ConvolutionType&& other) :
     Layer<InputType, OutputType>(std::move(other)),
-    maps(other.maps),
-    kernelWidth(other.kernelWidth),
-    kernelHeight(other.kernelHeight),
-    strideWidth(other.strideWidth),
-    strideHeight(other.strideHeight),
-    padWLeft(other.padWLeft),
-    padWRight(other.padWRight),
-    padHBottom(other.padHBottom),
-    padHTop(other.padHTop),
-    paddingType(std::move(other.paddingType))
+    maps(std::move(other.maps)),
+    kernelWidth(std::move(other.kernelWidth)),
+    kernelHeight(std::move(other.kernelHeight)),
+    strideWidth(std::move(other.strideWidth)),
+    strideHeight(std::move(other.strideHeight)),
+    padWLeft(std::move(other.padWLeft)),
+    padWRight(std::move(other.padWRight)),
+    padHBottom(std::move(other.padHBottom)),
+    padHTop(std::move(other.padHTop)),
+    padding(std::move(other.padding)),
+    paddingType(std::move(other.paddingType)),
+    inMaps(std::move(other.inMaps)),
+    higherInDimensions(std::move(other.higherInDimensions))
 {
   // Nothing to do.
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputType,
+    typename OutputType
+>
+ConvolutionType<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputType,
+    OutputType
+>&
+ConvolutionType<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputType,
+    OutputType
+>::operator=(const ConvolutionType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    maps = other.maps;
+    kernelWidth = other.kernelWidth;
+    kernelHeight = other.kernelHeight;
+    strideWidth = other.strideWidth;
+    strideHeight = other.strideHeight;
+    padWLeft = other.padWLeft;
+    padWRight = other.padWRight;
+    padHBottom = other.padHBottom;
+    padHTop = other.padHTop;
+    padding = other.padding;
+    paddingType = other.paddingType;
+    inMaps = other.inMaps;
+    higherInDimensions = other.higherInDimensions;
+  }
+
+  return *this;
+}
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputType,
+    typename OutputType
+>
+ConvolutionType<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputType,
+    OutputType
+>&
+ConvolutionType<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputType,
+    OutputType
+>::operator=(ConvolutionType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    maps = std::move(other.maps);
+    kernelWidth = std::move(other.kernelWidth);
+    kernelHeight = std::move(other.kernelHeight);
+    strideWidth = std::move(other.strideWidth);
+    strideHeight = std::move(other.strideHeight);
+    padWLeft = std::move(other.padWLeft);
+    padWRight = std::move(other.padWRight);
+    padHBottom = std::move(other.padHBottom);
+    padHTop = std::move(other.padHTop);
+    padding = std::move(other.padding);
+    paddingType = std::move(other.paddingType);
+    inMaps = std::move(other.inMaps);
+    higherInDimensions = std::move(other.higherInDimensions);
+  }
+
+  return *this;
 }
 
 template<

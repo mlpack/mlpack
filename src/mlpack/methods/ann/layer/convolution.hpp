@@ -131,17 +131,20 @@ class ConvolutionType : public Layer<InputType, OutputType>
   //! Clone the ConvolutionType object. This handles polymorphism correctly.
   ConvolutionType* Clone() const { return new ConvolutionType(*this); }
 
-  //! Copy constructor.
+  //! Copy the given ConvolutionType (but not weights).
   ConvolutionType(const ConvolutionType& layer);
 
-  //! Move constructor.
+  //! Take ownership of the given ConvolutionType (but not weights).
   ConvolutionType(ConvolutionType&&);
 
-  //! Copy assignment operator.
+  //! Copy the given ConvolutionType (but not weights).
   ConvolutionType& operator=(const ConvolutionType& layer);
 
-  //! Move assignment operator.
+  //! Take ownership of the given ConvolutionType (but not weights).
   ConvolutionType& operator=(ConvolutionType&& layer);
+
+  // Virtual destructor.
+  virtual ~ConvolutionType() { }
 
   /*
    * Set the weight and bias term.

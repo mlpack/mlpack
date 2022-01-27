@@ -25,6 +25,46 @@ LogSoftMaxType<InputType, OutputType>::LogSoftMaxType()
 }
 
 template<typename InputType, typename OutputType>
+LogSoftMaxType<InputType, OutputType>::LogSoftMaxType(
+    const LogSoftMaxType& other) :
+    Layer<InputType, OutputType>(other)
+{
+  // Nothing to do here.
+}
+
+template<typename InputType, typename OutputType>
+LogSoftMaxType<InputType, OutputType>::LogSoftMaxType(
+    const LogSoftMaxType& other) :
+    Layer<InputType, OutputType>(std::move(other))
+{
+  // Nothing to do here.
+}
+
+template<typename InputType, typename OutputType>
+LogSoftMaxType<InputType, OutputType>&
+LogSoftMaxType<InputType, OutputType>::operator=(const LogSoftMaxType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+LogSoftMaxType<InputType, OutputType>&
+LogSoftMaxType<InputType, OutputType>::operator=(LogSoftMaxType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 void LogSoftMaxType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {

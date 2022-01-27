@@ -20,7 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>::MaxPoolingType()
+MaxPoolingType<InputType, OutputType>::MaxPoolingType() :
+    Layer<InputType, OutputType>()
 {
   // Nothing to do here.
 }
@@ -32,6 +33,7 @@ MaxPoolingType<InputType, OutputType>::MaxPoolingType(
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor) :
+    Layer<InputType, OutputType>(),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
@@ -41,6 +43,80 @@ MaxPoolingType<InputType, OutputType>::MaxPoolingType(
     offset(0)
 {
   // Nothing to do here.
+}
+
+template<typename InputType, typename OutputType>
+MaxPoolingType<InputType, OutputType>::MaxPoolingType(
+    const MaxPoolingType& other) :
+    Layer<InputType, OutputType>(other),
+    kernelWidth(other.kernelWidth),
+    kernelHeight(other.kernelHeight),
+    strideWidth(other.strideWidth),
+    strideHeight(other.strideHeight),
+    floor(other.floor),
+    channels(other.channels),
+    offset(other.offset),
+    pooling(other.pooling)
+{
+  // Nothing to do here.
+}
+
+template<typename InputType, typename OutputType>
+MaxPoolingType<InputType, OutputType>::MaxPoolingType(
+    MaxPoolingType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    kernelWidth(std::move(other.kernelWidth)),
+    kernelHeight(std::move(other.kernelHeight)),
+    strideWidth(std::move(other.strideWidth)),
+    strideHeight(std::move(other.strideHeight)),
+    floor(std::move(other.floor)),
+    channels(std::move(other.channels)),
+    offset(std::move(other.offset)),
+    pooling(std::move(other.pooling))
+{
+  // Nothing to do here.
+}
+
+template<typename InputType, typename OutputType>
+MaxPoolingType<InputType, OutputType>&
+MaxPoolingType<InputType, OutputType>::operator=(
+    const MaxPoolingType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    kernelWidth = other.kernelWidth;
+    kernelHeight = other.kernelHeight;
+    strideWidth = other.strideWidth;
+    strideHeight = other.strideHeight;
+    floor = other.floor;
+    channels = other.channels;
+    offset = other.offset;
+    pooling = other.pooling;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+MaxPoolingType<InputType, OutputType>&
+MaxPoolingType<InputType, OutputType>::operator=(
+    MaxPoolingType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    kernelWidth = std::move(other.kernelWidth);
+    kernelHeight = std::move(other.kernelHeight);
+    strideWidth = std::move(other.strideWidth);
+    strideHeight = std::move(other.strideHeight);
+    floor = std::move(other.floor);
+    channels = std::move(other.channels);
+    offset = std::move(other.offset);
+    pooling = std::move(other.pooling);
+  }
+
+  return *this;
 }
 
 template<typename InputType, typename OutputType>

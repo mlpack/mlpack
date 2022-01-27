@@ -36,6 +36,56 @@ Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
 { }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
+Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
+    const Linear3DType& other) :
+    Layer<InputType, OutputType>(other),
+    outSize(other.outSize),
+    regularizer(other.regularizer)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
+Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
+    Linear3DType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    outSize(std::move(other.outSize)),
+    regularizer(std::move(other.regularizer))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
+Linear3DType<InputType, OutputType, RegularizerType>&
+Linear3DType<InputType, OutputType, RegularizerType>::operator=(
+    const Linear3DType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    outSize = other.outSize;
+    regularizer = other.regularizer;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
+Linear3DType<InputType, OutputType, RegularizerType>&
+Linear3DType<InputType, OutputType, RegularizerType>::operator=(
+    Linear3DType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    outSize = std::move(other.outSize);
+    regularizer = std::move(other.regularizer);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
 void Linear3DType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)
 {

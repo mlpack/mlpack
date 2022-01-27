@@ -20,9 +20,54 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType(const size_t outSize) :
+    Layer<InputType, OutputType>(other),
     outSize(outSize)
 {
   // Nothing to do here.
+}
+
+template<typename InputType, typename OutputType>
+NoisyLinearType<InputType, OutputType>::NoisyLinearType(
+    const NoisyLinearType& other) :
+    Layer<InputType, OutputType>(other),
+    outSize(other.outSize)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+NoisyLinearType<InputType, OutputType>::NoisyLinearType(
+    NoisyLinearType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    outSize(std::move(other.outSize))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+NoisyLinearType<InputType, OutputType>&
+NoisyLinearType<InputType, OutputType>::operator=(const NoisyLinearType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    outSize = other.outSize;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+NoisyLinearType<InputType, OutputType>&
+NoisyLinearType<InputType, OutputType>::operator=(NoisyLinearType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    outSize = std::move(other.outSize);
+  }
+
+  return *this;
 }
 
 template<typename InputType, typename OutputType>

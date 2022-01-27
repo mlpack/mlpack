@@ -52,14 +52,23 @@ template <
 class HighwayType : public MultiLayer<InputType, OutputType>
 {
  public:
-  //! Create the HighwayTest object.
+  //! Create the HighwayType object.
   HighwayType();
 
-  //! Destroy the Highway object.
-  ~HighwayType();
+  //! Destroy the HighwayType object.
+  virtual ~HighwayType();
 
   //! Clone the HighwayType object. This handles polymorphism correctly.
   HighwayType* Clone() const { return new HighwayType(*this); }
+
+  //! Copy the given HighwayType (but not weights).
+  HighwayType(const HighwayType& other);
+  //! Take ownership of the given HighwayType (but not weights).
+  HighwayType(HighwayType&& other);
+  //! Copy the given HighwayType (but not weights).
+  HighwayType& operator=(const HighwayType& other);
+  //! Take ownership of the given HighwayType (but not weights).
+  HighwayType& operator=(HighwayType&& other);
 
   void SetWeights(typename OutputType::elem_type* weightsPtr);
 

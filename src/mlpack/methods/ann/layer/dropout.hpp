@@ -61,6 +61,18 @@ class DropoutType : public Layer<InputType, OutputType>
   //! Clone the DropoutType object. This handles polymorphism correctly.
   DropoutType* Clone() const { return new DropoutType(*this); }
 
+  // Virtual destructor.
+  virtual DropoutType() { }
+
+  //! Copy the given DropoutType.
+  DropoutType(const DropoutType& other);
+  //! Take ownership of the given DropoutType.
+  DropoutType(DropoutType&& other);
+  //! Copy the given DropoutType.
+  DropoutType& operator=(const DropoutType& other);
+  //! Take ownership of the given DropoutType.
+  DropoutType& operator=(DropoutType&& other);
+
   /**
    * Ordinary feed forward pass of the dropout layer.
    *
@@ -97,7 +109,7 @@ class DropoutType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored mast object.
+  //! Locally-stored mask object.
   OutputType mask;
 
   //! The probability of setting a value to zero.

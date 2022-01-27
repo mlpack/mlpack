@@ -56,6 +56,18 @@ class LeakyReLUType : public Layer<InputType, OutputType>
   //! Clone the LeakyReLUType object. This handles polymorphism correctly.
   LeakyReLUType* Clone() const { return new LeakyReLUType(*this); }
 
+  // Virtual destructor.
+  virtual LeakyReLUType() { }
+
+  //! Copy the given LeakyReLUType.
+  LeakyReLUType(const LeakyReLUType& other);
+  //! Take ownership of the given LeakyReLUType.
+  LeakyReLUType(LeakyReLUType&& other);
+  //! Copy the given LeakyReLUType.
+  LeakyReLUType& operator=(const LeakyReLUType& other);
+  //! Take ownership of the given LeakyReLUType.
+  LeakyReLUType& operator=(LeakyReLUType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -28,6 +28,52 @@ LeakyReLUType<InputType, OutputType>::LeakyReLUType(
 }
 
 template<typename InputType, typename OutputType>
+LeakyReLUType<InputType, OutputType>::LeakyReLUType(
+    const LeakyReLUType& other) :
+    Layer<InputType, OutputType>(other),
+    alpha(other.alpha)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+LeakyReLUType<InputType, OutputType>::LeakyReLUType(
+    LeakyReLUType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    alpha(std::move(other.alpha))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+LeakyReLUType<InputType, OutputType>&
+LeakyReLUType<InputType, OutputType>::operator=(
+    const LeakyReLUType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    alpha = other.alpha;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+LeakyReLUType<InputType, OutputType>&
+LeakyReLUType<InputType, OutputType>::operator=(
+    LeakyReLUType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    alpha = std::move(other.alpha);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 void LeakyReLUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {

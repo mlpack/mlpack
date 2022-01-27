@@ -51,6 +51,60 @@ DropConnectType<InputType, OutputType>::~DropConnectType()
 }
 
 template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>::DropConnectType(
+    const DropConnectType& other) :
+    Layer<InputType, OutputType>(other),
+    ratio(other.ratio),
+    scale(other.scale),
+    baseLayer(other.baseLayer->Clone())
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>::DropConnectType(
+    DropConnectType&& other) :
+    Layer<InputType, OutputType>(std::move(other)),
+    ratio(std::move(other.ratio)),
+    scale(std::move(other.scale)),
+    baseLayer(std::move(other.baseLayer))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>&
+DropConnectType<InputType, OutputType>::operator=(
+    const DropConnectType& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    ratio = other.ratio;
+    scale = other.scale;
+    baseLayer = other.baseLayer->Clone();
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>&
+DropConnectType<InputType, OutputType>::operator=(
+    DropConnectType&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    ratio = std::move(other.ratio);
+    scale = std::move(other.scale);
+    baseLayer = std::move(other.baseLayer);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 void DropConnectType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
