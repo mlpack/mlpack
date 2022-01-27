@@ -69,19 +69,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   ReparametrizationType(const bool stochastic = true,
                         const bool includeKl = true,
                         const double beta = 1);
-/*
-  //! Copy constructor.
-  ReparametrizationType(const ReparametrizationType& layer);
-
-  //! Move constructor.
-  ReparametrizationType(ReparametrizationType&& layer);
-
-  //! Copy assignment operator.
-  ReparametrizationType& operator=(const ReparametrizationType& layer);
-
-  //! Move assignment operator.
-  ReparametrizationType& operator=(ReparametrizationType&& layer);
-*/
 
   /**
    * Clone the ReparametrizationType object. This handles polymorphism
@@ -91,6 +78,9 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   {
     return new ReparametrizationType(*this);
   }
+
+  // Virtual destructor.
+  virtual ~ReparameterizationType() { }
 
   //! Copy Constructor.
   ReparametrizationType(const ReparametrizationType& layer);

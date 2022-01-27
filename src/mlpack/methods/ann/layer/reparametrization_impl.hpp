@@ -35,9 +35,10 @@ ReparametrizationType<InputType, OutputType>::ReparametrizationType(
   }
 }
 
-template <typename InputDataType, typename OutputDataType>
-ReparametrizationType<InputDataType, OutputDataType>::ReparametrizationType(
+template <typename InputType, typename OutputType>
+ReparametrizationType<InputType, OutputType>::ReparametrizationType(
     const ReparametrizationType& layer) :
+    Layer<InputType, OutputType>(layer),
     stochastic(layer.stochastic),
     includeKl(layer.includeKl),
     beta(layer.beta)
@@ -45,9 +46,10 @@ ReparametrizationType<InputDataType, OutputDataType>::ReparametrizationType(
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-ReparametrizationType<InputDataType, OutputDataType>::ReparametrizationType(
+template <typename InputType, typename OutputType>
+ReparametrizationType<InputType, OutputType>::ReparametrizationType(
     ReparametrizationType&& layer) :
+    Layer<InputType, OutputType>(std::move(layer)),
     stochastic(std::move(layer.stochastic)),
     includeKl(std::move(layer.includeKl)),
     beta(std::move(layer.beta))
@@ -55,31 +57,35 @@ ReparametrizationType<InputDataType, OutputDataType>::ReparametrizationType(
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-ReparametrizationType<InputDataType, OutputDataType>&
-ReparametrizationType<InputDataType, OutputDataType>::
+template <typename InputType, typename OutputType>
+ReparametrizationType<InputType, OutputType>&
+ReparametrizationType<InputType, OutputType>::
 operator=(const ReparametrizationType& layer)
 {
   if (this != &layer)
   {
+    Layer<InputType, OutputType>::operator=(layer);
     stochastic = layer.stochastic;
     includeKl = layer.includeKl;
     beta = layer.beta;
   }
+
   return *this;
 }
 
-template <typename InputDataType, typename OutputDataType>
-ReparametrizationType<InputDataType, OutputDataType>&
-ReparametrizationType<InputDataType, OutputDataType>::
+template <typename InputType, typename OutputType>
+ReparametrizationType<InputType, OutputType>&
+ReparametrizationType<InputType, OutputType>::
 operator=(ReparametrizationType&& layer)
 {
   if (this != &layer)
   {
+    Layer<InputType, OutputType>::operator=(std::move(layer));
     stochastic = std::move(layer.stochastic);
     includeKl = std::move(layer.includeKl);
     beta = std::move(layer.beta);
   }
+
   return *this;
 }
 

@@ -71,6 +71,18 @@ class RBF : public Layer<InputType, OutputType>
   //! Clone the LinearType object. This handles polymorphism correctly.
   RBF* Clone() const { return new RBF(*this); }
 
+  // Virtual destructor.
+  virtual ~RBF() { }
+
+  //! Copy the given RBF layer.
+  RBF(const RBF& other);
+  //! Take ownership of the given RBF layer.
+  RBF(RBF&& other);
+  //! Copy the given RBF layer.
+  RBF& operator=(const RBF& other);
+  //! Take ownership of the given RBF layer.
+  RBF& operator=(RBF&& other);
+
   /**
    * Ordinary feed forward pass of the radial basis function.
    *

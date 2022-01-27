@@ -19,6 +19,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType,
          typename Activation>
 RBF<InputType, OutputType, Activation>::RBF() :
+    Layer<InputType, OutputType>(),
     outSize(0),
     betas(0)
 {
@@ -49,6 +50,60 @@ RBF<InputType, OutputType, Activation>::RBF(
     }
     this->betas = std::pow(2 * outSize, 0.5) / sigmas;
   }
+}
+
+template<typename InputType, typename OutputType,
+         typename Activation>
+RBF<InputType, OutputType, Activation>::RBF(const RBF& other) :
+    Layer<InputType, OutputType>(other),
+    outSize(other.outSize),
+    betas(other.betas),
+    centres(other.centres)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType,
+         typename Activation>
+RBF<InputType, OutputType, Activation>::RBF(RBF&& other) :
+    Layer<InputType, OutputType>(other),
+    outSize(other.outSize),
+    betas(other.betas),
+    centres(std::move(other.centres))
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType,
+         typename Activation>
+RBF<InputType, OutputType, Activation>&
+RBF<InputType, OutputType, Activation>::operator=(const RBF& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(other);
+    outSize = other.outSize;
+    betas = other.betas;
+    centres = other.centres;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType,
+         typename Activation>
+RBF<InputType, OutputType, Activation>&
+RBF<InputType, OutputType, Activation>::operator=(RBF&& other)
+{
+  if (&other != this)
+  {
+    Layer<InputType, OutputType>::operator=(std::move(other));
+    outSize = std::move(other.outSize);
+    betas = std::move(other.betas);
+    centres = std::move(other.centres);
+  }
+
+  return *this;
 }
 
 template<typename InputType, typename OutputType, typename Activation>
