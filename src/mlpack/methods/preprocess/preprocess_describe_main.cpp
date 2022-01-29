@@ -19,7 +19,7 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
-#include <memory>
+#include <iomanip>
 
 using namespace mlpack;
 using namespace mlpack::data;
@@ -82,26 +82,6 @@ PARAM_FLAG("population", "If specified, the program will calculate statistics "
 PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
     "across rows, not across columns.  (Remember that in mlpack, a column "
     "represents a point, so this option is generally not necessary.)", "r");
-
-/**
- * Formats string similar to printf.
- *
- * @param format Format of string desired.
- * @param args Args for inserting as parameter.
- * @return Desired Formatted String.
- */
-template<typename ... Args>
-std::string string_format(const std::string& format, Args ... args)
-{
-    size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1;
-    if (size <= 0) 
-    {
-      Log::Fatal << "Error during formatting." << std::endl;
-    }
-    std::unique_ptr<char[]> buf(new char[ size ]); 
-    snprintf(buf.get(), size, format.c_str(), args ...);
-    return std::string(buf.get(), buf.get() + size - 1);
-}
 
 /**
  * Calculates the sum of deviations to the Nth Power.
@@ -221,8 +201,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   timers.Start("statistics");
   // Print the headers.
-  Log::Info << string_format(stringFormat, "dim", "var", "mean",
-      "std", "median", "min", "max", "range", "skew", "kurt", "SE") << endl;
+  Log::Info << setw(width) << "dim" << setw(width) << "var" << setw(width) << 
+      "mean" << setw(width) << "std" << setw(width) << setw(width) << setw(width) << 
+      "median" << setw(width) << "min" << setw(width) << "max" << setw(width) << 
+      "range" << setw(width) << "skew" << setw(width) << "kurt" << setw(width) << 
+      "SE" << endl;
 
   // Lambda function to print out the results.
   auto PrintStatResults = [&](size_t dim, bool rowMajor)
@@ -240,12 +223,22 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << string_format(numberFormat,
-        dim, arma::var(feature, population), fMean, fStd,
-        arma::median(feature), fMin, fMax, (fMax - fMin),
-        Skewness(feature, fStd, fMean, population),
-        Kurtosis(feature, fStd, fMean, population),
-        StandardError(feature.n_elem, fStd)) << endl;
+    Log::Info << setw(width) << setprecision(precision) << numberFormat <<
+        setw(width) << setprecision(precision) << dim << 
+        setw(width) << setprecision(precision) << 
+        arma::var(feature, population) << 
+        setw(width) << setprecision(precision) << fMean << 
+        setw(width) << setprecision(precision) << fStd <<
+        setw(width) << setprecision(precision) << arma::median(feature) << 
+        setw(width) << setprecision(precision) << fMin << 
+        setw(width) << setprecision(precision) << fMax << 
+        setw(width) << setprecision(precision) << (fMax - fMin) <<
+        setw(width) << setprecision(precision) << 
+        Skewness(feature, fStd, fMean, population) <<
+        setw(width) << setprecision(precision) << 
+        Kurtosis(feature, fStd, fMean, population) <<
+        setw(width) << setprecision(precision) << 
+        StandardError(feature.n_elem, fStd) << endl;
   };
 
   // If the user specified dimension, describe statistics of the given
