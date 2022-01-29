@@ -306,6 +306,30 @@ inline void ReportIgnoredParam(util::Params& params,
   }
 }
 
+// Check if the given input data points aren't empty.
+template<typename T>
+inline void RequireNonEmptyInputValue(
+    util::Params& params,
+    const std::string& paramName,
+    const bool fatal,
+    const std::string& errorMessage)
+{
+  if (BINDING_IGNORE_CHECK(paramName))
+    return;
+
+  if (params.Has(paramName))
+  {
+    arma::mat trainingData = std::move(params.Get<arma::mat>(paramName));
+    if (trainingData.empty())
+    {
+      util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+      if (!errorMessage.empty())
+        stream << paramName << errorMessage << std::endl;
+    }
+  }
+}
+
+
 } // namespace util
 } // namespace mlpack
 
