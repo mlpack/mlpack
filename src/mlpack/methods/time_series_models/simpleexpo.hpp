@@ -31,8 +31,7 @@ class SimpleExpo
    * @param data time series data taken as input 
    * @param alpha weighted parameter
    */
-
- SimpleExpo(const arma::mat & data, const double alpha);
+ SimpleExpo(const arma::rowvec & data, const double alpha);
 
  /**
    * Empty constructor.  This gives a non-working model, so make sure Train() is
@@ -46,10 +45,22 @@ class SimpleExpo
    *Here aplha is not given by the user.
    * @param data time series data taken as input.
    */
+ SimpleExpo(const arma::rowvec & data);
+  
+  /** This constructor creates the model .Also instantiates the poarameter alpha .
+   * Here we assume the the last column cpntains the time series data.
+   * @param data takes the dataset as input
+   * @param alpha takes the parameter alpha 
+   */
+  SimpleExpo(const arma::mat &data,const double & alpha);
 
-
- SimpleExpo(const arma::mat & data);
-
+  /** This constructor creates the model .
+   * Gives a random value between 0 and 1 to aplha
+   * It assumes the data is present in the last column of the dataset.
+   * @param data takes the dataset as input 
+   */
+  SimpleExpo(const arma::mat & data);
+   
    /**
    * Train the SES model on the data to . trhis function will return the least squares error
    *
@@ -57,27 +68,28 @@ class SimpleExpo
    * @param alpha the parameter which gives weights to the different data points
    * @return The least squares error after training.
    */
- double Train(const arma::mat&data,const double alpha);
+
+ double Train(const arma::rowvec &data,const double & alpha);
 
  /**
    * Calculate y_i for each data point in data.
    *
    * @param data time series data to predict the outcome
+   * @param preds  number of predictions to be forcasted 
    */
+ void Predict(const arma::rowvec & data,arma::rowvec& predictions,const size_t preds=1) const ;
 
- void Predict(const arma::mat& data,arma::rowvec& predictions) const ;
 
+ double ComputeError(const arma::rowvec & data,const double & alpha)const;
 
- double ComputeError(const arma::mat & data,arma::rowvec& predictions)const;
-
-//! Return the parameter alpha
- const double Alpha() const {return alpha;}
+//! Returns the parameter alpha
+  double &Alpha();
 
 //! Returns the initial level 
  const double Level() const {return level;}
 
-//! Modifies the parameters alpha
- double& Alpha();
+//! updates the parameter alpha
+ double & UpAlpha();
 
 //! Modifies the initial level 
  double & Level(); 
@@ -90,6 +102,8 @@ class SimpleExpo
  double level;
  
  arma::rowvec predictions;
+ 
+ arma::rowvec datapts;
 };
 
 } // namespace ts
