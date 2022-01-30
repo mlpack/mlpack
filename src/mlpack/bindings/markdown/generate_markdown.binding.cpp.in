@@ -17,7 +17,7 @@
 #include "print_docs.hpp"
 #include "get_binding_name.hpp"
 
-#include <${PROGRAM_MAIN_FILE}>
+${INCLUDE_MAIN_FILES}
 
 using namespace std;
 
@@ -29,18 +29,32 @@ void Print${BINDING}Headers()
 {
   // Fill the vector of languages for which we want to print.
   vector<string> languages;
-  ${LANGUAGES_PUSH_BACK_CODE}
 
-  PrintHeaders("${BINDING}", languages);
+  // Stores if a wrapper is added for a particular language.
+  vector<bool> addWrapperDocs;
+
+  ${LANGUAGES_PUSH_BACK_CODE}
+  ${WRAPPER_PUSH_BACK_CODE}
+
+  PrintHeaders("${BINDING}", languages, addWrapperDocs);
 }
 
 void Print${BINDING}Docs()
 {
   // Fill the vector of languages for which we want to print.
   vector<string> languages;
-  ${LANGUAGES_PUSH_BACK_CODE}
 
-  PrintDocs("${BINDING}", languages);
+  // Stores the names of all methods in a vector.
+  vector<string> validMethods;
+
+  // Stores if a wrapper is added for a particular language.
+  vector<bool> addWrapperDocs;
+
+  ${LANGUAGES_PUSH_BACK_CODE}
+  ${WRAPPER_PUSH_BACK_CODE}
+  ${VALID_METHODS_PUSH_BACK_CODE}
+
+  PrintDocs("${BINDING}", languages, validMethods, addWrapperDocs);
 }
 
 } // namespace markdown

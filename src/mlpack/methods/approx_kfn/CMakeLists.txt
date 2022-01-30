@@ -19,9 +19,10 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # This program computes approximate furthest neighbors.
+add_category(approx_kfn "geometry")
 add_cli_executable(approx_kfn)
 add_python_binding(approx_kfn)
 add_julia_binding(approx_kfn)
 add_go_binding(approx_kfn)
 add_r_binding(approx_kfn)
-add_markdown_docs(approx_kfn "cli;python;julia;go;r" "geometry")
+add_markdown_docs(approx_kfn "cli;python;julia;go;r" "")

@@ -19,11 +19,6 @@ endif ()
 # We don't need to find any libraries or anything to generate markdown
 # documentation.
 
-# Get categories.  The list of allowable categories for add_markdown_docs() is
-# in that file.
-include(MarkdownCategories.cmake)
-set(MARKDOWN_CATEGORIES ${MARKDOWN_CATEGORIES} PARENT_SCOPE)
-
 # Add sources for Markdown bindings.
 set(SOURCES
   "binding_info.hpp"
@@ -42,8 +37,11 @@ set(SOURCES
   "print_doc_functions_impl.hpp"
   "print_docs.hpp"
   "print_docs.cpp"
+  "print_param_table.hpp"
+  "print_param_table.cpp"
   "print_type_doc.hpp"
   "program_doc_wrapper.hpp"
+  "replace_all_copy.hpp"
 )
 
 # Copy all Markdown sources to the build directory.
@@ -59,32 +57,71 @@ foreach(file ${SOURCES})
 endforeach()
 
 # Create the add_markdown_docs() macro.  It's meant to be used as
-# 'add_markdown_docs(knn, "cli;python;julia", "classification")', for instance.
-# See the file 'MarkdownCategories.cmake' for valid categories that can be used
+# 'add_markdown_docs(knn, "cli;python;julia")', for instance.
+# See the file 'Categories.cmake' for valid categories that can be used
 # by the macro.
-macro (add_markdown_docs name languages category)
+macro (add_markdown_docs name languages wrappers)
 
-  # First, make sure that the category is a valid category.
-  list(FIND MARKDOWN_CATEGORIES ${category} cat_index)
-  if (${cat_index} EQUAL -1)
-    string(CONCAT error_str "add_markdown_docs(): unknown category ${category}!"
-        "  See the categories in "
-        "src/mlpack/bindings/markdown/MarkdownCategories.cmake.")
-    message(FATAL_ERROR "${ERROR_STR}")
-  endif ()
+  set(category ${${name}_CATEGORY})
 
   # Next, we should use configure_file() to generate each
   # generate_markdown.<binding>.cpp.  We need to loop over all the languages for
   # this binding to do that.
   set(BINDING ${name})
+
+  # pushes language names to a std::vector<string>.
   set(LANGUAGES_PUSH_BACK_CODE "")
-  set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+
+  # pushes whether wrapper is to be added for this language
+  # to a std::vector<bool>.
+  set(WRAPPER_PUSH_BACK_CODE "")
+
+  # pushes method names in a group to a std::vector<string>.
+  set(VALID_METHODS_PUSH_BACK_CODE "")
+
+  # includes _main.cpp files for all methods.
+  set(INCLUDE_MAIN_FILES "")
+
+  # used to create WRAPPER_PUSH_BACK_CODE.
+  set(ADD_WRAPPER_LANGUAGES "")
+
+  # list of languages for which wrapper is to be added.
+  set(WRAPPERS ${wrappers})
+
   foreach (lang ${languages})
     set(LANGUAGES_PUSH_BACK_CODE
         "${LANGUAGES_PUSH_BACK_CODE}\n  languages.push_back(\"${lang}\");")
     set(MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} ${lang})
   endforeach ()
   list(REMOVE_DUPLICATES MARKDOWN_ALL_LANGUAGES_LIST)
+
+  foreach (lang ${languages})
+    list(FIND WRAPPERS "${lang}" _idx)
+    if(${_idx} EQUAL -1)
+      set(ADD_WRAPPER_LANGUAGES ${ADD_WRAPPER_LANGUAGES} "false")
+    else()
+      set(ADD_WRAPPER_LANGUAGES ${ADD_WRAPPER_LANGUAGES} "true")
+    endif()
+  endforeach()
+
+  foreach (val ${ADD_WRAPPER_LANGUAGES})
+    set(WRAPPER_PUSH_BACK_CODE
+        "${WRAPPER_PUSH_BACK_CODE}\n  addWrapperDocs.push_back(${val});")
+  endforeach()
+  
+  if(NOT ${WRAPPERS} EQUAL "")
+    foreach(method ${${name}_VALID_METHODS})
+      set(VALID_METHODS_PUSH_BACK_CODE
+          "${VALID_METHODS_PUSH_BACK_CODE}\n  validMethods.push_back(\"${method}\");")
+    endforeach()
+    foreach(loc ${${name}_METHOD_MAIN_FILES})
+      set(INCLUDE_MAIN_FILES
+          "${INCLUDE_MAIN_FILES}\n#include <${loc}>")
+    endforeach()
+  endif()
+
+  set(INCLUDE_MAIN_FILES
+      "${INCLUDE_MAIN_FILES}\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp>")
 
   # Do the actual file configuration.
   set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
@@ -107,6 +144,7 @@ macro (add_markdown_docs name languages category)
   set (MARKDOWN_NAME_CATEGORIES ${MARKDOWN_NAME_CATEGORIES} ${category})
   set (MARKDOWN_NAME_CATEGORIES ${MARKDOWN_NAME_CATEGORIES} PARENT_SCOPE)
   set (MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} PARENT_SCOPE)
+  set (ADD_WRAPPER_LANGUAGES ${ADD_WRAPPER_LANGUAGES} PARENT_SCOPE)
 endmacro ()
 
 # After all the methods/ directories have been traversed, we can add the
@@ -123,10 +161,10 @@ function (post_markdown_setup)
 
   # Iterate over categories of binding.
   list(LENGTH MARKDOWN_NAMES NUM_MARKDOWN_BINDINGS)
-  list(LENGTH MARKDOWN_CATEGORIES NUM_MARKDOWN_CATEGORIES)
+  list(LENGTH CATEGORIES NUM_MARKDOWN_CATEGORIES)
   math(EXPR cat_limit "${NUM_MARKDOWN_CATEGORIES} - 1")
   foreach (i RANGE ${cat_limit})
-    list (GET MARKDOWN_CATEGORIES ${i} cat)
+    list (GET CATEGORIES ${i} cat)
     # Put the things in this category in a div.
     string(CONCAT header_code "${MARKDOWN_HEADER_CODE}  cout << "
         "\"<div class=\\\"category\\\" markdown=\\\"1\\\">\" << endl;\n  "
@@ -181,7 +219,10 @@ function (post_markdown_setup)
       "${BINDING_SOURCE_DIR}/print_doc_functions_impl.hpp"
       "${BINDING_SOURCE_DIR}/print_docs.hpp"
       "${BINDING_SOURCE_DIR}/print_docs.cpp"
+      "${BINDING_SOURCE_DIR}/print_param_table.hpp"
+      "${BINDING_SOURCE_DIR}/print_param_table.cpp"
       "${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp"
+      "${BINDING_SOURCE_DIR}/replace_all_copy.hpp"
       "${BINDING_SOURCE_DIR}/generate_markdown.cpp")
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)

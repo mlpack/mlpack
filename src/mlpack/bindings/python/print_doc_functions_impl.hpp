@@ -14,6 +14,7 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -125,7 +126,10 @@ inline std::string PrintDefault(const std::string& bindingName,
 }
 
 // Recursion base case.
-std::string PrintInputOptions(util::Params& /* params */) { return ""; }
+std::string PrintInputOptions(util::Params& /* params */,
+                              bool /* onlyHyperParams */,
+                              bool /* onlyMatrixParams */)
+{ return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -134,6 +138,8 @@ std::string PrintInputOptions(util::Params& /* params */) { return ""; }
  */
 template<typename T, typename... Args>
 std::string PrintInputOptions(util::Params& params,
+                              bool onlyHyperParams,
+                              bool onlyMatrixParams,
                               const std::string& paramName,
                               const T& value,
                               Args... args)
@@ -143,14 +149,30 @@ std::string PrintInputOptions(util::Params& params,
   if (params.Parameters().count(paramName) > 0)
   {
     util::ParamData& d = params.Parameters()[paramName];
-    if (d.input)
+
+    bool isSerial;
+    params.functionMap[d.tname]["IsSerializable"](
+        d, NULL, (void*) &isSerial);
+
+    bool isHyperParam = false;
+    size_t foundArma = d.cppType.find("arma");
+    if(d.input && foundArma == std::string::npos &&
+        !isSerial)
+      isHyperParam = true;
+
+    bool printCondition = d.input;
+
+    // no parameter is both a hyper-parameter and a matrix-parmeter
+    // hence the print condition is "false".
+    if(onlyHyperParams && onlyMatrixParams) printCondition = false;
+    else if(onlyHyperParams) printCondition = isHyperParam;
+    else if(onlyMatrixParams) printCondition = foundArma != std::string::npos;
+
+    if (printCondition)
     {
       // Print the input option.
       std::ostringstream oss;
-      if (paramName != "lambda") // Don't print Python keywords.
-        oss << paramName << "=";
-      else
-        oss << paramName << "_=";
+      oss << GetValidName(paramName) << "=";
       oss << PrintValue(value, d.tname == TYPENAME(std::string));
       result = oss.str();
     }
@@ -158,13 +180,14 @@ std::string PrintInputOptions(util::Params& params,
   else
   {
     // Unknown parameter!
-    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
+    throw std::runtime_error("Unknown parameter '" + GetValidName(paramName) + "' " +
         "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
         + " and BINDING_EXAMPLE() declaration.");
   }
 
   // Continue recursion.
-  std::string rest = PrintInputOptions(params, args...);
+  std::string rest = PrintInputOptions(params, onlyHyperParams,
+                                       onlyMatrixParams, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -233,7 +256,7 @@ std::string ProgramCall(const std::string& bindingName, Args... args)
   oss << bindingName << "(";
 
   // Now process each input option.
-  oss << PrintInputOptions(params, args...);
+  oss << PrintInputOptions(params, false, false, args...);
   oss << ")";
 
   std::string call = oss.str();
@@ -372,6 +395,132 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   else
     oss << paramName << "=" << value;
   return oss.str();
+}
+
+inline std::string ImportExtLib()
+{
+  return ">>> import pandas as pd";
+}
+
+inline std::string ImportSplit()
+{
+  return ">>> from mlpack import preprocess_split";
+}
+
+inline std::string ImportThis(const std::string& groupName)
+{
+  return ">>> from mlpack import " + GetClassName(groupName);
+}
+
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio)
+{
+  std::string splitString = ">>> ";
+  splitString += testDataset + ", " + testLabels + ", ";
+  splitString += trainDataset + ", " + trainLabels;
+  splitString += " = ";
+  splitString += "preprocess_split(input_=" + datasetName + ", input_labels=";
+  splitString += labelName + ", test_ratio=" + splitRatio + ")";
+  return splitString;
+}
+
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url)
+{
+  std::string readString = ">>> " + datasetName + " = ";
+  readString += "pd.read_csv('" + url + "')";
+  return readString;
+}
+
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args)
+{
+  util::Params params = IO::Parameters(bindingName);
+  std::string createObj = ">>> ";
+  createObj += objectName + " = " + GetClassName(groupName) + "(";
+  createObj += PrintInputOptions(params, true, false, args...);
+  createObj += ")";
+  return util::HyphenateString(createObj, 2);
+}
+
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName)
+{
+  util::Params params = IO::Parameters(bindingName);
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
+
+  std::string createObj = ">>> ";
+  createObj += objectName + " = " + GetClassName(groupName) + "(";
+
+  bool first = true;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    bool isSerial;
+    params.functionMap[it->second.tname]["IsSerializable"](
+        it->second, NULL, (void*) &isSerial);
+
+    bool isHyperParam = false;
+    size_t foundArma = it->second.cppType.find("arma");
+    if(it->second.input && foundArma == std::string::npos &&
+        !isSerial)
+      isHyperParam = true;
+
+    if(!isHyperParam) continue;
+    if(it->second.name == "help" || it->second.name == "info" ||
+        it->second.name == "version")
+        continue;
+
+    if (!first)
+      createObj += ", ";
+    else
+      first = false;
+
+    // Print the input option.
+    if (it->second.name != "lambda") // Don't print Python keywords.
+      createObj += it->second.name + "=";
+    else
+      createObj += it->second.name + "_=";
+
+    std::string value;
+    params.functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    createObj += value;
+  }
+  createObj += ")";
+  return util::HyphenateString(createObj, 2);
+}
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args)
+{
+  util::Params params = IO::Parameters(bindingName);
+  std::map<std::string, util::ParamData> parameters = params.Parameters();
+  std::string callMethod = ">>> ";
+
+  // find out if there are any output options.
+  for(auto it=parameters.begin(); it!=parameters.end(); it++)
+  {
+    if(it->second.input) continue;
+    callMethod += it->first + ", ";
+  }
+  if (callMethod != "")
+    callMethod = callMethod.substr(0, callMethod.size()-2);
+  callMethod += " = " + objectName + "." + GetMappedName(methodName) + "(";
+  callMethod += PrintInputOptions(params, false, true, args...);
+  callMethod += ")";
+  return util::HyphenateString(callMethod, 2);
 }
 
 inline bool IgnoreCheck(const std::string& bindingName,

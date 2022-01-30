@@ -27,6 +27,7 @@
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
+#include <mlpack/methods/ann/layer/instance_norm.hpp>
 #include <mlpack/methods/ann/layer/group_norm.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
@@ -253,7 +254,8 @@ using MoreTypes = boost::variant<
         BicubicInterpolation<arma::mat, arma::mat>*,
         NearestInterpolation<arma::mat, arma::mat>*,
         GroupNorm<arma::mat, arma::mat>*,
-        RReLU<arma::mat, arma::mat>*
+        RReLU<arma::mat, arma::mat>*,
+        InstanceNorm<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
