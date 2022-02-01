@@ -61,7 +61,7 @@ AddType<InputType, OutputType>::operator=(AddType&& other)
   if (&other != this)
   {
     Layer<InputType, OutputType>::operator=(std::move(other));
-    outSIze = std::move(other.outSize);
+    outSize = std::move(other.outSize);
   }
 
   return *this;

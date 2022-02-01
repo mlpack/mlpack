@@ -40,9 +40,9 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
   // Nothing to do.
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputType, typename OutputType,
     typename RegularizerType>
-LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+LinearNoBiasType<InputType, OutputType, RegularizerType>::
 LinearNoBiasType(const LinearNoBiasType& layer) :
     Layer<InputType, OutputType>(layer),
     inSize(layer.inSize),
@@ -52,9 +52,9 @@ LinearNoBiasType(const LinearNoBiasType& layer) :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputType, typename OutputType,
     typename RegularizerType>
-LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+LinearNoBiasType<InputType, OutputType, RegularizerType>::
 LinearNoBiasType(LinearNoBiasType&& layer) :
     Layer<InputType, OutputType>(std::move(layer)),
     inSize(0),
@@ -64,10 +64,10 @@ LinearNoBiasType(LinearNoBiasType&& layer) :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputType, typename OutputType,
     typename RegularizerType>
-LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>&
-LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+LinearNoBiasType<InputType, OutputType, RegularizerType>&
+LinearNoBiasType<InputType, OutputType, RegularizerType>::
 operator=(const LinearNoBiasType& layer)
 {
   if (this != &layer)
@@ -81,10 +81,10 @@ operator=(const LinearNoBiasType& layer)
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputType, typename OutputType,
     typename RegularizerType>
-LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>&
-LinearNoBiasType<InputDataType, OutputDataType, RegularizerType>::
+LinearNoBiasType<InputType, OutputType, RegularizerType>&
+LinearNoBiasType<InputType, OutputType, RegularizerType>::
 operator=(LinearNoBiasType&& layer)
 {
   if (this != &layer)

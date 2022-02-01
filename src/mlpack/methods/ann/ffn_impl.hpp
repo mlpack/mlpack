@@ -642,7 +642,7 @@ void FFN<
     return;
   }
 
-  network.InputDimensions() = std::move(inputDimensions);
+  network.InputDimensions() = inputDimensions;
   network.ComputeOutputDimensions();
   inputDimensionsAreSet = true;
 }

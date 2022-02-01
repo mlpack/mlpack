@@ -130,6 +130,9 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Locally-stored number of output units.
   size_t outSize;
 
+  //! Locally stored number of input units.
+  size_t inSize;
+
   //! Locally-stored weight object.
   OutputType weights;
 

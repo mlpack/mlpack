@@ -20,8 +20,9 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType(const size_t outSize) :
-    Layer<InputType, OutputType>(other),
-    outSize(outSize)
+    Layer<InputType, OutputType>(),
+    outSize(outSize),
+    inSize(0)
 {
   // Nothing to do here.
 }
@@ -30,7 +31,8 @@ template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType(
     const NoisyLinearType& other) :
     Layer<InputType, OutputType>(other),
-    outSize(other.outSize)
+    outSize(other.outSize),
+    inSize(other.inSize)
 {
   // Nothing to do.
 }
@@ -39,7 +41,8 @@ template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType(
     NoisyLinearType&& other) :
     Layer<InputType, OutputType>(std::move(other)),
-    outSize(std::move(other.outSize))
+    outSize(std::move(other.outSize)),
+    inSize(std::move(other.inSize))
 {
   // Nothing to do.
 }
@@ -52,6 +55,7 @@ NoisyLinearType<InputType, OutputType>::operator=(const NoisyLinearType& other)
   {
     Layer<InputType, OutputType>::operator=(other);
     outSize = other.outSize;
+    inSize = other.inSize;
   }
 
   return *this;
@@ -65,6 +69,7 @@ NoisyLinearType<InputType, OutputType>::operator=(NoisyLinearType&& other)
   {
     Layer<InputType, OutputType>::operator=(std::move(other));
     outSize = std::move(other.outSize);
+    inSize = std::move(other.inSize);
   }
 
   return *this;
@@ -155,8 +160,8 @@ void NoisyLinearType<InputType, OutputType>::serialize(
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(inSize));
 
   if (cereal::is_loading<Archive>())
   {

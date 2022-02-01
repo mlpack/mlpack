@@ -62,7 +62,7 @@ class DropoutType : public Layer<InputType, OutputType>
   DropoutType* Clone() const { return new DropoutType(*this); }
 
   // Virtual destructor.
-  virtual DropoutType() { }
+  virtual ~DropoutType() { }
 
   //! Copy the given DropoutType.
   DropoutType(const DropoutType& other);

@@ -34,7 +34,7 @@ LogSoftMaxType<InputType, OutputType>::LogSoftMaxType(
 
 template<typename InputType, typename OutputType>
 LogSoftMaxType<InputType, OutputType>::LogSoftMaxType(
-    const LogSoftMaxType& other) :
+    LogSoftMaxType&& other) :
     Layer<InputType, OutputType>(std::move(other))
 {
   // Nothing to do here.

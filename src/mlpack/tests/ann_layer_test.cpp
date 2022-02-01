@@ -730,7 +730,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   output.set_size(totalOutputDimensions, input.n_cols);
   output.randu();
   module.Forward(input, output);
-  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(arma::accu(input) == Approx(arma::accu(output)));
   REQUIRE(output.n_rows == (9 * 8)); // 2x5 --> 9x8
 
   // Test the Backward function.
@@ -752,7 +752,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   output.set_size(totalOutputDimensions, input.n_cols);
   output.randu();
   module.Forward(input, output);
-  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(arma::accu(input) == Approx(arma::accu(output)));
   REQUIRE(output.n_rows == (226 * 226 * 3));
   REQUIRE(output.n_cols == 1);
 
@@ -771,7 +771,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   module.Forward(input, output);
   REQUIRE(output.n_rows == (246 * 246 * 3));
   REQUIRE(output.n_cols == 3);
-  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(arma::accu(input) == Approx(arma::accu(output)));
 }
 
 /**

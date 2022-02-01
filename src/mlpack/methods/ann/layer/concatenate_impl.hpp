@@ -69,7 +69,6 @@ ConcatenateType<InputType, OutputType>::operator=(ConcatenateType&& other)
   }
 
   return *this;
-  }
 }
 
 template<typename InputType, typename OutputType>

@@ -80,7 +80,7 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   }
 
   // Virtual destructor.
-  virtual ~ReparameterizationType() { }
+  virtual ~ReparametrizationType() { }
 
   //! Copy Constructor.
   ReparametrizationType(const ReparametrizationType& layer);

@@ -46,7 +46,7 @@ class AddType : public Layer<InputType, OutputType>
   AddType* Clone() const { return new AddType(*this); }
 
   // Virtual destructor.
-  virtual ~AddType();
+  virtual ~AddType() { }
 
   //! Copy the given AddType layer.
   AddType(const AddType& other);

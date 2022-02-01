@@ -57,7 +57,7 @@ class LeakyReLUType : public Layer<InputType, OutputType>
   LeakyReLUType* Clone() const { return new LeakyReLUType(*this); }
 
   // Virtual destructor.
-  virtual LeakyReLUType() { }
+  virtual ~LeakyReLUType() { }
 
   //! Copy the given LeakyReLUType.
   LeakyReLUType(const LeakyReLUType& other);
