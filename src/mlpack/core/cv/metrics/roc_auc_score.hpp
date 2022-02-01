@@ -36,16 +36,13 @@ class ROCAUCScore
 {
  public:
   /**
-   * Run classification and calculate area under the ROC curve.
+   * Calculate area under the ROC curve.
    *
-   * @param model A classification model.
-   * @param data Column-major data containing test items.
-   * @param labels Ground truth (correct) labels for the test items.
+   * @param labels Ground truth (correct) labels.
+   * @param scores Probability scores of positive class.
    */
-  template<typename MLAlgorithm, typename DataType>
-  static double Evaluate(MLAlgorithm& model,
-                         const DataType& data,
-                         const arma::Row<size_t>& labels);
+  static double Evaluate(const arma::Row<size_t>& labels,
+                         const arma::Row<double>& scores);
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want
