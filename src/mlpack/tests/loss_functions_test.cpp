@@ -667,35 +667,25 @@ TEST_CASE("HingeEmbeddingLossTest", "[LossFunctionsTest]")
  */
 TEST_CASE("SimpleL1LossTest", "[LossFunctionsTest]")
 {
-  arma::mat input1, input2, output, target1, target2;
-  L1Loss<> module(false);
+  arma::mat input, output, target;
+  double loss;
+  L1Loss<> module(true);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
-  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5");
-  target1 = arma::zeros(1, 7);
-  double error1 = module.Forward(input1, target1);
-  REQUIRE(error1 == 3.5);
-
-  input2 = arma::mat("0 1 1 0 1 0 0 1");
-  target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(input2, target2);
-  REQUIRE(error2 == Approx(0.0).epsilon(1e-5));
+  input = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target = arma::zeros(1, 7);
+  loss = module.Forward(input, target);
+  // Value calculated using torch.nn.L1Loss(reduction='sum').
+  REQUIRE(loss == 3.5);
 
   // Test the Backward function.
-  module.Backward(input1, target1, output);
+  module.Backward(input, target, output);
   for (double el : output)
     REQUIRE(el  == 1);
 
-  REQUIRE(output.n_rows == input1.n_rows);
-  REQUIRE(output.n_cols == input1.n_cols);
-
-  module.Backward(input2, target2, output);
-  for (double el : output)
-    REQUIRE(el == 0);
-
-  REQUIRE(output.n_rows == input2.n_rows);
-  REQUIRE(output.n_cols == input2.n_cols);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 }
 
 /**
