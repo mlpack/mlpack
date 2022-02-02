@@ -149,7 +149,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       "test ratio must be between 0.0 and 1.0");
 
   // input data can't be empty.
-  RequireNonEmptyInputValue(params, "input", true, " can not be empty!");
+  RequireNonEmptyInputValue(params, "input", true, "can not be empty");
 
   // Load the data.
   arma::mat& data = params.Get<arma::mat>("input");

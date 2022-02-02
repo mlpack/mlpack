@@ -307,7 +307,6 @@ inline void ReportIgnoredParam(util::Params& params,
 }
 
 // Check if the given input data points aren't empty.
-template<typename T>
 inline void RequireNonEmptyInputValue(
     util::Params& params,
     const std::string& paramName,
@@ -324,7 +323,7 @@ inline void RequireNonEmptyInputValue(
     {
       util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
       if (!errorMessage.empty())
-        stream << paramName << errorMessage << std::endl;
+        stream << paramName << " " << errorMessage << "!" << std::endl;
     }
   }
 }
