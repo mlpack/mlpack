@@ -357,3 +357,34 @@ TEST_CASE_METHOD(
   REQUIRE(static_cast<uvec>(find(
       params.Get<arma::Mat<size_t>>("test_labels") == 2)).n_rows == 20);
 }
+
+/**
+ * Check that if training size is not zero.
+ */
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessSplitNonEmptyInputTest",
+    "[PreprocessSplitMainTest][BindingTests]")
+{
+  // Load custom dataset.
+  arma::mat inputData;
+  arma::Mat<size_t> labels;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  // Store size of input dataset.
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
+
+  // Input custom data points and labels.
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("input_labels", std::move(labels));
+
+  RUN_BINDING();
+
+  // Now check that the input data is not empty.
+  REQUIRE(inputSize !== 0);
+  
+  REQUIRE(labelSize !== 0);
+}
