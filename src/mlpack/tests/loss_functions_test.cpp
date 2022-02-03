@@ -551,37 +551,49 @@ TEST_CASE("DiceLossTest", "[LossFunctionsTest]")
  */
 TEST_CASE("SimpleMeanBiasErrorTest", "[LossFunctionsTest]")
 {
-  arma::mat input, output, target;
+  arma::mat input, target, output;
+  double loss;
   MeanBiasError<> module;
 
-  // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
-  input = arma::mat("1.0 0.0 1.0 -1.0 -1.0 0.0 -1.0 0.0");
-  target = arma::zeros(1, 8);
-  double error = module.Forward(input, target);
-  REQUIRE(error == 0.125);
+  // Test for sum reduction.
+  input = arma::mat("-0.0494 -1.1958 -1.0486 -0.2121 1.6028 0.0737 -0.7091 "
+      "0.8612 0.9639 0.9648 0.0745 0.5924");
+  target = arma::mat("0.4316 0.0164 -0.4478 1.1452 0.5106 0.9255 0.5571 0.0864 "
+      "0.7059 -0.8288 -0.0231 -1.0526");
 
-  // Test the Backward function.
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  
+  // Test the forward function.
+  // Loss should  be 0.1081.
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(0.1081).epsilon(1e-5));
+
+  // Test the backward function.
   module.Backward(input, target, output);
-  // We should get a vector with -1 everywhere.
-  for (double el : output)
-  {
+
+  for(double el : output)
     REQUIRE(el == -1);
-  }
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
-  // Test the error function on a single input.
-  input = arma::mat("2");
-  target = arma::mat("3");
-  error = module.Forward(input, target);
-  REQUIRE(error == 1.0);
+  // Test for mean reduction by modifying
+  // reduction parameter using accessor.
+  module.Reduction() = false;
 
-  // Test the Backward function on a single input.
+  // Test the forward function
+  // loss should be 0.00900833
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(0.00900833).epsilon(1e-5));
+
+  // Test the backward function
   module.Backward(input, target, output);
-  // Test whether the output is negative.
-  REQUIRE(arma::accu(output) == -1);
-  REQUIRE(output.n_elem == 1);
+
+  for(double el : output)
+    REQUIRE(el == Approx(-0.0833).epsilon(1e-3));
+  REQUIRE(arma::accu(output) == Approx(-1).epsilon(1e-5));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 }
 
 /**
