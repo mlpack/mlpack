@@ -20,7 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss()
+HingeEmbeddingLoss<InputDataType, OutputDataType>
+  ::HingeEmbeddingLoss(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,8 +33,13 @@ HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  TargetType temp = target - (target == 0);
-  return (arma::accu(arma::max(1 - prediction % temp, 0.))) / target.n_elem;
+  PredictionType loss = (1 - target) / 2 + prediction % (target);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -43,17 +49,19 @@ void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     LossType& loss)
 {
-  TargetType temp = target - (target == 0);
-  loss = (prediction < 1 / temp) % -temp;
+  loss = target;
+
+  if (!reduction)
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
