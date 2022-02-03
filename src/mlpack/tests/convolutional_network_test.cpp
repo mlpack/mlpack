@@ -440,3 +440,25 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   // Check whether move constructor is working or not.
   CheckMoveFunction<>(model1, X, Y, 8);
 }
+
+TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
+{
+  // Ensure that the code snippet in issue #2986 succeeds without any issues.
+  arma::mat input, output, delta;
+  input.ones(36, 1);
+
+  // Note that the stride here is 2, not 1.
+  Convolution c(1, 3, 3, 2, 2, 0, 0);
+
+  // Set up the layer without an enclosing FFN.
+  c.InputDimensions() = std::vector<size_t>({ 6, 6 });
+  c.ComputeOutputDimensions();
+  arma::mat weights(c.WeightSize(), 1, arma::fill::randu);
+  c.SetWeights(weights.memptr());
+
+  output.set_size(c.OutputSize(), 1);
+  delta.set_size(input.size());
+
+  REQUIRE_NOTHROW(c.Forward(input, output));
+  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+}

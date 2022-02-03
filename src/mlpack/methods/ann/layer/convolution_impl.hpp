@@ -403,6 +403,8 @@ void ConvolutionType<
             mappedError.slice(outMap + fullOutputOffset),
             rotatedFilters.slice(outMap),
             output,
+            1,
+            1,
             strideWidth,
             strideHeight);
 

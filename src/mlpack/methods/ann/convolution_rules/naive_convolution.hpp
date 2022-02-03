@@ -59,7 +59,7 @@ class NaiveConvolution
   {
     output = arma::zeros<arma::Mat<eT> >(
         (input.n_rows - (filter.n_rows - 1) * dilationW - 1) / dW + 1,
-        (input.n_cols - (filter.n_cols - 1) * dilationH -  1) / dH + 1);
+        (input.n_cols - (filter.n_cols - 1) * dilationH - 1) / dH + 1);
 
     // It seems to be about 3.5 times faster to use pointers instead of
     // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
