@@ -43,7 +43,7 @@ class L1Loss
    *                  is set to true by default.
    *
    */
-  L1Loss(const bool mean = true);
+  L1Loss(const bool reduction = true);
 
   /**
    * Computes the L1 Loss function.
