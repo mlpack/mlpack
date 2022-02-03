@@ -149,7 +149,8 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
 
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree() :
-     end(0),
+    start(0),
+    end(0),
     splitDim(size_t(-1)),
     splitValue(std::numeric_limits<ElemType>::max()),
     logNegError(-DBL_MAX),
@@ -332,7 +333,8 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
 
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(MatType & data) :
-     end(data.n_cols),
+    start(0),
+    end(data.n_cols),
     maxVals(arma::max(data, 1)),
     minVals(arma::min(data, 1)),
     splitDim(size_t(-1)),
