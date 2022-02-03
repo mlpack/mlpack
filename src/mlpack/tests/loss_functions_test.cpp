@@ -52,25 +52,52 @@ using namespace mlpack::ann;
 TEST_CASE("HuberLossTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output;
+  arma::mat expectedOutput;
+  double loss;
   HuberLoss<> module;
 
-  // Test the Forward function.
-  input = arma::mat("17.45 12.91 13.63 29.01 7.12 15.47 31.52 31.97");
-  target = arma::mat("16.52 13.11 13.67 29.51 24.31 15.03 30.72 34.07");
-  double loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(2.410631).epsilon(1e-5));
+  // Test for sum reduction.
+  input = arma::mat("-0.0494 -1.1958 -1.0486 -0.2121 1.6028 0.0737 -0.7091 "
+      "0.8612 0.9639 0.9648 0.0745 0.5924");
+  target = arma::mat("0.4316 0.0164 -0.4478 1.1452 0.5106 0.9255 0.5571 0.0864 "
+      "0.7059 -0.8288 -0.0231 -1.0526");
+  expectedOutput = arma::mat("-0.4810 -1.0000 -0.6008 -1.0000 1.0000 -0.8518 "
+      "-1.0000 0.7748 0.2580 1.0000 0.0976 1.0000");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
 
-  // Test the backward function.
+  // Test the Forward function. Loss should be 6.36364.
+  // Value calculated using torch.nn.SmoothL1Loss(reduction='sum').
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(6.36364).epsilon(1e-3));
+
+  // Test the Backward function.
   module.Backward(input, target, output);
-
-  // Expected Output:
-  // [0.1162 -0.0250 -0.0050 -0.0625 -0.1250  0.0550  0.1000 -0.1250]
-  // Sum of Expected Output = -0.07125.
-  double expectedOutputSum = arma::accu(output);
-  REQUIRE(expectedOutputSum == Approx(-0.07125).epsilon(1e-5));
-
+  REQUIRE(arma::as_scalar(arma::accu(output)) == 
+                Approx(-0.8032).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("-0.0401 -0.0833 -0.0501 -0.0833 0.0833 -0.0710 "
+      "-0.0833 0.0646 0.0215 0.0833 0.0081 0.0833");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 0.530304.
+  // Value calculated using torch.nn.SmoothL1Loss(reduction='mean').
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(0.530304).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+            Approx(-0.0669333).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /**
