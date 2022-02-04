@@ -168,19 +168,55 @@ TEST_CASE("PoissonNLLLossTest", "[LossFunctionsTest]")
 }
 
 /**
- * Simple KL Divergence test.  The loss should be zero if input = target.
+ * Simple KL Divergence test.
  */
 TEST_CASE("SimpleKLDivergenceTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output;
+  arma::mat expectedOutput;
   double loss;
-  KLDivergence<> module(true);
+  KLDivergence<> module;
 
-  // Test the Forward function.  Loss should be 0 if input = target.
-  input = arma::ones(10, 1);
-  target = arma::ones(10, 1);
+  // Test for sum reduction.
+  input = arma::mat("-0.7007 -2.0247 -0.7132 -0.4584 -0.2637 -1.1795 -0.1093 "
+      "-1.0530 -2.4250 -0.4556 -0.7861 -0.9120");
+  target = arma::mat("0.0223 0.5185 0.1610 0.9152 0.1689 0.6977 0.2823 0.3971 "
+      "0.2939 0.8000 0.6816 0.8742");
+  expectedOutput = arma::mat("-0.0223 -0.5185 -0.1610 -0.9152 -0.1689 -0.6977 "
+      "-0.2823 -0.3971 -0.2939 -0.8000 -0.6816 -0.8742");
+  input.reshape(4, 3);
+  target.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 2.33349.
+  // Value calculated using torch.nn.KLDivLoss(reduction='sum').
   loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(0.0).margin(1e-5));
+  REQUIRE(loss == Approx(2.33349).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-5.8127).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("-0.0019 -0.0432 -0.0134 -0.0763 -0.0141 -0.0581 "
+      "-0.0235 -0.0331 -0.0245 -0.0667 -0.0568 -0.0728");
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be 0.194458.
+  // Value calculated using torch.nn.KLDivLoss(reduction='mean').
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(0.194458).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-0.484392).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /*
@@ -215,48 +251,6 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
   module.Backward(input, target, output);
   REQUIRE(arma::accu(output) == Approx(-0.1917880483011872).epsilon(1e-3));
   REQUIRE(output.n_elem == 1);
-}
-
-/**
- * Test to check KL Divergence loss function when we take mean.
- */
-TEST_CASE("KLDivergenceMeanTest", "[LossFunctionsTest]")
-{
-  arma::mat input, target, output;
-  double loss;
-  KLDivergence<> module(true);
-
-  // Test the Forward function.
-  input = arma::mat("1 1 1 1 1 1 1 1 1 1");
-  target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
-
-  loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(-1.1).epsilon(1e-5));
-
-  // Test the Backward function.
-  module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(output) == Approx(-0.1).epsilon(1e-5));
-}
-
-/**
- * Test to check KL Divergence loss function when we do not take mean.
- */
-TEST_CASE("KLDivergenceNoMeanTest", "[LossFunctionsTest]")
-{
-  arma::mat input, target, output;
-  double loss;
-  KLDivergence<> module(false);
-
-  // Test the Forward function.
-  input = arma::mat("1 1 1 1 1 1 1 1 1 1");
-  target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
-
-  loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(-11).epsilon(1e-5));
-
-  // Test the Backward function.
-  module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(output) == Approx(-1).epsilon(1e-5));
 }
 
 /*
