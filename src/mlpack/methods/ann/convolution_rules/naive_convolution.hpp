@@ -57,9 +57,16 @@ class NaiveConvolution
               const size_t dilationW = 1,
               const size_t dilationH = 1)
   {
-    output = arma::zeros<arma::Mat<eT> >(
-        (input.n_rows - (filter.n_rows - 1) * dilationW - 1) / dW + 1,
-        (input.n_cols - (filter.n_cols - 1) * dilationH - 1) / dH + 1);
+    // Compute the output size.  The filterRows and filterCols computation must
+    // take into account the fact that dilation only adds rows or columns
+    // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
+    // 3x3 means an effective kernel size of 5x5, *not* 6x6.
+    // TODO before PR: H vs. W nomenclature?
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+    const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
+    const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
+    output.zeros(outputRows, outputCols);
 
     // It seems to be about 3.5 times faster to use pointers instead of
     // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
@@ -72,6 +79,7 @@ class NaiveConvolution
         const eT* kernelPtr = filter.memptr();
         for (size_t kj = 0; kj < filter.n_cols; ++kj)
         {
+          // TODO: what if we go out of the bounds of `input` here?
           const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
           for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
               inputPtr += dilationH)
@@ -103,37 +111,22 @@ class NaiveConvolution
               const size_t dilationW = 1,
               const size_t dilationH = 1)
   {
-    size_t outputRows = (input.n_rows - 1) * dW + 2 * (filter.n_rows - 1)
-        * dilationW + 1;
-    size_t outputCols = (input.n_cols - 1) * dH + 2 * (filter.n_cols - 1)
-        * dilationH + 1;
-
-    for (size_t i = 0; i < dW; ++i)
-    {
-      if (((((i + outputRows - 2 * (filter.n_rows - 1) * dilationW - 1) % dW)
-          + dW) % dW) == i){
-        outputRows += i;
-        break;
-      }
-    }
-    for (size_t i = 0; i < dH; ++i)
-    {
-      if (((((i + outputCols - 2 * (filter.n_cols - 1) * dilationH - 1) % dH)
-          + dH) % dH) == i){
-        outputCols += i;
-        break;
-      }
-    }
+    // First, compute the necessary padding for the full convolution.  It is
+    // possible that this might be an overestimate.  Note that these variables
+    // only hold the padding on one side of the input.
+    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+    const size_t paddingRows = filterRows - 1;
+    const size_t paddingCols = filterCols - 1;
 
     // Pad filter and input to the working output shape.
-    arma::Mat<eT> inputPadded = arma::zeros<arma::Mat<eT> >(outputRows,
-        outputCols);
-    inputPadded.submat((filter.n_rows - 1) * dilationW, (filter.n_cols - 1)
-        * dilationH, (filter.n_rows - 1) * dilationW + input.n_rows - 1,
-        (filter.n_cols - 1) * dilationH + input.n_cols - 1) = input;
+    arma::Mat<eT> inputPadded(input.n_rows + 2 * paddingRows,
+        input.n_cols + 2 * paddingCols, arma::fill::zeros);
+    inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
+        paddingCols + input.n_cols - 1) = input;
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, 1, 1, dilationW, dilationH);
+        output, dW, dH, dilationW, dilationH);
   }
 
   /*
