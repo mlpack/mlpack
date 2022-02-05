@@ -57,11 +57,12 @@ namespace mlpack
 
                    predictions.resize(datapts.n_elem);
                    //First prediction
-                   predictions(0) = alpha * datapts(0) +(1-alpha) * level; 
+                   predictions(0) = level;
+                   predictions(1) = alpha * datapts(0) +(1-alpha) * level;
 
                    for(arma::uword i=1;i<datapts.n_elem-1;i++)
                    {
-                      predictions(i) = alpha * datapts(i) + (1-alpha) * predictions(i-1);
+                      predictions(i+1) = alpha * datapts(i) + (1-alpha) * predictions(i-1);
                    }
 
             }
