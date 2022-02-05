@@ -643,15 +643,29 @@ TEST_CASE("LogCoshLossTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
-  // Test the Forward function. Loss should be 0.546621.
+  // Test for sum reduction
   input = arma::mat("1 2 3 4 5");
   target = arma::mat("1 2.4 3.4 4.2 5.5");
+  // Test the Forward function. Loss should be 0.546621.
   loss = module.Forward(input, target);
   REQUIRE(loss == Approx(0.546621).epsilon(1e-3));
 
   // Test the Backward function.
   module.Backward(input, target, output);
   REQUIRE(arma::accu(output) == Approx(2.46962).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+    // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+
+  // Test the Forward function. Loss should be 0.109324.
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(0.109324).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(0.49392).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 }
