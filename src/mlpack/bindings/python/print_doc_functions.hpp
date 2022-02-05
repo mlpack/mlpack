@@ -56,7 +56,9 @@ inline std::string PrintDefault(const std::string& bindingName,
                                 const std::string& paramName);
 
 // Recursion base case.
-inline std::string PrintInputOptions(util::Params& params);
+inline std::string PrintInputOptions(util::Params& params,
+                                     bool onlyHyperParams,
+                                     bool onlyMatrixParams);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -65,6 +67,8 @@ inline std::string PrintInputOptions(util::Params& params);
  */
 template<typename T, typename... Args>
 std::string PrintInputOptions(util::Params& params,
+                              bool onlyHyperParams,
+                              bool onlyMatrixParams,
                               const std::string& paramName,
                               const T& value,
                               Args... args);
@@ -107,6 +111,39 @@ inline std::string PrintDataset(const std::string& datasetName);
  * the command line.
  */
 inline std::string ParamString(const std::string& paramName);
+
+inline std::string ImportExtLib();
+
+inline std::string ImportSplit();
+
+inline std::string ImportThis(const std::string& groupName);
+
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio);
+
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url);
+
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args);
+
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName);
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args);
 
 /**
  * Print whether or not we should ignore a check on the given parameter.  For

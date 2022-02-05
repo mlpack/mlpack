@@ -17,9 +17,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(softmax_regression "classification")
 add_cli_executable(softmax_regression)
 add_python_binding(softmax_regression)
 add_julia_binding(softmax_regression)
 add_go_binding(softmax_regression)
 add_r_binding(softmax_regression)
-add_markdown_docs(softmax_regression "cli;python;julia;go;r" "classification")
+add_markdown_docs(softmax_regression "cli;python;julia;go;r" "")

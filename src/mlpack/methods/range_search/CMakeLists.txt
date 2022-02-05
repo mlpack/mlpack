@@ -20,9 +20,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(range_search "geometry")
 add_cli_executable(range_search)
 #add_python_binding(range_search)
 #add_julia_binding(range_search)
 #add_go_binding(range_search)
 #add_r_binding(range_search)
-add_markdown_docs(range_search "cli" "geometry")
+add_markdown_docs(range_search "cli" "")

@@ -31,7 +31,6 @@
 
 // This will include the ParamData options that are a part of the program.
 #include <${PROGRAM_MAIN_FILE}>
-
 using namespace mlpack;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::python;

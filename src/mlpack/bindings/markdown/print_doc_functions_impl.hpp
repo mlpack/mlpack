@@ -20,6 +20,7 @@
 
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
+#include <mlpack/bindings/python/wrapper_functions.hpp>
 #include <mlpack/bindings/julia/print_doc_functions.hpp>
 #include <mlpack/bindings/go/print_doc_functions.hpp>
 #include <mlpack/bindings/R/print_doc_functions.hpp>
@@ -57,6 +58,23 @@ inline std::string GetBindingName(const std::string& bindingName)
   else
   {
     throw std::invalid_argument("GetBindingName(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+/**
+ * Given the name of the binding, print the name for the wrapper for
+ * current language.
+ */
+inline std::string GetWrapperName(const std::string& bindingName)
+{
+  if (BindingInfo::Language() == "python")
+  {
+    return "class " + python::GetClassName(bindingName);
+  }
+  else
+  {
+    throw std::invalid_argument("GetWrapperName(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }
@@ -736,6 +754,154 @@ inline std::string ParamType(util::Params& p, util::ParamData& d)
       ToUnderscores(anchorType) + ")";
 }
 
+inline std::string ImportExtLib()
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::ImportExtLib();
+  }
+  else
+  {
+    throw std::invalid_argument("ImportExtLib(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+inline std::string ImportSplit()
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::ImportSplit();
+  }
+  else
+  {
+    throw std::invalid_argument("ImportSplit(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+inline std::string ImportThis(const std::string& groupName)
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::ImportThis(groupName);
+  }
+  else
+  {
+    throw std::invalid_argument("ImportThis(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio)
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::SplitTrainTest(datasetName, labelName,
+        trainDataset, trainLabels, testDataset, testLabels, splitRatio);
+  }
+  else
+  {
+    throw std::invalid_argument("SplitTrainTest(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url)
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::GetDataset(datasetName, url);
+  }
+  else
+  {
+    throw std::invalid_argument("GetDataset(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args)
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::CreateObject(bindingName, objectName,
+        groupName, args...);
+  }
+  else
+  {
+    throw std::invalid_argument("CreateObject(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName)
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::CreateObject(bindingName, objectName, groupName);
+  }
+  else
+  {
+    throw std::invalid_argument("CreateObject(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args)
+{
+  std::string s;
+  if (BindingInfo::Language() == "python")
+  {
+    s = python::CallMethod(bindingName, objectName,
+        methodName, args...);
+  }
+  else
+  {
+    throw std::invalid_argument("CallMethod(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+
+  return s;
+}
+
 template<typename T>
 inline bool IgnoreCheck(const std::string& bindingName, const T& t)
 {
@@ -762,6 +928,32 @@ inline bool IgnoreCheck(const std::string& bindingName, const T& t)
   else
   {
     throw std::invalid_argument("IgnoreCheck(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+inline std::string GetMappedName(const std::string& methodName)
+{
+  if (BindingInfo::Language() == "python")
+  {
+    return python::GetMappedName(methodName);
+  }
+  else
+  {
+    throw std::invalid_argument("GetMappedName(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+inline std::string GetWrapperLink(const std::string& bindingName)
+{
+  if (BindingInfo::Language() == "python")
+  {
+    return "class-" + bindingName;
+  }
+  else
+  {
+    throw std::invalid_argument("GetWrapperLink(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }
