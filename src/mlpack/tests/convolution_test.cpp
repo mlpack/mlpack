@@ -55,6 +55,46 @@ void Convolution2DMethodTest(const arma::mat input,
 }
 
 /*
+ * Implementation of the convolution function test with custom stride and
+ * dilation.  This does not work for every convolution type.
+ *
+ * @param input Input used to perform the convolution.
+ * @param filter Filter used to perform the convolution.
+ * @param output The reference output data that contains the results of the
+ * convolution.
+ * @param strideH Height stride parameter.
+ * @param strideW Width stride parameter.
+ * @param dilationH Height dilation parameter.
+ * @param dilationW Width dilation parameter.
+ *
+ * @tparam ConvolutionFunction Convolution function used for the check.
+ */
+template<class ConvolutionFunction>
+void Convolution2DMethodTest(const arma::mat input,
+                             const arma::mat filter,
+                             const arma::mat output,
+                             const size_t strideW,
+                             const size_t strideH,
+                             const size_t dilationW,
+                             const size_t dilationH)
+{
+  arma::mat convOutput;
+  ConvolutionFunction::Convolution(input, filter, convOutput, strideW, strideH,
+      dilationW, dilationH);
+
+  // Check the output dimension.
+  bool b = (convOutput.n_rows == output.n_rows) &&
+      (convOutput.n_cols == output.n_cols);
+  REQUIRE(b == 1);
+
+  const double* outputPtr = output.memptr();
+  const double* convOutputPtr = convOutput.memptr();
+
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
+}
+
+/*
  * Implementation of the convolution function test using 3rd order tensors.
  *
  * @param input Input used to perform the convolution.
@@ -367,4 +407,164 @@ TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
   // speed up the computation.
   ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
       filterCube, outputCube);
+}
+
+/**
+ * Test that non-stride-1 convolution works the same as stride-1 convolution on
+ * a smaller matrix.
+ */
+TEST_CASE("Stride2ConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 1, -4 },
+             { -1, -4, 1 },
+             { -2, -1, 1 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 2, 2, 1, 1);
+}
+
+TEST_CASE("Stride3ConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 1 },
+             { -1, -4 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 3, 3, 1, 1);
+}
+
+TEST_CASE("UnequalStrideConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 1 },
+             { -1, 0 },
+             { -2, 3 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 3, 2, 1, 1);
+}
+
+TEST_CASE("Dilation2ConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 2, 2, 2, -3, -4 },
+             { 4, 1, -2, 2, -2, -3 },
+             { 2, 2, -4, -4, 2, 2 },
+             { -2, 2, 4, -4, -2, 2 },
+             { -3, -4, 2, 2, 1, 2 },
+             { -2, -3, -2, 2, 4, 1 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 1, 1, 2, 2);
+}
+
+TEST_CASE("Dilation3ConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 2, 3, 3, -2, -3, -4 },
+             { 4, 1, 2, -1, -1, -2, -3 },
+             { 3, 4, 1, -1, -4, -1, -2 },
+             { 1, 1, 1, -4, -1, -1, 3 },
+             { -4, -1, -2, 1, 1, 2, 3 },
+             { -3, -4, -1, 1, 4, 1, 2 },
+             { -2, -3, -4, 1, 3, 4, 1 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 1, 1, 3, 3);
+}
+
+TEST_CASE("UnequalDilationConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 2, 3, 3, -2, -3, -4 },
+             { 4, 1, 2, -1, -1, -2, -3 },
+             { 2, 2, -2, -4, -2, 2, 2 },
+             { -2, 2, 2, 0, -2, -2, 2 },
+             { -3, -4, -1, 1, 4, 1, 2 },
+             { -2, -3, -4, 1, 3, 4, 1 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 1, 1, 3, 2);
+}
+
+TEST_CASE("DilationAndStrideConvolutionTest", "[ConvolutionTest]")
+{
+  // Generate dataset.
+  arma::mat input, filter, output;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
+
+  filter = { { 1, -1 },
+             { -1, 1 } };
+
+  output = { { 1, 2, -3 },
+             { 2, -4, 2 },
+             { -3, 2, 1 } };
+
+  // Perform the naive convolution approach.
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
+      output, 2, 2, 2, 2);
 }
