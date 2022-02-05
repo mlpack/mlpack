@@ -30,36 +30,33 @@ class SimpleExpo
    *
    * @param data time series data taken as input 
    * @param alpha weighted parameter
+   * @param method specifies whether the parameter alpha should be initialized
    */
- SimpleExpo(const arma::rowvec & data, const double alpha);
+ SimpleExpo(const arma::rowvec & data, const double alpha,std::string method = "estimated");
 
- /**
-   * Empty constructor.  This gives a non-working model, so make sure Train() is
-   * called (or make sure the model parameters are set) before calling
-   * Predict()!
-   */
-
- SimpleExpo();
  /**
    * Creates the model. and also initializes the parameters.
    *Here aplha is not given by the user.
    * @param data time series data taken as input.
+   * @param method specifies whether alpha should be initialized
    */
- SimpleExpo(const arma::rowvec & data);
+ SimpleExpo(const arma::rowvec & data,std::string method = "estimated");
   
   /** This constructor creates the model .Also instantiates the poarameter alpha .
    * Here we assume the the last column cpntains the time series data.
    * @param data takes the dataset as input
    * @param alpha takes the parameter alpha 
+   * @param method specifies whether the level should be initialized
    */
-  SimpleExpo(const arma::mat &data,const double & alpha);
+  SimpleExpo(const arma::mat &data,const double  alpha,std::string method = "estimated");
 
   /** This constructor creates the model .
    * Gives a random value between 0 and 1 to aplha
    * It assumes the data is present in the last column of the dataset.
-   * @param data takes the dataset as input 
+   * @param data takes the dataset as input '
+   * @param method specifies wheter parameter alpha should be initialized 
    */
-  SimpleExpo(const arma::mat & data);
+  SimpleExpo(const arma::mat & data, std ::string method = "estimated");
    
    /**
    * Train the SES model on the data to . trhis function will return the least squares error
@@ -69,7 +66,7 @@ class SimpleExpo
    * @return The least squares error after training.
    */
 
- double Train(const arma::rowvec &data,const double & alpha);
+ double Train(const double  alpha,bool optimize = true);
 
  /**
    * Calculate y_i for each data point in data.
@@ -80,7 +77,7 @@ class SimpleExpo
  void Predict(const arma::rowvec & data,arma::rowvec& predictions,const size_t preds=1) const ;
 
 
- double ComputeError(const arma::rowvec & data,const double & alpha)const;
+ double ComputeError(const arma::rowvec & data,const double  alpha)const;
 
 //! Returns the parameter alpha
   double &Alpha();
@@ -91,8 +88,7 @@ class SimpleExpo
 //! updates the parameter alpha
  double & UpAlpha();
 
-//! Modifies the initial level 
- double & Level(); 
+
 
 
  private :
@@ -100,6 +96,8 @@ class SimpleExpo
  double alpha;
 
  double level;
+
+ std::string method ;
  
  arma::rowvec predictions;
  

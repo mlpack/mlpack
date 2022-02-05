@@ -22,30 +22,53 @@ namespace mlpack
 {
     namespace ts
     {
-        SimpleExpo::SimpleExpo()
-        { /* Nothing to do here */}
         
 
-        SimpleExpo::SimpleExpo(const arma::rowvec &data, const double alpha) : alpha(alpha),datapts(data)
+        SimpleExpo::SimpleExpo(const arma::rowvec &data, const double alpha,std::string method = "heuristic") : alpha(alpha),datapts(data)
         {
-            level = 0;
+            
         }
 
-        SimpleExpo::SimpleExpo(const arma::rowvec &data) : datapts(data)
+        SimpleExpo::SimpleExpo(const arma::rowvec &data,std::string method = "estimated") : datapts(data),method(method)
         {
             alpha = ((double)rand() / (RAND_MAX));
         }
 
-        SimpleExpo::SimpleExpo(const arma::mat &data, const double &alpha) : alpha(alpha)
+        SimpleExpo::SimpleExpo(const arma::mat &data, const double alpha,std::string method = "heuristic") : alpha(alpha)
         {
             datapts = data.row(data.n_rows - 1);
         }
 
-        SimpleExpo::SimpleExpo(const arma::mat &data)
+        SimpleExpo::SimpleExpo(const arma::mat &data, std::string method = "estimated")
         {
             alpha = ((double)rand() / (RAND_MAX));
             datapts = data.row(data.n_rows - 1);
         }
+  
+        double SimpleExpo::Train(const double  alpha,bool optimize = true)
+        {
+            if(optimize)
+            {   int sum=0;
+                for(arma::uword i =0;i<datapts.n_elem;i++)
+                {
+                   sum = sum + datapts(i);
+                }
+                   level = sum/(datapts.n_elem);  
+
+                   predictions.resize(datapts.n_elem);
+                   //First prediction
+                   predictions(0) = alpha * datapts(0) +(1-alpha) * level; 
+
+                   for(arma::uword i=1;i<datapts.n_elem-1;i++)
+                   {
+                      predictions(i) = alpha * datapts(i) + (1-alpha) * predictions(i-1);
+                   }
+
+            }
+              
+
+        }
+
          double & SimpleExpo::Alpha() 
         {
             return alpha;
