@@ -837,7 +837,7 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
   REQUIRE(arma::accu(output) == Approx(-0.36649111).epsilon(1e-3));
 
   // Check Output for mean type of reduction.
-  CosineEmbeddingLoss<> module3(0.0, true, true);
+  CosineEmbeddingLoss<> module3(0.0, true, false);
   loss = module3.Forward(input3, input4);
   REQUIRE(loss == Approx(0.092325).epsilon(1e-3));
 
@@ -848,7 +848,7 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module3.Backward(input3, input4, output);
-  REQUIRE(arma::accu(output) == Approx(0.36649111).epsilon(1e-4));
+  REQUIRE(arma::accu(output) == Approx(0.0236749374).epsilon(1e-4));
 }
 
 /*

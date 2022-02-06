@@ -20,8 +20,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 CosineEmbeddingLoss<InputDataType, OutputDataType>::CosineEmbeddingLoss(
-    const double margin, const bool similarity, const bool takeMean):
-    margin(margin), similarity(similarity), takeMean(takeMean)
+    const double margin, const bool similarity, const bool reduction):
+    margin(margin), similarity(similarity), reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -42,7 +42,7 @@ CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
 
   arma::colvec inputTemp1 = arma::vectorise(prediction);
   arma::colvec inputTemp2 = arma::vectorise(target);
-  ElemType loss = 0.0;
+  ElemType lossSum = 0.0;
 
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
@@ -50,18 +50,18 @@ CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
         inputTemp1(arma::span(i, i + cols - 1)), inputTemp2(arma::span(i,
         i + cols - 1)));
     if (similarity)
-      loss += 1 - cosDist;
+      lossSum += 1 - cosDist;
     else
     {
       const ElemType currentLoss = cosDist - margin;
-      loss += currentLoss > 0 ? currentLoss : 0;
+      lossSum += currentLoss > 0 ? currentLoss : 0;
     }
   }
 
-  if (takeMean)
-    loss = (ElemType) loss / batchSize;
+  if (reduction)
+    return lossSum;
 
-  return loss;
+  return (ElemType) lossSum / batchSize;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -74,6 +74,7 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
   typedef typename PredictionType::elem_type ElemType;
 
   const size_t cols = prediction.n_cols;
+  const size_t batchSize = prediction.n_elem / cols;
   if (arma::size(prediction) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 
@@ -99,6 +100,9 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
           1)))) / std::sqrt(arma::accu(arma::pow(inputTemp1(arma::span(i, i +
           cols - 1)), 2)));
     }
+
+    if (!reduction)
+      outputTemp = outputTemp / batchSize;
   }
 }
 
@@ -109,7 +113,7 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
 {
   ar(CEREAL_NVP(margin));
   ar(CEREAL_NVP(similarity));
-  ar(CEREAL_NVP(takeMean));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
