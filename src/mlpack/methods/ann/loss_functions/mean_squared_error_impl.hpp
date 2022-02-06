@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MeanSquaredError<InputDataType, OutputDataType>::MeanSquaredError()
+MeanSquaredError<InputDataType, OutputDataType>
+  ::MeanSquaredError(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -31,7 +32,13 @@ MeanSquaredError<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  return arma::accu(arma::square(prediction - target)) / target.n_cols;
+  typename PredictionType::elem_type lossSum =
+    arma::accu(arma::square(prediction - target));
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,16 +48,19 @@ void MeanSquaredError<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     LossType& loss)
 {
-  loss = 2 * (prediction - target) / target.n_cols;
+  loss = 2 * (prediction - target) ;
+
+  if (!reduction)
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
