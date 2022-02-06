@@ -424,21 +424,23 @@ TEST_CASE("SimpleSigmoidCrossEntropyErrorTest", "[LossFunctionsTest]")
 TEST_CASE("SimpleEarthMoverDistanceLayerTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, output, target1, target2, expectedOutput;
+  arma::mat input3, target3;
+  double loss;
   EarthMoverDistance<> module;
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(input1, target1);
+  loss = module.Forward(input1, target1);
   double expected = 0.0;
-  REQUIRE(error1 / input1.n_elem - expected == Approx(0.0).margin(1e-7));
+  REQUIRE(loss / input1.n_elem - expected == Approx(0.0).margin(1e-7));
 
   input2 = arma::mat("1 2 3 4 5");
   target2 = arma::mat("1 0 1 0 1");
-  double error2 = module.Forward(input2, target2);
+  loss = module.Forward(input2, target2);
   expected = -1.8;
-  REQUIRE(error2 / input2.n_elem - expected == Approx(0.0).margin(1e-6));
+  REQUIRE(loss / input2.n_elem - expected == Approx(0.0).margin(1e-6));
 
   // Test the Backward function.
   module.Backward(input1, target1, output);
@@ -454,6 +456,31 @@ TEST_CASE("SimpleEarthMoverDistanceLayerTest", "[LossFunctionsTest]")
     REQUIRE(output(i) - expectedOutput(i) == Approx(0.0).margin(1e-5));
   REQUIRE(output.n_rows == input2.n_rows);
   REQUIRE(output.n_cols == input2.n_cols);
+
+   // Test for mean reduction.
+   module.Reduction() = false;
+  input3 = arma::mat("-0.0494 -1.1958 -1.0486 -0.2121 1.6028 0.0737 -0.7091 "
+      "0.8612 0.9639 0.9648 0.0745 0.5924");
+  target3 = arma::mat("0.4316 0.0164 -0.4478 1.1452 0.5106 0.9255 0.5571 "
+      "0.0864 0.7059 -0.8288 -0.0231 -1.0526");
+  expectedOutput = arma::mat("-0.0360 -0.0014 0.0373 -0.0954 -0.0426 -0.0771 "
+      "-0.0464 -0.0072 -0.0588 0.0691 0.0019 0.0877");
+  input3.reshape(4, 3);
+  target3.reshape(4, 3);
+  expectedOutput.reshape(4, 3);
+
+  // Test the Forward function. Loss should be -0.00060089.
+  // Value calculated manually.
+  loss = module.Forward(input3, target3);
+  REQUIRE(loss == Approx(-0.00060089).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input3, target3, output);
+  REQUIRE(arma::as_scalar(arma::accu(output)) == 
+      Approx(-0.168867).epsilon(1e-3));
+  REQUIRE(output.n_rows == input3.n_rows);
+  REQUIRE(output.n_cols == input3.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /*

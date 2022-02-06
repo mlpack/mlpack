@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-EarthMoverDistance<InputDataType, OutputDataType>::EarthMoverDistance()
+EarthMoverDistance<InputDataType, OutputDataType>
+  ::EarthMoverDistance(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -31,7 +32,13 @@ EarthMoverDistance<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  return -arma::accu(target % prediction);
+  typename PredictionType::elem_type lossSum = 
+      -arma::accu(target % prediction);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -42,15 +49,18 @@ void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
     LossType& loss)
 {
   loss = -target;
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void EarthMoverDistance<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const uint32_t /* version */)
 {
-  /* Nothing to do here */
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
