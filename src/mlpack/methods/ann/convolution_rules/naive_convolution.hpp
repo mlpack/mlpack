@@ -61,7 +61,6 @@ class NaiveConvolution
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
     // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    // TODO before PR: H vs. W nomenclature?
     const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
     const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
     const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
@@ -79,7 +78,6 @@ class NaiveConvolution
         const eT* kernelPtr = filter.memptr();
         for (size_t kj = 0; kj < filter.n_cols; ++kj)
         {
-          // TODO: what if we go out of the bounds of `input` here?
           const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
           for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
               inputPtr += dilationH)
