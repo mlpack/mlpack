@@ -18,11 +18,12 @@ namespace cv {
 
 template<size_t PositiveClass>
 double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
-                                            const arma::Row<double>& scores)
+                                            const arma::rowvec& scores)
 {
   util::CheckSameSizes(labels, scores, "ROCAUCScore::Evaluate()");
 
-  if (labels.n_cols == 0) {
+  if (labels.n_cols == 0)
+  {
     throw std::invalid_argument(
         "ROCAUCScore::Evaluate(): "
         "number of points in input data cannot be zero");
@@ -33,29 +34,31 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
       (labels == PositiveClass));
 
   // Converting probability scores of PositiveClass, from row to column vector.
-  arma::Col<double> colScores = arma::conv_to<arma::Col<double>>::from(scores);
+  arma::vec colScores = arma::conv_to<arma::vec>::from(scores);
 
   size_t numberOfTrueLabels  = arma::sum(binaryLabels);
   size_t numberOfFalseLabels = binaryLabels.n_rows - numberOfTrueLabels;
 
   // Check if only one class is given in labels.
-  if (numberOfTrueLabels == 0 || numberOfFalseLabels == 0) {
+  if (numberOfTrueLabels == 0 || numberOfFalseLabels == 0)
+  {
     throw std::invalid_argument(
         "ROCAUCScore::Evaluate(): "
         "only one class is given in labels, ROCAUCScore is undefined");
   }
 
   // Sort labels and probabilities, using probability scores.
-  arma::ucolvec sortedScoreIndices = arma::stable_sort_index(
-      colScores, "descend");
+  arma::uvec sortedScoreIndices = arma::stable_sort_index(colScores, "descend");
   arma::Col<size_t> sortedLabels = binaryLabels(sortedScoreIndices);
-  arma::Col<double> sortedScores = colScores(sortedScoreIndices);
+  arma::vec sortedScores = colScores(sortedScoreIndices);
 
   // Compute indices of unique probability scores.
   arma::uword uniqueScoreIndicesLength = 0;
   arma::ucolvec uniqueScoreIndices(sortedScores.n_rows);
-  for (arma::uword idx = 0; idx < sortedScores.n_rows - 1; idx++) {
-    if (sortedScores(idx) != sortedScores(idx + 1)) {
+  for (arma::uword idx = 0; idx < sortedScores.n_rows - 1; idx++)
+  {
+    if (sortedScores(idx) != sortedScores(idx + 1))
+    {
       uniqueScoreIndices(uniqueScoreIndicesLength++) = idx;
     }
   }
@@ -66,8 +69,8 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   arma::Col<size_t> cumulativeSum = arma::cumsum(sortedLabels);
   cumulativeSum = cumulativeSum(uniqueScoreIndices);
 
-  arma::Col<double> tpr, fpr;
-  tpr = arma::conv_to<arma::Col<double>>::from(cumulativeSum);
+  arma::vec tpr, fpr;
+  tpr = arma::conv_to<arma::vec>::from(cumulativeSum);
   fpr = 1 + uniqueScoreIndices - tpr;
   tpr /= numberOfTrueLabels;
   fpr /= numberOfFalseLabels;
