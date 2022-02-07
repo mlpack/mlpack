@@ -32,15 +32,19 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  typedef typename PredictionType::elem_type ElemType;
-  ElemType lossSum = 0;
-  for (size_t i = 0; i < prediction.n_cols; ++i)
+  PredictionType loss;
+  loss.zeros(size(target));
+  typename TargetType::elem_type currentTarget;
+  for (size_t i = 0; i < target.n_cols; ++i)
   {
-    Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
+    currentTarget = target(i);
+    Log::Assert(currentTarget >=0 && currentTarget < prediction.n_rows,
         "Target class out of range.");
 
-    lossSum -= prediction(target(i), i);
+    loss(i) -= prediction(i, currentTarget);
   }
+
+  typename PredictionType::elem_type lossSum= arma::accu(loss);
 
   if (reduction)
     return lossSum;
