@@ -108,10 +108,10 @@ TEST_CASE("PoissonNLLLossTest", "[LossFunctionsTest]")
   arma::mat input, target, input4, target4;
   arma::mat output1, output2, output3, output4;
   arma::mat expOutput1, expOutput2, expOutput3, expOutput4;
-  PoissonNLLLoss<> module1;
-  PoissonNLLLoss<> module2(true, true, 1e-08, false);
-  PoissonNLLLoss<> module3(true, true, 1e-08, true);
-  PoissonNLLLoss<> module4(false, true, 1e-08, true);
+  PoissonNLLLoss<> module1(true, false, 1e-8, false);
+  PoissonNLLLoss<> module2(true, true, 1e-08, true);
+  PoissonNLLLoss<> module3(true, true, 1e-08, false);
+  PoissonNLLLoss<> module4(false, true, 1e-08, false);
 
   // Test the Forward function on a user generated input.
   input = arma::mat("1.0 1.0 1.9 1.6 -1.9 3.7 -1.0 0.5");
