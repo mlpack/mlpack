@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
+NegativeLogLikelihood<InputDataType, OutputDataType>
+  ::NegativeLogLikelihood(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,16 +33,19 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   typedef typename PredictionType::elem_type ElemType;
-  ElemType output = 0;
+  ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
-    output -= prediction(target(i), i);
+    lossSum -= prediction(target(i), i);
   }
 
-  return output;
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -59,14 +63,17 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
 
     loss(target(i), i) = -1;
   }
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */, const uint32_t /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
