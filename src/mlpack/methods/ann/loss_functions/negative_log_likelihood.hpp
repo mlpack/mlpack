@@ -20,8 +20,8 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the negative log likelihood layer. The negative log
  * likelihood layer expects that the input contains log-probabilities for each
- * class. The layer also expects a class index, in the range between 1 and the
- * number of classes, as target when calling the Forward function.
+ * class. The layer also expects a class index, in the range between 0 and 
+ * number of classes -1, as target when calling the Forward function.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
