@@ -1277,12 +1277,12 @@ TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
   NegativeLogLikelihood<> module;
 
   // Test for sum reduction.
-  input = arma::mat("-0.1689 -0.2862 -1.0543 -1.2865 -2.0033 -1.9392 -0.6196 "
-      "-1.4797 -3.8886 -2.2532 -2.1769 -0.7011");
+  input = arma::mat("-0.1689 -2.0033 -3.8886 -0.2862 -1.9392 -2.2532"
+      " -1.0543 -0.6196 -2.1769 -1.2865 -1.4797 -0.7011");
   target = arma::mat("2 2 1 2");
-  expectedOutput = arma::mat("0 0 0 0 0 0 -1.0000 0 -1.0000 -1.0000 0 -1.0000");
-  input.reshape(4, 3);
-  expectedOutput.reshape(4, 3);
+  expectedOutput = arma::mat("0 0 -1.0000 0 0 -1.0000 0 -1.0000 0 0 0 -1.0000");
+  input.reshape(3, 4);
+  expectedOutput.reshape(3, 4);
 
   // Test the Forward function. Loss should be 7.4625.
   // Value calculated using torch.nn.NLLLoss(reduction='sum').
@@ -1298,8 +1298,8 @@ TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
 
   // Test for mean reduction by modifying reduction parameter using accessor.
   module.Reduction() = false;
-  expectedOutput = arma::mat("0 0 0 0 0 0 -0.2500 0 -0.2500 -0.2500 0 -0.2500");
-  expectedOutput.reshape(4, 3);
+  expectedOutput = arma::mat("0 0 -0.2500 0 0 -0.2500 0 -0.2500 0 0 0 -0.2500");
+  expectedOutput.reshape(3, 4);
 
   // Test the Forward function. Loss should be 1.86562.
   // Value calculated using torch.nn.NLLLoss(reduction='mean').
