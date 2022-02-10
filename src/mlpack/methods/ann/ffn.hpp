@@ -21,7 +21,6 @@
 #include <mlpack/methods/ann/layer/multi_layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <ensmallen.hpp>
 
 namespace mlpack {

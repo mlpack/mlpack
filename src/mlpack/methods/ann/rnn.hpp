@@ -23,7 +23,6 @@
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <ensmallen.hpp>
