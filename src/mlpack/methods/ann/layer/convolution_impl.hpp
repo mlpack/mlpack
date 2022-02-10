@@ -403,19 +403,41 @@ void ConvolutionType<
             mappedError.slice(outMap + fullOutputOffset),
             rotatedFilters.slice(outMap),
             output,
-            1,
-            1,
-            strideWidth,
-            strideHeight);
+            strideHeight,
+            strideWidth);
 
-        if (usingPadding)
+        // If the stride width or height is greater than 1, then we have to
+        // insert columns and rows into the convolution output.
+        if (strideWidth == 1 && strideHeight == 1)
         {
-          gTemp.slice(inMap + fullInputOffset) += output.submat(padWLeft,
-              padHTop, padWLeft + gTemp.n_rows - 1, padHTop + gTemp.n_cols - 1);
+          if (usingPadding)
+          {
+            gTemp.slice(inMap + fullInputOffset) += output.submat(
+                padWLeft,
+                padHTop,
+                padWLeft + gTemp.n_rows - 1,
+                padHTop + gTemp.n_cols - 1);
+          }
+          else
+          {
+            gTemp.slice(inMap + fullInputOffset) += output;
+          }
         }
         else
         {
-          gTemp.slice(inMap + fullInputOffset) += output;
+          // We must iterate over each element of the output and manually
+          // re-insert the stride.
+          size_t col = padWLeft;
+          for (size_t i = 0; i < output.n_cols; ++i)
+          {
+            size_t row = padHTop;
+            for (size_t j = 0; j < output.n_rows; ++j)
+            {
+              gTemp(row, col, inMap + fullInputOffset) += output(j, i);
+              row += strideHeight;
+            }
+            col += strideWidth;
+          }
         }
       }
     }

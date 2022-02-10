@@ -461,4 +461,36 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
 
   REQUIRE_NOTHROW(c.Forward(input, output));
   REQUIRE_NOTHROW(c.Backward(input, output, delta));
+
+  // Now test with a stride of 3.
+  c = Convolution(1, 3, 3, 3, 3, 0, 0);
+
+  // Set up the layer without an enclosing FFN.
+  c.InputDimensions() = std::vector<size_t>({ 6, 6 });
+  c.ComputeOutputDimensions();
+  weights.set_size(c.WeightSize(), 1);
+  weights.randu();
+  c.SetWeights(weights.memptr());
+
+  output.set_size(c.OutputSize(), 1);
+  delta.set_size(input.size());
+
+  REQUIRE_NOTHROW(c.Forward(input, output));
+  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+
+  // Now test with different strides for height and width.
+  c = Convolution(1, 3, 3, 2, 3, 0, 0);
+
+  // Set up the layer without an enclosing FFN.
+  c.InputDimensions() = std::vector<size_t>({ 6, 6 });
+  c.ComputeOutputDimensions();
+  weights.set_size(c.WeightSize(), 1);
+  weights.randu();
+  c.SetWeights(weights.memptr());
+
+  output.set_size(c.OutputSize(), 1);
+  delta.set_size(input.size());
+
+  REQUIRE_NOTHROW(c.Forward(input, output));
+  REQUIRE_NOTHROW(c.Backward(input, output, delta));
 }
