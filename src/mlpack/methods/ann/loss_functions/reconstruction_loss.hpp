@@ -39,8 +39,14 @@ class ReconstructionLoss
  public:
   /**
    * Create the ReconstructionLoss object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
-  ReconstructionLoss();
+  ReconstructionLoss(const bool reduction = true);
 
   /**
    * Computes the reconstruction loss.
@@ -71,6 +77,11 @@ class ReconstructionLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer
    */
@@ -83,6 +94,10 @@ class ReconstructionLoss
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Boolean value that tells if reduction 
+  //  is 'sum' or 'mean'.
+  bool reduction;
 }; // class ReconstructionLoss
 
 } // namespace ann
