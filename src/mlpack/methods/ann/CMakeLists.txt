@@ -4,8 +4,8 @@ set(SOURCES
   ffn.hpp
   ffn_impl.hpp
   make_alias.hpp
-  #rnn.hpp
-  #rnn_impl.hpp
+  rnn.hpp
+  rnn_impl.hpp
   #brnn.hpp
   #brnn_impl.hpp
   #layer_names.hpp

@@ -481,6 +481,13 @@ double FFN<
   // Set networkOutput to the right size if needed, then perform the forward
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
+
+  std::cout << predictors.cols(begin, begin + 1 - 1).n_rows << std::endl;
+  std::cout << predictors.cols(begin, begin + 1 - 1).n_cols << std::endl;
+  std::cout << predictors.cols(begin, begin + 1 - 1) << std::endl;
+  std::cout << "----------------------------------------------------\n";
+  std::cout << predictors.cols(begin, begin + 2 - 1) << std::endl;
+  exit(0);
   network.Forward(predictors.cols(begin, begin + batchSize - 1), networkOutput);
 
   const double obj = outputLayer.Forward(networkOutput,
@@ -585,7 +592,7 @@ void FFN<
   size_t totalWeightSize = network.WeightSize();
 
   Log::Assert(totalWeightSize == parameters.n_elem,
-      "FNN::SetLayerMemory(): total layer weight size does not match parameter "
+      "FFN::SetLayerMemory(): total layer weight size does not match parameter "
       "size!");
 
   network.SetWeights(parameters.memptr());

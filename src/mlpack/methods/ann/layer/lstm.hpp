@@ -15,6 +15,8 @@
 #include <mlpack/prereqs.hpp>
 #include <limits>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -55,15 +57,15 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
+template<
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class LSTM : public Layer<InputType, OutputType>
+class LSTMType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the LSTM object.
-  LSTM();
+  LSTMType();
 
   /**
    * Create the LSTM layer object using the specified parameters.
@@ -72,21 +74,18 @@ class LSTM : public Layer<InputType, OutputType>
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize,
-       const size_t outSize,
-       const size_t rho = std::numeric_limits<size_t>::max());
+  LSTMType(const size_t inSize,
+           const size_t outSize,
+           const size_t rho = std::numeric_limits<size_t>::max());
 
-  //! Copy constructor.
-  LSTM(const LSTM& layer);
+  //! Clone the LSTMType object. This handles polymorphism correctly.
+  LSTMType* Clone() const { return new LSTMType(*this); }
 
-  //! Move constructor.
-  LSTM(LSTM&&);
-
-  //! Copy assignment operator.
-  LSTM& operator=(const LSTM& layer);
-
-  //! Move assignment operator.
-  LSTM& operator=(LSTM&& layer);
+  /**
+   * Reset the layer parameter. The method is called to
+   * assign the allocated memory to the internal learnable parameters.
+   */
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -154,34 +153,30 @@ class LSTM : public Layer<InputType, OutputType>
   size_t& Rho() { return rho; }
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return grad; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return grad; }
-
-  //! Get the number of input units.
-  size_t InSize() const { return inSize; }
-
-  //! Get the number of output units.
-  size_t OutSize() const { return outSize; }
+  //! Get the weight of the layer.
+  OutputType const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  OutputType& Weight() { return weight; }
 
   const size_t WeightSize() const
   {
+    // TODO ...
     return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize);
+  }
+
+  void ComputeOutputDimensions()
+  {
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    // The Linear layer flattens its input.
+    this->outputDimensions[0] = outSize;
   }
 
   /**
@@ -330,6 +325,11 @@ class LSTM : public Layer<InputType, OutputType>
   //! Current backpropagate through time steps.
   size_t bpttSteps;
 }; // class LSTM
+
+// Convenience typedefs.
+
+// Standard LSTM layer.
+typedef LSTMType<arma::mat, arma::mat, NoRegularizer> LSTM;
 
 } // namespace ann
 } // namespace mlpack

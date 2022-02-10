@@ -97,7 +97,7 @@ add_executable(mlpack_test
   range_search_test.cpp
   rbm_network_test.cpp
   rectangle_tree_test.cpp
-#  recurrent_network_test.cpp
+  recurrent_network_test.cpp
 #  rnn_reber_test.cpp
   regularized_svd_test.cpp
 #  reward_clipping_test.cpp

@@ -31,23 +31,27 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of a standard recurrent neural network container.
+ * Defenition of a standard recurrent neural network container.
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
 template<
-  typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization,
-  typename... CustomLayers
->
-class RNN
+    typename OutputLayerType = NegativeLogLikelihood<>,
+    typename InitializationRuleType = RandomInitialization,
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat>
+class RNNType : public FFN<OutputLayerType,
+                           InitializationRuleType,
+                           InputType,
+                           OutputType>
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = RNN<OutputLayerType,
-                          InitializationRuleType,
-                          CustomLayers...>;
+  using NetworkType = RNNType<OutputLayerType,
+                              InitializationRuleType,
+                              InputType,
+                              OutputType>;
 
   /**
    * Create the RNN object.
@@ -58,63 +62,25 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
-   * @param single Predict only the last element of the input sequence.
    * @param outputLayer Output layer used to evaluate the network.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(const size_t rho,
-      const bool single = false,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
+  RNNType(const size_t bpttTruncate = 0,
+          OutputLayerType outputLayer = OutputLayerType(),
+          InitializationRuleType initializeRule = InitializationRuleType());
 
   //! Copy constructor.
-  RNN(const RNN&);
+  RNNType(const RNNType&);
 
   //! Move constructor.
-  RNN(RNN&&);
+  RNNType(RNNType&&);
 
-  //! Copy assignment operator.
-  RNN& operator=(const RNN&);
-
-  //! Move assignment operator
-  RNN& operator=(RNN&&);
-
-  //! Destructor to release allocated memory.
-  ~RNN();
+  //! Copy/move assignment operator.
+  RNNType& operator=(RNNType);
 
   /**
-   * Check if the optimizer has MaxIterations() parameter, if it does
-   * then check if it's value is less than the number of datapoints
-   * in the dataset.
-   *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @param optimizer optimizer used in the training process.
-   * @param samples Number of datapoints in the dataset.
-   */
-  template<typename OptimizerType>
-  typename std::enable_if<
-      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
-  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
-
-  /**
-   * Check if the optimizer has MaxIterations() parameter, if it
-   * doesn't then simply return from the function.
-   *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @param optimizer optimizer used in the training process.
-   * @param samples Number of datapoints in the dataset.
-   */
-  template<typename OptimizerType>
-  typename std::enable_if<
-      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
-  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
-
-  /**
-   * Train the recurrent neural network on the given input data using the given
+   * Train the recurrent network on the given input data using the given
    * optimizer.
    *
    * This will use the existing model parameters as a starting point for the
@@ -123,13 +89,6 @@ class RNN
    *
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
-   *
-   * The format of the data should be as follows:
-   *  - each slice should correspond to a time step
-   *  - each column should correspond to a data point
-   *  - each row should correspond to a dimension
-   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
-   * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.
@@ -141,15 +100,15 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::cube predictors,
-               arma::cube responses,
+  double Train(arma::Cube<typename InputType::elem_type> predictors,
+               arma::Cube<typename InputType::elem_type> responses,
                OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
   /**
-   * Train the recurrent neural network on the given input data. By default, the
-   * SGD optimization algorithm is used, but others can be specified
-   * (such as ens::RMSprop).
+   * Train the recurrent network on the given input data. By default, the
+   * RMSProp optimization algorithm is used, but others can be specified
+   * (such as ens::SGD).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -158,24 +117,17 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
-   * The format of the data should be as follows:
-   *  - each slice should correspond to a time step
-   *  - each column should correspond to a data point
-   *  - each row should correspond to a dimension
-   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
-   * at time slice k.
-   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param responses Outputs results from input training variables.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = ens::StandardSGD, typename... CallbackTypes>
-  double Train(arma::cube predictors,
-               arma::cube responses,
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  double Train(InputType predictors,
+               InputType responses,
                CallbackTypes&&... callbacks);
 
   /**
@@ -186,56 +138,66 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
-   * The format of the data should be as follows:
-   *  - each slice should correspond to a time step
-   *  - each column should correspond to a data point
-   *  - each row should correspond to a dimension
-   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
-   * at time slice k.  The responses will be in the same format.
-   *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
-   * @param batchSize Number of points to predict at once.
+   * @param batchSize Batch size to use for prediction.
    */
-  void Predict(arma::cube predictors,
-               arma::cube& results,
-               const size_t batchSize = 256);
+  void Predict(InputType predictors,
+               OutputType& results,
+               const size_t batchSize = 128);
 
   /**
-   * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.
+   * Evaluate the recurrent network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  template<typename PredictorsType, typename ResponsesType>
+  double Evaluate(const PredictorsType& predictors,
+                  const ResponsesType& responses);
+
+  /**
+   * Evaluate the recurrent network with the given parameters. This function
+   * is usually called by the optimizer to train the model.
+   *
+   * @param parameters Matrix model parameters.
+   */
+  double Evaluate(const OutputType& parameters);
+
+   /**
+   * Evaluate the recurrent network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * Note that the network may return different results depending on the mode it
+   * is in (see `SetNetworkMode()`).
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
    *        evaluation.
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
    */
-  double Evaluate(const arma::mat& parameters,
-                  const size_t begin,
-                  const size_t batchSize,
-                  const bool deterministic);
-
-  /**
-   * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.  This just
-   * calls the other overload of Evaluate() with deterministic = true.
-   *
-   * @param parameters Matrix model parameters.
-   * @param begin Index of the starting point to use for objective function
-   *        evaluation.
-   * @param batchSize Number of points to be passed at a time to use for
-   *        objective function evaluation.
-   */
-  double Evaluate(const arma::mat& parameters,
+  double Evaluate(const OutputType& parameters,
                   const size_t begin,
                   const size_t batchSize);
 
   /**
-   * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.
+   * Evaluate the recurrent network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  double EvaluateWithGradient(const OutputType& parameters,
+                              OutputType& gradient);
+
+   /**
+   * Evaluate the recurrent network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -244,17 +206,15 @@ class RNN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
+  double EvaluateWithGradient(const OutputType& parameters,
                               const size_t begin,
-                              GradType& gradient,
+                              OutputType& gradient,
                               const size_t batchSize);
 
   /**
-   * Evaluate the gradient of the recurrent neural network with the given
-   * parameters, and with respect to only one point in the dataset. This is
-   * useful for optimizers such as SGD, which require a separable objective
-   * function.
+   * Evaluate the gradient of the recurrent network with the given parameters,
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -263,113 +223,202 @@ class RNN
    * @param batchSize Number of points to be processed as a batch for objective
    *        function gradient evaluation.
    */
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const OutputType& parameters,
                 const size_t begin,
-                arma::mat& gradient,
+                OutputType& gradient,
                 const size_t batchSize);
-
-  /**
-   * Shuffle the order of function visitation. This may be called by the
-   * optimizer.
-   */
-  void Shuffle();
-
-  /*
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
-
-  /*
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
-
-  //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return numFunctions; }
-
-  //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; }
-  //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; }
-
-  //! Return the maximum length of backpropagation through time.
-  const size_t& Rho() const { return rho; }
-  //! Modify the maximum length of backpropagation through time.
-  size_t& Rho() { return rho; }
-
-  //! Get the matrix of responses to the input data points.
-  const arma::cube& Responses() const { return responses; }
-  //! Modify the matrix of responses to the input data points.
-  arma::cube& Responses() { return responses; }
-
-  //! Get the matrix of data points (predictors).
-  const arma::cube& Predictors() const { return predictors; }
-  //! Modify the matrix of data points (predictors).
-  arma::cube& Predictors() { return predictors; }
-
-  /**
-   * Reset the state of the network.  This ensures that all internally-held
-   * gradients are set to 0, all memory cells are reset, and the parameters
-   * matrix is the right size.
-   */
-  void Reset();
-
-  /**
-   * Reset the module information (weights/parameters).
-   */
-  void ResetParameters();
 
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
+  /**
+   * Perform the forward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs The input data.
+   * @param results The predicted results.
+   */
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs, ResponsesType& results);
+
+  /**
+   * Perform a partial forward pass of the data.
+   *
+   * This function is meant for the cases when users require a forward pass only
+   * through certain layers and not the entire network.
+   *
+   * @param inputs The input data for the specified first layer.
+   * @param results The predicted results from the specified last layer.
+   * @param begin The index of the first layer.
+   * @param end The index of the last layer.
+   */
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs ,
+               ResponsesType& results,
+               const size_t begin,
+               const size_t end);
+
+  /**
+   * Perform the backward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs Inputs of current pass.
+   * @param targets The training target.
+   * @param gradients Computed gradients.
+   * @return Training error of the current pass.
+   */
+  template<typename PredictorsType,
+           typename TargetsType,
+           typename GradientsType>
+  double Backward(const PredictorsType& inputs,
+                  const TargetsType& targets,
+                  GradientsType& gradients);
+
+
+   /**
+   * Add a new module to the model.
+   *
+   * @param args The layer parameter.
+   */
+  template <class LayerType, class... Args>
+  void Add(Args... args)
+  {
+    network.template Add<LayerType>(args...);
+    inputDimensionsAreSet = false;
+  }
+
+  /**
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  //! TODO: if weights are set in this layer, we should copy them and update our
+  //cached parameters
+  void Add(Layer<InputType, OutputType>* layer)
+  {
+    network.Add(layer);
+    inputDimensionsAreSet = false;
+  }
+
+  //! Get the network model.
+  const std::vector<Layer<InputType, OutputType>*>& Network() const
+  {
+    return network.Network();
+  }
+
+  /**
+   * Modify the network model.  Be careful!  If you change the structure of the
+   * network or parameters for layers, its state may become invalid, so be sure
+   * to call ResetParameters() afterwards.  Don't add any layers like this; use
+   * `Add()` instead.
+   */
+  std::vector<Layer<InputType, OutputType>*>& Network()
+  {
+    return network.Network();
+  }
+
+  /**
+   * Set the logical dimensions of the input.
+   *
+   * TODO: better comment.  You would call this when you want to, e.g., pass an
+   * n-dimensional tensor, so that you can specify each of those n dimensions.
+   */
+  // Note: we don't need to invalidate any caches, because any forward pass will
+  // already check if the input dimensions have changed.
+  std::vector<size_t>& InputDimensions() { return inputDimensions; }
+  //! Get the logical dimensions of the input.
+  const std::vector<size_t>& InputDimensions() const
+  {
+    // The user may change the input dimensions, so we will have to propagate
+    // these changes to the network.
+    inputDimensionsAreSet = false;
+    return inputDimensions;
+  }
+
+  /**
+   * Set all the layers in the network to training mode, if `training` is
+   * `true`, or set all the layers in the network to testing mode, if `training`
+   * is `false`.
+   */
+  void SetNetworkMode(const bool training);
+
+    //! Return the number of separable functions (the number of predictor points).
+  size_t NumFunctions() const { return responses.n_slices; }
+
+  //! Return the initial point for the optimization.
+  const OutputType& Parameters() const { return parameters; }
+  //! Modify the initial point for the optimization.
+  OutputType& Parameters() { return parameters; }
+
+  //! Get the matrix of responses to the input data points.
+  const InputType& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  InputType& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+  const InputType& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  InputType& Predictors() { return predictors; }
+
  private:
   // Helper functions.
+
   /**
-   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
-   * forward probabilities for each module.
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
    *
-   * @param input Data sequence to compute probabilities for.
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input data variables.
    */
-  template<typename InputType>
-  void Forward(const InputType& input);
+  void ResetData(arma::Cube<typename InputType::elem_type> predictors,
+                 arma::Cube<typename InputType::elem_type> responses);
+
+  //! Use the InitializationPolicy to initialize all the weights in the network.
+  void InitializeWeights();
+
+  //! Make the memory of each layer point to the right place, by calling
+  //! SetWeightPtr() on each layer.
+  void SetLayerMemory();
 
   /**
-   * Reset the state of RNN cells in the network for new input sequence.
+   * Ensure that all the locally-cached information about the network is valid,
+   * all parameter memory is initialized, and we can make forward and backward
+   * passes.
+   *
+   * @param functionName Name of function to use if an exception is thrown.
+   * @param inputDimensionality Given dimensionality of the input data.
+   * @param setMode If true, the mode of the network will be set to the
+   *     parameter given in `training`.  Otherwise the mode of the network is
+   *     left unmodified.
+   * @param training Mode to set the network to; `true` indicates the network
+   *     should be set to training mode; `false` indicates testing mode.
    */
-  void ResetCells();
+  void CheckNetwork(const std::string& functionName,
+                    const size_t inputDimensionality,
+                    const bool setMode = false,
+                    const bool training = false);
 
   /**
-   * The Backward algorithm (part of the Forward-Backward algorithm). Computes
-   * backward pass for module.
+   * Set the input and output dimensions of each layer in the network correctly.
+   * The size of the input is taken, in case `inputDimensions` has not been set
+   * otherwise (e.g. via `InputDimensions()`).
    */
-  void Backward();
+  void UpdateDimensions(const std::string& functionName,
+                        const size_t inputDimensionality);
 
   /**
-   * Iterate through all layer modules and update the the gradient using the
-   * layer defined optimizer.
+   * Swap the content of this network with given network.
+   *
+   * @param network Desired source network.
    */
-  template<typename InputType>
-  void Gradient(const InputType& input);
-
-  /**
-   * Reset the module status by setting the current deterministic parameter
-   * for all modules that implement the Deterministic function.
-   */
-  void ResetDeterministic();
-
-  /**
-   * Reset the gradient for all modules that implement the Gradient function.
-   */
-  void ResetGradients(arma::mat& gradient);
-
-  //! Number of steps to backpropagate through time (BPTT).
-  size_t rho;
+  void Swap(RNNType& network);
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
@@ -378,76 +427,56 @@ class RNN
   //! parameter.
   InitializationRuleType initializeRule;
 
-  //! The input size.
-  size_t inputSize;
+  //! All of the network is stored inside this multilayer.
+  MultiLayer<InputType, OutputType> network;
 
-  //! The output size.
-  size_t outputSize;
+  /**
+   * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
+   * and each layer's `parameters` member is an alias pointing to parameters in
+   * this matrix.
+   *
+   * Note: although each layer may have its own InputType and OutputType,
+   * ensmallen optimization requires everything to be stored in one matrix
+   * object, so we have chosen OutputType.  This could be made more flexible
+   * with a "wrapper" class implementing the Armadillo API.
+   */
+  OutputType parameters;
 
-  //! The target size.
-  size_t targetSize;
+  //! Dimensions of input data.
+  std::vector<size_t> inputDimensions;
 
-  //! Indicator if we already trained the model.
-  bool reset;
+  //! The matrix of data points (predictors).  This member is empty, except
+  //! during training---we must store a local copy of the training data since
+  //! the ensmallen optimizer will not provide training data.
+  arma::Cube<typename InputType::elem_type> predictors;
 
-    //! Only predict the last element of the input sequence.
-  bool single;
-
-  //! Locally-stored model modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
-
-  //! The matrix of data points (predictors).
-  arma::cube predictors;
-
-  //! The matrix of responses to the input data points.
-  arma::cube responses;
-
-  //! Matrix of (trained) parameters.
-  arma::mat parameter;
-
-  //! The number of separable functions (the number of predictor points).
-  size_t numFunctions;
+  //! The matrix of responses to the input data points.  This member is empty,
+  //! except during training.
+  arma::Cube<typename InputType::elem_type> responses;
 
   //! The current error for the backward pass.
-  arma::mat error;
-
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! List of all module parameters for the backward pass (BBTT).
-  std::vector<arma::mat> moduleOutputParameter;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
-
-  //! Locally-stored reset visitor.
-  ResetVisitor resetVisitor;
-
-  //! Locally-stored delete visitor.
-  DeleteVisitor deleteVisitor;
+  OutputType networkOutput;
+  OutputType networkDelta;
+  OutputType error;
 
   //! The current evaluation mode (training or testing).
-  bool deterministic;
+  bool training;
 
-  //! The current gradient for the gradient pass.
-  arma::mat currentGradient;
+  //! If true, each layer has its memory properly set for a forward/backward
+  //! pass.
+  bool layerMemoryIsSet;
 
-  // The BRN class should have access to internal members.
-  template<
-    typename OutputLayerType1,
-    typename MergeLayerType1,
-    typename MergeOutputType1,
-    typename InitializationRuleType1,
-    typename... CustomLayers1
-  >
-  friend class BRNN;
-}; // class RNN
+  //! If true, each layer has its inputDimensions properly set, and
+  //! `totalInputSize` and `totalOutputSize` are valid.
+  bool inputDimensionsAreSet;
+}; // class RNNType
+
+// Convenience typedefs.
+
+/**
+ * Standard Sigmoid-Layer using the logistic activation function.
+ */
+using RNN = RNNType<>;
 
 } // namespace ann
 } // namespace mlpack

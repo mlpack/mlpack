@@ -19,6 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
+<<<<<<< Updated upstream
 LSTM<InputType, OutputType>::LSTM()
 {
   // Nothing to do here.
@@ -58,10 +59,14 @@ LSTM<InputType, OutputType>::LSTM(
     gradientStepIdx(std::move(layer.gradientStepIdx)),
     rhoSize(std::move(layer.rho)),
     bpttSteps(std::move(layer.bpttSteps))
+=======
+LSTMType<InputType, OutputType>::LSTMType()
+>>>>>>> Stashed changes
 {
   // Nothing to do here.
 }
 
+<<<<<<< Updated upstream
 template <typename InputType, typename OutputType>
 LSTM<InputType, OutputType>&
 LSTM<InputType, OutputType>::operator=(const LSTM& layer)
@@ -128,6 +133,10 @@ LSTM<InputType, OutputType>::LSTM(
 
 template<typename InputType, typename OutputType>
 void LSTM<InputType, OutputType>::ResetCell(const size_t size)
+=======
+template<typename InputType, typename OutputType>
+void LSTMType<InputType, OutputType>::ResetCell(const size_t size)
+>>>>>>> Stashed changes
 {
   if (size == std::numeric_limits<size_t>::max())
     return;
@@ -233,7 +242,11 @@ void LSTM<InputType, OutputType>::Reset()
 
 // Forward when cellState is not needed.
 template<typename InputType, typename OutputType>
+<<<<<<< Updated upstream
 void LSTM<InputType, OutputType>::Forward(
+=======
+void LSTMType<InputDataType, OutputDataType>::Forward(
+>>>>>>> Stashed changes
     const InputType& input, OutputType& output)
 {
   //! Locally-stored cellState.
@@ -243,10 +256,17 @@ void LSTM<InputType, OutputType>::Forward(
 
 // Forward when cellState is needed overloaded LSTM::Forward().
 template<typename InputType, typename OutputType>
+<<<<<<< Updated upstream
 void LSTM<InputType, OutputType>::Forward(const InputType& input,
                                           OutputType& output,
                                           OutputType& cellState,
                                           bool useCellState)
+=======
+void LSTMType<InputType, OutputType>::Forward(const InputType& input,
+                                                  OutputType& output,
+                                                  OutputType& cellState,
+                                                  bool useCellState)
+>>>>>>> Stashed changes
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -356,7 +376,11 @@ void LSTM<InputType, OutputType>::Forward(const InputType& input,
 }
 
 template<typename InputType, typename OutputType>
+<<<<<<< Updated upstream
 void LSTM<InputType, OutputType>::Backward(
+=======
+void LSTMType<InputType, OutputType>::Backward(
+>>>>>>> Stashed changes
   const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   OutputType gyLocal;
@@ -367,8 +391,13 @@ void LSTM<InputType, OutputType>::Backward(
   else
   {
     // Make an alias.
+<<<<<<< Updated upstream
     gyLocal = OutputType(((OutputType&) gy).memptr(), gy.n_rows, gy.n_cols,
         false, false);
+=======
+    gyLocal = ErrorType(((OutputType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
+        false);
+>>>>>>> Stashed changes
   }
 
   outputGateError =
@@ -433,7 +462,11 @@ void LSTM<InputType, OutputType>::Backward(
 }
 
 template<typename InputType, typename OutputType>
+<<<<<<< Updated upstream
 void LSTM<InputType, OutputType>::Gradient(
+=======
+void LSTMType<InputType, OutputType>::Gradient(
+>>>>>>> Stashed changes
     const InputType& input,
     const OutputType& /* error */,
     OutputType& gradient)
@@ -534,7 +567,11 @@ void LSTM<InputType, OutputType>::Gradient(
 
 template<typename InputType, typename OutputType>
 template<typename Archive>
+<<<<<<< Updated upstream
 void LSTM<InputType, OutputType>::serialize(
+=======
+void LSTMType<InputType, OutputType>::serialize(
+>>>>>>> Stashed changes
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
