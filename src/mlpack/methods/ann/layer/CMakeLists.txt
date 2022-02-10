@@ -6,8 +6,6 @@ set(SOURCES
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   base_layer.hpp
-  bicubic_interpolation.hpp
-  bicubic_interpolation_impl.hpp
   concatenate.hpp
   concatenate_impl.hpp
   convolution.hpp
@@ -16,12 +14,9 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
-  flatten_t_swish.hpp
-  flatten_t_swish_impl.hpp
   highway.hpp
   highway_impl.hpp
   layer.hpp
-  layer_traits.hpp
   layer_types.hpp
   leaky_relu.hpp
   leaky_relu_impl.hpp
