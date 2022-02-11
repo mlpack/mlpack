@@ -325,8 +325,8 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, input3, output, target1, target2, target3;
-  BCELoss<> module1(1e-6, false);
-  BCELoss<> module2(1e-6, true);
+  BCELoss<> module1(1e-6, true);
+  BCELoss<> module2(1e-6, false);
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
