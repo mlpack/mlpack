@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 SigmoidCrossEntropyError<InputDataType, OutputDataType>
-::SigmoidCrossEntropyError()
+::SigmoidCrossEntropyError(const bool reduction): reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -42,7 +42,13 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
         std::log(1 + std::exp(-std::abs(prediction[i])));
   }
 
-  return maximum - arma::accu(prediction % target);
+  ElemType lossSum = 
+    maximum - arma::accu(prediction % target);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -53,15 +59,18 @@ inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
     LossType& loss)
 {
   loss = 1.0 / (1.0 + arma::exp(-prediction)) - target;
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void SigmoidCrossEntropyError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar ,
     const uint32_t /* version */)
 {
-  // Nothing to do here
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
