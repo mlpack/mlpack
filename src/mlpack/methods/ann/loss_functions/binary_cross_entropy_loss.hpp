@@ -38,8 +38,12 @@ class BCELoss
    *
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
-   * @param reduction Reduction type. If true, it returns the mean of 
-   *                  the loss. Else, it returns the sum.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
   BCELoss(const double eps = 1e-10, const bool reduction = true);
 
@@ -77,9 +81,9 @@ class BCELoss
   //! Modify the epsilon.
   double& Eps() { return eps; }
 
-  //! Get the reduction.
+  //! Get the type of reduction used.
   bool Reduction() const { return reduction; }
-  //! Set the reduction.
+  //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
 
   /**
@@ -95,7 +99,8 @@ class BCELoss
   //! The minimum value used for computing logarithms and denominators
   double eps;
 
-  //! Reduction type. If true, performs mean of loss else sum.
+  //! Boolean value that tells if reduction 
+  //  is 'sum' or 'mean'.
   bool reduction;
 }; // class BCELoss
 

@@ -34,11 +34,13 @@ BCELoss<InputDataType, OutputDataType>::Forward(
 {
   typedef typename PredictionType::elem_type ElemType;
 
-  ElemType loss = -arma::accu(target % arma::log(prediction + eps) +
+  ElemType lossSum = -arma::accu(target % arma::log(prediction + eps) +
       (1. - target) % arma::log(1. - prediction + eps));
+
   if (reduction)
-    loss /= prediction.n_elem;
-  return loss;
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -49,7 +51,8 @@ void BCELoss<InputDataType, OutputDataType>::Backward(
     LossType& loss)
 {
   loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
-  if (reduction)
+
+  if (!reduction)
     loss /= prediction.n_elem;
 }
 
@@ -60,6 +63,7 @@ void BCELoss<InputDataType, OutputDataType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
