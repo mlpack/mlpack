@@ -45,6 +45,7 @@ add_executable(mlpack_test
   hmm_test.cpp
   hpt_test.cpp
   hoeffding_tree_test.cpp
+  holt_winters_test.cpp
   hyperplane_test.cpp
   image_load_test.cpp
   imputation_test.cpp
@@ -153,6 +154,7 @@ add_executable(mlpack_test
   main_tests/hmm_train_test.cpp
   main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
+  main_tests/holt_winters_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
