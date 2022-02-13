@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
 #undef BINDING_NAME
 #endif
-#define BINDING_NAME holt_winters_model
+#define BINDING_NAME holt_winters
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "holt_winters.hpp"
@@ -42,10 +42,11 @@ BINDING_LONG_DESC(
 	"also known as the 'Triple Exponential Smoothing Model'."
 	"\n\n"
 	"This program takes input data (specified with the " +
-	PRINT_PARAM_STRING("input") + " parameter) and makes  predictions '" +
-	PRINT_PARAM_STRING("numberOfForcasts") + "' predictions according to the " 
-	"method specified by" + PRINT_PARAM_STRING("method") + "('A' for Additive and "
-	"'M' for Multiplicative) and smoothing paramaters either "
+	PRINT_PARAM_STRING("input") + " parameter). The last coloumn is taken as the "
+	"time series. The model then makes  '" + PRINT_PARAM_STRING("numberOfForcasts") + 
+	"' predictions according to the mmethod specified by" + 
+	PRINT_PARAM_STRING("method") + "('M' for Multiplicative and "
+	"'A' or anything else for Additive) and smoothing paramaters either "
 	"trained or specified by " + PRINT_PARAM_STRING("alpha") + ", " +
 	PRINT_PARAM_STRING("beta") + ", " + PRINT_PARAM_STRING("gamma") + "."
 	"\n\n"
@@ -70,7 +71,7 @@ BINDING_SEE_ALSO("Holt Winters Model on Wikipedia",
 	"https://en.wikipedia.org/wiki/Exponential_smoothing");
 
 // Parameters for program.
-PARAM_ROW_IN_REQ("input", "Input dataset.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
 PARAM_STRING_IN("method",
 	"The method going to be used to predict (either 'A' or 'M')", "m", "A");
 PARAM_INT_IN_REQ("period", "The seasonal period of the input time series", "p");
@@ -90,25 +91,32 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
 	// Load input dataset.
 	arma::mat dataset = std::move(params.Get<arma::mat>("input"));
+	arma::Row<double> timeSeries = dataset.col(dataset.n_cols - 1).t();
 	double alpha = params.Get<double>("alpha");
 	double beta = params.Get<double>("beta");
 	double gamma = params.Get<double>("gamma");
 	size_t period = (size_t) params.Get<int>("period");
 	size_t H = (size_t) params.Get<int>("numberOfForcasts");
-	char method = params.get<std::string>("method")[0];
+	char method = params.Get<std::string>("method")[0];
 
 
 	// Issue a warning if the user did not specify an output file.
 	RequireAtLeastOnePassed(params, { "output" }, false,
 		"no output will be saved");
 
-	arma::Row<double> predictions(dataset.n_elem + H);
+	arma::Row<double> predictions(dataset.n_rows + H);
 
 	// Making the predictions.
-
-	HoltWintersModel model<method>(dataset, period, alpha, beta, gamma);
-	model.Predict(predictions, H);
-
+	if (method == 'M')
+	{
+		HoltWintersModel<'M'>model(timeSeries, period, alpha, beta, gamma);
+		model.Predict(predictions, H);
+	}
+	else
+	{
+		HoltWintersModel<'A'>model(timeSeries, period, alpha, beta, gamma);
+		model.Predict(predictions, H);
+	}
 	// Save predictions, if desired.
 	if (params.Has("output"))
 	{
