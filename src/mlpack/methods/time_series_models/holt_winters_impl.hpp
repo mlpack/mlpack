@@ -126,7 +126,7 @@ void  HoltWintersModel<method, DataType>::Predict(
     double alpha,
     double beta,
     double gamma,
-    size_t H = 0)
+    size_t H)
 {
     //Constructing the vectors that will store the 
     //level, trend and seasonal esitimates
@@ -166,7 +166,7 @@ void  HoltWintersModel<method, DataType>::Predict(
     double alpha,
     double beta,
     double gamma,
-    size_t H = 0)
+    size_t H)
 {
     //Constructing the vectors that will store the 
     //level, trend and seasonal esitimates

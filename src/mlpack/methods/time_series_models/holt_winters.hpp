@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_TIME_SERIES_MODELS_HOLT_WINTERS_MODEL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ts /* Time Series methods. */ {
