@@ -43,7 +43,7 @@ BINDING_LONG_DESC(
 	"\n\n"
 	"This program takes input data (specified with the " +
 	PRINT_PARAM_STRING("input") + " parameter). The last coloumn is taken as the "
-	"time series. The model then makes  '" + PRINT_PARAM_STRING("numberOfForcasts") + 
+	"time series. The model then makes  '" + PRINT_PARAM_STRING("numberOfForecasts") + 
 	"' predictions according to the mmethod specified by" + 
 	PRINT_PARAM_STRING("method") + "('M' for Multiplicative and "
 	"'A' or anything else for Additive) and smoothing paramaters either "
@@ -69,6 +69,8 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("Holt Winters Model on Wikipedia",
 	"https://en.wikipedia.org/wiki/Exponential_smoothing");
+BINDING_SEE_ALSO("Post about Holt Winters Model methods and initialization",
+	"https://robjhyndman.com/hyndsight/hw-initialization/");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
@@ -84,7 +86,7 @@ PARAM_DOUBLE_IN("gamma", "The seasonal smoothing parameter.", "g",
 
 PARAM_ROW_OUT("output", "Vector to save the predictions to.", "o");
 
-PARAM_INT_IN_REQ("numberOfForcasts", "The number of forecasts into the future", "h");
+PARAM_INT_IN_REQ("numberOfForecasts", "The number of forecasts into the future", "h");
 
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
@@ -96,7 +98,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 	double beta = params.Get<double>("beta");
 	double gamma = params.Get<double>("gamma");
 	size_t period = (size_t) params.Get<int>("period");
-	size_t H = (size_t) params.Get<int>("numberOfForcasts");
+	size_t H = (size_t) params.Get<int>("numberOfForecasts");
 	char method = params.Get<std::string>("method")[0];
 
 

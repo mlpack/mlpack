@@ -34,7 +34,7 @@ TEST_CASE("MultiplicativeMethodTest", "[HoltWintersModelTest]")
 	model.Predict(predictions, 0);
 
 	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) - labels(i) == Approx(0.0).margin(0.0005));
+		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
 }
 
 /**
@@ -54,7 +54,7 @@ TEST_CASE("AdditiveMethodTest", "[HoltWintersModelTest]")
 	model.Predict(predictions, 0);
 
 	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) - labels(i) == Approx(0.0).margin(0.0005));
+		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
 }
 /**
  * Checks predictions using the multiplicative method with a trained model.
@@ -74,7 +74,7 @@ TEST_CASE("TrainedMultiplicativeModelPredictionTest", "[HoltWintersModelTest]")
 	model.Predict(predictions, 0);
 
 	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) - labels(i) == Approx(0.0).margin(0.0005));
+		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
 }
 
 /**
@@ -95,5 +95,5 @@ TEST_CASE("TrainedAdditiveModelPredictionTest", "[HoltWintersModelTest]")
 	model.Predict(predictions, 0);
 
 	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) - labels(i) == Approx(0.0).margin(0.0005));
+		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
 }
