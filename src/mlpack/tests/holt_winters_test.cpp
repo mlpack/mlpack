@@ -22,19 +22,21 @@ using namespace mlpack::ts;
  */
 TEST_CASE("MultiplicativeMethodTest", "[HoltWintersModelTest]")
 {
-	arma::Row<size_t> input("10 14 8 25 16 22 14 35 15 27 18 40 28 40 25 65");
+	arma::Row<double> input("10.0 14.0 8.0 25.0 16.0 22.0 14.0 35.0 \
+		15.0 27.0 18.0 40.0 28.0 40.0 25.0 65.0");
 
-	arma::Row<double> predictions(10);
+	arma::Row<double> predictions(input.n_elem);
 
-	arma::Row<double> labels("2.68125 4.82362689 3.508499 5.57006575 \
-		4.49598037 6.53427619 5.48237865 7.52714329");
+	arma::Row<double> labels("19.4863219 25.2905334 15.7103141 \
+		37.5441898 14.7947244 28.6527549 20.1099415 42.474688 \
+		31.2796483 43.0564249 26.7261166 71.0462546");
 
-	HoltWintersModel<'M', arma::Row<size_t>> model(input, 2);
+	HoltWintersModel<'M', arma::Row<double>> model(input, 4);
 
 	model.Predict(predictions, 0);
 
-	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
+	for (size_t i = 0; i < labels.n_elem; ++i)
+		REQUIRE(predictions(i+4) == Approx(labels(i)).margin(0.0005));
 }
 
 /**
@@ -42,39 +44,43 @@ TEST_CASE("MultiplicativeMethodTest", "[HoltWintersModelTest]")
  */
 TEST_CASE("AdditiveMethodTest", "[HoltWintersModelTest]")
 {
-	arma::Row<size_t> input("10 14 8 25 16 22 14 35 15 27 18 40 28 40 25 65");
+	arma::Row<double> input("10.0 14.0 8.0 25.0 16.0 22.0 14.0 35.0 \
+		15.0 27.0 18.0 40.0 28.0 40.0 25.0 65.0");
 
-	arma::Row<double> predictions(10);
+	arma::Row<double> predictions(input.n_elem);
 
-	arma::Row<double> labels("2.625 4.53125 3.5390625 5.51757812 \
-		4.51416016 6.50793457 5.50552368 7.50336456");
+	arma::Row<double> labels("18.90625 25.1953125 16.0410156 36.9536133 \
+		14.6558838 27.9641418 19.3489151 41.9206257 31.0658631 43.440116 \
+		26.7006356 70.5288205");
 
-	HoltWintersModel<'A', arma::Row<size_t>> model(input, 2);
+	HoltWintersModel<'A', arma::Row<double>> model(input, 4);
 
 	model.Predict(predictions, 0);
 
-	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
+
+	for (size_t i = 0; i < labels.n_elem; ++i)
+		REQUIRE(predictions(i + 4) == Approx(labels(i)).margin(0.0005));
 }
 /**
  * Checks predictions using the multiplicative method with a trained model.
  */
 TEST_CASE("TrainedMultiplicativeModelPredictionTest", "[HoltWintersModelTest]")
 {
-	arma::Row<size_t> input("1 3 1 3 1 3 1 3 1 3");
+	arma::Row<double> input("1.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0");
 
-	arma::Row<double> predictions(10);
+	arma::Row<double> predictions(input.n_elem);
 
-	arma::Row<double> labels("1 3 1 3 1 3 1 3");
+	arma::Row<double> labels("1.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0");
 
-	HoltWintersModel<'M', arma::Row<size_t>> model(input, 2);
+	HoltWintersModel<'M', arma::Row<double>> model(input, 2);
 
 	model.Train();
 
 	model.Predict(predictions, 0);
 
-	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
+
+	for (size_t i = 0; i < labels.n_elem; ++i)
+		REQUIRE(predictions(i + 2) == Approx(labels(i)).margin(0.0005));
 }
 
 /**
@@ -82,18 +88,18 @@ TEST_CASE("TrainedMultiplicativeModelPredictionTest", "[HoltWintersModelTest]")
  */
 TEST_CASE("TrainedAdditiveModelPredictionTest", "[HoltWintersModelTest]")
 {
-	arma::Row<size_t> input("1 3 1 3 1 3 1 3 1 3");
+	arma::Row<double> input("1.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0");
 
-	arma::Row<double> predictions(10);
+	arma::Row<double> predictions(input.n_elem);
 
-	arma::Row<double> labels("1 3 1 3 1 3 1 3");
+	arma::Row<double> labels("1.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0");
 
-	HoltWintersModel<'A', arma::Row<size_t>> model(input, 2);
+	HoltWintersModel<'A', arma::Row<double>> model(input, 2);
 
 	model.Train();
 
 	model.Predict(predictions, 0);
 
-	for (size_t i = 2; i < predictions.n_elem; ++i)
-		REQUIRE(predictions(i) == Approx(labels(i)).margin(0.0005));
+	for (size_t i = 0; i < labels.n_elem; ++i)
+		REQUIRE(predictions(i + 2) == Approx(labels(i)).margin(0.0005));
 }
