@@ -23,7 +23,6 @@
 #include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
-#include <mlpack/methods/ann/layer/highway.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/linear.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
@@ -33,7 +32,6 @@
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
-#include <mlpack/methods/ann/layer/reparametrization.hpp>
 
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>

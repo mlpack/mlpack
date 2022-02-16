@@ -434,8 +434,7 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
       target = arma::randu(2, 1);
 
       model = new FFN<MeanSquaredError<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer<>>();
       model->Add<LinearType<>>(2);
       model->Add<SigmoidLayer<>>();
@@ -477,8 +476,7 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
       target = arma::randu(2, 1);
 
       model = new FFN<ReconstructionLoss<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer<>>();
       model->Add<LinearType<>>(2);
       model->Add<SigmoidLayer<>>();

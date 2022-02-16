@@ -154,6 +154,20 @@ void NoisyLinearType<InputType, OutputType>::Gradient(
 }
 
 template<typename InputType, typename OutputType>
+void NoisyLinearType<InputType, OutputType>::ComputeOutputDimensions()
+{
+  inSize = this->inputDimensions[0];
+  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+      inSize *= this->inputDimensions[i];
+
+  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+      1);
+
+  // The NoisyLinear layer flattens its output.
+  this->outputDimensions[0] = outSize;
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void NoisyLinearType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)

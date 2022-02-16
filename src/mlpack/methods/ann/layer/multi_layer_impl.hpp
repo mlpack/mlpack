@@ -120,7 +120,6 @@ MultiLayer<InputType, OutputType>::operator=(MultiLayer&& other)
     totalInputSize = std::move(other.totalInputSize);
     totalOutputSize = std::move(other.totalOutputSize);
 
-    // TODO: network ownerships??
     network = std::move(other.network);
 
     layerOutputs.resize(network.size(), OutputType());
@@ -229,6 +228,188 @@ void MultiLayer<InputType, OutputType>::Gradient(
   else
   {
     // Nothing to do if the network is empty... there is no gradient.
+  }
+}
+
+template<typename InputType, typename OutputType>
+void MultiLayer<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
+{
+  size_t start = 0;
+  const size_t totalWeightSize = WeightSize();
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    const size_t weightSize = network[i]->WeightSize();
+
+    // Sanity check: ensure we aren't passing memory past the end of the
+    // parameters.
+    Log::Assert(start + weightSize <= totalWeightSize,
+        "FNN::SetLayerMemory(): parameter size does not match total layer "
+        "weight size!");
+
+    network[i]->SetWeights(weightsPtr + start);
+    start += weightSize;
+  }
+
+  // Technically this check should be unnecessary, but there's nothing wrong
+  // with a little paranoia...
+  Log::Assert(start == totalWeightSize,
+      "FNN::SetLayerMemory(): total layer weight size does not match parameter "
+      "size!");
+}
+
+template<typename InputType, typename OutputType>
+size_t MultiLayer<InputType, OutputType>::WeightSize() const
+{
+  // Sum the weights in each layer.
+  size_t total = 0;
+  for (size_t i = 0; i < network.size(); ++i)
+    total += network[i]->WeightSize();
+  return total;
+}
+
+template<typename InputType, typename OutputType>
+void MultiLayer<InputType, OutputType>::ComputeOutputDimensions()
+{
+  inSize = 0;
+  totalInputSize = 0;
+  totalOutputSize = 0;
+
+  // Propagate the input dimensions forward to the output.
+  network.front()->InputDimensions() = this->inputDimensions;
+  inSize = this->inputDimensions[0];
+  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+    inSize *= this->inputDimensions[i];
+  totalInputSize += inSize;
+
+  for (size_t i = 1; i < network.size(); ++i)
+  {
+    network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
+    size_t layerInputSize = network[i]->InputDimensions()[0];
+    for (size_t j = 1; j < network[i]->InputDimensions().size(); ++j)
+      layerInputSize *= network[i]->InputDimensions()[j];
+
+    totalInputSize += layerInputSize;
+    totalOutputSize += layerInputSize;
+  }
+
+  size_t lastLayerSize = network.back()->OutputDimensions()[0];
+  for (size_t i = 1; i < network.back()->OutputDimensions().size(); ++i)
+    lastLayerSize *= network.back()->OutputDimensions()[i];
+
+  totalOutputSize += lastLayerSize;
+  this->outputDimensions = network.back()->OutputDimensions();
+}
+
+template<typename InputType, typename OutputType>
+double MultiLayer<InputType, OutputType>::Loss() const
+{
+  double loss = 0.0;
+  for (size_t i = 0; i < network.size(); ++i)
+    loss += network[i]->Loss();
+
+  return loss;
+}
+
+template<typename InputType, typename OutputType>
+template<typename Archive>
+void MultiLayer<InputType, OutputType>::serialize(
+    Archive& ar, const uint32_t /* version */)
+{
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
+  ar(CEREAL_VECTOR_POINTER(network));
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(totalInputSize));
+  ar(CEREAL_NVP(totalOutputSize));
+
+  if (Archive::is_loading::value)
+  {
+    layerOutputMatrix.clear();
+    layerDeltaMatrix.clear();
+    layerGradients.clear();
+    layerOutputs.resize(network.size(), OutputType());
+    layerDeltas.resize(network.size(), OutputType());
+    layerGradients.resize(network.size(), OutputType());
+  }
+}
+
+template<typename InputType, typename OutputType>
+void MultiLayer<InputType, OutputType>::InitializeForwardPassMemory(
+    const size_t batchSize)
+{
+  // We need to initialize memory to store the output of each layer's Forward()
+  // call.  We'll do this all in one matrix, but, the size of this matrix
+  // depends on the batch size we are using for computation.  We avoid resizing
+  // layerOutputMatrix down, unless we only need 10% or less of it.
+  if (batchSize * totalOutputSize > layerOutputMatrix.n_elem ||
+      batchSize * totalOutputSize <
+          std::floor(0.1 * layerOutputMatrix.n_elem))
+  {
+    // All outputs will be represented by one big block of memory.
+    layerOutputMatrix = OutputType(1, batchSize * totalOutputSize);
+  }
+
+  // Now, create an alias to the right place for each layer.  We assume that
+  // layerOutputs is already sized correctly (this should be done by Add()).
+  size_t start = 0;
+  for (size_t i = 0; i < layerOutputs.size(); ++i)
+  {
+    const size_t layerOutputSize = network[i]->OutputSize();
+    MakeAlias(layerOutputs[i], layerOutputMatrix.colptr(start),
+        layerOutputSize, batchSize);
+    start += batchSize * layerOutputSize;
+  }
+}
+
+template<typename InputType, typename OutputType>
+void MultiLayer<InputType, OutputType>::InitializeBackwardPassMemory(
+    const size_t batchSize)
+{
+  // We need to initialize memory to store the output of each layer's Backward()
+  // call.  We do this similarly to InitializeForwardPassMemory(), but we must
+  // store a matrix to use as the delta for each layer.
+  if (batchSize * totalInputSize > layerDeltaMatrix.n_elem ||
+      batchSize * totalInputSize < std::floor(0.1 * layerDeltaMatrix.n_elem))
+  {
+    // All deltas will be represented by one big block of memory.
+    layerDeltaMatrix = OutputType(1, batchSize * totalInputSize);
+  }
+
+  // Now, create an alias to the right place for each layer.  We assume that
+  // layerDeltas is already sized correctly (this should be done by Add()).
+  size_t start = 0;
+  for (size_t i = 0; i < layerDeltas.size(); ++i)
+  {
+    size_t layerInputSize = 1;
+    if (i == 0)
+    {
+      for (size_t j = 0; j < this->inputDimensions.size(); ++j)
+        layerInputSize *= this->inputDimensions[j];
+    }
+    else
+    {
+      layerInputSize = network[i - 1]->OutputSize();
+    }
+    MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
+        batchSize);
+    start += batchSize * layerInputSize;
+  }
+}
+
+template<typename InputType, typename OutputType>
+void MultiLayer<InputType, OutputType>::InitializeGradientPassMemory(
+    OutputType& gradient)
+{
+  // We need to initialize memory to store the gradients of each layer.  To do
+  // this, we need to know the weight size of each layer.
+  size_t gradientStart = 0;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    const size_t weightSize = network[i]->WeightSize();
+    MakeAlias(layerGradients[i], gradient.memptr() + gradientStart,
+        weightSize, 1);
+    gradientStart += weightSize;
   }
 }
 

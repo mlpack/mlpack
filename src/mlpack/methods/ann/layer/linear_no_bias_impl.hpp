@@ -131,6 +131,21 @@ void LinearNoBiasType<InputType, OutputType, RegularizerType>::Gradient(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
+void LinearNoBiasType<
+    InputType, OutputType, RegularizerType
+>::ComputeOutputDimensions()
+{
+  inSize = this->inputDimensions[0];
+  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+    inSize *= this->inputDimensions[i];
+
+  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+      1);
+
+  this->outputDimensions[0] = outSize;
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
 template<typename Archive>
 void LinearNoBiasType<InputType, OutputType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)

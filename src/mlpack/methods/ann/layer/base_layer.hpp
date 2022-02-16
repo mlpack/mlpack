@@ -89,8 +89,7 @@ class BaseLayer : public Layer<InputType, OutputType>
   BaseLayer* Clone() const { return new BaseLayer(*this); }
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
+   * Forward pass: apply the activation to the inputs.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -101,9 +100,8 @@ class BaseLayer : public Layer<InputType, OutputType>
   }
 
   /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
+   * Backward pass: compute the function f(x) by propagating x backwards through
+   * f, using the results from the forward pass.
    *
    * @param input The propagated input activation.
    * @param gy The backpropagated error.

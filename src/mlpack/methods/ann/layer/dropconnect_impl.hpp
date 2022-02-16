@@ -153,6 +153,21 @@ void DropConnectType<InputType, OutputType>::Gradient(
 }
 
 template<typename InputType, typename OutputType>
+void DropConnectType<InputType, OutputType>::ComputeOutputDimensions()
+{
+  // Propagate input dimensions to the base layer.
+  baseLayer->InputDimensions() = this->inputDimensions;
+  this->outputDimensions = baseLayer->OutputDimensions();
+}
+
+template<typename InputType, typename OutputType>
+void DropConnectType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
+{
+  baseLayer->SetWeights(weightsPtr);
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void DropConnectType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)

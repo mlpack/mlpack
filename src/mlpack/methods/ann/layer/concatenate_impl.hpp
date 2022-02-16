@@ -96,6 +96,32 @@ void ConcatenateType<InputType, OutputType>::Backward(
   g = gy.submat(0, 0, gy.n_rows - 1 - concat.n_elem, gy.n_cols - 1);
 }
 
+template<typename InputType, typename OutputType>
+void ConcatenateType<InputType, OutputType>::ComputeOutputDimensions()
+{
+  // This flattens the input.
+  size_t inSize = this->inputDimensions[0];
+  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+      inSize *= this->inputDimensions[i];
+
+  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+      1);
+  this->outputDimensions[0] = inSize + concat.n_elem;
+}
+
+  /**
+   * Serialize the layer.
+   */
+template<typename InputType, typename OutputType>
+template<typename Archive>
+void ConcatenateType<InputType, OutputType>::serialize(
+  Archive& ar, const uint32_t /* version */)
+{
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
+  ar(CEREAL_NVP(concat));
+}
+
 } // namespace ann
 } // namespace mlpack
 

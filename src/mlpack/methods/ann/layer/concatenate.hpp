@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_LAYER_CONCATENATE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -88,28 +87,14 @@ class ConcatenateType : public Layer<InputType, OutputType>
   //! Modify the concat.
   OutputType& Concat() { return concat; }
 
-  void ComputeOutputDimensions()
-  {
-    // This flattens the input.
-    size_t inSize = this->inputDimensions[0];
-    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
-        inSize *= this->inputDimensions[i];
-
-    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
-        1);
-    this->outputDimensions[0] = inSize + concat.n_elem;
-  }
+  //! Compute the output dimensions of the layer based on `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
-
-    ar(CEREAL_NVP(concat));
-  }
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Matrix to be concatenated to input.

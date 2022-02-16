@@ -109,71 +109,6 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename InputType,
          typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::ResetData(InputType predictors, InputType responses)
-{
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  // Set the network to training mode.
-  SetNetworkMode(true);
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-template<typename OptimizerType>
-typename std::enable_if<
-      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>::value,
-      void>::type
-FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
-{
-  if (optimizer.MaxIterations() < samples &&
-      optimizer.MaxIterations() != 0)
-  {
-    Log::Warn << "The optimizer's maximum number of iterations "
-        << "is less than the size of the dataset; the "
-        << "optimizer will not pass over the entire "
-        << "dataset. To fix this, modify the maximum "
-        << "number of iterations to be at least equal "
-        << "to the number of points of your dataset "
-        << "(" << samples << ")." << std::endl;
-  }
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-template<typename OptimizerType>
-typename std::enable_if<
-      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
-FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::WarnMessageMaxIterations(OptimizerType& /* optimizer */,
-                            size_t /* samples */) const
-{
-  // Nothing to do here.
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
 template<typename OptimizerType, typename... CallbackTypes>
 double FFN<
     OutputLayerType,
@@ -239,6 +174,93 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename InputType,
          typename OutputType>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::Predict(InputType predictors, OutputType& results, const size_t batchSize)
+{
+  // Ensure that the network is configured correctly.
+  CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
+
+  results.set_size(network.OutputSize(), predictors.n_cols);
+
+  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize,
+        size_t(predictors.n_cols) - i);
+
+    InputType predictorAlias(predictors.colptr(i), predictors.n_rows,
+        effectiveBatchSize, false, true);
+    OutputType resultAlias(results.colptr(i), results.n_rows,
+        effectiveBatchSize, false, true);
+
+    Forward(predictorAlias, resultAlias);
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+size_t FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::WeightSize()
+{
+  // If the input dimensions have not yet been propagated to the network, we
+  // must do that now.
+  UpdateDimensions("FFN::WeightSize()");
+  return network.WeightSize();
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::Reset(const size_t inputDimensionality)
+{
+  parameters.clear();
+
+  if (inputDimensionality != 0)
+  {
+    CheckNetwork("FFN::Reset()", inputDimensionality, true, false);
+  }
+  else
+  {
+    const size_t inputDims = std::accumulate(inputDimensions.begin(),
+        inputDimensions.end(), 0);
+    CheckNetwork("FFN::Reset()", inputDims, true, false);
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::SetNetworkMode(const bool training)
+{
+  this->training = training;
+  network.Training() = this->training;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
 template<typename PredictorsType, typename ResponsesType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType
 >::Forward(const PredictorsType& inputs, ResponsesType& results)
@@ -273,7 +295,7 @@ void FFN<
   networkOutput.set_size(network.OutputSize(), inputs.n_cols);
   network.Forward(inputs, networkOutput, begin, end);
 
-  // It's possible the user passed `networkOutputs` as `results`; in this case,
+  // It's possible the user passed `networkOutput` as `results`; in this case,
   // we don't need to create an alias.
   if (&results != &networkOutput)
     results = networkOutput;
@@ -314,36 +336,6 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename InputType,
          typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::Predict(InputType predictors, OutputType& results, const size_t batchSize)
-{
-  // Ensure that the network is configured correctly.
-  CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
-
-  results.set_size(network.OutputSize(), predictors.n_cols);
-
-  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
-  {
-    const size_t effectiveBatchSize = std::min(batchSize,
-        size_t(predictors.n_cols) - i);
-
-    InputType predictorAlias(predictors.colptr(i), predictors.n_rows,
-        effectiveBatchSize, false, true);
-    OutputType resultAlias(results.colptr(i), results.n_rows,
-        effectiveBatchSize, false, true);
-
-    Forward(predictorAlias, resultAlias);
-  }
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
 template<typename PredictorsType, typename ResponsesType>
 double FFN<
     OutputLayerType,
@@ -360,6 +352,49 @@ double FFN<
   network.Forward(predictors, networkOutput);
 
   return outputLayer.Forward(networkOutput, responses) + network.Loss();
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+template<typename Archive>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::serialize(Archive& ar, const uint32_t /* version */)
+{
+  // Serialize the output layer and initialization rule.
+  ar(CEREAL_NVP(outputLayer));
+  ar(CEREAL_NVP(initializeRule));
+
+  // Serialize the network itself.
+  ar(CEREAL_NVP(network));
+  ar(CEREAL_NVP(parameters));
+
+  // Serialize the expected input size.
+  ar(CEREAL_NVP(inputDimensions));
+  ar(CEREAL_NVP(training));
+
+  // If we are loading, we need to initialize the weights.
+  if (cereal::is_loading<Archive>())
+  {
+    // We can clear these members, since it's not possible to serialize in the
+    // middle of training and resume.
+    predictors.clear();
+    responses.clear();
+
+    networkOutput.clear();
+    networkDelta.clear();
+
+    layerMemoryIsSet = false;
+    inputDimensionsAreSet = false;
+
+    // The weights in `parameters` will be correctly set for each layer in the
+    // first call to Forward().
+  }
 }
 
 template<typename OutputLayerType,
@@ -508,20 +543,13 @@ void FFN<
     InitializationRuleType,
     InputType,
     OutputType
->::Reset(const size_t inputDimensionality)
+>::ResetData(InputType predictors, InputType responses)
 {
-  parameters.clear();
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
 
-  if (inputDimensionality != 0)
-  {
-    CheckNetwork("FFN::Reset()", inputDimensionality, true, false);
-  }
-  else
-  {
-    const size_t inputDims = std::accumulate(inputDimensions.begin(),
-        inputDimensions.end(), 0);
-    CheckNetwork("FFN::Reset()", inputDims, true, false);
-  }
+  // Set the network to training mode.
+  SetNetworkMode(true);
 }
 
 template<typename OutputLayerType,
@@ -626,8 +654,7 @@ void FFN<
   for (size_t i = 0; i < inputDimensions.size(); ++i)
     totalInputSize *= inputDimensions[i];
 
-  // TODO: improve this error message...
-  if (totalInputSize != inputDimensionality)
+  if (totalInputSize != inputDimensionality && inputDimensionality != 0)
   {
     throw std::logic_error(functionName + ": input size does not match expected"
         " size set with InputDimensions()!");
@@ -645,64 +672,6 @@ void FFN<
   network.InputDimensions() = inputDimensions;
   network.ComputeOutputDimensions();
   inputDimensionsAreSet = true;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::SetNetworkMode(const bool training)
-{
-  this->training = training;
-  network.Training() = this->training;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-template<typename Archive>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::serialize(Archive& ar, const uint32_t /* version */)
-{
-  // Serialize the output layer and initialization rule.
-  ar(CEREAL_NVP(outputLayer));
-  ar(CEREAL_NVP(initializeRule));
-
-  // Serialize the network itself.
-  ar(CEREAL_NVP(network));
-  ar(CEREAL_NVP(parameters));
-
-  // Serialize the expected input size.
-  ar(CEREAL_NVP(inputDimensions));
-  ar(CEREAL_NVP(training));
-
-  // If we are loading, we need to initialize the weights.
-  if (cereal::is_loading<Archive>())
-  {
-    // We can clear these members, since it's not possible to serialize in the
-    // middle of training and resume.
-    predictors.clear();
-    responses.clear();
-
-    networkOutput.clear();
-    networkDelta.clear();
-
-    layerMemoryIsSet = false;
-    inputDimensionsAreSet = false;
-
-    // The weights in `parameters` will be correctly set for each layer in the
-    // first call to Forward().
-  }
 }
 
 template<typename OutputLayerType,
@@ -732,6 +701,53 @@ void FFN<
   // those.
   layerMemoryIsSet = false;
 };
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+template<typename OptimizerType>
+typename std::enable_if<
+    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
+>::type
+FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+{
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+        << "is less than the size of the dataset; the "
+        << "optimizer will not pass over the entire "
+        << "dataset. To fix this, modify the maximum "
+        << "number of iterations to be at least equal "
+        << "to the number of points of your dataset "
+        << "(" << samples << ")." << std::endl;
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+template<typename OptimizerType>
+typename std::enable_if<
+    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
+>::type
+FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::WarnMessageMaxIterations(OptimizerType& /* optimizer */,
+                            size_t /* samples */) const
+{
+  // Nothing to do here.
+}
 
 } // namespace ann
 } // namespace mlpack

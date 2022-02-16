@@ -98,19 +98,12 @@ class RBF : public Layer<InputType, OutputType>
                 const OutputType& /* gy */,
                 OutputType& /* g */);
 
-  void ComputeOutputDimensions()
-  {
-    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
-        1);
-    // This flattens the input.
-    this->outputDimensions[0] = outSize;
-  }
+  //! Compute the output dimensions of the layer given `InputDimensions()`.  The
+  //! RBF layer flattens the input.
+  void ComputeOutputDimensions();
 
   //! Get the size of the weights.
-  size_t WeightSize() const
-  {
-    return 0;
-  }
+  size_t WeightSize() const { return 0; }
 
   /**
    * Serialize the layer.

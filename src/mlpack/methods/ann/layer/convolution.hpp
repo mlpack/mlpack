@@ -30,7 +30,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Convolution class. The Convolution class represents a
  * single layer of a neural network.
  * Example usage:
- * 
+ *
  * Suppose we want to pass a matrix M (2744x100) to a `Convolution` layer;
  * in this example, `M` was obtained from "flattening" 100 images (or Mel
  * cepstral coefficients, if we talk about speech, or whatever you like) of
@@ -249,47 +249,8 @@ class ConvolutionType : public Layer<InputType, OutputType>
         maps;
   }
 
-  void ComputeOutputDimensions()
-  {
-    // First, we must make sure the padding sizes are up to date, which we can
-    // now do since inputDimensions is set correctly.
-    if (paddingType == "valid")
-    {
-      padWLeft = 0;
-      padWRight = 0;
-      padHTop = 0;
-      padHBottom = 0;
-    }
-    else if (paddingType == "same")
-    {
-      InitializeSamePadding();
-    }
-
-    padding = ann::Padding(padWLeft, padWRight, padHTop, padHBottom);
-    padding.InputDimensions() = this->inputDimensions;
-    padding.ComputeOutputDimensions();
-
-    // We must ensure that the output has at least 3 dimensions, since we will
-    // be adding some number of maps to the output.
-    this->outputDimensions = std::vector<size_t>(
-        std::max(this->inputDimensions.size(), size_t(3)), 1);
-    this->outputDimensions[0] = ConvOutSize(this->inputDimensions[0],
-        kernelWidth, strideWidth, padWLeft, padWRight);
-    this->outputDimensions[1] = ConvOutSize(this->inputDimensions[1],
-        kernelHeight, strideHeight, padHTop, padHBottom);
-
-    inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
-
-    // Compute and cache the total number of input maps.
-    higherInDimensions = 1;
-    for (size_t i = 3; i < this->inputDimensions.size(); ++i)
-    {
-      higherInDimensions *= this->inputDimensions[i];
-      this->outputDimensions[i] = this->inputDimensions[i];
-    }
-
-    this->outputDimensions[2] = maps;
-  }
+  //! Compute the output dimensions of the layer based on `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   /**
    * Serialize the layer.

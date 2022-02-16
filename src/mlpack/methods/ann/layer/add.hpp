@@ -15,7 +15,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include "layer.hpp"
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -37,8 +36,8 @@ class AddType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create the Add object.  The output size of the layer will be the same as
-   * the input size.
+   * Create the AddType object.  The output size of the layer will be the same
+   * as the input size.
    */
   AddType();
 
@@ -58,8 +57,7 @@ class AddType : public Layer<InputType, OutputType>
   AddType& operator=(AddType&& other);
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
+   * Forward pass: add the bias to the input.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -67,9 +65,7 @@ class AddType : public Layer<InputType, OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
+   * Backward pass: send weights backwards (the bias does not affect anything).
    *
    * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
@@ -80,7 +76,7 @@ class AddType : public Layer<InputType, OutputType>
                 OutputType& g);
 
   /**
-   * Calculate the gradient using the output delta and the input activation.
+   * Calculate the gradient using the output and the input activation.
    *
    * @param * (input) The propagated input.
    * @param error The calculated error.
@@ -98,15 +94,11 @@ class AddType : public Layer<InputType, OutputType>
   //! Get the size of weights.
   size_t WeightSize() const { return outSize; }
 
-  void ComputeOutputDimensions()
-  {
-    this->outputDimensions = this->inputDimensions;
+  //! Compute the output dimensions of the layer, based on the internal values
+  //! of `InputDimensions()`.
+  void ComputeOutputDimensions();
 
-    outSize = this->outputDimensions[0];
-    for (size_t i = 1; i < this->outputDimensions.size(); ++i)
-      outSize *= this->outputDimensions[i];
-  }
-
+  //! Set the weights of the layer to use the given memory.
   void SetWeights(typename OutputType::elem_type* weightPtr);
 
   /**

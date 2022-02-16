@@ -226,8 +226,6 @@ class Layer
   //! to the loss function when computing the objective.  (TODO: better comment)
   virtual double Loss() { return 0; }
 
-  // TODO: these need better comments.
-
   //! Get the input dimensions.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
   //! Modify the input dimensions.
@@ -268,11 +266,9 @@ class Layer
     outputDimensions = inputDimensions;
   }
 
-  //! Get the number of elements in the output from this layer.
-  //! This is marked final because no class should ever need to override
-  //! this---instead, override OutputDimensions()!
-  // TODO: is final not available in C++11?
-  size_t OutputSize()
+  //! Get the number of elements in the output from this layer.  This cannot be
+  //! overloaded!  Overload `ComputeOutputDimensions()` instead.
+  virtual size_t OutputSize() final
   {
     if (!validOutputDimensions)
     {
@@ -286,6 +282,7 @@ class Layer
     return outputSize;
   }
 
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
@@ -297,11 +294,26 @@ class Layer
   }
 
  protected:
-  // This matrix holds the parameters of the 
-
-  // TODO: comment
+  /**
+   * Logical input dimensions of each point.  Although each point given to !
+   * `Forward()` will be represented as a column in a matrix, logically
+   * speaking it can be a higher-order tensor.  So, for instance, if the point
+   * is 2-dimensional images of size 10x10, `Forward()` will contain columns
+   * with 100 rows, and `inputDimensions` will be `{10, 10}`.  This generalizes
+   * to higher dimensions.
+   */
   std::vector<size_t> inputDimensions;
+
+  /**
+   * Logical output dimensions of each point.  If the layer only performs
+   * elementwise operations, this is most likely equal to `inputDimensions`; but
+   * if the layer performs more complicated transformations, it may be
+   * different.
+   */
   std::vector<size_t> outputDimensions;
+
+  //! This is `true` if `ComputeOutputDimensions()` has been called, and
+  //! `outputDimensions` can be considered to be up-to-date.
   bool validOutputDimensions;
 
   //! If true, the layer is in training mode; otherwise, it is in testing mode.

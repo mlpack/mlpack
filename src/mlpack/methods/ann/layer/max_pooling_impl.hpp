@@ -165,6 +165,37 @@ void MaxPoolingType<InputType, OutputType>::Backward(
 }
 
 template<typename InputType, typename OutputType>
+void MaxPoolingType<InputType, OutputType>::ComputeOutputDimensions()
+{
+  this->outputDimensions = this->inputDimensions;
+
+  // Compute the size of the output.
+  if (floor)
+  {
+    this->outputDimensions[0] = std::floor((this->inputDimensions[0] -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    this->outputDimensions[1] = std::floor((this->inputDimensions[1] -
+        (double) kernelHeight) / (double) strideHeight + 1);
+    offset = 0;
+  }
+  else
+  {
+    this->outputDimensions[0] = std::ceil((this->inputDimensions[0] -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    this->outputDimensions[1] = std::ceil((this->inputDimensions[1] -
+        (double) kernelHeight) / (double) strideHeight + 1);
+    offset = 1;
+  }
+
+  // Higher dimensions are not modified.
+
+  // Cache input size and output size.
+  channels = 1;
+  for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+    channels *= this->inputDimensions[i];
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void MaxPoolingType<InputType, OutputType>::serialize(
     Archive& ar,

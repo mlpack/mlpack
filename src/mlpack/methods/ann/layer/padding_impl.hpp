@@ -110,6 +110,21 @@ void PaddingType<InputType, OutputType>::Backward(
 }
 
 template<typename InputType, typename OutputType>
+void PaddingType<InputType, OutputType>::ComputeOutputDimensions()
+{
+  this->outputDimensions = this->inputDimensions;
+
+  this->outputDimensions[0] += padHTop + padHBottom;
+  this->outputDimensions[1] += padWLeft + padWRight;
+
+  // Higher dimensions remain unchanged.  But, we will cache the product of
+  // these higher dimensions.
+  totalInMaps = 1;
+  for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+    totalInMaps *= this->inputDimensions[i];
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void PaddingType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)

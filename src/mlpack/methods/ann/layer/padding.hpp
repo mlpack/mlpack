@@ -94,19 +94,8 @@ class PaddingType : public Layer<InputType, OutputType>
   //! Modify the bottom padding width.
   size_t& PadHBottom() { return padHBottom; }
 
-  void ComputeOutputDimensions()
-  {
-    this->outputDimensions = this->inputDimensions;
-
-    this->outputDimensions[0] += padHTop + padHBottom;
-    this->outputDimensions[1] += padWLeft + padWRight;
-
-    // Higher dimensions remain unchanged.  But, we will cache the product of
-    // these higher dimensions.
-    totalInMaps = 1;
-    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
-      totalInMaps *= this->inputDimensions[i];
-  }
+  //! Compute the output dimensions of the layer using `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   /**
    * Serialize the layer.

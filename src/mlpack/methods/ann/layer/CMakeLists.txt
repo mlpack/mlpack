@@ -14,8 +14,6 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
-  highway.hpp
-  highway_impl.hpp
   layer.hpp
   layer_types.hpp
   leaky_relu.hpp
@@ -39,8 +37,6 @@ set(SOURCES
   padding.hpp
   radial_basis_function.hpp
   radial_basis_function_impl.hpp
-  reparametrization.hpp
-  reparametrization_impl.hpp
   serialization.hpp
 )
 

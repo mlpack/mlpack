@@ -101,6 +101,16 @@ void AddType<InputType, OutputType>::SetWeights(
 }
 
 template<typename InputType, typename OutputType>
+void AddType<InputType, OutputType>::ComputeOutputDimensions()
+{
+  this->outputDimensions = this->inputDimensions;
+
+  outSize = this->outputDimensions[0];
+  for (size_t i = 1; i < this->outputDimensions.size(); ++i)
+    outSize *= this->outputDimensions[i];
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void AddType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)

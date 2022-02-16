@@ -183,6 +183,18 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Gradient(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
+void Linear3DType<
+    InputType, OutputType, RegularizerType
+>::ComputeOutputDimensions()
+{
+  // The Linear3D layer shares weights for each row of the input, and
+  // duplicates it across the columns.  Thus, we only change the number of
+  // rows.
+  this->outputDimensions = this->inputDimensions;
+  this->outputDimensions[0] = outSize;
+}
+
+template<typename InputType, typename OutputType, typename RegularizerType>
 template<typename Archive>
 void Linear3DType<InputType, OutputType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)

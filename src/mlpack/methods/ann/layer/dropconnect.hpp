@@ -119,22 +119,14 @@ class DropConnectType : public Layer<InputType, OutputType>
     scale = 1.0 / (1.0 - ratio);
   }
 
-  void ComputeOutputDimensions()
-  {
-    // Propagate input dimensions to the base layer.
-    baseLayer->InputDimensions() = this->inputDimensions;
-    this->outputDimensions = baseLayer->OutputDimensions();
-  }
+  //! Compute the output dimensions of the layer based on `InputDimensions()`.
+  void ComputeOutputDimensions();
 
-  size_t WeightSize() const
-  {
-    return baseLayer->WeightSize();
-  }
+  //! Return the size of the weights.
+  size_t WeightSize() const { return baseLayer->WeightSize(); }
 
-  void SetWeights(typename OutputType::elem_type* weightsPtr)
-  {
-    baseLayer->SetWeights(weightsPtr);
-  }
+  // Set the weights to use the given memory `weightsPtr`.
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Serialize the layer.

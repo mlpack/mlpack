@@ -27,10 +27,28 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of a standard feed forward network.
+ * Implementation of a standard feed forward network.  Any layer that inherits
+ * from the base `Layer` class can be added to this model.  For recursive neural
+ * networks, see the `RNN` class.
+ *
+ * In general, a network can be created by using the `Add()` method to add
+ * layers to the network.  Then, training can be performed with `Train()`, and
+ * data points can be passed through the trained network with `Predict()`.
+ *
+ * Although the actual types passed as input will be matrix objects with one
+ * data point per column, each data point can be a tensor of arbitrary shape.
+ * If data points are not 1-dimensional vectors, then set the shape of the input
+ * with `InputDimensions()` before calling `Train()`.
+ *
+ * More granular functionality is available with `Forward()`, Backward()`, and
+ * `Evaluate()`, or even by accessing the individual layers directly with
+ * `Network()`.
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
+ * @tparam InputType Type of matrix to be given as input to the network.
+ * @tparam OutputType Type of matrix to be produced as output from the last
+ *     layer.
  */
 template<
     typename OutputLayerType = NegativeLogLikelihood<>,
@@ -40,12 +58,6 @@ template<
 class FFN
 {
  public:
-  //! Convenience typedef for the internal model construction.
-  using NetworkType = FFN<OutputLayerType,
-                          InitializationRuleType,
-                          InputType,
-                          OutputType>;
-
   /**
    * Create the FFN object.
    *
@@ -72,44 +84,60 @@ class FFN
   FFN& operator=(FFN);
 
   /**
-   * Check if the optimizer has MaxIterations() parameter, if it does
-   * then check if it's value is less than the number of datapoints
-   * in the dataset.
+   * Add a new layer to the model.
    *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @param optimizer optimizer used in the training process.
-   * @param samples Number of datapoints in the dataset.
+   * @param args The layer parameter.
    */
-  template<typename OptimizerType>
-  typename std::enable_if<
-      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
-  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+  template <class LayerType, class... Args>
+  void Add(Args... args)
+  {
+    network.template Add<LayerType>(args...);
+    inputDimensionsAreSet = false;
+  }
 
   /**
-   * Check if the optimizer has MaxIterations() parameter, if it
-   * doesn't then simply return from the function.
+   * Add a new layer to the model.  Note that any trainable weights of this
+   * layer will be reset!  (Any constant parameters are kept.)
    *
-   * @tparam OptimizerType Type of optimizer to use to train the model.
-   * @param optimizer optimizer used in the training process.
-   * @param samples Number of datapoints in the dataset.
+   * @param layer The Layer to be added to the model.
    */
-  template<typename OptimizerType>
-  typename std::enable_if<
-      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
-      ::value, void>::type
-  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+  void Add(Layer<InputType, OutputType>* layer)
+  {
+    network.Add(layer);
+    inputDimensionsAreSet = false;
+  }
+
+  //! Get the layers of the network..
+  const std::vector<Layer<InputType, OutputType>*>& Network() const
+  {
+    return network.Network();
+  }
+
+  /**
+   * Modify the network model.  Be careful!  If you change the structure of the
+   * network or parameters for layers, its state may become invalid, so be sure
+   * to call `ResetParameters()` afterwards.
+   *
+   * Don't add any layers like this; use `Add()` instead.
+   */
+  std::vector<Layer<InputType, OutputType>*>& Network()
+  {
+    return network.Network();
+  }
 
   /**
    * Train the feedforward network on the given input data using the given
    * optimizer.
    *
-   * This will use the existing model parameters as a starting point for the
-   * optimization. If this is not what you want, then you should access the
-   * parameters vector directly with Parameters() and modify it as desired.
+   * If no parameters have ever been set (e.g. if `Parameters()` is an empty
+   * matrix), or if the parameters' size does not match the number of weights
+   * needed for the current input size (as given by `predictors` and optionally
+   * set further by `InputDimensions()`), then the network will be initialized
+   * using `InitializeRuleType`.
    *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
+   * If parameters are the right size for the given `predictors` and
+   * `InputDimensions()`, then the existing parameters will be used as a
+   * starting point.  (If you want to reinitialize, first call `Reset()`.)
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.
@@ -131,12 +159,15 @@ class FFN
    * RMSProp optimization algorithm is used, but others can be specified
    * (such as ens::SGD).
    *
-   * This will use the existing model parameters as a starting point for the
-   * optimization. If this is not what you want, then you should access the
-   * parameters vector directly with Parameters() and modify it as desired.
+   * If no parameters have ever been set (e.g. if `Parameters()` is an empty
+   * matrix), or if the parameters' size does not match the number of weights
+   * needed for the current input size (as given by `predictors` and optionally
+   * set further by `InputDimensions()`), then the network will be initialized
+   * using `InitializeRuleType`.
    *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
+   * If parameters are the right size for the given `predictors` and
+   * `InputDimensions()`, then the existing parameters will be used as a
+   * starting point.  (If you want to reinitialize, first call `Reset()`.)
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
@@ -152,12 +183,9 @@ class FFN
                CallbackTypes&&... callbacks);
 
   /**
-   * Predict the responses to a given set of predictors. The responses will
-   * reflect the output of the given output layer as returned by the
-   * output layer function.
-   *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
+   * Predict the responses to a given set of predictors. The responses will be
+   * the output of the output layer when `predictors` is passed through the
+   * whole network (`OutputLayerType`).
    *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
@@ -167,160 +195,47 @@ class FFN
                OutputType& results,
                const size_t batchSize = 128);
 
-  /**
-   * Evaluate the feedforward network with the given predictors and responses.
-   * This functions is usually used to monitor progress while training.
-   *
-   * @param predictors Input variables.
-   * @param responses Target outputs for input variables.
-   */
-  template<typename PredictorsType, typename ResponsesType>
-  double Evaluate(const PredictorsType& predictors,
-                  const ResponsesType& responses);
+  // Return the number of weights in the model.
+  size_t WeightSize();
 
   /**
-   * Evaluate the feedforward network with the given parameters. This function
-   * is usually called by the optimizer to train the model.
+   * Set the logical dimensions of the input.  `Train()` and `Predict()` expect
+   * data to be passed such that one point corresponds to one column, but this
+   * data is allowed to be an arbitrary higher-order tensor.
    *
-   * @param parameters Matrix model parameters.
-   */
-  double Evaluate(const OutputType& parameters);
-
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function.
+   * So, if the input is meant to be 28x28x3 images, then the
+   * input data to `Train()` or `Predict()` should have 28*28*3 = 2352 rows, and
+   * `InputDimensions()` should be set to `{ 28, 28, 3 }`.  Then, the layers of
+   * the network will interpret each input point as a 3-dimensional image
+   * instead of a 1-dimensional vector.
    *
-   * Note that the network may return different results depending on the mode it
-   * is in (see `SetNetworkMode()`).
-   *
-   * @param parameters Matrix model parameters.
-   * @param begin Index of the starting point to use for objective function
-   *        evaluation.
-   * @param batchSize Number of points to be passed at a time to use for
-   *        objective function evaluation.
+   * If `InputDimensions()` is left unset before training, the data will be
+   * assumed to be a 1-dimensional vector.
    */
-  double Evaluate(const OutputType& parameters,
-                  const size_t begin,
-                  const size_t batchSize);
-
-  /**
-   * Evaluate the feedforward network with the given parameters.
-   * This function is usually called by the optimizer to train the model.
-   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
-   *
-   * @param parameters Matrix model parameters.
-   * @param gradient Matrix to output gradient into.
-   */
-  double EvaluateWithGradient(const OutputType& parameters,
-                              OutputType& gradient);
-
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function.
-   *
-   * @param parameters Matrix model parameters.
-   * @param begin Index of the starting point to use for objective function
-   *        evaluation.
-   * @param gradient Matrix to output gradient into.
-   * @param batchSize Number of points to be passed at a time to use for
-   *        objective function evaluation.
-   */
-  double EvaluateWithGradient(const OutputType& parameters,
-                              const size_t begin,
-                              OutputType& gradient,
-                              const size_t batchSize);
-
-  /**
-   * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only a number of points in the dataset. This is useful
-   * for optimizers such as SGD, which require a separable objective function.
-   *
-   * @param parameters Matrix of the model parameters to be optimized.
-   * @param begin Index of the starting point to use for objective function
-   *        gradient evaluation.
-   * @param gradient Matrix to output gradient into.
-   * @param batchSize Number of points to be processed as a batch for objective
-   *        function gradient evaluation.
-   */
-  void Gradient(const OutputType& parameters,
-                const size_t begin,
-                OutputType& gradient,
-                const size_t batchSize);
-
-  /**
-   * Shuffle the order of function visitation. This may be called by the
-   * optimizer.
-   */
-  void Shuffle();
-
-  /**
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args)
+  std::vector<size_t>& InputDimensions()
   {
-    network.template Add<LayerType>(args...);
+    // The user may change the input dimensions, so we will have to propagate
+    // these changes to the network.
     inputDimensionsAreSet = false;
+    return inputDimensions;
   }
+  //! Get the logical dimensions of the input.
+  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  //! TODO: if weights are set in this layer, we should copy them and update our
-  //cached parameters
-  void Add(Layer<InputType, OutputType>* layer)
-  {
-    network.Add(layer);
-    inputDimensionsAreSet = false;
-  }
-
-  //! Get the network model.
-  const std::vector<Layer<InputType, OutputType>*>& Network() const
-  {
-    return network.Network();
-  }
-
-  /**
-   * Modify the network model.  Be careful!  If you change the structure of the
-   * network or parameters for layers, its state may become invalid, so be sure
-   * to call ResetParameters() afterwards.  Don't add any layers like this; use
-   * `Add()` instead.
-   */
-  std::vector<Layer<InputType, OutputType>*>& Network() { return
-network.Network(); }
-
-  // TODO: check validity
-  size_t WeightSize() const { return network.WeightSize(); }
-
-  //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return responses.n_cols; }
-
-  //! Return the initial point for the optimization.
+  //! Return the current set of weights.  These are linearized: this contains
+  //! the weights of every layer.
   const OutputType& Parameters() const { return parameters; }
-  //! Modify the initial point for the optimization.
+  //! Modify the current set of weights.  These are linearized: this contains
+  //! the weights of every layer.  Be careful!  If you change the shape of
+  //! `parameters` to something incorrect, it may be re-initialized the next
+  //! time a forward pass is done.
   OutputType& Parameters() { return parameters; }
-
-  //! Get the matrix of responses to the input data points.
-  const InputType& Responses() const { return responses; }
-  //! Modify the matrix of responses to the input data points.
-  InputType& Responses() { return responses; }
-
-  //! Get the matrix of data points (predictors).
-  const InputType& Predictors() const { return predictors; }
-  //! Modify the matrix of data points (predictors).
-  InputType& Predictors() { return predictors; }
 
   /**
    * Reset the stored data of the network entirely.  This resets all weights of
-   * each layer, and prepares the network to accept an input size of
-   * `inputDimensionality` (if passed), or whatever input size has been set
-   * with `InputDimensions()`.
+   * each layer using `InitializationRuleType`, and prepares the network to
+   * accept a (flat 1-d) input size of `inputDimensionality` (if passed), or
+   * whatever input size has been set with `InputDimensions()`.
    *
    * This also resets the mode of the network to prediction mode (not training
    * mode).  See `SetNetworkMode()` for more information.
@@ -333,10 +248,6 @@ network.Network(); }
    * is `false`.
    */
   void SetNetworkMode(const bool training);
-
-  //! Serialize the model.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Perform the forward pass of the data in real batch mode.
@@ -389,35 +300,141 @@ network.Network(); }
                   GradientsType& gradients);
 
   /**
-   * Set the logical dimensions of the input.
+   * Evaluate the feedforward network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
    *
-   * TODO: better comment.  You would call this when you want to, e.g., pass an
-   * n-dimensional tensor, so that you can specify each of those n dimensions.
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
    */
-  std::vector<size_t>& InputDimensions()
-  {
-    // The user may change the input dimensions, so we will have to propagate
-    // these changes to the network.
-    inputDimensionsAreSet = false;
-    return inputDimensions;
-  }
-  //! Get the logical dimensions of the input.
-  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
+  template<typename PredictorsType, typename ResponsesType>
+  double Evaluate(const PredictorsType& predictors,
+                  const ResponsesType& responses);
 
- private:
-  // Helper functions.
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
+  //
+  // Only ensmallen utility functions for training are found below here.
+  // They aren't generally useful otherwise.
+  //
 
   /**
-   * Prepare the network for the given data.
-   * This function won't actually trigger training process.
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the feedforward network with the given parameters.
+   *
+   * @param parameters Matrix model parameters.
+   */
+  double Evaluate(const OutputType& parameters);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the feedforward network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * Note that the network may return different results depending on the mode it
+   * is in (see `SetNetworkMode()`).
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  double Evaluate(const OutputType& parameters,
+                  const size_t begin,
+                  const size_t batchSize);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the feedforward network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  double EvaluateWithGradient(const OutputType& parameters,
+                              OutputType& gradient);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the feedforward network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  double EvaluateWithGradient(const OutputType& parameters,
+                              const size_t begin,
+                              OutputType& gradient,
+                              const size_t batchSize);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Evaluate the gradient of the feedforward network with the given parameters,
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
+   *
+   * @param parameters Matrix of the model parameters to be optimized.
+   * @param begin Index of the starting point to use for objective function
+   *        gradient evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be processed as a batch for objective
+   *        function gradient evaluation.
+   */
+  void Gradient(const OutputType& parameters,
+                const size_t begin,
+                OutputType& gradient,
+                const size_t batchSize);
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Return the number of separable functions (the number of predictor points).
+   */
+  size_t NumFunctions() const { return responses.n_cols; }
+
+  /**
+   * Note: this function is implemented so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Shuffle the order of function visitation.  (This is equivalent to shuffling
+   * the dataset during training.)
+   */
+  void Shuffle();
+
+  /**
+   * Prepare the network for training on the given data.
+   *
+   * This function won't actually trigger the training process, and is
+   * generally only useful internally.
    *
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
    */
- public:
   void ResetData(InputType predictors, InputType responses);
 
  private:
+  // Helper functions.
+
   //! Use the InitializationPolicy to initialize all the weights in the network.
   void InitializeWeights();
 
@@ -446,10 +463,11 @@ network.Network(); }
   /**
    * Set the input and output dimensions of each layer in the network correctly.
    * The size of the input is taken, in case `inputDimensions` has not been set
-   * otherwise (e.g. via `InputDimensions()`).
+   * otherwise (e.g. via `InputDimensions()`).  If `InputDimensions()` is not
+   * empty, then `inputDimensionality` is ignored.
    */
   void UpdateDimensions(const std::string& functionName,
-                        const size_t inputDimensionality);
+                        const size_t inputDimensionality = 0);
 
   /**
    * Swap the content of this network with given network.
@@ -458,7 +476,35 @@ network.Network(); }
    */
   void Swap(FFN& network);
 
-  //! Instantiated outputlayer used to evaluate the network.
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it does then check
+   * if its value is less than the number of datapoints in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
+  >::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter; if it doesn't then
+   * simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
+  >::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  //! Instantiated output layer used to evaluate the network.
   OutputLayerType outputLayer;
 
   //! Instantiated InitializationRule object for initializing the network

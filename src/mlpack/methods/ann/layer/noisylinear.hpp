@@ -107,20 +107,11 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
 
+  //! Compute the number of parameters in the layer.
   size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
 
-  void ComputeOutputDimensions()
-  {
-    inSize = this->inputDimensions[0];
-    for (size_t i = 1; i < this->inputDimensions.size(); ++i)
-        inSize *= this->inputDimensions[i];
-
-    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
-        1);
-
-    // The NoisyLinear layer flattens its output.
-    this->outputDimensions[0] = outSize;
-  }
+  //! Compute the output dimensions of the layer given `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   //! Serialize the layer.
   template<typename Archive>

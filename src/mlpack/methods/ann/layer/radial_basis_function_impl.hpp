@@ -141,6 +141,15 @@ void RBF<InputType, OutputType, Activation>::Backward(
 }
 
 template<typename InputType, typename OutputType, typename Activation>
+void RBF<InputType, OutputType, Activation>::ComputeOutputDimensions()
+{
+  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(), 1);
+
+  // This flattens the input.
+  this->outputDimensions[0] = outSize;
+}
+
+template<typename InputType, typename OutputType, typename Activation>
 template<typename Archive>
 void RBF<InputType, OutputType, Activation>::serialize(
     Archive& ar,

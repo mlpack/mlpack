@@ -140,8 +140,7 @@ TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
         target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 10);
       model->Add<Add>(10);
@@ -468,8 +467,7 @@ TEST_CASE("NoAlphaDropoutTest", "[ANNLayerTest]")
 //         target(arma::mat("1"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(10, 10);
 //       model->Add<Linear<> >(10, 2);
@@ -582,8 +580,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
       target(1, 2) = 1;
 
       model = new FFN<MeanSquaredError<>, RandomInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<Linear3D>(outSize);
       model->InputDimensions() = std::vector<size_t>{ 4, 2 };
     }
@@ -659,8 +656,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //         target(arma::mat("1"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<NoisyLinear<> >(10, 10);
 //       model->Add<NoisyLinear<> >(10, 2);
@@ -813,8 +809,7 @@ TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
         target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<Linear>(10);
       model->Add<LinearNoBias>(2);
       model->Add<LogSoftMax>();
@@ -917,8 +912,7 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
           NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
 
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<Linear>(2, 2);
       model->Add<LinearNoBias>(2, 5);
       model->Add<FlexibleReLU>(0.05);
@@ -1176,8 +1170,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       const size_t rho = 5;
 
 //       model = new RNN<NegativeLogLikelihood<> >(rho);
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
 //       model->Add<LSTM<> >(10, 3, rho);
@@ -1281,8 +1274,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       const size_t rho = 5;
 
 //       model = new RNN<NegativeLogLikelihood<> >(rho);
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
 //       model->Add<FastLSTM<> >(10, 3, rho);
@@ -1348,8 +1340,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   RNN<NegativeLogLikelihood<> > *model1 =
 //       new RNN<NegativeLogLikelihood<> >(rho);
-//   model1->Predictors() = input;
-//   model1->Responses() = target;
+//   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<FastLSTM<> >(10, 3, rho);
@@ -1357,8 +1348,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   RNN<NegativeLogLikelihood<> > *model2 =
 //      new RNN<NegativeLogLikelihood<> >(rho);
-//   model2->Predictors() = input;
-//   model2->Responses() = target;
+//   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
 //   model2->Add<FastLSTM<> >(10, 3, rho);
@@ -1382,8 +1372,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   RNN<NegativeLogLikelihood<> > *model1 =
 //       new RNN<NegativeLogLikelihood<> >(rho);
-//   model1->Predictors() = input;
-//   model1->Responses() = target;
+//   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<LSTM<> >(10, 3, rho);
@@ -1391,8 +1380,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   RNN<NegativeLogLikelihood<> > *model2 =
 //      new RNN<NegativeLogLikelihood<> >(rho);
-//   model2->Predictors() = input;
-//   model2->Responses() = target;
+//   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
 //   model2->Add<LSTM<> >(10, 3, rho);
@@ -1618,8 +1606,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       const size_t rho = 5;
 
 //       model = new RNN<NegativeLogLikelihood<> >(rho);
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
 //       model->Add<GRU<> >(10, 3, rho);
@@ -1788,8 +1775,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       const size_t rho = 5;
 //
 //       model = new RNN<NegativeLogLikelihood<> >(rho);
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
 //       model->Add<LSTM<> >(10, 3, rho);
@@ -1893,8 +1879,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       const size_t rho = 5;
 //
 //       model = new RNN<NegativeLogLikelihood<> >(rho);
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
 //       model->Add<FastLSTM<> >(10, 3, rho);
@@ -1960,8 +1945,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   RNN<NegativeLogLikelihood<> > *model1 =
 //       new RNN<NegativeLogLikelihood<> >(rho);
-//   model1->Predictors() = input;
-//   model1->Responses() = target;
+//   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<FastLSTM<> >(10, 3, rho);
@@ -1969,8 +1953,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   RNN<NegativeLogLikelihood<> > *model2 =
 //      new RNN<NegativeLogLikelihood<> >(rho);
-//   model2->Predictors() = input;
-//   model2->Responses() = target;
+//   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
 //   model2->Add<FastLSTM<> >(10, 3, rho);
@@ -1994,8 +1977,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   RNN<NegativeLogLikelihood<> > *model1 =
 //       new RNN<NegativeLogLikelihood<> >(rho);
-//   model1->Predictors() = input;
-//   model1->Responses() = target;
+//   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<LSTM<> >(10, 3, rho);
@@ -2003,8 +1985,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   RNN<NegativeLogLikelihood<> > *model2 =
 //      new RNN<NegativeLogLikelihood<> >(rho);
-//   model2->Predictors() = input;
-//   model2->Responses() = target;
+//   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
 //   model2->Add<LSTM<> >(10, 3, rho);
@@ -2230,8 +2211,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       const size_t rho = 5;
 //
 //       model = new RNN<NegativeLogLikelihood<> >(rho);
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
 //       model->Add<GRU<> >(10, 3, rho);
@@ -2470,8 +2450,7 @@ TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
 //         target(arma::mat("0"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer>();
 //       model->Add<Linear>(10, 10);
 
@@ -2539,8 +2518,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
         target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 5);
 
@@ -2641,8 +2619,7 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
       }
 
       model = new FFN<BCELoss<>, GlorotInitialization>(BCELoss<>(1e-10, false));
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<Lookup>(vocabSize, embeddingSize);
       model->Add<Linear>(embeddingSize * seqLength, vocabSize);
       model->Add<Softmax>();
@@ -2749,8 +2726,7 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
         target(arma::mat("1; 0"))
     {
       model = new FFN<MeanSquaredError<>, RandomInitialization>;
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<Linear>(10, 10);
       model->Add<ReLULayer>();
       model->Add<Linear>(10, 2);
@@ -3111,8 +3087,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 //           target(arma::zeros(1, 2048))
 //       {
 //         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//         model->Predictors() = input;
-//         model->Responses() = target;
+//         model->ResetData(input, target);
 //         model->Add<IdentityLayer<> >();
 //         model->Add<Linear<> >(32, 4);
 //         model->Add<BatchNorm<> >(4);
@@ -3186,8 +3161,7 @@ TEST_CASE("GradientVirtualBatchNormTest", "[ANNLayerTest]")
       arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 4);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(5, 5);
       model->Add<VirtualBatchNorm>(referenceBatch, 5);
@@ -3248,8 +3222,7 @@ TEST_CASE("VirtualBatchNormLayerParametersTest", "[ANNLayerTest]")
 //         target(arma::zeros(1, 4))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(5, 5);
 //       model->Add<MiniBatchDiscrimination<> >(5, 10, 16);
@@ -3427,8 +3400,7 @@ TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
           target(arma::mat("0"))
       {
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
-        model->Predictors() = input;
-        model->Responses() = target;
+        model->ResetData(input, target);
         model->Add<TransposedConvolution>(1, 1, 3, 3, 2, 2, 1, 1, 6, 6, 12, 12);
         model->Add<LogSoftMax>();
       }
@@ -3594,8 +3566,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //         target(arma::mat("0"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<AtrousConvolution<> >(1, 1, 3, 3, 1, 1, 0, 0, 6, 6, 2, 2);
 //       model->Add<LogSoftMax<> >();
@@ -3777,8 +3748,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //         target(arma::zeros(1, 256))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(10, 10);
 //       model->Add<GroupNorm<> >(1, 10);
@@ -3855,8 +3825,7 @@ TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
         target(arma::zeros(1, 256))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 10);
       model->Add<LayerNorm>(10);
@@ -4186,8 +4155,7 @@ TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
         target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 6);
       model->Add<Reparametrization>(3, false, true, 1);
@@ -4230,8 +4198,7 @@ TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
         target(arma::mat("0 0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 6);
       // Use a value of beta not equal to 1.
@@ -4390,8 +4357,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //         target(arma::mat("0"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer>();
 //       model->Add<Linear>(5, 10);
 
@@ -4441,8 +4407,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //         target(arma::mat("0"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<IdentityLayer>();
 //       model->Add<Linear>(10, 10);
 //       sequential = new Sequential();
@@ -4491,8 +4456,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //         target(arma::mat("0"))
 //     {
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
+//       model->ResetData(input, target);
 //       model->Add<Linear>(10, 10);
 
 //       Linear* linear = new Linear(10, 2);
@@ -4715,8 +4679,7 @@ TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest]")
         target(arma::mat("1"))
     {
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       model->Add<Convolution>(1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
           std::tuple<size_t, size_t>(0, 0), "same");
       model->Add<LogSoftMax>();
@@ -5463,8 +5426,7 @@ TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 //           target(arma::zeros(1, 1024))
 //       {
 //         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//         model->Predictors() = input;
-//         model->Responses() = target;
+//         model->ResetData(input, target);
 //         model->Add<IdentityLayer<>>();
 //         model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
 //         model->Add<BatchNorm<>>(2);
@@ -6130,8 +6092,7 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
 
       model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
+      model->ResetData(input, target);
       // attnModule = new MultiheadAttention(tgtSeqLen, srcSeqLen, embedDim,
       //     nHeads);
       // attnModule->AttentionMask() = attnMask;
@@ -6334,8 +6295,7 @@ TEST_CASE("GradientInstanceNormLayerTest", "[ANNLayerTest]")
         target.ones(1, 1024);
 
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-        model->Predictors() = input;
-        model->Responses() = target;
+        model->ResetData(input, target);
         model->Add<IdentityLayer<> >();
         model->Add<Convolution<> >(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
         model->Add<InstanceNorm<> > (2, 1024);

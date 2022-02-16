@@ -46,7 +46,6 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::NoisyLinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::PaddingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::RBF<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::ReparametrizationType<__VA_ARGS__>);
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat, arma::mat);
 
