@@ -12,7 +12,11 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_CHECKS_IMPL_HPP
 #define MLPACK_CORE_UTIL_PARAM_CHECKS_IMPL_HPP
 
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/param_data.hpp>
+
 #include "param_checks.hpp"
+#include "get_printable_param.hpp"
 
 namespace mlpack {
 namespace util {
@@ -306,10 +310,25 @@ inline void ReportIgnoredParam(util::Params& params,
   }
 }
 
-// Check if the given input data points aren't empty.
-inline void RequireNonEmptyInputValue(
-    util::Params& params,
+/**
+ *
+ * Check if the given input data points are not empty.
+ *
+ * Input Data from file or as a matrix/tuple shouldn't not be empty.
+ * An empty dataset can not be split.
+ * 
+ * params is the parameters passed through the pre-process-split function.
+ * paramName which is "input" here is name of one of the parameters that 
+ * is passed to pre-process-split function.
+ * data is the matrix/tuple of the entire dataset.
+ * fatal is for checking if any error occurs is critical or not.
+ * errorMessage is the message that is displayed if dataset is empty.
+ */
+
+template<typename T>
+void RequireNonEmptyInputValue(util::Params& params,
     const std::string& paramName,
+    T data,
     const bool fatal,
     const std::string& errorMessage)
 {
@@ -318,12 +337,20 @@ inline void RequireNonEmptyInputValue(
 
   if (params.Has(paramName))
   {
-    arma::mat trainingData = std::move(params.Get<arma::mat>(paramName));
-    if (trainingData.empty())
+    T& inputData = std::move(data);
+    if (inputData.empty())
     {
       util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
-      if (!errorMessage.empty())
-        stream << paramName << " " << errorMessage << "!" << std::endl;
+      if (!errorMessage.empty()) {
+        stream << inputData << PRINT_PARAM_STRING(paramName) 
+            << " " << errorMessage << "! ";
+
+        GetPrintableParam<std::string>(params,
+            const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+            const typename std::enable_if<params::HasSerialize<T>::value>::type* = 0);
+
+        stream << std::endl;
+      }
     }
   }
 }

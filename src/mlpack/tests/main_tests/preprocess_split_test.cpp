@@ -359,7 +359,8 @@ TEST_CASE_METHOD(
 }
 
 /**
- * Check that if training size is not zero.
+ * Check that if input dataset is not empty.
+ * Empty dataset can not be split.
  */
 TEST_CASE_METHOD(
     PreprocessSplitTestFixture, "PreprocessSplitNonEmptyInputTest",
@@ -373,10 +374,11 @@ TEST_CASE_METHOD(
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
-  RUN_BINDING();
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("input_labels", std::move(labels));
 
-  // Now check that the input data is not empty.
-  REQUIRE(inputData.is_empty() == false);
-
-  REQUIRE(labels.is_empty() == false);
+  // Now check that the input dataset is not empty.
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }

@@ -148,11 +148,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "test ratio must be between 0.0 and 1.0");
 
-  // input data can't be empty.
-  RequireNonEmptyInputValue(params, "input", true, "can not be empty");
 
   // Load the data.
   arma::mat& data = params.Get<arma::mat>("input");
+
+  // input data can't be empty.
+  RequireNonEmptyInputValue<arma::mat>(params, "input", data, true, "must be non-empty: cannot split an empty dataset");
 
   // If parameters for labels exist, we must split the labels too.
   if (params.Has("input_labels"))
