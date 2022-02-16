@@ -153,7 +153,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::mat& data = params.Get<arma::mat>("input");
 
   // input data can't be empty.
-  RequireNonEmptyInputValue<arma::mat>(params, "input", data, true, "must be non-empty: cannot split an empty dataset");
+  std::string& filename =  mlpack::bindings::cli::GetPrintableParam(params, 0, 0);
+  if (filename != "")
+    RequireNonEmptyInputValue(params, "input", filename, true, "must be non-empty: cannot split an empty dataset");
+  else
+    RequireNonEmptyInputValue<arma::mat>(params, "input", data, true, "must be non-empty: cannot split an empty dataset");
 
   // If parameters for labels exist, we must split the labels too.
   if (params.Has("input_labels"))

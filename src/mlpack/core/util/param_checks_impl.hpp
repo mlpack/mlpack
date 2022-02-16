@@ -15,9 +15,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/param_data.hpp>
 
-#include "param_checks.hpp"
-#include "get_printable_param.hpp"
-
 namespace mlpack {
 namespace util {
 
@@ -337,19 +334,34 @@ void RequireNonEmptyInputValue(util::Params& params,
 
   if (params.Has(paramName))
   {
-    T& inputData = std::move(data);
-    if (inputData.empty())
+    if (data.empty())
     {
       util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
       if (!errorMessage.empty()) {
-        stream << inputData << PRINT_PARAM_STRING(paramName) 
-            << " " << errorMessage << "! ";
+        stream << data << PRINT_PARAM_STRING(paramName) 
+            << " " << errorMessage << "! " << std::endl;
+      }
+    }
+  }
+}
 
-        GetPrintableParam<std::string>(params,
-            const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-            const typename std::enable_if<params::HasSerialize<T>::value>::type* = 0);
+inline void RequireNonEmptyInputValue(util::Params& params,
+    const std::string& paramName,
+    std::string filename,
+    const bool fatal,
+    const std::string& errorMessage)
+{
+  if (BINDING_IGNORE_CHECK(paramName))
+    return;
 
-        stream << std::endl;
+  if (params.Has(paramName))
+  {
+    if (filename.empty())
+    {
+      util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+      if (!errorMessage.empty()) {
+        stream << filename << PRINT_PARAM_STRING(paramName) 
+            << " " << errorMessage << "! " << std::endl;
       }
     }
   }
