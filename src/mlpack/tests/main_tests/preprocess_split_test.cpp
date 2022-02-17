@@ -375,6 +375,6 @@ TEST_CASE_METHOD(
 
   // Now check that the input dataset is not empty.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::bad_alloc);
   Log::Fatal.ignoreInput = false;
 }
