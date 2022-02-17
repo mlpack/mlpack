@@ -482,12 +482,6 @@ double FFN<
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
 
-  std::cout << predictors.cols(begin, begin + 1 - 1).n_rows << std::endl;
-  std::cout << predictors.cols(begin, begin + 1 - 1).n_cols << std::endl;
-  std::cout << predictors.cols(begin, begin + 1 - 1) << std::endl;
-  std::cout << "----------------------------------------------------\n";
-  std::cout << predictors.cols(begin, begin + 2 - 1) << std::endl;
-  exit(0);
   network.Forward(predictors.cols(begin, begin + batchSize - 1), networkOutput);
 
   const double obj = outputLayer.Forward(networkOutput,
