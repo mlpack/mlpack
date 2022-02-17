@@ -332,37 +332,12 @@ void RequireNonEmptyInputValue(util::Params& params,
   if (BINDING_IGNORE_CHECK(paramName))
     return;
 
-  if (params.Has(paramName))
-  {
-    if (data.empty())
+  if (params.Has(paramName) && data.empty())
     {
       util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
       if (!errorMessage.empty()) {
         stream << data << PRINT_PARAM_STRING(paramName) 
             << " " << errorMessage << "! " << std::endl;
-      }
-    }
-  }
-}
-
-inline void RequireNonEmptyInputValue(util::Params& params,
-    const std::string& paramName,
-    std::string filename,
-    const bool fatal,
-    const std::string& errorMessage)
-{
-  if (BINDING_IGNORE_CHECK(paramName))
-    return;
-
-  if (params.Has(paramName))
-  {
-    if (filename.empty())
-    {
-      util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
-      if (!errorMessage.empty()) {
-        stream << filename << PRINT_PARAM_STRING(paramName) 
-            << " " << errorMessage << "! " << std::endl;
-      }
     }
   }
 }
