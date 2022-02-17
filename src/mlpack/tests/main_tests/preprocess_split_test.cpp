@@ -369,10 +369,10 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
-    FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
-    FAIL("Unable to load label dataset vc2_labels.txt!");
+  if (!data::Load("empty_dataset.csv", inputData))
+    FAIL("Cannot load training dataset empty_dataset.csv!");
+  if (!data::Load("empty_dataset_labels.txt", labels))
+    FAIL("Unable to load label dataset empty_dataset_labels.txt!");
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
