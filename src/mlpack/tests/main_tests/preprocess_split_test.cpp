@@ -367,12 +367,8 @@ TEST_CASE_METHOD(
     "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
-  arma::mat inputData;
-  arma::Mat<size_t> labels;
-  if (!data::Load("empty_dataset.csv", inputData))
-    FAIL("Cannot load training dataset empty_dataset.csv!");
-  if (!data::Load("empty_dataset_labels.txt", labels))
-    FAIL("Unable to load label dataset empty_dataset_labels.txt!");
+  arma::mat inputData(0,0);
+  arma::Mat<size_t> labels(0,0);
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
