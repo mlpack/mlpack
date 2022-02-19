@@ -77,6 +77,12 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
 
   // Testing binary ROC-AUC Score.
+  //
+  // NOTE:
+  // 	For comparing these ROCAUCScore testcases with "scikit-learn"
+  // library's "roc_auc_score", refer the pull request thread comment
+  // https://github.com/mlpack/mlpack/pull/3086#issuecomment-1046003548
+  //
   arma::Row<size_t> rocTrueLabels;
   arma::Row<double> rocScoresOfPC;
   double rocAucScore;
