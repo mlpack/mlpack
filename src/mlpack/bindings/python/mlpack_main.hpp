@@ -47,6 +47,46 @@
 #define PRINT_MODEL mlpack::bindings::python::PrintModel
 
 /**
+ * IMPORT_EXT_LIB() returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::python::ImportExtLib
+
+/**
+ * IMPORT_SPLIT() returns a string that imports mlpack's preprocess_split.
+ */
+#define IMPORT_SPLIT mlpack::bindings::python::ImportSplit
+
+/**
+ * IMPORT_THIS returns a string that imports the current method.
+ */
+#define IMPORT_THIS mlpack::bindings::python::ImportThis
+
+/**
+ * GET_DATASET() returns a string that reads data from a source and,
+ * stores in a variable.
+ */
+#define GET_DATASET mlpack::bindings::python::GetDataset
+
+/**
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets.
+ */
+#define SPLIT_TRAIN_TEST mlpack::bindings::python::SplitTrainTest
+
+/**
+ * CREATE_OBJECT() returns a string that creates an instance of the
+ * class.
+ */
+#define CREATE_OBJECT(...) mlpack::bindings::python::CreateObject(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
+ * CALL_METHOD() returns a string that calls a method of an instance.
+ */
+#define CALL_METHOD(...) mlpack::bindings::python::CallMethod(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
  * PRINT_CALL() returns a string that contains the full language-specific
  * representation of a call to an mlpack binding.  The first argument should be
  * the name of the binding, and all other arguments should be names of
@@ -61,6 +101,13 @@
  */
 #define BINDING_IGNORE_CHECK(x) mlpack::bindings::python::IgnoreCheck( \
     STRINGIFY(BINDING_NAME), x)
+
+/**
+ * BINDING_MIN_LABEL is the minimum value a label can take, as represented in
+ * the input binding language.  For Python bindings, we expect the user to
+ * provide their classes in the range [0, numClasses).
+ */
+#define BINDING_MIN_LABEL 0
 
 namespace mlpack {
 namespace util {

@@ -62,6 +62,13 @@
 #define BINDING_IGNORE_CHECK(x) mlpack::bindings::go::IgnoreCheck( \
     STRINGIFY(BINDING_NAME), x)
 
+/**
+ * BINDING_MIN_LABEL is the minimum value a label can take, as represented in
+ * the input binding language.  For Go bindings, we expect the user to provide
+ * their classes in the range [0, numClasses).
+ */
+#define BINDING_MIN_LABEL 0
+
 namespace mlpack {
 namespace util {
 

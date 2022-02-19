@@ -48,6 +48,46 @@
 #define PRINT_MODEL mlpack::bindings::markdown::PrintModel
 
 /**
+ * IMPORT_EXT_LIB() returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::markdown::ImportExtLib
+
+/**
+ * IMPORT_SPLIT() returns a string that imports mlpack's preprocess_split.
+ */
+#define IMPORT_SPLIT mlpack::bindings::markdown::ImportSplit
+
+/**
+ * IMPORT_THIS() returns a string that imports the current method.
+ */
+#define IMPORT_THIS mlpack::bindings::markdown::ImportThis
+
+/**
+ * GET_DATASET() returns a string that reads data from a source and,
+ * stores in a variable.
+ */
+#define GET_DATASET mlpack::bindings::markdown::GetDataset
+
+/**
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets.
+ */
+#define SPLIT_TRAIN_TEST mlpack::bindings::markdown::SplitTrainTest
+
+/**
+ * CREATE_OBJECT() returns a string that creates an instance of the
+ * class.
+ */
+#define CREATE_OBJECT(...) mlpack::bindings::markdown::CreateObject(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
+ * CALL_METHOD() returns a string that calls a method of an instance.
+ */
+#define CALL_METHOD(...) mlpack::bindings::markdown::CallMethod(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
  * PRINT_CALL() returns a string that contains the full language-specific
  * representation of a call to an mlpack binding.  The first argument should be
  * the name of the binding, and all other arguments should be names of
@@ -65,6 +105,9 @@
 
 // This doesn't actually matter for this binding type.
 #define BINDING_MATRIX_TRANSPOSED true
+
+// This doesn't actually matter for this binding type.
+#define BINDING_MIN_LABEL 0
 
 namespace mlpack {
 namespace util {

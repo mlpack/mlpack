@@ -30,6 +30,16 @@
 #define PRINT_MODEL(A) std::string(" ")
 #define PRINT_CALL(...) std::string(" ")
 #define BINDING_IGNORE_CHECK mlpack::bindings::tests::IgnoreCheck
+#define IMPORT_EXT_LIB(...) std::string(" ")
+#define IMPORT_SPLIT(...) std::string(" ")
+#define IMPORT_THIS(...) std::string(" ")
+#define GET_DATASET(...) std::string(" ")
+#define SPLIT_TRAIN_TEST(...) std::string(" ")
+#define CREATE_OBJECT(...) std::string(" ")
+#define CALL_METHOD(...) std::string(" ")
+
+// This doesn't actually matter for this binding type.
+#define BINDING_MIN_LABEL 0
 
 namespace mlpack {
 namespace util {

@@ -104,6 +104,9 @@ class DiscreteActionEnv
    * @return It's of no use but so lets keep it false.
    */
   bool IsTerminal(const State& /* state */) const { return false; }
+
+  //! Dimensionality of the reward vector. Number of rewards.
+  static size_t rewardSize;
 };
 
 /**
@@ -198,6 +201,9 @@ class ContinuousActionEnv
    * @return It's of no use but so lets keep it false.
    */
   bool IsTerminal(const State& /* state */) const { return false; }
+
+  //! Dimensionality of the reward vector. Number of rewards.
+  static size_t rewardSize;
 };
 
 } // namespace rl

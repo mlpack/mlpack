@@ -4,6 +4,7 @@ set(SOURCES
   clamp.hpp
   columns_to_blocks.hpp
   columns_to_blocks.cpp
+  digamma.hpp
   lin_alg.hpp
   lin_alg_impl.hpp
   lin_alg.cpp
@@ -20,6 +21,7 @@ set(SOURCES
   range_impl.hpp
   round.hpp
   shuffle_data.hpp
+  trigamma.hpp
   ccov.hpp
   ccov_impl.hpp
 )

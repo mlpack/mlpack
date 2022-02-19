@@ -1,5 +1,45 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Migrate from boost tests to Catch2 framework (#2523), (#2584).
+
+  * Bump minimum armadillo version from 8.400 to 9.800 (#3043), (#3048).
+
+  * Adding a copy constructor in the Convolution layer (#3067).
+
+  * Replace `boost::spirit` parser by a local efficient implementation (#2942).
+
+  * Disable correctly the autodownloader + fix tests stability (#3076).
+
+  * Replace `boost::any` with `core::v2::any` or `std::any` if available (#3006).
+
+  * Remove old non used Boost headers (#3005).
+
+  * Replace `boost::enable_if` with `std::enable_if` (#2998).
+
+  * Replace `boost::is_same` with `std::is_same` (#2993).
+
+  * Remove invalid option for emsmallen and STB (#2960).
+
+  * Check for armadillo dependencies before downloading armadillo (#2954).
+
+  * Disable the usage of autodownloader by default (#2953).
+
+  * Install dependencies downloaded with the autodownloader (#2952).
+ 
+  * Download older Boost if the compiler is old (#2940). 
+
+  * Add support for embedded systems (#2531).
+
+  * Build mlpack executable statically if the library is statically linked (#2931).
+
+  * Fix cover tree loop bug on embedded arm systems (#2869).
+
+  * Fix a LAPACK bug in `FindArmadillo.cmake` (#2929).
+
+  * Add an autodownloader to get mlpack dependencies (#2927).
+
+  * Remove Coverage files and configurations from CMakeLists (#2866).
+
   * Added `Multi Label Soft Margin Loss` loss function for neural networks
    (#2345).
 
@@ -80,6 +120,8 @@
     `decision_tree()` and `hoeffding_tree()` (#2971).
 
   * Depend on `pkgbuild` for R bindings (#3081).
+ 
+  * Replaced Numpy deprecated code in Python bindings (#3126).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

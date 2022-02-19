@@ -121,9 +121,9 @@ endif ()
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
-# If we are on a Unix-like system, use the GNU install directories module.
+# If we are not using Visual Studio, use the GNU install directories module.
 # Otherwise set the values manually.
-if (UNIX)
+if (NOT MSVC)
   include(GNUInstallDirs)
 else ()
   set(CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
@@ -168,8 +168,8 @@ endif ()
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
 # many sections.
 if (CMAKE_COMPILER_IS_GNUCC AND WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wa,-mbig-obj")
 endif()
 
 # If using clang, we have to link against libc++ depending on the
@@ -183,13 +183,18 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
-        "10\\.([0-9]+).*" "\\1"
-        MACOSX_VERSION
+        "([0-9]+)(?:\\.([0-9]+).*)*" "\\1"
+        MACOSX_MAJOR_VERSION
+        "${MACOSX_VERSION_RAW}")
+
+    string(REGEX REPLACE
+        "([0-9]+)(?:\\.([0-9]+).*)*" "\\2"
+        MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
 
      # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
      # select the right stdlib.
-    if (${MACOSX_VERSION} LESS 9)
+    if (${MACOSX_MAJOR_VERSION} LESS 11 AND ${MACOSX_MINOR_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_SHARED_LINKER_FLAGS
           "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
@@ -356,6 +361,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.78.0" "1.78"
   "1.77.0" "1.77"
   "1.76.0" "1.76"
   "1.75.0" "1.75"

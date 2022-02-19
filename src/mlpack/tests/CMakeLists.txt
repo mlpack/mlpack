@@ -32,6 +32,7 @@ add_executable(mlpack_test
   decision_tree_regressor_test.cpp
   decision_tree_test.cpp
   det_test.cpp
+  digamma_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
@@ -125,12 +126,16 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
+  trigamma_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
   xgboost_test.cpp
   main_tests/adaboost_test.cpp
+  main_tests/adaboost_train_test.cpp
+  main_tests/adaboost_classify_test.cpp
+  main_tests/adaboost_probabilities_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
   main_tests/cf_test.cpp
@@ -156,6 +161,8 @@ add_executable(mlpack_test
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/linear_regression_train_test.cpp
+  main_tests/linear_regression_predict_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp

@@ -11,8 +11,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gamma_distribution.hpp"
-#include <boost/math/special_functions/trigamma.hpp>
-#include <boost/math/special_functions/polygamma.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -101,9 +99,6 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
                               const arma::vec& meanxVec,
                               const double tol)
 {
-  // Use boost's definitions of digamma and tgamma, and std::log.
-  using boost::math::digamma;
-  using boost::math::trigamma;
   using std::log;
 
   // Number of dimensions of gamma distribution.
@@ -138,8 +133,8 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
       aOld = aEst;
 
       // Calculate new value for alpha.
-      double nominator = meanLogx - logMeanx + log(aEst) - digamma(aEst);
-      double denominator = pow(aEst, 2) * (1 / aEst - trigamma(aEst));
+      double nominator = meanLogx - logMeanx + log(aEst) - math::Digamma(aEst);
+      double denominator = pow(aEst, 2) * (1 / aEst - math::Trigamma(aEst));
 
       // Protect against division by 0.
       if (denominator == 0)
