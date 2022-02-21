@@ -161,8 +161,8 @@ endif()
 set(COMPILER_SUPPORT_LIBRARIES "")
 
 # Check if atomics need -latomic linking.
-include(CheckAtomic)
-if (LLVM_HAS_ATOMICS)
+#include(CheckAtomic)
+if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB AND NOT HAVE_CXX_ATOMICS64_WITHOUT_LIB)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -latomic")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -latomic")
 endif ()
