@@ -375,6 +375,6 @@ TEST_CASE_METHOD(
 
   // Now check that the input dataset is not empty.
   RUN_BINDING();
-  REQUIRE_THROWS_AS(inputData.is_empty() , std::bad_length_error);
-  REQUIRE_THROWS_AS(labels.is_empty() , std::bad_length_error);
+  REQUIRE_THROWS_AS(inputData.is_empty() , std::length_error);
+  REQUIRE_THROWS_AS(labels.is_empty() , std::length_error);
 }
