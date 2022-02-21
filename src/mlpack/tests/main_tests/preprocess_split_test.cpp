@@ -374,5 +374,7 @@ TEST_CASE_METHOD(
   SetInputParam("input_labels", std::move(labels));
 
   // Now check that the input dataset is not empty.
+  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING() , std::length_error);
+  Log::Fatal.ignoreInput = false;
 }
