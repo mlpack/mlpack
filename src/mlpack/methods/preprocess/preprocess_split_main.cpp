@@ -118,12 +118,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const bool shuffleData = params.Get<bool>("no_shuffle");
   const bool stratifyData = params.Get<bool>("stratify_data");
 
-  // Load the data.
-  arma::mat& data = params.Get<arma::mat>("input");
-
-  // input data can't be empty.
-  RequireNonEmptyInputValue<arma::mat>(params, "input", data, true, "must be non-empty: cannot split an empty dataset");
-
   if (params.Get<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
   else
@@ -154,6 +148,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "test ratio must be between 0.0 and 1.0");
 
+  // input data can't be empty.
+  RequireNonEmptyInputValue<arma::mat>(params, "input", params.Get<arma::mat>("input"), true, "must be non-empty: cannot split an empty dataset");
+
+  // Load the data.
+  arma::mat& data = params.Get<arma::mat>("input");
 
   // If parameters for labels exist, we must split the labels too.
   if (params.Has("input_labels"))
