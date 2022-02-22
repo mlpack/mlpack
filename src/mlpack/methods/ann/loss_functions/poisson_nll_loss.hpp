@@ -116,7 +116,8 @@ class PoissonNLLLoss
   //! logarithms and denominators.
   typename InputDataType::elem_type& Eps() { return eps; }
 
-  //! Get the type of reduction used.
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }

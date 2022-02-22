@@ -86,7 +86,8 @@ class LogCoshLoss
   //! Modify the value of hyperparameter a.
   double& A() { return a; }
 
-  //! Get the type of reduction used.
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
