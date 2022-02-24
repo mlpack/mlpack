@@ -93,7 +93,7 @@ class HingeLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! The boolean value that tells if reduction is sum or mean.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class HingeLoss
 

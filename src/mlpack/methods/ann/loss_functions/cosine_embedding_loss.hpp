@@ -133,8 +133,7 @@ class CosineEmbeddingLoss
   //! Locally-stored value of similarity hyper-parameter.
   bool similarity;
 
-//! Boolean value that tells if reduction
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class CosineEmbeddingLoss
 

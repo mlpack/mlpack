@@ -105,8 +105,7 @@ class LogCoshLoss
   //! Hyperparameter a for smoothening function curve.
   double a;
 
-  //! Boolean value that tells if reduction 
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class LogCoshLoss
 

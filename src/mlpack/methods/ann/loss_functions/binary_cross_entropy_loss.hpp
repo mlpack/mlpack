@@ -100,8 +100,7 @@ class BCELoss
   //! The minimum value used for computing logarithms and denominators
   double eps;
 
-  //! Boolean value that tells if reduction 
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class BCELoss
 

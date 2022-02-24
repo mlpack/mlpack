@@ -156,8 +156,7 @@ class PoissonNLLLoss
   //! eps is a small value required to prevent 0 in logarithms and denominators.
   typename InputDataType::elem_type eps;
 
-  //! Boolean value that tells if reduction 
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 
 }; // class PoissonNLLLoss

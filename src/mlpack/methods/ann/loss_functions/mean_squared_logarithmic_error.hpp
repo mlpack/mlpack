@@ -89,8 +89,7 @@ class MeanSquaredLogarithmicError
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Boolean value that tells if reduction 
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class MeanSquaredLogarithmicError
 

@@ -102,8 +102,7 @@ class HuberLoss
   //! Hyperparameter `delta` defines the point upto which MSE is considered.
   double delta;
 
-  //! Boolean value that tells if reduction 
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class HuberLoss
 

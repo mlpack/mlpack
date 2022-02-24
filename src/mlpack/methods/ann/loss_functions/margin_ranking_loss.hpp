@@ -103,8 +103,7 @@ class MarginRankingLoss
   //! The margin value used in calculating Margin Ranking Loss.
   double margin;
 
-  //! Boolean value that tells if reduction 
-  //  is 'sum' or 'mean'.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class MarginRankingLoss
 
