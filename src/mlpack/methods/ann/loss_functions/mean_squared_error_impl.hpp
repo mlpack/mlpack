@@ -33,7 +33,7 @@ MeanSquaredError<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   typename PredictionType::elem_type lossSum =
-    arma::accu(arma::square(prediction - target));
+      arma::accu(arma::square(prediction - target));
 
   if (reduction)
     return lossSum;
