@@ -20,8 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss
-  (const double a, const bool reduction) :
+LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(
+    const double a, const bool reduction) :
     a(a) , reduction(reduction)
 {
   Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
