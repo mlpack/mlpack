@@ -53,7 +53,7 @@ void BCELoss<InputDataType, OutputDataType>::Backward(
   loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
 
   if (!reduction)
-    loss /= prediction.n_elem;
+    loss /= target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>

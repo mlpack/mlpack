@@ -47,7 +47,7 @@ HuberLoss<InputDataType, OutputDataType>::Forward(
   if (reduction)
     return lossSum;
 
-  return lossSum / prediction.n_elem;
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -69,7 +69,7 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
   }
 
   if (!reduction)
-    loss = loss / prediction.n_elem;
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
