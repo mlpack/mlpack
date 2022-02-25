@@ -35,7 +35,7 @@ LogCoshLoss<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   typename PredictionType::elem_type lossSum = 
-    arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
+      arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
 
   if (reduction)
     return lossSum;
