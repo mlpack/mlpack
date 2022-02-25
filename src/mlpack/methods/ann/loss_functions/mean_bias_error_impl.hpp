@@ -39,7 +39,7 @@ MeanBiasError<InputDataType, OutputDataType>::Forward(
   if (reduction)
     return lossSum;
 
-  return lossSum/ target.n_elem;
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -53,7 +53,7 @@ void MeanBiasError<InputDataType, OutputDataType>::Backward(
   loss.fill(-1.0);
 
   if (!reduction)
-    loss = loss / target.n_elem;
+    loss = loss / loss.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
