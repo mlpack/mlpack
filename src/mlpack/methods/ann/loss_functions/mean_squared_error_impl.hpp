@@ -48,7 +48,7 @@ void MeanSquaredError<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     LossType& loss)
 {
-  loss = 2 * (prediction - target) ;
+  loss = 2 * (prediction - target);
 
   if (!reduction)
     loss = loss / prediction.n_elem;
