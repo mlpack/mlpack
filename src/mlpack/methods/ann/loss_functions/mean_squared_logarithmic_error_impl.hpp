@@ -33,8 +33,8 @@ MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   typename PredictionType::elem_type lossSum =  
-    arma::accu(arma::square(arma::log(1. + target) -
-      arma::log(1. + prediction))) ;
+      arma::accu(arma::square(arma::log(1.0 + target) -
+      arma::log(1.0 + prediction)));
 
   if (reduction)
     return lossSum;
