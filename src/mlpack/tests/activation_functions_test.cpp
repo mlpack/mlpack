@@ -798,7 +798,6 @@ TEST_CASE("ThresholdFunctionTest", "[ActivationFunctionsTest]")
   CheckThresholdCorrect(activationData, desiredActivations, desiredDerivatives);
 }
 
-
 /**
  * Basic test of the tanh function.
  */
