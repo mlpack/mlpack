@@ -28,16 +28,16 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 RReLU<InputDataType, OutputDataType>::RReLU(
-    const double lowerbound,
-    const double higherbound):
-    lowerbound(lowerbound),
-    higherbound(higherbound),
+    const double lowerBound,
+    const double upperBound):
+    lowerBound(lowerBound),
+    upperBound(upperBound),
     deterministic(false),
     alpha(0.0)
 {
-  if (lowerbound < 1.0 || higherbound < 1.0)
+  if (lowerBound < 1.0 || upperBound < 1.0)
   {
-    Log::Fatal << "Lowerbound and higherbound must be greater than 1."
+    Log::Fatal << "lowerBound and upperBound must be greater than 1."
         << std::endl;
   }
 }
@@ -49,11 +49,11 @@ void RReLU<InputDataType, OutputDataType>::Forward(
 {
   if (deterministic)
   {
-    alpha = 2.0 / (higherbound + lowerbound);
+    alpha = 2.0 / (upperBound + lowerBound);
   }
   else
   {
-    alpha = 1.0 / math::Random(lowerbound, higherbound);
+    alpha = 1.0 / math::Random(lowerBound, upperBound);
   }
   output = arma::max(input, alpha * input);
 }
@@ -77,8 +77,8 @@ void RReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(lowerbound));
-  ar(CEREAL_NVP(higherbound));
+  ar(CEREAL_NVP(lowerBound));
+  ar(CEREAL_NVP(upperBound));
 }
 
 } // namespace ann

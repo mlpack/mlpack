@@ -57,11 +57,11 @@ class RReLU
    * lowerbound, and higherbound from range 1 to inf.
    * Default (lowerbound = 3.0, higherbound = 8.0)
    *
-   * @param lowerbound Lowerbound of uniform distribution
-   * @param higherbound Higherbound of uniform distribution
+   * @param lowerBound Lower bound of uniform distribution.
+   * @param upperBound Upper bound of uniform distribution.
    */
-  RReLU(const double lowerbound = 3.0,
-        const double higherbound = 8.0);
+  RReLU(const double lowerBound = 3.0,
+        const double upperBound = 8.0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -105,25 +105,15 @@ class RReLU
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
-  //! Get the lowerbound parameter.
-  double const& LowerBound() const { return lowerbound; }
+  //! Get the lowerBound parameter.
+  double const& LowerBound() const { return lowerBound; }
   //! Modify the lowerbound parameter.
-  void LowerBound(const double lo)
-  {
-    if (lo < 1.0)
-      Log::Fatal << "Lowerbound must be greater than 1.0" << std::endl;
-    lowerbound = lo;
-  }
+  double& LowerBound() { return lowerBound; }
 
-  //! Get the higherbound parameter.
-  double const& HigherBound() const { return higherbound; }
-  //! Modify the upperbound parameter.
-  void HigherBound(const double hi)
-  {
-    if (hi < 1.0)
-      Log::Fatal << "Higherbound must be greater than 1.0" << std::endl;
-    higherbound = hi;
-  }
+  //! Get the upperBound parameter.
+  double const& UpperBound() const { return upperBound; }
+  //! Modify the upperBound parameter.
+  double& UpperBound() { return upperBound; }
 
   //! Get size of weights.
   size_t WeightSize() const { return 0; }
@@ -142,10 +132,10 @@ class RReLU
   OutputDataType outputParameter;
 
   //! Lower bound of uniform distribution
-  double lowerbound;
+  double lowerBound;
 
-  //! Higher bound of uniform distribution
-  double higherbound;
+  //! Upper bound of uniform distribution
+  double upperBound;
 
   //! If true randomization of alpha is disabled, see notes above.
   bool deterministic;
