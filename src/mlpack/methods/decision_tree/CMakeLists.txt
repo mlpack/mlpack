@@ -27,9 +27,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(decision_tree "classification")
 add_cli_executable(decision_tree)
 add_python_binding(decision_tree)
 add_julia_binding(decision_tree)
 add_go_binding(decision_tree)
 add_r_binding(decision_tree)
-add_markdown_docs(decision_tree "cli;python;julia;go;r" "classification")
+add_markdown_docs(decision_tree "cli;python;julia;go;r" "")

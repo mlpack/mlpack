@@ -17,6 +17,7 @@
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
+#include <mlpack/core/cv/metrics/roc_auc_score.hpp>
 #include <mlpack/core/cv/metrics/r2_score.hpp>
 #include <mlpack/core/cv/metrics/silhouette_score.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
@@ -74,6 +75,86 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
+
+  // Testing binary ROC-AUC Score.
+  //
+  // NOTE:
+  // 	For comparing these ROCAUCScore testcases with "scikit-learn"
+  // library's "roc_auc_score", refer the pull request thread comment
+  // https://github.com/mlpack/mlpack/pull/3086#issuecomment-1046003548
+  //
+  arma::Row<size_t> rocTrueLabels;
+  arma::Row<double> rocScoresOfPC;
+  double rocAucScore;
+
+  // Test - 1
+  rocTrueLabels = arma::Row<size_t>("0 0 0 0 0  1 1 1 1 1");
+  rocScoresOfPC = arma::Row<double>("0.1 0.2 0.3 0.4 0.5  0.6 0.7 0.8 0.9 1");
+
+  rocAucScore = 0;
+  REQUIRE(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC)
+          == Approx(rocAucScore).epsilon(1e-7));
+
+  rocAucScore = 1;
+  REQUIRE(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC)
+          == Approx(rocAucScore).epsilon(1e-7));
+
+  // Test - 2
+  rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
+  rocScoresOfPC = arma::Row<double>("0.1 0.2 0.3 0.4 0.5  0.6 0.7 0.8 0.9 1");
+
+  rocAucScore = 0.6;
+  REQUIRE(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC)
+          == Approx(rocAucScore).epsilon(1e-7));
+
+  rocAucScore = 0.4;
+  REQUIRE(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC)
+          == Approx(rocAucScore).epsilon(1e-7));
+
+  // Test - 3
+  rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
+  rocScoresOfPC = arma::Row<double>("0.8 0.3 0.5 0.4 0.9  0.2 0.7 0.6 0 0.1");
+
+  rocAucScore = 0.24;
+  REQUIRE(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC)
+          == Approx(rocAucScore).epsilon(1e-7));
+
+  rocAucScore = 0.76;
+  REQUIRE(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC)
+          == Approx(rocAucScore).epsilon(1e-7));
+
+  // Test - 4 (labels and scores with zero size)
+  rocTrueLabels = arma::Row<size_t>();
+  rocScoresOfPC = arma::Row<double>();
+
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC),
+                    std::invalid_argument);
+  REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
+                    std::invalid_argument);
+  Log::Fatal.ignoreInput = false;
+
+  // Test - 5 (labels and scores with one size)
+  rocTrueLabels = arma::Row<size_t>("1");
+  rocScoresOfPC = arma::Row<double>("0.8");
+
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC),
+                    std::invalid_argument);
+  REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
+                    std::invalid_argument);
+  Log::Fatal.ignoreInput = false;
+
+  // Test - 6 (mismatch labels and scores size)
+  rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
+  rocScoresOfPC = arma::Row<double>("0.1 0.2 0.3 0.4 0.5");
+
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC),
+                    std::invalid_argument);
+  REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
+                    std::invalid_argument);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**
