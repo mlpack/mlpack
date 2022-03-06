@@ -12,134 +12,148 @@
 #ifndef MLPACK_METHODS_RVM_REGRESSION_MODEL_HPP
 #define MLPACK_METHODS_RVM_REGRESSION_MODEL_HPP
 
+#include <mlpack/core.hpp>
 #include <mlpack/methods/rvm_regression/rvm_regression.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include "boost/variant.hpp"
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+
+
 
 using namespace mlpack::kernel;
 using namespace mlpack::regression;
+using namespace arma;
 
-/**
- * Serializabale RVM class.
- */
+namespace mlpack {
+
+enum Kernel
+{
+ LINEAR,
+ GAUSSIAN,
+ LAPLACIAN,
+ EPANECHNIKOV,
+ SPHERICAL,
+ POLYNOMIAL,
+ COSINE,
+ ARD
+};
+  
+class WrapperBase
+{
+  public:
+  //! Create the object. The base class has nothing to hold.
+  WrapperBase() {};
+
+  //! Delete the object.
+  virtual ~WrapperBase() {};
+
+  //! Make a training.
+  virtual void Train(const mat& matX, const rowvec& responses) = 0;
+
+  //! Compute predictions from matX.
+  virtual void Predict(const mat& matX, rowvec& predictions) = 0;
+
+  //! Compute predictions and uncertainties from matX.
+  virtual void Predict(const mat& matX, rowvec& predictions, rowvec& std) = 0;
+
+  //! Get solution vector.
+  virtual const colvec& Omega() const = 0;
+};
+
+template<typename KernelType>
+class Wrapper : public WrapperBase
+{
+  protected:
+  typedef RVMRegression<KernelType> RVMRType;
+  RVMRType rvm;
+
+  public:
+  Wrapper(const KernelType& kernel,
+	  const bool centerData,
+	  const bool scaleData,
+	  const bool ard);
+
+  //! Delete the Wrapper object.
+  virtual ~Wrapper() {};
+  
+  //! Make a training.
+  virtual void Train(const mat& matX, const rowvec& responses);
+
+  //! Compute predictions from matX.
+  virtual void Predict(const mat& matX, rowvec& predictions);
+
+  //! Compute predictions and uncertainties from matX.
+  virtual void Predict(const mat& matX, rowvec& predictions, rowvec& std);
+
+  //! Get internal pointer to RVMRegression<> object.
+  const RVMRegression<KernelType>* GetRVMptr() const;
+  
+  //! Get solution vector.
+  virtual const colvec& Omega() const {return rvm.Omega();}
+
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(rvm));
+  }
+
+};
+
 class RVMRegressionModel
 {
-  private:
-  boost::variant<RVMRegression<LinearKernel>*,
-		 RVMRegression<GaussianKernel>*,
-		 RVMRegression<LaplacianKernel>*,
-		 RVMRegression<EpanechnikovKernel>*,
-		 RVMRegression<SphericalKernel>*,
-		 // RVMRegression<HyperbolicTangentKernel>*,
-		 RVMRegression<PolynomialKernel>*,
-		 RVMRegression<CosineDistance>*> rVariant;
+  public:
 
- public:
- RVMRegressionModel(const std::string kernelType,
-		    const bool centerData,
-		    const bool scaleData,
-		    const double bandwidth = 1.0,
-		    const double offset = 0.0,
-		    const double kernel_scale = 1.0,
-		    const double degree = 2.0);
+  //! Create an empty model.
+  RVMRegressionModel();
+  
+  //! Create the RVMRegressionModel.
+  RVMRegressionModel(const std::string kernelType,
+		     const bool centerData,
+		     const bool scaleData,
+		     const double bandwidth = 1.0,
+		     const double offset = 0.0,
+		     const double kernel_scale = 1.0,
+		     const double degree = 2.0);
 
-  //! Create an empty CF model.
-  RVMRegressionModel() { }
+  //! Make a training.
+  void Train(const mat& matX, const rowvec& responses);
 
- // Clean up memory.
+  //! Compute predictions from matX.
+  void Predict(const mat& matX, rowvec& predictions);
+
+  //! Compute predictions and uncertainties from matX.
+  void Predict(const mat& matX, rowvec& predictions, rowvec& std);
+
+  //! Get solution vector.
+  inline const colvec& Omega() const { return rvmWrapper->Omega(); }
+
+  //! Get a pointer to the internal RVMRegression object.
+  template<typename KernelType>
+  const RVMRegression<KernelType>* RVMPtr() const
+  {
+    Wrapper<KernelType>* rvm_ = dynamic_cast<Wrapper<KernelType>*>(rvmWrapper);
+    return rvm_->GetRVMptr();
+  }
+
+  //! Destructor.
   ~RVMRegressionModel();
-  
-  void Train(const arma::mat& matX, const arma::rowvec& responses);
-  
-  void Predict(const arma::mat& matX, arma::rowvec& predictions);
-  
-  void Predict(const arma::mat& matX, arma::rowvec& predictions,
-      arma::rowvec& std);
-
-  //! Get the pointer to RVMRegression<> object.
-  template <typename KernelType>
-  const RVMRegression<KernelType>* RVMPtr() const;
 
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-};
-
-/**
- * TrainVisitor train the RVMRegression model whatever its kernel type.
- */
-class TrainVisitor : public boost::static_visitor<>
-{
+  
   private:
-  const arma::mat& matX;
-  const arma::rowvec& responses;
-  
-  public:
-  // Train the RVMRegression model.
-  TrainVisitor(const arma::mat& matX, const arma::rowvec& responses);
+  Kernel kernel_;
+  WrapperBase* rvmWrapper;
 
-  // Generic visitor for training.
-  template <typename T>
-  void operator()(T* t) const;
 };
 
-/**
- * PredictVisitor makes predictions on a given dataset.
- */
-class PredictVisitor : public boost::static_visitor<>
-{
-  private:
-    const arma::mat& matX;
-    arma::rowvec& predictions;
-  
-  public:
-    PredictVisitor(const arma::mat& matX,
-		   arma::rowvec& predictions);
-
-  template <typename T>
-  void operator()(T* t) const;
-};
-
-/**
- * PredictStdVisitor makes predictions on a given dataset with uncertainies.
- */
-class PredictStdVisitor : public boost::static_visitor<>
-{
-private:
-  const arma::mat& matX;
-  arma::rowvec& predictions;
-  arma::rowvec& std;
-  
-public:
-  PredictStdVisitor(const arma::mat& matX,
-		    arma::rowvec& predictions,
-		    arma::rowvec& std);
-
-  template <typename T>
-  void operator()(T* t) const;
-};
-
-/**
- * GetValueVisitor returns the pointer which points to the RVMRegression
- * Type object.
- */
-class GetValueVisitor : public boost::static_visitor<void*>
-{
- public:
-  //! Return stored pointer as void* type.
-  template <typename T> void* operator()(T *t) const;
-};
-
-struct DeleteVisitor : public boost::static_visitor<>
-{
-  template <typename T>
-  void operator()(T* t) const
-  {
-    if (!t)
-      delete t;
-  }
-};
+} // namespace mlpack
 
 #include "rvm_regression_model_impl.hpp"
 

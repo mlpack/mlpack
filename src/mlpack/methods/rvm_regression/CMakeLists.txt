@@ -4,6 +4,7 @@ set(SOURCES
   rvm_regression.hpp
   rvm_regression_impl.hpp
   rvm_regression_model.hpp
+  rvm_regression_model.cpp
   rvm_regression_model_impl.hpp
 )
 

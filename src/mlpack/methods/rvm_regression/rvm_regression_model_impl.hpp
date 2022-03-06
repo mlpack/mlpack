@@ -14,173 +14,113 @@
 
 #include "rvm_regression_model.hpp"
 
-RVMRegressionModel::RVMRegressionModel(const std::string kernelType,
-				       const bool centerData,
-				       const bool scaleData,
-				       const double bandwidth,
-				       const double offset,
-				       const double kernel_scale,
-				       const double degree)
+using namespace mlpack;
+
+template<typename KernelType>
+Wrapper<KernelType>::Wrapper(const KernelType& kernel,
+	const bool centerData,
+	const bool scaleData,
+	const bool ard)
 {
-  if (kernelType == "linear")
-  {    
-    LinearKernel kernel;
-    rVariant = new RVMRegression<LinearKernel>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "gaussian")
-  {
-    GaussianKernel kernel(bandwidth);
-    rVariant = new RVMRegression<GaussianKernel>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "laplacian")
-  {
-    LaplacianKernel kernel(bandwidth);
-    rVariant = new RVMRegression<LaplacianKernel>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "epanechnikov")
-  {
-    EpanechnikovKernel kernel(bandwidth);
-    rVariant = new RVMRegression<EpanechnikovKernel>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "spherical")
-  {
-    SphericalKernel kernel(bandwidth);
-    rVariant = new RVMRegression<SphericalKernel>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "hyptan")
-  {
-    std::cout << "hyptan kernel unavailable as long as its Evualuate "
-        "method is not const." << std::endl;
-    exit(0);
-    // HyperbolicTangentKernel kernel(kernel_scale, offset);
-    // rVariant = new RVMRegression<HyperbolicTangentKernel>(
-    //     kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "polynomial")
-  {
-    PolynomialKernel kernel(degree, offset);
-    rVariant = new RVMRegression<PolynomialKernel>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "cosine")
-  {
-    CosineDistance kernel;
-    rVariant = new RVMRegression<CosineDistance>(
-        kernel, centerData, scaleData, false);
-  }
-
-  else if (kernelType == "ard")
-  {
-    LinearKernel kernel;
-    rVariant = new RVMRegression<LinearKernel>(
-        kernel, centerData, scaleData, true);
-  }
-
-  else
-  {
-    std::cout << "ard, linear or gaussian only." << std::endl;
-  }
-};
-
-RVMRegressionModel::~RVMRegressionModel()
-{
-  boost::apply_visitor(DeleteVisitor{}, rVariant);
+  rvm = RVMRegression<KernelType>(kernel,
+				  centerData,
+				  scaleData,
+				  ard);
 }
 
-void RVMRegressionModel::Predict(const arma::mat& matX,
-				 arma::rowvec& predictions,
-				 arma::rowvec& std)
+template<typename KernelType>
+void Wrapper<KernelType>::Train(const mat& matX, const rowvec& responses)
 {
-  PredictStdVisitor predict(matX, predictions, std);
-  boost::apply_visitor(predict, rVariant);
+  rvm.Train(matX, responses);
 }
 
-
-void RVMRegressionModel::Train(const arma::mat& matX,
-			       const arma::rowvec& responses)
+template<typename KernelType>
+void Wrapper<KernelType>::Predict(const mat& matX, rowvec& predictions)
 {
-  TrainVisitor train(matX, responses);
-  boost::apply_visitor(train, rVariant);
+  rvm.Predict(matX, predictions);
 }
 
-void RVMRegressionModel::Predict(const arma::mat& matX,
-				 arma::rowvec& predictions)
+template<typename KernelType>
+void Wrapper<KernelType>::Predict(const mat& matX, rowvec& predictions,
+	     rowvec& std)
 {
-  PredictVisitor predict(matX, predictions);
-  boost::apply_visitor(predict, rVariant);
+  rvm.Predict(matX, predictions, std);
 }
 
-template <typename KernelType>
-const RVMRegression<KernelType>* RVMRegressionModel::RVMPtr() const
+template<typename KernelType>
+const RVMRegression<KernelType>* Wrapper<KernelType>::GetRVMptr() const
 {
-  void* pointer = boost::apply_visitor(GetValueVisitor(), rVariant);
-  return (RVMRegression<KernelType>*) pointer;
+  return &rvm;
 }
 
+template<typename Archive>
+void SerializeHelperRVM(Archive& ar, WrapperBase* rvmWrapper, const Kernel kernel_)
+{
+  switch(kernel_)
+  {
+    case LINEAR:
+    {
+      Wrapper<LinearKernel>& rvm_ =
+	dynamic_cast<Wrapper<LinearKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case GAUSSIAN:
+    {
+      Wrapper<GaussianKernel>& rvm_ =
+	dynamic_cast<Wrapper<GaussianKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case LAPLACIAN:
+    {
+      Wrapper<LaplacianKernel>& rvm_ =
+	dynamic_cast<Wrapper<LaplacianKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case EPANECHNIKOV:
+    {
+      Wrapper<EpanechnikovKernel>& rvm_ =
+	dynamic_cast<Wrapper<EpanechnikovKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case SPHERICAL:
+    {
+      Wrapper<SphericalKernel>& rvm_ =
+	dynamic_cast<Wrapper<SphericalKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case POLYNOMIAL:
+    {
+      Wrapper<PolynomialKernel>& rvm_ =
+	dynamic_cast<Wrapper<PolynomialKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case COSINE:
+    {
+      Wrapper<CosineDistance>& rvm_ =
+	dynamic_cast<Wrapper<CosineDistance>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+    case ARD:
+    {
+      Wrapper<LinearKernel>& rvm_ =
+	dynamic_cast<Wrapper<LinearKernel>&>(*rvmWrapper);
+      ar(CEREAL_NVP(rvm_));
+      break;
+    }
+  }
+}
 
 template<typename Archive>
 void RVMRegressionModel::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_VARIANT_POINTER(rVariant));
-}
-
-TrainVisitor::TrainVisitor(const arma::mat& matX,
-			   const arma::rowvec& responses) :
-    matX(matX),
-    responses(responses)
-{ }
-
-template <typename T>
-void TrainVisitor::operator()(T* t) const
-{
-  t->Train(matX, responses);
-}
-
-PredictVisitor::PredictVisitor(const arma::mat& matX,
-			       arma::rowvec& predictions) :
-  matX(matX),
-  predictions(predictions)
-{ /* Nothing to do */ }
-
-template <typename T>
-void PredictVisitor::operator()(T* t) const
-{
-    t->Predict(matX, predictions);
-}
-
-PredictStdVisitor::PredictStdVisitor(const arma::mat& matX,
-				  arma::rowvec& predictions,
-				  arma::rowvec& std) :
-  matX(matX),
-  predictions(predictions),
-  std(std)
-  { /* Nothing to do */ }
-
-template <typename T>
-void PredictStdVisitor::operator()(T* t) const
-{
-  t->Predict(matX, predictions, std);
-}
-
-template <typename T>
-void* GetValueVisitor::operator()(T *t) const
-{
-  if (!t)
-    throw std::runtime_error("no rvm model initialized");
-
-  return (void*) t;
+  SerializeHelperRVM(ar, rvmWrapper, kernel_);
 }
 
 #endif

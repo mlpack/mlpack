@@ -18,18 +18,8 @@
 #define BINDING_NAME rvm_regression
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/cosine_distance.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/core/kernels/spherical_kernel.hpp>
-#include <mlpack/core/kernels/laplacian_kernel.hpp>
-#include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
-// #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
 
-
-#include <mlpack/core/util/mlpack_main.hpp>
-
+#include "rvm_regression.hpp"
 #include "rvm_regression_model.hpp"
 
 using namespace arma;

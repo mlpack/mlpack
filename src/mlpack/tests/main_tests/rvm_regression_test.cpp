@@ -17,12 +17,14 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/rvm_regression/rvm_regression_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "main_test_fixture.hpp"
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include "main_test_fixture.hpp"
+
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
+using namespace arma;
 
 static const std::string testName = "RVMRegression";
 

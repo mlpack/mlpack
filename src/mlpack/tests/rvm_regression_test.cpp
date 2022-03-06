@@ -17,6 +17,8 @@
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/methods/rvm_regression/rvm_regression.hpp>
 
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack::regression;
