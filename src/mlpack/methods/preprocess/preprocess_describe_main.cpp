@@ -185,20 +185,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Load the data.
   arma::mat& data = params.Get<arma::mat>("input");
 
-  // Generate format recipe.
-  const string widthPrecision("%-" + to_string(width) +
-      to_string(precision));
-  const string widthOnly("%-" + to_string(width) + ".");
-  string stringFormat = "";
-  string numberFormat = "";
-
-  // We are going to print 11 different categories.
-  for (size_t i = 0; i < 11; ++i)
-  {
-    stringFormat += widthOnly + "s";
-    numberFormat += widthPrecision + "f";
-  }
-
   timers.Start("statistics");
   // Print the headers.
   Log::Info << setw(width) << "dim" << setw(width) << "var" << setw(width) << 
@@ -223,8 +209,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << setprecision(precision) << setw(width) << numberFormat <<
-        setw(width) << dim << 
+    Log::Info << setprecision(precision) << setw(width) << dim << 
         setw(width) << arma::var(feature, population) << 
         setw(width) << fMean << 
         setw(width) << fStd <<
