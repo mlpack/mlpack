@@ -223,22 +223,18 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << setw(width) << setprecision(precision) << numberFormat <<
-        setw(width) << setprecision(precision) << dim << 
-        setw(width) << setprecision(precision) << 
-        arma::var(feature, population) << 
-        setw(width) << setprecision(precision) << fMean << 
-        setw(width) << setprecision(precision) << fStd <<
-        setw(width) << setprecision(precision) << arma::median(feature) << 
-        setw(width) << setprecision(precision) << fMin << 
-        setw(width) << setprecision(precision) << fMax << 
-        setw(width) << setprecision(precision) << (fMax - fMin) <<
-        setw(width) << setprecision(precision) << 
-        Skewness(feature, fStd, fMean, population) <<
-        setw(width) << setprecision(precision) << 
-        Kurtosis(feature, fStd, fMean, population) <<
-        setw(width) << setprecision(precision) << 
-        StandardError(feature.n_elem, fStd) << endl;
+    Log::Info << setprecision(precision) << setw(width) << numberFormat <<
+        setw(width) << dim << 
+        setw(width) << arma::var(feature, population) << 
+        setw(width) << fMean << 
+        setw(width) << fStd <<
+        setw(width) << arma::median(feature) << 
+        setw(width) << fMin << 
+        setw(width) << fMax << 
+        setw(width) << (fMax - fMin) <<
+        setw(width) << Skewness(feature, fStd, fMean, population) <<
+        setw(width) << Kurtosis(feature, fStd, fMean, population) <<
+        setw(width) << StandardError(feature.n_elem, fStd) << endl;
   };
 
   // If the user specified dimension, describe statistics of the given
