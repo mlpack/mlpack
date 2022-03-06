@@ -25,7 +25,7 @@ namespace math /** Miscellaneous math routines. */ {
  *
  * @param x Input value.
  */
-inline double erfinverse(double x)
+inline double ErfInverse(double x)
 {
   double w, p;
 
@@ -112,9 +112,9 @@ inline double erfinverse(double x)
  * @param mu Mean of the distribution. (Default 0)
  * @param sigma Standard deviation of the distribution. (Default 1)
  */
-inline double quantile(double p, double mu = 0.0, double sigma = 1.0)
+inline double Quantile(double p, double mu = 0.0, double sigma = 1.0)
 {
-  return mu + sigma * std::sqrt(2.0) * erfinverse(2 * p - 1);
+  return mu + sigma * std::sqrt(2.0) * ErfInverse(2 * p - 1);
 }
 
 } // namespace math
