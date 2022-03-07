@@ -21,9 +21,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(emst "geometry")
 add_cli_executable(emst)
 add_python_binding(emst)
 add_julia_binding(emst)
 add_go_binding(emst)
 add_r_binding(emst)
-add_markdown_docs(emst "cli;python;julia;go;r" "geometry")
+add_markdown_docs(emst "cli;python;julia;go;r" "")

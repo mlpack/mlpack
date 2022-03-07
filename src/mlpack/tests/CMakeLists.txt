@@ -134,6 +134,9 @@ add_executable(mlpack_test
   wgan_test.cpp
   xgboost_test.cpp
   main_tests/adaboost_test.cpp
+  main_tests/adaboost_train_test.cpp
+  main_tests/adaboost_classify_test.cpp
+  main_tests/adaboost_probabilities_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
   main_tests/cf_test.cpp
@@ -159,6 +162,8 @@ add_executable(mlpack_test
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/linear_regression_train_test.cpp
+  main_tests/linear_regression_predict_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp

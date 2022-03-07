@@ -17,9 +17,10 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_category(perceptron "classification")
 add_cli_executable(perceptron)
 add_python_binding(perceptron)
 add_julia_binding(perceptron)
 add_go_binding(perceptron)
 add_r_binding(perceptron)
-add_markdown_docs(perceptron "cli;python;julia;go;r" "classification")
+add_markdown_docs(perceptron "cli;python;julia;go;r" "")

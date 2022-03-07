@@ -123,12 +123,16 @@ void PrintPYX(const util::BindingDetails& doc,
 
   cout << endl;
 
+  unordered_set<std::string> extraDefnSet; // to print defns only once.
   // Print any extra class definitions we might need.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
-    if (d.input)
+    if (extraDefnSet.find(d.tname) == extraDefnSet.end())
+    {
       params.functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+      extraDefnSet.insert(d.tname);
+    }
   }
 
   // Print the definition.

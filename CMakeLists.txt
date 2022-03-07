@@ -183,13 +183,18 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
-        "10\\.([0-9]+).*" "\\1"
-        MACOSX_VERSION
+        "([0-9]+)(?:\\.([0-9]+).*)*" "\\1"
+        MACOSX_MAJOR_VERSION
+        "${MACOSX_VERSION_RAW}")
+
+    string(REGEX REPLACE
+        "([0-9]+)(?:\\.([0-9]+).*)*" "\\2"
+        MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
 
      # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
      # select the right stdlib.
-    if (${MACOSX_VERSION} LESS 9)
+    if (${MACOSX_MAJOR_VERSION} LESS 11 AND ${MACOSX_MINOR_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_SHARED_LINKER_FLAGS
           "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
@@ -356,6 +361,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.78.0" "1.78"
   "1.77.0" "1.77"
   "1.76.0" "1.76"
   "1.75.0" "1.75"

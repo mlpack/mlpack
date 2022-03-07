@@ -19,6 +19,7 @@
 #include "get_numpy_type_char.hpp"
 #include "get_cython_type.hpp"
 #include "strip_type.hpp"
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -49,7 +50,7 @@ void PrintInputProcessing(
     def = "False";
 
   // Make sure that we don't use names that are Python keywords.
-  std::string name = (d.name == "lambda") ? "lambda_" : d.name;
+  std::string name = GetValidName(d.name);
 
   /**
    * This gives us code like:
@@ -188,23 +189,26 @@ void PrintInputProcessing(
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
+
+  std::string name = GetValidName(d.name);
+
   if (!d.required)
   {
-    std::cout << prefix << "if " << d.name << " is not None:"
+    std::cout << prefix << "if " << name << " is not None:"
         << std::endl;
-    std::cout << prefix << "  if isinstance(" << d.name << ", list):"
+    std::cout << prefix << "  if isinstance(" << name << ", list):"
         << std::endl;
-    std::cout << prefix << "    if len(" << d.name << ") > 0:"
+    std::cout << prefix << "    if len(" << name << ") > 0:"
         << std::endl;
-    std::cout << prefix << "      if isinstance(" << d.name << "[0], "
+    std::cout << prefix << "      if isinstance(" << name << "[0], "
         << GetPrintableType<typename T::value_type>(d) << "):" << std::endl;
     std::cout << prefix << "        SetParam[" << GetCythonType<T>(d)
         << "](p, <const string> '" << d.name << "', ";
     // Strings need special handling.
     if (GetCythonType<T>(d) == "vector[string]")
-      std::cout << "[i.encode(\"UTF-8\") for i in " << d.name << "]";
+      std::cout << "[i.encode(\"UTF-8\") for i in " << name << "]";
     else
-      std::cout << d.name;
+      std::cout << name;
     std::cout << ")" << std::endl;
     std::cout << prefix << "        p.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
@@ -218,19 +222,19 @@ void PrintInputProcessing(
   }
   else
   {
-    std::cout << prefix << "if isinstance(" << d.name << ", list):"
+    std::cout << prefix << "if isinstance(" << name << ", list):"
         << std::endl;
-    std::cout << prefix << "  if len(" << d.name << ") > 0:"
+    std::cout << prefix << "  if len(" << name << ") > 0:"
         << std::endl;
-    std::cout << prefix << "    if isinstance(" << d.name << "[0], "
+    std::cout << prefix << "    if isinstance(" << name << "[0], "
         << GetPrintableType<typename T::value_type>(d) << "):" << std::endl;
     std::cout << prefix << "      SetParam[" << GetCythonType<T>(d)
         << "](p, <const string> '" << d.name << "', ";
     // Strings need special handling.
     if (GetCythonType<T>(d) == "vector[string]")
-      std::cout << "[i.encode(\"UTF-8\") for i in " << d.name << "]";
+      std::cout << "[i.encode(\"UTF-8\") for i in " << name << "]";
     else
-      std::cout << d.name;
+      std::cout << name;
     std::cout << ")" << std::endl;
     std::cout << prefix << "      p.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
@@ -273,93 +277,95 @@ void PrintInputProcessing(
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
+  std::string name = GetValidName(d.name);
+
   if (!d.required)
   {
     if (T::is_row || T::is_col)
     {
-      std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-      std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
-          << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
+      std::cout << prefix << "if " << name << " is not None:" << std::endl;
+      std::cout << prefix << "  " << name << "_tuple = to_matrix("
+          << name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=p.Has('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape) > 1:"
+      std::cout << prefix << "  if len(" << name << "_tuple[0].shape) > 1:"
           << std::endl;
-      std::cout << prefix << "    if " << d.name << "_tuple[0]"
-          << ".shape[0] == 1 or " << d.name << "_tuple[0].shape[1] == 1:"
+      std::cout << prefix << "    if " << name << "_tuple[0]"
+          << ".shape[0] == 1 or " << name << "_tuple[0].shape[1] == 1:"
           << std::endl;
-      std::cout << prefix << "      " << d.name << "_tuple[0].shape = ("
+      std::cout << prefix << "      " << name << "_tuple[0].shape = ("
           << d.name << "_tuple[0].size,)" << std::endl;
-      std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
+      std::cout << prefix << "  " << name << "_mat = arma_numpy.numpy_to_"
+          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
+          << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference("
-          << d.name << "_mat))"<< std::endl;
+          << name << "_mat))"<< std::endl;
       std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
-      std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
+      std::cout << prefix << "  del " << name << "_mat" << std::endl;
     }
     else
     {
-      std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-      std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
-          << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
+      std::cout << prefix << "if " << name << " is not None:" << std::endl;
+      std::cout << prefix << "  " << name << "_tuple = to_matrix("
+          << name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=p.Has('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape"
+      std::cout << prefix << "  if len(" << name << "_tuple[0].shape"
           << ") < 2:" << std::endl;
-      std::cout << prefix << "    " << d.name << "_tuple[0].shape = (" << d.name
+      std::cout << prefix << "    " << name << "_tuple[0].shape = (" << name
           << "_tuple[0].shape[0], 1)" << std::endl;
-      std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
+      std::cout << prefix << "  " << name << "_mat = arma_numpy.numpy_to_"
+          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
+          << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference("
-          << d.name << "_mat))"<< std::endl;
+          << name << "_mat))"<< std::endl;
       std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
-      std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
+      std::cout << prefix << "  del " << name << "_mat" << std::endl;
     }
   }
   else
   {
     if (T::is_row || T::is_col)
     {
-      std::cout << prefix << d.name << "_tuple = to_matrix(" << d.name
+      std::cout << prefix << name << "_tuple = to_matrix(" << name
           << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=p.Has('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "if len(" << d.name << "_tuple[0].shape) > 1:"
+      std::cout << prefix << "if len(" << name << "_tuple[0].shape) > 1:"
           << std::endl;
-      std::cout << prefix << "  if " << d.name << "_tuple[0].shape[0] == 1 or "
-          << d.name << "_tuple[0].shape[1] == 1:" << std::endl;
-      std::cout << prefix << "    " << d.name << "_tuple[0].shape = ("
-          << d.name << "_tuple[0].size,)" << std::endl;
-      std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
+      std::cout << prefix << "  if " << name << "_tuple[0].shape[0] == 1 or "
+          << name << "_tuple[0].shape[1] == 1:" << std::endl;
+      std::cout << prefix << "    " << name << "_tuple[0].shape = ("
+          << name << "_tuple[0].size,)" << std::endl;
+      std::cout << prefix << name << "_mat = arma_numpy.numpy_to_"
+          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
+          << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference("
-          << d.name << "_mat))"<< std::endl;
+          << name << "_mat))"<< std::endl;
       std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
           << std::endl;
-      std::cout << prefix << "del " << d.name << "_mat" << std::endl;
+      std::cout << prefix << "del " << name << "_mat" << std::endl;
     }
     else
     {
-      std::cout << prefix << d.name << "_tuple = to_matrix(" << d.name
+      std::cout << prefix << name << "_tuple = to_matrix(" << name
           << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=p.Has('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "if len(" << d.name << "_tuple[0].shape) > 2:"
+      std::cout << prefix << "if len(" << name << "_tuple[0].shape) < 2:"
           << std::endl;
-      std::cout << prefix << "  " << d.name << "_tuple[0].shape = (" << d.name
+      std::cout << prefix << "  " << name << "_tuple[0].shape = (" << name
           << "_tuple[0].shape[0], 1)" << std::endl;
-      std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
+      std::cout << prefix << name << "_mat = arma_numpy.numpy_to_"
+          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
+          << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
-          << "](p, <const string> '" << d.name << "', dereference(" << d.name
+          << "](p, <const string> '" << d.name << "', dereference(" << name
           << "_mat))" << std::endl;
       std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
           << std::endl;
-      std::cout << prefix << "del " << d.name << "_mat" << std::endl;
+      std::cout << prefix << "del " << name << "_mat" << std::endl;
     }
   }
   std::cout << std::endl;
@@ -379,6 +385,8 @@ void PrintInputProcessing(
   // First, get the correct class name if needed.
   std::string strippedType, printedType, defaultsType;
   StripType(d.cppType, strippedType, printedType, defaultsType);
+
+  std::string name = GetValidName(d.name);
 
   const std::string prefix(indent, ' ');
 
@@ -402,16 +410,16 @@ void PrintInputProcessing(
       << std::endl;
   if (!d.required)
   {
-    std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
+    std::cout << prefix << "if " << name << " is not None:" << std::endl;
     std::cout << prefix << "  try:" << std::endl;
     std::cout << prefix << "    SetParamPtr[" << strippedType << "](p, '" << d.name
-        << "', (<" << strippedType << "Type?> " << d.name << ").modelptr, "
+        << "', (<" << strippedType << "Type?> " << name << ").modelptr, "
         << "p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  except TypeError as e:" << std::endl;
-    std::cout << prefix << "    if type(" << d.name << ").__name__ == '"
+    std::cout << prefix << "    if type(" << name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "      SetParamPtr[" << strippedType << "](p, '"
-        << d.name << "', (<" << strippedType << "Type> " << d.name
+        << d.name << "', (<" << strippedType << "Type> " << name
         << ").modelptr, p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise e" << std::endl;
@@ -422,13 +430,13 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "try:" << std::endl;
     std::cout << prefix << "  SetParamPtr[" << strippedType << "](p, '" << d.name
-        << "', (<" << strippedType << "Type?> " << d.name << ").modelptr, "
+        << "', (<" << strippedType << "Type?> " << name << ").modelptr, "
         << "p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "except TypeError as e:" << std::endl;
-    std::cout << prefix << "  if type(" << d.name << ").__name__ == '"
+    std::cout << prefix << "  if type(" << name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "    SetParamPtr[" << strippedType << "](p,'" << d.name
-        << "', (<" << strippedType << "Type> " << d.name << ").modelptr, "
+        << "', (<" << strippedType << "Type> " << name << ").modelptr, "
         << "p.Has('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  else:" << std::endl;
     std::cout << prefix << "    raise e" << std::endl;
@@ -449,63 +457,72 @@ void PrintInputProcessing(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
+  std::string name = GetValidName(d.name);
+
   // The user should pass in a matrix type of some sort.
   const std::string prefix(indent, ' ');
 
   /** We want to generate code like the following:
    *
+   * cdef extern from "numpy/arrayobject.h":
+   *   void* PyArray_DATA(np.ndarray arr)
    * if param_name is not None:
    *   param_name_tuple = to_matrix_with_info(param_name)
    *   if len(param_name_tuple[0].shape) < 2:
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
    *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
    *   SetParamWithInfo[mat](p, \<const string\> 'param_name',
-   *       dereference(param_name_mat), &param_name_tuple[1][0])
+   *       dereference(param_name_mat), 
+   *       \<const cbool*\> PyArray_DATA(param_name_dims))
    *   p.SetPassed(\<const string\> 'param_name')
    */
-  std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
+  std::cout << prefix << "cdef np.ndarray " << name << "_dims" << std::endl;
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
   if (!d.required)
   {
+    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
+    std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
         << d.name << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
         << std::endl;
-    std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape"
+    std::cout << prefix << "  if len(" << name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
-    std::cout << prefix << "    " << d.name << "_tuple[0].shape = (" << d.name
+    std::cout << prefix << "    " << name << "_tuple[0].shape = (" << name
         << "_tuple[0].shape[0], 1)" << std::endl;
-    std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_d("
-        << d.name << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "  " << d.name << "_dims = " << d.name
+    std::cout << prefix << "  " << name << "_mat = arma_numpy.numpy_to_mat_d("
+        << name << "_tuple[0], " << name << "_tuple[1])" << std::endl;
+    std::cout << prefix << "  " << name << "_dims = " << name
         << "_tuple[2]" << std::endl;
     std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](p, <const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
-        << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
+        << "<const cbool*> PyArray_DATA(" << d.name << "_dims))" << std::endl;
     std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
-    std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
+    std::cout << prefix << "  del " << name << "_mat" << std::endl;
   }
   else
   {
+    std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
+    std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
     std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
         << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
         << std::endl;
-    std::cout << prefix << "if len(" << d.name << "_tuple[0].shape"
+    std::cout << prefix << "if len(" << name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
-    std::cout << prefix << "  " << d.name << "_tuple[0].shape = (" << d.name
+    std::cout << prefix << "  " << name << "_tuple[0].shape = (" << name
         << "_tuple[0].shape[0], 1)" << std::endl;
-    std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_d("
-        << d.name << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << d.name << "_dims = " << d.name << "_tuple[2]"
+    std::cout << prefix << name << "_mat = arma_numpy.numpy_to_mat_d("
+        << name << "_tuple[0], " << name << "_tuple[1])" << std::endl;
+    std::cout << prefix << name << "_dims = " << name << "_tuple[2]"
         << std::endl;
     std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](p, <const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
-        << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
+        << "<const cbool*> PyArray_DATA(" << d.name << "_dims))" << std::endl;
     std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
-    std::cout << prefix << "del " << d.name << "_mat" << std::endl;
+    std::cout << prefix << "del " << name << "_mat" << std::endl;
   }
   std::cout << std::endl;
 }

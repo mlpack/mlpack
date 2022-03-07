@@ -11,6 +11,7 @@ set(SOURCES
   acrobot.hpp
   pendulum.hpp
   reward_clipping.hpp
+  ftn.hpp
 )
 
 # Add directory name to sources.

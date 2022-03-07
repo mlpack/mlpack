@@ -1,0 +1,33 @@
+/**
+ * @file python/generate_py_wrapper_${GROUP_NAME}.cpp
+ * @author Nippun Sharma
+ *
+ * This is an automatically-generated file that is used to generate the .py
+ * file that is used for the wrapper of Python bindings. 
+ * This program will print the .py file on stdout when run and doesn't need
+ * any input parameters.
+ *
+ * The CMake variables ${CATEGORY}, ${GROUP_VALID_METHODS} and ${GROUP_NAME}
+ * must be set for this to configure correctly.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#define BINDING_TYPE BINDING_TYPE_PYX // this is for generating py wrappers.
+
+#include <mlpack/core.hpp>
+#include <mlpack/bindings/python/print_wrapper_py.hpp>
+#include "${GROUP_NAME}_main_includes.hpp"
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::python;
+using namespace std;
+using namespace mlpack::util;
+
+int main(int /* argc */, char** /* argv */)
+{
+  PrintWrapperPY("${CATEGORY}","${GROUP_NAME}","${GROUP_VALID_METHODS}");
+}

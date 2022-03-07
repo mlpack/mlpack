@@ -36,9 +36,10 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # The code to compute the rank-approximate neighbor for the given query and
 # reference sets.
+add_category(krann "geometry")
 add_cli_executable(krann)
 add_python_binding(krann)
 add_julia_binding(krann)
 add_go_binding(krann)
 add_r_binding(krann)
-add_markdown_docs(krann "cli;python;julia;go;r" "geometry")
+add_markdown_docs(krann "cli;python;julia;go;r" "")
