@@ -73,7 +73,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     const double tolerance)
 {
   // Sanity check on data
-  util::CheckSameDimensionality(data, labels, "Adaboost::Train()");
+  util::CheckSameSizes(data, labels, "Adaboost::Train()");
 
   // Clear information from previous runs.
   wl.clear();
@@ -248,7 +248,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
     arma::mat& probabilities)
 { 
   // Sanity Check on Data
-  util::CheckSameDimensionality(test, predictedLabels, "Adaboost::Classify()");
+  util::CheckSameSizes(test, predictedLabels, "Adaboost::Classify()");
   
   arma::Row<size_t> tempPredictedLabels(test.n_cols);
 
