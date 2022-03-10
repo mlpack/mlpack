@@ -164,7 +164,6 @@ Cluster(const MatType& data,
   if (initialGuess)
   {
     util::CheckSameSizes(centroids, clusters, "KMeans::Cluster()", "clusters");
-
     util::CheckSameDimensionality(data, centroids, "KMeans::Cluster()");
   }
 
@@ -284,7 +283,7 @@ Cluster(const MatType& data,
   // Now, the initial assignments.  First determine if they are necessary.
   if (initialAssignmentGuess)
   {
-    util::CheckSameSizes(data, assignments, "KMeans::Cluster()","assignments");
+    util::CheckSameSizes(data, assignments, "KMeans::Cluster()", "assignments");
 
     // Calculate initial centroids.
     arma::Row<size_t> counts;
