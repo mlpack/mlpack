@@ -13,6 +13,7 @@
 #ifndef MLPACK_UTIL_SIZE_CHECKS_HPP
 #define MLPACK_UTIL_SIZE_CHECKS_HPP
 
+#include "log.hpp"
 
 namespace mlpack {
 namespace util {
@@ -33,8 +34,7 @@ inline void CheckSameSizes(const DataType& data,
                            const std::string& callerDescription,
                            const std::string& addInfo = "labels")
 {
-  Log::Assert( label.is_rowvec(), "Label matrix should be a row vector \
-      .");
+  Log::Assert( label.is_rowvec(), "Label matrix should be a row vector.");
 
   if (data.n_cols != label.n_cols)
   {
