@@ -21,9 +21,9 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 HuberLoss<InputDataType, OutputDataType>::HuberLoss(
   const double delta,
-  const bool mean):
+  const bool reduction):
   delta(delta),
-  mean(mean)
+  reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -36,14 +36,18 @@ HuberLoss<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   typedef typename PredictionType::elem_type ElemType;
-  ElemType loss = 0;
+  ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_elem; ++i)
   {
       const ElemType absError = std::abs(target[i] - prediction[i]);
-      loss += absError > delta ?
+      lossSum += absError > delta ?
           delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
-  return mean ? loss / prediction.n_elem : loss;
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -62,9 +66,10 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
     loss[i] = absError > delta ?
         -delta * (target[i] - prediction[i]) / absError :
         prediction[i] - target[i];
-    if (mean)
-      loss[i] /= loss.n_elem;
   }
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -74,7 +79,7 @@ void HuberLoss<InputDataType, OutputDataType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(delta));
-  ar(CEREAL_NVP(mean));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

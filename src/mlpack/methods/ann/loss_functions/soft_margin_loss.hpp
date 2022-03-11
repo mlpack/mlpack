@@ -74,7 +74,8 @@ class SoftMarginLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the type of reduction used.
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
@@ -89,7 +90,7 @@ class SoftMarginLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! The boolean value that tells if reduction is sum or mean.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class SoftMarginLoss
 

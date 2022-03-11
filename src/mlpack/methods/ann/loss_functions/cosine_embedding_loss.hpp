@@ -46,13 +46,15 @@ class CosineEmbeddingLoss
    *               Refer definition of cosine-embedding-loss above.
    * @param similarity Determines whether to use similarity or dissimilarity for
    *                   comparision.
-   * @param takeMean Boolean variable to specify whether to take mean or not.
-   *                 Specifies reduction method i.e. sum or mean corresponding
-   *                 to 0 and 1 respectively. Default value = 0.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
   CosineEmbeddingLoss(const double margin = 0.0,
                       const bool similarity = true,
-                      const bool takeMean = false);
+                      const bool reduction = true);
 
   /**
    * Ordinary feed forward pass of a neural network.
@@ -93,10 +95,11 @@ class CosineEmbeddingLoss
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the value of takeMean.
-  bool TakeMean() const { return takeMean; }
-  //! Modify the value of takeMean.
-  bool& TakeMean() { return takeMean; }
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   //! Get the value of margin.
   double Margin() const { return margin; }
@@ -130,8 +133,8 @@ class CosineEmbeddingLoss
   //! Locally-stored value of similarity hyper-parameter.
   bool similarity;
 
-  //! Locally-stored value of takeMean hyper-parameter.
-  bool takeMean;
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
+  bool reduction;
 }; // class CosineEmbeddingLoss
 
 } // namespace ann

@@ -38,8 +38,14 @@ class HingeEmbeddingLoss
  public:
   /**
    * Create the Hinge Embedding object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
-  HingeEmbeddingLoss();
+  HingeEmbeddingLoss(const bool reduction = true);
 
   /**
    * Computes the Hinge Embedding loss function.
@@ -70,6 +76,12 @@ class HingeEmbeddingLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const {return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() {return reduction; }
+
   /**
    * Serialize the loss function.
    */
@@ -79,6 +91,10 @@ class HingeEmbeddingLoss
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Boolean values that tells if reduction
+  // is 'sum' or 'mean'.
+  bool reduction;
 }; // class HingeEmbeddingLoss
 
 } // namespace ann

@@ -23,7 +23,7 @@ ReconstructionLoss<
     InputDataType,
     OutputDataType,
     DistType
->::ReconstructionLoss()
+>::ReconstructionLoss(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -35,7 +35,12 @@ ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
     const PredictionType& prediction, const TargetType& target)
 {
   dist = DistType(prediction);
-  return -dist.LogProbability(target);
+  typename PredictionType::elem_type lossSum = -dist.LogProbability(target);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
@@ -47,15 +52,18 @@ void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
 {
   dist.LogProbBackward(target, loss);
   loss *= -1;
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename Archive>
 void ReconstructionLoss<InputDataType, OutputDataType, DistType>::serialize(
-    Archive& /* ar */,
+    Archive&  ar,
     const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

@@ -80,7 +80,8 @@ class MultiLabelSoftMarginLoss
   //! Modify the weights assigned to each class.
   arma::rowvec& ClassWeights() { return classWeights; }
 
-  //! Get the type of reduction used.
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
@@ -95,7 +96,7 @@ class MultiLabelSoftMarginLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! The boolean value that tells if reduction is sum or mean.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 
   //! A (1, numClasses) shaped vector with weights for each class.
