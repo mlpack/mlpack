@@ -53,7 +53,7 @@ MatrixCompletion::MatrixCompletion(const size_t m,
 }
 
 void MatrixCompletion::CheckValues()
-{
+{ 
   if (indices.n_rows != 2)
   {
     Log::Fatal << "MatrixCompletion::CheckValues(): matrix of constraint "
