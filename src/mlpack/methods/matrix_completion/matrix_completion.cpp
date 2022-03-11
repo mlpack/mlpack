@@ -60,7 +60,7 @@ void MatrixCompletion::CheckValues()
         << "indices does not have 2 rows!" << std::endl;
   }
 
-  util::CheckSameSizes(indices, values, "MatrixCompletion::CheckValues()", "indices");
+  util::CheckSameSizes(indices, (size_t)values.n_rows, "MatrixCompletion::CheckValues()", "values");
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {

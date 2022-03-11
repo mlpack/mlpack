@@ -33,6 +33,9 @@ inline void CheckSameSizes(const DataType& data,
                            const std::string& callerDescription,
                            const std::string& addInfo = "labels")
 {
+  Log::Assert( label.is_rowvec() == true, "Label matrix should be a row vector \
+      .");
+
   if (data.n_cols != label.n_cols)
   {
     std::ostringstream oss;
