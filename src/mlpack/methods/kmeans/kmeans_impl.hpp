@@ -16,7 +16,6 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include <mlpack/core/util/size_checks.hpp>
 
-
 namespace mlpack {
 namespace kmeans {
 
