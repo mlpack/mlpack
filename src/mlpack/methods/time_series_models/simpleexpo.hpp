@@ -13,98 +13,63 @@
 #define MLPACK_METHODS_TIME_SERIES_MODELS_SIMPLEEXPO_MODEL_HPP
 
 #include<mlpack/prereqs.hpp>
+#include<ensmallen.hpp>
 
 namespace mlpack {
 namespace ts {
-
-/** 
- * Simple Exponential Smopothing mopdel is one of the simplest time series forcasting methods.
- * It simply gives more weights to recent observations while forcasting and the 
- * weights given to older observations exponentially decreases.
- **/ 
+template<typename datatype = arma::Row<double>>
 class SimpleExpo
 {
- public :
- /**
-   * Creates the model. and also initializes the parameters.
-   *
-   * @param data time series data taken as input 
-   * @param alpha weighted parameter
-   * @param method specifies whether the parameter alpha should be initialized
-   */
- SimpleExpo(const arma::rowvec & data, const double alpha,std::string method = "estimated");
 
- /**
-   * Creates the model. and also initializes the parameters.
-   *Here aplha is not given by the user.
-   * @param data time series data taken as input.
-   * @param method specifies whether alpha should be initialized
-   */
- SimpleExpo(const arma::rowvec & data,std::string method = "estimated");
-  
-  /** This constructor creates the model .Also instantiates the poarameter alpha .
-   * Here we assume the the last column cpntains the time series data.
-   * @param data takes the dataset as input
-   * @param alpha takes the parameter alpha 
-   * @param method specifies whether the level should be initialized
-   */
-  SimpleExpo(const arma::mat &data,const double  alpha,std::string method = "estimated");
-
-  /** This constructor creates the model .
-   * Gives a random value between 0 and 1 to aplha
-   * It assumes the data is present in the last column of the dataset.
-   * @param data takes the dataset as input '
-   * @param method specifies wheter parameter alpha should be initialized 
-   */
-  SimpleExpo(const arma::mat & data, std ::string method = "estimated");
-   
-   /**
-   * Train the SES model on the data to . trhis function will return the least squares error
-   *
-   * @param data  time series data to train the model on
-   * @param alpha the parameter which gives weights to the different data points
-   * @return The least squares error after training.
-   */
-
- double Train(const double  alpha,bool optimize = true);
-
- /**
-   * Calculate y_i for each data point in data.
-   *
-   * @param data time series data to predict the outcome
-   * @param preds  number of predictions to be forcasted 
-   */
- void Predict(const arma::rowvec & data,arma::rowvec& predictions,const size_t preds=1) const ;
+SimpleExpo();
 
 
- double ComputeError(const arma::rowvec & data,const double  alpha)const;
-
-//! Returns the parameter alpha
-  double &Alpha();
-
-//! Returns the initial level 
- const double Level() const {return level;}
-
-//! updates the parameter alpha
- double & UpAlpha();
+SimpleExpo(datatype data,double alpha,double level);
 
 
+SimpleExpo(datatype data);
 
 
- private :
+double Loss();
 
- double alpha;
+double Loss(const arma::mat & params);
 
- double level;
+void Train();
 
- std::string method ;
- 
- arma::rowvec predictions;
- 
- arma::rowvec datapts;
+void Predict(const datatype &data,arma::Row<double>& predictions,size_t forcast);
+void Predict(arma::Row<double>& predictions,size_t forcast);
+
+double const &alpha()
+{
+  return params[0];
+}
+
+double const &level()
+{
+  return params[1];
+}
+
+double & alpha();
+double & level();
+void Initialize();
+
+private:
+
+template<typename Datatype ,typename = std::enable_if_t<((arma::is_Row<Datatype>::value||arma::is_Col<Datatype>::value))>>
+void Predict(const datatype & data,arma::Row<double> & predictions,double alpha ,double level,size_t forcast)
+
+template<typename Datatype,typename=std::enable_if_t<((arma::is_Row<Datatype>::value || arma::is_Col<Datatype>::value))>,typename = void>
+void Predict(const Datatype & data,arma::Row<double>& predictions,double alpha,double level,size_t forcast = 0);
+
+size_t forcast;
+
+datatype data;
+
+arma::mat params;
+
+double Loss(const arma::mat & params,const datatype & data);
+
 };
-
-} // namespace ts
-} //namespace mlpack
-
-#endif    //MLPACK_METHODS_TIME_SERIES_MODEELS_SIMPLEEXPO_MODEL_HPP
+}
+}
+#endif
