@@ -376,6 +376,6 @@ TEST_CASE_METHOD(
   // Now check that the input dataset is not empty.
   Log::Fatal.ignoreInput = true;
   // REQUIRE_THROWS_AS(RUN_BINDING() , std::unexpected_handler);
-  REQUIRE_THROWS_WITH(RUN_BINDING, "Mat::max(): object has no elements");
+  REQUIRE_THROWS_WITH(RUN_BINDING(), "Mat::max(): object has no elements");
   Log::Fatal.ignoreInput = false;
 }
