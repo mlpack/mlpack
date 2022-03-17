@@ -9,9 +9,12 @@ set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -std=c++11")
 CHECK_CXX_SOURCE_COMPILES("
 #include <atomic>
+
 std::atomic<int> x;
-int main() {
-return std::atomic_is_lock_free(&x);
+
+int main()
+{
+  return std::atomic_is_lock_free(&x);
 }
 " ${varname})
 set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
@@ -23,10 +26,13 @@ set(CMAKE_REQUIRED_FLAGS "-std=c++11 ${CMAKE_REQUIRED_FLAGS}")
 CHECK_CXX_SOURCE_COMPILES("
 #include <atomic>
 #include <cstdint>
+
 std::atomic<uint64_t> x (0);
-int main() {
-uint64_t i = x.load(std::memory_order_relaxed);
-return std::atomic_is_lock_free(&x);
+
+int main()
+{
+  uint64_t i = x.load(std::memory_order_relaxed);
+  return std::atomic_is_lock_free(&x);
 }
 " ${varname})
 set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
