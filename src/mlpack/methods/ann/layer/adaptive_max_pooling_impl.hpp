@@ -57,8 +57,9 @@ template <typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
     AdaptiveMaxPooling&& pooling):
     AdaptiveMaxPooling(std::move(pooling))
-    {
-    }
+{
+      //Nothing to do here
+}
     
 
 template<typename InputDataType, typename OutputDataType>
