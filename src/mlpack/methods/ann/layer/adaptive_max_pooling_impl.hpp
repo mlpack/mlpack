@@ -42,6 +42,21 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
 {
   poolingLayer = ann::MaxPooling<>(0, 0);
 }
+  
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
+    const AdaptiveMaxPooling& pooling):
+    outputWidth(pooling.OutputWidth()),
+    outputHeight(pooling.outputHeight()),
+    reset(false)
+{
+  poolingLayer = ann::MaxPooling<>(0, 0);
+}
+  
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
+    AdaptiveMaxPooling&& pooling):
+    
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
