@@ -13,19 +13,9 @@
 #define MLPACK_METHODS_ANN_RNN_HPP
 
 #include <mlpack/prereqs.hpp>
-
-//#include "visitor/delete_visitor.hpp"
-//#include "visitor/delta_visitor.hpp"
-//#include "visitor/output_parameter_visitor.hpp"
-//#include "visitor/reset_visitor.hpp"
-
-#include "init_rules/network_init.hpp"
-
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-
 #include <ensmallen.hpp>
+
+#include "ffn.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -41,18 +31,9 @@ template<
     typename InitializationRuleType = RandomInitialization,
     typename InputType = arma::mat,
     typename OutputType = arma::mat>
-class RNNType : public FFN<OutputLayerType,
-                           InitializationRuleType,
-                           InputType,
-                           OutputType>
+class RNN
 {
  public:
-  //! Convenience typedef for the internal model construction.
-  using NetworkType = RNNType<OutputLayerType,
-                              InitializationRuleType,
-                              InputType,
-                              OutputType>;
-
   /**
    * Create the RNN object.
    *
@@ -66,18 +47,54 @@ class RNNType : public FFN<OutputLayerType,
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNNType(const size_t bpttTruncate = 0,
-          OutputLayerType outputLayer = OutputLayerType(),
-          InitializationRuleType initializeRule = InitializationRuleType());
+  RNN(const size_t bpttTruncate = 0,
+      const bool single = false,
+      OutputLayerType outputLayer = OutputLayerType(),
+      InitializationRuleType initializeRule = InitializationRuleType());
 
   //! Copy constructor.
-  RNNType(const RNNType&);
+  RNN(const RNN&);
 
   //! Move constructor.
-  RNNType(RNNType&&);
+  RNN(RNN&&);
 
   //! Copy/move assignment operator.
-  RNNType& operator=(RNNType);
+  // TODO: what does FFN do, should we match it?
+  RNN& operator=(RNN);
+
+  ~RNN();
+
+  /**
+   * Add a new module to the model.
+   *
+   * @param args The layer parameter.
+   */
+  template <class LayerType, class... Args>
+  void Add(Args... args) { network.template Add<LayerType>(args...); }
+
+  /**
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(Layer<InputType, OutputType>* layer) { network.Add(layer); }
+
+  //! Get the network model.
+  const std::vector<Layer<InputType, OutputType>*>& Network() const
+  {
+    return network.Network().Network();
+  }
+
+  /**
+   * Modify the network model.  Be careful!  If you change the structure of the
+   * network or parameters for layers, its state may become invalid, so be sure
+   * to call ResetParameters() afterwards.  Don't add any layers like this; use
+   * `Add()` instead.
+   */
+  std::vector<Layer<InputType, OutputType>*>& Network()
+  {
+    return network.Network().Network();
+  }
 
   /**
    * Train the recurrent network on the given input data using the given
@@ -101,7 +118,7 @@ class RNNType : public FFN<OutputLayerType,
    */
   template<typename OptimizerType, typename... CallbackTypes>
   double Train(arma::Cube<typename InputType::elem_type> predictors,
-               arma::Cube<typename InputType::elem_type> responses,
+               arma::Cube<typename OutputType::elem_type> responses,
                OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
@@ -126,8 +143,8 @@ class RNNType : public FFN<OutputLayerType,
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  double Train(InputType predictors,
-               InputType responses,
+  double Train(arma::Cube<typename InputType::elem_type> predictors,
+               arma::Cube<typename OutputType::elem_type> responses,
                CallbackTypes&&... callbacks);
 
   /**
@@ -142,9 +159,89 @@ class RNNType : public FFN<OutputLayerType,
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(InputType predictors,
-               OutputType& results,
+  void Predict(arma::Cube<typename InputType::elem_type> predictors,
+               arma::Cube<typename OutputType::elem_type>& results,
                const size_t batchSize = 128);
+
+  // Return the nujmber of weights in the model.
+  size_t WeightSize() { return network.WeightSize(); }
+
+  /**
+   * Set the logical dimensions of the input.
+   *
+   * TODO: better comment.  You would call this when you want to, e.g., pass an
+   * n-dimensional tensor, so that you can specify each of those n dimensions.
+   */
+  // Note: we don't need to invalidate any caches, because any forward pass will
+  // already check if the input dimensions have changed.
+  std::vector<size_t>& InputDimensions() { return network.InputDimensions(); }
+  //! Get the logical dimensions of the input.
+  const std::vector<size_t>& InputDimensions() const
+  {
+    return network.InputDimensions();
+  }
+
+  //! Return the initial point for the optimization.
+  const OutputType& Parameters() const { return network.Parameters(); }
+  //! Modify the initial point for the optimization.
+  OutputType& Parameters() { return network.Parameters(); }
+
+  void Reset(const size_t inputDimensionality = 0);
+
+  /**
+   * Set all the layers in the network to training mode, if `training` is
+   * `true`, or set all the layers in the network to testing mode, if `training`
+   * is `false`.
+   */
+  void SetNetworkMode(const bool training) { network.SetNetworkMode(training); }
+
+  /**
+   * Perform the forward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs The input data.
+   * @param results The predicted results.
+   */
+  void Forward(const arma::Cube<typename InputType::elem_type>& inputs,
+               arma::Cube<typename OutputType::elem_type>& results);
+
+  /**
+   * Perform a partial forward pass of the data.
+   *
+   * This function is meant for the cases when users require a forward pass only
+   * through certain layers and not the entire network.
+   *
+   * @param inputs The input data for the specified first layer.
+   * @param results The predicted results from the specified last layer.
+   * @param begin The index of the first layer.
+   * @param end The index of the last layer.
+   */
+  void Forward(const arma::Cube<typename InputType::elem_type>& inputs,
+               arma::Cube<typename OutputType::elem_type>& results,
+               const size_t begin,
+               const size_t end);
+
+  /**
+   * Perform the backward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs Inputs of current pass.
+   * @param targets The training target.
+   * @param gradients Computed gradients.
+   * @return Training error of the current pass.
+   */
+  template<typename PredictorsType,
+           typename TargetsType,
+           typename GradientsType>
+  double Backward(const PredictorsType& inputs,
+                  const TargetsType& targets,
+                  GradientsType& gradients);
 
   /**
    * Evaluate the recurrent network with the given predictors and responses.
@@ -156,6 +253,15 @@ class RNNType : public FFN<OutputLayerType,
   template<typename PredictorsType, typename ResponsesType>
   double Evaluate(const PredictorsType& predictors,
                   const ResponsesType& responses);
+
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
+  //
+  // Only ensmallen utility functions for training are found below here.
+  // They generally aren't useful otherwise.
+  //
 
   /**
    * Evaluate the recurrent network with the given parameters. This function
@@ -191,8 +297,9 @@ class RNNType : public FFN<OutputLayerType,
    * @param parameters Matrix model parameters.
    * @param gradient Matrix to output gradient into.
    */
+  template<typename GradType>
   double EvaluateWithGradient(const OutputType& parameters,
-                              OutputType& gradient);
+                              GradType& gradient);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -206,9 +313,10 @@ class RNNType : public FFN<OutputLayerType,
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
+  template<typename GradType>
   double EvaluateWithGradient(const OutputType& parameters,
                               const size_t begin,
-                              OutputType& gradient,
+                              GradType& gradient,
                               const size_t batchSize);
 
   /**
@@ -223,152 +331,16 @@ class RNNType : public FFN<OutputLayerType,
    * @param batchSize Number of points to be processed as a batch for objective
    *        function gradient evaluation.
    */
+  template<typename GradType>
   void Gradient(const OutputType& parameters,
                 const size_t begin,
-                OutputType& gradient,
+                GradType& gradient,
                 const size_t batchSize);
 
-  //! Serialize the model.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
-
-  /**
-   * Perform the forward pass of the data in real batch mode.
-   *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
-   *
-   * @param inputs The input data.
-   * @param results The predicted results.
-   */
-  template<typename PredictorsType, typename ResponsesType>
-  void Forward(const PredictorsType& inputs, ResponsesType& results);
-
-  /**
-   * Perform a partial forward pass of the data.
-   *
-   * This function is meant for the cases when users require a forward pass only
-   * through certain layers and not the entire network.
-   *
-   * @param inputs The input data for the specified first layer.
-   * @param results The predicted results from the specified last layer.
-   * @param begin The index of the first layer.
-   * @param end The index of the last layer.
-   */
-  template<typename PredictorsType, typename ResponsesType>
-  void Forward(const PredictorsType& inputs ,
-               ResponsesType& results,
-               const size_t begin,
-               const size_t end);
-
-  /**
-   * Perform the backward pass of the data in real batch mode.
-   *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
-   *
-   * @param inputs Inputs of current pass.
-   * @param targets The training target.
-   * @param gradients Computed gradients.
-   * @return Training error of the current pass.
-   */
-  template<typename PredictorsType,
-           typename TargetsType,
-           typename GradientsType>
-  double Backward(const PredictorsType& inputs,
-                  const TargetsType& targets,
-                  GradientsType& gradients);
-
-
-   /**
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args)
-  {
-    network.template Add<LayerType>(args...);
-    inputDimensionsAreSet = false;
-  }
-
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  //! TODO: if weights are set in this layer, we should copy them and update our
-  //cached parameters
-  void Add(Layer<InputType, OutputType>* layer)
-  {
-    network.Add(layer);
-    inputDimensionsAreSet = false;
-  }
-
-  //! Get the network model.
-  const std::vector<Layer<InputType, OutputType>*>& Network() const
-  {
-    return network.Network();
-  }
-
-  /**
-   * Modify the network model.  Be careful!  If you change the structure of the
-   * network or parameters for layers, its state may become invalid, so be sure
-   * to call ResetParameters() afterwards.  Don't add any layers like this; use
-   * `Add()` instead.
-   */
-  std::vector<Layer<InputType, OutputType>*>& Network()
-  {
-    return network.Network();
-  }
-
-  /**
-   * Set the logical dimensions of the input.
-   *
-   * TODO: better comment.  You would call this when you want to, e.g., pass an
-   * n-dimensional tensor, so that you can specify each of those n dimensions.
-   */
-  // Note: we don't need to invalidate any caches, because any forward pass will
-  // already check if the input dimensions have changed.
-  std::vector<size_t>& InputDimensions() { return inputDimensions; }
-  //! Get the logical dimensions of the input.
-  const std::vector<size_t>& InputDimensions() const
-  {
-    // The user may change the input dimensions, so we will have to propagate
-    // these changes to the network.
-    inputDimensionsAreSet = false;
-    return inputDimensions;
-  }
-
-  /**
-   * Set all the layers in the network to training mode, if `training` is
-   * `true`, or set all the layers in the network to testing mode, if `training`
-   * is `false`.
-   */
-  void SetNetworkMode(const bool training);
-
-    //! Return the number of separable functions (the number of predictor points).
+  //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return responses.n_slices; }
 
-  //! Return the initial point for the optimization.
-  const OutputType& Parameters() const { return parameters; }
-  //! Modify the initial point for the optimization.
-  OutputType& Parameters() { return parameters; }
-
-  //! Get the matrix of responses to the input data points.
-  const InputType& Responses() const { return responses; }
-  //! Modify the matrix of responses to the input data points.
-  InputType& Responses() { return responses; }
-
-  //! Get the matrix of data points (predictors).
-  const InputType& Predictors() const { return predictors; }
-  //! Modify the matrix of data points (predictors).
-  InputType& Predictors() { return predictors; }
-
- private:
-  // Helper functions.
+  void Shuffle();
 
   /**
    * Prepare the network for the given data.
@@ -378,72 +350,29 @@ class RNNType : public FFN<OutputLayerType,
    * @param responses Outputs results from input data variables.
    */
   void ResetData(arma::Cube<typename InputType::elem_type> predictors,
-                 arma::Cube<typename InputType::elem_type> responses);
+                 arma::Cube<typename OutputType::elem_type> responses);
 
-  //! Use the InitializationPolicy to initialize all the weights in the network.
-  void InitializeWeights();
+ private:
+  // Helper functions.
 
-  //! Make the memory of each layer point to the right place, by calling
-  //! SetWeightPtr() on each layer.
-  void SetLayerMemory();
-
-  /**
-   * Ensure that all the locally-cached information about the network is valid,
-   * all parameter memory is initialized, and we can make forward and backward
-   * passes.
-   *
-   * @param functionName Name of function to use if an exception is thrown.
-   * @param inputDimensionality Given dimensionality of the input data.
-   * @param setMode If true, the mode of the network will be set to the
-   *     parameter given in `training`.  Otherwise the mode of the network is
-   *     left unmodified.
-   * @param training Mode to set the network to; `true` indicates the network
-   *     should be set to training mode; `false` indicates testing mode.
-   */
-  void CheckNetwork(const std::string& functionName,
-                    const size_t inputDimensionality,
-                    const bool setMode = false,
-                    const bool training = false);
-
-  /**
-   * Set the input and output dimensions of each layer in the network correctly.
-   * The size of the input is taken, in case `inputDimensions` has not been set
-   * otherwise (e.g. via `InputDimensions()`).
-   */
-  void UpdateDimensions(const std::string& functionName,
-                        const size_t inputDimensionality);
+  void ResetMemoryState(const size_t memorySize, const size_t batchSize);
+  void SetPreviousStep(const size_t step);
+  void SetCurrentStep(const size_t step);
 
   /**
    * Swap the content of this network with given network.
    *
    * @param network Desired source network.
    */
-  void Swap(RNNType& network);
+  void Swap(RNN& network);
 
-  //! Instantiated outputlayer used to evaluate the network.
-  OutputLayerType outputLayer;
+  size_t rho;
+  bool single;
 
-  //! Instantiated InitializationRule object for initializing the network
-  //! parameter.
-  InitializationRuleType initializeRule;
-
-  //! All of the network is stored inside this multilayer.
-  MultiLayer<InputType, OutputType> network;
-
-  /**
-   * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
-   * and each layer's `parameters` member is an alias pointing to parameters in
-   * this matrix.
-   *
-   * Note: although each layer may have its own InputType and OutputType,
-   * ensmallen optimization requires everything to be stored in one matrix
-   * object, so we have chosen OutputType.  This could be made more flexible
-   * with a "wrapper" class implementing the Armadillo API.
-   */
-  OutputType parameters;
-
-  //! Dimensions of input data.
-  std::vector<size_t> inputDimensions;
+  //! The network itself is stored in this FFN object.  Note that this network
+  //! may contain recursive layers, and thus we will be responsible for
+  //! occasionally resetting any memory cells.
+  FFN<OutputLayerType, InitializationRuleType, InputType, OutputType> network;
 
   //! The matrix of data points (predictors).  This member is empty, except
   //! during training---we must store a local copy of the training data since
@@ -452,23 +381,7 @@ class RNNType : public FFN<OutputLayerType,
 
   //! The matrix of responses to the input data points.  This member is empty,
   //! except during training.
-  arma::Cube<typename InputType::elem_type> responses;
-
-  //! The current error for the backward pass.
-  OutputType networkOutput;
-  OutputType networkDelta;
-  OutputType error;
-
-  //! The current evaluation mode (training or testing).
-  bool training;
-
-  //! If true, each layer has its memory properly set for a forward/backward
-  //! pass.
-  bool layerMemoryIsSet;
-
-  //! If true, each layer has its inputDimensions properly set, and
-  //! `totalInputSize` and `totalOutputSize` are valid.
-  bool inputDimensionsAreSet;
+  arma::Cube<typename OutputType::elem_type> responses;
 }; // class RNNType
 
 // Convenience typedefs.
@@ -476,7 +389,7 @@ class RNNType : public FFN<OutputLayerType,
 /**
  * Standard Sigmoid-Layer using the logistic activation function.
  */
-using RNN = RNNType<>;
+//using RNN = RNNType<>;
 
 } // namespace ann
 } // namespace mlpack

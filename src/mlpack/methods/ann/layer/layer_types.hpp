@@ -14,6 +14,7 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/multi_layer.hpp>
+#include <mlpack/methods/ann/layer/recurrent_layer.hpp>
 
 // Include each layer.
 #include <mlpack/methods/ann/layer/add.hpp>
@@ -28,6 +29,7 @@
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
 #include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
+#include <mlpack/methods/ann/layer/lstm.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>

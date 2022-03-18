@@ -193,15 +193,6 @@ class Layer
 
   virtual size_t WeightSize() const { return 0; }
 
-  // TODO: figure out what to do
-  /**
-   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
-   * new one.
-   *
-   * @param * (size) The current maximum number of steps through time.
-   */
-  virtual void ResetCell(const size_t /* size */) {}
-
   /**
    * Get whether the layer is currently in training mode.
    *

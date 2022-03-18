@@ -42,6 +42,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::LinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LinearNoBiasType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LogSoftMaxType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::LSTMType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::MaxPoolingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::NoisyLinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::PaddingType<__VA_ARGS__>); \

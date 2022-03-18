@@ -26,6 +26,13 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// TODO: move
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename InputType,
+    typename OutputType> class RNN;
+
 /**
  * Implementation of a standard feed forward network.  Any layer that inherits
  * from the base `Layer` class can be added to this model.  For recursive neural
@@ -553,6 +560,9 @@ class FFN
   //! If true, each layer has its inputDimensions properly set, and
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
+
+  friend class RNN<OutputLayerType, InitializationRuleType, InputType,
+      OutputType>;
 }; // class FFN
 
 } // namespace ann

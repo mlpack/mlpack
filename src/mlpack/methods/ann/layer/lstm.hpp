@@ -61,7 +61,7 @@ template<
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class LSTMType : public Layer<InputType, OutputType>
+class LSTMType : public RecurrentLayer<InputType, OutputType>
 {
  public:
   //! Create the LSTM object.
@@ -70,16 +70,18 @@ class LSTMType : public Layer<InputType, OutputType>
   /**
    * Create the LSTM layer object using the specified parameters.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTMType(const size_t inSize,
-           const size_t outSize,
-           const size_t rho = std::numeric_limits<size_t>::max());
+  LSTMType(const size_t outSize);
 
   //! Clone the LSTMType object. This handles polymorphism correctly.
   LSTMType* Clone() const { return new LSTMType(*this); }
+
+  LSTMType(const LSTMType& other);
+  LSTMType(LSTMType&& other);
+  LSTMType& operator=(const LSTMType& other);
+  LSTMType& operator=(LSTMType&& other);
 
   /**
    * Reset the layer parameter. The method is called to
@@ -97,20 +99,6 @@ class LSTMType : public Layer<InputType, OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
-   * Ordinary feed-forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   * @param cellState Cell state of the LSTM.
-   * @param useCellState Use the cellState passed in the LSTM cell.
-   */
-  void Forward(const InputType& input,
-               OutputType& output,
-               OutputType& cellState,
-               bool useCellState = false);
-
-  /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
@@ -119,22 +107,7 @@ class LSTMType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input,
-                const OutputType& gy,
-                OutputType& g);
-
-  /*
-   * Reset the layer parameter.
-   */
-  void Reset();
-
-  /*
-   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
-   * new one.
-   *
-   * @param size The current maximum number of steps through time.
-   */
-  void ResetCell(const size_t size);
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -147,22 +120,25 @@ class LSTMType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  //! Get the maximum number of steps to backpropagate through time (BPTT).
-  size_t Rho() const { return rho; }
-  //! Modify the maximum number of steps to backpropagate through time (BPTT).
-  size_t& Rho() { return rho; }
+  /*
+   * Reset the layer parameter.
+   */
+  void Reset();
+
+  /*
+   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
+   * new one.
+   *
+   * @param size The current maximum number of steps through time.
+   */
+  void ClearRecurrentState(const size_t bpttSteps, const size_t batchSize);
 
   //! Get the parameters.
   const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the weight of the layer.
-  OutputType const& Weight() const { return weight; }
-  //! Modify the weight of the layer.
-  OutputType& Weight() { return weight; }
-
-  const size_t WeightSize() const
+  size_t WeightSize() const
   {
     // TODO ...
     return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize);
@@ -192,36 +168,8 @@ class LSTMType : public Layer<InputType, OutputType>
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Number of steps to backpropagate through time (BPTT).
-  size_t rho;
-
-  //! Locally-stored number of forward steps.
-  size_t forwardStep;
-
-  //! Locally-stored number of backward steps.
-  size_t backwardStep;
-
-  //! Locally-stored number of gradient steps.
-  size_t gradientStep;
-
   //! Locally-stored weight object.
   OutputType weights;
-
-  //! Locally-stored previous output.
-  OutputType prevOutput;
-
-  //! Locally-stored batch size.
-  size_t batchSize;
-
-  //! Current batch step, alias for batchSize - 1.
-  size_t batchStep;
-
-  //! Current gradient step to keep track of the backpropagate through time
-  //! step.
-  size_t gradientStepIdx;
-
-  //! Locally-stored cell activation error.
-  OutputType cellActivationError;
 
   //! Weights between the output and input gate.
   OutputType output2GateInputWeight;
@@ -259,6 +207,8 @@ class LSTMType : public Layer<InputType, OutputType>
   //! Weights between cell and output gate.
   OutputType cell2GateOutputWeight;
 
+  // Below here are recurrent state matrices.
+
   //! Locally-stored input gate parameter.
   OutputType inputGate;
 
@@ -271,18 +221,6 @@ class LSTMType : public Layer<InputType, OutputType>
   //! Locally-stored output gate parameter.
   OutputType outputGate;
 
-  //! Locally-stored input gate activation.
-  OutputType inputGateActivation;
-
-  //! Locally-stored forget gate activation.
-  OutputType forgetGateActivation;
-
-  //! Locally-stored output gate activation.
-  OutputType outputGateActivation;
-
-  //! Locally-stored hidden layer activation.
-  OutputType hiddenLayerActivation;
-
   //! Locally-stored input to hidden weight.
   OutputType input2HiddenWeight;
 
@@ -293,10 +231,28 @@ class LSTMType : public Layer<InputType, OutputType>
   OutputType output2HiddenWeight;
 
   //! Locally-stored cell parameter.
-  OutputType cell;
+  arma::Cube<typename OutputType::elem_type> cell; // should be a cube, but what is n_cols?
+
+  // Locally-stored intermediate computations below here.  Do these still need
+  // to be cubes?  TODO: but I think they do.
+
+  // We need to store state whenever something is used in Backward() or
+  // Gradient().
+
+  //! Locally-stored input gate activation.
+  arma::Cube<typename OutputType::elem_type> inputGateActivation;
+
+  //! Locally-stored forget gate activation.
+  arma::Cube<typename OutputType::elem_type> forgetGateActivation;
+
+  //! Locally-stored output gate activation.
+  arma::Cube<typename OutputType::elem_type> outputGateActivation;
+
+  //! Locally-stored hidden layer activation.
+  arma::Cube<typename OutputType::elem_type> hiddenLayerActivation;
 
   //! Locally-stored cell activation error.
-  OutputType cellActivation;
+  arma::Cube<typename OutputType::elem_type> cellActivation;
 
   //! Locally-stored forget gate error.
   OutputType forgetGateError;
@@ -304,11 +260,8 @@ class LSTMType : public Layer<InputType, OutputType>
   //! Locally-stored output gate error.
   OutputType outputGateError;
 
-  //! Locally-stored previous error.
-  OutputType prevError;
-
   //! Locally-stored output parameters.
-  OutputType outParameter;
+  arma::Cube<typename OutputType::elem_type> outParameter;
 
   //! Locally-stored input cell error parameter.
   OutputType inputCellError;
@@ -318,18 +271,12 @@ class LSTMType : public Layer<InputType, OutputType>
 
   //! Locally-stored hidden layer error.
   OutputType hiddenError;
-
-  //! Locally-stored current rho size.
-  size_t rhoSize;
-
-  //! Current backpropagate through time steps.
-  size_t bpttSteps;
 }; // class LSTM
 
 // Convenience typedefs.
 
 // Standard LSTM layer.
-typedef LSTMType<arma::mat, arma::mat, NoRegularizer> LSTM;
+typedef LSTMType<arma::mat, arma::mat> LSTM;
 
 } // namespace ann
 } // namespace mlpack

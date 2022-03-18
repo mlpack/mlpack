@@ -132,7 +132,7 @@ double FFN<
   const double out = optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
-  Log::Info << "FFN::FFN(): final objective of trained model is " << out
+  Log::Info << "FFN::Train(): final objective of trained model is " << out
       << "." << std::endl;
   return out;
 }
@@ -151,23 +151,9 @@ double FFN<
          InputType responses,
          CallbackTypes&&... callbacks)
 {
-  ResetData(std::move(predictors), std::move(responses));
-
   OptimizerType optimizer;
-
-  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
-
-  // Ensure that the network can be used.
-  CheckNetwork("FFN::Train()", this->predictors.n_rows, true, true);
-
-  // Train the model.
-  Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameters, callbacks...);
-  Timer::Stop("ffn_optimization");
-
-  Log::Info << "FFN::FFN(): final objective of trained model is " << out
-      << "." << std::endl;
-  return out;
+  return Train(std::forward(predictors), std::forward(responses), optimizer,
+      callbacks...);
 }
 
 template<typename OutputLayerType,
