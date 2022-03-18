@@ -76,7 +76,7 @@ class AdaptiveMaxPooling
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
-  //! Get the output parameter. test
+  //! Get the output parameter.
   const OutputDataType& OutputParameter() const
   { return poolingLayer.OutputParameter(); }
 
