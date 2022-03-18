@@ -433,15 +433,14 @@ double RNN<
   // If `bpttSteps` is less than the number of time steps in the data, then for
   // the first few steps, we won't actually need to hold onto any historical
   // information, since BPTT will never go back that far.
-  const size_t extraSteps = (responses.n_slices - effectiveRho + 1);
-  for (size_t t = 0; t < extraSteps; ++t)
+  const size_t extraSteps = (predictors.n_slices - effectiveRho + 1);
+  for (size_t t = 0; t < std::min(size_t(predictors.n_slices), extraSteps); ++t)
   {
     SetCurrentStep(0);
 
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
         batchSize, false, true);
-    // TODO: handle t correctly, if rho < response.n_slices
     arma::mat outputData(outputs.slice(t).memptr(), outputs.n_rows,
         outputs.n_cols, false, true);
     network.network.Forward(stepData, outputData);
@@ -457,14 +456,13 @@ double RNN<
 
   // Next, we reach the time steps that will be used for BPTT, for which we must
   // preserve step data.
-  for (size_t t = extraSteps; t < responses.n_slices; ++t)
+  for (size_t t = extraSteps; t < predictors.n_slices; ++t)
   {
     SetCurrentStep(t - extraSteps);
 
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
         batchSize, false, true);
-    // TODO: handle t correctly, if rho < response.n_slices
     arma::mat outputData(outputs.slice(t).memptr(), outputs.n_rows,
         outputs.n_cols, false, true);
     network.network.Forward(stepData, outputData);
@@ -489,7 +487,7 @@ double RNN<
       network.Parameters().n_cols);
 
   SetPreviousStep(size_t(-1));
-  for (size_t t = responses.n_slices - 1; t >= responses.n_slices - effectiveRho; --t)
+  for (size_t t = predictors.n_slices - 1; t >= predictors.n_slices - effectiveRho; --t)
   {
     SetCurrentStep(t);
 
@@ -588,7 +586,8 @@ void RNN<
     arma::Cube<typename InputType::elem_type> predictors,
     arma::Cube<typename OutputType::elem_type> responses)
 {
-  // TODO
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
 }
 
 template<

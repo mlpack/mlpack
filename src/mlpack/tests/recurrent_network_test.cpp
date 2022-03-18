@@ -76,7 +76,6 @@ void GenerateNoisySines(arma::cube& data,
  * @param sequences Number of sequences for each class.
  * @param noise The noise factor that influences the sines.
  */
-
 void GenerateSines(arma::cube& data,
                    arma::cube& labels,
                    const size_t sequences,
@@ -190,57 +189,47 @@ void BatchSizeTest()
   // Generate 12 (2 * 6) noisy sines. A single sine contains rho
   // points/features.
   arma::cube input;
-  arma::cube labels;
-  GenerateSines(input, labels, 4, 5);
-  /* arma::mat labelsTemp; */
-  /* GenerateNoisySines(input, labelsTemp, T, 6); */
+  arma::mat labelsTemp;
+  GenerateNoisySines(input, labelsTemp, 4, 5);
 
-  /* arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, T); */
-  /* for (size_t i = 0; i < labelsTemp.n_cols; ++i) */
-  /* { */
-  /*   const int value = arma::as_scalar(arma::find( */
-  /*       arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1; */
-  /*   labels.tube(0, i).fill(value); */
-  /* } */
-
-  //std::cout << input << std::endl;
-
-  //std::cout << labels << std::endl;
-
-
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, T);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.tube(0, i).fill(value);
+  }
 
   RNN<> model(bpttTruncate);
   model.Add<Linear>(100);
   model.Add<Sigmoid>();
-  model.Add<Linear>(1);
-  //model.Add<RecurrentLayerType>(10, 10);
-  //model.Add<SigmoidLayer<>>();
-  //model.Add<Linear<>>(10, 10);
-  //model.Add<SigmoidLayer<>>();
+  model.Add<RecurrentLayerType>(10);
+  model.Add<Sigmoid>();
+  model.Add<Linear>(10);
+  model.Add<Sigmoid>();
 
-  //model.Reset();
-  //arma::mat initParams = model.Parameters();
+  model.Reset(1);
+  arma::mat initParams = model.Parameters();
 
   StandardSGD opt(1e-5, 1, 5, -100, false);
   model.Train(input, labels, opt);
 
-  /* exit(0); */
+  // This is trained with one point.
+  arma::mat outputParams = model.Parameters();
 
-  /* // This is trained with one point. */
-  /* arma::mat outputParams = model.Parameters(); */
+  model.Reset(1);
+  model.Parameters() = initParams;
+  opt.BatchSize() = 2;
+  model.Train(input, labels, opt);
 
-  /* model.Reset(); */
-  /* model.Parameters() = initParams; */
-  /* opt.BatchSize() = 2; */
-  /* model.Train(input, labels, opt); */
+  CheckMatrices(outputParams, model.Parameters(), 1);
 
-  /* CheckMatrices(outputParams, model.Parameters(), 1); */
+  model.Reset(1);
+  model.Parameters() = initParams;
+  opt.BatchSize() = 5;
+  model.Train(input, labels, opt);
 
-  /* model.Parameters() = initParams; */
-  /* opt.BatchSize() = 5; */
-  /* model.Train(input, labels, opt); */
-
-  /* CheckMatrices(outputParams, model.Parameters(), 1); */
+  CheckMatrices(outputParams, model.Parameters(), 1);
 }
 
 /**
