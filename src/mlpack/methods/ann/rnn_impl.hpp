@@ -423,7 +423,7 @@ double RNN<
 
   double loss = 0;
   // TODO: cleaner
-  const size_t effectiveRho = std::min(rho, size_t(responses.n_slices));
+  const size_t effectiveRho = std::min(rho, size_t(predictors.n_slices));
 
   ResetMemoryState(effectiveRho, batchSize);
   SetPreviousStep(size_t(-1));
@@ -487,9 +487,10 @@ double RNN<
       network.Parameters().n_cols);
 
   SetPreviousStep(size_t(-1));
-  for (size_t t = predictors.n_slices - 1; t >= predictors.n_slices - effectiveRho; --t)
+  for (size_t t = predictors.n_slices; t >= predictors.n_slices - effectiveRho +
+1; --t)
   {
-    SetCurrentStep(t);
+    SetCurrentStep(t - 1);
 
     currentGradient.zeros();
     OutputType error(outputs.n_rows, outputs.n_cols);
@@ -498,32 +499,33 @@ double RNN<
     // that if we are in 'single' mode, we don't care what the network outputs
     // until the input sequence is done, so there is no error for any timestep
     // other than the first one.
-    if (single && t < responses.n_slices - 1)
+    if (single && (t - 1) < responses.n_slices - 1)
     {
       error.zeros();
     }
     else
     {
-      arma::mat outputData(outputs.slice(t).colptr(0), outputs.n_rows,
+      arma::mat outputData(outputs.slice(t - 1).colptr(0), outputs.n_rows,
           outputs.n_cols, false, true);
-      arma::mat respData(responses.slice(t).colptr(begin), responses.n_rows,
-          responses.n_cols, false, true);
+      const size_t respStep = (single) ? 0 : t - 1;
+      arma::mat respData(responses.slice(respStep).colptr(begin),
+          responses.n_rows, batchSize, false, true);
       network.outputLayer.Backward(outputData, respData, error);
     }
 
     // Now pass that error backwards through the network.
-    arma::mat outputData(outputs.slice(t).colptr(0), outputs.n_rows,
+    arma::mat outputData(outputs.slice(t - 1).colptr(0), outputs.n_rows,
         outputs.n_cols, false, true);
     // TODO: allocate space for networkDelta?
     InputType networkDelta;
     network.network.Backward(outputData, error, networkDelta);
 
-    arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
+    arma::mat stepData(predictors.slice(t - 1).colptr(begin), predictors.n_rows,
         batchSize, false, true);
     network.network.Gradient(stepData, error, currentGradient);
     gradient += currentGradient;
 
-    SetPreviousStep(t);
+    SetPreviousStep(t - 1);
   }
 
   return loss;

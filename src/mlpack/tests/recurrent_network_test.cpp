@@ -573,7 +573,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   RNN<MeanSquaredError<> > net(rho, true);
   net.Add<LinearNoBias>(hiddenUnits);
   net.Add<LSTM>(hiddenUnits);
-  net.Add<LinearNoBias>(hiddenUnits);
+  net.Add<LinearNoBias>(1);
 
   RMSProp opt(0.005, 100, 0.9, 1e-08, 50000, 1e-5);
 

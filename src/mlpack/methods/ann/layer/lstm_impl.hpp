@@ -126,6 +126,7 @@ void LSTMType<InputType, OutputType>::ClearRecurrentState(
   hiddenLayerActivation.set_size(outSize, batchSize, bpttSteps);
 
   cellActivation.set_size(outSize, batchSize, bpttSteps);
+  outParameter.set_size(outSize, batchSize, bpttSteps);
 
   // Now reset recurrent values to 0.
   cell.zeros(outSize, batchSize, bpttSteps);
@@ -330,7 +331,8 @@ void LSTMType<InputType, OutputType>::Backward(
   }
   else
   {
-    forgetGateError.zeros();
+    forgetGateError.zeros(forgetGateActivation.n_rows,
+        forgetGateActivation.n_cols);
   }
 
   inputGateError = hiddenLayerActivation.slice(this->CurrentStep()) % cellError %
