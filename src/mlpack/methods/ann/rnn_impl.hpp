@@ -14,6 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "rnn.hpp"
+#include "layer/recurrent_layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
