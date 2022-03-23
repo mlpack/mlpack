@@ -330,6 +330,8 @@ void RNN<
 >::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(single));
   ar(CEREAL_NVP(network));
   ar(CEREAL_NVP(predictors));
   ar(CEREAL_NVP(responses));
