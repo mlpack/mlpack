@@ -338,7 +338,7 @@ class RNN
                 const size_t batchSize);
 
   //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return responses.n_slices; }
+  size_t NumFunctions() const { return predictors.n_cols; }
 
   void Shuffle();
 
