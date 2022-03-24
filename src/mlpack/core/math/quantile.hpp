@@ -21,7 +21,7 @@ namespace math /** Miscellaneous math routines. */ {
  * Computes the inverse erf function using the rational approximation from
  * Numerical Recipes.
  * Code accompanying the article "Approximating the erfinv function" in 
- * GPU Computing Gems, Volume 2
+ * GPU Computing Gems, Volume 2.
  *
  * @param x Input value.
  */
