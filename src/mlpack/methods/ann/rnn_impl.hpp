@@ -426,7 +426,8 @@ double RNN<
 
   double loss = 0;
   // TODO: cleaner
-  const size_t effectiveRho = std::min(rho, size_t(predictors.n_slices));
+  const size_t effectiveRho = std::max(size_t(1),
+      std::min(rho, size_t(predictors.n_slices)));
 
   ResetMemoryState(effectiveRho, batchSize);
   SetPreviousStep(size_t(-1));
