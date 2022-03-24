@@ -13,6 +13,7 @@
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -777,7 +778,7 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
     inputs[i] = makeInput(trainingData[i].c_str());
     targets[i] = makeTarget(trainingData[i].c_str());
   }
-  ens::SGD<> opt(0.01, 1, 100);
+  ens::StandardSGD opt(0.01, 1, 100);
   model.Train(inputs[0], targets[0], opt);
   INFO("Training over");
 }
@@ -845,3 +846,36 @@ TEST_CASE("RNNCheckInputShapeTest", "[RecurrentNetworkTest]")
   REQUIRE_THROWS_AS(model.Train(input, labels, opt), std::logic_error);
 }
 */
+
+/**
+ * Test that a simple RNN with no recurrent components behaves the same as an
+ * FFN.
+ */
+TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest]")
+{
+  // We'll create an RNN with *no* BPTT, just a simple single-layer linear
+  // network.
+  RNN<MeanSquaredError<>, ConstInitialization> rnn;
+  FFN<MeanSquaredError<>, ConstInitialization> ffn;
+
+  rnn.Add<Linear>(10);
+  rnn.Add<Sigmoid>();
+  rnn.Add<Linear>(1);
+
+  ffn.Add<Linear>(10);
+  ffn.Add<Sigmoid>();
+  ffn.Add<Linear>(1);
+
+  // Now create some random data.
+  arma::cube data(20, 200, 1, arma::fill::randu);
+  arma::cube responses(1, 200, 1, arma::fill::randu);
+
+  // Train the FFN.
+  ens::StandardSGD optimizer(1e-5, 1, 200, 1e-8, false);
+
+  ffn.Train(data.slice(0), responses.slice(0), optimizer);
+  rnn.Train(data, responses, optimizer);
+
+  // Now, the weights should be the same!
+  CheckMatrices(ffn.Parameters(), rnn.Parameters());
+}
