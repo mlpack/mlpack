@@ -288,7 +288,8 @@ void AtrousConvolution<
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, 1, 1, 1, 1);
+          rotatedFilter, output, 1, 1, (dilationWidth - strideWidth + 1),
+          (dilationHeight - strideHeight + 1));
 
       // If the stride is greater than 1, we must manually insert zeros into the
       // output.
