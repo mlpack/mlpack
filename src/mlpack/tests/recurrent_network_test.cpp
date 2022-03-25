@@ -576,8 +576,6 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   net.Add<LSTM>(hiddenUnits);
   net.Add<LinearNoBias>(1);
 
-  RMSProp opt(0.005, 100, 0.9, 1e-08, 50000, 1e-5);
-
   // Generate data
   arma::cube data;
   arma::cube labels;
@@ -591,12 +589,12 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   arma::cube testLabels = labels.subcube(0, labels.n_cols - testCols, 0,
       labels.n_rows - 1, labels.n_cols - 1, labels.n_slices - 1);
 
-  for (size_t i = 0; i < numEpochs; ++i)
-  {
-    net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
-        data.n_slices - 1), labels.subcube(0, 0, 0, labels.n_rows - 1,
-        trainCols - 1, labels.n_slices - 1), opt);
-  }
+  RMSProp opt(0.005, 16, 0.9, 1e-08, trainCols * numEpochs, 1e-5);
+
+  net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
+      data.n_slices - 1), labels.subcube(0, 0, 0, labels.n_rows - 1,
+      trainCols - 1, labels.n_slices - 1), opt);
+
   // Well now it should be trained. Do the test here.
   arma::cube prediction;
   net.Predict(testData, prediction);
