@@ -284,7 +284,7 @@ void LSTMType<InputType, OutputType>::Forward(
   // TODO: these aliases are likely not useful?
   // but, they're intended to avoid copying the output---can we avoid that?
   output = OutputType(outParameter.memptr() +
-      (this->CurrentStep() + batchSize) * outSize, outSize, batchSize, false,
+      this->CurrentStep() * (batchSize * outSize), outSize, batchSize, false,
       false);
 }
 
