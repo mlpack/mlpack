@@ -2872,7 +2872,7 @@ TEST_CASE("SimpleAtrousConvolutionLayerTest", "[ANNLayerTest]")
   module1.Parameters()(8) = 2.0;
   module1.Reset();
   module1.Forward(input, output);
-  // Value calculated using tensorflow.nn.atrous_conv2d()
+  // Value calculated using tensorflow.nn.atrous_conv2d() and also by hand.
   REQUIRE(arma::accu(output) == 792.0);
 
   // Test the Backward function.

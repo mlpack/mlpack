@@ -288,20 +288,40 @@ void AtrousConvolution<
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, strideWidth, strideHeight, dilationWidth,
-          dilationHeight);
+          rotatedFilter, output, 1, 1, 1, 1);
 
-      if (padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
-          padding.PadHTop() != 0 || padding.PadHBottom() != 0)
+      // If the stride is greater than 1, we must manually insert zeros into the
+      // output.
+      if (strideWidth == 1 && strideHeight == 1)
       {
-        gTemp.slice(inMap + batchCount * inSize) +=
-            output.submat(padding.PadWLeft(), padding.PadHTop(),
-                          padding.PadWLeft() + gTemp.n_rows - 1,
-                          padding.PadHTop() + gTemp.n_cols - 1);
+        if (padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
+            padding.PadHTop() != 0 || padding.PadHBottom() != 0)
+        {
+          gTemp.slice(inMap + batchCount * inSize) +=
+              output.submat(padding.PadWLeft(), padding.PadHTop(),
+                            padding.PadWLeft() + gTemp.n_rows - 1,
+                            padding.PadHTop() + gTemp.n_cols - 1);
+        }
+        else
+        {
+          gTemp.slice(inMap + batchCount * inSize) += output;
+        }
       }
       else
       {
-        gTemp.slice(inMap + batchCount * inSize) += output;
+        // We must iterate over each element of the output and re-insert the
+        // stride.
+        size_t col = padding.PadWLeft();
+        for (size_t i = 0; i < output.n_cols; ++i)
+        {
+          size_t row = padding.PadHTop();
+          for (size_t j = 0; j < output.n_rows; ++j)
+          {
+            gTemp(row, col, inMap + batchCount * inSize) += output(j, i);
+            row += strideHeight;
+          }
+          col += strideWidth;
+        }
       }
     }
   }
