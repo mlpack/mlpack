@@ -462,7 +462,7 @@ double RNN<
   // preserve step data.
   for (size_t t = extraSteps; t < predictors.n_slices; ++t)
   {
-    SetCurrentStep(t - extraSteps);
+    SetCurrentStep(t - extraSteps + 1);
 
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
@@ -477,7 +477,7 @@ double RNN<
 
     loss += network.outputLayer.Forward(outputData, responseData);
 
-    SetPreviousStep(t - extraSteps);
+    SetPreviousStep(t - extraSteps + 1);
   }
 
   // Add loss (this is not dependent on time steps, and should only be added
