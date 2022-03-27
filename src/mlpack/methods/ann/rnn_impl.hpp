@@ -395,8 +395,12 @@ void RNN<
   ar(CEREAL_NVP(rho));
   ar(CEREAL_NVP(single));
   ar(CEREAL_NVP(network));
-  ar(CEREAL_NVP(predictors));
-  ar(CEREAL_NVP(responses));
+
+  if (Archive::is_loading::value)
+  {
+    predictors.clear();
+    responses.clear();
+  }
 }
 
 template<
