@@ -93,6 +93,68 @@ RNN<
     InitializationRuleType,
     InputType,
     OutputType
+>&
+RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::operator=(const RNN& other)
+{
+  if (this != &other)
+  {
+    rho = other.rho;
+    single = other.single;
+    network = other.network;
+    predictors.clear();
+    responses.clear();
+  }
+
+  return *this;
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename InputType,
+    typename OutputType
+>
+RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>&
+RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::operator=(RNN&& other)
+{
+  if (this != &other)
+  {
+    rho = std::move(other.rho);
+    single = std::move(other.single);
+    network = std::move(other.network);
+    predictors.clear();
+    responses.clear();
+  }
+
+  return *this;
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename InputType,
+    typename OutputType
+>
+RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
 >::~RNN()
 {
   // Nothing special to do.

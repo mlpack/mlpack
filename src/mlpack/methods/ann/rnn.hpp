@@ -59,8 +59,8 @@ class RNN
   RNN(RNN&&);
 
   //! Copy/move assignment operator.
-  // TODO: what does FFN do, should we match it?
-  RNN& operator=(RNN);
+  RNN& operator=(const RNN&);
+  RNN& operator=(RNN&&);
 
   ~RNN();
 
