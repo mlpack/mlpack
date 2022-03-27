@@ -12,7 +12,7 @@
 #include "cosine_tree.hpp"
 #include <mlpack/core/util/log.hpp>
 
-#include <boost/math/distributions/normal.hpp>
+#include <mlpack/core/math/quantile.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -477,8 +477,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 
   // Fit a normal distribution using the calculated statistics, and calculate a
   // lower bound on the magnitudes for the passed 'delta' parameter.
-  boost::math::normal dist(mu, sigma);
-  double lowerBound = boost::math::quantile(dist, delta);
+  double lowerBound = math::Quantile(delta, mu, sigma);
 
   // Upper bound on the subspace reconstruction error.
   node->L2Error(node->FrobNormSquared() - lowerBound);

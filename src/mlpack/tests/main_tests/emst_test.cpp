@@ -18,8 +18,6 @@
 
 #include "../catch.hpp"
 
-#include <boost/math/special_functions/round.hpp>
-
 using namespace mlpack;
 
 BINDING_TEST_FIXTURE(EMSTTestFixture);
@@ -106,10 +104,10 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTFirstTwoOutputRowsIntegerTest",
   for (size_t i = 0; i < params.Get<arma::mat>("output").n_cols; ++i)
   {
     REQUIRE(params.Get<arma::mat>("output")(0, i) ==
-        Approx(boost::math::iround(params.Get<arma::mat>("output")(0, i))).
+        Approx(std::round(params.Get<arma::mat>("output")(0, i))).
         epsilon(1e-7));
     REQUIRE(params.Get<arma::mat>("output")(1, i) ==
-        Approx(boost::math::iround(params.Get<arma::mat>("output")(1, i))).
+        Approx(std::round(params.Get<arma::mat>("output")(1, i))).
         epsilon(1e-7));
   }
 }
