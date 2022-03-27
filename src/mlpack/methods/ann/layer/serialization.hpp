@@ -12,6 +12,7 @@
 #define CEREAL_REGISTER_MLPACK_LAYERS(...) \
     CEREAL_REGISTER_TYPE(mlpack::ann::Layer<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::MultiLayer<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::RecurrentLayer<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AddType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AlphaDropout<__VA_ARGS__>); \
     /* Base layers from base_layer.hpp. */ \
