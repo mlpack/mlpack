@@ -267,7 +267,7 @@ void LSTMType<InputType, OutputType>::Forward(
   if (this->HasPreviousStep())
   {
     outputGate +=
-        output2GateOutputWeight * outParameter.slice(this->CurrentStep());
+        output2GateOutputWeight * outParameter.slice(this->PreviousStep());
   }
   outputGate.each_col() += input2GateOutputBias;
 
