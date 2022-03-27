@@ -83,6 +83,8 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
   LSTMType& operator=(const LSTMType& other);
   LSTMType& operator=(LSTMType&& other);
 
+  virtual ~LSTMType() { }
+
   /**
    * Reset the layer parameter. The method is called to
    * assign the allocated memory to the internal learnable parameters.
