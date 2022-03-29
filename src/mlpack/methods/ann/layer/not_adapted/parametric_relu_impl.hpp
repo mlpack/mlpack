@@ -12,8 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_PReLU_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_PReLU_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_PRELU_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_PRELU_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "parametric_relu.hpp"
