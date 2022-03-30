@@ -105,7 +105,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/array.hpp>
-#include <cereal/types/boost_variant.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/tuple.hpp>
 #include <mlpack/core/cereal/unordered_map.hpp>
@@ -116,8 +115,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/cereal/is_saving.hpp>
 #include <mlpack/core/arma_extend/serialize_armadillo.hpp>
 #include <mlpack/core/cereal/array_wrapper.hpp>
-#include <mlpack/core/cereal/pointer_variant_wrapper.hpp>
-#include <mlpack/core/cereal/pointer_vector_variant_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
