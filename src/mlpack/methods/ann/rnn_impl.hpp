@@ -337,10 +337,8 @@ void RNN<
     const arma::Mat<typename InputType::elem_type> inputAlias(
         (typename InputType::elem_type*) predictors.slice(t).colptr(begin),
         predictors.n_rows, batchSize, false, true);
-    const size_t responseStep = (single) ? 0 : t;
     arma::Mat<typename OutputType::elem_type> outputAlias(
-        results.slice(responseStep).colptr(begin), results.n_rows,
-        batchSize, false, true);
+        results.slice(t).colptr(begin), results.n_rows, batchSize, false, true);
 
     network.Forward(inputAlias, outputAlias);
   }
