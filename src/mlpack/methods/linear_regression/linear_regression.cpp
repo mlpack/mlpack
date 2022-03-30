@@ -100,7 +100,8 @@ void LinearRegression::Predict(const arma::mat& points,
   {
     // We want to be sure we have the correct number of dimensions in the
     // dataset.
-    util::CheckSameDimensionality(points, (size_t) (parameters.n_rows - 1), "LinearRegression::Predict()", "points");
+    util::CheckSameDimensionality(points, (size_t) (parameters.n_rows - 1), 
+        "LinearRegression::Predict()", "points");
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
     predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
@@ -112,7 +113,8 @@ void LinearRegression::Predict(const arma::mat& points,
   {
     // We want to be sure we have the correct number of dimensions in
     // the dataset.
-    util::CheckSameDimensionality(points, parameters, "LinearRegression::Predict()", "points");
+    util::CheckSameDimensionality(points, parameters, 
+        "LinearRegression::Predict()", "points");
     predictions = arma::trans(parameters) * points;
   }
 }

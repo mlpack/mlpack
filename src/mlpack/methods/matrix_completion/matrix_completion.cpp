@@ -61,7 +61,8 @@ void MatrixCompletion::CheckValues()
   }
 
   arma::mat transposeValues = values.t();
-  util::CheckSameSizes(indices, transposeValues, "MatrixCompletion::CheckValues()", "values");
+  util::CheckSameSizes(indices, transposeValues, 
+      "MatrixCompletion::CheckValues()", "values");
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {
