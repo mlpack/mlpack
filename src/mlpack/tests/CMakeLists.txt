@@ -3,7 +3,7 @@ include(CTest)
 # mlpack test executable.
 add_executable(mlpack_test
   EXCLUDE_FROM_ALL
-  # activation_functions_test.cpp
+#  activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
@@ -59,7 +59,6 @@ add_executable(mlpack_test
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
-#  layer_names_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
   lmnn_test.cpp
@@ -95,7 +94,7 @@ add_executable(mlpack_test
   random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
-  rbm_network_test.cpp
+#  rbm_network_test.cpp
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
 #  rnn_reber_test.cpp
