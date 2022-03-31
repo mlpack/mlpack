@@ -152,7 +152,7 @@ double FFN<
          CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
-  return Train(std::forward(predictors), std::forward(responses), optimizer,
+  return Train(std::move(predictors), std::move(responses), optimizer,
       callbacks...);
 }
 
