@@ -13,7 +13,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
-#include <mlpack/methods/ann/rbm/rbm.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+//#include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/lmnn/lmnn.hpp>
@@ -49,10 +50,10 @@ TEST_CASE("FFNCallbackTest", "[CallbackTest]")
 
   FFN<MeanSquaredError<>, RandomInitialization> model;
 
-  model.Add<Linear<>>(1, 2);
-  model.Add<SigmoidLayer<>>();
-  model.Add<Linear<>>(2, 1);
-  model.Add<SigmoidLayer<>>();
+  model.Add<Linear>(2);
+  model.Add<Sigmoid>();
+  model.Add<Linear>(1);
+  model.Add<Sigmoid>();
 
   std::stringstream stream;
   model.Train(data, labels, ens::PrintLoss(stream));
@@ -75,10 +76,10 @@ TEST_CASE("FFNWithOptimizerCallbackTest", "[CallbackTest]")
 
   FFN<MeanSquaredError<>, RandomInitialization> model;
 
-  model.Add<Linear<>>(1, 2);
-  model.Add<SigmoidLayer<>>();
-  model.Add<Linear<>>(2, 1);
-  model.Add<SigmoidLayer<>>();
+  model.Add<Linear>(2);
+  model.Add<Sigmoid>();
+  model.Add<Linear>(1);
+  model.Add<Sigmoid>();
 
   std::stringstream stream;
   ens::StandardSGD opt(0.1, 1, 5);
@@ -100,12 +101,11 @@ TEST_CASE("RNNCallbackTest", "[CallbackTest]")
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> model(
       rho, false, NegativeLogLikelihood<>(), init);
-  model.Add<IdentityLayer<>>();
-  model.Add<Linear<>>(1, 10);
+  model.Add<Linear>(10);
 
-  // Use LSTM layer with rho.
-  model.Add<LSTM<>>(10, 3, rho);
-  model.Add<LogSoftMax<>>();
+  // Use LSTM layer with 3 units.
+  model.Add<LSTM>(3);
+  model.Add<LogSoftMax>();
 
   std::stringstream stream;
   model.Train(input, target, ens::PrintLoss(stream));
@@ -126,12 +126,11 @@ TEST_CASE("RNNWithOptimizerCallbackTest", "[CallbackTest]")
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> model(
       rho, false, NegativeLogLikelihood<>(), init);
-  model.Add<IdentityLayer<>>();
-  model.Add<Linear<>>(1, 10);
+  model.Add<Linear>(10);
 
-  // Use LSTM layer with rho.
-  model.Add<LSTM<>>(10, 3, rho);
-  model.Add<LogSoftMax<>>();
+  // Use LSTM layer with 3 units.
+  model.Add<LSTM>(3);
+  model.Add<LogSoftMax>();
 
   std::stringstream stream;
   ens::StandardSGD opt(0.1, 1, 5);
@@ -234,7 +233,7 @@ TEST_CASE("SRWithOptimizerCallback", "[CallbackTest]")
 
 /*
  * Tests the RBM Implementation with PrintLoss callback.
- */
+ *
 TEST_CASE("RBMCallbackTest", "[CallbackTest]")
 {
   // Normalised dataset.
@@ -259,7 +258,7 @@ TEST_CASE("RBMCallbackTest", "[CallbackTest]")
   double objVal = model.Train(msgd, ens::ProgressBar(70, stream));
   REQUIRE(!std::isnan(objVal));
   REQUIRE(stream.str().length() > 0);
-}
+}*/
 
 /**
  * Tests the SparseAutoencoder implementation with
