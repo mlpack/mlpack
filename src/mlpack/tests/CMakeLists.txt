@@ -3,7 +3,7 @@ include(CTest)
 # mlpack test executable.
 add_executable(mlpack_test
   EXCLUDE_FROM_ALL
-#  activation_functions_test.cpp
+  activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
