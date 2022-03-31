@@ -186,6 +186,11 @@ class RNN
   //! Modify the initial point for the optimization.
   OutputType& Parameters() { return network.Parameters(); }
 
+  //! Return the number of steps allowed for BPTT.
+  size_t Rho() const { return rho; }
+  //! Modify the number of steps allowed for BPTT.
+  size_t& Rho() { return rho; }
+
   void Reset(const size_t inputDimensionality = 0);
 
   /**
