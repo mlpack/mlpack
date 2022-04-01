@@ -239,7 +239,11 @@ class Layer
   }
 
   //! Get the parameters.
-  virtual const OutputType& Parameters() const { return OutputType(); }
+  virtual const OutputType& Parameters() const
+  {
+    throw std::invalid_argument("Layer::Parameters(): cannot access parameters "
+        "of a layer with no weights!");
+  }
   //! Set the parameters.
   virtual OutputType& Parameters()
   {
