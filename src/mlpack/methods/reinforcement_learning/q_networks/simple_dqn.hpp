@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 
 namespace mlpack {
@@ -45,7 +45,6 @@ class SimpleDQN
   /**
    * Construct an instance of SimpleDQN class.
    *
-   * @param inputDim Number of inputs.
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
@@ -53,8 +52,7 @@ class SimpleDQN
    * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
    */
-  SimpleDQN(const int inputDim,
-            const int h1,
+  SimpleDQN(const int h1,
             const int h2,
             const int outputDim,
             const bool isNoisy = false,
@@ -63,21 +61,21 @@ class SimpleDQN
       network(outputLayer, init),
       isNoisy(isNoisy)
   {
-    network.Add(new Linear<>(inputDim, h1));
-    network.Add(new ReLULayer<>());
+    network.Add(new Linear(h1));
+    network.Add(new ReLU());
     if (isNoisy)
     {
-      noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new NoisyLinear<>(h1, h2));
-      network.Add(new ReLULayer<>());
-      noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new NoisyLinear<>(h2, outputDim));
+      noisyLayerIndex.push_back(network.Network().size());
+      network.Add(new NoisyLinear(h2));
+      network.Add(new ReLU());
+      noisyLayerIndex.push_back(network.Network().size());
+      network.Add(new NoisyLinear(outputDim));
     }
     else
     {
-      network.Add(new Linear<>(h1, h2));
-      network.Add(new ReLULayer<>());
-      network.Add(new Linear<>(h2, outputDim));
+      network.Add(new Linear(h2));
+      network.Add(new ReLU());
+      network.Add(new Linear(outputDim));
     }
   }
 
@@ -122,9 +120,9 @@ class SimpleDQN
   /**
    * Resets the parameters of the network.
    */
-  void ResetParameters()
+  void Reset()
   {
-    network.ResetParameters();
+    network.Reset();
   }
 
   /**
@@ -134,8 +132,8 @@ class SimpleDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      boost::get<NoisyLinear<>*>
-          (network.Model()[noisyLayerIndex[i]])->ResetNoise();
+      dynamic_cast<NoisyLinear*>(
+          network.Network()[noisyLayerIndex[i]])->ResetNoise();
     }
   }
 
