@@ -21,7 +21,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-SigmoidCrossEntropyErrorType<MatType>::SigmoidCrossEntropyErrorType()
+SigmoidCrossEntropyErrorType<MatType>::SigmoidCrossEntropyErrorType(
+    const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -40,7 +42,12 @@ SigmoidCrossEntropyErrorType<MatType>::Forward(
         std::log(1 + std::exp(-std::abs(prediction[i])));
   }
 
-  return maximum - arma::accu(prediction % target);
+  ElemType lossSum = maximum - arma::accu(prediction % target);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -50,6 +57,18 @@ inline void SigmoidCrossEntropyErrorType<MatType>::Backward(
     MatType& loss)
 {
   loss = 1.0 / (1.0 + arma::exp(-prediction)) - target;
+
+  if (!reduction)
+    loss = loss / target.n_elem;
+}
+
+template<typename MatType>
+template<typename Archive>
+void SigmoidCrossEntropyError<MatType>::serialize(
+    Archive& ar,
+    const uint32_t /* version */)
+{
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

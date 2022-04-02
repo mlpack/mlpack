@@ -39,12 +39,16 @@ class PoissonNLLLossType
    * @param full Boolean value that determines whether to include Stirling's
    *        approximation term.
    * @param eps A small value to prevent 0 in denominators and logarithms.
-   * @param mean When true, mean loss is computed otherwise total loss.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
   PoissonNLLLossType(const bool logInput = true,
                  const bool full = false,
                  const typename MatType::elem_type eps = 1e-08,
-                 const bool mean = true);
+                 const bool reduction = true);
 
   /**
    * Computes the Poisson negative log likelihood Loss.
@@ -94,12 +98,11 @@ class PoissonNLLLossType
   //! logarithms and denominators.
   typename MatType::elem_type& Eps() { return eps; }
 
-  //! Get the value of mean. It's a boolean value that tells if
-  //! mean of the total loss has to be taken.
-  bool Mean() const { return mean; }
-  //! Modify the value of mean. It's a boolean value that tells if
-  //! mean of the total loss has to be taken.
-  bool& Mean() { return mean; }
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the layer.
@@ -130,8 +133,8 @@ class PoissonNLLLossType
   //! eps is a small value required to prevent 0 in logarithms and denominators.
   typename MatType::elem_type eps;
 
-  //! Boolean value that tells if mean of the total loss has to be taken.
-  bool mean;
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
+  bool reduction;
 }; // class PoissonNLLLossType
 
 // Default typedef for typical `arma::mat` usage.

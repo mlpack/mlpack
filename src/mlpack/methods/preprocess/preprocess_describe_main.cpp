@@ -19,14 +19,12 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
+#include <iomanip>
 
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace mlpack::util;
 using namespace std;
-using namespace boost;
 
 // Program Name.
 BINDING_USER_NAME("Descriptive Statistics");
@@ -187,25 +185,13 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Load the data.
   arma::mat& data = params.Get<arma::mat>("input");
 
-  // Generate boost format recipe.
-  const string widthPrecision("%-" + to_string(width) + "." +
-      to_string(precision));
-  const string widthOnly("%-" + to_string(width) + ".");
-  string stringFormat = "";
-  string numberFormat = "";
-
-  // We are going to print 11 different categories.
-  for (size_t i = 0; i < 11; ++i)
-  {
-    stringFormat += widthOnly + "s";
-    numberFormat += widthPrecision + "f";
-  }
-
   timers.Start("statistics");
   // Print the headers.
-  Log::Info << boost::format(stringFormat)
-      % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
-      % "range" % "skew" % "kurt" % "SE" << endl;
+  Log::Info << setw(width) << "dim" << setw(width) << "var" << setw(width) << 
+      "mean" << setw(width) << "std" << setw(width) << setw(width) << setw(width) << 
+      "median" << setw(width) << "min" << setw(width) << "max" << setw(width) << 
+      "range" << setw(width) << "skew" << setw(width) << "kurt" << setw(width) << 
+      "SE" << endl;
 
   // Lambda function to print out the results.
   auto PrintStatResults = [&](size_t dim, bool rowMajor)
@@ -223,19 +209,17 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << boost::format(numberFormat)
-        % dim
-        % arma::var(feature, population)
-        % fMean
-        % fStd
-        % arma::median(feature)
-        % fMin
-        % fMax
-        % (fMax - fMin) // range
-        % Skewness(feature, fStd, fMean, population)
-        % Kurtosis(feature, fStd, fMean, population)
-        % StandardError(feature.n_elem, fStd)
-        << endl;
+    Log::Info << setprecision(precision) << setw(width) << dim << 
+        setw(width) << arma::var(feature, population) << 
+        setw(width) << fMean << 
+        setw(width) << fStd <<
+        setw(width) << arma::median(feature) << 
+        setw(width) << fMin << 
+        setw(width) << fMax << 
+        setw(width) << (fMax - fMin) <<
+        setw(width) << Skewness(feature, fStd, fMean, population) <<
+        setw(width) << Kurtosis(feature, fStd, fMean, population) <<
+        setw(width) << StandardError(feature.n_elem, fStd) << endl;
   };
 
   // If the user specified dimension, describe statistics of the given

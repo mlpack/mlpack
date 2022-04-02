@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-L1LossType<MatType>::L1LossType(const bool mean):
-  mean(mean)
+L1LossType<MatType>::L1LossType(const bool reduction):
+    reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -30,10 +30,13 @@ typename MatType::elem_type L1LossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  if (mean)
-    return arma::accu(arma::mean(prediction - target));
+  PredictionType loss = arma::abs(prediction - target);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
-  return arma::accu(prediction - target);
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -43,6 +46,9 @@ void L1LossType<MatType>::Backward(
     MatType& loss)
 {
   loss = arma::sign(prediction - target);
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename MatType>
@@ -51,7 +57,7 @@ void L1LossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(mean));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

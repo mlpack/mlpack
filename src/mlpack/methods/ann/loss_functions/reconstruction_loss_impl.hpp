@@ -19,7 +19,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename DistType>
-ReconstructionLossType<MatType, DistType>::ReconstructionLossType()
+ReconstructionLossType<MatType, DistType>::ReconstructionLossType(
+    const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -29,7 +31,12 @@ typename MatType::elem_type ReconstructionLossType<MatType, DistType>::Forward(
     const MatType& prediction, const MatType& target)
 {
   dist = DistType(prediction);
-  return -dist.LogProbability(target);
+  typename PredictionType::elem_type lossSum = -dist.LogProbability(target);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType, typename DistType>
@@ -40,6 +47,9 @@ void ReconstructionLossType<MatType, DistType>::Backward(
 {
   dist.LogProbBackward(target, loss);
   loss *= -1;
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename MatType, typename DistType>
@@ -49,6 +59,7 @@ void ReconstructionLossType<MatType, DistType>::serialize(
     const uint32_t /* version */)
 {
   ar(dist);
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

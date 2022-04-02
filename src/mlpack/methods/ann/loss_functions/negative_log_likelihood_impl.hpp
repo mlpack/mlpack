@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-NegativeLogLikelihoodType<MatType>::NegativeLogLikelihoodType()
+NegativeLogLikelihoodType<MatType>::NegativeLogLikelihoodType(
+    const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -29,16 +30,20 @@ double NegativeLogLikelihoodType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  double output = 0;
+  typedef typename PredictionType::elem_type ElemType;
+  ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
-    output -= prediction(target(i), i);
+    lossSum -= prediction(target(i), i);
   }
 
-  return output;
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -55,6 +60,17 @@ void NegativeLogLikelihoodType<MatType>::Backward(
 
     loss(target(i), i) = -1;
   }
+
+  if (!reduction)
+    loss = loss / target.n_elem;
+}
+
+template<typename MatType>
+template<typename Archive>
+void NegativeLogLikelihood<MatType>::serialize(
+    Archive& ar, const uint32_t /* version */)
+{
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

@@ -20,8 +20,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-LogCoshLossType<MatType>::LogCoshLossType(const double a) :
-    a(a)
+LogCoshLossType<MatType>::LogCoshLossType(
+    const double a,
+    const bool reduction) :
+    a(a),
+    reduction(reduction)
 {
   Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
 }
@@ -31,7 +34,13 @@ typename MatType::elem_type LogCoshLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  return arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
+  typename PredictionType::elem_type lossSum = 
+      arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -41,6 +50,9 @@ void LogCoshLossType<MatType>::Backward(
     MatType& loss)
 {
   loss = arma::tanh(a * (target - prediction));
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename MatType>
@@ -50,6 +62,7 @@ void LogCoshLossType<MatType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(a));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

@@ -44,9 +44,13 @@ class KLDivergenceType
    * Create the Kullback–Leibler Divergence object with the specified
    * parameters.
    *
-   * @param takeMean Boolean variable to specify whether to take mean or not.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
-  KLDivergenceType(const bool takeMean = false);
+  KLDivergenceType(const bool reduction = false);
 
   /**
    * Computes the Kullback–Leibler divergence error function.
@@ -70,20 +74,21 @@ class KLDivergenceType
                 const MatType& target,
                 MatType& loss);
 
-  //! Get the value of takeMean.
-  bool TakeMean() const { return takeMean; }
-  //! Modify the value of takeMean.
-  bool& TakeMean() { return takeMean; }
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   /**
-   * Serialize the loss function
+   * Serialize the loss function.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Boolean variable for taking mean or not.
-  bool takeMean;
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
+  bool reduction;
 }; // class KLDivergenceType
 
 // Default typedef for typical `arma::mat` usage.

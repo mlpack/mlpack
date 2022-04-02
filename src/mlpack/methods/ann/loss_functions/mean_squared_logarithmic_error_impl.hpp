@@ -19,7 +19,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-MeanSquaredLogarithmicErrorType<MatType>::MeanSquaredLogarithmicErrorType()
+MeanSquaredLogarithmicErrorType<MatType>::MeanSquaredLogarithmicErrorType(
+    const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -29,8 +31,14 @@ typename MatType::elem_type MeanSquaredLogarithmicErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  return arma::accu(arma::square(arma::log(1. + target) -
-      arma::log(1. + prediction))) / target.n_cols;
+  typename PredictionType::elem_type lossSum =
+      arma::accu(arma::square(arma::log(1.0 + target) -
+      arma::log(1.0 + prediction)));
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -40,7 +48,19 @@ void MeanSquaredLogarithmicErrorType<MatType>::Backward(
     MatType& loss)
 {
   loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target)) /
-      ((1. + prediction) * target.n_cols);
+      (1. + prediction);
+
+  if (!reduction)
+    loss = loss / target.n_elem;
+}
+
+template<typename MatType>
+template<typename Archive>
+void MeanSquaredLogarithmicError<MatType>::serialize(
+    Archive& ar,
+    const uint32_t /* version */)
+{
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

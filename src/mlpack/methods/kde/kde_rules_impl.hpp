@@ -17,7 +17,7 @@
 #include "kde_rules.hpp"
 
 // Used for Monte Carlo estimation.
-#include <boost/math/distributions/normal.hpp>
+#include <mlpack/core/math/quantile.hpp>
 
 namespace mlpack {
 namespace kde {
@@ -191,9 +191,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Monte Carlo probabilistic estimation.
     // Calculate z using accumulated alpha if possible.
     const double alpha = depthAlpha + accumMCAlpha(queryIndex);
-    const boost::math::normal normalDist;
-    const double z =
-        std::abs(boost::math::quantile(normalDist, alpha / 2));
+    const double z = std::abs(math::Quantile(alpha / 2.0));
 
     // Auxiliary variables.
     arma::vec sample;
@@ -400,9 +398,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Monte Carlo probabilistic estimation.
     // Calculate z using accumulated alpha if possible.
     const double alpha = depthAlpha + queryStat.AccumAlpha();
-    const boost::math::normal normalDist;
-    const double z =
-        std::abs(boost::math::quantile(normalDist, alpha / 2));
+    const double z = std::abs(math::Quantile(alpha / 2));
 
     // Auxiliary variables.
     arma::vec sample;

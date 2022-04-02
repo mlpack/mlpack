@@ -36,8 +36,14 @@ class ReconstructionLossType
  public:
   /**
    * Create the ReconstructionLossType object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
-  ReconstructionLossType();
+  ReconstructionLossType(const bool reduction = true);
 
   /**
    * Computes the reconstruction loss.
@@ -61,6 +67,12 @@ class ReconstructionLossType
                 const MatType& target,
                 MatType& loss);
 
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer
    */
@@ -70,6 +82,9 @@ class ReconstructionLossType
  private:
   //! Locally-stored distribution object.
   DistType dist;
+
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
+  bool reduction;
 }; // class ReconstructionLossType
 
 // Default typedef for typical `arma::mat` usage.

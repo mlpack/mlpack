@@ -34,8 +34,15 @@ class MarginRankingLossType
    * Create the MarginRankingLossType object with Hyperparameter margin.
    * Hyperparameter margin defines a minimum distance between correctly ranked
    * samples.
+   *
+   * @param margin defines a minimum distance between correctly ranked samples.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
-  MarginRankingLossType(const double margin = 1.0);
+  MarginRankingLossType(const double margin = 1.0, const bool reduction = true);
 
   /**
    * Computes the Margin Ranking Loss function.
@@ -64,6 +71,12 @@ class MarginRankingLossType
   //! Modify the margin parameter.
   double& Margin() { return margin; }
 
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer.
    */
@@ -73,6 +86,9 @@ class MarginRankingLossType
  private:
   //! The margin value used in calculating Margin Ranking Loss.
   double margin;
+
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
+  bool reduction;
 }; // class MarginRankingLossType
 
 // Default typedef for typical `arma::mat` usage.

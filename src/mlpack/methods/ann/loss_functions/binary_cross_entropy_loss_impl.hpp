@@ -32,11 +32,13 @@ typename MatType::elem_type BCELossType<MatType>::Forward(
 {
   typedef typename MatType::elem_type ElemType;
 
-  ElemType loss = -arma::accu(target % arma::log(prediction + eps) +
+  ElemType lossSum = -arma::accu(target % arma::log(prediction + eps) +
       (1. - target) % arma::log(1. - prediction + eps));
+
   if (reduction)
-    loss /= prediction.n_elem;
-  return loss;
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -46,8 +48,9 @@ void BCELossType<MatType>::Backward(
     MatType& loss)
 {
   loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
-  if (reduction)
-    loss /= prediction.n_elem;
+
+  if (!reduction)
+    loss /= target.n_elem;
 }
 
 template<typename MatType>
@@ -57,6 +60,7 @@ void BCELossType<MatType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

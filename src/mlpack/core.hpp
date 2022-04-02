@@ -83,6 +83,7 @@
 #include <mlpack/core/math/shuffle_data.hpp>
 #include <mlpack/core/math/ccov.hpp>
 #include <mlpack/core/math/make_alias.hpp>
+#include <mlpack/core/math/quantile.hpp>
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>

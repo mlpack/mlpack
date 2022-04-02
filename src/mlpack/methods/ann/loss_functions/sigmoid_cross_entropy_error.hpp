@@ -3,7 +3,7 @@
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
- * Definition of the cross-entropy with logit performance function.
+ * Definition of the cross-entropy with logits performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -49,8 +49,14 @@ class SigmoidCrossEntropyErrorType
  public:
   /**
    * Create the SigmoidCrossEntropyErrorType object.
+   *
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If true,
+   *                  'sum' reduction is used and the output will be summed. It
+   *                  is set to true by default.
    */
-  SigmoidCrossEntropyErrorType();
+  SigmoidCrossEntropyErrorType(const bool reduction = true);
 
   /**
    * Computes the Sigmoid CrossEntropy Error functions.
@@ -75,11 +81,21 @@ class SigmoidCrossEntropyErrorType
                        const MatType& target,
                        MatType& loss);
 
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */) { }
+  void serialize(Archive& ar, const uint32_t /* version */);
+
+ private:
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
+  bool reduction;
 }; // class SigmoidCrossEntropyErrorType
 
 // Default typedef for typical `arma::mat` usage.

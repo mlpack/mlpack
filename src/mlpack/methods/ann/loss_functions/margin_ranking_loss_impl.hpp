@@ -20,7 +20,9 @@ namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
 MarginRankingLossType<MatType>::MarginRankingLossType(
-    const double margin) : margin(margin)
+    const double margin, const bool reduction) :
+    margin(margin),
+    reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -35,8 +37,14 @@ typename MatType::elem_type MarginRankingLossType<MatType>::Forward(
       predictionRows / 2 - 1);
   const MatType& prediction2 = prediction.rows(predictionRows / 2,
       predictionRows - 1);
-  return arma::accu(arma::max(arma::zeros(size(target)),
-      -target % (prediction1 - prediction2) + margin)) / target.n_cols;
+
+  double lossSum = arma::accu(arma::max(arma::zeros(size(target)),
+      -target % (prediction1 - prediction2) + margin));
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -50,10 +58,16 @@ void MarginRankingLossType<MatType>::Backward(
       predictionRows / 2 - 1);
   const MatType& prediction2 = prediction.rows(predictionRows / 2,
       predictionRows - 1);
-  loss = -target % (prediction1 - prediction2) + margin;
-  loss.elem(arma::find(loss >= 0)).ones();
-  loss.elem(arma::find(loss < 0)).zeros();
-  loss = (prediction2 - prediction1) % loss / target.n_cols;
+  LossType lossPrediction1 = -target % (prediction1 - prediction2) + margin;
+  lossPrediction1.elem(arma::find(lossPrediction1 >= 0)).ones();
+  lossPrediction1.elem(arma::find(lossPrediction1 < 0)).zeros();
+  LossType lossPrediction2 = lossPrediction1;
+  lossPrediction1 = -target % lossPrediction1;
+  lossPrediction2 = target % lossPrediction2;
+  loss = arma::join_cols(lossPrediction1, lossPrediction2);
+
+  if (!reduction)
+    loss = loss / target.n_elem;
 }
 
 template<typename MatType>
@@ -63,6 +77,7 @@ void MarginRankingLossType<MatType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(margin));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

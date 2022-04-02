@@ -68,7 +68,8 @@ class SoftMarginLossType
                 const MatType& target,
                 MatType& loss);
 
-  //! Get the type of reduction used.
+  //! Get the reduction type, represented as boolean
+  //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
@@ -80,7 +81,7 @@ class SoftMarginLossType
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-  //! The boolean value that tells if reduction is sum or mean.
+  //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
 }; // class SoftMarginLossType
 

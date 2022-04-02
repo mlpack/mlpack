@@ -20,9 +20,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-MeanBiasErrorType<MatType>::MeanBiasErrorType()
+MeanBiasErrorType<MatType>::MeanBiasErrorType(const bool reduction) :
+    reduction(reduction)
 {
-  // Nothing to do here.
+  // Nothing to do here
 }
 
 template<typename MatType>
@@ -30,7 +31,13 @@ typename MatType::elem_type MeanBiasErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  return arma::accu(target - prediction) / target.n_cols;
+  PredictionType loss = target - prediction;
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / target.n_elem;
 }
 
 template<typename MatType>
@@ -41,6 +48,18 @@ void MeanBiasErrorType<MatType>::Backward(
 {
   loss.set_size(arma::size(prediction));
   loss.fill(-1.0);
+
+  if (!reduction)
+    loss = loss / loss.n_elem;
+}
+
+template<typename MatType>
+template<typename Archive>
+void MeanBiasErrorType<MatType>::serialize(
+    Archive& ar,
+    const uint32_t /* version */)
+{
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
