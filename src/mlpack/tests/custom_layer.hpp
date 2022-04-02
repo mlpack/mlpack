@@ -26,11 +26,9 @@ namespace ann {
  */
 template <
     class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename MatType = arma::mat
 >
-using CustomLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+using CustomLayer = BaseLayer<ActivationFunction, MatType>;
 
 } // namespace ann
 } // namespace mlpack
