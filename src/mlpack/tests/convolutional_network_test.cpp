@@ -207,15 +207,15 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
     FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
     model.Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
-    model.Add<ReLULayer<>>();
+    model.Add<ReLU>();
     model.Add<MaxPooling>(2, 2);
     model.Add<Convolution>(12, 2, 2);
-    model.Add<ReLULayer<> >();
+    model.Add<ReLU>();
     model.Add<MaxPooling>(2, 2);
     model.Add<Linear>(20);
-    model.Add<ReLULayer<> >();
+    model.Add<ReLU>();
     model.Add<Linear>(10);
-    model.Add<ReLULayer<> >();
+    model.Add<ReLU>();
     model.Add<Linear>(2);
     model.Add<LogSoftMax>();
 
@@ -256,15 +256,15 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
   model.Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
-  model.Add<ReLULayer<>>();
+  model.Add<ReLU>();
   model.Add<MaxPooling>(2, 2);
   model.Add<Convolution>(12, 2, 2);
-  model.Add<ReLULayer<> >();
+  model.Add<ReLU>();
   model.Add<MaxPooling>(2, 2);
   model.Add<Linear>(20);
-  model.Add<ReLULayer<> >();
+  model.Add<ReLU>();
   model.Add<Linear>(10);
-  model.Add<ReLULayer<> >();
+  model.Add<ReLU>();
   model.Add<Linear>(2);
   model.Add<LogSoftMax>();
 
@@ -404,15 +404,15 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
       new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
   model->Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
-  model->Add<ReLULayer<>>();
+  model->Add<ReLU>();
   model->Add<MaxPooling>(2, 2);
   model->Add<Convolution>(12, 2, 2);
-  model->Add<ReLULayer<> >();
+  model->Add<ReLU>();
   model->Add<MaxPooling>(2, 2);
   model->Add<Linear>(20);
-  model->Add<ReLULayer<> >();
+  model->Add<ReLU>();
   model->Add<Linear>(10);
-  model->Add<ReLULayer<> >();
+  model->Add<ReLU>();
   model->Add<Linear>(2);
   model->Add<LogSoftMax>();
   model->InputDimensions() = std::vector<size_t>({ 28, 28 });
@@ -421,15 +421,15 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
       new FFN<NegativeLogLikelihood<>, RandomInitialization>;
 
   model1->Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
-  model1->Add<ReLULayer<>>();
+  model1->Add<ReLU>();
   model1->Add<MaxPooling>(2, 2);
   model1->Add<Convolution>(12, 2, 2);
-  model1->Add<ReLULayer<> >();
+  model1->Add<ReLU>();
   model1->Add<MaxPooling>(2, 2);
   model1->Add<Linear>(20);
-  model1->Add<ReLULayer<> >();
+  model1->Add<ReLU>();
   model1->Add<Linear>(10);
-  model1->Add<ReLULayer<> >();
+  model1->Add<ReLU>();
   model1->Add<Linear>(2);
   model1->Add<LogSoftMax>();
   model1->InputDimensions() = std::vector<size_t>({ 28, 28 });

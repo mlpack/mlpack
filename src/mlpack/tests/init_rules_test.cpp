@@ -222,7 +222,6 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> randomModel(
       std::move(outputLayer), randomInit);
-  randomModel.Add<IdentityLayer<> >();
   randomModel.Add<Linear>(5);
   randomModel.Add<Linear>(2);
   randomModel.Add<LogSoftMax>();
@@ -235,7 +234,6 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   // Create a simple network and use the OrthogonalInitialization rule to
   // initialize the network parameters.
   FFN<NegativeLogLikelihood<>, OrthogonalInitialization> orthogonalModel;
-  orthogonalModel.Add<IdentityLayer<> >();
   orthogonalModel.Add<Linear>(5);
   orthogonalModel.Add<Linear>(2);
   orthogonalModel.Add<LogSoftMax>();
@@ -247,7 +245,6 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   // initialize the network parameters.
   FFN<NegativeLogLikelihood<>, ConstInitialization>
     zeroModel(NegativeLogLikelihood<>(), ConstInitialization(0));
-  zeroModel.Add<IdentityLayer<> >();
   zeroModel.Add<Linear>(5);
   zeroModel.Add<Linear>(2);
   zeroModel.Add<LogSoftMax>();
@@ -263,7 +260,6 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
       input, 1.5);
   FFN<NegativeLogLikelihood<>, KathirvalavakumarSubavathiInitialization>
       ksModel(std::move(outputLayer), kathirvalavakumarSubavathiInit);
-  ksModel.Add<IdentityLayer<> >();
   ksModel.Add<Linear>(5);
   ksModel.Add<Linear>(2);
   ksModel.Add<LogSoftMax>();
@@ -274,7 +270,6 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   // Create a simple network and use the OivsInitialization rule to
   // initialize the network parameters.
   FFN<NegativeLogLikelihood<>, OivsInitialization<> > oivsModel;
-  oivsModel.Add<IdentityLayer<> >();
   oivsModel.Add<Linear>(5);
   oivsModel.Add<Linear>(2);
   oivsModel.Add<LogSoftMax>();
@@ -285,7 +280,6 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
   FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
-  gaussianModel.Add<IdentityLayer<> >();
   gaussianModel.Add<Linear>(5);
   gaussianModel.Add<Linear>(2);
   gaussianModel.Add<LogSoftMax>();

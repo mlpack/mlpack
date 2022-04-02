@@ -223,7 +223,6 @@ TEST_CASE("MSEMatResponsesTest", "[CVTest]")
   FFN<MeanSquaredError<>, ConstInitialization> ffn(MeanSquaredError<>(),
     ConstInitialization(0));
   ffn.Add<Linear>(2);
-  ffn.Add<IdentityLayer<>>();
 
   ens::RMSProp opt(0.2);
   opt.BatchSize() = 1;

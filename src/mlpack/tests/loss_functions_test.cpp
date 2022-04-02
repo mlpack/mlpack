@@ -435,9 +435,8 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
 
       model = new FFN<MeanSquaredError<>, NguyenWidrowInitialization>();
       model->ResetData(input, target);
-      model->Add<IdentityLayer<>>();
-      model->Add<LinearType<>>(2);
-      model->Add<SigmoidLayer<>>();
+      model->Add<Linear>(2);
+      model->Add<Sigmoid>();
     }
 
     ~GradientFunction()
@@ -477,9 +476,8 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
 
       model = new FFN<ReconstructionLoss<>, NguyenWidrowInitialization>();
       model->ResetData(input, target);
-      model->Add<IdentityLayer<>>();
-      model->Add<LinearType<>>(2);
-      model->Add<SigmoidLayer<>>();
+      model->Add<Linear>(2);
+      model->Add<Sigmoid>();
     }
 
     ~GradientFunction()
@@ -744,44 +742,6 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
   // Test the Backward function.
   module.Backward(input1, input2, output);
   REQUIRE(arma::accu(output) == Approx(0.06324556).epsilon(1e-3));
-
-  // Check for correctness for cube.
-  CosineEmbeddingLoss<> module2(0.5, true);
-
-  arma::cube input3(3, 2, 2);
-  arma::cube input4(3, 2, 2);
-  input3.fill(1);
-  input4.fill(1);
-  input3(0) = 2;
-  input3(1) = 2;
-  input3(4) = 2;
-  input3(6) = 2;
-  input3(8) = 2;
-  input3(10) = 2;
-  input4(2) = 2;
-  input4(9) = 2;
-  input4(11) = 2;
-  loss = module2.Forward(input3, input4);
-  // Calculated using torch.nn.CosineEmbeddingLoss().
-  REQUIRE(loss == Approx(0.55395).epsilon(1e-3));
-
-  // Test the Backward function.
-  module2.Backward(input3, input4, output);
-  REQUIRE(arma::accu(output) == Approx(-0.36649111).epsilon(1e-3));
-
-  // Check Output for mean type of reduction.
-  CosineEmbeddingLoss<> module3(0.0, true, true);
-  loss = module3.Forward(input3, input4);
-  REQUIRE(loss == Approx(0.092325).epsilon(1e-3));
-
-  // Check correctness for cube.
-  module3.Similarity() = false;
-  loss = module3.Forward(input3, input4);
-  REQUIRE(loss == Approx(0.90767498236).epsilon(1e-3));
-
-  // Test the Backward function.
-  module3.Backward(input3, input4, output);
-  REQUIRE(arma::accu(output) == Approx(0.36649111).epsilon(1e-4));
 }
 
 /*

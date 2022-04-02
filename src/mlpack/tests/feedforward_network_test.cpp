@@ -272,7 +272,6 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   // Check copying constructor.
   FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
   model1->ResetData(input, output);
-  model1->Add<Identity>();
   model1->Add<NoisyLinear>(5);
   model1->Add<Linear>(1);
   model1->Add<LogSoftMax>();
@@ -283,7 +282,6 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   // Check moving constructor.
   FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
   model2->ResetData(input, output);
-  model2->Add<Identity>();
   model2->Add<NoisyLinear>(5);
   model2->Add<Linear>(1);
   model2->Add<LogSoftMax>();
@@ -305,7 +303,6 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   // Check copying constructor.
   FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
   model1->ResetData(input, output);
-  model1->Add<Identity>();
   model1->Add<Linear>(5);
 
   // Create concatenate layer.
@@ -324,7 +321,6 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   // Check moving constructor.
   FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
   model2->ResetData(input, output);
-  model2->Add<Identity>();
   model2->Add<Linear>(5);
 
   // Create new concat layer.

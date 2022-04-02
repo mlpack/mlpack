@@ -103,7 +103,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   kmeans.Cluster(trainData, 8, centroids);
 
   FFN<MeanSquaredError<> > model;
-  model.Add<RBF<> >(8, centroids);
+  model.Add<RBF>(8, centroids);
   model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
@@ -135,7 +135,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   kmeans1.Cluster(dataset, 140, centroids1);
 
   FFN<MeanSquaredError<> > model1;
-  model1.Add<RBF<> >(140, centroids1, 4.1);
+  model1.Add<RBF>(140, centroids1, 4.1);
   model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.

@@ -333,7 +333,7 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   // and variance nearabout 1.
   arma::mat input = arma::randn<arma::mat>(1000, 1);
 
-  AlphaDropout<> module(p);
+  AlphaDropout module(p);
   module.Training() = true;
 
   // Test the Forward function when training phase.
@@ -374,7 +374,7 @@ TEST_CASE("AlphaDropoutProbabilityTest", "[ANNLayerTest]")
     double nonzeroCount = 0;
     for (size_t i = 0; i < iterations; ++i)
     {
-      AlphaDropout<> module(probability[trial]);
+      AlphaDropout module(probability[trial]);
       module.Training() = true;
 
       arma::mat output(arma::size(input));
@@ -402,7 +402,7 @@ TEST_CASE("AlphaDropoutProbabilityTest", "[ANNLayerTest]")
 TEST_CASE("NoAlphaDropoutTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(1500, 1);
-  AlphaDropout<> module(0);
+  AlphaDropout module(0);
   module.Training() = false;
 
   arma::mat output;
