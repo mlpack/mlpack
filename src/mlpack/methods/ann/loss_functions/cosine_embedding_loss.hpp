@@ -27,15 +27,12 @@ namespace ann /** Artificial Neural Network. */ {
  * f(x) = max(0, cos(x1, x2) - margin) , for y = -1
  * @f}
  * 
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class CosineEmbeddingLoss
 {
  public:
@@ -61,9 +58,8 @@ class CosineEmbeddingLoss
    *     function.
    * @param target The target vector.
    */
-  template <typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -73,25 +69,9 @@ class CosineEmbeddingLoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the value of takeMean.
   bool TakeMean() const { return takeMean; }
@@ -115,15 +95,6 @@ class CosineEmbeddingLoss
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally-stored value of margin hyper-parameter.
   double margin;
 

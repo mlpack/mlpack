@@ -29,10 +29,9 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  * @tparam DistType The type of distribution parametrized by the input.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename DistType = BernoulliDistribution<InputDataType>
+template<
+    typename MatType = arma::mat,
+    typename DistType = BernoulliDistribution<MatType>
 >
 class ReconstructionLoss
 {
@@ -49,9 +48,8 @@ class ReconstructionLoss
    *     function.
    * @param target The target matrix.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -61,15 +59,9 @@ class ReconstructionLoss
    * @param target The target matrix.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   /**
    * Serialize the layer
@@ -80,9 +72,6 @@ class ReconstructionLoss
  private:
   //! Locally-stored distribution object.
   DistType dist;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
 }; // class ReconstructionLoss
 
 } // namespace ann

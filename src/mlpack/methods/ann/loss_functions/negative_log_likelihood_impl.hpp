@@ -18,16 +18,16 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
+template<typename MatType>
+NegativeLogLikelihood<MatType>::NegativeLogLikelihood()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const InputDataType& prediction,
-    const OutputDataType& target)
+template<typename MatType>
+double NegativeLogLikelihood<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   double output = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
@@ -41,14 +41,13 @@ double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
   return output;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
-      const PredictionType& prediction,
-      const TargetType& target,
-      LossType& loss)
+template<typename MatType>
+void NegativeLogLikelihood<MatType>::Backward(
+      const MatType& prediction,
+      const MatType& target,
+      MatType& loss)
 {
-  loss = arma::zeros<LossType>(prediction.n_rows, prediction.n_cols);
+  loss = arma::zeros<MatType>(prediction.n_rows, prediction.n_cols);
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
@@ -56,14 +55,6 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
 
     loss(target(i), i) = -1;
   }
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename Archive>
-void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */, const uint32_t /* version */)
-{
-  // Nothing to do here.
 }
 
 } // namespace ann

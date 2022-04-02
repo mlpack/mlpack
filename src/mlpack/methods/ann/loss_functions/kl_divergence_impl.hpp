@@ -19,19 +19,17 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
+template<typename MatType>
+KLDivergence<MatType>::KLDivergence(const bool takeMean) :
     takeMean(takeMean)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-KLDivergence<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type KLDivergence<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   if (takeMean)
   {
@@ -44,12 +42,11 @@ KLDivergence<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void KLDivergence<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void KLDivergence<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   if (takeMean)
   {
@@ -62,9 +59,9 @@ void KLDivergence<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void KLDivergence<InputDataType, OutputDataType>::serialize(
+void KLDivergence<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

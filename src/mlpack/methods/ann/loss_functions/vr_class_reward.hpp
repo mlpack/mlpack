@@ -26,13 +26,10 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class VRClassReward
 {
  public:
@@ -52,8 +49,8 @@ class VRClassReward
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& input,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -66,20 +63,7 @@ class VRClassReward
    *        between 1 and the number of classes.
    * @param output The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType& input,
-                const TargetType& target,
-                OutputType& output);
-
-  //! Get the output parameter.
-  const OutputDataType& OutputParameter() const {return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  const OutputDataType& Delta() const {return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const MatType& input, const MatType& target, MatType& output);
 
   /**
    * Add a new module to the model.
@@ -94,16 +78,15 @@ class VRClassReward
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(Layer<InputDataType, OutputDataType>* layer)
+  void Add(Layer<MatType>* layer)
   {
     network.push_back(layer);
   }
 
-  //! Get the network modules.
-  std::vector<Layer<InputDataType, OutputDataType>*>& Model()
-  {
-    return network;
-  }
+  //! Get the network.
+  const std::vector<Layer<MatType>*>& Network() const { return network; }
+  //! Modify the network.
+  std::vector<Layer<MatType>*>& Network() { return network; }
 
   //! Get the value of parameter sizeAverage.
   bool SizeAverage() const { return sizeAverage; }
@@ -127,14 +110,8 @@ class VRClassReward
   //! Locally stored reward parameter.
   double reward;
 
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally-stored network modules.
-  std::vector<Layer<InputDataType, OutputDataType>*> network;
+  std::vector<Layer<MatType>*> network;
 }; // class VRClassReward
 
 } // namespace ann

@@ -19,36 +19,33 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(const double a) :
+template<typename MatType>
+LogCoshLoss<MatType>::LogCoshLoss(const double a) :
     a(a)
 {
   Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-LogCoshLoss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type LogCoshLoss<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   return arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void LogCoshLoss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void LogCoshLoss<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss = arma::tanh(a * (target - prediction));
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void LogCoshLoss<InputDataType, OutputDataType>::serialize(
+void LogCoshLoss<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

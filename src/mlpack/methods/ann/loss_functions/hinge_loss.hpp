@@ -30,10 +30,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-        typename InputDataType = arma::mat,
-        typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class HingeLoss
 {
  public:
@@ -55,9 +52,8 @@ class HingeLoss
    *     function.
    * @param target Target data to compare with.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -67,15 +63,9 @@ class HingeLoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the type of reduction used.
   bool Reduction() const { return reduction; }
@@ -89,9 +79,6 @@ class HingeLoss
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! The boolean value that tells if reduction is sum or mean.
   bool reduction;
 }; // class HingeLoss

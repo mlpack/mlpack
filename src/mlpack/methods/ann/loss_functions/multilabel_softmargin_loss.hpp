@@ -27,10 +27,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class MultiLabelSoftMarginLoss
 {
  public:
@@ -45,8 +42,10 @@ class MultiLabelSoftMarginLoss
    * @param weights A manual rescaling weight given to each class. It is a
    *                (1, numClasses) row vector.
    */
-  MultiLabelSoftMarginLoss(const bool reduction = true,
-                           const arma::rowvec& weights = arma::rowvec());
+  MultiLabelSoftMarginLoss(
+      const bool reduction = true,
+      const arma::Row<typename MatType::elem_type>& weights =
+          arma::Row<typename MatType::elem_type>());
 
   /**
    * Computes the Multi Label Soft Margin Loss function.
@@ -54,9 +53,8 @@ class MultiLabelSoftMarginLoss
    * @param input Input data used for evaluating the specified function.
    * @param target The target vector with same shape as input.
    */
-  template<typename InputType, typename TargetType>
-  typename InputType::elem_type Forward(const InputType& input,
-                                        const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& input,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -65,20 +63,20 @@ class MultiLabelSoftMarginLoss
    * @param target The target vector.
    * @param output The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType& input,
-                const TargetType& target,
-                OutputType& output);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& input,
+                const MatType& target,
+                MatType& output);
 
   //! Get the weights assigned to each class.
-  const arma::rowvec& ClassWeights() const { return classWeights; }
+  const arma::Row<typename MatType::elem_type>& ClassWeights() const
+  {
+    return classWeights;
+  }
   //! Modify the weights assigned to each class.
-  arma::rowvec& ClassWeights() { return classWeights; }
+  arma::Row<typename MatType::elem_type>& ClassWeights()
+  {
+    return classWeights;
+  }
 
   //! Get the type of reduction used.
   bool Reduction() const { return reduction; }
@@ -92,14 +90,11 @@ class MultiLabelSoftMarginLoss
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! The boolean value that tells if reduction is sum or mean.
   bool reduction;
 
   //! A (1, numClasses) shaped vector with weights for each class.
-  arma::rowvec classWeights;
+  arma::Row<typename MatType::elem_type> classWeights;
 
   // An internal parameter used during initialisation of class weights.
   bool weighted;

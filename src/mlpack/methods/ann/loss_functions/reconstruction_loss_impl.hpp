@@ -18,44 +18,37 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
-ReconstructionLoss<
-    InputDataType,
-    OutputDataType,
-    DistType
->::ReconstructionLoss()
+template<typename MatType, typename DistType>
+ReconstructionLoss<MatType, DistType>::ReconstructionLoss()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
-    const PredictionType& prediction, const TargetType& target)
+template<typename MatType, typename DistType>
+typename MatType::elem_type ReconstructionLoss<MatType, DistType>::Forward(
+    const MatType& prediction, const MatType& target)
 {
   dist = DistType(prediction);
   return -dist.LogProbability(target);
 }
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
-    const PredictionType& /* prediction */,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType, typename DistType>
+void ReconstructionLoss<MatType, DistType>::Backward(
+    const MatType& /* prediction */,
+    const MatType& target,
+    MatType& loss)
 {
   dist.LogProbBackward(target, loss);
   loss *= -1;
 }
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
+template<typename MatType, typename DistType>
 template<typename Archive>
-void ReconstructionLoss<InputDataType, OutputDataType, DistType>::serialize(
-    Archive& /* ar */,
+void ReconstructionLoss<MatType, DistType>::serialize(
+    Archive& ar,
     const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(dist);
 }
 
 } // namespace ann

@@ -19,41 +19,29 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss()
+template<typename MatType>
+HingeEmbeddingLoss<MatType>::HingeEmbeddingLoss()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type HingeEmbeddingLoss<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  TargetType temp = target - (target == 0);
+  MatType temp = target - (target == 0);
   return (arma::accu(arma::max(1 - prediction % temp, 0.))) / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void HingeEmbeddingLoss<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
-  TargetType temp = target - (target == 0);
+  MatType temp = target - (target == 0);
   loss = (prediction < 1 / temp) % -temp;
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename Archive>
-void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const uint32_t /* version */)
-{
-  // Nothing to do here.
 }
 
 } // namespace ann

@@ -18,42 +18,30 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MeanSquaredLogarithmicError<InputDataType, OutputDataType>
+template<typename MatType>
+MeanSquaredLogarithmicError<MatType>
 ::MeanSquaredLogarithmicError()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type MeanSquaredLogarithmicError<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   return arma::accu(arma::square(arma::log(1. + target) -
       arma::log(1. + prediction))) / target.n_cols;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void MeanSquaredLogarithmicError<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target)) /
       ((1. + prediction) * target.n_cols);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename Archive>
-void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const uint32_t /* version */)
-{
-  // Nothing to do here.
 }
 
 } // namespace ann

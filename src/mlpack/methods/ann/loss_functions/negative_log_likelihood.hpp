@@ -23,15 +23,12 @@ namespace ann /** Artificial Neural Network. */ {
  * class. The layer also expects a class index, in the range between 1 and the
  * number of classes, as target when calling the Forward function.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class NegativeLogLikelihood
 {
  public:
@@ -48,8 +45,8 @@ class NegativeLogLikelihood
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  double Forward(const InputDataType& prediction,
-                 const OutputDataType& target);
+  double Forward(const MatType& prediction,
+                 const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -63,41 +60,15 @@ class NegativeLogLikelihood
    *        between 1 and the number of classes.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */);
-
- private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class NegativeLogLikelihood
 
 } // namespace ann

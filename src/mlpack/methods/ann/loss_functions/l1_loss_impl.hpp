@@ -18,19 +18,17 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-L1Loss<InputDataType, OutputDataType>::L1Loss(const bool mean):
+template<typename MatType>
+L1Loss<MatType>::L1Loss(const bool mean):
   mean(mean)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-L1Loss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type L1Loss<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   if (mean)
     return arma::accu(arma::mean(prediction - target));
@@ -38,19 +36,18 @@ L1Loss<InputDataType, OutputDataType>::Forward(
   return arma::accu(prediction - target);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void L1Loss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void L1Loss<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss = arma::sign(prediction - target);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void L1Loss<InputDataType, OutputDataType>::serialize(
+void L1Loss<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

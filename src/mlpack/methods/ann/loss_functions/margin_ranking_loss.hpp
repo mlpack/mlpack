@@ -28,10 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class MarginRankingLoss
 {
  public:
@@ -49,9 +46,8 @@ class MarginRankingLoss
    *     function.
    * @param target The label vector which contains values of -1 or 1.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -61,19 +57,9 @@ class MarginRankingLoss
    * @param target The label vector which contains -1 or 1 values.
    * @param loss The calculated error.
    */
-  template <
-    typename PredictionType,
-    typename TargetType,
-    typename LossType
-  >
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the margin parameter.
   double Margin() const { return margin; }
@@ -87,9 +73,6 @@ class MarginRankingLoss
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! The margin value used in calculating Margin Ranking Loss.
   double margin;
 }; // class MarginRankingLoss

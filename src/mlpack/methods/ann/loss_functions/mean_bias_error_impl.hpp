@@ -19,40 +19,28 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MeanBiasError<InputDataType, OutputDataType>::MeanBiasError()
+template<typename MatType>
+MeanBiasError<MatType>::MeanBiasError()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-MeanBiasError<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type MeanBiasError<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   return arma::accu(target - prediction) / target.n_cols;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void MeanBiasError<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& /* target */,
-    LossType& loss)
+template<typename MatType>
+void MeanBiasError<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& /* target */,
+    MatType& loss)
 {
   loss.set_size(arma::size(prediction));
   loss.fill(-1.0);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename Archive>
-void MeanBiasError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const uint32_t /* version */)
-{
-  // Nothing to do here.
 }
 
 } // namespace ann

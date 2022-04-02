@@ -18,35 +18,32 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-EarthMoverDistance<InputDataType, OutputDataType>::EarthMoverDistance()
+template<typename MatType>
+EarthMoverDistance<MatType>::EarthMoverDistance()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-EarthMoverDistance<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type EarthMoverDistance<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
   return -arma::accu(target % prediction);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
-    const PredictionType& /* prediction */,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void EarthMoverDistance<MatType>::Backward(
+    const MatType& /* prediction */,
+    const MatType& target,
+    MatType& loss)
 {
   loss = -target;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void EarthMoverDistance<InputDataType, OutputDataType>::serialize(
+void EarthMoverDistance<MatType>::serialize(
     Archive& /* ar */,
     const uint32_t /* version */)
 {

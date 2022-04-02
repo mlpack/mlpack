@@ -24,15 +24,12 @@ namespace ann /** Artificial Neural Network. */ {
  * and linear for large values, with equal values and slopes of the different
  * sections at the two points where \f$ |y - f(x)| = delta \f$.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename MatType = arma::mat>
 class HuberLoss
 {
  public:
@@ -52,9 +49,8 @@ class HuberLoss
    *     function.
    * @param target The target vector.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -64,15 +60,9 @@ class HuberLoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the value of delta.
   double Delta() const { return delta; }
@@ -91,9 +81,6 @@ class HuberLoss
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Hyperparameter `delta` defines the point upto which MSE is considered.
   double delta;
 

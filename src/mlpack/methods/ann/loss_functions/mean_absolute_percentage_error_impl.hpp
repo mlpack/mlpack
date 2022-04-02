@@ -18,43 +18,30 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MeanAbsolutePercentageError<InputDataType, OutputDataType>::
-MeanAbsolutePercentageError()
+template<typename MatType>
+MeanAbsolutePercentageError<MatType>::MeanAbsolutePercentageError()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-MeanAbsolutePercentageError<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type MeanAbsolutePercentageError<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  PredictionType loss = arma::abs((prediction - target) / target);
+  MatType loss = arma::abs((prediction - target) / target);
   return arma::accu(loss) * (100 / target.n_cols);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void MeanAbsolutePercentageError<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 
 {
   loss = (((arma::conv_to<arma::mat>::from(prediction < target) * -2) + 1) /
       target) * (100 / target.n_cols);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename Archive>
-void MeanAbsolutePercentageError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
-{
-  // Nothing to do here.
 }
 
 } // namespace ann

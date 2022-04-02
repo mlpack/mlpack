@@ -19,11 +19,11 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
+template<typename MatType>
+PoissonNLLLoss<MatType>::PoissonNLLLoss(
     const bool logInput,
     const bool full,
-    const typename InputDataType::elem_type eps,
+    const typename MatType::elem_type eps,
     const bool mean):
     logInput(logInput),
     full(full),
@@ -33,14 +33,12 @@ PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
   Log::Assert(eps >= 0, "Epsilon (eps) must be greater than or equal to zero.");
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename InputDataType::elem_type
-PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type PoissonNLLLoss<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  PredictionType loss(arma::size(prediction));
+  MatType loss(arma::size(prediction));
 
   if (logInput)
     loss = arma::exp(prediction) - target % prediction;
@@ -53,7 +51,7 @@ PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   if (full)
   {
     const auto mask = target > 1.0;
-    const PredictionType approx = target % arma::log(target) - target
+    const MatType approx = target % arma::log(target) - target
         + 0.5 * arma::log(2 * M_PI * target);
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
@@ -61,12 +59,11 @@ PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
   return mean ? arma::accu(loss) / loss.n_elem : arma::accu(loss);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void PoissonNLLLoss<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss.set_size(size(prediction));
 
@@ -79,9 +76,9 @@ void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
     loss = loss / loss.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
+void PoissonNLLLoss<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

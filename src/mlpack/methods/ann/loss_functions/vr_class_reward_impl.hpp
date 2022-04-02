@@ -19,8 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-VRClassReward<InputDataType, OutputDataType>::VRClassReward(
+template<typename MatType>
+VRClassReward<MatType>::VRClassReward(
     const double scale,
     const bool sizeAverage) :
     scale(scale),
@@ -30,17 +30,15 @@ VRClassReward<InputDataType, OutputDataType>::VRClassReward(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double VRClassReward<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type VRClassReward<MatType>::Forward(
+    const MatType& input, const MatType& target)
 {
   double output = 0;
   for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget < input.n_rows,
-        "Target class out of range.");
+    const size_t currentTarget = target(i);
+    Log::Assert(currentTarget < input.n_rows, "Target class out of range.");
 
     output -= input(currentTarget, i);
   }
@@ -51,7 +49,7 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
     input.unsafe_col(i).max(index);
-    reward = ((index + 1) == target(i)) * scale;
+    reward = (index == target(i)) * scale;
   }
 
   if (sizeAverage)
@@ -62,19 +60,17 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
   return output - reward;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
-void VRClassReward<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
-    const TargetType& target,
-    OutputType& output)
+template<typename MatType>
+void VRClassReward<MatType>::Backward(
+    const MatType& input,
+    const MatType& target,
+    MatType& output)
 {
-  output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
+  output = arma::zeros<MatType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < (input.n_cols - 1); ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget < input.n_rows,
-        "Target class out of range.");
+    const size_t currentTarget = target(i);
+    Log::Assert(currentTarget < input.n_rows, "Target class out of range.");
 
     output(currentTarget, i) = -1;
   }
@@ -91,12 +87,15 @@ void VRClassReward<InputDataType, OutputDataType>::Backward(
   network.back()->Reward() = vrReward;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void VRClassReward<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */, const uint32_t /* version */)
+void VRClassReward<MatType>::serialize(
+    Archive& ar, const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(scale);
+  ar(sizeAverage);
+  ar(reward);
+  ar(network);
 }
 
 } // namespace ann
