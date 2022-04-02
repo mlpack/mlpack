@@ -39,7 +39,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class KLDivergence
+class KLDivergenceType
 {
  public:
   /**
@@ -48,7 +48,7 @@ class KLDivergence
    *
    * @param takeMean Boolean variable to specify whether to take mean or not.
    */
-  KLDivergence(const bool takeMean = false);
+  KLDivergenceType(const bool takeMean = false);
 
   /**
    * Computes the Kullback–Leibler divergence error function.
@@ -86,7 +86,9 @@ class KLDivergence
  private:
   //! Boolean variable for taking mean or not.
   bool takeMean;
-}; // class KLDivergence
+}; // class KLDivergenceType
+
+typedef KLDivergenceType<arma::mat> KLDivergence;
 
 } // namespace ann
 } // namespace mlpack

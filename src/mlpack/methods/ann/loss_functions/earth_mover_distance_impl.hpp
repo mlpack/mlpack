@@ -19,13 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-EarthMoverDistance<MatType>::EarthMoverDistance()
+EarthMoverDistanceType<MatType>::EarthMoverDistanceType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type EarthMoverDistance<MatType>::Forward(
+typename MatType::elem_type EarthMoverDistanceType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -33,21 +33,12 @@ typename MatType::elem_type EarthMoverDistance<MatType>::Forward(
 }
 
 template<typename MatType>
-void EarthMoverDistance<MatType>::Backward(
+void EarthMoverDistanceType<MatType>::Backward(
     const MatType& /* prediction */,
     const MatType& target,
     MatType& loss)
 {
   loss = -target;
-}
-
-template<typename MatType>
-template<typename Archive>
-void EarthMoverDistance<MatType>::serialize(
-    Archive& /* ar */,
-    const uint32_t /* version */)
-{
-  /* Nothing to do here */
 }
 
 } // namespace ann

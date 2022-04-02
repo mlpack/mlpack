@@ -29,13 +29,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class EmptyLoss
+class EmptyLossType
 {
  public:
   /**
-   * Create the EmptyLoss object.
+   * Create the EmptyLossType object.
    */
-  EmptyLoss();
+  EmptyLossType();
 
   /**
    * Computes the Empty loss function.
@@ -58,10 +58,12 @@ class EmptyLoss
                 const MatType& target,
                 MatType& loss);
 
-  //! Serialize the EmptyLoss.
+  //! Serialize the EmptyLossType.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */) { }
-}; // class EmptyLoss
+}; // class EmptyLossType
+
+typedef EmptyLossType<arma::mat> EmptyLoss;
 
 } // namespace ann
 } // namespace mlpack

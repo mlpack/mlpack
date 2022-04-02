@@ -28,13 +28,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class MeanSquaredError
+class MeanSquaredErrorType
 {
  public:
   /**
-   * Create the MeanSquaredError object.
+   * Create the MeanSquaredErrorType object.
    */
-  MeanSquaredError();
+  MeanSquaredErrorType();
 
   /**
    * Computes the mean squared error function.
@@ -63,7 +63,9 @@ class MeanSquaredError
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */) { }
-}; // class MeanSquaredError
+}; // class MeanSquaredErrorType
+
+typedef MeanSquaredErrorType<arma::mat> MeanSquaredError;
 
 } // namespace ann
 } // namespace mlpack

@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-CosineEmbeddingLoss<MatType>::CosineEmbeddingLoss(
+CosineEmbeddingLossType<MatType>::CosineEmbeddingLossType(
     const double margin, const bool similarity, const bool takeMean):
     margin(margin), similarity(similarity), takeMean(takeMean)
 {
@@ -27,7 +27,7 @@ CosineEmbeddingLoss<MatType>::CosineEmbeddingLoss(
 }
 
 template<typename MatType>
-typename MatType::elem_type CosineEmbeddingLoss<MatType>::Forward(
+typename MatType::elem_type CosineEmbeddingLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -63,7 +63,7 @@ typename MatType::elem_type CosineEmbeddingLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void CosineEmbeddingLoss<MatType>::Backward(
+void CosineEmbeddingLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -101,7 +101,7 @@ void CosineEmbeddingLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void CosineEmbeddingLoss<MatType>::serialize(
+void CosineEmbeddingLossType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(margin));

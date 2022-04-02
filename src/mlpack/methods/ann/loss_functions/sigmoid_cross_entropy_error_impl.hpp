@@ -21,13 +21,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-SigmoidCrossEntropyError<MatType>::SigmoidCrossEntropyError()
+SigmoidCrossEntropyErrorType<MatType>::SigmoidCrossEntropyErrorType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-inline typename MatType::elem_type SigmoidCrossEntropyError<MatType>::Forward(
+inline typename MatType::elem_type
+SigmoidCrossEntropyErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -43,7 +44,7 @@ inline typename MatType::elem_type SigmoidCrossEntropyError<MatType>::Forward(
 }
 
 template<typename MatType>
-inline void SigmoidCrossEntropyError<MatType>::Backward(
+inline void SigmoidCrossEntropyErrorType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)

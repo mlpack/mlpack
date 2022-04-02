@@ -137,13 +137,13 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+       +-----+
    */
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
   model->Add<Linear>(8);
   model->Add<Sigmoid>();
   model->Add<Linear>(3);
   model->Add<LogSoftMax>();
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
   model1->Add<Linear>(8);
   model1->Add<Sigmoid>();
   model1->Add<Linear>(3);
@@ -171,12 +171,12 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
 
   // Construct a feed forward network with trainData.n_rows input nodes,
   // followed by a linear layer and then a reparametrization layer.
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
   model->Add<Linear>(8);
   model->Add<Reparametrization>(false, true, 1);
   model->Add<LogSoftMax>();
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
   model1->Add<Linear>(8);
   model1->Add<Reparametrization>(false, true, 1);
   model1->Add<LogSoftMax>();
@@ -208,12 +208,12 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
 //    * followed by a linear layer and then a reparametrization layer.
 //    */
 //
-//   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+//   FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
 //   model->Add<Linear<> >(trainData.n_rows, 8);
 //   model->Add<Reparametrization<> >(4, false, true, 1);
 //   model->Add<LogSoftMax<> >();
 //
-//   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+//   FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
 //   model1->Add<Linear<> >(trainData.n_rows, 8);
 //   model1->Add<Reparametrization<> >(4, false, true, 1);
 //   model1->Add<LogSoftMax<> >();
@@ -240,13 +240,13 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 
   // Construct a feed forward network with trainData.n_rows input nodes,
   // followed by a linear layer and then a Linear3D layer.
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
   model->Add<Linear>(8);
   model->Add<Sigmoid>();
   model->Add<Linear3D>(3);
   model->Add<LogSoftMax>();
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
   model1->Add<Linear>(8);
   model1->Add<Sigmoid>();
   model1->Add<Linear3D>(3);
@@ -270,7 +270,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   arma::mat output = arma::mat("0");
 
   // Check copying constructor.
-  FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>();
   model1->ResetData(input, output);
   model1->Add<NoisyLinear>(5);
   model1->Add<Linear>(1);
@@ -280,7 +280,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   CheckCopyFunction(model1, input, output);
 
   // Check moving constructor.
-  FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
+  FFN<NegativeLogLikelihood> *model2 = new FFN<NegativeLogLikelihood>();
   model2->ResetData(input, output);
   model2->Add<NoisyLinear>(5);
   model2->Add<Linear>(1);
@@ -301,7 +301,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   arma::mat output = arma::mat("1");
 
   // Check copying constructor.
-  FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>();
   model1->ResetData(input, output);
   model1->Add<Linear>(5);
 
@@ -319,7 +319,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   CheckCopyFunction(model1, input, output);
 
   // Check moving constructor.
-  FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
+  FFN<NegativeLogLikelihood> *model2 = new FFN<NegativeLogLikelihood>();
   model2->ResetData(input, output);
   model2->Add<Linear>(5);
 
@@ -349,14 +349,14 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
   model->Add<Linear>(8);
   model->Add<Sigmoid>();
   model->Add<Dropout>(0.3);
   model->Add<Linear>(3);
   model->Add<LogSoftMax>();
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
   model1->Add<Linear>(8);
   model1->Add<Sigmoid>();
   model1->Add<Dropout>(0.3);
@@ -398,13 +398,13 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTestNoBias", "[FeedForwardNetworkTest]")
    * +-----+       +--+--+       +-----+
    */
 
-  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
   model->Add<LinearNoBias>(8);
   model->Add<Sigmoid>();
   model->Add<LinearNoBias>(3);
   model->Add<LogSoftMax>();
 
-  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
   model1->Add<LinearNoBias>(8);
   model1->Add<Sigmoid>();
   model1->Add<LinearNoBias>(3);
@@ -436,12 +436,12 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTestNoBias", "[FeedForwardNetworkTest]")
 //    * followed by a linear layer and then a reparametrization layer.
 //    */
 //
-//   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+//   FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
 //   model->Add<LinearNoBias<> >(trainData.n_rows, 8);
 //   model->Add<Reparametrization<> >(4, false, true, 1);
 //   model->Add<LogSoftMax<> >();
 //
-//   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+//   FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
 //   model1->Add<LinearNoBias<> >(trainData.n_rows, 8);
 //   model1->Add<Reparametrization<> >(4, false, true, 1);
 //   model1->Add<LogSoftMax<> >();
@@ -497,7 +497,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+       +-----+
    */
 
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Linear>(3);
@@ -518,7 +518,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood<> > model1;
+  FFN<NegativeLogLikelihood> model1;
   model1.Add<Linear>(10);
   model1.Add<Sigmoid>();
   model1.Add<Linear>(2);
@@ -539,7 +539,7 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(50);
   model.Add<Sigmoid>();
   model.Add<Linear>(10);
@@ -645,7 +645,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+
    */
 
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Dropout>();
@@ -668,7 +668,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood<> > model1;
+  FFN<NegativeLogLikelihood> model1;
   model1.Add<Linear>(10);
   model1.Add<Sigmoid>();
   model.Add<Dropout>();
@@ -693,7 +693,7 @@ TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(10);
   Highway* highway = new Highway();
   highway->Add<Linear>(10);
@@ -750,7 +750,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   *
   */
 
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<DropConnect>(3);
@@ -771,7 +771,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood<> > model1;
+  FFN<NegativeLogLikelihood> model1;
   model1.Add<Linear>(10);
   model1.Add<Sigmoid>();
   model1.Add<DropConnect>(2);
@@ -787,7 +787,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
  */
 TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
 {
-  FFN<MeanSquaredError<>> model;
+  FFN<MeanSquaredError> model;
   model.Add<Linear>(3);
   model.Add<ReLU>();
 
@@ -822,7 +822,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Dropout>();
@@ -833,7 +833,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 
   model.Train(trainData, trainLabels, opt);
 
-  FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
+  FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
   xmlModel.Add<Linear>(10); // Layer that will get removed.
 
   // Serialize into other models.
@@ -874,7 +874,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 //   // Vanilla neural net with logistic activation function.
 //   // Because 92% of the patients are not hyperthyroid the neural
 //   // network must be significant better than 92%.
-//   FFN<NegativeLogLikelihood<> > model;
+//   FFN<NegativeLogLikelihood> model;
 //   model.Add<Linear<> >(trainData.n_rows, 8);
 //   model.Add<PReLU<> >();
 //   model.Add<Dropout<> >();
@@ -885,7 +885,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 //
 //   model.Train(trainData, trainLabels, opt);
 //
-//   FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
+//   FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
 //   xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
 //
 //   // Serialize into other models.
@@ -924,7 +924,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 //   testData.shed_row(testData.n_rows - 1);
 //   testLabels -= 1; // The labels should be between 0 and numClasses - 1.
 //
-//   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+//   FFN<NegativeLogLikelihood, RandomInitialization, CustomLayer<> > model;
 //   model.Add<Linear<> >(trainData.n_rows, 8);
 //   model.Add<CustomLayer<> >();
 //   model.Add<Linear<> >(8, 3);
@@ -943,7 +943,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
  */
 TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood, RandomInitialization> model;
   model.Add<Linear>(10);
 
   // Add a new Add<> module which adds a (learnable) constant term to the input.
@@ -1012,7 +1012,7 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significantly better than 92%.
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Dropout>();
@@ -1032,7 +1032,7 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
 TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
-  FFN<NegativeLogLikelihood<> > model;
+  FFN<NegativeLogLikelihood> model;
   Linear* linearA = new Linear(3);
   model.Add(linearA);
   Linear* linearB = new Linear(4);
@@ -1082,7 +1082,7 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   testData.shed_row(testData.n_rows - 1);
   testLabels -= 1; // The labels should be between 0 and numClasses.
 
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood, RandomInitialization> model;
   model.Add<Linear>(8);
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
@@ -1112,7 +1112,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood, RandomInitialization> model;
   model.Add<Linear>(8);
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();

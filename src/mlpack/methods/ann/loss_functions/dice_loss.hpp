@@ -44,15 +44,15 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class DiceLoss
+class DiceLossType
 {
  public:
   /**
-   * Create the DiceLoss object.
+   * Create the DiceLossType object.
    *
    * @param smooth The Laplace smoothing parameter.
    */
-  DiceLoss(const double smooth = 1);
+  DiceLossType(const double smooth = 1);
 
   /**
    * Computes the dice loss function.
@@ -90,7 +90,9 @@ class DiceLoss
  private:
   //! The parameter to avoid overfitting.
   double smooth;
-}; // class DiceLoss
+}; // class DiceLossType
+
+typedef DiceLossType<arma::mat> DiceLoss;
 
 } // namespace ann
 } // namespace mlpack

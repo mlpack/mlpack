@@ -27,16 +27,16 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class L1Loss
+class L1LossType
 {
  public:
   /**
-   * Create the L1Loss object.
+   * Create the L1LossType object.
    *
    * @param mean Reduction type. If true, it returns the mean of 
    * the loss. Else, it returns the sum.
    */
-  L1Loss(const bool mean = true);
+  L1LossType(const bool mean = true);
 
   /**
    * Computes the L1 Loss function.
@@ -74,7 +74,9 @@ class L1Loss
  private:
   //! Reduction type. If true, performs mean of loss else sum.
   bool mean;
-}; // class L1Loss
+}; // class L1LossType
+
+typedef L1LossType<arma::mat> L1Loss;
 
 } // namespace ann
 } // namespace mlpack

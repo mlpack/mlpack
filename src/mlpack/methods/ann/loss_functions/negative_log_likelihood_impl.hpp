@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/negative_log_likelihood_impl.hpp
  * @author Marcus Edel
  *
- * Implementation of the NegativeLogLikelihood class.
+ * Implementation of the NegativeLogLikelihoodType class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,13 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-NegativeLogLikelihood<MatType>::NegativeLogLikelihood()
+NegativeLogLikelihoodType<MatType>::NegativeLogLikelihoodType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-double NegativeLogLikelihood<MatType>::Forward(
+double NegativeLogLikelihoodType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -42,7 +42,7 @@ double NegativeLogLikelihood<MatType>::Forward(
 }
 
 template<typename MatType>
-void NegativeLogLikelihood<MatType>::Backward(
+void NegativeLogLikelihoodType<MatType>::Backward(
       const MatType& prediction,
       const MatType& target,
       MatType& loss)

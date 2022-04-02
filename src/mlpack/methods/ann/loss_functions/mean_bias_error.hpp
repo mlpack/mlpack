@@ -27,13 +27,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class MeanBiasError
+class MeanBiasErrorType
 {
  public:
   /**
-   * Create the MeanBiasError object.
+   * Create the MeanBiasErrorType object.
    */
-  MeanBiasError();
+  MeanBiasErrorType();
 
   /**
    * Computes the mean bias error function.
@@ -62,7 +62,9 @@ class MeanBiasError
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
-}; // class MeanBiasError
+}; // class MeanBiasErrorType
+
+typedef MeanBiasErrorType<arma::mat> MeanBiasError;
 
 } // namespace ann
 } // namespace mlpack

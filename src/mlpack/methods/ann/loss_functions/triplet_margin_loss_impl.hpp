@@ -20,14 +20,14 @@ namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
-TripletMarginLoss<MatType>::TripletMarginLoss(const double margin) :
+TripletMarginLossType<MatType>::TripletMarginLossType(const double margin) :
     margin(margin)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type TripletMarginLoss<MatType>::Forward(
+typename MatType::elem_type TripletMarginLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -41,7 +41,7 @@ typename MatType::elem_type TripletMarginLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void TripletMarginLoss<MatType>::Backward(
+void TripletMarginLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -54,7 +54,7 @@ void TripletMarginLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void TripletMarginLoss<MatType>::serialize(
+void TripletMarginLossType<MatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

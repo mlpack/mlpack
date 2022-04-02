@@ -19,14 +19,14 @@ namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
-SoftMarginLoss<MatType>::
-SoftMarginLoss(const bool reduction) : reduction(reduction)
+SoftMarginLossType<MatType>::
+SoftMarginLossType(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type SoftMarginLoss<MatType>::Forward(
+typename MatType::elem_type SoftMarginLossType<MatType>::Forward(
     const MatType& prediction, const MatType& target)
 {
   MatType loss = arma::log(1 + arma::exp(-target % prediction));
@@ -39,7 +39,7 @@ typename MatType::elem_type SoftMarginLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void SoftMarginLoss<MatType>::Backward(
+void SoftMarginLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -56,7 +56,7 @@ void SoftMarginLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void SoftMarginLoss<MatType>::serialize(
+void SoftMarginLossType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(reduction));

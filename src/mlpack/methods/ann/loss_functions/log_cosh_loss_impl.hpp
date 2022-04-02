@@ -20,14 +20,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-LogCoshLoss<MatType>::LogCoshLoss(const double a) :
+LogCoshLossType<MatType>::LogCoshLossType(const double a) :
     a(a)
 {
   Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
 }
 
 template<typename MatType>
-typename MatType::elem_type LogCoshLoss<MatType>::Forward(
+typename MatType::elem_type LogCoshLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -35,7 +35,7 @@ typename MatType::elem_type LogCoshLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void LogCoshLoss<MatType>::Backward(
+void LogCoshLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -45,7 +45,7 @@ void LogCoshLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void LogCoshLoss<MatType>::serialize(
+void LogCoshLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

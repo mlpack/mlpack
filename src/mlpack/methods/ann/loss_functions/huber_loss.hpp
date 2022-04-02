@@ -30,17 +30,17 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class HuberLoss
+class HuberLossType
 {
  public:
   /**
-   * Create the HuberLoss object.
+   * Create the HuberLossType object.
    *
    * @param delta The threshold value upto which squared error is followed and
    *              after which absolute error is considered.
    * @param mean If true then mean loss is computed otherwise sum.
    */
-  HuberLoss(const double delta = 1.0, const bool mean = true);
+  HuberLossType(const double delta = 1.0, const bool mean = true);
 
   /**
    * Computes the Huber Loss function.
@@ -86,7 +86,9 @@ class HuberLoss
 
   //! Reduction type. If true, performs mean of loss else sum.
   bool mean;
-}; // class HuberLoss
+}; // class HuberLossType
+
+typedef HuberLossType<arma::mat> HuberLoss;
 
 } // namespace ann
 } // namespace mlpack

@@ -48,7 +48,7 @@ TEST_CASE("FFNCallbackTest", "[CallbackTest]")
   if (!data::Load("lab3.csv", labels))
     FAIL("Cannot load test dataset lab3.csv!");
 
-  FFN<MeanSquaredError<>, RandomInitialization> model;
+  FFN<MeanSquaredError, RandomInitialization> model;
 
   model.Add<Linear>(2);
   model.Add<Sigmoid>();
@@ -74,7 +74,7 @@ TEST_CASE("FFNWithOptimizerCallbackTest", "[CallbackTest]")
   if (!data::Load("lab3.csv", labels))
     FAIL("Cannot load test dataset lab3.csv!");
 
-  FFN<MeanSquaredError<>, RandomInitialization> model;
+  FFN<MeanSquaredError, RandomInitialization> model;
 
   model.Add<Linear>(2);
   model.Add<Sigmoid>();
@@ -99,8 +99,8 @@ TEST_CASE("RNNCallbackTest", "[CallbackTest]")
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
-  RNN<NegativeLogLikelihood<>, RandomInitialization> model(
-      rho, false, NegativeLogLikelihood<>(), init);
+  RNN<NegativeLogLikelihood, RandomInitialization> model(
+      rho, false, NegativeLogLikelihood(), init);
   model.Add<Linear>(10);
 
   // Use LSTM layer with 3 units.
@@ -124,8 +124,8 @@ TEST_CASE("RNNWithOptimizerCallbackTest", "[CallbackTest]")
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
-  RNN<NegativeLogLikelihood<>, RandomInitialization> model(
-      rho, false, NegativeLogLikelihood<>(), init);
+  RNN<NegativeLogLikelihood, RandomInitialization> model(
+      rho, false, NegativeLogLikelihood(), init);
   model.Add<Linear>(10);
 
   // Use LSTM layer with 3 units.

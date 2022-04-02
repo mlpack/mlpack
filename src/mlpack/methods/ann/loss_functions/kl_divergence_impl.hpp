@@ -20,14 +20,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-KLDivergence<MatType>::KLDivergence(const bool takeMean) :
+KLDivergenceType<MatType>::KLDivergenceType(const bool takeMean) :
     takeMean(takeMean)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type KLDivergence<MatType>::Forward(
+typename MatType::elem_type KLDivergenceType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -43,7 +43,7 @@ typename MatType::elem_type KLDivergence<MatType>::Forward(
 }
 
 template<typename MatType>
-void KLDivergence<MatType>::Backward(
+void KLDivergenceType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -61,7 +61,7 @@ void KLDivergence<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void KLDivergence<MatType>::serialize(
+void KLDivergenceType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

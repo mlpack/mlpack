@@ -19,13 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-MeanAbsolutePercentageError<MatType>::MeanAbsolutePercentageError()
+MeanAbsolutePercentageErrorType<MatType>::MeanAbsolutePercentageErrorType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type MeanAbsolutePercentageError<MatType>::Forward(
+typename MatType::elem_type MeanAbsolutePercentageErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -34,7 +34,7 @@ typename MatType::elem_type MeanAbsolutePercentageError<MatType>::Forward(
 }
 
 template<typename MatType>
-void MeanAbsolutePercentageError<MatType>::Backward(
+void MeanAbsolutePercentageErrorType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)

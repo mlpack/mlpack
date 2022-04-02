@@ -31,11 +31,11 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class HingeLoss
+class HingeLossType
 {
  public:
   /**
-   * Create HingeLoss object.
+   * Create HingeLossType object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -43,7 +43,7 @@ class HingeLoss
    *                  true, 'sum' reduction is used and the output will be
    *                  summed. It is set to true by default.
    */
-  HingeLoss(const bool reduction = true);
+  HingeLossType(const bool reduction = true);
 
   /**
    * Computes the Hinge loss function.
@@ -81,7 +81,9 @@ class HingeLoss
  private:
   //! The boolean value that tells if reduction is sum or mean.
   bool reduction;
-}; // class HingeLoss
+}; // class HingeLossType
+
+typedef HingeLossType<arma::mat> HingeLoss;
 
 } // namespace ann
 } // namespace mlpack

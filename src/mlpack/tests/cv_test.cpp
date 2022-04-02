@@ -220,7 +220,7 @@ TEST_CASE("MSEMatResponsesTest", "[CVTest]")
   arma::mat data("1 2");
   arma::mat trainingResponses("1 2; 3 4");
 
-  FFN<MeanSquaredError<>, ConstInitialization> ffn(MeanSquaredError<>(),
+  FFN<MeanSquaredError, ConstInitialization> ffn(MeanSquaredError(),
     ConstInitialization(0));
   ffn.Add<Linear>(2);
 

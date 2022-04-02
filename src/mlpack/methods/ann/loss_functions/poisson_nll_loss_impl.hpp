@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/poisson_nll_loss_impl.hpp
  * @author Mrityunjay Tripathi
  *
- * Implementation of the PoissonNLLLoss class.
+ * Implementation of the PoissonNLLLossType class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-PoissonNLLLoss<MatType>::PoissonNLLLoss(
+PoissonNLLLossType<MatType>::PoissonNLLLossType(
     const bool logInput,
     const bool full,
     const typename MatType::elem_type eps,
@@ -34,7 +34,7 @@ PoissonNLLLoss<MatType>::PoissonNLLLoss(
 }
 
 template<typename MatType>
-typename MatType::elem_type PoissonNLLLoss<MatType>::Forward(
+typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -60,7 +60,7 @@ typename MatType::elem_type PoissonNLLLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void PoissonNLLLoss<MatType>::Backward(
+void PoissonNLLLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -78,7 +78,7 @@ void PoissonNLLLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void PoissonNLLLoss<MatType>::serialize(
+void PoissonNLLLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

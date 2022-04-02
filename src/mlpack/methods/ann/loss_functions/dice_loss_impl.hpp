@@ -19,13 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-DiceLoss<MatType>::DiceLoss(const double smooth) : smooth(smooth)
+DiceLossType<MatType>::DiceLossType(const double smooth) : smooth(smooth)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type DiceLoss<MatType>::Forward(
+typename MatType::elem_type DiceLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -35,7 +35,7 @@ typename MatType::elem_type DiceLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void DiceLoss<MatType>::Backward(
+void DiceLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -49,7 +49,7 @@ void DiceLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void DiceLoss<MatType>::serialize(
+void DiceLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

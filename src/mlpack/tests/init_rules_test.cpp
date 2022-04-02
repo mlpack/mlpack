@@ -214,13 +214,13 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 {
   arma::mat input = arma::ones(5, 1);
   arma::mat response;
-  NegativeLogLikelihood<> outputLayer;
+  NegativeLogLikelihood outputLayer;
 
   // Create a simple network and use the RandomInitialization rule to
   // initialize the network parameters.
   RandomInitialization randomInit(0.5, 0.5);
 
-  FFN<NegativeLogLikelihood<>, RandomInitialization> randomModel(
+  FFN<NegativeLogLikelihood, RandomInitialization> randomModel(
       std::move(outputLayer), randomInit);
   randomModel.Add<Linear>(5);
   randomModel.Add<Linear>(2);
@@ -233,7 +233,7 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 
   // Create a simple network and use the OrthogonalInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, OrthogonalInitialization> orthogonalModel;
+  FFN<NegativeLogLikelihood, OrthogonalInitialization> orthogonalModel;
   orthogonalModel.Add<Linear>(5);
   orthogonalModel.Add<Linear>(2);
   orthogonalModel.Add<LogSoftMax>();
@@ -243,8 +243,8 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 
   // Create a simple network and use the ZeroInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, ConstInitialization>
-    zeroModel(NegativeLogLikelihood<>(), ConstInitialization(0));
+  FFN<NegativeLogLikelihood, ConstInitialization>
+    zeroModel(NegativeLogLikelihood(), ConstInitialization(0));
   zeroModel.Add<Linear>(5);
   zeroModel.Add<Linear>(2);
   zeroModel.Add<LogSoftMax>();
@@ -258,7 +258,7 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   // parameters.
   KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
       input, 1.5);
-  FFN<NegativeLogLikelihood<>, KathirvalavakumarSubavathiInitialization>
+  FFN<NegativeLogLikelihood, KathirvalavakumarSubavathiInitialization>
       ksModel(std::move(outputLayer), kathirvalavakumarSubavathiInit);
   ksModel.Add<Linear>(5);
   ksModel.Add<Linear>(2);
@@ -269,7 +269,7 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 
   // Create a simple network and use the OivsInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, OivsInitialization<> > oivsModel;
+  FFN<NegativeLogLikelihood, OivsInitialization<> > oivsModel;
   oivsModel.Add<Linear>(5);
   oivsModel.Add<Linear>(2);
   oivsModel.Add<LogSoftMax>();
@@ -279,7 +279,7 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
+  FFN<NegativeLogLikelihood, GaussianInitialization> gaussianModel;
   gaussianModel.Add<Linear>(5);
   gaussianModel.Add<Linear>(2);
   gaussianModel.Add<LogSoftMax>();

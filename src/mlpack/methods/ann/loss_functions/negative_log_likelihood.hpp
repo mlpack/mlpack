@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/negative_log_likelihood.hpp
  * @author Marcus Edel
  *
- * Definition of the NegativeLogLikelihood class.
+ * Definition of the NegativeLogLikelihoodType class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -29,13 +29,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class NegativeLogLikelihood
+class NegativeLogLikelihoodType
 {
  public:
   /**
-   * Create the NegativeLogLikelihoodLayer object.
+   * Create the NegativeLogLikelihoodTypeLayer object.
    */
-  NegativeLogLikelihood();
+  NegativeLogLikelihoodType();
 
   /**
    * Computes the Negative log likelihood.
@@ -69,7 +69,9 @@ class NegativeLogLikelihood
    */
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
-}; // class NegativeLogLikelihood
+}; // class NegativeLogLikelihoodType
+
+typedef NegativeLogLikelihoodType<arma::mat> NegativeLogLikelihood;
 
 } // namespace ann
 } // namespace mlpack

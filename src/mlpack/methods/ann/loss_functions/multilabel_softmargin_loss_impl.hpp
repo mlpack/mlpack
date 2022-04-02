@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
-MultiLabelSoftMarginLoss<MatType>::MultiLabelSoftMarginLoss(
+MultiLabelSoftMarginLossType<MatType>::MultiLabelSoftMarginLossType(
     const bool reduction,
     const arma::Row<typename MatType::elem_type>& weights) :
     reduction(reduction),
@@ -33,7 +33,7 @@ MultiLabelSoftMarginLoss<MatType>::MultiLabelSoftMarginLoss(
 }
 
 template<typename MatType>
-typename MatType::elem_type MultiLabelSoftMarginLoss<MatType>::Forward(
+typename MatType::elem_type MultiLabelSoftMarginLossType<MatType>::Forward(
     const MatType& input, const MatType& target)
 {
   if (!weighted)
@@ -54,7 +54,7 @@ typename MatType::elem_type MultiLabelSoftMarginLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void MultiLabelSoftMarginLoss<MatType>::Backward(
+void MultiLabelSoftMarginLossType<MatType>::Backward(
     const MatType& input,
     const MatType& target,
     MatType& output)
@@ -70,7 +70,7 @@ void MultiLabelSoftMarginLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void MultiLabelSoftMarginLoss<MatType>::serialize(
+void MultiLabelSoftMarginLossType<MatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

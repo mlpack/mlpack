@@ -33,13 +33,13 @@ template<
     typename MatType = arma::mat,
     typename DistType = BernoulliDistribution<MatType>
 >
-class ReconstructionLoss
+class ReconstructionLossType
 {
  public:
   /**
-   * Create the ReconstructionLoss object.
+   * Create the ReconstructionLossType object.
    */
-  ReconstructionLoss();
+  ReconstructionLossType();
 
   /**
    * Computes the reconstruction loss.
@@ -72,7 +72,9 @@ class ReconstructionLoss
  private:
   //! Locally-stored distribution object.
   DistType dist;
-}; // class ReconstructionLoss
+}; // class ReconstructionLossType
+
+typedef ReconstructionLossType<arma::mat> ReconstructionLoss;
 
 } // namespace ann
 } // namespace mlpack

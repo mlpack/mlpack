@@ -27,13 +27,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class EarthMoverDistance
+class EarthMoverDistanceType
 {
  public:
   /**
-   * Create the EarthMoverDistance object.
+   * Create the EarthMoverDistanceType object.
    */
-  EarthMoverDistance();
+  EarthMoverDistanceType();
 
   /**
    * Ordinary feed forward pass of a neural network.
@@ -61,8 +61,10 @@ class EarthMoverDistance
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
-}; // class EarthMoverDistance
+  void serialize(Archive& ar, const uint32_t /* version */) { }
+}; // class EarthMoverDistanceType
+
+typedef EarthMoverDistanceType<arma::mat> EarthMoverDistance;
 
 } // namespace ann
 } // namespace mlpack

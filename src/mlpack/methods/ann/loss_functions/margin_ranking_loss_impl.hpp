@@ -19,14 +19,14 @@ namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
-MarginRankingLoss<MatType>::MarginRankingLoss(
+MarginRankingLossType<MatType>::MarginRankingLossType(
     const double margin) : margin(margin)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type MarginRankingLoss<MatType>::Forward(
+typename MatType::elem_type MarginRankingLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -40,7 +40,7 @@ typename MatType::elem_type MarginRankingLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void MarginRankingLoss<MatType>::Backward(
+void MarginRankingLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -58,7 +58,7 @@ void MarginRankingLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void MarginRankingLoss<MatType>::serialize(
+void MarginRankingLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

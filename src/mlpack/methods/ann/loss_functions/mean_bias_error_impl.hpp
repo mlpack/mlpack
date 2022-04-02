@@ -20,13 +20,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-MeanBiasError<MatType>::MeanBiasError()
+MeanBiasErrorType<MatType>::MeanBiasErrorType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type MeanBiasError<MatType>::Forward(
+typename MatType::elem_type MeanBiasErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -34,7 +34,7 @@ typename MatType::elem_type MeanBiasError<MatType>::Forward(
 }
 
 template<typename MatType>
-void MeanBiasError<MatType>::Backward(
+void MeanBiasErrorType<MatType>::Backward(
     const MatType& prediction,
     const MatType& /* target */,
     MatType& loss)

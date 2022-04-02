@@ -27,7 +27,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
 template<
-    typename OutputLayerType = NegativeLogLikelihood<>,
+    typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
     typename MatType = arma::mat>
 class RNN

@@ -139,7 +139,7 @@ TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
         input(arma::randu(10, 1)),
         target(arma::mat("0"))
     {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 10);
@@ -161,7 +161,7 @@ TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -466,7 +466,7 @@ TEST_CASE("NoAlphaDropoutTest", "[ANNLayerTest]")
 //         input(arma::randu(10, 1)),
 //         target(arma::mat("1"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(10, 10);
@@ -488,7 +488,7 @@ TEST_CASE("NoAlphaDropoutTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     arma::mat input, target;
 //   } function;
 
@@ -579,7 +579,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
       target(1, 1) = 1;
       target(1, 2) = 1;
 
-      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model = new FFN<MeanSquaredError, RandomInitialization>();
       model->ResetData(input, target);
       model->Add<Linear3D>(outSize);
       model->InputDimensions() = std::vector<size_t>{ 4, 2 };
@@ -599,7 +599,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    FFN<MeanSquaredError, RandomInitialization>* model;
     arma::mat input, target;
     const size_t inSize;
     const size_t outSize;
@@ -655,7 +655,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //         input(arma::randu(10, 1)),
 //         target(arma::mat("1"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<NoisyLinear<> >(10, 10);
@@ -677,7 +677,7 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     arma::mat input, target;
 //   } function;
 
@@ -808,7 +808,7 @@ TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
         input(arma::randu(10, 1)),
         target(arma::mat("0"))
     {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<Linear>(10);
       model->Add<LinearNoBias>(2);
@@ -829,7 +829,7 @@ TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -843,7 +843,7 @@ TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
 // {
 //   for (size_t i = 0; i < 5; ++i)
 //   {
-//     NegativeLogLikelihood<> module;
+//     NegativeLogLikelihood module;
 //     const size_t inputElements = math::RandInt(5, 100);
 //     arma::mat input;
 //     RandomInitialization init(0, 1);
@@ -909,8 +909,8 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
         input(arma::randu(2, 1)),
         target(arma::mat("0"))
     {
-      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
-          NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
+      model = new FFN<NegativeLogLikelihood, RandomInitialization>(
+          NegativeLogLikelihood(), RandomInitialization(0.1, 0.5));
 
       model->ResetData(input, target);
       model->Add<Linear>(2, 2);
@@ -933,7 +933,7 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    FFN<NegativeLogLikelihood, RandomInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -1129,8 +1129,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   RandomInitialization init(0.5, 0.5);
 
 //   // Create model with user defined rho parameter.
-//   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood, RandomInitialization> modelA(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelA.Add<IdentityLayer<> >();
 //   modelA.Add<Linear<> >(1, 10);
 
@@ -1139,8 +1139,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   modelA.Add<LogSoftMax<> >();
 
 //   // Create model without user defined rho parameter.
-//   RNN<NegativeLogLikelihood<> > modelB(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood> modelB(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelB.Add<IdentityLayer<> >();
 //   modelB.Add<Linear<> >(1, 10);
 
@@ -1169,7 +1169,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     {
 //       const size_t rho = 5;
 
-//       model = new RNN<NegativeLogLikelihood<> >(rho);
+//       model = new RNN<NegativeLogLikelihood>(rho);
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
@@ -1191,7 +1191,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     RNN<NegativeLogLikelihood<> >* model;
+//     RNN<NegativeLogLikelihood>* model;
 //     arma::cube input, target;
 //   } function;
 
@@ -1233,8 +1233,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   RandomInitialization init(0.5, 0.5);
 
 //   // Create model with user defined rho parameter.
-//   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood, RandomInitialization> modelA(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelA.Add<IdentityLayer<> >();
 //   modelA.Add<Linear<> >(1, 10);
 
@@ -1243,8 +1243,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   modelA.Add<LogSoftMax<> >();
 
 //   // Create model without user defined rho parameter.
-//   RNN<NegativeLogLikelihood<> > modelB(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood> modelB(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelB.Add<IdentityLayer<> >();
 //   modelB.Add<Linear<> >(1, 10);
 
@@ -1273,7 +1273,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     {
 //       const size_t rho = 5;
 
-//       model = new RNN<NegativeLogLikelihood<> >(rho);
+//       model = new RNN<NegativeLogLikelihood>(rho);
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
@@ -1295,7 +1295,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     RNN<NegativeLogLikelihood<> >* model;
+//     RNN<NegativeLogLikelihood>* model;
 //     arma::cube input, target;
 //   } function;
 
@@ -1338,16 +1338,16 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   arma::cube target = arma::ones(1, 1, 5);
 //   const size_t rho = 5;
 
-//   RNN<NegativeLogLikelihood<> > *model1 =
-//       new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model1 =
+//       new RNN<NegativeLogLikelihood>(rho);
 //   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<FastLSTM<> >(10, 3, rho);
 //   model1->Add<LogSoftMax<> >();
 
-//   RNN<NegativeLogLikelihood<> > *model2 =
-//      new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model2 =
+//      new RNN<NegativeLogLikelihood>(rho);
 //   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
@@ -1370,16 +1370,16 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   arma::cube target = arma::ones(1, 1, 5);
 //   const size_t rho = 5;
 
-//   RNN<NegativeLogLikelihood<> > *model1 =
-//       new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model1 =
+//       new RNN<NegativeLogLikelihood>(rho);
 //   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<LSTM<> >(10, 3, rho);
 //   model1->Add<LogSoftMax<> >();
 
-//   RNN<NegativeLogLikelihood<> > *model2 =
-//      new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model2 =
+//      new RNN<NegativeLogLikelihood>(rho);
 //   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
@@ -1605,7 +1605,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     {
 //       const size_t rho = 5;
 
-//       model = new RNN<NegativeLogLikelihood<> >(rho);
+//       model = new RNN<NegativeLogLikelihood>(rho);
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
@@ -1628,7 +1628,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     RNN<NegativeLogLikelihood<> >* model;
+//     RNN<NegativeLogLikelihood>* model;
 //     arma::cube input, target;
 //   } function;
 
@@ -1734,8 +1734,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   RandomInitialization init(0.5, 0.5);
 //
 //   // Create model with user defined rho parameter.
-//   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood, RandomInitialization> modelA(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelA.Add<IdentityLayer<> >();
 //   modelA.Add<Linear<> >(1, 10);
 //
@@ -1744,8 +1744,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   modelA.Add<LogSoftMax<> >();
 //
 //   // Create model without user defined rho parameter.
-//   RNN<NegativeLogLikelihood<> > modelB(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood> modelB(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelB.Add<IdentityLayer<> >();
 //   modelB.Add<Linear<> >(1, 10);
 //
@@ -1774,7 +1774,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     {
 //       const size_t rho = 5;
 //
-//       model = new RNN<NegativeLogLikelihood<> >(rho);
+//       model = new RNN<NegativeLogLikelihood>(rho);
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
@@ -1796,7 +1796,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //     arma::mat& Parameters() { return model->Parameters(); }
 //
-//     RNN<NegativeLogLikelihood<> >* model;
+//     RNN<NegativeLogLikelihood>* model;
 //     arma::cube input, target;
 //   } function;
 //
@@ -1838,8 +1838,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   RandomInitialization init(0.5, 0.5);
 //
 //   // Create model with user defined rho parameter.
-//   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood, RandomInitialization> modelA(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelA.Add<IdentityLayer<> >();
 //   modelA.Add<Linear<> >(1, 10);
 //
@@ -1848,8 +1848,8 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   modelA.Add<LogSoftMax<> >();
 //
 //   // Create model without user defined rho parameter.
-//   RNN<NegativeLogLikelihood<> > modelB(
-//       rho, false, NegativeLogLikelihood<>(), init);
+//   RNN<NegativeLogLikelihood> modelB(
+//       rho, false, NegativeLogLikelihood(), init);
 //   modelB.Add<IdentityLayer<> >();
 //   modelB.Add<Linear<> >(1, 10);
 //
@@ -1878,7 +1878,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     {
 //       const size_t rho = 5;
 //
-//       model = new RNN<NegativeLogLikelihood<> >(rho);
+//       model = new RNN<NegativeLogLikelihood>(rho);
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
@@ -1900,7 +1900,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //     arma::mat& Parameters() { return model->Parameters(); }
 //
-//     RNN<NegativeLogLikelihood<> >* model;
+//     RNN<NegativeLogLikelihood>* model;
 //     arma::cube input, target;
 //   } function;
 //
@@ -1943,16 +1943,16 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   arma::cube target = arma::ones(1, 1, 5);
 //   const size_t rho = 5;
 //
-//   RNN<NegativeLogLikelihood<> > *model1 =
-//       new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model1 =
+//       new RNN<NegativeLogLikelihood>(rho);
 //   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<FastLSTM<> >(10, 3, rho);
 //   model1->Add<LogSoftMax<> >();
 //
-//   RNN<NegativeLogLikelihood<> > *model2 =
-//      new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model2 =
+//      new RNN<NegativeLogLikelihood>(rho);
 //   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
@@ -1975,16 +1975,16 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   arma::cube target = arma::ones(1, 1, 5);
 //   const size_t rho = 5;
 //
-//   RNN<NegativeLogLikelihood<> > *model1 =
-//       new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model1 =
+//       new RNN<NegativeLogLikelihood>(rho);
 //   model1->ResetData(input, target);
 //   model1->Add<IdentityLayer<> >();
 //   model1->Add<Linear<> >(1, 10);
 //   model1->Add<LSTM<> >(10, 3, rho);
 //   model1->Add<LogSoftMax<> >();
 //
-//   RNN<NegativeLogLikelihood<> > *model2 =
-//      new RNN<NegativeLogLikelihood<> >(rho);
+//   RNN<NegativeLogLikelihood> *model2 =
+//      new RNN<NegativeLogLikelihood>(rho);
 //   model2->ResetData(input, target);
 //   model2->Add<IdentityLayer<> >();
 //   model2->Add<Linear<> >(1, 10);
@@ -2210,7 +2210,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     {
 //       const size_t rho = 5;
 //
-//       model = new RNN<NegativeLogLikelihood<> >(rho);
+//       model = new RNN<NegativeLogLikelihood>(rho);
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(1, 10);
@@ -2233,7 +2233,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //     arma::mat& Parameters() { return model->Parameters(); }
 //
-//     RNN<NegativeLogLikelihood<> >* model;
+//     RNN<NegativeLogLikelihood>* model;
 //     arma::cube input, target;
 //   } function;
 //
@@ -2449,7 +2449,7 @@ TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
 //         input(arma::randu(10, 1)),
 //         target(arma::mat("0"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer>();
 //       model->Add<Linear>(10, 10);
@@ -2475,7 +2475,7 @@ TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     Concat* concat;
 //     arma::mat input, target;
 //   } function;
@@ -2517,7 +2517,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
         input(arma::randu(10, 1)),
         target(arma::mat("0"))
     {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 5);
@@ -2546,7 +2546,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     Concatenate* concatenate;
     arma::mat input, target;
   } function;
@@ -2725,7 +2725,7 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
         input(arma::randu(10, 1)),
         target(arma::mat("1; 0"))
     {
-      model = new FFN<MeanSquaredError<>, RandomInitialization>;
+      model = new FFN<MeanSquaredError, RandomInitialization>;
       model->ResetData(input, target);
       model->Add<Linear>(10, 10);
       model->Add<ReLULayer>();
@@ -2747,7 +2747,7 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<MeanSquaredError<> >* model;
+    FFN<MeanSquaredError>* model;
     arma::mat input, target;
   } function;
 
@@ -3086,7 +3086,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 //           input(arma::randn(32, 2048)),
 //           target(arma::zeros(1, 2048))
 //       {
-//         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//         model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //         model->ResetData(input, target);
 //         model->Add<IdentityLayer<> >();
 //         model->Add<Linear<> >(32, 4);
@@ -3109,7 +3109,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 
 //       arma::mat& Parameters() { return model->Parameters(); }
 
-//       FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//       FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //       arma::mat input, target;
 //     } function;
 
@@ -3160,7 +3160,7 @@ TEST_CASE("GradientVirtualBatchNormTest", "[ANNLayerTest]")
     {
       arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 4);
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(5, 5);
@@ -3183,7 +3183,7 @@ TEST_CASE("GradientVirtualBatchNormTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -3221,7 +3221,7 @@ TEST_CASE("VirtualBatchNormLayerParametersTest", "[ANNLayerTest]")
 //         input(arma::randn(5, 4)),
 //         target(arma::zeros(1, 4))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(5, 5);
@@ -3242,7 +3242,7 @@ TEST_CASE("VirtualBatchNormLayerParametersTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     arma::mat input, target;
 //   } function;
 
@@ -3399,7 +3399,7 @@ TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
           input(arma::linspace<arma::colvec>(0, 35, 36)),
           target(arma::mat("0"))
       {
-        model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+        model = new FFN<NegativeLogLikelihood, RandomInitialization>();
         model->ResetData(input, target);
         model->Add<TransposedConvolution>(1, 1, 3, 3, 2, 2, 1, 1, 6, 6, 12, 12);
         model->Add<LogSoftMax>();
@@ -3419,7 +3419,7 @@ TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
 
       arma::mat& Parameters() { return model->Parameters(); }
 
-      FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+      FFN<NegativeLogLikelihood, RandomInitialization>* model;
       arma::mat input, target;
     } function;
 
@@ -3565,7 +3565,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //         input(arma::linspace<arma::colvec>(0, 35, 36)),
 //         target(arma::mat("0"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+//       model = new FFN<NegativeLogLikelihood, RandomInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<AtrousConvolution<> >(1, 1, 3, 3, 1, 1, 0, 0, 6, 6, 2, 2);
@@ -3586,7 +3586,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+//     FFN<NegativeLogLikelihood, RandomInitialization>* model;
 //     arma::mat input, target;
 //   } function;
 
@@ -3747,7 +3747,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //         input(arma::randn(10, 256)),
 //         target(arma::zeros(1, 256))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer<> >();
 //       model->Add<Linear<> >(10, 10);
@@ -3770,7 +3770,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //
 //     arma::mat& Parameters() { return model->Parameters(); }
 //
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     arma::mat input, target;
 //   } function;
 //
@@ -3824,7 +3824,7 @@ TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
         input(arma::randn(10, 256)),
         target(arma::zeros(1, 256))
     {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 10);
@@ -3847,7 +3847,7 @@ TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -4154,7 +4154,7 @@ TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
         input(arma::randu(10, 1)),
         target(arma::mat("0"))
     {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 6);
@@ -4177,7 +4177,7 @@ TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -4197,7 +4197,7 @@ TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
         input(arma::randu(10, 2)),
         target(arma::mat("0 0"))
     {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<IdentityLayer>();
       model->Add<Linear>(10, 6);
@@ -4221,7 +4221,7 @@ TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -4356,7 +4356,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //         input(arma::randu(5, 1)),
 //         target(arma::mat("0"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer>();
 //       model->Add<Linear>(5, 10);
@@ -4386,7 +4386,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     Highway* highway;
 //     arma::mat input, target;
 //   } function;
@@ -4406,7 +4406,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //         input(arma::randu(10, 1)),
 //         target(arma::mat("0"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<IdentityLayer>();
 //       model->Add<Linear>(10, 10);
@@ -4435,7 +4435,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     Sequential* sequential;
 //     arma::mat input, target;
 //   } function;
@@ -4455,7 +4455,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //         input(arma::randu(10, 1)),
 //         target(arma::mat("0"))
 //     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //       model->ResetData(input, target);
 //       model->Add<Linear>(10, 10);
 
@@ -4480,7 +4480,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 
 //     arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //     WeightNorm* weightNorm;
 //     arma::mat input, target;
 //   } function;
@@ -4521,7 +4521,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   arma::mat input(5, 100, arma::fill::randu);
 //   arma::mat output(5, 100, arma::fill::randu);
 
-//   FFN<NegativeLogLikelihood<>, ann::RandomInitialization> model;
+//   FFN<NegativeLogLikelihood, ann::RandomInitialization> model;
 //   model.Add<Linear<>>(input.n_rows, 10);
 //   model.Add<LayerType>(layer);
 //   model.Add<ReLULayer<>>();
@@ -4535,7 +4535,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   model.Predict(input, originalOutput);
 
 //   // Now serialize the model.
-//   FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, jsonModel,
+//   FFN<NegativeLogLikelihood, ann::RandomInitialization> xmlModel, jsonModel,
 //       binaryModel;
 //   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
@@ -4678,7 +4678,7 @@ TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest]")
         input(arma::linspace<arma::colvec>(0, 35, 36)),
         target(arma::mat("1"))
     {
-      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+      model = new FFN<NegativeLogLikelihood, RandomInitialization>();
       model->ResetData(input, target);
       model->Add<Convolution>(1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
           std::tuple<size_t, size_t>(0, 0), "same");
@@ -4701,7 +4701,7 @@ TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    FFN<NegativeLogLikelihood, RandomInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -5425,7 +5425,7 @@ TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 //           input(arma::randn(16, 1024)),
 //           target(arma::zeros(1, 1024))
 //       {
-//         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+//         model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
 //         model->ResetData(input, target);
 //         model->Add<IdentityLayer<>>();
 //         model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
@@ -5448,7 +5448,7 @@ TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 
 //       arma::mat& Parameters() { return model->Parameters(); }
 
-//       FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+//       FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
 //       arma::mat input, target;
 //     } function;
 
@@ -6091,7 +6091,7 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       keyPaddingMask = arma::zeros(1, srcSeqLen);
       keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
 
-      model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
+      model = new FFN<NegativeLogLikelihood, XavierInitialization>();
       model->ResetData(input, target);
       // attnModule = new MultiheadAttention(tgtSeqLen, srcSeqLen, embedDim,
       //     nHeads);
@@ -6118,7 +6118,7 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, XavierInitialization>* model;
+    FFN<NegativeLogLikelihood, XavierInitialization>* model;
     // MultiheadAttention* attnModule;
 
     arma::mat input, target, attnMask, keyPaddingMask;
@@ -6294,7 +6294,7 @@ TEST_CASE("GradientInstanceNormLayerTest", "[ANNLayerTest]")
         arma::mat target;
         target.ones(1, 1024);
 
-        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
         model->ResetData(input, target);
         model->Add<IdentityLayer<> >();
         model->Add<Convolution<> >(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
@@ -6317,7 +6317,7 @@ TEST_CASE("GradientInstanceNormLayerTest", "[ANNLayerTest]")
 
       arma::mat& Parameters() { return model->Parameters(); }
 
-      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
       arma::mat input, target;
     } function;
 

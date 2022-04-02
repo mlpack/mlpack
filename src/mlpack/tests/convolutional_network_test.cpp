@@ -81,7 +81,7 @@ TEST_CASE("PaddingTest", "[ConvolutionalNetworktest]")
   X.load("mnist_first250_training_4s_and_9s.arm");
 
   // Create the network.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood, RandomInitialization> model;
 
   model.Add<Padding>(1, 2, 3, 4);
 
@@ -129,7 +129,7 @@ TEST_CASE("MaxPoolingTest", "[ConvolutionalNetworkTest]")
   X.col(2) = arma::vec("3, 4, 1, -1, 5, 5, 5, 5");
 
   // Create the network.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood, RandomInitialization> model;
   model.Add<MaxPooling>(2, 2);
 
   arma::mat results;
@@ -204,7 +204,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+    FFN<NegativeLogLikelihood, RandomInitialization> model;
 
     model.Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
     model.Add<ReLU>();
@@ -253,7 +253,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
 
 TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 {
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood, RandomInitialization> model;
 
   model.Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
   model.Add<ReLU>();
@@ -400,8 +400,8 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   // of iterations using random weights. If this works 1 of 5 times, I'm fine
   // with that. All I want to know is that the network is able to escape from
   // local minima and to solve the task.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> *model =
-      new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+  FFN<NegativeLogLikelihood, RandomInitialization> *model =
+      new FFN<NegativeLogLikelihood, RandomInitialization>;
 
   model->Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
   model->Add<ReLU>();
@@ -417,8 +417,8 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
   model->Add<LogSoftMax>();
   model->InputDimensions() = std::vector<size_t>({ 28, 28 });
 
-  FFN<NegativeLogLikelihood<>, RandomInitialization> *model1 =
-      new FFN<NegativeLogLikelihood<>, RandomInitialization>;
+  FFN<NegativeLogLikelihood, RandomInitialization> *model1 =
+      new FFN<NegativeLogLikelihood, RandomInitialization>;
 
   model1->Add<Convolution>(8, 5, 5, 1, 1, 0, 0);
   model1->Add<ReLU>();

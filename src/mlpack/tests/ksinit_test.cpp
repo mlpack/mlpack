@@ -75,8 +75,8 @@ void BuildVanillaNetwork(MatType& trainData,
   // Cauchy’s Inequality Based on Sensitivity Analysis" paper.
   KathirvalavakumarSubavathiInitialization init(trainData, 4.59);
 
-  FFN<MeanSquaredError<>, KathirvalavakumarSubavathiInitialization>
-      model(MeanSquaredError<>(), init);
+  FFN<MeanSquaredError, KathirvalavakumarSubavathiInitialization>
+      model(MeanSquaredError(), init);
 
   model.Add<Linear>(hiddenLayerSize);
   model.Add<LeakyReLU>();

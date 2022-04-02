@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/poisson_nll_loss.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the PoissonNLLLoss class. It is the negative log likelihood of
+ * Definition of the PoissonNLLLossType class. It is the negative log likelihood of
  * the Poisson distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -30,11 +30,11 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class PoissonNLLLoss
+class PoissonNLLLossType
 {
  public:
   /**
-   * Create the PoissonNLLLoss object.
+   * Create the PoissonNLLLossType object.
    *
    * @param logInput If true the loss is computed as
    *        \f$ \exp(input) - target \cdot input \f$, if false then the loss is
@@ -44,7 +44,7 @@ class PoissonNLLLoss
    * @param eps A small value to prevent 0 in denominators and logarithms.
    * @param mean When true, mean loss is computed otherwise total loss.
    */
-  PoissonNLLLoss(const bool logInput = true,
+  PoissonNLLLossType(const bool logInput = true,
                  const bool full = false,
                  const typename MatType::elem_type eps = 1e-08,
                  const bool mean = true);
@@ -135,7 +135,9 @@ class PoissonNLLLoss
 
   //! Boolean value that tells if mean of the total loss has to be taken.
   bool mean;
-}; // class PoissonNLLLoss
+}; // class PoissonNLLLossType
+
+typedef PoissonNLLLossType<arma::mat> PoissonNLLLoss;
 
 } // namespace ann
 } // namespace mlpack

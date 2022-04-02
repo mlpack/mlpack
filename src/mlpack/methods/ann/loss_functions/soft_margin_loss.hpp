@@ -28,11 +28,11 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class SoftMarginLoss
+class SoftMarginLossType
 {
  public:
   /**
-   * Create the SoftMarginLoss object.
+   * Create the SoftMarginLossType object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -40,7 +40,7 @@ class SoftMarginLoss
    *                  true, 'sum' reduction is used and the output will be
    *                  summed. It is set to true by default.
    */
-  SoftMarginLoss(const bool reduction = true);
+  SoftMarginLossType(const bool reduction = true);
 
   /**
    * Computes the Soft Margin Loss function.
@@ -78,7 +78,9 @@ class SoftMarginLoss
  private:
   //! The boolean value that tells if reduction is sum or mean.
   bool reduction;
-}; // class SoftMarginLoss
+}; // class SoftMarginLossType
+
+typedef SoftMarginLossType<arma::mat> SoftMarginLoss;
 
 } // namespace ann
 } // namespace mlpack

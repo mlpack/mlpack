@@ -19,14 +19,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-BCELoss<MatType>::BCELoss(
+BCELossType<MatType>::BCELossType(
     const double eps, const bool reduction) : eps(eps), reduction(reduction)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type BCELoss<MatType>::Forward(
+typename MatType::elem_type BCELossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -40,7 +40,7 @@ typename MatType::elem_type BCELoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void BCELoss<MatType>::Backward(
+void BCELossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -52,7 +52,7 @@ void BCELoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void BCELoss<MatType>::serialize(
+void BCELossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

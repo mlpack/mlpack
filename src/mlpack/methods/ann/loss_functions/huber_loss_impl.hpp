@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-HuberLoss<MatType>::HuberLoss(
+HuberLossType<MatType>::HuberLossType(
     const double delta,
     const bool mean):
     delta(delta),
@@ -29,7 +29,7 @@ HuberLoss<MatType>::HuberLoss(
 }
 
 template<typename MatType>
-typename MatType::elem_type HuberLoss<MatType>::Forward(
+typename MatType::elem_type HuberLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -45,7 +45,7 @@ typename MatType::elem_type HuberLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void HuberLoss<MatType>::Backward(
+void HuberLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -66,7 +66,7 @@ void HuberLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void HuberLoss<MatType>::serialize(
+void HuberLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

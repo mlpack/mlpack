@@ -30,13 +30,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class HingeEmbeddingLoss
+class HingeEmbeddingLossType
 {
  public:
   /**
    * Create the Hinge Embedding object.
    */
-  HingeEmbeddingLoss();
+  HingeEmbeddingLossType();
 
   /**
    * Computes the Hinge Embedding loss function.
@@ -65,7 +65,9 @@ class HingeEmbeddingLoss
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */) { }
-}; // class HingeEmbeddingLoss
+}; // class HingeEmbeddingLossType
+
+typedef HingeEmbeddingLossType<arma::mat> HingeEmbeddingLoss;
 
 } // namespace ann
 } // namespace mlpack

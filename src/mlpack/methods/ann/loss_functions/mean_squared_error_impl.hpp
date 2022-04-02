@@ -19,13 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-MeanSquaredError<MatType>::MeanSquaredError()
+MeanSquaredErrorType<MatType>::MeanSquaredErrorType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type MeanSquaredError<MatType>::Forward(
+typename MatType::elem_type MeanSquaredErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -33,7 +33,7 @@ typename MatType::elem_type MeanSquaredError<MatType>::Forward(
 }
 
 template<typename MatType>
-void MeanSquaredError<MatType>::Backward(
+void MeanSquaredErrorType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)

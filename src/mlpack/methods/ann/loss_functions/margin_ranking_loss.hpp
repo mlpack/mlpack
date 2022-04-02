@@ -29,15 +29,15 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class MarginRankingLoss
+class MarginRankingLossType
 {
  public:
   /**
-   * Create the MarginRankingLoss object with Hyperparameter margin.
+   * Create the MarginRankingLossType object with Hyperparameter margin.
    * Hyperparameter margin defines a minimum distance between correctly ranked
    * samples.
    */
-  MarginRankingLoss(const double margin = 1.0);
+  MarginRankingLossType(const double margin = 1.0);
 
   /**
    * Computes the Margin Ranking Loss function.
@@ -75,7 +75,9 @@ class MarginRankingLoss
  private:
   //! The margin value used in calculating Margin Ranking Loss.
   double margin;
-}; // class MarginRankingLoss
+}; // class MarginRankingLossType
+
+typedef MarginRankingLossType<arma::mat> MarginRankingLoss;
 
 } // namespace ann
 } // namespace mlpack

@@ -20,13 +20,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-HingeEmbeddingLoss<MatType>::HingeEmbeddingLoss()
+HingeEmbeddingLossType<MatType>::HingeEmbeddingLossType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type HingeEmbeddingLoss<MatType>::Forward(
+typename MatType::elem_type HingeEmbeddingLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -35,7 +35,7 @@ typename MatType::elem_type HingeEmbeddingLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void HingeEmbeddingLoss<MatType>::Backward(
+void HingeEmbeddingLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)

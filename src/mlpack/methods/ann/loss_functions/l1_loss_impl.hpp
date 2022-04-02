@@ -19,14 +19,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-L1Loss<MatType>::L1Loss(const bool mean):
+L1LossType<MatType>::L1LossType(const bool mean):
   mean(mean)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type L1Loss<MatType>::Forward(
+typename MatType::elem_type L1LossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -37,7 +37,7 @@ typename MatType::elem_type L1Loss<MatType>::Forward(
 }
 
 template<typename MatType>
-void L1Loss<MatType>::Backward(
+void L1LossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -47,7 +47,7 @@ void L1Loss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void L1Loss<MatType>::serialize(
+void L1LossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

@@ -33,11 +33,11 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class CosineEmbeddingLoss
+class CosineEmbeddingLossType
 {
  public:
   /**
-   * Create the CosineEmbeddingLoss object.
+   * Create the CosineEmbeddingLossType object.
    *
    * @param margin Increases cosine distance in case of dissimilarity.
    *               Refer definition of cosine-embedding-loss above.
@@ -47,7 +47,7 @@ class CosineEmbeddingLoss
    *                 Specifies reduction method i.e. sum or mean corresponding
    *                 to 0 and 1 respectively. Default value = 0.
    */
-  CosineEmbeddingLoss(const double margin = 0.0,
+  CosineEmbeddingLossType(const double margin = 0.0,
                       const bool similarity = true,
                       const bool takeMean = false);
 
@@ -103,7 +103,9 @@ class CosineEmbeddingLoss
 
   //! Locally-stored value of takeMean hyper-parameter.
   bool takeMean;
-}; // class CosineEmbeddingLoss
+}; // class CosineEmbeddingLossType
+
+typedef CosineEmbeddingLossType<arma::mat> CosineEmbeddingLoss;
 
 } // namespace ann
 } // namespace mlpack

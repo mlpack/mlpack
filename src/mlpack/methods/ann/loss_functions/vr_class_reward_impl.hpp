@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/vr_class_reward_impl.hpp
  * @author Marcus Edel
  *
- * Implementation of the VRClassReward class, which implements the variance
+ * Implementation of the VRClassRewardType class, which implements the variance
  * reduced classification reinforcement layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-VRClassReward<MatType>::VRClassReward(
+VRClassRewardType<MatType>::VRClassRewardType(
     const double scale,
     const bool sizeAverage) :
     scale(scale),
@@ -31,7 +31,7 @@ VRClassReward<MatType>::VRClassReward(
 }
 
 template<typename MatType>
-typename MatType::elem_type VRClassReward<MatType>::Forward(
+typename MatType::elem_type VRClassRewardType<MatType>::Forward(
     const MatType& input, const MatType& target)
 {
   double output = 0;
@@ -61,7 +61,7 @@ typename MatType::elem_type VRClassReward<MatType>::Forward(
 }
 
 template<typename MatType>
-void VRClassReward<MatType>::Backward(
+void VRClassRewardType<MatType>::Backward(
     const MatType& input,
     const MatType& target,
     MatType& output)
@@ -89,7 +89,7 @@ void VRClassReward<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void VRClassReward<MatType>::serialize(
+void VRClassRewardType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(scale);

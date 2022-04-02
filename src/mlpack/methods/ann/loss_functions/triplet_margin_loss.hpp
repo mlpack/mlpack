@@ -42,17 +42,17 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class TripletMarginLoss
+class TripletMarginLossType
 {
  public:
   /**
-   * Create the TripletMarginLoss object.
+   * Create the TripletMarginLossType object.
    * 
    * @param margin The minimum value by which the distance between 
    *               Anchor and Negative sample exceeds the distance 
    *               between Anchor and Positive sample.
    */
-  TripletMarginLoss(const double margin = 1.0);
+  TripletMarginLossType(const double margin = 1.0);
 
   /**
    * Computes the Triplet Margin Loss function.
@@ -88,7 +88,9 @@ class TripletMarginLoss
  private:
   //! The margin value used in calculating Triplet Margin Loss.
   double margin;
-}; // class TripletLossMargin
+}; // class TripletMarginLoss
+
+typedef TripletMarginLossType<arma::mat> TripletMarginLoss;
 
 } // namespace ann
 } // namespace mlpack

@@ -27,7 +27,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class BCELoss
+class BCELossType
 {
  public:
   /**
@@ -38,7 +38,7 @@ class BCELoss
    * @param reduction Reduction type. If true, it returns the mean of 
    *                  the loss. Else, it returns the sum.
    */
-  BCELoss(const double eps = 1e-10, const bool reduction = true);
+  BCELossType(const double eps = 1e-10, const bool reduction = true);
 
   /**
    * Computes the cross-entropy function.
@@ -84,13 +84,17 @@ class BCELoss
 
   //! Reduction type. If true, performs mean of loss else sum.
   bool reduction;
-}; // class BCELoss
+}; // class BCELossType
+
+typedef BCELossType<arma::mat> BCELoss;
 
 /**
- * Adding alias of BCELoss.
+ * Alias of BCELossType.
  */
+typedef BCELossType<arma::mat> CrossEntropyError;
+
 template<typename MatType = arma::mat>
-using CrossEntropyError = BCELoss<MatType>;
+using CrossEntropyErrorType = BCELossType<MatType>;
 
 } // namespace ann
 } // namespace mlpack

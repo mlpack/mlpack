@@ -43,13 +43,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class MeanAbsolutePercentageError
+class MeanAbsolutePercentageErrorType
 {
  public:
   /**
-   * Create the MeanAbsolutePercentageError object.
+   * Create the MeanAbsolutePercentageErrorType object.
    */
-  MeanAbsolutePercentageError();
+  MeanAbsolutePercentageErrorType();
 
   /**
    * Computes the mean absolute percentage error function.
@@ -78,7 +78,9 @@ class MeanAbsolutePercentageError
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */) { }
-}; // class MeanAbsolutePercentageError
+}; // class MeanAbsolutePercentageErrorType
+
+typedef MeanAbsolutePercentageErrorType<arma::mat> MeanAbsolutePercentageError;
 
 } // namespace ann
 } // namespace mlpack

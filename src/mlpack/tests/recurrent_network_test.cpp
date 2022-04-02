@@ -571,7 +571,7 @@ void GenerateNoisySinRNN(arma::cube& data,
  */
 double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 {
-  RNN<MeanSquaredError<> > net(rho, true);
+  RNN<MeanSquaredError> net(rho, true);
   net.Add<LinearNoBias>(hiddenUnits);
   net.Add<LSTM>(hiddenUnits);
   net.Add<LinearNoBias>(1);
@@ -853,8 +853,8 @@ TEST_CASE("RNNFFNTest", "[RecurrentNetworkTest]")
 {
   // We'll create an RNN with *no* BPTT, just a simple single-layer linear
   // network.
-  RNN<MeanSquaredError<>, ConstInitialization> rnn;
-  FFN<MeanSquaredError<>, ConstInitialization> ffn;
+  RNN<MeanSquaredError, ConstInitialization> rnn;
+  FFN<MeanSquaredError, ConstInitialization> ffn;
 
   rnn.Add<Linear>(10);
   rnn.Add<Sigmoid>();

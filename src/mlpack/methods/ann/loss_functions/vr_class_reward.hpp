@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/vr_class_reward.hpp
  * @author Marcus Edel
  *
- * Definition of the VRClassReward class, which implements the variance
+ * Definition of the VRClassRewardType class, which implements the variance
  * reduced classification reinforcement layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -30,16 +30,16 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class VRClassReward
+class VRClassRewardType
 {
  public:
   /**
-   * Create the VRClassReward object.
+   * Create the VRClassRewardType object.
    *
    * @param scale Parameter used to scale the reward.
    * @param sizeAverage Take the average over all batches.
    */
-  VRClassReward(const double scale = 1, const bool sizeAverage = true);
+  VRClassRewardType(const double scale = 1, const bool sizeAverage = true);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -112,7 +112,9 @@ class VRClassReward
 
   //! Locally-stored network modules.
   std::vector<Layer<MatType>*> network;
-}; // class VRClassReward
+}; // class VRClassRewardType
+
+typedef VRClassRewardType<arma::mat> VRClassReward;
 
 } // namespace ann
 } // namespace mlpack

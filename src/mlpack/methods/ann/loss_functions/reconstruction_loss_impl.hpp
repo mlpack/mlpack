@@ -19,13 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename DistType>
-ReconstructionLoss<MatType, DistType>::ReconstructionLoss()
+ReconstructionLossType<MatType, DistType>::ReconstructionLossType()
 {
   // Nothing to do here.
 }
 
 template<typename MatType, typename DistType>
-typename MatType::elem_type ReconstructionLoss<MatType, DistType>::Forward(
+typename MatType::elem_type ReconstructionLossType<MatType, DistType>::Forward(
     const MatType& prediction, const MatType& target)
 {
   dist = DistType(prediction);
@@ -33,7 +33,7 @@ typename MatType::elem_type ReconstructionLoss<MatType, DistType>::Forward(
 }
 
 template<typename MatType, typename DistType>
-void ReconstructionLoss<MatType, DistType>::Backward(
+void ReconstructionLossType<MatType, DistType>::Backward(
     const MatType& /* prediction */,
     const MatType& target,
     MatType& loss)
@@ -44,7 +44,7 @@ void ReconstructionLoss<MatType, DistType>::Backward(
 
 template<typename MatType, typename DistType>
 template<typename Archive>
-void ReconstructionLoss<MatType, DistType>::serialize(
+void ReconstructionLossType<MatType, DistType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

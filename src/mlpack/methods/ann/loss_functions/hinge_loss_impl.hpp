@@ -20,14 +20,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-HingeLoss<MatType>::HingeLoss(const bool reduction):
+HingeLossType<MatType>::HingeLossType(const bool reduction):
   reduction(reduction)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-typename MatType::elem_type HingeLoss<MatType>::Forward(
+typename MatType::elem_type HingeLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
@@ -45,7 +45,7 @@ typename MatType::elem_type HingeLoss<MatType>::Forward(
 }
 
 template<typename MatType>
-void HingeLoss<MatType>::Backward(
+void HingeLossType<MatType>::Backward(
     const MatType& prediction,
     const MatType& target,
     MatType& loss)
@@ -59,7 +59,7 @@ void HingeLoss<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void HingeLoss<MatType>::serialize(
+void HingeLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

@@ -28,11 +28,11 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class MultiLabelSoftMarginLoss
+class MultiLabelSoftMarginLossType
 {
  public:
   /**
-   * Create the MultiLabelSoftMarginLoss object.
+   * Create the MultiLabelSoftMarginLossType object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -42,7 +42,7 @@ class MultiLabelSoftMarginLoss
    * @param weights A manual rescaling weight given to each class. It is a
    *                (1, numClasses) row vector.
    */
-  MultiLabelSoftMarginLoss(
+  MultiLabelSoftMarginLossType(
       const bool reduction = true,
       const arma::Row<typename MatType::elem_type>& weights =
           arma::Row<typename MatType::elem_type>());
@@ -98,7 +98,9 @@ class MultiLabelSoftMarginLoss
 
   // An internal parameter used during initialisation of class weights.
   bool weighted;
-}; // class MultiLabelSoftMarginLoss
+}; // class MultiLabelSoftMarginLossType
+
+typedef MultiLabelSoftMarginLossType<arma::mat> MultiLabelSoftMarginLoss;
 
 } // namespace ann
 } // namespace mlpack

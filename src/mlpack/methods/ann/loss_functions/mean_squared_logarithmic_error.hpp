@@ -27,13 +27,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class MeanSquaredLogarithmicError
+class MeanSquaredLogarithmicErrorType
 {
  public:
   /**
-   * Create the MeanSquaredLogarithmicError object.
+   * Create the MeanSquaredLogarithmicErrorType object.
    */
-  MeanSquaredLogarithmicError();
+  MeanSquaredLogarithmicErrorType();
 
   /**
    * Computes the mean squared logarithmic error function.
@@ -62,7 +62,9 @@ class MeanSquaredLogarithmicError
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */) { }
-}; // class MeanSquaredLogarithmicError
+}; // class MeanSquaredLogarithmicErrorType
+
+typedef MeanSquaredLogarithmicErrorType<arma::mat> MeanSquaredLogarithmicError;
 
 } // namespace ann
 } // namespace mlpack

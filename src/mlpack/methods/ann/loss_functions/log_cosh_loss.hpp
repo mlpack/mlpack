@@ -29,7 +29,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class LogCoshLoss
+class LogCoshLossType
 {
  public:
   /**
@@ -43,7 +43,7 @@ class LogCoshLoss
    *          function more sensitive to small losses around the
    *          origin. Default value = 1.0.
    */
-  LogCoshLoss(const double a = 1.0);
+  LogCoshLossType(const double a = 1.0);
 
   /**
    * Computes the Log-Hyperbolic-Cosine loss function.
@@ -81,7 +81,9 @@ class LogCoshLoss
  private:
   //! Hyperparameter a for smoothening function curve.
   double a;
-}; // class LogCoshLoss
+}; // class LogCoshLossType
+
+typedef LogCoshLossType<arma::mat> LogCoshLoss;
 
 } // namespace ann
 } // namespace mlpack

@@ -57,7 +57,7 @@ template<
  *     layer.
  */
 template<
-    typename OutputLayerType = NegativeLogLikelihood<>,
+    typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,
     typename MatType = arma::mat>
 class FFN

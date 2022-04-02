@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The SigmoidCrossEntropyError performance function measures the network's
+ * The SigmoidCrossEntropyErrorType performance function measures the network's
  * performance according to the cross-entropy function between the input and
  * target distributions. This function calculates the cross entropy
  * given the real values instead of providing the sigmoid activations.
@@ -46,13 +46,13 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename MatType = arma::mat>
-class SigmoidCrossEntropyError
+class SigmoidCrossEntropyErrorType
 {
  public:
   /**
-   * Create the SigmoidCrossEntropyError object.
+   * Create the SigmoidCrossEntropyErrorType object.
    */
-  SigmoidCrossEntropyError();
+  SigmoidCrossEntropyErrorType();
 
   /**
    * Computes the Sigmoid CrossEntropy Error functions.
@@ -82,7 +82,9 @@ class SigmoidCrossEntropyError
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */) { }
-}; // class SigmoidCrossEntropy
+}; // class SigmoidCrossEntropyErrorType
+
+typedef SigmoidCrossEntropyErrorType<arma::mat> SigmoidCrossEntropyError;
 
 } // namespace ann
 } // namespace mlpack
