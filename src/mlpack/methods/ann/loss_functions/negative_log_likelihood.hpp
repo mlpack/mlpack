@@ -69,6 +69,7 @@ class NegativeLogLikelihoodType
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class NegativeLogLikelihoodType
 
+// Default typedef for typical `arma::mat` usage.
 typedef NegativeLogLikelihoodType<arma::mat> NegativeLogLikelihood;
 
 } // namespace ann

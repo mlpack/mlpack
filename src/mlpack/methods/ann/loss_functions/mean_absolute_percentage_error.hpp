@@ -78,6 +78,7 @@ class MeanAbsolutePercentageErrorType
   void serialize(Archive& ar, const unsigned int /* version */) { }
 }; // class MeanAbsolutePercentageErrorType
 
+// Default typedef for typical `arma::mat` usage.
 typedef MeanAbsolutePercentageErrorType<arma::mat> MeanAbsolutePercentageError;
 
 } // namespace ann

@@ -86,6 +86,7 @@ class KLDivergenceType
   bool takeMean;
 }; // class KLDivergenceType
 
+// Default typedef for typical `arma::mat` usage.
 typedef KLDivergenceType<arma::mat> KLDivergence;
 
 } // namespace ann

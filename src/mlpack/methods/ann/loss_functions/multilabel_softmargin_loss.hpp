@@ -104,6 +104,7 @@ class MultiLabelSoftMarginLossType
   bool weighted;
 }; // class MultiLabelSoftMarginLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef MultiLabelSoftMarginLossType<arma::mat> MultiLabelSoftMarginLoss;
 
 } // namespace ann

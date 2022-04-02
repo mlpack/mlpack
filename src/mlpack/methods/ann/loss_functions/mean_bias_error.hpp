@@ -62,6 +62,7 @@ class MeanBiasErrorType
   void serialize(Archive& ar, const uint32_t /* version */);
 }; // class MeanBiasErrorType
 
+// Default typedef for typical `arma::mat` usage.
 typedef MeanBiasErrorType<arma::mat> MeanBiasError;
 
 } // namespace ann

@@ -61,6 +61,7 @@ class EmptyLossType
   void serialize(Archive& ar, const uint32_t /* version */) { }
 }; // class EmptyLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef EmptyLossType<arma::mat> EmptyLoss;
 
 } // namespace ann

@@ -84,6 +84,7 @@ class BCELossType
   bool reduction;
 }; // class BCELossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef BCELossType<arma::mat> BCELoss;
 
 /**

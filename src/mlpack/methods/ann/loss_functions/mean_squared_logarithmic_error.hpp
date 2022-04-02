@@ -62,6 +62,7 @@ class MeanSquaredLogarithmicErrorType
   void serialize(Archive& ar, const uint32_t /* version */) { }
 }; // class MeanSquaredLogarithmicErrorType
 
+// Default typedef for typical `arma::mat` usage.
 typedef MeanSquaredLogarithmicErrorType<arma::mat> MeanSquaredLogarithmicError;
 
 } // namespace ann

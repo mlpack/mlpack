@@ -134,6 +134,7 @@ class PoissonNLLLossType
   bool mean;
 }; // class PoissonNLLLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef PoissonNLLLossType<arma::mat> PoissonNLLLoss;
 
 } // namespace ann

@@ -103,6 +103,7 @@ class CosineEmbeddingLossType
   bool takeMean;
 }; // class CosineEmbeddingLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef CosineEmbeddingLossType<arma::mat> CosineEmbeddingLoss;
 
 } // namespace ann

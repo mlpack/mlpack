@@ -84,6 +84,7 @@ class SoftMarginLossType
   bool reduction;
 }; // class SoftMarginLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef SoftMarginLossType<arma::mat> SoftMarginLoss;
 
 } // namespace ann

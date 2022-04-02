@@ -62,6 +62,7 @@ class MeanSquaredErrorType
   void serialize(Archive& ar, const uint32_t /* version */) { }
 }; // class MeanSquaredErrorType
 
+// Default typedef for typical `arma::mat` usage.
 typedef MeanSquaredErrorType<arma::mat> MeanSquaredError;
 
 } // namespace ann

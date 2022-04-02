@@ -90,6 +90,7 @@ class DiceLossType
   double smooth;
 }; // class DiceLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef DiceLossType<arma::mat> DiceLoss;
 
 } // namespace ann

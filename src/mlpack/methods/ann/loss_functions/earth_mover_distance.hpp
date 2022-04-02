@@ -62,6 +62,7 @@ class EarthMoverDistanceType
   void serialize(Archive& ar, const uint32_t /* version */) { }
 }; // class EarthMoverDistanceType
 
+// Default typedef for typical `arma::mat` usage.
 typedef EarthMoverDistanceType<arma::mat> EarthMoverDistance;
 
 } // namespace ann

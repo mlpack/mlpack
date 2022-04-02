@@ -82,6 +82,7 @@ class SigmoidCrossEntropyErrorType
   void serialize(Archive& ar, const uint32_t /* version */) { }
 }; // class SigmoidCrossEntropyErrorType
 
+// Default typedef for typical `arma::mat` usage.
 typedef SigmoidCrossEntropyErrorType<arma::mat> SigmoidCrossEntropyError;
 
 } // namespace ann

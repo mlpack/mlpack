@@ -72,6 +72,7 @@ class ReconstructionLossType
   DistType dist;
 }; // class ReconstructionLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef ReconstructionLossType<arma::mat> ReconstructionLoss;
 
 } // namespace ann

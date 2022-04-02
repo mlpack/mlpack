@@ -86,6 +86,7 @@ class HuberLossType
   bool mean;
 }; // class HuberLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef HuberLossType<arma::mat> HuberLoss;
 
 } // namespace ann

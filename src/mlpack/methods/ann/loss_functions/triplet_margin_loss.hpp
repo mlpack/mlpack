@@ -89,6 +89,7 @@ class TripletMarginLossType
   double margin;
 }; // class TripletMarginLoss
 
+// Default typedef for typical `arma::mat` usage.
 typedef TripletMarginLossType<arma::mat> TripletMarginLoss;
 
 } // namespace ann

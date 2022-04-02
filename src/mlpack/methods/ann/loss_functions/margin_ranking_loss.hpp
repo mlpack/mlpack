@@ -75,6 +75,7 @@ class MarginRankingLossType
   double margin;
 }; // class MarginRankingLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef MarginRankingLossType<arma::mat> MarginRankingLoss;
 
 } // namespace ann

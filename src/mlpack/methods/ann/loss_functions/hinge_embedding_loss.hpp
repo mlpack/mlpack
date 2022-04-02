@@ -65,6 +65,7 @@ class HingeEmbeddingLossType
   void serialize(Archive& ar, const uint32_t /* version */) { }
 }; // class HingeEmbeddingLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef HingeEmbeddingLossType<arma::mat> HingeEmbeddingLoss;
 
 } // namespace ann

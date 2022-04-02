@@ -112,6 +112,7 @@ class VRClassRewardType
   std::vector<Layer<MatType>*> network;
 }; // class VRClassRewardType
 
+// Default typedef for typical `arma::mat` usage.
 typedef VRClassRewardType<arma::mat> VRClassReward;
 
 } // namespace ann

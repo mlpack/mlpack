@@ -81,6 +81,7 @@ class HingeLossType
   bool reduction;
 }; // class HingeLossType
 
+// Default typedef for typical `arma::mat` usage.
 typedef HingeLossType<arma::mat> HingeLoss;
 
 } // namespace ann
