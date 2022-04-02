@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_RBF_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_RBF_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_RBFType_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_RBFType_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "radial_basis_function.hpp"
@@ -16,21 +16,19 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType,
-         typename Activation>
-RBF<InputType, OutputType, Activation>::RBF() :
-    Layer<InputType, OutputType>(),
+template<typename MatType, typename Activation>
+RBFType<MatType, Activation>::RBFType() :
+    Layer<MatType>(),
     outSize(0),
     betas(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType,
-         typename Activation>
-RBF<InputType, OutputType, Activation>::RBF(
+template<typename MatType, typename Activation>
+RBFType<MatType, Activation>::RBFType(
     const size_t outSize,
-    InputType& centres,
+    MatType& centres,
     double betas) :
     outSize(outSize),
     betas(betas),
@@ -42,7 +40,7 @@ RBF<InputType, OutputType, Activation>::RBF(
     for (size_t i = 0; i < centres.n_cols; i++)
     {
       double maxDis = 0;
-      InputType temp = centres.each_col() - centres.col(i);
+      MatType temp = centres.each_col() - centres.col(i);
       maxDis = arma::accu(arma::max(arma::pow(arma::sum(
           arma::pow((temp), 2), 0), 0.5).t()));
       if (maxDis > sigmas)
@@ -52,10 +50,10 @@ RBF<InputType, OutputType, Activation>::RBF(
   }
 }
 
-template<typename InputType, typename OutputType,
+template<typename MatType,
          typename Activation>
-RBF<InputType, OutputType, Activation>::RBF(const RBF& other) :
-    Layer<InputType, OutputType>(other),
+RBFType<MatType, Activation>::RBFType(const RBFType& other) :
+    Layer<MatType>(other),
     outSize(other.outSize),
     betas(other.betas),
     centres(other.centres)
@@ -63,10 +61,10 @@ RBF<InputType, OutputType, Activation>::RBF(const RBF& other) :
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType,
+template<typename MatType,
          typename Activation>
-RBF<InputType, OutputType, Activation>::RBF(RBF&& other) :
-    Layer<InputType, OutputType>(other),
+RBFType<MatType, Activation>::RBFType(RBFType&& other) :
+    Layer<MatType>(other),
     outSize(other.outSize),
     betas(other.betas),
     centres(std::move(other.centres))
@@ -74,14 +72,13 @@ RBF<InputType, OutputType, Activation>::RBF(RBF&& other) :
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType,
-         typename Activation>
-RBF<InputType, OutputType, Activation>&
-RBF<InputType, OutputType, Activation>::operator=(const RBF& other)
+template<typename MatType, typename Activation>
+RBFType<MatType, Activation>&
+RBFType<MatType, Activation>::operator=(const RBFType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     outSize = other.outSize;
     betas = other.betas;
     centres = other.centres;
@@ -90,14 +87,13 @@ RBF<InputType, OutputType, Activation>::operator=(const RBF& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType,
-         typename Activation>
-RBF<InputType, OutputType, Activation>&
-RBF<InputType, OutputType, Activation>::operator=(RBF&& other)
+template<typename MatType, typename Activation>
+RBFType<MatType, Activation>&
+RBFType<MatType, Activation>::operator=(RBFType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     outSize = std::move(other.outSize);
     betas = std::move(other.betas);
     centres = std::move(other.centres);
@@ -106,24 +102,24 @@ RBF<InputType, OutputType, Activation>::operator=(RBF&& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType, typename Activation>
-void RBF<InputType, OutputType, Activation>::Forward(
-    const InputType& input,
-    OutputType& output)
+template<typename MatType, typename Activation>
+void RBFType<MatType, Activation>::Forward(
+    const MatType& input,
+    MatType& output)
 {
   // Sanity check: make sure the dimensions are right.
   if (input.n_rows != centres.n_rows)
   {
-    Log::Fatal << "RBF::Forward(): input size (" << input.n_rows << ") does "
-        << "not match given center size (" << centres.n_rows << ")!"
+    Log::Fatal << "RBFType::Forward(): input size (" << input.n_rows << ") does"
+        << " not match given center size (" << centres.n_rows << ")!"
         << std::endl;
   }
 
-  distances = InputType(outSize, input.n_cols);
+  distances = MatType(outSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
   {
-    InputType temp = centres.each_col() - input.col(i);
+    MatType temp = centres.each_col() - input.col(i);
     distances.col(i) = arma::pow(arma::sum(
         arma::pow((temp), 2), 0), 0.5).t();
   }
@@ -131,17 +127,17 @@ void RBF<InputType, OutputType, Activation>::Forward(
 }
 
 
-template<typename InputType, typename OutputType, typename Activation>
-void RBF<InputType, OutputType, Activation>::Backward(
-    const InputType& /* input */,
-    const OutputType& /* gy */,
-    OutputType& /* g */)
+template<typename MatType, typename Activation>
+void RBFType<MatType, Activation>::Backward(
+    const MatType& /* input */,
+    const MatType& /* gy */,
+    MatType& /* g */)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType, typename Activation>
-void RBF<InputType, OutputType, Activation>::ComputeOutputDimensions()
+template<typename MatType, typename Activation>
+void RBFType<MatType, Activation>::ComputeOutputDimensions()
 {
   this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(), 1);
 
@@ -149,13 +145,13 @@ void RBF<InputType, OutputType, Activation>::ComputeOutputDimensions()
   this->outputDimensions[0] = outSize;
 }
 
-template<typename InputType, typename OutputType, typename Activation>
+template<typename MatType, typename Activation>
 template<typename Archive>
-void RBF<InputType, OutputType, Activation>::serialize(
+void RBFType<MatType, Activation>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(distances));
   ar(CEREAL_NVP(centres));

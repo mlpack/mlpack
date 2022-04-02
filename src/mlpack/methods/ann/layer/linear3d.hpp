@@ -29,17 +29,16 @@ namespace ann /** Artificial Neural Network. */ {
  * Shape of input : (inSize * nPoints, batchSize)
  * Shape of output : (outSize * nPoints, batchSize)
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat,
+    typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class Linear3DType : public Layer<InputType, OutputType>
+class Linear3DType : public Layer<MatType>
 {
  public:
   //! Create the Linear3D object.
@@ -73,7 +72,7 @@ class Linear3DType : public Layer<InputType, OutputType>
   /*
    * Reset the layer parameter.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -82,7 +81,7 @@ class Linear3DType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -93,9 +92,9 @@ class Linear3DType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -104,24 +103,24 @@ class Linear3DType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  MatType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  OutputType const& Weight() const { return weight; }
+  MatType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
-  OutputType& Weight() { return weight; }
+  MatType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  OutputType const& Bias() const { return bias; }
+  MatType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
-  OutputType& Bias() { return bias; }
+  MatType& Bias() { return bias; }
 
   //! Return the number of weight elements.
   size_t WeightSize() const { return outSize * (this->inputDimensions[0] + 1); }
@@ -140,20 +139,20 @@ class Linear3DType : public Layer<InputType, OutputType>
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputType weights;
+  MatType weights;
 
   //! Locally-stored weight parameters.
-  OutputType weight;
+  MatType weight;
 
   //! Locally-stored bias term parameters.
-  OutputType bias;
+  MatType bias;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class Linear
 
 // Standard Linear3D layer.
-typedef Linear3DType<arma::mat, arma::mat, NoRegularizer> Linear3D;
+typedef Linear3DType<arma::mat, NoRegularizer> Linear3D;
 
 } // namespace ann
 } // namespace mlpack

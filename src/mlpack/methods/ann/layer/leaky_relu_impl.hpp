@@ -20,71 +20,68 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-LeakyReLUType<InputType, OutputType>::LeakyReLUType(
-    const double alpha) : alpha(alpha)
+template<typename MatType>
+LeakyReLUType<MatType>::LeakyReLUType(const double alpha) :
+    Layer<MatType>(),
+    alpha(alpha)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LeakyReLUType<InputType, OutputType>::LeakyReLUType(
-    const LeakyReLUType& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+LeakyReLUType<MatType>::LeakyReLUType(const LeakyReLUType& other) :
+    Layer<MatType>(other),
     alpha(other.alpha)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-LeakyReLUType<InputType, OutputType>::LeakyReLUType(
+template<typename MatType>
+LeakyReLUType<MatType>::LeakyReLUType(
     LeakyReLUType&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+    Layer<MatType>(std::move(other)),
     alpha(std::move(other.alpha))
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-LeakyReLUType<InputType, OutputType>&
-LeakyReLUType<InputType, OutputType>::operator=(
-    const LeakyReLUType& other)
+template<typename MatType>
+LeakyReLUType<MatType>&
+LeakyReLUType<MatType>::operator=(const LeakyReLUType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     alpha = other.alpha;
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-LeakyReLUType<InputType, OutputType>&
-LeakyReLUType<InputType, OutputType>::operator=(
-    LeakyReLUType&& other)
+template<typename MatType>
+LeakyReLUType<MatType>&
+LeakyReLUType<MatType>::operator=(LeakyReLUType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     alpha = std::move(other.alpha);
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void LeakyReLUType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void LeakyReLUType<MatType>::Forward(const MatType& input, MatType& output)
 {
   output = arma::max(input, alpha * input);
 }
 
-template<typename InputType, typename OutputType>
-void LeakyReLUType<InputType, OutputType>::Backward(
-    const InputType& input, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void LeakyReLUType<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
-  OutputType derivative;
+  MatType derivative;
   derivative.set_size(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
     derivative(i) = (input(i) >= 0) ? 1 : alpha;
@@ -92,13 +89,13 @@ void LeakyReLUType<InputType, OutputType>::Backward(
   g = gy % derivative;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void LeakyReLUType<InputType, OutputType>::serialize(
+void LeakyReLUType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(alpha));
 }

@@ -19,8 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-PaddingType<InputType, OutputType>::PaddingType(
+template<typename MatType>
+PaddingType<MatType>::PaddingType(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
@@ -34,17 +34,16 @@ PaddingType<InputType, OutputType>::PaddingType(
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-void PaddingType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void PaddingType<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Make an alias of the input and output so that we can deal with the first
   // two dimensions directly.
-  arma::Cube<typename InputType::elem_type> reshapedInput(
-      (typename InputType::elem_type*) input.memptr(),
+  arma::Cube<typename MatType::elem_type> reshapedInput(
+      (typename MatType::elem_type*) input.memptr(),
       this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
       input.n_cols, false, true);
-  arma::Cube<typename OutputType::elem_type> reshapedOutput(output.memptr(),
+  arma::Cube<typename MatType::elem_type> reshapedOutput(output.memptr(),
       this->outputDimensions[0], this->outputDimensions[1], totalInMaps *
       output.n_cols, false, true);
 
@@ -88,18 +87,18 @@ void PaddingType<InputType, OutputType>::Forward(
                       padWLeft + this->inputDimensions[1] - 1) = reshapedInput;
 }
 
-template<typename InputType, typename OutputType>
-void PaddingType<InputType, OutputType>::Backward(
-    const InputType& /* input */,
-    const OutputType& gy,
-    OutputType& g)
+template<typename MatType>
+void PaddingType<MatType>::Backward(
+    const MatType& /* input */,
+    const MatType& gy,
+    MatType& g)
 {
   // Reshape g and gy so that extracting the un-padded input is easier to
   // understand.
-  arma::Cube<typename OutputType::elem_type> reshapedGy(
-      (typename OutputType::elem_type*) gy.memptr(), this->outputDimensions[0],
+  arma::Cube<typename MatType::elem_type> reshapedGy(
+      (typename MatType::elem_type*) gy.memptr(), this->outputDimensions[0],
       this->outputDimensions[1], totalInMaps * gy.n_cols, false, true);
-  arma::Cube<typename OutputType::elem_type> reshapedG(g.memptr(),
+  arma::Cube<typename MatType::elem_type> reshapedG(g.memptr(),
       this->inputDimensions[0], this->inputDimensions[1], totalInMaps *
       g.n_cols, false, true);
 
@@ -109,8 +108,8 @@ void PaddingType<InputType, OutputType>::Backward(
                               padWLeft + this->inputDimensions[1] - 1);
 }
 
-template<typename InputType, typename OutputType>
-void PaddingType<InputType, OutputType>::ComputeOutputDimensions()
+template<typename MatType>
+void PaddingType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -124,12 +123,11 @@ void PaddingType<InputType, OutputType>::ComputeOutputDimensions()
     totalInMaps *= this->inputDimensions[i];
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void PaddingType<InputType, OutputType>::serialize(
-    Archive& ar, const uint32_t /* version */)
+void PaddingType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(padWLeft));
   ar(CEREAL_NVP(padWRight));

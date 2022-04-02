@@ -26,8 +26,8 @@ namespace ann {
  * is meant as a base class for use by other layers that must store and use
  * multiple layers.
  */
-template<typename InputType, typename OutputType>
-class MultiLayer : public Layer<InputType, OutputType>
+template<typename MatType>
+class MultiLayer : public Layer<MatType>
 {
  public:
   /**
@@ -63,7 +63,7 @@ class MultiLayer : public Layer<InputType, OutputType>
    * @param input Input data to pass through the MultiLayer.
    * @param output Matrix to store output in.
    */
-  virtual void Forward(const InputType& input, OutputType& output);
+  virtual void Forward(const MatType& input, MatType& output);
 
   /**
    * Perform a forward pass with the given input data, but only on a subset of
@@ -76,8 +76,8 @@ class MultiLayer : public Layer<InputType, OutputType>
    * @param start Index of first layer to pass data through.
    * @param end Index of last layer to pass data through.
    */
-  void Forward(const InputType& input,
-               OutputType& output,
+  void Forward(const MatType& input,
+               MatType& output,
                const size_t start,
                const size_t end);
 
@@ -99,9 +99,9 @@ class MultiLayer : public Layer<InputType, OutputType>
    * @param gy Propagated error from next layer.
    * @param g Matrix to store propagated error in for previous layer.
    */
-  virtual void Backward(const InputType& input,
-                        const OutputType& gy,
-                        OutputType& g);
+  virtual void Backward(const MatType& input,
+                        const MatType& gy,
+                        MatType& g);
 
   /**
    * Compute the gradients of each layer.
@@ -117,14 +117,14 @@ class MultiLayer : public Layer<InputType, OutputType>
    * @param error Error as computed by `Backward()`.
    * @param gradient Matrix to store the gradients in.
    */
-  virtual void Gradient(const InputType& input,
-                        const OutputType& error,
-                        OutputType& gradient);
+  virtual void Gradient(const MatType& input,
+                        const MatType& error,
+                        MatType& gradient);
 
   /**
    * Set the weights of the layer to use the memory given as `weightsPtr`.
    */
-  virtual void SetWeights(typename OutputType::elem_type* weightsPtr);
+  virtual void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Return the number of weights in the MultiLayer.  This is the sum of the
@@ -153,9 +153,9 @@ class MultiLayer : public Layer<InputType, OutputType>
   void Add(Args... args)
   {
     network.push_back(new LayerType(args...));
-    layerOutputs.push_back(OutputType());
-    layerDeltas.push_back(OutputType());
-    layerGradients.push_back(OutputType());
+    layerOutputs.push_back(MatType());
+    layerDeltas.push_back(MatType());
+    layerGradients.push_back(MatType());
   }
 
   /*
@@ -163,22 +163,22 @@ class MultiLayer : public Layer<InputType, OutputType>
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(Layer<InputType, OutputType>* layer)
+  void Add(Layer<MatType>* layer)
   {
     network.push_back(layer);
-    layerOutputs.push_back(OutputType());
-    layerDeltas.push_back(OutputType());
-    layerGradients.push_back(OutputType());
+    layerOutputs.push_back(MatType());
+    layerDeltas.push_back(MatType());
+    layerGradients.push_back(MatType());
   }
 
   //! Get the network (series of layers) held by this MultiLayer.
-  const std::vector<Layer<InputType, OutputType>*> Network() const
+  const std::vector<Layer<MatType>*> Network() const
   {
     return network;
   }
   //! Modify the network (series of layers) held by this MultiLayer.  Be
   //! careful!
-  std::vector<Layer<InputType, OutputType>*>& Network() { return network; }
+  std::vector<Layer<MatType>*>& Network() { return network; }
 
   //! Serialize the MultiLayer.
   template<typename Archive>
@@ -209,10 +209,10 @@ class MultiLayer : public Layer<InputType, OutputType>
    * such that each layer will output its gradient (via its `Gradient()` method)
    * into the appropriate member of `layerGradients`.
    */
-  void InitializeGradientPassMemory(OutputType& gradient);
+  void InitializeGradientPassMemory(MatType& gradient);
 
   //! The internally-held network.
-  std::vector<Layer<InputType, OutputType>*> network;
+  std::vector<Layer<MatType>*> network;
 
   // Total number of elements in the input, cached for convenience.
   size_t inSize;
@@ -223,20 +223,20 @@ class MultiLayer : public Layer<InputType, OutputType>
 
   //! This matrix stores all of the outputs of each layer when Forward() is
   //! called.  See `InitializeForwardPassMemory()`.
-  OutputType layerOutputMatrix;
+  MatType layerOutputMatrix;
   //! These are aliases of `layerOutputMatrix` for each layer.
-  std::vector<OutputType> layerOutputs;
+  std::vector<MatType> layerOutputs;
 
   //! This matrix stores all of the backwards pass results of each layer when
   //! Backward() is called.  See `InitializeBackwardPassMemory()`.
-  OutputType layerDeltaMatrix;
+  MatType layerDeltaMatrix;
   //! These are aliases of `layerDeltaMatrix` for each layer.
-  std::vector<OutputType> layerDeltas;
+  std::vector<MatType> layerDeltas;
 
   //! Gradient aliases for each layer.  Note that this is *only* valid in the
   //! context of `Gradient()`!  We have it as a class member to avoid
-  //! reallocating the `OutputType`s each call to `Gradient()`.
-  std::vector<OutputType> layerGradients;
+  //! reallocating the `MatType`s each call to `Gradient()`.
+  std::vector<MatType> layerGradients;
 };
 
 } // namespace ann

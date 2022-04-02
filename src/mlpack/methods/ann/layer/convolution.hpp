@@ -62,19 +62,18 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
+    typename MatType = arma::mat
 >
-class ConvolutionType : public Layer<InputType, OutputType>
+class ConvolutionType : public Layer<MatType>
 {
  public:
   //! Create the ConvolutionType object.
@@ -149,7 +148,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
   /*
    * Set the weight and bias term.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -158,7 +157,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -169,9 +168,9 @@ class ConvolutionType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -180,14 +179,14 @@ class ConvolutionType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& /* input */,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& /* input */,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  MatType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the weight of the layer as a cube.
   arma::cube const& Weight() const { return weight; }
@@ -195,9 +194,9 @@ class ConvolutionType : public Layer<InputType, OutputType>
   arma::cube& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  OutputType const& Bias() const { return bias; }
+  MatType const& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  OutputType& Bias() { return bias; }
+  MatType& Bias() { return bias; }
 
   //! Get the number of output maps.
   size_t const& Maps() const { return maps; }
@@ -343,25 +342,25 @@ class ConvolutionType : public Layer<InputType, OutputType>
   size_t padHTop;
 
   //! Locally-stored weight object.
-  OutputType weights;
+  MatType weights;
 
   //! Locally-stored weight object.
-  arma::Cube<typename OutputType::elem_type> weight;
+  arma::Cube<typename MatType::elem_type> weight;
 
   //! Locally-stored bias term object.
-  OutputType bias;
+  MatType bias;
 
   //! Locally-stored transformed output parameter.
-  arma::Cube<typename OutputType::elem_type> outputTemp;
+  arma::Cube<typename MatType::elem_type> outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  InputType inputPadded;
+  MatType inputPadded;
 
   //! Locally-stored transformed error parameter.
-  arma::Cube<typename OutputType::elem_type> gTemp;
+  arma::Cube<typename MatType::elem_type> gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::Cube<typename OutputType::elem_type> gradientTemp;
+  arma::Cube<typename MatType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
   ann::Padding padding;
@@ -380,7 +379,6 @@ typedef ConvolutionType<
     NaiveConvolution<ValidConvolution>,
     NaiveConvolution<FullConvolution>,
     NaiveConvolution<ValidConvolution>,
-    arma::mat,
     arma::mat
 > Convolution;
 

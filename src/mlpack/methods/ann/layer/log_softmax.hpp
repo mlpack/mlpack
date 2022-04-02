@@ -26,14 +26,14 @@ namespace ann /** Artificial Neural Network. */ {
  * (NegativeLogLikelihoodLayer), which expects that the input contains
  * log-probabilities for each class.
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
+ * @tparam MatType The type of the layer's inputs. The layer automatically
  *    cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
+ * @tparam MatType The type of the computation which also causes the output
  *    to also be in this type. The type also allows the computation and weight
  *    type to differ from the input type (Default: arma::mat).
  */
-template <typename InputType = arma::mat, typename OutputType = arma::mat>
-class LogSoftMaxType : public Layer<InputType, OutputType>
+template <typename MatType = arma::mat>
+class LogSoftMaxType : public Layer<MatType>
 {
  public:
   /**
@@ -63,7 +63,7 @@ class LogSoftMaxType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -74,14 +74,12 @@ class LogSoftMaxType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+    ar(cereal::base_class<Layer<MatType>>(this));
     // Nothing to do.
   }
 
@@ -91,7 +89,7 @@ class LogSoftMaxType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard Linear layer using no regularization.
-typedef LogSoftMaxType<arma::mat, arma::mat> LogSoftMax;
+typedef LogSoftMaxType<arma::mat> LogSoftMax;
 
 } // namespace ann
 } // namespace mlpack

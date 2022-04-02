@@ -20,19 +20,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Add module class. The Add module applies a bias term
- * to the incoming data.
+ * Implementation of the Add layer. The Add module applies a bias term to the
+ * incoming data.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix type used as inputs, outputs, and weights.
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class AddType : public Layer<InputType, OutputType>
+template<typename MatType>
+class AddType : public Layer<MatType>
 {
  public:
   /**
@@ -62,7 +56,7 @@ class AddType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Backward pass: send weights backwards (the bias does not affect anything).
@@ -71,9 +65,9 @@ class AddType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output and the input activation.
@@ -82,14 +76,14 @@ class AddType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& /* input */,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& /* input */,
+                const MatType& error,
+                MatType& gradient);
 
   //! Return the weights of the network.
-  const OutputType& Parameters() const { return weights; }
+  const MatType& Parameters() const { return weights; }
   //! Modify the weights of the network.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the size of weights.
   size_t WeightSize() const { return outSize; }
@@ -99,10 +93,10 @@ class AddType : public Layer<InputType, OutputType>
   void ComputeOutputDimensions();
 
   //! Set the weights of the layer to use the given memory.
-  void SetWeights(typename OutputType::elem_type* weightPtr);
+  void SetWeights(typename MatType::elem_type* weightPtr);
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -112,11 +106,11 @@ class AddType : public Layer<InputType, OutputType>
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputType weights;
+  MatType weights;
 }; // class Add
 
 // Standard Add layer.
-typedef AddType<arma::mat, arma::mat> Add;
+typedef AddType<arma::mat> Add;
 
 } // namespace ann
 } // namespace mlpack

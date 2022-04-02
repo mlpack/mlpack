@@ -52,16 +52,13 @@ namespace ann /** Artificial Neural Network. */ {
  * \see FastLSTM for a faster LSTM version which combines the calculation of the
  * input, forget, output gates and hidden state in a single step.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template<
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class LSTMType : public RecurrentLayer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class LSTMType : public RecurrentLayer<MatType>
 {
  public:
   //! Create the LSTM object.
@@ -89,7 +86,7 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
    * Reset the layer parameter. The method is called to
    * assign the allocated memory to the internal learnable parameters.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -98,7 +95,7 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -109,7 +106,7 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -118,9 +115,9 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   /*
    * Reset the layer parameter.
@@ -136,9 +133,9 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
   void ClearRecurrentState(const size_t bpttSteps, const size_t batchSize);
 
   //! Get the parameters.
-  const OutputType& Parameters() const { return weights; }
+  const MatType& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   size_t WeightSize() const
   {
@@ -171,69 +168,69 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputType weights;
+  MatType weights;
 
   //! Weights between the output and input gate.
-  OutputType output2GateInputWeight;
+  MatType output2GateInputWeight;
 
   //! Weights between the input and gate.
-  OutputType input2GateInputWeight;
+  MatType input2GateInputWeight;
 
   //! Bias between the input and input gate.
-  OutputType input2GateInputBias;
+  MatType input2GateInputBias;
 
   //! Weights between the cell and input gate.
-  OutputType cell2GateInputWeight;
+  MatType cell2GateInputWeight;
 
   //! Weights between the output and forget gate.
-  OutputType output2GateForgetWeight;
+  MatType output2GateForgetWeight;
 
   //! Weights between the input and gate.
-  OutputType input2GateForgetWeight;
+  MatType input2GateForgetWeight;
 
   //! Bias between the input and gate.
-  OutputType input2GateForgetBias;
+  MatType input2GateForgetBias;
 
   //! Bias between the input and gate.
-  OutputType cell2GateForgetWeight;
+  MatType cell2GateForgetWeight;
 
   //! Weights between the output and gate.
-  OutputType output2GateOutputWeight;
+  MatType output2GateOutputWeight;
 
   //! Weights between the input and gate.
-  OutputType input2GateOutputWeight;
+  MatType input2GateOutputWeight;
 
   //! Bias between the input and gate.
-  OutputType input2GateOutputBias;
+  MatType input2GateOutputBias;
 
   //! Weights between cell and output gate.
-  OutputType cell2GateOutputWeight;
+  MatType cell2GateOutputWeight;
 
   // Below here are recurrent state matrices.
 
   //! Locally-stored input gate parameter.
-  OutputType inputGate;
+  MatType inputGate;
 
   //! Locally-stored forget gate parameter.
-  OutputType forgetGate;
+  MatType forgetGate;
 
   //! Locally-stored hidden layer parameter.
-  OutputType hiddenLayer;
+  MatType hiddenLayer;
 
   //! Locally-stored output gate parameter.
-  OutputType outputGate;
+  MatType outputGate;
 
   //! Locally-stored input to hidden weight.
-  OutputType input2HiddenWeight;
+  MatType input2HiddenWeight;
 
   //! Locally-stored input to hidden bias.
-  OutputType input2HiddenBias;
+  MatType input2HiddenBias;
 
   //! Locally-stored output to hidden weight.
-  OutputType output2HiddenWeight;
+  MatType output2HiddenWeight;
 
   //! Locally-stored cell parameter.
-  arma::Cube<typename OutputType::elem_type> cell; // should be a cube, but what is n_cols?
+  arma::Cube<typename MatType::elem_type> cell; // should be a cube, but what is n_cols?
 
   // Locally-stored intermediate computations below here.  Do these still need
   // to be cubes?  TODO: but I think they do.
@@ -242,43 +239,43 @@ class LSTMType : public RecurrentLayer<InputType, OutputType>
   // Gradient().
 
   //! Locally-stored input gate activation.
-  arma::Cube<typename OutputType::elem_type> inputGateActivation;
+  arma::Cube<typename MatType::elem_type> inputGateActivation;
 
   //! Locally-stored forget gate activation.
-  arma::Cube<typename OutputType::elem_type> forgetGateActivation;
+  arma::Cube<typename MatType::elem_type> forgetGateActivation;
 
   //! Locally-stored output gate activation.
-  arma::Cube<typename OutputType::elem_type> outputGateActivation;
+  arma::Cube<typename MatType::elem_type> outputGateActivation;
 
   //! Locally-stored hidden layer activation.
-  arma::Cube<typename OutputType::elem_type> hiddenLayerActivation;
+  arma::Cube<typename MatType::elem_type> hiddenLayerActivation;
 
   //! Locally-stored cell activation error.
-  arma::Cube<typename OutputType::elem_type> cellActivation;
+  arma::Cube<typename MatType::elem_type> cellActivation;
 
   //! Locally-stored forget gate error.
-  OutputType forgetGateError;
+  MatType forgetGateError;
 
   //! Locally-stored output gate error.
-  OutputType outputGateError;
+  MatType outputGateError;
 
   //! Locally-stored output parameters.
-  arma::Cube<typename OutputType::elem_type> outParameter;
+  arma::Cube<typename MatType::elem_type> outParameter;
 
   //! Locally-stored input cell error parameter.
-  OutputType inputCellError;
+  MatType inputCellError;
 
   //! Locally-stored input gate error.
-  OutputType inputGateError;
+  MatType inputGateError;
 
   //! Locally-stored hidden layer error.
-  OutputType hiddenError;
+  MatType hiddenError;
 }; // class LSTM
 
 // Convenience typedefs.
 
 // Standard LSTM layer.
-typedef LSTMType<arma::mat, arma::mat> LSTM;
+typedef LSTMType<arma::mat> LSTM;
 
 } // namespace ann
 } // namespace mlpack

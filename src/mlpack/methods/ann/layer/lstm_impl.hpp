@@ -18,58 +18,53 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-LSTMType<InputType, OutputType>::LSTMType() :
-    RecurrentLayer<InputType, OutputType>(),
+template<typename MatType>
+LSTMType<MatType>::LSTMType() :
+    RecurrentLayer<MatType>(),
     outSize(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LSTMType<InputType, OutputType>::LSTMType(
-    const size_t outSize) :
-    RecurrentLayer<InputType, OutputType>(),
+template<typename MatType>
+LSTMType<MatType>::LSTMType(const size_t outSize) :
+    RecurrentLayer<MatType>(),
     outSize(outSize)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LSTMType<InputType, OutputType>::LSTMType(
-    const LSTMType& layer) :
-    RecurrentLayer<InputType, OutputType>(layer)
+template<typename MatType>
+LSTMType<MatType>::LSTMType(const LSTMType& layer) :
+    RecurrentLayer<MatType>(layer)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LSTMType<InputType, OutputType>::LSTMType(
-    LSTMType&& layer) :
-    RecurrentLayer<InputType, OutputType>(std::move(layer))
+template<typename MatType>
+LSTMType<MatType>::LSTMType(LSTMType&& layer) :
+    RecurrentLayer<MatType>(std::move(layer))
 {
   // Nothing to do here.
 }
 
-template <typename InputType, typename OutputType>
-LSTMType<InputType, OutputType>&
-LSTMType<InputType, OutputType>::operator=(const LSTMType& layer)
+template<typename MatType>
+LSTMType<MatType>& LSTMType<MatType>::operator=(const LSTMType& layer)
 {
   if (this != &layer)
   {
-    RecurrentLayer<InputType, OutputType>::operator=(layer);
+    RecurrentLayer<MatType>::operator=(layer);
   }
 
   return *this;
 }
 
-template <typename InputType, typename OutputType>
-LSTMType<InputType, OutputType>&
-LSTMType<InputType, OutputType>::operator=(LSTMType&& layer)
+template<typename MatType>
+LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
 {
   if (this != &layer)
   {
-    RecurrentLayer<InputType, OutputType>::operator=(std::move(layer));
+    RecurrentLayer<MatType>::operator=(std::move(layer));
   }
 
   return *this;
@@ -109,8 +104,8 @@ LSTMType<InputType, OutputType>::operator=(LSTMType&& layer)
 // our state "input" should come from.  Note that it's possible that
 // `previousStep` == `currentStep`!
 
-template<typename InputType, typename OutputType>
-void LSTMType<InputType, OutputType>::ClearRecurrentState(
+template<typename MatType>
+void LSTMType<MatType>::ClearRecurrentState(
     const size_t bpttSteps, const size_t batchSize)
 {
   // Make sure all of the different matrices we will use to hold parameters are
@@ -132,77 +127,76 @@ void LSTMType<InputType, OutputType>::ClearRecurrentState(
   cell.zeros(outSize, batchSize, bpttSteps);
 }
 
-template<typename InputType, typename OutputType>
-void LSTMType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+template<typename MatType>
+void LSTMType<MatType>::SetWeights(
+    typename MatType::elem_type* weightsPtr)
 {
   // Set the weight parameter for the output gate.
-  input2GateOutputWeight = OutputType(weightsPtr, outSize, inSize,
+  input2GateOutputWeight = MatType(weightsPtr, outSize, inSize,
       false, false);
-  input2GateOutputBias = OutputType(weightsPtr + input2GateOutputWeight.n_elem,
+  input2GateOutputBias = MatType(weightsPtr + input2GateOutputWeight.n_elem,
       outSize, 1, false, false);
   size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
 
   // Set the weight parameter for the forget gate.
-  input2GateForgetWeight = OutputType(weightsPtr + offset, outSize, inSize,
+  input2GateForgetWeight = MatType(weightsPtr + offset, outSize, inSize,
       false, false);
-  input2GateForgetBias = OutputType(weightsPtr + offset +
+  input2GateForgetBias = MatType(weightsPtr + offset +
       input2GateForgetWeight.n_elem, outSize, 1, false, false);
   offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
 
   // Set the weight parameter for the input gate.
-  input2GateInputWeight = OutputType(weightsPtr + offset, outSize, inSize,
+  input2GateInputWeight = MatType(weightsPtr + offset, outSize, inSize,
       false, false);
-  input2GateInputBias = OutputType(weightsPtr + offset +
+  input2GateInputBias = MatType(weightsPtr + offset +
       input2GateInputWeight.n_elem, outSize, 1, false, false);
   offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
 
   // Set the weight parameter for the hidden gate.
-  input2HiddenWeight = OutputType(weightsPtr + offset, outSize, inSize, false,
+  input2HiddenWeight = MatType(weightsPtr + offset, outSize, inSize, false,
       false);
-  input2HiddenBias = OutputType(weightsPtr + offset + input2HiddenWeight.n_elem,
+  input2HiddenBias = MatType(weightsPtr + offset + input2HiddenWeight.n_elem,
       outSize, 1, false, false);
   offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  output2GateOutputWeight = OutputType(weightsPtr + offset, outSize, outSize,
+  output2GateOutputWeight = MatType(weightsPtr + offset, outSize, outSize,
       false, false);
   offset += output2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  output2GateForgetWeight = OutputType(weightsPtr + offset, outSize, outSize,
+  output2GateForgetWeight = MatType(weightsPtr + offset, outSize, outSize,
       false, false);
   offset += output2GateForgetWeight.n_elem;
 
   // Set the weight parameter for the input multiplication.
-  output2GateInputWeight = OutputType(weightsPtr + offset, outSize, outSize,
+  output2GateInputWeight = MatType(weightsPtr + offset, outSize, outSize,
       false, false);
   offset += output2GateInputWeight.n_elem;
 
   // Set the weight parameter for the hidden multiplication.
-  output2HiddenWeight = OutputType(weightsPtr + offset, outSize, outSize, false,
+  output2HiddenWeight = MatType(weightsPtr + offset, outSize, outSize, false,
       false);
   offset += output2HiddenWeight.n_elem;
 
   // Set the weight parameter for the cell multiplication.
-  cell2GateOutputWeight = OutputType(weightsPtr + offset, outSize, 1, false,
+  cell2GateOutputWeight = MatType(weightsPtr + offset, outSize, 1, false,
       false);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - forget gate multiplication.
-  cell2GateForgetWeight = OutputType(weightsPtr + offset, outSize, 1, false,
+  cell2GateForgetWeight = MatType(weightsPtr + offset, outSize, 1, false,
       false);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - input gate multiplication.
-  cell2GateInputWeight = OutputType(weightsPtr + offset, outSize, 1, false,
+  cell2GateInputWeight = MatType(weightsPtr + offset, outSize, 1, false,
       false);
 }
 
 // Forward when cellState is not needed.
-template<typename InputType, typename OutputType>
-void LSTMType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Convenience alias.
   const size_t batchSize = input.n_cols;
@@ -283,16 +277,16 @@ void LSTMType<InputType, OutputType>::Forward(
 
   // TODO: these aliases are likely not useful?
   // but, they're intended to avoid copying the output---can we avoid that?
-  output = OutputType(outParameter.memptr() +
+  output = MatType(outParameter.memptr() +
       this->CurrentStep() * (batchSize * outSize), outSize, batchSize, false,
       false);
 }
 
-template<typename InputType, typename OutputType>
-void LSTMType<InputType, OutputType>::Backward(
-  const InputType& /* input */, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void LSTMType<MatType>::Backward(
+    const MatType& /* input */, const MatType& gy, MatType& g)
 {
-  OutputType gyLocal;
+  MatType gyLocal;
   if (this->HasPreviousStep())
   {
     gyLocal = gy + output2GateOutputWeight.t() * outputGateError +
@@ -303,7 +297,7 @@ void LSTMType<InputType, OutputType>::Backward(
   else
   {
     // Make an alias.
-    gyLocal = OutputType(((OutputType&) gy).memptr(), gy.n_rows, gy.n_cols,
+    gyLocal = MatType(((MatType&) gy).memptr(), gy.n_rows, gy.n_cols,
         false, false);
   }
 
@@ -312,7 +306,7 @@ void LSTMType<InputType, OutputType>::Backward(
       (outputGateActivation.slice(this->CurrentStep()) %
       (1.0 - outputGateActivation.slice(this->CurrentStep())));
 
-  OutputType cellError = gyLocal %
+  MatType cellError = gyLocal %
       outputGateActivation.slice(this->CurrentStep()) %
       (1 - arma::pow(cellActivation.slice(this->CurrentStep()), 2)) +
       outputGateError.each_col() % cell2GateOutputWeight;
@@ -352,11 +346,11 @@ void LSTMType<InputType, OutputType>::Backward(
       input2GateOutputWeight.t() * outputGateError;
 }
 
-template<typename InputType, typename OutputType>
-void LSTMType<InputType, OutputType>::Gradient(
-    const InputType& input,
-    const OutputType& /* error */,
-    OutputType& gradient)
+template<typename MatType>
+void LSTMType<MatType>::Gradient(
+    const MatType& input,
+    const MatType& /* error */,
+    MatType& gradient)
 {
   // TODO: this depends on Gradient() being called just after Backward().  We
   // should document that assumption.
@@ -441,12 +435,11 @@ void LSTMType<InputType, OutputType>::Gradient(
   }
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void LSTMType<InputType, OutputType>::serialize(
-    Archive& ar, const uint32_t /* version */)
+void LSTMType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<RecurrentLayer<InputType, OutputType>>(this));
+  ar(cereal::base_class<RecurrentLayer<MatType>>(this));
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));

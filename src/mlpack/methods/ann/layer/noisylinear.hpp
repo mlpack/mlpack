@@ -24,14 +24,14 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the NoisyLinear layer class. It represents a single
  * layer of a neural network, with parametric noise added to its weights.
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
+ * @tparam MatType The type of the layer's inputs. The layer automatically
  *    cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
+ * @tparam MatType The type of the computation which also causes the output
  *    to also be in this type. The type also allows the computation and weight
  *    type to differ from the input type (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class NoisyLinearType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class NoisyLinearType : public Layer<MatType>
 {
  public:
   /**
@@ -57,7 +57,7 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   NoisyLinearType& operator=(NoisyLinearType&& other);
 
   //! Reset the layer parameter.
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   //! Reset the noise parameters (epsilons).
   void ResetNoise();
@@ -72,7 +72,7 @@ class NoisyLinearType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -83,9 +83,9 @@ class NoisyLinearType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -94,18 +94,18 @@ class NoisyLinearType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  MatType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the shape of the input.
   //! Modify the bias weights of the layer.
-  OutputType& Bias() { return bias; }
+  MatType& Bias() { return bias; }
 
   //! Compute the number of parameters in the layer.
   size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
@@ -125,38 +125,38 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   size_t inSize;
 
   //! Locally-stored weight object.
-  OutputType weights;
+  MatType weights;
 
   //! Locally-stored weight parameters.
-  OutputType weight;
+  MatType weight;
 
   //! Locally-stored weight-mean parameters.
-  OutputType weightMu;
+  MatType weightMu;
 
   //! Locally-stored weight-standard-deviation parameters.
-  OutputType weightSigma;
+  MatType weightSigma;
 
   //! Locally-stored weight-epsilon parameters.
-  OutputType weightEpsilon;
+  MatType weightEpsilon;
 
   //! Locally-stored bias parameters.
-  OutputType bias;
+  MatType bias;
 
   //! Locally-stored bias-mean parameters.
-  OutputType biasMu;
+  MatType biasMu;
 
   //! Locally-stored bias-standard-deviation parameters.
-  OutputType biasSigma;
+  MatType biasSigma;
 
   //! Locally-stored bias-epsilon parameters.
-  OutputType biasEpsilon;
+  MatType biasEpsilon;
 
 }; // class NoisyLinearType
 
 // Convenience typedefs.
 
 // Standard noisy linear layer.
-typedef NoisyLinearType<arma::mat, arma::mat> NoisyLinear;
+typedef NoisyLinearType<arma::mat> NoisyLinear;
 
 } // namespace ann
 } // namespace mlpack

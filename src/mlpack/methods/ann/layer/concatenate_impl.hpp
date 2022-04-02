@@ -19,61 +19,60 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
-ConcatenateType(const InputType& concat) :
+template<typename MatType>
+ConcatenateType<MatType>::
+ConcatenateType(const MatType& concat) :
     concat(concat)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
+template<typename MatType>
+ConcatenateType<MatType>::
 ConcatenateType(const ConcatenateType& other) :
-    Layer<InputType, OutputType>(other),
+    Layer<MatType>(other),
     concat(other.concat)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
+template<typename MatType>
+ConcatenateType<MatType>::
 ConcatenateType(ConcatenateType&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+    Layer<MatType>(std::move(other)),
     concat(other.concat)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>&
-ConcatenateType<InputType, OutputType>::operator=(const ConcatenateType& other)
+template<typename MatType>
+ConcatenateType<MatType>&
+ConcatenateType<MatType>::operator=(const ConcatenateType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     concat = other.concat;
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>&
-ConcatenateType<InputType, OutputType>::operator=(ConcatenateType&& other)
+template<typename MatType>
+ConcatenateType<MatType>&
+ConcatenateType<MatType>::operator=(ConcatenateType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     concat = std::move(other.concat);
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void ConcatenateType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void ConcatenateType<MatType>::Forward(const MatType& input, MatType& output)
 {
   if (concat.is_empty())
   {
@@ -86,18 +85,18 @@ void ConcatenateType<InputType, OutputType>::Forward(
       arma::repmat(arma::vectorise(concat), 1, input.n_cols);
 }
 
-template<typename InputType, typename OutputType>
-void ConcatenateType<InputType, OutputType>::Backward(
-    const InputType& /* input */,
-    const OutputType& gy,
-    OutputType& g)
+template<typename MatType>
+void ConcatenateType<MatType>::Backward(
+    const MatType& /* input */,
+    const MatType& gy,
+    MatType& g)
 {
   // Pass back the non-concatenated part.
   g = gy.submat(0, 0, gy.n_rows - 1 - concat.n_elem, gy.n_cols - 1);
 }
 
-template<typename InputType, typename OutputType>
-void ConcatenateType<InputType, OutputType>::ComputeOutputDimensions()
+template<typename MatType>
+void ConcatenateType<MatType>::ComputeOutputDimensions()
 {
   // This flattens the input.
   size_t inSize = this->inputDimensions[0];
@@ -112,12 +111,12 @@ void ConcatenateType<InputType, OutputType>::ComputeOutputDimensions()
   /**
    * Serialize the layer.
    */
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void ConcatenateType<InputType, OutputType>::serialize(
+void ConcatenateType<MatType>::serialize(
   Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(concat));
 }

@@ -43,14 +43,14 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
+ * @tparam MatType The type of the layer's inputs. The layer automatically
  *     cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
+ * @tparam MatType The type of the computation which also causes the output
  *     to also be in this type. The type also allows the computation and weight
  *     type to differ from the input type (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class DropConnectType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class DropConnectType : public Layer<MatType>
 {
  public:
   //! Create the DropConnect object.
@@ -87,7 +87,7 @@ class DropConnectType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of the DropConnect layer.
@@ -96,7 +96,7 @@ class DropConnectType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -105,9 +105,7 @@ class DropConnectType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param * (gradient) The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input, const MatType& error, MatType& gradient);
 
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
@@ -126,7 +124,7 @@ class DropConnectType : public Layer<InputType, OutputType>
   size_t WeightSize() const { return baseLayer->WeightSize(); }
 
   // Set the weights to use the given memory `weightsPtr`.
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Serialize the layer.
@@ -142,19 +140,19 @@ class DropConnectType : public Layer<InputType, OutputType>
   double scale;
 
   //! Locally-stored mask object.
-  OutputType mask;
+  MatType mask;
 
   //! Denoise mask for the weights.
-  OutputType denoise;
+  MatType denoise;
 
   //! Locally-stored layer module.
-  Layer<InputType, OutputType>* baseLayer;
+  Layer<MatType>* baseLayer;
 }; // class DropConnect.
 
 // Convenience typedefs.
 
 // Standard DropConnect layer.
-typedef DropConnectType<arma::mat, arma::mat> DropConnect;
+typedef DropConnectType<arma::mat> DropConnect;
 
 }  // namespace ann
 }  // namespace mlpack

@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann {
 
-template<typename InputType, typename OutputType>
-MultiLayer<InputType, OutputType>::MultiLayer() :
+template<typename MatType>
+MultiLayer<MatType>::MultiLayer() :
     inSize(0),
     totalInputSize(0),
     totalOutputSize(0)
@@ -27,9 +27,9 @@ MultiLayer<InputType, OutputType>::MultiLayer() :
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-MultiLayer<InputType, OutputType>::MultiLayer(const MultiLayer& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
+    Layer<MatType>(other),
     inSize(other.inSize),
     totalInputSize(other.totalInputSize),
     totalOutputSize(other.totalOutputSize),
@@ -41,17 +41,17 @@ MultiLayer<InputType, OutputType>::MultiLayer(const MultiLayer& other) :
     network.push_back(other.network[i]->Clone());
 
   // Ensure that the aliases for layers during passes have the right size.
-  layerOutputs.resize(network.size(), OutputType());
-  layerDeltas.resize(network.size(), OutputType());
-  layerGradients.resize(network.size(), OutputType());
+  layerOutputs.resize(network.size(), MatType());
+  layerDeltas.resize(network.size(), MatType());
+  layerGradients.resize(network.size(), MatType());
 
   // layerOutputs, layerDeltas, and layerGradients will be reset the next time
   // Forward(), Backward(), or Gradient() is called.
 }
 
-template<typename InputType, typename OutputType>
-MultiLayer<InputType, OutputType>::MultiLayer(MultiLayer&& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+MultiLayer<MatType>::MultiLayer(MultiLayer&& other) :
+    Layer<MatType>(other),
     network(std::move(other.network)),
     inSize(std::move(other.inSize)),
     totalInputSize(std::move(other.totalInputSize)),
@@ -60,9 +60,9 @@ MultiLayer<InputType, OutputType>::MultiLayer(MultiLayer&& other) :
     layerDeltaMatrix(std::move(other.layerDeltaMatrix))
 {
   // Ensure that the aliases for layers during passes have the right size.
-  layerOutputs.resize(network.size(), OutputType());
-  layerDeltas.resize(network.size(), OutputType());
-  layerGradients.resize(network.size(), OutputType());
+  layerOutputs.resize(network.size(), MatType());
+  layerDeltas.resize(network.size(), MatType());
+  layerGradients.resize(network.size(), MatType());
 
   // layerOutputs, layerDeltas, and layerGradients will be reset the next time
   // Forward(), Backward(), or Gradient() is called.
@@ -72,13 +72,12 @@ MultiLayer<InputType, OutputType>::MultiLayer(MultiLayer&& other) :
   other.layerGradients.clear();
 }
 
-template<typename InputType, typename OutputType>
-MultiLayer<InputType, OutputType>&
-MultiLayer<InputType, OutputType>::operator=(const MultiLayer& other)
+template<typename MatType>
+MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
 {
   if (this != &other)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
 
     network.clear();
     layerOutputs.clear();
@@ -96,21 +95,20 @@ MultiLayer<InputType, OutputType>::operator=(const MultiLayer& other)
       network.push_back(other.network[i]->Clone());
 
     // Ensure that the aliases for layers during passes have the right size.
-    layerOutputs.resize(network.size(), OutputType());
-    layerDeltas.resize(network.size(), OutputType());
-    layerGradients.resize(network.size(), OutputType());
+    layerOutputs.resize(network.size(), MatType());
+    layerDeltas.resize(network.size(), MatType());
+    layerGradients.resize(network.size(), MatType());
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-MultiLayer<InputType, OutputType>&
-MultiLayer<InputType, OutputType>::operator=(MultiLayer&& other)
+template<typename MatType>
+MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
 {
   if (this != &other)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
 
     layerOutputs.clear();
     layerDeltas.clear();
@@ -122,9 +120,9 @@ MultiLayer<InputType, OutputType>::operator=(MultiLayer&& other)
 
     network = std::move(other.network);
 
-    layerOutputs.resize(network.size(), OutputType());
-    layerDeltas.resize(network.size(), OutputType());
-    layerGradients.resize(network.size(), OutputType());
+    layerOutputs.resize(network.size(), MatType());
+    layerDeltas.resize(network.size(), MatType());
+    layerGradients.resize(network.size(), MatType());
 
     other.layerOutputs.clear();
     other.layerDeltas.clear();
@@ -134,17 +132,17 @@ MultiLayer<InputType, OutputType>::operator=(MultiLayer&& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void MultiLayer<MatType>::Forward(
+    const MatType& input, MatType& output)
 {
   Forward(input, output, 0, network.size() - 1);
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::Forward(
-    const InputType& input,
-    OutputType& output,
+template<typename MatType>
+void MultiLayer<MatType>::Forward(
+    const MatType& input,
+    MatType& output,
     const size_t start,
     const size_t end)
 {
@@ -175,9 +173,9 @@ void MultiLayer<InputType, OutputType>::Forward(
   }
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::Backward(
-    const InputType& input, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void MultiLayer<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
   if (network.size() > 1)
   {
@@ -200,9 +198,9 @@ void MultiLayer<InputType, OutputType>::Backward(
   }
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::Gradient(
-    const InputType& input, const OutputType& error, OutputType& gradient)
+template<typename MatType>
+void MultiLayer<MatType>::Gradient(
+    const MatType& input, const MatType& error, MatType& gradient)
 {
   // We assume gradient has the right size already.
 
@@ -231,9 +229,8 @@ void MultiLayer<InputType, OutputType>::Gradient(
   }
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+template<typename MatType>
+void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 {
   size_t start = 0;
   const size_t totalWeightSize = WeightSize();
@@ -258,8 +255,8 @@ void MultiLayer<InputType, OutputType>::SetWeights(
       "size!");
 }
 
-template<typename InputType, typename OutputType>
-size_t MultiLayer<InputType, OutputType>::WeightSize() const
+template<typename MatType>
+size_t MultiLayer<MatType>::WeightSize() const
 {
   // Sum the weights in each layer.
   size_t total = 0;
@@ -268,8 +265,8 @@ size_t MultiLayer<InputType, OutputType>::WeightSize() const
   return total;
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::ComputeOutputDimensions()
+template<typename MatType>
+void MultiLayer<MatType>::ComputeOutputDimensions()
 {
   inSize = 0;
   totalInputSize = 0;
@@ -301,8 +298,8 @@ void MultiLayer<InputType, OutputType>::ComputeOutputDimensions()
   this->outputDimensions = network.back()->OutputDimensions();
 }
 
-template<typename InputType, typename OutputType>
-double MultiLayer<InputType, OutputType>::Loss() const
+template<typename MatType>
+double MultiLayer<MatType>::Loss() const
 {
   double loss = 0.0;
   for (size_t i = 0; i < network.size(); ++i)
@@ -311,12 +308,12 @@ double MultiLayer<InputType, OutputType>::Loss() const
   return loss;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void MultiLayer<InputType, OutputType>::serialize(
+void MultiLayer<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_VECTOR_POINTER(network));
   ar(CEREAL_NVP(inSize));
@@ -328,15 +325,14 @@ void MultiLayer<InputType, OutputType>::serialize(
     layerOutputMatrix.clear();
     layerDeltaMatrix.clear();
     layerGradients.clear();
-    layerOutputs.resize(network.size(), OutputType());
-    layerDeltas.resize(network.size(), OutputType());
-    layerGradients.resize(network.size(), OutputType());
+    layerOutputs.resize(network.size(), MatType());
+    layerDeltas.resize(network.size(), MatType());
+    layerGradients.resize(network.size(), MatType());
   }
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::InitializeForwardPassMemory(
-    const size_t batchSize)
+template<typename MatType>
+void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
 {
   // We need to initialize memory to store the output of each layer's Forward()
   // call.  We'll do this all in one matrix, but, the size of this matrix
@@ -347,7 +343,7 @@ void MultiLayer<InputType, OutputType>::InitializeForwardPassMemory(
           std::floor(0.1 * layerOutputMatrix.n_elem))
   {
     // All outputs will be represented by one big block of memory.
-    layerOutputMatrix = OutputType(1, batchSize * totalOutputSize);
+    layerOutputMatrix = MatType(1, batchSize * totalOutputSize);
   }
 
   // Now, create an alias to the right place for each layer.  We assume that
@@ -362,8 +358,8 @@ void MultiLayer<InputType, OutputType>::InitializeForwardPassMemory(
   }
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::InitializeBackwardPassMemory(
+template<typename MatType>
+void MultiLayer<MatType>::InitializeBackwardPassMemory(
     const size_t batchSize)
 {
   // We need to initialize memory to store the output of each layer's Backward()
@@ -373,7 +369,7 @@ void MultiLayer<InputType, OutputType>::InitializeBackwardPassMemory(
       batchSize * totalInputSize < std::floor(0.1 * layerDeltaMatrix.n_elem))
   {
     // All deltas will be represented by one big block of memory.
-    layerDeltaMatrix = OutputType(1, batchSize * totalInputSize);
+    layerDeltaMatrix = MatType(1, batchSize * totalInputSize);
   }
 
   // Now, create an alias to the right place for each layer.  We assume that
@@ -397,9 +393,8 @@ void MultiLayer<InputType, OutputType>::InitializeBackwardPassMemory(
   }
 }
 
-template<typename InputType, typename OutputType>
-void MultiLayer<InputType, OutputType>::InitializeGradientPassMemory(
-    OutputType& gradient)
+template<typename MatType>
+void MultiLayer<MatType>::InitializeGradientPassMemory(MatType& gradient)
 {
   // We need to initialize memory to store the gradients of each layer.  To do
   // this, we need to know the weight size of each layer.

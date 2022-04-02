@@ -19,20 +19,20 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType() :
-    Layer<InputType, OutputType>(),
+template<typename MatType, typename RegularizerType>
+LinearType<MatType, RegularizerType>::LinearType() :
+    Layer<MatType>(),
     inSize(0),
     outSize(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
+template<typename MatType, typename RegularizerType>
+LinearType<MatType, RegularizerType>::LinearType(
     const size_t outSize,
     RegularizerType regularizer) :
-    Layer<InputType, OutputType>(),
+    Layer<MatType>(),
     inSize(0), // This will be computed in ComputeOutputDimensions().
     outSize(outSize),
     regularizer(regularizer)
@@ -41,10 +41,9 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType(
 }
 
 // Copy constructor.
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    const LinearType& layer) :
-    Layer<InputType, OutputType>(layer),
+template<typename MatType, typename RegularizerType>
+LinearType<MatType, RegularizerType>::LinearType(const LinearType& layer) :
+    Layer<MatType>(layer),
     inSize(layer.inSize),
     outSize(layer.outSize),
     regularizer(layer.regularizer)
@@ -53,10 +52,9 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType(
 }
 
 // Move constructor.
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    LinearType&& layer) :
-    Layer<InputType, OutputType>(std::move(layer)),
+template<typename MatType, typename RegularizerType>
+LinearType<MatType, RegularizerType>::LinearType(LinearType&& layer) :
+    Layer<MatType>(std::move(layer)),
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
     regularizer(std::move(layer.regularizer))
@@ -64,14 +62,13 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType(
   // Nothing else to do.
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>&
-LinearType<InputType, OutputType, RegularizerType>::operator=(
-    const LinearType& layer)
+template<typename MatType, typename RegularizerType>
+LinearType<MatType, RegularizerType>&
+LinearType<MatType, RegularizerType>::operator=(const LinearType& layer)
 {
   if (&layer != this)
   {
-    Layer<InputType, OutputType>::operator=(layer);
+    Layer<MatType>::operator=(layer);
     inSize = layer.inSize;
     outSize = layer.outSize;
     regularizer = layer.regularizer;
@@ -80,14 +77,14 @@ LinearType<InputType, OutputType, RegularizerType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>&
-LinearType<InputType, OutputType, RegularizerType>::operator=(
+template<typename MatType, typename RegularizerType>
+LinearType<MatType, RegularizerType>&
+LinearType<MatType, RegularizerType>::operator=(
     LinearType&& layer)
 {
   if (&layer != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(layer));
+    Layer<MatType>::operator=(std::move(layer));
     inSize = std::move(layer.inSize);
     outSize = std::move(layer.outSize);
     regularizer = std::move(layer.regularizer);
@@ -96,35 +93,35 @@ LinearType<InputType, OutputType, RegularizerType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<InputType, OutputType, RegularizerType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+template<typename MatType, typename RegularizerType>
+void LinearType<MatType, RegularizerType>::SetWeights(
+    typename MatType::elem_type* weightsPtr)
 {
-  weights = OutputType(weightsPtr, outSize * inSize + outSize, 1, false, false);
-  weight = OutputType(weightsPtr, outSize, inSize, false, false);
-  bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, false);
+  weights = MatType(weightsPtr, outSize * inSize + outSize, 1, false, false);
+  weight = MatType(weightsPtr, outSize, inSize, false, false);
+  bias = MatType(weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<InputType, OutputType, RegularizerType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType, typename RegularizerType>
+void LinearType<MatType, RegularizerType>::Forward(
+    const MatType& input, MatType& output)
 {
   output = weight * input;
   output.each_col() += bias;
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<InputType, OutputType, RegularizerType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+template<typename MatType, typename RegularizerType>
+void LinearType<MatType, RegularizerType>::Backward(
+    const MatType& /* input */, const MatType& gy, MatType& g)
 {
   g = weight.t() * gy;
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<InputType, OutputType, RegularizerType>::Gradient(
-    const InputType& input,
-    const OutputType& error,
-    OutputType& gradient)
+template<typename MatType, typename RegularizerType>
+void LinearType<MatType, RegularizerType>::Gradient(
+    const MatType& input,
+    const MatType& error,
+    MatType& gradient)
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
@@ -134,10 +131,8 @@ void LinearType<InputType, OutputType, RegularizerType>::Gradient(
   regularizer.Evaluate(weights, gradient);
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<
-    InputType, OutputType, RegularizerType
->::ComputeOutputDimensions()
+template<typename MatType, typename RegularizerType>
+void LinearType<MatType, RegularizerType>::ComputeOutputDimensions()
 {
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
@@ -149,12 +144,12 @@ void LinearType<
   this->outputDimensions[0] = outSize;
 }
 
-template<typename InputType, typename OutputType, typename RegularizerType>
+template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void LinearType<InputType, OutputType, RegularizerType>::serialize(
+void LinearType<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));

@@ -22,16 +22,13 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Padding module class. The Padding module applies a bias term
  * to the incoming data.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class PaddingType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class PaddingType : public Layer<MatType>
 {
  public:
   /**
@@ -59,7 +56,7 @@ class PaddingType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -70,9 +67,9 @@ class PaddingType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   //! Get the left padding width.
   size_t PadWLeft() const { return padWLeft; }
@@ -121,7 +118,7 @@ class PaddingType : public Layer<InputType, OutputType>
 }; // class PaddingType
 
 // Standard Padding layer.
-typedef PaddingType<arma::mat, arma::mat> Padding;
+typedef PaddingType<arma::mat> Padding;
 
 } // namespace ann
 } // namespace mlpack

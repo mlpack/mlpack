@@ -19,21 +19,21 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>::MaxPoolingType() :
-    Layer<InputType, OutputType>()
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType() :
+    Layer<MatType>()
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>::MaxPoolingType(
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor) :
-    Layer<InputType, OutputType>(),
+    Layer<MatType>(),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
@@ -45,10 +45,10 @@ MaxPoolingType<InputType, OutputType>::MaxPoolingType(
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>::MaxPoolingType(
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType(
     const MaxPoolingType& other) :
-    Layer<InputType, OutputType>(other),
+    Layer<MatType>(other),
     kernelWidth(other.kernelWidth),
     kernelHeight(other.kernelHeight),
     strideWidth(other.strideWidth),
@@ -61,10 +61,10 @@ MaxPoolingType<InputType, OutputType>::MaxPoolingType(
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>::MaxPoolingType(
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType(
     MaxPoolingType&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+    Layer<MatType>(std::move(other)),
     kernelWidth(std::move(other.kernelWidth)),
     kernelHeight(std::move(other.kernelHeight)),
     strideWidth(std::move(other.strideWidth)),
@@ -77,14 +77,13 @@ MaxPoolingType<InputType, OutputType>::MaxPoolingType(
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>&
-MaxPoolingType<InputType, OutputType>::operator=(
-    const MaxPoolingType& other)
+template<typename MatType>
+MaxPoolingType<MatType>&
+MaxPoolingType<MatType>::operator=(const MaxPoolingType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     kernelWidth = other.kernelWidth;
     kernelHeight = other.kernelHeight;
     strideWidth = other.strideWidth;
@@ -98,14 +97,13 @@ MaxPoolingType<InputType, OutputType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-MaxPoolingType<InputType, OutputType>&
-MaxPoolingType<InputType, OutputType>::operator=(
-    MaxPoolingType&& other)
+template<typename MatType>
+MaxPoolingType<MatType>&
+MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     kernelWidth = std::move(other.kernelWidth);
     kernelHeight = std::move(other.kernelHeight);
     strideWidth = std::move(other.strideWidth);
@@ -119,15 +117,14 @@ MaxPoolingType<InputType, OutputType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void MaxPoolingType<InputType, OutputType>::Forward(
-  const InputType& input, OutputType& output)
+template<typename MatType>
+void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  arma::Cube<typename InputType::elem_type> inputTemp(
-      const_cast<InputType&>(input).memptr(), this->inputDimensions[0],
+  arma::Cube<typename MatType::elem_type> inputTemp(
+      const_cast<MatType&>(input).memptr(), this->inputDimensions[0],
       this->inputDimensions[1], input.n_cols * channels, false, false);
 
-  arma::Cube<typename OutputType::elem_type> outputTemp(output.memptr(),
+  arma::Cube<typename MatType::elem_type> outputTemp(output.memptr(),
       this->outputDimensions[0], this->outputDimensions[1],
       input.n_cols * channels, false, true);
 
@@ -146,16 +143,16 @@ void MaxPoolingType<InputType, OutputType>::Forward(
   }
 }
 
-template<typename InputType, typename OutputType>
-void MaxPoolingType<InputType, OutputType>::Backward(
-    const InputType& input, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void MaxPoolingType<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
-  arma::Cube<typename OutputType::elem_type> mappedError =
-      arma::Cube<typename OutputType::elem_type>(((OutputType&) gy).memptr(),
+  arma::Cube<typename MatType::elem_type> mappedError =
+      arma::Cube<typename MatType::elem_type>(((MatType&) gy).memptr(),
       this->outputDimensions[0], this->outputDimensions[1],
       channels * input.n_cols, false, false);
 
-  arma::Cube<typename OutputType::elem_type> gTemp(g.memptr(),
+  arma::Cube<typename MatType::elem_type> gTemp(g.memptr(),
       this->inputDimensions[0], this->inputDimensions[1],
       channels * input.n_cols, false, true);
 
@@ -164,8 +161,8 @@ void MaxPoolingType<InputType, OutputType>::Backward(
   UnpoolingOperation(mappedError, gTemp, poolingIndices);
 }
 
-template<typename InputType, typename OutputType>
-void MaxPoolingType<InputType, OutputType>::ComputeOutputDimensions()
+template<typename MatType>
+void MaxPoolingType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -195,14 +192,14 @@ void MaxPoolingType<InputType, OutputType>::ComputeOutputDimensions()
     channels *= this->inputDimensions[i];
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void MaxPoolingType<InputType, OutputType>::serialize(
+void MaxPoolingType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));

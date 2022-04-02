@@ -45,17 +45,14 @@ namespace ann {
  * Forward(), Backward() and Gradient().  The weights of the layers are tracked
  * in layer.Parameters().
  *
- * @tparam InputType The type of the layer's inputs. Layers automatically cast
+ * @tparam MatType The type of the layer's inputs. Layers automatically cast
  *     inputs to this type (default: arma::mat).
- * @tparam OutputType The type of the layer's computation which also causes the
+ * @tparam MatType The type of the layer's computation which also causes the
  *     computations and output to also be in this type. The type also allows the
  *     computation and weight type to differ from the input type
  *     (default: arma::mat).
  */
-template<
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
+template<typename MatType = arma::mat>
 class Layer
 {
  public:
@@ -122,8 +119,8 @@ class Layer
    * @param * (input) Input data used for evaluating the specified layer.
    * @param * (output) Resulting output.
    */
-  virtual void Forward(const InputType& /* input */,
-                       OutputType& /* output */)
+  virtual void Forward(const MatType& /* input */,
+                       MatType& /* output */)
   { /* Nothing to do here */ }
 
   /**
@@ -135,8 +132,8 @@ class Layer
    * @param * (input) Input data used for evaluating the specified layer.
    * @param * (output) Resulting output.
    */
-  virtual void Forward(const InputType& /* input */,
-                       const OutputType& /* output */)
+  virtual void Forward(const MatType& /* input */,
+                       const MatType& /* output */)
   { /* Nothing to do here */ }
 
   /**
@@ -160,9 +157,9 @@ class Layer
    * @param * (gy) The backpropagated error.
    * @param * (g) The calculated gradient.
    */
-  virtual void Backward(const InputType& /* input */,
-                        const OutputType& /* gy */,
-                        OutputType& /* g */)
+  virtual void Backward(const MatType& /* input */,
+                        const MatType& /* gy */,
+                        MatType& /* g */)
   { /* Nothing to do here */ }
 
   /**
@@ -177,9 +174,9 @@ class Layer
    * @param * (error) The calculated error.
    * @param * (gradient) The calculated gradient.
    */
-  virtual void Gradient(const InputType& /* input */,
-                        const OutputType& /* error */,
-                        OutputType& /* gradient */)
+  virtual void Gradient(const MatType& /* input */,
+                        const MatType& /* error */,
+                        MatType& /* gradient */)
   { /* Nothing to do here */ }
 
   /**
@@ -189,7 +186,7 @@ class Layer
    * do not respect this rule, Forward(input, output) and Backward(input, gy, g)
    * might compute incorrect results.
    */
-  virtual void SetWeights(typename OutputType::elem_type* /* weightsPtr */) { }
+  virtual void SetWeights(typename MatType::elem_type* /* weightsPtr */) { }
 
   virtual size_t WeightSize() const { return 0; }
 
@@ -239,13 +236,13 @@ class Layer
   }
 
   //! Get the parameters.
-  virtual const OutputType& Parameters() const
+  virtual const MatType& Parameters() const
   {
     throw std::invalid_argument("Layer::Parameters(): cannot access parameters "
         "of a layer with no weights!");
   }
   //! Set the parameters.
-  virtual OutputType& Parameters()
+  virtual MatType& Parameters()
   {
     throw std::invalid_argument("Layer::Parameters(): cannot modify parameters "
         "of a layer with no weights!");

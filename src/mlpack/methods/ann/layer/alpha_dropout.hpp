@@ -40,14 +40,13 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template<typename InputType = arma::mat,
-         typename OutputType = arma::mat>
-class AlphaDropout : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class AlphaDropoutType : public Layer<MatType>
 {
  public:
   /**
@@ -56,25 +55,25 @@ class AlphaDropout : public Layer<InputType, OutputType>
    * @param ratio The probability of setting a value to alphaDash.
    * @param alphaDash The dropout scaling parameter.
    */
-  AlphaDropout(const double ratio = 0.5,
+  AlphaDropoutType(const double ratio = 0.5,
                const double alphaDash = -alpha * lambda);
 
   /**
    * Clone the DropoutType object. This handles polymorphism correctly.
    */
-  AlphaDropout* Clone() const { return new AlphaDropout(*this); }
+  AlphaDropoutType* Clone() const { return new AlphaDropoutType(*this); }
 
   // Virtual destructor.
-  virtual ~AlphaDropout() { }
+  virtual ~AlphaDropoutType() { }
 
-  //! Copy the given AlphaDropout layer.
-  AlphaDropout(const AlphaDropout& other);
-  //! Take ownership of the given AlphaDropout layer.
-  AlphaDropout(AlphaDropout&& other);
-  //! Copy the given AlphaDropout layer.
-  AlphaDropout& operator=(const AlphaDropout& other);
-  //! Take ownership of the given AlphaDropout layer.
-  AlphaDropout& operator=(AlphaDropout&& other);
+  //! Copy the given AlphaDropoutType layer.
+  AlphaDropoutType(const AlphaDropoutType& other);
+  //! Take ownership of the given AlphaDropoutType layer.
+  AlphaDropoutType(AlphaDropoutType&& other);
+  //! Copy the given AlphaDropoutType layer.
+  AlphaDropoutType& operator=(const AlphaDropoutType& other);
+  //! Take ownership of the given AlphaDropoutType layer.
+  AlphaDropoutType& operator=(AlphaDropoutType&& other);
 
   /**
    * Ordinary feed forward pass of the alpha_dropout layer.
@@ -82,7 +81,7 @@ class AlphaDropout : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of the alpha_dropout layer.
@@ -91,9 +90,7 @@ class AlphaDropout : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */, const MatType& gy, MatType& g);
 
   //! The probability of setting a value to alphaDash.
   double Ratio() const { return ratio; }
@@ -108,7 +105,7 @@ class AlphaDropout : public Layer<InputType, OutputType>
   double AlphaDash() const { return alphaDash; }
 
   //! Get the mask.
-  const OutputType& Mask() const { return mask; }
+  const MatType& Mask() const { return mask; }
 
   //! Modify the probability of setting a value to alphaDash. As
   //! 'a' and 'b' depend on 'ratio', modify them as well.
@@ -127,7 +124,7 @@ class AlphaDropout : public Layer<InputType, OutputType>
 
  private:
   //! Locally-stored mask object.
-  OutputType mask;
+  MatType mask;
 
   //! The probability of setting a value to aplhaDash.
   double ratio;
@@ -146,7 +143,9 @@ class AlphaDropout : public Layer<InputType, OutputType>
 
   //! Value to be added to a*x for affine transformation.
   double b;
-}; // class AlphaDropout
+}; // class AlphaDropoutType
+
+typedef AlphaDropoutType<arma::mat> AlphaDropout;
 
 } // namespace ann
 } // namespace mlpack

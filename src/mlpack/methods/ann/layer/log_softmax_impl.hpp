@@ -18,57 +18,54 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-LogSoftMaxType<InputType, OutputType>::LogSoftMaxType()
+template<typename MatType>
+LogSoftMaxType<MatType>::LogSoftMaxType()
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LogSoftMaxType<InputType, OutputType>::LogSoftMaxType(
-    const LogSoftMaxType& other) :
-    Layer<InputType, OutputType>(other)
+template<typename MatType>
+LogSoftMaxType<MatType>::LogSoftMaxType(const LogSoftMaxType& other) :
+    Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LogSoftMaxType<InputType, OutputType>::LogSoftMaxType(
-    LogSoftMaxType&& other) :
-    Layer<InputType, OutputType>(std::move(other))
+template<typename MatType>
+LogSoftMaxType<MatType>::LogSoftMaxType(LogSoftMaxType&& other) :
+    Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-LogSoftMaxType<InputType, OutputType>&
-LogSoftMaxType<InputType, OutputType>::operator=(const LogSoftMaxType& other)
+template<typename MatType>
+LogSoftMaxType<MatType>&
+LogSoftMaxType<MatType>::operator=(const LogSoftMaxType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-LogSoftMaxType<InputType, OutputType>&
-LogSoftMaxType<InputType, OutputType>::operator=(LogSoftMaxType&& other)
+template<typename MatType>
+LogSoftMaxType<MatType>&
+LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void LogSoftMaxType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  InputType maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
+  MatType maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
 
   // Approximation of the base-e exponential function. The acuracy however is
@@ -100,11 +97,11 @@ void LogSoftMaxType<InputType, OutputType>::Forward(
   output = input - maxInput;
 }
 
-template<typename InputType, typename OutputType>
-void LogSoftMaxType<InputType, OutputType>::Backward(
-    const InputType& input,
-    const OutputType& gy,
-    OutputType& g)
+template<typename MatType>
+void LogSoftMaxType<MatType>::Backward(
+    const MatType& input,
+    const MatType& gy,
+    MatType& g)
 {
   g = arma::exp(input) + gy;
 }

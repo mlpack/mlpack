@@ -22,38 +22,37 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>::DropConnectType() :
-    Layer<InputType, OutputType>(),
+template<typename MatType>
+DropConnectType<MatType>::DropConnectType() :
+    Layer<MatType>(),
     ratio(0.5),
     scale(2.0),
-    baseLayer(new LinearType<InputType, OutputType>(0))
+    baseLayer(new LinearType<MatType>(0))
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>::DropConnectType(
+template<typename MatType>
+DropConnectType<MatType>::DropConnectType(
     const size_t outSize,
     const double ratio) :
-    Layer<InputType, OutputType>(),
+    Layer<MatType>(),
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    baseLayer(new LinearType<InputType, OutputType>(outSize))
+    baseLayer(new LinearType<MatType>(outSize))
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>::~DropConnectType()
+template<typename MatType>
+DropConnectType<MatType>::~DropConnectType()
 {
   delete baseLayer;
 }
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>::DropConnectType(
-    const DropConnectType& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+DropConnectType<MatType>::DropConnectType(const DropConnectType& other) :
+    Layer<MatType>(other),
     ratio(other.ratio),
     scale(other.scale),
     baseLayer(other.baseLayer->Clone())
@@ -61,10 +60,9 @@ DropConnectType<InputType, OutputType>::DropConnectType(
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>::DropConnectType(
-    DropConnectType&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+template<typename MatType>
+DropConnectType<MatType>::DropConnectType(DropConnectType&& other) :
+    Layer<MatType>(std::move(other)),
     ratio(std::move(other.ratio)),
     scale(std::move(other.scale)),
     baseLayer(std::move(other.baseLayer))
@@ -72,14 +70,13 @@ DropConnectType<InputType, OutputType>::DropConnectType(
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>&
-DropConnectType<InputType, OutputType>::operator=(
-    const DropConnectType& other)
+template<typename MatType>
+DropConnectType<MatType>&
+DropConnectType<MatType>::operator=(const DropConnectType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     ratio = other.ratio;
     scale = other.scale;
     baseLayer = other.baseLayer->Clone();
@@ -88,14 +85,13 @@ DropConnectType<InputType, OutputType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-DropConnectType<InputType, OutputType>&
-DropConnectType<InputType, OutputType>::operator=(
-    DropConnectType&& other)
+template<typename MatType>
+DropConnectType<MatType>&
+DropConnectType<MatType>::operator=(DropConnectType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     ratio = std::move(other.ratio);
     scale = std::move(other.scale);
     baseLayer = std::move(other.baseLayer);
@@ -104,10 +100,8 @@ DropConnectType<InputType, OutputType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void DropConnectType<InputType, OutputType>::Forward(
-    const InputType& input,
-    OutputType& output)
+template<typename MatType>
+void DropConnectType<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The DropConnect mask will not be multiplied in testing mode.
   if (!this->training)
@@ -121,7 +115,7 @@ void DropConnectType<InputType, OutputType>::Forward(
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
-    mask = arma::randu<OutputType>(denoise.n_rows, denoise.n_cols);
+    mask = arma::randu<MatType>(denoise.n_rows, denoise.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
 
     baseLayer->Parameters() = denoise % mask;
@@ -131,20 +125,20 @@ void DropConnectType<InputType, OutputType>::Forward(
   }
 }
 
-template<typename InputType, typename OutputType>
-void DropConnectType<InputType, OutputType>::Backward(
-    const InputType& input,
-    const OutputType& gy,
-    OutputType& g)
+template<typename MatType>
+void DropConnectType<MatType>::Backward(
+    const MatType& input,
+    const MatType& gy,
+    MatType& g)
 {
   baseLayer->Backward(input, gy, g);
 }
 
-template<typename InputType, typename OutputType>
-void DropConnectType<InputType, OutputType>::Gradient(
-    const InputType& input,
-    const OutputType& error,
-    OutputType& gradient)
+template<typename MatType>
+void DropConnectType<MatType>::Gradient(
+    const MatType& input,
+    const MatType& error,
+    MatType& gradient)
 {
   baseLayer->Gradient(input, error, gradient);
 
@@ -152,27 +146,27 @@ void DropConnectType<InputType, OutputType>::Gradient(
   baseLayer->Parameters() = denoise;
 }
 
-template<typename InputType, typename OutputType>
-void DropConnectType<InputType, OutputType>::ComputeOutputDimensions()
+template<typename MatType>
+void DropConnectType<MatType>::ComputeOutputDimensions()
 {
   // Propagate input dimensions to the base layer.
   baseLayer->InputDimensions() = this->inputDimensions;
   this->outputDimensions = baseLayer->OutputDimensions();
 }
 
-template<typename InputType, typename OutputType>
-void DropConnectType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+template<typename MatType>
+void DropConnectType<MatType>::SetWeights(
+    typename MatType::elem_type* weightsPtr)
 {
   baseLayer->SetWeights(weightsPtr);
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void DropConnectType<InputType, OutputType>::serialize(
+void DropConnectType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(scale));

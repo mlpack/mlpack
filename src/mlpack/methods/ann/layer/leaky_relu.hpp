@@ -34,14 +34,14 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
+ * @tparam MatType The type of the layer's inputs. The layer automatically
  *     cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
+ * @tparam MatType The type of the computation which also causes the output
  *     to also be in this type. The type also allows the computation and weight
  *     type to differ from the input type (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class LeakyReLUType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class LeakyReLUType : public Layer<MatType>
 {
  public:
   /**
@@ -75,7 +75,7 @@ class LeakyReLUType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -86,7 +86,7 @@ class LeakyReLUType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
@@ -105,7 +105,7 @@ class LeakyReLUType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard LeakyReLU layer.
-typedef LeakyReLUType<arma::mat, arma::mat> LeakyReLU;
+typedef LeakyReLUType<arma::mat> LeakyReLU;
 
 
 } // namespace ann

@@ -30,20 +30,19 @@ namespace ann /** Artificial Neural Network. */ {
  * must be either a vector or matrix. If the input is a matrix, then each column
  * is assumed to be an input sample of given batch.
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
+ * @tparam MatType The type of the layer's inputs. The layer automatically
  *    cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
+ * @tparam MatType The type of the computation which also causes the output
  *    to also be in this type. The type also allows the computation and weight
  *    type to differ from the input type (Default: arma::mat).
  * @tparam RegularizerType Type of the regularizer to be used (Default no
  *    regularizer).
  */
 template<
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat,
+    typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearType: public Layer<InputType, OutputType>
+class LinearType : public Layer<MatType>
 {
  public:
   //! Create the Linear object.
@@ -81,7 +80,7 @@ class LinearType: public Layer<InputType, OutputType>
    * Reset the layer parameter (weights and bias). The method is called to
    * assign the allocated memory to the internal learnable parameters.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -93,7 +92,7 @@ class LinearType: public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -106,9 +105,9 @@ class LinearType: public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -117,24 +116,24 @@ class LinearType: public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  const OutputType& Parameters() const { return weights; }
+  const MatType& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  OutputType const& Weight() const { return weight; }
+  MatType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
-  OutputType& Weight() { return weight; }
+  MatType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  OutputType const& Bias() const { return bias; }
+  MatType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
-  OutputType& Bias() { return bias; }
+  MatType& Bias() { return bias; }
 
   //! Get the size of the weights.
   size_t WeightSize() const { return (inSize * outSize) + outSize; }
@@ -154,13 +153,13 @@ class LinearType: public Layer<InputType, OutputType>
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputType weights;
+  MatType weights;
 
   //! Locally-stored weight parameters.
-  OutputType weight;
+  MatType weight;
 
   //! Locally-stored bias term parameters.
-  OutputType bias;
+  MatType bias;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
@@ -169,7 +168,7 @@ class LinearType: public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard Linear layer using no regularization.
-typedef LinearType<arma::mat, arma::mat, NoRegularizer> Linear;
+typedef LinearType<arma::mat, NoRegularizer> Linear;
 
 } // namespace ann
 } // namespace mlpack

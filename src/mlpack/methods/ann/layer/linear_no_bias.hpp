@@ -25,20 +25,19 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the LinearNoBias class. The LinearNoBias class represents a
  * single layer of a neural network.
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
+ * @tparam MatType The type of the layer's inputs. The layer automatically
  *    cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
+ * @tparam MatType The type of the computation which also causes the output
  *    to also be in this type. The type also allows the computation and weight
  *    type to differ from the input type (Default: arma::mat).
  * @tparam RegularizerType Type of the regularizer to be used (Default no
  *    regularizer).
  */
 template<
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat,
+    typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearNoBiasType : public Layer<InputType, OutputType>
+class LinearNoBiasType : public Layer<MatType>
 {
  public:
   //! Create the LinearNoBias object.
@@ -57,7 +56,7 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
 
   //! Reset the layer parameter.
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   //! Copy constructor.
   LinearNoBiasType(const LinearNoBiasType& layer);
@@ -81,7 +80,7 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -92,9 +91,9 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -103,14 +102,14 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  const OutputType& Parameters() const { return weight; }
+  const MatType& Parameters() const { return weight; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weight; }
+  MatType& Parameters() { return weight; }
 
   //! Get the number of weights in the layer.
   size_t WeightSize() const { return inSize * outSize; }
@@ -130,7 +129,7 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   size_t outSize;
 
   //! Locally-stored weight parameter.
-  OutputType weight;
+  MatType weight;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
@@ -139,7 +138,7 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard Linear without bias layer using no regularization.
-typedef LinearNoBiasType<arma::mat, arma::mat, NoRegularizer> LinearNoBias;
+typedef LinearNoBiasType<arma::mat, NoRegularizer> LinearNoBias;
 
 } // namespace ann
 } // namespace mlpack

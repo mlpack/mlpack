@@ -22,8 +22,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-AlphaDropout<InputType, OutputType>::AlphaDropout(
+template<typename MatType>
+AlphaDropoutType<MatType>::AlphaDropoutType(
     const double ratio,
     const double alphaDash) :
     ratio(ratio),
@@ -32,9 +32,9 @@ AlphaDropout<InputType, OutputType>::AlphaDropout(
   Ratio(ratio);
 }
 
-template<typename InputType, typename OutputType>
-AlphaDropout<InputType, OutputType>::AlphaDropout(const AlphaDropout& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+AlphaDropoutType<MatType>::AlphaDropoutType(const AlphaDropoutType& other) :
+    Layer<MatType>(other),
     mask(other.mask),
     ratio(other.ratio),
     alphaDash(other.alphaDash),
@@ -44,9 +44,9 @@ AlphaDropout<InputType, OutputType>::AlphaDropout(const AlphaDropout& other) :
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-AlphaDropout<InputType, OutputType>::AlphaDropout(AlphaDropout&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+template<typename MatType>
+AlphaDropoutType<MatType>::AlphaDropoutType(AlphaDropoutType&& other) :
+    Layer<MatType>(std::move(other)),
     mask(std::move(other.mask)),
     ratio(std::move(other.ratio)),
     alphaDash(std::move(other.alphaDash)),
@@ -56,13 +56,13 @@ AlphaDropout<InputType, OutputType>::AlphaDropout(AlphaDropout&& other) :
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-AlphaDropout<InputType, OutputType>&
-AlphaDropout<InputType, OutputType>::operator=(const AlphaDropout& other)
+template<typename MatType>
+AlphaDropoutType<MatType>&
+AlphaDropoutType<MatType>::operator=(const AlphaDropoutType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     mask = other.mask;
     ratio = other.ratio;
     alphaDash = other.alphaDash;
@@ -73,13 +73,13 @@ AlphaDropout<InputType, OutputType>::operator=(const AlphaDropout& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-AlphaDropout<InputType, OutputType>&
-AlphaDropout<InputType, OutputType>::operator=(AlphaDropout&& other)
+template<typename MatType>
+AlphaDropoutType<MatType>&
+AlphaDropoutType<MatType>::operator=(AlphaDropoutType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     mask = std::move(other.mask);
     ratio = std::move(other.ratio);
     alphaDash = std::move(other.alphaDash);
@@ -90,9 +90,8 @@ AlphaDropout<InputType, OutputType>::operator=(AlphaDropout&& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void AlphaDropout<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void AlphaDropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The dropout mask will not be multiplied during testing.
   if (!this->training)
@@ -104,25 +103,25 @@ void AlphaDropout<InputType, OutputType>::Forward(
     // Set values to alphaDash with probability ratio.  Then apply affine
     // transformation so as to keep mean and variance of outputs to their
     // original values.
-    mask = arma::randu<InputType>(input.n_rows, input.n_cols);
+    mask = arma::randu<MatType>(input.n_rows, input.n_cols);
     mask.transform( [&](double val) { return (val > ratio); } );
     output = (input % mask + alphaDash * (1 - mask)) * a + b;
   }
 }
 
-template<typename InputType, typename OutputType>
-void AlphaDropout<InputType, OutputType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void AlphaDropoutType<MatType>::Backward(
+    const MatType& /* input */, const MatType& gy, MatType& g)
 {
   g = gy % mask * a;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void AlphaDropout<InputType, OutputType>::serialize(
+void AlphaDropoutType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(alphaDash));

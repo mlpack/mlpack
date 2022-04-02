@@ -19,89 +19,87 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>::AddType() : outSize(0)
+template<typename MatType>
+AddType<MatType>::AddType() : outSize(0)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>::AddType(const AddType& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+AddType<MatType>::AddType(const AddType& other) :
+    Layer<MatType>(other),
     outSize(other.outSize)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>::AddType(AddType&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+template<typename MatType>
+AddType<MatType>::AddType(AddType&& other) :
+    Layer<MatType>(std::move(other)),
     outSize(std::move(other.outSize))
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>&
-AddType<InputType, OutputType>::operator=(const AddType& other)
+template<typename MatType>
+AddType<MatType>&
+AddType<MatType>::operator=(const AddType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     outSize = other.outSize;
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>&
-AddType<InputType, OutputType>::operator=(AddType&& other)
+template<typename MatType>
+AddType<MatType>&
+AddType<MatType>::operator=(AddType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     outSize = std::move(other.outSize);
   }
 
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void AddType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void AddType<MatType>::Forward(const MatType& input, MatType& output)
 {
   output = input + arma::repmat(arma::vectorise(weights), 1, input.n_cols);
 }
 
-template<typename InputType, typename OutputType>
-void AddType<InputType, OutputType>::Backward(
-    const InputType& /* input */,
-    const OutputType& gy,
-    OutputType& g)
+template<typename MatType>
+void AddType<MatType>::Backward(
+    const MatType& /* input */,
+    const MatType& gy,
+    MatType& g)
 {
   g = gy;
 }
 
-template<typename InputType, typename OutputType>
-void AddType<InputType, OutputType>::Gradient(
-    const InputType& /* input */,
-    const OutputType& error,
-    OutputType& gradient)
+template<typename MatType>
+void AddType<MatType>::Gradient(
+    const MatType& /* input */,
+    const MatType& error,
+    MatType& gradient)
 {
   gradient = error;
 }
 
-template<typename InputType, typename OutputType>
-void AddType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightPtr)
+template<typename MatType>
+void AddType<MatType>::SetWeights(typename MatType::elem_type* weightPtr)
 {
   // Set the weights to wrap the given memory.
-  weights = OutputType(weightPtr, 1, outSize, false, true);
+  weights = MatType(weightPtr, 1, outSize, false, true);
 }
 
-template<typename InputType, typename OutputType>
-void AddType<InputType, OutputType>::ComputeOutputDimensions()
+template<typename MatType>
+void AddType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -110,12 +108,11 @@ void AddType<InputType, OutputType>::ComputeOutputDimensions()
     outSize *= this->outputDimensions[i];
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void AddType<InputType, OutputType>::serialize(
-    Archive& ar, const uint32_t /* version */)
+void AddType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(weights));

@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_RBF_HPP
-#define MLPACK_METHODS_ANN_LAYER_RBF_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_RBFType_HPP
+#define MLPACK_METHODS_ANN_LAYER_RBFType_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
@@ -23,7 +23,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 /**
- * Implementation of the Radial Basis Function layer. The RBF class when use
+ * Implementation of the Radial Basis Function layer. The RBFType class when use
  * with a non-linear activation function acts as a Radial Basis Function which
  * can be used with Feed-Forward neural network.
  *
@@ -38,23 +38,22 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam Activation Type of the activation function (mlpack::ann::Gaussian).
  */
 
 template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat,
+    typename MatType = arma::mat,
     typename Activation = GaussianFunction
 >
-class RBF : public Layer<InputType, OutputType>
+class RBFType : public Layer<MatType>
 {
  public:
-  //! Create the RBF object.
-  RBF();
+  //! Create the RBFType object.
+  RBFType();
 
   /**
    * Create the Radial Basis Function layer object using the specified
@@ -64,24 +63,24 @@ class RBF : public Layer<InputType, OutputType>
    * @param centres The centres calculated using k-means of data.
    * @param betas The beta value to be used with centres.
    */
-  RBF(const size_t outSize,
-      InputType& centres,
+  RBFType(const size_t outSize,
+      MatType& centres,
       double betas = 0);
 
   //! Clone the LinearType object. This handles polymorphism correctly.
-  RBF* Clone() const { return new RBF(*this); }
+  RBFType* Clone() const { return new RBFType(*this); }
 
   // Virtual destructor.
-  virtual ~RBF() { }
+  virtual ~RBFType() { }
 
-  //! Copy the given RBF layer.
-  RBF(const RBF& other);
-  //! Take ownership of the given RBF layer.
-  RBF(RBF&& other);
-  //! Copy the given RBF layer.
-  RBF& operator=(const RBF& other);
-  //! Take ownership of the given RBF layer.
-  RBF& operator=(RBF&& other);
+  //! Copy the given RBFType layer.
+  RBFType(const RBFType& other);
+  //! Take ownership of the given RBFType layer.
+  RBFType(RBFType&& other);
+  //! Copy the given RBFType layer.
+  RBFType& operator=(const RBFType& other);
+  //! Take ownership of the given RBFType layer.
+  RBFType& operator=(RBFType&& other);
 
   /**
    * Ordinary feed forward pass of the radial basis function.
@@ -89,17 +88,17 @@ class RBF : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of the radial basis function.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& /* gy */,
-                OutputType& /* g */);
+  void Backward(const MatType& /* input */,
+                const MatType& /* gy */,
+                MatType& /* g */);
 
   //! Compute the output dimensions of the layer given `InputDimensions()`.  The
-  //! RBF layer flattens the input.
+  //! RBFType layer flattens the input.
   void ComputeOutputDimensions();
 
   //! Get the size of the weights.
@@ -119,11 +118,13 @@ class RBF : public Layer<InputType, OutputType>
   double betas;
 
   //! Locally-stored the learnable centre of the shape.
-  InputType centres;
+  MatType centres;
 
   //! Locally-stored the output distances of the shape.
-  OutputType distances;
-}; // class RBF
+  MatType distances;
+}; // class RBFType
+
+typedef RBFType<arma::mat> RBF;
 
 } // namespace ann
 } // namespace mlpack

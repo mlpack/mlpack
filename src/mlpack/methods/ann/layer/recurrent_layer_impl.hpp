@@ -18,35 +18,34 @@
 namespace mlpack {
 namespace ann {
 
-template<typename InputType, typename OutputType>
-RecurrentLayer<InputType, OutputType>::RecurrentLayer() :
-    Layer<InputType, OutputType>(),
+template<typename MatType>
+RecurrentLayer<MatType>::RecurrentLayer() :
+    Layer<MatType>(),
     currentStep(0),
     previousStep(0)
 { /* Nothing to do. */ }
 
-template<typename InputType, typename OutputType>
-RecurrentLayer<InputType, OutputType>::RecurrentLayer(
-    const RecurrentLayer& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+RecurrentLayer<MatType>::RecurrentLayer(const RecurrentLayer& other) :
+    Layer<MatType>(other),
     currentStep(other.currentStep),
     previousStep(other.previousStep)
 { /* Nothing else to do. */ }
 
-template<typename InputType, typename OutputType>
-RecurrentLayer<InputType, OutputType>::RecurrentLayer(RecurrentLayer&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+template<typename MatType>
+RecurrentLayer<MatType>::RecurrentLayer(RecurrentLayer&& other) :
+    Layer<MatType>(std::move(other)),
     currentStep(std::move(other.currentStep)),
     previousStep(std::move(other.previousStep))
 { /* Nothing else to do. */ }
 
-template<typename InputType, typename OutputType>
-RecurrentLayer<InputType, OutputType>&
-RecurrentLayer<InputType, OutputType>::operator=(const RecurrentLayer& other)
+template<typename MatType>
+RecurrentLayer<MatType>&
+RecurrentLayer<MatType>::operator=(const RecurrentLayer& other)
 {
   if (this != &other)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     currentStep = other.currentStep;
     previousStep = other.previousStep;
   }
@@ -54,13 +53,13 @@ RecurrentLayer<InputType, OutputType>::operator=(const RecurrentLayer& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-RecurrentLayer<InputType, OutputType>&
-RecurrentLayer<InputType, OutputType>::operator=(RecurrentLayer&& other)
+template<typename MatType>
+RecurrentLayer<MatType>&
+RecurrentLayer<MatType>::operator=(RecurrentLayer&& other)
 {
   if (this != &other)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     currentStep = std::move(other.currentStep);
     previousStep = std::move(other.previousStep);
   }
@@ -68,12 +67,12 @@ RecurrentLayer<InputType, OutputType>::operator=(RecurrentLayer&& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void RecurrentLayer<InputType, OutputType>::serialize(
+void RecurrentLayer<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(currentStep));
   ar(CEREAL_NVP(previousStep));

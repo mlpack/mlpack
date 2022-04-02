@@ -16,10 +16,9 @@ namespace mlpack {
 namespace ann {
 
 template<
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
+    typename MatType = arma::mat
 >
-class RecurrentLayer : public Layer<InputType, OutputType>
+class RecurrentLayer : public Layer<MatType>
 {
  public:
   RecurrentLayer();

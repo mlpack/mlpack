@@ -19,8 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(
+template<typename MatType>
+DropoutType<MatType>::DropoutType(
     const double ratio) :
     ratio(ratio),
     scale(1.0 / (1.0 - ratio))
@@ -28,31 +28,31 @@ DropoutType<InputType, OutputType>::DropoutType(
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(const DropoutType& other) :
-    Layer<InputType, OutputType>(other),
+template<typename MatType>
+DropoutType<MatType>::DropoutType(const DropoutType& other) :
+    Layer<MatType>(other),
     ratio(other.ratio),
     scale(other.scale)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(DropoutType&& other) :
-    Layer<InputType, OutputType>(std::move(other)),
+template<typename MatType>
+DropoutType<MatType>::DropoutType(DropoutType&& other) :
+    Layer<MatType>(std::move(other)),
     ratio(std::move(other.ratio)),
     scale(std::move(other.scale))
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>&
-DropoutType<InputType, OutputType>::operator=(const DropoutType& other)
+template<typename MatType>
+DropoutType<MatType>&
+DropoutType<MatType>::operator=(const DropoutType& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(other);
+    Layer<MatType>::operator=(other);
     ratio = other.ratio;
     scale = other.scale;
   }
@@ -60,13 +60,13 @@ DropoutType<InputType, OutputType>::operator=(const DropoutType& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>&
-DropoutType<InputType, OutputType>::operator=(DropoutType&& other)
+template<typename MatType>
+DropoutType<MatType>&
+DropoutType<MatType>::operator=(DropoutType&& other)
 {
   if (&other != this)
   {
-    Layer<InputType, OutputType>::operator=(std::move(other));
+    Layer<MatType>::operator=(std::move(other));
     ratio = std::move(other.ratio);
     scale = std::move(other.scale);
   }
@@ -74,10 +74,8 @@ DropoutType<InputType, OutputType>::operator=(DropoutType&& other)
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void DropoutType<InputType, OutputType>::Forward(
-    const InputType& input,
-    OutputType& output)
+template<typename MatType>
+void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The dropout mask will not be multiplied in testing mode.
   if (!this->training)
@@ -88,28 +86,28 @@ void DropoutType<InputType, OutputType>::Forward(
   {
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
-    mask = arma::randu<OutputType>(input.n_rows, input.n_cols);
+    mask = arma::randu<MatType>(input.n_rows, input.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;
   }
 }
 
-template<typename InputType, typename OutputType>
-void DropoutType<InputType, OutputType>::Backward(
-    const InputType& /* input */,
-    const OutputType& gy,
-    OutputType& g)
+template<typename MatType>
+void DropoutType<MatType>::Backward(
+    const MatType& /* input */,
+    const MatType& gy,
+    MatType& g)
 {
   g = gy % mask * scale;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void DropoutType<InputType, OutputType>::serialize(
+void DropoutType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(ratio));
 

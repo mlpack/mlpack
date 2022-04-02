@@ -31,37 +31,34 @@ class MaxPoolingRule
    * @param input Input used to perform the pooling operation.  Could be an
    *     Armadillo subview.
    */
-  template<typename InputType>
-  typename InputType::elem_type Pooling(const InputType& input)
+  template<typename MatType>
+  typename MatType::elem_type Pooling(const MatType& input)
   {
     return arma::max(arma::vectorise(input));
   }
 
-  template<typename InputType>
-  std::tuple<size_t, typename InputType::elem_type> PoolingWithIndex(
-      const InputType& input)
+  template<typename MatType>
+  std::tuple<size_t, typename MatType::elem_type> PoolingWithIndex(
+      const MatType& input)
   {
-    const typename InputType::elem_type maxVal =
+    const typename MatType::elem_type maxVal =
         arma::max(arma::vectorise(input));
     const size_t index = arma::as_scalar(arma::find(input == maxVal, 1));
 
-    return std::tuple<size_t, typename InputType::elem_type>(index, maxVal);
+    return std::tuple<size_t, typename MatType::elem_type>(index, maxVal);
   }
 };
 
 /**
  * Implementation of the MaxPooling layer.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class MaxPoolingType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class MaxPoolingType : public Layer<MatType>
 {
  public:
   //! Create the MaxPooling object.
@@ -103,7 +100,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -114,9 +111,9 @@ class MaxPoolingType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   //! Get the kernel width.
   size_t const& KernelWidth() const { return kernelWidth; }
@@ -161,8 +158,8 @@ class MaxPoolingType : public Layer<InputType, OutputType>
    * @param poolingIndices The pooled indices.
    */
   void PoolingOperation(
-      const arma::Cube<typename InputType::elem_type>& input,
-      arma::Cube<typename OutputType::elem_type>& output,
+      const arma::Cube<typename MatType::elem_type>& input,
+      arma::Cube<typename MatType::elem_type>& output,
       arma::Cube<size_t>& poolingIndices)
   {
     // Iterate over all slices individually.
@@ -174,7 +171,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
         for (size_t i = 0, rowidx = 0; i < output.n_rows;
             ++i, rowidx += strideWidth)
         {
-          const std::tuple<size_t, typename InputType::elem_type> poolResult =
+          const std::tuple<size_t, typename MatType::elem_type> poolResult =
               pooling.PoolingWithIndex(input.slice(s).submat(
                   rowidx,
                   colidx,
@@ -205,8 +202,8 @@ class MaxPoolingType : public Layer<InputType, OutputType>
    * @param output The pooled result.
    */
   void PoolingOperation(
-      const arma::Cube<typename InputType::elem_type>& input,
-      arma::Cube<typename OutputType::elem_type>& output)
+      const arma::Cube<typename MatType::elem_type>& input,
+      arma::Cube<typename MatType::elem_type>& output)
   {
     // Iterate over all slices individually.
     for (size_t s = 0; s < input.n_slices; ++s)
@@ -235,8 +232,8 @@ class MaxPoolingType : public Layer<InputType, OutputType>
    * @param poolingIndices The pooled indices (from `PoolingOperation()`).
    */
   void UnpoolingOperation(
-      const arma::Cube<typename InputType::elem_type>& error,
-      arma::Cube<typename OutputType::elem_type>& output,
+      const arma::Cube<typename MatType::elem_type>& error,
+      arma::Cube<typename MatType::elem_type>& output,
       const arma::Cube<size_t>& poolingIndices)
   {
     output.zeros();
@@ -275,7 +272,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
 }; // class MaxPoolingType
 
 // Standard MaxPooling layer.
-typedef MaxPoolingType<arma::mat, arma::mat> MaxPooling;
+typedef MaxPoolingType<arma::mat> MaxPooling;
 
 } // namespace ann
 } // namespace mlpack

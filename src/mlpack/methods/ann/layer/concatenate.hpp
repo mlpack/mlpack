@@ -27,23 +27,20 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * After this layer is applied, the shape of the data will be a vector.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class ConcatenateType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class ConcatenateType : public Layer<MatType>
 {
  public:
   /**
    * Create the ConcatenateType object using the given constant matrix as the
    * data to be concatenated to the output of the forward pass.
    */
-  ConcatenateType(const InputType& concat = InputType());
+  ConcatenateType(const MatType& concat = MatType());
 
   //! Clone the ConcatenateType object. This handles polymorphism correctly.
   ConcatenateType* Clone() const { return new ConcatenateType(*this); }
@@ -67,7 +64,7 @@ class ConcatenateType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -78,14 +75,12 @@ class ConcatenateType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */, const MatType& gy, MatType& g);
 
   //! Get the concat matrix.
-  OutputType const& Concat() const { return concat; }
+  MatType const& Concat() const { return concat; }
   //! Modify the concat.
-  OutputType& Concat() { return concat; }
+  MatType& Concat() { return concat; }
 
   //! Compute the output dimensions of the layer based on `InputDimensions()`.
   void ComputeOutputDimensions();
@@ -98,12 +93,12 @@ class ConcatenateType : public Layer<InputType, OutputType>
 
  private:
   //! Matrix to be concatenated to input.
-  InputType concat;
+  MatType concat;
 
 }; // class Concatenate
 
 // Standard Concatenate layer.
-typedef ConcatenateType<arma::mat, arma::mat> Concatenate;
+typedef ConcatenateType<arma::mat> Concatenate;
 
 } // namespace ann
 } // namespace mlpack
