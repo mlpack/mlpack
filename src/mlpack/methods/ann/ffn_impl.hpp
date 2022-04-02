@@ -22,13 +22,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::FFN(OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
@@ -41,13 +39,11 @@ FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::FFN(const FFN& network):
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
@@ -66,13 +62,11 @@ FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::FFN(FFN&& network):
     outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule)),
@@ -92,13 +86,11 @@ FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>& FFN<
+         typename MatType>
+FFN<OutputLayerType, InitializationRuleType, MatType>& FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::operator=(FFN network)
 {
   Swap(network);
@@ -107,16 +99,14 @@ FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>& FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename OptimizerType, typename... CallbackTypes>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::Train(InputType predictors,
-         InputType responses,
+    MatType
+>::Train(MatType predictors,
+         MatType responses,
          OptimizerType& optimizer,
          CallbackTypes&&... callbacks)
 {
@@ -139,16 +129,14 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename OptimizerType, typename... CallbackTypes>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::Train(InputType predictors,
-         InputType responses,
+    MatType
+>::Train(MatType predictors,
+         MatType responses,
          CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
@@ -158,14 +146,12 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::Predict(InputType predictors, OutputType& results, const size_t batchSize)
+    MatType
+>::Predict(MatType predictors, MatType& results, const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
   CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
@@ -177,9 +163,9 @@ void FFN<
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols) - i);
 
-    InputType predictorAlias(predictors.colptr(i), predictors.n_rows,
+    MatType predictorAlias(predictors.colptr(i), predictors.n_rows,
         effectiveBatchSize, false, true);
-    OutputType resultAlias(results.colptr(i), results.n_rows,
+    MatType resultAlias(results.colptr(i), results.n_rows,
         effectiveBatchSize, false, true);
 
     Forward(predictorAlias, resultAlias);
@@ -188,13 +174,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 size_t FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::WeightSize()
 {
   // If the input dimensions have not yet been propagated to the network, we
@@ -205,13 +189,11 @@ size_t FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Reset(const size_t inputDimensionality)
 {
   parameters.clear();
@@ -230,13 +212,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::SetNetworkMode(const bool training)
 {
   this->training = training;
@@ -245,10 +225,12 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename PredictorsType, typename ResponsesType>
-void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
 >::Forward(const PredictorsType& inputs, ResponsesType& results)
 {
   Forward(inputs, results, 0, network.Network().size() - 1);
@@ -256,14 +238,12 @@ void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename PredictorsType, typename ResponsesType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Forward(const PredictorsType& inputs,
            ResponsesType& results,
            const size_t begin,
@@ -289,14 +269,12 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename PredictorsType, typename TargetsType, typename GradientsType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Backward(const PredictorsType& inputs,
             const TargetsType& targets,
             GradientsType& gradients)
@@ -320,14 +298,12 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename PredictorsType, typename ResponsesType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Evaluate(const PredictorsType& predictors, const ResponsesType& responses)
 {
   // Sanity check: ensure network is valid.
@@ -342,14 +318,12 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename Archive>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   // Serialize the output layer and initialization rule.
@@ -385,14 +359,12 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::Evaluate(const OutputType& parameters)
+    MatType
+>::Evaluate(const MatType& parameters)
 {
   double res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
@@ -403,14 +375,12 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::Evaluate(const OutputType& /* parameters */,
+    MatType
+>::Evaluate(const MatType& /* parameters */,
             const size_t begin,
             const size_t batchSize)
 {
@@ -427,14 +397,12 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::EvaluateWithGradient(const OutputType& parameters, OutputType& gradient)
+    MatType
+>::EvaluateWithGradient(const MatType& parameters, MatType& gradient)
 {
   double res = 0;
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
@@ -450,16 +418,14 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::EvaluateWithGradient(const OutputType& parameters,
+    MatType
+>::EvaluateWithGradient(const MatType& parameters,
                         const size_t begin,
-                        OutputType& gradient,
+                        MatType& gradient,
                         const size_t batchSize)
 {
   CheckNetwork("FFN::EvaluateWithGradient()", predictors.n_rows);
@@ -492,16 +458,14 @@ double FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::Gradient(const OutputType& parameters,
+    MatType
+>::Gradient(const MatType& parameters,
             const size_t begin,
-            OutputType& gradient,
+            MatType& gradient,
             const size_t batchSize)
 {
   this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
@@ -509,13 +473,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Shuffle()
 {
   math::ShuffleData(predictors, responses, predictors, responses);
@@ -523,14 +485,12 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
->::ResetData(InputType predictors, InputType responses)
+    MatType
+>::ResetData(MatType predictors, MatType responses)
 {
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
@@ -541,13 +501,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::InitializeWeights()
 {
   // Set the network to testing mode.
@@ -560,13 +518,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::SetLayerMemory()
 {
   size_t totalWeightSize = network.WeightSize();
@@ -581,13 +537,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::CheckNetwork(const std::string& functionName,
                 const size_t inputDimensionality,
                 const bool setMode,
@@ -622,13 +576,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::UpdateDimensions(const std::string& functionName,
                     const size_t inputDimensionality)
 {
@@ -663,13 +615,11 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Swap(FFN& network)
 {
   std::swap(outputLayer, network.outputLayer);
@@ -691,8 +641,7 @@ void FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename OptimizerType>
 typename std::enable_if<
     ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
@@ -700,8 +649,7 @@ typename std::enable_if<
 FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
 {
   if (optimizer.MaxIterations() < samples &&
@@ -719,8 +667,7 @@ FFN<
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
+         typename MatType>
 template<typename OptimizerType>
 typename std::enable_if<
     !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
@@ -728,8 +675,7 @@ typename std::enable_if<
 FFN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::WarnMessageMaxIterations(OptimizerType& /* optimizer */,
                             size_t /* samples */) const
 {

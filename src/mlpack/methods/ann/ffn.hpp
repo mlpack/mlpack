@@ -30,8 +30,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType> class RNN;
+    typename MatType> class RNN;
 
 /**
  * Implementation of a standard feed forward network.  Any layer that inherits
@@ -53,15 +52,14 @@ template<
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
- * @tparam InputType Type of matrix to be given as input to the network.
- * @tparam OutputType Type of matrix to be produced as output from the last
+ * @tparam MatType Type of matrix to be given as input to the network.
+ * @tparam MatType Type of matrix to be produced as output from the last
  *     layer.
  */
 template<
     typename OutputLayerType = NegativeLogLikelihood<>,
     typename InitializationRuleType = RandomInitialization,
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat>
+    typename MatType = arma::mat>
 class FFN
 {
  public:
@@ -108,14 +106,14 @@ class FFN
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(Layer<InputType, OutputType>* layer)
+  void Add(Layer<MatType>* layer)
   {
     network.Add(layer);
     inputDimensionsAreSet = false;
   }
 
   //! Get the layers of the network..
-  const std::vector<Layer<InputType, OutputType>*>& Network() const
+  const std::vector<Layer<MatType>*>& Network() const
   {
     return network.Network();
   }
@@ -127,7 +125,7 @@ class FFN
    *
    * Don't add any layers like this; use `Add()` instead.
    */
-  std::vector<Layer<InputType, OutputType>*>& Network()
+  std::vector<Layer<MatType>*>& Network()
   {
     return network.Network();
   }
@@ -156,8 +154,8 @@ class FFN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(InputType predictors,
-               InputType responses,
+  double Train(MatType predictors,
+               MatType responses,
                OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
@@ -185,8 +183,8 @@ class FFN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  double Train(InputType predictors,
-               InputType responses,
+  double Train(MatType predictors,
+               MatType responses,
                CallbackTypes&&... callbacks);
 
   /**
@@ -198,8 +196,8 @@ class FFN
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(InputType predictors,
-               OutputType& results,
+  void Predict(MatType predictors,
+               MatType& results,
                const size_t batchSize = 128);
 
   // Return the number of weights in the model.
@@ -231,12 +229,12 @@ class FFN
 
   //! Return the current set of weights.  These are linearized: this contains
   //! the weights of every layer.
-  const OutputType& Parameters() const { return parameters; }
+  const MatType& Parameters() const { return parameters; }
   //! Modify the current set of weights.  These are linearized: this contains
   //! the weights of every layer.  Be careful!  If you change the shape of
   //! `parameters` to something incorrect, it may be re-initialized the next
   //! time a forward pass is done.
-  OutputType& Parameters() { return parameters; }
+  MatType& Parameters() { return parameters; }
 
   /**
    * Reset the stored data of the network entirely.  This resets all weights of
@@ -334,7 +332,7 @@ class FFN
    *
    * @param parameters Matrix model parameters.
    */
-  double Evaluate(const OutputType& parameters);
+  double Evaluate(const MatType& parameters);
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
@@ -353,7 +351,7 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double Evaluate(const OutputType& parameters,
+  double Evaluate(const MatType& parameters,
                   const size_t begin,
                   const size_t batchSize);
 
@@ -368,8 +366,8 @@ class FFN
    * @param parameters Matrix model parameters.
    * @param gradient Matrix to output gradient into.
    */
-  double EvaluateWithGradient(const OutputType& parameters,
-                              OutputType& gradient);
+  double EvaluateWithGradient(const MatType& parameters,
+                              MatType& gradient);
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
@@ -386,9 +384,9 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double EvaluateWithGradient(const OutputType& parameters,
+  double EvaluateWithGradient(const MatType& parameters,
                               const size_t begin,
-                              OutputType& gradient,
+                              MatType& gradient,
                               const size_t batchSize);
 
   /**
@@ -406,9 +404,9 @@ class FFN
    * @param batchSize Number of points to be processed as a batch for objective
    *        function gradient evaluation.
    */
-  void Gradient(const OutputType& parameters,
+  void Gradient(const MatType& parameters,
                 const size_t begin,
-                OutputType& gradient,
+                MatType& gradient,
                 const size_t batchSize);
 
   /**
@@ -437,7 +435,7 @@ class FFN
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
    */
-  void ResetData(InputType predictors, InputType responses);
+  void ResetData(MatType predictors, MatType responses);
 
  private:
   // Helper functions.
@@ -519,19 +517,19 @@ class FFN
   InitializationRuleType initializeRule;
 
   //! All of the network is stored inside this multilayer.
-  MultiLayer<InputType, OutputType> network;
+  MultiLayer<MatType> network;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
    * and each layer's `parameters` member is an alias pointing to parameters in
    * this matrix.
    *
-   * Note: although each layer may have its own InputType and OutputType,
+   * Note: although each layer may have its own MatType and MatType,
    * ensmallen optimization requires everything to be stored in one matrix
-   * object, so we have chosen OutputType.  This could be made more flexible
+   * object, so we have chosen MatType.  This could be made more flexible
    * with a "wrapper" class implementing the Armadillo API.
    */
-  OutputType parameters;
+  MatType parameters;
 
   //! Dimensions of input data.
   std::vector<size_t> inputDimensions;
@@ -539,16 +537,16 @@ class FFN
   //! The matrix of data points (predictors).  This member is empty, except
   //! during training---we must store a local copy of the training data since
   //! the ensmallen optimizer will not provide training data.
-  InputType predictors;
+  MatType predictors;
 
   //! The matrix of responses to the input data points.  This member is empty,
   //! except during training.
-  InputType responses;
+  MatType responses;
 
   //! The current error for the backward pass.
-  OutputType networkOutput;
-  OutputType networkDelta;
-  OutputType error;
+  MatType networkOutput;
+  MatType networkDelta;
+  MatType error;
 
   //! The current evaluation mode (training or testing).
   bool training;
@@ -561,8 +559,7 @@ class FFN
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
 
-  friend class RNN<OutputLayerType, InitializationRuleType, InputType,
-      OutputType>;
+  friend class RNN<OutputLayerType, InitializationRuleType, MatType>;
 }; // class FFN
 
 } // namespace ann

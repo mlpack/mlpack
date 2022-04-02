@@ -50,8 +50,9 @@ class NetworkInitialization
    * @param parameterOffset Offset for network paramater, default 0.
    */
   template <typename eT>
-  void Initialize(const std::vector<Layer<arma::mat, arma::mat>*>& network,
-                  arma::Mat<eT>& parameters, size_t parameterOffset = 0)
+  void Initialize(const std::vector<Layer<arma::Mat<eT>>*>& network,
+                  arma::Mat<eT>& parameters,
+                  size_t parameterOffset = 0)
   {
     // Determine the total number of parameters/weights of the given network.
     if (parameters.is_empty())

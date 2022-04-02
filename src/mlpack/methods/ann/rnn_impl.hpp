@@ -22,14 +22,12 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::RNN(
     const size_t rho,
     const bool single,
@@ -45,14 +43,12 @@ RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::RNN(
     const RNN& network) :
     rho(network.rho),
@@ -65,14 +61,12 @@ RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::RNN(
     RNN&& network) :
     rho(std::move(network.rho)),
@@ -85,20 +79,17 @@ RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >&
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::operator=(const RNN& other)
 {
   if (this != &other)
@@ -116,20 +107,17 @@ RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >&
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::operator=(RNN&& other)
 {
   if (this != &other)
@@ -147,14 +135,12 @@ RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::~RNN()
 {
   // Nothing special to do.
@@ -163,18 +149,16 @@ RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename OptimizerType, typename... CallbackTypes>
 double RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Train(
-    arma::Cube<typename InputType::elem_type> predictors,
-    arma::Cube<typename OutputType::elem_type> responses,
+    arma::Cube<typename MatType::elem_type> predictors,
+    arma::Cube<typename MatType::elem_type> responses,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
@@ -199,18 +183,16 @@ double RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename OptimizerType, typename... CallbackTypes>
 double RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Train(
-    arma::Cube<typename InputType::elem_type> predictors,
-    arma::Cube<typename OutputType::elem_type> responses,
+    arma::Cube<typename MatType::elem_type> predictors,
+    arma::Cube<typename MatType::elem_type> responses,
     CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
@@ -221,17 +203,15 @@ double RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Predict(
-    arma::Cube<typename InputType::elem_type> predictors,
-    arma::Cube<typename OutputType::elem_type>& results,
+    arma::Cube<typename MatType::elem_type> predictors,
+    arma::Cube<typename MatType::elem_type>& results,
     const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
@@ -252,14 +232,12 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Reset(const size_t inputDimensionality)
 {
   // This is a reimplementation of FFN::Reset() that correctly prints
@@ -281,17 +259,15 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Forward(
-    const arma::Cube<typename InputType::elem_type>& predictors,
-    arma::Cube<typename OutputType::elem_type>& results)
+    const arma::Cube<typename MatType::elem_type>& predictors,
+    arma::Cube<typename MatType::elem_type>& results)
 {
   Forward(std::forward(predictors), results, 0, predictors.n_cols - 1);
 }
@@ -299,17 +275,15 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Forward(
-    const arma::Cube<typename InputType::elem_type>& predictors,
-    arma::Cube<typename OutputType::elem_type>& results,
+    const arma::Cube<typename MatType::elem_type>& predictors,
+    arma::Cube<typename MatType::elem_type>& results,
     const size_t begin,
     const size_t batchSize)
 {
@@ -334,10 +308,10 @@ void RNN<
       SetPreviousStep(size_t(0));
 
     // Create aliases for the input and output.
-    const arma::Mat<typename InputType::elem_type> inputAlias(
-        (typename InputType::elem_type*) predictors.slice(t).colptr(begin),
+    const arma::Mat<typename MatType::elem_type> inputAlias(
+        (typename MatType::elem_type*) predictors.slice(t).colptr(begin),
         predictors.n_rows, batchSize, false, true);
-    arma::Mat<typename OutputType::elem_type> outputAlias(
+    arma::Mat<typename MatType::elem_type> outputAlias(
         results.slice(t).colptr(begin), results.n_rows, batchSize, false, true);
 
     network.Forward(inputAlias, outputAlias);
@@ -349,15 +323,13 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename PredictorsType, typename TargetsType, typename GradientsType>
 double RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Backward(
     const PredictorsType& inputs,
     const TargetsType& targets,
@@ -378,15 +350,13 @@ double RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename Archive>
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::serialize(
     Archive& ar, const uint32_t /* version */)
 {
@@ -404,16 +374,14 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 double RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Evaluate(
-    const OutputType& /* parameters */,
+    const MatType& /* parameters */,
     const size_t begin,
     const size_t batchSize)
 {
@@ -452,17 +420,15 @@ double RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename GradType>
 double RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::EvaluateWithGradient(
-    const OutputType& parameters,
+    const MatType& parameters,
     GradType& gradient)
 {
   return EvaluateWithGradient(parameters, 0, gradient, predictors.n_cols);
@@ -471,17 +437,15 @@ double RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename GradType>
 double RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::EvaluateWithGradient(
-    const OutputType& /* parameters */,
+    const MatType& /* parameters */,
     const size_t begin,
     GradType& gradient,
     const size_t batchSize)
@@ -495,7 +459,7 @@ double RNN<
 
   ResetMemoryState(effectiveRho, batchSize);
   SetPreviousStep(size_t(-1));
-  arma::Cube<typename OutputType::elem_type> outputs(
+  arma::Cube<typename MatType::elem_type> outputs(
       network.network.OutputSize(), batchSize, effectiveRho);
 
   // If `bpttSteps` is less than the number of time steps in the data, then for
@@ -561,7 +525,7 @@ double RNN<
     SetCurrentStep(t - 1);
 
     currentGradient.zeros();
-    OutputType error(outputs.n_rows, outputs.n_cols);
+    MatType error(outputs.n_rows, outputs.n_cols);
 
     // Set up the response by backpropagating through the output layer.  Note
     // that if we are in 'single' mode, we don't care what the network outputs
@@ -585,7 +549,7 @@ double RNN<
     arma::mat outputData(outputs.slice(t - 1).colptr(0), outputs.n_rows,
         outputs.n_cols, false, true);
     // TODO: allocate space for networkDelta?
-    InputType networkDelta;
+    MatType networkDelta;
     network.network.Backward(outputData, error, networkDelta);
 
     arma::mat stepData(predictors.slice(t - 1).colptr(begin), predictors.n_rows,
@@ -602,17 +566,15 @@ double RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 template<typename GradType>
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Gradient(
-    const OutputType& parameters,
+    const MatType& parameters,
     const size_t begin,
     GradType& gradient,
     const size_t batchSize)
@@ -623,18 +585,16 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::Shuffle()
 {
-  arma::Cube<typename InputType::elem_type> newPredictors;
-  arma::Cube<typename OutputType::elem_type> newResponses;
+  arma::Cube<typename MatType::elem_type> newPredictors;
+  arma::Cube<typename MatType::elem_type> newResponses;
   math::ShuffleData(predictors, responses, newPredictors, newResponses);
 
   predictors = std::move(newPredictors);
@@ -644,17 +604,15 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::ResetData(
-    arma::Cube<typename InputType::elem_type> predictors,
-    arma::Cube<typename OutputType::elem_type> responses)
+    arma::Cube<typename MatType::elem_type> predictors,
+    arma::Cube<typename MatType::elem_type> responses)
 {
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
@@ -663,22 +621,20 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::ResetMemoryState(const size_t memorySize, const size_t batchSize)
 {
   // Iterate over all layers and set the memory size.
-  for (Layer<InputType, OutputType>* l : network.Network())
+  for (Layer<MatType>* l : network.Network())
   {
     // We can only call ClearRecurrentState() on RecurrentLayers.
-    RecurrentLayer<InputType, OutputType>* r =
-        dynamic_cast<RecurrentLayer<InputType, OutputType>*>(l);
+    RecurrentLayer<MatType>* r =
+        dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
       r->ClearRecurrentState(memorySize, batchSize);
   }
@@ -687,22 +643,20 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::SetPreviousStep(const size_t step)
 {
   // Iterate over all layers and set the memory size.
-  for (Layer<InputType, OutputType>* l : network.Network())
+  for (Layer<MatType>* l : network.Network())
   {
     // We can only call SetPreviousStep() on RecurrentLayers.
-    RecurrentLayer<InputType, OutputType>* r =
-        dynamic_cast<RecurrentLayer<InputType, OutputType>*>(l);
+    RecurrentLayer<MatType>* r =
+        dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
       r->PreviousStep() = step;
   }
@@ -711,22 +665,20 @@ void RNN<
 template<
     typename OutputLayerType,
     typename InitializationRuleType,
-    typename InputType,
-    typename OutputType
+    typename MatType
 >
 void RNN<
     OutputLayerType,
     InitializationRuleType,
-    InputType,
-    OutputType
+    MatType
 >::SetCurrentStep(const size_t step)
 {
   // Iterate over all layers and set the memory size.
-  for (Layer<InputType, OutputType>* l : network.Network())
+  for (Layer<MatType>* l : network.Network())
   {
     // We can only call SetPreviousStep() on RecurrentLayers.
-    RecurrentLayer<InputType, OutputType>* r =
-        dynamic_cast<RecurrentLayer<InputType, OutputType>*>(l);
+    RecurrentLayer<MatType>* r =
+        dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
       r->CurrentStep() = step;
   }

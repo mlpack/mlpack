@@ -29,8 +29,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename OutputLayerType = NegativeLogLikelihood<>,
     typename InitializationRuleType = RandomInitialization,
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat>
+    typename MatType = arma::mat>
 class RNN
 {
  public:
@@ -77,10 +76,10 @@ class RNN
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(Layer<InputType, OutputType>* layer) { network.Add(layer); }
+  void Add(Layer<MatType>* layer) { network.Add(layer); }
 
   //! Get the network model.
-  const std::vector<Layer<InputType, OutputType>*>& Network() const
+  const std::vector<Layer<MatType>*>& Network() const
   {
     return network.Network().Network();
   }
@@ -91,7 +90,7 @@ class RNN
    * to call ResetParameters() afterwards.  Don't add any layers like this; use
    * `Add()` instead.
    */
-  std::vector<Layer<InputType, OutputType>*>& Network()
+  std::vector<Layer<MatType>*>& Network()
   {
     return network.Network().Network();
   }
@@ -117,8 +116,8 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::Cube<typename InputType::elem_type> predictors,
-               arma::Cube<typename OutputType::elem_type> responses,
+  double Train(arma::Cube<typename MatType::elem_type> predictors,
+               arma::Cube<typename MatType::elem_type> responses,
                OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
@@ -143,8 +142,8 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  double Train(arma::Cube<typename InputType::elem_type> predictors,
-               arma::Cube<typename OutputType::elem_type> responses,
+  double Train(arma::Cube<typename MatType::elem_type> predictors,
+               arma::Cube<typename MatType::elem_type> responses,
                CallbackTypes&&... callbacks);
 
   /**
@@ -159,8 +158,8 @@ class RNN
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(arma::Cube<typename InputType::elem_type> predictors,
-               arma::Cube<typename OutputType::elem_type>& results,
+  void Predict(arma::Cube<typename MatType::elem_type> predictors,
+               arma::Cube<typename MatType::elem_type>& results,
                const size_t batchSize = 128);
 
   // Return the nujmber of weights in the model.
@@ -182,9 +181,9 @@ class RNN
   }
 
   //! Return the initial point for the optimization.
-  const OutputType& Parameters() const { return network.Parameters(); }
+  const MatType& Parameters() const { return network.Parameters(); }
   //! Modify the initial point for the optimization.
-  OutputType& Parameters() { return network.Parameters(); }
+  MatType& Parameters() { return network.Parameters(); }
 
   //! Return the number of steps allowed for BPTT.
   size_t Rho() const { return rho; }
@@ -210,8 +209,8 @@ class RNN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  void Forward(const arma::Cube<typename InputType::elem_type>& inputs,
-               arma::Cube<typename OutputType::elem_type>& results);
+  void Forward(const arma::Cube<typename MatType::elem_type>& inputs,
+               arma::Cube<typename MatType::elem_type>& results);
 
   /**
    * Perform a partial forward pass of the data.
@@ -224,8 +223,8 @@ class RNN
    * @param begin The index of the first layer.
    * @param end The index of the last layer.
    */
-  void Forward(const arma::Cube<typename InputType::elem_type>& inputs,
-               arma::Cube<typename OutputType::elem_type>& results,
+  void Forward(const arma::Cube<typename MatType::elem_type>& inputs,
+               arma::Cube<typename MatType::elem_type>& results,
                const size_t begin,
                const size_t end);
 
@@ -274,7 +273,7 @@ class RNN
    *
    * @param parameters Matrix model parameters.
    */
-  double Evaluate(const OutputType& parameters);
+  double Evaluate(const MatType& parameters);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -290,7 +289,7 @@ class RNN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double Evaluate(const OutputType& parameters,
+  double Evaluate(const MatType& parameters,
                   const size_t begin,
                   const size_t batchSize);
 
@@ -303,7 +302,7 @@ class RNN
    * @param gradient Matrix to output gradient into.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const OutputType& parameters,
+  double EvaluateWithGradient(const MatType& parameters,
                               GradType& gradient);
 
    /**
@@ -319,7 +318,7 @@ class RNN
    *        objective function evaluation.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const OutputType& parameters,
+  double EvaluateWithGradient(const MatType& parameters,
                               const size_t begin,
                               GradType& gradient,
                               const size_t batchSize);
@@ -337,7 +336,7 @@ class RNN
    *        function gradient evaluation.
    */
   template<typename GradType>
-  void Gradient(const OutputType& parameters,
+  void Gradient(const MatType& parameters,
                 const size_t begin,
                 GradType& gradient,
                 const size_t batchSize);
@@ -354,8 +353,8 @@ class RNN
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
    */
-  void ResetData(arma::Cube<typename InputType::elem_type> predictors,
-                 arma::Cube<typename OutputType::elem_type> responses);
+  void ResetData(arma::Cube<typename MatType::elem_type> predictors,
+                 arma::Cube<typename MatType::elem_type> responses);
 
  private:
   // Helper functions.
@@ -377,16 +376,16 @@ class RNN
   //! The network itself is stored in this FFN object.  Note that this network
   //! may contain recursive layers, and thus we will be responsible for
   //! occasionally resetting any memory cells.
-  FFN<OutputLayerType, InitializationRuleType, InputType, OutputType> network;
+  FFN<OutputLayerType, InitializationRuleType, MatType> network;
 
   //! The matrix of data points (predictors).  This member is empty, except
   //! during training---we must store a local copy of the training data since
   //! the ensmallen optimizer will not provide training data.
-  arma::Cube<typename InputType::elem_type> predictors;
+  arma::Cube<typename MatType::elem_type> predictors;
 
   //! The matrix of responses to the input data points.  This member is empty,
   //! except during training.
-  arma::Cube<typename OutputType::elem_type> responses;
+  arma::Cube<typename MatType::elem_type> responses;
 }; // class RNNType
 
 // Convenience typedefs.
