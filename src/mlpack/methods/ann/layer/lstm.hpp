@@ -73,9 +73,13 @@ class LSTMType : public RecurrentLayer<MatType>
   //! Clone the LSTMType object. This handles polymorphism correctly.
   LSTMType* Clone() const { return new LSTMType(*this); }
 
+  //! Copy the given LSTMType object.
   LSTMType(const LSTMType& other);
+  //! Take ownership of the given LSTMType object's data.
   LSTMType(LSTMType&& other);
+  //! Copy the given LSTMType object.
   LSTMType& operator=(const LSTMType& other);
+  //! Take ownership of the given LSTMType object's data.
   LSTMType& operator=(LSTMType&& other);
 
   virtual ~LSTMType() { }
@@ -122,11 +126,12 @@ class LSTMType : public RecurrentLayer<MatType>
    */
   void Reset();
 
-  /*
-   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
-   * new one.
+  /**
+   * Reset the recurrent state of the LSTM layer, and allocate enough space to
+   * hold `bpttSteps` of previous passes with a batch size of `batchSize`.
    *
-   * @param size The current maximum number of steps through time.
+   * @param bpttSteps Number of steps of history to allocate space for.
+   * @param batchSize Batch size to prepare for.
    */
   void ClearRecurrentState(const size_t bpttSteps, const size_t batchSize);
 

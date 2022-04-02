@@ -70,40 +70,6 @@ LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
   return *this;
 }
 
-// We already have the assumption that a forward pass may modify the state of a
-// layer.  Thus it is reasonable to hold the time-based state in the LSTM layer.
-
-// But how do we reset it gracefully in the FFN and RNN case?
-
-// What if each recurrent layer inherited from some base recurrent layer that
-// would check if the state had ever been set, and if not, clear the state
-// during each call to Forward()?  But now you have to remember to call it from
-// Forward() in every single recurrent layer's implementation.
-
-// What if the base layer has a "StartForwardPass()"?  But then how do we get
-// the `bpttSteps` parameter to it?
-
-// What if the FFN class simply checks to see if any of its layers inherit from
-// the base recurrent layer, and if so, throws an error?  That seems like
-// probably the best way to go here, honestly.  However we will need to add a
-// flag to FFN::Add() because RNN::Add() uses FFN::Add().
-
-// So the RNN class will, at the outset of every forward pass, pass through the
-// FFN network and call ClearState() on any recurrent layers.  Recurrent layers
-// should indeed inherit from some base type, but I'll define that later.  I
-// need some kind of (runtime) way to determine if the layer is actually
-// recurrent, but that should be straightforward.
-
-// Now, another observation is that if we are just doing a forward pass, we
-// don't actually need to cache any previous states for backpropagation.  So,
-// bpttSize may change, but it is only the RNN itself that will know when or why
-// bpttSize may change (since that will change based on the user's input).  The
-// layers themselves should be agnostic to this, and therefore we can introduce
-// a parameter `currentStep` to indicate which memory state we are currently
-// looking at.  There should also be a parameter `previousStep` to indicate what
-// our state "input" should come from.  Note that it's possible that
-// `previousStep` == `currentStep`!
-
 template<typename MatType>
 void LSTMType<MatType>::ClearRecurrentState(
     const size_t bpttSteps, const size_t batchSize)
