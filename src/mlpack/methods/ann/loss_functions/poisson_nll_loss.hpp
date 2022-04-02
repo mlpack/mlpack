@@ -20,14 +20,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Poisson negative log likelihood loss. This loss
- * function expects input for each class. It also expects a class index,
- * in the range between 1 and the number of classes, as target when calling
- * the Forward function.
+ * function expects input for each class. It also expects a class index, in the
+ * range [0, numClasses - 1], as target when calling the Forward function.
  *
- * @tparam MatType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class PoissonNLLLossType

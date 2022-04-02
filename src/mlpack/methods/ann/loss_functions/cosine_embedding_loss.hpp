@@ -26,11 +26,9 @@ namespace ann /** Artificial Neural Network. */ {
  * f(x) = 1 - cos(x1, x2) , for y = 1
  * f(x) = max(0, cos(x1, x2) - margin) , for y = -1
  * @f}
- * 
- * @tparam MatType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class CosineEmbeddingLossType

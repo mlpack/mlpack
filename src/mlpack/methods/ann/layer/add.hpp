@@ -23,7 +23,8 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Add layer. The Add module applies a bias term to the
  * incoming data.
  *
- * @tparam MatType Matrix type used as inputs, outputs, and weights.
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType>
 class AddType : public Layer<MatType>

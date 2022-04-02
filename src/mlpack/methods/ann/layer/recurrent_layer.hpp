@@ -15,9 +15,13 @@
 namespace mlpack {
 namespace ann {
 
-template<
-    typename MatType = arma::mat
->
+/**
+ * TODO: comment
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
+ */
+template<typename MatType = arma::mat>
 class RecurrentLayer : public Layer<MatType>
 {
  public:

@@ -23,10 +23,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The empty loss does nothing, letting the user calculate the loss outside
  * the model.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class EmptyLossType

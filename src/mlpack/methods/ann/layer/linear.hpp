@@ -30,11 +30,8 @@ namespace ann /** Artificial Neural Network. */ {
  * must be either a vector or matrix. If the input is a matrix, then each column
  * is assumed to be an input sample of given batch.
  *
- * @tparam MatType The type of the layer's inputs. The layer automatically
- *    cast inputs to this type (Default: arma::mat).
- * @tparam MatType The type of the computation which also causes the output
- *    to also be in this type. The type also allows the computation and weight
- *    type to differ from the input type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  * @tparam RegularizerType Type of the regularizer to be used (Default no
  *    regularizer).
  */

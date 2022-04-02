@@ -21,13 +21,11 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the variance reduced classification reinforcement layer.
  * This layer is meant to be used in combination with the reinforce normal layer
- * (ReinforceNormalLayer), which expects that an reward:
- * (1 for success, 0 otherwise).
+ * (ReinforceNormalLayer), which expects that the reward is 1 for success, and 0
+ * otherwise.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class VRClassRewardType

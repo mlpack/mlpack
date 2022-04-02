@@ -45,12 +45,8 @@ namespace ann {
  * Forward(), Backward() and Gradient().  The weights of the layers are tracked
  * in layer.Parameters().
  *
- * @tparam MatType The type of the layer's inputs. Layers automatically cast
- *     inputs to this type (default: arma::mat).
- * @tparam MatType The type of the layer's computation which also causes the
- *     computations and output to also be in this type. The type also allows the
- *     computation and weight type to differ from the input type
- *     (default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class Layer

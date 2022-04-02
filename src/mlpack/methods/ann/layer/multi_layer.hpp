@@ -25,6 +25,9 @@ namespace ann {
  * It's likely not very useful to use this layer directly; instead, this layer
  * is meant as a base class for use by other layers that must store and use
  * multiple layers.
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType>
 class MultiLayer : public Layer<MatType>

@@ -23,10 +23,8 @@ namespace ann /** Artificial Neural Network. */ {
  * performance equal to the negative log probability of the target with
  * the input distribution.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  * @tparam DistType The type of distribution parametrized by the input.
  */
 template<

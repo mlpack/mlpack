@@ -24,22 +24,21 @@ namespace ann /** Artificial Neural Network. */ {
  * of the positive (truthy) and negative (falsy) inputs.
  * The distance between two samples A and B is defined as square of L2 norm
  * of A-B.
- * 
+ *
  * For more information, refer the following paper.
  *
  * @code
  * @article{Schroff2015,
  *   author  = {Florian Schroff, Dmitry Kalenichenko, James Philbin},
- *   title   = {FaceNet: A Unified Embedding for Face Recognition and Clustering},
+ *   title   = {FaceNet: A Unified Embedding for Face Recognition and
+ *              Clustering},
  *   year    = {2015},
  *   url     = {https://arxiv.org/abs/1503.03832},
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class TripletMarginLossType

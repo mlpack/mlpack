@@ -22,10 +22,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * The Multi-label Soft Margin Loss function.
+ *
+ * It is a criterion that optimizes a multi-label one-versus-all loss based on
+ * max-entropy, between input x and target y of size (N, C) where N is the
+ * batch size and C is the number of classes.
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class MultiLabelSoftMarginLossType

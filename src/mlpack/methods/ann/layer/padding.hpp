@@ -19,13 +19,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Padding module class. The Padding module applies a bias term
- * to the incoming data.
+ * Implementation of the Padding module class. The Padding module applies
+ * (zero-valued) padding on the input data.
  *
- * @tparam MatType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class PaddingType : public Layer<MatType>

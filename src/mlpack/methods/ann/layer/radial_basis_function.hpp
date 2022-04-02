@@ -21,7 +21,6 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-
 /**
  * Implementation of the Radial Basis Function layer. The RBFType class when use
  * with a non-linear activation function acts as a Radial Basis Function which
@@ -38,10 +37,8 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam MatType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  * @tparam Activation Type of the activation function (mlpack::ann::Gaussian).
  */
 

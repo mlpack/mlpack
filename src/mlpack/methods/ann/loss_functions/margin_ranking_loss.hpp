@@ -22,11 +22,9 @@ namespace ann /** Artificial Neural Network. */ {
  * values of 1 or -1. If the label is 1 then the first input should be ranked
  * higher than the second input at a distance larger than a margin, and vice-
  * versa if the label is -1.
- * 
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class MarginRankingLossType

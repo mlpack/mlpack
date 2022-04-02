@@ -34,11 +34,8 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * @tparam MatType The type of the layer's inputs. The layer automatically
- *     cast inputs to this type (Default: arma::mat).
- * @tparam MatType The type of the computation which also causes the output
- *     to also be in this type. The type also allows the computation and weight
- *     type to differ from the input type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class LeakyReLUType : public Layer<MatType>

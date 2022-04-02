@@ -18,13 +18,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The mean squared logarithmic error performance function measures the network's
- * performance according to the mean of squared logarithmic errors.
+ * The mean squared logarithmic error performance function measures the
+ * network's performance according to the mean of squared logarithmic errors.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class MeanSquaredLogarithmicErrorType

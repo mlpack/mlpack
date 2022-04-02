@@ -52,10 +52,8 @@ namespace ann /** Artificial Neural Network. */ {
  * \see FastLSTM for a faster LSTM version which combines the calculation of the
  * input, forget, output gates and hidden state in a single step.
  *
- * @tparam MatType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class LSTMType : public RecurrentLayer<MatType>

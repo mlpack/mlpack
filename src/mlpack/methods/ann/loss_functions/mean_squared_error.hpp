@@ -21,11 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The mean squared error performance function measures the network's
  * performance according to the mean of squared errors.
  *
- * @tparam ActivationFunction Activation function used for the embedding layer.
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class MeanSquaredErrorType

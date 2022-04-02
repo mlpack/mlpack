@@ -21,10 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
  * The earth mover distance function measures the network's performance
  * according to the Kantorovich-Rubinstein duality approximation.
  *
- * @tparam MatType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
 template<typename MatType = arma::mat>
 class EarthMoverDistanceType
