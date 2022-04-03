@@ -268,7 +268,7 @@ class LSTMType : public RecurrentLayer<MatType>
 
   //! Locally-stored hidden layer error.
   MatType hiddenError;
-}; // class LSTM
+}; // class LSTMType
 
 // Convenience typedefs.
 
