@@ -8,8 +8,8 @@ include(CMake/ConfigureCrossCompile.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
-option(DEBUG "Compile with debugging information." ON)
-option(PROFILE "Compile with profiling information." ON)
+option(DEBUG "Compile with debugging information." OFF)
+option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
@@ -87,7 +87,7 @@ option(BUILD_GO_BINDINGS "Build Go bindings." OFF)
 
 # If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
-  set(BUILD_GO_SHLIB OFF)
+  set(BUILD_GO_SHLIB ON)
 endif()
 
 # Detect whether the user passed BUILD_R_BINDINGS in order to determine if
