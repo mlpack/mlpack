@@ -121,11 +121,6 @@ class LSTMType : public RecurrentLayer<MatType>
                 const MatType& error,
                 MatType& gradient);
 
-  /*
-   * Reset the layer parameter.
-   */
-  void Reset();
-
   /**
    * Reset the recurrent state of the LSTM layer, and allocate enough space to
    * hold `bpttSteps` of previous passes with a batch size of `batchSize`.
