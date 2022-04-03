@@ -369,13 +369,6 @@ class RNN
   void SetPreviousStep(const size_t step);
   void SetCurrentStep(const size_t step);
 
-  /**
-   * Swap the content of this network with given network.
-   *
-   * @param network Desired source network.
-   */
-  void Swap(RNN& network);
-
   size_t rho;
   bool single;
 
