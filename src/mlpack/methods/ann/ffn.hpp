@@ -153,10 +153,10 @@ class FFN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(MatType predictors,
-               MatType responses,
-               OptimizerType& optimizer,
-               CallbackTypes&&... callbacks);
+  typename MatType::elem_type Train(MatType predictors,
+                                    MatType responses,
+                                    OptimizerType& optimizer,
+                                    CallbackTypes&&... callbacks);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -182,9 +182,9 @@ class FFN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  double Train(MatType predictors,
-               MatType responses,
-               CallbackTypes&&... callbacks);
+  typename MatType::elem_type Train(MatType predictors,
+                                    MatType responses,
+                                    CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will be
@@ -254,7 +254,7 @@ class FFN
   void SetNetworkMode(const bool training);
 
   /**
-   * Perform the forward pass of the data in real batch mode.
+   * Perform a manual forward pass of the data.
    *
    * `Forward()` and `Backward()` should be used as a pair, and they are
    * designed mainly for advanced users. You should try to use `Predict()` and
@@ -266,7 +266,7 @@ class FFN
   void Forward(const MatType& inputs, MatType& results);
 
   /**
-   * Perform a partial forward pass of the data.
+   * Perform a manual partial forward pass of the data.
    *
    * This function is meant for the cases when users require a forward pass only
    * through certain layers and not the entire network.  `Forward()` and
@@ -285,7 +285,7 @@ class FFN
                const size_t end);
 
   /**
-   * Perform the backward pass of the data.
+   * Perform a manual backward pass of the data.
    *
    * `Forward()` and `Backward()` should be used as a pair, and they are
    * designed mainly for advanced users. You should try to use `Predict()` and
@@ -307,7 +307,8 @@ class FFN
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  double Evaluate(const MatType& predictors, const MatType& responses);
+  typename MatType::elem_type Evaluate(const MatType& predictors,
+                                       const MatType& responses);
 
   //! Serialize the model.
   template<typename Archive>
@@ -326,7 +327,7 @@ class FFN
    *
    * @param parameters Matrix model parameters.
    */
-  double Evaluate(const MatType& parameters);
+  typename MatType::elem_type Evaluate(const MatType& parameters);
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
@@ -345,9 +346,9 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double Evaluate(const MatType& parameters,
-                  const size_t begin,
-                  const size_t batchSize);
+  typename MatType::elem_type Evaluate(const MatType& parameters,
+                                       const size_t begin,
+                                       const size_t batchSize);
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
@@ -360,8 +361,8 @@ class FFN
    * @param parameters Matrix model parameters.
    * @param gradient Matrix to output gradient into.
    */
-  double EvaluateWithGradient(const MatType& parameters,
-                              MatType& gradient);
+  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
+                                                   MatType& gradient);
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's
@@ -378,10 +379,10 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double EvaluateWithGradient(const MatType& parameters,
-                              const size_t begin,
-                              MatType& gradient,
-                              const size_t batchSize);
+  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
+                                                   const size_t begin,
+                                                   MatType& gradient,
+                                                   const size_t batchSize);
 
   /**
    * Note: this function is implemented so that it can be used by ensmallen's

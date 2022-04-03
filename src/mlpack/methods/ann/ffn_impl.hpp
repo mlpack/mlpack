@@ -144,7 +144,7 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
 template<typename OptimizerType, typename... CallbackTypes>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -162,7 +162,8 @@ double FFN<
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameters, callbacks...);
+  const typename MatType::elem_type out =
+      optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::Train(): final objective of trained model is " << out
@@ -174,7 +175,7 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
 template<typename OptimizerType, typename... CallbackTypes>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -341,7 +342,7 @@ typename MatType::elem_type FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -400,13 +401,13 @@ void FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
 >::Evaluate(const MatType& parameters)
 {
-  double res = 0;
+  typename MatType::elem_type res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
     res += Evaluate(parameters, i, 1);
 
@@ -416,7 +417,7 @@ double FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -438,13 +439,13 @@ double FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
 >::EvaluateWithGradient(const MatType& parameters, MatType& gradient)
 {
-  double res = 0;
+  typename MatType::elem_type res = 0;
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
   for (size_t i = 1; i < predictors.n_cols; ++i)
   {
@@ -459,7 +460,7 @@ double FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -476,7 +477,7 @@ double FFN<
 
   network.Forward(predictors.cols(begin, begin + batchSize - 1), networkOutput);
 
-  const double obj = outputLayer.Forward(networkOutput,
+  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
       responses.cols(begin, begin + batchSize - 1)) + network.Loss();
 
   // Now perform the backward pass.
