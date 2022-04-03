@@ -91,11 +91,59 @@ FFN<OutputLayerType, InitializationRuleType, MatType>& FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::operator=(FFN network)
+>::operator=(const FFN& other)
 {
-  Swap(network);
+  if (this != &other)
+  {
+    outputLayer = other.outputLayer;
+    initializeRule = other.initializeRule;
+    network = other.network;
+    parameters = other.parameters;
+    inputDimensions = other.inputDimensions;
+    predictors = other.predictors;
+    responses = other.responses;
+    networkOutput = other.networkOutput;
+    networkDelta = other.networkDelta;
+    error = other.error;
+    training = other.training;
+    inputDimensionsAreSet = other.inputDimensionsAreSet;
+
+    // Copying will not preserve Armadillo aliases correctly, so we will reset
+    // those.
+    layerMemoryIsSet = false;
+  }
+
   return *this;
-};
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+FFN<OutputLayerType, InitializationRuleType, MatType>& FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::operator=(FFN&& other)
+{
+  if (this != &other)
+  {
+    outputLayer = std::move(other.outputLayer);
+    initializeRule = std::move(other.initializeRule);
+    network = std::move(other.network);
+    parameters = std::move(other.parameters);
+    inputDimensions = std::move(other.inputDimensions);
+    predictors = std::move(other.predictors);
+    responses = std::move(other.responses);
+    networkOutput = std::move(other.networkOutput);
+    networkDelta = std::move(other.networkDelta);
+    error = std::move(other.error);
+    training = std::move(other.training);
+    inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
+    layerMemoryIsSet = std::move(other.layerMemoryIsSet);
+  }
+
+  return *this;
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -616,32 +664,6 @@ void FFN<
   network.ComputeOutputDimensions();
   inputDimensionsAreSet = true;
 }
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MatType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::Swap(FFN& network)
-{
-  std::swap(outputLayer, network.outputLayer);
-  std::swap(initializeRule, network.initializeRule);
-  std::swap(this->network, network.network);
-  std::swap(parameters, network.parameters);
-  std::swap(inputDimensions, network.inputDimensions);
-  std::swap(predictors, network.predictors);
-  std::swap(responses, network.responses);
-  std::swap(training, network.training);
-  std::swap(inputDimensionsAreSet, network.inputDimensionsAreSet);
-  std::swap(networkOutput, network.networkOutput);
-  std::swap(networkDelta, network.networkDelta);
-
-  // std::swap() will not preserve Armadillo aliases correctly, so we will reset
-  // those.
-  layerMemoryIsSet = false;
-};
 
 template<typename OutputLayerType,
          typename InitializationRuleType,

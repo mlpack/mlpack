@@ -75,13 +75,13 @@ class FFN
       InitializationRuleType initializeRule = InitializationRuleType());
 
   //! Copy constructor.
-  FFN(const FFN&);
-
+  FFN(const FFN& other);
   //! Move constructor.
-  FFN(FFN&&);
-
-  //! Copy/move assignment operator.
-  FFN& operator=(FFN);
+  FFN(FFN&& other);
+  //! Copy operator.
+  FFN& operator=(const FFN& other);
+  //! Move assignment operator.
+  FFN& operator=(FFN&& other);
 
   /**
    * Add a new layer to the model.
@@ -467,13 +467,6 @@ class FFN
    */
   void UpdateDimensions(const std::string& functionName,
                         const size_t inputDimensionality = 0);
-
-  /**
-   * Swap the content of this network with given network.
-   *
-   * @param network Desired source network.
-   */
-  void Swap(FFN& network);
 
   /**
    * Check if the optimizer has MaxIterations() parameter, if it does then check
