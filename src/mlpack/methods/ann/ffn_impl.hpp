@@ -246,6 +246,9 @@ void FFN<
 {
   parameters.clear();
 
+  // If the user provided an input dimensionality, then we will take that as the
+  // new input size.  Otherwise, whatever is currently specified in
+  // `InputDimensions()` will be used.
   if (inputDimensionality != 0)
   {
     CheckNetwork("FFN::Reset()", inputDimensionality, true, false);
