@@ -149,7 +149,7 @@ class LSTMType : public RecurrentLayer<MatType>
     this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
         1);
 
-    // The Linear layer flattens its input.
+    // The LSTM layer flattens its input.
     this->outputDimensions[0] = outSize;
   }
 
