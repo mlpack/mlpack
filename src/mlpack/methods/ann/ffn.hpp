@@ -538,9 +538,6 @@ class FFN
   //! Locally-stored error of the backward pass; used by the gradient pass.
   MatType error;
 
-  //! The current evaluation mode (training or testing).
-  bool training;
-
   //! If true, each layer has its memory properly set for a forward/backward
   //! pass.
   bool layerMemoryIsSet;

@@ -30,7 +30,6 @@ FFN<
 >::FFN(OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
-    training(false),
     layerMemoryIsSet(false),
     inputDimensionsAreSet(false)
 {
@@ -52,7 +51,6 @@ FFN<
     inputDimensions(network.inputDimensions),
     predictors(network.predictors),
     responses(network.responses),
-    training(network.training),
     // These will be set correctly in the first Forward() call.
     layerMemoryIsSet(false),
     inputDimensionsAreSet(false)
@@ -75,7 +73,6 @@ FFN<
     inputDimensions(std::move(network.inputDimensions)),
     predictors(std::move(network.predictors)),
     responses(std::move(network.responses)),
-    training(std::move(network.training)),
     // Aliases will not be correct after a std::move(), so we will manually
     // reset them.
     layerMemoryIsSet(false),
@@ -105,7 +102,6 @@ FFN<OutputLayerType, InitializationRuleType, MatType>& FFN<
     networkOutput = other.networkOutput;
     networkDelta = other.networkDelta;
     error = other.error;
-    training = other.training;
     inputDimensionsAreSet = other.inputDimensionsAreSet;
 
     // Copying will not preserve Armadillo aliases correctly, so we will reset
@@ -137,7 +133,6 @@ FFN<OutputLayerType, InitializationRuleType, MatType>& FFN<
     networkOutput = std::move(other.networkOutput);
     networkDelta = std::move(other.networkDelta);
     error = std::move(other.error);
-    training = std::move(other.training);
     inputDimensionsAreSet = std::move(other.inputDimensionsAreSet);
     layerMemoryIsSet = std::move(other.layerMemoryIsSet);
   }
@@ -270,8 +265,7 @@ void FFN<
     MatType
 >::SetNetworkMode(const bool training)
 {
-  this->training = training;
-  network.Training() = this->training;
+  network.Training() = training;
 }
 
 template<typename OutputLayerType,
@@ -383,7 +377,6 @@ void FFN<
 
   // Serialize the expected input size.
   ar(CEREAL_NVP(inputDimensions));
-  ar(CEREAL_NVP(training));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
