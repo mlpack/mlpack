@@ -149,7 +149,8 @@ class LinearType : public Layer<MatType>
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.
+  //! Locally-stored weight object.  This holds all the weights in a vectorized
+  //! form; i.e., the weights and the bias.
   MatType weights;
 
   //! Locally-stored weight parameters.
