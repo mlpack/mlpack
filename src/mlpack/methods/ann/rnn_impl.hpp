@@ -366,6 +366,8 @@ void RNN<
 
   if (Archive::is_loading::value)
   {
+    // We can clear these members, since it's not possible to serialize in the
+    // middle of training and resume.
     predictors.clear();
     responses.clear();
   }
