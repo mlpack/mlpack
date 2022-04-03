@@ -234,8 +234,7 @@ class LSTMType : public RecurrentLayer<MatType>
   // Locally-stored intermediate computations below here.  Do these still need
   // to be cubes?  TODO: but I think they do.
 
-  // We need to store state whenever something is used in Backward() or
-  // Gradient().
+  // These members store recurrent state.
 
   //! Locally-stored input gate activation.
   arma::Cube<typename MatType::elem_type> inputGateActivation;
