@@ -560,9 +560,17 @@ void FFN<
   if (!inputDimensionsAreSet)
     UpdateDimensions(functionName, inputDimensionality);
 
-  // We may need to initialize the `parameters` matrix if it is empty.
+  // We may need to initialize the `parameters` matrix if it is empty or the
+  // wrong size.
   if (parameters.is_empty())
+  {
     InitializeWeights();
+  }
+  else if (parameters.n_elem != network.WeightSize())
+  {
+    parameters.clear();
+    InitializeWeights();
+  }
 
   // Make sure each layer is pointing at the right memory.
   if (!layerMemoryIsSet)

@@ -115,13 +115,17 @@ class FFN
 
   /**
    * Modify the network model.  Be careful!  If you change the structure of the
-   * network or parameters for layers, its state may become invalid, so be sure
-   * to call `ResetParameters()` afterwards.
+   * network or parameters for layers, its state may become invalid, and the
+   * next time it is used for any operation the parameters will be reset.
    *
    * Don't add any layers like this; use `Add()` instead.
    */
   std::vector<Layer<MatType>*>& Network()
   {
+    // We can no longer make any assumptions... the user may change anything.
+    inputDimensionsAreSet = false;
+    layerMemoryIsSet = false;
+
     return network.Network();
   }
 
@@ -554,6 +558,7 @@ class FFN
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
 
+  // RNN will call `CheckNetwork()`, which is private.
   friend class RNN<OutputLayerType, InitializationRuleType, MatType>;
 }; // class FFN
 
