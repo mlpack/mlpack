@@ -598,12 +598,7 @@ void RNN<
     MatType
 >::Shuffle()
 {
-  arma::Cube<typename MatType::elem_type> newPredictors;
-  arma::Cube<typename MatType::elem_type> newResponses;
-  math::ShuffleData(predictors, responses, newPredictors, newResponses);
-
-  predictors = std::move(newPredictors);
-  responses = std::move(newResponses);
+  math::ShuffleData(predictors, responses, predictors, responses);
 }
 
 template<
