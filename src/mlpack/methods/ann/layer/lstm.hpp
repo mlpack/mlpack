@@ -135,12 +135,13 @@ class LSTMType : public RecurrentLayer<MatType>
   //! Modify the parameters.
   MatType& Parameters() { return weights; }
 
+  //! Get the total number of trainable parameters.
   size_t WeightSize() const
   {
-    // TODO ...
     return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize);
   }
 
+  //! Given a properly set InputDimensions(), compute the output dimensions.
   void ComputeOutputDimensions()
   {
     inSize = std::accumulate(this->inputDimensions.begin(),
@@ -153,7 +154,7 @@ class LSTMType : public RecurrentLayer<MatType>
   }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
