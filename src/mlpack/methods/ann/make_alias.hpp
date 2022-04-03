@@ -2,7 +2,9 @@
  * @file make_alias.hpp
  * @author Ryan Curtin
  *
- * Implementation of MakeAlias(), a utility function.
+ * Implementation of `MakeAlias()`, a utility function.  This is meant to be
+ * used in `SetWeights()` calls in various layers, to wrap internal weight
+ * objects as aliases around the given memory pointers.
  */
 #ifndef MLPACK_METHODS_ANN_MAKE_ALIAS_HPP
 #define MLPACK_METHODS_ANN_MAKE_ALIAS_HPP
