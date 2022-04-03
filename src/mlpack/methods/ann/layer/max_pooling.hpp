@@ -269,7 +269,7 @@ class MaxPoolingType : public Layer<MatType>
   //! Locally-stored pooling strategy.
   MaxPoolingRule pooling;
 
-  //! Locally-stored pooling indicies.
+  //! Locally-stored pooling indices.
   arma::Cube<size_t> poolingIndices;
 }; // class MaxPoolingType
 
