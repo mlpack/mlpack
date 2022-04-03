@@ -184,6 +184,9 @@ class Layer
    */
   virtual void SetWeights(typename MatType::elem_type* /* weightsPtr */) { }
 
+  /**
+   * Get the total number of trainable weights in the layer.
+   */
   virtual size_t WeightSize() const { return 0; }
 
   /**
