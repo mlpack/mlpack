@@ -20,7 +20,7 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
-#include "layer_types.hpp"
+#include "layer.hpp"
 #include "padding.hpp"
 
 namespace mlpack {

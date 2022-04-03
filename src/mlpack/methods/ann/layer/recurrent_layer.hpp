@@ -12,6 +12,9 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_RECURRENT_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_LAYER_HPP
 
+#include <mlpack/prereqs.hpp>
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann {
 

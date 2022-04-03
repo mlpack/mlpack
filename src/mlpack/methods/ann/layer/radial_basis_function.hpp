@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 
-#include "layer_types.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
