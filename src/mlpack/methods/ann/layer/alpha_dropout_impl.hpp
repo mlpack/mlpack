@@ -129,7 +129,9 @@ void AlphaDropoutType<MatType>::serialize(
   ar(CEREAL_NVP(b));
 
   // No need to serialize the mask, since it will be recomputed on the next
-  // forward pass.
+  // forward pass.  But we should clear it if we are loading.
+  if (Archive::is_loading::value)
+    mask.clear();
 }
 
 } // namespace ann
