@@ -97,9 +97,9 @@ template<typename MatType, typename RegularizerType>
 void LinearType<MatType, RegularizerType>::SetWeights(
     typename MatType::elem_type* weightsPtr)
 {
-  weights = MatType(weightsPtr, outSize * inSize + outSize, 1, false, false);
-  weight = MatType(weightsPtr, outSize, inSize, false, false);
-  bias = MatType(weightsPtr + weight.n_elem, outSize, 1, false, false);
+  MakeAlias(weights, weightsPtr, outSize * inSize + outSize, 1);
+  MakeAlias(weight, weightsPtr, outSize, inSize);
+  MakeAlias(bias, weightsPtr + weight.n_elem, outSize, 1);
 }
 
 template<typename MatType, typename RegularizerType>

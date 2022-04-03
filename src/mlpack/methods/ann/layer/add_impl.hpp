@@ -95,7 +95,7 @@ template<typename MatType>
 void AddType<MatType>::SetWeights(typename MatType::elem_type* weightPtr)
 {
   // Set the weights to wrap the given memory.
-  weights = MatType(weightPtr, 1, outSize, false, true);
+  MakeAlias(weights, weightPtr, 1, outSize);
 }
 
 template<typename MatType>

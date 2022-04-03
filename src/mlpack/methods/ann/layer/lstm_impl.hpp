@@ -98,66 +98,55 @@ void LSTMType<MatType>::SetWeights(
     typename MatType::elem_type* weightsPtr)
 {
   // Set the weight parameter for the output gate.
-  input2GateOutputWeight = MatType(weightsPtr, outSize, inSize,
-      false, false);
-  input2GateOutputBias = MatType(weightsPtr + input2GateOutputWeight.n_elem,
-      outSize, 1, false, false);
-  size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
+  MakeAlias(input2GateOutputWeight, weightsPtr, outSize, inSize);
+  size_t offset = input2GateOutputWeight.n_elem;
+  MakeAlias(input2GateOutputBias, weightsPtr + offset, outSize, 1);
+  offset += input2GateOutputBias.n_elem;
 
   // Set the weight parameter for the forget gate.
-  input2GateForgetWeight = MatType(weightsPtr + offset, outSize, inSize,
-      false, false);
-  input2GateForgetBias = MatType(weightsPtr + offset +
-      input2GateForgetWeight.n_elem, outSize, 1, false, false);
-  offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
+  MakeAlias(input2GateForgetWeight, weightsPtr + offset, outSize, inSize);
+  offset += input2GateForgetWeight.n_elem;
+  MakeAlias(input2GateForgetBias, weightsPtr + offset, outSize, 1);
+  offset += input2GateForgetBias.n_elem;
 
   // Set the weight parameter for the input gate.
-  input2GateInputWeight = MatType(weightsPtr + offset, outSize, inSize,
-      false, false);
-  input2GateInputBias = MatType(weightsPtr + offset +
-      input2GateInputWeight.n_elem, outSize, 1, false, false);
-  offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
+  MakeAlias(input2GateInputWeight, weightsPtr + offset, outSize, inSize);
+  offset += input2GateInputWeight.n_elem;
+  MakeAlias(input2GateInputBias, weightsPtr + offset, outSize, 1);
+  offset += input2GateInputBias.n_elem;
 
   // Set the weight parameter for the hidden gate.
-  input2HiddenWeight = MatType(weightsPtr + offset, outSize, inSize, false,
-      false);
-  input2HiddenBias = MatType(weightsPtr + offset + input2HiddenWeight.n_elem,
-      outSize, 1, false, false);
-  offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
+  MakeAlias(input2HiddenWeight, weightsPtr + offset, outSize, inSize);
+  offset += input2HiddenWeight.n_elem;
+  MakeAlias(input2HiddenBias, weightsPtr + offset, outSize, 1);
+  offset += input2HiddenBias.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  output2GateOutputWeight = MatType(weightsPtr + offset, outSize, outSize,
-      false, false);
+  MakeAlias(output2GateOutputWeight, weightsPtr + offset, outSize, outSize);
   offset += output2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  output2GateForgetWeight = MatType(weightsPtr + offset, outSize, outSize,
-      false, false);
+  MakeAlias(output2GateForgetWeight, weightsPtr + offset, outSize, outSize);
   offset += output2GateForgetWeight.n_elem;
 
   // Set the weight parameter for the input multiplication.
-  output2GateInputWeight = MatType(weightsPtr + offset, outSize, outSize,
-      false, false);
+  MakeAlias(output2GateInputWeight, weightsPtr + offset, outSize, outSize);
   offset += output2GateInputWeight.n_elem;
 
   // Set the weight parameter for the hidden multiplication.
-  output2HiddenWeight = MatType(weightsPtr + offset, outSize, outSize, false,
-      false);
+  MakeAlias(output2HiddenWeight, weightsPtr + offset, outSize, outSize);
   offset += output2HiddenWeight.n_elem;
 
   // Set the weight parameter for the cell multiplication.
-  cell2GateOutputWeight = MatType(weightsPtr + offset, outSize, 1, false,
-      false);
+  MakeAlias(cell2GateOutputWeight, weightsPtr + offset, outSize, 1);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - forget gate multiplication.
-  cell2GateForgetWeight = MatType(weightsPtr + offset, outSize, 1, false,
-      false);
+  MakeAlias(cell2GateForgetWeight, weightsPtr + offset, outSize, 1);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - input gate multiplication.
-  cell2GateInputWeight = MatType(weightsPtr + offset, outSize, 1, false,
-      false);
+  MakeAlias(cell2GateInputWeight, weightsPtr + offset, outSize, 1);
 }
 
 // Forward when cellState is not needed.

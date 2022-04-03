@@ -98,7 +98,7 @@ template<typename MatType, typename RegularizerType>
 void LinearNoBiasType<MatType, RegularizerType>::SetWeights(
     typename MatType::elem_type* weightsPtr)
 {
-  weight = arma::mat(weightsPtr, outSize, inSize, false, false);
+  MakeAlias(weight, weightsPtr, outSize, inSize);
 }
 
 template<typename MatType, typename RegularizerType>
