@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_RBFType_HPP
-#define MLPACK_METHODS_ANN_LAYER_RBFType_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_RADIAL_BASIS_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_LAYER_RADIAL_BASIS_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>

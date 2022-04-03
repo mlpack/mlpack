@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_RBFType_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_RBFType_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_RADIAL_BASIS_FUNCTION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_RADIAL_BASIS_FUNCTION_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "radial_basis_function.hpp"
