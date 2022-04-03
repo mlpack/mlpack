@@ -521,8 +521,8 @@ double RNN<
       network.Parameters().n_cols);
 
   SetPreviousStep(size_t(-1));
-  for (size_t t = predictors.n_slices; t >= predictors.n_slices - effectiveRho +
-1; --t)
+  const size_t minStep = predictors.n_slices - effectiveRho + 1;
+  for (size_t t = predictors.n_slices; t >= minStep; --t)
   {
     SetCurrentStep(t - 1);
 
