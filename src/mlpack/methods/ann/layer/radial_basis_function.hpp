@@ -22,9 +22,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Radial Basis Function layer. The RBFType class when use
- * with a non-linear activation function acts as a Radial Basis Function which
- * can be used with Feed-Forward neural network.
+ * Implementation of the Radial Basis Function layer. The RBFType class, when
+ * used with a non-linear activation function, acts as a Radial Basis Function
+ * which can be used with a feed-forward neural network.
  *
  * For more information, refer to the following paper,
  *
@@ -61,8 +61,8 @@ class RBFType : public Layer<MatType>
    * @param betas The beta value to be used with centres.
    */
   RBFType(const size_t outSize,
-      MatType& centres,
-      double betas = 0);
+          MatType& centres,
+          double betas = 0);
 
   //! Clone the LinearType object. This handles polymorphism correctly.
   RBFType* Clone() const { return new RBFType(*this); }
