@@ -537,9 +537,12 @@ class FFN
   //! except during training.
   MatType responses;
 
-  //! The current error for the backward pass.
+  //! Locally-stored output of the network from a forward pass; used by the
+  //! backward pass.
   MatType networkOutput;
+  //! Locally-stored output of the backward pass; used by the gradient pass.
   MatType networkDelta;
+  //! Locally-stored error of the backward pass; used by the gradient pass.
   MatType error;
 
   //! The current evaluation mode (training or testing).
