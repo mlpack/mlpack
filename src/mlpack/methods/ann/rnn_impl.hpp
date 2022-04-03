@@ -301,6 +301,7 @@ void RNN<
   SetCurrentStep(size_t(0));
 
   // Iterate over all time steps.
+  MatType inputAlias, outputAlias;
   for (size_t t = 0; t < predictors.n_slices; ++t)
   {
     // If it is after the first step, we have a previous state.
@@ -308,11 +309,11 @@ void RNN<
       SetPreviousStep(size_t(0));
 
     // Create aliases for the input and output.
-    const arma::Mat<typename MatType::elem_type> inputAlias(
+    MakeAlias(inputAlias,
         (typename MatType::elem_type*) predictors.slice(t).colptr(begin),
-        predictors.n_rows, batchSize, false, true);
-    arma::Mat<typename MatType::elem_type> outputAlias(
-        results.slice(t).colptr(begin), results.n_rows, batchSize, false, true);
+        predictors.n_rows, batchSize);
+    MakeAlias(outputAlias, results.slice(t).colptr(begin), results.n_rows,
+        batchSize);
 
     network.Forward(inputAlias, outputAlias);
   }
@@ -396,20 +397,21 @@ double RNN<
   ResetMemoryState(1, batchSize);
   SetCurrentStep(0);
   SetPreviousStep(size_t(-1));
-  arma::mat output(network.network.OutputSize(), batchSize);
+  MatType output(network.network.OutputSize(), batchSize);
 
   double loss = 0.0;
+  MatType stepData, responseData;
   for (size_t t = 0; t < predictors.n_slices; ++t)
   {
     if (t == 1)
       SetPreviousStep(0);
 
     // Wrap a matrix around our data to avoid a copy.
-    arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
-        batchSize, false, true);
+    MakeAlias(stepData, predictors.slice(t).colptr(begin), predictors.n_rows,
+        batchSize);
     const size_t responseStep = (single) ? 0 : t;
-    arma::mat responseData(responses.slice(responseStep).colptr(begin),
-        responses.n_rows, batchSize, false, true);
+    MakeAlias(responseData, responses.slice(responseStep).colptr(begin),
+        responses.n_rows, batchSize);
 
     // TODO: does this cause a copy?
     network.ResetData(std::move(stepData), std::move(responseData));
@@ -468,20 +470,21 @@ double RNN<
   // the first few steps, we won't actually need to hold onto any historical
   // information, since BPTT will never go back that far.
   const size_t extraSteps = (predictors.n_slices - effectiveRho + 1);
+  MatType stepData, outputData, responseData;
   for (size_t t = 0; t < std::min(size_t(predictors.n_slices), extraSteps); ++t)
   {
     SetCurrentStep(0);
 
-    // Wrap a matrix around our data to avoid a copy.
-    arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
-        batchSize, false, true);
-    arma::mat outputData(outputs.slice(t).memptr(), outputs.n_rows,
-        outputs.n_cols, false, true);
+    // Make an alias of the step's data.
+    MakeAlias(stepData, predictors.slice(t).colptr(begin), predictors.n_rows,
+        batchSize);
+    MakeAlias(outputData, outputs.slice(t).memptr(), outputs.n_rows,
+        outputs.n_cols);
     network.network.Forward(stepData, outputData);
 
     const size_t responseStep = (single) ? 0 : t;
-    arma::mat responseData(responses.slice(responseStep).colptr(begin),
-        responses.n_rows, batchSize, false, true);
+    MakeAlias(responseData, responses.slice(responseStep).colptr(begin),
+        responses.n_rows, batchSize);
 
     loss += network.outputLayer.Forward(outputData, responseData);
 
@@ -495,15 +498,15 @@ double RNN<
     SetCurrentStep(t - extraSteps + 1);
 
     // Wrap a matrix around our data to avoid a copy.
-    arma::mat stepData(predictors.slice(t).colptr(begin), predictors.n_rows,
-        batchSize, false, true);
-    arma::mat outputData(outputs.slice(t).memptr(), outputs.n_rows,
-        outputs.n_cols, false, true);
+    MakeAlias(stepData, predictors.slice(t).colptr(begin), predictors.n_rows,
+        batchSize);
+    MakeAlias(outputData, outputs.slice(t).memptr(), outputs.n_rows,
+        outputs.n_cols);
     network.network.Forward(stepData, outputData);
 
     const size_t responseStep = (single) ? 0 : t;
-    arma::mat responseData(responses.slice(responseStep).colptr(begin),
-        responses.n_rows, batchSize, false, true);
+    MakeAlias(responseData, responses.slice(responseStep).colptr(begin),
+        responses.n_rows, batchSize);
 
     loss += network.outputLayer.Forward(outputData, responseData);
 
@@ -539,23 +542,23 @@ double RNN<
     }
     else
     {
-      arma::mat outputData(outputs.slice(t - 1).colptr(0), outputs.n_rows,
-          outputs.n_cols, false, true);
+      MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
+          outputs.n_cols);
       const size_t respStep = (single) ? 0 : t - 1;
-      arma::mat respData(responses.slice(respStep).colptr(begin),
-          responses.n_rows, batchSize, false, true);
-      network.outputLayer.Backward(outputData, respData, error);
+      MakeAlias(responseData, responses.slice(respStep).colptr(begin),
+          responses.n_rows, batchSize);
+      network.outputLayer.Backward(outputData, responseData, error);
     }
 
     // Now pass that error backwards through the network.
-    arma::mat outputData(outputs.slice(t - 1).colptr(0), outputs.n_rows,
-        outputs.n_cols, false, true);
+    MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
+        outputs.n_cols);
     // TODO: allocate space for networkDelta?
     MatType networkDelta;
     network.network.Backward(outputData, error, networkDelta);
 
-    arma::mat stepData(predictors.slice(t - 1).colptr(begin), predictors.n_rows,
-        batchSize, false, true);
+    MakeAlias(stepData, predictors.slice(t - 1).colptr(begin),
+        predictors.n_rows, batchSize);
     network.network.Gradient(stepData, error, currentGradient);
     gradient += currentGradient;
 
