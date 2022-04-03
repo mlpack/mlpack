@@ -21,7 +21,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Defenition of a standard recurrent neural network container.
+ * Definition of a standard recurrent neural network container.  A recurrent
+ * neural network can handle recurrent layers (i.e. `RecurrentLayer`s), which
+ * hold internal state and are passed sequences of data as inputs.
+ *
+ * As opposed to the standard `FFN`, which takes data in a matrix format where
+ * each column is a data point, the `RNN` takes a cube format where each column
+ * is a data point and each slice is a time step.
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
