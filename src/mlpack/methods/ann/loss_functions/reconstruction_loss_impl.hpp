@@ -58,7 +58,7 @@ void ReconstructionLossType<MatType, DistType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(dist);
+  ar(CEREAL_NVP(dist));
   ar(CEREAL_NVP(reduction));
 }
 
