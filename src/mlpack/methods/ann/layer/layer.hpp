@@ -277,9 +277,10 @@ class Layer
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar(inputDimensions);
-    ar(outputDimensions);
-    ar(training);
+    ar(CEREAL_NVP(inputDimensions));
+    ar(CEREAL_NVP(outputDimensions));
+    ar(CEREAL_NVP(validOutputDimensions));
+    ar(CEREAL_NVP(training));
 
     // Note that layer weights are serialized by the FFN!
   }
