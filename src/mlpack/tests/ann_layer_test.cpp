@@ -21,7 +21,6 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
-// #include <mlpack/methods/ann/rnn.hpp>
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
@@ -337,7 +336,7 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   module.Training() = true;
 
   // Test the Forward function when training phase.
-  arma::mat output (arma::size(input));
+  arma::mat output(arma::size(input));
   module.Forward(input, output);
   // Check whether mean remains nearly same.
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))) <=
