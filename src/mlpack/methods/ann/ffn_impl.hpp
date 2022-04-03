@@ -226,12 +226,11 @@ void FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-template<typename PredictorsType, typename ResponsesType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Forward(const PredictorsType& inputs, ResponsesType& results)
+>::Forward(const MatType& inputs, MatType& results)
 {
   Forward(inputs, results, 0, network.Network().size() - 1);
 }
@@ -239,13 +238,12 @@ void FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-template<typename PredictorsType, typename ResponsesType>
 void FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Forward(const PredictorsType& inputs,
-           ResponsesType& results,
+>::Forward(const MatType& inputs,
+           MatType& results,
            const size_t begin,
            const size_t end)
 {
@@ -270,17 +268,16 @@ void FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-template<typename PredictorsType, typename TargetsType, typename GradientsType>
-double FFN<
+typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Backward(const PredictorsType& inputs,
-            const TargetsType& targets,
-            GradientsType& gradients)
+>::Backward(const MatType& inputs,
+            const MatType& targets,
+            MatType& gradients)
 {
-  const double res = outputLayer.Forward(networkOutput, targets) +
-      network.Loss();
+  const typename MatType::elem_type res =
+      outputLayer.Forward(networkOutput, targets) + network.Loss();
 
   // Compute the error of the output layer.
   outputLayer.Backward(networkOutput, targets, error);
@@ -299,12 +296,11 @@ double FFN<
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
-template<typename PredictorsType, typename ResponsesType>
 double FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Evaluate(const PredictorsType& predictors, const ResponsesType& responses)
+>::Evaluate(const MatType& predictors, const MatType& responses)
 {
   // Sanity check: ensure network is valid.
   CheckNetwork("FFN::Evaluate()", predictors.n_rows);

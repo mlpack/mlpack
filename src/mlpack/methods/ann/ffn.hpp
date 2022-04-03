@@ -256,52 +256,49 @@ class FFN
   /**
    * Perform the forward pass of the data in real batch mode.
    *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
+   * `Forward()` and `Backward()` should be used as a pair, and they are
+   * designed mainly for advanced users. You should try to use `Predict()` and
+   * `Train()`, if you can.
    *
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  template<typename PredictorsType, typename ResponsesType>
-  void Forward(const PredictorsType& inputs, ResponsesType& results);
+  void Forward(const MatType& inputs, MatType& results);
 
   /**
    * Perform a partial forward pass of the data.
    *
    * This function is meant for the cases when users require a forward pass only
-   * through certain layers and not the entire network.
+   * through certain layers and not the entire network.  `Forward()` and
+   * `Backward()` should be used as a pair, and they are designed mainly for
+   * advanced users. You should try to use `Predict()` and `Train()`, if you
+   * can.
    *
    * @param inputs The input data for the specified first layer.
    * @param results The predicted results from the specified last layer.
    * @param begin The index of the first layer.
    * @param end The index of the last layer.
    */
-  template<typename PredictorsType, typename ResponsesType>
-  void Forward(const PredictorsType& inputs ,
-               ResponsesType& results,
+  void Forward(const MatType& inputs,
+               MatType& results,
                const size_t begin,
                const size_t end);
 
-  // TODO: this API needs to be changed!
   /**
-   * Perform the backward pass of the data in real batch mode.
+   * Perform the backward pass of the data.
    *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
+   * `Forward()` and `Backward()` should be used as a pair, and they are
+   * designed mainly for advanced users. You should try to use `Predict()` and
+   * `Train()` instead, if you can.
    *
    * @param inputs Inputs of current pass.
    * @param targets The training target.
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
    */
-  template<typename PredictorsType,
-           typename TargetsType,
-           typename GradientsType>
-  double Backward(const PredictorsType& inputs,
-                  const TargetsType& targets,
-                  GradientsType& gradients);
+  typename MatType::elem_type Backward(const MatType& inputs,
+                                       const MatType& targets,
+                                       MatType& gradients);
 
   /**
    * Evaluate the feedforward network with the given predictors and responses.
@@ -310,9 +307,7 @@ class FFN
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  template<typename PredictorsType, typename ResponsesType>
-  double Evaluate(const PredictorsType& predictors,
-                  const ResponsesType& responses);
+  double Evaluate(const MatType& predictors, const MatType& responses);
 
   //! Serialize the model.
   template<typename Archive>
