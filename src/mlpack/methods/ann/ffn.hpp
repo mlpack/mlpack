@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "forward_decls.hpp"
 #include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -25,12 +26,6 @@
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
-
-// TODO: move
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType> class RNN;
 
 /**
  * Implementation of a standard feed forward network.  Any layer that inherits
