@@ -21,13 +21,13 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::TanHType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::SoftPlusType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::HardSigmoidType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::SwishFunctionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::MishFunctionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::LiSHTFunctionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::GELUFunctionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::ElliotFunctionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::ElishFunctionType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::ann::GaussianFunctionType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::SwishType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::MishType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::LiSHTType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::GELUType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::ElliotType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::ElishType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::GaussianType<__VA_ARGS__>); \
     /* (end of base_layer.hpp) */ \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatenateType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConvolutionType< \
