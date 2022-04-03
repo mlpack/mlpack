@@ -387,13 +387,6 @@ class RNN
   arma::Cube<typename MatType::elem_type> responses;
 }; // class RNNType
 
-// Convenience typedefs.
-
-/**
- * Standard Sigmoid-Layer using the logistic activation function.
- */
-//using RNN = RNNType<>;
-
 } // namespace ann
 } // namespace mlpack
 
