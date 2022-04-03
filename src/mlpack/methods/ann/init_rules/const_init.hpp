@@ -103,7 +103,7 @@ class ConstInitialization
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar(initVal);
+    ar(CEREAL_NVP(initVal));
   }
 
  private:

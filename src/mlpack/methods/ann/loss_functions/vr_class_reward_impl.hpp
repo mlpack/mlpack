@@ -92,10 +92,10 @@ template<typename Archive>
 void VRClassRewardType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(scale);
-  ar(sizeAverage);
-  ar(reward);
-  ar(network);
+  ar(CEREAL_NVP(scale));
+  ar(CEREAL_NVP(sizeAverage));
+  ar(CEREAL_NVP(reward));
+  ar(CEREAL_NVP(network));
 }
 
 } // namespace ann
