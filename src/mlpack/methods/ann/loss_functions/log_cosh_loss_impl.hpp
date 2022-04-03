@@ -34,7 +34,7 @@ typename MatType::elem_type LogCoshLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typename PredictionType::elem_type lossSum = 
+  typename MatType::elem_type lossSum =
       arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
 
   if (reduction)

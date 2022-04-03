@@ -64,7 +64,7 @@ inline void SigmoidCrossEntropyErrorType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void SigmoidCrossEntropyError<MatType>::serialize(
+void SigmoidCrossEntropyErrorType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

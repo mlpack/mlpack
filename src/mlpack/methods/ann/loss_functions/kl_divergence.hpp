@@ -50,7 +50,7 @@ class KLDivergenceType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  KLDivergenceType(const bool reduction = false);
+  KLDivergenceType(const bool reduction = true);
 
   /**
    * Computes the Kullback–Leibler divergence error function.

@@ -58,10 +58,10 @@ void MarginRankingLossType<MatType>::Backward(
       predictionRows / 2 - 1);
   const MatType& prediction2 = prediction.rows(predictionRows / 2,
       predictionRows - 1);
-  LossType lossPrediction1 = -target % (prediction1 - prediction2) + margin;
+  MatType lossPrediction1 = -target % (prediction1 - prediction2) + margin;
   lossPrediction1.elem(arma::find(lossPrediction1 >= 0)).ones();
   lossPrediction1.elem(arma::find(lossPrediction1 < 0)).zeros();
-  LossType lossPrediction2 = lossPrediction1;
+  MatType lossPrediction2 = lossPrediction1;
   lossPrediction1 = -target % lossPrediction1;
   lossPrediction2 = target % lossPrediction2;
   loss = arma::join_cols(lossPrediction1, lossPrediction2);

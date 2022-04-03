@@ -55,7 +55,7 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
         + 0.5 * arma::log(2 * M_PI * target);
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
-  typename PredictionType::elem_type lossSum = arma::accu(loss);
+  typename MatType::elem_type lossSum = arma::accu(loss);
   
   if (reduction)
     return lossSum;

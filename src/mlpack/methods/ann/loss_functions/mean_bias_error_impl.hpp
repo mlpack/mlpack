@@ -31,8 +31,8 @@ typename MatType::elem_type MeanBiasErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  PredictionType loss = target - prediction;
-  typename PredictionType::elem_type lossSum = arma::accu(loss);
+  MatType loss = target - prediction;
+  typename MatType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;

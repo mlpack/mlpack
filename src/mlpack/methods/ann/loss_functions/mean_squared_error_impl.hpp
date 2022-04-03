@@ -30,7 +30,7 @@ typename MatType::elem_type MeanSquaredErrorType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typename PredictionType::elem_type lossSum =
+  typename MatType::elem_type lossSum =
       arma::accu(arma::square(prediction - target));
 
   if (reduction)

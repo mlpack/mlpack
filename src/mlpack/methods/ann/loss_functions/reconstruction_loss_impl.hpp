@@ -31,7 +31,7 @@ typename MatType::elem_type ReconstructionLossType<MatType, DistType>::Forward(
     const MatType& prediction, const MatType& target)
 {
   dist = DistType(prediction);
-  typename PredictionType::elem_type lossSum = -dist.LogProbability(target);
+  typename MatType::elem_type lossSum = -dist.LogProbability(target);
 
   if (reduction)
     return lossSum;

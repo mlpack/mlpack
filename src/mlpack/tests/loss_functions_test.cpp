@@ -246,7 +246,8 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-10.5619).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-10.5619).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -254,39 +255,13 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
   // Test the error function on a single input.
   input = arma::mat("2");
   target = arma::mat("3");
-  error = module.Forward(input, target);
-  REQUIRE(error == Approx(0.082760974810151655).epsilon(1e-3));
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(0.082760974810151655).epsilon(1e-3));
 
   // Test the Backward function on a single input.
   module.Backward(input, target, output);
   REQUIRE(arma::accu(output) == Approx(-0.1917880483011872).epsilon(1e-3));
   REQUIRE(output.n_elem == 1);
-}
-
-/**
- * Test to check KL Divergence loss function when we take mean.
- */
-TEST_CASE("KLDivergenceMeanTest", "[LossFunctionsTest]")
-{
-  arma::mat input, target, output;
-  double loss;
-  KLDivergence module(true);
-
-  // Test the Forward function.
-  input = arma::mat("1 1 1 1 1 1 1 1 1 1");
-  target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
-
-  // Test the Forward function. Loss should be 1.10606.
-  loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(1.10606).epsilon(1e-3));
-
-  // Test the Backward function.
-  module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) ==
-      Approx(-0.880156).epsilon(1e-3));
-  REQUIRE(output.n_rows == input.n_rows);
-  REQUIRE(output.n_cols == input.n_cols);
-  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /*
@@ -1266,7 +1241,7 @@ TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
   arma::mat input, target, output;
   arma::mat expectedOutput;
   double loss;
-  NegativeLogLikelihood<> module;
+  NegativeLogLikelihood module;
 
   // Test for sum reduction.
   input = arma::mat("-0.1689 -2.0033 -3.8886 -0.2862 -1.9392 -2.2532"

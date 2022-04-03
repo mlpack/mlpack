@@ -30,7 +30,7 @@ double NegativeLogLikelihoodType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typedef typename PredictionType::elem_type ElemType;
+  typedef typename MatType::elem_type ElemType;
   ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
@@ -67,7 +67,7 @@ void NegativeLogLikelihoodType<MatType>::Backward(
 
 template<typename MatType>
 template<typename Archive>
-void NegativeLogLikelihood<MatType>::serialize(
+void NegativeLogLikelihoodType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(reduction));

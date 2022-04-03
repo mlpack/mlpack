@@ -42,7 +42,7 @@ typename MatType::elem_type HingeEmbeddingLossType<MatType>::Forward(
 
 template<typename MatType>
 void HingeEmbeddingLossType<MatType>::Backward(
-    const MatType& prediction,
+    const MatType& /* prediction */,
     const MatType& target,
     MatType& loss)
 {

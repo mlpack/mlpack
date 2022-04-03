@@ -40,7 +40,7 @@ class HingeEmbeddingLossType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  HingeEmbeddingLossType(const bool reduction = true;);
+  HingeEmbeddingLossType(const bool reduction = true);
 
   /**
    * Computes the Hinge Embedding loss function.
