@@ -59,14 +59,14 @@ class RNN
 
   //! Copy constructor.
   RNN(const RNN&);
-
   //! Move constructor.
   RNN(RNN&&);
-
-  //! Copy/move assignment operator.
+  //! Copy operator.
   RNN& operator=(const RNN&);
+  //! Move assignment operator.
   RNN& operator=(RNN&&);
 
+  //! Destroy the RNN and release any memory it is holding.
   ~RNN();
 
   /**
@@ -92,9 +92,10 @@ class RNN
 
   /**
    * Modify the network model.  Be careful!  If you change the structure of the
-   * network or parameters for layers, its state may become invalid, so be sure
-   * to call ResetParameters() afterwards.  Don't add any layers like this; use
-   * `Add()` instead.
+   * network or parameters for layers, its state may become invalid, and the
+   * next time it is used for any operation the parameters will be reset.
+   *
+   * Don't add any layers like this; use `Add()` instead.
    */
   std::vector<Layer<MatType>*>& Network()
   {
@@ -122,10 +123,11 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::Cube<typename MatType::elem_type> predictors,
-               arma::Cube<typename MatType::elem_type> responses,
-               OptimizerType& optimizer,
-               CallbackTypes&&... callbacks);
+  typename MatType::elem_type Train(
+      arma::Cube<typename MatType::elem_type> predictors,
+      arma::Cube<typename MatType::elem_type> responses,
+      OptimizerType& optimizer,
+      CallbackTypes&&... callbacks);
 
   /**
    * Train the recurrent network on the given input data. By default, the
@@ -148,9 +150,10 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  double Train(arma::Cube<typename MatType::elem_type> predictors,
-               arma::Cube<typename MatType::elem_type> responses,
-               CallbackTypes&&... callbacks);
+  typename MatType::elem_type Train(
+      arma::Cube<typename MatType::elem_type> predictors,
+      arma::Cube<typename MatType::elem_type> responses,
+      CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -172,13 +175,19 @@ class RNN
   size_t WeightSize() { return network.WeightSize(); }
 
   /**
-   * Set the logical dimensions of the input.
+   * Set the logical dimensions of the input.  `Train()` and `Predict()` expect
+   * data to be passed such that one point corresponds to one column, but this
+   * data is allowed to be an arbitrary higher-order tensor.
    *
-   * TODO: better comment.  You would call this when you want to, e.g., pass an
-   * n-dimensional tensor, so that you can specify each of those n dimensions.
+   * So, if the input is meant to be 28x28x3 images, then the input data to
+   * `Train()` or `Predict()` should have 28*28*3 = 2352 rows, and
+   * `InputDImensions()` should be set to `{ 28, 28, 3}`.  Then, the layers of
+   * the network will interpret each input point as a 3-dimensional image
+   * instead of a 1-dimensional vector.
+   *
+   * If `InputDimensions()` is left unset before training, the data will be
+   * assumed to be a 1-dimensional vector.
    */
-  // Note: we don't need to invalidate any caches, because any forward pass will
-  // already check if the input dimensions have changed.
   std::vector<size_t>& InputDimensions() { return network.InputDimensions(); }
   //! Get the logical dimensions of the input.
   const std::vector<size_t>& InputDimensions() const
@@ -196,6 +205,15 @@ class RNN
   //! Modify the number of steps allowed for BPTT.
   size_t& Rho() { return rho; }
 
+  /**
+   * Reset the stored data of the network entirely.  This reset all weights of
+   * each layer using `InitializationRuleType`, and prepares the network to
+   * accept a (flat 1-d) input size of `inputDimensionality` (if passed), or
+   * whatever input size has been set with `InputDimensions()`.
+   *
+   * This also resets the mode of the network to prediction mode (not training
+   * mode).  See `SetNetworkMode()` for more information.
+   */
   void Reset(const size_t inputDimensionality = 0);
 
   /**
@@ -206,63 +224,15 @@ class RNN
   void SetNetworkMode(const bool training) { network.SetNetworkMode(training); }
 
   /**
-   * Perform the forward pass of the data in real batch mode.
-   *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
-   *
-   * @param inputs The input data.
-   * @param results The predicted results.
-   */
-  void Forward(const arma::Cube<typename MatType::elem_type>& inputs,
-               arma::Cube<typename MatType::elem_type>& results);
-
-  /**
-   * Perform a partial forward pass of the data.
-   *
-   * This function is meant for the cases when users require a forward pass only
-   * through certain layers and not the entire network.
-   *
-   * @param inputs The input data for the specified first layer.
-   * @param results The predicted results from the specified last layer.
-   * @param begin The index of the first layer.
-   * @param end The index of the last layer.
-   */
-  void Forward(const arma::Cube<typename MatType::elem_type>& inputs,
-               arma::Cube<typename MatType::elem_type>& results,
-               const size_t begin,
-               const size_t end);
-
-  /**
-   * Perform the backward pass of the data in real batch mode.
-   *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
-   *
-   * @param inputs Inputs of current pass.
-   * @param targets The training target.
-   * @param gradients Computed gradients.
-   * @return Training error of the current pass.
-   */
-  template<typename PredictorsType,
-           typename TargetsType,
-           typename GradientsType>
-  double Backward(const PredictorsType& inputs,
-                  const TargetsType& targets,
-                  GradientsType& gradients);
-
-  /**
    * Evaluate the recurrent network with the given predictors and responses.
    * This functions is usually used to monitor progress while training.
    *
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  template<typename PredictorsType, typename ResponsesType>
-  double Evaluate(const PredictorsType& predictors,
-                  const ResponsesType& responses);
+  typename MatType::elem_type Evaluate(
+      const arma::Cube<typename MatType::elem_type>& predictors,
+      const arma::Cube<typename MatType::elem_type>& responses);
 
   //! Serialize the model.
   template<typename Archive>
@@ -279,7 +249,7 @@ class RNN
    *
    * @param parameters Matrix model parameters.
    */
-  double Evaluate(const MatType& parameters);
+  typename MatType::elem_type Evaluate(const MatType& parameters);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -295,9 +265,9 @@ class RNN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double Evaluate(const MatType& parameters,
-                  const size_t begin,
-                  const size_t batchSize);
+  typename MatType::elem_type Evaluate(const MatType& parameters,
+                                       const size_t begin,
+                                       const size_t batchSize);
 
   /**
    * Evaluate the recurrent network with the given parameters.
@@ -308,8 +278,8 @@ class RNN
    * @param gradient Matrix to output gradient into.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const MatType& parameters,
-                              GradType& gradient);
+  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
+                                                   GradType& gradient);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -324,10 +294,10 @@ class RNN
    *        objective function evaluation.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const MatType& parameters,
-                              const size_t begin,
-                              GradType& gradient,
-                              const size_t batchSize);
+  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
+                                                   const size_t begin,
+                                                   GradType& gradient,
+                                                   const size_t batchSize);
 
   /**
    * Evaluate the gradient of the recurrent network with the given parameters,
@@ -350,6 +320,13 @@ class RNN
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
 
+  /**
+   * Note: this function is implement so that it can be used by ensmallen's
+   * optimizers.  It's not generally meant to be used otherwise.
+   *
+   * Shuffle the order of function visitation.  (This is equivalent to shuffling
+   * the dataset during training.)
+   */
   void Shuffle();
 
   /**
@@ -365,11 +342,22 @@ class RNN
  private:
   // Helper functions.
 
+  /**
+   * Iterate over all layers and reset the recurrent layers' states.  Prepare
+   * each recurrent layer to store up to `memorySize` previous states, operating
+   * with a batch size of `batchSize`.
+   */
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
+
+  //! Set the previous step index of all recurrent layers to `step`.
   void SetPreviousStep(const size_t step);
+  //! Set the current step index of all recurrent layers to `step`.
   void SetCurrentStep(const size_t step);
 
+  //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t rho;
+  //! Whether the network expects only one single response per sequence, or one
+  //! response per time step.
   bool single;
 
   //! The network itself is stored in this FFN object.  Note that this network

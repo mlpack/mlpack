@@ -152,7 +152,7 @@ template<
     typename MatType
 >
 template<typename OptimizerType, typename... CallbackTypes>
-double RNN<
+typename MatType::elem_type RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -171,8 +171,8 @@ double RNN<
 
   // Train the model.
   Timer::Start("rnn_optimization");
-  const double out = optimizer.Optimize(*this, network.Parameters(),
-      callbacks...);
+  const typename MatType::elem_type out =
+      optimizer.Optimize(*this, network.Parameters(), callbacks...);
   Timer::Stop("rnn_optimization");
 
   Log::Info << "RNN::Train(): final objective of trained model is " << out
@@ -186,7 +186,7 @@ template<
     typename MatType
 >
 template<typename OptimizerType, typename... CallbackTypes>
-double RNN<
+typename MatType::elem_type RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -220,12 +220,34 @@ void RNN<
   results.set_size(network.network.OutputSize(), predictors.n_cols,
       predictors.n_slices);
 
+  MatType inputAlias, outputAlias;
   for (size_t i = 0; i < predictors.n_cols; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols) - i);
 
-    Forward(predictors, results, i, effectiveBatchSize);
+    // Since we aren't doing a backward pass, we don't actually need to store
+    // the state for each time step---we can fit it all in one buffer.
+    ResetMemoryState(1, effectiveBatchSize);
+    SetPreviousStep(size_t(-1));
+    SetCurrentStep(size_t(0));
+
+    // Iterate over all time steps.
+    for (size_t t = 0; t < predictors.n_slices; ++t)
+    {
+      // If it is after the first step, we have a previous state.
+      if (t == 1)
+        SetPreviousStep(size_t(0));
+
+      // Create aliases for the input and output.
+      MakeAlias(inputAlias,
+          (typename MatType::elem_type*) predictors.slice(t).colptr(i),
+          predictors.n_rows, effectiveBatchSize);
+      MakeAlias(outputAlias, results.slice(t).colptr(i), results.n_rows,
+          effectiveBatchSize);
+
+      network.Forward(inputAlias, outputAlias);
+    }
   }
 }
 
@@ -261,98 +283,6 @@ template<
     typename InitializationRuleType,
     typename MatType
 >
-void RNN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::Forward(
-    const arma::Cube<typename MatType::elem_type>& predictors,
-    arma::Cube<typename MatType::elem_type>& results)
-{
-  Forward(std::forward(predictors), results, 0, predictors.n_cols - 1);
-}
-
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType
->
-void RNN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::Forward(
-    const arma::Cube<typename MatType::elem_type>& predictors,
-    arma::Cube<typename MatType::elem_type>& results,
-    const size_t begin,
-    const size_t batchSize)
-{
-  // Ensure the network is valid.
-  network.CheckNetwork("RNN::Forward()", predictors.n_rows);
-
-  // This is internal---so we assume the network is already ready to go.
-  results.set_size(network.network.OutputSize(), predictors.n_cols,
-      predictors.n_slices);
-
-  // Since we aren't doing a backward pass, we don't actually need to store the
-  // state for each time step---we can fit it all in one buffer.
-  ResetMemoryState(1, batchSize);
-  SetPreviousStep(size_t(-1));
-  SetCurrentStep(size_t(0));
-
-  // Iterate over all time steps.
-  MatType inputAlias, outputAlias;
-  for (size_t t = 0; t < predictors.n_slices; ++t)
-  {
-    // If it is after the first step, we have a previous state.
-    if (t == 1)
-      SetPreviousStep(size_t(0));
-
-    // Create aliases for the input and output.
-    MakeAlias(inputAlias,
-        (typename MatType::elem_type*) predictors.slice(t).colptr(begin),
-        predictors.n_rows, batchSize);
-    MakeAlias(outputAlias, results.slice(t).colptr(begin), results.n_rows,
-        batchSize);
-
-    network.Forward(inputAlias, outputAlias);
-  }
-
-  // TODO: I think we need to store networkOutputs and also all the state!
-}
-
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType
->
-template<typename PredictorsType, typename TargetsType, typename GradientsType>
-double RNN<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::Backward(
-    const PredictorsType& inputs,
-    const TargetsType& targets,
-    GradientsType& gradients)
-{
-  // Compute the loss for each time step.
-  double res = 0.0;
-  return res;
-  // TODO: finish this
-  //for (size_t t = 0; t < inputs.n_slices; ++t)
-  //{
-    
-
-  //  res += network.outputLayer.Forward(
-  //}
-}
-
-template<
-    typename OutputLayerType,
-    typename InitializationRuleType,
-    typename MatType
->
 template<typename Archive>
 void RNN<
     OutputLayerType,
@@ -379,7 +309,7 @@ template<
     typename InitializationRuleType,
     typename MatType
 >
-double RNN<
+typename MatType::elem_type RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -399,22 +329,21 @@ double RNN<
   SetPreviousStep(size_t(-1));
   MatType output(network.network.OutputSize(), batchSize);
 
-  double loss = 0.0;
+  typename MatType::elem_type loss = 0.0;
   MatType stepData, responseData;
   for (size_t t = 0; t < predictors.n_slices; ++t)
   {
     if (t == 1)
       SetPreviousStep(0);
 
-    // Wrap a matrix around our data to avoid a copy.
-    MakeAlias(stepData, predictors.slice(t).colptr(begin), predictors.n_rows,
-        batchSize);
+    // Manually reset the data of the network to be an alias of the current time
+    // step.
+    MakeAlias(network.predictors, predictors.slice(t).colptr(begin),
+        predictors.n_rows, batchSize);
     const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep).colptr(begin),
+    MakeAlias(network.responses, responses.slice(responseStep).colptr(begin),
         responses.n_rows, batchSize);
 
-    // TODO: does this cause a copy?
-    network.ResetData(std::move(stepData), std::move(responseData));
     loss += network.Evaluate(output, begin, batchSize);
   }
 
@@ -427,7 +356,7 @@ template<
     typename MatType
 >
 template<typename GradType>
-double RNN<
+typename MatType::elem_type RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -444,7 +373,7 @@ template<
     typename MatType
 >
 template<typename GradType>
-double RNN<
+typename MatType::elem_type RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
@@ -456,7 +385,7 @@ double RNN<
 {
   network.CheckNetwork("RNN::EvaluateWithGradient()", predictors.n_rows);
 
-  double loss = 0;
+  typename MatType::elem_type loss = 0;
   // TODO: cleaner
   const size_t effectiveRho = std::max(size_t(1),
       std::min(rho, size_t(predictors.n_slices)));
