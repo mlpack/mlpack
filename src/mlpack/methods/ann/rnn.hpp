@@ -201,9 +201,9 @@ class RNN
   MatType& Parameters() { return network.Parameters(); }
 
   //! Return the number of steps allowed for BPTT.
-  size_t Rho() const { return rho; }
+  size_t BPTTSteps() const { return bpttSteps; }
   //! Modify the number of steps allowed for BPTT.
-  size_t& Rho() { return rho; }
+  size_t& BPTTSteps() { return bpttSteps; }
 
   /**
    * Reset the stored data of the network entirely.  This reset all weights of
@@ -355,7 +355,7 @@ class RNN
   void SetCurrentStep(const size_t step);
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
-  size_t rho;
+  size_t bpttSteps;
   //! Whether the network expects only one single response per sequence, or one
   //! response per time step.
   bool single;

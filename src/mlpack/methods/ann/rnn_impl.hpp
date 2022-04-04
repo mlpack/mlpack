@@ -29,11 +29,11 @@ RNN<
     InitializationRuleType,
     MatType
 >::RNN(
-    const size_t rho,
+    const size_t bpttSteps,
     const bool single,
     OutputLayerType outputLayer,
     InitializationRuleType initializeRule) :
-    rho(rho),
+    bpttSteps(bpttSteps),
     single(single),
     network(std::move(outputLayer), std::move(initializeRule))
 {
@@ -51,7 +51,7 @@ RNN<
     MatType
 >::RNN(
     const RNN& network) :
-    rho(network.rho),
+    bpttSteps(network.bpttSteps),
     single(network.single),
     network(network.network)
 {
@@ -69,7 +69,7 @@ RNN<
     MatType
 >::RNN(
     RNN&& network) :
-    rho(std::move(network.rho)),
+    bpttSteps(std::move(network.bpttSteps)),
     single(std::move(network.single)),
     network(std::move(network.network))
 {
@@ -94,7 +94,7 @@ RNN<
 {
   if (this != &other)
   {
-    rho = other.rho;
+    bpttSteps = other.bpttSteps;
     single = other.single;
     network = other.network;
     predictors.clear();
@@ -122,7 +122,7 @@ RNN<
 {
   if (this != &other)
   {
-    rho = std::move(other.rho);
+    bpttSteps = std::move(other.bpttSteps);
     single = std::move(other.single);
     network = std::move(other.network);
     predictors.clear();
@@ -291,7 +291,7 @@ void RNN<
 >::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(bpttSteps));
   ar(CEREAL_NVP(single));
   ar(CEREAL_NVP(network));
 
@@ -386,19 +386,21 @@ typename MatType::elem_type RNN<
   network.CheckNetwork("RNN::EvaluateWithGradient()", predictors.n_rows);
 
   typename MatType::elem_type loss = 0;
-  // TODO: cleaner
-  const size_t effectiveRho = std::max(size_t(1),
-      std::min(rho, size_t(predictors.n_slices)));
 
-  ResetMemoryState(effectiveRho, batchSize);
+  // We must save anywhere between 1 and `bpttSteps` states, but we are limited
+  // by `predictors.n_slices`.
+  const size_t effectiveBPTTSteps = std::max(size_t(1),
+      std::min(bpttSteps, size_t(predictors.n_slices)));
+
+  ResetMemoryState(effectiveBPTTSteps, batchSize);
   SetPreviousStep(size_t(-1));
   arma::Cube<typename MatType::elem_type> outputs(
-      network.network.OutputSize(), batchSize, effectiveRho);
+      network.network.OutputSize(), batchSize, effectiveBPTTSteps);
 
   // If `bpttSteps` is less than the number of time steps in the data, then for
   // the first few steps, we won't actually need to hold onto any historical
   // information, since BPTT will never go back that far.
-  const size_t extraSteps = (predictors.n_slices - effectiveRho + 1);
+  const size_t extraSteps = (predictors.n_slices - effectiveBPTTSteps + 1);
   MatType stepData, outputData, responseData;
   for (size_t t = 0; t < std::min(size_t(predictors.n_slices), extraSteps); ++t)
   {
@@ -453,7 +455,7 @@ typename MatType::elem_type RNN<
       network.Parameters().n_cols);
 
   SetPreviousStep(size_t(-1));
-  const size_t minStep = predictors.n_slices - effectiveRho + 1;
+  const size_t minStep = predictors.n_slices - effectiveBPTTSteps + 1;
   for (size_t t = predictors.n_slices; t >= minStep; --t)
   {
     SetCurrentStep(t - 1);
@@ -482,7 +484,6 @@ typename MatType::elem_type RNN<
     // Now pass that error backwards through the network.
     MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
         outputs.n_cols);
-    // TODO: allocate space for networkDelta?
     MatType networkDelta;
     network.network.Backward(outputData, error, networkDelta);
 
