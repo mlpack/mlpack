@@ -31,16 +31,43 @@ template<typename DataType, typename LabelsType>
 inline void CheckSameSizes(const DataType& data,
                            const LabelsType& label,
                            const std::string& callerDescription,
-                           const std::string& addInfo = "labels")
-{
-  if (data.n_cols != label.n_cols)
+                           const std::string& addInfo = "labels",
+                           const std::string& isTranspose = "none")
+{ 
+  if (isTranspose == "data")
   {
-    std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of " << addInfo << " (" << label.n_cols
-        << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
+    if (data.n_rows != label.n_cols)
+    {
+      std::ostringstream oss;
+      oss << callerDescription << ": number of points (" << data.n_cols << ") "
+          << "does not match number of " << addInfo << " (" << label.n_cols
+          << ")!" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
   }
+  else if (isTranspose == "label")
+  {
+    if (data.n_cols != label.n_rows)
+    {
+      std::ostringstream oss;
+      oss << callerDescription << ": number of points (" << data.n_cols << ") "
+          << "does not match number of " << addInfo << " (" << label.n_cols
+          << ")!" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+  }
+  else
+  {
+    if (data.n_cols != label.n_cols)
+    {
+      std::ostringstream oss;
+      oss << callerDescription << ": number of points (" << data.n_cols << ") "
+          << "does not match number of " << addInfo << " (" << label.n_cols
+          << ")!" << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+  }
+  
 }
 
 /**

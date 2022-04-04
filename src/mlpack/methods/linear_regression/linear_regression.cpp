@@ -59,7 +59,7 @@ double LinearRegression::Train(const arma::mat& predictors,
   // Reminder: Armadillo stores the data transposed from how we think of it,
   //           that is, columns are actually rows (see: column major order).
 
-  // Sanity check on data
+  // Sanity check on data.
   util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
 
   const size_t nCols = predictors.n_cols;
@@ -121,8 +121,8 @@ void LinearRegression::Predict(const arma::mat& points,
 
 double LinearRegression::ComputeError(const arma::mat& predictors,
                                       const arma::rowvec& responses) const
-{ 
-  // Sanity check on data
+{
+  // Sanity check on data.
   util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
   
   // Get the number of columns and rows of the dataset.
