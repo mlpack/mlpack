@@ -48,11 +48,16 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * @param bpttSteps Number of time steps to use for BPTT (backpropagation
+   *      through time) when training.
+   * @param single If true, then the network will expect only a single timestep
+   *      for responses.  (That is, every input sequence only has one single
+   *      output; so, `responses.n_slices` should be 1 when calling `Train()`.)
    * @param outputLayer Output layer used to evaluate the network.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(const size_t bpttTruncate = 0,
+  RNN(const size_t bpttSteps = 0,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
