@@ -156,7 +156,6 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   // Convenience alias.
   const size_t batchSize = input.n_cols;
 
-  // TODO: what is outParameter?
   inputGate = input2GateInputWeight * input;
   if (this->HasPreviousStep())
   {
@@ -190,7 +189,8 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   hiddenLayer = input2HiddenWeight * input;
   if (this->HasPreviousStep())
   {
-    hiddenLayer += output2HiddenWeight * outParameter.slice(this->PreviousStep());
+    hiddenLayer += output2HiddenWeight *
+        outParameter.slice(this->PreviousStep());
   }
   hiddenLayer.each_col() += input2HiddenBias;
 
@@ -226,15 +226,15 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   cellActivation.slice(this->CurrentStep()) =
       arma::tanh(cell.slice(this->CurrentStep()));
 
+  // There's a bit of an issue here: we need to preserve the output for the next
+  // time step, but we also need to set `output` to that.  Unfortunately for now
+  // we make a copy, but it's possible that we could instead use an alias here,
+  // or have `outParameter` hold a collection of aliases.
   outParameter.slice(this->CurrentStep()) =
       cellActivation.slice(this->CurrentStep()) %
       outputGateActivation.slice(this->CurrentStep());
 
-  // TODO: these aliases are likely not useful?
-  // but, they're intended to avoid copying the output---can we avoid that?
-  output = MatType(outParameter.memptr() +
-      this->CurrentStep() * (batchSize * outSize), outSize, batchSize, false,
-      false);
+  output = outParameter.slice(this->CurrentStep());
 }
 
 template<typename MatType>
@@ -256,7 +256,6 @@ void LSTMType<MatType>::Backward(
         false, false);
   }
 
-  // TODO: previousStep for backward passes should be the "next" one...
   outputGateError = gyLocal % cellActivation.slice(this->CurrentStep()) %
       (outputGateActivation.slice(this->CurrentStep()) %
       (1.0 - outputGateActivation.slice(this->CurrentStep())));
@@ -268,11 +267,10 @@ void LSTMType<MatType>::Backward(
 
   if (this->HasPreviousStep())
   {
-    // TODO: what is inputCellError?
     cellError += inputCellError;
   }
 
-  if (this->HasPreviousStep()) // TODO: if we are not the last step
+  if (this->HasPreviousStep())
   {
     forgetGateError = cell.slice(this->PreviousStep()) % cellError %
         (forgetGateActivation.slice(this->CurrentStep()) %
@@ -284,8 +282,8 @@ void LSTMType<MatType>::Backward(
         forgetGateActivation.n_cols);
   }
 
-  inputGateError = hiddenLayerActivation.slice(this->CurrentStep()) % cellError %
-      (inputGateActivation.slice(this->CurrentStep()) %
+  inputGateError = hiddenLayerActivation.slice(this->CurrentStep()) %
+      cellError % (inputGateActivation.slice(this->CurrentStep()) %
       (1.0 - inputGateActivation.slice(this->CurrentStep())));
 
   hiddenError = inputGateActivation.slice(this->CurrentStep()) % cellError %
@@ -307,8 +305,8 @@ void LSTMType<MatType>::Gradient(
     const MatType& /* error */,
     MatType& gradient)
 {
-  // TODO: this depends on Gradient() being called just after Backward().  We
-  // should document that assumption.
+  // This implementation depends on Gradient() being called just after
+  // Backward(), which is something we can safely assume.
 
   // Input2GateOutputWeight and input2GateOutputBias gradients.
   gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =
@@ -372,7 +370,7 @@ void LSTMType<MatType>::Gradient(
   offset += cell2GateOutputWeight.n_elem;
 
   // cell2GateForgetWeight and cell2GateInputWeight gradients.
-  if (this->HasPreviousStep()) // TODO: fix convention here
+  if (this->HasPreviousStep())
   {
     gradient.submat(offset, 0, offset + cell2GateForgetWeight.n_elem - 1, 0) =
         arma::sum(forgetGateError % cell.slice(this->PreviousStep()), 1);
@@ -398,6 +396,22 @@ void LSTMType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
+
+  // Clear recurrent state if we are loading.
+  if (Archive::is_loading::value)
+  {
+    inputGateActivation.clear();
+    forgetGateActivation.clear();
+    outputGateActivation.clear();
+    hiddenLayerActivation.clear();
+    cellActivation.clear();
+    forgetGateError.clear();
+    outputGateError.clear();
+    outParameter.clear();
+    inputCellError.clear();
+    inputGateError.clear();
+    hiddenError.clear();
+  }
 }
 
 } // namespace ann

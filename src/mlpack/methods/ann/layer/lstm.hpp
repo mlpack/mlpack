@@ -229,10 +229,7 @@ class LSTMType : public RecurrentLayer<MatType>
   MatType output2HiddenWeight;
 
   //! Locally-stored cell parameter.
-  arma::Cube<typename MatType::elem_type> cell; // should be a cube, but what is n_cols?
-
-  // Locally-stored intermediate computations below here.  Do these still need
-  // to be cubes?  TODO: but I think they do.
+  arma::Cube<typename MatType::elem_type> cell;
 
   // These members store recurrent state.
 
