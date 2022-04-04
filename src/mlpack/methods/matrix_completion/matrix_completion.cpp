@@ -60,9 +60,8 @@ void MatrixCompletion::CheckValues()
         << "indices does not have 2 rows!" << std::endl;
   }
 
-  arma::mat transposeValues = values.t();
-  util::CheckSameSizes(indices, transposeValues, 
-      "MatrixCompletion::CheckValues()", "values");
+  util::CheckSameSizes(indices, values, 
+      "MatrixCompletion::CheckValues()", "labels", "label");
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {
