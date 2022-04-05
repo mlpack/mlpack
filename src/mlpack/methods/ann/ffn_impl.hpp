@@ -212,7 +212,7 @@ void FFN<
     MatType resultAlias(results.colptr(i), results.n_rows,
         effectiveBatchSize, false, true);
 
-    Forward(predictorAlias, resultAlias);
+    network.Forward(predictorAlias, resultAlias);
   }
 }
 
