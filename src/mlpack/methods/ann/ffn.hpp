@@ -107,7 +107,7 @@ class FFN
     inputDimensionsAreSet = false;
   }
 
-  //! Get the layers of the network..
+  //! Get the layers of the network.
   const std::vector<Layer<MatType>*>& Network() const
   {
     return network.Network();
