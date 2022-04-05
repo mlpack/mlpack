@@ -61,7 +61,7 @@ void MatrixCompletion::CheckValues()
   }
 
   util::CheckSameSizes(indices, values, 
-      "MatrixCompletion::CheckValues()", "labels", "label");
+      "MatrixCompletion::CheckValues()", "labels", false, true);
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {
