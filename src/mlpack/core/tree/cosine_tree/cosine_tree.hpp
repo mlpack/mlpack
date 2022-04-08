@@ -13,7 +13,8 @@
 #define MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/heap/priority_queue.hpp>
+#include <vector>
+#include <queue>
 
 namespace mlpack {
 namespace tree {
@@ -23,8 +24,7 @@ class CompareCosineNode;
 class CosineTree;
 
 // CosineNodeQueue typedef.
-typedef boost::heap::priority_queue<CosineTree*,
-    boost::heap::compare<CompareCosineNode> > CosineNodeQueue;
+typedef std::vector<CosineTree*> CosineNodeQueue;
 
 class CosineTree
 {
