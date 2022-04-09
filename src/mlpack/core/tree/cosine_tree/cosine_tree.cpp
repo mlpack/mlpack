@@ -105,7 +105,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
     // Pop node from queue with highest projection error.
     CosineTree* currentNode;
     currentNode = treeQueue.front();
-    std::pop_heap(treeQueue.begin(), treeQueue.end());
+    std::pop_heap(treeQueue.begin(), treeQueue.end(), comp);
     treeQueue.pop_back();
 
     // If the priority is 0, we can't improve anything, and we can assume that
