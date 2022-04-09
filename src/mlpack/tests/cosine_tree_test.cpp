@@ -214,7 +214,7 @@ TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
   {
     CosineTree* currentNode;
     currentNode = basisQueue.front();
-    std::pop_heap(basisQueue.begin(), basisQueue.end());
+    std::pop_heap(basisQueue.begin(), basisQueue.end(), comp);
     basisQueue.pop_back();
 
     delete currentNode;
