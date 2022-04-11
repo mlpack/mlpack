@@ -23,7 +23,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Concatenate module class. The Concatenate module
  * concatenates a constant given matrix to the incoming data.
  *
- * The Concat() function to provide the concat matrix, or it can be passed to
+ * The Concat() function provides the concat matrix, or it can be passed to
  * the constructor.
  *
  * After this layer is applied, the shape of the data will be a vector.
