@@ -75,7 +75,7 @@ class AlphaDropoutType : public Layer<MatType>
   AlphaDropoutType& operator=(AlphaDropoutType&& other);
 
   /**
-   * Ordinary feed forward pass of the alpha_dropout layer.
+   * Ordinary feed forward pass of the AlphaDropout layer.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
