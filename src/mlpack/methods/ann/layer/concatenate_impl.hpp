@@ -108,9 +108,9 @@ void ConcatenateType<MatType>::ComputeOutputDimensions()
   this->outputDimensions[0] = inSize + concat.n_elem;
 }
 
-  /**
-   * Serialize the layer.
-   */
+/**
+ * Serialize the layer.
+ */
 template<typename MatType>
 template<typename Archive>
 void ConcatenateType<MatType>::serialize(
