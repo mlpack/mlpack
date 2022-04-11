@@ -181,6 +181,11 @@ class Layer
    * should be called before the first call of Forward(input, output). If you
    * do not respect this rule, Forward(input, output) and Backward(input, gy, g)
    * might compute incorrect results.
+   *
+   * @param weightsPtr This pointer should be used as the first element of the
+   *    memory that is allocated for this layer.  In general, SetWeights()
+   *    implementations should use MakeAlias() with weightsPtr to wrap the
+   *    weights of a layer.
    */
   virtual void SetWeights(typename MatType::elem_type* /* weightsPtr */) { }
 
