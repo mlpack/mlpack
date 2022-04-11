@@ -88,7 +88,9 @@ class ConvolutionType : public Layer<MatType>
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   * @param paddingType The type of padding ("valid" or "same"). Defaults to
+   *    "none".  If not specified or "none", the values for `padW` and `padH`
+   *    will be used.
    */
   ConvolutionType(const size_t maps,
                   const size_t kernelWidth,
@@ -97,7 +99,7 @@ class ConvolutionType : public Layer<MatType>
                   const size_t strideHeight = 1,
                   const size_t padW = 0,
                   const size_t padH = 0,
-                  const std::string& paddingType = "None");
+                  const std::string& paddingType = "none");
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -108,13 +110,15 @@ class ConvolutionType : public Layer<MatType>
    * @param kernelHeight Height of the filter/kernel.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
-   * @param padW A two-value tuple indicating padding widths of the input.
-   *             First value is padding at left side. Second value is padding on
-   *             right side.
-   * @param padH A two-value tuple indicating padding heights of the input.
-   *             First value is padding at top. Second value is padding on
-   *             bottom.
-   * @param paddingType The type of padding (Valid or Same). Defaults to None.
+   * @param padW A two-value tuple indicating padding widths of the input.  The
+   *      first value is the padding for the left side; the second value is the
+   *      padding on the right side.
+   * @param padH A two-value tuple indicating padding heights of the input.  The
+   *      first value is the padding for the top; the second value is the
+   *      padding on the bottom.
+   * @param paddingType The type of padding ("valid" or "same"). Defaults to
+   *      "none".  If not specified or "none", the values for `padW` and `padH`
+   *      will be used.
    */
   ConvolutionType(const size_t maps,
                   const size_t kernelWidth,
@@ -123,7 +127,7 @@ class ConvolutionType : public Layer<MatType>
                   const size_t strideHeight,
                   const std::tuple<size_t, size_t>& padW,
                   const std::tuple<size_t, size_t>& padH,
-                  const std::string& paddingType = "None");
+                  const std::string& paddingType = "none");
 
   //! Clone the ConvolutionType object. This handles polymorphism correctly.
   ConvolutionType* Clone() const { return new ConvolutionType(*this); }

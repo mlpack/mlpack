@@ -281,7 +281,6 @@ void ConvolutionType<
   const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
   if (usingPadding)
   {
-    // TODO: double-check with a padding test?
     inputPadded.set_size(paddedRows * paddedCols * inMaps * higherInDimensions,
         input.n_cols);
     padding.Forward(input, inputPadded);

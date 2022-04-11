@@ -494,3 +494,38 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   REQUIRE_NOTHROW(c.Forward(input, output));
   REQUIRE_NOTHROW(c.Backward(input, output, delta));
 }
+
+// Test that the Convolution layer gives reasonable output when a non-zero
+// padding size is used.
+TEST_CASE("CustomPaddingTest", "[ConvolutionalNetworkTest]")
+{
+  arma::mat input, output, delta, weights;
+  input.ones(36, 1);
+
+  Convolution c = Convolution(1, 3, 3, 1, 1, { 1, 2 }, { 3, 4 }, "none");
+
+  c.InputDimensions() = std::vector<size_t>({ 6, 6 });
+  c.ComputeOutputDimensions();
+
+  // First, check that the output dimensions are reasonable.
+  REQUIRE(c.OutputDimensions().size() == 3);
+  REQUIRE(c.OutputDimensions()[0] == 7);
+  REQUIRE(c.OutputDimensions()[1] == 11);
+  REQUIRE(c.OutputDimensions()[2] == 1);
+
+  weights.set_size(c.WeightSize(), 1);
+  weights.ones();
+  c.SetWeights(weights.memptr());
+
+  // Now make sure that the forward pass returns the correct output.
+  output.set_size(c.OutputSize(), 1);
+  REQUIRE_NOTHROW(c.Forward(input, output));
+  REQUIRE(output.n_rows == c.OutputSize());
+  REQUIRE(output.n_cols == 1);
+  // The lower right corner's convolution entry should only touch one input
+  // value (and everything else padding).
+  REQUIRE(output(output.n_rows - 1, 0) == 1.0);
+
+  delta.set_size(input.size());
+  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+}
