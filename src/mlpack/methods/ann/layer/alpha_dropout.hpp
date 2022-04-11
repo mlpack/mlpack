@@ -55,7 +55,7 @@ class AlphaDropoutType : public Layer<MatType>
    * @param alphaDash The dropout scaling parameter.
    */
   AlphaDropoutType(const double ratio = 0.5,
-               const double alphaDash = -alpha * lambda);
+                   const double alphaDash = -alpha * lambda);
 
   /**
    * Clone the DropoutType object. This handles polymorphism correctly.
