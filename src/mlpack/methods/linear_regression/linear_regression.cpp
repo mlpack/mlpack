@@ -100,7 +100,9 @@ void LinearRegression::Predict(const arma::mat& points,
   {
     // We want to be sure we have the correct number of dimensions in the
     // dataset.
-    const size_t labels = (parameters.n_rows == 0) ? size_t(0) : size_t(parameters.n_rows - 1);
+    // Prevent underflow.
+    const size_t labels = (parameters.n_rows == 0) ? size_t(0) :
+        size_t(parameters.n_rows - 1);
     util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()", 
         "points");
     // Get the predictions, but this ignores the intercept value
