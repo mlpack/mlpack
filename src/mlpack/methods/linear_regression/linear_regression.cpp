@@ -100,13 +100,9 @@ void LinearRegression::Predict(const arma::mat& points,
   {
     // We want to be sure we have the correct number of dimensions in the
     // dataset.
-    // Warning : If parameters.n_rows is 0, then size_t cast would lead 
-    // it to capture UINT32_MAX. 
-    // You might get error message like this - "mismatch size x and UNIT32_MAX"
-    // Checks to ensures parameters isn't an empty matrix will be added 
-    // after PR #3140  gets merged
-    util::CheckSameDimensionality(points, (size_t) (parameters.n_rows - 1), 
-        "LinearRegression::Predict()", "points");
+    const size_t labels = (parameters.n_rows == 0) ? size_t(0) : size_t(parameters.n_rows - 1);
+    util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()", 
+        "points");
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
     predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
