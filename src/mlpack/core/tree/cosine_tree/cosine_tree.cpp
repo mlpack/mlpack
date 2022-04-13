@@ -93,7 +93,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
   arma::vec tempVector = arma::zeros(dataset.n_rows);
   root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
-  treeQueue.push_back(&root); // treeQueue is empty now, so we don't need to call std::push_heap here
+  treeQueue.push_back(&root); // treeQueue is empty now, so we don't need to call std::push_heap here.
 
   // Initialize Monte Carlo error estimate for comparison.
   double monteCarloError = root.FrobNormSquared();
