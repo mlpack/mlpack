@@ -271,7 +271,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   // To prevent underflow in log of sum of exp of x operation (where x is a
   // small negative value), we use logsumexp(x - max(x)) + max(x).
-  const double maxValue = arma::max(logLikelihoods);
+  const double maxValue = logLikelihoods.max();
   const double logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
       maxValue;
   probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
