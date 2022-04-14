@@ -86,13 +86,14 @@ CosineTree::CosineTree(const arma::mat& dataset,
 {
   // Declare the cosine tree priority queue.
   CosineNodeQueue treeQueue;
+  CompareCosineNode comp;
 
   // Define root node of the tree and add it to the queue.
   CosineTree root(dataset);
   arma::vec tempVector = arma::zeros(dataset.n_rows);
   root.L2Error(-1.0); // We don't know what the error is.
   root.BasisVector(tempVector);
-  treeQueue.push(&root);
+  treeQueue.push_back(&root); // treeQueue is empty now, so we don't need to call std::push_heap here.
 
   // Initialize Monte Carlo error estimate for comparison.
   double monteCarloError = root.FrobNormSquared();
@@ -102,8 +103,9 @@ CosineTree::CosineTree(const arma::mat& dataset,
   {
     // Pop node from queue with highest projection error.
     CosineTree* currentNode;
-    currentNode = treeQueue.top();
-    treeQueue.pop();
+    currentNode = treeQueue.front();
+    std::pop_heap(treeQueue.begin(), treeQueue.end(), comp);
+    treeQueue.pop_back();
 
     // If the priority is 0, we can't improve anything, and we can assume that
     // we've done the best we can.
@@ -142,8 +144,10 @@ CosineTree::CosineTree(const arma::mat& dataset,
     MonteCarloError(currentRight, treeQueue, &lBasisVector, &rBasisVector);
 
     // Push child nodes into the priority queue.
-    treeQueue.push(currentLeft);
-    treeQueue.push(currentRight);
+    treeQueue.push_back(currentLeft);
+    std::push_heap(treeQueue.begin(), treeQueue.end(), comp);
+    treeQueue.push_back(currentRight);
+    std::push_heap(treeQueue.begin(), treeQueue.end(), comp);
 
     // Calculate Monte Carlo error estimate for the root node.
     monteCarloError = MonteCarloError(&root, treeQueue);
@@ -377,11 +381,11 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
 
   // Variables for iterating throught the priority queue.
   CosineTree *currentNode;
-  CosineNodeQueue::const_iterator i = treeQueue.begin();
+  CosineNodeQueue::const_iterator i = treeQueue.cbegin();
 
   // For every vector in the current basis, remove its projection from the
   // centroid.
-  for ( ; i != treeQueue.end(); ++i)
+  for ( ; i != treeQueue.cend(); ++i)
   {
     currentNode = *i;
 
@@ -437,11 +441,11 @@ double CosineTree::MonteCarloError(CosineTree* node,
     projection.zeros(projectionSize);
 
     CosineTree *currentNode;
-    CosineNodeQueue::const_iterator j = treeQueue.begin();
+    CosineNodeQueue::const_iterator j = treeQueue.cbegin();
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for ( ; j != treeQueue.end(); ++j, ++k)
+    for ( ; j != treeQueue.cend(); ++j, ++k)
     {
       currentNode = *j;
 
@@ -492,11 +496,11 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
   // Variables for iterating through the priority queue.
   CosineTree *currentNode;
-  CosineNodeQueue::const_iterator i = treeQueue.begin();
+  CosineNodeQueue::const_iterator i = treeQueue.cbegin();
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for ( ; i != treeQueue.end(); ++i, ++j)
+  for ( ; i != treeQueue.cend(); ++i, ++j)
   {
     currentNode = *i;
     basis.col(j) = currentNode->BasisVector();
