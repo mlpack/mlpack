@@ -5,6 +5,7 @@ include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
+include(CMake/CheckAtomic.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -158,6 +159,15 @@ endif()
 # These support libraries are used if we need to link against something
 # specific.  This list is a subset of MLPACK_LIBRARIES.
 set(COMPILER_SUPPORT_LIBRARIES "")
+
+# Check if atomics need -latomic linking.
+#include(CheckAtomic)
+if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB AND
+    NOT HAVE_CXX_ATOMICS64_WITHOUT_LIB AND
+    NOT MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -latomic")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -latomic")
+endif ()
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
