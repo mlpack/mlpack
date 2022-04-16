@@ -1,5 +1,5 @@
 /**
- * @file core/data/save_image_impl.hpp
+ * @file core/data/save_image.hpp
  * @author Ryan Curtin
  *
  * Implementation of save functionality.
