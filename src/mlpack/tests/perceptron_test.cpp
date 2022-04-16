@@ -244,4 +244,28 @@ TEST_CASE("SecondaryConstructor", "[PerceptronTest]")
   Perceptron<> p1(trainData, labels.row(0), 2, 1000);
 
   Perceptron<> p2(p1);
+
+  REQUIRE(p1.Weights().n_elem > 0);
+  REQUIRE(p2.Weights().n_elem > 0);
+}
+
+/**
+ * This tests that we can build the Perceptron when specifying instance weights.
+ */
+TEST_CASE("InstanceWeightsConstructor", "[PerceptronTest]")
+{
+  mat trainData;
+  trainData = { { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2 } };
+
+  Mat<size_t> labels;
+  labels = { 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1 };
+
+  rowvec instanceWeights;
+  instanceWeights = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9,
+      0.8, 0.7, 0.6, 0.5, 0.4 };
+
+  Perceptron<> p(trainData, labels.row(0), 2, instanceWeights, 1000);
+
+  REQUIRE(p.Weights().n_elem > 0);
 }

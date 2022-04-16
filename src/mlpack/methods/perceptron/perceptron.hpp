@@ -69,6 +69,29 @@ class Perceptron
              const size_t maxIterations = 1000);
 
   /**
+   * Constructor: construct the perceptron by building the weights matrix, which
+   * is later used in classification.  The number of classes should be specified
+   * separately, and the labels vector should contain values in the range [0,
+   * numClasses - 1].  The data::NormalizeLabels() function can be used if the
+   * labels vector does not contain values in the required range.
+   *
+   * This constructor supports weights for each data point.
+   *
+   * @param data Input, training data.
+   * @param labels Labels of dataset.
+   * @param numClasses Number of classes in the dataset.
+   * @param instanceWeights Weight vector to use for each training point while
+   *     training.
+   * @param maxIterations Maximum number of iterations for the perceptron
+   *     learning algorithm.
+   */
+  Perceptron(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const arma::rowvec& instanceWeights,
+             const size_t maxIterations = 1000);
+
+  /**
    * Alternate constructor which copies parameters from an already initiated
    * perceptron.
    *
