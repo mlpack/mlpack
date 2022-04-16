@@ -108,13 +108,14 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
 {
   arma::vec tempLabelMat;
   arma::uword maxIndex = 0;
+  predictedLabels.set_size(test.n_cols);
 
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
     tempLabelMat.max(maxIndex);
-    predictedLabels(0, i) = maxIndex;
+    predictedLabels(i) = maxIndex;
   }
 }
 

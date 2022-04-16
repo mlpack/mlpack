@@ -120,7 +120,7 @@ TEST_CASE("And", "[PerceptronTest]")
   mat testData;
   testData = { { 0, 1, 1, 0 },
                { 1, 0, 1, 0 } };
-  Row<size_t> predictedLabels(testData.n_cols);
+  Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
   CHECK(predictedLabels(0, 0) == 0);
@@ -146,7 +146,7 @@ TEST_CASE("Or", "[PerceptronTest]")
   mat testData;
   testData = { { 0, 1, 1, 0 },
                { 1, 0, 1, 0 } };
-  Row<size_t> predictedLabels(testData.n_cols);
+  Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
   CHECK(predictedLabels(0, 0) == 1);
@@ -173,7 +173,7 @@ TEST_CASE("Random3", "[PerceptronTest]")
   mat testData;
   testData = { { 0, 1, 1 },
                { 1, 0, 1 } };
-  Row<size_t> predictedLabels(testData.n_cols);
+  Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
@@ -198,7 +198,7 @@ TEST_CASE("TwoPoints", "[PerceptronTest]")
   mat testData;
   testData = { { 0, 1 },
                { 1, 0 } };
-  Row<size_t> predictedLabels(testData.n_cols);
+  Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
   CHECK(predictedLabels(0, 0) == 0);
@@ -223,7 +223,7 @@ TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]")
   mat testData;
   testData = { { 3,   4,   5,   6 },
                { 3, 2.3, 1.7, 1.5 } };
-  Row<size_t> predictedLabels(testData.n_cols);
+  Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
   CHECK(predictedLabels(0, 0) == 0);
