@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix `Perceptron` to work with cross-validation framework (#3190).
+
   * Migrate from boost tests to Catch2 framework (#2523), (#2584).
 
   * Bump minimum armadillo version from 8.400 to 9.800 (#3043), (#3048).
