@@ -106,6 +106,7 @@ PARAM_FLAG("no_shuffle", "Avoid shuffling the data before splitting.", "S");
 PARAM_FLAG("stratify_data", "Stratify the data according to labels", "z")
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::data;
 using namespace mlpack::util;
 using namespace arma;
@@ -119,9 +120,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const bool stratifyData = params.Get<bool>("stratify_data");
 
   if (params.Get<int>("seed") == 0)
-    mlpack::math::RandomSeed(std::time(NULL));
+    RandomSeed(std::time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed(params, { "training" }, false, "no training set will "

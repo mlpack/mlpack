@@ -15,11 +15,9 @@
 #include <stack>
 #include <vector>
 
-using namespace mlpack;
-using namespace det;
-
-namespace details
-{
+namespace mlpack {
+namespace det {
+namespace details {
 
 /**
  * This one sorts and scand the given per-dimension extract and puts all splits
@@ -552,10 +550,11 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
 }
 
 template<typename MatType, typename TagType>
-size_t DTree<MatType, TagType>::SplitData(MatType& data,
-                                          const size_t splitDim,
-                                          const ElemType splitValue,
-                                          arma::Col<size_t>& oldFromNew) const
+size_t DTree<MatType, TagType>::SplitData(
+    MatType& data,
+    const size_t splitDim,
+    const ElemType splitValue,
+    arma::Col<size_t>& oldFromNew) const
 {
   // Swap all columns such that any columns with value in dimension splitDim
   // less than or equal to splitValue are on the left side, and all others are
@@ -933,8 +932,8 @@ TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
 }
 
 template<typename MatType, typename TagType>
-void DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances)
-    const
+void DTree<MatType, TagType>::ComputeVariableImportance(
+  arma::vec& importances) const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);
@@ -1036,3 +1035,6 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
       FillMinMax(minVals, maxVals);
   }
 }
+
+} // namespace det
+} // namespace mlpack

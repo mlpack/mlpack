@@ -13,6 +13,23 @@
 #ifndef MLPACK_CORE_DATA_IMAGE_INFO_IMPL_HPP
 #define MLPACK_CORE_DATA_IMAGE_INFO_IMPL_HPP
 
+namespace mlpack {
+namespace data {
+
+inline const std::vector<std::string> LoadFileTypes()
+{
+  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "psd", "gif",
+      "hdr", "pic", "pnm", "jpeg"});
+}
+
+inline const std::vector<std::string> SaveFileTypes()
+{
+  return std::vector<std::string>({"jpg", "png", "tga", "bmp", "hdr"});
+}
+
+}
+}
+
 #ifdef HAS_STB // Compile this only if stb is present.
 
 // In case it hasn't been included yet.
@@ -21,18 +38,12 @@
 namespace mlpack {
 namespace data {
 
-static const std::vector<std::string> loadFileTypes({"jpg", "png", "tga",
-    "bmp", "psd", "gif", "hdr", "pic", "pnm", "jpeg"});
-
-static const std::vector<std::string> saveFileTypes({"jpg", "png", "tga",
-    "bmp", "hdr"});
-
 inline bool ImageFormatSupported(const std::string& fileName, const bool save)
 {
   if (save)
   {
     // Iterate over all supported file types that can be saved.
-    for (auto extension : saveFileTypes)
+    for (auto extension : SaveFileTypes())
     {
       if (extension == Extension(fileName))
         return true;
@@ -41,7 +52,7 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
   else
   {
     // Iterate over all supported file types that can be loaded.
-    for (auto extension : loadFileTypes)
+    for (auto extension : LoadFileTypes())
     {
       if (extension == Extension(fileName))
         return true;

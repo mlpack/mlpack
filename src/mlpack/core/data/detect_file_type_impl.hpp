@@ -1,5 +1,5 @@
 /**
- * @file core/data/detect_file_type.cpp
+ * @file core/data/detect_file_type_impl.hpp
  * @author Conrad Sanderson
  * @author Ryan Curtin
  *
@@ -24,7 +24,7 @@ namespace data {
  *
  * @param type Type to get the logical name of.
  */
-std::string GetStringType(const FileType& type)
+inline std::string GetStringType(const FileType& type)
 {
   switch (type)
   {
@@ -50,7 +50,7 @@ std::string GetStringType(const FileType& type)
  *
  * @param f Opened istream to look into to guess the file type.
  */
-FileType GuessFileType(std::istream& f)
+inline FileType GuessFileType(std::istream& f)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
@@ -186,7 +186,7 @@ FileType GuessFileType(std::istream& f)
  * @param filename Name of the file.
  * @return The detected file type.
  */
-FileType AutoDetect(std::fstream& stream, const std::string& filename)
+inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
 {
   // Get the extension.
   std::string extension = Extension(filename);
@@ -304,7 +304,7 @@ FileType AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-FileType DetectFromExtension(const std::string& filename)
+inline FileType DetectFromExtension(const std::string& filename)
 {
   const std::string extension = Extension(filename);
 

@@ -72,8 +72,8 @@ class PSpectrumStringKernel
    * @param datasets Sets of string data.
    * @param p The length of substrings to search.
    */
-  PSpectrumStringKernel(const std::vector<std::vector<std::string> >& datasets,
-                        const size_t p);
+  inline PSpectrumStringKernel(const std::vector<std::vector<std::string> >& datasets,
+                               const size_t p);
 
   /**
    * Evaluate the kernel for the string indices given.  As mentioned in the

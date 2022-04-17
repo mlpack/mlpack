@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -22,6 +23,7 @@
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::gmm;
 using namespace mlpack::util;
 
@@ -74,9 +76,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       "no results will be saved");
 
   if (params.Get<int>("seed") == 0)
-    mlpack::math::RandomSeed(time(NULL));
+    RandomSeed(time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
 
   RequireParamValue<int>(params, "samples", [](int x) { return x > 0; }, true,
       "number of samples must be greater than 0");

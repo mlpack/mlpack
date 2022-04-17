@@ -7,7 +7,6 @@ set(SOURCES
   digamma.hpp
   lin_alg.hpp
   lin_alg_impl.hpp
-  lin_alg.cpp
   log_add.hpp
   log_add_impl.hpp
   make_alias.hpp
@@ -17,7 +16,7 @@ set(SOURCES
   random.hpp
   random.cpp
   random_basis.hpp
-  random_basis.cpp
+  random_basis_impl.hpp
   range.hpp
   range_impl.hpp
   round.hpp

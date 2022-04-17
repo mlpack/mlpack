@@ -21,17 +21,15 @@
 namespace mlpack {
 namespace rl {
 
-using namespace mlpack::ann;
-
 /**
  * @tparam OutputLayerType The output layer type of the network.
  * @tparam InitType The initialization type used for the network.
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = MeanSquaredError<>,
-  typename InitType = GaussianInitialization,
-  typename NetworkType = FFN<OutputLayerType, InitType>
+  typename OutputLayerType = ann::MeanSquaredError<>,
+  typename InitType = ann::GaussianInitialization,
+  typename NetworkType = ann::FFN<OutputLayerType, InitType>
 >
 class SimpleDQN
 {
@@ -63,21 +61,21 @@ class SimpleDQN
       network(outputLayer, init),
       isNoisy(isNoisy)
   {
-    network.Add(new Linear<>(inputDim, h1));
-    network.Add(new ReLULayer<>());
+    network.Add(new ann::Linear<>(inputDim, h1));
+    network.Add(new ann::ReLULayer<>());
     if (isNoisy)
     {
       noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new NoisyLinear<>(h1, h2));
-      network.Add(new ReLULayer<>());
+      network.Add(new ann::NoisyLinear<>(h1, h2));
+      network.Add(new ann::ReLULayer<>());
       noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new NoisyLinear<>(h2, outputDim));
+      network.Add(new ann::NoisyLinear<>(h2, outputDim));
     }
     else
     {
-      network.Add(new Linear<>(h1, h2));
-      network.Add(new ReLULayer<>());
-      network.Add(new Linear<>(h2, outputDim));
+      network.Add(new ann::Linear<>(h1, h2));
+      network.Add(new ann::ReLULayer<>());
+      network.Add(new ann::Linear<>(h2, outputDim));
     }
   }
 
@@ -134,7 +132,7 @@ class SimpleDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      boost::get<NoisyLinear<>*>
+      boost::get<ann::NoisyLinear<>*>
           (network.Model()[noisyLayerIndex[i]])->ResetNoise();
     }
   }

@@ -12,6 +12,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -19,13 +20,13 @@
 #define BINDING_NAME lsh
 
 #include <mlpack/core/util/mlpack_main.hpp>
-
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "lsh_search.hpp"
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::neighbor;
 using namespace mlpack::util;
 
@@ -114,9 +115,9 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) time(NULL));
+    RandomSeed((size_t) time(NULL));
 
   // Get all the parameters after checking them.
   if (params.Has("k"))
