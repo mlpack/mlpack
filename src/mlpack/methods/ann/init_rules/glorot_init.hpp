@@ -106,6 +106,12 @@ class GlorotInitializationType
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W);
+
+  /**
+   * Serialize the initialization.  (Nothing to serialize for this one.)
+   */
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class GlorotInitializationType
 
 template<>
