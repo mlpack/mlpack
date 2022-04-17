@@ -13,7 +13,6 @@ add_executable(mlpack_test
   ann/convolution_test.cpp
   ann/custom_layer.hpp
   ann/feedforward_network_test.cpp
-  ann/feedforward_network_2_test.cpp
   ann/init_rules_test.cpp
   ann/ksinit_test.cpp
   ann/loss_functions_test.cpp
@@ -22,6 +21,10 @@ add_executable(mlpack_test
   ann/augmented_rnns_tasks_test.cpp
   ann/rl_components_test.cpp
 
+#  ann/not_adapted/activation_functions_test.cpp
+#  ann/not_adapted/ann_layer_test.cpp
+#  ann/not_adapted/feedforward_network_test.cpp
+#  ann/not_adapted/recurrent_network_test.cpp
 #  ann/not_adapted/reward_clipping_test.cpp
 #  ann/not_adapted/rbm_network_test.cpp
 #  ann/not_adapted/rnn_reber_test.cpp
