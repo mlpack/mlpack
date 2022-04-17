@@ -3,18 +3,39 @@ include(CTest)
 # mlpack test executable.
 add_executable(mlpack_test
   EXCLUDE_FROM_ALL
-  activation_functions_test.cpp
+  # Tests for neural network code (and reinforcement learning code).
+  ann/activation_functions_test.cpp
+  ann/ann_dist_test.cpp
+  ann/ann_layer_test.cpp
+  ann/ann_regularizer_test.cpp
+  ann/ann_test_tools.hpp
+  ann/convolutional_network_test.cpp
+  ann/convolution_test.cpp
+  ann/custom_layer.hpp
+  ann/feedforward_network_test.cpp
+  ann/feedforward_network_2_test.cpp
+  ann/init_rules_test.cpp
+  ann/ksinit_test.cpp
+  ann/loss_functions_test.cpp
+  ann/recurrent_network_test.cpp
+
+  ann/augmented_rnns_tasks_test.cpp
+  ann/rl_components_test.cpp
+
+#  ann/not_adapted/reward_clipping_test.cpp
+#  ann/not_adapted/rbm_network_test.cpp
+#  ann/not_adapted/rnn_reber_test.cpp
+#  ann/not_adapted/async_learning_test.cpp
+#  ann/not_adapted/dcgan_test.cpp
+#  ann/not_adapted/gan_test.cpp
+#  ann/not_adapted/wgan_test.cpp
+
+  # Tests for other methods.
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
-  ann_dist_test.cpp
-  ann_layer_test.cpp
-  ann_regularizer_test.cpp
-  ann_test_tools.hpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
-#  async_learning_test.cpp
-  augmented_rnns_tasks_test.cpp
   bayesian_linear_regression_test.cpp
   bias_svd_test.cpp
   binarize_test.cpp
@@ -22,12 +43,9 @@ add_executable(mlpack_test
   callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
-  convolutional_network_test.cpp
-  convolution_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
-#  dcgan_test.cpp
   decision_tree_regressor_test.cpp
   decision_tree_test.cpp
   det_test.cpp
@@ -37,9 +55,6 @@ add_executable(mlpack_test
   emst_test.cpp
   facilities_test.cpp
   fastmks_test.cpp
-  feedforward_network_test.cpp
-  feedforward_network_2_test.cpp
-#  gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
   hpt_test.cpp
@@ -47,7 +62,6 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   image_load_test.cpp
   imputation_test.cpp
-  init_rules_test.cpp
   io_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
@@ -57,7 +71,6 @@ add_executable(mlpack_test
   kmeans_test.cpp
   knn_test.cpp
   krann_search_test.cpp
-  ksinit_test.cpp
   lars_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
@@ -67,7 +80,6 @@ add_executable(mlpack_test
   local_coordinate_coding_test.cpp
   logistic_regression_test.cpp
   log_test.cpp
-  loss_functions_test.cpp
   lsh_test.cpp
   main.cpp
   math_test.cpp
@@ -94,13 +106,8 @@ add_executable(mlpack_test
   random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
-#  rbm_network_test.cpp
   rectangle_tree_test.cpp
-  recurrent_network_test.cpp
-#  rnn_reber_test.cpp
   regularized_svd_test.cpp
-#  reward_clipping_test.cpp
-  rl_components_test.cpp
   scaling_test.cpp
   size_checks_test.cpp
   serialization.cpp
@@ -128,8 +135,9 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-#  wgan_test.cpp
   xgboost_test.cpp
+
+  # Tests for individual bindings.
   main_tests/adaboost_test.cpp
   main_tests/adaboost_train_test.cpp
   main_tests/adaboost_classify_test.cpp

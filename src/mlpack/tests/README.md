@@ -4,11 +4,13 @@ This directory contains code and data used to test all the algorithms and functi
 
 ## Test Directories Structure
 
-- *_test.cpp - methods tests
+- *_test.cpp - tests for non-neural-network methods
+- ann/*_test.cpp - tests for code relating to neural networks (including
+  reinforcement learning)
 - main_tests/*_test.cpp - binding tests
 - data - data needed to run the tests
 
-## Add tests 
+## Add tests
 
 We have a rich test suite, consisting of almost 2000 tests (and still counting). It is suggested to add tests when:
 
@@ -17,7 +19,8 @@ We have a rich test suite, consisting of almost 2000 tests (and still counting).
 
 ## Building Tests
 
-To build the test suite you can simply run `make mlpack_test`.
+To build the test suite you can simply run `make mlpack_test` from a build
+directory that has been properly configured with CMake..
 
 ## To run Tests
 
@@ -43,4 +46,6 @@ To run a single test, you can explicitly provide the name of the test, for examp
 
 `./bin/mlpack_test BinaryClassificationMetricsTest`
 
-Catch2 provides many other features like filter, checkout the [Catch2 reference section](https://github.com/catchorg/Catch2/blob/devel/docs/Readme.md#top) - for more details.
+Catch2 provides many other features like filtering; check out the
+[Catch2 reference section](https://github.com/catchorg/Catch2/blob/devel/docs/Readme.md#top)
+for more details.

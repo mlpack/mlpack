@@ -22,10 +22,10 @@
 #include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
-#include "test_catch_tools.hpp"
-#include "catch.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
+#include "../serialization.hpp"
 #include "ann_test_tools.hpp"
-#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

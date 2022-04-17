@@ -10,8 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
 */
-#include "catch.hpp"
-
 #include <mlpack/core.hpp>
 
 #include <ensmallen.hpp>
@@ -19,6 +17,8 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
+
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

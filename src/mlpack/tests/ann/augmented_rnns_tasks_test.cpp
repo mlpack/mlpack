@@ -22,7 +22,7 @@
 #include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using std::vector;
 using std::pair;

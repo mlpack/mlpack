@@ -40,9 +40,9 @@
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
-#include "catch.hpp"
-#include "test_catch_tools.hpp"
-#include "ann_test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
+#include "../ann_test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

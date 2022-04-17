@@ -23,8 +23,8 @@
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
-#include "catch.hpp"
-#include "test_catch_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::rl;

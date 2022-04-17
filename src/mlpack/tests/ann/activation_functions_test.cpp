@@ -36,7 +36,7 @@
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
