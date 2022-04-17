@@ -42,7 +42,7 @@
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
-#include "../ann_test_tools.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
