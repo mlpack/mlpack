@@ -11,6 +11,7 @@
  */
 
 #include "matrix_completion.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 namespace matrix_completion {
@@ -59,13 +60,8 @@ void MatrixCompletion::CheckValues()
         << "indices does not have 2 rows!" << std::endl;
   }
 
-  if (indices.n_cols != values.n_elem)
-  {
-    Log::Fatal << "MatrixCompletion::CheckValues(): the number of constraint "
-        << "indices (columns of constraint indices matrix) does not match the "
-        << "number of constraint values (length of constraint value vector)!"
-        << std::endl;
-  }
+  util::CheckSameSizes(indices, values, 
+      "MatrixCompletion::CheckValues()", "labels", false, true);
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {
