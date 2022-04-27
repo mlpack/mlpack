@@ -11,6 +11,8 @@ import sysconfig
 import shutil
 import os
 
+print(sysconfig.get_config_var('ext_suffix'))
+
 directory = 'build/lib.' + \
             sysconfig.get_platform() + \
             '-' + \
