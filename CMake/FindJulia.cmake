@@ -17,7 +17,7 @@ if (JULIA_EXECUTABLE)
       RESULT_VARIABLE RESULT
   )
   if (RESULT EQUAL 0)
-    string(REGEX REPLACE ".*([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"
+    string(REGEX REPLACE ".*?([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"
         JULIA_VERSION_STRING ${JULIA_VERSION_STRING})
   endif ()
 endif ()
