@@ -1,5 +1,5 @@
 /**
- * @file core/dists/diagonal_gaussian_distribution.cpp
+ * @file core/dists/diagonal_gaussian_distribution_impl.hpp
  * @author Kim SangYeon
  *
  * Implementation of Gaussian distribution class with diagonal covariance.
@@ -9,11 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_IMPL_HPP
+
 #include "diagonal_gaussian_distribution.hpp"
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution {
 
 DiagonalGaussianDistribution::DiagonalGaussianDistribution(
     const arma::vec& mean,
@@ -25,15 +28,15 @@ DiagonalGaussianDistribution::DiagonalGaussianDistribution(
 
 void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
 {
-  this->invCov = 1 / covariance;
-  this->logDetCov = arma::accu(log(covariance));
+  invCov = 1 / covariance;
+  logDetCov = arma::accu(log(covariance));
   this->covariance = covariance;
 }
 
 void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
 {
-  this->invCov = 1 / covariance;
-  this->logDetCov = arma::accu(log(covariance));
+  invCov = 1 / covariance;
+  logDetCov = arma::accu(log(covariance));
   this->covariance = std::move(covariance);
 }
 
@@ -146,3 +149,8 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   invCov = 1 / covariance;
   logDetCov = arma::accu(log(covariance));
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif

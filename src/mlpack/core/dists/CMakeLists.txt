@@ -12,7 +12,7 @@ set(SOURCES
   gamma_distribution.hpp
   gamma_distribution.cpp
   diagonal_gaussian_distribution.hpp
-  diagonal_gaussian_distribution.cpp
+  diagonal_gaussian_distribution_impl.hpp
 )
 
 # add directory name to sources

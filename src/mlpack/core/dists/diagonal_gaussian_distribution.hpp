@@ -153,4 +153,7 @@ class DiagonalGaussianDistribution
 } // namespace distribution
 } // namespace mlpack
 
+// Include implementation.
+#include "diagonal_gaussian_distribution_impl.hpp"
+
 #endif
