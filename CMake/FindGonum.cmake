@@ -3,6 +3,9 @@
 # Find the Gonum program.
 if (GO_EXECUTABLE)
   execute_process(
+    COMMAND ${GO_EXECUTABLE} env -w GO111MODULE=auto
+  )
+  execute_process(
      COMMAND ${GO_EXECUTABLE} list -m gonum.org/v1/gonum
      OUTPUT_VARIABLE GONUM_VERSION_STRING
      RESULT_VARIABLE RESULT
