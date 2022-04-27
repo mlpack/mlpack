@@ -15,7 +15,7 @@ if (GO_EXECUTABLE)
   )
   if (RESULT EQUAL 0)
     string(REGEX MATCH "([0-9]+\\.[0-9]+\(\\.[0-9]+\)?)"
-        ${GO_VERSION_STRING} ${GO_VERSION_STRING_RAW})
+        GO_VERSION_STRING "${GO_VERSION_STRING_RAW}")
   endif()
 endif()
 

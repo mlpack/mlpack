@@ -18,7 +18,7 @@ if (JULIA_EXECUTABLE)
   )
   if (RESULT EQUAL 0)
     string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+)"
-        ${JULIA_VERSION_STRING} ${JULIA_VERSION_STRING_RAW})
+        JULIA_VERSION_STRING "${JULIA_VERSION_STRING_RAW}")
   endif ()
 endif ()
 

@@ -23,7 +23,7 @@ if(R_EXECUTABLE)
   )
   if (RESULT EQUAL 0)
     string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+).*"
-        ${R_VERSION_STRING} ${R_VERSION_STRING_RAW})
+        R_VERSION_STRING "${R_VERSION_STRING_RAW}")
   endif ()
 
   set(R_HOME ${R_BASE_DIR} CACHE PATH "R home directory obtained from R RHOME")

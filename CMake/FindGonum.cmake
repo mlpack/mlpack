@@ -9,7 +9,7 @@ if (GO_EXECUTABLE)
   )
   if (RESULT EQUAL 0)
     string(REGEX REPLACE "([0-9]+\\.[0-9]+\\.[0-9]+[\n]+)"
-        ${GONUM_VERSION_STRING} ${GONUM_VERSION_STRING_RAW})
+        GONUM_VERSION_STRING "${GONUM_VERSION_STRING_RAW}")
     string(REGEX REPLACE "\n$" ""
         GONUM_VERSION_STRING ${GONUM_VERSION_STRING})
   endif()
