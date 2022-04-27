@@ -18,7 +18,7 @@
 namespace mlpack {
 namespace distribution {
 
-DiagonalGaussianDistribution::DiagonalGaussianDistribution(
+inline DiagonalGaussianDistribution::DiagonalGaussianDistribution(
     const arma::vec& mean,
     const arma::vec& covariance) :
     mean(mean)
@@ -26,21 +26,21 @@ DiagonalGaussianDistribution::DiagonalGaussianDistribution(
   Covariance(covariance);
 }
 
-void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
+inline void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
 {
   invCov = 1 / covariance;
   logDetCov = arma::accu(log(covariance));
   this->covariance = covariance;
 }
 
-void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
+inline void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
 {
   invCov = 1 / covariance;
   logDetCov = arma::accu(log(covariance));
   this->covariance = std::move(covariance);
 }
 
-double DiagonalGaussianDistribution::LogProbability(
+inline double DiagonalGaussianDistribution::LogProbability(
     const arma::vec& observation) const
 {
   const size_t k = observation.n_elem;
@@ -49,7 +49,7 @@ double DiagonalGaussianDistribution::LogProbability(
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
 }
 
-void DiagonalGaussianDistribution::LogProbability(
+inline void DiagonalGaussianDistribution::LogProbability(
     const arma::mat& observations,
     arma::vec& logProbabilities) const
 {
@@ -66,12 +66,12 @@ void DiagonalGaussianDistribution::LogProbability(
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
 
-arma::vec DiagonalGaussianDistribution::Random() const
+inline arma::vec DiagonalGaussianDistribution::Random() const
 {
   return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
 }
 
-void DiagonalGaussianDistribution::Train(const arma::mat& observations)
+inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
 {
   if (observations.n_cols > 1)
   {
@@ -98,7 +98,7 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   logDetCov = arma::accu(log(covariance));
 }
 
-void DiagonalGaussianDistribution::Train(const arma::mat& observations,
+inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
                                          const arma::vec& probabilities)
 {
   if (observations.n_cols > 0)
