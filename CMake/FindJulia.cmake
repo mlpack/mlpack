@@ -13,12 +13,12 @@ find_program(JULIA_EXECUTABLE julia DOC "Julia executable")
 if (JULIA_EXECUTABLE)
   execute_process(
       COMMAND ${JULIA_EXECUTABLE} --version
-      OUTPUT_VARIABLE JULIA_VERSION_STRING
+      OUTPUT_VARIABLE JULIA_VERSION_STRING_RAW
       RESULT_VARIABLE RESULT
   )
   if (RESULT EQUAL 0)
-    string(REGEX REPLACE ".*?([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"
-        JULIA_VERSION_STRING ${JULIA_VERSION_STRING})
+    string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+)"
+        ${JULIA_VERSION_STRING} ${JULIA_VERSION_STRING_RAW})
   endif ()
 endif ()
 

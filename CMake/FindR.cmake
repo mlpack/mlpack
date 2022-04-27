@@ -18,12 +18,12 @@ if(R_EXECUTABLE)
   # Get the R version.
   execute_process(
       COMMAND ${R_EXECUTABLE} --version
-      OUTPUT_VARIABLE R_VERSION_STRING
+      OUTPUT_VARIABLE R_VERSION_STRING_RAW
       RESULT_VARIABLE RESULT
   )
   if (RESULT EQUAL 0)
-    string(REGEX REPLACE ".*?([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"
-        R_VERSION_STRING ${R_VERSION_STRING})
+    string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+).*"
+        ${R_VERSION_STRING} ${R_VERSION_STRING_RAW})
   endif ()
 
   set(R_HOME ${R_BASE_DIR} CACHE PATH "R home directory obtained from R RHOME")

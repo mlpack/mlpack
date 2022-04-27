@@ -4,12 +4,12 @@
 if (GO_EXECUTABLE)
   execute_process(
      COMMAND ${GO_EXECUTABLE} list gonum.org/v1/gonum/mat
-     OUTPUT_VARIABLE GONUM_VERSION_STRING
+     OUTPUT_VARIABLE GONUM_VERSION_STRING_RAW
      RESULT_VARIABLE RESULT
   )
   if (RESULT EQUAL 0)
-    string(REGEX REPLACE ".*?([0-9]+\\.[0-9]+\\.[0-9]+[\n]+).*" "\\1"
-        GONUM_VERSION_STRING ${GONUM_VERSION_STRING})
+    string(REGEX REPLACE "([0-9]+\\.[0-9]+\\.[0-9]+[\n]+)"
+        ${GONUM_VERSION_STRING} ${GONUM_VERSION_STRING_RAW})
     string(REGEX REPLACE "\n$" ""
         GONUM_VERSION_STRING ${GONUM_VERSION_STRING})
   endif()

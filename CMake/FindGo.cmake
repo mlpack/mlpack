@@ -10,12 +10,12 @@ find_program(GO_EXECUTABLE go DOC "Go executable")
 if (GO_EXECUTABLE)
   execute_process(
        COMMAND ${GO_EXECUTABLE} version 
-       OUTPUT_VARIABLE GO_VERSION_STRING
+       OUTPUT_VARIABLE GO_VERSION_STRING_RAW
        RESULT_VARIABLE RESULT
   )
   if (RESULT EQUAL 0)
-    string(REGEX REPLACE ".*?([0-9]+\\.[0-9]+\(\\.[0-9]+\)?).*" "\\1"
-        GO_VERSION_STRING ${GO_VERSION_STRING})
+    string(REGEX MATCH "([0-9]+\\.[0-9]+\(\\.[0-9]+\)?)"
+        ${GO_VERSION_STRING} ${GO_VERSION_STRING_RAW})
   endif()
 endif()
 
