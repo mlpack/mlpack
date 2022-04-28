@@ -21,7 +21,7 @@ import glob
 #             '/mlpack/'
 
 # New directory structure
-directory = glob.glob('build/lib.' + sysconfig.get_platform() + '*/mlpack')[0]
+directory = glob.glob('build/lib.' + sysconfig.get_platform() + '*/mlpack/')[0]
 directory = directory.replace('\\', '/')
 
 # Now copy all the files from the directory to the desired location.
