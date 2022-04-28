@@ -10,16 +10,19 @@ import sys
 import sysconfig
 import shutil
 import os
+import glob
 
-print(sysconfig.get_config_var('ext_suffix'))
+# directory = 'build/lib.' + \
+#             sysconfig.get_platform() + \
+#             '-' + \
+#             str(sys.version_info[0]) + \
+#             '.' + \
+#             str(sys.version_info[1]) + \
+#             '/mlpack/'
 
-directory = 'build/lib.' + \
-            sysconfig.get_platform() + \
-            '-' + \
-            str(sys.version_info[0]) + \
-            '.' + \
-            str(sys.version_info[1]) + \
-            '/mlpack/'
+# New directory structure
+directory = glob.glob('build/lib.' + sysconfig.get_platform() + '*/mlpack')[0]
+directory = directory.replace('\\', '/')
 
 # Now copy all the files from the directory to the desired location.
 for f in os.listdir(directory):
