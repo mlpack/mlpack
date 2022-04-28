@@ -33,6 +33,7 @@ steps:
     mkdir build && cd build
     if [ "$(binding)" == "go" ]; then
       export GOPATH=$PWD/src/mlpack/bindings/go
+      export GO111MODULE=off
       go get -u -t gonum.org/v1/gonum/...
     fi
     if [ "$(binding)" == "python" ]; then
