@@ -69,9 +69,10 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @param inputLoadType Used to determine the type of file to load (default arma::auto_detect).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+template<typename MatType>
+typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value || std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value, bool>::type
+Load(const std::string& filename,
+          MatType& matrix,
           const bool fatal = false,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);

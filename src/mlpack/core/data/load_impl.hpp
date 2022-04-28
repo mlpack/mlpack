@@ -81,9 +81,10 @@ bool inline inplace_transpose(MatType& X, bool fatal)
   }
 }
 
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+template<typename MatType>
+typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value || std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value, bool>::type
+Load(const std::string& filename,
+          MatType& matrix,
           const bool fatal,
           const bool transpose,
           const FileType inputLoadType)
