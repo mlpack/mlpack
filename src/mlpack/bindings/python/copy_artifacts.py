@@ -6,19 +6,10 @@
 # terms of the 3-clause BSD license.  You should have received a copy of the
 # 3-clause BSD license along with mlpack.  If not, see
 # http://www.opensource.org/licenses/BSD-3-Clause for more information.
-import sys
 import sysconfig
 import shutil
 import os
 import glob
-
-# directory = 'build/lib.' + \
-#             sysconfig.get_platform() + \
-#             '-' + \
-#             str(sys.version_info[0]) + \
-#             '.' + \
-#             str(sys.version_info[1]) + \
-#             '/mlpack/'
 
 # New directory structure
 directory = glob.glob('build/lib.' + sysconfig.get_platform() + '*/mlpack/')[0]
