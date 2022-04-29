@@ -4,7 +4,7 @@ set(SOURCES
   discrete_distribution.hpp
   discrete_distribution_impl.hpp
   gaussian_distribution.hpp
-  gaussian_distribution.cpp
+  gaussian_distribution_impl.hpp
   laplace_distribution.hpp
   laplace_distribution.cpp
   regression_distribution.hpp
