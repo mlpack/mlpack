@@ -231,7 +231,7 @@ inline double GammaDistribution::LogProbability(double x, size_t dim) const
 }
 
 // Returns a gamma-random d-dimensional vector.
-arma::vec GammaDistribution::Random() const
+inline arma::vec GammaDistribution::Random() const
 {
   arma::vec randVec(alpha.n_elem);
 

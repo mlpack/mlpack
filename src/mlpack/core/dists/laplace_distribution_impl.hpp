@@ -1,5 +1,5 @@
 /*
- * @file core/dists/laplace_distribution.cpp
+ * @file core/dists/laplace_distribution_impl.hpp
  * @author Zhihao Lou
  * @author Rohan Raj
  *
@@ -10,17 +10,18 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
+#ifndef MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_IMPL_HPP
 
 #include "laplace_distribution.hpp"
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * Return the log probability of the given observation.
  */
-double LaplaceDistribution::LogProbability(const arma::vec& observation) const
+inline double LaplaceDistribution::LogProbability(const arma::vec& observation) const
 {
   // Evaluate the PDF of the Laplace distribution to determine
   // the log probability.
@@ -33,7 +34,7 @@ double LaplaceDistribution::LogProbability(const arma::vec& observation) const
  * @param x List of observations.
  * @param probabilities Output probabilities for each input observation.
  */
-void LaplaceDistribution::Probability(const arma::mat& x,
+inline void LaplaceDistribution::Probability(const arma::mat& x,
                                       arma::vec& probabilities) const
 {
   probabilities.set_size(x.n_cols);
@@ -48,7 +49,7 @@ void LaplaceDistribution::Probability(const arma::mat& x,
  *
  * @param observations List of observations.
  */
-void LaplaceDistribution::Estimate(const arma::mat& observations)
+inline void LaplaceDistribution::Estimate(const arma::mat& observations)
 {
   // The maximum likelihood estimate of the mean is the median of the data for
   // the univariate case.  See the short note "The Double Exponential
@@ -81,7 +82,7 @@ void LaplaceDistribution::Estimate(const arma::mat& observations)
  * taking into account the probability of each observation actually being from
  * this distribution.
  */
-void LaplaceDistribution::Estimate(const arma::mat& observations,
+inline void LaplaceDistribution::Estimate(const arma::mat& observations,
                                    const arma::vec& probabilities)
 {
   // I am not completely sure that this change results in a valid maximum
@@ -99,3 +100,8 @@ void LaplaceDistribution::Estimate(const arma::mat& observations,
     scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);
   scale /= arma::accu(probabilities);
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif
