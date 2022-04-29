@@ -10,7 +10,7 @@ set(SOURCES
   regression_distribution.hpp
   regression_distribution.cpp
   gamma_distribution.hpp
-  gamma_distribution.cpp
+  gamma_distribution_impl.hpp
   diagonal_gaussian_distribution.hpp
   diagonal_gaussian_distribution_impl.hpp
 )
