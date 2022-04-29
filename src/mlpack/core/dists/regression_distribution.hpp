@@ -160,4 +160,7 @@ class RegressionDistribution
 } // namespace distribution
 } // namespace mlpack
 
+// Include implementation.
+#include "regression_distribution_impl.hpp"
+
 #endif

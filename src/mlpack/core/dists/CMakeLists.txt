@@ -8,7 +8,7 @@ set(SOURCES
   laplace_distribution.hpp
   laplace_distribution_impl.hpp
   regression_distribution.hpp
-  regression_distribution.cpp
+  regression_distribution_impl.hpp
   gamma_distribution.hpp
   gamma_distribution_impl.hpp
   diagonal_gaussian_distribution.hpp
