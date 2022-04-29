@@ -11,7 +11,7 @@ import shutil
 import os
 import glob
 
-# New directory structure
+# Match any lib.$platform*/mlpack/ directory.
 directory = glob.glob('build/lib.' + sysconfig.get_platform() + '*/mlpack/')[0]
 directory = directory.replace('\\', '/')
 
