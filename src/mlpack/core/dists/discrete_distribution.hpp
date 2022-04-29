@@ -252,4 +252,6 @@ class DiscreteDistribution
 } // namespace distribution
 } // namespace mlpack
 
+#include "discrete_distribution_impl.hpp"
+
 #endif

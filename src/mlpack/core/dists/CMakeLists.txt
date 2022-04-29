@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   discrete_distribution.hpp
-  discrete_distribution.cpp
+  discrete_distribution_impl.hpp
   gaussian_distribution.hpp
   gaussian_distribution.cpp
   laplace_distribution.hpp

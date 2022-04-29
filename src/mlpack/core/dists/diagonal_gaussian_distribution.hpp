@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace distribution {
+namespace distribution /** Probability distributions. */ {
 
 //! A single multivariate Gaussian distribution with diagonal covariance.
 class DiagonalGaussianDistribution

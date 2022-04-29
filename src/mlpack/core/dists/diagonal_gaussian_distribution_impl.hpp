@@ -16,7 +16,7 @@
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
 
 namespace mlpack {
-namespace distribution {
+namespace distribution /** Probability distributions. */ {
 
 inline DiagonalGaussianDistribution::DiagonalGaussianDistribution(
     const arma::vec& mean,
