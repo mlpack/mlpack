@@ -18,21 +18,19 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MeanSquaredError<InputDataType, OutputDataType>
-  ::MeanSquaredError(const bool reduction) : reduction(reduction)
+template<typename MatType>
+MeanSquaredErrorType<MatType>::MeanSquaredErrorType(const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-MeanSquaredError<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type MeanSquaredErrorType<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  typename PredictionType::elem_type lossSum =
+  typename MatType::elem_type lossSum =
       arma::accu(arma::square(prediction - target));
 
   if (reduction)
@@ -41,12 +39,11 @@ MeanSquaredError<InputDataType, OutputDataType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void MeanSquaredError<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void MeanSquaredErrorType<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss = 2 * (prediction - target);
 
@@ -54,9 +51,9 @@ void MeanSquaredError<InputDataType, OutputDataType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void MeanSquaredError<InputDataType, OutputDataType>::serialize(
+void MeanSquaredErrorType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

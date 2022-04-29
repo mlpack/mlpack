@@ -19,49 +19,42 @@
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-TripletMarginLoss<InputDataType, OutputDataType>::TripletMarginLoss(
-    const double margin) : margin(margin)
+template<typename MatType>
+TripletMarginLossType<MatType>::TripletMarginLossType(const double margin) :
+    margin(margin)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-TripletMarginLoss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type TripletMarginLossType<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  PredictionType anchor =
+  MatType anchor =
       prediction.submat(0, 0, prediction.n_rows / 2 - 1, prediction.n_cols - 1);
-  PredictionType positive =
+  MatType positive =
       prediction.submat(prediction.n_rows / 2, 0, prediction.n_rows - 1,
       prediction.n_cols - 1);
   return std::max(0.0, arma::accu(arma::pow(anchor - positive, 2)) -
       arma::accu(arma::pow(anchor - target, 2)) + margin) / anchor.n_cols;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template <
-    typename PredictionType,
-    typename TargetType,
-    typename LossType
->
-void TripletMarginLoss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void TripletMarginLossType<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
-  PredictionType positive =
+  MatType positive =
       prediction.submat(prediction.n_rows / 2, 0, prediction.n_rows - 1,
       prediction.n_cols - 1);
   loss = 2 * (target - positive) / target.n_cols;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void TripletMarginLoss<InputDataType, OutputDataType>::serialize(
+void TripletMarginLossType<MatType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

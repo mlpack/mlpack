@@ -15,6 +15,8 @@
 #include <mlpack/prereqs.hpp>
 #include <limits>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -50,43 +52,43 @@ namespace ann /** Artificial Neural Network. */ {
  * \see FastLSTM for a faster LSTM version which combines the calculation of the
  * input, forget, output gates and hidden state in a single step.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class LSTM
+template<typename MatType = arma::mat>
+class LSTMType : public RecurrentLayer<MatType>
 {
  public:
   //! Create the LSTM object.
-  LSTM();
+  LSTMType();
 
   /**
    * Create the LSTM layer object using the specified parameters.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  LSTM(const size_t inSize,
-       const size_t outSize,
-       const size_t rho = std::numeric_limits<size_t>::max());
+  LSTMType(const size_t outSize);
 
-  //! Copy constructor.
-  LSTM(const LSTM& layer);
+  //! Clone the LSTMType object. This handles polymorphism correctly.
+  LSTMType* Clone() const { return new LSTMType(*this); }
 
-  //! Move constructor.
-  LSTM(LSTM&&);
+  //! Copy the given LSTMType object.
+  LSTMType(const LSTMType& other);
+  //! Take ownership of the given LSTMType object's data.
+  LSTMType(LSTMType&& other);
+  //! Copy the given LSTMType object.
+  LSTMType& operator=(const LSTMType& other);
+  //! Take ownership of the given LSTMType object's data.
+  LSTMType& operator=(LSTMType&& other);
 
-  //! Copy assignment operator.
-  LSTM& operator=(const LSTM& layer);
+  virtual ~LSTMType() { }
 
-  //! Move assignment operator.
-  LSTM& operator=(LSTM&& layer);
+  /**
+   * Reset the layer parameter. The method is called to
+   * assign the allocated memory to the internal learnable parameters.
+   */
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -95,23 +97,7 @@ class LSTM
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output);
-
-  /**
-   * Ordinary feed-forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   * @param cellState Cell state of the LSTM.
-   * @param useCellState Use the cellState passed in the LSTM cell.
-   */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input,
-               OutputType& output,
-               OutputType& cellState,
-               bool useCellState = false);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -122,23 +108,7 @@ class LSTM
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType& input,
-                const ErrorType& gy,
-                GradientType& g);
-
-  /*
-   * Reset the layer parameter.
-   */
-  void Reset();
-
-  /*
-   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
-   * new one.
-   *
-   * @param size The current maximum number of steps through time.
-   */
-  void ResetCell(const size_t size);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -147,56 +117,44 @@ class LSTM
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(const InputType& input,
-                const ErrorType& error,
-                GradientType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
-  //! Get the maximum number of steps to backpropagate through time (BPTT).
-  size_t Rho() const { return rho; }
-  //! Modify the maximum number of steps to backpropagate through time (BPTT).
-  size_t& Rho() { return rho; }
+  /**
+   * Reset the recurrent state of the LSTM layer, and allocate enough space to
+   * hold `bpttSteps` of previous passes with a batch size of `batchSize`.
+   *
+   * @param bpttSteps Number of steps of history to allocate space for.
+   * @param batchSize Batch size to prepare for.
+   */
+  void ClearRecurrentState(const size_t bpttSteps, const size_t batchSize);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  const MatType& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return grad; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return grad; }
-
-  //! Get the number of input units.
-  size_t InSize() const { return inSize; }
-
-  //! Get the number of output units.
-  size_t OutSize() const { return outSize; }
-
-  //! Get the size of the weights.
+  //! Get the total number of trainable parameters.
   size_t WeightSize() const
   {
     return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize);
   }
 
-  //! Get the shape of the input.
-  size_t InputShape() const
+  //! Given a properly set InputDimensions(), compute the output dimensions.
+  void ComputeOutputDimensions()
   {
-    return inSize;
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    // The LSTM layer flattens its input.
+    this->outputDimensions[0] = outSize;
   }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -208,148 +166,111 @@ class LSTM
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Number of steps to backpropagate through time (BPTT).
-  size_t rho;
-
-  //! Locally-stored number of forward steps.
-  size_t forwardStep;
-
-  //! Locally-stored number of backward steps.
-  size_t backwardStep;
-
-  //! Locally-stored number of gradient steps.
-  size_t gradientStep;
-
   //! Locally-stored weight object.
-  OutputDataType weights;
-
-  //! Locally-stored previous output.
-  OutputDataType prevOutput;
-
-  //! Locally-stored batch size.
-  size_t batchSize;
-
-  //! Current batch step, alias for batchSize - 1.
-  size_t batchStep;
-
-  //! Current gradient step to keep track of the backpropagate through time
-  //! step.
-  size_t gradientStepIdx;
-
-  //! Locally-stored cell activation error.
-  OutputDataType cellActivationError;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType grad;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  MatType weights;
 
   //! Weights between the output and input gate.
-  OutputDataType output2GateInputWeight;
+  MatType output2GateInputWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateInputWeight;
+  MatType input2GateInputWeight;
 
   //! Bias between the input and input gate.
-  OutputDataType input2GateInputBias;
+  MatType input2GateInputBias;
 
   //! Weights between the cell and input gate.
-  OutputDataType cell2GateInputWeight;
+  MatType cell2GateInputWeight;
 
   //! Weights between the output and forget gate.
-  OutputDataType output2GateForgetWeight;
+  MatType output2GateForgetWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateForgetWeight;
+  MatType input2GateForgetWeight;
 
   //! Bias between the input and gate.
-  OutputDataType input2GateForgetBias;
+  MatType input2GateForgetBias;
 
   //! Bias between the input and gate.
-  OutputDataType cell2GateForgetWeight;
+  MatType cell2GateForgetWeight;
 
   //! Weights between the output and gate.
-  OutputDataType output2GateOutputWeight;
+  MatType output2GateOutputWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateOutputWeight;
+  MatType input2GateOutputWeight;
 
   //! Bias between the input and gate.
-  OutputDataType input2GateOutputBias;
+  MatType input2GateOutputBias;
 
   //! Weights between cell and output gate.
-  OutputDataType cell2GateOutputWeight;
+  MatType cell2GateOutputWeight;
+
+  // Below here are recurrent state matrices.
 
   //! Locally-stored input gate parameter.
-  OutputDataType inputGate;
+  MatType inputGate;
 
   //! Locally-stored forget gate parameter.
-  OutputDataType forgetGate;
+  MatType forgetGate;
 
   //! Locally-stored hidden layer parameter.
-  OutputDataType hiddenLayer;
+  MatType hiddenLayer;
 
   //! Locally-stored output gate parameter.
-  OutputDataType outputGate;
-
-  //! Locally-stored input gate activation.
-  OutputDataType inputGateActivation;
-
-  //! Locally-stored forget gate activation.
-  OutputDataType forgetGateActivation;
-
-  //! Locally-stored output gate activation.
-  OutputDataType outputGateActivation;
-
-  //! Locally-stored hidden layer activation.
-  OutputDataType hiddenLayerActivation;
+  MatType outputGate;
 
   //! Locally-stored input to hidden weight.
-  OutputDataType input2HiddenWeight;
+  MatType input2HiddenWeight;
 
   //! Locally-stored input to hidden bias.
-  OutputDataType input2HiddenBias;
+  MatType input2HiddenBias;
 
   //! Locally-stored output to hidden weight.
-  OutputDataType output2HiddenWeight;
+  MatType output2HiddenWeight;
 
   //! Locally-stored cell parameter.
-  OutputDataType cell;
+  arma::Cube<typename MatType::elem_type> cell;
+
+  // These members store recurrent state.
+
+  //! Locally-stored input gate activation.
+  arma::Cube<typename MatType::elem_type> inputGateActivation;
+
+  //! Locally-stored forget gate activation.
+  arma::Cube<typename MatType::elem_type> forgetGateActivation;
+
+  //! Locally-stored output gate activation.
+  arma::Cube<typename MatType::elem_type> outputGateActivation;
+
+  //! Locally-stored hidden layer activation.
+  arma::Cube<typename MatType::elem_type> hiddenLayerActivation;
 
   //! Locally-stored cell activation error.
-  OutputDataType cellActivation;
+  arma::Cube<typename MatType::elem_type> cellActivation;
 
   //! Locally-stored forget gate error.
-  OutputDataType forgetGateError;
+  MatType forgetGateError;
 
   //! Locally-stored output gate error.
-  OutputDataType outputGateError;
-
-  //! Locally-stored previous error.
-  OutputDataType prevError;
+  MatType outputGateError;
 
   //! Locally-stored output parameters.
-  OutputDataType outParameter;
+  arma::Cube<typename MatType::elem_type> outParameter;
 
   //! Locally-stored input cell error parameter.
-  OutputDataType inputCellError;
+  MatType inputCellError;
 
   //! Locally-stored input gate error.
-  OutputDataType inputGateError;
+  MatType inputGateError;
 
   //! Locally-stored hidden layer error.
-  OutputDataType hiddenError;
+  MatType hiddenError;
+}; // class LSTMType
 
-  //! Locally-stored current rho size.
-  size_t rhoSize;
+// Convenience typedefs.
 
-  //! Current backpropagate through time steps.
-  size_t bpttSteps;
-}; // class LSTM
+// Standard LSTM layer.
+typedef LSTMType<arma::mat> LSTM;
 
 } // namespace ann
 } // namespace mlpack

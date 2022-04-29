@@ -19,7 +19,6 @@
 #include "replay/random_replay.hpp"
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/visitor/parameters_visitor.hpp>
 #include "training_config.hpp"
 
 namespace mlpack {

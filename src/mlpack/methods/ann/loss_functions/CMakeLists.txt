@@ -47,6 +47,8 @@ set(SOURCES
   soft_margin_loss_impl.hpp
   triplet_margin_loss.hpp
   triplet_margin_loss_impl.hpp
+  vr_class_reward.hpp
+  vr_class_reward_impl.hpp
 )
 
 # Add directory name to sources.
