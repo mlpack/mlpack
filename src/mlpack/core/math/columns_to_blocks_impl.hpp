@@ -1,5 +1,5 @@
 /**
- * @file core/math/columns_to_blocks.cpp
+ * @file core/math/columns_to_blocks_impl.hpp
  * @author Tham Ngap Wei
  *
  * Implementation of the ColumnsToBlocks class.
@@ -9,12 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_IMPL_HPP
+#define MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_IMPL_HPP
+
 #include "columns_to_blocks.hpp"
 
 namespace mlpack {
 namespace math {
 
-ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
+inline ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
                                  const size_t cols,
                                  const size_t blockHeight,
                                  const size_t blockWidth) :
@@ -30,15 +33,16 @@ ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
 {
 }
 
-bool ColumnsToBlocks::IsPerfectSquare(const size_t value) const
+inline bool ColumnsToBlocks::IsPerfectSquare(const size_t value) const
 {
   const size_t root = (size_t) std::round(std::sqrt(value));
   return (value == root * root);
 }
 
-void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
+inline void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
                                 arma::mat& output)
 {
+  //! TODO: Maybe replace std::runtime_error with Log::Fatal.
   if (!IsPerfectSquare(maximalInputs.n_rows))
   {
     throw std::runtime_error("maximalInputs.n_rows should be perfect square");
@@ -97,3 +101,5 @@ void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
 
 } // namespace math
 } // namespace mlpack
+
+#endif
