@@ -9,13 +9,9 @@ if (GO_EXECUTABLE)
   )
   if (RESULT EQUAL 0)
     string(REGEX REPLACE "\n$" ""
-    GONUM_RAW_STRING ${GONUM_RAW_STRING})
+        GONUM_RAW_STRING ${GONUM_RAW_STRING})
     if ("${GONUM_RAW_STRING}" STREQUAL "gonum.org/v1/gonum/mat")
-      set(GONUM_VERSION_STRING "0.0.1")
-    # string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+[\n]+)"
-    #     GONUM_VERSION_STRING "${GONUM_VERSION_STRING}")
-    # string(REGEX REPLACE "\n$" ""
-    #     GONUM_VERSION_STRING ${GONUM_VERSION_STRING})
+      set(GONUM_FOUND 1)
     endif()
   endif()
 endif()
@@ -23,6 +19,6 @@ endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   Gonum
-  REQUIRED_VARS GONUM_VERSION_STRING
+  REQUIRED_VARS GONUM_FOUND
   FAIL_MESSAGE "Gonum not found"
 )
