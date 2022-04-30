@@ -44,11 +44,11 @@ namespace math /** Miscellaneous math routines. */ {
   }
 
   // Global random object.
-  MLPACK_EXPORT std::mt19937& randGen = rand_mlpack::GlobalRandomVariables<>::randGen;
+  extern MLPACK_EXPORT std::mt19937& randGen = rand_mlpack::GlobalRandomVariables<>::randGen;
   // Global uniform distribution.
-  MLPACK_EXPORT std::uniform_real_distribution<>& randUniformDist = rand_mlpack::GlobalRandomVariables<>::randUniformDist;
+  extern MLPACK_EXPORT std::uniform_real_distribution<>& randUniformDist = rand_mlpack::GlobalRandomVariables<>::randUniformDist;
   // Global normal distribution.
-  MLPACK_EXPORT std::normal_distribution<>& randNormalDist = rand_mlpack::GlobalRandomVariables<>::randNormalDist;
+  extern MLPACK_EXPORT std::normal_distribution<>& randNormalDist = rand_mlpack::GlobalRandomVariables<>::randNormalDist;
 #else
   // Global random object.
   inline std::mt19937 randGen;
