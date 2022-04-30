@@ -53,13 +53,6 @@ namespace math /** Miscellaneous math routines. */ {
   inline MLPACK_EXPORT std::normal_distribution<> randNormalDist(0.0, 1.0);
 #endif 
 
-// Global random object.
-extern MLPACK_EXPORT std::mt19937 randGen;
-// Global uniform distribution.
-extern MLPACK_EXPORT std::uniform_real_distribution<> randUniformDist;
-// Global normal distribution.
-extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
-
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
  * The seed is casted to a 32-bit integer before being given to the random
