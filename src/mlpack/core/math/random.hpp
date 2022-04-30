@@ -23,9 +23,12 @@ namespace math /** Miscellaneous math routines. */ {
  * correctly on Windows.
  */
 
+#ifndef MLPACK_CORE_MATH_RANDOM_GLOBAL
+#define MLPACK_CORE_MATH_RANDOM_GLOBAL
+
 #if __cplusplus < 201703L
   namespace rand_mlpack {
-  template<class=void>
+    template<class=void>
     struct GlobalRandomVariables
     {
       static std::mt19937 randGen;
@@ -53,6 +56,8 @@ namespace math /** Miscellaneous math routines. */ {
   inline std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
   // Global normal distribution.
   inline std::normal_distribution<> randNormalDist(0.0, 1.0);
+#endif
+
 #endif
 
 /**
