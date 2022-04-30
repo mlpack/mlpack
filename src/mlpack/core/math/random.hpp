@@ -24,7 +24,7 @@ namespace math /** Miscellaneous math routines. */ {
  */
 
 #if __cplusplus < 201703L
-  namespace rand {
+  namespace rand_mlpack {
   template<class=void>
     struct GlobalRandomVariables
     {
@@ -39,18 +39,18 @@ namespace math /** Miscellaneous math routines. */ {
   }
 
   // Global random object.
-  static MLPACK_EXPORT std::mt19937& randGen = rand::GlobalRandomVariables<>::randGen;
+  static std::mt19937& randGen = rand_mlpack::GlobalRandomVariables<>::randGen;
   // Global uniform distribution.
-  static MLPACK_EXPORT std::uniform_real_distribution<>& randUniformDist = rand::GlobalRandomVariables<>::randUniformDist;
+  static std::uniform_real_distribution<>& randUniformDist = rand_mlpack::GlobalRandomVariables<>::randUniformDist;
   // Global normal distribution.
-  static MLPACK_EXPORT std::normal_distribution<>& randNormalDist = rand::GlobalRandomVariables<>::randNormalDist;
+  static std::normal_distribution<>& randNormalDist = rand_mlpack::GlobalRandomVariables<>::randNormalDist;
 #else
   // Global random object.
-  inline MLPACK_EXPORT std::mt19937 randGen;
+  inline std::mt19937 randGen;
   // Global uniform distribution.
-  inline MLPACK_EXPORT std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
+  inline std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
   // Global normal distribution.
-  inline MLPACK_EXPORT std::normal_distribution<> randNormalDist(0.0, 1.0);
+  inline std::normal_distribution<> randNormalDist(0.0, 1.0);
 #endif 
 
 /**
