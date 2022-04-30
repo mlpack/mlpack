@@ -669,7 +669,7 @@ TEST_CASE("GammaDistributionTrainTest", "[DistributionTest]")
   // Random generation of gamma-like points.
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::randGen);
+      rdata(j, i) = dist(math::GlobalRandomVariables::randGen);
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist;
@@ -687,7 +687,7 @@ TEST_CASE("GammaDistributionTrainTest", "[DistributionTest]")
   // Random generation of gamma-like points.
   for (size_t j = 0; j < d2; ++j)
     for (size_t i = 0; i < N2; ++i)
-      rdata2(j, i) = dist(math::randGen);
+      rdata2(j, i) = dist(math::GlobalRandomVariables::randGen);
 
   // Fit results using old object.
   gDist.Train(rdata2);
@@ -715,7 +715,7 @@ TEST_CASE("GammaDistributionTrainWithProbabilitiesTest", "[DistributionTest]")
 
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::randGen);
+      rdata(j, i) = dist(math::GlobalRandomVariables::randGen);
 
   // Fill the probabilities randomly.
   arma::vec probabilities(N, arma::fill::randu);
@@ -759,7 +759,7 @@ TEST_CASE("GammaDistributionTrainAllProbabilities1Test", "[DistributionTest]")
 
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::randGen);
+      rdata(j, i) = dist(math::GlobalRandomVariables::randGen);
 
   // Fit results with only data.
   GammaDistribution gDist;
@@ -808,9 +808,9 @@ TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
     for (size_t i = 0; i < N; ++i)
     {
       if (i % 2 == 0)
-        rdata(j, i) = dist(math::randGen);
+        rdata(j, i) = dist(math::GlobalRandomVariables::randGen);
       else
-        rdata(j, i) = dist2(math::randGen);
+        rdata(j, i) = dist2(math::GlobalRandomVariables::randGen);
     }
   }
 
@@ -859,7 +859,7 @@ TEST_CASE("GammaDistributionFittingTest", "[DistributionTest]")
   arma::mat rdata(d, N);
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::randGen);
+      rdata(j, i) = dist(math::GlobalRandomVariables::randGen);
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist;
@@ -880,7 +880,7 @@ TEST_CASE("GammaDistributionFittingTest", "[DistributionTest]")
   arma::mat rdata2(d, N);
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata2(j, i) = dist2(math::randGen);
+      rdata2(j, i) = dist2(math::GlobalRandomVariables::randGen);
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist2;

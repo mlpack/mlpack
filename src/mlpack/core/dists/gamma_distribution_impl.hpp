@@ -239,7 +239,7 @@ inline arma::vec GammaDistribution::Random() const
   {
     std::gamma_distribution<double> dist(alpha(d), beta(d));
     // Use the mlpack random object.
-    randVec(d) = dist(mlpack::math::randGen);
+    randVec(d) = dist(mlpack::math::GlobalRandomVariables::randGen);
   }
 
   return randVec;
