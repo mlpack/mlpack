@@ -14,7 +14,6 @@ set(SOURCES
   multiply_slices.hpp
   quantile.hpp
   random.hpp
-  random.cpp
   random_basis.hpp
   random_basis_impl.hpp
   range.hpp

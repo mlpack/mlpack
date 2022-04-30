@@ -23,6 +23,36 @@ namespace math /** Miscellaneous math routines. */ {
  * correctly on Windows.
  */
 
+#if __cplusplus < 201703L
+  namespace rand {
+  template<class=void>
+    struct GlobalRandomVariables
+    {
+      static std::mt19937 randGen;
+      static std::uniform_real_distribution<> randUniformDist;
+      static std::normal_distribution<> randNormalDist;
+    };
+    template<>
+    std::uniform_real_distribution<> GlobalRandomVariables<>::randUniformDist(0.0, 1.0);
+    template<>
+    std::normal_distribution<> GlobalRandomVariables<>::randNormalDist(0.0, 1.0);
+  }
+
+  // Global random object.
+  static MLPACK_EXPORT std::mt19937& randGen = rand::GlobalRandomVariables<>::randGen;
+  // Global uniform distribution.
+  static MLPACK_EXPORT std::uniform_real_distribution<>& randUniformDist = rand::GlobalRandomVariables<>::randUniformDist;
+  // Global normal distribution.
+  static MLPACK_EXPORT std::normal_distribution<>& randNormalDist = rand::GlobalRandomVariables<>::randNormalDist;
+#else
+  // Global random object.
+  inline MLPACK_EXPORT std::mt19937 randGen;
+  // Global uniform distribution.
+  inline MLPACK_EXPORT std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
+  // Global normal distribution.
+  inline MLPACK_EXPORT std::normal_distribution<> randNormalDist(0.0, 1.0);
+#endif 
+
 // Global random object.
 extern MLPACK_EXPORT std::mt19937 randGen;
 // Global uniform distribution.
