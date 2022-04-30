@@ -57,6 +57,7 @@ jobs:
           run: |
             remotes::install_deps(dependencies = TRUE)
             remotes::install_cran("roxygen2")
+            remotes::install_cran("pkgbuild")
           shell: Rscript {0}
 
         - name: CMake
