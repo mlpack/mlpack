@@ -41,11 +41,11 @@ namespace math /** Miscellaneous math routines. */ {
   }
 
   // Global random object.
-  static std::mt19937& randGen = rand_mlpack::GlobalRandomVariables<>::randGen;
+  static MLPACK_EXPORT std::mt19937& randGen = rand_mlpack::GlobalRandomVariables<>::randGen;
   // Global uniform distribution.
-  static std::uniform_real_distribution<>& randUniformDist = rand_mlpack::GlobalRandomVariables<>::randUniformDist;
+  static MLPACK_EXPORT std::uniform_real_distribution<>& randUniformDist = rand_mlpack::GlobalRandomVariables<>::randUniformDist;
   // Global normal distribution.
-  static std::normal_distribution<>& randNormalDist = rand_mlpack::GlobalRandomVariables<>::randNormalDist;
+  static MLPACK_EXPORT std::normal_distribution<>& randNormalDist = rand_mlpack::GlobalRandomVariables<>::randNormalDist;
 #else
   // Global random object.
   inline std::mt19937 randGen;
@@ -54,13 +54,6 @@ namespace math /** Miscellaneous math routines. */ {
   // Global normal distribution.
   inline std::normal_distribution<> randNormalDist(0.0, 1.0);
 #endif
-
-// Global random object.
-extern MLPACK_EXPORT std::mt19937 randGen;
-// Global uniform distribution.
-extern MLPACK_EXPORT std::uniform_real_distribution<> randUniformDist;
-// Global normal distribution.
-extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
 
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
