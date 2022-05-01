@@ -371,10 +371,10 @@ inline CosineTree::~CosineTree()
     delete right;
 }
 
-void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
-                                     arma::vec& centroid,
-                                     arma::vec& newBasisVector,
-                                     arma::vec* addBasisVector)
+inline void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
+                                            arma::vec& centroid,
+                                            arma::vec& newBasisVector,
+                                            arma::vec* addBasisVector)
 {
   // Set new basis vector to centroid.
   newBasisVector = centroid;
