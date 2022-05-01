@@ -13,6 +13,8 @@
 #define MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/math/quantile.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -284,5 +286,8 @@ class CompareCosineNode
 
 } // namespace tree
 } // namespace mlpack
+
+// Include implementation.
+#include "cosine_tree_impl.hpp"
 
 #endif
