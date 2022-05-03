@@ -26,6 +26,7 @@
 
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::svm;
 using namespace mlpack::util;
 
@@ -178,9 +179,9 @@ PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   // Collect command-line options.
   const double lambda = params.Get<double>("lambda");

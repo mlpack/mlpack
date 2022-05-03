@@ -5,6 +5,7 @@ include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
+include(CMake/CheckAtomic.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -158,6 +159,15 @@ endif()
 # These support libraries are used if we need to link against something
 # specific.  This list is a subset of MLPACK_LIBRARIES.
 set(COMPILER_SUPPORT_LIBRARIES "")
+
+# Check if atomics need -latomic linking.
+#include(CheckAtomic)
+if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB AND
+    NOT HAVE_CXX_ATOMICS64_WITHOUT_LIB AND
+    NOT MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -latomic")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -latomic")
+endif ()
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
@@ -330,6 +340,15 @@ if (STB_IMAGE_FOUND)
   add_definitions(-DHAS_STB)
   set(STB_AVAILABLE "1")
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
+
+  # Make sure that we can link STB in multiple translation units.
+  include(CMake/TestStaticSTB.cmake)
+  if (NOT CMAKE_HAS_WORKING_STATIC_STB)
+    message(FATAL_ERROR "STB implementations's static mode cannot link across "
+        "multiple translation units!  Try upgrading your STB implementation, "
+        "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
+	"CMake configuration command.")
+  endif ()
 endif()
 
 # Find ensmallen.
@@ -361,6 +380,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.79.0" "1.79"
   "1.78.0" "1.78"
   "1.77.0" "1.77"
   "1.76.0" "1.76"

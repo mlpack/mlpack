@@ -58,7 +58,7 @@ class AlphaDropoutType : public Layer<MatType>
                    const double alphaDash = -alpha * lambda);
 
   /**
-   * Clone the DropoutType object. This handles polymorphism correctly.
+   * Clone the AlphaDropoutType object. This handles polymorphism correctly.
    */
   AlphaDropoutType* Clone() const { return new AlphaDropoutType(*this); }
 

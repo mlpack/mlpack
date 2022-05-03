@@ -33,6 +33,7 @@
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
+#include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/data/confusion_matrix.hpp>
 #include <ensmallen.hpp>
@@ -44,6 +45,7 @@ using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::cv;
 using namespace mlpack::naive_bayes;
+using namespace mlpack::perceptron;
 using namespace mlpack::regression;
 using namespace mlpack::tree;
 using namespace mlpack::data;
@@ -599,6 +601,33 @@ TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
   // 10-fold cross-validation, no shuffling.
   KFoldCV<NaiveBayesClassifier<>, Accuracy> cv(10, data, labels, numClasses,
       false);
+
+  // We should succeed in classifying separately the first nine samples, and
+  // fail with the remaining one.
+  double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
+
+  REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  REQUIRE_NOTHROW(cv.Model());
+}
+
+/**
+ * Test k-fold cross-validation with the perceptron.
+ */
+TEST_CASE("KFoldCVPerceptronTest", "[CVTest]")
+{
+  // The same as the test above (for Naive Bayes), but with the perceptron.
+
+  // Making a 10-points dataset. The last point should be classified wrong when
+  // it is tested separately.
+  arma::mat data("0 1 2 3 100 101 102 103 104 5");
+  arma::Row<size_t> labels("0 0 0 0 1 1 1 1 1 1");
+  size_t numClasses = 2;
+
+  // 10-fold cross-validation, no shuffling.
+  KFoldCV<Perceptron<>, Accuracy> cv(10, data, labels, numClasses);
 
   // We should succeed in classifying separately the first nine samples, and
   // fail with the remaining one.

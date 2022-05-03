@@ -4,7 +4,7 @@ set(SOURCES
   dataset_mapper.hpp
   dataset_mapper_impl.hpp
   detect_file_type.hpp
-  detect_file_type.cpp
+  detect_file_type_impl.hpp
   extension.hpp
   format.hpp
   has_serialize.hpp
@@ -14,7 +14,7 @@ set(SOURCES
   load_categorical_csv.hpp
   load.hpp
   load_image_impl.hpp
-  load_image.cpp
+  load_image.hpp
   load_model_impl.hpp
   load_vec_impl.hpp
   load_impl.hpp
@@ -24,7 +24,8 @@ set(SOURCES
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
-  save_image.cpp
+  save_image.hpp
+  save_image_impl.hpp
   split_data.hpp
   string_algorithms.hpp
   imputer.hpp

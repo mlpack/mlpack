@@ -18,10 +18,12 @@
 #define BINDING_NAME random_forest
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;
@@ -171,9 +173,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Initialize random seed if needed.
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   // Check for incompatible input parameters.
   if (!params.Has("warm_start"))

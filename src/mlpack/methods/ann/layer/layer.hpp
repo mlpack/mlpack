@@ -57,7 +57,7 @@ class Layer
   { /* Nothing to do here */ }
 
   //! Default deconstructor.
-  virtual ~Layer() { }
+  virtual ~Layer() { /* Nothing to do here */ }
 
   //! Copy constructor.  This is not responsible for copying weights!
   Layer(const Layer& layer) :
@@ -65,7 +65,7 @@ class Layer
       outputDimensions(layer.outputDimensions),
       validOutputDimensions(layer.validOutputDimensions),
       training(layer.training)
-  { }
+  { /* Nothing to do here */ }
 
   //! Make a copy of the object.
   virtual Layer* Clone() const = 0;
@@ -76,7 +76,7 @@ class Layer
       outputDimensions(std::move(layer.outputDimensions)),
       validOutputDimensions(std::move(layer.validOutputDimensions)),
       training(std::move(layer.training))
-  { }
+  { /* Nothing to do here */ }
 
   //! Copy assignment operator.  This is not responsible for copying weights!
   virtual Layer& operator=(const Layer& layer)

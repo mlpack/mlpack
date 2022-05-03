@@ -20,10 +20,11 @@
 
 #include "format.hpp"
 #include "dataset_mapper.hpp"
+#include "detect_file_type.hpp"
 #include "image_info.hpp"
 #include "load_csv.hpp"
 #include "load_arff.hpp"
-#include "detect_file_type.hpp"
+#include "load_image.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -250,46 +251,6 @@ bool Load(const std::string& filename,
           const bool fatal = false,
           format f = format::autodetect);
 
-/**
- * Image load/save interfaces.
- */
-
-/**
- * Load the image file into the given matrix.
- *
- * @param filename Name of the image file.
- * @param matrix Matrix to load the image into.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @return Boolean value indicating success or failure of load.
- */
-template<typename eT>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
-
-/**
- * Load the image file into the given matrix.
- *
- * @param files A vector consisting of filenames.
- * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @return Boolean value indicating success or failure of load.
- */
-template<typename eT>
-bool Load(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
-
-// Implementation found in load_image.cpp.
-bool LoadImage(const std::string& filename,
-               arma::Mat<unsigned char>& matrix,
-               ImageInfo& info,
-               const bool fatal = false);
-
 } // namespace data
 } // namespace mlpack
 
@@ -299,7 +260,5 @@ bool LoadImage(const std::string& filename,
 #include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
-// Include implementation of Load() for images.
-#include "load_image_impl.hpp"
 
 #endif

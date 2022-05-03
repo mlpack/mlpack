@@ -63,6 +63,32 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 }
 
 /**
+ * Constructor: construct the perceptron by building the weights matrix, which
+ * is later used in classification.  The number of classes should be specified
+ * separately, and the labels vector should contain values in the range [0,
+ * numClasses - 1].  The data::NormalizeLabels() function can be used if the
+ * labels vector does not contain values in the required range.
+ *
+ * This constructor supports weights for each data point.
+ */
+template<
+    typename LearnPolicy,
+    typename WeightInitializationPolicy,
+    typename MatType
+>
+Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const arma::rowvec& instanceWeights,
+    const size_t maxIterations) :
+    maxIterations(maxIterations)
+{
+  // Start training.
+  Train(data, labels, numClasses, instanceWeights);
+}
+
+/**
  * Alternate constructor which copies parameters from an already initiated
  * perceptron.
  *
@@ -108,13 +134,14 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
 {
   arma::vec tempLabelMat;
   arma::uword maxIndex = 0;
+  predictedLabels.set_size(test.n_cols);
 
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
     tempLabelMat.max(maxIndex);
-    predictedLabels(0, i) = maxIndex;
+    predictedLabels(i) = maxIndex;
   }
 }
 

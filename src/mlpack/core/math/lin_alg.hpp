@@ -13,6 +13,8 @@
 #define MLPACK_CORE_MATH_LIN_ALG_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "ccov.hpp"
+#include "random.hpp"
 
 /**
  * Linear algebra utility functions, generally performed on matrices or vectors.
@@ -25,7 +27,7 @@ namespace math {
  * is ignored in the power operation and then re-added.  Useful for
  * eigenvalues.
  */
-void VectorPower(arma::vec& vec, const double power);
+inline void VectorPower(arma::vec& vec, const double power);
 
 /**
  * Creates a centered matrix, where centering is done by subtracting
@@ -34,34 +36,34 @@ void VectorPower(arma::vec& vec, const double power);
  * @param x Input matrix
  * @param xCentered Matrix to write centered output into
  */
-void Center(const arma::mat& x, arma::mat& xCentered);
+inline void Center(const arma::mat& x, arma::mat& xCentered);
 
 /**
  * Whitens a matrix using the singular value decomposition of the covariance
  * matrix. Whitening means the covariance matrix of the result is the identity
  * matrix.
  */
-void WhitenUsingSVD(const arma::mat& x,
-                    arma::mat& xWhitened,
-                    arma::mat& whiteningMatrix);
+inline void WhitenUsingSVD(const arma::mat& x,
+                           arma::mat& xWhitened,
+                           arma::mat& whiteningMatrix);
 
 
 /**
  * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N.
  */
-void RandVector(arma::vec& v);
+inline void RandVector(arma::vec& v);
 
 /**
  * Orthogonalize x and return the result in W, using eigendecomposition.
  * We will be using the formula \f$ W = x (x^T x)^{-0.5} \f$.
  */
-void Orthogonalize(const arma::mat& x, arma::mat& W);
+inline void Orthogonalize(const arma::mat& x, arma::mat& W);
 
 /**
  * Orthogonalize x in-place.  This could be sped up by a custom
  * implementation.
  */
-void Orthogonalize(arma::mat& x);
+inline void Orthogonalize(arma::mat& x);
 
 /**
  * Remove a certain set of rows in a matrix while copying to a second matrix.
@@ -70,9 +72,9 @@ void Orthogonalize(arma::mat& x);
  * @param rowsToRemove Vector containing indices of rows to be removed.
  * @param output Matrix to copy non-removed rows into.
  */
-void RemoveRows(const arma::mat& input,
-                const std::vector<size_t>& rowsToRemove,
-                arma::mat& output);
+inline void RemoveRows(const arma::mat& input,
+                       const std::vector<size_t>& rowsToRemove,
+                       arma::mat& output);
 
 /**
  * Upper triangular representation of a symmetric matrix, scaled such that,
@@ -83,9 +85,9 @@ void RemoveRows(const arma::mat& input,
  * @param input A symmetric matrix
  * @param output
  */
-void Svec(const arma::mat& input, arma::vec& output);
+inline void Svec(const arma::mat& input, arma::vec& output);
 
-void Svec(const arma::sp_mat& input, arma::sp_vec& output);
+inline void Svec(const arma::sp_mat& input, arma::sp_vec& output);
 
 /**
  * The inverse of Svec. That is, Smat(Svec(A)) == A.
@@ -93,7 +95,7 @@ void Svec(const arma::sp_mat& input, arma::sp_vec& output);
  * @param input
  * @param output A symmetric matrix
  */
-void Smat(const arma::vec& input, arma::mat& output);
+inline void Smat(const arma::vec& input, arma::mat& output);
 
 /**
  * Return the index such that A[i,j] == factr(i, j) * svec(A)[pos(i, j)],
@@ -115,7 +117,7 @@ inline size_t SvecIndex(size_t i, size_t j, size_t n);
  * @param A
  * @param op
  */
-void SymKronId(const arma::mat& A, arma::mat& op);
+inline void SymKronId(const arma::mat& A, arma::mat& op);
 
 /**
  * Signum function.

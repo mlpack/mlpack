@@ -24,9 +24,12 @@ namespace math {
  * @param basis Matrix to store basis in.
  * @param d Desired number of dimensions in the basis.
  */
-void RandomBasis(arma::mat& basis, const size_t d);
+inline void RandomBasis(arma::mat& basis, const size_t d);
 
 } // namespace math
 } // namespace mlpack
+
+//! Include the implementation file.
+#include "random_basis_impl.hpp"
 
 #endif

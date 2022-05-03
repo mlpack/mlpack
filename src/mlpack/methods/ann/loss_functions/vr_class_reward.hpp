@@ -68,7 +68,7 @@ class VRClassRewardType
    *
    * @param args The layer parameter.
    */
-  template <class LayerType, class... Args>
+  template <typename LayerType, typename... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
   /**

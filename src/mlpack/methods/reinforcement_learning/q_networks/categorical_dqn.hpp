@@ -23,8 +23,6 @@
 namespace mlpack {
 namespace rl {
 
-using namespace mlpack::ann;
-
 /**
  * Implementation of the Categorical Deep Q-Learning network.
  * For more information, see the following.
@@ -43,9 +41,9 @@ using namespace mlpack::ann;
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = EmptyLoss<>,
-  typename InitType = GaussianInitialization,
-  typename NetworkType = FFN<OutputLayerType, InitType>
+  typename OutputLayerType = ann::EmptyLoss<>,
+  typename InitType = ann::GaussianInitialization,
+  typename NetworkType = ann::FFN<OutputLayerType, InitType>
 >
 class CategoricalDQN
 {
@@ -83,21 +81,21 @@ class CategoricalDQN
       vMax(config.VMax()),
       isNoisy(isNoisy)
   {
-    network.Add(new Linear<>(inputDim, h1));
-    network.Add(new ReLULayer<>());
+    network.Add(new ann::Linear<>(inputDim, h1));
+    network.Add(new ann::ReLULayer<>());
     if (isNoisy)
     {
       noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new NoisyLinear<>(h1, h2));
-      network.Add(new ReLULayer<>());
+      network.Add(new ann::NoisyLinear<>(h1, h2));
+      network.Add(new ann::ReLULayer<>());
       noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new NoisyLinear<>(h2, outputDim * atomSize));
+      network.Add(new ann::NoisyLinear<>(h2, outputDim * atomSize));
     }
     else
     {
-      network.Add(new Linear<>(h1, h2));
-      network.Add(new ReLULayer<>());
-      network.Add(new Linear<>(h2, outputDim * atomSize));
+      network.Add(new ann::Linear<>(h1, h2));
+      network.Add(new ann::ReLULayer<>());
+      network.Add(new ann::Linear<>(h2, outputDim * atomSize));
     }
   }
 
@@ -181,9 +179,9 @@ class CategoricalDQN
    */
   void ResetNoise()
   {
-    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
+    for (size_t i = 0; i < noisyLayerIndex.size(); ++i)
     {
-      boost::get<NoisyLinear<>*>
+      boost::get<ann::NoisyLinear<>*>
           (network.Model()[noisyLayerIndex[i]])->ResetNoise();
     }
   }
@@ -236,7 +234,7 @@ class CategoricalDQN
   std::vector<size_t> noisyLayerIndex;
 
   //! Locally-stored softmax activation function.
-  Softmax<> softMax;
+  ann::Softmax<> softMax;
 
   //! Locally-stored activations from softMax.
   arma::mat activations;

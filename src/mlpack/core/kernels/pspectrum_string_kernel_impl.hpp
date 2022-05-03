@@ -22,6 +22,64 @@
 namespace mlpack {
 namespace kernel {
 
+inline PSpectrumStringKernel::PSpectrumStringKernel(
+    const std::vector<std::vector<std::string> >& datasets,
+    const size_t p) : p(p)
+{
+  // We have to assemble the counts of substrings.  This is not a particularly
+  // fast operation, unfortunately, but it only needs to be done once.
+  Log::Info << "Assembling counts of substrings of length " << p << "."
+      << std::endl;
+
+  // Resize for number of datasets.
+  counts.resize(datasets.size());
+
+  for (size_t dataset = 0; dataset < datasets.size(); ++dataset)
+  {
+    const std::vector<std::string>& set = datasets[dataset];
+
+    // Resize for number of strings in dataset.
+    counts[dataset].resize(set.size());
+
+    // Inspect each string in the dataset.
+    for (size_t index = 0; index < set.size(); ++index)
+    {
+      // Convenience references.
+      const std::string& str = set[index];
+      std::map<std::string, int>& mapping = counts[dataset][index];
+
+      size_t start = 0;
+      while ((start + p) <= str.length())
+      {
+        std::string sub = str.substr(start, p);
+
+        // Convert all characters to lowercase.
+        bool invalid = false;
+        for (size_t j = 0; j < p; ++j)
+        {
+          if (!isalnum(sub[j]))
+          {
+            invalid = true;
+            break; // Only consider substrings with alphanumerics.
+          }
+
+          sub[j] = tolower(sub[j]);
+        }
+
+        // Increment position in string.
+        ++start;
+
+        if (!invalid)
+        {
+          // Add to the map.
+          ++mapping[sub];
+        }
+      }
+    }
+  }
+  Log::Info << "Substring extraction complete." << std::endl;
+}
+
 /**
  * Evaluate the kernel for the string indices given.  As mentioned in the class
  * documentation, a and b should be 2-element vectors, where the first element

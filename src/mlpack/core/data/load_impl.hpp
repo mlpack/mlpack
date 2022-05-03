@@ -16,13 +16,12 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
-#include <exception>
 #include <algorithm>
+#include <exception>
 #include <mlpack/core/util/timers.hpp>
 
 #include "extension.hpp"
 #include "detect_file_type.hpp"
-
 #include "string_algorithms.hpp"
 
 namespace mlpack {

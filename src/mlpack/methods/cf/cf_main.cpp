@@ -40,6 +40,7 @@
 #include <mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp>
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::cf;
 using namespace mlpack::amf;
 using namespace mlpack::svd;
@@ -202,9 +203,9 @@ PARAM_STRING_IN("neighbor_search", "Algorithm used for neighbor search.",
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") == 0)
-    math::RandomSeed(std::time(NULL));
+    RandomSeed(std::time(NULL));
   else
-    math::RandomSeed(params.Get<int>("seed"));
+    RandomSeed(params.Get<int>("seed"));
 
   // Validate parameters.
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);

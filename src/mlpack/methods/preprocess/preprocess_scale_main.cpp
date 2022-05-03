@@ -29,6 +29,7 @@
 #include "mlpack/methods/preprocess/scaling_model.hpp"
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::util;
 using namespace mlpack::data;
 using namespace arma;
@@ -122,9 +123,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const std::string scalerMethod = params.Get<string>("scaler_method");
 
   if (params.Get<int>("seed") == 0)
-    mlpack::math::RandomSeed(std::time(NULL));
+    RandomSeed(std::time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed(params, { "output", "output_model"}, false,

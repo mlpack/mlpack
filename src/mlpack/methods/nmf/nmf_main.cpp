@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -29,6 +30,7 @@
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::amf;
 using namespace mlpack::util;
 using namespace std;
@@ -217,9 +219,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Initialize random seed.
   if (params.Get<int>("seed") != 0)
-    math::RandomSeed((size_t) params.Get<int>("seed"));
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   // Gather parameters.
   const size_t r = params.Get<int>("rank");
