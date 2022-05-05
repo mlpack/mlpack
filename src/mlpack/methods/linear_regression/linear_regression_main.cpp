@@ -120,7 +120,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
-  ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "output_predictions");
 
   mat regressors;
   rowvec responses;
