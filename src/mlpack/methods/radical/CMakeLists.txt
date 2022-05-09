@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into the output library
 set(SOURCES
    radical.hpp
-   radical.cpp
+   radical_impl.hpp
 )
 
 # add directory name to sources
