@@ -72,6 +72,17 @@ SparseAutoencoder::SparseAutoencoder(const arma::mat& data,
       << "trained model is " << out << "." << std::endl;
 }
 
+inline void SparseAutoencoder::GetNewFeatures(arma::mat& data,
+																							arma::mat& features)
+{
+  const size_t l1 = hiddenSize;
+  const size_t l2 = visibleSize;
+
+  Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+      features);
+}
+
 } // namespace nn
 } // namespace mlpack
 

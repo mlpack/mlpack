@@ -1,5 +1,5 @@
 /**
- * @file methods/sparse_autoencoder/sparse_autoencoder_function.cpp
+ * @file methods/sparse_autoencoder/sparse_autoencoder_function_impl.hpp
  * @author Siddharth Agrawal
  *
  * Implementation of function to be optimized for sparse autoencoders.
@@ -9,18 +9,21 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_FUNCTION_IMPL_HPP
+#define MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_FUNCTION_IMPL_HPP
+
 #include "sparse_autoencoder_function.hpp"
 
-using namespace mlpack;
-using namespace mlpack::nn;
-using namespace std;
+namespace mlpack {
+namespace nn {
 
-SparseAutoencoderFunction::SparseAutoencoderFunction(const arma::mat& data,
-                                                     const size_t visibleSize,
-                                                     const size_t hiddenSize,
-                                                     const double lambda,
-                                                     const double beta,
-                                                     const double rho) :
+inline SparseAutoencoderFunction::SparseAutoencoderFunction(
+    const arma::mat& data,
+    const size_t visibleSize,
+    const size_t hiddenSize,
+    const double lambda,
+    const double beta,
+    const double rho) :
     data(data),
     visibleSize(visibleSize),
     hiddenSize(hiddenSize),
@@ -37,7 +40,7 @@ SparseAutoencoderFunction::SparseAutoencoderFunction(const arma::mat& data,
   * [-r, r] where 'r' is decided using the sizes of the visible and hidden
   * layers. The biases b1, b2 are initialized to 0.
   */
-const arma::mat SparseAutoencoderFunction::InitializeWeights()
+inline const arma::mat SparseAutoencoderFunction::InitializeWeights()
 {
   // The module uses a matrix to store the parameters, its structure looks like:
   //          vSize   1
@@ -73,7 +76,8 @@ const arma::mat SparseAutoencoderFunction::InitializeWeights()
 
 /** Evaluates the objective function given the parameters.
   */
-double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
+inline double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters)
+    const
 {
   // The objective function is the average squared reconstruction error of the
   // network. w1 and b1 are the weights and biases associated with the hidden
@@ -141,8 +145,8 @@ double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
 
 /** Calculates and stores the gradient values given a set of parameters.
   */
-void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
-                                         arma::mat& gradient) const
+inline void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
+                                                arma::mat& gradient) const
 {
   // Performs a feedforward pass of the neural network, and computes the
   // activations of the output layer as in the Evaluate() method. It uses the
@@ -208,3 +212,8 @@ void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   gradient.submat(0, l2, l1 - 1, l2) = arma::sum(delHid, 1) / data.n_cols;
   gradient.submat(l3, 0, l3, l2 - 1) = (arma::sum(delOut, 1) / data.n_cols).t();
 }
+
+} // namespace nn
+} // namespace mlpack
+
+#endif
