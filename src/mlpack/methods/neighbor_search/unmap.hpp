@@ -63,4 +63,7 @@ void Unmap(const arma::Mat<size_t>& neighbors,
 } // namespace neighbor
 } // namespace mlpack
 
+// Include implementation.
+#include "unmap_impl.hpp"
+
 #endif

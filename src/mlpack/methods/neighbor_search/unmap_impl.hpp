@@ -1,5 +1,5 @@
 /**
- * @file methods/neighbor_search/unmap.cpp
+ * @file methods/neighbor_search/unmap_impl.hpp
  * @author Ryan Curtin
  *
  * Auxiliary function to unmap neighbor search results.
@@ -9,19 +9,22 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_IMPL_HPP
+#define MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_IMPL_HPP
+
 #include "unmap.hpp"
 
 namespace mlpack {
 namespace neighbor {
 
 // Useful in the dual-tree setting.
-void Unmap(const arma::Mat<size_t>& neighbors,
-           const arma::mat& distances,
-           const std::vector<size_t>& referenceMap,
-           const std::vector<size_t>& queryMap,
-           arma::Mat<size_t>& neighborsOut,
-           arma::mat& distancesOut,
-           const bool squareRoot)
+inline void Unmap(const arma::Mat<size_t>& neighbors,
+                  const arma::mat& distances,
+                  const std::vector<size_t>& referenceMap,
+                  const std::vector<size_t>& queryMap,
+                  arma::Mat<size_t>& neighborsOut,
+                  arma::mat& distancesOut,
+                  const bool squareRoot)
 {
   // Set matrices to correct size.
   neighborsOut.set_size(neighbors.n_rows, neighbors.n_cols);
@@ -44,12 +47,12 @@ void Unmap(const arma::Mat<size_t>& neighbors,
 }
 
 // Useful in the single-tree setting.
-void Unmap(const arma::Mat<size_t>& neighbors,
-           const arma::mat& distances,
-           const std::vector<size_t>& referenceMap,
-           arma::Mat<size_t>& neighborsOut,
-           arma::mat& distancesOut,
-           const bool squareRoot)
+inline void Unmap(const arma::Mat<size_t>& neighbors,
+                  const arma::mat& distances,
+                  const std::vector<size_t>& referenceMap,
+                  arma::Mat<size_t>& neighborsOut,
+                  arma::mat& distancesOut,
+                  const bool squareRoot)
 {
   // Set matrices to correct size.
   neighborsOut.set_size(neighbors.n_rows, neighbors.n_cols);
@@ -67,3 +70,5 @@ void Unmap(const arma::Mat<size_t>& neighbors,
 
 } // namespace neighbor
 } // namespace mlpack
+
+#endif
