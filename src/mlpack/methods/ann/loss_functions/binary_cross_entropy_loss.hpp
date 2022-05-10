@@ -18,19 +18,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The binary-cross-entropy performance function measures the
- * Binary Cross Entropy between the target and the output.
+ * The binary-cross-entropy performance function measures the Binary Cross
+ * Entropy between the target and the output.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class BCELoss
+template<typename MatType = arma::mat>
+class BCELossType
 {
  public:
   /**
@@ -45,7 +40,7 @@ class BCELoss
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  BCELoss(const double eps = 1e-10, const bool reduction = true);
+  BCELossType(const double eps = 1e-10, const bool reduction = true);
 
   /**
    * Computes the cross-entropy function.
@@ -54,9 +49,8 @@ class BCELoss
    *     function.
    * @param target The target vector.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -66,15 +60,9 @@ class BCELoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the epsilon.
   double Eps() const { return eps; }
@@ -94,25 +82,23 @@ class BCELoss
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! The minimum value used for computing logarithms and denominators
   double eps;
 
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class BCELoss
+}; // class BCELossType
+
+// Default typedef for typical `arma::mat` usage.
+typedef BCELossType<arma::mat> BCELoss;
 
 /**
- * Adding alias of BCELoss.
+ * Alias of BCELossType.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using CrossEntropyError = BCELoss<
-    InputDataType, OutputDataType>;
+typedef BCELossType<arma::mat> CrossEntropyError;
+
+template<typename MatType = arma::mat>
+using CrossEntropyErrorType = BCELossType<MatType>;
 
 } // namespace ann
 } // namespace mlpack

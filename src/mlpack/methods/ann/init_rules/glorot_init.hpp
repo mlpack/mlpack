@@ -104,13 +104,19 @@ class GlorotInitializationType
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W);
+
+  /**
+   * Serialize the initialization.  (Nothing to serialize for this one.)
+   */
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class GlorotInitializationType
 
-template <>
+template<>
 template<typename eT>
 inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
-                                                       const size_t rows,
-                                                       const size_t cols)
+                                                        const size_t rows,
+                                                        const size_t cols)
 {
   if (W.is_empty())
     W.set_size(rows, cols);
@@ -120,7 +126,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
   normalInit.Initialize(W, rows, cols);
 }
 
-template <>
+template<>
 template<typename eT>
 inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W)
 {
@@ -132,7 +138,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W)
   normalInit.Initialize(W);
 }
 
-template <>
+template<>
 template<typename eT>
 inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
                                                        const size_t rows,
@@ -147,7 +153,7 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
   randomInit.Initialize(W, rows, cols);
 }
 
-template <>
+template<>
 template<typename eT>
 inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W)
 {

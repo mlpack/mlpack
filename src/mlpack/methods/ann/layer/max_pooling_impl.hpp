@@ -19,141 +19,201 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MaxPooling<InputDataType, OutputDataType>::MaxPooling()
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType() :
+    Layer<MatType>()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-MaxPooling<InputDataType, OutputDataType>::MaxPooling(
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor) :
+    Layer<MatType>(),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
     strideHeight(strideHeight),
     floor(floor),
-    inSize(0),
-    outSize(0),
-    reset(false),
-    inputWidth(0),
-    inputHeight(0),
-    outputWidth(0),
-    outputHeight(0),
-    deterministic(false),
-    batchSize(0)
+    channels(0),
+    offset(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MaxPooling<InputDataType, OutputDataType>::Forward(
-  const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType(
+    const MaxPoolingType& other) :
+    Layer<MatType>(other),
+    kernelWidth(other.kernelWidth),
+    kernelHeight(other.kernelHeight),
+    strideWidth(other.strideWidth),
+    strideHeight(other.strideHeight),
+    floor(other.floor),
+    channels(other.channels),
+    offset(other.offset),
+    pooling(other.pooling)
 {
-  batchSize = input.n_cols;
-  inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
-      inputWidth, inputHeight, batchSize * inSize, false, false);
+  // Nothing to do here.
+}
 
-  if (floor)
+template<typename MatType>
+MaxPoolingType<MatType>::MaxPoolingType(
+    MaxPoolingType&& other) :
+    Layer<MatType>(std::move(other)),
+    kernelWidth(std::move(other.kernelWidth)),
+    kernelHeight(std::move(other.kernelHeight)),
+    strideWidth(std::move(other.strideWidth)),
+    strideHeight(std::move(other.strideHeight)),
+    floor(std::move(other.floor)),
+    channels(std::move(other.channels)),
+    offset(std::move(other.offset)),
+    pooling(std::move(other.pooling))
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+MaxPoolingType<MatType>&
+MaxPoolingType<MatType>::operator=(const MaxPoolingType& other)
+{
+  if (&other != this)
   {
-    outputWidth = std::floor((inputWidth -
-        (double) kernelWidth) / (double) strideWidth + 1);
-    outputHeight = std::floor((inputHeight -
-        (double) kernelHeight) / (double) strideHeight + 1);
+    Layer<MatType>::operator=(other);
+    kernelWidth = other.kernelWidth;
+    kernelHeight = other.kernelHeight;
+    strideWidth = other.strideWidth;
+    strideHeight = other.strideHeight;
+    floor = other.floor;
+    channels = other.channels;
+    offset = other.offset;
+    pooling = other.pooling;
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+MaxPoolingType<MatType>&
+MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
+{
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(std::move(other));
+    kernelWidth = std::move(other.kernelWidth);
+    kernelHeight = std::move(other.kernelHeight);
+    strideWidth = std::move(other.strideWidth);
+    strideHeight = std::move(other.strideHeight);
+    floor = std::move(other.floor);
+    channels = std::move(other.channels);
+    offset = std::move(other.offset);
+    pooling = std::move(other.pooling);
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
+{
+  arma::Cube<typename MatType::elem_type> inputTemp(
+      const_cast<MatType&>(input).memptr(), this->inputDimensions[0],
+      this->inputDimensions[1], input.n_cols * channels, false, false);
+
+  arma::Cube<typename MatType::elem_type> outputTemp(output.memptr(),
+      this->outputDimensions[0], this->outputDimensions[1],
+      input.n_cols * channels, false, true);
+
+  if (this->training)
+  {
+    // If we are training, we'll do a backwards pass, so we need to ensure that
+    // we know what indices we used.
+    poolingIndices.set_size(this->outputDimensions[0],
+        this->outputDimensions[1], input.n_cols * channels);
+
+    PoolingOperation(inputTemp, outputTemp, poolingIndices);
   }
   else
   {
-    outputWidth = std::ceil((inputWidth -
-        (double) kernelWidth) / (double) strideWidth + 1);
-    outputHeight = std::ceil((inputHeight -
-        (double) kernelHeight) / (double) strideHeight + 1);
+    PoolingOperation(inputTemp, outputTemp);
   }
-
-  outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
-      batchSize * inSize);
-
-  if (!deterministic)
-  {
-    poolingIndices.push_back(outputTemp);
-  }
-
-  if (!reset)
-  {
-    size_t elements = inputWidth * inputHeight;
-    indicesCol = arma::linspace<arma::Col<size_t> >(0, (elements - 1),
-        elements);
-
-    indices = arma::Mat<size_t>(indicesCol.memptr(), inputWidth, inputHeight);
-
-    reset = true;
-  }
-
-  for (size_t s = 0; s < inputTemp.n_slices; s++)
-  {
-    if (!deterministic)
-    {
-      PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-        poolingIndices.back().slice(s));
-    }
-    else
-    {
-      PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-          inputTemp.slice(s));
-    }
-  }
-
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / batchSize,
-      batchSize);
-
-  outputWidth = outputTemp.n_rows;
-  outputHeight = outputTemp.n_cols;
-  outSize = batchSize * inSize;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MaxPooling<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename MatType>
+void MaxPoolingType<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
-  arma::cube mappedError = arma::cube(((arma::Mat<eT>&) gy).memptr(),
-      outputWidth, outputHeight, outSize, false, false);
+  arma::Cube<typename MatType::elem_type> mappedError =
+      arma::Cube<typename MatType::elem_type>(((MatType&) gy).memptr(),
+      this->outputDimensions[0], this->outputDimensions[1],
+      channels * input.n_cols, false, false);
 
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
+  arma::Cube<typename MatType::elem_type> gTemp(g.memptr(),
+      this->inputDimensions[0], this->inputDimensions[1],
+      channels * input.n_cols, false, true);
 
-  for (size_t s = 0; s < mappedError.n_slices; s++)
-  {
-    Unpooling(mappedError.slice(s), gTemp.slice(s),
-        poolingIndices.back().slice(s));
-  }
-
-  poolingIndices.pop_back();
-
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
+  // There's no version of UnpoolingOperation without pooling indices, because
+  // if we call `Backward()`, we know for sure we are training.
+  UnpoolingOperation(mappedError, gTemp, poolingIndices);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
+void MaxPoolingType<MatType>::ComputeOutputDimensions()
+{
+  this->outputDimensions = this->inputDimensions;
+
+  // Compute the size of the output.
+  if (floor)
+  {
+    this->outputDimensions[0] = std::floor((this->inputDimensions[0] -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    this->outputDimensions[1] = std::floor((this->inputDimensions[1] -
+        (double) kernelHeight) / (double) strideHeight + 1);
+    offset = 0;
+  }
+  else
+  {
+    this->outputDimensions[0] = std::ceil((this->inputDimensions[0] -
+        (double) kernelWidth) / (double) strideWidth + 1);
+    this->outputDimensions[1] = std::ceil((this->inputDimensions[1] -
+        (double) kernelHeight) / (double) strideHeight + 1);
+    offset = 1;
+  }
+
+  // Higher dimensions are not modified.
+
+  // Cache input size and output size.
+  channels = 1;
+  for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+    channels *= this->inputDimensions[i];
+}
+
+template<typename MatType>
 template<typename Archive>
-void MaxPooling<InputDataType, OutputDataType>::serialize(
+void MaxPoolingType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
+
 {
+  ar(cereal::base_class<Layer<MatType>>(this));
+
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
   ar(CEREAL_NVP(strideWidth));
   ar(CEREAL_NVP(strideHeight));
-  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(channels));
   ar(CEREAL_NVP(floor));
-  ar(CEREAL_NVP(inputWidth));
-  ar(CEREAL_NVP(inputHeight));
-  ar(CEREAL_NVP(outputWidth));
-  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(offset));
+
+  if (Archive::is_loading::value)
+  {
+    // Clear any memory used by `poolingIndices`.
+    poolingIndices.clear();
+  }
 }
 
 } // namespace ann

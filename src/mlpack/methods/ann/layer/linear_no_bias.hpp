@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
-#include "layer_types.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -25,48 +25,50 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the LinearNoBias class. The LinearNoBias class represents a
  * single layer of a neural network.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
+ * @tparam RegularizerType Type of the regularizer to be used (Default no
+ *    regularizer).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
+template<
+    typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearNoBias
+class LinearNoBiasType : public Layer<MatType>
 {
  public:
   //! Create the LinearNoBias object.
-  LinearNoBias();
+  LinearNoBiasType();
+
   /**
    * Create the LinearNoBias object using the specified number of units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  LinearNoBias(const size_t inSize,
-               const size_t outSize,
-               RegularizerType regularizer = RegularizerType());
+  LinearNoBiasType(const size_t outSize,
+                   RegularizerType regularizer = RegularizerType());
+
+  //! Clone the LinearNoBiasType object. This handles polymorphism correctly.
+  LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
+
+  //! Reset the layer parameter.
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   //! Copy constructor.
-  LinearNoBias(const LinearNoBias& layer);
+  LinearNoBiasType(const LinearNoBiasType& layer);
 
   //! Move constructor.
-  LinearNoBias(LinearNoBias&&);
+  LinearNoBiasType(LinearNoBiasType&&);
 
   //! Copy assignment operator.
-  LinearNoBias& operator=(const LinearNoBias& layer);
+  LinearNoBiasType& operator=(const LinearNoBiasType& layer);
 
   //! Move assignment operator.
-  LinearNoBias& operator=(LinearNoBias&& layer);
+  LinearNoBiasType& operator=(LinearNoBiasType&& layer);
 
-  /*
-   * Reset the layer parameter.
-   */
-  void Reset();
+  //! Virtual destructor.
+  virtual ~LinearNoBiasType() { }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -75,8 +77,7 @@ class LinearNoBias
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -87,69 +88,33 @@ class LinearNoBias
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  const MatType& Parameters() const { return weight; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  MatType& Parameters() { return weight; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  //! Get the number of weights in the layer.
+  size_t WeightSize() const { return inSize * outSize; }
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  //! Compute the output dimensions of the layer using `InputDimensions()`.
+  void ComputeOutputDimensions();
 
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
-  //! Get the size of the weights.
-  size_t WeightSize() const
-  {
-    return inSize * outSize;
-  }
-
-  //! Get the shape of the input.
-  size_t InputShape() const
-  {
-    return inSize;
-  }
-
-  /**
-   * Serialize the layer
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -160,27 +125,17 @@ class LinearNoBias
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.
-  OutputDataType weights;
-
   //! Locally-stored weight parameter.
-  OutputDataType weight;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  MatType weight;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-}; // class LinearNoBias
+}; // class LinearNoBiasType
+
+// Convenience typedefs.
+
+// Standard Linear without bias layer using no regularization.
+typedef LinearNoBiasType<arma::mat, NoRegularizer> LinearNoBias;
 
 } // namespace ann
 } // namespace mlpack

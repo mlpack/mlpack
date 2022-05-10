@@ -13,7 +13,7 @@
 
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/reinforcement_learning/async_learning.hpp>
@@ -48,11 +48,11 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
     // Set up the network.
     FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
         GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(4, 20);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(20, 20);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(20, 2);
+    model.Add<Linear>(20);
+    model.Add<ReLULayer>();
+    model.Add<Linear>(20);
+    model.Add<ReLULayer>();
+    model.Add<Linear>(2);
 
     // Set up the policy.
     using Policy = GreedyPolicy<CartPole>;
@@ -124,11 +124,11 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
     // Set up the network.
     FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
         GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(4, 20);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(20, 20);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(20, 2);
+    model.Add<Linear>(20);
+    model.Add<ReLULayer>();
+    model.Add<Linea>(20);
+    model.Add<ReLULayer>();
+    model.Add<Linear>(2);
 
     // Set up the policy.
     using Policy = GreedyPolicy<CartPole>;
@@ -199,11 +199,11 @@ TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
   // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
-  model.Add<Linear<>>(4, 20);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(20, 20);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(20, 2);
+  model.Add<Linear>(20);
+  model.Add<ReLULayer>();
+  model.Add<Linear>(20);
+  model.Add<ReLULayer>();
+  model.Add<Linear>(2);
 
   // Set up the policy.
   using Policy = GreedyPolicy<CartPole>;

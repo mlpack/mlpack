@@ -17,40 +17,23 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-// Helper function which calls the Reset function of the given module.
-template<class T>
-void ResetFunction(
-    T& layer,
-    typename std::enable_if<HasResetCheck<T, void(T::*)()>::value>::type* = 0)
-{
-  layer.Reset();
-}
-
-template<class T>
-void ResetFunction(
-    T& /* layer */,
-    typename std::enable_if<!HasResetCheck<T, void(T::*)()>::value>::type* = 0)
-{
-  /* Nothing to do here */
-}
-
 // Approximate Jacobian and supposedly-true Jacobian, then compare them
 // similarly to before.
 template<typename ModuleType>
 double JacobianTest(ModuleType& module,
-                  arma::mat& input,
-                  const double minValue = -2,
-                  const double maxValue = -1,
-                  const double perturbation = 1e-6)
+                    arma::mat& input,
+                    const double minValue = -2,
+                    const double maxValue = -1,
+                    const double perturbation = 1e-6)
 {
   arma::mat output, outputA, outputB, jacobianA, jacobianB;
+  output.set_size(module.OutputSize(), input.n_cols);
+  outputA.set_size(module.OutputSize(), input.n_cols);
+  outputB.set_size(module.OutputSize(), input.n_cols);
 
   // Initialize the input matrix.
   RandomInitialization init(minValue, maxValue);
   init.Initialize(input, input.n_rows, input.n_cols);
-
-  // Initialize the module parameters.
-  ResetFunction(module);
 
   // Initialize the jacobian matrix.
   module.Forward(input, output);
@@ -89,7 +72,7 @@ double JacobianTest(ModuleType& module,
     deriv.zeros();
     derivTemp(i) = 1;
 
-    arma::mat delta;
+    arma::mat delta(input.n_rows, input.n_cols);
     module.Backward(input, deriv, delta);
 
     jacobianB.col(i) = delta;
@@ -107,9 +90,9 @@ double CustomJacobianTest(ModuleType& module,
                           const double perturbation = 1e-6)
 {
   arma::mat output, outputA, outputB, jacobianA, jacobianB;
-
-  // Initialize the module parameters.
-  ResetFunction(module);
+  output.set_size(module.OutputSize(), input.n_cols);
+  outputA.set_size(module.OutputSize(), input.n_cols);
+  outputB.set_size(module.OutputSize(), input.n_cols);
 
   // Initialize the jacobian matrix.
   module.Forward(input, output);
@@ -140,7 +123,7 @@ double CustomJacobianTest(ModuleType& module,
     deriv.zeros();
     deriv(i) = 1;
 
-    arma::mat delta;
+    arma::mat delta(input.n_rows, input.n_cols);
     module.Backward(input, deriv, delta);
 
     jacobianB.col(i) = delta;

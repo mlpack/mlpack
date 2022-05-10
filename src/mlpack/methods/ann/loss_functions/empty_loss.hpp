@@ -23,22 +23,17 @@ namespace ann /** Artificial Neural Network. */ {
  * The empty loss does nothing, letting the user calculate the loss outside
  * the model.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class EmptyLoss
+template<typename MatType = arma::mat>
+class EmptyLossType
 {
  public:
   /**
-   * Create the EmptyLoss object.
+   * Create the EmptyLossType object.
    */
-  EmptyLoss();
+  EmptyLossType();
 
   /**
    * Computes the Empty loss function.
@@ -47,8 +42,7 @@ class EmptyLoss
    *     function.
    * @param target The target vector.
    */
-  template<typename PredictionType, typename TargetType>
-  double Forward(const PredictionType& input, const TargetType& target);
+  double Forward(const MatType& input, const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -58,11 +52,17 @@ class EmptyLoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-}; // class EmptyLoss
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
+
+  //! Serialize the EmptyLossType.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */) { }
+}; // class EmptyLossType
+
+// Default typedef for typical `arma::mat` usage.
+typedef EmptyLossType<arma::mat> EmptyLoss;
 
 } // namespace ann
 } // namespace mlpack

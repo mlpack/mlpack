@@ -18,24 +18,20 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
-ReconstructionLoss<
-    InputDataType,
-    OutputDataType,
-    DistType
->::ReconstructionLoss(const bool reduction) : reduction(reduction)
+template<typename MatType, typename DistType>
+ReconstructionLossType<MatType, DistType>::ReconstructionLossType(
+    const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
-    const PredictionType& prediction, const TargetType& target)
+template<typename MatType, typename DistType>
+typename MatType::elem_type ReconstructionLossType<MatType, DistType>::Forward(
+    const MatType& prediction, const MatType& target)
 {
   dist = DistType(prediction);
-  typename PredictionType::elem_type lossSum = -dist.LogProbability(target);
+  typename MatType::elem_type lossSum = -dist.LogProbability(target);
 
   if (reduction)
     return lossSum;
@@ -43,12 +39,11 @@ ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
-    const PredictionType& /* prediction */,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType, typename DistType>
+void ReconstructionLossType<MatType, DistType>::Backward(
+    const MatType& /* prediction */,
+    const MatType& target,
+    MatType& loss)
 {
   dist.LogProbBackward(target, loss);
   loss *= -1;
@@ -57,12 +52,13 @@ void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType, typename DistType>
+template<typename MatType, typename DistType>
 template<typename Archive>
-void ReconstructionLoss<InputDataType, OutputDataType, DistType>::serialize(
-    Archive&  ar,
+void ReconstructionLossType<MatType, DistType>::serialize(
+    Archive& ar,
     const uint32_t /* version */)
 {
+  ar(CEREAL_NVP(dist));
   ar(CEREAL_NVP(reduction));
 }
 

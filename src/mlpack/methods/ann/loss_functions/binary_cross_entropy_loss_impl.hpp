@@ -18,21 +18,19 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-BCELoss<InputDataType, OutputDataType>::BCELoss(
+template<typename MatType>
+BCELossType<MatType>::BCELossType(
     const double eps, const bool reduction) : eps(eps), reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-BCELoss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type BCELossType<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  typedef typename PredictionType::elem_type ElemType;
+  typedef typename MatType::elem_type ElemType;
 
   ElemType lossSum = -arma::accu(target % arma::log(prediction + eps) +
       (1. - target) % arma::log(1. - prediction + eps));
@@ -43,12 +41,11 @@ BCELoss<InputDataType, OutputDataType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void BCELoss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void BCELossType<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
 
@@ -56,9 +53,9 @@ void BCELoss<InputDataType, OutputDataType>::Backward(
     loss /= target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void BCELoss<InputDataType, OutputDataType>::serialize(
+void BCELossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

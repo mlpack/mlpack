@@ -18,30 +18,28 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-HuberLoss<InputDataType, OutputDataType>::HuberLoss(
-  const double delta,
-  const bool reduction):
-  delta(delta),
-  reduction(reduction)
+template<typename MatType>
+HuberLossType<MatType>::HuberLossType(
+    const double delta,
+    const bool reduction):
+    delta(delta),
+    reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-HuberLoss<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type HuberLossType<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  typedef typename PredictionType::elem_type ElemType;
+  typedef typename MatType::elem_type ElemType;
   ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-      const ElemType absError = std::abs(target[i] - prediction[i]);
-      lossSum += absError > delta ?
-          delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
+    const ElemType absError = std::abs(target[i] - prediction[i]);
+    lossSum += absError > delta ?
+        delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
 
   if (reduction)
@@ -50,14 +48,13 @@ HuberLoss<InputDataType, OutputDataType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void HuberLoss<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void HuberLossType<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
-  typedef typename PredictionType::elem_type ElemType;
+  typedef typename MatType::elem_type ElemType;
 
   loss.set_size(size(prediction));
   for (size_t i = 0; i < loss.n_elem; ++i)
@@ -72,9 +69,9 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void HuberLoss<InputDataType, OutputDataType>::serialize(
+void HuberLossType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
