@@ -1,5 +1,5 @@
 /**
- * @file methods/adaboost/adaboost_model.cpp
+ * @file methods/adaboost/adaboost_model_impl.hpp
  * @author Ryan Curtin
  *
  * A serializable AdaBoost model, used by the main program.
@@ -9,18 +9,17 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_IMPL_HPP
+#define MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_IMPL_HPP
+
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
-using namespace mlpack;
-using namespace std;
-using namespace arma;
-using namespace mlpack::adaboost;
-using namespace mlpack::tree;
-using namespace mlpack::perceptron;
+namespace mlpack {
+namespace adaboost {
 
 //! Create an empty AdaBoost model.
-AdaBoostModel::AdaBoostModel() :
+inline AdaBoostModel::AdaBoostModel() :
     weakLearnerType(0),
     dsBoost(NULL),
     pBoost(NULL),
@@ -30,8 +29,8 @@ AdaBoostModel::AdaBoostModel() :
 }
 
 //! Create the AdaBoost model with the given mappings and type.
-AdaBoostModel::AdaBoostModel(
-    const Col<size_t>& mappings,
+inline AdaBoostModel::AdaBoostModel(
+    const arma::Col<size_t>& mappings,
     const size_t weakLearnerType) :
     mappings(mappings),
     weakLearnerType(weakLearnerType),
@@ -43,20 +42,20 @@ AdaBoostModel::AdaBoostModel(
 }
 
 //! Copy constructor.
-AdaBoostModel::AdaBoostModel(const AdaBoostModel& other) :
+inline AdaBoostModel::AdaBoostModel(const AdaBoostModel& other) :
     mappings(other.mappings),
     weakLearnerType(other.weakLearnerType),
     dsBoost(other.dsBoost == NULL ? NULL :
-        new AdaBoost<ID3DecisionStump>(*other.dsBoost)),
+        new AdaBoost<tree::ID3DecisionStump>(*other.dsBoost)),
     pBoost(other.pBoost == NULL ? NULL :
-        new AdaBoost<Perceptron<>>(*other.pBoost)),
+        new AdaBoost<perceptron::Perceptron<>>(*other.pBoost)),
     dimensionality(other.dimensionality)
 {
   // Nothing to do.
 }
 
 //! Move constructor.
-AdaBoostModel::AdaBoostModel(AdaBoostModel&& other) :
+inline AdaBoostModel::AdaBoostModel(AdaBoostModel&& other) :
     mappings(std::move(other.mappings)),
     weakLearnerType(other.weakLearnerType),
     dsBoost(other.dsBoost),
@@ -70,7 +69,7 @@ AdaBoostModel::AdaBoostModel(AdaBoostModel&& other) :
 }
 
 //! Copy assignment operator.
-AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
+inline AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
 {
   if (this != &other)
   {
@@ -79,11 +78,11 @@ AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
 
     delete dsBoost;
     dsBoost = (other.dsBoost == NULL) ? NULL :
-        new AdaBoost<ID3DecisionStump>(*other.dsBoost);
+        new AdaBoost<tree::ID3DecisionStump>(*other.dsBoost);
 
     delete pBoost;
     pBoost = (other.pBoost == NULL) ? NULL :
-        new AdaBoost<Perceptron<>>(*other.pBoost);
+        new AdaBoost<perceptron::Perceptron<>>(*other.pBoost);
 
     dimensionality = other.dimensionality;
   }
@@ -91,7 +90,7 @@ AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
 }
 
 //! Move assignment operator.
-AdaBoostModel& AdaBoostModel::operator=(AdaBoostModel&& other)
+inline AdaBoostModel& AdaBoostModel::operator=(AdaBoostModel&& other)
 {
   if (this != &other)
   {
@@ -109,40 +108,40 @@ AdaBoostModel& AdaBoostModel::operator=(AdaBoostModel&& other)
   return *this;
 }
 
-AdaBoostModel::~AdaBoostModel()
+inline AdaBoostModel::~AdaBoostModel()
 {
   delete dsBoost;
   delete pBoost;
 }
 
 //! Train the model.
-void AdaBoostModel::Train(const mat& data,
-                          const Row<size_t>& labels,
-                          const size_t numClasses,
-                          const size_t iterations,
-                          const double tolerance)
+inline void AdaBoostModel::Train(const arma::mat& data,
+                                 const arma::Row<size_t>& labels,
+                                 const size_t numClasses,
+                                 const size_t iterations,
+                                 const double tolerance)
 {
   dimensionality = data.n_rows;
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
   {
     delete dsBoost;
-    ID3DecisionStump ds(data, labels, max(labels) + 1);
-    dsBoost = new AdaBoost<ID3DecisionStump>(data, labels, numClasses, ds,
-        iterations, tolerance);
+    tree::ID3DecisionStump ds(data, labels, max(labels) + 1);
+    dsBoost = new AdaBoost<tree::ID3DecisionStump>(data, labels, numClasses,
+        ds, iterations, tolerance);
   }
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
   {
     delete pBoost;
-    Perceptron<> p(data, labels, max(labels) + 1);
-    pBoost = new AdaBoost<Perceptron<>>(data, labels, numClasses, p, iterations,
-        tolerance);
+    perceptron::Perceptron<> p(data, labels, max(labels) + 1);
+    pBoost = new AdaBoost<perceptron::Perceptron<>>(data, labels, numClasses,
+        p, iterations, tolerance);
   }
 }
 
 //! Classify test points.
-void AdaBoostModel::Classify(const mat& testData,
-                             Row<size_t>& predictions,
-                             mat& probabilities)
+inline void AdaBoostModel::Classify(const arma::mat& testData,
+                                    arma::Row<size_t>& predictions,
+                                    arma::mat& probabilities)
 {
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
     dsBoost->Classify(testData, predictions, probabilities);
@@ -151,11 +150,16 @@ void AdaBoostModel::Classify(const mat& testData,
 }
 
 //! Classify test points.
-void AdaBoostModel::Classify(const mat& testData,
-                             Row<size_t>& predictions)
+inline void AdaBoostModel::Classify(const arma::mat& testData,
+                                    arma::Row<size_t>& predictions)
 {
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
     dsBoost->Classify(testData, predictions);
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
     pBoost->Classify(testData, predictions);
 }
+
+} // namespace adaboost
+} // namespace mlpack
+
+#endif
