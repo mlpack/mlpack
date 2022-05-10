@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
 
 #include "matrix_completion.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 namespace matrix_completion {
@@ -73,13 +74,8 @@ inline void MatrixCompletion::CheckValues()
         << "indices does not have 2 rows!" << std::endl;
   }
 
-  if (indices.n_cols != values.n_elem)
-  {
-    Log::Fatal << "MatrixCompletion::CheckValues(): the number of constraint "
-        << "indices (columns of constraint indices matrix) does not match the "
-        << "number of constraint values (length of constraint value vector)!"
-        << std::endl;
-  }
+  util::CheckSameSizes(indices, values, 
+      "MatrixCompletion::CheckValues()", "labels", false, true);
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {
@@ -113,8 +109,8 @@ inline void MatrixCompletion::Recover(arma::mat& recovered)
 }
 
 inline size_t MatrixCompletion::DefaultRank(const size_t m,
-                                     const size_t n,
-                                     const size_t p)
+                                            const size_t n,
+                                            const size_t p)
 {
   // If r = O(sqrt(p)), then we are guaranteed an exact solution.
   // For more details, see
