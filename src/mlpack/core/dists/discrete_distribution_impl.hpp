@@ -111,7 +111,7 @@ inline void DiscreteDistribution::Train(const arma::mat& observations)
  * given probabilities that each observation is from this distribution.
  */
 inline void DiscreteDistribution::Train(const arma::mat& observations,
-                                 const arma::vec& probObs)
+                                        const arma::vec& probObs)
 {
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())

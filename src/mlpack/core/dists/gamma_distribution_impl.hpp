@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef _MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_IMPL_HPP
-#define _MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_IMPL_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_IMPL_HPP
 
 #include "gamma_distribution.hpp"
 
@@ -26,13 +26,13 @@ inline GammaDistribution::GammaDistribution(const size_t dimensionality)
 }
 
 inline GammaDistribution::GammaDistribution(const arma::mat& data,
-                                     const double tol)
+                                            const double tol)
 {
   Train(data, tol);
 }
 
 inline GammaDistribution::GammaDistribution(const arma::vec& alpha,
-                                     const arma::vec& beta)
+                                            const arma::vec& beta)
 {
   if (beta.n_elem != alpha.n_elem)
     throw std::runtime_error("Alpha and beta vector dimensions mismatch.");
@@ -68,8 +68,8 @@ inline void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 
 // Fits an alpha and beta parameter according to observation probabilities.
 inline void GammaDistribution::Train(const arma::mat& rdata,
-                              const arma::vec& probabilities,
-                              const double tol)
+                                     const arma::vec& probabilities,
+                                     const double tol)
 {
   // If fittingSet is empty, nothing to do.
   if (arma::size(rdata) == arma::size(arma::mat()))
@@ -98,9 +98,9 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
 
 // Fits an alpha and beta parameter to each dimension of the data.
 inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
-                              const arma::vec& meanLogxVec,
-                              const arma::vec& meanxVec,
-                              const double tol)
+                                     const arma::vec& meanLogxVec,
+                                     const arma::vec& meanxVec,
+                                     const double tol)
 {
   using std::log;
 
@@ -159,7 +159,7 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
 
 // Returns the probability of the provided observations.
 inline void GammaDistribution::Probability(const arma::mat& observations,
-                                    arma::vec& probabilities) const
+                                           arma::vec& probabilities) const
 {
   size_t numObs = observations.n_cols;
 
@@ -194,8 +194,9 @@ inline double GammaDistribution::Probability(double x, size_t dim) const
 }
 
 // Returns the log probability of the provided observations.
-inline void GammaDistribution::LogProbability(const arma::mat& observations,
-                                       arma::vec& logProbabilities) const
+inline void GammaDistribution::LogProbability(
+    const arma::mat& observations,
+    arma::vec& logProbabilities) const
 {
   size_t numObs = observations.n_cols;
 

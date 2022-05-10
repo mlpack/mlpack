@@ -21,7 +21,8 @@ namespace distribution /** Probability distributions. */ {
 /**
  * Return the log probability of the given observation.
  */
-inline double LaplaceDistribution::LogProbability(const arma::vec& observation) const
+inline double LaplaceDistribution::LogProbability(
+    const arma::vec& observation) const
 {
   // Evaluate the PDF of the Laplace distribution to determine
   // the log probability.
@@ -35,7 +36,7 @@ inline double LaplaceDistribution::LogProbability(const arma::vec& observation) 
  * @param probabilities Output probabilities for each input observation.
  */
 inline void LaplaceDistribution::Probability(const arma::mat& x,
-                                      arma::vec& probabilities) const
+                                             arma::vec& probabilities) const
 {
   probabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; ++i)
@@ -83,7 +84,7 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations)
  * this distribution.
  */
 inline void LaplaceDistribution::Estimate(const arma::mat& observations,
-                                   const arma::vec& probabilities)
+                                          const arma::vec& probabilities)
 {
   // I am not completely sure that this change results in a valid maximum
   // likelihood estimator given probabilities of points.

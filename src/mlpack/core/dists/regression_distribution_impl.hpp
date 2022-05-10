@@ -40,13 +40,13 @@ inline void RegressionDistribution::Train(const arma::mat& observations)
  * @param weights Probability that given observation is from distribution.
  */
 inline void RegressionDistribution::Train(const arma::mat& observations,
-                                   const arma::vec& weights)
+                                          const arma::vec& weights)
 {
   Train(observations, arma::rowvec(weights.t()));
 }
 
 inline void RegressionDistribution::Train(const arma::mat& observations,
-                                   const arma::rowvec& weights)
+                                          const arma::rowvec& weights)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), weights, 0, true);
@@ -61,7 +61,8 @@ inline void RegressionDistribution::Train(const arma::mat& observations,
  *
  * @param observation Point to evaluate probability at.
  */
-inline double RegressionDistribution::Probability(const arma::vec& observation) const
+inline double RegressionDistribution::Probability(
+    const arma::vec& observation) const
 {
   arma::rowvec fitted;
   rf.Predict(observation.rows(1, observation.n_rows-1), fitted);
@@ -69,7 +70,7 @@ inline double RegressionDistribution::Probability(const arma::vec& observation) 
 }
 
 inline void RegressionDistribution::Predict(const arma::mat& points,
-                                     arma::vec& predictions) const
+                                            arma::vec& predictions) const
 {
   arma::rowvec rowPredictions;
   Predict(points, rowPredictions);
@@ -77,7 +78,7 @@ inline void RegressionDistribution::Predict(const arma::mat& points,
 }
 
 inline void RegressionDistribution::Predict(const arma::mat& points,
-                                     arma::rowvec& predictions) const
+                                            arma::rowvec& predictions) const
 {
   rf.Predict(points, predictions);
 }

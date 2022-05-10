@@ -99,7 +99,7 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
 }
 
 inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
-                                         const arma::vec& probabilities)
+                                                const arma::vec& probabilities)
 {
   if (observations.n_cols > 0)
   {

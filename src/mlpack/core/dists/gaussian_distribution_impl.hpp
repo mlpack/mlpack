@@ -19,9 +19,11 @@
 namespace mlpack {
 namespace distribution /** Probability distributions. */ {
 
-inline GaussianDistribution::GaussianDistribution(const arma::vec& mean,
-                                           const arma::mat& covariance)
-  : mean(mean), logDetCov(0.0)
+inline GaussianDistribution::GaussianDistribution(
+    const arma::vec& mean,
+    const arma::mat& covariance) :
+    mean(mean),
+    logDetCov(0.0)
 {
   Covariance(covariance);
 }
@@ -70,7 +72,8 @@ inline void GaussianDistribution::FactorCovariance()
   logDetCov *= 2;
 }
 
-inline double GaussianDistribution::LogProbability(const arma::vec& observation) const
+inline double GaussianDistribution::LogProbability(
+    const arma::vec& observation) const
 {
   const size_t k = observation.n_elem;
   const arma::vec diff = mean - observation;
@@ -130,7 +133,7 @@ inline void GaussianDistribution::Train(const arma::mat& observations)
  * distribution.
  */
 inline void GaussianDistribution::Train(const arma::mat& observations,
-                                 const arma::vec& probabilities)
+                                        const arma::vec& probabilities)
 {
   if (observations.n_cols > 0)
   {
