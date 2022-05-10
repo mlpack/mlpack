@@ -14,7 +14,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
@@ -34,7 +34,6 @@
 #include <mlpack/methods/ann/loss_functions/multilabel_softmargin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
-#include <mlpack/methods/ann/loss_functions/vr_class_reward.hpp>
 #include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/hinge_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
@@ -55,7 +54,7 @@ TEST_CASE("HuberLossTest", "[LossFunctionsTest]")
   arma::mat input, target, output;
   arma::mat expectedOutput;
   double loss;
-  HuberLoss module;
+  HuberLoss<> module;
 
   // Test for sum reduction.
   input = arma::mat("-0.0494 -1.1958 -1.0486 -0.2121 1.6028 0.0737 -0.7091 "
@@ -109,10 +108,10 @@ TEST_CASE("PoissonNLLLossTest", "[LossFunctionsTest]")
   arma::mat input, target, input4, target4;
   arma::mat output1, output2, output3, output4;
   arma::mat expOutput1, expOutput2, expOutput3, expOutput4;
-  PoissonNLLLoss module1(true, false, 1e-8, false);
-  PoissonNLLLoss module2(true, true, 1e-08, true);
-  PoissonNLLLoss module3(true, true, 1e-08, false);
-  PoissonNLLLoss module4(false, true, 1e-08, false);
+  PoissonNLLLoss<> module1(true, false, 1e-8, false);
+  PoissonNLLLoss<> module2(true, true, 1e-08, true);
+  PoissonNLLLoss<> module3(true, true, 1e-08, false);
+  PoissonNLLLoss<> module4(false, true, 1e-08, false);
 
   // Test the Forward function on a user generated input.
   input = arma::mat("1.0 1.0 1.9 1.6 -1.9 3.7 -1.0 0.5");
@@ -176,7 +175,7 @@ TEST_CASE("SimpleKLDivergenceTest", "[LossFunctionsTest]")
   arma::mat input, target, output;
   arma::mat expectedOutput;
   double loss;
-  KLDivergence module;
+  KLDivergence<> module;
 
   // Test for sum reduction.
   input = arma::mat("-0.7007 -2.0247 -0.7132 -0.4584 -0.2637 -1.1795 -0.1093 "
@@ -225,9 +224,9 @@ TEST_CASE("SimpleKLDivergenceTest", "[LossFunctionsTest]")
  */
 TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 {
-  arma::mat input, target, output, expectedOutput;
+    arma::mat input, target, output, expectedOutput;
   double loss;
-  MeanSquaredLogarithmicError module;
+  MeanSquaredLogarithmicError<> module;
 
   // Test for sum reduction.
   input = arma::mat("-0.0494 1.1958 1.0486 -0.2121 1.6028 0.0737 -0.7091 "
@@ -246,22 +245,28 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) ==
-      Approx(-10.5619).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-10.5619).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
 
-  // Test the error function on a single input.
-  input = arma::mat("2");
-  target = arma::mat("3");
-  loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(0.082760974810151655).epsilon(1e-3));
+  // Test for mean reduction by modifying reduction parameter using accessor.
+  module.Reduction() = false;
+  expectedOutput = arma::mat("-0.0718 0.0585 0.1067 -0.2119 0.0348 -0.0907 "
+      "-0.9612 0.0482 0.0120 0.2070 0.0148 -0.0266");
+  expectedOutput.reshape(4, 3);
 
-  // Test the Backward function on a single input.
+  // Test the Forward function. Loss should be 1.10606.
+  loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(1.10606).epsilon(1e-3));
+
+  // Test the Backward function.
   module.Backward(input, target, output);
-  REQUIRE(arma::accu(output) == Approx(-0.1917880483011872).epsilon(1e-3));
-  REQUIRE(output.n_elem == 1);
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-0.880156).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 /*
@@ -270,7 +275,7 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
 TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, output, target;
-  MeanSquaredError module(false);
+  MeanSquaredError<> module(false);
 
   // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
@@ -320,8 +325,8 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, input3, output, target1, target2, target3;
-  BCELoss module1(1e-6, true);
-  BCELoss module2(1e-6, false);
+  BCELoss<> module1(1e-6, true);
+  BCELoss<> module2(1e-6, false);
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
@@ -373,7 +378,7 @@ TEST_CASE("SimpleSigmoidCrossEntropyErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, input3, output, target1,
             target2, target3, expectedOutput;
-  SigmoidCrossEntropyError module;
+  SigmoidCrossEntropyError<> module;
 
   // Test the Forward function on a user generator input and compare it against
   // the calculated result.
@@ -434,7 +439,7 @@ TEST_CASE("SimpleEarthMoverDistanceLayerTest", "[LossFunctionsTest]")
   arma::mat input1, input2, output, target1, target2, expectedOutput;
   arma::mat input3, target3;
   double loss;
-  EarthMoverDistance module;
+  EarthMoverDistance<> module;
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
@@ -504,10 +509,12 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
       input = arma::randu(10, 1);
       target = arma::randu(2, 1);
 
-      model = new FFN<MeanSquaredError, NguyenWidrowInitialization>();
-      model->ResetData(input, target);
-      model->Add<Linear>(2);
-      model->Add<Sigmoid>();
+      model = new FFN<MeanSquaredError<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SigmoidLayer<> >();
     }
 
     ~GradientFunction()
@@ -525,7 +532,7 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<MeanSquaredError, NguyenWidrowInitialization>* model;
+    FFN<MeanSquaredError<>, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -545,10 +552,12 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
       input = arma::randu(10, 1);
       target = arma::randu(2, 1);
 
-      model = new FFN<ReconstructionLoss, NguyenWidrowInitialization>();
-      model->ResetData(input, target);
-      model->Add<Linear>(2);
-      model->Add<Sigmoid>();
+      model = new FFN<ReconstructionLoss<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SigmoidLayer<> >();
     }
 
     ~GradientFunction()
@@ -566,7 +575,7 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<ReconstructionLoss, NguyenWidrowInitialization>* model;
+    FFN<ReconstructionLoss<>, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
 
@@ -580,7 +589,7 @@ TEST_CASE("DiceLossTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, target, output;
   double loss;
-  DiceLoss module;
+  DiceLoss<> module;
 
   // Test the Forward function. Loss should be 0 if input = target.
   input1 = arma::ones(10, 1);
@@ -621,7 +630,7 @@ TEST_CASE("SimpleMeanBiasErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output;
   double loss;
-  MeanBiasError module;
+  MeanBiasError<> module;
 
   // Test for sum reduction.
   input = arma::mat("-0.0494 -1.1958 -1.0486 -0.2121 1.6028 0.0737 -0.7091 "
@@ -671,7 +680,7 @@ TEST_CASE("LogCoshLossTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output;
   double loss;
-  LogCoshLoss module(2);
+  LogCoshLoss<> module(2);
 
   // Test the Forward function. Loss should be 0 if input = target.
   input = arma::ones(10, 1);
@@ -724,7 +733,7 @@ TEST_CASE("HingeEmbeddingLossTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  HingeEmbeddingLoss module;
+  HingeEmbeddingLoss<> module;
 
   // Test for sum reduction
   input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
@@ -776,7 +785,7 @@ TEST_CASE("SimpleL1LossTest", "[LossFunctionsTest]")
 {
   arma::mat input, output, target;
   double loss;
-  L1Loss module(true);
+  L1Loss<> module(true);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
@@ -802,7 +811,7 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, y, output;
   double loss;
-  CosineEmbeddingLoss module;
+  CosineEmbeddingLoss<> module;
 
   // Test the Forward function. Loss should be 0 if input1 = input2 and y = 1.
   input1 = arma::mat(1, 10);
@@ -842,6 +851,44 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
   // Test the Backward function.
   module.Backward(input1, input2, output);
   REQUIRE(arma::accu(output) == Approx(0.06324556).epsilon(1e-3));
+
+  // Check for correctness for cube.
+  CosineEmbeddingLoss<> module2(0.5, true);
+
+  arma::cube input3(3, 2, 2);
+  arma::cube input4(3, 2, 2);
+  input3.fill(1);
+  input4.fill(1);
+  input3(0) = 2;
+  input3(1) = 2;
+  input3(4) = 2;
+  input3(6) = 2;
+  input3(8) = 2;
+  input3(10) = 2;
+  input4(2) = 2;
+  input4(9) = 2;
+  input4(11) = 2;
+  loss = module2.Forward(input3, input4);
+  // Calculated using torch.nn.CosineEmbeddingLoss().
+  REQUIRE(loss == Approx(0.55395).epsilon(1e-3));
+
+  // Test the Backward function.
+  module2.Backward(input3, input4, output);
+  REQUIRE(arma::accu(output) == Approx(-0.36649111).epsilon(1e-3));
+
+  // Check Output for mean type of reduction.
+  CosineEmbeddingLoss<> module3(0.0, true, false);
+  loss = module3.Forward(input3, input4);
+  REQUIRE(loss == Approx(0.092325).epsilon(1e-3));
+
+  // Check correctness for cube.
+  module3.Similarity() = false;
+  loss = module3.Forward(input3, input4);
+  REQUIRE(loss == Approx(0.90767498236).epsilon(1e-3));
+
+  // Test the Backward function.
+  module3.Backward(input3, input4, output);
+  REQUIRE(arma::accu(output) == Approx(0.0236749374).epsilon(1e-4));
 }
 
 /*
@@ -852,7 +899,7 @@ TEST_CASE("MarginRankingLossTest", "[LossFunctionsTest]")
   arma::mat input, input1, input2, target, output, expectedOutput;
   double loss;
   //  Test sum reduction
-  MarginRankingLoss module;
+  MarginRankingLoss<> module;
   input1 = arma::mat("0.4287 -1.6208 -1.5006 -0.4473 1.5208 -4.5184 9.3574 "
       "-4.8090 4.3455 5.2070");
   input2 = arma::mat("-4.5288 -9.2766 -0.5882 -5.6643 -6.0175 8.8506 3.4759 "
@@ -878,7 +925,7 @@ TEST_CASE("MarginRankingLossTest", "[LossFunctionsTest]")
 
   // Test for mean reduction by modifying reduction parameter using accessor.
   module.Reduction() = false;
-
+  
   // Test the forward function
   // loss should be 3.0353
   // value calculated using torch.nn.MarginRankingLoss(margin=1.0,reduction='mean')
@@ -903,8 +950,8 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  SoftMarginLoss module1;
-  SoftMarginLoss module2(false);
+  SoftMarginLoss<> module1;
+  SoftMarginLoss<> module2(false);
 
   input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
       "-0.3336");
@@ -958,7 +1005,7 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
 TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output, expectedOutput;
-  MeanAbsolutePercentageError module;
+  MeanAbsolutePercentageError<> module;
 
   input = arma::mat("3 -0.5 2 7");
   target = arma::mat("2.5 0.2 2 8");
@@ -978,20 +1025,6 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
   CheckMatrices(output, expectedOutput, 0.1);
 }
 
-/**
- * Test that the function that can access the parameters of the
- * VR Class Reward layer works.
- */
-TEST_CASE("VRClassRewardLayerParametersTest", "[LossFunctionsTest]")
-{
-  // Parameter order : scale, sizeAverage.
-  VRClassReward layer(2, false);
-
-  // Make sure we can get the parameters successfully.
-  REQUIRE(layer.Scale() == 2);
-  REQUIRE(layer.SizeAverage() == false);
-}
-
 /*
  * Simple test for the Triplet Margin Loss function.
  */
@@ -999,7 +1032,7 @@ TEST_CASE("TripletMarginLossTest")
 {
   arma::mat anchor, positive, negative;
   arma::mat input, target, output;
-  TripletMarginLoss module;
+  TripletMarginLoss<> module;
 
   // Test the Forward function on a user generated input and compare it against
   // the manually calculated result.
@@ -1047,8 +1080,8 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, target_b, output;
   double loss, loss_b;
-  HingeLoss module1;
-  HingeLoss module2(false);
+  HingeLoss<> module1;
+  HingeLoss<> module2(false);
 
   // Test the Forward function. Loss should be 0 if input = target.
   input = arma::ones(10, 1);
@@ -1124,8 +1157,8 @@ TEST_CASE("MultiLabelSoftMarginLossTest", "[LossFunctionsTest]")
 {
   arma::mat input, target, output, expectedOutput;
   double loss;
-  MultiLabelSoftMarginLoss module1;
-  MultiLabelSoftMarginLoss module2(false);
+  MultiLabelSoftMarginLoss<> module1;
+  MultiLabelSoftMarginLoss<> module2(false);
 
   input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
       "-0.3336");
@@ -1183,8 +1216,8 @@ TEST_CASE("MultiLabelSoftMarginLossWeightedTest", "[LossFunctionsTest]")
   arma::rowvec weights;
   double loss;
   weights = arma::mat("1 2 3");
-  MultiLabelSoftMarginLoss module1(true, weights);
-  MultiLabelSoftMarginLoss module2(false, weights);
+  MultiLabelSoftMarginLoss<> module1(true, weights);
+  MultiLabelSoftMarginLoss<> module2(false, weights);
 
   input = arma::mat("0.1778 0.0957 0.1397 0.2256 0.1203 0.2403 0.1925 0.3144 "
       "-0.2264 -0.3400 -0.3336 -0.8695");
@@ -1241,7 +1274,7 @@ TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
   arma::mat input, target, output;
   arma::mat expectedOutput;
   double loss;
-  NegativeLogLikelihood module;
+  NegativeLogLikelihood<> module;
 
   // Test for sum reduction.
   input = arma::mat("-0.1689 -2.0033 -3.8886 -0.2862 -1.9392 -2.2532"

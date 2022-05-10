@@ -21,15 +21,20 @@ namespace ann /** Artificial Neural Network. */ {
  * The L1 loss is a loss function that measures the mean absolute error (MAE)
  * between each element in the input x and target y. 
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class L1LossType
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class L1Loss
 {
  public:
   /**
-   * Create the L1LossType object.
+   * Create the L1Loss object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -38,7 +43,7 @@ class L1LossType
    *                  is set to true by default.
    *
    */
-  L1LossType(const bool reduction = true);
+  L1Loss(const bool reduction = true);
 
   /**
    * Computes the L1 Loss function.
@@ -47,8 +52,9 @@ class L1LossType
    *     function.
    * @param target The target vector.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -58,9 +64,15 @@ class L1LossType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
@@ -75,12 +87,12 @@ class L1LossType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class L1LossType
-
-// Default typedef for typical `arma::mat` usage.
-typedef L1LossType<arma::mat> L1Loss;
+}; // class L1Loss
 
 } // namespace ann
 } // namespace mlpack

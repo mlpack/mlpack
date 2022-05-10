@@ -33,11 +33,16 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class KLDivergenceType
+template <
+        typename InputDataType = arma::mat,
+        typename OutputDataType = arma::mat
+>
+class KLDivergence
 {
  public:
   /**
@@ -50,7 +55,7 @@ class KLDivergenceType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  KLDivergenceType(const bool reduction = true);
+  KLDivergence(const bool reduction = true);
 
   /**
    * Computes the Kullback–Leibler divergence error function.
@@ -59,8 +64,9 @@ class KLDivergenceType
    *     function.
    * @param target Target data to compare with.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -70,29 +76,34 @@ class KLDivergenceType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
-
   /**
-   * Serialize the loss function.
+   * Serialize the loss function
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class KLDivergenceType
-
-// Default typedef for typical `arma::mat` usage.
-typedef KLDivergenceType<arma::mat> KLDivergence;
+}; // class KLDivergence
 
 } // namespace ann
 } // namespace mlpack

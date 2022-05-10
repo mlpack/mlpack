@@ -20,7 +20,7 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
-#include "layer.hpp"
+#include "layer_types.hpp"
 #include "padding.hpp"
 
 namespace mlpack {
@@ -30,7 +30,7 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Convolution class. The Convolution class represents a
  * single layer of a neural network.
  * Example usage:
- *
+ * 
  * Suppose we want to pass a matrix M (2744x100) to a `Convolution` layer;
  * in this example, `M` was obtained from "flattening" 100 images (or Mel
  * cepstral coefficients, if we talk about speech, or whatever you like) of
@@ -62,95 +62,100 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
 template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename MatType = arma::mat
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
 >
-class ConvolutionType : public Layer<MatType>
+class Convolution
 {
  public:
-  //! Create the ConvolutionType object.
-  ConvolutionType();
+  //! Create the Convolution object.
+  Convolution();
 
   /**
-   * Create the ConvolutionType object using the specified number of output
-   * maps, filter size, stride and padding parameter.
+   * Create the Convolution object using the specified number of input maps,
+   * output maps, filter size, stride and padding parameter.
    *
-   * @param maps The number of output maps.
+   * @param inSize The number of input maps.
+   * @param outSize The number of output maps.
    * @param kernelWidth Width of the filter/kernel.
    * @param kernelHeight Height of the filter/kernel.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
-   * @param paddingType The type of padding ("valid" or "same"). Defaults to
-   *    "none".  If not specified or "none", the values for `padW` and `padH`
-   *    will be used.
+   * @param inputWidth The width of the input data.
+   * @param inputHeight The height of the input data.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  ConvolutionType(const size_t maps,
-                  const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth = 1,
-                  const size_t strideHeight = 1,
-                  const size_t padW = 0,
-                  const size_t padH = 0,
-                  const std::string& paddingType = "none");
+  Convolution(const size_t inSize,
+              const size_t outSize,
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth = 1,
+              const size_t strideHeight = 1,
+              const size_t padW = 0,
+              const size_t padH = 0,
+              const size_t inputWidth = 0,
+              const size_t inputHeight = 0,
+              const std::string& paddingType = "None");
 
   /**
    * Create the Convolution object using the specified number of input maps,
    * output maps, filter size, stride and padding parameter.
    *
-   * @param maps The number of output maps.
+   * @param inSize The number of input maps.
+   * @param outSize The number of output maps.
    * @param kernelWidth Width of the filter/kernel.
    * @param kernelHeight Height of the filter/kernel.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
-   * @param padW A two-value tuple indicating padding widths of the input.  The
-   *      first value is the padding for the left side; the second value is the
-   *      padding on the right side.
-   * @param padH A two-value tuple indicating padding heights of the input.  The
-   *      first value is the padding for the top; the second value is the
-   *      padding on the bottom.
-   * @param paddingType The type of padding ("valid" or "same"). Defaults to
-   *      "none".  If not specified or "none", the values for `padW` and `padH`
-   *      will be used.
+   * @param padW A two-value tuple indicating padding widths of the input.
+   *             First value is padding at left side. Second value is padding on
+   *             right side.
+   * @param padH A two-value tuple indicating padding heights of the input.
+   *             First value is padding at top. Second value is padding on
+   *             bottom.
+   * @param inputWidth The width of the input data.
+   * @param inputHeight The height of the input data.
+   * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  ConvolutionType(const size_t maps,
-                  const size_t kernelWidth,
-                  const size_t kernelHeight,
-                  const size_t strideWidth,
-                  const size_t strideHeight,
-                  const std::tuple<size_t, size_t>& padW,
-                  const std::tuple<size_t, size_t>& padH,
-                  const std::string& paddingType = "none");
+  Convolution(const size_t inSize,
+              const size_t outSize,
+              const size_t kernelWidth,
+              const size_t kernelHeight,
+              const size_t strideWidth,
+              const size_t strideHeight,
+              const std::tuple<size_t, size_t>& padW,
+              const std::tuple<size_t, size_t>& padH,
+              const size_t inputWidth = 0,
+              const size_t inputHeight = 0,
+              const std::string& paddingType = "None");
 
-  //! Clone the ConvolutionType object. This handles polymorphism correctly.
-  ConvolutionType* Clone() const { return new ConvolutionType(*this); }
+  //! Copy constructor.
+  Convolution(const Convolution& layer);
 
-  //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType(const ConvolutionType& layer);
+  //! Move constructor.
+  Convolution(Convolution&&);
 
-  //! Take ownership of the given ConvolutionType (but not weights).
-  ConvolutionType(ConvolutionType&&);
+  //! Copy assignment operator.
+  Convolution& operator=(const Convolution& layer);
 
-  //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType& operator=(const ConvolutionType& layer);
-
-  //! Take ownership of the given ConvolutionType (but not weights).
-  ConvolutionType& operator=(ConvolutionType&& layer);
-
-  // Virtual destructor.
-  virtual ~ConvolutionType() { }
+  //! Move assignment operator.
+  Convolution& operator=(Convolution&& layer);
 
   /*
    * Set the weight and bias term.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -159,7 +164,8 @@ class ConvolutionType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -170,91 +176,135 @@ class ConvolutionType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
-                const MatType& gy,
-                MatType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
-  /**
+  /*
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const MatType& /* input */,
-                const MatType& error,
-                MatType& gradient);
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  MatType const& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  MatType& Parameters() { return weights; }
+  OutputDataType& Parameters() { return weights; }
 
-  //! Get the weight of the layer as a cube.
-  arma::Cube<typename MatType::elem_type> const& Weight() const
-  {
-    return weight;
-  }
-  //! Modify the weight of the layer as a cube.
-  arma::Cube<typename MatType::elem_type>& Weight() { return weight; }
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  MatType const& Bias() const { return bias; }
+  arma::mat const& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  MatType& Bias() { return bias; }
+  arma::mat& Bias() { return bias; }
+
+  //! Get the input parameter.
+  InputDataType const& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  OutputDataType const& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the delta.
+  OutputDataType const& Delta() const { return delta; }
+  //! Modify the delta.
+  OutputDataType& Delta() { return delta; }
+
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
+
+  //! Get the input width.
+  size_t InputWidth() const { return inputWidth; }
+  //! Modify input the width.
+  size_t& InputWidth() { return inputWidth; }
+
+  //! Get the input height.
+  size_t InputHeight() const { return inputHeight; }
+  //! Modify the input height.
+  size_t& InputHeight() { return inputHeight; }
+
+  //! Get the output width.
+  size_t OutputWidth() const { return outputWidth; }
+  //! Modify the output width.
+  size_t& OutputWidth() { return outputWidth; }
+
+  //! Get the output height.
+  size_t OutputHeight() const { return outputHeight; }
+  //! Modify the output height.
+  size_t& OutputHeight() { return outputHeight; }
+
+  //! Get the number of input maps.
+  size_t InputSize() const { return inSize; }
 
   //! Get the number of output maps.
-  size_t const& Maps() const { return maps; }
+  size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
-  size_t const& KernelWidth() const { return kernelWidth; }
+  size_t KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
   size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
-  size_t const& KernelHeight() const { return kernelHeight; }
+  size_t KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
   size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
-  size_t const& StrideWidth() const { return strideWidth; }
+  size_t StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
   size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
-  size_t const& StrideHeight() const { return strideHeight; }
+  size_t StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
   //! Get the top padding height.
-  size_t const& PadHTop() const { return padHTop; }
+  size_t PadHTop() const { return padHTop; }
   //! Modify the top padding height.
   size_t& PadHTop() { return padHTop; }
 
   //! Get the bottom padding height.
-  size_t const& PadHBottom() const { return padHBottom; }
+  size_t PadHBottom() const { return padHBottom; }
   //! Modify the bottom padding height.
   size_t& PadHBottom() { return padHBottom; }
 
   //! Get the left padding width.
-  size_t const& PadWLeft() const { return padWLeft; }
+  size_t PadWLeft() const { return padWLeft; }
   //! Modify the left padding width.
   size_t& PadWLeft() { return padWLeft; }
 
   //! Get the right padding width.
-  size_t const& PadWRight() const { return padWRight; }
+  size_t PadWRight() const { return padWRight; }
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    return (maps * inMaps * higherInDimensions * kernelWidth * kernelHeight) +
-        maps;
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
   }
 
-  //! Compute the output dimensions of the layer based on `InputDimensions()`.
-  void ComputeOutputDimensions();
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
+  }
 
   /**
    * Serialize the layer.
@@ -263,7 +313,7 @@ class ConvolutionType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  /**
+  /*
    * Return the convolution output size.
    *
    * @param size The size of the input (row or column).
@@ -282,12 +332,12 @@ class ConvolutionType : public Layer<MatType>
     return std::floor(size + pSideOne + pSideTwo - k) / s + 1;
   }
 
-  /**
+  /*
    * Function to assign padding such that output size is same as input size.
    */
   void InitializeSamePadding();
 
-  /**
+  /*
    * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
    *
    * @param input The input data to be rotated.
@@ -303,7 +353,7 @@ class ConvolutionType : public Layer<MatType>
       output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
   }
 
-  /**
+  /*
    * Rotates a dense matrix counterclockwise by 180 degrees.
    *
    * @param input The input data to be rotated.
@@ -316,8 +366,11 @@ class ConvolutionType : public Layer<MatType>
     output = arma::fliplr(arma::flipud(input));
   }
 
+  //! Locally-stored number of input channels.
+  size_t inSize;
+
   //! Locally-stored number of output channels.
-  size_t maps;
+  size_t outSize;
 
   //! Locally-stored number of input units.
   size_t batchSize;
@@ -347,45 +400,53 @@ class ConvolutionType : public Layer<MatType>
   size_t padHTop;
 
   //! Locally-stored weight object.
-  MatType weights;
+  OutputDataType weights;
 
   //! Locally-stored weight object.
-  arma::Cube<typename MatType::elem_type> weight;
+  arma::cube weight;
 
   //! Locally-stored bias term object.
-  MatType bias;
+  arma::mat bias;
+
+  //! Locally-stored input width.
+  size_t inputWidth;
+
+  //! Locally-stored input height.
+  size_t inputHeight;
+
+  //! Locally-stored output width.
+  size_t outputWidth;
+
+  //! Locally-stored output height.
+  size_t outputHeight;
 
   //! Locally-stored transformed output parameter.
-  arma::Cube<typename MatType::elem_type> outputTemp;
+  arma::cube outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  MatType inputPadded;
+  arma::cube inputPaddedTemp;
 
   //! Locally-stored transformed error parameter.
-  arma::Cube<typename MatType::elem_type> gTemp;
+  arma::cube gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::Cube<typename MatType::elem_type> gradientTemp;
+  arma::cube gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding padding;
+  ann::Padding<> padding;
 
-  //! Type of padding.
-  std::string paddingType;
+  //! Locally-stored delta object.
+  OutputDataType delta;
 
-  //! Locally-cached number of input maps.
-  size_t inMaps;
-  //! Locally-cached higher-order input dimensions.
-  size_t higherInDimensions;
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
+
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
 }; // class Convolution
-
-// Standard Convolution layer.
-typedef ConvolutionType<
-    NaiveConvolution<ValidConvolution>,
-    NaiveConvolution<FullConvolution>,
-    NaiveConvolution<ValidConvolution>,
-    arma::mat
-> Convolution;
 
 } // namespace ann
 } // namespace mlpack

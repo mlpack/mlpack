@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/poisson_nll_loss_impl.hpp
  * @author Mrityunjay Tripathi
  *
- * Implementation of the PoissonNLLLossType class.
+ * Implementation of the PoissonNLLLoss class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,12 +19,12 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-PoissonNLLLossType<MatType>::PoissonNLLLossType(
+template<typename InputDataType, typename OutputDataType>
+PoissonNLLLoss<InputDataType, OutputDataType>::PoissonNLLLoss(
     const bool logInput,
     const bool full,
-    const typename MatType::elem_type eps,
-    const bool reduction) :
+    const typename InputDataType::elem_type eps,
+    const bool reduction):
     logInput(logInput),
     full(full),
     eps(eps),
@@ -33,12 +33,14 @@ PoissonNLLLossType<MatType>::PoissonNLLLossType(
   Log::Assert(eps >= 0, "Epsilon (eps) must be greater than or equal to zero.");
 }
 
-template<typename MatType>
-typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename InputDataType::elem_type
+PoissonNLLLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  MatType loss(arma::size(prediction));
+  PredictionType loss(arma::size(prediction));
 
   if (logInput)
     loss = arma::exp(prediction) - target % prediction;
@@ -51,11 +53,11 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
   if (full)
   {
     const auto mask = target > 1.0;
-    const MatType approx = target % arma::log(target) - target
+    const PredictionType approx = target % arma::log(target) - target
         + 0.5 * arma::log(2 * M_PI * target);
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
   
   if (reduction)
     return lossSum;
@@ -63,11 +65,12 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
   return lossSum / loss.n_elem;
 }
 
-template<typename MatType>
-void PoissonNLLLossType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void PoissonNLLLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
   loss.set_size(size(prediction));
 
@@ -80,9 +83,9 @@ void PoissonNLLLossType<MatType>::Backward(
     loss = loss / loss.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PoissonNLLLossType<MatType>::serialize(
+void PoissonNLLLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

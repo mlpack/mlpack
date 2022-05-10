@@ -12,7 +12,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -20,7 +20,7 @@
 
 #include "catch.hpp"
 #include "serialization.hpp"
-//#include "custom_layer.hpp"
+#include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -37,7 +37,7 @@ void TestNetwork(ModelType& model,
                  const size_t maxEpochs,
                  const double classificationErrorThreshold)
 {
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -51,7 +51,6 @@ void TestNetwork(ModelType& model,
   }
 
   size_t correct = arma::accu(prediction == testLabels);
-
   double classificationError = 1 - double(correct) / testData.n_cols;
   REQUIRE(classificationError <= classificationErrorThreshold);
 }
@@ -60,14 +59,14 @@ void TestNetwork(ModelType& model,
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
                        MatType& trainData,
-                       MatType& trainLabels)
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
 {
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
   network1->Predict(trainData, predictions1);
-
   FFN<> network2;
   network2 = *network1;
   delete network1;
@@ -86,7 +85,7 @@ void CheckMoveFunction(ModelType* network1,
                        MatType& trainLabels,
                        const size_t maxEpochs)
 {
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -137,28 +136,28 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+       +-----+
    */
 
-  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-  model->Add<Linear>(8);
-  model->Add<Sigmoid>();
-  model->Add<Linear>(3);
-  model->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Linear<> >(8, 3);
+  model->Add<LogSoftMax<> >();
 
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-  model1->Add<Linear>(8);
-  model1->Add<Sigmoid>();
-  model1->Add<Linear>(3);
-  model1->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<Linear<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels);
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
 /**
  * Check whether copying and moving network with Reparametrization is working or not.
- *
+ */
 TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
           "[FeedForwardNetworkTest]")
 {
@@ -166,64 +165,31 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
-  // Construct a feed forward network with trainData.n_rows input nodes,
-  // followed by a linear layer and then a reparametrization layer.
-  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-  model->Add<Linear>(8);
-  model->Add<Reparametrization>(false, true, 1);
-  model->Add<LogSoftMax>();
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * followed by a linear layer and then a reparametrization layer.
+   */
 
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-  model1->Add<Linear>(8);
-  model1->Add<Reparametrization>(false, true, 1);
-  model1->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<Reparametrization<> >(4, false, true, 1);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<Reparametrization<> >(4, false, true, 1);
+  model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels);
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
-*/
-
-/**
- * Check whether copying and moving network with Reparametrization is working or not.
- */
-// TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
-//           "[FeedForwardNetworkTest]")
-// {
-//   // Load the dataset.
-//   arma::mat trainData;
-//   data::Load("thyroid_train.csv", trainData, true);
-//
-//   // Normalize labels to [0, 2].
-//   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
-//   trainData.shed_row(trainData.n_rows - 1);
-//
-//   /*
-//    * Construct a feed forward network with trainData.n_rows input nodes,
-//    * followed by a linear layer and then a reparametrization layer.
-//    */
-//
-//   FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-//   model->Add<Linear<> >(trainData.n_rows, 8);
-//   model->Add<Reparametrization<> >(4, false, true, 1);
-//   model->Add<LogSoftMax<> >();
-//
-//   FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-//   model1->Add<Linear<> >(trainData.n_rows, 8);
-//   model1->Add<Reparametrization<> >(4, false, true, 1);
-//   model1->Add<LogSoftMax<> >();
-//
-//   // Check whether copy constructor is working or not.
-//   CheckCopyFunction<>(model, trainData, trainLabels, 1);
-//
-//   // Check whether move constructor is working or not.
-//   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
-// }
 
 /**
  * Check whether copying and moving network with linear3d is working or not.
@@ -238,25 +204,45 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
-  // Construct a feed forward network with trainData.n_rows input nodes,
-  // followed by a linear layer and then a Linear3D layer.
-  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-  model->Add<Linear>(8);
-  model->Add<Sigmoid>();
-  model->Add<Linear3D>(3);
-  model->Add<LogSoftMax>();
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
 
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-  model1->Add<Linear>(8);
-  model1->Add<Sigmoid>();
-  model1->Add<Linear3D>(3);
-  model1->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Linear3D<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<Linear3D<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels);
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
 /**
@@ -270,24 +256,28 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   arma::mat output = arma::mat("0");
 
   // Check copying constructor.
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>();
-  model1->ResetData(input, output);
-  model1->Add<NoisyLinear>(5);
-  model1->Add<Linear>(1);
-  model1->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
+  model1->Predictors() = input;
+  model1->Responses() = output;
+  model1->Add<IdentityLayer<>>();
+  model1->Add<NoisyLinear<>>(10, 5);
+  model1->Add<Linear<> >(5, 1);
+  model1->Add<LogSoftMax<>>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model1, input, output);
+  CheckCopyFunction<>(model1, input, output, 1);
 
   // Check moving constructor.
-  FFN<NegativeLogLikelihood> *model2 = new FFN<NegativeLogLikelihood>();
-  model2->ResetData(input, output);
-  model2->Add<NoisyLinear>(5);
-  model2->Add<Linear>(1);
-  model2->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
+  model2->Predictors() = input;
+  model2->Responses() = output;
+  model2->Add<IdentityLayer<>>();
+  model2->Add<NoisyLinear<>>(10, 5);
+  model2->Add<Linear<> >(5, 1);
+  model2->Add<LogSoftMax<>>();
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model2, input, output, 1);
+  CheckMoveFunction<>(model2, input, output, 1);
 }
 
 /**
@@ -301,39 +291,43 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   arma::mat output = arma::mat("1");
 
   // Check copying constructor.
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>();
-  model1->ResetData(input, output);
-  model1->Add<Linear>(5);
+  FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
+  model1->Predictors() = input;
+  model1->Responses() = output;
+  model1->Add<IdentityLayer<>>();
+  model1->Add<Linear<>>(10, 5);
 
   // Create concatenate layer.
   arma::mat concatMatrix = arma::ones(5, 1);
-  Concatenate* concatLayer = new Concatenate();
+  Concatenate<>* concatLayer = new Concatenate<>();
   concatLayer->Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
   model1->Add(concatLayer);
-  model1->Add<Linear>(5);
-  model1->Add<LogSoftMax>();
+  model1->Add<Linear<> >(10, 5);
+  model1->Add<LogSoftMax<>>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model1, input, output);
+  CheckCopyFunction<>(model1, input, output, 1);
 
   // Check moving constructor.
-  FFN<NegativeLogLikelihood> *model2 = new FFN<NegativeLogLikelihood>();
-  model2->ResetData(input, output);
-  model2->Add<Linear>(5);
+  FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
+  model2->Predictors() = input;
+  model2->Responses() = output;
+  model2->Add<IdentityLayer<>>();
+  model2->Add<Linear<>>(10, 5);
 
   // Create new concat layer.
-  Concatenate* concatLayer2 = new Concatenate();
+  Concatenate<>* concatLayer2 = new Concatenate<>();
   concatLayer2->Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
   model2->Add(concatLayer2);
-  model2->Add<Linear>(5);
-  model2->Add<LogSoftMax>();
+  model2->Add<Linear<> >(10, 5);
+  model2->Add<LogSoftMax<>>();
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model2, input, output, 1);
+  CheckMoveFunction<>(model2, input, output, 1);
 }
 
 /**
@@ -349,25 +343,47 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
-  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-  model->Add<Linear>(8);
-  model->Add<Sigmoid>();
-  model->Add<Dropout>(0.3);
-  model->Add<Linear>(3);
-  model->Add<LogSoftMax>();
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
 
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-  model1->Add<Linear>(8);
-  model1->Add<Sigmoid>();
-  model1->Add<Dropout>(0.3);
-  model1->Add<Linear>(3);
-  model1->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Dropout<> >(0.3);
+  model->Add<Linear<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<Dropout<> >(0.3);
+  model1->Add<Linear<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels);
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
 /**
@@ -398,20 +414,20 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTestNoBias", "[FeedForwardNetworkTest]")
    * +-----+       +--+--+       +-----+
    */
 
-  FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-  model->Add<LinearNoBias>(8);
-  model->Add<Sigmoid>();
-  model->Add<LinearNoBias>(3);
-  model->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<LinearNoBias<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<LinearNoBias<> >(8, 3);
+  model->Add<LogSoftMax<> >();
 
-  FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-  model1->Add<LinearNoBias>(8);
-  model1->Add<Sigmoid>();
-  model1->Add<LinearNoBias>(3);
-  model1->Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<LinearNoBias<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<LinearNoBias<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction<>(model, trainData, trainLabels);
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
   // Check whether move constructor is working or not.
   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
@@ -420,38 +436,38 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTestNoBias", "[FeedForwardNetworkTest]")
 /**
  * Check whether copying and moving network with Reparametrization is working or not.
  */
-// TEST_CASE("CheckCopyMovingReparametrizationNetworkTestNoBias",
-//           "[FeedForwardNetworkTest]")
-// {
-//   // Load the dataset.
-//   arma::mat trainData;
-//   data::Load("thyroid_train.csv", trainData, true);
-//
-//   // Normalize labels to [0, 2].
-//   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
-//   trainData.shed_row(trainData.n_rows - 1);
-//
-//   /*
-//    * Construct a feed forward network with trainData.n_rows input nodes,
-//    * followed by a linear layer and then a reparametrization layer.
-//    */
-//
-//   FFN<NegativeLogLikelihood> *model = new FFN<NegativeLogLikelihood>;
-//   model->Add<LinearNoBias<> >(trainData.n_rows, 8);
-//   model->Add<Reparametrization<> >(4, false, true, 1);
-//   model->Add<LogSoftMax<> >();
-//
-//   FFN<NegativeLogLikelihood> *model1 = new FFN<NegativeLogLikelihood>;
-//   model1->Add<LinearNoBias<> >(trainData.n_rows, 8);
-//   model1->Add<Reparametrization<> >(4, false, true, 1);
-//   model1->Add<LogSoftMax<> >();
-//
-//   // Check whether copy constructor is working or not.
-//   CheckCopyFunction<>(model, trainData, trainLabels, 1);
-//
-//   // Check whether move constructor is working or not.
-//   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
-// }
+TEST_CASE("CheckCopyMovingReparametrizationNetworkTestNoBias",
+          "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
+  trainData.shed_row(trainData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * followed by a linear layer and then a reparametrization layer.
+   */
+
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<LinearNoBias<> >(trainData.n_rows, 8);
+  model->Add<Reparametrization<> >(4, false, true, 1);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<LinearNoBias<> >(trainData.n_rows, 8);
+  model1->Add<Reparametrization<> >(4, false, true, 1);
+  model1->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+}
 
 /**
  * Train the vanilla network on a larger dataset.
@@ -497,11 +513,11 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+       +-----+
    */
 
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(8);
-  model.Add<Sigmoid>();
-  model.Add<Linear>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
@@ -518,13 +534,13 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood> model1;
-  model1.Add<Linear>(10);
-  model1.Add<Sigmoid>();
-  model1.Add<Linear>(2);
-  model1.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
@@ -539,13 +555,14 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(50);
-  model.Add<Sigmoid>();
-  model.Add<Linear>(10);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(dataset.n_rows, 50);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Linear<> >(50, 10);
+  model.Add<LogSoftMax<> >();
 
   ens::VanillaUpdate opt;
+  model.ResetParameters();
   #if ENS_VERSION_MAJOR == 1
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   #else
@@ -645,12 +662,12 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+
    */
 
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(8);
-  model.Add<Sigmoid>();
-  model.Add<Dropout>();
-  model.Add<Linear>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
@@ -668,19 +685,19 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood> model1;
-  model1.Add<Linear>(10);
-  model1.Add<Sigmoid>();
-  model.Add<Dropout>();
-  model1.Add<Linear>(2);
-  model1.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
  * Train the highway network on a larger dataset.
- *
+ */
 TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
@@ -693,16 +710,16 @@ TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(10);
-  Highway* highway = new Highway();
-  highway->Add<Linear>(10);
-  highway->Add<Sigmoid>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(dataset.n_rows, 10);
+  Highway<>* highway = new Highway<>(10, true);
+  highway->Add<Linear<> >(10, 10);
+  highway->Add<SigmoidLayer<> >();
   model.Add(highway); // This takes ownership of the memory.
-  model.Add<Linear>(2);
-  model.Add<LogSoftMax>();
-  TestNetwork(model, dataset, labels, dataset, labels, 10, 0.2);
-}*/
+  model.Add<Linear<> >(10, 2);
+  model.Add<LogSoftMax<> >();
+  TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);
+}
 
 /**
  * Train the DropConnect network on a larger dataset.
@@ -750,16 +767,16 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   *
   */
 
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(8);
-  model.Add<Sigmoid>();
-  model.Add<DropConnect>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<DropConnect<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -771,14 +788,13 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
-  FFN<NegativeLogLikelihood> model1;
-  model1.Add<Linear>(10);
-  model1.Add<Sigmoid>();
-  model1.Add<DropConnect>(2);
-  model1.Add<LogSoftMax>();
-
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<DropConnect<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
@@ -787,9 +803,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
  */
 TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
 {
-  FFN<MeanSquaredError> model;
-  model.Add<Linear>(3);
-  model.Add<ReLU>();
+  FFN<MeanSquaredError<>> model;
+  model.Add<Linear<>>(2, 3);
+  model.Add<ReLULayer<>>();
 
   auto copiedModel(model);
   copiedModel = model;
@@ -822,19 +838,19 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(8);
-  model.Add<Sigmoid>();
-  model.Add<Dropout>();
-  model.Add<Linear>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
 
   model.Train(trainData, trainLabels, opt);
 
-  FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
-  xmlModel.Add<Linear>(10); // Layer that will get removed.
+  FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
+  xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
 
   // Serialize into other models.
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
@@ -843,7 +859,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   model.Predict(testData, predictions);
   xmlModel.Predict(testData, xmlPredictions);
   jsonModel.Predict(testData, jsonPredictions);
-  binaryModel.Predict(testData, binaryPredictions);
+  jsonModel.Predict(testData, binaryPredictions);
 
   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
       binaryPredictions);
@@ -852,112 +868,110 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 /**
  * Test that serialization works ok for PReLU.
  */
-// TEST_CASE("PReLUSerializationTest", "[FeedForwardNetworkTest]")
-// {
-//   // Load the dataset.
-//   arma::mat trainData;
-//   if (!data::Load("thyroid_train.csv", trainData))
-//     FAIL("Cannot open thyroid_train.csv");
-//
-//   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-//   trainData.shed_row(trainData.n_rows - 1);
-//   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
-//
-//   arma::mat testData;
-//   if (!data::Load("thyroid_test.csv", testData))
-//     FAIL("Cannot load dataset thyroid_test.csv");
-//
-//   arma::mat testLabels = testData.row(testData.n_rows - 1);
-//   testData.shed_row(testData.n_rows - 1);
-//   testLabels -= 1; // The labels should be between 0 and numClasses - 1.
-//
-//   // Vanilla neural net with logistic activation function.
-//   // Because 92% of the patients are not hyperthyroid the neural
-//   // network must be significant better than 92%.
-//   FFN<NegativeLogLikelihood> model;
-//   model.Add<Linear<> >(trainData.n_rows, 8);
-//   model.Add<PReLU<> >();
-//   model.Add<Dropout<> >();
-//   model.Add<Linear<> >(8, 3);
-//   model.Add<LogSoftMax<> >();
-//
-//   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
-//
-//   model.Train(trainData, trainLabels, opt);
-//
-//   FFN<NegativeLogLikelihood> xmlModel, jsonModel, binaryModel;
-//   xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
-//
-//   // Serialize into other models.
-//   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
-//
-//   arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
-//   model.Predict(testData, predictions);
-//   xmlModel.Predict(testData, xmlPredictions);
-//   jsonModel.Predict(testData, jsonPredictions);
-//   jsonModel.Predict(testData, binaryPredictions);
-//
-//   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
-//       binaryPredictions);
-// }
+TEST_CASE("PReLUSerializationTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  arma::mat testData;
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<PReLU<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  model.Train(trainData, trainLabels, opt);
+
+  FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
+  xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
+
+  // Serialize into other models.
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  model.Predict(testData, predictions);
+  xmlModel.Predict(testData, xmlPredictions);
+  jsonModel.Predict(testData, jsonPredictions);
+  jsonModel.Predict(testData, binaryPredictions);
+
+  CheckMatrices(predictions, xmlPredictions, jsonPredictions,
+      binaryPredictions);
+}
 
 /**
  * Test if the custom layers work. The target is to see if the code compiles
  * when the Train and Prediction are called.
  */
-// TEST_CASE("CustomLayerTest", "[FeedForwardNetworkTest]")
-// {
-//   // Load the dataset.
-//   arma::mat trainData;
-//   if (!data::Load("thyroid_train.csv", trainData))
-//     FAIL("Cannot open thyroid_train.csv");
-//
-//   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-//   trainData.shed_row(trainData.n_rows - 1);
-//   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
-//
-//   arma::mat testData;
-//   if (!data::Load("thyroid_test.csv", testData))
-//     FAIL("Cannot load dataset thyroid_test.csv");
-//
-//   arma::mat testLabels = testData.row(testData.n_rows - 1);
-//   testData.shed_row(testData.n_rows - 1);
-//   testLabels -= 1; // The labels should be between 0 and numClasses - 1.
-//
-//   FFN<NegativeLogLikelihood, RandomInitialization, CustomLayer<> > model;
-//   model.Add<Linear<> >(trainData.n_rows, 8);
-//   model.Add<CustomLayer<> >();
-//   model.Add<Linear<> >(8, 3);
-//   model.Add<LogSoftMax<> >();
-//
-//   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
-//   model.Train(trainData, trainLabels, opt);
-//
-//   arma::mat predictionTemp;
-//   model.Predict(testData, predictionTemp);
-//   arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
-// }
+TEST_CASE("CustomLayerTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  arma::mat testData;
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv");
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses - 1.
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
+  model.Train(trainData, trainLabels, opt);
+
+  arma::mat predictionTemp;
+  model.Predict(testData, predictionTemp);
+  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+}
 
 /**
  * Test the overload of Forward function which allows partial forward pass.
  */
 TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
-  FFN<NegativeLogLikelihood, RandomInitialization> model;
-  model.Add<Linear>(10);
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  model.Add<Linear<> >(5, 10);
 
-  // Add a new Add<> module which adds a (learnable) constant term to the input.
-  Add* addModule = new Add();
+  // Add a new Add<> module which adds a constant term to the input.
+  Add<>* addModule = new Add<>(10);
   model.Add(addModule);
 
-  LinearNoBias* linearNoBiasModule = new LinearNoBias(10);
+  LinearNoBias<>* linearNoBiasModule = new LinearNoBias<>(10, 10);
   model.Add(linearNoBiasModule);
 
-  model.Add<Linear>(10);
+  model.Add<Linear<> >(10, 10);
 
-  // Set up the network for inputs of dimensionality 10.
-  model.Reset(10);
-
+  model.ResetParameters();
   // Set the parameters of the Add<> module to a matrix of ones.
   addModule->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
@@ -1012,12 +1026,12 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significantly better than 92%.
-  FFN<NegativeLogLikelihood> model;
-  model.Add<Linear>(8);
-  model.Add<Sigmoid>();
-  model.Add<Dropout>();
-  model.Add<Linear>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
 
@@ -1032,14 +1046,14 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
 TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
-  FFN<NegativeLogLikelihood> model;
-  Linear* linearA = new Linear(3);
+  FFN<NegativeLogLikelihood<> > model;
+  Linear<>* linearA = new Linear<>(3, 3);
   model.Add(linearA);
-  Linear* linearB = new Linear(4);
+  Linear<>* linearB = new Linear<>(3, 4);
   model.Add(linearB);
 
-  // Initialize network parameters, with a new input size of 3.
-  model.Reset(3);
+  // Initialize network parameter.
+  model.ResetParameters();
 
   // Set all network parameter to one.
   model.Parameters().ones();
@@ -1049,8 +1063,9 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
-  const arma::mat parameterA = model.Network()[0]->Parameters();
-  const arma::mat parameterB = model.Network()[1]->Parameters();
+  arma::mat parameterA, parameterB;
+  boost::apply_visitor(ParametersVisitor(parameterA), model.Model()[0]);
+  boost::apply_visitor(ParametersVisitor(parameterB), model.Model()[1]);
 
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
@@ -1082,10 +1097,11 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   testData.shed_row(testData.n_rows - 1);
   testLabels -= 1; // The labels should be between 0 and numClasses.
 
-  FFN<NegativeLogLikelihood, RandomInitialization> model;
-  model.Add<Linear>(8);
-  model.Add<Linear>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
@@ -1109,18 +1125,23 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  arma::mat testLabels = testData.row(testData.n_rows - 1) - 1;
   testData.shed_row(testData.n_rows - 1);
 
-  FFN<NegativeLogLikelihood, RandomInitialization> model;
-  model.Add<Linear>(8);
-  model.Add<Linear>(3);
-  model.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  // Purposely putting wrong input shape so that error is thrown.
+  model.Add<Linear<> >(trainData.n_rows - 3, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  std::string expectedMsg = "FFN<>::Train(): ";
+  expectedMsg += "the first layer of the network expects ";
+  expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
+  expectedMsg += "but the input has " + std::to_string(trainData.n_rows) +
+      " dimensions! ";
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
-
-  // Now set up the input incorrectly.
-  model.InputDimensions() = std::vector<size_t>({ 1, 2, 3 });
 
   REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
 }

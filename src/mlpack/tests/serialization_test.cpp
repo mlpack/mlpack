@@ -38,7 +38,7 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
-//#include <mlpack/methods/ann/rbm/rbm.hpp>
+#include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 using namespace mlpack;
@@ -1498,7 +1498,7 @@ TEST_CASE("HoeffdingTreeTest", "[SerializationTest]")
 /**
  * Build a Binary RBM, then save it and make sure the parameters of the
  * all the RBM are equal.
- *
+ */
 TEST_CASE("BinaryRBMTest", "[SerializationTest]")
 {
   arma::mat data;
@@ -1531,12 +1531,11 @@ TEST_CASE("BinaryRBMTest", "[SerializationTest]")
   CheckMatrices(Rbm.Weight(), RbmText.Weight());
   CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
 }
-*/
 
 /**
  * Build a ssRBM, then save it and make sure the parameters of the
  * all the RBM are equal.
- *
+ */
 TEST_CASE("ssRBMTest", "[SerializationTest]")
 {
   arma::mat data;
@@ -1586,7 +1585,6 @@ TEST_CASE("ssRBMTest", "[SerializationTest]")
   CheckMatrices(Rbm.Weight(), RbmText.Weight());
   CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
 }
-*/
 
 // Make sure serialization works for BayesianLinearRegression.
 TEST_CASE("BayesianLinearRegressionTest", "[SerializationTest]")

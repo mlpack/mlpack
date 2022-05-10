@@ -22,19 +22,21 @@ namespace ann /** Artificial Neural Network. */ {
  * values of 1 or -1. If the label is 1 then the first input should be ranked
  * higher than the second input at a distance larger than a margin, and vice-
  * versa if the label is -1.
- *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * 
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class MarginRankingLossType
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class MarginRankingLoss
 {
  public:
   /**
-   * Create the MarginRankingLossType object with Hyperparameter margin.
-   * Hyperparameter margin defines a minimum distance between correctly ranked
-   * samples.
-   *
+   * Create the MarginRankingLoss object with Hyperparameter margin.
    * @param margin defines a minimum distance between correctly ranked samples.
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -42,7 +44,7 @@ class MarginRankingLossType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  MarginRankingLossType(const double margin = 1.0, const bool reduction = true);
+  MarginRankingLoss(const double margin = 1.0, const bool reduction = true);
 
   /**
    * Computes the Margin Ranking Loss function.
@@ -51,8 +53,9 @@ class MarginRankingLossType
    *     function.
    * @param target The label vector which contains values of -1 or 1.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -62,9 +65,19 @@ class MarginRankingLossType
    * @param target The label vector which contains -1 or 1 values.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template <
+    typename PredictionType,
+    typename TargetType,
+    typename LossType
+  >
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the margin parameter.
   double Margin() const { return margin; }
@@ -84,15 +97,15 @@ class MarginRankingLossType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! The margin value used in calculating Margin Ranking Loss.
   double margin;
 
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class MarginRankingLossType
-
-// Default typedef for typical `arma::mat` usage.
-typedef MarginRankingLossType<arma::mat> MarginRankingLoss;
+}; // class MarginRankingLoss
 
 } // namespace ann
 } // namespace mlpack

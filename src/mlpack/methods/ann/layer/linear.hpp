@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
-#include "layer.hpp"
+#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -25,120 +25,142 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Linear layer class. The Linear class represents a
  * single layer of a neural network.
  *
- * The linear layer applies a linear transformation to the incoming data
- * (input), i.e. y = Ax + b. The input matrix given in Forward(input, output)
- * must be either a vector or matrix. If the input is a matrix, then each column
- * is assumed to be an input sample of given batch.
- *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
- * @tparam RegularizerType Type of the regularizer to be used (Default no
- *    regularizer).
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<
-    typename MatType = arma::mat,
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearType : public Layer<MatType>
+class Linear
 {
  public:
   //! Create the Linear object.
-  LinearType();
+  Linear();
 
   /**
-   * Create the Linear layer object with the specified number of output
-   * dimensions.
+   * Create the Linear layer object using the specified number of units.
    *
-   * @param outSize The output dimension.
-   * @param regularizer The regularizer to use, optional (default: no
-   *     regularizer).
+   * @param inSize The number of input units.
+   * @param outSize The number of output units.
+   * @param regularizer The regularizer to use, optional.
    */
-  LinearType(const size_t outSize,
-             RegularizerType regularizer = RegularizerType());
+  Linear(const size_t inSize,
+         const size_t outSize,
+         RegularizerType regularizer = RegularizerType());
 
-  virtual ~LinearType() { }
+  //! Copy constructor.
+  Linear(const Linear& layer);
 
-  //! Clone the LinearType object. This handles polymorphism correctly.
-  LinearType* Clone() const { return new LinearType(*this); }
+  //! Move constructor.
+  Linear(Linear&&);
 
-  //! Copy the other Linear layer (but not weights).
-  LinearType(const LinearType& layer);
+  //! Copy assignment operator.
+  Linear& operator=(const Linear& layer);
 
-  //! Take ownership of the members of the other Linear layer (but not weights).
-  LinearType(LinearType&& layer);
+  //! Move assignment operator.
+  Linear& operator=(Linear&& layer);
 
-  //! Copy the other Linear layer (but not weights).
-  LinearType& operator=(const LinearType& layer);
-
-  //! Take ownership of the members of the other Linear layer (but not weights).
-  LinearType& operator=(LinearType&& layer);
-
-  /**
-   * Reset the layer parameter (weights and bias). The method is called to
-   * assign the allocated memory to the internal learnable parameters.
+  /*
+   * Reset the layer parameter.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
-   * f(x) is a linear transformation: Ax + b, where x is the given input, x are
-   * the layer weights and b is the layer bias.
-   *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * To compute the downstream gradient (g) the chain rule is used.
-   *
    * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
-                const MatType& gy,
-                MatType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
-  /**
+  /*
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const MatType& input,
-                const MatType& error,
-                MatType& gradient);
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  const MatType& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  MatType& Parameters() { return weights; }
+  OutputDataType& Parameters() { return weights; }
+
+  //! Get the input parameter.
+  InputDataType const& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  OutputDataType const& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the delta.
+  OutputDataType const& Delta() const { return delta; }
+  //! Modify the delta.
+  OutputDataType& Delta() { return delta; }
+
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
 
   //! Get the weight of the layer.
-  MatType const& Weight() const { return weight; }
+  OutputDataType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
-  MatType& Weight() { return weight; }
+  OutputDataType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  MatType const& Bias() const { return bias; }
+  OutputDataType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
-  MatType& Bias() { return bias; }
+  OutputDataType& Bias() { return bias; }
 
   //! Get the size of the weights.
-  size_t WeightSize() const { return (inSize * outSize) + outSize; }
+  size_t WeightSize() const
+  {
+    return (inSize * outSize) + outSize;
+  }
 
-  //! Compute the output dimensions of the layer given `InputDimensions()`.
-  void ComputeOutputDimensions();
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
 
-  //! Serialize the layer.
+  /**
+   * Serialize the layer
+   */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -149,24 +171,30 @@ class LinearType : public Layer<MatType>
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.  This holds all the weights in a vectorized
-  //! form; i.e., the weights and the bias.
-  MatType weights;
+  //! Locally-stored weight object.
+  OutputDataType weights;
 
   //! Locally-stored weight parameters.
-  MatType weight;
+  OutputDataType weight;
 
   //! Locally-stored bias term parameters.
-  MatType bias;
+  OutputDataType bias;
+
+  //! Locally-stored delta object.
+  OutputDataType delta;
+
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
+
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-}; // class LinearType
-
-// Convenience typedefs.
-
-// Standard Linear layer using no regularization.
-typedef LinearType<arma::mat, NoRegularizer> Linear;
+}; // class Linear
 
 } // namespace ann
 } // namespace mlpack

@@ -15,7 +15,7 @@
 #include <mlpack/core.hpp>
 
 #include <ensmallen.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
@@ -75,12 +75,12 @@ void BuildVanillaNetwork(MatType& trainData,
   // Cauchy’s Inequality Based on Sensitivity Analysis" paper.
   KathirvalavakumarSubavathiInitialization init(trainData, 4.59);
 
-  FFN<MeanSquaredError, KathirvalavakumarSubavathiInitialization>
-      model(MeanSquaredError(), init);
+  FFN<MeanSquaredError<>, KathirvalavakumarSubavathiInitialization>
+      model(MeanSquaredError<>(), init);
 
-  model.Add<Linear>(hiddenLayerSize);
-  model.Add<LeakyReLU>();
-  model.Add<Linear>(outputSize);
+  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<LeakyReLU<> >();
+  model.Add<Linear<> >(hiddenLayerSize, outputSize);
 
   ens::RMSProp opt(0.01, 1, 0.88, 1e-8, maxEpochs * trainData.n_cols, 1e-18);
 

@@ -23,11 +23,16 @@ namespace ann /** Artificial Neural Network. */ {
  * variational auto encoder. This function is the log of hyperbolic
  * cosine of difference between true values and predicted values.
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class LogCoshLossType
+template <
+        typename InputDataType = arma::mat,
+        typename OutputDataType = arma::mat
+>
+class LogCoshLoss
 {
  public:
   /**
@@ -45,7 +50,7 @@ class LogCoshLossType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  LogCoshLossType(const double a = 1.0, const bool reduction = true);
+  LogCoshLoss(const double a = 1.0, const bool reduction = true);
 
   /**
    * Computes the Log-Hyperbolic-Cosine loss function.
@@ -54,8 +59,9 @@ class LogCoshLossType
    *     function.
    * @param target Target data to compare with.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -65,9 +71,15 @@ class LogCoshLossType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of hyperparameter a.
   double A() const { return a; }
@@ -87,15 +99,15 @@ class LogCoshLossType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! Hyperparameter a for smoothening function curve.
   double a;
 
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class LogCoshLossType
-
-// Default typedef for typical `arma::mat` usage.
-typedef LogCoshLossType<arma::mat> LogCoshLoss;
+}; // class LogCoshLoss
 
 } // namespace ann
 } // namespace mlpack

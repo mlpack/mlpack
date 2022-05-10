@@ -38,19 +38,24 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class DiceLossType
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class DiceLoss
 {
  public:
   /**
-   * Create the DiceLossType object.
+   * Create the DiceLoss object.
    *
    * @param smooth The Laplace smoothing parameter.
    */
-  DiceLossType(const double smooth = 1);
+  DiceLoss(const double smooth = 1);
 
   /**
    * Computes the dice loss function.
@@ -59,8 +64,9 @@ class DiceLossType
    *     function.
    * @param target The target vector.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -70,9 +76,15 @@ class DiceLossType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the smooth.
   double Smooth() const { return smooth; }
@@ -86,12 +98,12 @@ class DiceLossType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! The parameter to avoid overfitting.
   double smooth;
-}; // class DiceLossType
-
-// Default typedef for typical `arma::mat` usage.
-typedef DiceLossType<arma::mat> DiceLoss;
+}; // class DiceLoss
 
 } // namespace ann
 } // namespace mlpack

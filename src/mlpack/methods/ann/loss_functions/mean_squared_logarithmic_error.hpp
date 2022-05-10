@@ -18,18 +18,23 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The mean squared logarithmic error performance function measures the
- * network's performance according to the mean of squared logarithmic errors.
+ * The mean squared logarithmic error performance function measures the network's
+ * performance according to the mean of squared logarithmic errors.
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class MeanSquaredLogarithmicErrorType
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class MeanSquaredLogarithmicError
 {
  public:
   /**
-   * Create the MeanSquaredLogarithmicErrorType object.
+   * Create the MeanSquaredLogarithmicError object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -37,7 +42,7 @@ class MeanSquaredLogarithmicErrorType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  MeanSquaredLogarithmicErrorType(const bool reduction = true);
+  MeanSquaredLogarithmicError(const bool reduction = true);
 
   /**
    * Computes the mean squared logarithmic error function.
@@ -46,8 +51,9 @@ class MeanSquaredLogarithmicErrorType
    *     function.
    * @param target The target vector.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -57,9 +63,15 @@ class MeanSquaredLogarithmicErrorType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
@@ -74,12 +86,12 @@ class MeanSquaredLogarithmicErrorType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class MeanSquaredLogarithmicErrorType
-
-// Default typedef for typical `arma::mat` usage.
-typedef MeanSquaredLogarithmicErrorType<arma::mat> MeanSquaredLogarithmicError;
+}; // class MeanSquaredLogarithmicError
 
 } // namespace ann
 } // namespace mlpack

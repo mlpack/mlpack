@@ -19,20 +19,22 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-KLDivergenceType<MatType>::KLDivergenceType(const bool reduction) :
+template<typename InputDataType, typename OutputDataType>
+KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool reduction):
     reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-typename MatType::elem_type KLDivergenceType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+KLDivergence<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  MatType loss = target % (arma::log(target) - prediction);
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  PredictionType loss = target % (arma::log(target) - prediction);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
@@ -40,21 +42,22 @@ typename MatType::elem_type KLDivergenceType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void KLDivergenceType<MatType>::Backward(
-    const MatType& /* prediction */,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void KLDivergence<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
-  loss = -target;
+  loss = - target;
 
   if (!reduction)
     loss = loss / target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void KLDivergenceType<MatType>::serialize(
+void KLDivergence<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

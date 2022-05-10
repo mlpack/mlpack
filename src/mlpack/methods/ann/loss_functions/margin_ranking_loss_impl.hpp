@@ -18,24 +18,25 @@
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
-template<typename MatType>
-MarginRankingLossType<MatType>::MarginRankingLossType(
-    const double margin, const bool reduction) :
-    margin(margin),
-    reduction(reduction)
+template<typename InputDataType, typename OutputDataType>
+MarginRankingLoss<InputDataType, OutputDataType>::MarginRankingLoss(
+    const double margin, const bool reduction):
+    margin(margin), reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-typename MatType::elem_type MarginRankingLossType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+MarginRankingLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
   const int predictionRows = prediction.n_rows;
-  const MatType& prediction1 = prediction.rows(0,
+  const PredictionType& prediction1 = prediction.rows(0,
       predictionRows / 2 - 1);
-  const MatType& prediction2 = prediction.rows(predictionRows / 2,
+  const PredictionType& prediction2 = prediction.rows(predictionRows / 2,
       predictionRows - 1);
 
   double lossSum = arma::accu(arma::max(arma::zeros(size(target)),
@@ -47,21 +48,26 @@ typename MatType::elem_type MarginRankingLossType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void MarginRankingLossType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template <
+    typename PredictionType,
+    typename TargetType,
+    typename LossType
+>
+void MarginRankingLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
   const int predictionRows = prediction.n_rows;
-  const MatType& prediction1 = prediction.rows(0,
+  const PredictionType& prediction1 = prediction.rows(0,
       predictionRows / 2 - 1);
-  const MatType& prediction2 = prediction.rows(predictionRows / 2,
+  const PredictionType& prediction2 = prediction.rows(predictionRows / 2,
       predictionRows - 1);
-  MatType lossPrediction1 = -target % (prediction1 - prediction2) + margin;
+  LossType lossPrediction1 = -target % (prediction1 - prediction2) + margin;
   lossPrediction1.elem(arma::find(lossPrediction1 >= 0)).ones();
   lossPrediction1.elem(arma::find(lossPrediction1 < 0)).zeros();
-  MatType lossPrediction2 = lossPrediction1;
+  LossType lossPrediction2 = lossPrediction1;
   lossPrediction1 = -target % lossPrediction1;
   lossPrediction2 = target % lossPrediction2;
   loss = arma::join_cols(lossPrediction1, lossPrediction2);
@@ -70,9 +76,9 @@ void MarginRankingLossType<MatType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MarginRankingLossType<MatType>::serialize(
+void MarginRankingLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

@@ -19,103 +19,51 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-AddType<MatType>::AddType() : outSize(0)
+template<typename InputDataType, typename OutputDataType>
+Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
+    outSize(outSize)
 {
-  // Nothing to do.
+  weights.set_size(WeightSize(), 1);
 }
 
-template<typename MatType>
-AddType<MatType>::AddType(const AddType& other) :
-    Layer<MatType>(other),
-    outSize(other.outSize)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void Add<InputDataType, OutputDataType>::Forward(
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  // Nothing to do.
+  output = input;
+  output.each_col() += weights;
 }
 
-template<typename MatType>
-AddType<MatType>::AddType(AddType&& other) :
-    Layer<MatType>(std::move(other)),
-    outSize(std::move(other.outSize))
-{
-  // Nothing to do.
-}
-
-template<typename MatType>
-AddType<MatType>&
-AddType<MatType>::operator=(const AddType& other)
-{
-  if (&other != this)
-  {
-    Layer<MatType>::operator=(other);
-    outSize = other.outSize;
-  }
-
-  return *this;
-}
-
-template<typename MatType>
-AddType<MatType>&
-AddType<MatType>::operator=(AddType&& other)
-{
-  if (&other != this)
-  {
-    Layer<MatType>::operator=(std::move(other));
-    outSize = std::move(other.outSize);
-  }
-
-  return *this;
-}
-
-template<typename MatType>
-void AddType<MatType>::Forward(const MatType& input, MatType& output)
-{
-  output = input + arma::repmat(arma::vectorise(weights), 1, input.n_cols);
-}
-
-template<typename MatType>
-void AddType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& gy,
-    MatType& g)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void Add<InputDataType, OutputDataType>::Backward(
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy;
 }
 
-template<typename MatType>
-void AddType<MatType>::Gradient(
-    const MatType& /* input */,
-    const MatType& error,
-    MatType& gradient)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void Add<InputDataType, OutputDataType>::Gradient(
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient = error;
 }
 
-template<typename MatType>
-void AddType<MatType>::SetWeights(typename MatType::elem_type* weightPtr)
-{
-  // Set the weights to wrap the given memory.
-  MakeAlias(weights, weightPtr, 1, outSize);
-}
-
-template<typename MatType>
-void AddType<MatType>::ComputeOutputDimensions()
-{
-  this->outputDimensions = this->inputDimensions;
-
-  outSize = this->outputDimensions[0];
-  for (size_t i = 1; i < this->outputDimensions.size(); ++i)
-    outSize *= this->outputDimensions[i];
-}
-
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void AddType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void Add<InputDataType, OutputDataType>::serialize(
+    Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<MatType>>(this));
-
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(weights));
+
+  if (cereal::is_loading<Archive>())
+    weights.set_size(outSize, 1);
 }
 
 } // namespace ann

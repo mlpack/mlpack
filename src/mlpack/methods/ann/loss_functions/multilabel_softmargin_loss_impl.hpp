@@ -18,10 +18,11 @@
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
-template<typename MatType>
-MultiLabelSoftMarginLossType<MatType>::MultiLabelSoftMarginLossType(
+template<typename InputDataType, typename OutputDataType>
+MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::
+MultiLabelSoftMarginLoss(
     const bool reduction,
-    const arma::Row<typename MatType::elem_type>& weights) :
+    const arma::rowvec& weights) :
     reduction(reduction),
     weighted(false)
 {
@@ -32,9 +33,11 @@ MultiLabelSoftMarginLossType<MatType>::MultiLabelSoftMarginLossType(
   }
 }
 
-template<typename MatType>
-typename MatType::elem_type MultiLabelSoftMarginLossType<MatType>::Forward(
-    const MatType& input, const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType>
+typename InputType::elem_type
+MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Forward(
+    const InputType& input, const TargetType& target)
 {
   if (!weighted)
   {
@@ -42,9 +45,9 @@ typename MatType::elem_type MultiLabelSoftMarginLossType<MatType>::Forward(
     weighted = true;
   }
 
-  MatType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
-  MatType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
-  MatType loss = arma::mean(arma::sum(-(target % logSigmoid +
+  InputType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
+  InputType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
+  InputType loss = arma::mean(arma::sum(-(target % logSigmoid +
       (1 - target) % logSigmoidNeg)) % classWeights, 1);
 
   if (reduction)
@@ -53,14 +56,15 @@ typename MatType::elem_type MultiLabelSoftMarginLossType<MatType>::Forward(
   return arma::as_scalar(loss / input.n_rows);
 }
 
-template<typename MatType>
-void MultiLabelSoftMarginLossType<MatType>::Backward(
-    const MatType& input,
-    const MatType& target,
-    MatType& output)
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType, typename OutputType>
+void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::Backward(
+    const InputType& input,
+    const TargetType& target,
+    OutputType& output)
 {
   output.set_size(size(input));
-  MatType sigmoid = (1 / (1 + arma::exp(-input)));
+  InputType sigmoid = (1 / (1 + arma::exp(-input)));
   output = -(target % (1 - sigmoid) - (1 - target) % sigmoid) %
         arma::repmat(classWeights, target.n_rows, 1) / output.n_elem;
 
@@ -68,9 +72,9 @@ void MultiLabelSoftMarginLossType<MatType>::Backward(
     output = output * input.n_rows;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MultiLabelSoftMarginLossType<MatType>::serialize(
+void MultiLabelSoftMarginLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {

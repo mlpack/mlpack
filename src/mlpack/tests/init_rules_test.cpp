@@ -214,17 +214,18 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 {
   arma::mat input = arma::ones(5, 1);
   arma::mat response;
-  NegativeLogLikelihood outputLayer;
+  NegativeLogLikelihood<> outputLayer;
 
   // Create a simple network and use the RandomInitialization rule to
   // initialize the network parameters.
   RandomInitialization randomInit(0.5, 0.5);
 
-  FFN<NegativeLogLikelihood, RandomInitialization> randomModel(
+  FFN<NegativeLogLikelihood<>, RandomInitialization> randomModel(
       std::move(outputLayer), randomInit);
-  randomModel.Add<Linear>(5);
-  randomModel.Add<Linear>(2);
-  randomModel.Add<LogSoftMax>();
+  randomModel.Add<IdentityLayer<> >();
+  randomModel.Add<Linear<> >(5, 5);
+  randomModel.Add<Linear<> >(5, 2);
+  randomModel.Add<LogSoftMax<> >();
   randomModel.Predict(input, response);
 
   bool b = arma::all(arma::vectorise(randomModel.Parameters()) == 0.5);
@@ -233,21 +234,23 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 
   // Create a simple network and use the OrthogonalInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood, OrthogonalInitialization> orthogonalModel;
-  orthogonalModel.Add<Linear>(5);
-  orthogonalModel.Add<Linear>(2);
-  orthogonalModel.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>, OrthogonalInitialization> orthogonalModel;
+  orthogonalModel.Add<IdentityLayer<> >();
+  orthogonalModel.Add<Linear<> >(5, 5);
+  orthogonalModel.Add<Linear<> >(5, 2);
+  orthogonalModel.Add<LogSoftMax<> >();
   orthogonalModel.Predict(input, response);
 
   REQUIRE(orthogonalModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the ZeroInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood, ConstInitialization>
-    zeroModel(NegativeLogLikelihood(), ConstInitialization(0));
-  zeroModel.Add<Linear>(5);
-  zeroModel.Add<Linear>(2);
-  zeroModel.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>, ConstInitialization>
+    zeroModel(NegativeLogLikelihood<>(), ConstInitialization(0));
+  zeroModel.Add<IdentityLayer<> >();
+  zeroModel.Add<Linear<> >(5, 5);
+  zeroModel.Add<Linear<> >(5, 2);
+  zeroModel.Add<LogSoftMax<> >();
   zeroModel.Predict(input, response);
 
   REQUIRE(arma::accu(zeroModel.Parameters()) == 0);
@@ -258,31 +261,34 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   // parameters.
   KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
       input, 1.5);
-  FFN<NegativeLogLikelihood, KathirvalavakumarSubavathiInitialization>
+  FFN<NegativeLogLikelihood<>, KathirvalavakumarSubavathiInitialization>
       ksModel(std::move(outputLayer), kathirvalavakumarSubavathiInit);
-  ksModel.Add<Linear>(5);
-  ksModel.Add<Linear>(2);
-  ksModel.Add<LogSoftMax>();
+  ksModel.Add<IdentityLayer<> >();
+  ksModel.Add<Linear<> >(5, 5);
+  ksModel.Add<Linear<> >(5, 2);
+  ksModel.Add<LogSoftMax<> >();
   ksModel.Predict(input, response);
 
   REQUIRE(ksModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the OivsInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood, OivsInitialization<> > oivsModel;
-  oivsModel.Add<Linear>(5);
-  oivsModel.Add<Linear>(2);
-  oivsModel.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>, OivsInitialization<> > oivsModel;
+  oivsModel.Add<IdentityLayer<> >();
+  oivsModel.Add<Linear<> >(5, 5);
+  oivsModel.Add<Linear<> >(5, 2);
+  oivsModel.Add<LogSoftMax<> >();
   oivsModel.Predict(input, response);
 
   REQUIRE(oivsModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood, GaussianInitialization> gaussianModel;
-  gaussianModel.Add<Linear>(5);
-  gaussianModel.Add<Linear>(2);
-  gaussianModel.Add<LogSoftMax>();
+  FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
+  gaussianModel.Add<IdentityLayer<> >();
+  gaussianModel.Add<Linear<> >(5, 5);
+  gaussianModel.Add<Linear<> >(5, 2);
+  gaussianModel.Add<LogSoftMax<> >();
   gaussianModel.Predict(input, response);
 
   REQUIRE(gaussianModel.Parameters().n_elem == 42);

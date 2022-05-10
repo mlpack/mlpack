@@ -14,8 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "layer.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -26,32 +24,22 @@ namespace ann /** Artificial Neural Network. */ {
  * (NegativeLogLikelihoodLayer), which expects that the input contains
  * log-probabilities for each class.
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template <typename MatType = arma::mat>
-class LogSoftMaxType : public Layer<MatType>
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class LogSoftMax
 {
  public:
   /**
-   * Create the LogSoftmax layer.
+   * Create the LogSoftmax object.
    */
-  LogSoftMaxType();
-
-  //! Clone the LogSoftMaxType object. This handles polymorphism correctly.
-  LogSoftMaxType* Clone() const { return new LogSoftMaxType(*this); }
-
-  // Virtual destructor.
-  virtual ~LogSoftMaxType() { }
-
-  //! Copy the given LogSoftMaxType.
-  LogSoftMaxType(const LogSoftMaxType& other);
-  //! Take ownership of the given LogSoftMaxType.
-  LogSoftMaxType(LogSoftMaxType&& other);
-  //! Copy the given LogSoftMaxType.
-  LogSoftMaxType& operator=(const LogSoftMaxType& other);
-  //! Take ownership of the given LogSoftMaxType.
-  LogSoftMaxType& operator=(LogSoftMaxType&& other);
+  LogSoftMax();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -60,7 +48,8 @@ class LogSoftMaxType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  template<typename InputType, typename OutputType>
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -71,22 +60,34 @@ class LogSoftMaxType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input, const MatType& gy, MatType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the delta.
+  InputDataType& Delta() const { return delta; }
+  //! Modify the delta.
+  InputDataType& Delta() { return delta; }
+
+  /**
+   * Serialize the layer.
+   */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(cereal::base_class<Layer<MatType>>(this));
-    // Nothing to do.
-  }
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
-}; // class LogSoftmaxType
+  //! Locally-stored delta object.
+  OutputDataType delta;
 
-// Convenience typedefs.
-
-// Standard Linear layer using no regularization.
-typedef LogSoftMaxType<arma::mat> LogSoftMax;
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+}; // class LogSoftmax
 
 } // namespace ann
 } // namespace mlpack

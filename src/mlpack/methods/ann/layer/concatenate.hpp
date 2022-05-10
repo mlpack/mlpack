@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_CONCATENATE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "layer.hpp"
+#include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -22,39 +22,36 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the Concatenate module class. The Concatenate module
  * concatenates a constant given matrix to the incoming data.
+ * Note: Users need to use the Concat() function to provide the concat matrix.
  *
- * The Concat() function provides the concat matrix, or it can be passed to
- * the constructor.
- *
- * After this layer is applied, the shape of the data will be a vector.
- *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class ConcatenateType : public Layer<MatType>
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class Concatenate
 {
  public:
   /**
-   * Create the ConcatenateType object using the given constant matrix as the
-   * data to be concatenated to the output of the forward pass.
+   * Create the Concatenate object using the specified number of output units.
    */
-  ConcatenateType(const MatType& concat = MatType());
+  Concatenate();
 
-  //! Clone the ConcatenateType object. This handles polymorphism correctly.
-  ConcatenateType* Clone() const { return new ConcatenateType(*this); }
+  //! Copy constructor.
+  Concatenate(const Concatenate& layer);
 
-  // Virtual destructor.
-  virtual ~ConcatenateType() { }
+  //! Move constructor.
+  Concatenate(Concatenate&& layer);
 
-  //! Copy the given ConcatenateType layer.
-  ConcatenateType(const ConcatenateType& other);
-  //! Take ownership of the given ConcatenateType layer.
-  ConcatenateType(ConcatenateType&& other);
-  //! Copy the given ConcatenateType layer.
-  ConcatenateType& operator=(const ConcatenateType& other);
-  //! Take ownership of the given ConcatenateType layer.
-  ConcatenateType& operator=(ConcatenateType&& other);
+  //! Operator= copy constructor.
+  Concatenate& operator=(const Concatenate& layer);
+
+  //! Operator= move constructor.
+  Concatenate& operator=(Concatenate&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -63,7 +60,8 @@ class ConcatenateType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -74,30 +72,56 @@ class ConcatenateType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */, const MatType& gy, MatType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
+
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
+
+  //! Get the output parameter.
+  OutputDataType const& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the delta.
+  OutputDataType const& Delta() const { return delta; }
+  //! Modify the delta.
+  OutputDataType& Delta() { return delta; }
 
   //! Get the concat matrix.
-  MatType const& Concat() const { return concat; }
+  OutputDataType const& Concat() const { return concat; }
   //! Modify the concat.
-  MatType& Concat() { return concat; }
-
-  //! Compute the output dimensions of the layer based on `InputDimensions()`.
-  void ComputeOutputDimensions();
+  OutputDataType& Concat() { return concat; }
 
   /**
-   * Serialize the layer.
+   * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */)
+  {
+    // Nothing to do here.
+  }
 
  private:
-  //! Matrix to be concatenated to input.
-  MatType concat;
+  //! Locally-stored number of input rows.
+  size_t inRows;
 
+  //! Locally-stored weight object.
+  OutputDataType weights;
+
+  //! Locally-stored delta object.
+  OutputDataType delta;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
+  //! Locally-stored matrix to be concatenated to input.
+  OutputDataType concat;
 }; // class Concatenate
-
-// Standard Concatenate layer.
-typedef ConcatenateType<arma::mat> Concatenate;
 
 } // namespace ann
 } // namespace mlpack

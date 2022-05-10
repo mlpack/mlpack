@@ -18,296 +18,430 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-LSTMType<MatType>::LSTMType() :
-    RecurrentLayer<MatType>(),
-    outSize(0)
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM()
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-LSTMType<MatType>::LSTMType(const size_t outSize) :
-    RecurrentLayer<MatType>(),
-    outSize(outSize)
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    const LSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    weights(layer.weights),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-LSTMType<MatType>::LSTMType(const LSTMType& layer) :
-    RecurrentLayer<MatType>(layer)
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    LSTM&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    forwardStep(std::move(layer.forwardStep)),
+    backwardStep(std::move(layer.backwardStep)),
+    gradientStep(std::move(layer.gradientStep)),
+    weights(std::move(layer.weights)),
+    batchSize(std::move(layer.batchSize)),
+    batchStep(std::move(layer.batchStep)),
+    gradientStepIdx(std::move(layer.gradientStepIdx)),
+    rhoSize(std::move(layer.rho)),
+    bpttSteps(std::move(layer.bpttSteps))
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-LSTMType<MatType>::LSTMType(LSTMType&& layer) :
-    RecurrentLayer<MatType>(std::move(layer))
-{
-  // Nothing to do here.
-}
-
-template<typename MatType>
-LSTMType<MatType>& LSTMType<MatType>::operator=(const LSTMType& layer)
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>&
+LSTM<InputDataType, OutputDataType> :: operator=(const LSTM& layer)
 {
   if (this != &layer)
   {
-    RecurrentLayer<MatType>::operator=(layer);
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    rho = layer.rho;
+    forwardStep = layer.forwardStep;
+    backwardStep = layer.backwardStep;
+    gradientStep = layer.gradientStep;
+    weights = layer.weights;
+    batchSize = layer.batchSize;
+    batchStep = layer.batchStep;
+    gradientStepIdx = layer.gradientStepIdx;
+    grad = layer.grad;
+    rhoSize = layer.rho;
+    bpttSteps = layer.bpttSteps;
   }
-
   return *this;
 }
 
-template<typename MatType>
-LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>&
+LSTM<InputDataType, OutputDataType> :: operator=(LSTM&& layer)
 {
   if (this != &layer)
   {
-    RecurrentLayer<MatType>::operator=(std::move(layer));
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    rho = std::move(layer.rho);
+    forwardStep = std::move(layer.forwardStep);
+    backwardStep = std::move(layer.backwardStep);
+    gradientStep = std::move(layer.gradientStep);
+    weights = std::move(layer.weights);
+    batchSize = std::move(layer.batchSize);
+    batchStep = std::move(layer.batchStep);
+    gradientStepIdx = std::move(layer.gradientStepIdx);
+    grad = std::move(layer.grad);
+    rhoSize = std::move(layer.rho);
+    bpttSteps = std::move(layer.bpttSteps);
   }
-
   return *this;
 }
 
-template<typename MatType>
-void LSTMType<MatType>::ClearRecurrentState(
-    const size_t bpttSteps, const size_t batchSize)
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    const size_t inSize, const size_t outSize, const size_t rho) :
+    inSize(inSize),
+    outSize(outSize),
+    rho(rho),
+    forwardStep(0),
+    backwardStep(0),
+    gradientStep(0),
+    batchSize(0),
+    batchStep(0),
+    gradientStepIdx(0),
+    rhoSize(rho),
+    bpttSteps(0)
 {
+  weights.set_size(WeightSize(), 1);
+}
+
+template<typename InputDataType, typename OutputDataType>
+void LSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
+{
+  if (size == std::numeric_limits<size_t>::max())
+    return;
+
+  rhoSize = size;
+
+  if (batchSize == 0)
+    return;
+
+  bpttSteps = std::min(rho, rhoSize);
+  forwardStep = 0;
+  gradientStepIdx = 0;
+  backwardStep = batchSize * size - 1;
+  gradientStep = batchSize * size - 1;
+
+  const size_t rhoBatchSize = size * batchSize;
+
   // Make sure all of the different matrices we will use to hold parameters are
   // at least as large as we need.
-  inputGate.set_size(outSize, batchSize);
-  forgetGate.set_size(outSize, batchSize);
-  hiddenLayer.set_size(outSize, batchSize);
-  outputGate.set_size(outSize, batchSize);
+  inputGate.set_size(outSize, rhoBatchSize);
+  forgetGate.set_size(outSize, rhoBatchSize);
+  hiddenLayer.set_size(outSize, rhoBatchSize);
+  outputGate.set_size(outSize, rhoBatchSize);
 
-  inputGateActivation.set_size(outSize, batchSize, bpttSteps);
-  forgetGateActivation.set_size(outSize, batchSize, bpttSteps);
-  outputGateActivation.set_size(outSize, batchSize, bpttSteps);
-  hiddenLayerActivation.set_size(outSize, batchSize, bpttSteps);
+  inputGateActivation.set_size(outSize, rhoBatchSize);
+  forgetGateActivation.set_size(outSize, rhoBatchSize);
+  outputGateActivation.set_size(outSize, rhoBatchSize);
+  hiddenLayerActivation.set_size(outSize, rhoBatchSize);
 
-  cellActivation.set_size(outSize, batchSize, bpttSteps);
-  outParameter.set_size(outSize, batchSize, bpttSteps);
+  cellActivation.set_size(outSize, rhoBatchSize);
+  prevError.set_size(4 * outSize, batchSize);
 
   // Now reset recurrent values to 0.
-  cell.zeros(outSize, batchSize, bpttSteps);
+  cell.zeros(outSize, size * batchSize);
+  outParameter.zeros(outSize, (size + 1) * batchSize);
 }
 
-template<typename MatType>
-void LSTMType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+template<typename InputDataType, typename OutputDataType>
+void LSTM<InputDataType, OutputDataType>::Reset()
 {
   // Set the weight parameter for the output gate.
-  MakeAlias(input2GateOutputWeight, weightsPtr, outSize, inSize);
-  size_t offset = input2GateOutputWeight.n_elem;
-  MakeAlias(input2GateOutputBias, weightsPtr + offset, outSize, 1);
-  offset += input2GateOutputBias.n_elem;
+  input2GateOutputWeight = OutputDataType(weights.memptr(), outSize, inSize,
+      false, false);
+  input2GateOutputBias = OutputDataType(weights.memptr() +
+      input2GateOutputWeight.n_elem, outSize, 1, false, false);
+  size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
 
   // Set the weight parameter for the forget gate.
-  MakeAlias(input2GateForgetWeight, weightsPtr + offset, outSize, inSize);
-  offset += input2GateForgetWeight.n_elem;
-  MakeAlias(input2GateForgetBias, weightsPtr + offset, outSize, 1);
-  offset += input2GateForgetBias.n_elem;
+  input2GateForgetWeight = OutputDataType(weights.memptr() + offset,
+      outSize, inSize, false, false);
+  input2GateForgetBias = OutputDataType(weights.memptr() +
+      offset + input2GateForgetWeight.n_elem, outSize, 1, false, false);
+  offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
 
   // Set the weight parameter for the input gate.
-  MakeAlias(input2GateInputWeight, weightsPtr + offset, outSize, inSize);
-  offset += input2GateInputWeight.n_elem;
-  MakeAlias(input2GateInputBias, weightsPtr + offset, outSize, 1);
-  offset += input2GateInputBias.n_elem;
+  input2GateInputWeight = OutputDataType(weights.memptr() +
+      offset, outSize, inSize, false, false);
+  input2GateInputBias = OutputDataType(weights.memptr() +
+      offset + input2GateInputWeight.n_elem, outSize, 1, false, false);
+  offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
 
   // Set the weight parameter for the hidden gate.
-  MakeAlias(input2HiddenWeight, weightsPtr + offset, outSize, inSize);
-  offset += input2HiddenWeight.n_elem;
-  MakeAlias(input2HiddenBias, weightsPtr + offset, outSize, 1);
-  offset += input2HiddenBias.n_elem;
+  input2HiddenWeight = OutputDataType(weights.memptr() +
+      offset, outSize, inSize, false, false);
+  input2HiddenBias = OutputDataType(weights.memptr() +
+      offset + input2HiddenWeight.n_elem, outSize, 1, false, false);
+  offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  MakeAlias(output2GateOutputWeight, weightsPtr + offset, outSize, outSize);
+  output2GateOutputWeight = OutputDataType(weights.memptr() +
+      offset, outSize, outSize, false, false);
   offset += output2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  MakeAlias(output2GateForgetWeight, weightsPtr + offset, outSize, outSize);
+  output2GateForgetWeight = OutputDataType(weights.memptr() +
+      offset, outSize, outSize, false, false);
   offset += output2GateForgetWeight.n_elem;
 
   // Set the weight parameter for the input multiplication.
-  MakeAlias(output2GateInputWeight, weightsPtr + offset, outSize, outSize);
+  output2GateInputWeight = OutputDataType(weights.memptr() +
+      offset, outSize, outSize, false, false);
   offset += output2GateInputWeight.n_elem;
 
   // Set the weight parameter for the hidden multiplication.
-  MakeAlias(output2HiddenWeight, weightsPtr + offset, outSize, outSize);
+  output2HiddenWeight = OutputDataType(weights.memptr() +
+      offset, outSize, outSize, false, false);
   offset += output2HiddenWeight.n_elem;
 
   // Set the weight parameter for the cell multiplication.
-  MakeAlias(cell2GateOutputWeight, weightsPtr + offset, outSize, 1);
+  cell2GateOutputWeight = OutputDataType(weights.memptr() +
+      offset, outSize, 1, false, false);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - forget gate multiplication.
-  MakeAlias(cell2GateForgetWeight, weightsPtr + offset, outSize, 1);
+  cell2GateForgetWeight = OutputDataType(weights.memptr() +
+      offset, outSize, 1, false, false);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - input gate multiplication.
-  MakeAlias(cell2GateInputWeight, weightsPtr + offset, outSize, 1);
+  cell2GateInputWeight = OutputDataType(weights.memptr() +
+      offset, outSize, 1, false, false);
 }
 
 // Forward when cellState is not needed.
-template<typename MatType>
-void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
+void LSTM<InputDataType, OutputDataType>::Forward(
+    const InputType& input, OutputType& output)
 {
-  // Convenience alias.
-  const size_t batchSize = input.n_cols;
+  //! Locally-stored cellState.
+  OutputType cellState;
+  Forward(input, output, cellState, false);
+}
 
-  inputGate = input2GateInputWeight * input;
-  if (this->HasPreviousStep())
+// Forward when cellState is needed overloaded LSTM::Forward().
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
+void LSTM<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                  OutputType& output,
+                                                  OutputType& cellState,
+                                                  bool useCellState)
+{
+  // Check if the batch size changed, the number of cols is defines the input
+  // batch size.
+  if (input.n_cols != batchSize)
   {
-    inputGate +=
-        output2GateInputWeight * outParameter.slice(this->PreviousStep());
-  }
-  inputGate.each_col() += input2GateInputBias;
-
-  forgetGate = input2GateForgetWeight * input;
-  if (this->HasPreviousStep())
-  {
-    forgetGate += output2GateForgetWeight * outParameter.slice(
-        this->PreviousStep());
-  }
-  forgetGate.each_col() += input2GateForgetBias;
-
-  if (this->HasPreviousStep())
-  {
-    inputGate += arma::repmat(cell2GateInputWeight, 1, batchSize) %
-        cell.slice(this->PreviousStep());
-
-    forgetGate += arma::repmat(cell2GateForgetWeight, 1, batchSize) %
-        cell.slice(this->PreviousStep());
+    batchSize = input.n_cols;
+    batchStep = batchSize - 1;
+    ResetCell(rhoSize);
   }
 
-  inputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-inputGate));
-  forgetGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-forgetGate));
+  inputGate.cols(forwardStep, forwardStep + batchStep) = input2GateInputWeight *
+      input + output2GateInputWeight * outParameter.cols(forwardStep,
+      forwardStep + batchStep);
+  inputGate.cols(forwardStep, forwardStep + batchStep).each_col() +=
+      input2GateInputBias;
 
-  hiddenLayer = input2HiddenWeight * input;
-  if (this->HasPreviousStep())
+  forgetGate.cols(forwardStep, forwardStep + batchStep) = input2GateForgetWeight
+      * input + output2GateForgetWeight * outParameter.cols(
+      forwardStep, forwardStep + batchStep);
+  forgetGate.cols(forwardStep, forwardStep + batchStep).each_col() +=
+      input2GateForgetBias;
+
+  if (forwardStep > 0)
   {
-    hiddenLayer += output2HiddenWeight *
-        outParameter.slice(this->PreviousStep());
+    if (useCellState)
+    {
+      if (!cellState.is_empty())
+      {
+        cell.cols(forwardStep - batchSize,
+            forwardStep - batchSize + batchStep) = cellState;
+      }
+      else
+      {
+        throw std::runtime_error("Cell parameter is empty.");
+      }
+    }
+    inputGate.cols(forwardStep, forwardStep + batchStep) +=
+        arma::repmat(cell2GateInputWeight, 1, batchSize) %
+        cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep);
+
+    forgetGate.cols(forwardStep, forwardStep + batchStep) +=
+        arma::repmat(cell2GateForgetWeight, 1, batchSize) %
+        cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep);
   }
-  hiddenLayer.each_col() += input2HiddenBias;
 
-  hiddenLayerActivation.slice(this->CurrentStep()) = arma::tanh(hiddenLayer);
+  inputGateActivation.cols(forwardStep, forwardStep + batchStep) = 1.0 /
+      (1 + arma::exp(-inputGate.cols(forwardStep, forwardStep + batchStep)));
 
-  if (!this->HasPreviousStep())
+  forgetGateActivation.cols(forwardStep, forwardStep + batchStep) = 1.0 /
+      (1 + arma::exp(-forgetGate.cols(forwardStep, forwardStep + batchStep)));
+
+  hiddenLayer.cols(forwardStep, forwardStep + batchStep) = input2HiddenWeight *
+      input + output2HiddenWeight * outParameter.cols(
+      forwardStep, forwardStep + batchStep);
+
+  hiddenLayer.cols(forwardStep, forwardStep + batchStep).each_col() +=
+      input2HiddenBias;
+
+  hiddenLayerActivation.cols(forwardStep, forwardStep + batchStep) =
+      arma::tanh(hiddenLayer.cols(forwardStep, forwardStep + batchStep));
+
+  if (forwardStep == 0)
   {
-    cell.slice(this->CurrentStep()) =
-        inputGateActivation.slice(this->CurrentStep()) %
-        hiddenLayerActivation.slice(this->CurrentStep());
+    cell.cols(forwardStep, forwardStep + batchStep) =
+        inputGateActivation.cols(forwardStep, forwardStep + batchStep) %
+        hiddenLayerActivation.cols(forwardStep, forwardStep + batchStep);
   }
   else
   {
-    cell.slice(this->CurrentStep()) =
-        forgetGateActivation.slice(this->CurrentStep()) %
-        cell.slice(this->PreviousStep()) +
-        inputGateActivation.slice(this->CurrentStep()) %
-        hiddenLayerActivation.slice(this->CurrentStep());
+    cell.cols(forwardStep, forwardStep + batchStep) =
+        forgetGateActivation.cols(forwardStep, forwardStep + batchStep) %
+        cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep)
+        + inputGateActivation.cols(forwardStep, forwardStep + batchStep) %
+        hiddenLayerActivation.cols(forwardStep, forwardStep + batchStep);
   }
 
-  outputGate = input2GateOutputWeight * input +
-      cell.slice(this->CurrentStep()).each_col() % cell2GateOutputWeight;
-  if (this->HasPreviousStep())
+  outputGate.cols(forwardStep, forwardStep + batchStep) = input2GateOutputWeight
+      * input + output2GateOutputWeight * outParameter.cols(
+      forwardStep, forwardStep + batchStep) + cell.cols(forwardStep,
+      forwardStep + batchStep).each_col() % cell2GateOutputWeight;
+
+  outputGate.cols(forwardStep, forwardStep + batchStep).each_col() +=
+      input2GateOutputBias;
+
+  outputGateActivation.cols(forwardStep, forwardStep + batchStep) = 1.0 /
+      (1 + arma::exp(-outputGate.cols(forwardStep, forwardStep + batchStep)));
+
+  cellActivation.cols(forwardStep, forwardStep + batchStep) =
+      arma::tanh(cell.cols(forwardStep, forwardStep + batchStep));
+
+  outParameter.cols(forwardStep + batchSize,
+      forwardStep + batchSize + batchStep) =
+      cellActivation.cols(forwardStep, forwardStep + batchStep) %
+      outputGateActivation.cols(forwardStep, forwardStep + batchStep);
+
+  output = OutputType(outParameter.memptr() +
+      (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
+
+  cellState = OutputType(cell.memptr() +
+      forwardStep * outSize, outSize, batchSize, false, false);
+
+  forwardStep += batchSize;
+  if ((forwardStep / batchSize) == bpttSteps)
   {
-    outputGate +=
-        output2GateOutputWeight * outParameter.slice(this->PreviousStep());
+    forwardStep = 0;
   }
-  outputGate.each_col() += input2GateOutputBias;
-
-  outputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-outputGate));
-
-  cellActivation.slice(this->CurrentStep()) =
-      arma::tanh(cell.slice(this->CurrentStep()));
-
-  // There's a bit of an issue here: we need to preserve the output for the next
-  // time step, but we also need to set `output` to that.  Unfortunately for now
-  // we make a copy, but it's possible that we could instead use an alias here,
-  // or have `outParameter` hold a collection of aliases.
-  outParameter.slice(this->CurrentStep()) =
-      cellActivation.slice(this->CurrentStep()) %
-      outputGateActivation.slice(this->CurrentStep());
-
-  output = outParameter.slice(this->CurrentStep());
 }
 
-template<typename MatType>
-void LSTMType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename ErrorType, typename GradientType>
+void LSTM<InputDataType, OutputDataType>::Backward(
+  const InputType& /* input */, const ErrorType& gy, GradientType& g)
 {
-  MatType gyLocal;
-  if (this->HasPreviousStep())
+  ErrorType gyLocal;
+  if (gradientStepIdx > 0)
   {
-    gyLocal = gy + output2GateOutputWeight.t() * outputGateError +
-      output2GateForgetWeight.t() * forgetGateError +
-      output2GateInputWeight.t() * inputGateError +
-      output2HiddenWeight.t() * hiddenError;
+    gyLocal = gy + prevError;
   }
   else
   {
     // Make an alias.
-    gyLocal = MatType(((MatType&) gy).memptr(), gy.n_rows, gy.n_cols,
-        false, false);
+    gyLocal = ErrorType(((ErrorType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
+        false);
   }
 
-  outputGateError = gyLocal % cellActivation.slice(this->CurrentStep()) %
-      (outputGateActivation.slice(this->CurrentStep()) %
-      (1.0 - outputGateActivation.slice(this->CurrentStep())));
+  outputGateError =
+      gyLocal % cellActivation.cols(backwardStep - batchStep, backwardStep) %
+      (outputGateActivation.cols(backwardStep - batchStep, backwardStep) %
+      (1.0 - outputGateActivation.cols(backwardStep - batchStep,
+      backwardStep)));
 
-  MatType cellError = gyLocal %
-      outputGateActivation.slice(this->CurrentStep()) %
-      (1 - arma::pow(cellActivation.slice(this->CurrentStep()), 2)) +
-      outputGateError.each_col() % cell2GateOutputWeight;
+  OutputDataType cellError = gyLocal %
+      outputGateActivation.cols(backwardStep - batchStep, backwardStep) %
+      (1 - arma::pow(cellActivation.cols(backwardStep -
+      batchStep, backwardStep), 2)) + outputGateError.each_col() %
+      cell2GateOutputWeight;
 
-  if (this->HasPreviousStep())
+  if (gradientStepIdx > 0)
   {
     cellError += inputCellError;
   }
 
-  if (this->HasPreviousStep())
+  if (backwardStep > batchStep)
   {
-    forgetGateError = cell.slice(this->PreviousStep()) % cellError %
-        (forgetGateActivation.slice(this->CurrentStep()) %
-        (1.0 - forgetGateActivation.slice(this->CurrentStep())));
+    forgetGateError = cell.cols((backwardStep - batchSize) - batchStep,
+      (backwardStep - batchSize)) % cellError % (forgetGateActivation.cols(
+      backwardStep - batchStep, backwardStep) % (1.0 -
+      forgetGateActivation.cols(backwardStep - batchStep, backwardStep)));
   }
   else
   {
-    forgetGateError.zeros(forgetGateActivation.n_rows,
-        forgetGateActivation.n_cols);
+    forgetGateError.zeros();
   }
 
-  inputGateError = hiddenLayerActivation.slice(this->CurrentStep()) %
-      cellError % (inputGateActivation.slice(this->CurrentStep()) %
-      (1.0 - inputGateActivation.slice(this->CurrentStep())));
+  inputGateError = hiddenLayerActivation.cols(backwardStep - batchStep,
+      backwardStep) % cellError %
+      (inputGateActivation.cols(backwardStep - batchStep, backwardStep) %
+      (1.0 - inputGateActivation.cols(backwardStep - batchStep, backwardStep)));
 
-  hiddenError = inputGateActivation.slice(this->CurrentStep()) % cellError %
-      (1 - arma::pow(hiddenLayerActivation.slice(this->CurrentStep()), 2));
+  hiddenError = inputGateActivation.cols(backwardStep - batchStep,
+      backwardStep) % cellError % (1 - arma::pow(hiddenLayerActivation.cols(
+      backwardStep - batchStep, backwardStep), 2));
 
-  inputCellError = forgetGateActivation.slice(this->CurrentStep()) % cellError +
-      forgetGateError.each_col() % cell2GateForgetWeight +
-      inputGateError.each_col() % cell2GateInputWeight;
+  inputCellError = forgetGateActivation.cols(backwardStep - batchStep,
+      backwardStep) % cellError + forgetGateError.each_col() %
+      cell2GateForgetWeight + inputGateError.each_col() % cell2GateInputWeight;
 
   g = input2GateInputWeight.t() * inputGateError +
       input2HiddenWeight.t() * hiddenError +
       input2GateForgetWeight.t() * forgetGateError +
       input2GateOutputWeight.t() * outputGateError;
+
+  prevError = output2GateOutputWeight.t() * outputGateError +
+      output2GateForgetWeight.t() * forgetGateError +
+      output2GateInputWeight.t() * inputGateError +
+      output2HiddenWeight.t() * hiddenError;
+
+  backwardStep -= batchSize;
+  gradientStepIdx++;
+  if (gradientStepIdx == bpttSteps)
+  {
+    backwardStep = bpttSteps - 1;
+    gradientStepIdx = 0;
+  }
 }
 
-template<typename MatType>
-void LSTMType<MatType>::Gradient(
-    const MatType& input,
-    const MatType& /* error */,
-    MatType& gradient)
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename ErrorType, typename GradientType>
+void LSTM<InputDataType, OutputDataType>::Gradient(
+    const InputType& input,
+    const ErrorType& /* error */,
+    GradientType& gradient)
 {
-  // This implementation depends on Gradient() being called just after
-  // Backward(), which is something we can safely assume.
-
   // Input2GateOutputWeight and input2GateOutputBias gradients.
   gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =
       arma::vectorise(outputGateError * input.t());
@@ -316,7 +450,7 @@ void LSTMType<MatType>::Gradient(
       arma::sum(outputGateError, 1);
   size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
 
-  // input2GateForgetWeight and input2GateForgetBias gradients.
+  // Input2GateForgetWeight and input2GateForgetBias gradients.
   gradient.submat(offset, 0, offset + input2GateForgetWeight.n_elem - 1, 0) =
       arma::vectorise(forgetGateError * input.t());
   gradient.submat(offset + input2GateForgetWeight.n_elem, 0,
@@ -324,7 +458,7 @@ void LSTMType<MatType>::Gradient(
       input2GateForgetBias.n_elem - 1, 0) = arma::sum(forgetGateError, 1);
   offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
 
-  // input2GateInputWeight and input2GateInputBias gradients.
+  // Input2GateInputWeight and input2GateInputBias gradients.
   gradient.submat(offset, 0, offset + input2GateInputWeight.n_elem - 1, 0) =
       arma::vectorise(inputGateError * input.t());
   gradient.submat(offset + input2GateInputWeight.n_elem, 0,
@@ -332,7 +466,7 @@ void LSTMType<MatType>::Gradient(
       input2GateInputBias.n_elem - 1, 0) = arma::sum(inputGateError, 1);
   offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
 
-  // input2HiddenWeight and input2HiddenBias gradients.
+  // Input2HiddenWeight and input2HiddenBias gradients.
   gradient.submat(offset, 0, offset + input2HiddenWeight.n_elem - 1, 0) =
       arma::vectorise(hiddenError * input.t());
   gradient.submat(offset + input2HiddenWeight.n_elem, 0,
@@ -340,43 +474,48 @@ void LSTMType<MatType>::Gradient(
       arma::sum(hiddenError, 1);
   offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
 
-  // output2GateOutputWeight gradients.
+  // Output2GateOutputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateOutputWeight.n_elem - 1, 0) =
       arma::vectorise(outputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      outParameter.cols(gradientStep - batchStep, gradientStep).t());
   offset += output2GateOutputWeight.n_elem;
 
-  // output2GateForgetWeight gradients.
+  // Output2GateForgetWeight gradients.
   gradient.submat(offset, 0, offset + output2GateForgetWeight.n_elem - 1, 0) =
       arma::vectorise(forgetGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      outParameter.cols(gradientStep - batchStep, gradientStep).t());
   offset += output2GateForgetWeight.n_elem;
 
-  // output2GateInputWeight gradients.
+  // Output2GateInputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateInputWeight.n_elem - 1, 0) =
       arma::vectorise(inputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      outParameter.cols(gradientStep - batchStep, gradientStep).t());
   offset += output2GateInputWeight.n_elem;
 
-  // output2HiddenWeight gradients.
+  // Output2HiddenWeight gradients.
   gradient.submat(offset, 0, offset + output2HiddenWeight.n_elem - 1, 0) =
       arma::vectorise(hiddenError *
-      outParameter.slice(this->CurrentStep()).t());
+      outParameter.cols(gradientStep - batchStep, gradientStep).t());
   offset += output2HiddenWeight.n_elem;
 
-  // cell2GateOutputWeight gradients.
+  // Cell2GateOutputWeight gradients.
   gradient.submat(offset, 0, offset + cell2GateOutputWeight.n_elem - 1, 0) =
-      arma::sum(outputGateError % cell.slice(this->CurrentStep()), 1);
+      arma::sum(outputGateError %
+      cell.cols(gradientStep - batchStep, gradientStep), 1);
   offset += cell2GateOutputWeight.n_elem;
 
-  // cell2GateForgetWeight and cell2GateInputWeight gradients.
-  if (this->HasPreviousStep())
+  // Cell2GateForgetWeight and cell2GateInputWeight gradients.
+  if (gradientStep > batchStep)
   {
     gradient.submat(offset, 0, offset + cell2GateForgetWeight.n_elem - 1, 0) =
-        arma::sum(forgetGateError % cell.slice(this->PreviousStep()), 1);
+        arma::sum(forgetGateError %
+                  cell.cols((gradientStep - batchSize) - batchStep,
+                            (gradientStep - batchSize)), 1);
     gradient.submat(offset + cell2GateForgetWeight.n_elem, 0, offset +
         cell2GateForgetWeight.n_elem + cell2GateInputWeight.n_elem - 1, 0) =
-        arma::sum(inputGateError % cell.slice(this->PreviousStep()), 1);
+        arma::sum(inputGateError %
+                  cell.cols((gradientStep - batchSize) - batchStep,
+                            (gradientStep - batchSize)), 1);
   }
   else
   {
@@ -386,32 +525,41 @@ void LSTMType<MatType>::Gradient(
         cell2GateForgetWeight.n_elem +
         cell2GateInputWeight.n_elem - 1, 0).zeros();
   }
+
+  if (gradientStep == 0)
+  {
+    gradientStep = batchSize * bpttSteps - 1;
+  }
+  else
+  {
+    gradientStep -= batchSize;
+  }
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LSTMType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void LSTM<InputDataType, OutputDataType>::serialize(
+    Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<RecurrentLayer<MatType>>(this));
-
+  ar(CEREAL_NVP(weights));
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-
-  // Clear recurrent state if we are loading.
-  if (Archive::is_loading::value)
-  {
-    inputGateActivation.clear();
-    forgetGateActivation.clear();
-    outputGateActivation.clear();
-    hiddenLayerActivation.clear();
-    cellActivation.clear();
-    forgetGateError.clear();
-    outputGateError.clear();
-    outParameter.clear();
-    inputCellError.clear();
-    inputGateError.clear();
-    hiddenError.clear();
-  }
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(bpttSteps));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(batchStep));
+  ar(CEREAL_NVP(forwardStep));
+  ar(CEREAL_NVP(backwardStep));
+  ar(CEREAL_NVP(gradientStep));
+  ar(CEREAL_NVP(gradientStepIdx));
+  ar(CEREAL_NVP(cell));
+  ar(CEREAL_NVP(inputGateActivation));
+  ar(CEREAL_NVP(forgetGateActivation));
+  ar(CEREAL_NVP(outputGateActivation));
+  ar(CEREAL_NVP(hiddenLayerActivation));
+  ar(CEREAL_NVP(cellActivation));
+  ar(CEREAL_NVP(prevError));
+  ar(CEREAL_NVP(outParameter));
 }
 
 } // namespace ann

@@ -18,20 +18,21 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-MeanSquaredLogarithmicErrorType<MatType>::MeanSquaredLogarithmicErrorType(
-    const bool reduction) :
-    reduction(reduction)
+template<typename InputDataType, typename OutputDataType>
+MeanSquaredLogarithmicError<InputDataType, OutputDataType>
+::MeanSquaredLogarithmicError(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-typename MatType::elem_type MeanSquaredLogarithmicErrorType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  typename MatType::elem_type lossSum =
+  typename PredictionType::elem_type lossSum =  
       arma::accu(arma::square(arma::log(1.0 + target) -
       arma::log(1.0 + prediction)));
 
@@ -41,11 +42,12 @@ typename MatType::elem_type MeanSquaredLogarithmicErrorType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void MeanSquaredLogarithmicErrorType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
   loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target)) /
       (1. + prediction);
@@ -54,9 +56,9 @@ void MeanSquaredLogarithmicErrorType<MatType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MeanSquaredLogarithmicErrorType<MatType>::serialize(
+void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

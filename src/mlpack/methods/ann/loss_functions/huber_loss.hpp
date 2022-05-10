@@ -24,15 +24,20 @@ namespace ann /** Artificial Neural Network. */ {
  * and linear for large values, with equal values and slopes of the different
  * sections at the two points where \f$ |y - f(x)| = delta \f$.
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class HuberLossType
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class HuberLoss
 {
  public:
   /**
-   * Create the HuberLossType object.
+   * Create the HuberLoss object.
    *
    * @param delta The threshold value upto which squared error is followed and
    *              after which absolute error is considered.
@@ -42,7 +47,7 @@ class HuberLossType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  HuberLossType(const double delta = 1.0, const bool reduction = true);
+  HuberLoss(const double delta = 1.0, const bool reduction = true);
 
   /**
    * Computes the Huber Loss function.
@@ -51,8 +56,9 @@ class HuberLossType
    *     function.
    * @param target The target vector.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -62,9 +68,15 @@ class HuberLossType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of delta.
   double Delta() const { return delta; }
@@ -84,15 +96,15 @@ class HuberLossType
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! Hyperparameter `delta` defines the point upto which MSE is considered.
   double delta;
 
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class HuberLossType
-
-// Default typedef for typical `arma::mat` usage.
-typedef HuberLossType<arma::mat> HuberLoss;
+}; // class HuberLoss
 
 } // namespace ann
 } // namespace mlpack

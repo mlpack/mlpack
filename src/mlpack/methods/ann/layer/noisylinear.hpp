@@ -14,8 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "layer.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -23,42 +21,55 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the NoisyLinear layer class. It represents a single
  * layer of a neural network, with parametric noise added to its weights.
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class NoisyLinearType : public Layer<MatType>
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class NoisyLinear
 {
  public:
+  //! Create the NoisyLinear object.
+  NoisyLinear();
+
   /**
    * Create the NoisyLinear layer object using the specified number of units.
    *
+   * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  NoisyLinearType(const size_t outSize = 0);
+  NoisyLinear(const size_t inSize,
+              const size_t outSize);
 
-  //! Clone the NoisyLinearType object. This handles polymorphism correctly.
-  NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
+  //! Copy constructor.
+  NoisyLinear(const NoisyLinear&);
 
-  // Virtual destructor.
-  virtual ~NoisyLinearType() { }
+  //! Move constructor.
+  NoisyLinear(NoisyLinear&&);
 
-  //! Copy the given NoisyLinear layer (but not weights).
-  NoisyLinearType(const NoisyLinearType& other);
-  //! Take ownership of the given NoisyLinear layer (but not weights).
-  NoisyLinearType(NoisyLinearType&& other);
-  //! Copy the given NoisyLinear layer (but not weights).
-  NoisyLinearType& operator=(const NoisyLinearType& other);
-  //! Take ownership of the given NoisyLinear layer (but not weights).
-  NoisyLinearType& operator=(NoisyLinearType&& other);
+  //! Operator= copy constructor.
+  NoisyLinear& operator=(const NoisyLinear& layer);
 
-  //! Reset the layer parameter.
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  //! Operator= move constructor.
+  NoisyLinear& operator=(NoisyLinear&& layer);
 
-  //! Reset the noise parameters (epsilons).
+  /*
+   * Reset the layer parameter.
+   */
+  void Reset();
+
+  /*
+   * Reset the noise parameters(epsilons).
+   */
   void ResetNoise();
 
-  //! Reset the values of layer parameters (factorized gaussian noise).
+  /*
+   * Reset the values of layer parameters (factorized gaussian noise).
+   */
   void ResetParameters();
 
   /**
@@ -68,7 +79,8 @@ class NoisyLinearType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -79,80 +91,117 @@ class NoisyLinearType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
-                const MatType& gy,
-                MatType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
-  /**
+  /*
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const MatType& input,
-                const MatType& error,
-                MatType& gradient);
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  MatType const& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  MatType& Parameters() { return weights; }
+  OutputDataType& Parameters() { return weights; }
+
+  //! Get the input parameter.
+  InputDataType const& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  OutputDataType const& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the delta.
+  OutputDataType const& Delta() const { return delta; }
+  //! Modify the delta.
+  OutputDataType& Delta() { return delta; }
+
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
 
   //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   //! Modify the bias weights of the layer.
-  MatType& Bias() { return bias; }
+  arma::mat& Bias() { return bias; }
 
-  //! Compute the number of parameters in the layer.
+  //! Get size of weights.
   size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
-
-  //! Compute the output dimensions of the layer given `InputDimensions()`.
-  void ComputeOutputDimensions();
-
-  //! Serialize the layer.
+  /**
+   * Serialize the layer
+   */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored number of input units.
+  size_t inSize;
+
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally stored number of input units.
-  size_t inSize;
-
   //! Locally-stored weight object.
-  MatType weights;
+  OutputDataType weights;
 
   //! Locally-stored weight parameters.
-  MatType weight;
+  OutputDataType weight;
 
   //! Locally-stored weight-mean parameters.
-  MatType weightMu;
+  OutputDataType weightMu;
 
   //! Locally-stored weight-standard-deviation parameters.
-  MatType weightSigma;
+  OutputDataType weightSigma;
 
   //! Locally-stored weight-epsilon parameters.
-  MatType weightEpsilon;
+  OutputDataType weightEpsilon;
 
   //! Locally-stored bias parameters.
-  MatType bias;
+  OutputDataType bias;
 
   //! Locally-stored bias-mean parameters.
-  MatType biasMu;
+  OutputDataType biasMu;
 
   //! Locally-stored bias-standard-deviation parameters.
-  MatType biasSigma;
+  OutputDataType biasSigma;
 
   //! Locally-stored bias-epsilon parameters.
-  MatType biasEpsilon;
+  OutputDataType biasEpsilon;
 
-}; // class NoisyLinearType
+  //! Locally-stored delta object.
+  OutputDataType delta;
 
-// Convenience typedefs.
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
 
-// Standard noisy linear layer.
-typedef NoisyLinearType<arma::mat> NoisyLinear;
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+}; // class NoisyLinear
 
 } // namespace ann
 } // namespace mlpack

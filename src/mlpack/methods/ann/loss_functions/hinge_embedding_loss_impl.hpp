@@ -19,20 +19,22 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-HingeEmbeddingLossType<MatType>::HingeEmbeddingLossType(const bool reduction) :
-    reduction(reduction)
+template<typename InputDataType, typename OutputDataType>
+HingeEmbeddingLoss<InputDataType, OutputDataType>
+  ::HingeEmbeddingLoss(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-typename MatType::elem_type HingeEmbeddingLossType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  MatType loss = (1 - target) / 2 + prediction % (target);
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  PredictionType loss = (1 - target) / 2 + prediction % (target);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
@@ -40,11 +42,12 @@ typename MatType::elem_type HingeEmbeddingLossType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void HingeEmbeddingLossType<MatType>::Backward(
-    const MatType& /* prediction */,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
   loss = target;
 
@@ -52,9 +55,9 @@ void HingeEmbeddingLossType<MatType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void HingeEmbeddingLossType<MatType>::serialize(
+void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

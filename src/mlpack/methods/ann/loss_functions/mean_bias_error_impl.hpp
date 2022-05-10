@@ -19,20 +19,22 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-MeanBiasErrorType<MatType>::MeanBiasErrorType(const bool reduction) :
-    reduction(reduction)
+template<typename InputDataType, typename OutputDataType>
+MeanBiasError<InputDataType, OutputDataType>::
+  MeanBiasError(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here
 }
 
-template<typename MatType>
-typename MatType::elem_type MeanBiasErrorType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+MeanBiasError<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  MatType loss = target - prediction;
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  PredictionType loss = target - prediction;
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
@@ -40,11 +42,12 @@ typename MatType::elem_type MeanBiasErrorType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void MeanBiasErrorType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& /* target */,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void MeanBiasError<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& /* target */,
+    LossType& loss)
 {
   loss.set_size(arma::size(prediction));
   loss.fill(-1.0);
@@ -53,9 +56,9 @@ void MeanBiasErrorType<MatType>::Backward(
     loss = loss / loss.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void MeanBiasErrorType<MatType>::serialize(
+void MeanBiasError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

@@ -19,66 +19,73 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-DropoutType<MatType>::DropoutType(
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
     const double ratio) :
     ratio(ratio),
-    scale(1.0 / (1.0 - ratio))
+    scale(1.0 / (1.0 - ratio)),
+    deterministic(false)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-DropoutType<MatType>::DropoutType(const DropoutType& other) :
-    Layer<MatType>(other),
-    ratio(other.ratio),
-    scale(other.scale)
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
+    const Dropout& layer) :
+    ratio(layer.ratio),
+    scale(layer.scale),
+    deterministic(layer.deterministic)
 {
-  // Nothing to do.
+  // Nothing to do here.
 }
 
-template<typename MatType>
-DropoutType<MatType>::DropoutType(DropoutType&& other) :
-    Layer<MatType>(std::move(other)),
-    ratio(std::move(other.ratio)),
-    scale(std::move(other.scale))
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
+    const Dropout&& layer) :
+    ratio(std::move(layer.ratio)),
+    scale(std::move(scale)),
+    deterministic(std::move(deterministic))
 {
-  // Nothing to do.
+  // Nothing to do here.
 }
 
-template<typename MatType>
-DropoutType<MatType>&
-DropoutType<MatType>::operator=(const DropoutType& other)
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>&
+Dropout<InputDataType, OutputDataType>::
+operator=(const Dropout& layer)
 {
-  if (&other != this)
+  if (this != &layer)
   {
-    Layer<MatType>::operator=(other);
-    ratio = other.ratio;
-    scale = other.scale;
+    ratio = layer.ratio;
+    scale = layer.scale;
+    deterministic = layer.deterministic;
   }
-
   return *this;
 }
 
-template<typename MatType>
-DropoutType<MatType>&
-DropoutType<MatType>::operator=(DropoutType&& other)
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>&
+Dropout<InputDataType, OutputDataType>::
+operator=(Dropout&& layer)
 {
-  if (&other != this)
+  if (this != &layer)
   {
-    Layer<MatType>::operator=(std::move(other));
-    ratio = std::move(other.ratio);
-    scale = std::move(other.scale);
+    ratio = std::move(layer.ratio);
+    scale = std::move(layer.scale);
+    deterministic = std::move(layer.deterministic);
   }
-
   return *this;
 }
 
-template<typename MatType>
-void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void Dropout<InputDataType, OutputDataType>::Forward(
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
 {
-  // The dropout mask will not be multiplied in testing mode.
-  if (!this->training)
+  // The dropout mask will not be multiplied in the deterministic mode
+  // (during testing).
+  if (deterministic)
   {
     output = input;
   }
@@ -86,29 +93,28 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
   {
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
-    mask = arma::randu<MatType>(input.n_rows, input.n_cols);
+    mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;
   }
 }
 
-template<typename MatType>
-void DropoutType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& gy,
-    MatType& g)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void Dropout<InputDataType, OutputDataType>::Backward(
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy % mask * scale;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void DropoutType<MatType>::serialize(
+void Dropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<MatType>>(this));
-
   ar(CEREAL_NVP(ratio));
 
   // Reset scale.

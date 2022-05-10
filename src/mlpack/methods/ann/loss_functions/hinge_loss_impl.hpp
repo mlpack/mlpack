@@ -19,24 +19,26 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-HingeLossType<MatType>::HingeLossType(const bool reduction):
+template<typename InputDataType, typename OutputDataType>
+HingeLoss<InputDataType, OutputDataType>::HingeLoss(const bool reduction):
   reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-typename MatType::elem_type HingeLossType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+HingeLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  MatType temp = target - (target == 0);
-  MatType temp_zeros(size(target), arma::fill::zeros);
+  TargetType temp = target - (target == 0);
+  TargetType temp_zeros(size(target), arma::fill::zeros);
 
-  MatType loss = arma::max(temp_zeros, 1 - prediction % temp);
+  PredictionType loss = arma::max(temp_zeros, 1 - prediction % temp);
 
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
@@ -44,22 +46,23 @@ typename MatType::elem_type HingeLossType<MatType>::Forward(
   return lossSum / loss.n_elem;
 }
 
-template<typename MatType>
-void HingeLossType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void HingeLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
-  MatType temp = target - (target == 0);
+  TargetType temp = target - (target == 0);
   loss = (prediction < (1 / temp)) % -temp;
 
   if (!reduction)
     loss /= target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void HingeLossType<MatType>::serialize(
+void HingeLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

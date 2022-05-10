@@ -136,12 +136,6 @@ class HeInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
-
-  template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */)
-  {
-    // Nothing to do.
-  }
 }; // class HeInitialization
 
 } // namespace ann

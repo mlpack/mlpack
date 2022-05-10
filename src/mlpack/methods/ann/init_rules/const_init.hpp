@@ -98,13 +98,7 @@ class ConstInitialization
   //! Get the initialization value.
   double const& InitValue() const { return initVal; }
   //! Modify the initialization value.
-  double& InitValue() { return initVal; }
-
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(initVal));
-  }
+  double& initValue() { return initVal; }
 
  private:
   //! Value to be initialized with

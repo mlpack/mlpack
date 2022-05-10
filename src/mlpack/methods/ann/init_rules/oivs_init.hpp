@@ -47,13 +47,15 @@ namespace ann /** Artificial Neural Network. */ {
  * w_i &=& \hat{w} \cdot \sqrt{a_i + 1}
  * @f}
  *
- * Where f is the transfer function epsilon, k custom parameters, n the number
- * of neurons in the outgoing layer and gamma a parameter that defines the
- * random interval.
+ * Where f is the transfer function epsilon, k custom parameters, n the number of
+ * neurons in the outgoing layer and gamma a parameter that defines the random
+ * interval.
  *
  * @tparam ActivationFunction The activation function used for the oivs method.
  */
-template<class ActivationFunction = LogisticFunction>
+template<
+    class ActivationFunction = LogisticFunction
+>
 class OivsInitialization
 {
  public:

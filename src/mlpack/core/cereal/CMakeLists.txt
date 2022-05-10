@@ -7,6 +7,8 @@ set(SOURCES
   pair_associative_container.hpp
   pointer_wrapper.hpp
   pointer_vector_wrapper.hpp
+  pointer_variant_wrapper.hpp
+  pointer_vector_variant_wrapper.hpp
   unordered_map.hpp
 )
 

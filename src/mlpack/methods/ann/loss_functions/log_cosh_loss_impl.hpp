@@ -19,22 +19,22 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-LogCoshLossType<MatType>::LogCoshLossType(
-    const double a,
-    const bool reduction) :
-    a(a),
-    reduction(reduction)
+template<typename InputDataType, typename OutputDataType>
+LogCoshLoss<InputDataType, OutputDataType>::LogCoshLoss(
+    const double a, const bool reduction) :
+    a(a) , reduction(reduction)
 {
   Log::Assert(a > 0, "Hyper-Parameter \'a\' must be positive");
 }
 
-template<typename MatType>
-typename MatType::elem_type LogCoshLossType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+LogCoshLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  typename MatType::elem_type lossSum =
+  typename PredictionType::elem_type lossSum = 
       arma::accu(arma::log(arma::cosh(a * (target - prediction)))) / a;
 
   if (reduction)
@@ -43,11 +43,12 @@ typename MatType::elem_type LogCoshLossType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void LogCoshLossType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void LogCoshLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
   loss = arma::tanh(a * (target - prediction));
 
@@ -55,9 +56,9 @@ void LogCoshLossType<MatType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void LogCoshLossType<MatType>::serialize(
+void LogCoshLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

@@ -55,7 +55,7 @@ class OrthogonalRegularizer
   template<typename MatType>
   void Evaluate(const MatType& weight, MatType& gradient);
 
-  //! Serialize the regularizer.
+  //! Serialize the regularizer (nothing to do).
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 

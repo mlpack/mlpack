@@ -3,17 +3,24 @@
 set(SOURCES
   ffn.hpp
   ffn_impl.hpp
-  forward_decls.hpp
-  make_alias.hpp
   rnn.hpp
   rnn_impl.hpp
+  brnn.hpp
+  brnn_impl.hpp
+  layer_names.hpp
 )
 
+add_subdirectory(visitor)
+add_subdirectory(activation_functions)
 add_subdirectory(init_rules)
 add_subdirectory(layer)
 add_subdirectory(loss_functions)
 add_subdirectory(convolution_rules)
+add_subdirectory(gan)
+add_subdirectory(rbm)
+add_subdirectory(augmented)
 add_subdirectory(regularizer)
+add_subdirectory(util)
 
 # Add directory name to sources.
 set(DIR_SRCS)

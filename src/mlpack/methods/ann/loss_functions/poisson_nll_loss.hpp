@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/poisson_nll_loss.hpp
  * @author Mrityunjay Tripathi
  *
- * Definition of the PoissonNLLLossType class. It is the negative log likelihood of
+ * Definition of the PoissonNLLLoss class. It is the negative log likelihood of
  * the Poisson distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -20,18 +20,24 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Poisson negative log likelihood loss. This loss
- * function expects input for each class. It also expects a class index, in the
- * range [0, numClasses - 1], as target when calling the Forward function.
+ * function expects input for each class. It also expects a class index,
+ * in the range between 1 and the number of classes, as target when calling
+ * the Forward function.
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class PoissonNLLLossType
+template <
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat
+>
+class PoissonNLLLoss
 {
  public:
   /**
-   * Create the PoissonNLLLossType object.
+   * Create the PoissonNLLLoss object.
    *
    * @param logInput If true the loss is computed as
    *        \f$ \exp(input) - target \cdot input \f$, if false then the loss is
@@ -45,9 +51,9 @@ class PoissonNLLLossType
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  PoissonNLLLossType(const bool logInput = true,
+  PoissonNLLLoss(const bool logInput = true,
                  const bool full = false,
-                 const typename MatType::elem_type eps = 1e-08,
+                 const typename InputDataType::elem_type eps = 1e-08,
                  const bool reduction = true);
 
   /**
@@ -58,8 +64,9 @@ class PoissonNLLLossType
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename InputDataType::elem_type Forward(const PredictionType& prediction,
+                                            const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The Poisson Negative Log
@@ -73,9 +80,20 @@ class PoissonNLLLossType
    *        between 1 and the number of classes.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the input parameter.
+  InputDataType& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of logInput. logInput is a boolean value that tells if
   //! logits are given as input.
@@ -93,17 +111,16 @@ class PoissonNLLLossType
 
   //! Get the value of eps. eps is a small value required to prevent 0 in
   //! logarithms and denominators.
-  typename MatType::elem_type Eps() const { return eps; }
+  typename InputDataType::elem_type Eps() const { return eps; }
   //! Modify the value of eps. eps is a small value required to prevent 0 in
   //! logarithms and denominators.
-  typename MatType::elem_type& Eps() { return eps; }
+  typename InputDataType::elem_type& Eps() { return eps; }
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
   bool Reduction() const { return reduction; }
   //! Modify the type of reduction used.
   bool& Reduction() { return reduction; }
-
   /**
    * Serialize the layer.
    */
@@ -123,6 +140,12 @@ class PoissonNLLLossType
     }
   }
 
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
   //! Boolean value that tells if logits are given as input.
   bool logInput;
 
@@ -131,14 +154,12 @@ class PoissonNLLLossType
   bool full;
 
   //! eps is a small value required to prevent 0 in logarithms and denominators.
-  typename MatType::elem_type eps;
+  typename InputDataType::elem_type eps;
 
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class PoissonNLLLossType
 
-// Default typedef for typical `arma::mat` usage.
-typedef PoissonNLLLossType<arma::mat> PoissonNLLLoss;
+}; // class PoissonNLLLoss
 
 } // namespace ann
 } // namespace mlpack

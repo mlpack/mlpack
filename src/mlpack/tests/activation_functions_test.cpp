@@ -12,7 +12,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
@@ -135,7 +135,7 @@ void CheckInverseCorrect(const arma::colvec input)
  *
  * @param input Input data used for evaluating the HardTanH activation function.
  * @param target Target data used to evaluate the HardTanH activation.
- *
+ */
 void CheckHardTanHActivationCorrect(const arma::colvec input,
                                     const arma::colvec target)
 {
@@ -148,7 +148,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the HardTanH activation function derivative test. The
@@ -157,7 +157,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the HardTanH activation
  * function.
  * @param target Target data used to evaluate the HardTanH activation.
- *
+ */
 void CheckHardTanHDerivativeCorrect(const arma::colvec input,
                                     const arma::colvec target)
 {
@@ -174,7 +174,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the LeakyReLU activation function test. The function is
@@ -187,7 +187,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 void CheckLeakyReLUActivationCorrect(const arma::colvec input,
                                      const arma::colvec target)
 {
-  LeakyReLU lrf;
+  LeakyReLU<> lrf;
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
@@ -210,7 +210,7 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
 void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
                                      const arma::colvec target)
 {
-  LeakyReLU lrf;
+  LeakyReLU<> lrf;
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives;
@@ -230,7 +230,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the ELU activation function.
  * @param target Target data used to evaluate the ELU activation.
- *
+ */
 void CheckELUActivationCorrect(const arma::colvec input,
                                const arma::colvec target)
 {
@@ -244,7 +244,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the ELU activation function derivative test. The function
@@ -252,7 +252,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the ELU activation function.
  * @param target Target data used to evaluate the ELU activation.
- *
+ */
 void CheckELUDerivativeCorrect(const arma::colvec input,
                                const arma::colvec target)
 {
@@ -270,7 +270,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the PReLU activation function test. The function
@@ -279,7 +279,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the PReLU activation
  *   function.
  * @param target Target data used to evaluate the PReLU activation.
- *
+ */
 void CheckPReLUActivationCorrect(const arma::colvec input,
                                  const arma::colvec target)
 {
@@ -292,7 +292,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the PReLU activation function derivative test.
@@ -302,7 +302,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the PReLU activation
  *   function.
  * @param target Target data used to evaluate the PReLU activation.
- *
+ */
 void CheckPReLUDerivativeCorrect(const arma::colvec input,
                                  const arma::colvec target)
 {
@@ -318,7 +318,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the PReLU activation function gradient test.
@@ -328,7 +328,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the PReLU activation
  *   function.
  * @param target Target data used to evaluate the PReLU gradient.
- *
+ */
 void CheckPReLUGradientCorrect(const arma::colvec input,
                                const arma::colvec target)
 {
@@ -343,7 +343,7 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
   REQUIRE(gradient.n_rows == 1);
   REQUIRE(gradient.n_cols == 1);
   REQUIRE(gradient(0) == Approx(target(0)).epsilon(1e-5));
-}*/
+}
 
 /**
  * Implementation of the Hard Shrink activation function test. The function is
@@ -351,7 +351,7 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the Hard Shrink activation function.
  * @param target Target data used to evaluate the Hard Shrink activation.
- *
+ */
 void CheckHardShrinkActivationCorrect(const arma::colvec input,
                                       const arma::colvec target)
 {
@@ -364,7 +364,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the HardShrink activation function derivative test.
@@ -374,7 +374,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the HardShrink activation
  * function.
  * @param target Target data used to evaluate the HardShrink activation.
- *
+ */
 void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
                                       const arma::colvec target)
 {
@@ -390,7 +390,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the Soft Shrink activation function test. The function is
@@ -399,7 +399,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the Soft Shrink activation
  * function.
  * @param target Target data used to evaluate the Soft Shrink activation.
- *
+ */
 void CheckSoftShrinkActivationCorrect(const arma::colvec input,
                                       const arma::colvec target)
 {
@@ -412,7 +412,7 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the Soft Shrink activation function derivative test.
@@ -422,7 +422,7 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the Soft Shrink activation
  * function.
  * @param target Target data used to evaluate the Soft Shrink activation.
- *
+ */
 void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
                                       const arma::colvec target)
 {
@@ -438,12 +438,12 @@ void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Simple SELU activation test to check whether the mean and variance remain
  * invariant after passing normalized inputs through the function.
- *
+ */
 TEST_CASE("SELUFunctionNormalizedTest", "[ActivationFunctionsTest]")
 {
   arma::mat input = arma::randn<arma::mat>(1000, 1);
@@ -459,12 +459,12 @@ TEST_CASE("SELUFunctionNormalizedTest", "[ActivationFunctionsTest]")
 
   REQUIRE(arma::as_scalar(arma::abs(arma::var(input) -
       arma::var(output))) <= 0.1);
-}*/
+}
 
 /**
  * Simple SELU activation test to check whether the mean and variance
  * vary significantly after passing unnormalized inputs through the function.
- *
+ */
 TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec input("5.96402758 0.9966824 0.99975321 1 \
@@ -481,13 +481,13 @@ TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
 
   REQUIRE(arma::as_scalar(arma::abs(arma::var(input) -
       arma::var(output))) >= 0.1);
-}*/
+}
 
 /**
  * Simple SELU derivative test to check whether the derivatives
  * produced by the activation function are correct.
  *
- *
+ */
 TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
 {
   arma::mat input = arma::ones<arma::mat>(1000, 1);
@@ -511,7 +511,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
 
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda() * selu.Alpha() - arma::mean(activations))) <= 10e-4);
-}*/
+}
 
 /**
  * Implementation of the CELU activation function test. The function is
@@ -519,7 +519,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
  *
  * @param input Input data used for evaluating the CELU activation function.
  * @param target Target data used to evaluate the CELU activation.
- *
+ */
 void CheckCELUActivationCorrect(const arma::colvec input,
                                 const arma::colvec target)
 {
@@ -533,7 +533,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the CELU activation function derivative test. The function
@@ -541,7 +541,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the CELU activation function.
  * @param target Target data used to evaluate the CELU activation.
- *
+ */
 void CheckCELUDerivativeCorrect(const arma::colvec input,
                                 const arma::colvec target)
 {
@@ -559,7 +559,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the ISRLU activation function test. The function is
@@ -567,7 +567,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the ISRLU activation function.
  * @param target Target data used to evaluate the ISRLU activation.
- *
+ */
 void CheckISRLUActivationCorrect(const arma::colvec input,
                                  const arma::colvec target)
 {
@@ -581,7 +581,7 @@ void CheckISRLUActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the ISRLU activation function derivative test. The function
@@ -589,7 +589,7 @@ void CheckISRLUActivationCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the ISRLU activation function.
  * @param target Target data used to evaluate the ISRLU activation.
- *
+ */
 void CheckISRLUDerivativeCorrect(const arma::colvec input,
                                  const arma::colvec target)
 {
@@ -607,7 +607,7 @@ void CheckISRLUDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the Softmin activation function test. The function is
@@ -615,7 +615,7 @@ void CheckISRLUDerivativeCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the Softmin activation function.
  * @param target Target data used to evaluate the Softmin activation.
- *
+ */
 void CheckSoftminActivationCorrect(const arma::colvec input,
                                    const arma::colvec target)
 {
@@ -629,7 +629,7 @@ void CheckSoftminActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the Softmin activation function derivative test.
@@ -637,7 +637,7 @@ void CheckSoftminActivationCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the Softmin activation function.
  * @param target Target data used to evaluate the Softmin activation.
- *
+ */
 void CheckSoftminDerivativeCorrect(const arma::colvec input,
                                    const arma::colvec target)
 {
@@ -658,7 +658,7 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the Flatten T Swish activation function test. The function is
@@ -667,7 +667,7 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the Flatten T Swish activation
  *     function.
  * @param target Target data used to evaluate the Flatten T Swish activation.
- *
+ */
 void CheckFlattenTSwishActivationCorrect(const arma::colvec input,
                                          const arma::colvec target)
 {
@@ -679,7 +679,7 @@ void CheckFlattenTSwishActivationCorrect(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the Softmin activation function derivative test.
@@ -687,7 +687,7 @@ void CheckFlattenTSwishActivationCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the Softmin activation function.
  * @param target Target data used to evaluate the Softmin activation.
- *
+ */
 void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
                                        const arma::colvec target)
 {
@@ -702,7 +702,7 @@ void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
   {
     REQUIRE(derivate.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Implementation of the ReLU6 activation function derivative test. The function
@@ -710,7 +710,7 @@ void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
  *
  * @param input Input data used for evaluating the ReLU6 activation function.
  * @param target Target data used to evaluate the ReLU6 activation.
- *
+ */
 void CheckReLU6Correct(const arma::colvec input,
                        const arma::colvec ActivationTarget,
                        const arma::colvec DerivativeTarget)
@@ -733,11 +733,11 @@ void CheckReLU6Correct(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(DerivativeTarget.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Basic test of the ReLU6 function.
- *
+ */
 TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
@@ -749,7 +749,7 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
   const arma::colvec desiredDerivatives("0.0 1.0 0.0 0.0 0.0");
 
   CheckReLU6Correct(activationData, desiredActivations, desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the tanh function.
@@ -847,7 +847,7 @@ TEST_CASE("LeakyReLUFunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Basic test of the HardTanH function.
- *
+ */
 TEST_CASE("HardTanHFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-1 1 1 -1 \
@@ -858,11 +858,11 @@ TEST_CASE("HardTanHFunctionTest", "[ActivationFunctionsTest]")
 
   CheckHardTanHActivationCorrect(activationData, desiredActivations);
   CheckHardTanHDerivativeCorrect(activationData, desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the ELU function.
- *
+ */
 TEST_CASE("ELUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.86466471 3.2 4.5 -1.0 \
@@ -873,7 +873,7 @@ TEST_CASE("ELUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckELUActivationCorrect(activationData, desiredActivations);
   CheckELUDerivativeCorrect(activationData, desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the softplus function.
@@ -898,7 +898,7 @@ TEST_CASE("SoftplusFunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Basic test of the PReLU function.
- *
+ */
 TEST_CASE("PReLUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 \
@@ -911,11 +911,11 @@ TEST_CASE("PReLUFunctionTest", "[ActivationFunctionsTest]")
   CheckPReLUActivationCorrect(activationData, desiredActivations);
   CheckPReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
   CheckPReLUGradientCorrect(activationData, desiredGradient);
-}*/
+}
 
 /**
  * Basic test of the CReLU function.
- *
+ */
 TEST_CASE("CReLUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("0 3.2 4.5 0 \
@@ -942,11 +942,11 @@ TEST_CASE("CReLUFunctionTest", "[ActivationFunctionsTest]")
     REQUIRE(derivatives.at(i) ==
         Approx(desiredDerivatives.at(i)).epsilon(1e-5));
   }
-}*/
+}
 
 /**
  * Basic test of the swish function.
- *
+ */
 TEST_CASE("SwishFunctionTest", "[ActivationFunctionsTest]")
 {
   // Hand-calculated values using Python interpreter.
@@ -961,7 +961,7 @@ TEST_CASE("SwishFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<SwishFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<SwishFunction>(desiredActivations,
                                         desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the hard sigmoid function.
@@ -1049,7 +1049,7 @@ TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Basic test of the Hard Shrink function.
- *
+ */
 TEST_CASE("HardShrinkFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-2 3.2 4.5 -100.2 1 -1 2 0");
@@ -1060,7 +1060,7 @@ TEST_CASE("HardShrinkFunctionTest", "[ActivationFunctionsTest]")
                                    desiredActivations);
   CheckHardShrinkDerivativeCorrect(desiredActivations,
                                    desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the Elliot function.
@@ -1104,7 +1104,7 @@ TEST_CASE("ElishFunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Basic test of the Soft Shrink function.
- *
+ */
 TEST_CASE("SoftShrinkFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
@@ -1115,11 +1115,11 @@ TEST_CASE("SoftShrinkFunctionTest", "[ActivationFunctionsTest]")
                                    desiredActivations);
   CheckSoftShrinkDerivativeCorrect(desiredActivations,
                                    desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the CELU activation function.
- *
+ */
 TEST_CASE("CELUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.86466472 3.2 4.5 \
@@ -1131,11 +1131,11 @@ TEST_CASE("CELUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckCELUActivationCorrect(activationData, desiredActivations);
   CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the ISRLU activation function.
- *
+ */
 TEST_CASE("ISRLUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.89442719 3.2 4.5 \
@@ -1147,7 +1147,7 @@ TEST_CASE("ISRLUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckISRLUActivationCorrect(activationData, desiredActivations);
   CheckISRLUDerivativeCorrect(activationData, desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the inverse quadratic function.
@@ -1275,7 +1275,7 @@ TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Basic test of the Softmin function.
- *
+ */
 TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec activationData("4.2 2.4 7.0 6.4");
@@ -1291,7 +1291,7 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
                                 desiredActivations);
   CheckSoftminDerivativeCorrect(activationData,
                                 desiredDerivatives);
-}*/
+}
 
 /**
  * Basic test of the Hard Swish function.
@@ -1360,7 +1360,7 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 
 /**
  * Basic test of Flatten T Swish function.
- *
+ */
 TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 {
   // Random Value.
@@ -1378,4 +1378,4 @@ TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 
   CheckFlattenTSwishActivationCorrect(input, desiredActivation);
   CheckFlattenTSwishDerivateCorrect(desiredActivation, desiredDerivation);
-}*/
+}

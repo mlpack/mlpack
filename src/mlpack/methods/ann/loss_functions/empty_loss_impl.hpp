@@ -20,24 +20,26 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-EmptyLossType<MatType>::EmptyLossType()
+template<typename InputDataType, typename OutputDataType>
+EmptyLoss<InputDataType, OutputDataType>::EmptyLoss()
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-double EmptyLossType<MatType>::Forward(
-    const MatType& /* prediction */, const MatType& /* target */)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+double EmptyLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& /* prediction */, const TargetType& /* target */)
 {
   return 0;
 }
 
-template<typename MatType>
-void EmptyLossType<MatType>::Backward(
-    const MatType& /* prediction */,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void EmptyLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& /* prediction */,
+    const TargetType& target,
+    LossType& loss)
 {
   loss = target;
 }

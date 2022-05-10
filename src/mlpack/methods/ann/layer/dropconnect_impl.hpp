@@ -17,160 +17,112 @@
 // In case it hasn't yet been included.
 #include "dropconnect.hpp"
 
-#include "linear.hpp"
+#include "../visitor/delete_visitor.hpp"
+#include "../visitor/forward_visitor.hpp"
+#include "../visitor/backward_visitor.hpp"
+#include "../visitor/gradient_visitor.hpp"
+#include "../visitor/parameters_set_visitor.hpp"
+#include "../visitor/parameters_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-DropConnectType<MatType>::DropConnectType() :
-    Layer<MatType>(),
+template<typename InputDataType, typename OutputDataType>
+DropConnect<InputDataType, OutputDataType>::DropConnect() :
     ratio(0.5),
     scale(2.0),
-    baseLayer(new LinearType<MatType>(0))
+    deterministic(true)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-DropConnectType<MatType>::DropConnectType(
+template<typename InputDataType, typename OutputDataType>
+DropConnect<InputDataType, OutputDataType>::DropConnect(
+    const size_t inSize,
     const size_t outSize,
     const double ratio) :
-    Layer<MatType>(),
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    baseLayer(new LinearType<MatType>(outSize))
+    baseLayer(new Linear<InputDataType, OutputDataType>(inSize, outSize))
 {
-  // Nothing to do.
+  network.push_back(baseLayer);
 }
 
-template<typename MatType>
-DropConnectType<MatType>::~DropConnectType()
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void DropConnect<InputDataType, OutputDataType>::Forward(
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
 {
-  delete baseLayer;
-}
-
-template<typename MatType>
-DropConnectType<MatType>::DropConnectType(const DropConnectType& other) :
-    Layer<MatType>(other),
-    ratio(other.ratio),
-    scale(other.scale),
-    baseLayer(other.baseLayer->Clone())
-{
-  // Nothing to do.
-}
-
-template<typename MatType>
-DropConnectType<MatType>::DropConnectType(DropConnectType&& other) :
-    Layer<MatType>(std::move(other)),
-    ratio(std::move(other.ratio)),
-    scale(std::move(other.scale)),
-    baseLayer(std::move(other.baseLayer))
-{
-  // Nothing to do.
-}
-
-template<typename MatType>
-DropConnectType<MatType>&
-DropConnectType<MatType>::operator=(const DropConnectType& other)
-{
-  if (&other != this)
+  // The DropConnect mask will not be multiplied in the deterministic mode
+  // (during testing).
+  if (deterministic)
   {
-    Layer<MatType>::operator=(other);
-    ratio = other.ratio;
-    scale = other.scale;
-    baseLayer = other.baseLayer->Clone();
-  }
-
-  return *this;
-}
-
-template<typename MatType>
-DropConnectType<MatType>&
-DropConnectType<MatType>::operator=(DropConnectType&& other)
-{
-  if (&other != this)
-  {
-    Layer<MatType>::operator=(std::move(other));
-    ratio = std::move(other.ratio);
-    scale = std::move(other.scale);
-    baseLayer = std::move(other.baseLayer);
-  }
-
-  return *this;
-}
-
-template<typename MatType>
-void DropConnectType<MatType>::Forward(const MatType& input, MatType& output)
-{
-  // The DropConnect mask will not be multiplied in testing mode.
-  if (!this->training)
-  {
-    baseLayer->Forward(input, output);
+    boost::apply_visitor(ForwardVisitor(input, output), baseLayer);
   }
   else
   {
     // Save weights for denoising.
-    denoise = baseLayer->Parameters();
+    boost::apply_visitor(ParametersVisitor(denoise), baseLayer);
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
-    mask = arma::randu<MatType>(denoise.n_rows, denoise.n_cols);
+    mask = arma::randu<arma::Mat<eT> >(denoise.n_rows, denoise.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
 
-    baseLayer->Parameters() = denoise % mask;
-    baseLayer->Forward(input, output);
+    arma::mat tmp = denoise % mask;
+    boost::apply_visitor(ParametersSetVisitor(tmp), baseLayer);
+
+    boost::apply_visitor(ForwardVisitor(input, output), baseLayer);
 
     output = output * scale;
   }
 }
 
-template<typename MatType>
-void DropConnectType<MatType>::Backward(
-    const MatType& input,
-    const MatType& gy,
-    MatType& g)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void DropConnect<InputDataType, OutputDataType>::Backward(
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
-  baseLayer->Backward(input, gy, g);
+  boost::apply_visitor(BackwardVisitor(input, gy, g), baseLayer);
 }
 
-template<typename MatType>
-void DropConnectType<MatType>::Gradient(
-    const MatType& input,
-    const MatType& error,
-    MatType& gradient)
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void DropConnect<InputDataType, OutputDataType>::Gradient(
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */)
 {
-  baseLayer->Gradient(input, error, gradient);
+  boost::apply_visitor(GradientVisitor(input, error),
+      baseLayer);
 
   // Denoise the weights.
-  baseLayer->Parameters() = denoise;
+  boost::apply_visitor(ParametersSetVisitor(denoise), baseLayer);
 }
 
-template<typename MatType>
-void DropConnectType<MatType>::ComputeOutputDimensions()
-{
-  // Propagate input dimensions to the base layer.
-  baseLayer->InputDimensions() = this->inputDimensions;
-  this->outputDimensions = baseLayer->OutputDimensions();
-}
-
-template<typename MatType>
-void DropConnectType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
-{
-  baseLayer->SetWeights(weightsPtr);
-}
-
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void DropConnectType<MatType>::serialize(
+void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<MatType>>(this));
+  // Delete the old network first, if needed.
+  if (cereal::is_loading<Archive>())
+  {
+    boost::apply_visitor(DeleteVisitor(), baseLayer);
+  }
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(scale));
-  ar(CEREAL_POINTER(baseLayer));
+  ar(CEREAL_VARIANT_POINTER(baseLayer));
+
+  if (cereal::is_loading<Archive>())
+  {
+    network.clear();
+    network.push_back(baseLayer);
+  }
 }
 
 }  // namespace ann

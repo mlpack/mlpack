@@ -24,7 +24,7 @@
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
@@ -33,7 +33,6 @@
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
-#include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/data/confusion_matrix.hpp>
 #include <ensmallen.hpp>
@@ -45,7 +44,6 @@ using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::cv;
 using namespace mlpack::naive_bayes;
-using namespace mlpack::perceptron;
 using namespace mlpack::regression;
 using namespace mlpack::tree;
 using namespace mlpack::data;
@@ -303,9 +301,10 @@ TEST_CASE("MSEMatResponsesTest", "[CVTest]")
   arma::mat data("1 2");
   arma::mat trainingResponses("1 2; 3 4");
 
-  FFN<MeanSquaredError, ConstInitialization> ffn(MeanSquaredError(),
+  FFN<MeanSquaredError<>, ConstInitialization> ffn(MeanSquaredError<>(),
     ConstInitialization(0));
-  ffn.Add<Linear>(2);
+  ffn.Add<Linear<>>(1, 2);
+  ffn.Add<IdentityLayer<>>();
 
   ens::RMSProp opt(0.2);
   opt.BatchSize() = 1;
@@ -601,33 +600,6 @@ TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
   // 10-fold cross-validation, no shuffling.
   KFoldCV<NaiveBayesClassifier<>, Accuracy> cv(10, data, labels, numClasses,
       false);
-
-  // We should succeed in classifying separately the first nine samples, and
-  // fail with the remaining one.
-  double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
-
-  REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
-
-  // Assert we can access a trained model without the exception of
-  // uninitialization.
-  REQUIRE_NOTHROW(cv.Model());
-}
-
-/**
- * Test k-fold cross-validation with the perceptron.
- */
-TEST_CASE("KFoldCVPerceptronTest", "[CVTest]")
-{
-  // The same as the test above (for Naive Bayes), but with the perceptron.
-
-  // Making a 10-points dataset. The last point should be classified wrong when
-  // it is tested separately.
-  arma::mat data("0 1 2 3 100 101 102 103 104 5");
-  arma::Row<size_t> labels("0 0 0 0 1 1 1 1 1 1");
-  size_t numClasses = 2;
-
-  // 10-fold cross-validation, no shuffling.
-  KFoldCV<Perceptron<>, Accuracy> cv(10, data, labels, numClasses);
 
   // We should succeed in classifying separately the first nine samples, and
   // fail with the remaining one.

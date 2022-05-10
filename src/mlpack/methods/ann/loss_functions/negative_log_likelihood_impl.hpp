@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/negative_log_likelihood_impl.hpp
  * @author Marcus Edel
  *
- * Implementation of the NegativeLogLikelihoodType class.
+ * Implementation of the NegativeLogLikelihood class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,19 +18,21 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-NegativeLogLikelihoodType<MatType>::NegativeLogLikelihoodType(
-    const bool reduction) : reduction(reduction)
+template<typename InputDataType, typename OutputDataType>
+NegativeLogLikelihood<InputDataType, OutputDataType>
+  ::NegativeLogLikelihood(const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-double NegativeLogLikelihoodType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  typedef typename MatType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
   ElemType lossSum = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
@@ -46,13 +48,14 @@ double NegativeLogLikelihoodType<MatType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename MatType>
-void NegativeLogLikelihoodType<MatType>::Backward(
-      const MatType& prediction,
-      const MatType& target,
-      MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
+      const PredictionType& prediction,
+      const TargetType& target,
+      LossType& loss)
 {
-  loss = arma::zeros<MatType>(prediction.n_rows, prediction.n_cols);
+  loss = arma::zeros<LossType>(prediction.n_rows, prediction.n_cols);
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
@@ -65,9 +68,9 @@ void NegativeLogLikelihoodType<MatType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void NegativeLogLikelihoodType<MatType>::serialize(
+void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(reduction));

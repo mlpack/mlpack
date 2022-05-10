@@ -18,28 +18,30 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType>
-CosineEmbeddingLossType<MatType>::CosineEmbeddingLossType(
+template<typename InputDataType, typename OutputDataType>
+CosineEmbeddingLoss<InputDataType, OutputDataType>::CosineEmbeddingLoss(
     const double margin, const bool similarity, const bool reduction):
     margin(margin), similarity(similarity), reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename MatType>
-typename MatType::elem_type CosineEmbeddingLossType<MatType>::Forward(
-    const MatType& prediction,
-    const MatType& target)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  typedef typename MatType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
 
   const size_t cols = prediction.n_cols;
   const size_t batchSize = prediction.n_elem / cols;
   if (arma::size(prediction) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 
-  arma::Col<ElemType> inputTemp1 = arma::vectorise(prediction);
-  arma::Col<ElemType> inputTemp2 = arma::vectorise(target);
+  arma::colvec inputTemp1 = arma::vectorise(prediction);
+  arma::colvec inputTemp2 = arma::vectorise(target);
   ElemType lossSum = 0.0;
 
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
@@ -62,24 +64,25 @@ typename MatType::elem_type CosineEmbeddingLossType<MatType>::Forward(
   return (ElemType) lossSum / batchSize;
 }
 
-template<typename MatType>
-void CosineEmbeddingLossType<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+template<typename InputDataType, typename OutputDataType>
+template<typename PredictionType, typename TargetType, typename LossType>
+void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
+    const PredictionType& prediction,
+    const TargetType& target,
+    LossType& loss)
 {
-  typedef typename MatType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
 
   const size_t cols = prediction.n_cols;
   const size_t batchSize = prediction.n_elem / cols;
   if (arma::size(prediction) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 
-  arma::Col<ElemType> inputTemp1 = arma::vectorise(prediction);
-  arma::Col<ElemType> inputTemp2 = arma::vectorise(target);
+  arma::colvec inputTemp1 = arma::vectorise(prediction);
+  arma::colvec inputTemp2 = arma::vectorise(target);
   loss.set_size(arma::size(inputTemp1));
 
-  arma::Col<ElemType> outputTemp(loss.memptr(), inputTemp1.n_elem,
+  arma::colvec outputTemp(loss.memptr(), inputTemp1.n_elem,
       false, false);
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
@@ -103,9 +106,9 @@ void CosineEmbeddingLossType<MatType>::Backward(
   }
 }
 
-template<typename MatType>
+template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void CosineEmbeddingLossType<MatType>::serialize(
+void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(margin));

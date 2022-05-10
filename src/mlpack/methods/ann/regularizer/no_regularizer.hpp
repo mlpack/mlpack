@@ -44,12 +44,6 @@ class NoRegularizer
   {
     // Nothing to do here.
   }
-
-  template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */)
-  {
-    // Nothing to do.
-  }
 };
 
 } // namespace ann

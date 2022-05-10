@@ -22,7 +22,7 @@
 
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
@@ -62,7 +62,7 @@ TEST_CASE("RewardClippedAcrobotWithDQN", "[RewardClippingTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> model(64, 32, 3);
+    SimpleDQN<> model(4, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1, 0.99);

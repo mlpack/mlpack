@@ -15,16 +15,18 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "layer.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
+
 
 /**
  * The dropout layer is a regularizer that randomly with probability 'ratio'
  * sets input values to zero and scales the remaining elements by factor 1 /
  * (1 - ratio) rather than during test time so as to keep the expected sum same.
- * When the layer is in testing mode, there is no change in the input.
+ * In the deterministic mode (during testing), there is no change in the input.
+ *
+ * Note: During training you should set deterministic to false and during
+ * testing you should set deterministic to true.
  *
  * For more information, see the following.
  *
@@ -41,11 +43,14 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class DropoutType : public Layer<MatType>
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
+class Dropout
 {
  public:
   /**
@@ -53,22 +58,19 @@ class DropoutType : public Layer<MatType>
    *
    * @param ratio The probability of setting a value to zero.
    */
-  DropoutType(const double ratio = 0.5);
+  Dropout(const double ratio = 0.5);
 
-  //! Clone the DropoutType object. This handles polymorphism correctly.
-  DropoutType* Clone() const { return new DropoutType(*this); }
+  //! Copy Constructor
+  Dropout(const Dropout& layer);
 
-  // Virtual destructor.
-  virtual ~DropoutType() { }
+  //! Move Constructor
+  Dropout(const Dropout&&);
 
-  //! Copy the given DropoutType.
-  DropoutType(const DropoutType& other);
-  //! Take ownership of the given DropoutType.
-  DropoutType(DropoutType&& other);
-  //! Copy the given DropoutType.
-  DropoutType& operator=(const DropoutType& other);
-  //! Take ownership of the given DropoutType.
-  DropoutType& operator=(DropoutType&& other);
+  //! Copy assignment operator
+  Dropout& operator=(const Dropout& layer);
+
+  //! Move assignment operator
+  Dropout& operator=(Dropout&& layer);
 
   /**
    * Ordinary feed forward pass of the dropout layer.
@@ -76,7 +78,8 @@ class DropoutType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of the dropout layer.
@@ -85,7 +88,25 @@ class DropoutType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */, const MatType& gy, MatType& g);
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
+
+  //! Get the output parameter.
+  OutputDataType const& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
+
+  //! Get the detla.
+  OutputDataType const& Delta() const { return delta; }
+  //! Modify the delta.
+  OutputDataType& Delta() { return delta; }
+
+  //! The value of the deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool& Deterministic() { return deterministic; }
 
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
@@ -104,20 +125,24 @@ class DropoutType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored mask object.
-  MatType mask;
+  //! Locally-stored delta object.
+  OutputDataType delta;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+
+  //! Locally-stored mast object.
+  OutputDataType mask;
 
   //! The probability of setting a value to zero.
   double ratio;
 
   //! The scale fraction.
   double scale;
-}; // class DropoutType
 
-// Convenience typedefs.
-
-// Standard Dropout layer.
-typedef DropoutType<arma::mat> Dropout;
+  //! If true dropout and scaling is disabled, see notes above.
+  bool deterministic;
+}; // class Dropout
 
 } // namespace ann
 } // namespace mlpack

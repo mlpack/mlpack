@@ -12,7 +12,6 @@
  */
 #include "linear_regression.hpp"
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/size_checks.hpp>
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -58,10 +57,6 @@ double LinearRegression::Train(const arma::mat& predictors,
   // We store the number of rows and columns of the predictors.
   // Reminder: Armadillo stores the data transposed from how we think of it,
   //           that is, columns are actually rows (see: column major order).
-
-  // Sanity check on data.
-  util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
-
   const size_t nCols = predictors.n_cols;
 
   arma::mat p = predictors;
@@ -100,11 +95,7 @@ void LinearRegression::Predict(const arma::mat& points,
   {
     // We want to be sure we have the correct number of dimensions in the
     // dataset.
-    // Prevent underflow.
-    const size_t labels = (parameters.n_rows == 0) ? size_t(0) :
-        size_t(parameters.n_rows - 1);
-    util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()", 
-        "points");
+    Log::Assert(points.n_rows == parameters.n_rows - 1);
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
     predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
@@ -116,8 +107,7 @@ void LinearRegression::Predict(const arma::mat& points,
   {
     // We want to be sure we have the correct number of dimensions in
     // the dataset.
-    util::CheckSameDimensionality(points, parameters, 
-        "LinearRegression::Predict()", "points");
+    Log::Assert(points.n_rows == parameters.n_rows);
     predictions = arma::trans(parameters) * points;
   }
 }
@@ -125,9 +115,6 @@ void LinearRegression::Predict(const arma::mat& points,
 double LinearRegression::ComputeError(const arma::mat& predictors,
                                       const arma::rowvec& responses) const
 {
-  // Sanity check on data.
-  util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
-  
   // Get the number of columns and rows of the dataset.
   const size_t nCols = predictors.n_cols;
   const size_t nRows = predictors.n_rows;

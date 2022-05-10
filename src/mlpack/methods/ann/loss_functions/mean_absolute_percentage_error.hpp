@@ -37,17 +37,22 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
-template<typename MatType = arma::mat>
-class MeanAbsolutePercentageErrorType
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class MeanAbsolutePercentageError
 {
  public:
   /**
-   * Create the MeanAbsolutePercentageErrorType object.
+   * Create the MeanAbsolutePercentageError object.
    */
-  MeanAbsolutePercentageErrorType();
+  MeanAbsolutePercentageError();
 
   /**
    * Computes the mean absolute percentage error function.
@@ -56,8 +61,9 @@ class MeanAbsolutePercentageErrorType
    *     function.
    * @param target The target vector.
    */
-  typename MatType::elem_type Forward(const MatType& prediction,
-                                      const MatType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -67,19 +73,26 @@ class MeanAbsolutePercentageErrorType
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
-                MatType& loss);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   /**
-   * Serialize the layer.
-   */
+  * Serialize the layer.
+  */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */) { }
-}; // class MeanAbsolutePercentageErrorType
+  void serialize(Archive& ar, const unsigned int /* version */);
 
-// Default typedef for typical `arma::mat` usage.
-typedef MeanAbsolutePercentageErrorType<arma::mat> MeanAbsolutePercentageError;
+ private:
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
+}; // class MeanAbsolutePercentageError
 
 } // namespace ann
 } // namespace mlpack

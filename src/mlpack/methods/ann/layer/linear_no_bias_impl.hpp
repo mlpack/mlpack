@@ -19,136 +19,135 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType() :
-    Layer<MatType>(),
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias() :
     inSize(0),
     outSize(0)
 {
   // Nothing to do here.
 }
 
-template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
-    Layer<MatType>(),
-    inSize(0), // This will be set by ComputeOutputDimensions().
+    inSize(inSize),
     outSize(outSize),
     regularizer(regularizer)
 {
-  // Nothing to do.
+  weights.set_size(WeightSize(), 1);
 }
 
-template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
-    const LinearNoBiasType& layer) :
-    Layer<MatType>(layer),
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    const LinearNoBias& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
+    weights(layer.weights),
     regularizer(layer.regularizer)
 {
   // Nothing to do here.
 }
 
-template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType(
-    LinearNoBiasType&& layer) :
-    Layer<MatType>(std::move(layer)),
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
+    LinearNoBias&& layer) :
     inSize(0),
     outSize(0),
+    weights(std::move(layer.weights)),
     regularizer(std::move(layer.regularizer))
 {
   // Nothing to do here.
 }
 
-template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>&
-LinearNoBiasType<MatType, RegularizerType>::operator=(
-    const LinearNoBiasType& layer)
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>&
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::
+operator=(const LinearNoBias& layer)
 {
   if (this != &layer)
   {
-    Layer<MatType>::operator=(layer);
     inSize = layer.inSize;
     outSize = layer.outSize;
+    weights = layer.weights;
     regularizer = layer.regularizer;
   }
-
   return *this;
 }
 
-template<typename MatType, typename RegularizerType>
-LinearNoBiasType<MatType, RegularizerType>&
-LinearNoBiasType<MatType, RegularizerType>::operator=(
-    LinearNoBiasType&& layer)
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>&
+LinearNoBias<InputDataType, OutputDataType, RegularizerType>::
+operator=(LinearNoBias&& layer)
 {
   if (this != &layer)
   {
-    Layer<MatType>::operator=(std::move(layer));
-    inSize = std::move(layer.inSize);
-    outSize = std::move(layer.outSize);
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = std::move(layer.weights);
     regularizer = std::move(layer.regularizer);
   }
-
   return *this;
 }
 
-template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
-  MakeAlias(weight, weightsPtr, outSize, inSize);
+  weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
 }
 
-template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::Forward(
-    const MatType& input, MatType& output)
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+template<typename eT>
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Forward(
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   output = weight * input;
 }
 
-template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+template<typename eT>
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Backward(
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   g = weight.t() * gy;
 }
 
-template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::Gradient(
-    const MatType& input,
-    const MatType& error,
-    MatType& gradient)
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+template<typename eT>
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Gradient(
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
-  regularizer.Evaluate(weight, gradient);
+  regularizer.Evaluate(weights, gradient);
 }
 
-template<typename MatType, typename RegularizerType>
-void LinearNoBiasType<MatType, RegularizerType>::ComputeOutputDimensions()
-{
-  inSize = this->inputDimensions[0];
-  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
-    inSize *= this->inputDimensions[i];
-
-  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
-      1);
-
-  this->outputDimensions[0] = outSize;
-}
-
-template<typename MatType, typename RegularizerType>
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 template<typename Archive>
-void LinearNoBiasType<MatType, RegularizerType>::serialize(
+void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<MatType>>(this));
-
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(regularizer));
+
+  // This is inefficient, but necessary so that WeightSetVisitor sets the right
+  // size.
+  if (cereal::is_loading<Archive>())
+    weights.set_size(outSize * inSize, 1);
 }
 
 } // namespace ann
