@@ -1,5 +1,5 @@
 /**
- * @file methods/matrix_completion/matrix_completion.cpp
+ * @file methods/matrix_completion/matrix_completion_impl.hpp
  * @author Stephen Tu
  *
  * Implementation of MatrixCompletion class.
@@ -9,41 +9,55 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
+#define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
 
 #include "matrix_completion.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
 
-MatrixCompletion::MatrixCompletion(const size_t m,
-                                   const size_t n,
-                                   const arma::umat& indices,
-                                   const arma::vec& values,
-                                   const size_t r) :
-    m(m), n(n), indices(indices), values(values),
+inline MatrixCompletion::MatrixCompletion(
+    const size_t m,
+    const size_t n,
+    const arma::umat& indices,
+    const arma::vec& values,
+    const size_t r) :
+    m(m),
+    n(n),
+    indices(indices),
+    values(values),
     sdp(indices.n_cols, 0, arma::randu<arma::mat>(m + n, r))
 {
   CheckValues();
   InitSDP();
 }
 
-MatrixCompletion::MatrixCompletion(const size_t m,
-                                   const size_t n,
-                                   const arma::umat& indices,
-                                   const arma::vec& values,
-                                   const arma::mat& initialPoint) :
-    m(m), n(n), indices(indices), values(values),
+inline MatrixCompletion::MatrixCompletion(
+    const size_t m,
+    const size_t n,
+    const arma::umat& indices,
+    const arma::vec& values,
+    const arma::mat& initialPoint) :
+    m(m),
+    n(n),
+    indices(indices),
+    values(values),
     sdp(indices.n_cols, 0, initialPoint)
 {
   CheckValues();
   InitSDP();
 }
 
-MatrixCompletion::MatrixCompletion(const size_t m,
-                                   const size_t n,
-                                   const arma::umat& indices,
-                                   const arma::vec& values) :
-    m(m), n(n), indices(indices), values(values),
+inline MatrixCompletion::MatrixCompletion(
+    const size_t m,
+    const size_t n,
+    const arma::umat& indices,
+    const arma::vec& values) :
+    m(m),
+    n(n),
+    indices(indices),
+    values(values),
     sdp(indices.n_cols, 0,
         arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
 {
@@ -51,7 +65,7 @@ MatrixCompletion::MatrixCompletion(const size_t m,
   InitSDP();
 }
 
-void MatrixCompletion::CheckValues()
+inline void MatrixCompletion::CheckValues()
 {
   if (indices.n_rows != 2)
   {
@@ -77,7 +91,7 @@ void MatrixCompletion::CheckValues()
   }
 }
 
-void MatrixCompletion::InitSDP()
+inline void MatrixCompletion::InitSDP()
 {
   sdp.SDP().C().eye(m + n, m + n);
   sdp.SDP().SparseB() = 2. * values;
@@ -90,7 +104,7 @@ void MatrixCompletion::InitSDP()
   }
 }
 
-void MatrixCompletion::Recover(arma::mat& recovered)
+inline void MatrixCompletion::Recover(arma::mat& recovered)
 {
   recovered = sdp.Function().GetInitialPoint();
   sdp.Optimize(recovered);
@@ -98,7 +112,7 @@ void MatrixCompletion::Recover(arma::mat& recovered)
   recovered = recovered(arma::span(0, m - 1), arma::span(m, m + n - 1));
 }
 
-size_t MatrixCompletion::DefaultRank(const size_t m,
+inline size_t MatrixCompletion::DefaultRank(const size_t m,
                                      const size_t n,
                                      const size_t p)
 {
@@ -118,3 +132,5 @@ size_t MatrixCompletion::DefaultRank(const size_t m,
 
 } // namespace matrix_completion
 } // namespace mlpack
+
+#endif
