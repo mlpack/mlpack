@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   randomized_block_krylov_svd.hpp
-  randomized_block_krylov_svd.cpp
+  randomized_block_krylov_svd_impl.hpp
 )
 
 # Add directory name to sources.

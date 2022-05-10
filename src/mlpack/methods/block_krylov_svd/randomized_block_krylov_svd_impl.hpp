@@ -1,5 +1,5 @@
 /**
- * @file methods/block_krylov_svd/randomized_block_krylov_svd.cpp
+ * @file methods/block_krylov_svd/randomized_block_krylov_svd_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the randomized block krylov SVD method.
@@ -9,19 +9,22 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_BLOCK_KRYLOV_SVD_RANDOMIZED_BLOCK_KRYLOV_SVD_IMPL_HPP
+#define MLPACK_METHODS_BLOCK_KRYLOV_SVD_RANDOMIZED_BLOCK_KRYLOV_SVD_IMPL_HPP
 
 #include "randomized_block_krylov_svd.hpp"
 
 namespace mlpack {
 namespace svd {
 
-RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(const arma::mat& data,
-                                                   arma::mat& u,
-                                                   arma::vec& s,
-                                                   arma::mat& v,
-                                                   const size_t maxIterations,
-                                                   const size_t rank,
-                                                   const size_t blockSize) :
+inline RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(
+    const arma::mat& data,
+    arma::mat& u,
+    arma::vec& s,
+    arma::mat& v,
+    const size_t maxIterations,
+    const size_t rank,
+    const size_t blockSize) :
     maxIterations(maxIterations),
     blockSize(blockSize)
 {
@@ -35,19 +38,20 @@ RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(const arma::mat& data,
   }
 }
 
-RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(const size_t maxIterations,
-                                                   const size_t blockSize) :
+inline RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(
+    const size_t maxIterations,
+    const size_t blockSize) :
     maxIterations(maxIterations),
     blockSize(blockSize)
 {
   /* Nothing to do here */
 }
 
-void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
-                                     arma::mat& u,
-                                     arma::vec& s,
-                                     arma::mat& v,
-                                     const size_t rank)
+inline void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
+                                            arma::mat& u,
+                                            arma::vec& s,
+                                            arma::mat& v,
+                                            const size_t rank)
 {
   arma::mat Q, R, block, blockIteration;
 
@@ -94,3 +98,5 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
 
 } // namespace svd
 } // namespace mlpack
+
+#endif
