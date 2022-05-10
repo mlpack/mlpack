@@ -3,7 +3,6 @@
 set(SOURCES
   lars.hpp
   lars_impl.hpp
-  lars.cpp
 )
 
 # add directory name to sources
