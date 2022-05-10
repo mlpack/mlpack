@@ -17,9 +17,9 @@
 #include <mlpack/methods/lars/lars.hpp>
 
 // Include three simple dictionary initializers from sparse coding.
-#include "../sparse_coding/nothing_initializer.hpp"
-#include "../sparse_coding/data_dependent_random_initializer.hpp"
-#include "../sparse_coding/random_initializer.hpp"
+#include <mlpack/methods/sparse_coding/nothing_initializer.hpp>
+#include <mlpack/methods/sparse_coding/data_dependent_random_initializer.hpp>
+#include <mlpack/methods/sparse_coding/random_initializer.hpp>
 
 namespace mlpack {
 namespace lcc {
