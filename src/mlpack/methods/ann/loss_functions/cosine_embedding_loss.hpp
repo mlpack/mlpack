@@ -26,21 +26,16 @@ namespace ann /** Artificial Neural Network. */ {
  * f(x) = 1 - cos(x1, x2) , for y = 1
  * f(x) = max(0, cos(x1, x2) - margin) , for y = -1
  * @f}
- * 
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class CosineEmbeddingLoss
+template<typename MatType = arma::mat>
+class CosineEmbeddingLossType
 {
  public:
   /**
-   * Create the CosineEmbeddingLoss object.
+   * Create the CosineEmbeddingLossType object.
    *
    * @param margin Increases cosine distance in case of dissimilarity.
    *               Refer definition of cosine-embedding-loss above.
@@ -52,7 +47,7 @@ class CosineEmbeddingLoss
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  CosineEmbeddingLoss(const double margin = 0.0,
+  CosineEmbeddingLossType(const double margin = 0.0,
                       const bool similarity = true,
                       const bool reduction = true);
 
@@ -63,9 +58,8 @@ class CosineEmbeddingLoss
    *     function.
    * @param target The target vector.
    */
-  template <typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -75,25 +69,9 @@ class CosineEmbeddingLoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
@@ -118,15 +96,6 @@ class CosineEmbeddingLoss
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally-stored value of margin hyper-parameter.
   double margin;
 
@@ -135,7 +104,10 @@ class CosineEmbeddingLoss
 
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class CosineEmbeddingLoss
+}; // class CosineEmbeddingLossType
+
+// Default typedef for typical `arma::mat` usage.
+typedef CosineEmbeddingLossType<arma::mat> CosineEmbeddingLoss;
 
 } // namespace ann
 } // namespace mlpack

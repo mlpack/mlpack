@@ -26,18 +26,27 @@ namespace util {
  *     error generation.
  * @param addInfo Name to use for labels for precise error generation. Default
  *     is "labels"; for example, "weights" could also be used.
+ * @param isDataTranspose Bool parameter which can be set true to transpose data
+ *     before size-check. Default is false.
+ * @param isLabelTranspose Bool parameter which can be set true to transpose label
+ *     before size-check. Default is false.
  */
 template<typename DataType, typename LabelsType>
 inline void CheckSameSizes(const DataType& data,
                            const LabelsType& label,
                            const std::string& callerDescription,
-                           const std::string& addInfo = "labels")
-{
-  if (data.n_cols != label.n_cols)
+                           const std::string& addInfo = "labels",
+                           const bool& isDataTranspose = false,
+                           const bool& isLabelTranspose = false)
+{ 
+  const size_t dataPoints = (isDataTranspose == true) ? data.n_rows : data.n_cols;
+  const size_t labelPoints = (isLabelTranspose == true) ? label.n_rows : label.n_cols;
+  
+  if (dataPoints != labelPoints)
   {
     std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of " << addInfo << " (" << label.n_cols
+    oss << callerDescription << ": number of points (" << dataPoints << ") "
+        << "does not match number of " << addInfo << " (" << labelPoints
         << ")!" << std::endl;
     throw std::invalid_argument(oss.str());
   }

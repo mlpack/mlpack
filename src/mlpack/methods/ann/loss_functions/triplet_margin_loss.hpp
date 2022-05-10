@@ -24,38 +24,34 @@ namespace ann /** Artificial Neural Network. */ {
  * of the positive (truthy) and negative (falsy) inputs.
  * The distance between two samples A and B is defined as square of L2 norm
  * of A-B.
- * 
+ *
  * For more information, refer the following paper.
  *
  * @code
  * @article{Schroff2015,
  *   author  = {Florian Schroff, Dmitry Kalenichenko, James Philbin},
- *   title   = {FaceNet: A Unified Embedding for Face Recognition and Clustering},
+ *   title   = {FaceNet: A Unified Embedding for Face Recognition and
+ *              Clustering},
  *   year    = {2015},
  *   url     = {https://arxiv.org/abs/1503.03832},
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class TripletMarginLoss
+template<typename MatType = arma::mat>
+class TripletMarginLossType
 {
  public:
   /**
-   * Create the TripletMarginLoss object.
+   * Create the TripletMarginLossType object.
    * 
    * @param margin The minimum value by which the distance between 
    *               Anchor and Negative sample exceeds the distance 
    *               between Anchor and Positive sample.
    */
-  TripletMarginLoss(const double margin = 1.0);
+  TripletMarginLossType(const double margin = 1.0);
 
   /**
    * Computes the Triplet Margin Loss function.
@@ -63,9 +59,9 @@ class TripletMarginLoss
    * @param prediction Concatenated anchor and positive sample.
    * @param target The negative sample.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                        const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -73,15 +69,9 @@ class TripletMarginLoss
    * @param target The negative sample.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the value of margin.
   double Margin() const { return margin; }
@@ -95,12 +85,12 @@ class TripletMarginLoss
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! The margin value used in calculating Triplet Margin Loss.
   double margin;
-}; // class TripletLossMargin
+}; // class TripletMarginLoss
+
+// Default typedef for typical `arma::mat` usage.
+typedef TripletMarginLossType<arma::mat> TripletMarginLoss;
 
 } // namespace ann
 } // namespace mlpack

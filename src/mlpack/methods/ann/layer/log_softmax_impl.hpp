@@ -18,18 +18,54 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-LogSoftMax<InputDataType, OutputDataType>::LogSoftMax()
+template<typename MatType>
+LogSoftMaxType<MatType>::LogSoftMaxType()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename OutputType>
-void LogSoftMax<InputDataType, OutputDataType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+LogSoftMaxType<MatType>::LogSoftMaxType(const LogSoftMaxType& other) :
+    Layer<MatType>(other)
 {
-  arma::mat maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
+  // Nothing to do here.
+}
+
+template<typename MatType>
+LogSoftMaxType<MatType>::LogSoftMaxType(LogSoftMaxType&& other) :
+    Layer<MatType>(std::move(other))
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+LogSoftMaxType<MatType>&
+LogSoftMaxType<MatType>::operator=(const LogSoftMaxType& other)
+{
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(other);
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+LogSoftMaxType<MatType>&
+LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
+{
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(std::move(other));
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
+{
+  MatType maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
 
   // Approximation of the base-e exponential function. The acuracy however is
@@ -61,23 +97,13 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
   output = input - maxInput;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void LogSoftMax<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename MatType>
+void LogSoftMaxType<MatType>::Backward(
+    const MatType& input,
+    const MatType& gy,
+    MatType& g)
 {
   g = arma::exp(input) + gy;
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename Archive>
-void LogSoftMax<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const uint32_t /* version */)
-{
-  // Nothing to do here.
 }
 
 } // namespace ann

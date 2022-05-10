@@ -13,98 +13,90 @@
 #define MLPACK_METHODS_ANN_LAYER_ADD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Add module class. The Add module applies a bias term
- * to the incoming data.
+ * Implementation of the Add layer. The Add module applies a bias term to the
+ * incoming data.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class Add
+template<typename MatType>
+class AddType : public Layer<MatType>
 {
  public:
   /**
-   * Create the Add object using the specified number of output units.
-   *
-   * @param outSize The number of output units.
+   * Create the AddType object.  The output size of the layer will be the same
+   * as the input size.
    */
-  Add(const size_t outSize = 0);
+  AddType();
+
+  //! Clone the AddType object. This handles polymorphism correctly.
+  AddType* Clone() const { return new AddType(*this); }
+
+  // Virtual destructor.
+  virtual ~AddType() { }
+
+  //! Copy the given AddType layer.
+  AddType(const AddType& other);
+  //! Take ownership of the given AddType layer.
+  AddType(AddType&& other);
+  //! Copy the given AddType layer.
+  AddType& operator=(const AddType& other);
+  //! Take ownership of the given AddType layer.
+  AddType& operator=(AddType&& other);
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
+   * Forward pass: add the bias to the input.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
+   * Backward pass: send weights backwards (the bias does not affect anything).
    *
    * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
-   * Calculate the gradient using the output delta and the input activation.
+   * Calculate the gradient using the output and the input activation.
    *
    * @param * (input) The propagated input.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const MatType& /* input */,
+                const MatType& error,
+                MatType& gradient);
 
-  //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  //! Return the weights of the network.
+  const MatType& Parameters() const { return weights; }
+  //! Modify the weights of the network.
+  MatType& Parameters() { return weights; }
 
   //! Get the size of weights.
   size_t WeightSize() const { return outSize; }
 
+  //! Compute the output dimensions of the layer, based on the internal values
+  //! of `InputDimensions()`.
+  void ComputeOutputDimensions();
+
+  //! Set the weights of the layer to use the given memory.
+  void SetWeights(typename MatType::elem_type* weightPtr);
+
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -114,17 +106,11 @@ class Add
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  MatType weights;
 }; // class Add
+
+// Standard Add layer.
+typedef AddType<arma::mat> Add;
 
 } // namespace ann
 } // namespace mlpack

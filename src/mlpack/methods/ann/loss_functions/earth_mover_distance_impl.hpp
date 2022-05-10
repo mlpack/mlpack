@@ -18,22 +18,19 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-EarthMoverDistance<InputDataType, OutputDataType>
-  ::EarthMoverDistance(const bool reduction) : reduction(reduction)
+template<typename MatType>
+EarthMoverDistanceType<MatType>::EarthMoverDistanceType(const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-EarthMoverDistance<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+typename MatType::elem_type EarthMoverDistanceType<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  typename PredictionType::elem_type lossSum = 
-      -arma::accu(target % prediction);
+  typename MatType::elem_type lossSum = -arma::accu(target % prediction);
 
   if (reduction)
     return lossSum;
@@ -41,12 +38,11 @@ EarthMoverDistance<InputDataType, OutputDataType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
-    const PredictionType& /* prediction */,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+void EarthMoverDistanceType<MatType>::Backward(
+    const MatType& /* prediction */,
+    const MatType& target,
+    MatType& loss)
 {
   loss = -target;
 
@@ -54,9 +50,9 @@ void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void EarthMoverDistance<InputDataType, OutputDataType>::serialize(
+void EarthMoverDistanceType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

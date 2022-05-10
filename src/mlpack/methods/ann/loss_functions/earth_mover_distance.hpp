@@ -21,20 +21,15 @@ namespace ann /** Artificial Neural Network. */ {
  * The earth mover distance function measures the network's performance
  * according to the Kantorovich-Rubinstein duality approximation.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class EarthMoverDistance
+template<typename MatType = arma::mat>
+class EarthMoverDistanceType
 {
  public:
   /**
-   * Create the EarthMoverDistance object.
+   * Create the EarthMoverDistanceType object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -42,7 +37,7 @@ class EarthMoverDistance
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  EarthMoverDistance(const bool reduction = true);
+  EarthMoverDistanceType(const bool reduction = true);
 
   /**
    * Ordinary feed forward pass of a neural network.
@@ -51,9 +46,8 @@ class EarthMoverDistance
    *     function.
    * @param target The target vector.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -63,15 +57,9 @@ class EarthMoverDistance
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
@@ -86,12 +74,12 @@ class EarthMoverDistance
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-  
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class EarthMoverDistance
+}; // class EarthMoverDistanceType
+
+// Default typedef for typical `arma::mat` usage.
+typedef EarthMoverDistanceType<arma::mat> EarthMoverDistance;
 
 } // namespace ann
 } // namespace mlpack

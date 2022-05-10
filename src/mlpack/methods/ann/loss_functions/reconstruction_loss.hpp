@@ -23,22 +23,19 @@ namespace ann /** Artificial Neural Network. */ {
  * performance equal to the negative log probability of the target with
  * the input distribution.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  * @tparam DistType The type of distribution parametrized by the input.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename DistType = BernoulliDistribution<InputDataType>
+template<
+    typename MatType = arma::mat,
+    typename DistType = BernoulliDistribution<MatType>
 >
-class ReconstructionLoss
+class ReconstructionLossType
 {
  public:
   /**
-   * Create the ReconstructionLoss object.
+   * Create the ReconstructionLossType object.
    *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
@@ -46,7 +43,7 @@ class ReconstructionLoss
    *                  'sum' reduction is used and the output will be summed. It
    *                  is set to true by default.
    */
-  ReconstructionLoss(const bool reduction = true);
+  ReconstructionLossType(const bool reduction = true);
 
   /**
    * Computes the reconstruction loss.
@@ -55,9 +52,8 @@ class ReconstructionLoss
    *     function.
    * @param target The target matrix.
    */
-  template<typename PredictionType, typename TargetType>
-  typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                             const TargetType& target);
+  typename MatType::elem_type Forward(const MatType& prediction,
+                                      const MatType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -67,15 +63,9 @@ class ReconstructionLoss
    * @param target The target matrix.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType, typename LossType>
-  void Backward(const PredictionType& prediction,
-                const TargetType& target,
-                LossType& loss);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  void Backward(const MatType& prediction,
+                const MatType& target,
+                MatType& loss);
 
   //! Get the reduction type, represented as boolean
   //! (false 'mean' reduction, true 'sum' reduction).
@@ -93,12 +83,12 @@ class ReconstructionLoss
   //! Locally-stored distribution object.
   DistType dist;
 
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Boolean value that tells if reduction is 'sum' or 'mean'.
   bool reduction;
-}; // class ReconstructionLoss
+}; // class ReconstructionLossType
+
+// Default typedef for typical `arma::mat` usage.
+typedef ReconstructionLossType<arma::mat> ReconstructionLoss;
 
 } // namespace ann
 } // namespace mlpack

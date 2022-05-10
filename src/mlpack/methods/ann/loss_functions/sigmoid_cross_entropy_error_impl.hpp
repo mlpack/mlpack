@@ -20,21 +20,21 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-SigmoidCrossEntropyError<InputDataType, OutputDataType>
-::SigmoidCrossEntropyError(const bool reduction): reduction(reduction)
+template<typename MatType>
+SigmoidCrossEntropyErrorType<MatType>::SigmoidCrossEntropyErrorType(
+    const bool reduction) :
+    reduction(reduction)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-inline typename PredictionType::elem_type
-SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+template<typename MatType>
+inline typename MatType::elem_type
+SigmoidCrossEntropyErrorType<MatType>::Forward(
+    const MatType& prediction,
+    const MatType& target)
 {
-  typedef typename PredictionType::elem_type ElemType;
+  typedef typename MatType::elem_type ElemType;
   ElemType maximum = 0;
   for (size_t i = 0; i < prediction.n_elem; ++i)
   {
@@ -50,12 +50,11 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
   return lossSum / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType, typename LossType>
-inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
-    const PredictionType& prediction,
-    const TargetType& target,
-    LossType& loss)
+template<typename MatType>
+inline void SigmoidCrossEntropyErrorType<MatType>::Backward(
+    const MatType& prediction,
+    const MatType& target,
+    MatType& loss)
 {
   loss = 1.0 / (1.0 + arma::exp(-prediction)) - target;
 
@@ -63,10 +62,10 @@ inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
     loss = loss / target.n_elem;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void SigmoidCrossEntropyError<InputDataType, OutputDataType>::serialize(
-    Archive& ar ,
+void SigmoidCrossEntropyErrorType<MatType>::serialize(
+    Archive& ar,
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(reduction));

@@ -18,107 +18,92 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-NoisyLinear<InputDataType, OutputDataType>::NoisyLinear() :
-    inSize(0),
-    outSize(0)
+template<typename MatType>
+NoisyLinearType<MatType>::NoisyLinearType(const size_t outSize) :
+    Layer<MatType>(),
+    outSize(outSize),
+    inSize(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
-  const NoisyLinear& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    weights(layer.weights)
+template<typename MatType>
+NoisyLinearType<MatType>::NoisyLinearType(const NoisyLinearType& other) :
+    Layer<MatType>(other),
+    outSize(other.outSize),
+    inSize(other.inSize)
 {
-  Reset();
+  // Nothing to do.
 }
 
-template<typename InputDataType, typename OutputDataType>
-NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
+template<typename MatType>
+NoisyLinearType<MatType>::NoisyLinearType(NoisyLinearType&& other) :
+    Layer<MatType>(std::move(other)),
+    outSize(std::move(other.outSize)),
+    inSize(std::move(other.inSize))
 {
-  weights.set_size(WeightSize(), 1);
-  weightEpsilon.set_size(outSize, inSize);
-  biasEpsilon.set_size(outSize, 1);
+  // Nothing to do.
 }
 
-template<typename InputDataType, typename OutputDataType>
-NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
-    NoisyLinear&& layer) :
-    inSize(std::move(layer.inSize)),
-    outSize(std::move(layer.outSize)),
-    weights(std::move(layer.weights))
+template<typename MatType>
+NoisyLinearType<MatType>&
+NoisyLinearType<MatType>::operator=(const NoisyLinearType& other)
 {
-  layer.inSize = 0;
-  layer.outSize = 0;
-  layer.weights = nullptr;
-  Reset();
-}
-
-template<typename InputDataType, typename OutputDataType>
-NoisyLinear<InputDataType, OutputDataType>&
-NoisyLinear<InputDataType, OutputDataType>::operator=(const NoisyLinear& layer)
-{
-  if (this != &layer)
+  if (&other != this)
   {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = layer.weights;
-    Reset();
+    Layer<MatType>::operator=(other);
+    outSize = other.outSize;
+    inSize = other.inSize;
   }
+
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType>
-NoisyLinear<InputDataType, OutputDataType>&
-NoisyLinear<InputDataType, OutputDataType>::operator=(NoisyLinear&& layer)
+template<typename MatType>
+NoisyLinearType<MatType>&
+NoisyLinearType<MatType>::operator=(NoisyLinearType&& other)
 {
-  if (this != &layer)
+  if (&other != this)
   {
-    inSize = std::move(layer.inSize);
-    layer.inSize = 0;
-    outSize = std::move(layer.outSize);
-    layer.outSize = 0;
-    weights = std::move(layer.weights);
-    layer.weights = nullptr;
-    Reset();
+    Layer<MatType>::operator=(std::move(other));
+    outSize = std::move(other.outSize);
+    inSize = std::move(other.inSize);
   }
+
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void NoisyLinear<InputDataType, OutputDataType>::Reset()
+template<typename MatType>
+void NoisyLinearType<MatType>::SetWeights(
+    typename MatType::elem_type* weightsPtr)
 {
-  weightMu = arma::mat(weights.memptr(),
-      outSize, inSize, false, false);
-  biasMu = arma::mat(weights.memptr() + weightMu.n_elem,
-      outSize, 1, false, false);
-  weightSigma = arma::mat(weights.memptr() + weightMu.n_elem + biasMu.n_elem,
-      outSize, inSize, false, false);
-  biasSigma = arma::mat(weights.memptr() + weightMu.n_elem * 2 + biasMu.n_elem,
-      outSize, 1, false, false);
+  MakeAlias(weights, weightsPtr, 1, (outSize * inSize + outSize) * 2);
+
+  MakeAlias(weightMu, weightsPtr, outSize, inSize);
+  MakeAlias(biasMu, weightsPtr + weightMu.n_elem, outSize, 1);
+  MakeAlias(weightSigma, weightsPtr + weightMu.n_elem + biasMu.n_elem, outSize,
+      inSize);
+  MakeAlias(biasSigma, weightsPtr + weightMu.n_elem * 2 + biasMu.n_elem,
+      outSize, 1);
+
   this->ResetNoise();
 }
 
-template<typename InputDataType, typename OutputDataType>
-void NoisyLinear<InputDataType, OutputDataType>::ResetNoise()
+template<typename MatType>
+void NoisyLinearType<MatType>::ResetNoise()
 {
-  arma::mat epsilonIn = arma::randn<arma::mat>(inSize, 1);
+  MatType epsilonIn = arma::randn<MatType>(inSize, 1);
   epsilonIn = arma::sign(epsilonIn) % arma::sqrt(arma::abs(epsilonIn));
-  arma::mat epsilonOut = arma::randn<arma::mat>(outSize, 1);
+
+  MatType epsilonOut = arma::randn<MatType>(outSize, 1);
   epsilonOut = arma::sign(epsilonOut) % arma::sqrt(arma::abs(epsilonOut));
+
   weightEpsilon = epsilonOut * epsilonIn.t();
   biasEpsilon = epsilonOut;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void NoisyLinear<InputDataType, OutputDataType>::ResetParameters()
+template<typename MatType>
+void NoisyLinearType<MatType>::ResetParameters()
 {
   const double muRange = 1 / std::sqrt(inSize);
   weightMu.randu();
@@ -129,10 +114,8 @@ void NoisyLinear<InputDataType, OutputDataType>::ResetParameters()
   biasSigma.fill(0.5 / std::sqrt(outSize));
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void NoisyLinear<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename MatType>
+void NoisyLinearType<MatType>::Forward(const MatType& input, MatType& output)
 {
   weight = weightMu + weightSigma % weightEpsilon;
   bias = biasMu + biasSigma % biasEpsilon;
@@ -140,23 +123,19 @@ void NoisyLinear<InputDataType, OutputDataType>::Forward(
   output.each_col() += bias;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void NoisyLinear<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename MatType>
+void NoisyLinearType<MatType>::Backward(
+    const MatType& /* input */, const MatType& gy, MatType& g)
 {
   g = weight.t() * gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void NoisyLinear<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename MatType>
+void NoisyLinearType<MatType>::Gradient(
+    const MatType& input, const MatType& error, MatType& gradient)
 {
   // Locally stored to prevent multiplication twice.
-  arma::mat weightGrad = error * input.t();
+  MatType weightGrad = error * input.t();
 
   // Gradients for mu values.
   gradient.rows(0, weight.n_elem - 1) = arma::vectorise(weightGrad);
@@ -170,18 +149,34 @@ void NoisyLinear<InputDataType, OutputDataType>::Gradient(
       = arma::sum(error, 1) % biasEpsilon;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
+void NoisyLinearType<MatType>::ComputeOutputDimensions()
+{
+  inSize = this->inputDimensions[0];
+  for (size_t i = 1; i < this->inputDimensions.size(); ++i)
+      inSize *= this->inputDimensions[i];
+
+  this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+      1);
+
+  // The NoisyLinear layer flattens its output.
+  this->outputDimensions[0] = outSize;
+}
+
+template<typename MatType>
 template<typename Archive>
-void NoisyLinear<InputDataType, OutputDataType>::serialize(
+void NoisyLinearType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(inSize));
-  ar(CEREAL_NVP(outSize));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(inSize));
+
   if (cereal::is_loading<Archive>())
-    weights.set_size((outSize * inSize + outSize) * 2, 1);
+  {
+    ResetNoise();
+  }
 }
 
 } // namespace ann

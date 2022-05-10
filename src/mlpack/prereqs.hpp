@@ -33,6 +33,7 @@
 #include <stdexcept>
 #include <tuple>
 #include <utility>
+#include <numeric>
 #include <vector>
 #include <queue>
 
@@ -107,7 +108,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/array.hpp>
-#include <cereal/types/boost_variant.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/tuple.hpp>
 #include <mlpack/core/cereal/unordered_map.hpp>
@@ -118,19 +118,9 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/cereal/is_saving.hpp>
 #include <mlpack/core/arma_extend/serialize_armadillo.hpp>
 #include <mlpack/core/cereal/array_wrapper.hpp>
-#include <mlpack/core/cereal/pointer_variant_wrapper.hpp>
-#include <mlpack/core/cereal/pointer_vector_variant_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
-
-// If we have Boost 1.58 or older and are using C++14, the compilation is likely
-// to fail due to boost::visitor issues.  We will pre-emptively fail.
-#if __cplusplus > 201103L && BOOST_VERSION < 105900
-#error Use of C++14 mode with Boost < 1.59 is known to cause compilation \
-problems.  Instead specify the C++11 standard (-std=c++11 with gcc or clang), \
-or upgrade Boost to 1.59 or newer.
-#endif
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because

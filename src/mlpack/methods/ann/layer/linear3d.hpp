@@ -14,8 +14,9 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
+
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -27,49 +28,48 @@ namespace ann /** Artificial Neural Network. */ {
  * Shape of input : (inSize * nPoints, batchSize)
  * Shape of output : (outSize * nPoints, batchSize)
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
+template<
+    typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class Linear3D
+class Linear3DType : public Layer<MatType>
 {
  public:
   //! Create the Linear3D object.
-  Linear3D();
+  Linear3DType();
 
   /**
-   * Create the Linear3D layer object using the specified number of units.
+   * Create the Linear3D layer object using the specified number of output
+   * units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  Linear3D(const size_t inSize,
-           const size_t outSize,
-           RegularizerType regularizer = RegularizerType());
+  Linear3DType(const size_t outSize,
+               RegularizerType regularizer = RegularizerType());
 
-  //! Copy constructor.
-  Linear3D(const Linear3D& layer);
+  //! Clone the Linear3DType object. This handles polymorphism correctly.
+  Linear3DType* Clone() const { return new Linear3DType(*this); }
 
-  //! Move constructor.
-  Linear3D(Linear3D&&);
+  // Virtual destructor.
+  virtual ~Linear3DType() { }
 
-  //! Copy assignment operator.
-  Linear3D& operator=(const Linear3D& layer);
-
-  //! Move assignment operator.
-  Linear3D& operator=(Linear3D&& layer);
+  //! Copy the given Linear3DType (but not weights).
+  Linear3DType(const Linear3DType& other);
+  //! Take ownership of the given Linear3DType (but not weights).
+  Linear3DType(Linear3DType&& other);
+  //! Copy the given Linear3DType (but not weights).
+  Linear3DType& operator=(const Linear3DType& other);
+  //! Take ownership of the given Linear3DType (but not weights).
+  Linear3DType& operator=(Linear3DType&& other);
 
   /*
    * Reset the layer parameter.
    */
-  void Reset();
+  void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -78,8 +78,7 @@ class Linear3D
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -90,69 +89,41 @@ class Linear3D
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  MatType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  MatType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  OutputDataType const& Weight() const { return weight; }
+  MatType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
-  OutputDataType& Weight() { return weight; }
+  MatType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  OutputDataType const& Bias() const { return bias; }
+  MatType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
-  OutputDataType& Bias() { return bias; }
+  MatType& Bias() { return bias; }
 
-  //! Get the shape of the input.
-  size_t InputShape() const
-  {
-    return inSize;
-  }
+  //! Return the number of weight elements.
+  size_t WeightSize() const { return outSize * (this->inputDimensions[0] + 1); }
+
+  //! Compute the output dimensions for the layer, using `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   /**
    * Serialize the layer
@@ -161,36 +132,24 @@ class Linear3D
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
   //! Locally-stored number of output units.
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  MatType weights;
 
   //! Locally-stored weight parameters.
-  OutputDataType weight;
+  MatType weight;
 
   //! Locally-stored bias term parameters.
-  OutputDataType bias;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  MatType bias;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class Linear
+
+// Standard Linear3D layer.
+typedef Linear3DType<arma::mat, NoRegularizer> Linear3D;
 
 } // namespace ann
 } // namespace mlpack
