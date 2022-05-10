@@ -20,9 +20,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "timers.hpp"
 #include "binding_details.hpp"
-#include "program_doc.hpp"
 #include "version.hpp"
 
 #include "param_data.hpp"
@@ -34,6 +32,12 @@
 // TODO: this entire set of code is related to the bindings and maybe should go
 // into src/mlpack/bindings/util/.
 namespace mlpack {
+
+class Timer;
+
+namespace util {
+    class Timers;
+}
 
 // TODO: completely go through this documentation and clean it up
 /**

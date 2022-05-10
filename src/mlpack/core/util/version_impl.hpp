@@ -1,5 +1,5 @@
 /**
- * @file core/util/version.cpp
+ * @file core/util/version_impl.hpp
  * @author Ryan Curtin
  *
  * The implementation of GetVersion().
@@ -9,13 +9,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_UTIL_VERSION_IMPL_HPP
+#define MLPACK_CORE_UTIL_VERSION_IMPL_HPP
+
 #include "version.hpp"
 
 #include <sstream>
 
 // If we are not a git revision, just use the macros to assemble the version
 // name.
-std::string mlpack::util::GetVersion()
+inline std::string mlpack::util::GetVersion()
 {
 #ifndef MLPACK_GIT_VERSION
   std::stringstream o;
@@ -28,3 +31,5 @@ std::string mlpack::util::GetVersion()
   #include "gitversion.hpp"
 #endif
 }
+
+#endif
