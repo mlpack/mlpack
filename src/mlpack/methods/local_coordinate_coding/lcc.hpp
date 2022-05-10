@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/core/math/lin_alg.hpp>
 
 // Include three simple dictionary initializers from sparse coding.
 #include <mlpack/methods/sparse_coding/nothing_initializer.hpp>
