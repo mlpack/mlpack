@@ -4892,6 +4892,8 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
            <<  2.7500  <<  6.0000  <<  arma::endr;
 
   arma::mat output1, output2;
+  output1.set_size(8, 1);
+  output2.set_size(6, 1);
   module1.Forward(input, output1);
   module2.Forward(input, output2);
   output1.reshape(4, 2);
@@ -4899,7 +4901,11 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
+  output1.reshape(8, 1);
+  output2.reshape(6, 1);
   arma::mat delta1, delta2;
+  delta1.set_size(8, 1);
+  delta2.set_size(6, 1);
   module1.Backward(input, output1, delta1);
   REQUIRE(arma::accu(delta1) == 25.5);
   module2.Backward(input, output2, delta2);
