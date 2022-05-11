@@ -13,7 +13,7 @@ set(SOURCES
   hyphenate_string.hpp
   is_std_vector.hpp
   log.hpp
-  log_impl.hpp
+  log.cpp
   mlpack_main.hpp
   nulloutstream.hpp
   param.hpp
@@ -24,16 +24,18 @@ set(SOURCES
   params_impl.hpp
   params.cpp
   prefixedoutstream.hpp
+  prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
   program_doc.hpp
-  program_doc_impl.hpp
+  program_doc.cpp
   size_checks.hpp
   sfinae_utility.hpp
+  singletons.cpp
   timers.hpp
-  timers_impl.hpp
+  timers.cpp
   to_lower.hpp
   version.hpp
-  version_impl.hpp
+  version.cpp
 )
 
 # add directory name to sources

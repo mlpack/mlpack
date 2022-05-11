@@ -13,10 +13,11 @@
 #define MLPACK_CORE_UTIL_BINDING_DETAILS_HPP
 
 #include <mlpack/prereqs.hpp>
-// #include "program_doc.hpp"
+#include "program_doc.hpp"
 
 namespace mlpack {
 namespace util {
+
 /**
  * This structure holds all of the information about bindings documentation.
  */

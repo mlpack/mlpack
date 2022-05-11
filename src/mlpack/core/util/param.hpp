@@ -15,8 +15,6 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP
 
-#include "program_doc.hpp"
-
 // Required forward declarations.
 namespace mlpack {
 namespace data {

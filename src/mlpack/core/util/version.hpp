@@ -33,7 +33,4 @@ std::string GetVersion();
 } // namespace util
 } // namespace mlpack
 
-// Include implementation.
-#include "version_impl.hpp"
-
 #endif
