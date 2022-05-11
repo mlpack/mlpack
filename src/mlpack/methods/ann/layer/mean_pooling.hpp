@@ -96,7 +96,7 @@ class MeanPoolingType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
+  void Backward(const MatType& input,
                 const MatType& gy,
                 MatType& g);
 
@@ -173,8 +173,6 @@ class MeanPoolingType : public Layer<MatType>
   void Unpooling(const MatType& error,
                  MatType& output)
   {
-
-    output.zeros();
     // This condition comes by comparing the number of operations involved in the brute
     // force method and the prefix method. Let the area of error be errorArea and area
     // of kernal be kernalArea. Total number of operations in brute force method will be

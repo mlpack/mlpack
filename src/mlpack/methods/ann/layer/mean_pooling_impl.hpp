@@ -148,6 +148,7 @@ void MeanPoolingType<MatType>::Backward(
       this->inputDimensions[0], this->inputDimensions[1],
       channels * input.n_cols, false, true);
 
+  gTemp.zeros();
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
     Unpooling(mappedError.slice(s), gTemp.slice(s));
