@@ -2,6 +2,7 @@
  * @file methods/ann/layer/mean_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
+ * @author Shubham Agrawal
  *
  * Definition of the MeanPooling layer class.
  *
@@ -14,23 +15,35 @@
 #define MLPACK_METHODS_ANN_LAYER_MEAN_POOLING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+class MeanPoolingRule
+{
+ public:
+  /**
+   * Return the maximum value within the receptive block.
+   *
+   * @param input Input used to perform the pooling operation.  Could be an
+   *     Armadillo subview.
+   */
+  template<typename MatType>
+  typename MatType::elem_type Pooling(const MatType& input)
+  {
+    return arma::mean(arma::vectorise(input));
+  }
+};
+
 /**
  * Implementation of the MeanPooling.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *         computation.
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class MeanPoolingType : public Layer<InputType, OutputType>
+template <typename MatType = arma::mat>
+class MeanPoolingType : public Layer<MatType>
 {
  public:
   //! Create the MeanPoolingType object.
@@ -51,7 +64,18 @@ class MeanPoolingType : public Layer<InputType, OutputType>
                   const size_t strideHeight = 1,
                   const bool floor = true);
 
-  // TODO: copy constructor / move constructor
+  // Virtual destructor.
+  virtual ~MeanPoolingType() { }
+
+  //! Copy the given MeanPoolingType.
+  MeanPoolingType(const MeanPoolingType& other);
+  //! Take ownership of the given MeanPoolingType.
+  MeanPoolingType(MeanPoolingType&& other);
+  //! Copy the given MeanPoolingType.
+  MeanPoolingType& operator=(const MeanPoolingType& other);
+  //! Take ownership of the given MeanPoolingType.
+  MeanPoolingType& operator=(MeanPoolingType&& other);
+
   MeanPoolingType* Clone() const { return new MeanPoolingType(*this); }
 
   /**
@@ -61,7 +85,7 @@ class MeanPoolingType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -72,9 +96,9 @@ class MeanPoolingType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   //! Get the kernel width.
   size_t const& KernelWidth() const { return kernelWidth; }
@@ -101,40 +125,8 @@ class MeanPoolingType : public Layer<InputType, OutputType>
   //! Modify the value of the rounding operation
   bool& Floor() { return floor; }
 
-  //! Get the size of the output.
-  const std::vector<size_t> OutputDimensions() const
-  {
-    outputDimensions = this->inputDimensions;
-
-    // Compute the size of the output.
-    if (floor)
-    {
-      outputDimensions[0] = std::floor((this->inputDimensions[0] -
-          (double) kernelWidth) / (double) strideWidth + 1);
-      outputDimensions[1] = std::floor((this->inputDimensions[1] -
-          (double) kernelHeight) / (double) strideHeight + 1);
-      offset = 0;
-    }
-    else
-    {
-      outputDimensions[0] = std::ceil((this->inputDimensions[0] -
-          (double) kernelWidth) / (double) strideWidth + 1);
-      outputDimensions[1] = std::ceil((this->inputDimensions[1] -
-          (double) kernelHeight) / (double) strideHeight + 1);
-      offset = 1;
-    }
-
-    // Higher dimensions are not modified.
-    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
-      outputDimensions[i] = this->inputDimensions[i];
-
-    // Cache input size and output size.
-    channels = 1;
-    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
-      channels *= this->inputDimensions[i];
-
-    return outputDimensions;
-  }
+  //! Compute the size of the output given `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   /**
    * Serialize the layer.
@@ -144,48 +136,30 @@ class MeanPoolingType : public Layer<InputType, OutputType>
 
  private:
   /**
-   * Apply pooling to the input and store the results.
+   * Apply pooling to all slices of the input and store the results.
    *
    * @param input The input to be apply the pooling rule.
    * @param output The pooled result.
    */
-  void Pooling(const InputType& input, OutputType& output)
+  void PoolingOperation(
+      const arma::Cube<typename MatType::elem_type>& input,
+      arma::Cube<typename MatType::elem_type>& output)
   {
-    arma::Mat<eT> inputPre = input;
-
-    for (size_t i = 1; i < input.n_cols; ++i)
-      inputPre.col(i) += inputPre.col(i - 1);
-
-    for (size_t i = 1; i < input.n_rows; ++i)
-      inputPre.row(i) += inputPre.row(i - 1);
-
-    for (size_t j = 0, colidx = 0; j < output.n_cols;
-         ++j, colidx += strideHeight)
+    // Iterate over all slices individually.
+    for (size_t s = 0; s < input.n_slices; ++s)
     {
-      for (size_t i = 0, rowidx = 0; i < output.n_rows;
-           ++i, rowidx += strideWidth)
+      for (size_t j = 0, colidx = 0; j < output.n_cols;
+          ++j, colidx += strideHeight)
       {
-        InputType subInput = input(
-            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
-            arma::span(colidx, colidx + kernelHeight - 1 - offset));
-
-        if (rowEnd > input.n_rows - 1)
-          rowEnd = input.n_rows - 1;
-        if (colEnd > input.n_cols - 1)
-          colEnd = input.n_cols - 1;
-
-        const size_t kernalArea = (rowEnd - rowidx + 1) * (colEnd - colidx + 1);
-        val += inputPre(rowEnd, colEnd);
-        if (rowidx >= 1)
+        for (size_t i = 0, rowidx = 0; i < output.n_rows;
+            ++i, rowidx += strideWidth)
         {
-          if (colidx >= 1)
-            val += inputPre(rowidx - 1, colidx - 1);
-          val -= inputPre(rowidx - 1, colEnd);
+          output(i, j, s) = pooling.Pooling(input.slice(s).submat(
+              rowidx,
+              colidx,
+              rowidx + kernelWidth - 1 - offset,
+              colidx + kernelHeight - 1 - offset));
         }
-        if (colidx >= 1)
-          val -= inputPre(rowEnd, colidx - 1);
-
-        output(i, j) = val / kernalArea;
       }
     }
   }
@@ -196,10 +170,11 @@ class MeanPoolingType : public Layer<InputType, OutputType>
    * @param input The input to be apply the unpooling rule.
    * @param output The pooled result.
    */
-  void Unpooling(const InputType& input,
-                 const OutputType& error,
-                 OutputType& output)
+  void Unpooling(const MatType& error,
+                 MatType& output)
   {
+
+    output.zeros();
     // This condition comes by comparing the number of operations involved in the brute
     // force method and the prefix method. Let the area of error be errorArea and area
     // of kernal be kernalArea. Total number of operations in brute force method will be
@@ -209,10 +184,9 @@ class MeanPoolingType : public Layer<InputType, OutputType>
     // prefix sums performed (col-wise and row-wise).
     // We can use this to determine which method to use.
     const bool condition = (error.n_elem * kernelHeight * kernelWidth) >
-        (4 * error.n_elem + 2 * input.n_elem);
+        (4 * error.n_elem + 2 * output.n_elem);
 
-    OutputType unpooledError;
-    for (size_t j = 0; j < input.n_cols - cStep; j += cStep)
+    if (condition)
     {
       // If this condition is true then theoritically the prefix sum method of
       // unpooling is faster. The aim of unpooling is to add
@@ -238,98 +212,98 @@ class MeanPoolingType : public Layer<InputType, OutputType>
       // input(x1 : x2, y1 : y2). So the inputArea = (x2 - x1 + 1) * (y2 - y1 + 1).
       // In prefix method the following operations will be performed:
       //    1. Add `+e` to input(x1, y1).
-      //    2. Add `-e` to input(x1 + 1, y1).
-      //    3. Add `-e` to input(x1, y1 + 1).
-      //    4. Add `+e` to input(x1 + 1, y1 + 1).
+      //    2. Add `-e` to input(x2 + 1, y1).
+      //    3. Add `-e` to input(x1, y2 + 1).
+      //    4. Add `+e` to input(x2 + 1, y2 + 1).
       //    5. Perform Prefix sum over columns i.e input(i, j) += input(i, j - 1)
       //    6. Perform Prefix sum over rows i.e input(i, j) += input(i - 1, j)
       // So lets say if we had `k` number of such operations. The brute force
       // method will require `kernalArea * k` operations.
       // The prefix method will require `4 * k + Prefix operation`.
 
-      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, ++colidx)
+      for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight, ++colidx)
       {
-        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, ++rowidx)
+        for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth, ++rowidx)
         {
           // We have to add error(i, j) to output(span(rowidx, rowEnd),
           // span(colidx, colEnd)).
           // The steps of prefix sum method:
           //
-          // 1. For each (i, j) perform:
-          //    1.1 Add +error(i, j) to output(rowidx, colidx)
-          //    1.2 Add -error(i, j) to output(rowidx, colidx + 1)
-          //    1.3 Add -error(i, j) to output(rowidx + 1, colidx)
-          //    1.4 Add +error(i, j) to output(rowidx + 1, colidx + 1)
+          // 1. For each (rowidx, colidx) perform:
+          //    1.1 Add +error(rowidx, colidx) to output(i, j)
+          //    1.2 Add -error(rowidx, colidx) to output(i, colend + 1)
+          //    1.3 Add -error(rowidx, colidx) to output(rowend + 1, j)
+          //    1.4 Add +error(rowidx, colidx) to output(rowend + 1, colend + 1)
           //
           // 2. Do prefix sum column wise i.e output(i, j) += output(i, j - 1)
           // 2. Do prefix sum row wise i.e output(i, j) += output(i - 1, j)
 
-          size_t rowEnd = i + kernelWidth - 1;
-          size_t colEnd = j + kernelHeight - 1;
+          size_t rowEnd = i + kernelWidth - 1 - offset;
+          size_t colEnd = j + kernelHeight - 1 - offset;
 
-          if (rowEnd > input.n_rows - 1)
+          if (rowEnd > output.n_rows - 1)
           {
             if (floor)
               continue;
-            rowEnd = input.n_rows - 1;
+            rowEnd = output.n_rows - 1;
           }
 
-          if (colEnd > input.n_cols - 1)
+          if (colEnd > output.n_cols - 1)
           {
             if (floor)
               continue;
-            colEnd = input.n_cols - 1;
+            colEnd = output.n_cols - 1;
           }
 
           size_t kernalArea = (rowEnd - i + 1) * (colEnd - j + 1);
           output(i, j) += error(rowidx, colidx) / kernalArea;
 
-          if (rowEnd + 1 < input.n_rows)
+          if (rowEnd + 1 < output.n_rows)
           {
             output(rowEnd + 1, j) -= error(rowidx, colidx) / kernalArea;
 
-            if (colEnd + 1 < input.n_cols)
+            if (colEnd + 1 < output.n_cols)
               output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) / kernalArea;
           }
 
-          if (colEnd + 1 < input.n_cols)
+          if (colEnd + 1 < output.n_cols)
             output(i, colEnd + 1) -= error(rowidx, colidx) / kernalArea;
         }
       }
 
-      for (size_t i = 1; i < input.n_rows; ++i)
+      for (size_t i = 1; i < output.n_rows; ++i)
         output.row(i) += output.row(i - 1);
 
-      for (size_t j = 1; j < input.n_cols; ++j)
+      for (size_t j = 1; j < output.n_cols; ++j)
         output.col(j) += output.col(j - 1);
     }
     else
     {
-      arma::Mat<eT> unpooledError;
-      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, ++colidx)
+      arma::Mat<typename MatType::elem_type> unpooledError;
+      for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight, ++colidx)
       {
-        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, ++rowidx)
+        for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth, ++rowidx)
         {
           size_t rowEnd = i + kernelWidth - 1;
           size_t colEnd = j + kernelHeight - 1;
 
-          if (rowEnd > input.n_rows - 1)
+          if (rowEnd > output.n_rows - 1)
           {
             if (floor)
               continue;
-            rowEnd = input.n_rows - 1;
+            rowEnd = output.n_rows - 1;
           }
 
-          if (colEnd > input.n_cols - 1)
+          if (colEnd > output.n_cols - 1)
           {
             if (floor)
               continue;
-            colEnd = input.n_cols - 1;
+            colEnd = output.n_cols - 1;
           }
 
-          arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
+          arma::mat InputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));
 
-          unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
+          unpooledError = arma::Mat<typename MatType::elem_type>(InputArea.n_rows, InputArea.n_cols);
           unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
 
           output(arma::span(i, i + InputArea.n_rows - 1),
@@ -357,18 +331,16 @@ class MeanPoolingType : public Layer<InputType, OutputType>
   //! Locally-stored number channels.
   size_t channels;
 
-  //! Locally-stored cached output dimensions.
-  std::vector<size_t> outputDimensions;
+  //! Locally-stored offset: indicates whether we take the first element or the
+  //! second element when pooling.  Computed by `ComputeOutputDimensions()`.
+  size_t offset;
 
-  //! Locally-stored number of input units.
-  size_t batchSize;
-
-  //! Cached last-seen input.
-  arma::Cube<typename InputType::elem_type> inputTemp;
+  //! Locally-stored pooling strategy.
+  MeanPoolingRule pooling;
 }; // class MeanPoolingType
 
 // Standard MeanPooling layer.
-typedef MeanPoolingType<arma::mat, arma::mat> MeanPooling;
+typedef MeanPoolingType<arma::mat> MeanPooling;
 
 } // namespace ann
 } // namespace mlpack

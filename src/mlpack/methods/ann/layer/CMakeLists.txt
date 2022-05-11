@@ -30,6 +30,8 @@ set(SOURCES
   lstm_impl.hpp
   max_pooling.hpp
   max_pooling_impl.hpp
+  mean_pooling.hpp
+  mean_pooling_impl.hpp
   multi_layer.hpp
   multi_layer_impl.hpp
   noisylinear.hpp

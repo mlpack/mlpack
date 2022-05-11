@@ -31,6 +31,7 @@
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lstm.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
+#include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
