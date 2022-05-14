@@ -916,20 +916,20 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   if (!data::Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat trainLabels1 = arma::zeros(3, trainData.n_cols);
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    trainLabels1.col(i).row((trainLabels(i) - 1)) = 1;
+    trainLabels1.col(i).row(trainLabels(i)) = 1;
   }
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData))
     FAIL("Cannot open thyroid_test.csv");
 
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  arma::mat testLabels = testData.row(testData.n_rows - 1) - 1;
   testData.shed_row(testData.n_rows - 1);
 
   /*
@@ -974,7 +974,6 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   {
     labels1.col(i).row(labels(i)) = 1;
   }
-  labels += 1;
 
   arma::mat centroids1;
   arma::Row<size_t> assignments;
