@@ -171,18 +171,34 @@ class MaxPoolingType : public Layer<MatType>
         for (size_t i = 0, rowidx = 0; i < output.n_rows;
             ++i, rowidx += strideWidth)
         {
+          size_t rowEnd = rowidx + kernelWidth - 1;
+          size_t colEnd = colidx + kernelHeight - 1;
+
+          if (rowEnd > input.n_rows - 1)
+          {
+            if (floor)
+              continue;
+            rowEnd = input.n_rows - 1;
+          }
+
+          if (colEnd > input.n_cols - 1)
+          {
+            if (floor)
+              continue;
+            colEnd = input.n_cols - 1;
+          }
           const std::tuple<size_t, typename MatType::elem_type> poolResult =
               pooling.PoolingWithIndex(input.slice(s).submat(
                   rowidx,
                   colidx,
-                  rowidx + kernelWidth - 1 - offset,
-                  colidx + kernelHeight - 1 - offset));
+                  rowEnd,
+                  colEnd));
 
           // Now map the returned pooling index, which corresponds to the
           // submatrix we gave, back to its position in the (linearized) input.
           const size_t poolIndex = std::get<0>(poolResult);
-          const size_t poolingCol = poolIndex / (kernelWidth - offset);
-          const size_t poolingRow = poolIndex % (kernelWidth - offset);
+          const size_t poolingCol = poolIndex / (kernelWidth);
+          const size_t poolingRow = poolIndex % (kernelWidth);
           const size_t unmappedPoolingIndex = (rowidx + poolingRow) +
               input.n_rows * (colidx + poolingCol) +
               input.n_rows * input.n_cols * s;
@@ -214,11 +230,27 @@ class MaxPoolingType : public Layer<MatType>
         for (size_t i = 0, rowidx = 0; i < output.n_rows;
             ++i, rowidx += strideWidth)
         {
+          size_t rowEnd = rowidx + kernelWidth - 1;
+          size_t colEnd = colidx + kernelHeight - 1;
+
+          if (rowEnd > input.n_rows - 1)
+          {
+            if (floor)
+              continue;
+            rowEnd = input.n_rows - 1;
+          }
+
+          if (colEnd > input.n_cols - 1)
+          {
+            if (floor)
+              continue;
+            colEnd = input.n_cols - 1;
+          }
           output(i, j, s) = pooling.Pooling(input.slice(s).submat(
               rowidx,
               colidx,
-              rowidx + kernelWidth - 1 - offset,
-              colidx + kernelHeight - 1 - offset));
+              rowEnd,
+              colEnd));
         }
       }
     }
@@ -261,10 +293,6 @@ class MaxPoolingType : public Layer<MatType>
 
   //! Locally-stored number of channels.
   size_t channels;
-
-  //! Locally-stored offset: indicates whether we take the first element or the
-  //! second element when pooling.  Computed by `ComputeOutputDimensions()`.
-  size_t offset;
 
   //! Locally-stored pooling strategy.
   MaxPoolingRule pooling;

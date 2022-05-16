@@ -40,8 +40,7 @@ MeanPoolingType<MatType>::MeanPoolingType(
     strideWidth(strideWidth),
     strideHeight(strideHeight),
     floor(floor),
-    channels(0),
-    offset(0)
+    channels(0)
 {
   // Nothing to do here.
 }
@@ -56,7 +55,6 @@ MeanPoolingType<MatType>::MeanPoolingType(
     strideHeight(other.strideHeight),
     floor(other.floor),
     channels(other.channels),
-    offset(other.offset),
     pooling(other.pooling)
 {
   // Nothing to do here.
@@ -72,7 +70,6 @@ MeanPoolingType<MatType>::MeanPoolingType(
     strideHeight(std::move(other.strideHeight)),
     floor(std::move(other.floor)),
     channels(std::move(other.channels)),
-    offset(std::move(other.offset)),
     pooling(std::move(other.pooling))
 {
   // Nothing to do here.
@@ -91,7 +88,6 @@ MeanPoolingType<MatType>::operator=(const MeanPoolingType& other)
     strideHeight = other.strideHeight;
     floor = other.floor;
     channels = other.channels;
-    offset = other.offset;
     pooling = other.pooling;
   }
 
@@ -111,7 +107,6 @@ MeanPoolingType<MatType>::operator=(MeanPoolingType&& other)
     strideHeight = std::move(other.strideHeight);
     floor = std::move(other.floor);
     channels = std::move(other.channels);
-    offset = std::move(other.offset);
     pooling = std::move(other.pooling);
   }
 
@@ -167,7 +162,6 @@ void MeanPoolingType<MatType>::ComputeOutputDimensions()
         (double) kernelWidth) / (double) strideWidth + 1);
     this->outputDimensions[1] = std::floor((this->inputDimensions[1] -
         (double) kernelHeight) / (double) strideHeight + 1);
-    offset = 0;
   }
   else
   {
@@ -175,7 +169,6 @@ void MeanPoolingType<MatType>::ComputeOutputDimensions()
         (double) kernelWidth) / (double) strideWidth + 1);
     this->outputDimensions[1] = std::ceil((this->inputDimensions[1] -
         (double) kernelHeight) / (double) strideHeight + 1);
-    offset = 1;
   }
 
   // Higher dimensions are not modified.
@@ -200,7 +193,6 @@ void MeanPoolingType<MatType>::serialize(
   ar(CEREAL_NVP(strideHeight));
   ar(CEREAL_NVP(channels));
   ar(CEREAL_NVP(floor));
-  ar(CEREAL_NVP(offset));
 }
 
 } // namespace ann

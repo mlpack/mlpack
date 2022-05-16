@@ -345,10 +345,6 @@ class MeanPoolingType : public Layer<MatType>
   //! Locally-stored number channels.
   size_t channels;
 
-  //! Locally-stored offset: indicates whether we take the first element or the
-  //! second element when pooling.  Computed by `ComputeOutputDimensions()`.
-  size_t offset;
-
   //! Locally-stored pooling strategy.
   MeanPoolingRule pooling;
 }; // class MeanPoolingType

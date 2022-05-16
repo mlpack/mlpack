@@ -4918,9 +4918,9 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   prev_delta1.reshape(8, 1);
   prev_delta2.reshape(6, 1);
   module1.Backward(input, prev_delta1, delta1);
-  REQUIRE(arma::accu(delta1) == 10.8);
+  REQUIRE(arma::accu(delta1) == Approx(10.8).epsilon(1e-3));
   module2.Backward(input, prev_delta2, delta2);
-  REQUIRE(arma::accu(delta2) == 8.1);
+  REQUIRE(arma::accu(delta2) == Approx(8.1).epsilon(1e-3));
 }
 
 /**
