@@ -154,11 +154,27 @@ class MeanPoolingType : public Layer<MatType>
         for (size_t i = 0, rowidx = 0; i < output.n_rows;
             ++i, rowidx += strideWidth)
         {
+          size_t rowEnd = rowidx + kernelWidth - 1;
+          size_t colEnd = colidx + kernelHeight - 1;
+
+          if (rowEnd > input.n_rows - 1)
+          {
+            if (floor)
+              continue;
+            rowEnd = input.n_rows - 1;
+          }
+
+          if (colEnd > input.n_cols - 1)
+          {
+            if (floor)
+              continue;
+            colEnd = input.n_cols - 1;
+          }
           output(i, j, s) = pooling.Pooling(input.slice(s).submat(
               rowidx,
               colidx,
-              rowidx + kernelWidth - 1 - offset,
-              colidx + kernelHeight - 1 - offset));
+              rowEnd,
+              colEnd));
         }
       }
     }
@@ -236,8 +252,8 @@ class MeanPoolingType : public Layer<MatType>
           // 2. Do prefix sum column wise i.e output(i, j) += output(i, j - 1)
           // 2. Do prefix sum row wise i.e output(i, j) += output(i - 1, j)
 
-          size_t rowEnd = i + kernelWidth - 1 - offset;
-          size_t colEnd = j + kernelHeight - 1 - offset;
+          size_t rowEnd = i + kernelWidth - 1;
+          size_t colEnd = j + kernelHeight - 1;
 
           if (rowEnd > output.n_rows - 1)
           {

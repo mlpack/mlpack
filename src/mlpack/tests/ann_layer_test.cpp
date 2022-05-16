@@ -4895,7 +4895,9 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   output1.set_size(8, 1);
   output2.set_size(6, 1);
   module1.Forward(input, output1);
+  REQUIRE(arma::accu(output1) == 25.5);
   module2.Forward(input, output2);
+  REQUIRE(arma::accu(output2) == 19.5);
   output1.reshape(4, 2);
   output2.reshape(3, 2);
   CheckMatrices(output1, result1, 1e-1);
