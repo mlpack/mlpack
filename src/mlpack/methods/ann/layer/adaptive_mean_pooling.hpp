@@ -54,7 +54,7 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
 
   // Virtual destructor.
   virtual ~AdaptiveMeanPoolingType() { 
-    delete poolingLayer;
+    // Nothing to do here.
   }
 
   //! Copy the given AdaptiveMeanPoolingType.
