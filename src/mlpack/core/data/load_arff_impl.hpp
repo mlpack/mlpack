@@ -57,8 +57,7 @@ void LoadARFF(const std::string& filename,
     // @data.
     if (line[0] == '@')
     {
-      std::string separators = "\t% \\ \"'";
-      std::vector<std::string> tok = Tokenize(line, separators);
+      std::vector<std::string> tok = Tokenize(line, ' ', '"');
       std::vector<std::string>::iterator it = tok.begin();
 
       // Get the annotation we are looking at.
@@ -106,8 +105,7 @@ void LoadARFF(const std::string& filename,
                 return c == '{' || c == '}' || c == ' ' || c == '\t';
               });
 
-          std::string sep = "\\ , \"'";
-          std::vector<std::string> dimTok = Tokenize(origDimType, sep);
+          std::vector<std::string> dimTok = Tokenize(origDimType, ',', '"');
           std::vector<std::string>::iterator it = dimTok.begin();
           std::vector<std::string> categories;
 
@@ -209,8 +207,7 @@ void LoadARFF(const std::string& filename,
       throw std::runtime_error("cannot yet parse sparse ARFF data");
 
     // Tokenize the line.
-    std::string sep = "\\ , \"";
-    std::vector<std::string> tok = Tokenize(line, sep);
+    std::vector<std::string> tok = Tokenize(line, ',', '"');
 
     size_t col = 0;
     std::stringstream token;
