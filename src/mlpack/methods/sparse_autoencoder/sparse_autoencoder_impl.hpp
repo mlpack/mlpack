@@ -73,7 +73,7 @@ SparseAutoencoder::SparseAutoencoder(const arma::mat& data,
 }
 
 inline void SparseAutoencoder::GetNewFeatures(arma::mat& data,
-																							arma::mat& features)
+                                              arma::mat& features)
 {
   const size_t l1 = hiddenSize;
   const size_t l2 = visibleSize;
