@@ -23,15 +23,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the AdaptiveMeanPooling.
+ * Implementation of the MeanPooling.
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
- *    cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the layer's Outputs. The layer automatically
- *    cast inputs to this type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *         computation.
  */
-template <typename InputType = arma::mat, typename OutputType = arma::mat>
-class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
+template <typename MatType = arma::mat>
+class AdaptiveMeanPoolingType : public Layer<MatType>
 {
  public:
   //! Create the AdaptiveMeanPooling object.
@@ -54,6 +52,22 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
    */
   AdaptiveMeanPoolingType(const std::tuple<size_t, size_t>& outputShape);
 
+  // Virtual destructor.
+  virtual ~AdaptiveMeanPoolingType() { 
+    delete poolingLayer;
+  }
+
+  //! Copy the given AdaptiveMeanPoolingType.
+  AdaptiveMeanPoolingType(const AdaptiveMeanPoolingType& other);
+  //! Take ownership of the given AdaptiveMeanPoolingType.
+  AdaptiveMeanPoolingType(AdaptiveMeanPoolingType&& other);
+  //! Copy the given AdaptiveMeanPoolingType.
+  AdaptiveMeanPoolingType& operator=(const AdaptiveMeanPoolingType& other);
+  //! Take ownership of the given AdaptiveMeanPoolingType.
+  AdaptiveMeanPoolingType& operator=(AdaptiveMeanPoolingType&& other);
+
+  AdaptiveMeanPoolingType* Clone() const { return new AdaptiveMeanPoolingType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -61,7 +75,7 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -72,9 +86,9 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& input,
+                const MatType& gy,
+                MatType& g);
 
   //! Get the output width.
   size_t const& OutputWidth() const { return outputWidth; }
@@ -86,19 +100,8 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the number of trainable weights.
-  size_t WeightSize() const { return 0; }
-
-  const std::vector<size_t>& OutputDimensions() const
-  {
-    std::vector<size_t> result(this->inputDimensions);
-    result[0] = outputWidth;
-    result[1] = outputHeight;
-    return result;
-  }
-
-  //! Get the size of the weights.
-  size_t WeightSize() const { return 0; }
+  //! Compute the size of the output given `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   /**
    * Serialize the layer.
@@ -112,14 +115,15 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
    */
   void InitializeAdaptivePadding()
   {
-    poolingLayer.StrideWidth() = std::floor(poolingLayer.InputWidth() /
+    poolingLayer.InputDimensions() = this->inputDimensions;
+    poolingLayer.StrideWidth() = std::floor(this->inputDimensions[0] /
         outputWidth);
-    poolingLayer.StrideHeight() = std::floor(poolingLayer.InputHeight() /
+    poolingLayer.StrideHeight() = std::floor(this->inputDimensions[1] /
         outputHeight);
 
-    poolingLayer.KernelWidth() = poolingLayer.InputWidth() -
+    poolingLayer.KernelWidth() = this->inputDimensions[0] -
         (outputWidth - 1) * poolingLayer.StrideWidth();
-    poolingLayer.KernelHeight() = poolingLayer.InputHeight() -
+    poolingLayer.KernelHeight() = this->inputDimensions[1] -
         (outputHeight - 1) * poolingLayer.StrideHeight();
 
     if (poolingLayer.KernelHeight() <= 0 || poolingLayer.KernelWidth() <= 0 ||
@@ -127,28 +131,26 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
     {
       Log::Fatal << "Given output shape (" << outputWidth << ", "
         << outputHeight << ") is not possible for given input shape ("
-        << poolingLayer.InputWidth() << ", " << poolingLayer.InputHeight()
+        << this->inputDimensions[0] << ", " << this->inputDimensions[1]
         << ")." << std::endl;
     }
+    poolingLayer.ComputeOutputDimensions();
   }
 
   //! Locally stored MeanPooling Object.
-  MeanPoolingType<InputType, OutputType> poolingLayer;
+  MeanPoolingType<MatType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;
 
   //! Locally-stored output height.
   size_t outputHeight;
-
-  //! Locally-stored reset parameter used to initialize the layer once.
-  bool reset;
 }; // class AdaptiveMeanPoolingType
 
 // Convenience typedefs.
 
 // Standard Adaptive mean pooling layer.
-typedef AdaptiveMeanPoolingType<arma::mat, arma::mat> AdaptiveMeanPooling;
+typedef AdaptiveMeanPoolingType<arma::mat> AdaptiveMeanPooling;
 
 } // namespace ann
 } // namespace mlpack
