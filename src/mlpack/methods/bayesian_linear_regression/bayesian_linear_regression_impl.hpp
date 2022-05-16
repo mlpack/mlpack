@@ -58,11 +58,11 @@ inline double BayesianLinearRegression::Train(const arma::mat& data,
   beta =  1 / (var(t, 1) * 0.1);
 
   unsigned short i = 0;
-  double deltaAlpha = 1.0, crit = 1.0;
+  double crit = 1.0;
 
   while ((crit > tolerance) && (i < maxIterations))
   {
-    deltaAlpha = -alpha;
+    double deltaAlpha = -alpha;
     double deltaBeta = -beta;
 
     // Update the solution.
