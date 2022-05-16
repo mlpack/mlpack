@@ -15,6 +15,7 @@
 #define MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
+
 namespace mlpack {
 namespace distribution /** Probability distributions. */ {
 
