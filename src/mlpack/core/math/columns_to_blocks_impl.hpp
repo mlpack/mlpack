@@ -18,9 +18,9 @@ namespace mlpack {
 namespace math {
 
 inline ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
-                                 const size_t cols,
-                                 const size_t blockHeight,
-                                 const size_t blockWidth) :
+                                        const size_t cols,
+                                        const size_t blockHeight,
+                                        const size_t blockWidth) :
     blockHeight(blockHeight),
     blockWidth(blockWidth),
     bufSize(1),
@@ -40,7 +40,7 @@ inline bool ColumnsToBlocks::IsPerfectSquare(const size_t value) const
 }
 
 inline void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
-                                arma::mat& output)
+                                       arma::mat& output)
 {
   //! TODO: Maybe replace std::runtime_error with Log::Fatal.
   if (!IsPerfectSquare(maximalInputs.n_rows))

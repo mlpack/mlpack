@@ -19,7 +19,7 @@ namespace radical {
 
 // Set the parameters to RADICAL.
 inline Radical::Radical(
-  const double noiseStdDev,
+    const double noiseStdDev,
     const size_t replicates,
     const size_t angles,
     const size_t sweeps,
