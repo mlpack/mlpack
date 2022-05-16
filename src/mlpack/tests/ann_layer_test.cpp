@@ -4913,8 +4913,10 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr;
   arma::mat delta1, delta2;
-  delta1.set_size(8, 1);
-  delta2.set_size(6, 1);
+  delta1.set_size(28, 1);
+  delta2.set_size(28, 1);
+  prev_delta1.reshape(8, 1);
+  prev_delta2.reshape(6, 1);
   module1.Backward(input, prev_delta1, delta1);
   REQUIRE(arma::accu(delta1) == 10.8);
   module2.Backward(input, prev_delta2, delta2);
