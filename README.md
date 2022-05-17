@@ -381,7 +381,7 @@ If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
 
 Github is used for bug tracking, and can be found at
-https://github.com/mlpack/mlpack/.
+https://github.com/mlpack/mlpack/issues.
 It is easy to register an account and file a bug there, and the mlpack
 development team will try to quickly resolve your issue.
 
