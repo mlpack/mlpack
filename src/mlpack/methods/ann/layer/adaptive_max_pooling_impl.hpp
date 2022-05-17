@@ -100,6 +100,7 @@ template<typename MatType>
 void AdaptiveMaxPoolingType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
+  poolingLayer.Training() = this->training;
   poolingLayer.Forward(input, output);
 }
 

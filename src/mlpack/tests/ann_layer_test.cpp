@@ -5087,6 +5087,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   output.set_size(4, 1);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
+  module1.Training() = true;
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 28);
@@ -5111,6 +5112,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   output.set_size(2, 1);
   module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
   module2.ComputeOutputDimensions();
+  module2.Training() = true;
   module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 15.0);
@@ -5135,6 +5137,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   output.set_size(9, 1);
   module3.InputDimensions() = std::vector<size_t>({ 4, 4 });
   module3.ComputeOutputDimensions();
+  module3.Training() = true;
   module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 30.0);
@@ -5157,6 +5160,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   output.set_size(4, 1);
   module4.InputDimensions() = std::vector<size_t>({ 5, 4 });
   module4.ComputeOutputDimensions();
+  module4.Training() = true;
   module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 2);
