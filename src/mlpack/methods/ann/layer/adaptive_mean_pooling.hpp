@@ -1,4 +1,3 @@
-// Maybe 
 /**
  * @file methods/ann/layer/adaptive_mean_pooling.hpp
  * @author Kartik Dutt
@@ -23,7 +22,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the MeanPooling.
+ * Implementation of the AdaptiveMeanPooling.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *         computation.

@@ -1,52 +1,52 @@
 /**
- * @file methods/ann/layer/adaptive_mean_pooling_impl.hpp
+ * @file methods/ann/layer/adaptive_max_pooling_impl.hpp
  * @author Kartik Dutt
  *
- * Implementation of the Adaptive Mean Pooling layer class.
+ * Implementation of the Adaptive Max Pooling layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MEAN_POOLING_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MEAN_POOLING_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MAX_POOLING_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MAX_POOLING_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "adaptive_mean_pooling.hpp"
+#include "adaptive_max_pooling.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType() :
+AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType() : 
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template <typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
+AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
     const size_t outputWidth,
     const size_t outputHeight) :
-    AdaptiveMeanPoolingType(std::tuple<size_t, size_t>(outputWidth, outputHeight))
+    AdaptiveMaxPoolingType(std::tuple<size_t, size_t>(outputWidth, outputHeight))
 {
   // Nothing to do here.
 }
 
 template <typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
+AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
     const std::tuple<size_t, size_t>& outputShape) : 
     Layer<MatType>(),
     outputWidth(std::get<0>(outputShape)),
     outputHeight(std::get<1>(outputShape))
 {
-  poolingLayer = ann::MeanPoolingType<MatType>(0, 0);
+  poolingLayer = ann::MaxPoolingType<MatType>(0, 0);
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
-    const AdaptiveMeanPoolingType& other) :
+AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
+    const AdaptiveMaxPoolingType& other) :
     Layer<MatType>(other),
     poolingLayer(other.poolingLayer),
     outputWidth(other.outputWidth),
@@ -56,8 +56,8 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
-    AdaptiveMeanPoolingType&& other) :
+AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
+    AdaptiveMaxPoolingType&& other) :
     Layer<MatType>(std::move(other)),
     poolingLayer(std::move(other.poolingLayer)),
     outputWidth(std::move(other.outputWidth)),
@@ -67,8 +67,8 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>&
-AdaptiveMeanPoolingType<MatType>::operator=(const AdaptiveMeanPoolingType& other)
+AdaptiveMaxPoolingType<MatType>&
+AdaptiveMaxPoolingType<MatType>::operator=(const AdaptiveMaxPoolingType& other)
 {
   if (&other != this)
   {
@@ -82,8 +82,8 @@ AdaptiveMeanPoolingType<MatType>::operator=(const AdaptiveMeanPoolingType& other
 }
 
 template<typename MatType>
-AdaptiveMeanPoolingType<MatType>&
-AdaptiveMeanPoolingType<MatType>::operator=(AdaptiveMeanPoolingType&& other)
+AdaptiveMaxPoolingType<MatType>&
+AdaptiveMaxPoolingType<MatType>::operator=(AdaptiveMaxPoolingType&& other)
 {
   if (&other != this)
   {
@@ -97,14 +97,14 @@ AdaptiveMeanPoolingType<MatType>::operator=(AdaptiveMeanPoolingType&& other)
 }
 
 template<typename MatType>
-void AdaptiveMeanPoolingType<MatType>::Forward(
+void AdaptiveMaxPoolingType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   poolingLayer.Forward(input, output);
 }
 
 template<typename MatType>
-void AdaptiveMeanPoolingType<MatType>::Backward(
+void AdaptiveMaxPoolingType<MatType>::Backward(
   const MatType& input,
   const MatType& gy,
   MatType& g)
@@ -113,7 +113,7 @@ void AdaptiveMeanPoolingType<MatType>::Backward(
 }
 
 template<typename MatType>
-void AdaptiveMeanPoolingType<MatType>::ComputeOutputDimensions()
+void AdaptiveMaxPoolingType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -127,7 +127,7 @@ void AdaptiveMeanPoolingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void AdaptiveMeanPoolingType<MatType>::serialize(
+void AdaptiveMaxPoolingType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

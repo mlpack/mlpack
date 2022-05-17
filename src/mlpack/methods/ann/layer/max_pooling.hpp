@@ -20,14 +20,14 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-/*
+/**
  * The max pooling rule for convolution neural networks. Take the maximum value
  * within the receptive block.
  */
 class MaxPoolingRule
 {
  public:
-  /*
+  /**
    * Return the maximum value within the receptive block.
    *
    * @param input Input used to perform the pooling operation.  Could be an
