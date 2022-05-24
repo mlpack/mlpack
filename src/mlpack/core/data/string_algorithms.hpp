@@ -110,15 +110,18 @@ inline void TrimIf(std::string &str, std::function<bool(char)> func)
 }
 
 /**
- * Splits the given string into tokens. String will be separated by all the
- * characters that are part of delimiters (string delim).
+ * Splits the given string into tokens, using the given delimiter to split.
+ * An escape character should be specified to indicate escape sequences where
+ * the delimiter may be safely used.  For instance, with the delimiter ',' and
+ * the escape character '"' (a double quote), the line
  *
- * You can have a single delimiter or a group of delimiters.
- * Multiple delimiters: string delim = "| ? @ , /"
+ * hello, "one, two"
  *
- * @param line string which need to be tokenized
- * @param delims delimiter characters
- * @param escapes escape characters
+ * will be split into two tokens: "hello", and "one, two".
+ *
+ * @param line Input string to tokenize.
+ * @param tokenDelim Character to use as delimiter between tokens.
+ * @param escape Escape character, usually " or '.
  */
 inline std::vector<std::string> Tokenize(
     std::string& line,
