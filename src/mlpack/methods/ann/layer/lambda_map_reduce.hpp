@@ -1,6 +1,6 @@
 /**
- * @file methods/ann/layer/multi_layer.hpp
- * @author Ryan Curtin
+ * @file methods/ann/layer/lambda_map_reduce.hpp
+ * @author Shubham Agrawal
  *
  * Base class for neural network layers that are wrappers around other layers.
  *
@@ -9,73 +9,75 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
-#define MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LAMBDA_MAP_REDUCE_HPP
+#define MLPACK_METHODS_ANN_LAYER_LAMBDA_MAP_REDUCE_HPP
 
 #include "../make_alias.hpp"
 #include "layer.hpp"
+#include <mlpack/methods/ann/reduction_rules/add_reduction.hpp>
 
 namespace mlpack {
 namespace ann {
 
 /**
- * A "multi-layer" is a layer that is a wrapper around other layers.  It passes
- * the input through all of its child layers sequentially, returning the output
- * from the last layer.
+ * A lambda "map-reduce" is a layer that is a wrapper around other layers.  
+ * It passes the input through all of its child layers sequentially, returning
+ * the output from reducing the output.
  *
  * It's likely not very useful to use this layer directly; instead, this layer
  * is meant as a base class for use by other layers that must store and use
  * multiple layers.
  *
+ * @tparam ReductionRuleType Reduction rule to use for the layer.
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
-template<typename MatType>
-class MultiLayer : public Layer<MatType>
+template<typename ReductionRuleType, typename MatType>
+class LambdaMapReduceType : public Layer<MatType>
 {
  public:
   /**
-   * Create an empty MultiLayer that holds no layers of its own.  Be sure to add
+   * Create an empty LambdaMapReduceType that holds no layers of its own.  Be sure to add
    * layers with Add() before using!
    */
-  MultiLayer();
+  LambdaMapReduceType();
 
-  //! Copy the given MultiLayer.
-  MultiLayer(const MultiLayer& other);
-  //! Take ownership of the layers of the given MultiLayer.
-  MultiLayer(MultiLayer&& other);
-  //! Copy the given MultiLayer.
-  MultiLayer& operator=(const MultiLayer& other);
-  //! Take ownership of the given MultiLayer.
-  MultiLayer& operator=(MultiLayer&& other);
+  //! Copy the given LambdaMapReduceType.
+  LambdaMapReduceType(const LambdaMapReduceType& other);
+  //! Take ownership of the layers of the given LambdaMapReduceType.
+  LambdaMapReduceType(LambdaMapReduceType&& other);
+  //! Copy the given LambdaMapReduceType.
+  LambdaMapReduceType& operator=(const LambdaMapReduceType& other);
+  //! Take ownership of the given LambdaMapReduceType.
+  LambdaMapReduceType& operator=(LambdaMapReduceType&& other);
 
   //! Virtual destructor: delete all held layers.
-  virtual ~MultiLayer()
+  virtual ~LambdaMapReduceType()
   {
     for (size_t i = 0; i < network.size(); ++i)
       delete network[i];
   }
 
-  //! Create a copy of the MultiLayer (this is safe for polymorphic use).
-  virtual MultiLayer* Clone() const { return new MultiLayer(*this); }
+  //! Create a copy of the LambdaMapReduceType (this is safe for polymorphic use).
+  virtual LambdaMapReduceType* Clone() const { return new LambdaMapReduceType(*this); }
 
   /**
    * Perform a forward pass with the given input data.  `output` is expected to
    * have the correct size (e.g. number of rows equal to `OutputSize()` of the
    * last held layer; number of columns equal to `input.n_cols`).
    *
-   * @param input Input data to pass through the MultiLayer.
+   * @param input Input data to pass through the LambdaMapReduceType.
    * @param output Matrix to store output in.
    */
   virtual void Forward(const MatType& input, MatType& output);
 
   /**
    * Perform a forward pass with the given input data, but only on a subset of
-   * the layers in the MultiLayer.  `output` is expected to have the correct
+   * the layers in the LambdaMapReduceType.  `output` is expected to have the correct
    * size (e.g. number of rows equal to `OutputSize()` of the last layer to be
    * computed; number of columns equal to `input.n_cols`).
    *
-   * @param input Input data to pass through the MultiLayer.
+   * @param input Input data to pass through the LambdaMapReduceType.
    * @param output Matrix to store output in.
    * @param start Index of first layer to pass data through.
    * @param end Index of last layer to pass data through.
@@ -131,14 +133,14 @@ class MultiLayer : public Layer<MatType>
   virtual void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
-   * Return the number of weights in the MultiLayer.  This is the sum of the
+   * Return the number of weights in the LambdaMapReduceType.  This is the sum of the
    * number of weights in each layer.
    */
   virtual size_t WeightSize() const;
 
   /**
-   * Compute the output dimensions of the MultiLayer using `InputDimensions()`.
-   * This computes the dimensions of each layer held by the MultiLayer, and the
+   * Compute the output dimensions of the LambdaMapReduceType using `InputDimensions()`.
+   * This computes the dimensions of each layer held by the LambdaMapReduceType, and the
    * output dimensions are set to the output dimensions of the last layer.
    */
   virtual void ComputeOutputDimensions();
@@ -175,16 +177,21 @@ class MultiLayer : public Layer<MatType>
     layerGradients.push_back(MatType());
   }
 
-  //! Get the network (series of layers) held by this MultiLayer.
+  //! Get the network (series of layers) held by this LambdaMapReduceType.
   const std::vector<Layer<MatType>*> Network() const
   {
     return network;
   }
-  //! Modify the network (series of layers) held by this MultiLayer.  Be
+  //! Modify the network (series of layers) held by this LambdaMapReduceType.  Be
   //! careful!
   std::vector<Layer<MatType>*>& Network() { return network; }
 
-  //! Serialize the MultiLayer.
+  //! Get the parameters.
+  MatType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  MatType& Parameters() { return weights; }
+
+  //! Serialize the LambdaMapReduceType.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -225,6 +232,12 @@ class MultiLayer : public Layer<MatType>
   // Total number of output elements for *every* layer.
   size_t totalOutputSize;
 
+  //! Redction rule for the output of each layer.
+  ReductionRuleType reductionRule;
+
+  //! Locally-stored weight object.
+  MatType weights;
+
   //! This matrix stores all of the outputs of each layer when Forward() is
   //! called.  See `InitializeForwardPassMemory()`.
   MatType layerOutputMatrix;
@@ -243,10 +256,15 @@ class MultiLayer : public Layer<MatType>
   std::vector<MatType> layerGradients;
 };
 
+typedef LambdaMapReduceType<
+    AddReduction,
+    arma::mat
+> LambdaMapReduce;
+
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "multi_layer_impl.hpp"
+#include "lambda_map_reduce_impl.hpp"
 
 #endif

@@ -14,6 +14,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  lambda_map_reduce.hpp
+  lambda_map_reduce_impl.hpp
   layer.hpp
   layer_types.hpp
   leaky_relu.hpp

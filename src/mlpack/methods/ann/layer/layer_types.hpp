@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
+#include <mlpack/methods/ann/layer/lambda_map_reduce.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/linear.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
@@ -45,6 +46,9 @@
 
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
+
+// Include Reduction Rules.
+#include <mlpack/methods/ann/reduction_rules/add_reduction.hpp>
 
 // Include definitions for polymorphic serialization.
 #include <mlpack/methods/ann/layer/serialization.hpp>

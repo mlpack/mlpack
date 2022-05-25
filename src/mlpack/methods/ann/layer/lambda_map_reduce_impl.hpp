@@ -1,6 +1,6 @@
 /**
- * @file methods/ann/layer/multi_layer_impl.hpp
- * @author Ryan Curtin
+ * @file methods/ann/layer/lambda_map_reduce_impl.hpp
+ * @author Shubham Agrawal
  *
  * Implementation of the base class for neural network layers that are wrappers
  * around other layers.
@@ -10,16 +10,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LAMBDA_MAP_REDUCE_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_LAMBDA_MAP_REDUCE_IMPL_HPP
 
-#include "multi_layer.hpp"
+#include "lambda_map_reduce.hpp"
 
 namespace mlpack {
 namespace ann {
 
-template<typename MatType>
-MultiLayer<MatType>::MultiLayer() :
+template<typename ReductionRuleType, typename MatType>
+LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType() :
     Layer<MatType>(),
     inSize(0),
     totalInputSize(0),
@@ -28,14 +28,15 @@ MultiLayer<MatType>::MultiLayer() :
   // Nothing to do.
 }
 
-template<typename MatType>
-MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
-    Layer<MatType>(other),
+template<typename ReductionRuleType, typename MatType>
+LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(const LambdaMapReduceType& other) :
+    Layer<ReductionRuleType, MatType>(other),
     inSize(other.inSize),
     totalInputSize(other.totalInputSize),
     totalOutputSize(other.totalOutputSize),
     layerOutputMatrix(other.layerOutputMatrix),
-    layerDeltaMatrix(other.layerDeltaMatrix)
+    layerDeltaMatrix(other.layerDeltaMatrix),
+    reductionRule(other.reductionRule)
 {
   // Copy each layer.
   for (size_t i = 0; i < other.network.size(); ++i)
@@ -50,15 +51,16 @@ MultiLayer<MatType>::MultiLayer(const MultiLayer& other) :
   // Forward(), Backward(), or Gradient() is called.
 }
 
-template<typename MatType>
-MultiLayer<MatType>::MultiLayer(MultiLayer&& other) :
-    Layer<MatType>(other),
+template<typename ReductionRuleType, typename MatType>
+LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(LambdaMapReduceType&& other) :
+    Layer<ReductionRuleType, MatType>(other),
     network(std::move(other.network)),
     inSize(std::move(other.inSize)),
     totalInputSize(std::move(other.totalInputSize)),
     totalOutputSize(std::move(other.totalOutputSize)),
     layerOutputMatrix(std::move(other.layerOutputMatrix)),
-    layerDeltaMatrix(std::move(other.layerDeltaMatrix))
+    layerDeltaMatrix(std::move(other.layerDeltaMatrix)),
+    reductionRule(std::move(other.reductionRule))
 {
   // Ensure that the aliases for layers during passes have the right size.
   layerOutputs.resize(network.size(), MatType());
@@ -73,12 +75,12 @@ MultiLayer<MatType>::MultiLayer(MultiLayer&& other) :
   other.layerGradients.clear();
 }
 
-template<typename MatType>
-MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
+template<typename ReductionRuleType, typename MatType>
+LambdaMapReduceType<ReductionRuleType, MatType>& LambdaMapReduceType<ReductionRuleType, MatType>::operator=(const LambdaMapReduceType& other)
 {
   if (this != &other)
   {
-    Layer<MatType>::operator=(other);
+    Layer<ReductionRuleType, MatType>::operator=(other);
 
     network.clear();
     layerOutputs.clear();
@@ -88,6 +90,7 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
     inSize = other.inSize;
     totalInputSize = other.totalInputSize;
     totalOutputSize = other.totalOutputSize;
+    reductionRule = other.reductionRule;
 
     layerOutputMatrix = other.layerOutputMatrix;
     layerDeltaMatrix = other.layerDeltaMatrix;
@@ -104,12 +107,12 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(const MultiLayer& other)
   return *this;
 }
 
-template<typename MatType>
-MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
+template<typename ReductionRuleType, typename MatType>
+LambdaMapReduceType<ReductionRuleType, MatType>& LambdaMapReduceType<ReductionRuleType, MatType>::operator=(LambdaMapReduceType&& other)
 {
   if (this != &other)
   {
-    Layer<MatType>::operator=(other);
+    Layer<ReductionRuleType, MatType>::operator=(other);
 
     layerOutputs.clear();
     layerDeltas.clear();
@@ -118,6 +121,7 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
     inSize = std::move(other.inSize);
     totalInputSize = std::move(other.totalInputSize);
     totalOutputSize = std::move(other.totalOutputSize);
+    reductionRule = std::move(other.reductionRule);
 
     network = std::move(other.network);
 
@@ -133,15 +137,15 @@ MultiLayer<MatType>& MultiLayer<MatType>::operator=(MultiLayer&& other)
   return *this;
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::Forward(
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::Forward(
     const MatType& input, MatType& output)
 {
   Forward(input, output, 0, network.size() - 1);
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::Forward(
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::Forward(
     const MatType& input,
     MatType& output,
     const size_t start,
@@ -158,10 +162,11 @@ void MultiLayer<MatType>::Forward(
     // Initialize memory for the forward pass (if needed).
     InitializeForwardPassMemory(input.n_cols);
 
-    network[start]->Forward(input, layerOutputs[start]);
-    for (size_t i = start + 1; i < end; ++i)
-      network[i]->Forward(layerOutputs[i - 1], layerOutputs[i]);
-    network[end]->Forward(layerOutputs[end - 1], output);
+    for (size_t i = start; i <= end; i++)
+      network[i]->Forward(input, layerOutputs[i]);
+
+		// Reduce the outputs to single output.
+    reductionRule.Reduce(layerOutputs, output);
   }
   else if ((end - start) == 0 && network.size() > 0)
   {
@@ -174,8 +179,8 @@ void MultiLayer<MatType>::Forward(
   }
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::Backward(
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::Backward(
     const MatType& input, const MatType& gy, MatType& g)
 {
   if (network.size() > 1)
@@ -183,10 +188,15 @@ void MultiLayer<MatType>::Backward(
     // Initialize memory for the backward pass (if needed).
     InitializeBackwardPassMemory(input.n_cols);
 
-    network.back()->Backward(input, gy, layerDeltas.back());
-    for (size_t i = network.size() - 2; i > 0; --i)
-      network[i]->Backward(layerOutputs[i], layerDeltas[i + 1], layerDeltas[i]);
-    network[0]->Backward(layerOutputs[0], layerDeltas[1], g);
+		std::vector<MatType> layerTempDeltas;
+		// Compute the gy for all layers.
+    reductionRule.UnReduce(gy, network.size(), layerTempDeltas);
+
+    g.zeros();
+    for (size_t i = network.size() - 1; i >= 0; i--) {
+      network[i]->Backward(layerOutputs[i], layerTempDeltas[i], layerDeltas[i]);
+			g += layerDeltas[i];
+		}
   }
   else if (network.size() == 1)
   {
@@ -199,8 +209,8 @@ void MultiLayer<MatType>::Backward(
   }
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::Gradient(
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::Gradient(
     const MatType& input, const MatType& error, MatType& gradient)
 {
   // We assume gradient has the right size already.
@@ -211,14 +221,15 @@ void MultiLayer<MatType>::Gradient(
     // Initialize memory for the gradient pass (if needed).
     InitializeGradientPassMemory(gradient);
 
-    network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
-    for (size_t i = 1; i < network.size() - 1; ++i)
+    std::vector<MatType> layerTempDeltas;
+    // Compute the error for all layers.
+    reductionRule.UnReduce(error, network.size(), layerTempDeltas);
+
+    for (size_t i = 0; i < network.size(); ++i)
     {
-      network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
+      network[i]->Gradient(input, layerTempDeltas[i],
           layerGradients[i]);
     }
-    network.back()->Gradient(layerOutputs[network.size() - 2], error,
-        layerGradients.back());
   }
   else if (network.size() == 1)
   {
@@ -230,8 +241,8 @@ void MultiLayer<MatType>::Gradient(
   }
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 {
   size_t start = 0;
   const size_t totalWeightSize = WeightSize();
@@ -254,10 +265,12 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
   Log::Assert(start == totalWeightSize,
       "FNN::SetLayerMemory(): total layer weight size does not match parameter "
       "size!");
+
+  MakeAlias(weights, weightsPtr, totalWeightSize, 1);
 }
 
-template<typename MatType>
-size_t MultiLayer<MatType>::WeightSize() const
+template<typename ReductionRuleType, typename MatType>
+size_t LambdaMapReduceType<ReductionRuleType, MatType>::WeightSize() const
 {
   // Sum the weights in each layer.
   size_t total = 0;
@@ -266,41 +279,38 @@ size_t MultiLayer<MatType>::WeightSize() const
   return total;
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::ComputeOutputDimensions()
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::ComputeOutputDimensions()
 {
   inSize = 0;
   totalInputSize = 0;
   totalOutputSize = 0;
 
   // Propagate the input dimensions forward to the output.
+  if (network.size() == 0)
+  {
+    this->outputDimensions = this->inputDimensions;
+    return;
+  }
   network.front()->InputDimensions() = this->inputDimensions;
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
     inSize *= this->inputDimensions[i];
-  totalInputSize += inSize;
+  totalInputSize = network.size() * inSize;
 
-  for (size_t i = 1; i < network.size(); ++i)
+  for (size_t i = 0; i < network.size(); ++i)
   {
-    network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
-    size_t layerInputSize = network[i]->InputDimensions()[0];
-    for (size_t j = 1; j < network[i]->InputDimensions().size(); ++j)
-      layerInputSize *= network[i]->InputDimensions()[j];
-
-    totalInputSize += layerInputSize;
-    totalOutputSize += layerInputSize;
+    network[i]->InputDimensions() = this->inputDimensions;
+    size_t layerOutputSize = network[i]->OutputSize();
+    totalOutputSize += layerOutputSize;
   }
 
-  size_t lastLayerSize = network.back()->OutputDimensions()[0];
-  for (size_t i = 1; i < network.back()->OutputDimensions().size(); ++i)
-    lastLayerSize *= network.back()->OutputDimensions()[i];
-
-  totalOutputSize += lastLayerSize;
-  this->outputDimensions = network.back()->OutputDimensions();
+	// Compute the output size of the network using reduction rules.
+  this->outputDimensions = reductionRule.ReduceSize(network);
 }
 
-template<typename MatType>
-double MultiLayer<MatType>::Loss() const
+template<typename ReductionRuleType, typename MatType>
+double LambdaMapReduceType<ReductionRuleType, MatType>::Loss() const
 {
   double loss = 0.0;
   for (size_t i = 0; i < network.size(); ++i)
@@ -309,9 +319,9 @@ double MultiLayer<MatType>::Loss() const
   return loss;
 }
 
-template<typename MatType>
+template<typename ReductionRuleType, typename MatType>
 template<typename Archive>
-void MultiLayer<MatType>::serialize(
+void LambdaMapReduceType<ReductionRuleType, MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
@@ -332,8 +342,8 @@ void MultiLayer<MatType>::serialize(
   }
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::InitializeForwardPassMemory(const size_t batchSize)
 {
   // We need to initialize memory to store the output of each layer's Forward()
   // call.  We'll do this all in one matrix, but, the size of this matrix
@@ -359,8 +369,8 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   }
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::InitializeBackwardPassMemory(
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::InitializeBackwardPassMemory(
     const size_t batchSize)
 {
   // We need to initialize memory to store the output of each layer's Backward()
@@ -378,24 +388,15 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
   size_t start = 0;
   for (size_t i = 0; i < layerDeltas.size(); ++i)
   {
-    size_t layerInputSize = 1;
-    if (i == 0)
-    {
-      for (size_t j = 0; j < this->inputDimensions.size(); ++j)
-        layerInputSize *= this->inputDimensions[j];
-    }
-    else
-    {
-      layerInputSize = network[i - 1]->OutputSize();
-    }
+    size_t layerInputSize = inSize;
     MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
         batchSize);
     start += batchSize * layerInputSize;
   }
 }
 
-template<typename MatType>
-void MultiLayer<MatType>::InitializeGradientPassMemory(MatType& gradient)
+template<typename ReductionRuleType, typename MatType>
+void LambdaMapReduceType<ReductionRuleType, MatType>::InitializeGradientPassMemory(MatType& gradient)
 {
   // We need to initialize memory to store the gradients of each layer.  To do
   // this, we need to know the weight size of each layer.

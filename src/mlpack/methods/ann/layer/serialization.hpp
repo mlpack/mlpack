@@ -37,6 +37,8 @@
         __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropConnectType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropoutType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::LambdaMapReduceType< \
+        mlpack::ann::AddReduction, __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LeakyReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LinearType<__VA_ARGS__>); \

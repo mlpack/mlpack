@@ -1,20 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  ffn.hpp
-  ffn_impl.hpp
-  forward_decls.hpp
-  make_alias.hpp
-  rnn.hpp
-  rnn_impl.hpp
+  add_reduction.hpp
 )
-
-add_subdirectory(init_rules)
-add_subdirectory(layer)
-add_subdirectory(loss_functions)
-add_subdirectory(convolution_rules)
-add_subdirectory(regularizer)
-add_subdirectory(reduction_rules)
 
 # Add directory name to sources.
 set(DIR_SRCS)
