@@ -117,7 +117,7 @@ installed through apt:
 
 @code
 # apt-get install libcereal-dev libarmadillo-dev binutils-dev python3-pandas
-    python3-numpy cython3 python3-setuptools
+  python3-numpy cython3 python3-setuptools
 @endcode
 
 If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
@@ -139,8 +139,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install armadillo-devel binutils-devel python3-Cython python3-setuptools
-    python3-numpy python3-pandas ensmallen-devel
-  stbi-devel cereal-devel
+  python3-numpy python3-pandas ensmallen-devel stbi-devel cereal-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack
