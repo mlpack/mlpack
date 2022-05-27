@@ -96,7 +96,6 @@ mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
  - Armadillo >= 9.800 (with LAPACK support)
- - Boost (math_c99, spirit) >= 1.58
  - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
@@ -117,9 +116,8 @@ In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be
 installed through apt:
 
 @code
-# apt-get install libboost-math-dev libcereal-dev
-  libarmadillo-dev binutils-dev python3-pandas python3-numpy cython3
-  python3-setuptools
+# apt-get install libcereal-dev libarmadillo-dev binutils-dev python3-pandas
+    python3-numpy cython3 python3-setuptools
 @endcode
 
 If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
@@ -140,8 +138,8 @@ source as apt installs an older version. So you need to omit
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
-# dnf install boost-devel boost-math armadillo-devel binutils-devel
-  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel
+# dnf install armadillo-devel binutils-devel python3-Cython python3-setuptools
+    python3-numpy python3-pandas ensmallen-devel
   stbi-devel cereal-devel
 @endcode
 
@@ -225,7 +223,6 @@ and libraries. These also use the '-D' flag.
  - ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
  - ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): location of Armadillo
        library
- - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
  - CEREAL_INCLUDE_DIR=(/path/to/cereal/include): path to include directory for
        cereal
  - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory

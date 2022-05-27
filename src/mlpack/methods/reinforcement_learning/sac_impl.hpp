@@ -223,8 +223,7 @@ void SAC<
   learningQ2Network.Predict(qInput, Q2);
 
   // Get the size of the first hidden layer in the Q network.
-  size_t hidden1 = boost::get<mlpack::ann::Linear<> *>
-      (learningQ1Network.Model()[0])->OutputSize();
+  size_t hidden1 = (learningQ1Network.Model()[0])->OutputSize();
 
   arma::mat gradient;
   for (size_t i = 0; i < sampledStates.n_cols; i++)
