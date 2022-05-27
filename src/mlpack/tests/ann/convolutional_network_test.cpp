@@ -224,7 +224,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
     // Train for only 8 epochs.
     ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
 
-    double objVal = model.Train(X, Y, opt, ens::PrintLoss());
+    double objVal = model.Train(X, Y, opt);
 
     // Test that objective value returned by FFN::Train() is finite.
     REQUIRE(std::isfinite(objVal) == true);
@@ -320,7 +320,7 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 
     // Now compute results with a batch size of 1.
     arma::mat singleResults(results.n_rows, results.n_cols);
-    arma::mat singleGradient(gradient.n_rows, gradient.n_cols);
+    arma::mat singleGradient(gradient.n_rows, gradient.n_cols, arma::fill::zeros);
     double singleObj = 0.0;
 
     for (size_t i = 0; i < batchSize; ++i)
