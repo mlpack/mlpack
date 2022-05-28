@@ -228,7 +228,7 @@ void MeanPoolingType<MatType>::PoolingOperation(
             continue;
           colEnd = input.n_cols - 1;
         }
-        output(i, j, s) = MeanPoolingRule.Pooling(input.slice(s).submat(
+        output(i, j, s) = Pooling(input.slice(s).submat(
             rowidx,
             colidx,
             rowEnd,
