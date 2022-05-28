@@ -114,8 +114,8 @@ void AdaptiveMeanPoolingType<MatType>::ComputeOutputDimensions()
   this->outputDimensions[0] = outputWidth;
   this->outputDimensions[1] = outputHeight;
 
-  if (outputWidth < this->inputDimensions[0] ||
-        outputHeight < this->inputDimensions[1])
+  if (outputWidth > this->inputDimensions[0] ||
+        outputHeight > this->inputDimensions[1])
   {
     Log::Fatal << "Given output shape (" << outputWidth << ", "
       << outputHeight << ") is not possible for given input shape ("
