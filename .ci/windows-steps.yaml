@@ -84,6 +84,7 @@ steps:
 - bash: |
     cd build
     cmake --build . --target mlpack_test --config Release
+    Release\mlpack_test.exe
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 
