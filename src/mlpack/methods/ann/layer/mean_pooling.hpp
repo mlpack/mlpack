@@ -20,22 +20,6 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-class MeanPoolingRule
-{
- public:
-  /**
-   * Return the maximum value within the receptive block.
-   *
-   * @param input Input used to perform the pooling operation.  Could be an
-   *     Armadillo subview.
-   */
-  template<typename MatType>
-  static typename MatType::elem_type Pooling(const MatType& input)
-  {
-    return arma::mean(arma::vectorise(input));
-  }
-};
-
 /**
  * Implementation of the MeanPooling.
  *
@@ -152,6 +136,17 @@ class MeanPoolingType : public Layer<MatType>
    * @param output The pooled result.
    */
   void Unpooling(const MatType& error, MatType& output);
+
+  /**
+   * Return the average value of the receptive block.
+   *
+   * @param input Input used to perform the pooling operation.  Could be an
+   *     Armadillo subview.
+   */
+  typename MatType::elem_type Pooling(const MatType& input)
+  {
+    return arma::mean(arma::vectorise(input));
+  }
 
   //! Locally-stored width of the pooling window.
   size_t kernelWidth;
