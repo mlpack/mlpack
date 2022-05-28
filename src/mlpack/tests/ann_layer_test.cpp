@@ -4903,23 +4903,23 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat prev_delta1, prev_delta2;
-  prev_delta1 << 3.6000 << -0.9000 << arma::endr
+  arma::mat prevDelta1, prevDelta2;
+  prevDelta1  << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr;
 
-  prev_delta2 << 3.6000 << -0.9000 << arma::endr
+  prevDelta2  << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr;
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);
-  prev_delta1.reshape(8, 1);
-  prev_delta2.reshape(6, 1);
-  module1.Backward(input, prev_delta1, delta1);
+  prevDelta1.reshape(8, 1);
+  prevDelta2.reshape(6, 1);
+  module1.Backward(input, prevDelta1, delta1);
   REQUIRE(arma::accu(delta1) == Approx(10.8).epsilon(1e-3));
-  module2.Backward(input, prev_delta2, delta2);
+  module2.Backward(input, prevDelta2, delta2);
   REQUIRE(arma::accu(delta2) == Approx(8.1).epsilon(1e-3));
 }
 
@@ -5133,7 +5133,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   input(8) = 3;
   // Output-Size should be 3 x 3.
   // Square output.
-  AdaptiveMaxPooling module3(std::tuple<size_t, size_t>(3, 3));
+  AdaptiveMaxPooling module3(3, 3);
   output.set_size(9, 1);
   module3.InputDimensions() = std::vector<size_t>({ 4, 4 });
   module3.ComputeOutputDimensions();
@@ -5156,7 +5156,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   input(3) = 1;
   // Output-Size should be 2 x 2.
   // Square output.
-  AdaptiveMaxPooling module4(std::tuple<size_t, size_t>(2, 2));
+  AdaptiveMaxPooling module4(2, 2);
   output.set_size(4, 1);
   module4.InputDimensions() = std::vector<size_t>({ 5, 4 });
   module4.ComputeOutputDimensions();
@@ -5242,7 +5242,7 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   input(8) = 3;
   // Output-Size should be 3 x 3.
   // Square output.
-  AdaptiveMeanPooling module3(std::tuple<size_t, size_t>(3, 3));
+  AdaptiveMeanPooling module3(3, 3);
   output.set_size(9, 1);
   module3.InputDimensions() = std::vector<size_t>({ 4, 4 });
   module3.ComputeOutputDimensions();
@@ -5264,7 +5264,7 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   input(4) = 3;
   // Output-Size should be 3 x 3.
   // Square output.
-  AdaptiveMeanPooling module4(std::tuple<size_t, size_t>(3, 3));
+  AdaptiveMeanPooling module4(3, 3);
   output.set_size(9, 1);
   module4.InputDimensions() = std::vector<size_t>({ 6, 4 });
   module4.ComputeOutputDimensions();

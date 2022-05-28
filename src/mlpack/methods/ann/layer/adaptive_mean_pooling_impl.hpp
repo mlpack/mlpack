@@ -28,20 +28,12 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType() :
 template <typename MatType>
 AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
     const size_t outputWidth,
-    const size_t outputHeight) :
-    AdaptiveMeanPoolingType(std::tuple<size_t, size_t>(outputWidth, outputHeight))
-{
-  // Nothing to do here.
-}
-
-template <typename MatType>
-AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
-    const std::tuple<size_t, size_t>& outputShape) : 
+    const size_t outputHeight) : 
     Layer<MatType>(),
-    outputWidth(std::get<0>(outputShape)),
-    outputHeight(std::get<1>(outputShape))
+    outputWidth(outputWidth),
+    outputHeight(outputHeight)
 {
-  poolingLayer = ann::MeanPoolingType<MatType>(0, 0);
+  poolingLayer = ann::MeanPoolingType<MatType>(1, 1);
 }
 
 template<typename MatType>
@@ -116,12 +108,32 @@ void AdaptiveMeanPoolingType<MatType>::Backward(
 template<typename MatType>
 void AdaptiveMeanPoolingType<MatType>::ComputeOutputDimensions()
 {
+  // The AdaptiveMaxPooling layer only affects the first two dimensions.
   this->outputDimensions = this->inputDimensions;
 
   this->outputDimensions[0] = outputWidth;
   this->outputDimensions[1] = outputHeight;
 
-  InitializeAdaptivePadding();
+  if (outputWidth < this->inputDimensions[0] ||
+        outputHeight < this->inputDimensions[1])
+  {
+    Log::Fatal << "Given output shape (" << outputWidth << ", "
+      << outputHeight << ") is not possible for given input shape ("
+      << this->inputDimensions[0] << ", " << this->inputDimensions[1]
+      << ")." << std::endl;
+  }
+  poolingLayer.InputDimensions() = this->inputDimensions;
+  poolingLayer.StrideWidth() = std::floor(this->inputDimensions[0] /
+      outputWidth);
+  poolingLayer.StrideHeight() = std::floor(this->inputDimensions[1] /
+      outputHeight);
+
+  poolingLayer.KernelWidth() = this->inputDimensions[0] -
+      (outputWidth - 1) * poolingLayer.StrideWidth();
+  poolingLayer.KernelHeight() = this->inputDimensions[1] -
+      (outputHeight - 1) * poolingLayer.StrideHeight();
+
+  poolingLayer.ComputeOutputDimensions();
 
   // Higher dimensions are not modified.
 }

@@ -22,8 +22,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the AdaptiveMeanPooling.
- *
+ * Implementation of the AdaptiveMeanPooling layer.
+ * 
+ * The AdaptiveMeanPooling layer works similarly to MeanPooling layer, but it 
+ * adaptively changes the size of the pooling region to minimize the amount of
+ * computation. In MeanPooling, we specifies the kernel and stride size whereas
+ * in AdaptiveMeanPooling, we specify the output size of the pooling region.
+ * 
  * @tparam MatType Matrix representation to accept as input and use for
  *         computation.
  */
@@ -42,14 +47,6 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
    */
   AdaptiveMeanPoolingType(const size_t outputWidth,
                           const size_t outputHeight);
-
-  /**
-   * Create the AdaptiveMeanPooling object.
-   *
-   * @param outputShape A two-value tuple indicating width and height of the
-   *      output.
-   */
-  AdaptiveMeanPoolingType(const std::tuple<size_t, size_t>& outputShape);
 
   // Virtual destructor.
   virtual ~AdaptiveMeanPoolingType() { 
@@ -109,40 +106,17 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-  /**
-   * Initialize Kernel Size and Stride for Adaptive Pooling.
-   */
-  void InitializeAdaptivePadding()
-  {
-    poolingLayer.InputDimensions() = this->inputDimensions;
-    poolingLayer.StrideWidth() = std::floor(this->inputDimensions[0] /
-        outputWidth);
-    poolingLayer.StrideHeight() = std::floor(this->inputDimensions[1] /
-        outputHeight);
-
-    poolingLayer.KernelWidth() = this->inputDimensions[0] -
-        (outputWidth - 1) * poolingLayer.StrideWidth();
-    poolingLayer.KernelHeight() = this->inputDimensions[1] -
-        (outputHeight - 1) * poolingLayer.StrideHeight();
-
-    if (poolingLayer.KernelHeight() <= 0 || poolingLayer.KernelWidth() <= 0 ||
-        poolingLayer.StrideWidth() <= 0 || poolingLayer.StrideHeight() <= 0)
-    {
-      Log::Fatal << "Given output shape (" << outputWidth << ", "
-        << outputHeight << ") is not possible for given input shape ("
-        << this->inputDimensions[0] << ", " << this->inputDimensions[1]
-        << ")." << std::endl;
-    }
-    poolingLayer.ComputeOutputDimensions();
-  }
-
   //! Locally stored MeanPooling Object.
   MeanPoolingType<MatType> poolingLayer;
 
-  //! Locally-stored output width.
+  //! Locally-stored output width. These are user specified outputWidth.
+  //! Actual outputWidth will be equal to this but only after 
+  //! `ComputeOutputDimensions()` is called.
   size_t outputWidth;
 
-  //! Locally-stored output height.
+  //! Locally-stored output height. These are user specified outputWidth.
+  //! Actual outputWidth will be equal to this but only after
+  //! `ComputeOutputDimensions()` is called.
   size_t outputHeight;
 }; // class AdaptiveMeanPoolingType
 
