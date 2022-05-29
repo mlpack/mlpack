@@ -26,7 +26,6 @@ option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 # See https://github.com/mlpack/mlpack/issues/3033 for some more discussion.
 set(ARMADILLO_VERSION "9.800")
 set(ENSMALLEN_VERSION "2.10.0")
-set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
 
 # If BUILD_SHARED_LIBS is OFF then the mlpack library will be built statically.
@@ -290,8 +289,6 @@ endif()
 #   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
 #   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
-#   BOOST_ROOT - root of Boost installation
-#   BOOST_INCLUDEDIR - include directory for Boost
 #   CEREAL_INCLUDE_DIR - include directory for cereal
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
@@ -376,54 +373,6 @@ else()
   endif()
 endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
-
-# Unfortunately this configuration variable is necessary and will need to be
-# updated as time goes on and new versions are released.
-set(Boost_ADDITIONAL_VERSIONS
-  "1.79.0" "1.79"
-  "1.78.0" "1.78"
-  "1.77.0" "1.77"
-  "1.76.0" "1.76"
-  "1.75.0" "1.75"
-  "1.74.0" "1.74"
-  "1.73.0" "1.73"
-  "1.72.0" "1.72"
-  "1.71.0" "1.71"
-  "1.70.0" "1.70"
-  "1.69.0" "1.69"
-  "1.68.0" "1.68"
-  "1.67.0" "1.67"
-  "1.66.0" "1.66"
-  "1.65.1" "1.65.0" "1.65"
-  "1.64.1" "1.64.0" "1.64"
-  "1.63.1" "1.63.0" "1.63"
-  "1.62.1" "1.62.0" "1.62"
-  "1.61.1" "1.61.0" "1.61"
-  "1.60.1" "1.60.0" "1.60"
-  "1.59.1" "1.59.0" "1.59"
-  "1.58.1" "1.58.0" "1.58")
-# Disable forced config-mode CMake search for Boost, which only imports targets
-# and does not set the variables that we need.
-#
-# TODO for the brave: transition all mlpack's CMake to 'target-based modern
-# CMake'.  Good luck!  You'll need it.
-set(Boost_NO_BOOST_CMAKE 1)
-if (NOT DOWNLOAD_DEPENDENCIES)
-  find_package(Boost "${BOOST_VERSION}" REQUIRED)
-else()
-  find_package(Boost "${BOOST_VERSION}")
-  if (NOT Boost_FOUND)
-    if (CMAKE_COMPILER_IS_GNUCC AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0))
-      get_deps(http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz boost boost_1_58_0.tar.gz)
-    else()
-      get_deps(https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz boost boost_1_76_0.tar.gz)
-    endif()
-    find_package(Boost REQUIRED)
-  endif()
-endif()
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
-set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
