@@ -85,7 +85,8 @@ steps:
     cd build
     cmake --build . --target mlpack_test --config Release
     ls
-    Release/mlpack_test.exe
+    dumpbin.exe /dependents Release/mlpack_test.exe
+    dumpbin.exe /imports Release/mlpack_test.exe
     echo "ran"
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
