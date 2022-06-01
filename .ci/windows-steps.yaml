@@ -86,6 +86,7 @@ steps:
     cmake --build . --target mlpack_test --config Release
     ls ../armadillo-9.800.6/Release/
     cp ../armadillo-9.800.6/Release/armadillo.dll Release/
+    cp $(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a Release/
     ls
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
