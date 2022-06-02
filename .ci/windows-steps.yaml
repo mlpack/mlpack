@@ -84,8 +84,6 @@ steps:
 - bash: |
     cd build
     cmake --build . --target mlpack_test --config Release
-    ls ../armadillo-9.800.6/Release/
-    cp ../armadillo-9.800.6/Release/armadillo.dll Release/
   displayName: 'Build tests'
 
 - powershell: cp $(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a Release/
