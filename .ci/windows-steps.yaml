@@ -82,7 +82,7 @@ steps:
   displayName: 'Configure mlpack'
 
 # Run tests via ctest.
-- bash: |
+- powershell: |
     cd build
     cmake --build . --target mlpack_test --config Release
     cd Release
