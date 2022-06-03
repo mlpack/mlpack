@@ -30,10 +30,11 @@ AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
     const size_t outputWidth,
     const size_t outputHeight) : 
     Layer<MatType>(),
+    poolingLayer(ann::MaxPoolingType<MatType>(1, 1)),
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
-  poolingLayer = ann::MaxPoolingType<MatType>(1, 1);
+  // Nothing to do here.
 }
 
 template<typename MatType>

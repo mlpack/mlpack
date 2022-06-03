@@ -250,7 +250,7 @@ void MeanPoolingType<MatType>::Unpooling(
   // of kernal be kernalArea. Total number of operations in brute force method will be
   // `errorArea * kernalArea` and for each element in error we are doing `kernalArea`
   // number of operations. Whereas in the prefix method the total number of operations
-  // will be `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
+  // will be `4 * errorArea + 2 * outputArea`. The term `2 * outputArea` comes from
   // prefix sums performed (col-wise and row-wise).
   // We can use this to determine which method to use.
   const bool condition = (error.n_elem * kernelHeight * kernelWidth) >
@@ -260,9 +260,9 @@ void MeanPoolingType<MatType>::Unpooling(
   {
     // If this condition is true then theoritically the prefix sum method of
     // unpooling is faster. The aim of unpooling is to add
-    // `error(i, j) / kernalArea` to `inputArea(kernal)`. This requires
-    // `inputArea.n_elem` additions. So, total operations required will be
-    // `error.n_elem * inputArea.n_elem` operations.
+    // `error(i, j) / kernalArea` to `outputArea(kernal)`. This requires
+    // `outputArea.n_elem` additions. So, total operations required will be
+    // `error.n_elem * outputArea.n_elem` operations.
     // To improve this method we will use an idea of prefix sums. Let's see
     // this method in 1-D matrix then we will extend it to 2-D matrix.
     // Let the input be a 1-D matrix input = `[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]` of size 10
@@ -375,13 +375,13 @@ void MeanPoolingType<MatType>::Unpooling(
           rowEnd = output.n_rows - 1;
         }
 
-        arma::mat InputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));
+        arma::mat OutputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));
 
-        unpooledError = arma::Mat<typename MatType::elem_type>(InputArea.n_rows, InputArea.n_cols);
-        unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
+        unpooledError = arma::Mat<typename MatType::elem_type>(OutputArea.n_rows, OutputArea.n_cols);
+        unpooledError.fill(error(rowidx, colidx) / OutputArea.n_elem);
 
-        output(arma::span(i, i + InputArea.n_rows - 1),
-            arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;
+        output(arma::span(i, i + OutputArea.n_rows - 1),
+            arma::span(j, j + OutputArea.n_cols - 1)) += unpooledError;
       }
     }
   }
