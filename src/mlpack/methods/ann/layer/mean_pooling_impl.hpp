@@ -209,24 +209,26 @@ void MeanPoolingType<MatType>::PoolingOperation(
     for (size_t j = 0, colidx = 0; j < output.n_cols;
         ++j, colidx += strideHeight)
     {
+      size_t colEnd = colidx + kernelHeight - 1;
+      // Check if the kernel along column is out of bounds.
+      if (colEnd > input.n_cols - 1)
+      {
+        // If so, we need to reduce the kernel height or terminate.
+        if (floor)
+          continue;
+        colEnd = input.n_cols - 1;
+      }
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
           ++i, rowidx += strideWidth)
       {
         size_t rowEnd = rowidx + kernelWidth - 1;
-        size_t colEnd = colidx + kernelHeight - 1;
-
+        // Check if the kernel along row is out of bounds.
         if (rowEnd > input.n_rows - 1)
         {
+          // If so, we need to reduce the kernel width or terminate.
           if (floor)
             continue;
           rowEnd = input.n_rows - 1;
-        }
-
-        if (colEnd > input.n_cols - 1)
-        {
-          if (floor)
-            continue;
-          colEnd = input.n_cols - 1;
         }
         output(i, j, s) = Pooling(input.slice(s).submat(
             rowidx,
@@ -291,6 +293,15 @@ void MeanPoolingType<MatType>::Unpooling(
 
     for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight, ++colidx)
     {
+      size_t colEnd = j + kernelHeight - 1;
+      // Check if the kernel along column is out of bounds.
+      if (colEnd > output.n_cols - 1)
+      {
+        // If so, we need to reduce the kernel height or terminate.
+        if (floor)
+          continue;
+        colEnd = output.n_cols - 1;
+      }
       for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth, ++rowidx)
       {
         // We have to add error(i, j) to output(span(rowidx, rowEnd),
@@ -307,20 +318,13 @@ void MeanPoolingType<MatType>::Unpooling(
         // 2. Do prefix sum row wise i.e output(i, j) += output(i - 1, j)
 
         size_t rowEnd = i + kernelWidth - 1;
-        size_t colEnd = j + kernelHeight - 1;
-
+        // Check if the kernel along row is out of bounds.
         if (rowEnd > output.n_rows - 1)
         {
+          // If so, we need to reduce the kernel width or terminate.
           if (floor)
             continue;
           rowEnd = output.n_rows - 1;
-        }
-
-        if (colEnd > output.n_cols - 1)
-        {
-          if (floor)
-            continue;
-          colEnd = output.n_cols - 1;
         }
 
         size_t kernalArea = (rowEnd - i + 1) * (colEnd - j + 1);
@@ -350,23 +354,25 @@ void MeanPoolingType<MatType>::Unpooling(
     arma::Mat<typename MatType::elem_type> unpooledError;
     for (size_t j = 0, colidx = 0; j < output.n_cols; j += strideHeight, ++colidx)
     {
+      size_t colEnd = j + kernelHeight - 1;
+      // Check if the kernel along column is out of bounds.
+      if (colEnd > output.n_cols - 1)
+      {
+        // If so, we need to reduce the kernel height or terminate.
+        if (floor)
+          continue;
+        colEnd = output.n_cols - 1;
+      }
       for (size_t i = 0, rowidx = 0; i < output.n_rows; i += strideWidth, ++rowidx)
       {
         size_t rowEnd = i + kernelWidth - 1;
-        size_t colEnd = j + kernelHeight - 1;
-
+        // Check if the kernel along row is out of bounds.
         if (rowEnd > output.n_rows - 1)
         {
+          // If so, we need to reduce the kernel width or terminate.
           if (floor)
             continue;
           rowEnd = output.n_rows - 1;
-        }
-
-        if (colEnd > output.n_cols - 1)
-        {
-          if (floor)
-            continue;
-          colEnd = output.n_cols - 1;
         }
 
         arma::mat InputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));

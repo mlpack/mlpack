@@ -40,7 +40,8 @@ class MeanPoolingType : public Layer<MatType>
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
-   * @param floor Set to true to use floor method.
+   * @param floor If true, then a pooling operation that would oly part of the
+   *              input will be skipped.
    */
   MeanPoolingType(const size_t kernelWidth,
                   const size_t kernelHeight,

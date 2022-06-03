@@ -71,7 +71,8 @@ class MaxPoolingType : public Layer<MatType>
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
-   * @param floor Rounding operator (floor or ceil).
+   * @param floor If true, then a pooling operation that would oly part of the
+   *              input will be skipped.
    */
   MaxPoolingType(const size_t kernelWidth,
                  const size_t kernelHeight,
@@ -168,24 +169,26 @@ class MaxPoolingType : public Layer<MatType>
       for (size_t j = 0, colidx = 0; j < output.n_cols;
           ++j, colidx += strideHeight)
       {
+        size_t colEnd = colidx + kernelHeight - 1;
+        // Check if the kernel along column is out of bounds.
+        if (colEnd > input.n_cols - 1)
+        {
+          // If so, we need to reduce the kernel height or terminate.
+          if (floor)
+            continue;
+          colEnd = input.n_cols - 1;
+        }
         for (size_t i = 0, rowidx = 0; i < output.n_rows;
             ++i, rowidx += strideWidth)
         {
           size_t rowEnd = rowidx + kernelWidth - 1;
-          size_t colEnd = colidx + kernelHeight - 1;
-
+          // Check if the kernel along row is out of bounds.
           if (rowEnd > input.n_rows - 1)
           {
+            // If so, we need to reduce the kernel width or terminate.
             if (floor)
               continue;
             rowEnd = input.n_rows - 1;
-          }
-
-          if (colEnd > input.n_cols - 1)
-          {
-            if (floor)
-              continue;
-            colEnd = input.n_cols - 1;
           }
           const std::tuple<size_t, typename MatType::elem_type> poolResult =
               pooling.PoolingWithIndex(input.slice(s).submat(
@@ -227,25 +230,28 @@ class MaxPoolingType : public Layer<MatType>
       for (size_t j = 0, colidx = 0; j < output.n_cols;
           ++j, colidx += strideHeight)
       {
+        size_t colEnd = colidx + kernelHeight - 1;
+        // Check if the kernel along column is out of bounds.
+        if (colEnd > input.n_cols - 1)
+        {
+          // If so, we need to reduce the kernel height or terminate.
+          if (floor)
+            continue;
+          colEnd = input.n_cols - 1;
+        }
         for (size_t i = 0, rowidx = 0; i < output.n_rows;
             ++i, rowidx += strideWidth)
         {
           size_t rowEnd = rowidx + kernelWidth - 1;
-          size_t colEnd = colidx + kernelHeight - 1;
-
+          // Check if the kernel along row is out of bounds.
           if (rowEnd > input.n_rows - 1)
           {
+            // If so, we need to reduce the kernel width or terminate.
             if (floor)
               continue;
             rowEnd = input.n_rows - 1;
           }
 
-          if (colEnd > input.n_cols - 1)
-          {
-            if (floor)
-              continue;
-            colEnd = input.n_cols - 1;
-          }
           output(i, j, s) = pooling.Pooling(input.slice(s).submat(
               rowidx,
               colidx,

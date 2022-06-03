@@ -146,8 +146,6 @@ void AdaptiveMeanPoolingType<MatType>::serialize(
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
-  ar(CEREAL_NVP(outputWidth));
-  ar(CEREAL_NVP(outputHeight));
   ar(CEREAL_NVP(poolingLayer));
 }
 
