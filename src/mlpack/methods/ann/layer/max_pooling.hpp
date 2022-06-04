@@ -92,6 +92,7 @@ class MaxPoolingType : public Layer<MatType>
   //! Take ownership of the given MaxPoolingType.
   MaxPoolingType& operator=(MaxPoolingType&& other);
 
+  //! Clone the MaxPoolingType object. This handles polymorphism correctly.
   MaxPoolingType* Clone() const { return new MaxPoolingType(*this); }
 
   /**

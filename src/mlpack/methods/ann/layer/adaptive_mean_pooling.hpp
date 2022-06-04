@@ -49,7 +49,8 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
                           const size_t outputHeight);
 
   // Virtual destructor.
-  virtual ~AdaptiveMeanPoolingType() { 
+  virtual ~AdaptiveMeanPoolingType() 
+  { 
     // Nothing to do here.
   }
 
@@ -62,7 +63,12 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
   //! Take ownership of the given AdaptiveMeanPoolingType.
   AdaptiveMeanPoolingType& operator=(AdaptiveMeanPoolingType&& other);
 
-  AdaptiveMeanPoolingType* Clone() const { return new AdaptiveMeanPoolingType(*this); }
+  //! Clone the AdaptiveMeanPoolingType object. 
+  //! This handles polymorphism correctly.
+  AdaptiveMeanPoolingType* Clone() const 
+  { 
+    return new AdaptiveMeanPoolingType(*this); 
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

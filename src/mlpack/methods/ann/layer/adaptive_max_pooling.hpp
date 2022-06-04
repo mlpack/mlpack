@@ -48,7 +48,8 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
                          const size_t outputHeight);
 
   // Virtual destructor.
-  virtual ~AdaptiveMaxPoolingType() { 
+  virtual ~AdaptiveMaxPoolingType() 
+  { 
     // Nothing to do here.
   }
 
@@ -61,7 +62,12 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
   //! Take ownership of the given AdaptiveMaxPoolingType.
   AdaptiveMaxPoolingType& operator=(AdaptiveMaxPoolingType&& other);
 
-  AdaptiveMaxPoolingType* Clone() const { return new AdaptiveMaxPoolingType(*this); }
+  //! Clone the AdaptiveMaxPoolingType object. 
+  //! This handles polymorphism correctly.
+  AdaptiveMaxPoolingType* Clone() const 
+  { 
+    return new AdaptiveMaxPoolingType(*this); 
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

@@ -61,6 +61,7 @@ class MeanPoolingType : public Layer<MatType>
   //! Take ownership of the given MeanPoolingType.
   MeanPoolingType& operator=(MeanPoolingType&& other);
 
+  //! Clone the MeanPoolingType object. This handles polymorphism correctly.
   MeanPoolingType* Clone() const { return new MeanPoolingType(*this); }
 
   /**
