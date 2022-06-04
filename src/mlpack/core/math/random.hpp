@@ -23,42 +23,23 @@ namespace math /** Miscellaneous math routines. */ {
  * correctly on Windows.
  */
 
-#ifndef MLPACK_CORE_MATH_RANDOM_GLOBAL
-#define MLPACK_CORE_MATH_RANDOM_GLOBAL
+inline std::mt19937& RandGen()
+{
+  static thread_local std::mt19937 randGen;
+  return randGen;
+}
 
-#if __cplusplus < 201703L
-    template<class Dummy>
-    struct GlobalRandomVariables_
-    {
-      // Global random object.
-      static std::mt19937 randGen;
-      // Global uniform distribution.
-      static std::uniform_real_distribution<> randUniformDist;
-      // Global normal distribution.
-      static std::normal_distribution<> randNormalDist;
-    };
-    template<class Dummy>
-    // Global random object.
-    std::mt19937 GlobalRandomVariables_<Dummy>::randGen;
-    template<class Dummy>
-    // Global uniform distribution.
-    std::uniform_real_distribution<> GlobalRandomVariables_<Dummy>::randUniformDist(0.0, 1.0);
-    template<class Dummy>
-    // Global normal distribution.
-    std::normal_distribution<> GlobalRandomVariables_<Dummy>::randNormalDist(0.0, 1.0);
-    using GlobalRandomVariables = GlobalRandomVariables_<void>;
-#else
-  namespace GlobalRandomVariables {
-    // Global random object.
-    inline std::mt19937 randGen;
-    // Global uniform distribution.
-    inline std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
-    // Global normal distribution.
-    inline std::normal_distribution<> randNormalDist(0.0, 1.0);
-  }
-#endif
+inline std::uniform_real_distribution<>& RandUniformDist()
+{
+  static thread_local std::uniform_real_distribution<> randUniformDist(0.0, 0.1);
+  return randUniformDist;
+}
 
-#endif
+inline std::normal_distribution<>& RandNormalDist()
+{
+  static thread_local std::normal_distribution<> randNormalDist(0.0, 0.1);
+  return randNormalDist;
+}
 
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
@@ -70,7 +51,7 @@ namespace math /** Miscellaneous math routines. */ {
 inline void RandomSeed(const size_t seed)
 {
   #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
-    GlobalRandomVariables::randGen.seed((uint32_t) seed);
+    RandGen().seed((uint32_t) seed);
     #if (BINDING_TYPE == BINDING_TYPE_R)
       // To suppress Found 'srand', possibly from 'srand' (C).
       (void) seed;
@@ -94,14 +75,14 @@ inline void RandomSeed(const size_t seed)
 inline void FixedRandomSeed()
 {
   const static size_t seed = rand();
-  GlobalRandomVariables::randGen.seed((uint32_t) seed);
+  RandGen().seed((uint32_t) seed);
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
 }
 
 inline void CustomRandomSeed(const size_t seed)
 {
-  GlobalRandomVariables::randGen.seed((uint32_t) seed);
+  RandGen().seed((uint32_t) seed);
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
 }
@@ -112,7 +93,7 @@ inline void CustomRandomSeed(const size_t seed)
  */
 inline double Random()
 {
-  return GlobalRandomVariables::randUniformDist(GlobalRandomVariables::randGen);
+  return RandUniformDist()(RandGen());
 }
 
 /**
@@ -120,7 +101,7 @@ inline double Random()
  */
 inline double Random(const double lo, const double hi)
 {
-  return lo + (hi - lo) * GlobalRandomVariables::randUniformDist(GlobalRandomVariables::randGen);
+  return lo + (hi - lo) * RandUniformDist()(RandGen());
 }
 
 /**
@@ -139,7 +120,7 @@ inline double RandBernoulli(const double input)
  */
 inline int RandInt(const int hiExclusive)
 {
-  return (int) std::floor((double) hiExclusive * GlobalRandomVariables::randUniformDist(GlobalRandomVariables::randGen));
+  return (int) std::floor((double) hiExclusive * RandUniformDist()(RandGen()));
 }
 
 /**
@@ -148,7 +129,7 @@ inline int RandInt(const int hiExclusive)
 inline int RandInt(const int lo, const int hiExclusive)
 {
   return lo + (int) std::floor((double) (hiExclusive - lo)
-                               * GlobalRandomVariables::randUniformDist(GlobalRandomVariables::randGen));
+                               * RandUniformDist()(RandGen()));
 }
 
 /**
@@ -156,7 +137,7 @@ inline int RandInt(const int lo, const int hiExclusive)
  */
 inline double RandNormal()
 {
-  return GlobalRandomVariables::randNormalDist(GlobalRandomVariables::randGen);
+  return RandNormalDist()(RandGen());
 }
 
 /**
@@ -168,7 +149,7 @@ inline double RandNormal()
  */
 inline double RandNormal(const double mean, const double variance)
 {
-  return variance * GlobalRandomVariables::randNormalDist(GlobalRandomVariables::randGen) + mean;
+  return variance * RandNormalDist()(RandGen()) + mean;
 }
 
 /**
