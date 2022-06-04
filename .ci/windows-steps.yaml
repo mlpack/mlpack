@@ -82,10 +82,11 @@ steps:
   displayName: 'Configure mlpack'
 
 # Run tests via ctest.
-- powershell: |
+- bash: |
     cd build
     cmake --build . --target mlpack_test --config Release
     cd Release
+    ldd mlpack_test.exe
     ./mlpack_test.exe
     #CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
