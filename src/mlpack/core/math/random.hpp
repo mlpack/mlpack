@@ -26,21 +26,21 @@ namespace math /** Miscellaneous math routines. */ {
 //! Global random object.
 inline std::mt19937& RandGen()
 {
-  static thread_local std::mt19937 randGen;
+  static std::mt19937 randGen;
   return randGen;
 }
 
 //! Global uniform distribution.
 inline std::uniform_real_distribution<>& RandUniformDist()
 {
-  static thread_local std::uniform_real_distribution<> randUniformDist(0.0, 0.1);
+  static std::uniform_real_distribution<> randUniformDist(0.0, 0.1);
   return randUniformDist;
 }
 
 //! Global normal distribution.
 inline std::normal_distribution<>& RandNormalDist()
 {
-  static thread_local std::normal_distribution<> randNormalDist(0.0, 0.1);
+  static std::normal_distribution<> randNormalDist(0.0, 0.1);
   return randNormalDist;
 }
 
