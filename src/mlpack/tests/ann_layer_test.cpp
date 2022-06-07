@@ -2691,7 +2691,7 @@ TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
 
 /**
  * Simple Softmax module test.
- *
+ */
 TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
 {
   arma::mat input, output, gy, g;
@@ -2710,11 +2710,10 @@ TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
   REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
       Approx(0.0).margin(1e-04));
 }
-*/
 
 /**
  * Softmax layer numerical gradient test.
- *
+ */
 TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 {
   // Softmax function gradient instantiation.
@@ -2726,9 +2725,9 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
     {
       model = new FFN<MeanSquaredError, RandomInitialization>;
       model->ResetData(input, target);
-      model->Add<Linear>(10, 10);
-      model->Add<ReLULayer>();
-      model->Add<Linear>(10, 2);
+      model->Add<Linear>(10);
+      model->Add<ReLU>();
+      model->Add<Linear>(2);
       model->Add<Softmax>();
     }
 
@@ -2752,7 +2751,6 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 1e-4);
 }
-*/
 
 /**
  * Simple test for the NearestInterpolation layer
