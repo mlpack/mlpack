@@ -77,13 +77,16 @@ steps:
 
 # Configure mlpack
 - powershell: |
-    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\*.* build\Release\
+    # The .dlls are stored in the bin/ directory, and those are the ones we need
+    # to run with.
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\
   displayName: 'Configure mlpack'
 
 # Run tests via ctest.
 - bash: |
     cd build
-    cmake --build . --target mlpack_test
+    cmake --build . --target mlpack_test --config Release
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 
