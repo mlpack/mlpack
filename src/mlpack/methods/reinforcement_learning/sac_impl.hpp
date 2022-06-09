@@ -67,13 +67,13 @@ SAC<
   // passed using this constructor.
   if (learningQ1Network.Parameters().is_empty())
   {
-    learningQ1Network.ResetParameters();
-    learningQ2Network.ResetParameters();
+    learningQ1Network.Reset();
+    learningQ2Network.Reset();
   }
   if (policyNetwork.Parameters().is_empty())
-    policyNetwork.ResetParameters();
-  targetQ1Network.ResetParameters();
-  targetQ2Network.ResetParameters();
+    policyNetwork.Reset();
+  targetQ1Network.Reset();
+  targetQ2Network.Reset();
 
   #if ENS_VERSION_MAJOR == 1
   this->qNetworkUpdater.Initialize(learningQ1Network.Parameters().n_rows,
@@ -223,8 +223,7 @@ void SAC<
   learningQ2Network.Predict(qInput, Q2);
 
   // Get the size of the first hidden layer in the Q network.
-  size_t hidden1 = boost::get<mlpack::ann::Linear<> *>
-      (learningQ1Network.Model()[0])->OutputSize();
+  size_t hidden1 = learningQ1Network.Network()[0]->OutputSize();
 
   arma::mat gradient;
   for (size_t i = 0; i < sampledStates.n_cols; i++)

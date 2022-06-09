@@ -13,7 +13,7 @@ add_executable(mlpack_test
   ann_test_tools.hpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
-#  async_learning_test.cpp
+  async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
   bayesian_linear_regression_test.cpp
   bias_svd_test.cpp
@@ -88,7 +88,7 @@ add_executable(mlpack_test
   python_binding_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
-#  q_learning_test.cpp
+  q_learning_test.cpp
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp

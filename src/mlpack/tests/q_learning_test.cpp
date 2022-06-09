@@ -246,11 +246,11 @@ TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 4; trial++)
   {
     // Set up the module. Note that we use a custom network here.
-    FFN<MeanSquaredError<>, GaussianInitialization> module(
-        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
-    module.Add<Linear<>>(6, 256);
-    module.Add<ReLULayer<>>();
-    module.Add<Linear<>>(256, 3);
+    FFN<MeanSquaredError, GaussianInitialization> module(
+        MeanSquaredError(), GaussianInitialization(0, 0.001));
+    module.Add<Linear>(256);
+    module.Add<ReLU>();
+    module.Add<Linear>(3);
 
     // Adding the module to the SimpleDQN network containing required functions.
     SimpleDQN<> network(module);
@@ -484,11 +484,11 @@ TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest]")
     config.ExplorationSteps() = 32;
 
     // Set up the module. Note that we use a custom network here.
-    FFN<EmptyLoss<>, GaussianInitialization> module(
-        EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    module.Add<Linear<>>(4, 128);
-    module.Add<ReLULayer<>>();
-    module.Add<Linear<>>(128, 2 * config.AtomSize());
+    FFN<EmptyLoss, GaussianInitialization> module(
+        EmptyLoss(), GaussianInitialization(0, 0.1));
+    module.Add<Linear>(128);
+    module.Add<ReLU>();
+    module.Add<Linear>(2 * config.AtomSize());
 
     // Adding the module to the CategoricalDQN network.
     CategoricalDQN<> network(module, config);
@@ -521,18 +521,18 @@ TEST_CASE("PendulumWithSAC", "[QLearningTest]")
     config.TargetNetworkSyncInterval() = 1;
     config.UpdateInterval() = 3;
 
-    FFN<EmptyLoss<>, GaussianInitialization>
-        policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear<>(3, 128));
-    policyNetwork.Add(new ReLULayer<>());
-    policyNetwork.Add(new Linear<>(128, 1));
-    policyNetwork.Add(new TanHLayer<>());
+    FFN<EmptyLoss, GaussianInitialization>
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear(128));
+    policyNetwork.Add(new ReLU());
+    policyNetwork.Add(new Linear(1));
+    policyNetwork.Add(new TanH());
 
-    FFN<EmptyLoss<>, GaussianInitialization>
-        qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear<>(3 + 1, 128));
-    qNetwork.Add(new ReLULayer<>());
-    qNetwork.Add(new Linear<>(128, 1));
+    FFN<EmptyLoss, GaussianInitialization>
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear(128));
+    qNetwork.Add(new ReLU());
+    qNetwork.Add(new Linear(1));
 
     // Set up Soft actor-critic agent.
     SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
@@ -551,19 +551,18 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   ContinuousActionEnv::State::dimension = 3;
   ContinuousActionEnv::Action::size = 4;
 
-  FFN<EmptyLoss<>, GaussianInitialization>
-      policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension, 128));
-  policyNetwork.Add(new ReLULayer<>());
-  policyNetwork.Add(new Linear<>(128, ContinuousActionEnv::Action::size));
-  policyNetwork.Add(new TanHLayer<>());
+  FFN<EmptyLoss, GaussianInitialization>
+      policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+  policyNetwork.Add(new Linear(128));
+  policyNetwork.Add(new ReLU());
+  policyNetwork.Add(new Linear(ContinuousActionEnv::Action::size));
+  policyNetwork.Add(new TanH());
 
-  FFN<EmptyLoss<>, GaussianInitialization>
-      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension +
-                            ContinuousActionEnv::Action::size, 128));
-  qNetwork.Add(new ReLULayer<>());
-  qNetwork.Add(new Linear<>(128, 1));
+  FFN<EmptyLoss, GaussianInitialization>
+      qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+  qNetwork.Add(new Linear(128));
+  qNetwork.Add(new ReLU());
+  qNetwork.Add(new Linear(1));
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv> replayMethod(32, 10000);
