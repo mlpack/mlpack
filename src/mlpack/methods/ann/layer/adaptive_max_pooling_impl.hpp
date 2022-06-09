@@ -135,8 +135,6 @@ void AdaptiveMaxPoolingType<MatType>::ComputeOutputDimensions()
       (outputHeight - 1) * poolingLayer.StrideHeight();
 
   poolingLayer.ComputeOutputDimensions();
-
-  // Higher dimensions are not modified.
 }
 
 template<typename MatType>
