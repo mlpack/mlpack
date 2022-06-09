@@ -19,38 +19,81 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-ConcatType<InputType, OutputType>::ConcatType(
-    const bool run) :
-    axis(0),
-    useAxis(false)
-{
-  // Nothing to do.
-}
-
-template<typename InputType, typename OutputType>
-ConcatType<InputType, OutputType>::ConcatType(
-    const size_t axis,
-    const bool run) :
+template<typename MatType>
+ConcatType<MatType>::ConcatType(
+    const size_t axis) :
+    MultiLayer<MatType>(),
     axis(axis),
     useAxis(true)
 {
   // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-ConcatType<InputType, OutputType>::~ConcatType()
+template<typename MatType>
+ConcatType<MatType>::ConcatType() :
+    MultiLayer<MatType>(),
+    axis(0),
+    useAxis(false)
 {
-  // Clear memory.
-  for (size_t i = 0; i < this->network.size(); ++i)
-    delete this->network[i];
+  // Nothing to do.
 }
 
-template<typename InputType, typename OutputType>
-void ConcatType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+ConcatType<MatType>::~ConcatType()
 {
-  this->InitializeForwardPassMemory();
+  // Nothing to do: the child layer memory is already cleared by MultiLayer.
+}
+
+template<typename MatType>
+ConcatType<MatType>::ConcatType(const ConcatType& other) :
+    MultiLayer<MatType>(other),
+    axis(other.axis),
+    useAxis(other.useAxis)
+{
+  // Nothing else to do.
+}
+
+template<typename MatType>
+ConcatType<MatType>::ConcatType(ConcatType&& other) :
+    MultiLayer<MatType>(std::move(other)),
+    axis(std::move(other.axis)),
+    useAxis(std::move(other.useAxis))
+{
+  // Nothing else to do.
+}
+
+template<typename MatType>
+ConcatType<MatType>& ConcatType<MatType>::operator=(const ConcatType& other)
+{
+  if (this != &other)
+  {
+    MultiLayer<MatType>::operator=(other);
+    axis = other.axis;
+    useAxis = other.useAxis;
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+ConcatType<MatType>& ConcatType<MatType>::operator=(ConcatType&& other)
+{
+  if (this != &other)
+  {
+    MultiLayer<MatType>::operator=(std::move(other));
+    axis = std::move(other.axis);
+    useAxis = std::move(other.useAxis);
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
+{
+  // The implementation of MultiLayer is fine: this will allocate a matrix that
+  // is able to hold each child layer's output.
+  this->InitializeForwardPassMemory(input.n_cols);
 
   // Pass the input through all the layers in the network.
   for (size_t i = 0; i < this->network.size(); ++i)
@@ -76,32 +119,42 @@ void ConcatType<InputType, OutputType>::Forward(
       std::accumulate(this->outputDimensions.begin() + axis + 1,
           this->outputDimensions.end(), 0);
 
-  std::vector<arma::Cube<typename OutputType::elem_type>> layerOutputAliases;
+  std::vector<arma::Cube<typename MatType::elem_type>> layerOutputAliases(
+      this->layerOutputs.size());
   for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
-    layerOutputAliases.emplace_back(arma::Cube<typename OutputType::elem_type>(
-        this->layerOutputs[i].memptr(), rows,
-        this->network[i]->OutputDimensions()[axis], slices, false, true);
+    MakeAlias(layerOutputAliases.back(),
+              (typename MatType::elem_type*) this->layerOutputs[i].memptr(),
+              rows,
+              this->network[i]->OutputDimensions()[axis],
+              slices);
   }
 
-  arma::Cube<typename OutputType::elem_type> output(output.memptr(), rows,
-      this->outputDimensions[axis], slices, false, true);
+  arma::Cube<typename MatType::elem_type> outputAlias;
+  MakeAlias(outputAlias,
+            (typename MatType::elem_type*) output.memptr(),
+            rows,
+            this->outputDimensions[axis],
+            slices);
 
   // Now get the columns from each output.
   size_t startCol = 0;
   for (size_t i = 0; i < layerOutputAliases.size(); ++i)
   {
     const size_t cols = layerOutputAliases[i].n_cols;
-    output.cols(startCol, startCol + cols - 1) = layerOutputAliases[i];
+    outputAlias.cols(startCol, startCol + cols - 1) = layerOutputAliases[i];
     startCol += cols;
   }
 }
 
-template<typename InputType, typename OutputType>
-void ConcatType<InputType, OutputType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void ConcatType<MatType>::Backward(
+    const MatType& /* input */, const MatType& gy, MatType& g)
 {
-  this->InitializeBackwardPassMemory();
+  // The implementation of MultiLayer is fine: this will allocate a matrix that
+  // is able to hold each child layer's delta (which has the same size as the
+  // input).
+  this->InitializeBackwardPassMemory(gy.n_cols);
 
   // Just like the forward pass, we can treat our inputs as a cube, but here we
   // have to distribute the correct parts of `gy` to the layers.
@@ -113,18 +166,20 @@ void ConcatType<InputType, OutputType>::Backward(
       std::accumulate(this->outputDimensions.begin() + axis + 1,
           this->outputDimensions.end(), 0);
 
-  arma::Cube<typename OutputType::elem_type> gyTmp(gy.memptr(), rows,
-      this->outputDimensions[axis], slices, false, true);
+  arma::Cube<typename MatType::elem_type> gyTmp;
+  MakeAlias(gyTmp,
+            (typename MatType::elem_type*) gy.memptr(),
+            rows,
+            this->outputDimensions[axis],
+            slices);
 
   size_t startCol = 0;
   for (size_t i = 0; i < this->network.size(); ++i)
   {
     const size_t cols = this->network[i]->OutputDimensions()[axis];
-    // TODO: is delta size correct?
-    // TODO: no copy!
-    OutputType delta = gyTmp.cols(startCol, startCol + cols - 1);
-    // TODO: consider batch size correctly
-    delta.reshape( ... );
+    MatType delta = gyTmp.cols(startCol, startCol + cols - 1);
+    // Reshape so that the batch size is the number of columns.
+    delta.reshape(delta.n_elem / gy.n_cols, gy.n_cols);
     this->network[i]->Backward(this->layerOutputs[i], delta,
         this->layerDeltas[i]);
 
@@ -138,11 +193,11 @@ void ConcatType<InputType, OutputType>::Backward(
   }
 }
 
-template<typename InputType, typename OutputType>
-void ConcatType<InputType, OutputType>::Backward(
-    const InputType& /* input */,
-    const OutputType& gy,
-    OutputType& g,
+template<typename MatType>
+void ConcatType<MatType>::Backward(
+    const MatType& /* input */,
+    const MatType& gy,
+    MatType& g,
     const size_t index)
 {
   // We only intend to perform a backward pass on one layer.
@@ -156,8 +211,12 @@ void ConcatType<InputType, OutputType>::Backward(
       std::accumulate(this->outputDimensions.begin() + axis + 1,
           this->outputDimensions.end(), 0);
 
-  arma::Cube<typename OutputType::elem_type> gyTmp(gy.memptr(), rows,
-      this->outputDimensions[axis], slices, false, true);
+  arma::Cube<typename MatType::elem_type> gyTmp;
+  MakeAlias(gyTmp,
+            (typename MatType::elem_type*) gy.memptr(),
+            rows,
+            this->outputDimensions[axis],
+            slices);
 
   size_t startCol = 0;
   for (size_t i = 0; i < index; ++i)
@@ -165,22 +224,22 @@ void ConcatType<InputType, OutputType>::Backward(
     startCol += this->network[i]->OutputDimensions()[axis];
   }
 
-  // TODO: no copy!
   const size_t cols = this->network[index]->OutputDimensions()[axis];
-  OutputType delta = gyTmp.cols(startCol, startCol + cols - 1);
-  delta.reshape( ... );
+  MatType delta = gyTmp.cols(startCol, startCol + cols - 1);
+  // Reshape so that the batch size is the number of columns.
+  delta.reshape(delta.n_elem / gy.n_cols, gy.n_cols);
 
   this->network[index]->Backward(this->layerOutputs[index], delta, g);
 }
 
-template<typename InputType, typename OutputType>
-void ConcatType<InputType, OutputType>::Gradient(
-    const InputType& input,
-    const OutputType& error,
-    OutputType& gradient)
+template<typename MatType>
+void ConcatType<MatType>::Gradient(
+    const MatType& input,
+    const MatType& error,
+    MatType& gradient)
 {
   // Just like the forward pass, we can treat our inputs as a cube, but here we
-  // have to distribute the correct parts of `gy` to the layers.
+  // have to distribute the correct parts of `error` to the layers.
 
   size_t slices = (axis == 0) ? input.n_cols :
       std::accumulate(this->outputDimensions.begin(),
@@ -189,8 +248,12 @@ void ConcatType<InputType, OutputType>::Gradient(
       std::accumulate(this->outputDimensions.begin() + axis + 1,
           this->outputDimensions.end(), 0);
 
-  arma::Cube<typename OutputType::elem_type> errorTmp(error.memptr(), rows,
-      this->outputDimensions[axis], slices, false, true);
+  arma::Cube<typename MatType::elem_type> errorTmp;
+  MakeAlias(errorTmp,
+            (typename MatType::elem_type*) error.memptr(),
+            rows,
+            this->outputDimensions[axis],
+            slices);
 
   size_t startCol = 0;
   size_t startParam = 0;
@@ -199,11 +262,13 @@ void ConcatType<InputType, OutputType>::Gradient(
     const size_t cols = this->network[i]->OutputDimensions()[axis];
     const size_t params = this->network[i]->WeightSize();
 
-    OutputType err = errorTmp.cols(startCol, startCol + cols - 1);
-    err.reshape(input.n_cols, err.n_elem / input.n_cols);
-    // TODO: what about layerGradients?
-    OutputType gradientAlias(gradient.colptr(startParam, 1, params, false,
-        true);
+    MatType err = errorTmp.cols(startCol, startCol + cols - 1);
+    err.reshape(err.n_elem / input.n_cols, input.n_cols);
+    MatType gradientAlias;
+    MakeAlias(gradientAlias,
+              (typename MatType::elem_type*) gradient.colptr(startParam),
+              1,
+              params);
     this->network[i]->Gradient(input, err, gradientAlias);
 
     startCol += cols;
@@ -211,16 +276,15 @@ void ConcatType<InputType, OutputType>::Gradient(
   }
 }
 
-// TODO: adapt
-template<typename InputType, typename OutputType>
-void ConcatType<InputType, OutputType>::Gradient(
-    const InputType& input,
-    const OutputType& error,
-    OutputType& gradient,
+template<typename MatType>
+void ConcatType<MatType>::Gradient(
+    const MatType& input,
+    const MatType& error,
+    MatType& gradient,
     const size_t index)
 {
   // Just like the forward pass, we can treat our inputs as a cube, but here we
-  // have to distribute the correct parts of `gy` to the layers.
+  // have to distribute the correct parts of `error` to the layers.
 
   size_t slices = (axis == 0) ? input.n_cols :
       std::accumulate(this->outputDimensions.begin(),
@@ -229,8 +293,12 @@ void ConcatType<InputType, OutputType>::Gradient(
       std::accumulate(this->outputDimensions.begin() + axis + 1,
           this->outputDimensions.end(), 0);
 
-  arma::Cube<typename OutputType::elem_type> errorTmp(error.memptr(), rows,
-      this->outputDimensions[axis], slices, false, true);
+  arma::Cube<typename MatType::elem_type> errorTmp;
+  MakeAlias(errorTmp,
+            (typename MatType::elem_type*) error.memptr(),
+            rows,
+            this->outputDimensions[axis],
+            slices);
 
   size_t startCol = 0;
   size_t startParam = 0;
@@ -243,19 +311,22 @@ void ConcatType<InputType, OutputType>::Gradient(
   const size_t cols = this->network[index]->OutputDimensions()[axis];
   const size_t params = this->network[index]->WeightSize();
 
-  // TODO: no copy!
-  OutputType err = errorTmp.cols(startCol, startCol + cols - 1);
-  err.reshape(input.n_cols, err.n_elem / input.n_cols);
-  OutputType gradientAlias(gradient.memptr(), 1, params, false, true);
+  MatType err = errorTmp.cols(startCol, startCol + cols - 1);
+  err.reshape(err.n_elem / input.n_cols, input.n_cols);
+  MatType gradientAlias;
+  MakeAlias(gradientAlias,
+            (typename MatType::elem_type*) gradient.colptr(startParam),
+            1,
+            params);
   this->network[index]->Gradient(input, err, gradientAlias);
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void ConcatType<InputType, OutputType>::serialize(
+void ConcatType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
+  ar(cereal::base_class<MultiLayer<MatType>>(this));
 
   ar(CEREAL_NVP(axis));
   ar(CEREAL_NVP(useAxis));

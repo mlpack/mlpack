@@ -6,6 +6,8 @@ set(SOURCES
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   base_layer.hpp
+  concat.hpp
+  concat_impl.hpp
   concatenate.hpp
   concatenate_impl.hpp
   convolution.hpp

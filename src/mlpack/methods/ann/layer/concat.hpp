@@ -25,41 +25,46 @@ namespace ann /** Artificial Neural Network. */ {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * NOTE: this class is not intended to exist for long!  It will be replaced with
+ * a more flexible DAG network type.
+ *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class ConcatType : public MultiLayer<InputType, OutputType>
+template <typename MatType = arma::mat>
+class ConcatType : public MultiLayer<MatType>
 {
  public:
   /**
-   * Create the Concat object using the specified parameters.
-   *
-   * @param run Call the Forward/Backward method before the output is merged.
+   * Create the Concat object.  The axis used for concatenation will be the last
+   * one.
    */
-  ConcatType(const bool run = true);
+  ConcatType();
 
   /**
    * Create the Concat object, specifying a particular axis on which the layer
    * outputs should be concatenated.
    *
    * @param axis Concat axis.
-   * @param run Call the Forward/Backward method before the output is merged.
    */
-  ConcatType(const size_t axis, const bool run = true);
+  ConcatType(const size_t axis);
 
   /**
    * Destroy the layers held by the model.
    */
-  ~ConcatType();
+  virtual ~ConcatType();
 
   //! Clone the ConcatType object. This handles polymorphism correctly.
   ConcatType* Clone() const { return new ConcatType(*this); }
+
+  //! Copy the given ConcatType layer.
+  ConcatType(const ConcatType& other);
+  //! Take ownership of the given ConcatType layer.
+  ConcatType(ConcatType&& other);
+  //! Copy the given ConcatType layer.
+  ConcatType& operator=(const ConcatType& other);
+  //! Take ownership of the given ConcatType layer.
+  ConcatType& operator=(ConcatType&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -68,7 +73,7 @@ class ConcatType : public MultiLayer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -79,9 +84,9 @@ class ConcatType : public MultiLayer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * This is the overload of Backward() that runs only a specific layer with
@@ -92,9 +97,9 @@ class ConcatType : public MultiLayer<InputType, OutputType>
    * @param g The calculated gradient.
    * @param index The index of the layer to run.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g,
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g,
                 const size_t index);
 
   /**
@@ -104,9 +109,9 @@ class ConcatType : public MultiLayer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& /* input */,
-                const OutputType& error,
-                OutputType& /* gradient */);
+  void Gradient(const MatType& /* input */,
+                const MatType& error,
+                MatType& /* gradient */);
 
   /**
    * This is the overload of Gradient() that runs a specific layer with the
@@ -117,29 +122,24 @@ class ConcatType : public MultiLayer<InputType, OutputType>
    * @param gradient The calculated gradient.
    * @param The index of the layer to run.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient,
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient,
                 const size_t index);
 
-  //! Get the value of run parameter.
-  bool Run() const { return run; }
-  //! Modify the value of run parameter.
-  bool& Run() { return run; }
-
   //! Get the axis of concatenation.
-  const size_t& ConcatAxis() const { return axis; }
+  const size_t& Axis() const { return axis; }
 
-  //! Get the size of the weight matrix.
-  size_t WeightSize() const { return 0; }
+  // We don't need to overload WeightSize(); MultiLayer already computes this
+  // correctly.  (It is the sum of weights of all child layers.)
 
   void ComputeOutputDimensions()
   {
     // The input is sent to every layer.
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
-      network[i]->InputDimensions() = this->inputDimensions;
-      network[i]->ComputeOutputDimensions();
+      this->network[i]->InputDimensions() = this->inputDimensions;
+      this->network[i]->ComputeOutputDimensions();
     }
 
     // If the user did not specify an axis, we will use the last one.
@@ -147,7 +147,7 @@ class ConcatType : public MultiLayer<InputType, OutputType>
     // concatenating along is valid.
     if (!useAxis)
     {
-      axis  = this->inputDimensions.size() - 1;
+      axis = this->inputDimensions.size() - 1;
     }
     else if (axis >= this->inputDimensions.size())
     {
@@ -197,10 +197,10 @@ class ConcatType : public MultiLayer<InputType, OutputType>
   }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar,  const uint32_t /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates the axis of concatenation.
@@ -211,7 +211,7 @@ class ConcatType : public MultiLayer<InputType, OutputType>
 }; // class ConcatType.
 
 // Standard Concat layer.
-typedef ConcatType<arma::mat, arma::mat> Concat;
+typedef ConcatType<arma::mat> Concat;
 
 } // namespace ann
 } // namespace mlpack
