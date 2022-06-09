@@ -260,4 +260,7 @@ class RandomizedSVD
 } // namespace svd
 } // namespace mlpack
 
+// Include implementation.
+#include "randomized_svd_impl.hpp"
+
 #endif

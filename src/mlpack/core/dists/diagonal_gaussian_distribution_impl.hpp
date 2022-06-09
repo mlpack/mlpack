@@ -1,5 +1,5 @@
 /**
- * @file core/dists/diagonal_gaussian_distribution.cpp
+ * @file core/dists/diagonal_gaussian_distribution_impl.hpp
  * @author Kim SangYeon
  *
  * Implementation of Gaussian distribution class with diagonal covariance.
@@ -9,13 +9,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_IMPL_HPP
+
 #include "diagonal_gaussian_distribution.hpp"
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution /** Probability distributions. */ {
 
-DiagonalGaussianDistribution::DiagonalGaussianDistribution(
+inline DiagonalGaussianDistribution::DiagonalGaussianDistribution(
     const arma::vec& mean,
     const arma::vec& covariance) :
     mean(mean)
@@ -23,21 +26,21 @@ DiagonalGaussianDistribution::DiagonalGaussianDistribution(
   Covariance(covariance);
 }
 
-void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
+inline void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
 {
-  this->invCov = 1 / covariance;
-  this->logDetCov = arma::accu(log(covariance));
+  invCov = 1 / covariance;
+  logDetCov = arma::accu(log(covariance));
   this->covariance = covariance;
 }
 
-void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
+inline void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
 {
-  this->invCov = 1 / covariance;
-  this->logDetCov = arma::accu(log(covariance));
+  invCov = 1 / covariance;
+  logDetCov = arma::accu(log(covariance));
   this->covariance = std::move(covariance);
 }
 
-double DiagonalGaussianDistribution::LogProbability(
+inline double DiagonalGaussianDistribution::LogProbability(
     const arma::vec& observation) const
 {
   const size_t k = observation.n_elem;
@@ -46,7 +49,7 @@ double DiagonalGaussianDistribution::LogProbability(
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
 }
 
-void DiagonalGaussianDistribution::LogProbability(
+inline void DiagonalGaussianDistribution::LogProbability(
     const arma::mat& observations,
     arma::vec& logProbabilities) const
 {
@@ -63,12 +66,12 @@ void DiagonalGaussianDistribution::LogProbability(
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
 
-arma::vec DiagonalGaussianDistribution::Random() const
+inline arma::vec DiagonalGaussianDistribution::Random() const
 {
   return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
 }
 
-void DiagonalGaussianDistribution::Train(const arma::mat& observations)
+inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
 {
   if (observations.n_cols > 1)
   {
@@ -95,8 +98,8 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   logDetCov = arma::accu(log(covariance));
 }
 
-void DiagonalGaussianDistribution::Train(const arma::mat& observations,
-                                         const arma::vec& probabilities)
+inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
+                                                const arma::vec& probabilities)
 {
   if (observations.n_cols > 0)
   {
@@ -146,3 +149,8 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   invCov = 1 / covariance;
   logDetCov = arma::accu(log(covariance));
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif

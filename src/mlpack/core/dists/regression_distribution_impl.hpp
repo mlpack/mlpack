@@ -1,5 +1,5 @@
 /**
- * @file core/dists/regression_distribution.cpp
+ * @file core/dists/regression_distribution_impl.hpp
  * @author Michael Fox
  *
  * Implementation of conditional Gaussian distribution for HMM regression
@@ -11,17 +11,20 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_IMPL_HPP
+
 #include "regression_distribution.hpp"
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * Estimate parameters using provided observation weights.
  *
  * @param observations List of observations.
  */
-void RegressionDistribution::Train(const arma::mat& observations)
+inline void RegressionDistribution::Train(const arma::mat& observations)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), 0, true);
@@ -36,14 +39,14 @@ void RegressionDistribution::Train(const arma::mat& observations)
  *
  * @param weights Probability that given observation is from distribution.
  */
-void RegressionDistribution::Train(const arma::mat& observations,
-                                   const arma::vec& weights)
+inline void RegressionDistribution::Train(const arma::mat& observations,
+                                          const arma::vec& weights)
 {
   Train(observations, arma::rowvec(weights.t()));
 }
 
-void RegressionDistribution::Train(const arma::mat& observations,
-                                   const arma::rowvec& weights)
+inline void RegressionDistribution::Train(const arma::mat& observations,
+                                          const arma::rowvec& weights)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), weights, 0, true);
@@ -58,23 +61,29 @@ void RegressionDistribution::Train(const arma::mat& observations,
  *
  * @param observation Point to evaluate probability at.
  */
-double RegressionDistribution::Probability(const arma::vec& observation) const
+inline double RegressionDistribution::Probability(
+    const arma::vec& observation) const
 {
   arma::rowvec fitted;
   rf.Predict(observation.rows(1, observation.n_rows-1), fitted);
   return err.Probability(observation(0)-fitted.t());
 }
 
-void RegressionDistribution::Predict(const arma::mat& points,
-                                     arma::vec& predictions) const
+inline void RegressionDistribution::Predict(const arma::mat& points,
+                                            arma::vec& predictions) const
 {
   arma::rowvec rowPredictions;
   Predict(points, rowPredictions);
   predictions = rowPredictions.t();
 }
 
-void RegressionDistribution::Predict(const arma::mat& points,
-                                     arma::rowvec& predictions) const
+inline void RegressionDistribution::Predict(const arma::mat& points,
+                                            arma::rowvec& predictions) const
 {
   rf.Predict(points, predictions);
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif

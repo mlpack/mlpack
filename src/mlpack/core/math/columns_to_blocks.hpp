@@ -224,4 +224,7 @@ class ColumnsToBlocks
 } // namespace math
 } // namespace mlpack
 
+// Include implementation.
+#include "columns_to_blocks_impl.hpp"
+
 #endif

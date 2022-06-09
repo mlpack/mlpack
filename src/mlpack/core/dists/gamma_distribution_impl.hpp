@@ -1,5 +1,5 @@
 /**
- * @file core/dists/gamma_distribution.cpp
+ * @file core/dists/gamma_distribution_impl.hpp
  * @author Yannis Mentekidis
  * @author Rohan Raj
  *
@@ -10,26 +10,29 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_IMPL_HPP
+
 #include "gamma_distribution.hpp"
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution /** Probability distributions. */ {
 
-GammaDistribution::GammaDistribution(const size_t dimensionality)
+inline GammaDistribution::GammaDistribution(const size_t dimensionality)
 {
   // Initialize distribution.
   alpha.zeros(dimensionality);
   beta.zeros(dimensionality);
 }
 
-GammaDistribution::GammaDistribution(const arma::mat& data,
-                                     const double tol)
+inline GammaDistribution::GammaDistribution(const arma::mat& data,
+                                            const double tol)
 {
   Train(data, tol);
 }
 
-GammaDistribution::GammaDistribution(const arma::vec& alpha,
-                                     const arma::vec& beta)
+inline GammaDistribution::GammaDistribution(const arma::vec& alpha,
+                                            const arma::vec& beta)
 {
   if (beta.n_elem != alpha.n_elem)
     throw std::runtime_error("Alpha and beta vector dimensions mismatch.");
@@ -47,7 +50,7 @@ inline bool GammaDistribution::Converged(const double aOld,
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
-void GammaDistribution::Train(const arma::mat& rdata, const double tol)
+inline void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 {
   // If fittingSet is empty, nothing to do.
   if (arma::size(rdata) == arma::size(arma::mat()))
@@ -64,9 +67,9 @@ void GammaDistribution::Train(const arma::mat& rdata, const double tol)
 }
 
 // Fits an alpha and beta parameter according to observation probabilities.
-void GammaDistribution::Train(const arma::mat& rdata,
-                              const arma::vec& probabilities,
-                              const double tol)
+inline void GammaDistribution::Train(const arma::mat& rdata,
+                                     const arma::vec& probabilities,
+                                     const double tol)
 {
   // If fittingSet is empty, nothing to do.
   if (arma::size(rdata) == arma::size(arma::mat()))
@@ -94,10 +97,10 @@ void GammaDistribution::Train(const arma::mat& rdata,
 }
 
 // Fits an alpha and beta parameter to each dimension of the data.
-void GammaDistribution::Train(const arma::vec& logMeanxVec,
-                              const arma::vec& meanLogxVec,
-                              const arma::vec& meanxVec,
-                              const double tol)
+inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
+                                     const arma::vec& meanLogxVec,
+                                     const arma::vec& meanxVec,
+                                     const double tol)
 {
   using std::log;
 
@@ -155,8 +158,8 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
 }
 
 // Returns the probability of the provided observations.
-void GammaDistribution::Probability(const arma::mat& observations,
-                                    arma::vec& probabilities) const
+inline void GammaDistribution::Probability(const arma::mat& observations,
+                                           arma::vec& probabilities) const
 {
   size_t numObs = observations.n_cols;
 
@@ -184,15 +187,16 @@ void GammaDistribution::Probability(const arma::mat& observations,
 
 // Returns the probability of one observation (x) for one of the Gamma's
 // dimensions.
-double GammaDistribution::Probability(double x, size_t dim) const
+inline double GammaDistribution::Probability(double x, size_t dim) const
 {
   return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
       (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
 }
 
 // Returns the log probability of the provided observations.
-void GammaDistribution::LogProbability(const arma::mat& observations,
-                                       arma::vec& logProbabilities) const
+inline void GammaDistribution::LogProbability(
+    const arma::mat& observations,
+    arma::vec& logProbabilities) const
 {
   size_t numObs = observations.n_cols;
 
@@ -221,14 +225,14 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
 
 // Returns the log probability of one observation (x) for one of the Gamma's
 // dimensions.
-double GammaDistribution::LogProbability(double x, size_t dim) const
+inline double GammaDistribution::LogProbability(double x, size_t dim) const
 {
   return std::log(std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
       (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim))));
 }
 
 // Returns a gamma-random d-dimensional vector.
-arma::vec GammaDistribution::Random() const
+inline arma::vec GammaDistribution::Random() const
 {
   arma::vec randVec(alpha.n_elem);
 
@@ -236,8 +240,13 @@ arma::vec GammaDistribution::Random() const
   {
     std::gamma_distribution<double> dist(alpha(d), beta(d));
     // Use the mlpack random object.
-    randVec(d) = dist(mlpack::math::randGen);
+    randVec(d) = dist(mlpack::math::RandGen());
   }
 
   return randVec;
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif

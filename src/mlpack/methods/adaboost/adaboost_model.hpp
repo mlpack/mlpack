@@ -126,4 +126,7 @@ class AdaBoostModel
 } // namespace adaboost
 } // namespace mlpack
 
+// Include implementation.
+#include "adaboost_model_impl.hpp"
+
 #endif

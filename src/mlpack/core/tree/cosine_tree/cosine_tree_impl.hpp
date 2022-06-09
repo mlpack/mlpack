@@ -1,5 +1,5 @@
 /**
- * @file core/tree/cosine_tree/cosine_tree.cpp
+ * @file core/tree/cosine_tree/cosine_tree_impl.hpp
  * @author Siddharth Agrawal
  *
  * Implementation of cosine tree.
@@ -9,15 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "cosine_tree.hpp"
-#include <mlpack/core/util/log.hpp>
+#ifndef MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_IMPL_HPP
+#define MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_IMPL_HPP
 
-#include <mlpack/core/math/quantile.hpp>
+#include "cosine_tree.hpp"
 
 namespace mlpack {
 namespace tree {
 
-CosineTree::CosineTree(const arma::mat& dataset) :
+inline CosineTree::CosineTree(const arma::mat& dataset) :
     dataset(&dataset),
     parent(NULL),
     left(NULL),
@@ -46,8 +46,8 @@ CosineTree::CosineTree(const arma::mat& dataset) :
   splitPointIndex = ColumnSampleLS();
 }
 
-CosineTree::CosineTree(CosineTree& parentNode,
-                       const std::vector<size_t>& subIndices) :
+inline CosineTree::CosineTree(CosineTree& parentNode,
+                              const std::vector<size_t>& subIndices) :
     dataset(&parentNode.GetDataset()),
     parent(&parentNode),
     left(NULL),
@@ -75,9 +75,9 @@ CosineTree::CosineTree(CosineTree& parentNode,
   splitPointIndex = ColumnSampleLS();
 }
 
-CosineTree::CosineTree(const arma::mat& dataset,
-                       const double epsilon,
-                       const double delta) :
+inline CosineTree::CosineTree(const arma::mat& dataset,
+                              const double epsilon,
+                              const double delta) :
     dataset(&dataset),
     delta(delta),
     left(NULL),
@@ -158,7 +158,7 @@ CosineTree::CosineTree(const arma::mat& dataset,
 }
 
 //! Copy the given tree.
-CosineTree::CosineTree(const CosineTree& other) :
+inline CosineTree::CosineTree(const CosineTree& other) :
     // Copy matrix, but only if we are the root.
     dataset((other.parent == NULL) ? new arma::mat(*other.dataset) : NULL),
     delta(other.delta),
@@ -211,7 +211,7 @@ CosineTree::CosineTree(const CosineTree& other) :
 }
 
 //! Copy assignment operator: copy the given other tree.
-CosineTree& CosineTree::operator=(const CosineTree& other)
+inline CosineTree& CosineTree::operator=(const CosineTree& other)
 {
   // Return if it's the same tree.
   if (this == &other)
@@ -279,7 +279,7 @@ CosineTree& CosineTree::operator=(const CosineTree& other)
 }
 
 //! Move the given tree.
-CosineTree::CosineTree(CosineTree&& other) :
+inline CosineTree::CosineTree(CosineTree&& other) :
     dataset(other.dataset),
     delta(std::move(other.delta)),
     parent(other.parent),
@@ -314,7 +314,7 @@ CosineTree::CosineTree(CosineTree&& other) :
 }
 
 //! Move assignment operator: take ownership of the given tree.
-CosineTree& CosineTree::operator=(CosineTree&& other)
+inline CosineTree& CosineTree::operator=(CosineTree&& other)
 {
   // Return if it's the same tree.
   if (this == &other)
@@ -361,7 +361,7 @@ CosineTree& CosineTree::operator=(CosineTree&& other)
   return *this;
 }
 
-CosineTree::~CosineTree()
+inline CosineTree::~CosineTree()
 {
   if (localDataset)
     delete dataset;
@@ -371,10 +371,10 @@ CosineTree::~CosineTree()
     delete right;
 }
 
-void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
-                                     arma::vec& centroid,
-                                     arma::vec& newBasisVector,
-                                     arma::vec* addBasisVector)
+inline void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
+                                            arma::vec& centroid,
+                                            arma::vec& newBasisVector,
+                                            arma::vec* addBasisVector)
 {
   // Set new basis vector to centroid.
   newBasisVector = centroid;
@@ -405,10 +405,10 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
     newBasisVector /= arma::norm(newBasisVector, 2);
 }
 
-double CosineTree::MonteCarloError(CosineTree* node,
-                                   CosineNodeQueue& treeQueue,
-                                   arma::vec* addBasisVector1,
-                                   arma::vec* addBasisVector2)
+inline double CosineTree::MonteCarloError(CosineTree* node,
+                                          CosineNodeQueue& treeQueue,
+                                          arma::vec* addBasisVector1,
+                                          arma::vec* addBasisVector2)
 {
   std::vector<size_t> sampledIndices;
   arma::vec probabilities;
@@ -489,7 +489,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
   return (node->FrobNormSquared() - lowerBound);
 }
 
-void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
+inline void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 {
   // Initialize basis as matrix of zeros.
   basis.zeros(dataset->n_rows, treeQueue.size());
@@ -507,7 +507,7 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
   }
 }
 
-void CosineTree::CosineNodeSplit()
+inline void CosineTree::CosineNodeSplit()
 {
   // If less than two points, splitting does not make sense---there is nothing
   // to split.
@@ -544,9 +544,9 @@ void CosineTree::CosineNodeSplit()
   right = new CosineTree(*this, rightIndices);
 }
 
-void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
-                                 arma::vec& probabilities,
-                                 size_t numSamples)
+inline void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
+                                        arma::vec& probabilities,
+                                        size_t numSamples)
 {
   // Initialize the cumulative distribution vector size.
   arma::vec cDistribution;
@@ -576,7 +576,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   }
 }
 
-size_t CosineTree::ColumnSampleLS()
+inline size_t CosineTree::ColumnSampleLS()
 {
   // If only one element is present, there can only be one sample.
   if (numColumns < 2)
@@ -603,10 +603,10 @@ size_t CosineTree::ColumnSampleLS()
   return BinarySearch(cDistribution, randValue, start, end);
 }
 
-size_t CosineTree::BinarySearch(arma::vec& cDistribution,
-                                double value,
-                                size_t start,
-                                size_t end)
+inline size_t CosineTree::BinarySearch(arma::vec& cDistribution,
+                                       double value,
+                                       size_t start,
+                                       size_t end)
 {
   size_t pivot = (start + end) / 2;
 
@@ -631,7 +631,7 @@ size_t CosineTree::BinarySearch(arma::vec& cDistribution,
   }
 }
 
-void CosineTree::CalculateCosines(arma::vec& cosines)
+inline void CosineTree::CalculateCosines(arma::vec& cosines)
 {
   // Initialize cosine vector as a vector of zeros.
   cosines.zeros(numColumns);
@@ -653,7 +653,7 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
   }
 }
 
-void CosineTree::CalculateCentroid()
+inline void CosineTree::CalculateCentroid()
 {
   // Initialize centroid as vector of zeros.
   centroid.zeros(dataset->n_rows);
@@ -668,3 +668,5 @@ void CosineTree::CalculateCentroid()
 
 } // namespace tree
 } // namespace mlpack
+
+#endif

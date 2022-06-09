@@ -1,5 +1,5 @@
 /**
- * @file methods/linear_regression/linear_regression.cpp
+ * @file methods/linear_regression/linear_regression_impl.hpp
  * @author James Cline
  * @author Michael Fox
  *
@@ -10,42 +10,45 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_IMPL_HPP
+#define MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_IMPL_HPP
+
 #include "linear_regression.hpp"
-#include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/size_checks.hpp>
 
-using namespace mlpack;
-using namespace mlpack::regression;
+namespace mlpack {
+namespace regression {
 
-LinearRegression::LinearRegression(const arma::mat& predictors,
-                                   const arma::rowvec& responses,
-                                   const double lambda,
-                                   const bool intercept) :
+inline LinearRegression::LinearRegression(
+    const arma::mat& predictors,
+    const arma::rowvec& responses,
+    const double lambda,
+    const bool intercept) :
     LinearRegression(predictors, responses, arma::rowvec(), lambda, intercept)
-{}
+{ /* Nothing to do. */ }
 
-LinearRegression::LinearRegression(const arma::mat& predictors,
-                                   const arma::rowvec& responses,
-                                   const arma::rowvec& weights,
-                                   const double lambda,
-                                   const bool intercept) :
+inline LinearRegression::LinearRegression(
+    const arma::mat& predictors,
+    const arma::rowvec& responses,
+    const arma::rowvec& weights,
+    const double lambda,
+    const bool intercept) :
     lambda(lambda),
     intercept(intercept)
 {
   Train(predictors, responses, weights, intercept);
 }
 
-double LinearRegression::Train(const arma::mat& predictors,
-                               const arma::rowvec& responses,
-                               const bool intercept)
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const bool intercept)
 {
   return Train(predictors, responses, arma::rowvec(), intercept);
 }
 
-double LinearRegression::Train(const arma::mat& predictors,
-                               const arma::rowvec& responses,
-                               const arma::rowvec& weights,
-                               const bool intercept)
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const arma::rowvec& weights,
+                                      const bool intercept)
 {
   this->intercept = intercept;
 
@@ -93,7 +96,8 @@ double LinearRegression::Train(const arma::mat& predictors,
   return ComputeError(predictors, responses);
 }
 
-void LinearRegression::Predict(const arma::mat& points,
+inline void LinearRegression::Predict(
+    const arma::mat& points,
     arma::rowvec& predictions) const
 {
   if (intercept)
@@ -122,8 +126,9 @@ void LinearRegression::Predict(const arma::mat& points,
   }
 }
 
-double LinearRegression::ComputeError(const arma::mat& predictors,
-                                      const arma::rowvec& responses) const
+inline double LinearRegression::ComputeError(
+    const arma::mat& predictors,
+    const arma::rowvec& responses) const
 {
   // Sanity check on data.
   util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
@@ -160,3 +165,8 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
 
   return cost;
 }
+
+} // namespace regression 
+} // namespace mlpack
+
+#endif

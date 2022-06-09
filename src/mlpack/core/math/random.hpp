@@ -23,12 +23,26 @@ namespace math /** Miscellaneous math routines. */ {
  * correctly on Windows.
  */
 
-// Global random object.
-extern MLPACK_EXPORT std::mt19937 randGen;
-// Global uniform distribution.
-extern MLPACK_EXPORT std::uniform_real_distribution<> randUniformDist;
-// Global normal distribution.
-extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
+//! Global random object.
+inline std::mt19937& RandGen()
+{
+  static thread_local std::mt19937 randGen;
+  return randGen;
+}
+
+//! Global uniform distribution.
+inline std::uniform_real_distribution<>& RandUniformDist()
+{
+  static thread_local std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
+  return randUniformDist;
+}
+
+//! Global normal distribution.
+inline std::normal_distribution<>& RandNormalDist()
+{
+  static thread_local std::normal_distribution<> randNormalDist(0.0, 1.0);
+  return randNormalDist;
+}
 
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
@@ -40,7 +54,7 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
 inline void RandomSeed(const size_t seed)
 {
   #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
-    randGen.seed((uint32_t) seed);
+    RandGen().seed((uint32_t) seed);
     #if (BINDING_TYPE == BINDING_TYPE_R)
       // To suppress Found 'srand', possibly from 'srand' (C).
       (void) seed;
@@ -64,14 +78,14 @@ inline void RandomSeed(const size_t seed)
 inline void FixedRandomSeed()
 {
   const static size_t seed = rand();
-  randGen.seed((uint32_t) seed);
+  RandGen().seed((uint32_t) seed);
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
 }
 
 inline void CustomRandomSeed(const size_t seed)
 {
-  randGen.seed((uint32_t) seed);
+  RandGen().seed((uint32_t) seed);
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
 }
@@ -82,7 +96,7 @@ inline void CustomRandomSeed(const size_t seed)
  */
 inline double Random()
 {
-  return randUniformDist(randGen);
+  return RandUniformDist()(RandGen());
 }
 
 /**
@@ -90,7 +104,7 @@ inline double Random()
  */
 inline double Random(const double lo, const double hi)
 {
-  return lo + (hi - lo) * randUniformDist(randGen);
+  return lo + (hi - lo) * RandUniformDist()(RandGen());
 }
 
 /**
@@ -109,7 +123,7 @@ inline double RandBernoulli(const double input)
  */
 inline int RandInt(const int hiExclusive)
 {
-  return (int) std::floor((double) hiExclusive * randUniformDist(randGen));
+  return (int) std::floor((double) hiExclusive * RandUniformDist()(RandGen()));
 }
 
 /**
@@ -118,7 +132,7 @@ inline int RandInt(const int hiExclusive)
 inline int RandInt(const int lo, const int hiExclusive)
 {
   return lo + (int) std::floor((double) (hiExclusive - lo)
-                               * randUniformDist(randGen));
+                               * RandUniformDist()(RandGen()));
 }
 
 /**
@@ -126,7 +140,7 @@ inline int RandInt(const int lo, const int hiExclusive)
  */
 inline double RandNormal()
 {
-  return randNormalDist(randGen);
+  return RandNormalDist()(RandGen());
 }
 
 /**
@@ -138,7 +152,7 @@ inline double RandNormal()
  */
 inline double RandNormal(const double mean, const double variance)
 {
-  return variance * randNormalDist(randGen) + mean;
+  return variance * RandNormalDist()(RandGen()) + mean;
 }
 
 /**
