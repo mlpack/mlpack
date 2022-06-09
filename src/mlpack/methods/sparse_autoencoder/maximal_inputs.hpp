@@ -93,4 +93,7 @@ void NormalizeColByMax(const arma::mat& input, arma::mat& output);
 } // namespace nn
 } // namespace mlpack
 
+// Include implementation.
+#include "maximal_inputs_impl.hpp"
+
 #endif

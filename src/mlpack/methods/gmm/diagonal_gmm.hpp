@@ -16,6 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
+#include <mlpack/core/math/log_add.hpp>
 
 // This is the default fitting method class.
 #include "em_fit.hpp"

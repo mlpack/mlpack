@@ -3,7 +3,7 @@
  * @author Rohan Raj
  *
  * This file is an implementation of Acrobot task:
- * https://gym.openai.com/envs/Acrobot-v1/
+ * https://www.gymlibrary.ml/environments/classic_control/acrobot
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

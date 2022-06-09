@@ -1,5 +1,5 @@
 /**
- * @file methods/radical/radical.cpp
+ * @file methods/radical/radical_impl.hpp
  * @author Nishant Mehta
  *
  * Implementation of Radical class
@@ -9,22 +9,21 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_RADICAL_RADICAL_IMPL_HPP
+#define MLPACK_METHODS_RADICAL_RADICAL_IMPL_HPP
 
 #include "radical.hpp"
-#include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/timers.hpp>
 
-using namespace std;
-using namespace arma;
-using namespace mlpack;
-using namespace mlpack::radical;
+namespace mlpack {
+namespace radical {
 
 // Set the parameters to RADICAL.
-Radical::Radical(const double noiseStdDev,
-                 const size_t replicates,
-                 const size_t angles,
-                 const size_t sweeps,
-                 const size_t m) :
+inline Radical::Radical(
+    const double noiseStdDev,
+    const size_t replicates,
+    const size_t angles,
+    const size_t sweeps,
+    const size_t m) :
     noiseStdDev(noiseStdDev),
     replicates(replicates),
     angles(angles),
@@ -34,14 +33,15 @@ Radical::Radical(const double noiseStdDev,
   // Nothing to do here.
 }
 
-void Radical::CopyAndPerturb(mat& xNew, const mat& x) const
+inline void Radical::CopyAndPerturb(arma::mat& xNew,
+                                    const arma::mat& x) const
 {
-  xNew = repmat(x, replicates, 1) + noiseStdDev * randn(replicates * x.n_rows,
+  xNew = arma::repmat(x, replicates, 1) + noiseStdDev * arma::randn(replicates * x.n_rows,
       x.n_cols);
 }
 
 
-double Radical::Vasicek(vec& z) const
+inline double Radical::Vasicek(arma::vec& z) const
 {
   z = sort(z);
 
@@ -54,25 +54,26 @@ double Radical::Vasicek(vec& z) const
 
   // Apparently faster.
   double sum = 0;
-  uword range = z.n_elem - m;
-  for (uword i = 0; i < range; ++i)
+  arma::uword range = z.n_elem - m;
+  for (arma::uword i = 0; i < range; ++i)
   {
-    sum += log(max(z(i + m) - z(i), DBL_MIN));
+    sum += log(std::max(z(i + m) - z(i), DBL_MIN));
   }
 
   return sum;
 }
 
 
-double Radical::DoRadical2D(const mat& matX, util::Timers& timers)
+inline double Radical::DoRadical2D(const arma::mat& matX, 
+                                   util::Timers& timers)
 {
   timers.Start("radical_copy_and_perturb");
   CopyAndPerturb(perturbed, matX);
   timers.Stop("radical_copy_and_perturb");
 
-  mat::fixed<2, 2> matJacobi;
+  arma::mat::fixed<2, 2> matJacobi;
 
-  vec values(angles);
+  arma::vec values(angles);
 
   for (size_t i = 0; i < angles; ++i)
   {
@@ -86,29 +87,29 @@ double Radical::DoRadical2D(const mat& matX, util::Timers& timers)
     matJacobi(1, 1) = cosTheta;
 
     candidate = perturbed * matJacobi;
-    vec candidateY1 = candidate.unsafe_col(0);
-    vec candidateY2 = candidate.unsafe_col(1);
+    arma::vec candidateY1 = candidate.unsafe_col(0);
+    arma::vec candidateY2 = candidate.unsafe_col(1);
 
     values(i) = Vasicek(candidateY1) + Vasicek(candidateY2);
   }
 
-  uword indOpt = 0;
+  arma::uword indOpt = 0;
   values.min(indOpt); // we ignore the return value; we don't care about it
   return (indOpt / (double) angles) * M_PI / 2.0;
 }
 
 
-void Radical::DoRadical(const mat& matXT,
-                        mat& matY,
-                        mat& matW,
-                        util::Timers& timers)
+inline void Radical::DoRadical(const arma::mat& matXT,
+                               arma::mat& matY,
+                               arma::mat& matW,
+                               util::Timers& timers)
 {
   // matX is nPoints by nDims (although less intuitive than columns being
   // points, and although this is the transpose of the ICA literature, this
   // choice is for computational efficiency when repeatedly generating
   // two-dimensional coordinate projections for Radical2D).
   timers.Start("radical_transpose_data");
-  mat matX = trans(matXT);
+  arma::mat matX = trans(matXT);
   timers.Stop("radical_transpose_data");
 
   // If m was not specified, initialize m as recommended in
@@ -120,8 +121,8 @@ void Radical::DoRadical(const mat& matXT,
   const size_t nPoints = matX.n_rows;
 
   timers.Start("radical_whiten_data");
-  mat matXWhitened;
-  mat matWhitening;
+  arma::mat matXWhitened;
+  arma::mat matWhitening;
   WhitenFeatureMajorMatrix(matX, matY, matWhitening);
   timers.Stop("radical_whiten_data");
   // matY is now the whitened form of matX.
@@ -135,9 +136,9 @@ void Radical::DoRadical(const mat& matXT,
   timers.Start("radical_do_radical");
   matW = matWhitening;
 
-  mat matYSubspace(nPoints, 2);
+  arma::mat matYSubspace(nPoints, 2);
 
-  mat matJ = eye(nDims, nDims);
+  arma::mat matJ = arma::eye(nDims, nDims);
 
   for (size_t sweepNum = 0; sweepNum < sweeps; sweepNum++)
   {
@@ -184,13 +185,18 @@ void Radical::DoRadical(const mat& matXT,
   timers.Stop("radical_transpose_data");
 }
 
-void mlpack::radical::WhitenFeatureMajorMatrix(const mat& matX,
-                                               mat& matXWhitened,
-                                               mat& matWhitening)
+inline void WhitenFeatureMajorMatrix(const arma::mat& matX,
+                                     arma::mat& matXWhitened,
+                                     arma::mat& matWhitening)
 {
-  mat matU, matV;
-  vec s;
+  arma::mat matU, matV;
+  arma::vec s;
   arma::svd(matU, s, matV, cov(matX));
   matWhitening = matU * diagmat(1 / sqrt(s)) * trans(matV);
   matXWhitened = matX * matWhitening;
 }
+
+} // namespace radical
+} // namespace mlpack
+
+#endif

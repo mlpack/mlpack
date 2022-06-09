@@ -1,5 +1,5 @@
 /**
- * @file core/dists/discrete_distribution.cpp
+ * @file core/dists/discrete_distribution_impl.hpp
  * @author Ryan Curtin
  * @author Rohan Raj
  *
@@ -10,16 +10,19 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_IMPL_HPP
+
 #include "discrete_distribution.hpp"
 
-using namespace mlpack;
-using namespace mlpack::distribution;
+namespace mlpack {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * Return a randomly generated observation according to the probability
  * distribution defined by this object.
  */
-arma::vec DiscreteDistribution::Random() const
+inline arma::vec DiscreteDistribution::Random() const
 {
   size_t dimension = probabilities.size();
   arma::vec result(dimension);
@@ -53,7 +56,7 @@ arma::vec DiscreteDistribution::Random() const
 /**
  * Estimate the probability distribution directly from the given observations.
  */
-void DiscreteDistribution::Train(const arma::mat& observations)
+inline void DiscreteDistribution::Train(const arma::mat& observations)
 {
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
@@ -107,8 +110,8 @@ void DiscreteDistribution::Train(const arma::mat& observations)
  * Estimate the probability distribution from the given observations when also
  * given probabilities that each observation is from this distribution.
  */
-void DiscreteDistribution::Train(const arma::mat& observations,
-                                 const arma::vec& probObs)
+inline void DiscreteDistribution::Train(const arma::mat& observations,
+                                        const arma::vec& probObs)
 {
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
@@ -158,3 +161,8 @@ void DiscreteDistribution::Train(const arma::mat& observations,
       probabilities[i].fill(1.0 / probabilities[i].n_elem);
   }
 }
+
+} // namespace distribution
+} // namespace mlpack
+
+#endif

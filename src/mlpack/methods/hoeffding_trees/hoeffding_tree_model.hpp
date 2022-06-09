@@ -15,6 +15,7 @@
 #include "hoeffding_tree.hpp"
 #include "binary_numeric_split.hpp"
 #include "information_gain.hpp"
+#include <queue>
 
 namespace mlpack {
 namespace tree {
@@ -219,5 +220,8 @@ class HoeffdingTreeModel
 
 } // namespace tree
 } // namespace mlpack
+
+// Include implementation.
+#include "hoeffding_tree_model_impl.hpp"
 
 #endif

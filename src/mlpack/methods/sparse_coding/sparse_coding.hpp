@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/core/math/lin_alg.hpp>
 
 // Include our three simple dictionary initializers.
 #include "nothing_initializer.hpp"

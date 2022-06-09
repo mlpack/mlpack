@@ -125,4 +125,7 @@ class RandomizedBlockKrylovSVD
 } // namespace svd
 } // namespace mlpack
 
+// Include implementation.
+#include "randomized_block_krylov_svd_impl.hpp"
+
 #endif

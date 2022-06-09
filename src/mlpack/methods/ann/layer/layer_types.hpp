@@ -35,6 +35,7 @@
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
+#include <mlpack/methods/ann/layer/softmax.hpp>
 
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>

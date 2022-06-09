@@ -9,14 +9,12 @@ steps:
 # Fetch build dependencies
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.66.0
     nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
     nuget install ensmallen -o $(Agent.ToolsDirectory) -Version 2.17.0
     ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
-    mkdir -p $(Agent.ToolsDirectory)/boost_libs
 
   displayName: 'Fetch build dependencies'
 
@@ -59,8 +57,6 @@ steps:
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
     -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
-    -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.66.0.0\lib\native\include `
-    -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
     -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
     -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include `
     -DBUILD_JULIA_BINDINGS=OFF `
@@ -81,13 +77,16 @@ steps:
 
 # Configure mlpack
 - powershell: |
-    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\*.* build\Release\
+    # The .dlls are stored in the bin/ directory, and those are the ones we need
+    # to run with.
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\
   displayName: 'Configure mlpack'
 
 # Run tests via ctest.
 - bash: |
     cd build
-    cmake --build . --target mlpack_test
+    cmake --build . --target mlpack_test --config Release
     CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 

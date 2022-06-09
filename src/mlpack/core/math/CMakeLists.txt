@@ -3,7 +3,7 @@
 set(SOURCES
   clamp.hpp
   columns_to_blocks.hpp
-  columns_to_blocks.cpp
+  columns_to_blocks_impl.hpp
   digamma.hpp
   lin_alg.hpp
   lin_alg_impl.hpp
@@ -14,7 +14,6 @@ set(SOURCES
   multiply_slices.hpp
   quantile.hpp
   random.hpp
-  random.cpp
   random_basis.hpp
   random_basis_impl.hpp
   range.hpp

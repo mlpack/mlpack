@@ -25,6 +25,8 @@
 #define MLPACK_METHODS_LARS_LARS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
 namespace regression {

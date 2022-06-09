@@ -1,5 +1,5 @@
 /**
- * @file methods/softmax_regression/softmax_regression_function.cpp
+ * @file methods/softmax_regression/softmax_regression_function_impl.hpp
  * @author Siddharth Agrawal
  *
  * Implementation of function to be optimized for softmax regression.
@@ -9,13 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_FUNCTION_IMPL_HPP
+#define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_FUNCTION_IMPL_HPP
+
 #include "softmax_regression_function.hpp"
-#include <mlpack/core/math/make_alias.hpp>
 
-using namespace mlpack;
-using namespace mlpack::regression;
+namespace mlpack {
+namespace regression {
 
-SoftmaxRegressionFunction::SoftmaxRegressionFunction(
+inline SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
@@ -36,7 +38,7 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(
 /**
  * Shuffle the data.
  */
-void SoftmaxRegressionFunction::Shuffle()
+inline void SoftmaxRegressionFunction::Shuffle()
 {
   // Determine new ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -75,12 +77,12 @@ void SoftmaxRegressionFunction::Shuffle()
  * normal distribution. The weights cannot be initialized to zero, as that will
  * lead to each class output being the same.
  */
-const arma::mat SoftmaxRegressionFunction::InitializeWeights()
+inline const arma::mat SoftmaxRegressionFunction::InitializeWeights()
 {
   return InitializeWeights(data.n_rows, numClasses, fitIntercept);
 }
 
-const arma::mat SoftmaxRegressionFunction::InitializeWeights(
+inline const arma::mat SoftmaxRegressionFunction::InitializeWeights(
     const size_t featureSize,
     const size_t numClasses,
     const bool fitIntercept)
@@ -90,7 +92,7 @@ const arma::mat SoftmaxRegressionFunction::InitializeWeights(
     return parameters;
 }
 
-void SoftmaxRegressionFunction::InitializeWeights(
+inline void SoftmaxRegressionFunction::InitializeWeights(
     arma::mat &weights,
     const size_t featureSize,
     const size_t numClasses,
@@ -111,7 +113,7 @@ void SoftmaxRegressionFunction::InitializeWeights(
  * labels. The output is in the form of a matrix, which leads to simpler
  * calculations in the Evaluate() and Gradient() methods.
  */
-void SoftmaxRegressionFunction::GetGroundTruthMatrix(
+inline void SoftmaxRegressionFunction::GetGroundTruthMatrix(
     const arma::Row<size_t>& labels, arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
@@ -147,7 +149,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(
  * Evaluate the probabilities matrix. If fitIntercept flag is true,
  * it should consider the parameters.cols(0) intercept term.
  */
-void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
+inline void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     const arma::mat& parameters,
     arma::mat& probabilities,
     const size_t start,
@@ -181,7 +183,8 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
 /**
  * Evaluates the objective function given the parameters.
  */
-double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
+inline double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters)
+    const
 {
   // The objective function is the negative log likelihood of the model
   // calculated over all the training examples. Mathematically it is as follows:
@@ -219,9 +222,9 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
 /**
  * Evaluate the objective function for the given points given the parameters.
  */
-double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
-                                           const size_t start,
-                                           const size_t batchSize) const
+inline double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
+                                                  const size_t start,
+                                                  const size_t batchSize) const
 {
   arma::mat probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
@@ -239,8 +242,8 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
 /**
  * Calculates and stores the gradient values given a set of parameters.
  */
-void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
-                                         arma::mat& gradient) const
+inline void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
+                                                arma::mat& gradient) const
 {
   // Calculate the class probabilities for each training example. The
   // probabilities for each of the classes are given by:
@@ -272,10 +275,11 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   }
 }
 
-void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
-                                         const size_t start,
-                                         arma::mat& gradient,
-                                         const size_t batchSize) const
+inline void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
+                                                const size_t start,
+                                                arma::mat& gradient,
+                                                const size_t batchSize)
+    const
 {
   arma::mat probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
@@ -301,9 +305,10 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   }
 }
 
-void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
-                                                const size_t j,
-                                                arma::sp_mat& gradient) const
+inline void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
+                                                       const size_t j,
+                                                       arma::sp_mat& gradient) 
+    const
 {
   gradient.zeros(arma::size(parameters));
 
@@ -332,3 +337,8 @@ void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
         parameters.col(j);
   }
 }
+
+} // namespace regression
+} // namespace mlpack
+
+#endif

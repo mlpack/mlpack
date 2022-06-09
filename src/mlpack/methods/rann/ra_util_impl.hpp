@@ -1,5 +1,5 @@
 /**
- * @file methods/rann/ra_util.cpp
+ * @file methods/rann/ra_util_impl.hpp
  * @author Parikshit Ram
  * @author Ryan Curtin
  *
@@ -10,15 +10,18 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_RANN_RA_UTIL_IMPL_HPP
+#define MLPACK_METHODS_RANN_RA_UTIL_IMPL_HPP
+
 #include "ra_util.hpp"
 
-using namespace mlpack;
-using namespace mlpack::neighbor;
+namespace mlpack {
+namespace neighbor {
 
-size_t mlpack::neighbor::RAUtil::MinimumSamplesReqd(const size_t n,
-                                                    const size_t k,
-                                                    const double tau,
-                                                    const double alpha)
+inline size_t RAUtil::MinimumSamplesReqd(const size_t n,
+                                         const size_t k,
+                                         const double tau,
+                                         const double alpha)
 {
   size_t ub = n; // The upper bound on the binary search.
   size_t lb = k; // The lower bound on the binary search.
@@ -69,10 +72,10 @@ size_t mlpack::neighbor::RAUtil::MinimumSamplesReqd(const size_t n,
   return (std::min(m + 1, n));
 }
 
-double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
-                                                    const size_t k,
-                                                    const size_t m,
-                                                    const size_t t)
+inline double RAUtil::SuccessProbability(const size_t n,
+                                         const size_t k,
+                                         const size_t m,
+                                         const size_t t)
 {
   if (k == 1)
   {
@@ -161,3 +164,8 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
     return sum;
   } // For k > 1.
 }
+
+} // namespace neighbor
+} // namespace mlpack
+
+#endif

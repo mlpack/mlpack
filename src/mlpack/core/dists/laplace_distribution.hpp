@@ -14,8 +14,10 @@
 #ifndef MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 #define MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 
+#include <mlpack/prereqs.hpp>
+
 namespace mlpack {
-namespace distribution {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * The multivariate Laplace distribution centered at 0 has pdf
@@ -188,5 +190,8 @@ class LaplaceDistribution
 
 } // namespace distribution
 } // namespace mlpack
+
+// Include implementation.
+#include "laplace_distribution_impl.hpp"
 
 #endif

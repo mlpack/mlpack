@@ -1,5 +1,5 @@
 /**
- * @param hoeffding_tree_model.cpp
+ * @file methods/hoeffding_trees/hoeffding_tree_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the HoeffdingTreeModel class.
@@ -9,15 +9,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_METHODS_HOEFFDING_TREE_HOEFFDING_TREE_MODEL_IMPL_HPP
+#define MLPACK_METHODS_HOEFFDING_TREE_HOEFFDING_TREE_MODEL_IMPL_HPP
+
 #include "hoeffding_tree_model.hpp"
 
-#include <queue>
-
-using namespace mlpack;
-using namespace mlpack::tree;
+namespace mlpack {
+namespace tree {
 
 // Constructor.
-HoeffdingTreeModel::HoeffdingTreeModel(const TreeType& type) :
+inline HoeffdingTreeModel::HoeffdingTreeModel(const TreeType& type) :
     type(type),
     giniHoeffdingTree(NULL),
     giniBinaryTree(NULL),
@@ -28,7 +29,7 @@ HoeffdingTreeModel::HoeffdingTreeModel(const TreeType& type) :
 }
 
 // Copy constructor.
-HoeffdingTreeModel::HoeffdingTreeModel(const HoeffdingTreeModel& other) :
+inline HoeffdingTreeModel::HoeffdingTreeModel(const HoeffdingTreeModel& other) :
     type(other.type),
     giniHoeffdingTree(other.giniHoeffdingTree ? new GiniHoeffdingTreeType(
         *other.giniHoeffdingTree) : NULL),
@@ -43,7 +44,7 @@ HoeffdingTreeModel::HoeffdingTreeModel(const HoeffdingTreeModel& other) :
 }
 
 // Move constructor.
-HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other) :
+inline HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other) :
     type(other.type),
     giniHoeffdingTree(other.giniHoeffdingTree),
     giniBinaryTree(other.giniBinaryTree),
@@ -59,7 +60,7 @@ HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other) :
 }
 
 // Copy operator.
-HoeffdingTreeModel& HoeffdingTreeModel::operator=(
+inline HoeffdingTreeModel& HoeffdingTreeModel::operator=(
     const HoeffdingTreeModel& other)
 {
   if (this != &other)
@@ -90,7 +91,8 @@ HoeffdingTreeModel& HoeffdingTreeModel::operator=(
 }
 
 // Move operator.
-HoeffdingTreeModel& HoeffdingTreeModel::operator=(HoeffdingTreeModel&& other)
+inline HoeffdingTreeModel& HoeffdingTreeModel::operator=(
+    HoeffdingTreeModel&& other)
 {
   if (this != &other)
   {
@@ -117,7 +119,7 @@ HoeffdingTreeModel& HoeffdingTreeModel::operator=(HoeffdingTreeModel&& other)
 }
 
 // Destructor.
-HoeffdingTreeModel::~HoeffdingTreeModel()
+inline HoeffdingTreeModel::~HoeffdingTreeModel()
 {
   delete giniHoeffdingTree;
   delete giniBinaryTree;
@@ -126,7 +128,7 @@ HoeffdingTreeModel::~HoeffdingTreeModel()
 }
 
 // Create the model.
-void HoeffdingTreeModel::BuildModel(
+inline void HoeffdingTreeModel::BuildModel(
     const arma::mat& dataset,
     const data::DatasetInfo& datasetInfo,
     const arma::Row<size_t>& labels,
@@ -189,9 +191,9 @@ void HoeffdingTreeModel::BuildModel(
 }
 
 // Train the model on one pass of the dataset.
-void HoeffdingTreeModel::Train(const arma::mat& dataset,
-                               const arma::Row<size_t>& labels,
-                               const bool batchTraining)
+inline void HoeffdingTreeModel::Train(const arma::mat& dataset,
+                                      const arma::Row<size_t>& labels,
+                                      const bool batchTraining)
 {
   // Depending on the type, pass through once.
   switch (type)
@@ -215,8 +217,9 @@ void HoeffdingTreeModel::Train(const arma::mat& dataset,
 }
 
 // Classify the given points.
-void HoeffdingTreeModel::Classify(const arma::mat& dataset,
-                                  arma::Row<size_t>& predictions) const
+inline void HoeffdingTreeModel::Classify(const arma::mat& dataset,
+                                         arma::Row<size_t>& predictions)
+    const
 {
   // Call Classify() with the right model.
   switch (type)
@@ -240,9 +243,10 @@ void HoeffdingTreeModel::Classify(const arma::mat& dataset,
 }
 
 // Classify the given points.
-void HoeffdingTreeModel::Classify(const arma::mat& dataset,
-                                  arma::Row<size_t>& predictions,
-                                  arma::rowvec& probabilities) const
+inline void HoeffdingTreeModel::Classify(const arma::mat& dataset,
+                                         arma::Row<size_t>& predictions,
+                                         arma::rowvec& probabilities) 
+    const
 {
   // Call Classify() with the right model.
   switch (type)
@@ -286,7 +290,7 @@ size_t CountNodes(TreeType& tree)
 }
 
 // Get the number of nodes in the tree.
-size_t HoeffdingTreeModel::NumNodes() const
+inline size_t HoeffdingTreeModel::NumNodes() const
 {
   // Call CountNodes() with the right type of tree.
   switch (type)
@@ -303,3 +307,8 @@ size_t HoeffdingTreeModel::NumNodes() const
 
   return 0; // This should never happen!
 }
+
+} // namespace tree
+} // namespace mlpack
+
+#endif

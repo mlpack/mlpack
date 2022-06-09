@@ -28,14 +28,11 @@ namespace ann /** Artificial Neural Network. */ {
  * numbers. It should be used for inference only and not with NLL loss (use
  * LogSoftMax instead).
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
- *     cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
- *     to also be in this type. The type also allows the computation and weight
- *     type to differ from the input type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class SoftmaxType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class SoftmaxType : public Layer<MatType>
 {
  public:
   //! Create the Softmax object.
@@ -44,6 +41,18 @@ class SoftmaxType : public Layer<InputType, OutputType>
   //! Clone the SoftmaxType object. This handles polymorphism correctly.
   SoftmaxType* Clone() const { return new SoftmaxType(*this); }
 
+  //! Virtual destructor.
+  virtual ~SoftmaxType() { }
+
+  //! Copy the given SoftmaxType.
+  SoftmaxType(const SoftmaxType& other);
+  //! Take ownership of the given SoftmaxType.
+  SoftmaxType(SoftmaxType&& other);
+  //! Copy the given SoftmaxType.
+  SoftmaxType& operator=(const SoftmaxType& other);
+  //! Take ownership of the given SoftmaxType.
+  SoftmaxType& operator=(SoftmaxType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -51,7 +60,7 @@ class SoftmaxType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -62,7 +71,7 @@ class SoftmaxType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Serialize the layer.
   template<typename Archive>
@@ -71,10 +80,8 @@ class SoftmaxType : public Layer<InputType, OutputType>
  private:
 }; // class SoftmaxType
 
-// Convenience typedefs.
-
-// Standard Linear layer using no regularization.
-typedef SoftmaxType<arma::mat, arma::mat> Softmax;
+// Convenience typedef.
+typedef SoftmaxType<arma::mat> Softmax;
 
 } // namespace ann
 } // namespace mlpack

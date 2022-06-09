@@ -3,7 +3,6 @@
 set(SOURCES
   bayesian_linear_regression.hpp
   bayesian_linear_regression_impl.hpp
-  bayesian_linear_regression.cpp
 )
 
 # add directory name to sources

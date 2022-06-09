@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   randomized_svd.hpp
-  randomized_svd.cpp
+  randomized_svd_impl.hpp
 )
 
 # Add directory name to sources.

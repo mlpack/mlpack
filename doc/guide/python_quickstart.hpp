@@ -30,7 +30,7 @@ have to install the dependencies (the code below is for Ubuntu), then we can
 build and install mlpack.  You can copy-paste the commands into your shell.
 
 @code{.sh}
-sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
+sudo apt-get install g++ cmake libarmadillo-dev python-pip wget
 sudo pip install cython setuptools distutils numpy pandas
 wget https://www.mlpack.org/files/mlpack-3.4.2.tar.gz
 tar -xvzpf mlpack-3.4.2.tar.gz
