@@ -292,7 +292,6 @@ void LambdaMapReduceType<ReductionRuleType, MatType>::ComputeOutputDimensions()
     this->outputDimensions = this->inputDimensions;
     return;
   }
-  network.front()->InputDimensions() = this->inputDimensions;
   inSize = this->inputDimensions[0];
   for (size_t i = 1; i < this->inputDimensions.size(); ++i)
     inSize *= this->inputDimensions[i];

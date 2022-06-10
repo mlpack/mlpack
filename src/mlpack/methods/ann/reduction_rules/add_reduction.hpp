@@ -73,7 +73,7 @@ class AddReductionType
 		const std::vector<size_t> networkSize = network[0]->OutputDimensions();
 		for (size_t i = 1; i < network.size(); i++)
 		{
-			if (networkSize != network[i]->OutputDimensions())
+			if (!(networkSize == network[i]->OutputDimensions()))
 			{
 				Log::Fatal << "Network size mismatch." << std::endl;
 			}
