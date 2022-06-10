@@ -34,9 +34,9 @@ LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(const Lambd
     inSize(other.inSize),
     totalInputSize(other.totalInputSize),
     totalOutputSize(other.totalOutputSize),
+    reductionRule(other.reductionRule),
     layerOutputMatrix(other.layerOutputMatrix),
-    layerDeltaMatrix(other.layerDeltaMatrix),
-    reductionRule(other.reductionRule)
+    layerDeltaMatrix(other.layerDeltaMatrix)
 {
   // Copy each layer.
   for (size_t i = 0; i < other.network.size(); ++i)
@@ -58,9 +58,9 @@ LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(LambdaMapRe
     inSize(std::move(other.inSize)),
     totalInputSize(std::move(other.totalInputSize)),
     totalOutputSize(std::move(other.totalOutputSize)),
+    reductionRule(std::move(other.reductionRule)),
     layerOutputMatrix(std::move(other.layerOutputMatrix)),
-    layerDeltaMatrix(std::move(other.layerDeltaMatrix)),
-    reductionRule(std::move(other.reductionRule))
+    layerDeltaMatrix(std::move(other.layerDeltaMatrix))
 {
   // Ensure that the aliases for layers during passes have the right size.
   layerOutputs.resize(network.size(), MatType());

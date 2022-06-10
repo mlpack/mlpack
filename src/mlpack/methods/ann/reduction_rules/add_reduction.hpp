@@ -33,7 +33,6 @@ class AddReductionType
    * @param layerOutputs Network output that should be reduced.
    * @param output The network output.
    */
-  template <typename eT>
   void Reduce(const std::vector<MatType>& layerOutputs,
               MatType& output)
   {
