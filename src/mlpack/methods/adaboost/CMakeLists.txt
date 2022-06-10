@@ -4,7 +4,7 @@ set(SOURCES
   adaboost.hpp
   adaboost_impl.hpp
   adaboost_model.hpp
-  adaboost_model.cpp
+  adaboost_model_impl.hpp
 )
 
 # Add directory name to sources.

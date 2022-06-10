@@ -16,6 +16,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
 namespace radical {
@@ -147,5 +149,8 @@ void WhitenFeatureMajorMatrix(const arma::mat& matX,
 
 } // namespace radical
 } // namespace mlpack
+
+// Include implementation.
+#include "radical_impl.hpp"
 
 #endif

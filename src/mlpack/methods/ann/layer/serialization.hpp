@@ -13,6 +13,8 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::Layer<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::MultiLayer<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::RecurrentLayer<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::AdaptiveMeanPoolingType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::AdaptiveMaxPoolingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AddType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AlphaDropoutType<__VA_ARGS__>); \
     /* Base layers from base_layer.hpp. */ \
@@ -44,9 +46,11 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::LogSoftMaxType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LSTMType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::MaxPoolingType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::MeanPoolingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::NoisyLinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::PaddingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::RBFType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::SoftmaxType<__VA_ARGS__>); \
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
 

@@ -16,8 +16,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef _MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_HPP
-#define _MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_GAMMA_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -25,7 +25,7 @@
 #include <mlpack/core/math/trigamma.hpp>
 
 namespace mlpack {
-namespace distribution {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * This class represents the Gamma distribution.  It supports training a Gamma
@@ -231,5 +231,8 @@ class GammaDistribution
 
 } // namespace distribution
 } // namespace mlpack
+
+// Include implementation.
+#include "gamma_distribution_impl.hpp"
 
 #endif

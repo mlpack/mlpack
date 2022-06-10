@@ -2,17 +2,17 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   discrete_distribution.hpp
-  discrete_distribution.cpp
+  discrete_distribution_impl.hpp
   gaussian_distribution.hpp
-  gaussian_distribution.cpp
+  gaussian_distribution_impl.hpp
   laplace_distribution.hpp
-  laplace_distribution.cpp
+  laplace_distribution_impl.hpp
   regression_distribution.hpp
-  regression_distribution.cpp
+  regression_distribution_impl.hpp
   gamma_distribution.hpp
-  gamma_distribution.cpp
+  gamma_distribution_impl.hpp
   diagonal_gaussian_distribution.hpp
-  diagonal_gaussian_distribution.cpp
+  diagonal_gaussian_distribution_impl.hpp
 )
 
 # add directory name to sources

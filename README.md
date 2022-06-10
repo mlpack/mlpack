@@ -100,7 +100,6 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 9.800
-      Boost (math_c99, spirit) >= 1.58.0
       CMake          >= 3.6
       ensmallen      >= 2.10.0
       cereal         >= 1.1.2
@@ -202,7 +201,6 @@ Options are specified with the -D flag.  The allowed options include:
     DEBUG=(ON/OFF): compile with debugging symbols
     PROFILE=(ON/OFF): compile with profiling symbols
     ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
-    BOOST_ROOT=(/path/to/boost/): path to root of boost installation
     ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs

@@ -145,4 +145,7 @@ class MatrixCompletion
 } // namespace matrix_completion
 } // namespace mlpack
 
+// Include implementation.
+#include "matrix_completion_impl.hpp"
+
 #endif

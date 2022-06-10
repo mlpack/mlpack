@@ -32,7 +32,7 @@ set(SOURCES
   cellbound.hpp
   cellbound_impl.hpp
   cosine_tree/cosine_tree.hpp
-  cosine_tree/cosine_tree.cpp
+  cosine_tree/cosine_tree_impl.hpp
   cover_tree.hpp
   cover_tree/cover_tree.hpp
   cover_tree/cover_tree_impl.hpp

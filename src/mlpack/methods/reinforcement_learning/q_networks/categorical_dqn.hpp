@@ -181,8 +181,7 @@ class CategoricalDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); ++i)
     {
-      boost::get<ann::NoisyLinear<>*>
-          (network.Model()[noisyLayerIndex[i]])->ResetNoise();
+      (network.Model()[noisyLayerIndex[i]])->ResetNoise();
     }
   }
 

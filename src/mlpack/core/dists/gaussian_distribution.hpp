@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace distribution {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * A single multivariate Gaussian distribution.
@@ -193,5 +193,8 @@ class GaussianDistribution
 
 } // namespace distribution
 } // namespace mlpack
+
+// Include implementation.
+#include "gaussian_distribution_impl.hpp"
 
 #endif

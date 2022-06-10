@@ -317,7 +317,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
     if (shuffle) // Determine order of visitation.
       std::shuffle(visitationOrder.begin(), visitationOrder.end(),
-          mlpack::math::randGen);
+          mlpack::math::RandGen());
 
     #pragma omp parallel
     {

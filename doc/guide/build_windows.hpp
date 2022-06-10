@@ -48,7 +48,6 @@ This tutorial has been designed and tested using:
 - Visual Studio 2019 (toolset v142)
 - mlpack
 - OpenBLAS.0.2.14.1
-- boost_1_71_0-msvc-14.2-64
 - armadillo (newest version)
 - and x64 configuration
 
@@ -100,18 +99,6 @@ It you choose to build `OpenBLAS` from source, make sure that `LAPACK` functions
 sure that the `openblas.lib` library is linked in your `Armadillo` build (see below), as well as the library 
 path used for the CMake options `BLAS_LIBRARIES` and `LAPACK_LIBRARIES` in the mlpack CMake project.
 
-<b> Boost Dependency </b>
-
-You can either get Boost via NuGet or you can download the prebuilt Windows binaries separately.
-This tutorial follows the second approach for simplicity.
-
-- Download the "Prebuilt Windows binaries" of the Boost library ("boost_1_71_0-msvc-14.2-64") from
-<a href="https://sourceforge.net/projects/boost/files/boost-binaries/">Sourceforge</a>
-
-@note Make sure you download the MSVC version that matches your Visual Studio
-
-- Install or unzip to "C:\boost\"
-
 <b> Armadillo Dependency </b>
 
 - Download the newest version of Armadillo from <a href="http://arma.sourceforge.net/download.html">Sourceforge</a>
@@ -140,7 +127,7 @@ compiler version, check if the Visual Studio compiler and Windows SDK are instal
 - Run cmake:
 
 @code
-cmake -G "Visual Studio 16 2019" -A x64 -DBLAS_LIBRARIES:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARIES:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/mlpack/armadillo/include" -DARMADILLO_LIBRARY:FILEPATH="C:/mlpack/armadillo/build/Debug/armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:/boost/" -DBOOST_LIBRARYDIR:PATH="C:/boost/lib64-msvc-14.2" -DDEBUG=OFF -DPROFILE=OFF ..
+cmake -G "Visual Studio 16 2019" -A x64 -DBLAS_LIBRARIES:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARIES:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/mlpack/armadillo/include" -DARMADILLO_LIBRARY:FILEPATH="C:/mlpack/armadillo/build/Debug/armadillo.lib" -DDEBUG=OFF -DPROFILE=OFF ..
 @endcode
 
 @note cmake will attempt to automatically download the ensmallen dependency. If for some reason cmake can't download the dependency, you will need to manually download ensmallen from http://ensmallen.org/ and extract it to "C:\mlpack\mlpack\deps\". Then, specify the path to ensmallen using the flag: -DENSMALLEN_INCLUDE_DIR=C:/mlpack/mlpack/deps/ensmallen/include
@@ -166,7 +153,6 @@ must provide to Visual Studio's CMake are:
 
   - `ARMADILLO_INCLUDE_DIR`
   - `ARMADILLO_LIBRARY`
-  - `BOOST_ROOT`
   - `CEREAL_INCLUDE_DIR`
   - `BLAS_LIBRARIES`
   - `LAPACK_LIBRARIES`
@@ -216,16 +202,6 @@ Here is a full example of the `CMakeSettings.json`file:
           "type": "PATH"
         },
         {
-          "name": "BUILD_ROOT",
-          "value": "PATH/TO/CPP/DEPENDENCY/boost_1_66_0",
-          "type": "PATH"
-        },
-        {
-          "name": "BOOST_INCLUDEDIR",
-          "value": "PATH/TO/CPP/DEPENDENCY/boost_1_66_0",
-          "type": "PATH"
-        },
-        {
           "name": "BLAS_LIBRARIES",
           "value": "PATH/TO/CPP/DEPENDENCY/OpenBLAS/lib/openblas.lib",
           "type": "PATH"
@@ -255,10 +231,6 @@ If you prefer to use cmake GUI, follow these instructions:
       - Name: `ARMADILLO_LIBRARY`; type `FILEPATH`; value `C:/mlpack/armadillo/build/Debug/armadillo.lib`
       - Name: `BLAS_LIBRARY`; type `FILEPATH`; value `C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a`
       - Name: `LAPACK_LIBRARY`; type `FILEPATH`; value `C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a`
-    - If there is an error and Boost is not found, try "Add Entry" with the
-      following variables and reconfigure:
-      - Name: `BOOST_INCLUDEDIR`; type `PATH`; value `C:/boost/`
-      - Name: `BOOST_LIBRARYDIR`; type `PATH`; value `C:/boost/lib64-msvc-14.2`
     - Once CMake has configured successfully, hit "Generate" to create the `.sln` file.
 
 @section build_windows_additional_information Additional Information

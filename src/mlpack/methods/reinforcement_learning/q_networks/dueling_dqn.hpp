@@ -243,10 +243,8 @@ class DuelingDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      boost::get<ann::NoisyLinear<>*>
-          (valueNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
-      boost::get<ann::NoisyLinear<>*>
-          (advantageNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
+      (valueNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
+      (advantageNetwork->Model()[noisyLayerIndex[i]])->ResetNoise();
     }
   }
 
