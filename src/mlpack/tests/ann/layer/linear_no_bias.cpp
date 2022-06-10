@@ -1,5 +1,5 @@
 /**
- * @file tests/ann_layer_test.cpp
+ * @file tests/ann/layer/linear_no_bias.cpp
  * @author Marcus Edel
  * @author Praveen Ch
  *

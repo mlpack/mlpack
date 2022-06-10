@@ -1,5 +1,5 @@
 /**
- * @file tests/ann_layer_test.cpp
+ * @file tests/ann/layer/alpha_dropout.cpp
  * @author Marcus Edel
  * @author Praveen Ch
  *

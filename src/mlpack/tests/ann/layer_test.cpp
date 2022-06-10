@@ -11,6 +11,8 @@
  * instantiations.
  */
 
+#include "layer/adaptive_max_pooling.cpp"
+#include "layer/adaptive_mean_pooling.cpp"
 #include "layer/alpha_dropout.cpp"
 #include "layer/convolution.cpp"
 #include "layer/dropout.cpp"
@@ -18,4 +20,6 @@
 #include "layer/linear_no_bias.cpp"
 #include "layer/log_softmax.cpp"
 #include "layer/max_pooling.cpp"
+#include "layer/mean_pooling.cpp"
 #include "layer/padding.cpp"
+#include "layer/softmax.cpp"
