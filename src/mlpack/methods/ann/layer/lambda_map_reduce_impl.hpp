@@ -301,6 +301,7 @@ void LambdaMapReduceType<ReductionRuleType, MatType>::ComputeOutputDimensions()
   {
     network[i]->InputDimensions() = this->inputDimensions;
     size_t layerOutputSize = network[i]->OutputSize();
+    Log::Info << layerOutputSize << std::endl;
     totalOutputSize += layerOutputSize;
   }
 
