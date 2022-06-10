@@ -30,7 +30,7 @@ LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType() :
 
 template<typename ReductionRuleType, typename MatType>
 LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(const LambdaMapReduceType& other) :
-    Layer<ReductionRuleType, MatType>(other),
+    Layer<MatType>(other),
     inSize(other.inSize),
     totalInputSize(other.totalInputSize),
     totalOutputSize(other.totalOutputSize),
@@ -53,7 +53,7 @@ LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(const Lambd
 
 template<typename ReductionRuleType, typename MatType>
 LambdaMapReduceType<ReductionRuleType, MatType>::LambdaMapReduceType(LambdaMapReduceType&& other) :
-    Layer<ReductionRuleType, MatType>(other),
+    Layer<MatType>(other),
     network(std::move(other.network)),
     inSize(std::move(other.inSize)),
     totalInputSize(std::move(other.totalInputSize)),
@@ -80,7 +80,7 @@ LambdaMapReduceType<ReductionRuleType, MatType>& LambdaMapReduceType<ReductionRu
 {
   if (this != &other)
   {
-    Layer<ReductionRuleType, MatType>::operator=(other);
+    Layer<MatType>::operator=(other);
 
     network.clear();
     layerOutputs.clear();
@@ -112,7 +112,7 @@ LambdaMapReduceType<ReductionRuleType, MatType>& LambdaMapReduceType<ReductionRu
 {
   if (this != &other)
   {
-    Layer<ReductionRuleType, MatType>::operator=(other);
+    Layer<MatType>::operator=(other);
 
     layerOutputs.clear();
     layerDeltas.clear();
