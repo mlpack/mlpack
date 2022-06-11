@@ -235,17 +235,19 @@ void SAC<
     arma::colvec input = arma::join_vert(singlePi, singleState);
     arma::mat weightLastLayer;
 
+    // Note that we can use an empty matrix for the backwards pass, since the
+    // networks use EmptyLoss.
     if (Q1(i) < Q2(i))
     {
       learningQ1Network.Forward(input, q);
-      learningQ1Network.Backward(input, -1, gradQ);
+      learningQ1Network.Backward(input, arma::mat(), gradQ);
       weightLastLayer = arma::reshape(learningQ1Network.Parameters().
           rows(0, hidden1 * singlePi.n_rows - 1), hidden1, singlePi.n_rows);
     }
     else
     {
       learningQ2Network.Forward(input, q);
-      learningQ2Network.Backward(input, -1, gradQ);
+      learningQ2Network.Backward(input, arma::mat(), gradQ);
       weightLastLayer = arma::reshape(learningQ2Network.Parameters().
           rows(0, hidden1 * singlePi.n_rows - 1), hidden1, singlePi.n_rows);
     }
