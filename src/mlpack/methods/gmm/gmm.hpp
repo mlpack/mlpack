@@ -10,13 +10,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_MOG_MOG_EM_HPP
-#define MLPACK_METHODS_MOG_MOG_EM_HPP
+#ifndef MLPACK_METHODS_GMM_GMM_HPP
+#define MLPACK_METHODS_GMM_GMM_HPP
 
 #include <mlpack/prereqs.hpp>
 
 // This is the default fitting method class.
 #include "em_fit.hpp"
+
+#include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
 namespace gmm /** Gaussian Mixture Models. */ {

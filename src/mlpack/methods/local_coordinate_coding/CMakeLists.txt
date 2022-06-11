@@ -5,7 +5,6 @@
 # that you have files in both sections
 set(SOURCES
   lcc.hpp
-  lcc.cpp
   lcc_impl.hpp
 )
 

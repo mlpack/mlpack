@@ -2,10 +2,9 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   softmax_regression.hpp
-  softmax_regression.cpp
   softmax_regression_impl.hpp
   softmax_regression_function.hpp
-  softmax_regression_function.cpp
+  softmax_regression_function_impl.hpp
 )
 
 # Add directory name to sources.

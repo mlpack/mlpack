@@ -13,7 +13,7 @@ set(SOURCES
   hoeffding_tree.hpp
   hoeffding_tree_impl.hpp
   hoeffding_tree_model.hpp
-  hoeffding_tree_model.cpp
+  hoeffding_tree_model_impl.hpp
   information_gain.hpp
   numeric_split_info.hpp
   typedef.hpp

@@ -2691,7 +2691,7 @@ TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
 
 /**
  * Simple Softmax module test.
- *
+ */
 TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
 {
   arma::mat input, output, gy, g;
@@ -2710,11 +2710,10 @@ TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
   REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
       Approx(0.0).margin(1e-04));
 }
-*/
 
 /**
  * Softmax layer numerical gradient test.
- *
+ */
 TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 {
   // Softmax function gradient instantiation.
@@ -2726,9 +2725,9 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
     {
       model = new FFN<MeanSquaredError, RandomInitialization>;
       model->ResetData(input, target);
-      model->Add<Linear>(10, 10);
-      model->Add<ReLULayer>();
-      model->Add<Linear>(10, 2);
+      model->Add<Linear>(10);
+      model->Add<ReLU>();
+      model->Add<Linear>(2);
       model->Add<Softmax>();
     }
 
@@ -2752,7 +2751,6 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 1e-4);
 }
-*/
 
 /**
  * Simple test for the NearestInterpolation layer
@@ -4932,53 +4930,70 @@ TEST_CASE("LambdaMapReduceTestCase", "[ANNLayerTest]")
 /**
  * Simple test for Mean Pooling layer.
  */
-// TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
-// {
-//   // For rectangular input to pooling layers.
-//   arma::mat input = arma::mat(28, 1);
-//   input.zeros();
-//   input(0) = input(16) = 1;
-//   input(1) = input(17) = 2;
-//   input(2) = input(18) = 3;
-//   input(3) = input(19) = 4;
-//   input(4) = input(20) = 5;
-//   input(5) = input(23) = 6;
-//   input(6) = input(24) = 7;
-//   input(14) = input(25) = 8;
-//   input(15) = input(26) = 9;
-//
-//   MeanPooling<> module1(2, 2, 2, 2, false);
-//   MeanPooling<> module2(2, 2, 2, 2, true);
-//   module1.InputWidth() = 7;
-//   module1.InputHeight() = 4;
-//   module2.InputWidth() = 7;
-//   module2.InputHeight() = 4;
-//
-//   // Calculated using torch.nn.MeanPool2d().
-//   arma::mat result1, result2;
-//   result1  <<  0.7500  <<  4.2500  <<  arma::endr
-//            <<  1.7500  <<  4.0000  <<  arma::endr
-//            <<  2.7500  <<  6.0000  <<  arma::endr
-//            <<  3.5000  <<  2.5000  <<  arma::endr;
-//
-//   result2  <<  0.7500  <<  4.2500  <<  arma::endr
-//            <<  1.7500  <<  4.0000  <<  arma::endr
-//            <<  2.7500  <<  6.0000  <<  arma::endr;
-//
-//   arma::mat output1, output2;
-//   module1.Forward(input, output1);
-//   module2.Forward(input, output2);
-//   output1.reshape(4, 2);
-//   output2.reshape(3, 2);
-//   CheckMatrices(output1, result1, 1e-1);
-//   CheckMatrices(output2, result2, 1e-1);
-//
-//   arma::mat delta1, delta2;
-//   module1.Backward(input, output1, delta1);
-//   REQUIRE(arma::accu(delta1) == 25.5);
-//   module2.Backward(input, output2, delta2);
-//   REQUIRE(arma::accu(delta2) == 19.5);
-// }
+TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(28, 1);
+  input.zeros();
+  input(0) = input(16) = 1;
+  input(1) = input(17) = 2;
+  input(2) = input(18) = 3;
+  input(3) = input(19) = 4;
+  input(4) = input(20) = 5;
+  input(5) = input(23) = 6;
+  input(6) = input(24) = 7;
+  input(14) = input(25) = 8;
+  input(15) = input(26) = 9;
+
+  MeanPooling module1(2, 2, 2, 2, false);
+  MeanPooling module2(2, 2, 2, 2, true);
+  module1.InputDimensions() = std::vector<size_t>({ 7, 4 });
+  module1.ComputeOutputDimensions();
+  module2.InputDimensions() = std::vector<size_t>({ 7, 4 });
+  module2.ComputeOutputDimensions();
+
+  // Calculated using torch.nn.MeanPool2d().
+  arma::mat result1, result2;
+  result1  <<  0.7500  <<  4.2500  <<  arma::endr
+           <<  1.7500  <<  4.0000  <<  arma::endr
+           <<  2.7500  <<  6.0000  <<  arma::endr
+           <<  3.5000  <<  2.5000  <<  arma::endr;
+
+  result2  <<  0.7500  <<  4.2500  <<  arma::endr
+           <<  1.7500  <<  4.0000  <<  arma::endr
+           <<  2.7500  <<  6.0000  <<  arma::endr;
+
+  arma::mat output1, output2;
+  output1.set_size(8, 1);
+  output2.set_size(6, 1);
+  module1.Forward(input, output1);
+  REQUIRE(arma::accu(output1) == 25.5);
+  module2.Forward(input, output2);
+  REQUIRE(arma::accu(output2) == 19.5);
+  output1.reshape(4, 2);
+  output2.reshape(3, 2);
+  CheckMatrices(output1, result1, 1e-1);
+  CheckMatrices(output2, result2, 1e-1);
+
+  arma::mat prevDelta1, prevDelta2;
+  prevDelta1  << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr;
+
+  prevDelta2  << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat delta1, delta2;
+  delta1.set_size(28, 1);
+  delta2.set_size(28, 1);
+  prevDelta1.reshape(8, 1);
+  prevDelta2.reshape(6, 1);
+  module1.Backward(input, prevDelta1, delta1);
+  REQUIRE(arma::accu(delta1) == Approx(10.8).epsilon(1e-3));
+  module2.Backward(input, prevDelta2, delta2);
+  REQUIRE(arma::accu(delta2) == Approx(8.1).epsilon(1e-3));
+}
 
 /**
  * Simple test for Max Pooling layer.
@@ -5121,7 +5136,7 @@ TEST_CASE("ReinforceNormalLayerParametersTest", "[ANNLayerTest]")
 
 /**
  * Simple test for Adaptive pooling for Max Pooling layer.
- *
+ */
 TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input.
@@ -5141,14 +5156,17 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   // Output-Size should be 2 x 2.
   // Square output.
   AdaptiveMaxPooling module1(2, 2);
-  module1.InputHeight() = 3;
-  module1.InputWidth() = 4;
+  output.set_size(4, 1);
+  module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
+  module1.ComputeOutputDimensions();
+  module1.Training() = true;
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 28);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(12, 1);
   module1.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 28.0);
 
@@ -5163,14 +5181,17 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   // Output-Size should be 1 x 2.
   // Rectangular output.
   AdaptiveMaxPooling module2(2, 1);
-  module2.InputHeight() = 3;
-  module2.InputWidth() = 3;
+  output.set_size(2, 1);
+  module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
+  module2.ComputeOutputDimensions();
+  module2.Training() = true;
   module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 15.0);
   REQUIRE(output.n_elem == 2);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(9, 1);
   module2.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 15.0);
 
@@ -5184,15 +5205,18 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   input(8) = 3;
   // Output-Size should be 3 x 3.
   // Square output.
-  AdaptiveMaxPooling module3(std::tuple<size_t, size_t>(3, 3));
-  module3.InputHeight() = 4;
-  module3.InputWidth() = 4;
+  AdaptiveMaxPooling module3(3, 3);
+  output.set_size(9, 1);
+  module3.InputDimensions() = std::vector<size_t>({ 4, 4 });
+  module3.ComputeOutputDimensions();
+  module3.Training() = true;
   module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 30.0);
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(16, 1);
   module3.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 30.0);
 
@@ -5204,23 +5228,26 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   input(3) = 1;
   // Output-Size should be 2 x 2.
   // Square output.
-  AdaptiveMaxPooling module4(std::tuple<size_t, size_t>(2, 2));
-  module4.InputHeight() = 4;
-  module4.InputWidth() = 5;
+  AdaptiveMaxPooling module4(2, 2);
+  output.set_size(4, 1);
+  module4.InputDimensions() = std::vector<size_t>({ 5, 4 });
+  module4.ComputeOutputDimensions();
+  module4.Training() = true;
   module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
   REQUIRE(arma::accu(output) == 2);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(20, 1);
   module4.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 2.0);
 }
-*/
 
 /**
  * Simple test for Adaptive pooling for Mean Pooling layer.
  *
+ */
 TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input.
@@ -5240,14 +5267,16 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   // Output-Size should be 2 x 2.
   // Square output.
   AdaptiveMeanPooling module1(2, 2);
-  module1.InputHeight() = 3;
-  module1.InputWidth() = 4;
+  output.set_size(4, 1);
+  module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
+  module1.ComputeOutputDimensions();
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
   REQUIRE(arma::accu(output) == 19.75);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(12, 1);
   module1.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 19.75);
 
@@ -5262,14 +5291,16 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   // Output-Size should be 1 x 2.
   // Rectangular output.
   AdaptiveMeanPooling module2(1, 2);
-  module2.InputHeight() = 3;
-  module2.InputWidth() = 3;
+  output.set_size(2, 1);
+  module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
+  module2.ComputeOutputDimensions();
   module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
   REQUIRE(arma::accu(output) == 4.5);
   REQUIRE(output.n_elem == 2);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(9, 1);
   module2.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 4.50);
 
@@ -5283,15 +5314,17 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   input(8) = 3;
   // Output-Size should be 3 x 3.
   // Square output.
-  AdaptiveMeanPooling module3(std::tuple<size_t, size_t>(3, 3));
-  module3.InputHeight() = 4;
-  module3.InputWidth() = 4;
+  AdaptiveMeanPooling module3(3, 3);
+  output.set_size(9, 1);
+  module3.InputDimensions() = std::vector<size_t>({ 4, 4 });
+  module3.ComputeOutputDimensions();
   module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
   REQUIRE(arma::accu(output) == 10.5);
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(16, 1);
   module3.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 10.5);
 
@@ -5303,19 +5336,20 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   input(4) = 3;
   // Output-Size should be 3 x 3.
   // Square output.
-  AdaptiveMeanPooling module4(std::tuple<size_t, size_t>(3, 3));
-  module4.InputHeight() = 4;
-  module4.InputWidth() = 6;
+  AdaptiveMeanPooling module4(3, 3);
+  output.set_size(9, 1);
+  module4.InputDimensions() = std::vector<size_t>({ 6, 4 });
+  module4.ComputeOutputDimensions();
   module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
   REQUIRE(arma::accu(output) == 2.25);
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  delta.set_size(24, 1);
   module4.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 2.25);
 }
-*/
 
 /*
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")

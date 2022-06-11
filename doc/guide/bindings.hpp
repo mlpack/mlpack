@@ -1314,7 +1314,7 @@ will be able to pass a pointer to the model itself.  This is generally
 best---users should not expect to be able to manipulate the model in the target
 language, but they should expect that they can pass a model back and forth
 without paying a runtime penalty.  So, for example, serializing a model using a
-@c boost::text_oarchive and then returning the string that represents the model
+cereal text archive and then returning the string that represents the model
 is not acceptable, because that string can be extremely large and the time it
 takes to decode the model can be very large.
 

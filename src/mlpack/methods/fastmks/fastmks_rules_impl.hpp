@@ -56,12 +56,9 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
   // BaseCase() method.
   const Candidate def = std::make_pair(-DBL_MAX, size_t() - 1);
 
-  CandidateList pqueue;
-  pqueue.reserve(k);
-  for (size_t i = 0; i < k; ++i)
-    pqueue.push(def);
-  std::vector<CandidateList> tmp(querySet.n_cols, pqueue);
-  candidates.swap(tmp);
+  std::vector<Candidate> pqueue(k, def);
+  std::make_heap(pqueue.begin(), pqueue.end(), CandidateCmp());
+  candidates = std::vector<std::vector<Candidate>>(querySet.n_cols, pqueue);
 }
 
 template<typename KernelType, typename TreeType>
@@ -74,12 +71,12 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
 
   for (size_t i = 0; i < querySet.n_cols; ++i)
   {
-    CandidateList& pqueue = candidates[i];
-    for (size_t j = 1; j <= k; ++j)
+    std::vector<Candidate>& pqueue = candidates[i];
+    std::sort_heap(pqueue.begin(), pqueue.end(), CandidateCmp());
+    for (size_t j = 0; j < k; ++j)
     {
-      indices(k - j, i) = pqueue.top().second;
-      products(k - j, i) = pqueue.top().first;
-      pqueue.pop();
+      indices(j, i) = pqueue[j].second;
+      products(j, i) = pqueue[j].first;
     }
   }
 }
@@ -129,7 +126,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
                                                  TreeType& referenceNode)
 {
   // Compare with the current best.
-  const double bestKernel = candidates[queryIndex].top().first;
+  const double bestKernel = candidates[queryIndex].front().first;
 
   // See if we can perform a parent-child prune.
   const double furthestDist = referenceNode.FurthestDescendantDistance();
@@ -412,7 +409,7 @@ double FastMKSRules<KernelType, TreeType>::Rescore(const size_t queryIndex,
                                                    TreeType& /*referenceNode*/,
                                                    const double oldScore) const
 {
-  const double bestKernel = candidates[queryIndex].top().first;
+  const double bestKernel = candidates[queryIndex].front().first;
 
   return ((1.0 / oldScore) >= bestKernel) ? oldScore : DBL_MAX;
 }
@@ -459,11 +456,11 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
     const size_t point = queryNode.Point(i);
-    const CandidateList& candidatesPoints = candidates[point];
-    if (candidatesPoints.top().first < worstPointKernel)
-      worstPointKernel = candidatesPoints.top().first;
+    const std::vector<Candidate>& candidatesPoints = candidates[point];
+    if (candidatesPoints.front().first < worstPointKernel)
+      worstPointKernel = candidatesPoints.front().first;
 
-    if (candidatesPoints.top().first == -DBL_MAX)
+    if (candidatesPoints.front().first == -DBL_MAX)
       continue; // Avoid underflow.
 
     // This should be (queryDescendantDistance + centroidDistance) for any tree
@@ -478,7 +475,7 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     // where p_j^*(p_q) is the j'th kernel candidate for query point p_q and
     // k_j^*(p_q) is K(p_q, p_j^*(p_q)).
     double worstPointCandidateKernel = DBL_MAX;
-    typedef typename CandidateList::const_iterator iter;
+    typedef std::vector<Candidate>::const_iterator iter;
     for (iter it = candidatesPoints.begin(); it != candidatesPoints.end(); ++it)
     {
       const double candidateKernel = it->first - queryDescendantDistance *
@@ -529,12 +526,14 @@ inline void FastMKSRules<KernelType, TreeType>::InsertNeighbor(
     const size_t index,
     const double product)
 {
-  CandidateList& pqueue = candidates[queryIndex];
-  if (product > pqueue.top().first)
+  std::vector<Candidate>& pqueue = candidates[queryIndex];
+  if (product > pqueue.front().first)
   {
     Candidate c = std::make_pair(product, index);
-    pqueue.pop();
-    pqueue.push(c);
+    // Update the min-heap with the new element.
+    std::pop_heap(pqueue.begin(), pqueue.end(), CandidateCmp());
+    pqueue.back() = c;
+    std::push_heap(pqueue.begin(), pqueue.end(), CandidateCmp());
   }
 }
 

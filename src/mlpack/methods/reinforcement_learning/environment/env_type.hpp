@@ -206,6 +206,19 @@ class ContinuousActionEnv
   static size_t rewardSize;
 };
 
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_ENV_TYPE_VARIABLES
+#define MLPACK_METHODS_RL_ENVIRONMENT_ENV_TYPE_VARIABLES
+
+size_t DiscreteActionEnv::State::dimension = 0;
+size_t DiscreteActionEnv::Action::size = 0;
+size_t DiscreteActionEnv::rewardSize = 0;
+
+size_t ContinuousActionEnv::State::dimension = 0;
+size_t ContinuousActionEnv::Action::size = 0;
+size_t ContinuousActionEnv::rewardSize = 0;
+
+#endif
+
 } // namespace rl
 } // namespace mlpack
 

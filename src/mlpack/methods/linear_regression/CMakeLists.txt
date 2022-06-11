@@ -3,7 +3,7 @@
 # Do not include test programs here
 set(SOURCES
   linear_regression.hpp
-  linear_regression.cpp
+  linear_regression_impl.hpp
 )
 
 # add directory name to sources

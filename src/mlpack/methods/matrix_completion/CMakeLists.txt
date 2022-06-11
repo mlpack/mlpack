@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   matrix_completion.hpp
-  matrix_completion.cpp
+  matrix_completion_impl.hpp
 )
 
 # Add directory name to sources.

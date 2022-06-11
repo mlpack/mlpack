@@ -94,4 +94,7 @@ class QUIC_SVD
 } // namespace svd
 } // namespace mlpack
 
+// Include implementation.
+#include "quic_svd_impl.hpp"
+
 #endif

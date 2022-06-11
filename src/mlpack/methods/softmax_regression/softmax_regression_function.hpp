@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
 namespace regression {
@@ -204,5 +205,8 @@ class SoftmaxRegressionFunction
 
 } // namespace regression
 } // namespace mlpack
+
+// Include implementation.
+#include "softmax_regression_function_impl.hpp"
 
 #endif
