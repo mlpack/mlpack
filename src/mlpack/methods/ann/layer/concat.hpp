@@ -159,17 +159,18 @@ class ConcatType : public MultiLayer<MatType>
     }
 
     // Now, we concatenate the output along a specific axis.
-    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+    this->outputDimensions = std::vector<size_t>(
+        (this->network.size() == 0) ?
+            this->inputDimensions.size() :
+            this->network[0]->OutputDimensions().size(),
         0);
-    for (size_t i = 0; i < this->inputDimensions.size(); ++i)
+    for (size_t i = 0; i < this->outputDimensions.size(); ++i)
     {
       if (i == axis)
       {
         // Accumulate output size along this axis for each layer output.
         for (size_t n = 0; n < this->network.size(); ++n)
-        {
           this->outputDimensions[i] += this->network[n]->OutputDimensions()[i];
-        }
       }
       else
       {
@@ -194,6 +195,19 @@ class ConcatType : public MultiLayer<MatType>
         this->outputDimensions[i] = axisDim;
       }
     }
+
+    // Recompute total input and output sizes.  Note that we pass the input to
+    // each layer held in the network, so the "total" input size (which is used
+    // by the backwards pass to compute how much memory to use for holding
+    // deltas) should be the number of layers multiplied by the input size for
+    // each layer.
+    this->totalInputSize = 1;
+    this->totalOutputSize = 1;
+    for (size_t i = 0; i < this->inputDimensions.size(); ++i)
+      this->totalInputSize *= this->inputDimensions[i];
+    this->totalInputSize *= this->network.size();
+    for (size_t i = 0; i < this->outputDimensions.size(); ++i)
+      this->totalOutputSize *= this->outputDimensions[i];
   }
 
   /**

@@ -112,18 +112,19 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
   // this->outputDimensions.size(); that is the batch size (represented as the
   // number of columns in `input`).
 
-  size_t slices = (axis == 0) ? input.n_cols :
-      std::accumulate(this->outputDimensions.begin(),
-          this->outputDimensions.begin() + axis, 0) + input.n_cols;
-  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
-      std::accumulate(this->outputDimensions.begin() + axis + 1,
-          this->outputDimensions.end(), 0);
+  size_t rows = 1;
+  for (size_t i = 0; i < axis; ++i)
+    rows *= this->outputDimensions[i];
+
+  size_t slices = 1;
+  for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
+    slices *= this->outputDimensions[i];
 
   std::vector<arma::Cube<typename MatType::elem_type>> layerOutputAliases(
       this->layerOutputs.size());
   for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
-    MakeAlias(layerOutputAliases.back(),
+    MakeAlias(layerOutputAliases[i],
               (typename MatType::elem_type*) this->layerOutputs[i].memptr(),
               rows,
               this->network[i]->OutputDimensions()[axis],
