@@ -58,7 +58,6 @@ class CategoricalDQN
   /**
    * Construct an instance of CategoricalDQN class.
    *
-   * @param inputDim Number of inputs.
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
@@ -67,8 +66,7 @@ class CategoricalDQN
    * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
    */
-  CategoricalDQN(const int inputDim,
-                 const int h1,
+  CategoricalDQN(const int h1,
                  const int h2,
                  const int outputDim,
                  TrainingConfig config,

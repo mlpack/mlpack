@@ -73,7 +73,6 @@ class DuelingDQN
   /**
    * Construct an instance of DuelingDQN class.
    *
-   * @param inputDim Number of inputs.
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
@@ -81,8 +80,7 @@ class DuelingDQN
    * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
    */
-  DuelingDQN(const int inputDim,
-             const int h1,
+  DuelingDQN(const int h1,
              const int h2,
              const int outputDim,
              const bool isNoisy = false,
