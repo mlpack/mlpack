@@ -304,7 +304,7 @@ TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 {
   // Set up the network.
-  DuelingDQN<> network(4, 128, 64, 2);
+  DuelingDQN<> network(128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -326,7 +326,7 @@ TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest]")
 {
   // Set up the network.
-  DuelingDQN<> network(4, 128, 64, 2);
+  DuelingDQN<> network(128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -397,7 +397,7 @@ TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
     config.NoisyQLearning() = true;
 
     // Set up the network with a flag to enable noisy layers.
-    DuelingDQN<> network(4, 64, 64, 2, config.NoisyQLearning());
+    DuelingDQN<> network(64, 64, 2, config.NoisyQLearning());
 
     // Set up DQN agent.
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>

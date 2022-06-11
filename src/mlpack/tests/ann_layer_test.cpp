@@ -2326,6 +2326,7 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
+  output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
   const double sumModuleA = arma::accu(
@@ -2339,6 +2340,7 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
+  delta.set_size(input.n_rows, input.n_cols);
   module.Backward(input, error, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
@@ -2377,6 +2379,8 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
   moduleB->Parameters().randu();
 
   // Compute output of each layer.
+  outputA.set_size(moduleA->OutputSize(), 1);
+  outputB.set_size(moduleB->OutputSize(), 1);
   moduleA->Forward(input, outputA);
   moduleB->Forward(input, outputB);
 
@@ -2422,8 +2426,10 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
     Concat module(axis);
     module.Add(moduleA);
     module.Add(moduleB);
+    std::cout << "input size " << inputWidth << " x " << inputHeight << "\n";
     module.InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
     module.ComputeOutputDimensions();
+    output.set_size(module.OutputSize(), 1);
     module.Forward(input, output);
     arma::cube concatOut(output.memptr(), x * outputWidth,
         y * outputHeight, z * outputChannel);
