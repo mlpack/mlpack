@@ -4876,8 +4876,8 @@ TEST_CASE("LambdaMapReduceTestCase", "[ANNLayerTest]")
   module1.Add<MeanPooling>(2, 2, 2, 2, false);
 
   LambdaMapReduce module2;
-  module1.Add<MeanPooling>(2, 2, 2, 2, true);
-  module1.Add<MeanPooling>(2, 2, 2, 2, true);
+  module2.Add<MeanPooling>(2, 2, 2, 2, true);
+  module2.Add<MeanPooling>(2, 2, 2, 2, true);
 
   module1.InputDimensions() = std::vector<size_t>({ 7, 4 });
   module1.ComputeOutputDimensions();

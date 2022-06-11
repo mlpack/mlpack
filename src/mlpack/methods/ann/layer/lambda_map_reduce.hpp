@@ -72,22 +72,6 @@ class LambdaMapReduceType : public Layer<MatType>
   virtual void Forward(const MatType& input, MatType& output);
 
   /**
-   * Perform a forward pass with the given input data, but only on a subset of
-   * the layers in the LambdaMapReduceType.  `output` is expected to have the correct
-   * size (e.g. number of rows equal to `OutputSize()` of the last layer to be
-   * computed; number of columns equal to `input.n_cols`).
-   *
-   * @param input Input data to pass through the LambdaMapReduceType.
-   * @param output Matrix to store output in.
-   * @param start Index of first layer to pass data through.
-   * @param end Index of last layer to pass data through.
-   */
-  void Forward(const MatType& input,
-               MatType& output,
-               const size_t start,
-               const size_t end);
-
-  /**
    * Perform a backward pass with the given data.  `gy` is expected to be the
    * propagated error from the subsequent layer (or output), `input` is expected
    * to be the output from this layer when `Forward()` was called, and `g` will

@@ -69,13 +69,20 @@ class AddReductionType
 		if (network.size() == 0)
 		{
 			return std::vector<size_t>();
+		} 
+		else if (network.size() == 1) 
+		{
+			return network[0]->OutputDimensions();
 		}
 		const std::vector<size_t> networkSize = network[0]->OutputDimensions();
 		for (size_t i = 1; i < network.size(); i++)
 		{
 			if (!(networkSize == network[i]->OutputDimensions()))
 			{
-				Log::Fatal << "Network size mismatch." << std::endl;
+				Log::Fatal << "Network size mismatch. (" << networkSize[0] << ", "
+					<< networkSize[1] << ") != ("
+					<< network[i]->OutputDimensions()[0] << ", " << network[i]->OutputDimensions()[1]
+					<< ")." << std::endl;
 			}
 		}
 		return networkSize;

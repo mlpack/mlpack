@@ -141,36 +141,26 @@ template<typename ReductionRuleType, typename MatType>
 void LambdaMapReduceType<ReductionRuleType, MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  Forward(input, output, 0, network.size() - 1);
-}
-
-template<typename ReductionRuleType, typename MatType>
-void LambdaMapReduceType<ReductionRuleType, MatType>::Forward(
-    const MatType& input,
-    MatType& output,
-    const size_t start,
-    const size_t end)
-{
   // Make sure training/testing mode is set right in each layer.
   for (size_t i = 0; i < network.size(); ++i)
     network[i]->Training() = this->training;
 
   // Note that we use `output` for the last layer; layerOutputs is only used for
   // intermediate values between layers.
-  if ((end - start) > 0)
+  if (network.size() > 1)
   {
     // Initialize memory for the forward pass (if needed).
     InitializeForwardPassMemory(input.n_cols);
 
-    for (size_t i = start; i <= end; i++)
+    for (size_t i = 0; i < network.size(); i++)
       network[i]->Forward(input, layerOutputs[i]);
 
 		// Reduce the outputs to single output.
     reductionRule.Reduce(layerOutputs, output);
   }
-  else if ((end - start) == 0 && network.size() > 0)
+  else if (network.size() == 1)
   {
-    network[start]->Forward(input, output);
+    network[0]->Forward(input, output);
   }
   else
   {
@@ -193,7 +183,7 @@ void LambdaMapReduceType<ReductionRuleType, MatType>::Backward(
     reductionRule.UnReduce(gy, network.size(), layerTempDeltas);
 
     g.zeros();
-    for (size_t i = network.size() - 1; i >= 0; i--) {
+    for (size_t i = 0; i < network.size(); i++) {
       network[i]->Backward(layerOutputs[i], layerTempDeltas[i], layerDeltas[i]);
 			g += layerDeltas[i];
 		}
@@ -301,7 +291,6 @@ void LambdaMapReduceType<ReductionRuleType, MatType>::ComputeOutputDimensions()
   {
     network[i]->InputDimensions() = this->inputDimensions;
     size_t layerOutputSize = network[i]->OutputSize();
-    Log::Warn << layerOutputSize << std::endl;
     totalOutputSize += layerOutputSize;
   }
 
