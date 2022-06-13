@@ -267,7 +267,7 @@ void ConcatType<MatType>::Gradient(
     err.reshape(err.n_elem / input.n_cols, input.n_cols);
     MatType gradientAlias;
     MakeAlias(gradientAlias,
-              (typename MatType::elem_type*) gradient.colptr(startParam),
+              (typename MatType::elem_type*) gradient.memptr() + startParam,
               params,
               1);
     this->network[i]->Gradient(input, err, gradientAlias);
@@ -316,9 +316,9 @@ void ConcatType<MatType>::Gradient(
   err.reshape(err.n_elem / input.n_cols, input.n_cols);
   MatType gradientAlias;
   MakeAlias(gradientAlias,
-            (typename MatType::elem_type*) gradient.colptr(startParam),
-            1,
-            params);
+            (typename MatType::elem_type*) gradient.memptr() + startParam,
+            params,
+            1);
   this->network[index]->Gradient(input, err, gradientAlias);
 }
 
