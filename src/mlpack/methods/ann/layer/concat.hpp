@@ -128,7 +128,7 @@ class ConcatType : public MultiLayer<MatType>
                 const size_t index);
 
   //! Get the axis of concatenation.
-  const size_t& Axis() const { return axis; }
+  size_t Axis() const { return axis; }
 
   // We don't need to overload WeightSize(); MultiLayer already computes this
   // correctly.  (It is the sum of weights of all child layers.)
@@ -142,6 +142,10 @@ class ConcatType : public MultiLayer<MatType>
       this->network[i]->ComputeOutputDimensions();
     }
 
+    const size_t numOutputDimensions = (this->network.size() == 0) ?
+        this->inputDimensions.size() :
+        this->network[0]->OutputDimensions().size();
+
     // If the user did not specify an axis, we will use the last one.
     // Otherwise, we must sanity check to ensure that the axis we are
     // concatenating along is valid.
@@ -149,7 +153,7 @@ class ConcatType : public MultiLayer<MatType>
     {
       axis = this->inputDimensions.size() - 1;
     }
-    else if (axis >= this->inputDimensions.size())
+    else if (axis >= numOutputDimensions)
     {
       std::ostringstream oss;
       oss << "Concat::ComputeOutputDimensions(): cannot concatenate outputs "
@@ -159,11 +163,7 @@ class ConcatType : public MultiLayer<MatType>
     }
 
     // Now, we concatenate the output along a specific axis.
-    this->outputDimensions = std::vector<size_t>(
-        (this->network.size() == 0) ?
-            this->inputDimensions.size() :
-            this->network[0]->OutputDimensions().size(),
-        0);
+    this->outputDimensions = std::vector<size_t>(numOutputDimensions, 0);
     for (size_t i = 0; i < this->outputDimensions.size(); ++i)
     {
       if (i == axis)
