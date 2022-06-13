@@ -4854,9 +4854,9 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 // }
 
 /**
- * Simple test for Lambda Map Reduce layer.
+ * Simple test for Residual layer.
  */
-TEST_CASE("LambdaMapReduceTestCase", "[ANNLayerTest]")
+TEST_CASE("ResidualTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(28, 1);
@@ -4871,11 +4871,11 @@ TEST_CASE("LambdaMapReduceTestCase", "[ANNLayerTest]")
   input(14) = input(25) = 8;
   input(15) = input(26) = 9;
 
-  LambdaMapReduce module1;
+  Residual module1;
   module1.Add<MeanPooling>(2, 2, 2, 2, false);
   module1.Add<MeanPooling>(2, 2, 2, 2, false);
 
-  LambdaMapReduce module2;
+  Residual module2;
   module2.Add<MeanPooling>(2, 2, 2, 2, true);
   module2.Add<MeanPooling>(2, 2, 2, 2, true);
 
@@ -4907,23 +4907,23 @@ TEST_CASE("LambdaMapReduceTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat prev_delta1, prev_delta2;
-  prev_delta1 << 3.6000 << -0.9000 << arma::endr
+  arma::mat prevDelta1, prevDelta2;
+  prevDelta1  << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr;
 
-  prev_delta2 << 3.6000 << -0.9000 << arma::endr
+  prevDelta2  << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr
               << 3.6000 << -0.9000 << arma::endr;
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);
-  prev_delta1.reshape(8, 1);
-  prev_delta2.reshape(6, 1);
-  module1.Backward(input, prev_delta1, delta1);
+  prevDelta1.reshape(8, 1);
+  prevDelta2.reshape(6, 1);
+  module1.Backward(input, prevDelta1, delta1);
   REQUIRE(arma::accu(delta1) == Approx(21.6).epsilon(1e-3));
-  module2.Backward(input, prev_delta2, delta2);
+  module2.Backward(input, prevDelta2, delta2);
   REQUIRE(arma::accu(delta2) == Approx(16.2).epsilon(1e-3));
 }
 

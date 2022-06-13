@@ -379,15 +379,9 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
   for (size_t i = 0; i < layerDeltas.size(); ++i)
   {
     size_t layerInputSize = 1;
-    if (i == 0)
-    {
-      for (size_t j = 0; j < this->inputDimensions.size(); ++j)
-        layerInputSize *= this->inputDimensions[j];
-    }
-    else
-    {
-      layerInputSize = network[i - 1]->OutputSize();
-    }
+    for (size_t j = 0; j < network[i]->InputDimensions().size(); ++j)
+      layerInputSize *= network[i]->InputDimensions()[j];
+    
     MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
         batchSize);
     start += batchSize * layerInputSize;
