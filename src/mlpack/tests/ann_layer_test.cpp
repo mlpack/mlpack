@@ -2422,11 +2422,9 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
     }
 
     // Compute output of Concat<> layer.
-    arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
     Concat module(axis);
     module.Add(moduleA);
     module.Add(moduleB);
-    std::cout << "input size " << inputWidth << " x " << inputHeight << "\n";
     module.InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
     module.ComputeOutputDimensions();
     output.set_size(module.OutputSize(), 1);
@@ -2436,6 +2434,10 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
 
     // Verify if the output reshaped to cubes are similar.
     CheckMatrices(concatOut, calculatedOut, 1e-12);
+
+    // Ensure that the child layers don't get deleted when `module` is
+    // deallocated.
+    module.Network().clear();
   }
 
   delete moduleA;
@@ -2471,8 +2473,10 @@ TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
       model->Add<Linear>(10);
 
       concat = new Concat();
-      concat->Add<Linear>(2);
+      concat->Add<Linear>(5);
+      concat->Add<Linear>(5);
       model->Add(concat);
+      model->Add<Linear>(2);
 
       model->Add<LogSoftMax>();
     }
