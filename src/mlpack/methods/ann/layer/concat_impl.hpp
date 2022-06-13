@@ -268,8 +268,8 @@ void ConcatType<MatType>::Gradient(
     MatType gradientAlias;
     MakeAlias(gradientAlias,
               (typename MatType::elem_type*) gradient.colptr(startParam),
-              1,
-              params);
+              params,
+              1);
     this->network[i]->Gradient(input, err, gradientAlias);
 
     startCol += cols;
