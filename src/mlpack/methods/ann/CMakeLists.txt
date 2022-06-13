@@ -14,7 +14,6 @@ add_subdirectory(layer)
 add_subdirectory(loss_functions)
 add_subdirectory(convolution_rules)
 add_subdirectory(regularizer)
-# add_subdirectory(reduction_rules)
 
 # Add directory name to sources.
 set(DIR_SRCS)
