@@ -3,8 +3,14 @@ on:
   workflow_dispatch:
   schedule:
     - cron:  '0 10 1/16 * *'
+permissions:
+  contents: read
+
 jobs:
   updateCatch:
+    permissions:
+      contents: write  # for peter-evans/create-pull-request to create branch
+      pull-requests: write  # for peter-evans/create-pull-request to create a PR
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     steps:
