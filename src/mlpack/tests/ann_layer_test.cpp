@@ -2513,13 +2513,17 @@ TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
 
   Concatenate module;
   module.Concat() = arma::ones(5, 1) * 0.5;
+  module.InputDimensions() = std::vector<size_t>({ 5 });
+  module.ComputeOutputDimensions();
 
   // Test the Forward function.
+  output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
   REQUIRE(arma::accu(output) == 7.5);
 
   // Test the Backward function.
+  delta.set_size(5, 1);
   module.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 5);
 }
