@@ -1,46 +1,45 @@
 /**
- * @file methods/ann/layer/residual_impl.hpp
+ * @file methods/ann/layer/add_merge_impl.hpp
  * @author Shubham Agrawal
  *
- * Implementation of the base class for neural network layers that are wrappers
- * around other layers.
+ * Implementation of the AddMerge class, which acts as a addition container.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_RESIDUAL_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_RESIDUAL_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_ADD_MERGE_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_ADD_MERGE_IMPL_HPP
 
-#include "residual.hpp"
+#include "add_merge.hpp"
 
 namespace mlpack {
 namespace ann {
 
 template<typename MatType>
-ResidualType<MatType>::ResidualType() :
+AddMergeType<MatType>::AddMergeType() :
     MultiLayer<MatType>()
 {
   // Nothing to do.
 }
 
 template<typename MatType>
-ResidualType<MatType>::ResidualType(const ResidualType& other) :
+AddMergeType<MatType>::AddMergeType(const AddMergeType& other) :
     MultiLayer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-ResidualType<MatType>::ResidualType(ResidualType&& other) :
+AddMergeType<MatType>::AddMergeType(AddMergeType&& other) :
     MultiLayer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-ResidualType<MatType>& ResidualType<MatType>::operator=(const ResidualType& other)
+AddMergeType<MatType>& AddMergeType<MatType>::operator=(const AddMergeType& other)
 {
   if (this != &other)
   {
@@ -51,7 +50,7 @@ ResidualType<MatType>& ResidualType<MatType>::operator=(const ResidualType& othe
 }
 
 template<typename MatType>
-ResidualType<MatType>& ResidualType<MatType>::operator=(ResidualType&& other)
+AddMergeType<MatType>& AddMergeType<MatType>::operator=(AddMergeType&& other)
 {
   if (this != &other)
   {
@@ -62,7 +61,7 @@ ResidualType<MatType>& ResidualType<MatType>::operator=(ResidualType&& other)
 }
 
 template<typename MatType>
-void ResidualType<MatType>::Forward(
+void AddMergeType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   // Make sure training/testing mode is set right in each layer.
@@ -76,15 +75,16 @@ void ResidualType<MatType>::Forward(
     // Initialize memory for the forward pass (if needed).
     this->InitializeForwardPassMemory(input.n_cols);
 
+    // Forward pass every layer in network with same input.
     for (size_t i = 0; i < this->network.size(); i++)
       this->network[i]->Forward(input, this->layerOutputs[i]);
 
-		// Reduce the outputs to single output.
+		// Reduce the outputs to single output by adding element-wise.
     output.zeros();
-		for (size_t i = 0; i < this->layerOutputs.size(); i++)
-		{
-			output += this->layerOutputs[i];
-		}
+    for (size_t i = 0; i < this->layerOutputs.size(); i++)
+    {
+      output += this->layerOutputs[i];
+    }
   }
   else if (this->network.size() == 1)
   {
@@ -98,7 +98,7 @@ void ResidualType<MatType>::Forward(
 }
 
 template<typename MatType>
-void ResidualType<MatType>::Backward(
+void AddMergeType<MatType>::Backward(
     const MatType& input, const MatType& gy, MatType& g)
 {
   if (this->network.size() > 1)
@@ -107,10 +107,11 @@ void ResidualType<MatType>::Backward(
     this->InitializeBackwardPassMemory(input.n_cols);
 
     g.zeros();
-    for (size_t i = 0; i < this->network.size(); i++) {
+    for (size_t i = 0; i < this->network.size(); i++) 
+    {
       this->network[i]->Backward(this->layerOutputs[i], gy, this->layerDeltas[i]);
-			g += this->layerDeltas[i];
-		}
+      g += this->layerDeltas[i];
+    }
   }
   else if (this->network.size() == 1)
   {
@@ -124,7 +125,7 @@ void ResidualType<MatType>::Backward(
 }
 
 template<typename MatType>
-void ResidualType<MatType>::Gradient(
+void AddMergeType<MatType>::Gradient(
     const MatType& input, const MatType& error, MatType& gradient)
 {
   // We assume gradient has the right size already.
@@ -151,7 +152,7 @@ void ResidualType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void ResidualType<MatType>::ComputeOutputDimensions()
+void AddMergeType<MatType>::ComputeOutputDimensions()
 {
   this->inSize = 0;
   this->totalInputSize = 0;
@@ -175,7 +176,7 @@ void ResidualType<MatType>::ComputeOutputDimensions()
     this->totalOutputSize += layerOutputSize;
   }
 
-	// Compute the output size of the network using reduction rules.
+  // Compute the output size of the network using reduction rules.
   if (this->network.size() == 1) 
   {
     this->outputDimensions = this->network[0]->OutputDimensions();
@@ -197,7 +198,7 @@ void ResidualType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void ResidualType<MatType>::serialize(
+void AddMergeType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<MultiLayer<MatType>>(this));

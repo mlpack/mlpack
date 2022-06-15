@@ -4854,9 +4854,9 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 // }
 
 /**
- * Simple test for Residual layer.
+ * Simple test for AddMerge layer.
  */
-TEST_CASE("ResidualTestCase", "[ANNLayerTest]")
+TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(28, 1);
@@ -4871,11 +4871,11 @@ TEST_CASE("ResidualTestCase", "[ANNLayerTest]")
   input(14) = input(25) = 8;
   input(15) = input(26) = 9;
 
-  Residual module1;
+  AddMerge module1;
   module1.Add<MeanPooling>(2, 2, 2, 2, false);
   module1.Add<MeanPooling>(2, 2, 2, 2, false);
 
-  Residual module2;
+  AddMerge module2;
   module2.Add<MeanPooling>(2, 2, 2, 2, true);
   module2.Add<MeanPooling>(2, 2, 2, 2, true);
 
