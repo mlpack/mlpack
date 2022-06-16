@@ -126,7 +126,6 @@ class DuelingDQN
 
     completeNetwork.Add(featureNetwork);
     completeNetwork.Add(concat);
-    this->Reset();
   }
 
   /**
@@ -151,7 +150,6 @@ class DuelingDQN
     concat->Add(advantageNetwork);
     completeNetwork.Add(featureNetwork);
     completeNetwork.Add(concat);
-    this->Reset();
   }
 
   //! Copy constructor.
@@ -185,8 +183,7 @@ class DuelingDQN
     completeNetwork.Predict(state, networkOutput);
     value = networkOutput.row(0);
     advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
-    actionValue = advantage.each_row() +
-        (value - arma::mean(advantage));
+    actionValue = advantage.each_row() + (value - arma::mean(advantage));
   }
 
   /**
@@ -228,9 +225,9 @@ class DuelingDQN
   /**
    * Resets the parameters of the network.
    */
-  void Reset()
+  void Reset(const size_t inputDimensionality = 0)
   {
-    completeNetwork.Reset();
+    completeNetwork.Reset(inputDimensionality);
   }
 
   /**

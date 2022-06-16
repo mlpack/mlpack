@@ -118,9 +118,9 @@ class SimpleDQN
   /**
    * Resets the parameters of the network.
    */
-  void Reset()
+  void Reset(const size_t inputDimensionality = 0)
   {
-    network.Reset();
+    network.Reset(inputDimensionality);
   }
 
   /**
