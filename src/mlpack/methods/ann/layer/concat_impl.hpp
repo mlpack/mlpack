@@ -116,7 +116,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
   for (size_t i = 0; i < axis; ++i)
     rows *= this->outputDimensions[i];
 
-  size_t slices = 1;
+  size_t slices = input.n_cols;
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
@@ -160,12 +160,13 @@ void ConcatType<MatType>::Backward(
   // Just like the forward pass, we can treat our inputs as a cube, but here we
   // have to distribute the correct parts of `gy` to the layers.
 
-  size_t slices = (axis == 0) ? gy.n_cols :
-      std::accumulate(this->outputDimensions.begin(),
-          this->outputDimensions.begin() + axis, 0) + gy.n_cols;
-  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
-      std::accumulate(this->outputDimensions.begin() + axis + 1,
-          this->outputDimensions.end(), 0);
+  size_t rows = 1;
+  for (size_t i = 0; i < axis; ++i)
+    rows *= this->outputDimensions[i];
+
+  size_t slices = gy.n_cols;
+  for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
+    slices *= this->outputDimensions[i];
 
   arma::Cube<typename MatType::elem_type> gyTmp;
   MakeAlias(gyTmp,
@@ -205,12 +206,13 @@ void ConcatType<MatType>::Backward(
   // Thus, we need to extract the parts of gy that correspond to the desired
   // layer (specified by `index`).
 
-  size_t slices = (axis == 0) ? gy.n_cols :
-      std::accumulate(this->outputDimensions.begin(),
-          this->outputDimensions.begin() + axis, 0) + gy.n_cols;
-  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
-      std::accumulate(this->outputDimensions.begin() + axis + 1,
-          this->outputDimensions.end(), 0);
+  size_t rows = 1;
+  for (size_t i = 0; i < axis; ++i)
+    rows *= this->outputDimensions[i];
+
+  size_t slices = gy.n_cols;
+  for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
+    slices *= this->outputDimensions[i];
 
   arma::Cube<typename MatType::elem_type> gyTmp;
   MakeAlias(gyTmp,
@@ -242,12 +244,13 @@ void ConcatType<MatType>::Gradient(
   // Just like the forward pass, we can treat our inputs as a cube, but here we
   // have to distribute the correct parts of `error` to the layers.
 
-  size_t slices = (axis == 0) ? input.n_cols :
-      std::accumulate(this->outputDimensions.begin(),
-          this->outputDimensions.begin() + axis, 0) + input.n_cols;
-  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
-      std::accumulate(this->outputDimensions.begin() + axis + 1,
-          this->outputDimensions.end(), 0);
+  size_t rows = 1;
+  for (size_t i = 0; i < axis; ++i)
+    rows *= this->outputDimensions[i];
+
+  size_t slices = input.n_cols;
+  for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
+    slices *= this->outputDimensions[i];
 
   arma::Cube<typename MatType::elem_type> errorTmp;
   MakeAlias(errorTmp,
@@ -287,12 +290,13 @@ void ConcatType<MatType>::Gradient(
   // Just like the forward pass, we can treat our inputs as a cube, but here we
   // have to distribute the correct parts of `error` to the layers.
 
-  size_t slices = (axis == 0) ? input.n_cols :
-      std::accumulate(this->outputDimensions.begin(),
-          this->outputDimensions.begin() + axis, 0) + input.n_cols;
-  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
-      std::accumulate(this->outputDimensions.begin() + axis + 1,
-          this->outputDimensions.end(), 0);
+  size_t rows = 1;
+  for (size_t i = 0; i < axis; ++i)
+    rows *= this->outputDimensions[i];
+
+  size_t slices = input.n_cols;
+  for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
+    slices *= this->outputDimensions[i];
 
   arma::Cube<typename MatType::elem_type> errorTmp;
   MakeAlias(errorTmp,
