@@ -97,7 +97,7 @@ bool testAgent(AgentType& agent,
 TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -127,7 +127,7 @@ TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -156,7 +156,7 @@ TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> network(4, 20, 20, 2);
+    SimpleDQN<> network(20, 20, 2);
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -187,7 +187,7 @@ TEST_CASE("AcrobotWithDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> network(4, 64, 32, 3);
+    SimpleDQN<> network(64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
@@ -216,7 +216,7 @@ TEST_CASE("MountainCarWithDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 5; trial++)
   {
     // Set up the network.
-    SimpleDQN<> network(2, 64, 32, 3);
+    SimpleDQN<> network(64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
@@ -364,7 +364,7 @@ TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest]")
     config.NoisyQLearning() = true;
 
     // Set up the network with a flag to enable noisy layers.
-    SimpleDQN<> network(4, 64, 32, 2, config.NoisyQLearning());
+    SimpleDQN<> network(64, 32, 2, config.NoisyQLearning());
 
     // Set up DQN agent.
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
@@ -414,7 +414,7 @@ TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -441,7 +441,7 @@ TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
