@@ -65,15 +65,20 @@ SAC<
   // Note: the q and policy networks have an if condition before reset.
   // This is because we don't want to reset a loaded(possibly pretrained) model
   // passed using this constructor.
-  if (learningQ1Network.Parameters().is_empty())
+  const size_t envSampleSize = environment.InitialSample().Encode().n_elem;
+  if (policyNetwork.Parameters().n_elem != envSampleSize)
+    policyNetwork.Reset(envSampleSize);
+
+  const size_t networkSize = envSampleSize +
+      policyNetwork.Network()[policyNetwork.Network().size() - 1]->OutputSize();
+
+  if (learningQ1Network.Parameters().n_elem != networkSize)
   {
-    learningQ1Network.Reset();
-    learningQ2Network.Reset();
+    learningQ1Network.Reset(networkSize);
+    learningQ2Network.Reset(networkSize);
   }
-  if (policyNetwork.Parameters().is_empty())
-    policyNetwork.Reset();
-  targetQ1Network.Reset();
-  targetQ2Network.Reset();
+  targetQ1Network.Reset(networkSize);
+  targetQ2Network.Reset(networkSize);
 
   #if ENS_VERSION_MAJOR == 1
   this->qNetworkUpdater.Initialize(learningQ1Network.Parameters().n_rows,
@@ -240,14 +245,14 @@ void SAC<
     if (Q1(i) < Q2(i))
     {
       learningQ1Network.Forward(input, q);
-      learningQ1Network.Backward(input, arma::mat(), gradQ);
+      learningQ1Network.Backward(input, arma::mat("-1"), gradQ);
       weightLastLayer = arma::reshape(learningQ1Network.Parameters().
           rows(0, hidden1 * singlePi.n_rows - 1), hidden1, singlePi.n_rows);
     }
     else
     {
       learningQ2Network.Forward(input, q);
-      learningQ2Network.Backward(input, arma::mat(), gradQ);
+      learningQ2Network.Backward(input, arma::mat("-1"), gradQ);
       weightLastLayer = arma::reshape(learningQ2Network.Parameters().
           rows(0, hidden1 * singlePi.n_rows - 1), hidden1, singlePi.n_rows);
     }
