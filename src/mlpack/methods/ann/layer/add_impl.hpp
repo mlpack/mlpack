@@ -20,7 +20,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-AddType<MatType>::AddType() : outSize(0)
+AddType<MatType>::AddType() : 
+    Layer<MatType>(),
+    outSize(0)
 {
   // Nothing to do.
 }
