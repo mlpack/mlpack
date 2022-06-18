@@ -64,12 +64,14 @@ PaddingType<MatType>&
 PaddingType<MatType>::operator=(const PaddingType& other)
 {
   if (this != &other)
+  {
     Layer<MatType>::operator=(other);
     padWLeft = other.padWLeft;
     padWRight = other.padWRight;
     padHTop = other.padHTop;
     padHBottom = other.padHBottom;
     totalInMaps = other.totalInMaps;
+  }
 
   return *this;
 }
@@ -79,12 +81,14 @@ PaddingType<MatType>&
 PaddingType<MatType>::operator=(PaddingType&& other)
 {
   if (this != &other)
+  {
     Layer<MatType>::operator=(std::move(other));
     padWLeft = std::move(other.padWLeft);
     padWRight = std::move(other.padWRight);
     padHTop = std::move(other.padHTop);
     padHBottom = std::move(other.padHBottom);
     totalInMaps = std::move(other.totalInMaps);
+  }
 
   return *this;
 }
