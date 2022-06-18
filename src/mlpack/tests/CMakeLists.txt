@@ -99,7 +99,7 @@ add_executable(mlpack_test
   recurrent_network_test.cpp
 #  rnn_reber_test.cpp
   regularized_svd_test.cpp
-#  reward_clipping_test.cpp
+  reward_clipping_test.cpp
   rl_components_test.cpp
   scaling_test.cpp
   size_checks_test.cpp
