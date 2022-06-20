@@ -3017,22 +3017,22 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 
   // Training Forward Pass Test.
   output.set_size(module1.OutputSize(), 1);
-  input.resize(9, 1);
+  input.reshape(9, 1);
   module1.Forward(input, output);
 
  // Value calculates using torch.nn.BatchNorm1d(momentum = None).
   arma::mat result;
-  output.resize(3, 3);
+  output.reshape(3, 3);
   result = { { 1.1658, 0.1100, -1.2758 },
             { 1.2579, -0.0699, -1.1880},
             { 1.1737, 0.0958, -1.2695 } };
 
-  CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result.t(), 1e-1);
 
   output.set_size(module2.OutputSize(), 1);
   module2.Forward(input, output);
-  output.resize(3, 3);
-  CheckMatrices(output, result, 1e-1);
+  output.reshape(3, 3);
+  CheckMatrices(output, result.t(), 1e-1);
   result.clear();
   output.clear();
 
@@ -3067,26 +3067,26 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   module1.Training() = false;
   output.set_size(module1.OutputSize(), 1);
   module1.Forward(input, output);
-  output.resize(3, 3);
+  output.reshape(3, 3);
 
   // Values calculated using torch.nn.BatchNorm1d(momentum = None).
   result = { { 0.9521, 0.0898, -1.0419 },
             { 1.0273, -0.0571, -0.9702 },
             { 0.9586, 0.0783, -1.0368 } };
 
-  CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result.t(), 1e-1);
 
   // Values calculated using torch.nn.BatchNorm1d().
   module2.Training() = false;
   output.set_size(module2.OutputSize(), 1);
   module2.Forward(input, output);
-  output.resize(3, 3);
+  output.reshape(3, 3);
 
   result = { { 4.2731, 2.8388, 0.9562 },
              { 4.1779, 2.4485, 0.9921 },
              { 4.0268, 2.6519, 0.9105 } };
 
-  CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result.t(), 1e-1);
 }
 
 // /**
