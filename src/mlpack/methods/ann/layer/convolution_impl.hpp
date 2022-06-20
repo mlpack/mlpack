@@ -29,7 +29,7 @@ ConvolutionType<
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType()
+>::ConvolutionType() : Layer<MatType>()
 {
   // Nothing to do here.
 }
@@ -87,6 +87,7 @@ ConvolutionType<
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
     const std::string& paddingTypeIn) :
+    Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
