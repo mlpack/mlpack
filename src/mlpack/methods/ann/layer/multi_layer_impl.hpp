@@ -20,6 +20,7 @@ namespace ann {
 
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer() :
+    Layer<MatType>(true),
     inSize(0),
     totalInputSize(0),
     totalOutputSize(0)
@@ -252,6 +253,42 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
   // with a little paranoia...
   Log::Assert(start == totalWeightSize,
       "FNN::SetLayerMemory(): total layer weight size does not match parameter "
+      "size!");
+}
+
+template<typename MatType>
+void MultiLayer<MatType>::CustomInitialize(
+    MatType& W,
+    const size_t rows, 
+    const size_t /* cols */)
+{
+  size_t start = 0;
+  const size_t totalWeightSize = rows;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    const size_t weightSize = network[i]->WeightSize();
+
+    // Sanity check: ensure we aren't passing memory past the end of the
+    // parameters.
+    Log::Assert(start + weightSize <= totalWeightSize,
+        "FNN::CustomInitialize(): parameter size does not match total layer "
+        "weight size!");
+    
+    // Check if layer has custom weights implementation.
+    if (network[i]->CustomWeights()) 
+    {
+      MatType W_temp;
+      MakeAlias(W_temp, W.memptr() + start, weightSize, 1);
+      // If so, then override the weight matrix.
+      network[i]->CustomInitialize(W_temp, weightSize, 1);
+    }
+    start += weightSize;
+  }
+
+  // Technically this check should be unnecessary, but there's nothing wrong
+  // with a little paranoia...
+  Log::Assert(start == totalWeightSize,
+      "FNN::CustomInitialize(): total layer weight size does not match rows "
       "size!");
 }
 

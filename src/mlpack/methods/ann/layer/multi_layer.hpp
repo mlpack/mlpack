@@ -131,6 +131,18 @@ class MultiLayer : public Layer<MatType>
   virtual void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
+   * Initialize the weight matrix of the layer.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param * (cols) Number of columns.
+   */
+  virtual void CustomInitialize(
+    MatType& W,
+    const size_t rows, 
+    const size_t /* cols */);
+
+  /**
    * Return the number of weights in the MultiLayer.  This is the sum of the
    * number of weights in each layer.
    */

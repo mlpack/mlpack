@@ -52,8 +52,18 @@ template<typename MatType = arma::mat>
 class Layer
 {
  public:
-  //! Default constructor.
-  Layer() : validOutputDimensions(false), training(false)
+  /**
+   * Create the Layer object using the custom weights indicator.
+   *
+   * @param customWeights Flag to indicate the use of custom weights initializer 
+   *                      (Default: false).
+   */
+  Layer(
+    bool customWeights = false
+  ) : 
+    validOutputDimensions(false),
+    training(false), 
+    customWeights(customWeights)
   { /* Nothing to do here */ }
 
   //! Default deconstructor.
@@ -64,7 +74,8 @@ class Layer
       inputDimensions(layer.inputDimensions),
       outputDimensions(layer.outputDimensions),
       validOutputDimensions(layer.validOutputDimensions),
-      training(layer.training)
+      training(layer.training),
+      customWeights(layer.customWeights)
   { /* Nothing to do here */ }
 
   //! Make a copy of the object.
@@ -75,7 +86,8 @@ class Layer
       inputDimensions(std::move(layer.inputDimensions)),
       outputDimensions(std::move(layer.outputDimensions)),
       validOutputDimensions(std::move(layer.validOutputDimensions)),
-      training(std::move(layer.training))
+      training(std::move(layer.training)),
+      customWeights(std::move(layer.customWeights))
   { /* Nothing to do here */ }
 
   //! Copy assignment operator.  This is not responsible for copying weights!
@@ -87,6 +99,7 @@ class Layer
       outputDimensions = layer.outputDimensions;
       validOutputDimensions = layer.validOutputDimensions;
       training = layer.training;
+      customWeights = layer.customWeights;
     }
 
     return *this;
@@ -101,6 +114,7 @@ class Layer
       outputDimensions = std::move(layer.outputDimensions);
       validOutputDimensions = std::move(layer.validOutputDimensions);
       training = std::move(layer.training);
+      customWeights = std::move(customWeights);
     }
 
     return *this;
@@ -214,6 +228,11 @@ class Layer
    */
   virtual bool& Training() { return training; }
 
+  /**
+   * Get whether the layer is using custom weights.
+   */
+  virtual bool const& CustomWeights() const { return customWeights; }
+
   //! Get the layer loss.  Overload this if the layer should add any extra loss
   //! to the loss function when computing the objective.  (TODO: better comment)
   virtual double Loss() { return 0; }
@@ -252,6 +271,22 @@ class Layer
         "of a layer with no weights!");
   }
 
+  /**
+   * Initialize the weight matrix of the layer.
+   *
+   * @param * (W) Weight matrix to initialize.
+   * @param * (rows) Number of rows.
+   * @param * (cols) Number of columns.
+   */
+  virtual void CustomInitialize(
+    MatType& /* W */,
+    const size_t /* rows */, 
+    const size_t /* cols */)
+  { 
+    throw std::invalid_argument("Layer::CustomInitialize(): missing "
+        "overloaded call!"); 
+  }
+
   //! Compute the output dimensions.  This should be overloaded if the layer is
   //! meant to work on higher-dimensional objects.  When this is called, it is a
   //! safe assumption that InputDimensions() is correct.
@@ -286,6 +321,7 @@ class Layer
     ar(CEREAL_NVP(outputDimensions));
     ar(CEREAL_NVP(validOutputDimensions));
     ar(CEREAL_NVP(training));
+    ar(CEREAL_NVP(customWeights));
 
     // Note that layer weights are serialized by the FFN!
   }
@@ -315,6 +351,10 @@ class Layer
 
   //! If true, the layer is in training mode; otherwise, it is in testing mode.
   bool training;
+
+  //! If true, the layer uses custom weights initializer; 
+  //! otherwise, it uses normal weight initializer.
+  bool customWeights;
 };
 
 } // namespace ann

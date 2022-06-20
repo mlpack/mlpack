@@ -2,6 +2,7 @@
  * @file methods/ann/layer/batch_norm.hpp
  * @author Praveen Ch
  * @author Manthan-R-Sheth
+ * @author Shubham Agrawal
  *
  * Definition of the Batch Normalization layer class.
  *
@@ -15,7 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "../layer.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -91,6 +92,18 @@ class BatchNormType : public Layer<MatType>
    * Reset the layer parameters.
    */
   void SetWeights(typename MatType::elem_type* weightsPtr);
+
+  /**
+   * Initialize the weight matrix of the layer.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param * (cols) Number of columns.
+   */
+  void CustomInitialize(
+    MatType& W,
+    const size_t rows, 
+    const size_t /* cols */);
 
   /**
    * Forward pass of the Batch Normalization layer. Transforms the input data
@@ -176,9 +189,6 @@ class BatchNormType : public Layer<MatType>
 
   //! Locally-stored value for momentum.
   double momentum;
-
-  //! Variable to keep track of whether we are in loading or saving mode.
-  bool loading;
 
   //! Locally-stored scale parameter.
   MatType gamma;

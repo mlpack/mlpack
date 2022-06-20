@@ -24,12 +24,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType() : 
-    Layer<MatType>(),
+    Layer<MatType>(true),
     size(0),
     eps(1e-8),
     average(true),
     momentum(0.0),
-    loading(false),
     count(0),
     averageFactor(0.0),
     inputDimension1(1),
@@ -45,12 +44,11 @@ BatchNormType<MatType>::BatchNormType(
     const double eps,
     const bool average,
     const double momentum) : 
-		Layer<MatType>(),
+		Layer<MatType>(true),
     size(size),
     eps(eps),
     average(average),
     momentum(momentum),
-    loading(false),
     count(0),
     averageFactor(0.0),
     inputDimension1(1),
@@ -69,7 +67,6 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
     eps(layer.eps),
     average(layer.average),
     momentum(layer.momentum),
-    loading(layer.loading),
     count(layer.count),
     averageFactor(layer.averageFactor),
     inputDimension1(layer.inputDimension1),
@@ -87,7 +84,6 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     eps(std::move(layer.eps)),
     average(std::move(layer.average)),
     momentum(std::move(layer.momentum)),
-    loading(std::move(layer.loading)),
     count(std::move(layer.count)),
     averageFactor(std::move(layer.averageFactor)),
     inputDimension1(std::move(layer.inputDimension1)),
@@ -108,7 +104,6 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
     eps = layer.eps;
     average = layer.average;
     momentum = layer.momentum;
-    loading = layer.loading;
     count = layer.count;
     averageFactor = layer.averageFactor;
     inputDimension1 = layer.inputDimension1;
@@ -131,7 +126,6 @@ BatchNormType<MatType>::operator=(
     eps = std::move(layer.eps);
     average = std::move(layer.average);
     momentum = std::move(layer.momentum);
-    loading = std::move(layer.loading);
     count = std::move(layer.count);
     averageFactor = std::move(layer.averageFactor);
     inputDimension1 = std::move(layer.inputDimension1);
@@ -151,14 +145,27 @@ void BatchNormType<MatType>::SetWeights(
 	MakeAlias(gamma, weightsPtr, size, 1);
   // Beta acts as the shifting parameters for the normalized output.
 	MakeAlias(beta, weightsPtr + gamma.n_elem, size, 1);
+}
 
-  if (!loading)
-  {
-    gamma.fill(1.0);
-    beta.fill(0.0);
+template<typename MatType>
+void BatchNormType<MatType>::CustomInitialize(
+    MatType& W,
+    const size_t rows, 
+    const size_t /* cols */)
+{
+  if (rows != 2*size) {
+    throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
+        "rows size!"); 
   }
+  MatType gamma_temp;
+  MatType beta_temp;
+  // Gamma acts as the scaling parameters for the normalized output.
+	MakeAlias(gamma_temp, W.memptr(), size, 1);
+  // Beta acts as the shifting parameters for the normalized output.
+	MakeAlias(beta_temp, W.memptr() + gamma_temp.n_elem, size, 1);
 
-  loading = false;
+  gamma_temp.fill(1.0);
+  beta_temp.fill(0.0);
 }
 
 template<typename MatType>
@@ -321,8 +328,10 @@ template<typename MatType>
 void BatchNormType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
-  if (this->inputDimensions.size() == 1) {
-    if (size != this->inputDimensions[0]) {
+  if (this->inputDimensions.size() == 1) 
+  {
+    if (size != this->inputDimensions[0]) 
+    {
       Log::Fatal << "BatchNorm: input size (" << this->inputDimensions[0]
           << ") must be equal to the size (" << size << ") of the batch "
           << "normalization layer." << std::endl;
@@ -330,13 +339,19 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
     inputDimension1 = 1;
     inputDimension2 = 1;
     higherDimension = 1;
-  } else if (this->inputDimensions.size() == 2) {
-    if (size == 1) {
+  } 
+  else if (this->inputDimensions.size() == 2) 
+  {
+    if (size == 1) 
+    {
       inputDimension1 = this->inputDimensions[0];
       inputDimension2 = this->inputDimensions[1];
       higherDimension = 1;
-    } else {
-      if (size != this->inputDimensions[1]) {
+    } 
+    else 
+    {
+      if (size != this->inputDimensions[1]) 
+      {
         Log::Fatal << "BatchNorm: input size (" << this->inputDimensions[1]
             << ") must be equal to the size (" << size << ") of the batch "
             << "normalization layer." << std::endl;
@@ -345,8 +360,11 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
       inputDimension2 = 1;
       higherDimension = 1;
     }
-  } else {
-    if (size != this->inputDimensions[2]) {
+  } 
+  else 
+  {
+    if (size != this->inputDimensions[2]) 
+    {
       Log::Fatal << "BatchNorm: input size (" << this->inputDimensions[2]
           << ") must be equal to the size (" << size << ") of the batch "
           << "normalization layer." << std::endl;
