@@ -24,7 +24,6 @@ set(SOURCES
   params.hpp
   params_impl.hpp
   prefixedoutstream.hpp
-  prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
   program_doc.hpp
   program_doc.cpp
