@@ -11,6 +11,8 @@
 // Required forward declarations.
 namespace mlpack {
 
+class IO;
+
 namespace util {
 
 class Params;

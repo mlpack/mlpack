@@ -22,7 +22,6 @@
 
 #include "timers.hpp"
 #include "binding_details.hpp"
-#include "program_doc.hpp"
 #include "version.hpp"
 
 #include "param_data.hpp"
@@ -304,5 +303,8 @@ class IO
 };
 
 } // namespace mlpack
+
+// This file must be included after IO is declared and fully defined.
+#include "program_doc.hpp"
 
 #endif

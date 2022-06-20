@@ -1,5 +1,5 @@
 /**
- * @file core/util/program_doc.cpp
+ * @file core/util/program_doc_impl.hpp
  * @author Yashwant Singh Parihar
  * @author Ryan Curtin
  *
@@ -11,14 +11,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_UTIL_PROGRAM_DOC_IMPL_HPP
+#define MLPACK_CORE_UTIL_PROGRAM_DOC_IMPL_HPP
+
 #include "io.hpp"
 #include "program_doc.hpp"
 
-#include <string>
-
-using namespace mlpack;
-using namespace mlpack::util;
-using namespace std;
+namespace mlpack {
+namespace util {
 
 /**
  * Construct a BindingName object.  When constructed, it will register itself
@@ -28,8 +28,8 @@ using namespace std;
  * @param bindingName Name of the binding.
  * @param name Name displayed to user of the binding.
  */
-BindingName::BindingName(const std::string& bindingName,
-                         const std::string& name)
+inline BindingName::BindingName(const std::string& bindingName,
+                                const std::string& name)
 {
   // Register this with IO.
   IO::AddBindingName(bindingName, name);
@@ -44,8 +44,8 @@ BindingName::BindingName(const std::string& bindingName,
  * @param shortDescription A short two-sentence description of the binding,
  *     what it does, and what it is useful for.
  */
-ShortDescription::ShortDescription(const std::string& bindingName,
-                                   const std::string& shortDescription)
+inline ShortDescription::ShortDescription(const std::string& bindingName,
+                                          const std::string& shortDescription)
 {
   // Register this with IO.
   IO::AddShortDescription(bindingName, shortDescription);
@@ -61,7 +61,7 @@ ShortDescription::ShortDescription(const std::string& bindingName,
  *     what it is.  No newline characters are necessary; this is
  *     taken care of by IO later.
  */
-LongDescription::LongDescription(
+inline LongDescription::LongDescription(
     const std::string& bindingName,
     const std::function<std::string()>& longDescription)
 {
@@ -76,8 +76,8 @@ LongDescription::LongDescription(
  * @param bindingName Name of the binding.
  * @param example Documentation on how to use the binding.
  */
-Example::Example(const std::string& bindingName,
-                 const std::function<std::string()>& example)
+inline Example::Example(const std::string& bindingName,
+                        const std::function<std::string()>& example)
 {
   // Register this with IO.
   IO::AddExample(bindingName, example);
@@ -91,10 +91,15 @@ Example::Example(const std::string& bindingName,
  * @param description Description of SeeAlso.
  * @param link Link of SeeAlso.
  */
-SeeAlso::SeeAlso(const std::string& bindingName,
-                 const std::string& description,
-                 const std::string& link)
+inline SeeAlso::SeeAlso(const std::string& bindingName,
+                        const std::string& description,
+                        const std::string& link)
 {
   // Register this with IO.
   IO::AddSeeAlso(bindingName, description, link);
 }
+
+} // namespace util
+} // namespace mlpack
+
+#endif

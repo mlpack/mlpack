@@ -13,7 +13,6 @@
 #define MLPACK_CORE_UTIL_BINDING_DETAILS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "program_doc.hpp"
 
 namespace mlpack {
 namespace util {
