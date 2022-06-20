@@ -25,6 +25,7 @@ PaddingType<MatType>::PaddingType(
     const size_t padWRight,
     const size_t padHTop,
     const size_t padHBottom) :
+    Layer<MatType>(),
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
@@ -32,6 +33,64 @@ PaddingType<MatType>::PaddingType(
     totalInMaps(0)
 {
   // Nothing to do here.
+}
+
+template<typename MatType>
+PaddingType<MatType>::PaddingType(const PaddingType& other) :
+    Layer<MatType>(other),
+    padWLeft(other.padWLeft),
+    padWRight(other.padWRight),
+    padHTop(other.padHTop),
+    padHBottom(other.padHBottom),
+    totalInMaps(other.totalInMaps)
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+PaddingType<MatType>::PaddingType(PaddingType&& other) :
+    Layer<MatType>(std::move(other)),
+    padWLeft(std::move(other.padWLeft)),
+    padWRight(std::move(other.padWRight)),
+    padHTop(std::move(other.padHTop)),
+    padHBottom(std::move(other.padHBottom)),
+    totalInMaps(std::move(other.totalInMaps))
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+PaddingType<MatType>&
+PaddingType<MatType>::operator=(const PaddingType& other)
+{
+  if (this != &other)
+  {
+    Layer<MatType>::operator=(other);
+    padWLeft = other.padWLeft;
+    padWRight = other.padWRight;
+    padHTop = other.padHTop;
+    padHBottom = other.padHBottom;
+    totalInMaps = other.totalInMaps;
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+PaddingType<MatType>&
+PaddingType<MatType>::operator=(PaddingType&& other)
+{
+  if (this != &other)
+  {
+    Layer<MatType>::operator=(std::move(other));
+    padWLeft = std::move(other.padWLeft);
+    padWRight = std::move(other.padWRight);
+    padHTop = std::move(other.padHTop);
+    padHBottom = std::move(other.padHBottom);
+    totalInMaps = std::move(other.totalInMaps);
+  }
+
+  return *this;
 }
 
 template<typename MatType>

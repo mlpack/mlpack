@@ -22,6 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename MatType>
 DropoutType<MatType>::DropoutType(
     const double ratio) :
+    Layer<MatType>(),
     ratio(ratio),
     scale(1.0 / (1.0 - ratio))
 {
