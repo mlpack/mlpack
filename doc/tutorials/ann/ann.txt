@@ -731,11 +731,10 @@ model.Parameters();
 which will return the complete model parameters as an armadillo matrix object;
 however often it is useful to not only have the parameters for the complete
 network, but the parameters of a specific layer.  The parameters for a specific
-layer @c x can be accessed via @c boost::visitor:
+layer @c x can be accessed via the @c Parameters() member:
 
 @code
-arma::mat parametersX;
-boost::apply_visitor(ParametersVisitor(parametersX), model.Model()[x]);
+arma::mat parametersX = model.Model()[x].Parameters();
 @endcode
 
 In the example above, we get the weights of the second layer.

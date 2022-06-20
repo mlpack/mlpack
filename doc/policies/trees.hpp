@@ -231,7 +231,7 @@ class ExampleTree
   template<typename Archive>
   ExampleTree(
       Archive& ar,
-      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+      const typename std::enable_if_c<typename Archive::is_loading>::type* = 0);
 
   // Release any resources held by the tree.
   ~ExampleTree();
@@ -477,9 +477,6 @@ a default-constructed metric should be used.  The constructor *must* return a
 valid, fully-constructed, ready-to-use tree that satisfies the definition
 of *space tree* that was \ref whatistree "given earlier".
 
-It is possible to implement both these constructors as one by using \c
-boost::optional.
-
 The third constructor requires the tree to be initializable from a \c
 cereal archive:
 
@@ -490,7 +487,7 @@ cereal archive:
 template<typename Archive>
 ExampleTree(
     Archive& ar,
-    const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+    const typename std::enable_if_c<typename Archive::is_loading>::type* = 0);
 @endcode
 
 This has implications on how the tree must be stored.  In this case, the dataset
@@ -794,13 +791,6 @@ On the other hand, the specifics of the functionality required for the
 \c Serialize() function are somewhat more difficult.  The \c Serialize()
 function will be called either when a tree is being saved to disk or loaded from
 disk.  The \c cereal documentation is fairly comprehensive.
-when writing a \c Serialize() method for mlpack trees you should use
-\c data::CreateNVP() instead of \c BOOST_SERIALIZATION_NVP().  This is because
-mlpack classes implement \c Serialize() instead of \c serialize() in order to
-conform to the mlpack style guidelines, and making this work requires some
-interesting shim code, which is hidden inside of \c data::CreateNVP().  It may
-be useful to look at other \c Serialize() methods contained in other mlpack
-classes as an example.
 
 An important note is that it is very difficult to use references with
 \c cereal, because \c serialize() may be called at any time during

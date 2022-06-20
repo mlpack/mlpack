@@ -618,12 +618,13 @@ TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
  */
 TEST_CASE("KFoldCVPerceptronTest", "[CVTest]")
 {
-  // The same as the test above (for Naive Bayes), but with the perceptron.
+  // Basically the same as the test above (for Naive Bayes), but with the
+  // perceptron.
 
-  // Making a 10-points dataset. The last point should be classified wrong when
-  // it is tested separately.
-  arma::mat data("0 1 2 3 100 101 102 103 104 5");
-  arma::Row<size_t> labels("0 0 0 0 1 1 1 1 1 1");
+  // Making a 10-points dataset. All points should always be correctly
+  // classified.
+  arma::mat data("0 0 0 0 0 1 1 1 1 1");
+  arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1");
   size_t numClasses = 2;
 
   // 10-fold cross-validation, no shuffling.
@@ -631,7 +632,7 @@ TEST_CASE("KFoldCVPerceptronTest", "[CVTest]")
 
   // We should succeed in classifying separately the first nine samples, and
   // fail with the remaining one.
-  double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
+  double expectedAccuracy = 1.0;
 
   REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
 

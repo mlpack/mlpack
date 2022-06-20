@@ -12,8 +12,6 @@
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/binding_details.hpp>
 
-#include <boost/algorithm/string/replace.hpp>
-
 #include "binding_info.hpp"
 #include "print_docs.hpp"
 #include "print_doc_functions.hpp"
