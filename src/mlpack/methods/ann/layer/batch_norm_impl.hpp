@@ -246,17 +246,17 @@ void BatchNormType<MatType>::Forward(
     // Normalize the input and scale and shift the output.
     output = input;
     arma::Cube<typename MatType::elem_type> outputTemp(
-        const_cast<MatType&>(output).memptr(), input.n_rows / size, size,
+        const_cast<MatType&>(output).memptr(), inputSize, size,
         batchSize * higherDimension, false, false);
 
     outputTemp.each_slice() -= arma::repmat(runningMean.t(),
-        input.n_rows / size, 1);
+        inputSize, 1);
     outputTemp.each_slice() /= arma::sqrt(arma::repmat(runningVariance.t(),
-        input.n_rows / size, 1) + eps);
+        inputSize, 1) + eps);
     outputTemp.each_slice() %= arma::repmat(gamma.t(),
-        input.n_rows / size, 1);
+        inputSize, 1);
     outputTemp.each_slice() += arma::repmat(beta.t(),
-        input.n_rows / size, 1);
+        inputSize, 1);
   }
 }
 
@@ -271,7 +271,6 @@ void BatchNormType<MatType>::Backward(
   const size_t batchSize = input.n_cols;
   const size_t inputSize = inputDimension1 * inputDimension2;
 
-  g.set_size(arma::size(input));
   arma::Cube<typename MatType::elem_type> gyTemp(
       const_cast<MatType&>(gy).memptr(), inputSize, size,
       batchSize * higherDimension, false, false);
@@ -310,7 +309,6 @@ void BatchNormType<MatType>::Gradient(
 {
   const size_t inputSize = inputDimension1 * inputDimension2;
 
-  gradient.set_size(size + size, 1);
   arma::Cube<typename MatType::elem_type> errorTemp(
       const_cast<MatType&>(error).memptr(), inputSize, size,
       error.n_cols, false, false);

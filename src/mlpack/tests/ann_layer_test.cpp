@@ -4539,12 +4539,14 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   arma::mat input(5, 100, arma::fill::randu);
 //   arma::mat output(5, 100, arma::fill::randu);
 
-//   FFN<NegativeLogLikelihood, ann::RandomInitialization> model;
-//   model.Add<Linear<>>(input.n_rows, 10);
+//   FFN<> model;
+//   model.Add<Linear>(10);
 //   model.Add<LayerType>(layer);
-//   model.Add<ReLULayer<>>();
-//   model.Add<Linear<>>(10, output.n_rows);
-//   model.Add<LogSoftMax<>>();
+//   model.Add<ReLU>();
+//   model.Add<Linear>(output.n_rows);
+//   model.Add<LogSoftMax>();
+
+//   model.InputDimensions() = std::vector<size_t>({ input.n_rows });
 
 //   ens::StandardSGD opt(0.1, 1, 5, -100, false);
 //   model.Train(input, output, opt);
@@ -4553,8 +4555,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   model.Predict(input, originalOutput);
 
 //   // Now serialize the model.
-//   FFN<NegativeLogLikelihood, ann::RandomInitialization> xmlModel, jsonModel,
-//       binaryModel;
+//   FFN<> xmlModel, jsonModel, binaryModel;
 //   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
 //   // Ensure that predictions are the same.
@@ -4575,7 +4576,7 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //  */
 // TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
 // {
-//   BatchNorm<> layer(10);
+//   BatchNorm layer(10);
 //   ANNLayerSerializationTest(layer);
 // }
 
@@ -5314,154 +5315,168 @@ TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 }
 */
 
-// TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output, result, runningMean, runningVar, delta;
+TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, result, runningMean, runningVar, delta;
 
-//   // The input test matrix is of the form 3 x 2 x 4 x 1 where
-//   // number of images are 3 and number of feature maps are 2.
-//   input = { { 1, 446, 42 },
-//             { 2, 16, 63 },
-//             { 3, 13, 63 },
-//             { 4, 21, 21 },
-//             { 1, 13, 11 },
-//             { 32, 45, 42 },
-//             { 22, 16, 63 },
-//             { 32, 13, 42 } };
-//
-//   // Output calculated using torch.nn.BatchNorm2d().
-//   result = { { -0.4786, 3.2634, -0.1338 },
-//              { -0.4702, -0.3525, 0.0427 },
-//              { -0.4618, -0.3777, 0.0427 },
-//              { -0.4534, -0.3104, -0.3104 },
-//              { -1.5429, -0.8486, -0.9643 },
-//              { 0.2507, 1.0029, 0.8293 },
-//              { -0.3279, -0.675, 2.0443 },
-//              { 0.2507 , -0.8486 , 0.8293 } };
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16, 63 },
+            { 32, 13, 42 } };
 
-//   // Check correctness of batch normalization.
-//   BatchNorm<> module1(2, 1e-5, false, 0.1);
-//   module1.Reset();
-//   module1.Forward(input, output);
-//   CheckMatrices(output, result, 1e-1);
+  // Output calculated using torch.nn.BatchNorm2d().
+  result = { { -0.4786, 3.2634, -0.1338 },
+             { -0.4702, -0.3525, 0.0427 },
+             { -0.4618, -0.3777, 0.0427 },
+             { -0.4534, -0.3104, -0.3104 },
+             { -1.5429, -0.8486, -0.9643 },
+             { 0.2507, 1.0029, 0.8293 },
+             { -0.3279, -0.675, 2.0443 },
+             { 0.2507 , -0.8486 , 0.8293 } };
 
-//   // Check backward function.
-//   module1.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == Approx(0.0102676).epsilon(1e-5));
+  // Check correctness of batch normalization.
+  BatchNorm module1(2, 1e-5, false, 0.1);
+  module1.Training() = true;
+  module1.InputDimensions() = std::vector<size_t>({ 1, 4, 2 });
+  module1.ComputeOutputDimensions();
+  arma::mat moduleParams(module1.WeightSize(), 1);
+  module1.CustomInitialize(moduleParams, module1.WeightSize(), 1);
+  module1.SetWeights((double*) moduleParams.memptr());
+  output.set_size(8, 3);
+  module1.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
 
-//   // Check values for running mean and running variance.
-//   // Calculated using torch.nn.BatchNorm2d().
-//   runningMean = arma::mat(2, 1);
-//   runningVar = arma::mat(2, 1);
-//   runningMean(0) = 5.7917;
-//   runningMean(1) = 2.76667;
-//   runningVar(0) = 1543.6545;
-//   runningVar(1) = 33.488;
+  // Check backward function.
+  delta.set_size(8, 3);
+  module1.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == Approx(0.0102676).epsilon(1e-5));
 
-//   CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
-//   CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean = arma::mat(2, 1);
+  runningVar = arma::mat(2, 1);
+  runningMean(0) = 5.7917;
+  runningMean(1) = 2.76667;
+  runningVar(0) = 1543.6545;
+  runningVar(1) = 33.488;
 
-//   // Check correctness of layer when running mean and variance
-//   // are updated using cumulative average.
-//   BatchNorm<> module2(2);
-//   module2.Reset();
-//   module2.Forward(input, output);
-//   CheckMatrices(output, result, 1e-1);
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
 
-//   // Check values for running mean and running variance.
-//   // Calculated using torch.nn.BatchNorm2d().
-//   runningMean(0) = 57.9167;
-//   runningMean(1) = 27.6667;
-//   runningVar(0) = 15427.5380;
-//   runningVar(1) = 325.8787;
+  // Check correctness of layer when running mean and variance
+  // are updated using cumulative average.
+  BatchNorm module2(2);
+  module2.Training() = true;
+  module2.InputDimensions() = std::vector<size_t>({ 1, 4, 2 });
+  module2.ComputeOutputDimensions();
+  arma::mat moduleParams2(module2.WeightSize(), 1);
+  module2.CustomInitialize(moduleParams2, module2.WeightSize(), 1);
+  module2.SetWeights((double*) moduleParams2.memptr());
+  output.set_size(8, 3);
+  module2.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
 
-//   CheckMatrices(runningMean, module2.TrainingMean(), 1e-2);
-//   CheckMatrices(runningVar, module2.TrainingVariance(), 1e-2);
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean(0) = 57.9167;
+  runningMean(1) = 27.6667;
+  runningVar(0) = 15427.5380;
+  runningVar(1) = 325.8787;
 
-//   // Check correctness when model is testing.
-//   arma::mat deterministicOutput;
-//   module1.Deterministic() = true;
-//   module1.Forward(input, deterministicOutput);
+  CheckMatrices(runningMean, module2.TrainingMean(), 1e-2);
+  CheckMatrices(runningVar, module2.TrainingVariance(), 1e-2);
 
-//   result.clear();
-//   result = { { -0.12195, 11.20426, 0.92158 },
-//              { -0.0965, 0.259824, 1.4560 },
-//              { -0.071054, 0.183567, 1.45607 },
-//              { -0.045601, 0.3870852, 0.38708 },
-//              { -0.305288, 1.7683, 1.4227 },
-//              { 5.05166, 7.29812, 6.7797 },
-//              { 3.323614, 2.2867, 10.4086 },
-//              { 5.05166, 1.7683, 6.7797 } };
+  // Check correctness when model is testing.
+  arma::mat deterministicOutput;
+  module1.Training() = false;
+  deterministicOutput.set_size(8, 3);
+  module1.Forward(input, deterministicOutput);
 
-//   CheckMatrices(result, deterministicOutput, 1e-1);
+  result.clear();
+  result = { { -0.12195, 11.20426, 0.92158 },
+             { -0.0965, 0.259824, 1.4560 },
+             { -0.071054, 0.183567, 1.45607 },
+             { -0.045601, 0.3870852, 0.38708 },
+             { -0.305288, 1.7683, 1.4227 },
+             { 5.05166, 7.29812, 6.7797 },
+             { 3.323614, 2.2867, 10.4086 },
+             { 5.05166, 1.7683, 6.7797 } };
 
-//   // Check correctness by updating the running mean and variance again.
-//   module1.Deterministic() = false;
+  CheckMatrices(result, deterministicOutput, 1e-1);
 
-//   // Clean up.
-//   output.clear();
-//   input.clear();
+  // // Check correctness by updating the running mean and variance again.
+  // module1.Training() = true;
 
-//   // The input test matrix is of the form 2 x 2 x 3 x 1 where
-//   // number of images are 2 and number of feature maps are 2.
-//   input = { { 12, 443 },
-//             { 134, 45 },
-//             { 11, 13 },
-//             { 14, 55 },
-//             { 110, 4 },
-//             { 1, 45 } };
-//
-//   result = { { -0.629337, 2.14791 },
-//              { 0.156797, -0.416694 },
-//              { -0.63578, -0.622893 },
-//              { -0.637481, 0.4440386 },
-//              { 1.894857, -0.901267 },
-//              { -0.980402, 0.180253 } };
+  // // Clean up.
+  // output.clear();
+  // input.clear();
 
-//   module1.Forward(input, output);
-//   CheckMatrices(result, output, 1e-3);
+  // // The input test matrix is of the form 2 x 2 x 3 x 1 where
+  // // number of images are 2 and number of feature maps are 2.
+  // input = { { 12, 443 },
+  //           { 134, 45 },
+  //           { 11, 13 },
+  //           { 14, 55 },
+  //           { 110, 4 },
+  //           { 1, 45 } };
 
-//   // Check correctness for the second module as well.
-//   module2.Forward(input, output);
-//   CheckMatrices(result, output, 1e-3);
+  // result = { { -0.629337, 2.14791 },
+  //            { 0.156797, -0.416694 },
+  //            { -0.63578, -0.622893 },
+  //            { -0.637481, 0.4440386 },
+  //            { 1.894857, -0.901267 },
+  //            { -0.980402, 0.180253 } };
 
-//   // Calculated using torch.nn.BatchNorm2d().
-//   runningMean(0) = 16.1792;
-//   runningMean(1) = 6.30667;
-//   runningVar(0) = 4276.5849;
-//   runningVar(1) = 202.595;
+  // module1.Forward(input, output);
+  // CheckMatrices(result, output, 1e-3);
 
-//   CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
-//   CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
+  // // Check correctness for the second module as well.
+  // module2.Forward(input, output);
+  // CheckMatrices(result, output, 1e-3);
 
-//   // Check correctness of running mean and variance when their
-//   // values are updated using cumulative average.
-//   runningMean(0) = 83.79166;
-//   runningMean(1) = 32.9166;
-//   runningVar(0) = 22164.1035;
-//   runningVar(1) = 1025.2227;
+  // // Calculated using torch.nn.BatchNorm2d().
+  // runningMean(0) = 16.1792;
+  // runningMean(1) = 6.30667;
+  // runningVar(0) = 4276.5849;
+  // runningVar(1) = 202.595;
 
-//   CheckMatrices(runningMean, module2.TrainingMean(), 1e-3);
-//   CheckMatrices(runningVar, module2.TrainingVariance(), 1e-3);
+  // CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  // CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
 
-//   // Check backward function.
-//   module1.Backward(input, output, delta);
+  // // Check correctness of running mean and variance when their
+  // // values are updated using cumulative average.
+  // runningMean(0) = 83.79166;
+  // runningMean(1) = 32.9166;
+  // runningVar(0) = 22164.1035;
+  // runningVar(1) = 1025.2227;
 
-//   deterministicOutput.clear();
-//   module1.Deterministic() = true;
-//   module1.Forward(input, deterministicOutput);
+  // CheckMatrices(runningMean, module2.TrainingMean(), 1e-3);
+  // CheckMatrices(runningVar, module2.TrainingVariance(), 1e-3);
 
-//   result.clear();
-//   result = { { -0.06388436, 6.524754114 },
-//              { 1.799655281, 0.44047968 },
-//              { -0.07913291, -0.04784981 },
-//              { 0.5405045, 3.4210097 },
-//              { 7.2851023, -0.1620577 },
-//              { -0.37282639, 2.7184474 } };
+  // // Check backward function.
+  // module1.Backward(input, output, delta);
 
-//   // Calculated using torch.nn.BatchNorm2d().
-//   CheckMatrices(result, deterministicOutput, 1e-1);
-// }
+  // deterministicOutput.clear();
+  // module1.Deterministic() = true;
+  // module1.Forward(input, deterministicOutput);
+
+  // result.clear();
+  // result = { { -0.06388436, 6.524754114 },
+  //            { 1.799655281, 0.44047968 },
+  //            { -0.07913291, -0.04784981 },
+  //            { 0.5405045, 3.4210097 },
+  //            { 7.2851023, -0.1620577 },
+  //            { -0.37282639, 2.7184474 } };
+
+  // // Calculated using torch.nn.BatchNorm2d().
+  // CheckMatrices(result, deterministicOutput, 1e-1);
+}
 
 // /**
 //  * Batch Normalization layer numerical gradient test.
