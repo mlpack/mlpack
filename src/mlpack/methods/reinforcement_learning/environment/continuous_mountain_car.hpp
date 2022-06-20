@@ -4,7 +4,7 @@
  * @author Shashank Shekhar
  *
  * This file is an implementation of Continous Mountain Car task:
- * https://gym.openai.com/envs/MountainCarContinuous-v0/
+ * https://www.gymlibrary.ml/environments/classic_control/mountain_car_continuous
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *

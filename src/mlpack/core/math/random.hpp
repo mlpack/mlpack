@@ -33,14 +33,14 @@ inline std::mt19937& RandGen()
 //! Global uniform distribution.
 inline std::uniform_real_distribution<>& RandUniformDist()
 {
-  static thread_local std::uniform_real_distribution<> randUniformDist(0.0, 0.1);
+  static thread_local std::uniform_real_distribution<> randUniformDist(0.0, 1.0);
   return randUniformDist;
 }
 
 //! Global normal distribution.
 inline std::normal_distribution<>& RandNormalDist()
 {
-  static thread_local std::normal_distribution<> randNormalDist(0.0, 0.1);
+  static thread_local std::normal_distribution<> randNormalDist(0.0, 1.0);
   return randNormalDist;
 }
 

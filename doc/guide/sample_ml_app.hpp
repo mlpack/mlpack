@@ -27,7 +27,6 @@ mlpack and dependencies in Release Mode).
 - Right click on the project and select Properties, select the x64 Debug profile
 - Under C/C++ > General > Additional Include Directories add:
 @code
- - C:\boost\boost_1_71_0\lib\native\include
  - C:\mlpack\armadillo-9.800.3\include
  - C:\mlpack\mlpack-3.4.2\build\include
 @endcode

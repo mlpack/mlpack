@@ -27,11 +27,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   # Get the name of the directory.
   file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
       "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
-  # Clean this line when boost is removed.
-  if (${DEPS_NAME} MATCHES "boost")
-    file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-        "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*_*")
-  elseif(${DEPS_NAME} MATCHES "stb")
+  if(${DEPS_NAME} MATCHES "stb")
     file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
         "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}")
   endif()
@@ -44,14 +40,8 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   list(LENGTH DIRECTORIES DIRECTORIES_LEN)
   if (DIRECTORIES_LEN GREATER 0)
     list(GET DIRECTORIES 0 DEPENDENCY_DIR)
-    # Clean these lines when boost is removed.
-    if (${DEPS_NAME} MATCHES "boost")
-      set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/")
-      install(DIRECTORY "${Boost_INCLUDE_DIR}/boost" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-    else()
-      set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include")
-      install(DIRECTORY "${GENERIC_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-    endif()
+    set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include")
+    install(DIRECTORY "${GENERIC_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
   else ()
     message(FATAL_ERROR
             "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try to remove the directory ${CMAKE_BINARY_DIR}/deps and reconfigure.")

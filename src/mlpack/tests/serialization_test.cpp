@@ -54,7 +54,6 @@ using namespace mlpack::neighbor;
 using namespace mlpack::ann;
 
 using namespace arma;
-using namespace boost;
 using namespace cereal;
 using namespace std;
 

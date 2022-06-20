@@ -109,6 +109,80 @@ inline void TrimIf(std::string &str, std::function<bool(char)> func)
   str = trimmedStr;
 }
 
+/**
+ * Splits the given string into tokens, using the given delimiter to split.
+ * An escape character should be specified to indicate escape sequences where
+ * the delimiter may be safely used.  For instance, with the delimiter ',' and
+ * the escape character '"' (a double quote), the line
+ *
+ * hello, "one, two"
+ *
+ * will be split into two tokens: "hello", and "one, two".
+ *
+ * @param line Input string to tokenize.
+ * @param tokenDelim Character to use as delimiter between tokens.
+ * @param escape Escape character, usually " or '.
+ */
+inline std::vector<std::string> Tokenize(
+    std::string& line,
+    char tokenDelim,
+    char escape)
+{
+  std::vector<std::string> tokens;
+
+  // Shortcut: if the line is empty, it has no tokens.
+  if (line.size() == 0)
+    return tokens;
+
+  bool inEscape = false;
+  bool lastBackslash = false;
+  std::string currentToken;
+  size_t lastSplitIndex = 0;
+  for (size_t currentIndex = 0; currentIndex < line.size(); ++currentIndex)
+  {
+    char c = line[currentIndex];
+
+    if (c == '\\')
+    {
+      // Make sure we mark that we just encountered a backslash.
+      lastBackslash = true;
+      continue;
+    }
+    else if (c == escape && !lastBackslash)
+    {
+      // We've encountered one of our escape characters, so if we were already
+      // in an escape sequence, we are no longer, and if we weren't, we are now.
+      inEscape = !inEscape;
+    }
+    else if (c == escape && lastBackslash)
+    {
+      // If we are in an escape sequence and we encounter an escaped delimiter,
+      // we want to remove the '\' that prepends the escaped delimiter.
+      currentToken.append(line.substr(lastSplitIndex,
+          currentIndex - 2 - lastSplitIndex));
+      lastSplitIndex = currentIndex;
+    }
+    else if (c == tokenDelim && !inEscape)
+    {
+      // If the current character is a delimiter, then finish the previous token
+      // and add it to the list of tokens.
+      currentToken.append(line.substr(lastSplitIndex,
+          currentIndex - lastSplitIndex));
+      tokens.push_back(currentToken);
+      currentToken.clear();
+      lastSplitIndex = currentIndex + 1;
+    }
+
+    lastBackslash = false;
+  }
+
+  // Push the last token.
+  currentToken.append(line.substr(lastSplitIndex));
+  tokens.push_back(currentToken);
+
+  return tokens;
+}
+
 }  // namespace data
 }  // namespace mlpack
 

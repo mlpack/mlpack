@@ -1,6 +1,10 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  adaptive_max_pooling.hpp
+  adaptive_max_pooling_impl.hpp
+  adaptive_mean_pooling.hpp
+  adaptive_mean_pooling_impl.hpp
   add.hpp
   add_impl.hpp
   alpha_dropout.hpp
@@ -32,6 +36,8 @@ set(SOURCES
   lstm_impl.hpp
   max_pooling.hpp
   max_pooling_impl.hpp
+  mean_pooling.hpp
+  mean_pooling_impl.hpp
   multi_layer.hpp
   multi_layer_impl.hpp
   noisylinear.hpp
