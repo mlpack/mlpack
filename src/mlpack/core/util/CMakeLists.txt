@@ -5,8 +5,9 @@ set(SOURCES
   arma_config.hpp
   arma_config_check.hpp
   backtrace.hpp
-  backtrace.cpp
+  backtrace_impl.hpp
   binding_details.hpp
+  forward.hpp
   io.hpp
   io.cpp
   deprecated.hpp
@@ -22,7 +23,6 @@ set(SOURCES
   param_data.hpp
   params.hpp
   params_impl.hpp
-  params.cpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
@@ -32,10 +32,10 @@ set(SOURCES
   sfinae_utility.hpp
   singletons.cpp
   timers.hpp
-  timers.cpp
+  timers_impl.hpp
   to_lower.hpp
   version.hpp
-  version.cpp
+  version_impl.hpp
 )
 
 # add directory name to sources

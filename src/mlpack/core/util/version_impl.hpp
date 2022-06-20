@@ -1,5 +1,5 @@
 /**
- * @file core/util/version.cpp
+ * @file core/util/version_impl.hpp
  * @author Ryan Curtin
  *
  * The implementation of GetVersion().
@@ -13,9 +13,12 @@
 
 #include <sstream>
 
+namespace mlpack {
+namespace util {
+
 // If we are not a git revision, just use the macros to assemble the version
 // name.
-std::string mlpack::util::GetVersion()
+inline std::string GetVersion()
 {
 #ifndef MLPACK_GIT_VERSION
   std::stringstream o;
@@ -28,3 +31,6 @@ std::string mlpack::util::GetVersion()
   #include "gitversion.hpp"
 #endif
 }
+
+} // namespace util
+} // namespace mlpack

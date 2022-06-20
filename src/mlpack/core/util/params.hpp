@@ -7,6 +7,7 @@
 #ifndef MLPACK_CORE_UTIL_PARAMS_HPP
 #define MLPACK_CORE_UTIL_PARAMS_HPP
 
+#include "forward.hpp"
 #include "param_data.hpp"
 #include "binding_details.hpp"
 

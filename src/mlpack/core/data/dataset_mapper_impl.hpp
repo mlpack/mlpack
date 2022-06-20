@@ -248,6 +248,12 @@ inline void DatasetMapper<PolicyType, InputType>::Policy(PolicyType&& policy)
   this->policy = std::forward<PolicyType>(policy);
 }
 
+// Implementation of utility function needed by Params class.
+inline arma::mat& GetMatrix(std::tuple<DatasetInfo, arma::mat>& t)
+{
+  return std::get<1>(t);
+}
+
 } // namespace data
 } // namespace mlpack
 
