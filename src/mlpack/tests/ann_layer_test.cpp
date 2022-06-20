@@ -2995,6 +2995,8 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
         << 4.9 << 3.0 << 1.4 << arma::endr
         << 4.7 << 3.2 << 1.3 << arma::endr;
 
+  input = input.t();
+
   // BatchNorm layer with average parameter set to true.
   BatchNorm module1(input.n_rows);
   module1.Training() = true;
@@ -3075,9 +3077,9 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   CheckMatrices(output, result, 1e-1);
 
   // Values calculated using torch.nn.BatchNorm1d().
-  model2.Training() = false;
-  output.set_size(module1.OutputSize(), 1);
-  model2.Forward(input, output);
+  module2.Training() = false;
+  output.set_size(module2.OutputSize(), 1);
+  module2.Forward(input, output);
   output.resize(3, 3);
 
   result = { { 4.2731, 2.8388, 0.9562 },
