@@ -87,8 +87,8 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     count(std::move(layer.count)),
     averageFactor(std::move(layer.averageFactor)),
     inputDimension1(std::move(layer.inputDimension1)),
-    inputDimension2(std.move(layer.inputDimension2)),
-    higherDimension(std.move(layer.higherDimension))
+    inputDimension2(std::move(layer.inputDimension2)),
+    higherDimension(std::move(layer.higherDimension))
 {
   // Nothing else to do.
 }
@@ -129,8 +129,8 @@ BatchNormType<MatType>::operator=(
     count = std::move(layer.count);
     averageFactor = std::move(layer.averageFactor);
     inputDimension1 = std::move(layer.inputDimension1);
-    inputDimension2 = std.move(layer.inputDimension2);
-    higherDimension = std.move(layer.higherDimension);
+    inputDimension2 = std::move(layer.inputDimension2);
+    higherDimension = std::move(layer.higherDimension);
   }
 
   return *this;
