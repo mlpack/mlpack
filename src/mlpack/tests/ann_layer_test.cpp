@@ -2985,90 +2985,109 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 }
 */
 
-// /**
-//  * Tests the BatchNorm Layer, compares the layers parameters with
-//  * the values from another implementation.
-//  * Link to the implementation - http://cthorey.github.io./backpropagation/
-//  */
-// TEST_CASE("BatchNormTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output;
-//   input << 5.1 << 3.5 << 1.4 << arma::endr
-//         << 4.9 << 3.0 << 1.4 << arma::endr
-//         << 4.7 << 3.2 << 1.3 << arma::endr;
+/**
+ * Tests the BatchNorm Layer, compares the layers parameters with
+ * the values from another implementation.
+ * Link to the implementation - http://cthorey.github.io./backpropagation/
+ */
+TEST_CASE("BatchNormTest", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+  input << 5.1 << 3.5 << 1.4 << arma::endr
+        << 4.9 << 3.0 << 1.4 << arma::endr
+        << 4.7 << 3.2 << 1.3 << arma::endr;
 
-//   // BatchNorm layer with average parameter set to true.
-//   BatchNorm<> model(input.n_rows);
-//   model.Reset();
+  // BatchNorm layer with average parameter set to true.
+  BatchNorm module1(input.n_rows);
+  module1.Training() = true;
+  module1.InputDimensions() = std::vector<size_t>({ 3, 3 });
+  module1.ComputeOutputDimensions();
+  arma::mat moduleParams(module1.WeightSize(), 1);
+  module1.CustomInitialize(moduleParams, module1.WeightSize(), 1);
+  module1.SetWeights((double*) moduleParams.memptr());
 
-//   // BatchNorm layer with average parameter set to false.
-//   BatchNorm<> model2(input.n_rows, 1e-5, false);
-//   model2.Reset();
+  // BatchNorm layer with average parameter set to false (using momentum).
+  BatchNorm module2(input.n_rows, 1e-5, false);
+  module2.Training() = true;
+  module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
+  module2.ComputeOutputDimensions();
+  arma::mat moduleParams2(module2.WeightSize(), 1);
+  module2.CustomInitialize(moduleParams2, module2.WeightSize(), 1);
+  module2.SetWeights((double*) moduleParams2.memptr());
 
-//   // Non-Deteministic Forward Pass Test.
-//   model.Deterministic() = false;
-//   model.Forward(input, output);
+  // Training Forward Pass Test.
+  output.set_size(module1.OutputSize(), 1);
+  input.resize(9, 1);
+  module1.Forward(input, output);
 
-//  // Value calculates using torch.nn.BatchNorm2d(momentum = None).
-//  arma::mat result;
-//  result = { { 1.1658, 0.1100, -1.2758 },
-//             { 1.2579, -0.0699, -1.1880},
-//             { 1.1737, 0.0958, -1.2695 } };
+ // Value calculates using torch.nn.BatchNorm1d(momentum = None).
+  arma::mat result;
+  output.resize(3, 3);
+  result = { { 1.1658, 0.1100, -1.2758 },
+            { 1.2579, -0.0699, -1.1880},
+            { 1.1737, 0.0958, -1.2695 } };
 
-//   CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result, 1e-1);
 
-//   model2.Forward(input, output);
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  output.set_size(module2.OutputSize(), 1);
+  module2.Forward(input, output);
+  output.resize(3, 3);
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+  output.clear();
 
-//  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-//  output = model.TrainingMean();
-//  result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
+ // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  output = module1.TrainingMean();
+  result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
 
-//   CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result, 1e-1);
 
-//  // Values calculated using torch.nn.BatchNorm2d().
-//  output = model2.TrainingMean();
-//  result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
+ // Values calculated using torch.nn.BatchNorm1d().
+  output = module2.TrainingMean();
+  result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-//  output = model.TrainingVariance();
-//  result = arma::mat({ 3.4433, 3.0700, 2.9033 }).t();
+  // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  output = module1.TrainingVariance();
+  result = arma::mat({ 3.4433, 3.0700, 2.9033 }).t();
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-  // Values calculated using torch.nn.BatchNorm2d().
-//  output = model2.TrainingVariance();
-//  result = arma::mat({ 1.2443, 1.2070, 1.1903 }).t();
+  // Values calculated using torch.nn.BatchNorm1d().
+  output = module2.TrainingVariance();
+  result = arma::mat({ 1.2443, 1.2070, 1.1903 }).t();
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-//   // Deterministic Forward Pass test.
-//   model.Deterministic() = true;
-//   model.Forward(input, output);
+  // Deterministic Forward Pass test.
+  module1.Training() = false;
+  output.set_size(module1.OutputSize(), 1);
+  module1.Forward(input, output);
+  output.resize(3, 3);
 
-  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-//  result = { { 0.9521, 0.0898, -1.0419 },
-//             { 1.0273, -0.0571, -0.9702 },
-//             { 0.9586, 0.0783, -1.0368 } };
+  // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  result = { { 0.9521, 0.0898, -1.0419 },
+            { 1.0273, -0.0571, -0.9702 },
+            { 0.9586, 0.0783, -1.0368 } };
 
-//   CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result, 1e-1);
 
-//   // Values calculated using torch.nn.BatchNorm2d().
-//   model2.Deterministic() = true;
-//   model2.Forward(input, output);
+  // Values calculated using torch.nn.BatchNorm1d().
+  model2.Training() = false;
+  output.set_size(module1.OutputSize(), 1);
+  model2.Forward(input, output);
+  output.resize(3, 3);
 
-//   result = { { 4.2731, 2.8388, 0.9562 },
-//              { 4.1779, 2.4485, 0.9921 },
-//              { 4.0268, 2.6519, 0.9105 } };
-//
-//   CheckMatrices(output, result, 1e-1);
-// }
+  result = { { 4.2731, 2.8388, 0.9562 },
+             { 4.1779, 2.4485, 0.9921 },
+             { 4.0268, 2.6519, 0.9105 } };
+
+  CheckMatrices(output, result, 1e-1);
+}
 
 // /**
 //  * BatchNorm layer numerical gradient test.
