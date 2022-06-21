@@ -1,5 +1,5 @@
 /**
- * @file core/util/singletons.cpp
+ * @file core/util/singletons.hpp
  * @author Ryan Curtin
  *
  * Declaration of singletons in libmlpack.so.
@@ -9,12 +9,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_UTIL_SINGLETONS_HPP
+#define MLPACK_CORE_UTIL_SINGLETONS_HPP
+
 #include "io.hpp"
 #include "log.hpp"
 #include <iostream>
-
-using namespace mlpack;
-using namespace mlpack::util;
 
 // Color code escape sequences -- but not on Windows.
 #ifndef _WIN32
@@ -31,16 +31,22 @@ using namespace mlpack::util;
   #define BASH_CLEAR ""
 #endif
 
+namespace mlpack {
+
 #ifdef DEBUG
-PrefixedOutStream Log::Debug = PrefixedOutStream(MLPACK_COUT_STREAM,
+static util::PrefixedOutStream Log::Debug = util::PrefixedOutStream(MLPACK_COUT_STREAM,
     BASH_CYAN "[DEBUG] " BASH_CLEAR);
 #else
-NullOutStream Log::Debug = NullOutStream();
+static util::NullOutStream Log::Debug = util::NullOutStream();
 #endif
 
-PrefixedOutStream Log::Info = PrefixedOutStream(MLPACK_COUT_STREAM,
+static util::PrefixedOutStream Log::Info = util::PrefixedOutStream(MLPACK_COUT_STREAM,
     BASH_GREEN "[INFO ] " BASH_CLEAR, true /* unless --verbose */, false);
-PrefixedOutStream Log::Warn = PrefixedOutStream(MLPACK_COUT_STREAM,
+static util::PrefixedOutStream Log::Warn = util::PrefixedOutStream(MLPACK_COUT_STREAM,
     BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
-PrefixedOutStream Log::Fatal = PrefixedOutStream(MLPACK_CERR_STREAM,
+static util::PrefixedOutStream Log::Fatal = util::PrefixedOutStream(MLPACK_CERR_STREAM,
     BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+
+} // namespace mlpack
+
+#endif

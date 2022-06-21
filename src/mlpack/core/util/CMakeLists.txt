@@ -29,7 +29,6 @@ set(SOURCES
   program_doc_impl.hpp
   size_checks.hpp
   sfinae_utility.hpp
-  singletons.cpp
   timers.hpp
   timers_impl.hpp
   to_lower.hpp
