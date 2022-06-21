@@ -9,12 +9,12 @@ set(SOURCES
   binding_details.hpp
   forward.hpp
   io.hpp
-  io.cpp
+  io_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
   log.hpp
-  log.cpp
+  log_impl.hpp
   mlpack_main.hpp
   nulloutstream.hpp
   param.hpp

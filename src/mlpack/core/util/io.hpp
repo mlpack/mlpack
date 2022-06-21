@@ -307,4 +307,7 @@ class IO
 // This file must be included after IO is declared and fully defined.
 #include "program_doc.hpp"
 
+// Include the implementation.
+#include "io_impl.hpp"
+
 #endif

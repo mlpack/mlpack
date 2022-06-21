@@ -95,4 +95,7 @@ class Log
 
 }; // namespace mlpack
 
+// Include implementation.
+#include "log_impl.hpp"
+
 #endif
