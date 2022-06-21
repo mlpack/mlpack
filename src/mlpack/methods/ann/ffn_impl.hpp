@@ -549,9 +549,6 @@ void FFN<
     MatType
 >::InitializeWeights()
 {
-  // Set the network to testing mode.
-  SetNetworkMode(false);
-
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
   networkInit.Initialize(network.Network(), parameters);
