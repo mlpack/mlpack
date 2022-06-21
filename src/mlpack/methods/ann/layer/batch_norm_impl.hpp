@@ -13,8 +13,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LAYER_BatchNormType_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_BatchNormType_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_BATCHNORM_IMPL_HPP
 
 // In case it is not included.
 #include "batch_norm.hpp"
@@ -44,7 +44,7 @@ BatchNormType<MatType>::BatchNormType(
     const double eps,
     const bool average,
     const double momentum) : 
-		Layer<MatType>(true),
+    Layer<MatType>(true),
     size(size),
     eps(eps),
     average(average),
@@ -71,7 +71,9 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
     averageFactor(layer.averageFactor),
     inputDimension1(layer.inputDimension1),
     inputDimension2(layer.inputDimension2),
-    higherDimension(layer.higherDimension)
+    higherDimension(layer.higherDimension),
+    runningMean(layer.runningMean),
+    runningVariance(layer.runningVariance)
 {
   // Nothing else to do.
 }
@@ -88,7 +90,9 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     averageFactor(std::move(layer.averageFactor)),
     inputDimension1(std::move(layer.inputDimension1)),
     inputDimension2(std::move(layer.inputDimension2)),
-    higherDimension(std::move(layer.higherDimension))
+    higherDimension(std::move(layer.higherDimension)),
+    runningMean(std::move(layer.runningMean)),
+    runningVariance(std::move(layer.runningVariance))
 {
   // Nothing else to do.
 }
@@ -109,6 +113,8 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
     inputDimension1 = layer.inputDimension1;
     inputDimension2 = layer.inputDimension2;
     higherDimension = layer.higherDimension;
+    runningMean = layer.runningMean;
+    runningVariance = layer.runningVariance;
   }
 
   return *this;
@@ -131,6 +137,8 @@ BatchNormType<MatType>::operator=(
     inputDimension1 = std::move(layer.inputDimension1);
     inputDimension2 = std::move(layer.inputDimension2);
     higherDimension = std::move(layer.higherDimension);
+    runningMean = std::move(layer.runningMean);
+    runningVariance = std::move(layer.runningVariance);
   }
 
   return *this;
@@ -157,15 +165,15 @@ void BatchNormType<MatType>::CustomInitialize(
     throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
         "rows size!"); 
   }
-  MatType gamma_temp;
-  MatType beta_temp;
+  MatType gammaTemp;
+  MatType betaTemp;
   // Gamma acts as the scaling parameters for the normalized output.
-	MakeAlias(gamma_temp, W.memptr(), size, 1);
+  MakeAlias(gammaTemp, W.memptr(), size, 1);
   // Beta acts as the shifting parameters for the normalized output.
-	MakeAlias(beta_temp, W.memptr() + gamma_temp.n_elem, size, 1);
+  MakeAlias(betaTemp, W.memptr() + gammaTemp.n_elem, size, 1);
 
-  gamma_temp.fill(1.0);
-  beta_temp.fill(0.0);
+  gammaTemp.fill(1.0);
+  betaTemp.fill(0.0);
 }
 
 template<typename MatType>
@@ -309,6 +317,7 @@ void BatchNormType<MatType>::Gradient(
 {
   const size_t inputSize = inputDimension1 * inputDimension2;
 
+  gradient.set_size(size + size, 1);
   arma::Cube<typename MatType::elem_type> errorTemp(
       const_cast<MatType&>(error).memptr(), inputSize, size,
       error.n_cols, false, false);

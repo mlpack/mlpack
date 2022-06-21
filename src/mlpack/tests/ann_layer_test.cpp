@@ -3089,58 +3089,48 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   CheckMatrices(output, result.t(), 1e-1);
 }
 
-// /**
-//  * BatchNorm layer numerical gradient test.
-//  */
-// TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
-// {
-//   bool pass = false;
-//   for (size_t trial = 0; trial < 10; trial++)
-//   {
-//     // Add function gradient instantiation.
-//     struct GradientFunction
-//     {
-//       GradientFunction() :
-//           input(arma::randn(32, 2048)),
-//           target(arma::zeros(1, 2048))
-//       {
-//         model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
-//         model->ResetData(input, target);
-//         model->Add<IdentityLayer<> >();
-//         model->Add<Linear<> >(32, 4);
-//         model->Add<BatchNorm<> >(4);
-//         model->Add<Linear<>>(4, 2);
-//         model->Add<LogSoftMax<> >();
-//       }
+/**
+ * BatchNorm layer numerical gradient test.
+ */
+TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(32, 2048)),
+        target(arma::zeros(1, 2048))
+    {
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
+      model->ResetData(input, target);
+      model->Add<Linear>(4);
+      model->Add<BatchNorm>(4);
+      model->Add<Linear>(2);
+      model->Add<LogSoftMax>();
+    }
 
-//       ~GradientFunction()
-//       {
-//         delete model;
-//       }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//       double Gradient(arma::mat& gradient) const
-//       {
-//         double error = model->Evaluate(model->Parameters(), 0, 2048, false);
-//         model->Gradient(model->Parameters(), 0, gradient, 2048);
-//         return error;
-//       }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 2048);
+      model->Gradient(model->Parameters(), 0, gradient, 2048);
+      return error;
+    }
 
-//       arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//       FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-//       arma::mat input, target;
-//     } function;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//     double gradient = CheckGradient(function);
-//     if (gradient < 2e-1)
-//     {
-//       pass = true;
-//       break;
-//     }
-//   }
+  double gradient = CheckGradient(function);
 
-//   REQUIRE(pass);
-// }
+  REQUIRE(gradient < 2e-1);
+}
 
 // /**
 //  * Test that the functions that can access the parameters of the
@@ -4532,53 +4522,51 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(arma::accu(delta) == 0);
 // }
 
-// // General ANN serialization test.
-// template<typename LayerType>
-// void ANNLayerSerializationTest(LayerType& layer)
-// {
-//   arma::mat input(5, 100, arma::fill::randu);
-//   arma::mat output(5, 100, arma::fill::randu);
+// General ANN serialization test.
+template<typename LayerType>
+void ANNLayerSerializationTest(LayerType& layer)
+{
+  arma::mat input(5, 100, arma::fill::randu);
+  arma::mat output(5, 100, arma::fill::randu);
 
-//   FFN<> model;
-//   model.Add<Linear>(10);
-//   model.Add<LayerType>(layer);
-//   model.Add<ReLU>();
-//   model.Add<Linear>(output.n_rows);
-//   model.Add<LogSoftMax>();
+  FFN<> model;
+  model.Add<Linear>(10);
+  model.Add<LayerType>(layer);
+  model.Add<ReLU>();
+  model.Add<Linear>(output.n_rows);
+  model.Add<LogSoftMax>();
 
-//   model.InputDimensions() = std::vector<size_t>({ input.n_rows });
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
+  model.Train(input, output, opt);
 
-//   ens::StandardSGD opt(0.1, 1, 5, -100, false);
-//   model.Train(input, output, opt);
+  arma::mat originalOutput;
+  model.Predict(input, originalOutput);
 
-//   arma::mat originalOutput;
-//   model.Predict(input, originalOutput);
+  // Now serialize the model.
+  FFN<> xmlModel, jsonModel, binaryModel;
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
-//   // Now serialize the model.
-//   FFN<> xmlModel, jsonModel, binaryModel;
-//   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+  // Ensure that predictions are the same.
+  arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
+  model.Predict(input, modelOutput);
+  xmlModel.Predict(input, xmlOutput);
+  jsonModel.Predict(input, jsonOutput);
+  binaryModel.Predict(input, binaryOutput);
 
-//   // Ensure that predictions are the same.
-//   arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
-//   model.Predict(input, modelOutput);
-//   xmlModel.Predict(input, xmlOutput);
-//   jsonModel.Predict(input, jsonOutput);
-//   binaryModel.Predict(input, binaryOutput);
+  CheckMatrices(originalOutput, modelOutput, 1e-5);
+  CheckMatrices(originalOutput, xmlOutput, 1e-5);
+  CheckMatrices(originalOutput, jsonOutput, 1e-5);
+  CheckMatrices(originalOutput, binaryOutput, 1e-5);
+}
 
-//   CheckMatrices(originalOutput, modelOutput, 1e-5);
-//   CheckMatrices(originalOutput, xmlOutput, 1e-5);
-//   CheckMatrices(originalOutput, jsonOutput, 1e-5);
-//   CheckMatrices(originalOutput, binaryOutput, 1e-5);
-// }
-
-// /**
-//  * Simple serialization test for batch normalization layer.
-//  */
-// TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
-// {
-//   BatchNorm layer(10);
-//   ANNLayerSerializationTest(layer);
-// }
+/**
+ * Simple serialization test for batch normalization layer.
+ */
+TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
+{
+  BatchNorm layer(10);
+  ANNLayerSerializationTest(layer);
+}
 
 // /**
 //  * Simple serialization test for layer normalization layer.
