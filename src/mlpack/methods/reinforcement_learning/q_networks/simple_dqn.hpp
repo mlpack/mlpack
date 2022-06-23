@@ -27,7 +27,7 @@ namespace rl {
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = ann::MeanSquaredError<>,
+  typename OutputLayerType = ann::MeanSquaredError,
   typename InitType = ann::GaussianInitialization,
   typename NetworkType = ann::FFN<OutputLayerType, InitType>
 >
@@ -118,9 +118,9 @@ class SimpleDQN
   /**
    * Resets the parameters of the network.
    */
-  void Reset()
+  void Reset(const size_t inputDimensionality = 0)
   {
-    network.Reset();
+    network.Reset(inputDimensionality);
   }
 
   /**
