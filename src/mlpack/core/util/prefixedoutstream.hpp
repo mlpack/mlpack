@@ -13,7 +13,7 @@
 #ifndef MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/base.hpp>
 
 namespace mlpack {
 namespace util {
