@@ -252,20 +252,6 @@ class Layer
         "of a layer with no weights!");
   }
 
-  //! Get the network (series of layers) held by this Layer.
-  virtual const std::vector<Layer<MatType>*>& Network() const
-  {
-    throw std::invalid_argument("Layer::Network(): cannot access network "
-        "of a layer with no network!");
-  }
-  //! Modify the network (series of layers) held by this Layer.  Be
-  //! careful!
-  virtual std::vector<Layer<MatType>*>& Network()
-  {
-    throw std::invalid_argument("Layer::Parameters(): cannot modify network "
-        "of a layer with no network!");
-  }
-
   //! Compute the output dimensions.  This should be overloaded if the layer is
   //! meant to work on higher-dimensional objects.  When this is called, it is a
   //! safe assumption that InputDimensions() is correct.

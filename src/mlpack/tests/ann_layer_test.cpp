@@ -4961,7 +4961,7 @@ TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
   arma::mat rParams(r.WeightSize(), 1);
   r.SetWeights((double*) rParams.memptr());
   r.Network()[0]->Parameters().fill(2.0);
-  r.Network()[1]->Network()[0]->Parameters().fill(-1.0);
+  ((AddMerge*) r.Network()[1])->Network()[0]->Parameters().fill(-1.0);
 
   Linear l(5);
   l.InputDimensions() = std::vector<size_t>({ 5 });
