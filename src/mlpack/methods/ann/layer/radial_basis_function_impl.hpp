@@ -30,6 +30,7 @@ RBFType<MatType, Activation>::RBFType(
     const size_t outSize,
     MatType& centres,
     double betas) :
+    Layer<MatType>(),
     outSize(outSize),
     betas(betas),
     centres(centres)

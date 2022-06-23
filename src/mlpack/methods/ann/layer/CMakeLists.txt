@@ -12,6 +12,8 @@ set(SOURCES
   base_layer.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  concat.hpp
+  concat_impl.hpp
   concatenate.hpp
   concatenate_impl.hpp
   convolution.hpp

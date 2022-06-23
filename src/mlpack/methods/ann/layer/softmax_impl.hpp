@@ -35,7 +35,7 @@ SoftmaxType<MatType>::SoftmaxType(const SoftmaxType& other) :
 
 template<typename MatType>
 SoftmaxType<MatType>::SoftmaxType(SoftmaxType&& other) :
-    Layer<MatType>(other)
+    Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }

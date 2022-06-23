@@ -243,17 +243,24 @@ void FFN<
   parameters.clear();
 
   // If the user provided an input dimensionality, then we will take that as the
-  // new input size.  Otherwise, whatever is currently specified in
-  // `InputDimensions()` will be used.
+  // new input size.  Otherwise, if anything is currently specified in
+  // `InputDimensions()`, that will be used.  If nothing is specified in
+  // `InputDimensions()`, an exception will be thrown.
   if (inputDimensionality != 0)
   {
     CheckNetwork("FFN::Reset()", inputDimensionality, true, false);
   }
-  else
+  else if (inputDimensions.size() > 0)
   {
     const size_t inputDims = std::accumulate(inputDimensions.begin(),
         inputDimensions.end(), 0);
     CheckNetwork("FFN::Reset()", inputDims, true, false);
+  }
+  else
+  {
+    throw std::invalid_argument("FFN::Reset(): cannot reset network when no "
+        "input dimensionality is given, and `InputDimensions()` has not been "
+        "set!");
   }
 }
 
@@ -549,9 +556,6 @@ void FFN<
     MatType
 >::InitializeWeights()
 {
-  // Set the network to testing mode.
-  SetNetworkMode(false);
-
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
   networkInit.Initialize(network.Network(), parameters);

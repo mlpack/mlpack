@@ -52,10 +52,12 @@ QLearning<
   targetNetwork = learningNetwork;
 
   // Set up q-learning network.
-  if (learningNetwork.Parameters().is_empty())
-    learningNetwork.Reset();
+  if (learningNetwork.Parameters().n_elem != environment.InitialSample().Encode().n_elem)
+    learningNetwork.Reset(environment.InitialSample().Encode().n_elem);
 
-  targetNetwork.Reset();
+  // Initialize the target network with the parameters of learning network.
+  targetNetwork.Parameters() = learningNetwork.Parameters();
+  targetNetwork.Reset(environment.InitialSample().Encode().n_elem);
 
   #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
@@ -66,9 +68,6 @@ QLearning<
                                    learningNetwork.Parameters().n_rows,
                                    learningNetwork.Parameters().n_cols);
   #endif
-
-  // Initialize the target network with the parameters of learning network.
-  targetNetwork.Parameters() = learningNetwork.Parameters();
 }
 
 template <
