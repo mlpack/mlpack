@@ -80,7 +80,7 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 }
 
 #include <mlpack/core/util/param.hpp>
-#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 

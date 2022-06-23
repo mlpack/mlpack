@@ -16,8 +16,6 @@
 #define MLPACK_METHODS_BAYESIAN_LINEAR_REGRESSION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
 namespace regression {

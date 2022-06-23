@@ -310,4 +310,7 @@ class IO
 // Include the implementation.
 #include "io_impl.hpp"
 
+// Now include the implementation of the timers.
+#include "timers_impl.hpp"
+
 #endif

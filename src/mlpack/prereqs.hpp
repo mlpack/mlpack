@@ -35,7 +35,7 @@
 
 // All code should have access to logging.
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/util/io.hpp>
 
 // Include ready to use utility function to check sizes of datasets.
 #include <mlpack/core/util/size_checks.hpp>

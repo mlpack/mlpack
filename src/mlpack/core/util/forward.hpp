@@ -16,6 +16,7 @@ class IO;
 namespace util {
 
 class Params;
+class Timers;
 
 } // namespace util
 
