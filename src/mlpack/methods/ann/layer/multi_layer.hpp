@@ -176,7 +176,7 @@ class MultiLayer : public Layer<MatType>
   }
 
   //! Get the network (series of layers) held by this MultiLayer.
-  const std::vector<Layer<MatType>*> Network() const
+  const std::vector<Layer<MatType>*>& Network() const
   {
     return network;
   }

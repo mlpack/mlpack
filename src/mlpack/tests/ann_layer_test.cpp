@@ -4949,6 +4949,38 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
   REQUIRE(arma::accu(delta2) == Approx(16.2).epsilon(1e-3));
 }
 
+TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
+{
+  AddMerge r;
+  AddMerge* r2 = new AddMerge();
+  r2->Add<Linear>(5);
+  r.Add<Linear>(5);
+  r.Add(r2);
+  r.InputDimensions() = std::vector<size_t>({ 5 });
+  r.ComputeOutputDimensions();
+  arma::mat rParams(r.WeightSize(), 1);
+  r.SetWeights((double*) rParams.memptr());
+  r.Network()[0]->Parameters().fill(2.0);
+  r.Network()[1]->Network()[0]->Parameters().fill(-1.0);
+
+  Linear l(5);
+  l.InputDimensions() = std::vector<size_t>({ 5 });
+  l.ComputeOutputDimensions();
+  arma::mat lParams(l.WeightSize(), 1);
+  l.SetWeights((double*) lParams.memptr());
+  l.Parameters().fill(1.0);
+
+  arma::mat input(arma::randn(5, 10));
+  arma::mat output1, output2;
+  output1.set_size(5, 10);
+  output2.set_size(5, 10);
+
+  r.Forward(input, output1);
+  l.Forward(input, output2);
+
+  CheckMatrices(output1, output2, 1e-1);
+}
+
 /**
  * Simple test for Mean Pooling layer.
  */
