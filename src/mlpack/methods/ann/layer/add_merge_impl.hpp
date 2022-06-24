@@ -72,18 +72,18 @@ void AddMergeType<MatType>::Forward(
   // intermediate values between layers.
   if (this->network.size() > 1)
   {
-    // Initialize memory for the forward pass (if needed).
-    this->InitializeForwardPassMemory(input.n_cols);
+    // Initialize temporary memory for the forward pass.
+    MatType tempOutput;
+    tempOutput.set_size(arma::size(output));
 
     // Forward pass every layer in network with same input.
-    for (size_t i = 0; i < this->network.size(); i++)
-      this->network[i]->Forward(input, this->layerOutputs[i]);
-
-		// Reduce the outputs to single output by adding element-wise.
-    output.zeros();
-    for (size_t i = 0; i < this->layerOutputs.size(); i++)
+    // Reduce the outputs to single output by adding element-wise.
+    this->network[0]->Forward(input, tempOutput);
+    output = tempOutput;
+    for (size_t i = 1; i < this->network.size(); i++)
     {
-      output += this->layerOutputs[i];
+      this->network[i]->Forward(input, tempOutput);
+      output += tempOutput;
     }
   }
   else if (this->network.size() == 1)
@@ -103,14 +103,15 @@ void AddMergeType<MatType>::Backward(
 {
   if (this->network.size() > 1)
   {
-    // Initialize memory for the backward pass (if needed).
-    this->InitializeBackwardPassMemory(input.n_cols);
+    // Initialize temporary memory for the backward pass.
+    MatType tempDelta;
+    tempDelta.set_size(arma::size(g));
 
     g.zeros();
     for (size_t i = 0; i < this->network.size(); i++) 
     {
-      this->network[i]->Backward(this->layerOutputs[i], gy, this->layerDeltas[i]);
-      g += this->layerDeltas[i];
+      this->network[i]->Backward(input, gy, tempDelta);
+      g += tempDelta;
     }
   }
   else if (this->network.size() == 1)
@@ -177,20 +178,15 @@ void AddMergeType<MatType>::ComputeOutputDimensions()
   }
 
   // Compute the output size of the network using reduction rules.
-  if (this->network.size() == 1) 
-  {
-    this->outputDimensions = this->network[0]->OutputDimensions();
-    return;
-  }
-  const std::vector<size_t> networkSize = this->network[0]->OutputDimensions();
+  const std::vector<size_t>& networkSize = this->network[0]->OutputDimensions();
   for (size_t i = 1; i < this->network.size(); i++)
   {
     if (!(networkSize == this->network[i]->OutputDimensions()))
     {
       Log::Fatal << "Network size mismatch. (" << networkSize[0] << ", "
-        << networkSize[1] << ") != ("
-        << this->network[i]->OutputDimensions()[0] << ", " << this->network[i]->OutputDimensions()[1]
-        << ")." << std::endl;
+          << networkSize[1] << ") != ("
+          << this->network[i]->OutputDimensions()[0] << ", " 
+          << this->network[i]->OutputDimensions()[1] << ")." << std::endl;
     }
   }
   this->outputDimensions = networkSize;
