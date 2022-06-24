@@ -24,7 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType() : 
-    Layer<MatType>(true),
+    Layer<MatType>(),
     size(0),
     eps(1e-8),
     average(true),
@@ -44,7 +44,7 @@ BatchNormType<MatType>::BatchNormType(
     const double eps,
     const bool average,
     const double momentum) : 
-    Layer<MatType>(true),
+    Layer<MatType>(),
     size(size),
     eps(eps),
     average(average),

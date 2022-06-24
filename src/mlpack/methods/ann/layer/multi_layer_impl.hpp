@@ -20,7 +20,7 @@ namespace ann {
 
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer() :
-    Layer<MatType>(true),
+    Layer<MatType>(),
     inSize(0),
     totalInputSize(0),
     totalOutputSize(0)
@@ -274,14 +274,10 @@ void MultiLayer<MatType>::CustomInitialize(
         "FNN::CustomInitialize(): parameter size does not match total layer "
         "weight size!");
     
-    // Check if layer has custom weights implementation.
-    if (network[i]->CustomWeights()) 
-    {
-      MatType W_temp;
-      MakeAlias(W_temp, W.memptr() + start, weightSize, 1);
-      // If so, then override the weight matrix.
-      network[i]->CustomInitialize(W_temp, weightSize, 1);
-    }
+    MatType WTemp;
+    MakeAlias(WTemp, W.memptr() + start, weightSize, 1);
+    network[i]->CustomInitialize(WTemp, weightSize, 1);
+    
     start += weightSize;
   }
 

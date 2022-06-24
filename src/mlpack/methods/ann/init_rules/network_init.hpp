@@ -74,13 +74,9 @@ class NetworkInitialization
         const size_t weight = network[i]->WeightSize();
         arma::Mat<eT> tmp = arma::mat(parameters.memptr() + offset,
             weight, 1, false, false);
-        initializeRule.Initialize(tmp, tmp.n_elem, 1);
-        // Check if layer has custom weights implementation.
-        if (network[i]->CustomWeights()) 
-        {
-          // If so, then override the weight matrix.
-          network[i]->CustomInitialize(tmp, tmp.n_elem, 1);
-        }
+        initializeRule.Initialize(tmp, tmp.n_elem, 1); 
+        // Override the weight matrix.
+        network[i]->CustomInitialize(tmp, tmp.n_elem, 1);
 
         // Increase the parameter/weight offset for the next layer.
         offset += weight;
