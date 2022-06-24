@@ -4949,6 +4949,13 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
   REQUIRE(arma::accu(delta2) == Approx(16.2).epsilon(1e-3));
 }
 
+/**
+ * Complex test for AddMerge layer.
+ * This test includes: 
+ * 1. AddMerge layer inside the AddMerge layer.
+ * 2. Batch Size > 1.
+ * 3. AddMerge layer with single child layer.
+ */
 TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
 {
   AddMerge r;
@@ -4978,7 +4985,15 @@ TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
   r.Forward(input, output1);
   l.Forward(input, output2);
 
-  CheckMatrices(output1, output2, 1e-1);
+  CheckMatrices(output1, output2, 1e-3);
+
+  arma::mat delta1, delta2;
+  delta1.set_size(5, 10);
+  delta2.set_size(5, 10);
+  r.Backward(input, output1, delta1);
+  l.Backward(input, output2, delta2);
+
+  CheckMatrices(output1, output2, 1e-3);
 }
 
 /**
