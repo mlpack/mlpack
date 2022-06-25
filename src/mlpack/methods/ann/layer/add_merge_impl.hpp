@@ -33,7 +33,7 @@ AddMergeType<MatType>::AddMergeType(const AddMergeType& other) :
 
 template<typename MatType>
 AddMergeType<MatType>::AddMergeType(AddMergeType&& other) :
-    MultiLayer<MatType>(other)
+    MultiLayer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
@@ -54,7 +54,7 @@ AddMergeType<MatType>& AddMergeType<MatType>::operator=(AddMergeType&& other)
 {
   if (this != &other)
   {
-    MultiLayer<MatType>::operator=(other);
+    MultiLayer<MatType>::operator=(std::move(other));
   }
 
   return *this;
