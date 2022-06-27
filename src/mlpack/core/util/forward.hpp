@@ -1,5 +1,5 @@
 /**
- * @file forward.hpp
+ * @file core/util/forward.hpp
  * @author Ryan Curtin
  *
  * Forward declaration of components from other subdirectories necessary for
