@@ -97,11 +97,11 @@ void AsyncLearning<
 
   #pragma omp parallel for shared(stop, workers, tasks, learningNetwork, \
       targetNetwork, totalSteps, policy)
-  for (omp_size_t i = 0; i < numThreads; ++i)
+  for (size_t i = 0; i < numThreads; ++i)
   {
     #pragma omp critical
     {
-      #ifdef HAS_OPENMP
+      #ifdef MLPACK_USE_OPENMP
         Log::Debug << "Thread " << omp_get_thread_num() <<
             " started." << std::endl;
       #endif

@@ -908,7 +908,7 @@ void LSHSearch<SortPolicy, MatType>::Search(
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (omp_size_t i = 0; i < (omp_size_t) querySet.n_cols; ++i)
+  for (size_t i = 0; i < (size_t) querySet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the
@@ -970,7 +970,7 @@ Search(const size_t k,
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (omp_size_t i = 0; i < (omp_size_t) referenceSet.n_cols; ++i)
+  for (size_t i = 0; i < (size_t) referenceSet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the

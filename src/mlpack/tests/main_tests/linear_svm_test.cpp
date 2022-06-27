@@ -654,7 +654,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
   SetInputParam("optimizer", std::string("psgd"));
 
   // First solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -675,7 +675,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
   SetInputParam("no_intercept", bool(true));
 
   // Second solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -735,7 +735,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
   SetInputParam("epochs", int(5));
 
   // First solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -756,7 +756,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
   SetInputParam("epochs", int(10));
 
   // Second solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -792,7 +792,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
   SetInputParam("step_size", double(0.02));
 
   // First solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -814,7 +814,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
   SetInputParam("step_size", double(1.02));
 
   // Second solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -850,7 +850,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
   SetInputParam("tolerance", double(1e-1));
 
   // First solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -872,7 +872,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
   SetInputParam("tolerance", double(1e-10));
 
   // Second solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 
@@ -922,7 +922,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffOptimizerTest",
   SetInputParam("optimizer", std::string("psgd"));
 
   // Second solution.
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
   omp_set_num_threads(1);
   #endif
 

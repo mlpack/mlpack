@@ -100,10 +100,9 @@
 
 // This can be removed with Visual Studio supports an OpenMP version with
 // unsigned loop variables.
-#ifdef _WIN32
-  #define omp_size_t intmax_t
-#else
-  #define omp_size_t size_t
+#if (defined(_OPENMP) && (_OPENMP >= 201107))
+  #undef  MLPACK_USE_OPENMP
+  #define MLPACK_USE_OPENMP
 #endif
 
 // We need to be able to mark functions deprecated.
