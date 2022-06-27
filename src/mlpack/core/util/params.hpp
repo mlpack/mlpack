@@ -10,6 +10,7 @@
 #include "forward.hpp"
 #include "param_data.hpp"
 #include "binding_details.hpp"
+#include <map>
 
 namespace mlpack {
 namespace util {

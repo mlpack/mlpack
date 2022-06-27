@@ -8,6 +8,8 @@
 #ifndef MLPACK_CORE_UTIL_FORWARD_HPP
 #define MLPACK_CORE_UTIL_FORWARD_HPP
 
+#include <mlpack/base.hpp>
+
 // Required forward declarations.
 namespace mlpack {
 
