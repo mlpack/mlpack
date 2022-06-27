@@ -83,16 +83,16 @@ using enable_if_t = typename enable_if<B, T>::type;
 #if __cplusplus < 201703L
   #include <mlpack/core/std_backport/any.hpp>
   #include <mlpack/core/std_backport/string_view.hpp>
-  #define ANY core::v2::any
-  #define ANY_CAST core::v2::any_cast
-  #define STRING_VIEW core::v2::string_view
+  #define MLPACK_ANY core::v2::any
+  #define MLPACK_ANY_CAST core::v2::any_cast
+  #define MLPACK_STRING_VIEW core::v2::string_view
 #else
   #include <any>
   #include <string_view>
-  #define ANY std::any
-  #define ANY_CAST std::any_cast
-  #define STRING_VIEW std::string_view
-#endif 
+  #define MLPACK_ANY std::any
+  #define MLPACK_ANY_CAST std::any_cast
+  #define MLPACK_STRING_VIEW std::string_view
+#endif
 
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>

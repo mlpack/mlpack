@@ -28,7 +28,7 @@ void GetParam(util::ParamData& d,
               void* output)
 {
   util::ParamData& dmod = const_cast<util::ParamData&>(d);
-  *((T**) output) = ANY_CAST<T>(&dmod.value);
+  *((T**) output) = MLPACK_ANY_CAST<T>(&dmod.value);
 }
 
 } // namespace markdown

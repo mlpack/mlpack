@@ -98,7 +98,7 @@ T& Params::Get(const std::string& identifier)
   }
   else
   {
-    return *ANY_CAST<T>(&d.value);
+    return *MLPACK_ANY_CAST<T>(&d.value);
   }
 }
 

@@ -58,10 +58,10 @@ void InPlaceCopyInternal(
 {
   // Make the output filename the same as the input filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *ANY_CAST<TupleType>(&d.value);
+  TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&d.value);
   std::string& value = std::get<0>(std::get<1>(tuple));
 
-  const TupleType& inputTuple = *ANY_CAST<TupleType>(&input.value);
+  const TupleType& inputTuple = *MLPACK_ANY_CAST<TupleType>(&input.value);
   value = std::get<0>(std::get<1>(inputTuple));
 }
 
@@ -81,10 +81,10 @@ void InPlaceCopyInternal(
 {
   // Make the output filename the same as the input filename.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *ANY_CAST<TupleType>(&d.value);
+  TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&d.value);
   std::string& value = std::get<1>(tuple);
 
-  const TupleType& inputTuple = *ANY_CAST<TupleType>(&input.value);
+  const TupleType& inputTuple = *MLPACK_ANY_CAST<TupleType>(&input.value);
   value = std::get<1>(inputTuple);
 }
 
