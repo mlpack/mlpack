@@ -65,18 +65,6 @@
   #define mlpack_force_inline __forceinline
 #endif
 
-// Backport this functionality from C++14, if it doesn't exist.
-#if __cplusplus <= 201103L
-#if !defined(_MSC_VER) || _MSC_VER <= 1800
-namespace std {
-
-template<bool B, class T = void>
-using enable_if_t = typename enable_if<B, T>::type;
-
-}
-#endif
-#endif
-
 // Backport std::any from C+17 to C++11 to replace boost::any.
 // Use mnmlstc backport implementation only if compiler does not
 // support C++17.
