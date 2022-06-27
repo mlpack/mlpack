@@ -38,7 +38,7 @@ PellegMooreKMeansRules<MetricType, TreeType>::PellegMooreKMeansRules(
 }
 
 template<typename MetricType, typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double PellegMooreKMeansRules<MetricType, TreeType>::BaseCase(
     const size_t /* queryIndex */,
     const size_t /* referenceIndex */)

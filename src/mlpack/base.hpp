@@ -56,13 +56,13 @@
 #endif
 
 // Give ourselves a nice way to force functions to be inline if we need.
-#define force_inline
+#define mlpack_force_inline
 #if defined(__GNUG__) && !defined(DEBUG)
-  #undef force_inline
-  #define force_inline __attribute__((always_inline))
+  #undef mlpack_force_inline
+  #define mlpack_force_inline __attribute__((always_inline))
 #elif defined(_MSC_VER) && !defined(DEBUG)
-  #undef force_inline
-  #define force_inline __forceinline
+  #undef mlpack_force_inline
+  #define mlpack_force_inline __forceinline
 #endif
 
 // Backport this functionality from C++14, if it doesn't exist.

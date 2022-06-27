@@ -80,7 +80,7 @@ void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
 };
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline force_inline // Absolutely MUST be inline so optimizations can happen.
+inline mlpack_force_inline // Must be inline so optimizations can happen.
 double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
