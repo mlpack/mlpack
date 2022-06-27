@@ -103,7 +103,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 // it's part of the C++11 standard.
 #ifdef _MSC_VER
   #pragma warning(disable : 4519)
-  #define ARMA_USE_CXX11
 #endif
 
 // Ensure that the user isn't doing something stupid with their Armadillo
