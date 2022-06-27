@@ -1,5 +1,5 @@
 /**
- * @file check_categorical_param.hpp
+ * @file core/data/check_categorical_param.hpp
  * @author Ryan Curtin
  *
  * This file provides an implementation of a simple function to check the values
