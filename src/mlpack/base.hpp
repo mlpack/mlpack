@@ -56,6 +56,7 @@
 #endif
 
 // Give ourselves a nice way to force functions to be inline if we need.
+#undef mlpack_force_inline
 #define mlpack_force_inline
 #if defined(__GNUG__) && !defined(DEBUG)
   #undef mlpack_force_inline
