@@ -104,8 +104,6 @@ option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentatio
 
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
-option(FORCE_CXX11
-    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
