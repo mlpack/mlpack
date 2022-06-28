@@ -483,7 +483,7 @@ void ConvolutionType<
         if (gradientTemp.n_rows < output.n_rows ||
             gradientTemp.n_cols < output.n_cols)
         {
-          gradientTemp.slice(outMap) += output.submat(0, 0,
+          gradientTemp.slice((outMap * inMaps) + inMap) += output.submat(0, 0,
               gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
         }
         else if (gradientTemp.n_rows > output.n_rows ||
