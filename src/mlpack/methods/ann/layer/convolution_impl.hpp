@@ -489,12 +489,12 @@ void ConvolutionType<
         else if (gradientTemp.n_rows > output.n_rows ||
                  gradientTemp.n_cols > output.n_cols)
         {
-          gradientTemp.slice(outMap).submat(0, 0, output.n_rows - 1,
+          gradientTemp.slice((outMap * inMaps) + inMap).submat(0, 0, output.n_rows - 1,
               output.n_cols - 1) += output;
         }
         else
         {
-          gradientTemp.slice(outMap) += output;
+          gradientTemp.slice((outMap * inMaps) + inMap) += output;
         }
       }
 
