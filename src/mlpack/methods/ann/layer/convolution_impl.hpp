@@ -316,7 +316,7 @@ void ConvolutionType<
 
         ForwardConvolutionRule::Convolution(
             inputTemp.slice(inMap + fullInputOffset),
-            weight.slice(outMap),
+            weight.slice((outMap * inMaps) + inMap),
             convOutput,
             strideWidth,
             strideHeight);
@@ -379,7 +379,7 @@ void ConvolutionType<
 
         BackwardConvolutionRule::Convolution(
             mappedError.slice(outMap + fullOutputOffset),
-            rotatedFilters.slice(outMap),
+            rotatedFilters.slice((outMap * inMaps) + inMap),
             output,
             strideHeight,
             strideWidth);
