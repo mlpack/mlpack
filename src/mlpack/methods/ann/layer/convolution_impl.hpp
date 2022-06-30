@@ -358,7 +358,7 @@ void ConvolutionType<
   // To perform the backward pass, we need to rotate all the filters.
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
-  for (size_t map = 0; map < maps; ++map)
+  for (size_t map = 0; map < (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
