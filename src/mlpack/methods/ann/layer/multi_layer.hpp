@@ -148,7 +148,7 @@ class MultiLayer : public Layer<MatType>
    */
   virtual double Loss() const;
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -162,7 +162,7 @@ class MultiLayer : public Layer<MatType>
     layerGradients.push_back(MatType());
   }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
@@ -176,7 +176,7 @@ class MultiLayer : public Layer<MatType>
   }
 
   //! Get the network (series of layers) held by this MultiLayer.
-  const std::vector<Layer<MatType>*> Network() const
+  const std::vector<Layer<MatType>*>& Network() const
   {
     return network;
   }
