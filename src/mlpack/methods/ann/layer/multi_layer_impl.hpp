@@ -20,6 +20,7 @@ namespace ann {
 
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer() :
+    Layer<MatType>(),
     inSize(0),
     totalInputSize(0),
     totalOutputSize(0)
@@ -194,7 +195,7 @@ void MultiLayer<MatType>::Backward(
   else
   {
     // Empty network?
-    g = input;
+    g = gy;
   }
 }
 
