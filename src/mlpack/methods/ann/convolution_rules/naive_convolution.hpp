@@ -35,7 +35,7 @@ template<typename BorderMode = FullConvolution>
 class NaiveConvolution
 {
  public:
-  /*
+  /**
    * Perform a convolution (valid mode).
    *
    * @param input Input used to perform the convolution.
@@ -55,17 +55,21 @@ class NaiveConvolution
               const size_t dW = 1,
               const size_t dH = 1,
               const size_t dilationW = 1,
-              const size_t dilationH = 1)
+              const size_t dilationH = 1,
+              const bool appending = false)
   {
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
     // 3x3 means an effective kernel size of 5x5, *not* 6x6.
-    const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
-    const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
-    const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
-    const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
-    output.zeros(outputRows, outputCols);
+    if (!appending)
+    {
+      const size_t filterRows = filter.n_rows * dilationH - (dilationH - 1);
+      const size_t filterCols = filter.n_cols * dilationW - (dilationW - 1);
+      const size_t outputRows = (input.n_rows - filterRows + dH) / dH;
+      const size_t outputCols = (input.n_cols - filterCols + dW) / dW;
+      output.zeros(outputRows, outputCols);
+    }
 
     // It seems to be about 3.5 times faster to use pointers instead of
     // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
@@ -87,7 +91,7 @@ class NaiveConvolution
     }
   }
 
-  /*
+  /**
    * Perform a convolution (full mode).
    *
    * @param input Input used to perform the convolution.
@@ -107,7 +111,8 @@ class NaiveConvolution
               const size_t dW = 1,
               const size_t dH = 1,
               const size_t dilationW = 1,
-              const size_t dilationH = 1)
+              const size_t dilationH = 1,
+              const bool appending = false)
   {
     // First, compute the necessary padding for the full convolution.  It is
     // possible that this might be an overestimate.  Note that these variables
@@ -124,10 +129,10 @@ class NaiveConvolution
         paddingCols + input.n_cols - 1) = input;
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, dW, dH, dilationW, dilationH);
+        output, dW, dH, dilationW, dilationH, appending);
   }
 
-  /*
+  /**
    * Perform a convolution using 3rd order tensors.
    *
    * @param input Input used to perform the convolution.
@@ -145,24 +150,26 @@ class NaiveConvolution
                           const size_t dW = 1,
                           const size_t dH = 1,
                           const size_t dilationW = 1,
-                          const size_t dilationH = 1)
+                          const size_t dilationH = 1,
+                          const bool appending = false)
   {
     arma::Mat<eT> convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput, dW, dH, dilationW, dilationH);
+        convOutput, dW, dH, dilationW, dilationH, appending);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    if (!appending)
+      output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+          input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; ++i)
     {
       NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i), dW, dH, dilationW, dilationH);
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 
-  /*
+  /**
    * Perform a convolution using dense matrix as input and a 3rd order tensors
    * as filter and output.
    *
@@ -181,24 +188,26 @@ class NaiveConvolution
                           const size_t dW = 1,
                           const size_t dH = 1,
                           const size_t dilationW = 1,
-                          const size_t dilationH = 1)
+                          const size_t dilationH = 1,
+                          const bool appending = false)
   {
     arma::Mat<eT> convOutput;
     NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput, dW, dH, dilationW, dilationH);
+        convOutput, dW, dH, dilationW, dilationH, appending);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        filter.n_slices);
+    if (!appending)
+      output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+          filter.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < filter.n_slices; ++i)
     {
       NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          output.slice(i), dW, dH, dilationW, dilationH);
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 
-  /*
+  /**
    * Perform a convolution using a 3rd order tensors as input and output and a
    * dense matrix as filter.
    *
@@ -217,20 +226,22 @@ class NaiveConvolution
                           const size_t dW = 1,
                           const size_t dH = 1,
                           const size_t dilationW = 1,
-                          const size_t dilationH = 1)
+                          const size_t dilationH = 1,
+                          const bool appending = false)
   {
     arma::Mat<eT> convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput, dW, dH, dilationW, dilationH);
+        convOutput, dW, dH, dilationW, dilationH, appending);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    if (!appending)
+      output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+          input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; ++i)
     {
       NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i), dW, dH, dilationW, dilationH);
+          output.slice(i), dW, dH, dilationW, dilationH, appending);
     }
   }
 };  // class NaiveConvolution

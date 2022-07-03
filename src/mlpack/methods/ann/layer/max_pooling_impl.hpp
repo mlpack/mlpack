@@ -151,9 +151,15 @@ void MaxPoolingType<MatType>::Backward(
       this->inputDimensions[0], this->inputDimensions[1],
       channels * input.n_cols, false, true);
 
+  gTemp.zeros();
+
   // There's no version of UnpoolingOperation without pooling indices, because
   // if we call `Backward()`, we know for sure we are training.
-  UnpoolingOperation(mappedError, gTemp, poolingIndices);
+  #pragma omp parallel for
+  for (omp_size_t s = 0; s < (omp_size_t) mappedError.n_slices; s++)
+  {
+    UnpoolingOperation(mappedError.slice(s), gTemp.slice(s), poolingIndices.slice(s));
+  }
 }
 
 template<typename MatType>

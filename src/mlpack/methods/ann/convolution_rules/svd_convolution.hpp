@@ -38,7 +38,7 @@ template<typename BorderMode = FullConvolution>
 class SVDConvolution
 {
  public:
-  /*
+  /**
    * Perform a convolution (valid or full mode) using singular value
    * decomposition. By using singular value decomposition of the filter matrix
    * the convolution can be expressed as a sum of outer products. Each product
@@ -49,8 +49,6 @@ class SVDConvolution
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
@@ -109,14 +107,12 @@ class SVDConvolution
     }
   }
 
-  /*
+  /**
    * Perform a convolution using 3rd order tensors.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
@@ -138,15 +134,13 @@ class SVDConvolution
     }
   }
 
-  /*
+  /**
    * Perform a convolution using dense matrix as input and a 3rd order tensors
    * as filter and output.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
@@ -167,15 +161,13 @@ class SVDConvolution
     }
   }
 
-  /*
+  /**
    * Perform a convolution using a 3rd order tensors as input and output and a
    * dense matrix as filter.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
-   * @param dW Stride of filter application in the x direction.
-   * @param dH Stride of filter application in the y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
