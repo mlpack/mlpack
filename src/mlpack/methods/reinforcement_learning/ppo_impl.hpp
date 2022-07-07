@@ -129,17 +129,19 @@ void PPO<
   softmax.Forward(actionLogit, prob);
 
   // Calculating cumulative probablity.
-  for (size_t i = 1; i<prob.n_rows; i++)
+  for (size_t i = 1; i < prob.n_rows; i++)
       prob[i] += prob[i-1];
 
   // Sampling action from cumulative probablity.
   double randValue = arma::randu<double>();
   for (size_t i = 0; i<prob.n_rows; i++)
-      if (randValue <= prob[i])
+  {
+    if (randValue <= prob[i])
     {
       action.action = static_cast<decltype(action.action)>(i);
       return;
-    }  
+    }
+  }
 }
 
 template<
@@ -170,14 +172,14 @@ void PPO<
   double R = nextActionValue(0);
   for (size_t i = sampledRewards.n_cols; i > 0; --i)
   {
-    if (isTerminal[i-1])
+    if (isTerminal[i - 1])
       R = 0;
-    R = sampledRewards[i-1] + R * config.Discount();
+    R = sampledRewards[i - 1] + R * config.Discount();
     discountedRewards[sampledRewards.n_cols - i] = R;
   }
 
   advantages = arma::conv_to<arma::mat>::
-               from(discountedRewards) - actionValues;
+      from(discountedRewards) - actionValues;
 
   // since empty loss is used, we give the gradient as input to Backward(),
   // instead of target.
@@ -206,12 +208,12 @@ void PPO<
 
   arma::mat L1 = ratio % advantages;
   arma::mat L2 = arma::clamp(ratio, 1 - config.Epsilon(),
-                            1 + config.Epsilon()) % advantages;
+      1 + config.Epsilon()) % advantages;
 
   // Calculates the gradient for Surrogate Loss
   arma::mat dL1 = (L1 < L2) % (advantages / oldProb);
   arma::mat dL2 = (L1 >= L2) % (ratio >= (1 - config.Epsilon())) %
-                      (ratio <= (1 + config.Epsilon())) % (advantages/oldProb);
+      (ratio <= (1 + config.Epsilon())) % (advantages/oldProb);
   arma::mat dSurroLoss = -(dL1 + dL2);
 
   arma::mat dLoss(action.size, sampledActions.size(), arma::fill::zeros);
@@ -221,7 +223,7 @@ void PPO<
   arma::mat dGrad;
   softmax.Backward(actionProb, dLoss, dGrad);
 
-  // since empty loss is used, we give the gradient as input to Backward(),
+  // Since empty loss is used, we give the gradient as input to Backward(),
   // instead of target.
   actorNetwork.Backward(sampledStates, dGrad, actorGradients);
 
@@ -230,7 +232,7 @@ void PPO<
                       actorGradients);
   #else
   actorUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
-                              actorGradients);
+                            actorGradients);
   #endif
 
   // Update the oldActorNetwork, synchronize the parameter.
