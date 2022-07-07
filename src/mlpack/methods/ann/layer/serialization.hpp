@@ -16,6 +16,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::AdaptiveMeanPoolingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AdaptiveMaxPoolingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AddType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::AddMergeType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::AlphaDropoutType<__VA_ARGS__>); \
     /* Base layers from base_layer.hpp. */ \
     CEREAL_REGISTER_TYPE(mlpack::ann::SigmoidType<__VA_ARGS__>); \
@@ -31,6 +32,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::ElishType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::GaussianType<__VA_ARGS__>); \
     /* (end of base_layer.hpp) */ \
+    CEREAL_REGISTER_TYPE(mlpack::ann::ConcatType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatenateType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConvolutionType< \
         mlpack::ann::NaiveConvolution<mlpack::ann::ValidConvolution>, \

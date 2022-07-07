@@ -41,7 +41,7 @@ namespace rl {
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = ann::EmptyLoss<>,
+  typename OutputLayerType = ann::EmptyLoss,
   typename InitType = ann::GaussianInitialization,
   typename NetworkType = ann::FFN<OutputLayerType, InitType>
 >
@@ -58,7 +58,6 @@ class CategoricalDQN
   /**
    * Construct an instance of CategoricalDQN class.
    *
-   * @param inputDim Number of inputs.
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
@@ -67,8 +66,7 @@ class CategoricalDQN
    * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
    */
-  CategoricalDQN(const int inputDim,
-                 const int h1,
+  CategoricalDQN(const int h1,
                  const int h2,
                  const int outputDim,
                  TrainingConfig config,
@@ -81,21 +79,21 @@ class CategoricalDQN
       vMax(config.VMax()),
       isNoisy(isNoisy)
   {
-    network.Add(new ann::Linear<>(inputDim, h1));
-    network.Add(new ann::ReLULayer<>());
+    network.Add(new ann::Linear(h1));
+    network.Add(new ann::ReLU());
     if (isNoisy)
     {
-      noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new ann::NoisyLinear<>(h1, h2));
-      network.Add(new ann::ReLULayer<>());
-      noisyLayerIndex.push_back(network.Model().size());
-      network.Add(new ann::NoisyLinear<>(h2, outputDim * atomSize));
+      noisyLayerIndex.push_back(network.Network().size());
+      network.Add(new ann::NoisyLinear(h2));
+      network.Add(new ann::ReLU());
+      noisyLayerIndex.push_back(network.Network().size());
+      network.Add(new ann::NoisyLinear(outputDim * atomSize));
     }
     else
     {
-      network.Add(new ann::Linear<>(h1, h2));
-      network.Add(new ann::ReLULayer<>());
-      network.Add(new ann::Linear<>(h2, outputDim * atomSize));
+      network.Add(new ann::Linear(h2));
+      network.Add(new ann::ReLU());
+      network.Add(new ann::Linear(outputDim * atomSize));
     }
   }
 
@@ -169,9 +167,9 @@ class CategoricalDQN
   /**
    * Resets the parameters of the network.
    */
-  void ResetParameters()
+  void Reset(const size_t inputDimensionality = 0)
   {
-    network.ResetParameters();
+    network.Reset(inputDimensionality);
   }
 
   /**
@@ -181,7 +179,8 @@ class CategoricalDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); ++i)
     {
-      (network.Model()[noisyLayerIndex[i]])->ResetNoise();
+      dynamic_cast<ann::NoisyLinear*>(
+          (network.Network()[noisyLayerIndex[i]]))->ResetNoise();
     }
   }
 
@@ -233,7 +232,7 @@ class CategoricalDQN
   std::vector<size_t> noisyLayerIndex;
 
   //! Locally-stored softmax activation function.
-  ann::Softmax<> softMax;
+  ann::Softmax softMax;
 
   //! Locally-stored activations from softMax.
   arma::mat activations;

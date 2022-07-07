@@ -2299,25 +2299,34 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 /**
  * Simple concat module test.
- *
+ */
 TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, error;
 
-  Linear* moduleA = new Linear(10, 10);
+  Linear* moduleA = new Linear(10);
+  moduleA->InputDimensions() = std::vector<size_t>({ 10 });
+  moduleA->ComputeOutputDimensions();
+  arma::mat weightsA(moduleA->WeightSize(), 1);
+  moduleA->SetWeights((double*) weightsA.memptr());
   moduleA->Parameters().randu();
-  moduleA->Reset();
 
-  Linear* moduleB = new Linear(10, 10);
+  Linear* moduleB = new Linear(10);
+  moduleB->InputDimensions() = std::vector<size_t>({ 10 });
+  moduleB->ComputeOutputDimensions();
+  arma::mat weightsB(moduleB->WeightSize(), 1);
+  moduleB->SetWeights((double*) weightsB.memptr());
   moduleB->Parameters().randu();
-  moduleB->Reset();
 
   Concat module;
   module.Add(moduleA);
   module.Add(moduleB);
+  module.InputDimensions() = std::vector<size_t>({ 10 });
+  module.ComputeOutputDimensions();
 
   // Test the Forward function.
   input = arma::zeros(10, 1);
+  output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
   const double sumModuleA = arma::accu(
@@ -2331,14 +2340,14 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
+  delta.set_size(input.n_rows, input.n_cols);
   module.Backward(input, error, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
-*/
 
 /**
  * Test to check Concat layer along different axes.
- *
+ */
 TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
 {
   arma::mat output, input, error, outputA, outputB;
@@ -2354,17 +2363,24 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
 
   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-  Convolution* moduleA = new Convolution(inputChannel, outputChannel,
-      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
-  Convolution* moduleB = new Convolution(inputChannel, outputChannel,
-      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
+  Convolution* moduleA = new Convolution(outputChannel, kW, kH, 1, 1, 0, 0);
+  Convolution* moduleB = new Convolution(outputChannel, kW, kH, 1, 1, 0, 0);
 
-  moduleA->Reset();
+  moduleA->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
+  moduleA->ComputeOutputDimensions();
+  arma::mat weightsA(moduleA->WeightSize(), 1);
+  moduleA->SetWeights((double*) weightsA.memptr());
   moduleA->Parameters().randu();
-  moduleB->Reset();
+
+  moduleB->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
+  moduleB->ComputeOutputDimensions();
+  arma::mat weightsB(moduleB->WeightSize(), 1);
+  moduleB->SetWeights((double*) weightsB.memptr());
   moduleB->Parameters().randu();
 
   // Compute output of each layer.
+  outputA.set_size(moduleA->OutputSize(), 1);
+  outputB.set_size(moduleB->OutputSize(), 1);
   moduleA->Forward(input, outputA);
   moduleB->Forward(input, outputB);
 
@@ -2382,9 +2398,9 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
       calculatedOut.set_size(2 * outputWidth, outputHeight, outputChannel);
       for (size_t i = 0; i < A.n_slices; ++i)
       {
-          arma::mat aMat = A.slice(i);
-          arma::mat bMat = B.slice(i);
-          calculatedOut.slice(i) = arma::join_cols(aMat, bMat);
+        arma::mat aMat = A.slice(i);
+        arma::mat bMat = B.slice(i);
+        calculatedOut.slice(i) = arma::join_cols(aMat, bMat);
       }
       x = 2;
     }
@@ -2393,9 +2409,9 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
       calculatedOut.set_size(outputWidth, 2 * outputHeight, outputChannel);
       for (size_t i = 0; i < A.n_slices; ++i)
       {
-          arma::mat aMat = A.slice(i);
-          arma::mat bMat = B.slice(i);
-          calculatedOut.slice(i) = arma::join_rows(aMat, bMat);
+        arma::mat aMat = A.slice(i);
+        arma::mat bMat = B.slice(i);
+        calculatedOut.slice(i) = arma::join_rows(aMat, bMat);
       }
       y = 2;
     }
@@ -2406,85 +2422,90 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
     }
 
     // Compute output of Concat<> layer.
-    arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
-    Concat module(inputSize, axis, true);
+    Concat module(axis);
     module.Add(moduleA);
     module.Add(moduleB);
+    module.InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
+    module.ComputeOutputDimensions();
+    output.set_size(module.OutputSize(), 1);
     module.Forward(input, output);
     arma::cube concatOut(output.memptr(), x * outputWidth,
         y * outputHeight, z * outputChannel);
 
     // Verify if the output reshaped to cubes are similar.
     CheckMatrices(concatOut, calculatedOut, 1e-12);
+
+    // Ensure that the child layers don't get deleted when `module` is
+    // deallocated.
+    module.Network().clear();
   }
+
   delete moduleA;
   delete moduleB;
-}*/
+}
 
 /**
  * Test that the function that can access the axis parameter of the
  * Concat layer works.
- *
+ */
 TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
 {
-  // Parameter order : inputSize{width, height, channels}, axis, model, run.
-  arma::Row<size_t> inputSize{128, 128, 3};
-  Concat layer(inputSize, 2, false, true);
+  Concat layer(2);
 
   // Make sure we can get the parameters successfully.
-  REQUIRE(layer.ConcatAxis() == 2);
+  REQUIRE(layer.Axis() == 2);
 }
-*/
 
 /**
  * Concat layer numerical gradient test.
  */
-// TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
-// {
-//   // Concat function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 1)),
-//         target(arma::mat("0"))
-//     {
-//       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
-//       model->ResetData(input, target);
-//       model->Add<IdentityLayer>();
-//       model->Add<Linear>(10, 10);
+TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
+{
+  // Concat function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
+    {
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
+      model->ResetData(input, target);
+      model->Add<Linear>(10);
 
-//       concat = new Concat(true);
-//       concat->Add<Linear>(10, 2);
-//       model->Add(concat);
+      concat = new Concat();
+      concat->Add<Linear>(5);
+      concat->Add<Linear>(5);
+      model->Add(concat);
+      model->Add<Linear>(2);
 
-//       model->Add<LogSoftMax>();
-//     }
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-//     Concat* concat;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
+    Concat* concat;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
 /**
  * Simple concatenate module test.
- *
+ */
 TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(5, 1);
@@ -2492,21 +2513,24 @@ TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
 
   Concatenate module;
   module.Concat() = arma::ones(5, 1) * 0.5;
+  module.InputDimensions() = std::vector<size_t>({ 5 });
+  module.ComputeOutputDimensions();
 
   // Test the Forward function.
+  output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
   REQUIRE(arma::accu(output) == 7.5);
 
   // Test the Backward function.
+  delta.set_size(5, 1);
   module.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 5);
 }
-*/
 
 /**
  * Concatenate layer numerical gradient test.
- *
+ */
 TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
 {
   // Concatenate function gradient instantiation.
@@ -2518,8 +2542,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
     {
       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
-      model->Add<IdentityLayer>();
-      model->Add<Linear>(10, 5);
+      model->Add<Linear>(5);
 
       arma::mat concat = arma::ones(5, 1);
       // concatenate = new Concatenate();
@@ -2527,7 +2550,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
       // model->Add(concatenate);
       model->Add<Concatenate>(concat);
 
-      model->Add<Linear>(10, 5);
+      model->Add<Linear>(5);
       model->Add<LogSoftMax>();
     }
 
@@ -2552,7 +2575,6 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 1e-4);
 }
-*/
 
 /**
  * Simple lookup module test.
@@ -4854,6 +4876,127 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 // }
 
 /**
+ * Simple test for AddMerge layer.
+ */
+TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(28, 1);
+  input.zeros();
+  input(0) = input(16) = 1;
+  input(1) = input(17) = 2;
+  input(2) = input(18) = 3;
+  input(3) = input(19) = 4;
+  input(4) = input(20) = 5;
+  input(5) = input(23) = 6;
+  input(6) = input(24) = 7;
+  input(14) = input(25) = 8;
+  input(15) = input(26) = 9;
+
+  AddMerge module1;
+  module1.Add<MeanPooling>(2, 2, 2, 2, false);
+  module1.Add<MeanPooling>(2, 2, 2, 2, false);
+
+  AddMerge module2;
+  module2.Add<MeanPooling>(2, 2, 2, 2, true);
+  module2.Add<MeanPooling>(2, 2, 2, 2, true);
+
+  module1.InputDimensions() = std::vector<size_t>({ 7, 4 });
+  module1.ComputeOutputDimensions();
+  module2.InputDimensions() = std::vector<size_t>({ 7, 4 });
+  module2.ComputeOutputDimensions();
+
+  // Calculated using torch.nn.MeanPool2d().
+  arma::mat result1, result2;
+  result1  <<  1.5000  <<  8.5000  <<  arma::endr
+           <<  3.5000  <<  8.0000  <<  arma::endr
+           <<  5.5000  <<  12.0000 <<  arma::endr
+           <<  7.0000  <<  5.0000  <<  arma::endr;
+
+  result2  <<  1.5000  <<  8.5000  <<  arma::endr
+           <<  3.5000  <<  8.0000  <<  arma::endr
+           <<  5.5000  <<  12.0000 <<  arma::endr;
+
+  arma::mat output1, output2;
+  output1.set_size(8, 1);
+  output2.set_size(6, 1);
+  module1.Forward(input, output1);
+  REQUIRE(arma::accu(output1) == 51.0);
+  module2.Forward(input, output2);
+  REQUIRE(arma::accu(output2) == 39.0);
+  output1.reshape(4, 2);
+  output2.reshape(3, 2);
+  CheckMatrices(output1, result1, 1e-1);
+  CheckMatrices(output2, result2, 1e-1);
+
+  arma::mat prevDelta1, prevDelta2;
+  prevDelta1  << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr;
+
+  prevDelta2  << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat delta1, delta2;
+  delta1.set_size(28, 1);
+  delta2.set_size(28, 1);
+  prevDelta1.reshape(8, 1);
+  prevDelta2.reshape(6, 1);
+  module1.Backward(input, prevDelta1, delta1);
+  REQUIRE(arma::accu(delta1) == Approx(21.6).epsilon(1e-3));
+  module2.Backward(input, prevDelta2, delta2);
+  REQUIRE(arma::accu(delta2) == Approx(16.2).epsilon(1e-3));
+}
+
+/**
+ * Complex test for AddMerge layer.
+ * This test includes: 
+ * 1. AddMerge layer inside the AddMerge layer.
+ * 2. Batch Size > 1.
+ * 3. AddMerge layer with single child layer.
+ */
+TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
+{
+  AddMerge r;
+  AddMerge* r2 = new AddMerge();
+  r2->Add<Linear>(5);
+  r.Add<Linear>(5);
+  r.Add(r2);
+  r.InputDimensions() = std::vector<size_t>({ 5 });
+  r.ComputeOutputDimensions();
+  arma::mat rParams(r.WeightSize(), 1);
+  r.SetWeights((double*) rParams.memptr());
+  r.Network()[0]->Parameters().fill(2.0);
+  ((AddMerge*) r.Network()[1])->Network()[0]->Parameters().fill(-1.0);
+
+  Linear l(5);
+  l.InputDimensions() = std::vector<size_t>({ 5 });
+  l.ComputeOutputDimensions();
+  arma::mat lParams(l.WeightSize(), 1);
+  l.SetWeights((double*) lParams.memptr());
+  l.Parameters().fill(1.0);
+
+  arma::mat input(arma::randn(5, 10));
+  arma::mat output1, output2;
+  output1.set_size(5, 10);
+  output2.set_size(5, 10);
+
+  r.Forward(input, output1);
+  l.Forward(input, output2);
+
+  CheckMatrices(output1, output2, 1e-3);
+
+  arma::mat delta1, delta2;
+  delta1.set_size(5, 10);
+  delta2.set_size(5, 10);
+  r.Backward(input, output1, delta1);
+  l.Backward(input, output2, delta2);
+
+  CheckMatrices(output1, output2, 1e-3);
+}
+
+/**
  * Simple test for Mean Pooling layer.
  */
 TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
@@ -4879,15 +5022,14 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
 
   // Calculated using torch.nn.MeanPool2d().
-  arma::mat result1, result2;
-  result1  <<  0.7500  <<  4.2500  <<  arma::endr
-           <<  1.7500  <<  4.0000  <<  arma::endr
-           <<  2.7500  <<  6.0000  <<  arma::endr
-           <<  3.5000  <<  2.5000  <<  arma::endr;
-
-  result2  <<  0.7500  <<  4.2500  <<  arma::endr
-           <<  1.7500  <<  4.0000  <<  arma::endr
-           <<  2.7500  <<  6.0000  <<  arma::endr;
+  arma::mat result1 = { { 0.7500, 4.2500 },
+                        { 1.7500, 4.0000 },
+                        { 2.7500, 6.0000 },
+                        { 3.5000, 2.5000 } };
+  
+  arma::mat result2 = { { 0.7500, 4.2500 },
+                        { 1.7500, 4.0000 },
+                        { 2.7500, 6.0000 } };
 
   arma::mat output1, output2;
   output1.set_size(8, 1);
@@ -4901,15 +5043,15 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat prevDelta1, prevDelta2;
-  prevDelta1  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat prevDelta1 = { { 3.6000, -0.9000 },
+                           { 3.6000, -0.9000 },
+                           { 3.6000, -0.9000 },
+                           { 3.6000, -0.9000 } };
 
-  prevDelta2  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat prevDelta2 = { { 3.6000, -0.9000 }, 
+                           { 3.6000, -0.9000 }, 
+                           { 3.6000, -0.9000 } };
+
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);

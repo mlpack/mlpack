@@ -36,8 +36,6 @@ class PaddingType : public Layer<MatType>
    * @param padWRight Right padding width of the input.
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
-   * @param inputWidth Width of the input.
-   * @param inputHeight Height of the input.
    */
   PaddingType(const size_t padWLeft = 0,
               const size_t padWRight = 0,
@@ -46,6 +44,18 @@ class PaddingType : public Layer<MatType>
 
   //! Clone the PaddingType object. This handles polymorphism correctly.
   PaddingType* Clone() const { return new PaddingType(*this); }
+
+  //! Virtual destructor.
+  virtual ~PaddingType() { }
+
+  //! Copy the given PaddingType.
+  PaddingType(const PaddingType& other);
+  //! Take ownership of the given PaddingType.
+  PaddingType(PaddingType&& other);
+  //! Copy the given PaddingType.
+  PaddingType& operator=(const PaddingType& other);
+  //! Take ownership of the given PaddingType.
+  PaddingType& operator=(PaddingType&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

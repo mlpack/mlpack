@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType()
+LogSoftMaxType<MatType>::LogSoftMaxType() :
+    Layer<MatType>()
 {
   // Nothing to do here.
 }

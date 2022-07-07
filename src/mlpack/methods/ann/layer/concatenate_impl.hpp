@@ -22,6 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename MatType>
 ConcatenateType<MatType>::
 ConcatenateType(const MatType& concat) :
+    Layer<MatType>(),
     concat(concat)
 {
   // Nothing to do here.

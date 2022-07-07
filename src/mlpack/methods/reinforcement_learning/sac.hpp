@@ -189,7 +189,7 @@ class SAC
   bool deterministic;
 
   //! Locally-stored loss function.
-  mlpack::ann::MeanSquaredError<> lossFunction;
+  mlpack::ann::MeanSquaredError lossFunction;
 };
 
 } // namespace rl

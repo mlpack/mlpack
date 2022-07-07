@@ -29,7 +29,7 @@ ConvolutionType<
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType()
+>::ConvolutionType() : Layer<MatType>()
 {
   // Nothing to do here.
 }
@@ -87,6 +87,7 @@ ConvolutionType<
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
     const std::string& paddingTypeIn) :
+    Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
@@ -315,7 +316,7 @@ void ConvolutionType<
 
         ForwardConvolutionRule::Convolution(
             inputTemp.slice(inMap + fullInputOffset),
-            weight.slice(outMap),
+            weight.slice((outMap * inMaps) + inMap),
             convOutput,
             strideWidth,
             strideHeight);
@@ -357,7 +358,7 @@ void ConvolutionType<
   // To perform the backward pass, we need to rotate all the filters.
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
-  for (size_t map = 0; map < maps; ++map)
+  for (size_t map = 0; map < (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
@@ -378,7 +379,7 @@ void ConvolutionType<
 
         BackwardConvolutionRule::Convolution(
             mappedError.slice(outMap + fullOutputOffset),
-            rotatedFilters.slice(outMap),
+            rotatedFilters.slice((outMap * inMaps) + inMap),
             output,
             strideHeight,
             strideWidth);
@@ -482,18 +483,18 @@ void ConvolutionType<
         if (gradientTemp.n_rows < output.n_rows ||
             gradientTemp.n_cols < output.n_cols)
         {
-          gradientTemp.slice(outMap) += output.submat(0, 0,
+          gradientTemp.slice((outMap * inMaps) + inMap) += output.submat(0, 0,
               gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
         }
         else if (gradientTemp.n_rows > output.n_rows ||
                  gradientTemp.n_cols > output.n_cols)
         {
-          gradientTemp.slice(outMap).submat(0, 0, output.n_rows - 1,
+          gradientTemp.slice((outMap * inMaps) + inMap).submat(0, 0, output.n_rows - 1,
               output.n_cols - 1) += output;
         }
         else
         {
-          gradientTemp.slice(outMap) += output;
+          gradientTemp.slice((outMap * inMaps) + inMap) += output;
         }
       }
 
