@@ -98,7 +98,7 @@
 // defines.
 #include <mlpack/core/util/arma_config_check.hpp>
 
-// This can be removed with Visual Studio supports an OpenMP version with
+// This can be removed when Visual Studio supports an OpenMP version with
 // unsigned loop variables.
 #if (defined(_OPENMP) && (_OPENMP >= 201107))
   #undef  MLPACK_USE_OPENMP
