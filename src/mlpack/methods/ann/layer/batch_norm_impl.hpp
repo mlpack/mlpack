@@ -25,14 +25,14 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType() : 
     Layer<MatType>(),
-    size(0),
+    maxAxis(2),
     eps(1e-8),
     average(true),
     momentum(0.0),
     count(0),
     averageFactor(0.0),
-    inputDimension1(1),
-    inputDimension2(1),
+    inputDimensions(1),
+    size(0),
     higherDimension(1)
 {
   // Nothing to do here.
@@ -40,37 +40,36 @@ BatchNormType<MatType>::BatchNormType() :
 
 template <typename MatType>
 BatchNormType<MatType>::BatchNormType(
-    const size_t size,
+    const size_t maxAxis,
     const double eps,
     const bool average,
     const double momentum) : 
     Layer<MatType>(),
-    size(size),
+    maxAxis(maxAxis),
     eps(eps),
     average(average),
     momentum(momentum),
     count(0),
     averageFactor(0.0),
-    inputDimension1(1),
-    inputDimension2(1),
+    inputDimensions(1),
+    size(0),
     higherDimension(1)
 {
-  runningMean.zeros(size, 1);
-  runningVariance.ones(size, 1);
+  // Nothing to do here.
 }
 
 // Copy constructor.
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
     Layer<MatType>(layer),
-    size(layer.size),
+    maxAxis(layer.maxAxis),
     eps(layer.eps),
     average(layer.average),
     momentum(layer.momentum),
     count(layer.count),
     averageFactor(layer.averageFactor),
-    inputDimension1(layer.inputDimension1),
-    inputDimension2(layer.inputDimension2),
+    inputDimensions(layer.inputDimensions),
+    size(layer.size),
     higherDimension(layer.higherDimension),
     runningMean(layer.runningMean),
     runningVariance(layer.runningVariance)
@@ -82,14 +81,14 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     Layer<MatType>(std::move(layer)),
-    size(std::move(layer.size)),
+    maxAxis(std::move(layer.maxAxis)),
     eps(std::move(layer.eps)),
     average(std::move(layer.average)),
     momentum(std::move(layer.momentum)),
     count(std::move(layer.count)),
     averageFactor(std::move(layer.averageFactor)),
-    inputDimension1(std::move(layer.inputDimension1)),
-    inputDimension2(std::move(layer.inputDimension2)),
+    inputDimensions(std::move(layer.inputDimensions)),
+    size(std::move(layer.size)),
     higherDimension(std::move(layer.higherDimension)),
     runningMean(std::move(layer.runningMean)),
     runningVariance(std::move(layer.runningVariance))
@@ -104,14 +103,14 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
   if (&layer != this)
   {
     Layer<MatType>::operator=(layer);
-    size = layer.size;
+    maxAxis = layer.maxAxis;
     eps = layer.eps;
     average = layer.average;
     momentum = layer.momentum;
     count = layer.count;
     averageFactor = layer.averageFactor;
-    inputDimension1 = layer.inputDimension1;
-    inputDimension2 = layer.inputDimension2;
+    inputDimensions = layer.inputDimensions;
+    size = layer.size;
     higherDimension = layer.higherDimension;
     runningMean = layer.runningMean;
     runningVariance = layer.runningVariance;
@@ -128,14 +127,14 @@ BatchNormType<MatType>::operator=(
   if (&layer != this)
   {
     Layer<MatType>::operator=(std::move(layer));
-    size = std::move(layer.size);
+    maxAxis = std::move(layer.maxAxis);
     eps = std::move(layer.eps);
     average = std::move(layer.average);
     momentum = std::move(layer.momentum);
     count = std::move(layer.count);
     averageFactor = std::move(layer.averageFactor);
-    inputDimension1 = std::move(layer.inputDimension1);
-    inputDimension2 = std::move(layer.inputDimension2);
+    inputDimensions = std::move(layer.inputDimensions);
+    size = std::move(layer.size);
     higherDimension = std::move(layer.higherDimension);
     runningMean = std::move(layer.runningMean);
     runningVariance = std::move(layer.runningVariance);
@@ -174,6 +173,9 @@ void BatchNormType<MatType>::CustomInitialize(
 
   gammaTemp.fill(1.0);
   betaTemp.fill(0.0);
+
+  runningMean.zeros(size, 1);
+  runningVariance.ones(size, 1);
 }
 
 template<typename MatType>
@@ -182,7 +184,7 @@ void BatchNormType<MatType>::Forward(
     MatType& output)
 {
   const size_t batchSize = input.n_cols;
-  const size_t inputSize = inputDimension1 * inputDimension2;
+  const size_t inputSize = inputDimensions;
 
   // Set size of output equal to the size of input.
   // output.set_size(arma::size(input));
@@ -277,7 +279,7 @@ void BatchNormType<MatType>::Backward(
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
   const size_t batchSize = input.n_cols;
-  const size_t inputSize = inputDimension1 * inputDimension2;
+  const size_t inputSize = inputDimensions;
 
   arma::Cube<typename MatType::elem_type> gyTemp(
       const_cast<MatType&>(gy).memptr(), inputSize, size,
@@ -315,7 +317,7 @@ void BatchNormType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  const size_t inputSize = inputDimension1 * inputDimension2;
+  const size_t inputSize = inputDimensions;
 
   gradient.set_size(size + size, 1);
   arma::Cube<typename MatType::elem_type> errorTemp(
@@ -335,55 +337,14 @@ template<typename MatType>
 void BatchNormType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
-  if (this->inputDimensions.size() == 1) 
-  {
-    if (size != this->inputDimensions[0]) 
-    {
-      Log::Fatal << "BatchNorm: input size (" << this->inputDimensions[0]
-          << ") must be equal to the size (" << size << ") of the batch "
-          << "normalization layer." << std::endl;
-    }
-    inputDimension1 = 1;
-    inputDimension2 = 1;
-    higherDimension = 1;
-  } 
-  else if (this->inputDimensions.size() == 2) 
-  {
-    if (size == 1) 
-    {
-      inputDimension1 = this->inputDimensions[0];
-      inputDimension2 = this->inputDimensions[1];
-      higherDimension = 1;
-    } 
-    else 
-    {
-      if (size != this->inputDimensions[1]) 
-      {
-        Log::Fatal << "BatchNorm: input size (" << this->inputDimensions[1]
-            << ") must be equal to the size (" << size << ") of the batch "
-            << "normalization layer." << std::endl;
-      }
-      inputDimension1 = this->inputDimensions[0];
-      inputDimension2 = 1;
-      higherDimension = 1;
-    }
-  } 
-  else 
-  {
-    if (size != this->inputDimensions[2]) 
-    {
-      Log::Fatal << "BatchNorm: input size (" << this->inputDimensions[2]
-          << ") must be equal to the size (" << size << ") of the batch "
-          << "normalization layer." << std::endl;
-    }
-    inputDimension1 = this->inputDimensions[0];
-    inputDimension2 = this->inputDimensions[1];
-    higherDimension = 1;
-    for (size_t i = 3; i < this->inputDimensions.size(); ++i)
-    {
-      higherDimension *= this->inputDimensions[i];
-    }
-  }
+  size_t mainAxis = std::min(this->inputDimensions.size(), maxAxis);
+  inputDimensions = 1;
+  for (size_t i = 0; i < mainAxis; i++)
+    inputDimensions *= this->inputDimensions[i];
+  size = this->inputDimensions[mainAxis];
+  higherDimension = 1;
+  for (size_t i = mainAxis + 1; i < this->inputDimensions.size(); i++)
+    higherDimension *= this->inputDimensions[i];
 }
 
 template<typename MatType>
@@ -393,7 +354,7 @@ void BatchNormType<MatType>::serialize(
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
-  ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(maxAxis));
   ar(CEREAL_NVP(eps));
   ar(CEREAL_NVP(count));
   ar(CEREAL_NVP(momentum));
@@ -401,8 +362,8 @@ void BatchNormType<MatType>::serialize(
   ar(CEREAL_NVP(runningMean));
   ar(CEREAL_NVP(runningVariance));
   ar(CEREAL_NVP(inputMean));
-  ar(CEREAL_NVP(inputDimension1));
-  ar(CEREAL_NVP(inputDimension2));
+  ar(CEREAL_NVP(inputDimensions));
+  ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(higherDimension));
 }
 

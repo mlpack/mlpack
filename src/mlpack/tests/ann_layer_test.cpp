@@ -3020,7 +3020,7 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   input = input.t();
 
   // BatchNorm layer with average parameter set to true.
-  BatchNorm module1(input.n_rows);
+  BatchNorm module1;
   module1.Training() = true;
   module1.InputDimensions() = std::vector<size_t>({ 3, 3 });
   module1.ComputeOutputDimensions();
@@ -3029,7 +3029,7 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   module1.SetWeights((double*) moduleParams.memptr());
 
   // BatchNorm layer with average parameter set to false (using momentum).
-  BatchNorm module2(input.n_rows, 1e-5, false);
+  BatchNorm module2(2, 1e-5, false);
   module2.Training() = true;
   module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
   module2.ComputeOutputDimensions();
@@ -3126,7 +3126,7 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
       model->Add<Linear>(4);
-      model->Add<BatchNorm>(4);
+      model->Add<BatchNorm>();
       model->Add<Linear>(2);
       model->Add<LogSoftMax>();
     }
@@ -4586,7 +4586,7 @@ void ANNLayerSerializationTest(LayerType& layer)
  */
 TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
 {
-  BatchNorm layer(10);
+  BatchNorm layer;
   ANNLayerSerializationTest(layer);
 }
 
@@ -5381,7 +5381,7 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
 
   // Check correctness of layer when running mean and variance
   // are updated using cumulative average.
-  BatchNorm module2(2);
+  BatchNorm module2;
   module2.Training() = true;
   module2.InputDimensions() = std::vector<size_t>({ 1, 4, 2 });
   module2.ComputeOutputDimensions();

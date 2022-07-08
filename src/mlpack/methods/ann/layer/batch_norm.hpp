@@ -60,13 +60,14 @@ class BatchNormType : public Layer<MatType>
   /**
    * Create the BatchNorm layer object for a specified number of input units.
    *
-   * @param size The number of input units / channels.
+   * @param maxAxis The max axis along which BatchNorm is applied. After that,
+   *                it will be treated as another higher dimension point.
    * @param eps The epsilon added to variance to ensure numerical stability.
    * @param average Boolean to determine whether cumulative average is used for
    *                updating the parameters or momentum is used.
    * @param momentum Parameter used to to update the running mean and variance.
    */
-  BatchNormType(const size_t size,
+  BatchNormType(const size_t maxAxis,
                 const double eps = 1e-8,
                 const bool average = true,
                 const double momentum = 0.1);
@@ -177,8 +178,8 @@ class BatchNormType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t size;
+  //! Locally-stored maxAxis along which BatchNorm will apply.
+  size_t maxAxis;
 
   //! Locally-stored epsilon value.
   double eps;
@@ -212,11 +213,11 @@ class BatchNormType : public Layer<MatType>
   //! mean and variance.
   double averageFactor;
 
-  //! Locally-stored input dimension1.
-  size_t inputDimension1;
+  //! Locally-stored input dimensions.
+  size_t inputDimensions;
 
-  //! Locally-stored input dimension2.
-  size_t inputDimension2;
+  //! Locally-stored number of input units.
+  size_t size;
 
   //! Locally-stored higher dimension.
   size_t higherDimension;
