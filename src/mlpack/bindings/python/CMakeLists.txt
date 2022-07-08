@@ -22,8 +22,6 @@ macro (post_python_bindings)
             -D GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
             -D PACKAGE_VERSION="${PACKAGE_VERSION}"
             -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
-            -D MLPACK_LIBRARY=$<TARGET_LINKER_FILE:mlpack>
-            -D MLPACK_LIBDIR=$<TARGET_LINKER_FILE_DIR:mlpack>
             -D MLPACK_PYXS="${MLPACK_PYXS}"
             -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
             -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
@@ -281,7 +279,7 @@ macro (add_python_binding name)
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
         ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.hpp
         ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.cpp)
-    target_link_libraries(generate_pyx_${name} mlpack ${MLPACK_LIBRARIES})
+    target_link_libraries(generate_pyx_${name} ${MLPACK_LIBRARIES})
     set_target_properties(generate_pyx_${name} PROPERTIES COMPILE_FLAGS
         -DBINDING_TYPE=BINDING_TYPE_PYX)
     add_custom_command(TARGET generate_pyx_${name} POST_BUILD
@@ -348,7 +346,7 @@ macro (add_python_wrapper group_name)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_wrapper_py.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_wrapper_py.cpp)
 
-  target_link_libraries(generate_py_wrapper_${group_name} mlpack ${MLPACK_LIBRARIES})
+  target_link_libraries(generate_py_wrapper_${group_name} ${MLPACK_LIBRARIES})
 
   add_custom_command(TARGET generate_py_wrapper_${group_name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}

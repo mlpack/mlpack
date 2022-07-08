@@ -171,7 +171,7 @@ if (BUILD_GO_SHLIB)
   add_library(mlpack_go_util SHARED
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/arma_util.cpp
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/io_util.cpp)
-  target_link_libraries(mlpack_go_util mlpack ${MLPACK_LIBRARIES})
+  target_link_libraries(mlpack_go_util ${MLPACK_LIBRARIES})
   target_compile_definitions(mlpack_go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
   set_target_properties(mlpack_go_util PROPERTIES
      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/)
@@ -240,7 +240,7 @@ if (BUILD_GO_BINDINGS)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_go.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_go.cpp)
-  target_link_libraries(generate_go_${name} mlpack ${MLPACK_LIBRARIES})
+  target_link_libraries(generate_go_${name} ${MLPACK_LIBRARIES})
   set_target_properties(generate_go_${name} PROPERTIES COMPILE_FLAGS
       -DBINDING_TYPE=BINDING_TYPE_GO)
   add_custom_command(TARGET generate_go_${name} POST_BUILD
@@ -269,7 +269,7 @@ if(BUILD_GO_SHLIB)
   # Build libmlpack_go_${name}.so.
   add_library(mlpack_go_${name} SHARED
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp)
-  target_link_libraries(mlpack_go_${name} mlpack mlpack_go_util)
+  target_link_libraries(mlpack_go_${name} mlpack_go_util)
   set_target_properties(mlpack_go_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/")
 

@@ -373,7 +373,7 @@ if (BUILD_R_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_input_processing.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_serialize_util.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_output_processing.hpp)
-   target_link_libraries(generate_r_${name} mlpack ${MLPACK_LIBRARIES})
+   target_link_libraries(generate_r_${name} ${MLPACK_LIBRARIES})
    set_target_properties(generate_r_${name} PROPERTIES
       COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_R"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/bin/")

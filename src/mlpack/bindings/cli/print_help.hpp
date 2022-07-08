@@ -30,4 +30,7 @@ void PrintHelp(util::Params& params, const std::string& param = "");
 } // namespace bindings
 } // namespace mlpack
 
+// Include implementation.
+#include "print_help_impl.hpp"
+
 #endif

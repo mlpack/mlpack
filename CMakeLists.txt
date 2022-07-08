@@ -155,10 +155,6 @@ if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 endif()
 
-# These support libraries are used if we need to link against something
-# specific.  This list is a subset of MLPACK_LIBRARIES.
-set(COMPILER_SUPPORT_LIBRARIES "")
-
 # Check if atomics need -latomic linking.
 #include(CheckAtomic)
 if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB AND
@@ -214,7 +210,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif()
 
   # Link everything with -lm.
-  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
   # Use -pthread, but not on OS X.
   if (NOT APPLE)
@@ -226,8 +221,7 @@ endif()
 # which we do in the tests.
 if (CMAKE_COMPILER_IS_GNUCC)
   find_package(Threads)
-  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
-      ${CMAKE_THREAD_LIBS_INIT})
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
@@ -241,8 +235,8 @@ if (DEBUG)
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
   if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    find_package(Bfd)
-    find_package(LibDL)
+#    find_package(Bfd)
+#    find_package(LibDL)
     if (LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}

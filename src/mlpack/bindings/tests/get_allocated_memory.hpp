@@ -30,10 +30,11 @@ void* GetAllocatedMemory(
 
 template<typename T>
 void* GetAllocatedMemory(
-    util::ParamData& /* d */,
+    util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  return NULL;
+  std::cout << "size " << (*ANY_CAST<T>(&d.value)).n_rows << " x " << (*ANY_CAST<T>(&d.value)).n_cols << "\n";
+  return (*ANY_CAST<T>(&d.value)).memptr();
 }
 
 template<typename T>

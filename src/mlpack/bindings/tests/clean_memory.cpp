@@ -48,6 +48,7 @@ void CleanMemory(util::Params& params)
   {
     util::ParamData& data = *(it2->second);
 
+    std::cout << "delete memory " << data.name << "\n";
     params.functionMap[data.tname]["DeleteAllocatedMemory"](data, NULL, NULL);
 
     ++it2;

@@ -29,10 +29,11 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    util::ParamData& /* d */,
+    util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  // Do nothing.
+  std::cout << "clearing matrix!\n";
+  (*ANY_CAST<T>(&d.value)).clear();
 }
 
 template<typename T>
@@ -42,6 +43,7 @@ void DeleteAllocatedMemoryImpl(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
+  std::cout << "actually doing something!\n";
   delete *ANY_CAST<T*>(&d.value);
 }
 

@@ -224,7 +224,7 @@ function (post_markdown_setup)
       "${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp"
       "${BINDING_SOURCE_DIR}/replace_all_copy.hpp"
       "${BINDING_SOURCE_DIR}/generate_markdown.cpp")
-  target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
+  target_link_libraries(generate_markdown ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)
   set_target_properties(generate_markdown PROPERTIES
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_MARKDOWN
