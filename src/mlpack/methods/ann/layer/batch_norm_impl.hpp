@@ -31,7 +31,7 @@ BatchNormType<MatType>::BatchNormType() :
     momentum(0.0),
     count(0),
     averageFactor(0.0),
-    inputDimensions(1),
+    inputDimension(1),
     size(0),
     higherDimension(1)
 {
@@ -51,7 +51,7 @@ BatchNormType<MatType>::BatchNormType(
     momentum(momentum),
     count(0),
     averageFactor(0.0),
-    inputDimensions(1),
+    inputDimension(1),
     size(0),
     higherDimension(1)
 {
@@ -68,7 +68,7 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
     momentum(layer.momentum),
     count(layer.count),
     averageFactor(layer.averageFactor),
-    inputDimensions(layer.inputDimensions),
+    inputDimension(layer.inputDimension),
     size(layer.size),
     higherDimension(layer.higherDimension),
     runningMean(layer.runningMean),
@@ -87,7 +87,7 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     momentum(std::move(layer.momentum)),
     count(std::move(layer.count)),
     averageFactor(std::move(layer.averageFactor)),
-    inputDimensions(std::move(layer.inputDimensions)),
+    inputDimension(std::move(layer.inputDimension)),
     size(std::move(layer.size)),
     higherDimension(std::move(layer.higherDimension)),
     runningMean(std::move(layer.runningMean)),
@@ -109,7 +109,7 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
     momentum = layer.momentum;
     count = layer.count;
     averageFactor = layer.averageFactor;
-    inputDimensions = layer.inputDimensions;
+    inputDimension = layer.inputDimension;
     size = layer.size;
     higherDimension = layer.higherDimension;
     runningMean = layer.runningMean;
@@ -133,7 +133,7 @@ BatchNormType<MatType>::operator=(
     momentum = std::move(layer.momentum);
     count = std::move(layer.count);
     averageFactor = std::move(layer.averageFactor);
-    inputDimensions = std::move(layer.inputDimensions);
+    inputDimension = std::move(layer.inputDimension);
     size = std::move(layer.size);
     higherDimension = std::move(layer.higherDimension);
     runningMean = std::move(layer.runningMean);
@@ -184,7 +184,7 @@ void BatchNormType<MatType>::Forward(
     MatType& output)
 {
   const size_t batchSize = input.n_cols;
-  const size_t inputSize = inputDimensions;
+  const size_t inputSize = inputDimension;
 
   // Set size of output equal to the size of input.
   // output.set_size(arma::size(input));
@@ -279,7 +279,7 @@ void BatchNormType<MatType>::Backward(
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
   const size_t batchSize = input.n_cols;
-  const size_t inputSize = inputDimensions;
+  const size_t inputSize = inputDimension;
 
   arma::Cube<typename MatType::elem_type> gyTemp(
       const_cast<MatType&>(gy).memptr(), inputSize, size,
@@ -317,7 +317,7 @@ void BatchNormType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  const size_t inputSize = inputDimensions;
+  const size_t inputSize = inputDimension;
 
   gradient.set_size(size + size, 1);
   arma::Cube<typename MatType::elem_type> errorTemp(
@@ -338,9 +338,9 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
   size_t mainAxis = std::min(this->inputDimensions.size(), maxAxis);
-  inputDimensions = 1;
+  inputDimension = 1;
   for (size_t i = 0; i < mainAxis; i++)
-    inputDimensions *= this->inputDimensions[i];
+    inputDimension *= this->inputDimensions[i];
   size = this->inputDimensions[mainAxis];
   higherDimension = 1;
   for (size_t i = mainAxis + 1; i < this->inputDimensions.size(); i++)
@@ -362,7 +362,7 @@ void BatchNormType<MatType>::serialize(
   ar(CEREAL_NVP(runningMean));
   ar(CEREAL_NVP(runningVariance));
   ar(CEREAL_NVP(inputMean));
-  ar(CEREAL_NVP(inputDimensions));
+  ar(CEREAL_NVP(inputDimension));
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(higherDimension));
 }

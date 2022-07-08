@@ -213,8 +213,8 @@ class BatchNormType : public Layer<MatType>
   //! mean and variance.
   double averageFactor;
 
-  //! Locally-stored input dimensions.
-  size_t inputDimensions;
+  //! Locally-stored input dimension.
+  size_t inputDimension;
 
   //! Locally-stored number of input units.
   size_t size;
