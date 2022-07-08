@@ -83,7 +83,7 @@ class TestOption
     data.input = input;
     data.loaded = false;
     data.cppType = cppName;
-    data.value = MLPACK_ANY(defaultValue);
+    data.value = defaultValue;
 
     const std::string tname = data.tname;
 

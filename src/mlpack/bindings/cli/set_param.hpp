@@ -34,7 +34,7 @@ void SetParam(
     const typename std::enable_if<!std::is_same<T, bool>::value>::type* = 0)
 {
   // No mapping is needed.
-  d.value = value;
+  d.value = *MLPACK_ANY_CAST<T>(&value);
 }
 
 /**
