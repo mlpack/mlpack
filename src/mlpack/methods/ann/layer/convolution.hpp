@@ -249,7 +249,7 @@ class ConvolutionType : public Layer<MatType>
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    return (maps * inMaps * higherInDimensions * kernelWidth * kernelHeight) +
+    return (maps * inMaps * kernelWidth * kernelHeight) +
         maps;
   }
 

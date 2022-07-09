@@ -195,7 +195,7 @@ void MultiLayer<MatType>::Backward(
   else
   {
     // Empty network?
-    g = input;
+    g = gy;
   }
 }
 
