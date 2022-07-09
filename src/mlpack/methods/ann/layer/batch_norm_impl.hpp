@@ -337,7 +337,7 @@ template<typename MatType>
 void BatchNormType<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
-  size_t mainAxis = std::min(this->inputDimensions.size(), maxAxis);
+  size_t mainAxis = std::min(this->inputDimensions.size() - 1, maxAxis);
   inputDimension = 1;
   for (size_t i = 0; i < mainAxis; i++)
     inputDimension *= this->inputDimensions[i];
