@@ -91,6 +91,6 @@ typedef IdentityType<arma::mat> Identity;
 } // namespace mlpack
 
 // Include implementation.
-#include "adaptive_max_pooling_impl.hpp"
+#include "identity_impl.hpp"
 
 #endif
