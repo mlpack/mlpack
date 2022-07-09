@@ -255,7 +255,11 @@ class Layer
   }
 
   /**
-   * Initialize the weight matrix of the layer.
+   * Override the weight matrix of the layer. This method is used to set the
+   * weights of the layer, and is only used during layer weight initialization.
+   * This method should be used if you want initialize the weights of the layer
+   * with a custom matrix. We will provide the weight matrix on which you can
+   * override the weights of the layer.
    *
    * @param * (W) Weight matrix to initialize.
    * @param * (rows) Number of rows.
