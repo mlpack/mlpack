@@ -24,12 +24,12 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType() : Layer<MatType>()
+>::GroupedConvolutionType() : Layer<MatType>()
 {
   // Nothing to do here.
 }
@@ -40,12 +40,12 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(
+>::GroupedConvolutionType(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -53,8 +53,9 @@ ConvolutionType<
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
-    const std::string& paddingType) :
-    ConvolutionType(
+    const std::string& paddingType,
+    const size_t groups) :
+    GroupedConvolutionType(
       maps,
       kernelWidth,
       kernelHeight,
@@ -62,7 +63,8 @@ ConvolutionType<
       strideHeight,
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
-      paddingType)
+      paddingType,
+      groups)
 {
   // Nothing to do here.
 }
@@ -73,12 +75,12 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(
+>::GroupedConvolutionType(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -86,7 +88,8 @@ ConvolutionType<
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
-    const std::string& paddingTypeIn) :
+    const std::string& paddingTypeIn,
+    const size_t groups) :
     Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
@@ -96,7 +99,8 @@ ConvolutionType<
     padWLeft(std::get<0>(padW)),
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
-    padHTop(std::get<0>(padH))
+    padHTop(std::get<0>(padH)),
+    groups(groups)
 {
   // Transform paddingType to lowercase.
   this->paddingType = util::ToLower(paddingTypeIn);
@@ -108,12 +112,12 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(const ConvolutionType& other) :
+>::GroupedConvolutionType(const GroupedConvolutionType& other) :
     Layer<MatType>(other),
     maps(other.maps),
     kernelWidth(other.kernelWidth),
@@ -124,6 +128,7 @@ ConvolutionType<
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
+    groups(other.groups),
     padding(other.padding),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
@@ -138,12 +143,12 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(ConvolutionType&& other) :
+>::GroupedConvolutionType(GroupedConvolutionType&& other) :
     Layer<MatType>(std::move(other)),
     maps(std::move(other.maps)),
     kernelWidth(std::move(other.kernelWidth)),
@@ -154,6 +159,7 @@ ConvolutionType<
     padWRight(std::move(other.padWRight)),
     padHBottom(std::move(other.padHBottom)),
     padHTop(std::move(other.padHTop)),
+    groups(std::move(other.groups)),
     padding(std::move(other.padding)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
@@ -168,18 +174,18 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
 >&
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::operator=(const ConvolutionType& other)
+>::operator=(const GroupedConvolutionType& other)
 {
   if (&other != this)
   {
@@ -193,6 +199,7 @@ ConvolutionType<
     padWRight = other.padWRight;
     padHBottom = other.padHBottom;
     padHTop = other.padHTop;
+    groups = other.groups;
     padding = other.padding;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
@@ -208,18 +215,18 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
 >&
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::operator=(ConvolutionType&& other)
+>::operator=(GroupedConvolutionType&& other)
 {
   if (&other != this)
   {
@@ -233,6 +240,7 @@ ConvolutionType<
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
+    groups = std::move(other.groups);
     padding = std::move(other.padding);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
@@ -248,7 +256,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -266,7 +274,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -342,7 +350,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -440,7 +448,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -530,7 +538,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -590,7 +598,7 @@ template<
     typename MatType
 >
 template<typename Archive>
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -621,7 +629,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,

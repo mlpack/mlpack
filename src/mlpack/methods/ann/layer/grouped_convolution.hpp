@@ -2,7 +2,7 @@
  * @file methods/ann/layer/grouped_convolution.hpp
  * @author Marcus Edel
  *
- * Definition of the Convolution module class.
+ * Definition of the Grouped Convolution module class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,8 +27,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Convolution class. The Convolution class represents a
- * single layer of a neural network.
+ * Implementation of the Grouped Convolution class. The Grouped Convolution 
+ * class represents a single layer of a neural network.
  * Example usage:
  *
  * Suppose we want to pass a matrix M (2744x100) to a `Convolution` layer;
@@ -71,14 +71,14 @@ template <
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename MatType = arma::mat
 >
-class ConvolutionType : public Layer<MatType>
+class GroupedConvolutionType : public Layer<MatType>
 {
  public:
-  //! Create the ConvolutionType object.
-  ConvolutionType();
+  //! Create the GroupedConvolutionType object.
+  GroupedConvolutionType();
 
   /**
-   * Create the ConvolutionType object using the specified number of output
+   * Create the GroupedConvolutionType object using the specified number of output
    * maps, filter size, stride and padding parameter.
    *
    * @param maps The number of output maps.
@@ -92,14 +92,15 @@ class ConvolutionType : public Layer<MatType>
    *    "none".  If not specified or "none", the values for `padW` and `padH`
    *    will be used.
    */
-  ConvolutionType(const size_t maps,
+  GroupedConvolutionType(const size_t maps,
                   const size_t kernelWidth,
                   const size_t kernelHeight,
                   const size_t strideWidth = 1,
                   const size_t strideHeight = 1,
                   const size_t padW = 0,
                   const size_t padH = 0,
-                  const std::string& paddingType = "none");
+                  const std::string& paddingType = "none",
+                  const size_t groups = 1);
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -120,32 +121,33 @@ class ConvolutionType : public Layer<MatType>
    *      "none".  If not specified or "none", the values for `padW` and `padH`
    *      will be used.
    */
-  ConvolutionType(const size_t maps,
+  GroupedConvolutionType(const size_t maps,
                   const size_t kernelWidth,
                   const size_t kernelHeight,
                   const size_t strideWidth,
                   const size_t strideHeight,
                   const std::tuple<size_t, size_t>& padW,
                   const std::tuple<size_t, size_t>& padH,
-                  const std::string& paddingType = "none");
+                  const std::string& paddingType = "none",
+                  const size_t groups = 1);
 
-  //! Clone the ConvolutionType object. This handles polymorphism correctly.
-  ConvolutionType* Clone() const { return new ConvolutionType(*this); }
+  //! Clone the GroupedConvolutionType object. This handles polymorphism correctly.
+  GroupedConvolutionType* Clone() const { return new GroupedConvolutionType(*this); }
 
-  //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType(const ConvolutionType& layer);
+  //! Copy the given GroupedConvolutionType (but not weights).
+  GroupedConvolutionType(const GroupedConvolutionType& layer);
 
-  //! Take ownership of the given ConvolutionType (but not weights).
-  ConvolutionType(ConvolutionType&&);
+  //! Take ownership of the given GroupedConvolutionType (but not weights).
+  GroupedConvolutionType(GroupedConvolutionType&&);
 
-  //! Copy the given ConvolutionType (but not weights).
-  ConvolutionType& operator=(const ConvolutionType& layer);
+  //! Copy the given GroupedConvolutionType (but not weights).
+  GroupedConvolutionType& operator=(const GroupedConvolutionType& layer);
 
-  //! Take ownership of the given ConvolutionType (but not weights).
-  ConvolutionType& operator=(ConvolutionType&& layer);
+  //! Take ownership of the given GroupedConvolutionType (but not weights).
+  GroupedConvolutionType& operator=(GroupedConvolutionType&& layer);
 
   // Virtual destructor.
-  virtual ~ConvolutionType() { }
+  virtual ~GroupedConvolutionType() { }
 
   /*
    * Set the weight and bias term.
@@ -388,17 +390,17 @@ class ConvolutionType : public Layer<MatType>
 }; // class Convolution
 
 // Standard Convolution layer.
-typedef ConvolutionType<
+typedef GroupedConvolutionType<
     NaiveConvolution<ValidConvolution>,
     NaiveConvolution<FullConvolution>,
     NaiveConvolution<ValidConvolution>,
     arma::mat
-> Convolution;
+> GroupedConvolution;
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "convolution_impl.hpp"
+#include "grouped_convolution_impl.hpp"
 
 #endif
