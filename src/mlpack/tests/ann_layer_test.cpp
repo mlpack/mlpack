@@ -3151,7 +3151,7 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
 
   double gradient = CheckGradient(function);
 
-  REQUIRE(gradient < 2e-1);
+  REQUIRE(gradient < 3e-1);
 }
 
 // /**
