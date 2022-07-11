@@ -147,11 +147,11 @@ template<typename MatType>
 void BatchNormType<MatType>::SetWeights(
     typename MatType::elem_type* weightsPtr)
 {
-	MakeAlias(weights, weightsPtr, WeightSize(), 1);
+  MakeAlias(weights, weightsPtr, WeightSize(), 1);
   // Gamma acts as the scaling parameters for the normalized output.
-	MakeAlias(gamma, weightsPtr, size, 1);
+  MakeAlias(gamma, weightsPtr, size, 1);
   // Beta acts as the shifting parameters for the normalized output.
-	MakeAlias(beta, weightsPtr + gamma.n_elem, size, 1);
+  MakeAlias(beta, weightsPtr + gamma.n_elem, size, 1);
 }
 
 template<typename MatType>
@@ -160,7 +160,7 @@ void BatchNormType<MatType>::CustomInitialize(
     const size_t rows, 
     const size_t /* cols */)
 {
-  if (rows != 2*size) {
+  if (rows != 2 * size) {
     throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
         "rows size!"); 
   }
@@ -186,9 +186,6 @@ void BatchNormType<MatType>::Forward(
   const size_t batchSize = input.n_cols;
   const size_t inputSize = inputDimension;
 
-  // Set size of output equal to the size of input.
-  // output.set_size(arma::size(input));
-
   // We will calculate minibatch norm on each channel / feature map.
   if (this->training)
   {
@@ -196,12 +193,12 @@ void BatchNormType<MatType>::Forward(
     if ((batchSize * higherDimension) == 1 && inputSize == 1)
     {
       Log::Warn << "Variance for single element isn't defined and" <<
-          " will be set to  0.0 for training. Use a batch-size" <<
+          " will be set to 0.0 for training. Use a batch-size" <<
           " greater than 1 to fix the warning." << std::endl;
     }
 
-    // Input corresponds to output from convolution layer.
-    // Use a cube for simplicity.
+    // Input corresponds to output from previous layer.
+    // Used a cube for simplicity.
     arma::Cube<typename MatType::elem_type> inputTemp(
         const_cast<MatType&>(input).memptr(), inputSize, size,
         batchSize * higherDimension, false, false);
@@ -213,8 +210,8 @@ void BatchNormType<MatType>::Forward(
     outputTemp = inputTemp;
 
     // Calculate mean and variance over all channels.
-    mean = arma::mean(arma::mean(inputTemp, 2), 0);
-    variance = arma::mean(arma::mean(arma::pow(
+    MatType mean = arma::mean(arma::mean(inputTemp, 2), 0);
+    MatType variance = arma::mean(arma::mean(arma::pow(
         inputTemp.each_slice() - arma::repmat(mean,
         inputSize, 1), 2), 2), 0);
 

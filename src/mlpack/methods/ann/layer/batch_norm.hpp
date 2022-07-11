@@ -54,7 +54,8 @@ template <typename MatType = arma::mat>
 class BatchNormType : public Layer<MatType>
 {
  public:
-  //! Create the BatchNorm object.
+  //! Create the BatchNorm object. This will initialize maxAxis to 2.
+  //! (or effectively 1 or 0 if there are fewer input Dimensions than 3.)
   BatchNormType();
 
   /**
@@ -197,12 +198,6 @@ class BatchNormType : public Layer<MatType>
   //! Locally-stored shift parameter.
   MatType beta;
 
-  //! Locally-stored mean object.
-  MatType mean;
-
-  //! Locally-stored variance object.
-  MatType variance;
-
   //! Locally-stored parameters.
   MatType weights;
 
@@ -213,13 +208,17 @@ class BatchNormType : public Layer<MatType>
   //! mean and variance.
   double averageFactor;
 
-  //! Locally-stored input dimension.
+  //! Locally-stored number of input dimensions that we are applying 
+  //! batch normalization over.  (This is the product of this->inputDimensions 
+  //! from index 0 to (maxAxis - 1)).
   size_t inputDimension;
 
   //! Locally-stored number of input units.
   size_t size;
 
-  //! Locally-stored higher dimension.
+  //! Locally-stored number of higher dimension we are not applying 
+  //! batch normalization to.  This is the product of this->inputDimension 
+  //! for all dimensions greater than or equal to maxAxis.
   size_t higherDimension;
 
   //! Locally-stored mean object.
