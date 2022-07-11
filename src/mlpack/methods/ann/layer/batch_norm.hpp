@@ -198,15 +198,14 @@ class BatchNormType : public Layer<MatType>
   //! Locally-stored shift parameter.
   MatType beta;
 
+  //! Locally-stored variance object.
+  MatType variance;
+
   //! Locally-stored parameters.
   MatType weights;
 
   //! Locally-stored running mean/variance counter.
   size_t count;
-
-  //! Locally-stored value for average factor which used to update running
-  //! mean and variance.
-  double averageFactor;
 
   //! Locally-stored number of input dimensions that we are applying 
   //! batch normalization over.  (This is the product of this->inputDimensions 

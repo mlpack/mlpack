@@ -30,7 +30,6 @@ BatchNormType<MatType>::BatchNormType() :
     average(true),
     momentum(0.0),
     count(0),
-    averageFactor(0.0),
     inputDimension(1),
     size(0),
     higherDimension(1)
@@ -50,7 +49,6 @@ BatchNormType<MatType>::BatchNormType(
     average(average),
     momentum(momentum),
     count(0),
-    averageFactor(0.0),
     inputDimension(1),
     size(0),
     higherDimension(1)
@@ -66,8 +64,8 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
     eps(layer.eps),
     average(layer.average),
     momentum(layer.momentum),
+    variance(layer.variance),
     count(layer.count),
-    averageFactor(layer.averageFactor),
     inputDimension(layer.inputDimension),
     size(layer.size),
     higherDimension(layer.higherDimension),
@@ -85,8 +83,8 @@ BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     eps(std::move(layer.eps)),
     average(std::move(layer.average)),
     momentum(std::move(layer.momentum)),
+    variance(std::move(layer.variance)),
     count(std::move(layer.count)),
-    averageFactor(std::move(layer.averageFactor)),
     inputDimension(std::move(layer.inputDimension)),
     size(std::move(layer.size)),
     higherDimension(std::move(layer.higherDimension)),
@@ -107,8 +105,8 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
     eps = layer.eps;
     average = layer.average;
     momentum = layer.momentum;
+    variance = layer.variance;
     count = layer.count;
-    averageFactor = layer.averageFactor;
     inputDimension = layer.inputDimension;
     size = layer.size;
     higherDimension = layer.higherDimension;
@@ -131,8 +129,8 @@ BatchNormType<MatType>::operator=(
     eps = std::move(layer.eps);
     average = std::move(layer.average);
     momentum = std::move(layer.momentum);
+    variance = std::move(layer.variance);
     count = std::move(layer.count);
-    averageFactor = std::move(layer.averageFactor);
     inputDimension = std::move(layer.inputDimension);
     size = std::move(layer.size);
     higherDimension = std::move(layer.higherDimension);
@@ -211,7 +209,7 @@ void BatchNormType<MatType>::Forward(
 
     // Calculate mean and variance over all channels.
     MatType mean = arma::mean(arma::mean(inputTemp, 2), 0);
-    MatType variance = arma::mean(arma::mean(arma::pow(
+    variance = arma::mean(arma::mean(arma::pow(
         inputTemp.each_slice() - arma::repmat(mean,
         inputSize, 1), 2), 2), 0);
 
@@ -235,7 +233,8 @@ void BatchNormType<MatType>::Forward(
         inputSize, 1);
 
     count += 1;
-    averageFactor = average ? 1.0 / count : momentum;
+    // Value for average factor which used to update running parameters.
+    double averageFactor = average ? 1.0 / count : momentum;
 
     double nElements = 0.0;
     if (input.n_elem - size != 0)
