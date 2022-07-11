@@ -4997,6 +4997,34 @@ TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
 }
 
 /**
+ * Simple test for Identity layer.
+ */
+TEST_CASE("IdentityTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(12, 1, arma::fill::randn);
+  arma::mat output;
+  // Output-Size should be 4 x 3.
+  output.set_size(12, 1);
+
+  Identity module1;
+  module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
+  module1.ComputeOutputDimensions();
+  module1.Forward(input, output);
+  CheckMatrices(output, input, 1e-1);
+  REQUIRE(output.n_elem == 12);
+  REQUIRE(output.n_cols == 1);
+  REQUIRE(input.memptr() != output.memptr());
+
+  arma::mat prevDelta = arma::mat(12, 1, arma::fill::randn);
+  arma::mat delta;
+  delta.set_size(12, 1);
+  module1.Backward(input, prevDelta, delta);
+  CheckMatrices(delta, prevDelta, 1e-1);
+  REQUIRE(delta.memptr() != prevDelta.memptr());
+}
+
+/**
  * Simple test for Mean Pooling layer.
  */
 TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
