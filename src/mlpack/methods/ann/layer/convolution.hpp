@@ -347,11 +347,11 @@ class ConvolutionType : public Layer<MatType>
   //! Locally-stored bottom padding height.
   size_t padHBottom;
 
-  //! Locally-stored useBias.
-  bool useBias;
-
   //! Locally-stored top padding height.
   size_t padHTop;
+
+  //! Locally-stored useBias.
+  bool useBias;
 
   //! Locally-stored weight object.
   MatType weights;
