@@ -30,6 +30,7 @@ class TrainingConfig
       gradientLimit(40),
       doubleQLearning(false),
       noisyQLearning(false),
+      epsilon(0.2),
       isCategorical(false),
       atomSize(51),
       vMin(0),
@@ -63,6 +64,7 @@ class TrainingConfig
       gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning),
       noisyQLearning(noisyQLearning),
+      epsilon(0.2),
       isCategorical(isCategorical),
       atomSize(atomSize),
       vMin(vMin),
@@ -123,6 +125,11 @@ class TrainingConfig
   bool NoisyQLearning() const { return noisyQLearning; }
   //! Modify the indicator of double q-learning.
   bool& NoisyQLearning() { return noisyQLearning; }
+
+  //! Get the discount rate for future reward.
+  double Epsilon() const { return epsilon; }
+  //! Modify the discount rate for future reward.
+  double& Epsilon() { return epsilon; }
 
   //! Get the indicator of categorical q-learning.
   bool IsCategorical() const { return isCategorical; }
@@ -212,6 +219,11 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool noisyQLearning;
+
+  /**
+   * the discount rate for future reward.
+   */
+  double epsilon;
 
   /**
    * Locally-stored indicator for categorical q-learning.
