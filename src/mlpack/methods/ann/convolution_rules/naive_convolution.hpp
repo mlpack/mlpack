@@ -45,6 +45,8 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
@@ -101,6 +103,8 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
@@ -142,6 +146,8 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
@@ -180,6 +186,8 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
    * @param dilationH The dilation factor in y direction.
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
@@ -217,7 +225,9 @@ class NaiveConvolution
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
    * @param dilationW The dilation factor in x direction.
-   * @param dilationH The dilation factor in y direction.
+   * @param dilationH The dilation factor in y direction.x
+   * @param appending If true, it will not initialize the output. Instead,
+   *                  it will append the results to the output.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
