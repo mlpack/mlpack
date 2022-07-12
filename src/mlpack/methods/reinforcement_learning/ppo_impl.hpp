@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_RL_PPO_IMPL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/layer/softmax.hpp>
 
 #include "ppo.hpp"
 
@@ -59,10 +60,10 @@ PPO<
   // passed using this constructor.
   const size_t envSampleSize = environment.InitialSample().Encode().n_elem;
   if (actorNetwork.Parameters().n_elem != envSampleSize)
-    actorNetwork.ResetParameters();
+    actorNetwork.Reset(envSampleSize);
 
   if (criticNetwork.Parameters().n_elem != envSampleSize)
-    criticNetwork.ResetParameters();
+    criticNetwork.Reset(envSampleSize);
 
   #if ENS_VERSION_MAJOR == 1
   this->criticUpdater.Initialize(criticNetwork.Parameters().n_rows,
@@ -125,7 +126,7 @@ void PPO<
   actorNetwork.Predict(state.Encode(), actionLogit);
 
   arma::colvec prob;
-  ann::Softmax<> softmax;
+  ann::Softmax softmax;
   softmax.Forward(actionLogit, prob);
 
   // Calculating cumulative probablity.
@@ -193,7 +194,7 @@ void PPO<
                              criticGradients);
   #endif
 
-  ann::Softmax<> softmax;
+  ann::Softmax softmax;
   arma::mat actionLogit, actionProb;
 
   oldActorNetwork.Forward(sampledStates, actionLogit);
