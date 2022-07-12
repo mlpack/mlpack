@@ -41,6 +41,11 @@
         __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropConnectType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropoutType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::GroupedConvolutionType< \
+        mlpack::ann::NaiveConvolution<mlpack::ann::ValidConvolution>, \
+        mlpack::ann::NaiveConvolution<mlpack::ann::FullConvolution>, \
+        mlpack::ann::NaiveConvolution<mlpack::ann::ValidConvolution>, \
+        __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LeakyReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LinearType<__VA_ARGS__>); \
