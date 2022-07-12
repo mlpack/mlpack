@@ -1,8 +1,9 @@
 /**
  * @file methods/ann/layer/grouped_convolution_impl.hpp
  * @author Marcus Edel
+ * @author Shubham Agrawal
  *
- * Implementation of the Convolution module class.
+ * Implementation of the Grouped Convolution module class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -49,22 +50,24 @@ GroupedConvolutionType<
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
+    const size_t groups,
     const size_t strideWidth,
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
     const std::string& paddingType,
-    const size_t groups) :
+    const bool useBias) :
     GroupedConvolutionType(
       maps,
       kernelWidth,
       kernelHeight,
+      groups,
       strideWidth,
       strideHeight,
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
       paddingType,
-      groups)
+      useBias)
 {
   // Nothing to do here.
 }
@@ -84,23 +87,25 @@ GroupedConvolutionType<
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
+    const size_t groups,
     const size_t strideWidth,
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
     const std::string& paddingTypeIn,
-    const size_t groups) :
+    const bool useBias) :
     Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
+    groups(groups),
     strideWidth(strideWidth),
     strideHeight(strideHeight),
     padWLeft(std::get<0>(padW)),
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
     padHTop(std::get<0>(padH)),
-    groups(groups)
+    useBias(useBias)
 {
   // Transform paddingType to lowercase.
   this->paddingType = util::ToLower(paddingTypeIn);
@@ -122,13 +127,14 @@ GroupedConvolutionType<
     maps(other.maps),
     kernelWidth(other.kernelWidth),
     kernelHeight(other.kernelHeight),
+    groups(other.groups),
     strideWidth(other.strideWidth),
     strideHeight(other.strideHeight),
     padWLeft(other.padWLeft),
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
-    groups(other.groups),
+    useBias(other.useBias),
     padding(other.padding),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
@@ -153,13 +159,14 @@ GroupedConvolutionType<
     maps(std::move(other.maps)),
     kernelWidth(std::move(other.kernelWidth)),
     kernelHeight(std::move(other.kernelHeight)),
+    groups(std::move(other.groups)),
     strideWidth(std::move(other.strideWidth)),
     strideHeight(std::move(other.strideHeight)),
     padWLeft(std::move(other.padWLeft)),
     padWRight(std::move(other.padWRight)),
     padHBottom(std::move(other.padHBottom)),
     padHTop(std::move(other.padHTop)),
-    groups(std::move(other.groups)),
+    useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
@@ -193,13 +200,14 @@ GroupedConvolutionType<
     maps = other.maps;
     kernelWidth = other.kernelWidth;
     kernelHeight = other.kernelHeight;
+    groups = other.groups;
     strideWidth = other.strideWidth;
     strideHeight = other.strideHeight;
     padWLeft = other.padWLeft;
     padWRight = other.padWRight;
     padHBottom = other.padHBottom;
     padHTop = other.padHTop;
-    groups = other.groups;
+    useBias = other.useBias;
     padding = other.padding;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
@@ -234,13 +242,14 @@ GroupedConvolutionType<
     maps = std::move(other.maps);
     kernelWidth = std::move(other.kernelWidth);
     kernelHeight = std::move(other.kernelHeight);
+    groups = std::move(other.groups);
     strideWidth = std::move(other.strideWidth);
     strideHeight = std::move(other.strideHeight);
     padWLeft = std::move(other.padWLeft);
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
-    groups = std::move(other.groups);
+    useBias = std.move(other.useBias);
     padding = std::move(other.padding);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
@@ -264,8 +273,15 @@ void GroupedConvolutionType<
 >::SetWeights(typename MatType::elem_type* weightPtr)
 {
   MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, (maps * inMaps) / groups);
-  MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
-  MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
+    if (useBias)
+  {
+    MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
+    MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
+  }
+  else
+  {
+    MakeAlias(weights, weightPtr, weight.n_elem, 1);
+  }
 }
 
 template<
@@ -338,7 +354,8 @@ void GroupedConvolutionType<
         }
 
         // Make sure to add the bias.
-        outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
+        if (useBias)
+          outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
       }
     }
   }
@@ -525,8 +542,9 @@ void GroupedConvolutionType<
           }
         }
 
-        gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
-            fullOutputOffset));
+        if (useBias)
+          gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
+              fullOutputOffset));
       }
     }
   }
@@ -611,13 +629,14 @@ void GroupedConvolutionType<
   ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(groups));
   ar(CEREAL_NVP(strideWidth));
   ar(CEREAL_NVP(strideHeight));
   ar(CEREAL_NVP(padWLeft));
   ar(CEREAL_NVP(padWRight));
   ar(CEREAL_NVP(padHBottom));
   ar(CEREAL_NVP(padHTop));
-  ar(CEREAL_NVP(groups));
+  ar(CEREAL_NVP(useBias));
   ar(CEREAL_NVP(padding));
   ar(CEREAL_NVP(inMaps));
   ar(CEREAL_NVP(higherInDimensions));

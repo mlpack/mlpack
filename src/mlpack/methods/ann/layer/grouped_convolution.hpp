@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/grouped_convolution.hpp
  * @author Marcus Edel
+ * @author Shubham Agrawal
  *
  * Definition of the Grouped Convolution module class.
  *
@@ -43,21 +44,32 @@ namespace ann /** Artificial Neural Network. */ {
  * this:
  *
  * ```
- * Convolution<> c(1, // Number of input activation maps.
- *                 14, // Number of output activation maps.
- *                 3, // Filter width.
- *                 3, // Filter height.
- *                 1, // Stride along width.
- *                 1, // Stride along height.
- *                 0, // Padding width.
- *                 0, // Padding height.
- *                 196, // Input width.
- *                 14); // Input height.
+ * GroupedConvolution<> c(1, // Number of input activation maps.
+ *                        14, // Number of output activation maps.
+ *                        3, // Filter width.
+ *                        3, // Filter height.
+ *                        1, // Number of groups.
+ *                        1, // Stride along width.
+ *                        1, // Stride along height.
+ *                        0, // Padding width.
+ *                        0, // Padding height.
+ *                        196, // Input width.
+ *                        14); // Input height.
  * ```
  *
  * This `Convolution<>` layer will treat each column of the input matrix `M` as
  * a 2-D image (or object) of the original 196x14 size, using this as the input
  * for the 14 filters of this example.
+ * 
+ * Groups controls the connections between inputs and outputs. 
+ * inMaps and outMaps must both be divisible by groups. 
+ * For example,
+ *    At groups=1, all inputs are convolved to all outputs.
+ *    At groups=2, the operation becomes equivalent to having two conv layers 
+ *      side by side, each seeing half the input channels and producing half 
+ *      the output channels, and both subsequently concatenated.
+ *    At groups= inMaps, each input channel is convolved with its own set of 
+ *      filters (of size \frac{\text{out\_channels}}{\text{in\_channels}}).
  *
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
@@ -84,6 +96,7 @@ class GroupedConvolutionType : public Layer<MatType>
    * @param maps The number of output maps.
    * @param kernelWidth Width of the filter/kernel.
    * @param kernelHeight Height of the filter/kernel.
+   * @param groups Number of groups.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW Padding width of the input.
@@ -91,16 +104,18 @@ class GroupedConvolutionType : public Layer<MatType>
    * @param paddingType The type of padding ("valid" or "same"). Defaults to
    *    "none".  If not specified or "none", the values for `padW` and `padH`
    *    will be used.
+   * @param useBias Whether or not to use a bias with the convolution.
    */
   GroupedConvolutionType(const size_t maps,
                   const size_t kernelWidth,
                   const size_t kernelHeight,
+                  const size_t groups,
                   const size_t strideWidth = 1,
                   const size_t strideHeight = 1,
                   const size_t padW = 0,
                   const size_t padH = 0,
                   const std::string& paddingType = "none",
-                  const size_t groups = 1);
+                  const bool useBias = true);
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -109,6 +124,7 @@ class GroupedConvolutionType : public Layer<MatType>
    * @param maps The number of output maps.
    * @param kernelWidth Width of the filter/kernel.
    * @param kernelHeight Height of the filter/kernel.
+   * @param groups Number of groups.
    * @param strideWidth Stride of filter application in the x direction.
    * @param strideHeight Stride of filter application in the y direction.
    * @param padW A two-value tuple indicating padding widths of the input.  The
@@ -120,16 +136,18 @@ class GroupedConvolutionType : public Layer<MatType>
    * @param paddingType The type of padding ("valid" or "same"). Defaults to
    *      "none".  If not specified or "none", the values for `padW` and `padH`
    *      will be used.
+   * @param useBias Whether or not to use a bias with the convolution.
    */
   GroupedConvolutionType(const size_t maps,
                   const size_t kernelWidth,
                   const size_t kernelHeight,
+                  const size_t groups,
                   const size_t strideWidth,
                   const size_t strideHeight,
                   const std::tuple<size_t, size_t>& padW,
                   const std::tuple<size_t, size_t>& padH,
                   const std::string& paddingType = "none",
-                  const size_t groups = 1);
+                  const bool useBias = true);
 
   //! Clone the GroupedConvolutionType object. This handles polymorphism correctly.
   GroupedConvolutionType* Clone() const { return new GroupedConvolutionType(*this); }
@@ -218,6 +236,11 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Modify the kernel height.
   size_t& KernelHeight() { return kernelHeight; }
 
+  //! Get the groups.
+  size_t const& Groups() const { return groups; }
+  //! Modify the groups.
+  size_t& Groups() { return groups; }
+
   //! Get the stride width.
   size_t const& StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
@@ -248,16 +271,11 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
-  //! Get the groups.
-  size_t const& Groups() const { return groups; }
-  //! Modify the groups.
-  size_t& Groups() { return groups; }
-
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
     return ((maps * inMaps * kernelWidth * kernelHeight) / groups) +
-        maps;
+        (useBias ? maps : 0);
   }
 
   //! Compute the output dimensions of the layer based on `InputDimensions()`.
@@ -335,6 +353,9 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Locally-stored filter/kernel height.
   size_t kernelHeight;
 
+  //! Locally-stored groups.
+  size_t groups;
+
   //! Locally-stored stride of the filter in x-direction.
   size_t strideWidth;
 
@@ -353,8 +374,8 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Locally-stored top padding height.
   size_t padHTop;
 
-  //! Locally-stored groups.
-  size_t groups;
+  //! Locally-stored top padding height.
+  bool useBias;
 
   //! Locally-stored weight object.
   MatType weights;
