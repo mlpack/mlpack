@@ -3,6 +3,9 @@
  * @author Shubham Agrawal
  *
  * Definition of the Identity class.
+ * 
+ * This layer is used mainly in creating complex networks. This will be generally
+ * used with AddMerge or Concat layers.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
