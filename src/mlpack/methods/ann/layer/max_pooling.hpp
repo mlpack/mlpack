@@ -272,20 +272,13 @@ class MaxPoolingType : public Layer<MatType>
    * @param poolingIndices The pooled indices (from `PoolingOperation()`).
    */
   void UnpoolingOperation(
-      const arma::Cube<typename MatType::elem_type>& mappedError,
-      arma::Cube<typename MatType::elem_type>& gTemp,
-      const arma::Cube<size_t>& poolingIndicesCube)
+      const MatType& error,
+      MatType& output,
+      const arma::Mat<size_t>& poolingIndices)
   {
-    #pragma omp parallel for
-    for (omp_size_t s = 0; s < (omp_size_t) mappedError.n_slices; s++)
+    for (size_t i = 0; i < poolingIndices.n_elem; ++i)
     {
-      MatType error = mappedError.slice(s); 
-      MatType output = gTemp.slice(s); 
-      arma::Mat<size_t> poolingIndices = poolingIndicesCube.slice(s);
-      for (size_t i = 0; i < poolingIndices.n_elem; ++i)
-      {
-        output(poolingIndices(i)) += error(i);
-      }
+      output(poolingIndices(i)) += error(i);
     }
   }
 
