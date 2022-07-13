@@ -12,6 +12,8 @@ set(SOURCES
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   base_layer.hpp
+  celu.hpp
+  celu_impl.hpp
   concat.hpp
   concat_impl.hpp
   concatenate.hpp
@@ -22,6 +24,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  elu.hpp
+  elu_impl.hpp
   layer.hpp
   layer_types.hpp
   leaky_relu.hpp
