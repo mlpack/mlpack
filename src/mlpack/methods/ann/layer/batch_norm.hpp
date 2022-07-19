@@ -54,13 +54,28 @@ template <typename MatType = arma::mat>
 class BatchNormType : public Layer<MatType>
 {
  public:
-  //! Create the BatchNorm object. This will initialize maxAxis to 2.
-  //! (or effectively 1 or 0 if there are fewer input Dimensions than 3.)
+  /**
+   * Create the BatchNorm object. 
+   * 
+   * This sets the minimum and maximum axis for batch normalization to 2; so, 
+   * e.g., we apply batch normalization to the first 3 dimensions with number 
+   * of channels equal to 3rd dimension, and higher dimensions are left 
+   * untouched.  As an example, if we have a 3-dimensional input (call the 
+   * three dimensions rows, columns and slices), and `minAxis` & `maxAxis` is 
+   * 2, then we apply the same normalization across different slices.
+   */
   BatchNormType();
 
   /**
-   * Create the BatchNorm layer object for a specified number of input units.
+   * Create the BatchNorm layer object for a specified axis of input units as 
+   * channels.
+   * 
+   * As an example, if we have a 3-dimensional input (call the three dimensions
+   * rows, columns and slices), and `minAxis` is 1 & `maxAxis` is 2, then the 
+   * number of channels is equal to `columns * slices`.
    *
+   * @param minAxis The min axis along which BatchNorm is applied. Before that,
+   *                it will be treated as input point.
    * @param maxAxis The max axis along which BatchNorm is applied. After that,
    *                it will be treated as another higher dimension point.
    * @param eps The epsilon added to variance to ensure numerical stability.
@@ -68,7 +83,8 @@ class BatchNormType : public Layer<MatType>
    *                updating the parameters or momentum is used.
    * @param momentum Parameter used to to update the running mean and variance.
    */
-  BatchNormType(const size_t maxAxis,
+  BatchNormType(const size_t minAxis,
+                const size_t maxAxis,
                 const double eps = 1e-8,
                 const bool average = true,
                 const double momentum = 0.1);
@@ -179,6 +195,9 @@ class BatchNormType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally-stored minAxis along which BatchNorm will apply.
+  size_t minAxis;
+
   //! Locally-stored maxAxis along which BatchNorm will apply.
   size_t maxAxis;
 

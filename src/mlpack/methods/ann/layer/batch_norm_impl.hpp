@@ -25,6 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType() : 
     Layer<MatType>(),
+    minAxis(2),
     maxAxis(2),
     eps(1e-8),
     average(true),
@@ -39,11 +40,13 @@ BatchNormType<MatType>::BatchNormType() :
 
 template <typename MatType>
 BatchNormType<MatType>::BatchNormType(
+    const size_t minAxis,
     const size_t maxAxis,
     const double eps,
     const bool average,
     const double momentum) : 
     Layer<MatType>(),
+    minAxis(minAxis),
     maxAxis(maxAxis),
     eps(eps),
     average(average),
@@ -60,6 +63,7 @@ BatchNormType<MatType>::BatchNormType(
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
     Layer<MatType>(layer),
+    minAxis(layer.minAxis),
     maxAxis(layer.maxAxis),
     eps(layer.eps),
     average(layer.average),
@@ -79,6 +83,7 @@ BatchNormType<MatType>::BatchNormType(const BatchNormType& layer) :
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType(BatchNormType&& layer) :
     Layer<MatType>(std::move(layer)),
+    minAxis(std::move(layer.minAxis)),
     maxAxis(std::move(layer.maxAxis)),
     eps(std::move(layer.eps)),
     average(std::move(layer.average)),
@@ -101,6 +106,7 @@ BatchNormType<MatType>::operator=(const BatchNormType& layer)
   if (&layer != this)
   {
     Layer<MatType>::operator=(layer);
+    minAxis = layer.minAxis;
     maxAxis = layer.maxAxis;
     eps = layer.eps;
     average = layer.average;
@@ -125,6 +131,7 @@ BatchNormType<MatType>::operator=(
   if (&layer != this)
   {
     Layer<MatType>::operator=(std::move(layer));
+    minAxis = std::move(layer.minAxis);
     maxAxis = std::move(layer.maxAxis);
     eps = std::move(layer.eps);
     average = std::move(layer.average);
@@ -332,14 +339,22 @@ void BatchNormType<MatType>::Gradient(
 template<typename MatType>
 void BatchNormType<MatType>::ComputeOutputDimensions()
 {
+  if (minAxis > maxAxis)
+  {
+    Log::Fatal << "BatchNorm: minAxis must be less than or equal to maxAxis."
+        << std::endl;
+  }
   this->outputDimensions = this->inputDimensions;
-  size_t mainAxis = std::min(this->inputDimensions.size() - 1, maxAxis);
+  size_t mainMinAxis = std::min(this->inputDimensions.size() - 1, minAxis);
+  size_t mainMaxAxis = std::min(this->inputDimensions.size() - 1, maxAxis);
   inputDimension = 1;
-  for (size_t i = 0; i < mainAxis; i++)
+  for (size_t i = 0; i < mainMinAxis; i++)
     inputDimension *= this->inputDimensions[i];
-  size = this->inputDimensions[mainAxis];
+  size = this->inputDimensions[mainMinAxis];
+  for (size_t i = mainMinAxis + 1; i <= mainMaxAxis; i++)
+    size *= this->inputDimensions[i];
   higherDimension = 1;
-  for (size_t i = mainAxis + 1; i < this->inputDimensions.size(); i++)
+  for (size_t i = mainMaxAxis + 1; i < this->inputDimensions.size(); i++)
     higherDimension *= this->inputDimensions[i];
 }
 
@@ -350,6 +365,7 @@ void BatchNormType<MatType>::serialize(
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
+  ar(CEREAL_NVP(minAxis));
   ar(CEREAL_NVP(maxAxis));
   ar(CEREAL_NVP(eps));
   ar(CEREAL_NVP(count));

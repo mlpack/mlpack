@@ -3029,7 +3029,7 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   module1.SetWeights((double*) moduleParams.memptr());
 
   // BatchNorm layer with average parameter set to false (using momentum).
-  BatchNorm module2(2, 1e-5, false);
+  BatchNorm module2(2, 2, 1e-5, false);
   module2.Training() = true;
   module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
   module2.ComputeOutputDimensions();
@@ -5471,7 +5471,7 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
              { 0.2507 , -0.8486 , 0.8293 } };
 
   // Check correctness of batch normalization.
-  BatchNorm module1(2, 1e-5, false, 0.1);
+  BatchNorm module1(2, 2, 1e-5, false, 0.1);
   module1.Training() = true;
   module1.InputDimensions() = std::vector<size_t>({ 1, 4, 2 });
   module1.ComputeOutputDimensions();
