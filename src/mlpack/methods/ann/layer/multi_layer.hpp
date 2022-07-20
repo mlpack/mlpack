@@ -134,13 +134,11 @@ class MultiLayer : public Layer<MatType>
    * Initialize the weight matrix of the layer.
    *
    * @param W Weight matrix to initialize.
-   * @param rows Number of rows.
-   * @param * (cols) Number of columns.
+   * @param elements Number of elements.
    */
   virtual void CustomInitialize(
       MatType& W,
-      const size_t rows, 
-      const size_t /* cols */);
+      const size_t elements);
 
   /**
    * Return the number of weights in the MultiLayer.  This is the sum of the

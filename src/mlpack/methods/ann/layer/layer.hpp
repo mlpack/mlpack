@@ -262,13 +262,11 @@ class Layer
    * override the weights of the layer.
    *
    * @param * (W) Weight matrix to initialize.
-   * @param * (rows) Number of rows.
-   * @param * (cols) Number of columns.
+   * @param * (elements) Number of elements.
    */
   virtual void CustomInitialize(
       MatType& /* W */,
-      const size_t /* rows */, 
-      const size_t /* cols */)
+      const size_t /* elements */)
   { /* Nothing to do here */ }
 
   //! Compute the output dimensions.  This should be overloaded if the layer is

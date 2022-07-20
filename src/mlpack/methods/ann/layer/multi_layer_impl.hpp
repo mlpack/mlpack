@@ -259,11 +259,10 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 template<typename MatType>
 void MultiLayer<MatType>::CustomInitialize(
     MatType& W,
-    const size_t rows, 
-    const size_t /* cols */)
+    const size_t elements)
 {
   size_t start = 0;
-  const size_t totalWeightSize = rows;
+  const size_t totalWeightSize = elements;
   for (size_t i = 0; i < network.size(); ++i)
   {
     const size_t weightSize = network[i]->WeightSize();
@@ -276,7 +275,7 @@ void MultiLayer<MatType>::CustomInitialize(
     
     MatType WTemp;
     MakeAlias(WTemp, W.memptr() + start, weightSize, 1);
-    network[i]->CustomInitialize(WTemp, weightSize, 1);
+    network[i]->CustomInitialize(WTemp, weightSize);
     
     start += weightSize;
   }

@@ -162,12 +162,11 @@ void BatchNormType<MatType>::SetWeights(
 template<typename MatType>
 void BatchNormType<MatType>::CustomInitialize(
     MatType& W,
-    const size_t rows, 
-    const size_t /* cols */)
+    const size_t elements)
 {
-  if (rows != 2 * size) {
+  if (elements != 2 * size) {
     throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
-        "rows size!"); 
+        "elements size!"); 
   }
   MatType gammaTemp;
   MatType betaTemp;
@@ -345,8 +344,22 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
         << std::endl;
   }
   this->outputDimensions = this->inputDimensions;
-  size_t mainMinAxis = std::min(this->inputDimensions.size() - 1, minAxis);
-  size_t mainMaxAxis = std::min(this->inputDimensions.size() - 1, maxAxis);
+  size_t mainMinAxis = minAxis;
+  if (minAxis > this->inputDimensions.size() - 1)
+  {
+    Log::Warn << "BatchNorm: minAxis is out of range.  Setting to last axis."
+        << std::endl;
+    mainMinAxis = this->inputDimensions.size() - 1;
+  }
+
+  size_t mainMaxAxis = maxAxis;
+  if (maxAxis > this->inputDimensions.size() - 1)
+  {
+    Log::Warn << "BatchNorm: maxAxis is out of range.  Setting to last axis."
+        << std::endl;
+    mainMaxAxis = this->inputDimensions.size() - 1;
+  }
+
   inputDimension = 1;
   for (size_t i = 0; i < mainMinAxis; i++)
     inputDimension *= this->inputDimensions[i];
