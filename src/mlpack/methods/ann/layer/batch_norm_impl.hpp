@@ -350,9 +350,11 @@ void BatchNormType<MatType>::ComputeOutputDimensions()
   inputDimension = 1;
   for (size_t i = 0; i < mainMinAxis; i++)
     inputDimension *= this->inputDimensions[i];
+
   size = this->inputDimensions[mainMinAxis];
   for (size_t i = mainMinAxis + 1; i <= mainMaxAxis; i++)
     size *= this->inputDimensions[i];
+
   higherDimension = 1;
   for (size_t i = mainMaxAxis + 1; i < this->inputDimensions.size(); i++)
     higherDimension *= this->inputDimensions[i];

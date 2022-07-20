@@ -54,8 +54,8 @@ class Layer
  public:
   //! Default constructor.
   Layer() : 
-    validOutputDimensions(false),
-    training(false)
+      validOutputDimensions(false),
+      training(false)
   { /* Nothing to do here */ }
 
   //! Default deconstructor.
@@ -266,9 +266,9 @@ class Layer
    * @param * (cols) Number of columns.
    */
   virtual void CustomInitialize(
-    MatType& /* W */,
-    const size_t /* rows */, 
-    const size_t /* cols */)
+      MatType& /* W */,
+      const size_t /* rows */, 
+      const size_t /* cols */)
   { /* Nothing to do here */ }
 
   //! Compute the output dimensions.  This should be overloaded if the layer is

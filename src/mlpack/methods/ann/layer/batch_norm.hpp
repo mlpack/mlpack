@@ -56,11 +56,19 @@ class BatchNormType : public Layer<MatType>
  public:
   /**
    * Create the BatchNorm object. 
-   * 
-   * This sets the minimum and maximum axis for batch normalization to 2; so, 
-   * e.g., we apply batch normalization to the first 3 dimensions with number 
-   * of channels equal to 3rd dimension, and higher dimensions are left 
-   * untouched.  As an example, if we have a 3-dimensional input (call the 
+   *
+   * With batch normalization, the same exact normalization is applied to every
+   * element in an individual channel.  To control what axes normalization is
+   * applied to, set the `minAxis` and `maxAxis` parameters.
+   *
+   * The last axis of the input data will be chosen as channels.  So, if the
+   * input is 3-dimensional or higher, this constructor will set the minimum
+   * and maximum axes to 2; this will take only the 3rd axis of the input as
+   * channels. If the input is 1-dimensional, then the minimum and maximum axis
+   * will be 0, and thus every element of the input will have a different
+   * normalization applied to it.
+   *
+   * As an example, if we have a 3-dimensional input (call the 
    * three dimensions rows, columns and slices), and `minAxis` & `maxAxis` is 
    * 2, then we apply the same normalization across different slices.
    */
@@ -68,7 +76,9 @@ class BatchNormType : public Layer<MatType>
 
   /**
    * Create the BatchNorm layer object for a specified axis of input units as 
-   * channels.
+   * channels.  With batch normalization, the same exact normalization is
+   * applied to every element in an individual channel.  To control what axes
+   * normalization is applied to, set the `minAxis` and `maxAxis` parameters.
    * 
    * As an example, if we have a 3-dimensional input (call the three dimensions
    * rows, columns and slices), and `minAxis` is 1 & `maxAxis` is 2, then the 
@@ -119,9 +129,9 @@ class BatchNormType : public Layer<MatType>
    * @param * (cols) Number of columns.
    */
   void CustomInitialize(
-    MatType& W,
-    const size_t rows, 
-    const size_t /* cols */);
+      MatType& W,
+      const size_t rows, 
+      const size_t /* cols */);
 
   /**
    * Forward pass of the Batch Normalization layer. Transforms the input data
@@ -228,14 +238,15 @@ class BatchNormType : public Layer<MatType>
 
   //! Locally-stored number of input dimensions that we are applying 
   //! batch normalization over.  (This is the product of this->inputDimensions 
-  //! from index 0 to (maxAxis - 1)).
+  //! from index 0 to (minAxis - 1)).
   size_t inputDimension;
 
-  //! Locally-stored number of input units.
+  //! Locally-stored number of input units.  (This is the product of all
+  //! dimensions between minAxis and maxAxis, inclusive.)
   size_t size;
 
   //! Locally-stored number of higher dimension we are not applying 
-  //! batch normalization to.  This is the product of this->inputDimension 
+  //! batch normalization to.  This is the product of this->inputDimensions
   //! for all dimensions greater than or equal to maxAxis.
   size_t higherDimension;
 
