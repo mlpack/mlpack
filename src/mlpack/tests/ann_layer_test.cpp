@@ -3154,28 +3154,6 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
   REQUIRE(gradient < 3e-1);
 }
 
-// /**
-//  * Test that the functions that can access the parameters of the
-//  * Batch Norm layer work.
-//  */
-// TEST_CASE("BatchNormLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : size, eps.
-//   BatchNorm<> layer(7, 1e-3);
-
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.InputSize() == 7);
-//   REQUIRE(layer.Epsilon() == 1e-3);
-
-//   arma::mat runningMean(7, 1, arma::fill::randn);
-//   arma::mat runningVariance(7, 1, arma::fill::randn);
-
-//   layer.TrainingVariance() = runningVariance;
-//   layer.TrainingMean() = runningMean;
-//   CheckMatrices(layer.TrainingVariance(), runningVariance);
-//   CheckMatrices(layer.TrainingMean(), runningMean);
-// }
-
 /**
  * VirtualBatchNorm layer numerical gradient test.
  *
@@ -5539,128 +5517,51 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
              { 5.05166, 1.7683, 6.7797 } };
 
   CheckMatrices(result, deterministicOutput, 1e-1);
-
-  // // Check correctness by updating the running mean and variance again.
-  // module1.Training() = true;
-
-  // // Clean up.
-  // output.clear();
-  // input.clear();
-
-  // // The input test matrix is of the form 2 x 2 x 3 x 1 where
-  // // number of images are 2 and number of feature maps are 2.
-  // input = { { 12, 443 },
-  //           { 134, 45 },
-  //           { 11, 13 },
-  //           { 14, 55 },
-  //           { 110, 4 },
-  //           { 1, 45 } };
-
-  // result = { { -0.629337, 2.14791 },
-  //            { 0.156797, -0.416694 },
-  //            { -0.63578, -0.622893 },
-  //            { -0.637481, 0.4440386 },
-  //            { 1.894857, -0.901267 },
-  //            { -0.980402, 0.180253 } };
-
-  // module1.Forward(input, output);
-  // CheckMatrices(result, output, 1e-3);
-
-  // // Check correctness for the second module as well.
-  // module2.Forward(input, output);
-  // CheckMatrices(result, output, 1e-3);
-
-  // // Calculated using torch.nn.BatchNorm2d().
-  // runningMean(0) = 16.1792;
-  // runningMean(1) = 6.30667;
-  // runningVar(0) = 4276.5849;
-  // runningVar(1) = 202.595;
-
-  // CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
-  // CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
-
-  // // Check correctness of running mean and variance when their
-  // // values are updated using cumulative average.
-  // runningMean(0) = 83.79166;
-  // runningMean(1) = 32.9166;
-  // runningVar(0) = 22164.1035;
-  // runningVar(1) = 1025.2227;
-
-  // CheckMatrices(runningMean, module2.TrainingMean(), 1e-3);
-  // CheckMatrices(runningVar, module2.TrainingVariance(), 1e-3);
-
-  // // Check backward function.
-  // module1.Backward(input, output, delta);
-
-  // deterministicOutput.clear();
-  // module1.Deterministic() = true;
-  // module1.Forward(input, deterministicOutput);
-
-  // result.clear();
-  // result = { { -0.06388436, 6.524754114 },
-  //            { 1.799655281, 0.44047968 },
-  //            { -0.07913291, -0.04784981 },
-  //            { 0.5405045, 3.4210097 },
-  //            { 7.2851023, -0.1620577 },
-  //            { -0.37282639, 2.7184474 } };
-
-  // // Calculated using torch.nn.BatchNorm2d().
-  // CheckMatrices(result, deterministicOutput, 1e-1);
 }
 
-// /**
-//  * Batch Normalization layer numerical gradient test.
-//  */
-// TEST_CASE("GradientBatchNormWithMiniBatchesTest", "[ANNLayerTest]")
-// {
-//   // Add function gradient instantiation.
-//   // To make this test robust, check it ten times.
-//   bool pass = false;
-//   for (size_t trial = 0; trial < 10; trial++)
-//   {
-//     struct GradientFunction
-//     {
-//       GradientFunction() :
-//           input(arma::randn(16, 1024)),
-//           target(arma::zeros(1, 1024))
-//       {
-//         model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
-//         model->ResetData(input, target);
-//         model->Add<IdentityLayer<>>();
-//         model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
-//         model->Add<BatchNorm<>>(2);
-//         model->Add<Linear<>>(2 * 2 * 2, 2);
-//         model->Add<LogSoftMax<>>();
-//       }
+/**
+ * Batch Normalization layer numerical gradient test.
+ */
+TEST_CASE("GradientBatchNormWithConvolutionTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(16, 1024)),
+        target(arma::zeros(1, 1024))
+    {
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
+      model->ResetData(input, target);
+      model->Add<Convolution>(2, 3, 3);
+      model->Add<BatchNorm>();
+      model->Add<Linear>(2);
+      model->Add<LogSoftMax>();
 
-//       ~GradientFunction()
-//       {
-//         delete model;
-//       }
+      model->InputDimensions() = std::vector<size_t>({ 4, 4, 1 });
+    }
 
-//       double Gradient(arma::mat& gradient) const
-//       {
-//         double error = model->Evaluate(model->Parameters(), 0, 1024, false);
-//         model->Gradient(model->Parameters(), 0, gradient, 1024);
-//         return error;
-//       }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//       arma::mat& Parameters() { return model->Parameters(); }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1024);
+      model->Gradient(model->Parameters(), 0, gradient, 1024);
+      return error;
+    }
 
-//       FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-//       arma::mat input, target;
-//     } function;
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     double gradient = CheckGradient(function);
-//     if (gradient < 1e-1)
-//     {
-//       pass = true;
-//       break;
-//     }
-//   }
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(pass);
-// }
+  double gradient = CheckGradient(function);
+
+  REQUIRE(gradient < 0.43);
+}
 
 TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
 {
@@ -5699,25 +5600,6 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   // Value calculated using torch.nn.Conv2d().
   REQUIRE(arma::accu(output) == 4156);
 }
-
-// TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
-// {
-//   FFN<> module;
-//   module.Add<BatchNorm<>>(2, 1e-5, false);
-//   module.Add<LogSoftMax<>>();
-
-//   arma::mat input(4, 3), output;
-//   module.ResetParameters();
-
-//   // The model should switch to Deterministic mode for predicting.
-//   module.Predict(input, output);
-//   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == true);
-
-//   output.ones();
-//   module.Train(input, output);
-//   // The model should switch to training mode for predicting.
-//   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
-// }
 
 // /**
 //  * Linear module weight initialization test.
