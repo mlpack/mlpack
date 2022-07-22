@@ -39,7 +39,6 @@
         mlpack::ann::NaiveConvolution<mlpack::ann::FullConvolution>, \
         mlpack::ann::NaiveConvolution<mlpack::ann::ValidConvolution>, \
         __VA_ARGS__>); \
-    
     CEREAL_REGISTER_TYPE(mlpack::ann::CELUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropConnectType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropoutType<__VA_ARGS__>); \
