@@ -302,13 +302,13 @@ void BatchNormType<MatType>::Backward(
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
   gTemp = (norm.each_slice() % arma::repmat(stdInv,
-      inputSize, 1) +
-      (inputMean.each_slice() % vars * 2)) / (batchSize * higherDimension);
+      inputSize, 1)) +
+      ((inputMean.each_slice() % vars * 2) / (batchSize * higherDimension));
 
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
-  // (sum -2 * (x - mu)) / m.
-  MatType normTemp = arma::sum(norm.each_slice() %
-      arma::repmat(-stdInv, inputSize, 1) , 2) /
+  // sum (-2 * (x - mu)) / m.
+  MatType normTemp = arma::sum((norm.each_slice() %
+      arma::repmat(-stdInv, inputSize, 1)) + (inputMean.each_slice() % vars * (-2) / (batchSize * higherDimension)), 2) /
       (batchSize * higherDimension);
   gTemp.each_slice() += normTemp;
 }
@@ -321,10 +321,9 @@ void BatchNormType<MatType>::Gradient(
 {
   const size_t inputSize = inputDimension;
 
-  gradient.set_size(size + size, 1);
   arma::Cube<typename MatType::elem_type> errorTemp(
       const_cast<MatType&>(error).memptr(), inputSize, size,
-      error.n_cols, false, false);
+      error.n_cols * higherDimension, false, false);
 
   // Step 5: dl / dy * xhat.
   MatType temp = arma::sum(arma::sum(normalized % errorTemp, 0), 2);

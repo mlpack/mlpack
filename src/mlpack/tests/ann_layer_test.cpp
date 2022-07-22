@@ -3151,7 +3151,7 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
 
   double gradient = CheckGradient(function);
 
-  REQUIRE(gradient < 3e-1);
+  REQUIRE(gradient < 1e-1);
 }
 
 /**
@@ -5463,6 +5463,8 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   // Check backward function.
   delta.set_size(8, 3);
   module1.Backward(input, output, delta);
+  // delta.print();
+  // std::cout << arma::accu(delta) << std::endl;
   REQUIRE(arma::accu(delta) == Approx(0.0102676).epsilon(1e-5));
 
   // Check values for running mean and running variance.
@@ -5560,7 +5562,7 @@ TEST_CASE("GradientBatchNormWithConvolutionTest", "[ANNLayerTest]")
 
   double gradient = CheckGradient(function);
 
-  REQUIRE(gradient < 0.43);
+  REQUIRE(gradient < 1e-1);
 }
 
 TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
