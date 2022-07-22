@@ -249,7 +249,7 @@ GroupedConvolutionType<
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
-    useBias = std.move(other.useBias);
+    useBias = std::move(other.useBias);
     padding = std::move(other.padding);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
