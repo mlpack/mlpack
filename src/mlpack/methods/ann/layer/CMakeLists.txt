@@ -24,6 +24,8 @@ set(SOURCES
   dropout_impl.hpp
   grouped_convolution.hpp
   grouped_convolution_impl.hpp
+  identity.hpp
+  identity_impl.hpp
   layer.hpp
   layer_types.hpp
   leaky_relu.hpp
