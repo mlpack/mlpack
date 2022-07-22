@@ -889,7 +889,7 @@ TEST_CASE("JacobianFlexibleReLULayerTest", "[ANNLayerTest]")
     input.set_size(inputElements, 1);
 
     FlexibleReLU module;
-
+    
     double error = JacobianTest(module, input);
     REQUIRE(error <= 1e-5);
   }
@@ -945,47 +945,45 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleELULayerTest", "[ANNLayerTest]")
 {
-    arma::mat output, input, delta;
-    ELU module(0.5);
-    module.Training() = true;
-    module.InputDimensions() = std::vector<size_t>({ 1 });
-    module.ComputeOutputDimensions();
+  arma::mat output, input, delta;
+  ELU module(0.5);
+  module.Training() = true;
+  module.InputDimensions() = std::vector<size_t>({ 1 });
+  module.ComputeOutputDimensions();
+  
+  // Test the Forward function.
+  input = arma::mat("-1 2");
+  module.Forward(input, output);
+  REQUIRE(arma::accu(arma::abs(arma::mat("-0.316060 2") - output)) ==
+    Approx(0.0).margin(1e-4));
 
-
-    // Test the Forward function.
-    input = arma::mat("-1 2");
-    module.Forward(input, output);
-    REQUIRE(arma::accu(arma::abs(arma::mat("-0.316060 2") - output)) ==
-        Approx(0.0).margin(1e-4));
-
-    // Test the Backward function.
-    module.Backward(input, output, delta);
-    REQUIRE(arma::accu(arma::abs(arma::mat("-0.058136 2") - delta)) ==
-        Approx(0.0).margin(1e-4));
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(arma::abs(arma::mat("-0.058136 2") - delta)) ==
+    Approx(0.0).margin(1e-4));
 }
 
 /**
- * Simple CELU module test.
- */
+* Simple CELU module test.
+*/
 TEST_CASE("SimpleCELULayerTest", "[ANNLayerTest]")
 {
-    arma::mat output, input, delta;
-    CELU module(0.5);
-    module.Training() = true;
-    module.InputDimensions() = std::vector<size_t>({ 1 });
-    module.ComputeOutputDimensions();
+  arma::mat output, input, delta;
+  CELU module(0.5);
+  module.Training() = true;
+  module.InputDimensions() = std::vector<size_t>({ 1 });
+  module.ComputeOutputDimensions();
 
+  // Test the Forward function.
+  input = arma::mat("-1 2");
+  module.Forward(input, output);
+  REQUIRE(arma::accu(arma::abs(arma::mat("-0.432332 2") - output)) ==
+    Approx(0.0).margin(1e-4));
 
-    // Test the Forward function.
-    input = arma::mat("-1 2");
-    module.Forward(input, output);
-    REQUIRE(arma::accu(arma::abs(arma::mat("-0.432332 2") - output)) ==
-        Approx(0.0).margin(1e-4));
-
-    // Test the Backward function.
-    module.Backward(input, output, delta);
-    REQUIRE(arma::accu(arma::abs(arma::mat("-0.0585098 2") - delta)) ==
-        Approx(0.0).margin(1e-4));
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(arma::abs(arma::mat("-0.0585098 2") - delta)) ==
+    Approx(0.0).margin(1e-4));
 }
 
 /**
@@ -4924,127 +4922,6 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 // }
 
 /**
- * Simple test for AddMerge layer.
- */
-TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
-{
-  // For rectangular input to pooling layers.
-  arma::mat input = arma::mat(28, 1);
-  input.zeros();
-  input(0) = input(16) = 1;
-  input(1) = input(17) = 2;
-  input(2) = input(18) = 3;
-  input(3) = input(19) = 4;
-  input(4) = input(20) = 5;
-  input(5) = input(23) = 6;
-  input(6) = input(24) = 7;
-  input(14) = input(25) = 8;
-  input(15) = input(26) = 9;
-
-  AddMerge module1;
-  module1.Add<MeanPooling>(2, 2, 2, 2, false);
-  module1.Add<MeanPooling>(2, 2, 2, 2, false);
-
-  AddMerge module2;
-  module2.Add<MeanPooling>(2, 2, 2, 2, true);
-  module2.Add<MeanPooling>(2, 2, 2, 2, true);
-
-  module1.InputDimensions() = std::vector<size_t>({ 7, 4 });
-  module1.ComputeOutputDimensions();
-  module2.InputDimensions() = std::vector<size_t>({ 7, 4 });
-  module2.ComputeOutputDimensions();
-
-  // Calculated using torch.nn.MeanPool2d().
-  arma::mat result1, result2;
-  result1  <<  1.5000  <<  8.5000  <<  arma::endr
-           <<  3.5000  <<  8.0000  <<  arma::endr
-           <<  5.5000  <<  12.0000 <<  arma::endr
-           <<  7.0000  <<  5.0000  <<  arma::endr;
-
-  result2  <<  1.5000  <<  8.5000  <<  arma::endr
-           <<  3.5000  <<  8.0000  <<  arma::endr
-           <<  5.5000  <<  12.0000 <<  arma::endr;
-
-  arma::mat output1, output2;
-  output1.set_size(8, 1);
-  output2.set_size(6, 1);
-  module1.Forward(input, output1);
-  REQUIRE(arma::accu(output1) == 51.0);
-  module2.Forward(input, output2);
-  REQUIRE(arma::accu(output2) == 39.0);
-  output1.reshape(4, 2);
-  output2.reshape(3, 2);
-  CheckMatrices(output1, result1, 1e-1);
-  CheckMatrices(output2, result2, 1e-1);
-
-  arma::mat prevDelta1, prevDelta2;
-  prevDelta1  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
-
-  prevDelta2  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
-  arma::mat delta1, delta2;
-  delta1.set_size(28, 1);
-  delta2.set_size(28, 1);
-  prevDelta1.reshape(8, 1);
-  prevDelta2.reshape(6, 1);
-  module1.Backward(input, prevDelta1, delta1);
-  REQUIRE(arma::accu(delta1) == Approx(21.6).epsilon(1e-3));
-  module2.Backward(input, prevDelta2, delta2);
-  REQUIRE(arma::accu(delta2) == Approx(16.2).epsilon(1e-3));
-}
-
-/**
- * Complex test for AddMerge layer.
- * This test includes: 
- * 1. AddMerge layer inside the AddMerge layer.
- * 2. Batch Size > 1.
- * 3. AddMerge layer with single child layer.
- */
-TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
-{
-  AddMerge r;
-  AddMerge* r2 = new AddMerge();
-  r2->Add<Linear>(5);
-  r.Add<Linear>(5);
-  r.Add(r2);
-  r.InputDimensions() = std::vector<size_t>({ 5 });
-  r.ComputeOutputDimensions();
-  arma::mat rParams(r.WeightSize(), 1);
-  r.SetWeights((double*) rParams.memptr());
-  r.Network()[0]->Parameters().fill(2.0);
-  ((AddMerge*) r.Network()[1])->Network()[0]->Parameters().fill(-1.0);
-
-  Linear l(5);
-  l.InputDimensions() = std::vector<size_t>({ 5 });
-  l.ComputeOutputDimensions();
-  arma::mat lParams(l.WeightSize(), 1);
-  l.SetWeights((double*) lParams.memptr());
-  l.Parameters().fill(1.0);
-
-  arma::mat input(arma::randn(5, 10));
-  arma::mat output1, output2;
-  output1.set_size(5, 10);
-  output2.set_size(5, 10);
-
-  r.Forward(input, output1);
-  l.Forward(input, output2);
-
-  CheckMatrices(output1, output2, 1e-3);
-
-  arma::mat delta1, delta2;
-  delta1.set_size(5, 10);
-  delta2.set_size(5, 10);
-  r.Backward(input, output1, delta1);
-  l.Backward(input, output2, delta2);
-
-  CheckMatrices(output1, output2, 1e-3);
-}
-
-/**
  * Simple test for Mean Pooling layer.
  */
 TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
@@ -5070,14 +4947,15 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
 
   // Calculated using torch.nn.MeanPool2d().
-  arma::mat result1 = { { 0.7500, 4.2500 },
-                        { 1.7500, 4.0000 },
-                        { 2.7500, 6.0000 },
-                        { 3.5000, 2.5000 } };
-  
-  arma::mat result2 = { { 0.7500, 4.2500 },
-                        { 1.7500, 4.0000 },
-                        { 2.7500, 6.0000 } };
+  arma::mat result1, result2;
+  result1  <<  0.7500  <<  4.2500  <<  arma::endr
+           <<  1.7500  <<  4.0000  <<  arma::endr
+           <<  2.7500  <<  6.0000  <<  arma::endr
+           <<  3.5000  <<  2.5000  <<  arma::endr;
+
+  result2  <<  0.7500  <<  4.2500  <<  arma::endr
+           <<  1.7500  <<  4.0000  <<  arma::endr
+           <<  2.7500  <<  6.0000  <<  arma::endr;
 
   arma::mat output1, output2;
   output1.set_size(8, 1);
@@ -5091,15 +4969,15 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat prevDelta1 = { { 3.6000, -0.9000 },
-                           { 3.6000, -0.9000 },
-                           { 3.6000, -0.9000 },
-                           { 3.6000, -0.9000 } };
+  arma::mat prevDelta1, prevDelta2;
+  prevDelta1  << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr;
 
-  arma::mat prevDelta2 = { { 3.6000, -0.9000 }, 
-                           { 3.6000, -0.9000 }, 
-                           { 3.6000, -0.9000 } };
-
+  prevDelta2  << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr
+              << 3.6000 << -0.9000 << arma::endr;
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);

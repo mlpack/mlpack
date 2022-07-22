@@ -51,13 +51,13 @@ template<typename MatType>
 CELUType<MatType>&
 CELUType<MatType>::operator=(const CELUType& other)
 {
-    if (&other != this)
-    {
-        Layer<MatType>::operator=(other);
-        alpha = other.alpha;
-    }
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(other);
+    alpha = other.alpha;
+  }
 
-    return *this;
+  return *this;
 }
 
 template<typename MatType>
@@ -66,8 +66,8 @@ CELUType<MatType>::operator=(CELUType&& other)
 {
     if (&other != this)
     {
-        Layer<MatType>::operator=(std::move(other));
-        alpha = std::move(other.alpha);
+      Layer<MatType>::operator=(std::move(other));
+      alpha = std::move(other.alpha);
     }
 
     return *this;

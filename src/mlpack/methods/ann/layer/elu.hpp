@@ -128,19 +128,19 @@ class ELUType : public Layer<MatType>
   //! Clone the ELUType object. This handles polymorphism correctly.
   ELUType* Clone() const { return new ELUType(*this); }
 
-  // Virtual destructor
+  // Virtual destructor.
   virtual ~ELUType() {};
 
-  //Copy constructor
+  // Copy constructor.
   ELUType(const ELUType& other);
 
-  //Move Constructor
+  // Move Constructor.
   ELUType(ELUType&& other);
 
-  //Copy assignment operator
+  // Copy assignment operator.
   ELUType& operator=(const ELUType& other);
 
-  //Move assignement operator
+  // Move assignement operator.
   ELUType& operator=(ELUType&& other);
 
   /**
@@ -150,8 +150,6 @@ class ELUType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-
-
   void Forward(const MatType& input, MatType& output);
 
   /**

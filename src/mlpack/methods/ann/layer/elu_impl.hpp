@@ -52,7 +52,7 @@ ELUType<MatType>::ELUType(const ELUType& other) :
     alpha(other.alpha),
     lambda(other.lambda)
 {
-    // Nothing to do.
+  // Nothing to do.
 }
 
 template<typename MatType>
@@ -62,37 +62,36 @@ ELUType<MatType>::ELUType(
     alpha(std::move(other.alpha)),
     lambda(std::move(other.lambda))
 {
-    // Nothing to do.
+  // Nothing to do.
 }
 
 template<typename MatType>
 ELUType<MatType>&
 ELUType<MatType>::operator=(const ELUType& other)
 {
-    if (&other != this)
-    {
-        Layer<MatType>::operator=(other);
-        alpha = other.alpha;
-        lambda = other.lambda;
-    }
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(other);
+    alpha = other.alpha;
+    lambda = other.lambda;
+  }
 
-    return *this;
+  return *this;
 }
 
 template<typename MatType>
 ELUType<MatType>&
 ELUType<MatType>::operator=(ELUType&& other)
 {
-    if (&other != this)
-    {
-        Layer<MatType>::operator=(std::move(other));
-        alpha = std::move(other.alpha);
-        lambda(std::move(other.lambda));
-    }
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(std::move(other));
+    alpha = std::move(other.alpha);
+    lambda = std::move(other.lambda);
+  }
 
-    return *this;
+  return *this;
 }
-
 
 template<typename MatType>
 void ELUType<MatType>::Forward(
