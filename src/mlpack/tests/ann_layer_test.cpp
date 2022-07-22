@@ -5697,6 +5697,7 @@ TEST_CASE("NoBiasConvolutionLayerTestCase", "[ANNLayerTest]")
   REQUIRE(layer.WeightSize() == 8);
   arma::mat layerWeights(layer.WeightSize(), 1);
   layer.SetWeights(layerWeights.memptr());
+  REQUIRE(layer.Bias().n_elem == 0);
   output.set_size(layer.OutputSize(), 3);
 
   // Set weights to 1.0 and bias to 0.0.
