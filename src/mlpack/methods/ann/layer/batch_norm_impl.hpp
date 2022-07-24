@@ -189,6 +189,7 @@ void BatchNormType<MatType>::Forward(
 {
   const size_t batchSize = input.n_cols;
   const size_t inputSize = inputDimension;
+  const size_t m = inputSize * batchSize * higherDimension;
 
   // We will calculate minibatch norm on each channel / feature map.
   if (this->training)
@@ -214,10 +215,10 @@ void BatchNormType<MatType>::Forward(
     outputTemp = inputTemp;
 
     // Calculate mean and variance over all channels.
-    MatType mean = arma::mean(arma::mean(inputTemp, 2), 0);
-    variance = arma::mean(arma::mean(arma::pow(
+    MatType mean = arma::sum(arma::sum(inputTemp, 2), 0) / m;
+    variance = arma::sum(arma::sum(arma::pow(
         inputTemp.each_slice() - arma::repmat(mean,
-        inputSize, 1), 2), 2), 0);
+        inputSize, 1), 2), 2), 0) / m;
 
     outputTemp.each_slice() -= arma::repmat(mean, inputSize, 1);
 
@@ -243,15 +244,14 @@ void BatchNormType<MatType>::Forward(
     double averageFactor = average ? 1.0 / count : momentum;
 
     double nElements = 0.0;
-    if (input.n_elem - size != 0)
-      nElements = 1.0 / (input.n_elem - size + eps);
+    if (m - 1 != 0)
+      nElements = m * (1.0 / (m - 1));
 
     // Update running mean and running variance.
     runningMean = (1 - averageFactor) * runningMean + averageFactor *
         mean.t();
     runningVariance = (1 - averageFactor) * runningVariance +
-       input.n_elem * nElements *
-       averageFactor * variance.t();
+        nElements * averageFactor * variance.t();
   }
   else
   {
