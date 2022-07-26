@@ -24,6 +24,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  identity.hpp
+  identity_impl.hpp
   layer.hpp
   layer_types.hpp
   leaky_relu.hpp

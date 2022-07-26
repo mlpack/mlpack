@@ -29,6 +29,7 @@
 #include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
+#include <mlpack/methods/ann/layer/identity.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/linear.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
