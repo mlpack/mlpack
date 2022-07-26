@@ -5488,13 +5488,6 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   module1.Forward(input, output);
   CheckMatrices(output, result, 1e-1);
 
-  // Check backward function.
-  delta.set_size(8, 3);
-  module1.Backward(input, output, delta);
-  // delta.print();
-  // std::cout << arma::accu(delta) << std::endl;
-  REQUIRE(arma::accu(delta) == Approx(0.0102676).epsilon(1e-5));
-
   // Check values for running mean and running variance.
   // Calculated using torch.nn.BatchNorm2d().
   runningMean = arma::mat(2, 1);
