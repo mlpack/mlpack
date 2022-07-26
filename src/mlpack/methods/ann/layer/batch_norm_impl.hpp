@@ -308,8 +308,9 @@ void BatchNormType<MatType>::Backward(
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
   // sum (-2 * (x - mu)) / m.
   MatType normTemp = arma::sum(arma::sum((norm.each_slice() %
-      arma::repmat(-stdInv, inputSize, 1)) + (inputMean.each_slice() % arma::repmat(vars, inputSize, 1) * (-2.0) / m), 2), 0) /
-      m;
+      arma::repmat(-stdInv, inputSize, 1)) + 
+      (inputMean.each_slice() % arma::repmat(vars, inputSize, 1) * (-2.0) / m),
+      2), 0) / m;
   gTemp.each_slice() += arma::repmat(normTemp, inputSize, 1);
 }
 
