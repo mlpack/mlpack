@@ -339,12 +339,12 @@ void GroupedConvolutionType<
       for (size_t outMap = group * outGroupSize; outMap < ((group + 1) * outGroupSize); ++outMap)
       {
         // Iterate over input maps (we will apply the filter and sum).
-        for (size_t inMap = group * inGroupSize; inMap < ((group + 1) * inGroupSize); ++inMap)
+        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
         {
           MatType convOutput;
 
           ForwardConvolutionRule::Convolution(
-              inputTemp.slice(inMap + fullInputOffset),
+              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
               weight.slice((outMap * inGroupSize) + inMap),
               convOutput,
               strideWidth,
@@ -406,7 +406,7 @@ void GroupedConvolutionType<
     for (size_t group = 0; group < groups; group++)
     {
     // Iterate over input maps.
-      for (size_t inMap = group * inGroupSize; inMap < ((group + 1) * inGroupSize); ++inMap)
+      for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
       {
         // Iterate over output maps.
         for (size_t outMap = group * outGroupSize; outMap < ((group + 1) * outGroupSize); ++outMap)
@@ -426,7 +426,7 @@ void GroupedConvolutionType<
           {
             if (usingPadding)
             {
-              gTemp.slice(inMap + fullInputOffset) += output.submat(
+              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) += output.submat(
                   padWLeft,
                   padHTop,
                   padWLeft + gTemp.n_rows - 1,
@@ -434,7 +434,7 @@ void GroupedConvolutionType<
             }
             else
             {
-              gTemp.slice(inMap + fullInputOffset) += output;
+              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) += output;
             }
           }
           else
@@ -447,7 +447,7 @@ void GroupedConvolutionType<
               size_t row = padHTop;
               for (size_t j = 0; j < output.n_rows; ++j)
               {
-                gTemp(row, col, inMap + fullInputOffset) += output(j, i);
+                gTemp(row, col, (group * inGroupSize) + inMap + fullInputOffset) += output(j, i);
                 row += strideHeight;
               }
               col += strideWidth;
@@ -513,11 +513,11 @@ void GroupedConvolutionType<
       for (size_t outMap = group * outGroupSize; outMap < ((group + 1) * outGroupSize); ++outMap)
       {
         // Iterate over input maps (we will apply the filter and sum).
-        for (size_t inMap = group * inGroupSize; inMap < ((group + 1) * inGroupSize); ++inMap)
+        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
         {
           MatType output;
           GradientConvolutionRule::Convolution(
-              inputTemp.slice(inMap + fullInputOffset),
+              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
               mappedError.slice(outMap + fullOutputOffset),
               output,
               strideWidth,
