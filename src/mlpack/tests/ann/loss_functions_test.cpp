@@ -857,10 +857,8 @@ TEST_CASE("MarginRankingLossTest", "[LossFunctionsTest]")
       "-4.8090 4.3455 5.2070");
   input2 = arma::mat("-4.5288 -9.2766 -0.5882 -5.6643 -6.0175 8.8506 3.4759 "
       "-9.4886 2.2755 8.4951");
-  expectedOutput << 0.0000 << 0.0000 << 1.0000 << 0.0000 << 1.0000 << -1.0000 
-                 << 0.0000 << 0.0000 << 1.0000 << -1.0000 <<arma::endr << 0.0000
-                 << 0.0000 << -1.0000 << 0.0000 << -1.0000 << 1.0000 << 0.0000
-                 << 0.0000 << -1.0000 << 1.0000 << arma::endr;
+  expectedOutput = { { 0.0, 0.0,  1.0, 0.0,  1.0, -1.0, 0.0, 0.0,  1.0, -1.0 }, 
+                     { 0.0, 0.0, -1.0, 0.0, -1.0,  1.0, 0.0, 0.0, -1.0,  1.0 } };
   input = arma::join_cols(input1, input2);
   target = arma::mat("1 1 -1 1 -1 1 1 1 -1 1");
 
@@ -887,10 +885,8 @@ TEST_CASE("MarginRankingLossTest", "[LossFunctionsTest]")
 
   // Test the backward function
   module.Backward(input, target, output);
-  expectedOutput << 0.0000 << 0.0000 << 0.1000 << 0.0000 << 0.1000 << -0.1000 
-                 << 0.0000 << 0.0000 << 0.1000 << -0.1000 <<arma::endr << 0.0000
-                 << 0.0000 << -0.1000 << 0.0000 << -0.1000 << 0.1000 << 0.0000
-                 << 0.0000 << -0.1000 << 0.1000 << arma::endr;
+  expectedOutput = { { 0.0, 0.0,  0.1, 0.0,  0.1, -0.1, 0.0, 0.0,  0.1, -0.1 },
+                     { 0.0, 0.0, -0.1, 0.0, -0.1,  0.1, 0.0, 0.0, -0.1,  0.1 } };
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);

@@ -7,9 +7,15 @@ set(SOURCES
   adaptive_mean_pooling_impl.hpp
   add.hpp
   add_impl.hpp
+  add_merge.hpp
+  add_merge_impl.hpp
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   base_layer.hpp
+  batch_norm.hpp
+  batch_norm_impl.hpp
+  concat.hpp
+  concat_impl.hpp
   concatenate.hpp
   concatenate_impl.hpp
   convolution.hpp
@@ -18,6 +24,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  identity.hpp
+  identity_impl.hpp
   layer.hpp
   layer_types.hpp
   leaky_relu.hpp

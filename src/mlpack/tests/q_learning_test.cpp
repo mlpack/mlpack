@@ -97,7 +97,7 @@ bool testAgent(AgentType& agent,
 TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -127,7 +127,7 @@ TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -156,7 +156,7 @@ TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> network(4, 20, 20, 2);
+    SimpleDQN<> network(20, 20, 2);
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -187,7 +187,7 @@ TEST_CASE("AcrobotWithDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    SimpleDQN<> network(4, 64, 32, 3);
+    SimpleDQN<> network(64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
@@ -216,7 +216,7 @@ TEST_CASE("MountainCarWithDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 5; trial++)
   {
     // Set up the network.
-    SimpleDQN<> network(2, 64, 32, 3);
+    SimpleDQN<> network(64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
@@ -246,11 +246,11 @@ TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 4; trial++)
   {
     // Set up the module. Note that we use a custom network here.
-    FFN<MeanSquaredError<>, GaussianInitialization> module(
-        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
-    module.Add<Linear<>>(6, 256);
-    module.Add<ReLULayer<>>();
-    module.Add<Linear<>>(256, 3);
+    FFN<MeanSquaredError, GaussianInitialization> module(
+        MeanSquaredError(), GaussianInitialization(0, 0.001));
+    module.Add<Linear>(256);
+    module.Add<ReLU>();
+    module.Add<Linear>(3);
 
     // Adding the module to the SimpleDQN network containing required functions.
     SimpleDQN<> network(module);
@@ -304,7 +304,7 @@ TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 {
   // Set up the network.
-  DuelingDQN<> network(4, 128, 64, 2);
+  DuelingDQN<> network(128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -326,7 +326,7 @@ TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest]")
 {
   // Set up the network.
-  DuelingDQN<> network(4, 128, 64, 2);
+  DuelingDQN<> network(128, 64, 2);
 
   // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
@@ -364,7 +364,7 @@ TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest]")
     config.NoisyQLearning() = true;
 
     // Set up the network with a flag to enable noisy layers.
-    SimpleDQN<> network(4, 64, 32, 2, config.NoisyQLearning());
+    SimpleDQN<> network(64, 32, 2, config.NoisyQLearning());
 
     // Set up DQN agent.
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
@@ -397,7 +397,7 @@ TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
     config.NoisyQLearning() = true;
 
     // Set up the network with a flag to enable noisy layers.
-    DuelingDQN<> network(4, 64, 64, 2, config.NoisyQLearning());
+    DuelingDQN<> network(64, 64, 2, config.NoisyQLearning());
 
     // Set up DQN agent.
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
@@ -414,7 +414,7 @@ TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -441,7 +441,7 @@ TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
 TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest]")
 {
   // Set up the network.
-  SimpleDQN<> network(4, 128, 128, 2);
+  SimpleDQN<> network(128, 128, 2);
 
   // Set up the policy.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
@@ -484,11 +484,11 @@ TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest]")
     config.ExplorationSteps() = 32;
 
     // Set up the module. Note that we use a custom network here.
-    FFN<EmptyLoss<>, GaussianInitialization> module(
-        EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    module.Add<Linear<>>(4, 128);
-    module.Add<ReLULayer<>>();
-    module.Add<Linear<>>(128, 2 * config.AtomSize());
+    FFN<EmptyLoss, GaussianInitialization> module(
+        EmptyLoss(), GaussianInitialization(0, 0.1));
+    module.Add<Linear>(128);
+    module.Add<ReLU>();
+    module.Add<Linear>(2 * config.AtomSize());
 
     // Adding the module to the CategoricalDQN network.
     CategoricalDQN<> network(module, config);
@@ -521,18 +521,18 @@ TEST_CASE("PendulumWithSAC", "[QLearningTest]")
     config.TargetNetworkSyncInterval() = 1;
     config.UpdateInterval() = 3;
 
-    FFN<EmptyLoss<>, GaussianInitialization>
-        policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear<>(3, 128));
-    policyNetwork.Add(new ReLULayer<>());
-    policyNetwork.Add(new Linear<>(128, 1));
-    policyNetwork.Add(new TanHLayer<>());
+    FFN<EmptyLoss, GaussianInitialization>
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear(128));
+    policyNetwork.Add(new ReLU());
+    policyNetwork.Add(new Linear(1));
+    policyNetwork.Add(new TanH());
 
-    FFN<EmptyLoss<>, GaussianInitialization>
-        qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear<>(3 + 1, 128));
-    qNetwork.Add(new ReLULayer<>());
-    qNetwork.Add(new Linear<>(128, 1));
+    FFN<EmptyLoss, GaussianInitialization>
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear(128));
+    qNetwork.Add(new ReLU());
+    qNetwork.Add(new Linear(1));
 
     // Set up Soft actor-critic agent.
     SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
@@ -551,19 +551,18 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   ContinuousActionEnv::State::dimension = 3;
   ContinuousActionEnv::Action::size = 4;
 
-  FFN<EmptyLoss<>, GaussianInitialization>
-      policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension, 128));
-  policyNetwork.Add(new ReLULayer<>());
-  policyNetwork.Add(new Linear<>(128, ContinuousActionEnv::Action::size));
-  policyNetwork.Add(new TanHLayer<>());
+  FFN<EmptyLoss, GaussianInitialization>
+      policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+  policyNetwork.Add(new Linear(128));
+  policyNetwork.Add(new ReLU());
+  policyNetwork.Add(new Linear(ContinuousActionEnv::Action::size));
+  policyNetwork.Add(new TanH());
 
-  FFN<EmptyLoss<>, GaussianInitialization>
-      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension +
-                            ContinuousActionEnv::Action::size, 128));
-  qNetwork.Add(new ReLULayer<>());
-  qNetwork.Add(new Linear<>(128, 1));
+  FFN<EmptyLoss, GaussianInitialization>
+      qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+  qNetwork.Add(new Linear(128));
+  qNetwork.Add(new ReLU());
+  qNetwork.Add(new Linear(1));
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv> replayMethod(32, 10000);

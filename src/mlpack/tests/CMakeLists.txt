@@ -19,17 +19,17 @@ add_executable(mlpack_test
   ann/loss_functions_test.cpp
   ann/recurrent_network_test.cpp
 
+  ann/async_learning_test.cpp
   ann/augmented_rnns_tasks_test.cpp
+  ann/reward_clipping_test.cpp
   ann/rl_components_test.cpp
 
 #  ann/not_adapted/activation_functions_test.cpp
 #  ann/not_adapted/ann_layer_test.cpp
 #  ann/not_adapted/feedforward_network_test.cpp
 #  ann/not_adapted/recurrent_network_test.cpp
-#  ann/not_adapted/reward_clipping_test.cpp
 #  ann/not_adapted/rbm_network_test.cpp
 #  ann/not_adapted/rnn_reber_test.cpp
-#  ann/not_adapted/async_learning_test.cpp
 #  ann/not_adapted/dcgan_test.cpp
 #  ann/not_adapted/gan_test.cpp
 #  ann/not_adapted/wgan_test.cpp
@@ -104,7 +104,7 @@ add_executable(mlpack_test
   python_binding_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
-#  q_learning_test.cpp
+  q_learning_test.cpp
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp

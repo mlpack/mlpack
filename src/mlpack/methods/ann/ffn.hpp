@@ -241,6 +241,10 @@ class FFN
    * accept a (flat 1-d) input size of `inputDimensionality` (if passed), or
    * whatever input size has been set with `InputDimensions()`.
    *
+   * If no input size has been set with `InputDimensions()`, and
+   * `inputDimensionality` is 0, an exception will be thrown, since an empty
+   * input size is invalid.
+   *
    * This also resets the mode of the network to prediction mode (not training
    * mode).  See `SetNetworkMode()` for more information.
    */

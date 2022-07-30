@@ -1,85 +1,89 @@
 /**
- * @file methods/ann/layer/softmax_impl.hpp
- * @author Mrityunjay Tripathi
- * @author Sreenik Seal
+ * @file methods/ann/layer/identity_impl.hpp
+ * @author Shubham Agrawal
  *
- * Implementation of the Softmax class.
+ * Implementation of the Identity layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SOFTMAX_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_SOFTMAX_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_IDENTITY_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_IDENTITY_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "softmax.hpp"
+#include "identity.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-SoftmaxType<MatType>::SoftmaxType() :
+IdentityType<MatType>::IdentityType() : 
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftmaxType<MatType>::SoftmaxType(const SoftmaxType& other) :
+IdentityType<MatType>::IdentityType(
+    const IdentityType& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftmaxType<MatType>::SoftmaxType(SoftmaxType&& other) :
+IdentityType<MatType>::IdentityType(
+    IdentityType&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-SoftmaxType<MatType>&
-SoftmaxType<MatType>::operator=(const SoftmaxType& other)
+IdentityType<MatType>&
+IdentityType<MatType>::operator=(const IdentityType& other)
 {
-  if (this != &other)
+  if (&other != this)
+  {
     Layer<MatType>::operator=(other);
+  }
 
   return *this;
 }
 
 template<typename MatType>
-SoftmaxType<MatType>&
-SoftmaxType<MatType>::operator=(SoftmaxType&& other)
+IdentityType<MatType>&
+IdentityType<MatType>::operator=(IdentityType&& other)
 {
-  if (this != &other)
+  if (&other != this)
+  {
     Layer<MatType>::operator=(std::move(other));
+  }
 
   return *this;
 }
 
 template<typename MatType>
-void SoftmaxType<MatType>::Forward(const MatType& input, MatType& output)
+void IdentityType<MatType>::Forward(
+    const MatType& input, MatType& output)
 {
-  MatType softmaxInput = arma::exp(input.each_row() -
-      arma::max(input, 0));
-  output = softmaxInput.each_row() / sum(softmaxInput, 0);
+  output = input;
 }
 
 template<typename MatType>
-void SoftmaxType<MatType>::Backward(
-    const MatType& input,
-    const MatType& gy,
-    MatType& g)
+void IdentityType<MatType>::Backward(
+  const MatType& /* input */,
+  const MatType& gy,
+  MatType& g)
 {
-  g = input % (gy - arma::repmat(arma::sum(gy % input), input.n_rows, 1));
+  g = gy;
 }
 
 template<typename MatType>
 template<typename Archive>
-void SoftmaxType<MatType>::serialize(
+void IdentityType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

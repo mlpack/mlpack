@@ -24,7 +24,7 @@
 
 #include <ensmallen.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -46,12 +46,12 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+    FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(),
         GaussianInitialization(0, 0.001));
     model.Add<Linear>(20);
-    model.Add<ReLULayer>();
+    model.Add<ReLU>();
     model.Add<Linear>(20);
-    model.Add<ReLULayer>();
+    model.Add<ReLU>();
     model.Add<Linear>(2);
 
     // Set up the policy.
@@ -122,12 +122,12 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+    FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(),
         GaussianInitialization(0, 0.001));
     model.Add<Linear>(20);
-    model.Add<ReLULayer>();
-    model.Add<Linea>(20);
-    model.Add<ReLULayer>();
+    model.Add<ReLU>();
+    model.Add<Linear>(20);
+    model.Add<ReLU>();
     model.Add<Linear>(2);
 
     // Set up the policy.
@@ -197,12 +197,12 @@ TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
   #endif
 
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+  FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(),
       GaussianInitialization(0, 0.001));
   model.Add<Linear>(20);
-  model.Add<ReLULayer>();
+  model.Add<ReLU>();
   model.Add<Linear>(20);
-  model.Add<ReLULayer>();
+  model.Add<ReLU>();
   model.Add<Linear>(2);
 
   // Set up the policy.

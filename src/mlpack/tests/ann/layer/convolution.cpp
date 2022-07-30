@@ -233,3 +233,43 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 }
+
+TEST_CASE("NoBiasConvolutionLayerTestCase", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 } };
+
+  Convolution layer(4, 1, 1, 1, 1, 0, 0, "none", false);
+  layer.InputDimensions() = std::vector<size_t>({ 4, 1, 2 });
+  layer.ComputeOutputDimensions();
+  REQUIRE(layer.WeightSize() == 8);
+  arma::mat layerWeights(layer.WeightSize(), 1);
+  layer.SetWeights(layerWeights.memptr());
+  REQUIRE(layer.Bias().n_elem == 0);
+  output.set_size(layer.OutputSize(), 3);
+
+  // Set weights to 1.0 and bias to 0.0.
+  layer.Weight().fill(1.0);
+  layer.Bias().zeros();
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == 4108);
+
+  // Set bias to one.
+  layer.Bias().fill(1.0);
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == 4108);
+}

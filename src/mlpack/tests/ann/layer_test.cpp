@@ -13,9 +13,12 @@
 
 #include "layer/adaptive_max_pooling.cpp"
 #include "layer/adaptive_mean_pooling.cpp"
+#include "layer/add_merge.cpp"
 #include "layer/alpha_dropout.cpp"
+#include "layer/batch_norm.cpp"
 #include "layer/convolution.cpp"
 #include "layer/dropout.cpp"
+#include "layer/identity.cpp"
 #include "layer/linear3d.cpp"
 #include "layer/linear_no_bias.cpp"
 #include "layer/log_softmax.cpp"
