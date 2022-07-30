@@ -77,8 +77,6 @@ template<typename MatType>
 void CELUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::ones<MatType>(arma::size(input));
-  derivative = arma::ones<MatType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : alpha *
