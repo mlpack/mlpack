@@ -945,7 +945,7 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleELULayerTest", "[ANNLayerTest]")
 {
-  arma::mat input;
+  arma::mat output, input, delta;
   ELU module(0.5);
   module.Training() = true;
   module.InputDimensions() = std::vector<size_t>({ 1 });
@@ -953,13 +953,11 @@ TEST_CASE("SimpleELULayerTest", "[ANNLayerTest]")
   
   // Test the Forward function.
   input = arma::mat("-1 2");
-  arma::mat output(arma::size(input));
   module.Forward(input, output);
   REQUIRE(arma::accu(arma::abs(arma::mat("-0.316060 2") - output)) ==
       Approx(0.0).margin(1e-4));
 
   // Test the Backward function.
-  arma::mat delta(arma::size(input));
   module.Backward(input, output, delta);
   REQUIRE(arma::accu(arma::abs(arma::mat("-0.058136 2") - delta)) ==
       Approx(0.0).margin(1e-4));
@@ -970,21 +968,20 @@ TEST_CASE("SimpleELULayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleCELULayerTest", "[ANNLayerTest]")
 {
-  arma::mat input;
+  arma::mat output, input, delta;
   CELU module(0.5);
   module.Training() = true;
   module.InputDimensions() = std::vector<size_t>({ 1 });
   module.ComputeOutputDimensions();
 
+
   // Test the Forward function.
   input = arma::mat("-1 2");
-  arma::mat output(arma::size(input));
   module.Forward(input, output);
   REQUIRE(arma::accu(arma::abs(arma::mat("-0.432332 2") - output)) ==
       Approx(0.0).margin(1e-4));
 
   // Test the Backward function.
-  arma::mat delta(arma::size(input));
   module.Backward(input, output, delta);
   REQUIRE(arma::accu(arma::abs(arma::mat("-0.0585098 2") - delta)) ==
       Approx(0.0).margin(1e-4));
