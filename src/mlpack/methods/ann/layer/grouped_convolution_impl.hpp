@@ -272,7 +272,8 @@ void GroupedConvolutionType<
     MatType
 >::SetWeights(typename MatType::elem_type* weightPtr)
 {
-  MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, (maps * inMaps) / groups);
+  MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, 
+      (maps * inMaps) / groups);
     if (useBias)
   {
     MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
@@ -323,8 +324,8 @@ void GroupedConvolutionType<
   size_t inGroupSize = inMaps / groups;
   size_t outGroupSize = maps / groups;
 
-  // We "ignore" dimensions higher than the third---that means that we just pass
-  // them through and treat them like different input points.
+  // We "ignore" dimensions higher than the third---that means that we just 
+  // pass them through and treat them like different input points.
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
@@ -336,7 +337,8 @@ void GroupedConvolutionType<
     for (size_t group = 0; group < groups; group++)
     {
       // Iterate over output maps.
-      for (size_t outMap = group * outGroupSize; outMap < ((group + 1) * outGroupSize); ++outMap)
+      for (size_t outMap = group * outGroupSize;
+          outMap < ((group + 1) * outGroupSize); ++outMap)
       {
         // Iterate over input maps (we will apply the filter and sum).
         for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
@@ -409,7 +411,8 @@ void GroupedConvolutionType<
       for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
       {
         // Iterate over output maps.
-        for (size_t outMap = group * outGroupSize; outMap < ((group + 1) * outGroupSize); ++outMap)
+        for (size_t outMap = group * outGroupSize; 
+            outMap < ((group + 1) * outGroupSize); ++outMap)
         {
           MatType output;
 
@@ -426,15 +429,17 @@ void GroupedConvolutionType<
           {
             if (usingPadding)
             {
-              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) += output.submat(
-                  padWLeft,
-                  padHTop,
-                  padWLeft + gTemp.n_rows - 1,
-                  padHTop + gTemp.n_cols - 1);
+              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) +=
+                  output.submat(
+                      padWLeft,
+                      padHTop,
+                      padWLeft + gTemp.n_rows - 1,
+                      padHTop + gTemp.n_cols - 1);
             }
             else
             {
-              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) += output;
+              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) +=
+                  output;
             }
           }
           else
@@ -447,7 +452,8 @@ void GroupedConvolutionType<
               size_t row = padHTop;
               for (size_t j = 0; j < output.n_rows; ++j)
               {
-                gTemp(row, col, (group * inGroupSize) + inMap + fullInputOffset) += output(j, i);
+                gTemp(row, col, (group * inGroupSize) + inMap +
+                    fullInputOffset) += output(j, i);
                 row += strideHeight;
               }
               col += strideWidth;
@@ -510,7 +516,8 @@ void GroupedConvolutionType<
     for (size_t group = 0; group < groups; group++)
     {
       // Iterate over output maps.
-      for (size_t outMap = group * outGroupSize; outMap < ((group + 1) * outGroupSize); ++outMap)
+      for (size_t outMap = group * outGroupSize;
+          outMap < ((group + 1) * outGroupSize); ++outMap)
       {
         // Iterate over input maps (we will apply the filter and sum).
         for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
@@ -527,14 +534,18 @@ void GroupedConvolutionType<
           if (gradientTemp.n_rows < output.n_rows ||
               gradientTemp.n_cols < output.n_cols)
           {
-            gradientTemp.slice((outMap * inGroupSize) + inMap) += output.submat(0, 0,
-                gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
+            gradientTemp.slice((outMap * inGroupSize) + inMap) += 
+                output.submat(
+                    0,
+                    0,
+                    gradientTemp.n_rows - 1, 
+                    gradientTemp.n_cols - 1);
           }
           else if (gradientTemp.n_rows > output.n_rows ||
                   gradientTemp.n_cols > output.n_cols)
           {
-            gradientTemp.slice((outMap * inGroupSize) + inMap).submat(0, 0, output.n_rows - 1,
-                output.n_cols - 1) += output;
+            gradientTemp.slice((outMap * inGroupSize) + inMap).submat(0, 0,
+                output.n_rows - 1, output.n_cols - 1) += output;
           }
           else
           {
@@ -543,8 +554,8 @@ void GroupedConvolutionType<
         }
 
         if (useBias)
-          gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
-              fullOutputOffset));
+          gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(
+              outMap + fullOutputOffset));
       }
     }
   }

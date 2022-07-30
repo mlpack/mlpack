@@ -90,8 +90,8 @@ class GroupedConvolutionType : public Layer<MatType>
   GroupedConvolutionType();
 
   /**
-   * Create the GroupedConvolutionType object using the specified number of output
-   * maps, filter size, stride and padding parameter.
+   * Create the GroupedConvolutionType object using the specified number of
+   * output maps, filter size, stride and padding parameter.
    *
    * @param maps The number of output maps.
    * @param kernelWidth Width of the filter/kernel.
