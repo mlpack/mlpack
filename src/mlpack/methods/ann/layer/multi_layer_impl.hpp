@@ -257,6 +257,37 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 }
 
 template<typename MatType>
+void MultiLayer<MatType>::CustomInitialize(
+    MatType& W,
+    const size_t elements)
+{
+  size_t start = 0;
+  const size_t totalWeightSize = elements;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    const size_t weightSize = network[i]->WeightSize();
+
+    // Sanity check: ensure we aren't passing memory past the end of the
+    // parameters.
+    Log::Assert(start + weightSize <= totalWeightSize,
+        "FNN::CustomInitialize(): parameter size does not match total layer "
+        "weight size!");
+    
+    MatType WTemp;
+    MakeAlias(WTemp, W.memptr() + start, weightSize, 1);
+    network[i]->CustomInitialize(WTemp, weightSize);
+    
+    start += weightSize;
+  }
+
+  // Technically this check should be unnecessary, but there's nothing wrong
+  // with a little paranoia...
+  Log::Assert(start == totalWeightSize,
+      "FNN::CustomInitialize(): total layer weight size does not match rows "
+      "size!");
+}
+
+template<typename MatType>
 size_t MultiLayer<MatType>::WeightSize() const
 {
   // Sum the weights in each layer.

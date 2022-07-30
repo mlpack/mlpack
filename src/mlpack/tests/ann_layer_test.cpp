@@ -3005,165 +3005,154 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 }
 */
 
-// /**
-//  * Tests the BatchNorm Layer, compares the layers parameters with
-//  * the values from another implementation.
-//  * Link to the implementation - http://cthorey.github.io./backpropagation/
-//  */
-// TEST_CASE("BatchNormTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output;
-//   input << 5.1 << 3.5 << 1.4 << arma::endr
-//         << 4.9 << 3.0 << 1.4 << arma::endr
-//         << 4.7 << 3.2 << 1.3 << arma::endr;
+/**
+ * Tests the BatchNorm Layer, compares the layers parameters with
+ * the values from another implementation.
+ * Link to the implementation - http://cthorey.github.io./backpropagation/
+ */
+TEST_CASE("BatchNormTest", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+  input << 5.1 << 3.5 << 1.4 << arma::endr
+        << 4.9 << 3.0 << 1.4 << arma::endr
+        << 4.7 << 3.2 << 1.3 << arma::endr;
 
-//   // BatchNorm layer with average parameter set to true.
-//   BatchNorm<> model(input.n_rows);
-//   model.Reset();
+  input = input.t();
 
-//   // BatchNorm layer with average parameter set to false.
-//   BatchNorm<> model2(input.n_rows, 1e-5, false);
-//   model2.Reset();
+  // BatchNorm layer with average parameter set to true.
+  BatchNorm module1;
+  module1.Training() = true;
+  module1.InputDimensions() = std::vector<size_t>({ 3, 3 });
+  module1.ComputeOutputDimensions();
+  arma::mat moduleParams(module1.WeightSize(), 1);
+  module1.CustomInitialize(moduleParams, module1.WeightSize());
+  module1.SetWeights((double*) moduleParams.memptr());
 
-//   // Non-Deteministic Forward Pass Test.
-//   model.Deterministic() = false;
-//   model.Forward(input, output);
+  // BatchNorm layer with average parameter set to false (using momentum).
+  BatchNorm module2(2, 2, 1e-5, false);
+  module2.Training() = true;
+  module2.InputDimensions() = std::vector<size_t>({ 3, 3 });
+  module2.ComputeOutputDimensions();
+  arma::mat moduleParams2(module2.WeightSize(), 1);
+  module2.CustomInitialize(moduleParams2, module2.WeightSize());
+  module2.SetWeights((double*) moduleParams2.memptr());
 
-//  // Value calculates using torch.nn.BatchNorm2d(momentum = None).
-//  arma::mat result;
-//  result = { { 1.1658, 0.1100, -1.2758 },
-//             { 1.2579, -0.0699, -1.1880},
-//             { 1.1737, 0.0958, -1.2695 } };
+  // Training Forward Pass Test.
+  output.set_size(module1.OutputSize(), 1);
+  input.reshape(9, 1);
+  module1.Forward(input, output);
 
-//   CheckMatrices(output, result, 1e-1);
+ // Value calculates using torch.nn.BatchNorm1d(momentum = None).
+  arma::mat result;
+  output.reshape(3, 3);
+  result = { { 1.1658, 0.1100, -1.2758 },
+            { 1.2579, -0.0699, -1.1880},
+            { 1.1737, 0.0958, -1.2695 } };
 
-//   model2.Forward(input, output);
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  CheckMatrices(output, result.t(), 1e-1);
 
-//  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-//  output = model.TrainingMean();
-//  result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
+  output.set_size(module2.OutputSize(), 1);
+  module2.Forward(input, output);
+  output.reshape(3, 3);
+  CheckMatrices(output, result.t(), 1e-1);
+  result.clear();
+  output.clear();
 
-//   CheckMatrices(output, result, 1e-1);
+ // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  output = module1.TrainingMean();
+  result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
 
-//  // Values calculated using torch.nn.BatchNorm2d().
-//  output = model2.TrainingMean();
-//  result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
+  CheckMatrices(output, result, 1e-1);
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+ // Values calculated using torch.nn.BatchNorm1d().
+  output = module2.TrainingMean();
+  result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
 
-  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-//  output = model.TrainingVariance();
-//  result = arma::mat({ 3.4433, 3.0700, 2.9033 }).t();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  output = module1.TrainingVariance();
+  result = arma::mat({ 3.4433, 3.0700, 2.9033 }).t();
 
-  // Values calculated using torch.nn.BatchNorm2d().
-//  output = model2.TrainingVariance();
-//  result = arma::mat({ 1.2443, 1.2070, 1.1903 }).t();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  // Values calculated using torch.nn.BatchNorm1d().
+  output = module2.TrainingVariance();
+  result = arma::mat({ 1.2443, 1.2070, 1.1903 }).t();
 
-//   // Deterministic Forward Pass test.
-//   model.Deterministic() = true;
-//   model.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-//  result = { { 0.9521, 0.0898, -1.0419 },
-//             { 1.0273, -0.0571, -0.9702 },
-//             { 0.9586, 0.0783, -1.0368 } };
+  // Deterministic Forward Pass test.
+  module1.Training() = false;
+  output.set_size(module1.OutputSize(), 1);
+  module1.Forward(input, output);
+  output.reshape(3, 3);
 
-//   CheckMatrices(output, result, 1e-1);
+  // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  result = { { 0.9521, 0.0898, -1.0419 },
+            { 1.0273, -0.0571, -0.9702 },
+            { 0.9586, 0.0783, -1.0368 } };
 
-//   // Values calculated using torch.nn.BatchNorm2d().
-//   model2.Deterministic() = true;
-//   model2.Forward(input, output);
+  CheckMatrices(output, result.t(), 1e-1);
 
-//   result = { { 4.2731, 2.8388, 0.9562 },
-//              { 4.1779, 2.4485, 0.9921 },
-//              { 4.0268, 2.6519, 0.9105 } };
-//
-//   CheckMatrices(output, result, 1e-1);
-// }
+  // Values calculated using torch.nn.BatchNorm1d().
+  module2.Training() = false;
+  output.set_size(module2.OutputSize(), 1);
+  module2.Forward(input, output);
+  output.reshape(3, 3);
 
-// /**
-//  * BatchNorm layer numerical gradient test.
-//  */
-// TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
-// {
-//   bool pass = false;
-//   for (size_t trial = 0; trial < 10; trial++)
-//   {
-//     // Add function gradient instantiation.
-//     struct GradientFunction
-//     {
-//       GradientFunction() :
-//           input(arma::randn(32, 2048)),
-//           target(arma::zeros(1, 2048))
-//       {
-//         model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
-//         model->ResetData(input, target);
-//         model->Add<IdentityLayer<> >();
-//         model->Add<Linear<> >(32, 4);
-//         model->Add<BatchNorm<> >(4);
-//         model->Add<Linear<>>(4, 2);
-//         model->Add<LogSoftMax<> >();
-//       }
+  result = { { 4.2731, 2.8388, 0.9562 },
+             { 4.1779, 2.4485, 0.9921 },
+             { 4.0268, 2.6519, 0.9105 } };
 
-//       ~GradientFunction()
-//       {
-//         delete model;
-//       }
+  CheckMatrices(output, result.t(), 1e-1);
+}
 
-//       double Gradient(arma::mat& gradient) const
-//       {
-//         double error = model->Evaluate(model->Parameters(), 0, 2048, false);
-//         model->Gradient(model->Parameters(), 0, gradient, 2048);
-//         return error;
-//       }
+/**
+ * BatchNorm layer numerical gradient test.
+ */
+TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(32, 2048)),
+        target(arma::zeros(1, 2048))
+    {
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
+      model->ResetData(input, target);
+      model->Add<Linear>(4);
+      model->Add<BatchNorm>();
+      model->Add<Linear>(2);
+      model->Add<LogSoftMax>();
+    }
 
-//       arma::mat& Parameters() { return model->Parameters(); }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//       FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-//       arma::mat input, target;
-//     } function;
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 2048);
+      model->Gradient(model->Parameters(), 0, gradient, 2048);
+      return error;
+    }
 
-//     double gradient = CheckGradient(function);
-//     if (gradient < 2e-1)
-//     {
-//       pass = true;
-//       break;
-//     }
-//   }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//   REQUIRE(pass);
-// }
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-// /**
-//  * Test that the functions that can access the parameters of the
-//  * Batch Norm layer work.
-//  */
-// TEST_CASE("BatchNormLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : size, eps.
-//   BatchNorm<> layer(7, 1e-3);
+  double gradient = CheckGradient(function);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.InputSize() == 7);
-//   REQUIRE(layer.Epsilon() == 1e-3);
-
-//   arma::mat runningMean(7, 1, arma::fill::randn);
-//   arma::mat runningVariance(7, 1, arma::fill::randn);
-
-//   layer.TrainingVariance() = runningVariance;
-//   layer.TrainingMean() = runningMean;
-//   CheckMatrices(layer.TrainingVariance(), runningVariance);
-//   CheckMatrices(layer.TrainingMean(), runningMean);
-// }
+  REQUIRE(gradient < 1e-1);
+}
 
 /**
  * VirtualBatchNorm layer numerical gradient test.
@@ -4533,52 +4522,51 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(arma::accu(delta) == 0);
 // }
 
-// // General ANN serialization test.
-// template<typename LayerType>
-// void ANNLayerSerializationTest(LayerType& layer)
-// {
-//   arma::mat input(5, 100, arma::fill::randu);
-//   arma::mat output(5, 100, arma::fill::randu);
+// General ANN serialization test.
+template<typename LayerType>
+void ANNLayerSerializationTest(LayerType& layer)
+{
+  arma::mat input(5, 100, arma::fill::randu);
+  arma::mat output(5, 100, arma::fill::randu);
 
-//   FFN<NegativeLogLikelihood, ann::RandomInitialization> model;
-//   model.Add<Linear<>>(input.n_rows, 10);
-//   model.Add<LayerType>(layer);
-//   model.Add<ReLULayer<>>();
-//   model.Add<Linear<>>(10, output.n_rows);
-//   model.Add<LogSoftMax<>>();
+  FFN<> model;
+  model.Add<Linear>(10);
+  model.Add<LayerType>(layer);
+  model.Add<ReLU>();
+  model.Add<Linear>(output.n_rows);
+  model.Add<LogSoftMax>();
 
-//   ens::StandardSGD opt(0.1, 1, 5, -100, false);
-//   model.Train(input, output, opt);
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
+  model.Train(input, output, opt);
 
-//   arma::mat originalOutput;
-//   model.Predict(input, originalOutput);
+  arma::mat originalOutput;
+  model.Predict(input, originalOutput);
 
-//   // Now serialize the model.
-//   FFN<NegativeLogLikelihood, ann::RandomInitialization> xmlModel, jsonModel,
-//       binaryModel;
-//   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+  // Now serialize the model.
+  FFN<> xmlModel, jsonModel, binaryModel;
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
-//   // Ensure that predictions are the same.
-//   arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
-//   model.Predict(input, modelOutput);
-//   xmlModel.Predict(input, xmlOutput);
-//   jsonModel.Predict(input, jsonOutput);
-//   binaryModel.Predict(input, binaryOutput);
+  // Ensure that predictions are the same.
+  arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
+  model.Predict(input, modelOutput);
+  xmlModel.Predict(input, xmlOutput);
+  jsonModel.Predict(input, jsonOutput);
+  binaryModel.Predict(input, binaryOutput);
 
-//   CheckMatrices(originalOutput, modelOutput, 1e-5);
-//   CheckMatrices(originalOutput, xmlOutput, 1e-5);
-//   CheckMatrices(originalOutput, jsonOutput, 1e-5);
-//   CheckMatrices(originalOutput, binaryOutput, 1e-5);
-// }
+  CheckMatrices(originalOutput, modelOutput, 1e-5);
+  CheckMatrices(originalOutput, xmlOutput, 1e-5);
+  CheckMatrices(originalOutput, jsonOutput, 1e-5);
+  CheckMatrices(originalOutput, binaryOutput, 1e-5);
+}
 
-// /**
-//  * Simple serialization test for batch normalization layer.
-//  */
-// TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
-// {
-//   BatchNorm<> layer(10);
-//   ANNLayerSerializationTest(layer);
-// }
+/**
+ * Simple serialization test for batch normalization layer.
+ */
+TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
+{
+  BatchNorm layer;
+  ANNLayerSerializationTest(layer);
+}
 
 // /**
 //  * Simple serialization test for layer normalization layer.
@@ -5463,208 +5451,140 @@ TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 }
 */
 
-// TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output, result, runningMean, runningVar, delta;
+TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, result, runningMean, runningVar, delta;
 
-//   // The input test matrix is of the form 3 x 2 x 4 x 1 where
-//   // number of images are 3 and number of feature maps are 2.
-//   input = { { 1, 446, 42 },
-//             { 2, 16, 63 },
-//             { 3, 13, 63 },
-//             { 4, 21, 21 },
-//             { 1, 13, 11 },
-//             { 32, 45, 42 },
-//             { 22, 16, 63 },
-//             { 32, 13, 42 } };
-//
-//   // Output calculated using torch.nn.BatchNorm2d().
-//   result = { { -0.4786, 3.2634, -0.1338 },
-//              { -0.4702, -0.3525, 0.0427 },
-//              { -0.4618, -0.3777, 0.0427 },
-//              { -0.4534, -0.3104, -0.3104 },
-//              { -1.5429, -0.8486, -0.9643 },
-//              { 0.2507, 1.0029, 0.8293 },
-//              { -0.3279, -0.675, 2.0443 },
-//              { 0.2507 , -0.8486 , 0.8293 } };
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16, 63 },
+            { 32, 13, 42 } };
 
-//   // Check correctness of batch normalization.
-//   BatchNorm<> module1(2, 1e-5, false, 0.1);
-//   module1.Reset();
-//   module1.Forward(input, output);
-//   CheckMatrices(output, result, 1e-1);
+  // Output calculated using torch.nn.BatchNorm2d().
+  result = { { -0.4786, 3.2634, -0.1338 },
+             { -0.4702, -0.3525, 0.0427 },
+             { -0.4618, -0.3777, 0.0427 },
+             { -0.4534, -0.3104, -0.3104 },
+             { -1.5429, -0.8486, -0.9643 },
+             { 0.2507, 1.0029, 0.8293 },
+             { -0.3279, -0.675, 2.0443 },
+             { 0.2507 , -0.8486 , 0.8293 } };
 
-//   // Check backward function.
-//   module1.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == Approx(0.0102676).epsilon(1e-5));
+  // Check correctness of batch normalization.
+  BatchNorm module1(2, 2, 1e-5, false, 0.1);
+  module1.Training() = true;
+  module1.InputDimensions() = std::vector<size_t>({ 1, 4, 2 });
+  module1.ComputeOutputDimensions();
+  arma::mat moduleParams(module1.WeightSize(), 1);
+  module1.CustomInitialize(moduleParams, module1.WeightSize());
+  module1.SetWeights((double*) moduleParams.memptr());
+  output.set_size(8, 3);
+  module1.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
 
-//   // Check values for running mean and running variance.
-//   // Calculated using torch.nn.BatchNorm2d().
-//   runningMean = arma::mat(2, 1);
-//   runningVar = arma::mat(2, 1);
-//   runningMean(0) = 5.7917;
-//   runningMean(1) = 2.76667;
-//   runningVar(0) = 1543.6545;
-//   runningVar(1) = 33.488;
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean = arma::mat(2, 1);
+  runningVar = arma::mat(2, 1);
+  runningMean(0) = 5.7917;
+  runningMean(1) = 2.76667;
+  runningVar(0) = 1543.6545;
+  runningVar(1) = 33.488;
 
-//   CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
-//   CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
 
-//   // Check correctness of layer when running mean and variance
-//   // are updated using cumulative average.
-//   BatchNorm<> module2(2);
-//   module2.Reset();
-//   module2.Forward(input, output);
-//   CheckMatrices(output, result, 1e-1);
+  // Check correctness of layer when running mean and variance
+  // are updated using cumulative average.
+  BatchNorm module2;
+  module2.Training() = true;
+  module2.InputDimensions() = std::vector<size_t>({ 1, 4, 2 });
+  module2.ComputeOutputDimensions();
+  arma::mat moduleParams2(module2.WeightSize(), 1);
+  module2.CustomInitialize(moduleParams2, module2.WeightSize());
+  module2.SetWeights((double*) moduleParams2.memptr());
+  output.set_size(8, 3);
+  module2.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
 
-//   // Check values for running mean and running variance.
-//   // Calculated using torch.nn.BatchNorm2d().
-//   runningMean(0) = 57.9167;
-//   runningMean(1) = 27.6667;
-//   runningVar(0) = 15427.5380;
-//   runningVar(1) = 325.8787;
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean(0) = 57.9167;
+  runningMean(1) = 27.6667;
+  runningVar(0) = 15427.5380;
+  runningVar(1) = 325.8787;
 
-//   CheckMatrices(runningMean, module2.TrainingMean(), 1e-2);
-//   CheckMatrices(runningVar, module2.TrainingVariance(), 1e-2);
+  CheckMatrices(runningMean, module2.TrainingMean(), 1e-2);
+  CheckMatrices(runningVar, module2.TrainingVariance(), 1e-2);
 
-//   // Check correctness when model is testing.
-//   arma::mat deterministicOutput;
-//   module1.Deterministic() = true;
-//   module1.Forward(input, deterministicOutput);
+  // Check correctness when model is testing.
+  arma::mat deterministicOutput;
+  module1.Training() = false;
+  deterministicOutput.set_size(8, 3);
+  module1.Forward(input, deterministicOutput);
 
-//   result.clear();
-//   result = { { -0.12195, 11.20426, 0.92158 },
-//              { -0.0965, 0.259824, 1.4560 },
-//              { -0.071054, 0.183567, 1.45607 },
-//              { -0.045601, 0.3870852, 0.38708 },
-//              { -0.305288, 1.7683, 1.4227 },
-//              { 5.05166, 7.29812, 6.7797 },
-//              { 3.323614, 2.2867, 10.4086 },
-//              { 5.05166, 1.7683, 6.7797 } };
+  result.clear();
+  result = { { -0.12195, 11.20426, 0.92158 },
+             { -0.0965, 0.259824, 1.4560 },
+             { -0.071054, 0.183567, 1.45607 },
+             { -0.045601, 0.3870852, 0.38708 },
+             { -0.305288, 1.7683, 1.4227 },
+             { 5.05166, 7.29812, 6.7797 },
+             { 3.323614, 2.2867, 10.4086 },
+             { 5.05166, 1.7683, 6.7797 } };
 
-//   CheckMatrices(result, deterministicOutput, 1e-1);
+  CheckMatrices(result, deterministicOutput, 1e-1);
+}
 
-//   // Check correctness by updating the running mean and variance again.
-//   module1.Deterministic() = false;
+/**
+ * Batch Normalization layer numerical gradient test.
+ */
+TEST_CASE("GradientBatchNormWithConvolutionTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(16, 1024)),
+        target(arma::zeros(1, 1024))
+    {
+      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
+      model->ResetData(input, target);
+      model->Add<Convolution>(2, 3, 3);
+      model->Add<BatchNorm>();
+      model->Add<Linear>(2);
+      model->Add<LogSoftMax>();
 
-//   // Clean up.
-//   output.clear();
-//   input.clear();
+      model->InputDimensions() = std::vector<size_t>({ 4, 4, 1 });
+    }
 
-//   // The input test matrix is of the form 2 x 2 x 3 x 1 where
-//   // number of images are 2 and number of feature maps are 2.
-//   input = { { 12, 443 },
-//             { 134, 45 },
-//             { 11, 13 },
-//             { 14, 55 },
-//             { 110, 4 },
-//             { 1, 45 } };
-//
-//   result = { { -0.629337, 2.14791 },
-//              { 0.156797, -0.416694 },
-//              { -0.63578, -0.622893 },
-//              { -0.637481, 0.4440386 },
-//              { 1.894857, -0.901267 },
-//              { -0.980402, 0.180253 } };
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//   module1.Forward(input, output);
-//   CheckMatrices(result, output, 1e-3);
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1024);
+      model->Gradient(model->Parameters(), 0, gradient, 1024);
+      return error;
+    }
 
-//   // Check correctness for the second module as well.
-//   module2.Forward(input, output);
-//   CheckMatrices(result, output, 1e-3);
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//   // Calculated using torch.nn.BatchNorm2d().
-//   runningMean(0) = 16.1792;
-//   runningMean(1) = 6.30667;
-//   runningVar(0) = 4276.5849;
-//   runningVar(1) = 202.595;
+    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
-//   CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
+  double gradient = CheckGradient(function);
 
-//   // Check correctness of running mean and variance when their
-//   // values are updated using cumulative average.
-//   runningMean(0) = 83.79166;
-//   runningMean(1) = 32.9166;
-//   runningVar(0) = 22164.1035;
-//   runningVar(1) = 1025.2227;
-
-//   CheckMatrices(runningMean, module2.TrainingMean(), 1e-3);
-//   CheckMatrices(runningVar, module2.TrainingVariance(), 1e-3);
-
-//   // Check backward function.
-//   module1.Backward(input, output, delta);
-
-//   deterministicOutput.clear();
-//   module1.Deterministic() = true;
-//   module1.Forward(input, deterministicOutput);
-
-//   result.clear();
-//   result = { { -0.06388436, 6.524754114 },
-//              { 1.799655281, 0.44047968 },
-//              { -0.07913291, -0.04784981 },
-//              { 0.5405045, 3.4210097 },
-//              { 7.2851023, -0.1620577 },
-//              { -0.37282639, 2.7184474 } };
-
-//   // Calculated using torch.nn.BatchNorm2d().
-//   CheckMatrices(result, deterministicOutput, 1e-1);
-// }
-
-// /**
-//  * Batch Normalization layer numerical gradient test.
-//  */
-// TEST_CASE("GradientBatchNormWithMiniBatchesTest", "[ANNLayerTest]")
-// {
-//   // Add function gradient instantiation.
-//   // To make this test robust, check it ten times.
-//   bool pass = false;
-//   for (size_t trial = 0; trial < 10; trial++)
-//   {
-//     struct GradientFunction
-//     {
-//       GradientFunction() :
-//           input(arma::randn(16, 1024)),
-//           target(arma::zeros(1, 1024))
-//       {
-//         model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
-//         model->ResetData(input, target);
-//         model->Add<IdentityLayer<>>();
-//         model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
-//         model->Add<BatchNorm<>>(2);
-//         model->Add<Linear<>>(2 * 2 * 2, 2);
-//         model->Add<LogSoftMax<>>();
-//       }
-
-//       ~GradientFunction()
-//       {
-//         delete model;
-//       }
-
-//       double Gradient(arma::mat& gradient) const
-//       {
-//         double error = model->Evaluate(model->Parameters(), 0, 1024, false);
-//         model->Gradient(model->Parameters(), 0, gradient, 1024);
-//         return error;
-//       }
-
-//       arma::mat& Parameters() { return model->Parameters(); }
-
-//       FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-//       arma::mat input, target;
-//     } function;
-
-//     double gradient = CheckGradient(function);
-//     if (gradient < 1e-1)
-//     {
-//       pass = true;
-//       break;
-//     }
-//   }
-
-//   REQUIRE(pass);
-// }
+  REQUIRE(gradient < 1e-1);
+}
 
 TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
 {
@@ -5829,25 +5749,6 @@ TEST_CASE("GradientGroupedConvolutionLayerTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) < 1e-1);
 }
-
-// TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
-// {
-//   FFN<> module;
-//   module.Add<BatchNorm<>>(2, 1e-5, false);
-//   module.Add<LogSoftMax<>>();
-
-//   arma::mat input(4, 3), output;
-//   module.ResetParameters();
-
-//   // The model should switch to Deterministic mode for predicting.
-//   module.Predict(input, output);
-//   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == true);
-
-//   output.ones();
-//   module.Train(input, output);
-//   // The model should switch to training mode for predicting.
-//   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
-// }
 
 // /**
 //  * Linear module weight initialization test.
