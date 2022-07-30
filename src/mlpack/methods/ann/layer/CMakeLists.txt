@@ -12,6 +12,8 @@ set(SOURCES
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   base_layer.hpp
+  batch_norm.hpp
+  batch_norm_impl.hpp
   celu.hpp
   celu_impl.hpp
   concat.hpp

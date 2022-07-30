@@ -53,7 +53,9 @@ class Layer
 {
  public:
   //! Default constructor.
-  Layer() : validOutputDimensions(false), training(false)
+  Layer() : 
+      validOutputDimensions(false),
+      training(false)
   { /* Nothing to do here */ }
 
   //! Default deconstructor.
@@ -251,6 +253,21 @@ class Layer
     throw std::invalid_argument("Layer::Parameters(): cannot modify parameters "
         "of a layer with no weights!");
   }
+
+  /**
+   * Override the weight matrix of the layer. This method is used to set the
+   * weights of the layer, and is only used during layer weight initialization.
+   * This method should be used if you want initialize the weights of the layer
+   * with a custom matrix. We will provide the weight matrix on which you can
+   * override the weights of the layer.
+   *
+   * @param * (W) Weight matrix to initialize.
+   * @param * (elements) Number of elements.
+   */
+  virtual void CustomInitialize(
+      MatType& /* W */,
+      const size_t /* elements */)
+  { /* Nothing to do here */ }
 
   //! Compute the output dimensions.  This should be overloaded if the layer is
   //! meant to work on higher-dimensional objects.  When this is called, it is a

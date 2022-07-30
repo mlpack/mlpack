@@ -559,6 +559,8 @@ void FFN<
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
   networkInit.Initialize(network.Network(), parameters);
+  // Override the weight matrix if necessary.
+  network.CustomInitialize(parameters, network.WeightSize());
 }
 
 template<typename OutputLayerType,
