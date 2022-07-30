@@ -53,7 +53,8 @@ ConvolutionType<
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
-    const std::string& paddingType) :
+    const std::string& paddingType,
+    const bool useBias) :
     ConvolutionType(
       maps,
       kernelWidth,
@@ -62,7 +63,8 @@ ConvolutionType<
       strideHeight,
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
-      paddingType)
+      paddingType,
+      useBias)
 {
   // Nothing to do here.
 }
@@ -86,7 +88,8 @@ ConvolutionType<
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
-    const std::string& paddingTypeIn) :
+    const std::string& paddingTypeIn,
+    const bool useBias) :
     Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
@@ -96,7 +99,8 @@ ConvolutionType<
     padWLeft(std::get<0>(padW)),
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
-    padHTop(std::get<0>(padH))
+    padHTop(std::get<0>(padH)),
+    useBias(useBias)
 {
   // Transform paddingType to lowercase.
   this->paddingType = util::ToLower(paddingTypeIn);
@@ -124,6 +128,7 @@ ConvolutionType<
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
+    useBias(other.useBias),
     padding(other.padding),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
@@ -154,6 +159,7 @@ ConvolutionType<
     padWRight(std::move(other.padWRight)),
     padHBottom(std::move(other.padHBottom)),
     padHTop(std::move(other.padHTop)),
+    useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
@@ -193,6 +199,7 @@ ConvolutionType<
     padWRight = other.padWRight;
     padHBottom = other.padHBottom;
     padHTop = other.padHTop;
+    useBias = other.useBias;
     padding = other.padding;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
@@ -233,6 +240,7 @@ ConvolutionType<
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
+    useBias = std::move(other.useBias);
     padding = std::move(other.padding);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
@@ -256,8 +264,15 @@ void ConvolutionType<
 >::SetWeights(typename MatType::elem_type* weightPtr)
 {
   MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, maps * inMaps);
-  MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
-  MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
+  if (useBias)
+  {
+    MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
+    MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
+  }
+  else
+  {
+    MakeAlias(weights, weightPtr, weight.n_elem, 1);
+  }
 }
 
 template<
@@ -326,7 +341,8 @@ void ConvolutionType<
       }
 
       // Make sure to add the bias.
-      convOutput += bias(outMap);
+      if (useBias)
+        convOutput += bias(outMap);
     }
   }
 }
@@ -506,7 +522,8 @@ void ConvolutionType<
         }
       }
 
-      gradient[weight.n_elem + outMap] += arma::accu(curError);
+      if (useBias)
+        gradient[weight.n_elem + outMap] += arma::accu(curError);
     }
   }
 }

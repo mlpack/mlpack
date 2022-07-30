@@ -32,6 +32,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::ElishType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::GaussianType<__VA_ARGS__>); \
     /* (end of base_layer.hpp) */ \
+    CEREAL_REGISTER_TYPE(mlpack::ann::BatchNormType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatenateType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConvolutionType< \
@@ -41,6 +42,7 @@
         __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropConnectType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::DropoutType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::IdentityType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LeakyReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LinearType<__VA_ARGS__>); \
