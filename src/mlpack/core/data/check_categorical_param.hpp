@@ -9,6 +9,8 @@
 #ifndef MLPACK_CORE_DATA_CHECK_CATEGORICAL_PARAM_HPP
 #define MLPACK_CORE_DATA_CHECK_CATEGORICAL_PARAM_HPP
 
+#include <mlpack/core/util/params.hpp>
+
 namespace mlpack {
 namespace data {
 

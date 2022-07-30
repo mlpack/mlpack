@@ -26,6 +26,7 @@
 
 #include "param_data.hpp"
 #include "params.hpp"
+#include "params_impl.hpp"
 
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>

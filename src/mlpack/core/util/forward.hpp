@@ -17,11 +17,14 @@ class IO;
 
 namespace util {
 
-class Params;
 class Timers;
 
 } // namespace util
+}
 
+#include "params.hpp"
+
+namespace mlpack {
 namespace data {
 
 class IncrementPolicy;

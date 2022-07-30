@@ -9,6 +9,7 @@
 #define MLPACK_CORE_UTIL_PARAMS_IMPL_HPP
 
 // Include definition, if needed.
+#include "forward.hpp"
 #include "params.hpp"
 
 namespace mlpack {

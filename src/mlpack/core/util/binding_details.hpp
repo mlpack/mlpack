@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_UTIL_BINDING_DETAILS_HPP
 #define MLPACK_CORE_UTIL_BINDING_DETAILS_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/base.hpp>
 
 namespace mlpack {
 namespace util {
