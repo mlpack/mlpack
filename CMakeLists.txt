@@ -233,8 +233,8 @@ if (DEBUG)
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
   if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-#    find_package(Bfd)
-#    find_package(LibDL)
+    find_package(Bfd)
+    find_package(LibDL)
     if (LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
