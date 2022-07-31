@@ -147,11 +147,6 @@ if (BUILD_GO_SHLIB)
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/)
   endforeach()
 
-  add_custom_command(TARGET go_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          $<TARGET_FILE:mlpack>
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/)
-
   foreach(cgo_file ${CGO_SOURCES})
   add_custom_command(TARGET go_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different

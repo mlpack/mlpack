@@ -30,17 +30,10 @@ if not '${OpenMP_CXX_FLAGS}':
 else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
-# Get list of library dirs.  Note that for the list of directories, any
-# directories with a (valid) space in the name will be given to us as '\ '; so,
-# in order to split these right, we first convert all spaces to ';', then
-# convert '\;' back to ' ', then split on ';'.
-library_dirs = ['${MLPACK_LIBDIR}']
-
 # We'll link with the exact paths to each library using extra_objects, instead
 # of linking with 'libraries' and 'library_dirs', because of differences in
 # Windows and Linux linking behavior.
-libraries = ['${MLPACK_LIBRARY}'] + \
-             '${ARMADILLO_LIBRARIES}'.split(' ')
+libraries = '${ARMADILLO_LIBRARIES}'.split(' ')
 
 # Potentially faulty assumption: we can always link against libraries directly
 # by just specifying the full path to them on the command line.
@@ -74,7 +67,6 @@ else:
                       '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
                                                      .replace('\;', ' ')
                                                      .split(';'),
-                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
@@ -93,7 +85,6 @@ else:
                       '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
                                                      .replace('\;', ' ')
                                                      .split(';'),
-                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
