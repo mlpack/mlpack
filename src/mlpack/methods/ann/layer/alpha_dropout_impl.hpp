@@ -26,6 +26,7 @@ template<typename MatType>
 AlphaDropoutType<MatType>::AlphaDropoutType(
     const double ratio,
     const double alphaDash) :
+    Layer<MatType>(),
     ratio(ratio),
     alphaDash(alphaDash)
 {

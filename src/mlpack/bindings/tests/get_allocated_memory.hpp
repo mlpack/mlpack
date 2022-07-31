@@ -44,7 +44,7 @@ void* GetAllocatedMemory(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Here we have a model; return its memory location.
-  return *ANY_CAST<T*>(&d.value);
+  return *MLPACK_ANY_CAST<T*>(&d.value);
 }
 
 template<typename T>

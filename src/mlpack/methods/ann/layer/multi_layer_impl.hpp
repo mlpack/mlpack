@@ -20,6 +20,7 @@ namespace ann {
 
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer() :
+    Layer<MatType>(),
     inSize(0),
     totalInputSize(0),
     totalOutputSize(0)
@@ -194,7 +195,7 @@ void MultiLayer<MatType>::Backward(
   else
   {
     // Empty network?
-    g = input;
+    g = gy;
   }
 }
 
@@ -252,6 +253,37 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
   // with a little paranoia...
   Log::Assert(start == totalWeightSize,
       "FNN::SetLayerMemory(): total layer weight size does not match parameter "
+      "size!");
+}
+
+template<typename MatType>
+void MultiLayer<MatType>::CustomInitialize(
+    MatType& W,
+    const size_t elements)
+{
+  size_t start = 0;
+  const size_t totalWeightSize = elements;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    const size_t weightSize = network[i]->WeightSize();
+
+    // Sanity check: ensure we aren't passing memory past the end of the
+    // parameters.
+    Log::Assert(start + weightSize <= totalWeightSize,
+        "FNN::CustomInitialize(): parameter size does not match total layer "
+        "weight size!");
+    
+    MatType WTemp;
+    MakeAlias(WTemp, W.memptr() + start, weightSize, 1);
+    network[i]->CustomInitialize(WTemp, weightSize);
+    
+    start += weightSize;
+  }
+
+  // Technically this check should be unnecessary, but there's nothing wrong
+  // with a little paranoia...
+  Log::Assert(start == totalWeightSize,
+      "FNN::CustomInitialize(): total layer weight size does not match rows "
       "size!");
 }
 
@@ -378,15 +410,9 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
   for (size_t i = 0; i < layerDeltas.size(); ++i)
   {
     size_t layerInputSize = 1;
-    if (i == 0)
-    {
-      for (size_t j = 0; j < this->inputDimensions.size(); ++j)
-        layerInputSize *= this->inputDimensions[j];
-    }
-    else
-    {
-      layerInputSize = network[i - 1]->OutputSize();
-    }
+    for (size_t j = 0; j < this->network[i]->InputDimensions().size(); ++j)
+      layerInputSize *= this->network[i]->InputDimensions()[j];
+
     MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
         batchSize);
     start += batchSize * layerInputSize;

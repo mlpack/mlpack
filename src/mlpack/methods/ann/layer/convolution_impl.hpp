@@ -29,7 +29,7 @@ ConvolutionType<
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType()
+>::ConvolutionType() : Layer<MatType>()
 {
   // Nothing to do here.
 }
@@ -53,7 +53,8 @@ ConvolutionType<
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
-    const std::string& paddingType) :
+    const std::string& paddingType,
+    const bool useBias) :
     ConvolutionType(
       maps,
       kernelWidth,
@@ -62,7 +63,8 @@ ConvolutionType<
       strideHeight,
       std::tuple<size_t, size_t>(padW, padW),
       std::tuple<size_t, size_t>(padH, padH),
-      paddingType)
+      paddingType,
+      useBias)
 {
   // Nothing to do here.
 }
@@ -86,7 +88,9 @@ ConvolutionType<
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
-    const std::string& paddingTypeIn) :
+    const std::string& paddingTypeIn,
+    const bool useBias) :
+    Layer<MatType>(),
     maps(maps),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
@@ -95,7 +99,8 @@ ConvolutionType<
     padWLeft(std::get<0>(padW)),
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
-    padHTop(std::get<0>(padH))
+    padHTop(std::get<0>(padH)),
+    useBias(useBias)
 {
   // Transform paddingType to lowercase.
   this->paddingType = util::ToLower(paddingTypeIn);
@@ -123,6 +128,7 @@ ConvolutionType<
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
+    useBias(other.useBias),
     padding(other.padding),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
@@ -153,6 +159,7 @@ ConvolutionType<
     padWRight(std::move(other.padWRight)),
     padHBottom(std::move(other.padHBottom)),
     padHTop(std::move(other.padHTop)),
+    useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
@@ -192,6 +199,7 @@ ConvolutionType<
     padWRight = other.padWRight;
     padHBottom = other.padHBottom;
     padHTop = other.padHTop;
+    useBias = other.useBias;
     padding = other.padding;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
@@ -232,6 +240,7 @@ ConvolutionType<
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
+    useBias = std::move(other.useBias);
     padding = std::move(other.padding);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
@@ -255,8 +264,15 @@ void ConvolutionType<
 >::SetWeights(typename MatType::elem_type* weightPtr)
 {
   MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, maps * inMaps);
-  MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
-  MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
+  if (useBias)
+  {
+    MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
+    MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
+  }
+  else
+  {
+    MakeAlias(weights, weightPtr, weight.n_elem, 1);
+  }
 }
 
 template<
@@ -315,7 +331,7 @@ void ConvolutionType<
 
         ForwardConvolutionRule::Convolution(
             inputTemp.slice(inMap + fullInputOffset),
-            weight.slice(outMap),
+            weight.slice((outMap * inMaps) + inMap),
             convOutput,
             strideWidth,
             strideHeight);
@@ -324,7 +340,8 @@ void ConvolutionType<
       }
 
       // Make sure to add the bias.
-      outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
+      if (useBias)
+        outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
     }
   }
 }
@@ -357,7 +374,7 @@ void ConvolutionType<
   // To perform the backward pass, we need to rotate all the filters.
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
-  for (size_t map = 0; map < maps; ++map)
+  for (size_t map = 0; map < (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
@@ -378,7 +395,7 @@ void ConvolutionType<
 
         BackwardConvolutionRule::Convolution(
             mappedError.slice(outMap + fullOutputOffset),
-            rotatedFilters.slice(outMap),
+            rotatedFilters.slice((outMap * inMaps) + inMap),
             output,
             strideHeight,
             strideWidth);
@@ -482,23 +499,24 @@ void ConvolutionType<
         if (gradientTemp.n_rows < output.n_rows ||
             gradientTemp.n_cols < output.n_cols)
         {
-          gradientTemp.slice(outMap) += output.submat(0, 0,
+          gradientTemp.slice((outMap * inMaps) + inMap) += output.submat(0, 0,
               gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
         }
         else if (gradientTemp.n_rows > output.n_rows ||
                  gradientTemp.n_cols > output.n_cols)
         {
-          gradientTemp.slice(outMap).submat(0, 0, output.n_rows - 1,
+          gradientTemp.slice((outMap * inMaps) + inMap).submat(0, 0, output.n_rows - 1,
               output.n_cols - 1) += output;
         }
         else
         {
-          gradientTemp.slice(outMap) += output;
+          gradientTemp.slice((outMap * inMaps) + inMap) += output;
         }
       }
 
-      gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
-          fullOutputOffset));
+      if (useBias)
+        gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
+            fullOutputOffset));
     }
   }
 }

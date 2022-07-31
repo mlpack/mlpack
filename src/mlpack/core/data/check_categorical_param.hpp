@@ -1,5 +1,5 @@
 /**
- * @file check_categorical_param.hpp
+ * @file core/data/check_categorical_param.hpp
  * @author Ryan Curtin
  *
  * This file provides an implementation of a simple function to check the values
@@ -8,6 +8,8 @@
  */
 #ifndef MLPACK_CORE_DATA_CHECK_CATEGORICAL_PARAM_HPP
 #define MLPACK_CORE_DATA_CHECK_CATEGORICAL_PARAM_HPP
+
+#include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
 namespace data {

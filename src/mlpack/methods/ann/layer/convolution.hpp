@@ -91,6 +91,7 @@ class ConvolutionType : public Layer<MatType>
    * @param paddingType The type of padding ("valid" or "same"). Defaults to
    *    "none".  If not specified or "none", the values for `padW` and `padH`
    *    will be used.
+   * @param useBias Whether or not to use a bias with the convolution.
    */
   ConvolutionType(const size_t maps,
                   const size_t kernelWidth,
@@ -99,7 +100,8 @@ class ConvolutionType : public Layer<MatType>
                   const size_t strideHeight = 1,
                   const size_t padW = 0,
                   const size_t padH = 0,
-                  const std::string& paddingType = "none");
+                  const std::string& paddingType = "none",
+                  const bool useBias = true);
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -119,6 +121,7 @@ class ConvolutionType : public Layer<MatType>
    * @param paddingType The type of padding ("valid" or "same"). Defaults to
    *      "none".  If not specified or "none", the values for `padW` and `padH`
    *      will be used.
+   * @param useBias Whether or not to use a bias with the convolution.
    */
   ConvolutionType(const size_t maps,
                   const size_t kernelWidth,
@@ -127,7 +130,8 @@ class ConvolutionType : public Layer<MatType>
                   const size_t strideHeight,
                   const std::tuple<size_t, size_t>& padW,
                   const std::tuple<size_t, size_t>& padH,
-                  const std::string& paddingType = "none");
+                  const std::string& paddingType = "none",
+                  const bool useBias = true);
 
   //! Clone the ConvolutionType object. This handles polymorphism correctly.
   ConvolutionType* Clone() const { return new ConvolutionType(*this); }
@@ -249,8 +253,8 @@ class ConvolutionType : public Layer<MatType>
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    return (maps * inMaps * higherInDimensions * kernelWidth * kernelHeight) +
-        maps;
+    return (maps * inMaps * kernelWidth * kernelHeight) +
+        (useBias ? maps : 0);
   }
 
   //! Compute the output dimensions of the layer based on `InputDimensions()`.
@@ -345,6 +349,9 @@ class ConvolutionType : public Layer<MatType>
 
   //! Locally-stored top padding height.
   size_t padHTop;
+
+  //! Locally-stored useBias.
+  bool useBias;
 
   //! Locally-stored weight object.
   MatType weights;

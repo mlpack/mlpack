@@ -51,7 +51,8 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
 }
 
 template<typename MetricType, typename TreeType>
-inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
+inline mlpack_force_inline
+double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {

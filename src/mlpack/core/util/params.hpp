@@ -7,9 +7,10 @@
 #ifndef MLPACK_CORE_UTIL_PARAMS_HPP
 #define MLPACK_CORE_UTIL_PARAMS_HPP
 
-#include "forward.hpp"
+//#include "forward.hpp"
 #include "param_data.hpp"
 #include "binding_details.hpp"
+#include <map>
 
 namespace mlpack {
 namespace util {
@@ -145,7 +146,6 @@ class Params
 } // namespace util
 } // namespace mlpack
 
-// Include implementation.
-#include "params_impl.hpp"
+// Implementation intentionally not included.
 
 #endif

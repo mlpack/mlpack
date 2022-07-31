@@ -78,7 +78,7 @@ class GoOption
     data.loaded = false;
     data.cppType = cppName;
 
-    data.value = ANY(defaultValue);
+    data.value = defaultValue;
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the .cpp,

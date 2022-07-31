@@ -1,5 +1,5 @@
 /**
- * @file forward.hpp
+ * @file core/util/forward.hpp
  * @author Ryan Curtin
  *
  * Forward declaration of components from other subdirectories necessary for
@@ -8,6 +8,8 @@
 #ifndef MLPACK_CORE_UTIL_FORWARD_HPP
 #define MLPACK_CORE_UTIL_FORWARD_HPP
 
+#include <mlpack/base.hpp>
+
 // Required forward declarations.
 namespace mlpack {
 
@@ -15,10 +17,14 @@ class IO;
 
 namespace util {
 
-class Params;
+class Timers;
 
 } // namespace util
+}
 
+#include "params.hpp"
+
+namespace mlpack {
 namespace data {
 
 class IncrementPolicy;

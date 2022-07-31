@@ -38,7 +38,7 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
    * This is for the Travis CI server, in your own machine you should use more
    * threads.
    */
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
     omp_set_num_threads(1);
   #endif
 
@@ -46,12 +46,12 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+    FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(),
         GaussianInitialization(0, 0.001));
     model.Add<Linear>(20);
-    model.Add<ReLULayer>();
+    model.Add<ReLU>();
     model.Add<Linear>(20);
-    model.Add<ReLULayer>();
+    model.Add<ReLU>();
     model.Add<Linear>(2);
 
     // Set up the policy.
@@ -114,7 +114,7 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
    * This is for the Travis CI server, in your own machine you shuold use more
    * threads.
    */
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
     omp_set_num_threads(1);
   #endif
 
@@ -122,12 +122,12 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+    FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(),
         GaussianInitialization(0, 0.001));
     model.Add<Linear>(20);
-    model.Add<ReLULayer>();
-    model.Add<Linea>(20);
-    model.Add<ReLULayer>();
+    model.Add<ReLU>();
+    model.Add<Linear>(20);
+    model.Add<ReLU>();
     model.Add<Linear>(2);
 
     // Set up the policy.
@@ -192,17 +192,17 @@ TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
    * This is for the Travis CI server, in your own machine you shuold use more
    * threads.
    */
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
     omp_set_num_threads(1);
   #endif
 
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+  FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(),
       GaussianInitialization(0, 0.001));
   model.Add<Linear>(20);
-  model.Add<ReLULayer>();
+  model.Add<ReLU>();
   model.Add<Linear>(20);
-  model.Add<ReLULayer>();
+  model.Add<ReLU>();
   model.Add<Linear>(2);
 
   // Set up the policy.

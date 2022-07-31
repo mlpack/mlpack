@@ -66,8 +66,8 @@ void AsyncLearning<
    * So we need to copy them to local variables.
    */
   NetworkType learningNetwork = std::move(this->learningNetwork);
-  if (learningNetwork.Parameters().is_empty())
-    learningNetwork.ResetParameters();
+  if (learningNetwork.Parameters().n_elem != environment.InitialSample().Encode().n_elem)
+    learningNetwork.Reset(environment.InitialSample().Encode().n_elem);
   NetworkType targetNetwork = learningNetwork;
   size_t totalSteps = 0;
   PolicyType policy = this->policy;
@@ -97,11 +97,11 @@ void AsyncLearning<
 
   #pragma omp parallel for shared(stop, workers, tasks, learningNetwork, \
       targetNetwork, totalSteps, policy)
-  for (omp_size_t i = 0; i < numThreads; ++i)
+  for (size_t i = 0; i < numThreads; ++i)
   {
     #pragma omp critical
     {
-      #ifdef HAS_OPENMP
+      #ifdef MLPACK_USE_OPENMP
         Log::Debug << "Thread " << omp_get_thread_num() <<
             " started." << std::endl;
       #endif

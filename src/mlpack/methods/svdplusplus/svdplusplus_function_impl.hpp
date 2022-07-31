@@ -425,7 +425,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     overallObjective = 0;
 
     #pragma omp parallel for reduction(+:overallObjective)
-    for (omp_size_t j = 0; j < (omp_size_t) function.NumFunctions(); ++j)
+    for (size_t j = 0; j < (size_t) function.NumFunctions(); ++j)
     {
       overallObjective += function.Evaluate(iterate, j);
     }
@@ -461,7 +461,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize.
       size_t threadId = 0;
-      #ifdef HAS_OPENMP
+      #ifdef MLPACK_USE_OPENMP
         threadId = omp_get_thread_num();
       #endif
 

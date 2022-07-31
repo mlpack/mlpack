@@ -49,7 +49,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     arma::Col<size_t> localCounts(centroids.n_cols, arma::fill::zeros);
 
     #pragma omp for
-    for (omp_size_t i = 0; i < (omp_size_t) dataset.n_cols; ++i)
+    for (size_t i = 0; i < (size_t) dataset.n_cols; ++i)
     {
       // Find the closest centroid to this point.
       double minDistance = std::numeric_limits<double>::infinity();

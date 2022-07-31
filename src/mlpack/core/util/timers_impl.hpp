@@ -12,6 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "timers.hpp"
+
+#include "forward.hpp"
 #include "io.hpp"
 #include "log.hpp"
 

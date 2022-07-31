@@ -11,6 +11,7 @@
 #include "log.hpp"
 
 // Include definition, if needed.
+#include "forward.hpp"
 #include "params.hpp"
 
 namespace mlpack {
@@ -100,7 +101,7 @@ T& Params::Get(const std::string& identifier)
   }
   else
   {
-    return *ANY_CAST<T>(&d.value);
+    return *MLPACK_ANY_CAST<T>(&d.value);
   }
 }
 
