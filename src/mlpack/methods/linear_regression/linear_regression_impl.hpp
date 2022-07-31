@@ -23,12 +23,39 @@ inline LinearRegression::LinearRegression(
     const arma::rowvec& responses,
     const double lambda,
     const bool intercept) :
+    LinearRegression(predictors,
+		     arma::mat(responses),
+		     arma::rowvec(),
+		     lambda,
+		     intercept)
+{ /* Nothing to do. */ }
+
+inline LinearRegression::LinearRegression(
+    const arma::mat& predictors,
+    const arma::mat& responses,
+    const double lambda,
+    const bool intercept) :
     LinearRegression(predictors, responses, arma::rowvec(), lambda, intercept)
 { /* Nothing to do. */ }
 
 inline LinearRegression::LinearRegression(
     const arma::mat& predictors,
     const arma::rowvec& responses,
+    const arma::rowvec& weights,
+    const double lambda,
+    const bool intercept) :
+    lambda(lambda),
+    intercept(intercept)
+{
+  Train(predictors,
+	arma::mat(responses),
+	weights,
+	intercept);
+}
+
+inline LinearRegression::LinearRegression(
+    const arma::mat& predictors,
+    const arma::mat& responses,
     const arma::rowvec& weights,
     const double lambda,
     const bool intercept) :
@@ -42,19 +69,33 @@ inline double LinearRegression::Train(const arma::mat& predictors,
                                       const arma::rowvec& responses,
                                       const bool intercept)
 {
+  return Train(predictors, arma::mat(responses), arma::rowvec(), intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+               			      const arma::rowvec& responses,
+               			      const arma::rowvec& weights,
+               			      const bool intercept)
+{
+  return Train(predictors, arma::mat(responses), weights, intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::mat& responses,
+                                      const bool intercept)
+{
   return Train(predictors, responses, arma::rowvec(), intercept);
 }
 
 inline double LinearRegression::Train(const arma::mat& predictors,
-                                      const arma::rowvec& responses,
+                                      const arma::mat& responses,
                                       const arma::rowvec& weights,
                                       const bool intercept)
 {
   this->intercept = intercept;
 
   /*
-   * We want to calculate the a_i coefficients of:
-   * \sum_{i=0}^n (a_i * x_i^i)
+   * train a multi-output regression model
    * In order to get the intercept value, we will add a row of ones.
    */
 
@@ -68,7 +109,7 @@ inline double LinearRegression::Train(const arma::mat& predictors,
   const size_t nCols = predictors.n_cols;
 
   arma::mat p = predictors;
-  arma::rowvec r = responses;
+  arma::mat r = responses;
 
   // Here we add the row of ones to the predictors.
   // The intercept is not penalized. Add an "all ones" row to design and set
@@ -81,14 +122,12 @@ inline double LinearRegression::Train(const arma::mat& predictors,
   if (weights.n_elem > 0)
   {
     p = p * diagmat(sqrt(weights));
-    r = sqrt(weights) % responses;
+    r = responses * diagmat(sqrt(weights));
   }
 
   // Convert to this form:
   // a * (X X^T) = y X^T.
   // Then we'll use Armadillo to solve it.
-  // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
-  // (assuming the SVD is used to solve it)
   arma::mat cov = p * p.t() +
       lambda * arma::eye<arma::mat>(p.n_rows, p.n_rows);
 
@@ -96,9 +135,17 @@ inline double LinearRegression::Train(const arma::mat& predictors,
   return ComputeError(predictors, responses);
 }
 
-inline void LinearRegression::Predict(
-    const arma::mat& points,
-    arma::rowvec& predictions) const
+
+inline void LinearRegression::Predict(const arma::mat& points,
+    				      arma::rowvec& predictions) const
+{
+  arma::mat preds_mat;
+  Predict(points, preds_mat);
+  predictions = arma::rowvec(preds_mat);
+}
+
+inline void LinearRegression::Predict(const arma::mat& points,
+    				      arma::mat& predictions) const
 {
   if (intercept)
   {
@@ -110,11 +157,10 @@ inline void LinearRegression::Predict(
     util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()", 
         "points");
     // Get the predictions, but this ignores the intercept value
-    // (parameters[0]).
-    predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
+    predictions = arma::trans(parameters.rows(1, parameters.n_rows - 1))
         * points;
     // Now add the intercept.
-    predictions += parameters(0);
+    predictions.each_col() += parameters.row(0).t();
   }
   else
   {
@@ -126,45 +172,29 @@ inline void LinearRegression::Predict(
   }
 }
 
+inline double LinearRegression::ComputeError(const arma::mat& predictors,
+    					     const arma::rowvec& responses
+					    ) const
+{
+  return ComputeError(predictors,
+		      arma::mat(responses));
+}
+
 inline double LinearRegression::ComputeError(
     const arma::mat& predictors,
-    const arma::rowvec& responses) const
+    const arma::mat& responses) const
 {
   // Sanity check on data.
   util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
   
-  // Get the number of columns and rows of the dataset.
-  const size_t nCols = predictors.n_cols;
-  const size_t nRows = predictors.n_rows;
 
-  // Calculate the differences between actual responses and predicted responses.
-  // We must also add the intercept (parameters(0)) to the predictions.
-  arma::rowvec temp;
-  if (intercept)
-  {
-    // Ensure that we have the correct number of dimensions in the dataset.
-    if (nRows != parameters.n_rows - 1)
-    {
-      Log::Fatal << "The test data must have the same number of columns as the "
-          "training file." << std::endl;
-    }
-    temp = responses - (parameters(0) +
-        arma::trans(parameters.subvec(1, parameters.n_elem - 1)) * predictors);
-  }
-  else
-  {
-    // Ensure that we have the correct number of dimensions in the dataset.
-    if (nRows != parameters.n_rows)
-    {
-      Log::Fatal << "The test data must have the same number of columns as the "
-          "training file." << std::endl;
-    }
-    temp = responses - arma::trans(parameters) * predictors;
-  }
-  const double cost = arma::dot(temp, temp) / nCols;
-
-  return cost;
+  arma::mat diff;
+  arma::mat preds;
+  Predict(predictors, preds);
+  diff = responses - preds; 
+  return arma::accu(diff % diff) / diff.n_cols; 
 }
+
 
 } // namespace regression 
 } // namespace mlpack
