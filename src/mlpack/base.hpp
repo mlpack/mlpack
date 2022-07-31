@@ -94,10 +94,6 @@
   #pragma warning(disable : 4519)
 #endif
 
-// Ensure that the user isn't doing something stupid with their Armadillo
-// defines.
-#include <mlpack/core/util/arma_config_check.hpp>
-
 // This can be removed when Visual Studio supports an OpenMP version with
 // unsigned loop variables.
 #if (defined(_OPENMP) && (_OPENMP >= 201107))

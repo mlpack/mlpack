@@ -452,21 +452,6 @@ if (GIT_FOUND)
   endif ()
 endif ()
 
-# Create a target to generate arma_config.hpp, which is used to warn the user
-# when they are doing something stupid when linking something against mlpack.
-include(CMake/CreateArmaConfigInfo.cmake)
-
-add_custom_target(mlpack_arma_config ALL
-    COMMAND ${CMAKE_COMMAND}
-        -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
-        -D OPENMP_FOUND="${OPENMP_FOUND}"
-        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
-        -P CMake/CreateArmaConfigInfo.cmake
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Updating arma_config.hpp (if necessary)")
-set(MLPACK_SRCS ${MLPACK_SRCS}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
-
 # Make a target to generate the man page documentation, but only if we are on a
 # UNIX-like system.
 if (BUILD_CLI_EXECUTABLES AND UNIX)
@@ -500,11 +485,6 @@ add_subdirectory(src/mlpack)
 if (USING_GIT STREQUAL "YES")
   add_dependencies(mlpack_headers mlpack_gitversion)
 endif ()
-
-# Make the mlpack_arma_config target depend on mlpack (we couldn't do this
-# before the add_subdirectory() call because the mlpack target didn't exist
-# before that).
-add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
