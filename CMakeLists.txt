@@ -32,7 +32,7 @@ set(CEREAL_VERSION "1.1.2")
 # In addition, all mlpack CLI bindings will be linked statically as well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
+      "Compile shared objects for tests and bindings (if OFF, static libraries and binaries are compiled)." OFF)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
@@ -41,7 +41,7 @@ elseif(CMAKE_CROSSCOMPILING)
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 else()
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
+      "Compile shared objects for tests and bindings (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
 # Enable auto-download if we are cross compiling.
@@ -336,7 +336,7 @@ if (STB_IMAGE_FOUND)
     message(FATAL_ERROR "STB implementations's static mode cannot link across "
         "multiple translation units!  Try upgrading your STB implementation, "
         "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
-	"CMake configuration command.")
+        "CMake configuration command.")
   endif ()
 endif()
 
@@ -567,13 +567,14 @@ if (PKG_CONFIG_FOUND)
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
+    elseif ("${first}" STREQUAL "-")
+      # This argument is already in the right format.  (This happens with, e.g.,
+      # `-lpthread`.)
+      list(APPEND MLPACK_LIBRARIES_LIST "${lib}")
     else ()
       list(APPEND MLPACK_LIBRARIES_LIST "-l${lib}")
     endif ()
   endforeach ()
-  # Don't forget to add mlpack as a dependency too.
-  list(APPEND MLPACK_LIBRARIES_LIST "-L${CMAKE_INSTALL_PREFIX}/lib/")
-  list(APPEND MLPACK_LIBRARIES_LIST "-lmlpack")
 
   # Filter duplicate dependencies and directories.
   list(REMOVE_DUPLICATES MLPACK_LIBRARIES_LIST)
