@@ -266,3 +266,187 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
 
   REQUIRE(std::isfinite(error) == true);
 }
+
+/**
+ * Creates two 10x3 random matrices as train features
+ * and one 10x2 random matrix as responses.
+ * Finds B in Y=BX with one matrix,
+ * and compare against single output models trained on the same data.
+ */
+TEST_CASE("MultiOutputLinearRegressionTestCase", "[LinearRegressionTest]")
+{
+  // generate random data
+  arma::mat X = arma::randu<arma::mat>(3, 10);
+  arma::mat Y = arma::randu<arma::mat>(2, 10);
+
+  // fit model
+  LinearRegression lr(X, Y, 0, true);
+
+  // fit single respose model
+  LinearRegression lr0(X, arma::rowvec(Y.row(0)), 0, true);
+  LinearRegression lr1(X, arma::rowvec(Y.row(1)), 0, true);
+
+  REQUIRE(arma::norm(lr0.Parameters() - lr.Parameters().col(0), 2) 
+						== Approx(0.0).margin(1e-10));
+  REQUIRE(arma::norm(lr1.Parameters() - lr.Parameters().col(1), 2) 
+						== Approx(0.0).margin(1e-10));
+}
+
+/**
+ * Creates two 10x3 random matrices as train features
+ * and one 10x2 random matrix as responses.
+ * Finds B in Y=BX with one matrix,
+ * and compare against single output models trained on the same data.
+ */
+TEST_CASE("MultiOutputLinearRegressionRidgeTestCase", "[LinearRegressionTest]")
+{
+  // generate random data
+  arma::mat X = arma::randu<arma::mat>(3, 10);
+  arma::mat Y = arma::randu<arma::mat>(2, 10);
+
+  // fit model
+  LinearRegression lr(X, Y, 0.6, true);
+
+  // fit single respose model
+  LinearRegression lr0(X, arma::rowvec(Y.row(0)), 0.6, true);
+  LinearRegression lr1(X, arma::rowvec(Y.row(1)), 0.6, true);
+
+  REQUIRE(arma::norm(lr0.Parameters() - lr.Parameters().col(0), 2) 
+						== Approx(0.0).margin(1e-10));
+  REQUIRE(arma::norm(lr1.Parameters() - lr.Parameters().col(1), 2) 
+						== Approx(0.0).margin(1e-10));
+}
+
+/**
+ * Creates two 10x3 random matrices as train features
+ * and one 10x2 random matrix as responses.
+ * Finds B in Y=BX with one matrix,
+ * and compare against single output models trained on the same data.
+ */
+TEST_CASE("MultiOutputLinearRegressionNoInterceptTestCase",
+	  "[LinearRegressionTest]")
+{
+  // generate random data
+  arma::mat X = arma::randu<arma::mat>(3, 10);
+  arma::mat Y = arma::randu<arma::mat>(2, 10);
+
+  // fit model
+  LinearRegression lr(X, Y, 0, false);
+
+  // fit single respose model
+  LinearRegression lr0(X, arma::rowvec(Y.row(0)), 0, false);
+  LinearRegression lr1(X, arma::rowvec(Y.row(1)), 0, false);
+
+  REQUIRE(arma::norm(lr0.Parameters() - lr.Parameters().col(0), 2) 
+						== Approx(0.0).margin(1e-10));
+  REQUIRE(arma::norm(lr1.Parameters() - lr.Parameters().col(1), 2) 
+						== Approx(0.0).margin(1e-10));
+  }
+
+/**
+ * Creates two 10x3 random matrices as train features
+ * and one 10x2 random matrix as responses.
+ * Finds B in Y=BX with one matrix,
+ * and compare against single output models trained on the same data.
+ */
+TEST_CASE("MultiOutputLinearRegressionRidgeNoInterceptTestCase",
+	  "[LinearRegressionTest]")
+{
+  // generate random data
+  arma::mat X = arma::randu<arma::mat>(3, 10);
+  arma::mat Y = arma::randu<arma::mat>(2, 10);
+
+  // fit model
+  LinearRegression lr(X, Y, 1.5, false);
+
+  // fit single respose model
+  LinearRegression lr0(X, arma::rowvec(Y.row(0)), 1.5, false);
+  LinearRegression lr1(X, arma::rowvec(Y.row(1)), 1.5, false);
+
+  REQUIRE(arma::norm(lr0.Parameters() - lr.Parameters().col(0), 2) 
+						== Approx(0.0).margin(1e-10));
+  REQUIRE(arma::norm(lr1.Parameters() - lr.Parameters().col(1), 2) 
+						== Approx(0.0).margin(1e-10)); 
+}
+
+/**
+ * Check the functionality of ComputeError() for multioutput regression with 
+ * no intercept.
+ */
+TEST_CASE("MultiOutputNoInterceptComputeErrorTest", "[LinearRegressionTest]")
+{
+   // generate random data
+  arma::mat X = arma::randu<arma::mat>(3, 10);
+  arma::mat Y = arma::randu<arma::mat>(2, 10);
+
+  // fit model
+  LinearRegression lr(X, Y, 1.5, false);
+
+  // fit single respose model
+  LinearRegression lr0(X, arma::rowvec(Y.row(0)), 1.5, false);
+  LinearRegression lr1(X, arma::rowvec(Y.row(1)), 1.5, false);
+
+  double col0_error = lr0.ComputeError(X, arma::rowvec(Y.row(0)));
+  double col1_error = lr1.ComputeError(X, arma::rowvec(Y.row(1)));
+
+  REQUIRE(lr.ComputeError(X, Y) ==
+      			Approx(col0_error + col1_error).epsilon(1e-10));
+}
+
+/**
+ * Check the functionality of ComputeError() for multioutput regression.
+ */
+TEST_CASE("MultiOutputComputeErrorTest", "[LinearRegressionTest]")
+{
+   // generate random data
+  arma::mat X = arma::randu<arma::mat>(3, 10);
+  arma::mat Y = arma::randu<arma::mat>(2, 10);
+
+  // fit model
+  LinearRegression lr(X, Y, 1.5, true);
+
+  // fit single respose model
+  LinearRegression lr0(X, arma::rowvec(Y.row(0)), 1.5, true);
+  LinearRegression lr1(X, arma::rowvec(Y.row(1)), 1.5, true);
+
+  double col0_error = lr0.ComputeError(X, arma::rowvec(Y.row(0)));
+  double col1_error = lr1.ComputeError(X, arma::rowvec(Y.row(1)));
+
+  REQUIRE(lr.ComputeError(X, Y) ==
+      			Approx(col0_error + col1_error).epsilon(1e-10));
+}
+
+/**
+ * Ensure that the cost is 0 when a perfectly-fitting dataset is given.
+ */
+TEST_CASE("MultiOutputComputeErrorPerfectFitTest", "[LinearRegressionTest]")
+{
+  // Linear regression should perfectly model this dataset.
+  arma::mat predictors;
+  predictors = { { 0, 1, 2, 1, 6, 2 },
+                 { 0, 1, 2, 2, 2, 6 } };
+  arma::mat responses = { {0, 2, 4, 3, 8, 8},
+			  {0, 0, 0, -1, 4, -4} };
+
+  LinearRegression lr(predictors, responses);
+
+  REQUIRE(lr.ComputeError(predictors, responses) == Approx(0.0).margin(1e-10));
+}
+
+/**
+ * Check the functionality of ComputeError() with sample weights.
+ */
+TEST_CASE("WeightedComputeErrorTest", "[LinearRegressionTest]")
+{
+  arma::mat X = { {  0,   1, 2.5, 4, -1 },
+  	          {0.6, 1.8,   4, 2, -2 },
+		  {  1, 2.1, 0.3, 4, -3 } };
+  arma::mat Y = { {0, 2.333, 4,    3, 0.666},
+		  {1,     3, 5, 7.22, 0.233 } };
+  arma::rowvec w = "0.8097 0.8361 0.4471 0.5010 0.0343";
+  // The error should 1.7371145872376228, as calculated in sklearn.
+  LinearRegression lr(X, Y, w);
+
+  REQUIRE(lr.ComputeError(X, Y) == Approx(1.7371145872376228).epsilon(1e-10));
+}
+
