@@ -194,8 +194,6 @@ inline util::Params IO::Parameters(const std::string& bindingName)
 {
   // We don't need a mutex here, because we are only randomly accessing elements
   // of the maps.
-  std::cout << "Get parameters for " << bindingName << " from IO object " << &GetSingleton() << " which has " << GetSingleton().parameters.size() << " entries.\n";
-
   std::map<char, std::string> resultAliases =
       GetSingleton().aliases[bindingName];
   // Merge in any persistent parameters (e.g. parameters in the "" binding map).
@@ -208,7 +206,6 @@ inline util::Params IO::Parameters(const std::string& bindingName)
   std::map<std::string, util::ParamData> persistentParams =
       GetSingleton().parameters[""];
   resultParams.insert(persistentParams.begin(), persistentParams.end());
-  std::cout << "That gives " << resultParams.size() << " parameters.\n";
 
   return util::Params(resultAliases, resultParams, GetSingleton().functionMap,
       bindingName, GetSingleton().docs[bindingName]);
