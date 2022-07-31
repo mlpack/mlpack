@@ -182,4 +182,7 @@ class Timers
 } // namespace util
 } // namespace mlpack
 
+// Note that the implementation is not included, to avoid include ordering
+// issues!
+
 #endif // MLPACK_CORE_UTILITIES_TIMERS_HPP

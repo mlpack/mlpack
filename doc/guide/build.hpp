@@ -199,9 +199,6 @@ The full list of options mlpack allows:
        (default ON)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
        OFF)
- - FORCE_CXX11=(ON/OFF): assume that the compiler supports C++11 instead of
-       checking; be sure to specify any necessary flag to enable C++11 as part
-       of CXXFLAGS (default OFF)
  - USE_OPENMP=(ON/OFF): if ON, then use OpenMP if the compiler supports it; if
        OFF, OpenMP support is manually disabled (default ON)
 

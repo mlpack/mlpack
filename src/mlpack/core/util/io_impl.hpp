@@ -1,5 +1,5 @@
 /**
- * @file core/util/io.cpp
+ * @file core/util/io_impl.hpp
  * @author Matthew Amidon
  *
  * Implementation of the IO module for parsing parameters.
@@ -9,31 +9,33 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_UTIL_IO_IMPL_HPP
+#define MLPACK_CORE_UTIL_IO_IMPL_HPP
 
 #include "io.hpp"
 #include "log.hpp"
 #include "hyphenate_string.hpp"
 
-using namespace mlpack;
-using namespace mlpack::util;
+namespace mlpack {
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO()
+inline IO::IO()
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-IO::IO(const IO& /* other */)
+inline IO::IO(const IO& /* other */)
 {
   return;
 }
 
 // Private copy operator; don't want copies floating around.
-IO& IO::operator=(const IO& /* other */) { return *this; }
+inline IO& IO::operator=(const IO& /* other */) { return *this; }
 
-void IO::AddParameter(const std::string& bindingName, ParamData&& data)
+inline void IO::AddParameter(const std::string& bindingName,
+                             util::ParamData&& data)
 {
   // Temporarily define color code escape sequences.
   #ifndef _WIN32
@@ -93,9 +95,9 @@ void IO::AddParameter(const std::string& bindingName, ParamData&& data)
  * @param name Name of the function.
  * @param func Function to call.
  */
-void IO::AddFunction(const std::string& type,
-                     const std::string& name,
-                     void (*func)(util::ParamData&, const void*, void*))
+inline void IO::AddFunction(const std::string& type,
+                            const std::string& name,
+                            void (*func)(util::ParamData&, const void*, void*))
 {
   std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
   GetSingleton().functionMap[type][name] = func;
@@ -107,7 +109,8 @@ void IO::AddFunction(const std::string& type,
  * @param bindingName Name of the binding to add the user-friendly name for.
  * @param name User-friendly name.
  */
-void IO::AddBindingName(const std::string& bindingName, const std::string& name)
+inline void IO::AddBindingName(const std::string& bindingName,
+                               const std::string& name)
 {
   std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
   GetSingleton().docs[bindingName].name = name;
@@ -119,8 +122,8 @@ void IO::AddBindingName(const std::string& bindingName, const std::string& name)
  * @param bindingName Name of the binding to add the description for.
  * @param shortDescription Description to use.
  */
-void IO::AddShortDescription(const std::string& bindingName,
-                             const std::string& shortDescription)
+inline void IO::AddShortDescription(const std::string& bindingName,
+                                    const std::string& shortDescription)
 {
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
   GetSingleton().docs[bindingName].shortDescription = shortDescription;
@@ -132,7 +135,7 @@ void IO::AddShortDescription(const std::string& bindingName,
  * @param bindingName Name of the binding to add the description for.
  * @param longDescription Function that returns the long description.
  */
-void IO::AddLongDescription(
+inline void IO::AddLongDescription(
     const std::string& bindingName,
     const std::function<std::string()>& longDescription)
 {
@@ -146,8 +149,8 @@ void IO::AddLongDescription(
  * @param bindingName Name of the binding to add the example for.
  * @param example Function that returns the example.
  */
-void IO::AddExample(const std::string& bindingName,
-                    const std::function<std::string()>& example)
+inline void IO::AddExample(const std::string& bindingName,
+                           const std::function<std::string()>& example)
 {
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
   GetSingleton().docs[bindingName].example.push_back(std::move(example));
@@ -160,9 +163,9 @@ void IO::AddExample(const std::string& bindingName,
  * @param description Description of the SeeAlso.
  * @param link Link of the SeeAlso.
  */
-void IO::AddSeeAlso(const std::string& bindingName,
-                    const std::string& description,
-                    const std::string& link)
+inline void IO::AddSeeAlso(const std::string& bindingName,
+                           const std::string& description,
+                           const std::string& link)
 {
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
   GetSingleton().docs[bindingName].seeAlso.push_back(
@@ -170,14 +173,14 @@ void IO::AddSeeAlso(const std::string& bindingName,
 }
 
 // Returns the sole instance of this class.
-IO& IO::GetSingleton()
+inline IO& IO::GetSingleton()
 {
   static IO singleton;
   return singleton;
 }
 
 // Returns the sole instance of the timers.
-util::Timers& IO::GetTimers()
+inline util::Timers& IO::GetTimers()
 {
   return GetSingleton().timer;
 }
@@ -187,7 +190,7 @@ util::Timers& IO::GetTimers()
  * binding `bindingName`.  This is intended to be called at the beginning of
  * the run of a binding.
  */
-util::Params IO::Parameters(const std::string& bindingName)
+inline util::Params IO::Parameters(const std::string& bindingName)
 {
   // We don't need a mutex here, because we are only randomly accessing elements
   // of the maps.
@@ -205,6 +208,10 @@ util::Params IO::Parameters(const std::string& bindingName)
       GetSingleton().parameters[""];
   resultParams.insert(persistentParams.begin(), persistentParams.end());
 
-  return Params(resultAliases, resultParams, GetSingleton().functionMap,
+  return util::Params(resultAliases, resultParams, GetSingleton().functionMap,
       bindingName, GetSingleton().docs[bindingName]);
 }
+
+} // namespace mlpack
+
+#endif

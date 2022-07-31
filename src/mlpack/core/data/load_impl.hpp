@@ -18,7 +18,6 @@
 
 #include <algorithm>
 #include <exception>
-#include <mlpack/core/util/timers.hpp>
 
 #include "extension.hpp"
 #include "detect_file_type.hpp"

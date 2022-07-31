@@ -301,7 +301,7 @@ TEST_CASE("BiasSVDFunctionOptimize", "[BiasSVDTest]")
 
 // The test is only compiled if the user has specified OpenMP to be
 // used.
-#ifdef HAS_OPENMP
+#ifdef MLPACK_USE_OPENMP
 
 // Test Bias SVD with parallel SGD.
 TEST_CASE("BiasSVDFunctionParallelOptimize", "[BiasSVDTest]")

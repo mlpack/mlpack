@@ -181,12 +181,9 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   regularizationConstants.fill(0.0);
 
   timers.Start("cross_validation");
-  // Go through each fold.  On the Visual Studio compiler, we have to use
-  // intmax_t because size_t is not yet supported by their OpenMP
-  // implementation. omp_size_t is the appropriate type according to the
-  // platform.
+  // Go through each fold.
   #pragma omp parallel for shared(prunedSequence, regularizationConstants)
-  for (omp_size_t fold = 0; fold < (omp_size_t) folds; fold++)
+  for (size_t fold = 0; fold < (size_t) folds; fold++)
   {
     // Break up data into train and test sets.
     const size_t start = fold * testSize;

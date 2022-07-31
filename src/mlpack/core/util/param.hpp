@@ -15,19 +15,7 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_HPP
 #define MLPACK_CORE_UTIL_PARAM_HPP
 
-// Required forward declarations.
-namespace mlpack {
-namespace data {
-
-class IncrementPolicy;
-
-template<typename PolicyType, typename InputType>
-class DatasetMapper;
-
-using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
-
-} // namespace data
-} // namespace mlpack
+#include "forward.hpp"
 
 /**
  * @cond

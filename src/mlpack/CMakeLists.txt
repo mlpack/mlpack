@@ -21,24 +21,20 @@ endforeach()
 # are set in the root CMakeLists.txt.
 add_library(mlpack ${MLPACK_SRCS})
 
-# If we are not forcing C++11 support, check that the compiler supports C++11
-# and enable it.
-if (NOT FORCE_CXX11)
-  target_compile_features(mlpack PUBLIC
-      cxx_decltype
-      cxx_alias_templates
-      cxx_auto_type
-      cxx_lambdas
-      cxx_constexpr
-      cxx_rvalue_references
-      cxx_static_assert
-      cxx_template_template_parameters
-      cxx_delegating_constructors
-      cxx_variadic_templates
-      cxx_nullptr
-      cxx_noexcept
-  )
-endif ()
+target_compile_features(mlpack PUBLIC
+    cxx_decltype
+    cxx_alias_templates
+    cxx_auto_type
+    cxx_lambdas
+    cxx_constexpr
+    cxx_rvalue_references
+    cxx_static_assert
+    cxx_template_template_parameters
+    cxx_delegating_constructors
+    cxx_variadic_templates
+    cxx_nullptr
+    cxx_noexcept
+)
 
 # Generate export symbols for Windows, instead of adding __declspec(dllimport)
 # and __declspec(dllexport) everywhere.  However, those modifiers are still

@@ -1,5 +1,5 @@
 /**
- * @file core/util/log.cpp
+ * @file core/util/log_impl.hpp
  * @author Matthew Amidon
  *
  * Implementation of the Log class.
@@ -9,18 +9,20 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_UTIL_LOG_IMPL_HPP
+#define MLPACK_CORE_UTIL_LOG_IMPL_HPP
+
 #include "log.hpp"
 
 #ifdef HAS_BFD_DL
   #include "backtrace.hpp"
 #endif
 
-using namespace mlpack;
-using namespace mlpack::util;
+namespace mlpack {
 
 // Only do anything for Assert() if in debugging mode.
 #ifdef DEBUG
-void Log::Assert(bool condition, const std::string& message)
+inline void Log::Assert(bool condition, const std::string& message)
 {
   if (!condition)
   {
@@ -35,6 +37,10 @@ void Log::Assert(bool condition, const std::string& message)
   }
 }
 #else
-void Log::Assert(bool /* condition */, const std::string& /* message */)
+inline void Log::Assert(bool /* condition */, const std::string& /* message */)
 { }
+#endif
+
+} // namespace mlpack
+
 #endif

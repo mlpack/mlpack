@@ -22,11 +22,11 @@
 
 #include "timers.hpp"
 #include "binding_details.hpp"
-#include "program_doc.hpp"
 #include "version.hpp"
 
 #include "param_data.hpp"
 #include "params.hpp"
+#include "params_impl.hpp"
 
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
@@ -304,5 +304,14 @@ class IO
 };
 
 } // namespace mlpack
+
+// This file must be included after IO is declared and fully defined.
+#include "program_doc.hpp"
+
+// Include the implementation.
+#include "io_impl.hpp"
+
+// Now include the implementation of the timers.
+#include "timers_impl.hpp"
 
 #endif

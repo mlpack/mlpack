@@ -116,7 +116,7 @@ void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
 };
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
