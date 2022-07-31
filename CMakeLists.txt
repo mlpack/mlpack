@@ -104,13 +104,11 @@ option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentatio
 
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
-option(FORCE_CXX11
-    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Set required standard to C++11.
-set(CMAKE_CXX_STANDARD 11)
+# Set required standard to C++14.
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that GCC is new enough, if the compiler is GCC.
@@ -375,26 +373,16 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
-# to compile with OpenMP are returned and added and the HAS_OPENMP definition
-# is added for compilation.
-#
-# This way we can skip calls to functions defined in omp.h with code like:
-# #ifdef HAS_OPENMP
-# {
-#   ... openMP code here ...
-# }
-# #endif
+# to compile with OpenMP are returned and added.  Note that MSVC does not
+# support a new-enough version of OpenMP to be useful.
 if (USE_OPENMP)
   find_package(OpenMP)
 endif ()
 
-if (OPENMP_FOUND)
-  add_definitions(-DHAS_OPENMP)
+if (OpenMP_FOUND AND OpenMP_CXX_VERSION VERSION_GREATER_EQUAL 3.0.0)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  if (OpenMP_CXX_FOUND)
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
-  endif ()
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
   if (NOT MSVC)

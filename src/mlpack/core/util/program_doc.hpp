@@ -97,4 +97,7 @@ class SeeAlso
 } // namespace util
 } // namespace mlpack
 
+// Include implementation.
+#include "program_doc_impl.hpp"
+
 #endif

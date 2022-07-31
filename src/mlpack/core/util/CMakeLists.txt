@@ -5,15 +5,16 @@ set(SOURCES
   arma_config.hpp
   arma_config_check.hpp
   backtrace.hpp
-  backtrace.cpp
+  backtrace_impl.hpp
   binding_details.hpp
+  forward.hpp
   io.hpp
-  io.cpp
+  io_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
   log.hpp
-  log.cpp
+  log_impl.hpp
   mlpack_main.hpp
   nulloutstream.hpp
   param.hpp
@@ -22,20 +23,17 @@ set(SOURCES
   param_data.hpp
   params.hpp
   params_impl.hpp
-  params.cpp
   prefixedoutstream.hpp
-  prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
   program_doc.hpp
-  program_doc.cpp
+  program_doc_impl.hpp
   size_checks.hpp
   sfinae_utility.hpp
-  singletons.cpp
   timers.hpp
-  timers.cpp
+  timers_impl.hpp
   to_lower.hpp
   version.hpp
-  version.cpp
+  version_impl.hpp
 )
 
 # add directory name to sources

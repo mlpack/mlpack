@@ -200,4 +200,7 @@ using DatasetInfo = DatasetMapper<data::IncrementPolicy>;
 
 #include "dataset_mapper_impl.hpp"
 
+// Also include utility function.
+#include "check_categorical_param.hpp"
+
 #endif

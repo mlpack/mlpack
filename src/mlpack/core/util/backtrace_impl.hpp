@@ -1,5 +1,5 @@
 /**
- * @file core/util/backtrace.cpp
+ * @file core/util/backtrace_impl.hpp
  * @author Grzegorz Krajewski
  *
  * Implementation of the Backtrace class.
@@ -11,74 +11,36 @@
  */
 #include <sstream>
 
-#ifdef HAS_BFD_DL
-  #include <execinfo.h>
-  #include <signal.h>
-  #include <unistd.h>
-  #include <cxxabi.h>
-
-  // Some versions of libbfd require PACKAGE and PACKAGE_VERSION to be set in
-  // order for the include to not fail.  For more information:
-  // https://github.com/mlpack/mlpack/issues/574
-  #ifndef PACKAGE
-    #define PACKAGE
-    #ifndef PACKAGE_VERSION
-      #define PACKAGE_VERSION
-      #include <bfd.h>
-      #undef PACKAGE_VERSION
-    #else
-      #include <bfd.h>
-    #endif
-    #undef PACKAGE
-  #else
-    #ifndef PACKAGE_VERSION
-      #define PACKAGE_VERSION
-      #include <bfd.h>
-      #undef PACKAGE_VERSION
-    #else
-      #include <bfd.h>
-    #endif
-  #endif
-  #include <dlfcn.h>
-#endif
-
 #include "backtrace.hpp"
 #include "log.hpp"
 
-using namespace mlpack;
-
-// Initialize Backtrace static inctances.
-Backtrace::Frames Backtrace::frame;
-std::vector<Backtrace::Frames> Backtrace::stack;
+namespace mlpack {
 
 #ifdef HAS_BFD_DL
-// Binary File Descriptor objects.
-bfd* abfd = 0;          // Descriptor datastructure.
-asymbol **syms = 0;     // Symbols datastructure.
-asection *text = 0;     // Strings datastructure.
-#endif
-
-#ifdef HAS_BFD_DL
-Backtrace::Backtrace(int maxDepth)
+inline Backtrace::Backtrace(int maxDepth)
 {
   frame.address = NULL;
   frame.function = "0";
   frame.file = "0";
   frame.line = 0;
 
+  abfd = 0;
+  syms = 0;
+  text = 0;
+
   stack.clear();
 
   GetAddress(maxDepth);
 }
 #else
-Backtrace::Backtrace()
+inline Backtrace::Backtrace()
 {
   // Dummy constructor
 }
 #endif
 
 #ifdef HAS_BFD_DL
-void Backtrace::GetAddress(int maxDepth)
+inline void Backtrace::GetAddress(int maxDepth)
 {
   void* trace[maxDepth];
   int stackDepth = backtrace(trace, maxDepth);
@@ -100,7 +62,7 @@ void Backtrace::GetAddress(int maxDepth)
   }
 }
 
-void Backtrace::DecodeAddress(long addr)
+inline void Backtrace::DecodeAddress(long addr)
 {
   // Check to see if there is anything to descript. If it doesn't, we'll
   // dump running program.
@@ -147,7 +109,7 @@ void Backtrace::DecodeAddress(long addr)
   }
 }
 
-void Backtrace::DemangleFunction()
+inline void Backtrace::DemangleFunction()
 {
   int status;
   char* tmp = abi::__cxa_demangle(frame.function, 0, 0, &status);
@@ -160,12 +122,12 @@ void Backtrace::DemangleFunction()
   }
 }
 #else
-void Backtrace::GetAddress(int /* maxDepth */) { }
-void Backtrace::DecodeAddress(long /* address */) { }
-void Backtrace::DemangleFunction() { }
+inline void Backtrace::GetAddress(int /* maxDepth */) { }
+inline void Backtrace::DecodeAddress(long /* address */) { }
+inline void Backtrace::DemangleFunction() { }
 #endif
 
-std::string Backtrace::ToString()
+inline std::string Backtrace::ToString()
 {
   std::string stackStr;
 
@@ -198,8 +160,10 @@ std::string Backtrace::ToString()
     it.str("");
   }
 #else
-  stackStr = "[bt]: No backtrace for this OS. Work in progress.";
+  stackStr = "[bt]: No backtrace for this OS.";
 #endif
 
   return stackStr;
 }
+
+} // namespace mlpack

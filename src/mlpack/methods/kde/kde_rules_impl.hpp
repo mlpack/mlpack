@@ -66,7 +66,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
 
 //! The base case.
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double KDERules<MetricType, KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
@@ -292,7 +292,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
 Rescore(const size_t /* queryIndex */,
         TreeType& /* referenceNode */,
         const double oldScore) const
@@ -515,7 +515,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
 //! Dual-tree rescore.
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
 Rescore(TreeType& /*queryNode*/,
         TreeType& /*referenceNode*/,
         const double oldScore) const
@@ -525,7 +525,7 @@ Rescore(TreeType& /*queryNode*/,
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
 EvaluateKernel(const size_t queryIndex,
                const size_t referenceIndex) const
 {
@@ -534,14 +534,14 @@ EvaluateKernel(const size_t queryIndex,
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
 EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
 {
   return kernel.Evaluate(metric.Evaluate(query, reference));
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+inline mlpack_force_inline double KDERules<MetricType, KernelType, TreeType>::
 CalculateAlpha(TreeType* node)
 {
   KDEStat& stat = node->Stat();
@@ -571,7 +571,7 @@ CalculateAlpha(TreeType* node)
 
 //! Clean rules base case.
 template<typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double KDECleanRules<TreeType>::BaseCase(const size_t /* queryIndex */,
                                          const size_t /* refIndex */)
 {
@@ -580,7 +580,7 @@ double KDECleanRules<TreeType>::BaseCase(const size_t /* queryIndex */,
 
 //! Clean rules single-tree score.
 template<typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double KDECleanRules<TreeType>::Score(const size_t /* queryIndex */,
                                       TreeType& referenceNode)
 {
@@ -591,7 +591,7 @@ double KDECleanRules<TreeType>::Score(const size_t /* queryIndex */,
 
 //! Clean rules double-tree score.
 template<typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double KDECleanRules<TreeType>::Score(TreeType& queryNode,
                                       TreeType& referenceNode)
 {
