@@ -480,12 +480,6 @@ endif ()
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
 
-# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
-# depends on it.
-if (USING_GIT STREQUAL "YES")
-  add_dependencies(mlpack_headers mlpack_gitversion)
-endif ()
-
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
 if (BUILD_DOCS)
@@ -598,8 +592,8 @@ if (PKG_CONFIG_FOUND)
 
   add_custom_target(pkgconfig ALL
       ${CMAKE_COMMAND}
+          -D MLPACK_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
-      DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
