@@ -5719,7 +5719,7 @@ TEST_CASE("NoBiasConvolutionLayerTest", "[ANNLayerTest]")
 }
 
 /**
- * Simple test for the Grouped Convolution layer.
+ * Simple test for the Grouped Convolution layer (With groups = 2).
  */
 TEST_CASE("GroupedConvolutionLayerTest", "[ANNLayerTest]")
 {

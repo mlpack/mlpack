@@ -61,7 +61,7 @@ namespace ann /** Artificial Neural Network. */ {
  * a 2-D image (or object) of the original 196x14 size, using this as the input
  * for the 14 filters of this example.
  * 
- * Groups controls the connections between inputs and outputs. 
+ * The `groups` parameter controls the connections between inputs and outputs.
  * inMaps and outMaps must both be divisible by groups. 
  * For example,
  *    At groups=1, all inputs are convolved to all outputs.
@@ -353,7 +353,7 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Locally-stored filter/kernel height.
   size_t kernelHeight;
 
-  //! Locally-stored groups.
+  //! Locally-stored number of groups of maps.
   size_t groups;
 
   //! Locally-stored stride of the filter in x-direction.
@@ -374,7 +374,7 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Locally-stored top padding height.
   size_t padHTop;
 
-  //! Locally-stored top padding height.
+  //! Locally-stored variable to indicate whether biases should be added.
   bool useBias;
 
   //! Locally-stored weight object.
