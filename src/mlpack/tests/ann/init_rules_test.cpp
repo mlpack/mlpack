@@ -27,7 +27,7 @@
 #include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/lecun_normal_init.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

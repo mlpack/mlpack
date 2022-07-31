@@ -24,7 +24,7 @@
 
 #include <ensmallen.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
