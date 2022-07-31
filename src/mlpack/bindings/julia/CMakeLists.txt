@@ -53,7 +53,7 @@ if (BUILD_JULIA_BINDINGS)
   add_library(mlpack_julia_util
     julia_util.h
     julia_util.cpp)
-  target_link_libraries(mlpack_julia_util ${ARMADILLO_LIBRARIES})
+  target_link_libraries(mlpack_julia_util ${MLPACK_LIBRARIES})
   set_target_properties(mlpack_julia_util PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
   add_dependencies(julia mlpack_julia_util)
