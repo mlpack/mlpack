@@ -352,7 +352,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
 // Base case where the query set is the reference set.  (So, we can't return
 // ourselves as the nearest neighbor.)
 template<typename SortPolicy, typename MatType>
-inline force_inline
+inline mlpack_force_inline
 void LSHSearch<SortPolicy, MatType>::BaseCase(
     const size_t queryIndex,
     const arma::uvec& referenceIndices,
@@ -398,7 +398,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
 
 // Base case for bichromatic search.
 template<typename SortPolicy, typename MatType>
-inline force_inline
+inline mlpack_force_inline
 void LSHSearch<SortPolicy, MatType>::BaseCase(
     const size_t queryIndex,
     const arma::uvec& referenceIndices,
@@ -440,7 +440,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
 }
 
 template<typename SortPolicy, typename MatType>
-inline force_inline
+inline mlpack_force_inline
 double LSHSearch<SortPolicy, MatType>::PerturbationScore(
     const std::vector<bool>& A,
     const arma::vec& scores) const
@@ -453,7 +453,7 @@ double LSHSearch<SortPolicy, MatType>::PerturbationScore(
 }
 
 template<typename SortPolicy, typename MatType>
-inline force_inline
+inline mlpack_force_inline
 bool LSHSearch<SortPolicy, MatType>::PerturbationShift(
     std::vector<bool>& A) const
 {
@@ -472,7 +472,7 @@ bool LSHSearch<SortPolicy, MatType>::PerturbationShift(
 }
 
 template<typename SortPolicy, typename MatType>
-inline force_inline
+inline mlpack_force_inline
 bool LSHSearch<SortPolicy, MatType>::PerturbationExpand(
     std::vector<bool>& A) const
 {
@@ -491,7 +491,7 @@ bool LSHSearch<SortPolicy, MatType>::PerturbationExpand(
 }
 
 template<typename SortPolicy, typename MatType>
-inline force_inline
+inline mlpack_force_inline
 bool LSHSearch<SortPolicy, MatType>::PerturbationValid(
     const std::vector<bool>& A) const
 {
@@ -908,7 +908,7 @@ void LSHSearch<SortPolicy, MatType>::Search(
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (omp_size_t i = 0; i < (omp_size_t) querySet.n_cols; ++i)
+  for (size_t i = 0; i < (size_t) querySet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the
@@ -970,7 +970,7 @@ Search(const size_t k,
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (omp_size_t i = 0; i < (omp_size_t) referenceSet.n_cols; ++i)
+  for (size_t i = 0; i < (size_t) referenceSet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the

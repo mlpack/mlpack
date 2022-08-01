@@ -27,7 +27,7 @@ class SplitByAnyOf
 {
  public:
   //! The type of the token which the tokenizer extracts.
-  using TokenType = STRING_VIEW;
+  using TokenType = MLPACK_STRING_VIEW;
 
   //! A convenient alias for the mask type.
   using MaskType = std::array<bool, 1 << CHAR_BIT>;
@@ -37,7 +37,7 @@ class SplitByAnyOf
    *
    * @param delimiters The given delimiters.
    */
-  SplitByAnyOf(const STRING_VIEW delimiters)
+  SplitByAnyOf(const MLPACK_STRING_VIEW delimiters)
   {
     mask.fill(false);
 
@@ -51,13 +51,13 @@ class SplitByAnyOf
    *
    * @param str String view to retrieve the token from.
    */
-  STRING_VIEW operator()(STRING_VIEW& str) const
+  MLPACK_STRING_VIEW operator()(MLPACK_STRING_VIEW& str) const
   {
-    STRING_VIEW retval;
+    MLPACK_STRING_VIEW retval;
     // std::basic_string_view does not have empty function.
     // Therefore, we are assiging an empty string when reaching the last
     // delimiter.
-    STRING_VIEW empty_string{""};
+    MLPACK_STRING_VIEW empty_string{""};
 
     while (retval.empty())
     {
@@ -79,7 +79,7 @@ class SplitByAnyOf
    *
    * @param token The given token.
    */
-  static bool IsTokenEmpty(const STRING_VIEW token)
+  static bool IsTokenEmpty(const MLPACK_STRING_VIEW token)
   {
     return token.empty();
   }
@@ -93,11 +93,11 @@ class SplitByAnyOf
   /**
    * The function finds the first character in the given string view equal to 
    * any of the delimiters and returns the position of the character or 
-   * STRING_VIEW::npos if no such character is found.
+   * MLPACK_STRING_VIEW::npos if no such character is found.
    *
    * @param str String where to find the character.
    */
-  size_t FindFirstDelimiter(const STRING_VIEW str) const
+  size_t FindFirstDelimiter(const MLPACK_STRING_VIEW str) const
   {
     for (size_t pos = 0; pos < str.size(); pos++)
     {

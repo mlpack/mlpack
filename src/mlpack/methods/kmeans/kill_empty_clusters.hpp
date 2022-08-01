@@ -46,7 +46,7 @@ class KillEmptyClusters
    * @return Number of points changed (0).
    */
   template<typename MetricType, typename MatType>
-  static inline force_inline void EmptyCluster(
+  static inline mlpack_force_inline void EmptyCluster(
       const MatType& /* data */,
       const size_t emptyCluster,
       const arma::mat& /* oldCentroids */,

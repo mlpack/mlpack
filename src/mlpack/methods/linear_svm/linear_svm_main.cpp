@@ -357,7 +357,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
       ens::ConstantStep decayPolicy(stepSize);
 
-      #ifdef HAS_OPENMP
+      #ifdef MLPACK_USE_OPENMP
       size_t threads = omp_get_max_threads();
       #else
       size_t threads = 1;

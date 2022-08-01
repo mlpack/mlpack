@@ -325,7 +325,6 @@ TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
 /**
  * Simple SELU derivative test to check whether the derivatives
  * produced by the activation function are correct.
- *
  */
 TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
 {
