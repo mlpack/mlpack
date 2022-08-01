@@ -251,7 +251,7 @@ TEST_CASE("RegularizedSVDFunctionOptimize", "[RegularizedSVDTest]")
 
 // The test is only compiled if the user has specified OpenMP to be
 // used.
-#ifdef HAS_OPENMP
+#ifdef MLPACK_USE_OPENMP
 
 // Test Regularized SVD with parallel SGD.
 TEST_CASE("RegularizedSVDFunctionOptimizeHOGWILD", "[RegularizedSVDTest]")

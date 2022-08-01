@@ -16,9 +16,9 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/regularizer/regularizer.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
+#include "../serialization.hpp"
 #include "ann_test_tools.hpp"
-#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

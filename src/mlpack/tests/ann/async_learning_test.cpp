@@ -24,7 +24,7 @@
 
 #include <ensmallen.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -38,7 +38,7 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
    * This is for the Travis CI server, in your own machine you should use more
    * threads.
    */
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
     omp_set_num_threads(1);
   #endif
 
@@ -114,7 +114,7 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
    * This is for the Travis CI server, in your own machine you shuold use more
    * threads.
    */
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
     omp_set_num_threads(1);
   #endif
 
@@ -192,7 +192,7 @@ TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
    * This is for the Travis CI server, in your own machine you shuold use more
    * threads.
    */
-  #ifdef HAS_OPENMP
+  #ifdef MLPACK_USE_OPENMP
     omp_set_num_threads(1);
   #endif
 
