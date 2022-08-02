@@ -15,6 +15,37 @@
 #include <string>
 #include <vector>
 
+#ifdef HAS_BFD_DL
+  #include <execinfo.h>
+  #include <signal.h>
+  #include <unistd.h>
+  #include <cxxabi.h>
+
+  // Some versions of libbfd require PACKAGE and PACKAGE_VERSION to be set in
+  // order for the include to not fail.  For more information:
+  // https://github.com/mlpack/mlpack/issues/574
+  #ifndef PACKAGE
+    #define PACKAGE
+    #ifndef PACKAGE_VERSION
+      #define PACKAGE_VERSION
+      #include <bfd.h>
+      #undef PACKAGE_VERSION
+    #else
+      #include <bfd.h>
+    #endif
+    #undef PACKAGE
+  #else
+    #ifndef PACKAGE_VERSION
+      #define PACKAGE_VERSION
+      #include <bfd.h>
+      #undef PACKAGE_VERSION
+    #else
+      #include <bfd.h>
+    #endif
+  #endif
+  #include <dlfcn.h>
+#endif
+
 namespace mlpack {
 
 /**
@@ -71,17 +102,17 @@ class Backtrace
    *
    * @param maxDepth Maximum depth of backtrace. Default 32 steps.
    */
-  static void GetAddress(int maxDepth);
+  void GetAddress(int maxDepth);
 
   /**
    * Decodes file name, function & line number.
    *
    * @param address Address of traced frame.
    */
-  static void DecodeAddress(long address);
+  void DecodeAddress(long address);
 
   //! Demangles function name.
-  static void DemangleFunction();
+  void DemangleFunction();
 
   //! Backtrace datastructure.
   struct Frames
@@ -90,12 +121,22 @@ class Backtrace
     const char* function;
     const char* file;
     unsigned line;
-  } static frame;
+  };
 
-  //! A vector for all the backtrace information.
-  static std::vector<Frames> stack;
+  Frames frame;
+  std::vector<Frames> stack;
+
+#ifdef HAS_BFD_DL
+  // Binary File Descriptor objects.
+  bfd* abfd;          // Descriptor datastructure.
+  asymbol **syms;     // Symbols datastructure.
+  asection *text;     // Strings datastructure.
+#endif
 };
 
 }; // namespace mlpack
+
+// Include implementation.
+#include "backtrace_impl.hpp"
 
 #endif

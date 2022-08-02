@@ -13,25 +13,12 @@
 #ifndef MLPACK_CORE_UTIL_PARAM_DATA_HPP
 #define MLPACK_CORE_UTIL_PARAM_DATA_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/base.hpp>
 
 /**
  * The TYPENAME macro is used internally to convert a type into a string.
  */
 #define TYPENAME(x) (std::string(typeid(x).name()))
-
-namespace mlpack {
-namespace data {
-
-class IncrementPolicy;
-
-template<typename PolicyType, typename InputType>
-class DatasetMapper;
-
-using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
-
-} // namespace data
-} // namespace mlpack
 
 namespace mlpack {
 namespace util {
@@ -75,7 +62,7 @@ struct ParamData
   bool loaded;
   //! The actual value that is held.  If the user has passed a different type,
   //! this may be a tuple containing multiple values.
-  ANY value;
+  MLPACK_ANY value;
   //! The true name of the type, as it would be written in C++.
   std::string cppType;
 };

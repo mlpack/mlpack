@@ -111,8 +111,8 @@
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 #include <mlpack/core/kernels/cauchy_kernel.hpp>
 
-// Use OpenMP if compiled with -DHAS_OPENMP.
-#ifdef HAS_OPENMP
+// Use OpenMP if available.
+#ifdef MLPACK_USE_OPENMP
   #include <omp.h>
 #endif
 

@@ -306,7 +306,7 @@ Cluster(const MatType& data,
   assignments.set_size(data.n_cols);
 
   #pragma omp parallel for
-  for (omp_size_t i = 0; i < (omp_size_t) data.n_cols; ++i)
+  for (size_t i = 0; i < (size_t) data.n_cols; ++i)
   {
     // Find the closest centroid to this point.
     double minDistance = std::numeric_limits<double>::infinity();

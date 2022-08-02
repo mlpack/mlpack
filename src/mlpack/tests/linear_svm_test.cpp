@@ -748,7 +748,7 @@ TEST_CASE("LinearSVMDeltaLBFGSTwoClasses", "[LinearSVMTest]")
  * The test is only compiled if the user has specified OpenMP to be
  * used.
  */
-#ifdef HAS_OPENMP
+#ifdef MLPACK_USE_OPENMP
 
 /**
  * Test training of linear svm on a simple dataset using

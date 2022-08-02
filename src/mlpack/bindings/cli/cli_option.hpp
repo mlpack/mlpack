@@ -95,12 +95,12 @@ class CLIOption
                      typename ParameterType<typename
                          std::remove_pointer<N>::type>::type>::value)
     {
-      data.value = ANY(defaultValue);
+      data.value = defaultValue;
     }
     else
     {
       typename ParameterType<typename std::remove_pointer<N>::type>::type tmp;
-      data.value = ANY(std::tuple<N, decltype(tmp)>(defaultValue, tmp));
+      data.value = std::tuple<N, decltype(tmp)>(defaultValue, tmp);
     }
 
     const std::string tname = data.tname;

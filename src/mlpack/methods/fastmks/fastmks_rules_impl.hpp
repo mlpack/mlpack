@@ -82,7 +82,7 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
 }
 
 template<typename KernelType, typename TreeType>
-inline force_inline
+inline mlpack_force_inline
 double FastMKSRules<KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)

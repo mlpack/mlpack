@@ -15,7 +15,6 @@
 #define MLPACK_CORE_DATA_LOAD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/log.hpp>
 #include <string>
 
 #include "format.hpp"
