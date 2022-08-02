@@ -7,6 +7,8 @@ include(CMake/Autodownload.cmake)
 include(CMake/ConfigureCrossCompile.cmake)
 include(CMake/CheckAtomic.cmake)
 
+message(STATUS "now mlpack_libraries ${MLPACK_LIBRARIES}")
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -221,6 +223,8 @@ if (CMAKE_COMPILER_IS_GNUCC)
   find_package(Threads)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endif()
+
+message(STATUS "now 2nd mlpack_libraries ${MLPACK_LIBRARIES}")
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if (DEBUG)
