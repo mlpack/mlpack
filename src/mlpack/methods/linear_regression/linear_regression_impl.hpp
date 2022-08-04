@@ -12,84 +12,95 @@
  */
 #ifndef MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_IMPL_HPP
 #define MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_IMPL_HPP
-
+#include <type_traits>
 #include "linear_regression.hpp"
 
 namespace mlpack {
 namespace regression {
 
-inline LinearRegression::LinearRegression(
-    const arma::mat& predictors,
-    const arma::rowvec& responses,
+template <template<class> class M, class Ele>
+inline LinearRegressionModel<M, Ele>::LinearRegressionModel(
+    const M<Ele>& predictors,
+    const arma::Row<Ele>& responses,
     const double lambda,
     const bool intercept) :
-    LinearRegression(predictors,
-		     arma::mat(responses),
-		     arma::rowvec(),
-		     lambda,
-		     intercept)
+    LinearRegressionModel(predictors,
+		                  arma::Mat<Ele>(responses),
+		                  arma::Row<Ele>(),
+		                  lambda,
+		                  intercept)
 { /* Nothing to do. */ }
 
-inline LinearRegression::LinearRegression(
-    const arma::mat& predictors,
-    const arma::mat& responses,
+template <template<class> class M, class Ele>
+inline LinearRegressionModel<M, Ele>::LinearRegressionModel(
+    const M<Ele>& predictors,
+    const arma::Mat<Ele>& responses,
     const double lambda,
     const bool intercept) :
-    LinearRegression(predictors, responses, arma::rowvec(), lambda, intercept)
+    LinearRegressionModel(predictors,
+                          responses,
+                          arma::Row<Ele>(),
+                          lambda,
+                          intercept)
 { /* Nothing to do. */ }
 
-inline LinearRegression::LinearRegression(
-    const arma::mat& predictors,
-    const arma::rowvec& responses,
-    const arma::rowvec& weights,
+template <template<class> class M, class Ele>
+inline LinearRegressionModel<M, Ele>::LinearRegressionModel(
+    const M<Ele>& predictors,
+    const arma::Row<Ele>& responses,
+    const arma::Row<Ele>& weights,
     const double lambda,
     const bool intercept) :
-    lambda(lambda),
-    intercept(intercept)
-{
-  Train(predictors,
-	arma::mat(responses),
-	weights,
-	intercept);
-}
+    LinearRegressionModel(predictors,
+                          arma::Mat<Ele>(responses),
+                          weights,
+                          lambda,
+                          intercept)   
+{ /* Nothing to do. */ }
 
-inline LinearRegression::LinearRegression(
-    const arma::mat& predictors,
-    const arma::mat& responses,
-    const arma::rowvec& weights,
+template <template<class> class M, class Ele>
+inline LinearRegressionModel<M, Ele>::LinearRegressionModel(
+    const M<Ele>& predictors,
+    const arma::Mat<Ele>& responses,
+    const arma::Row<Ele>& weights,
     const double lambda,
-    const bool intercept) :
-    lambda(lambda),
-    intercept(intercept)
+    const bool intercept) : lambda(lambda), intercept(intercept)
 {
   Train(predictors, responses, weights, intercept);
 }
 
-inline double LinearRegression::Train(const arma::mat& predictors,
-                                      const arma::rowvec& responses,
+template <template<class> class M, class Ele>
+inline double LinearRegressionModel<M, Ele>::Train(const M<Ele>& predictors,
+                                      const arma::Row<Ele>& responses,
                                       const bool intercept)
 {
-  return Train(predictors, arma::mat(responses), arma::rowvec(), intercept);
+  return Train(predictors,
+               arma::Mat<Ele>(responses),
+               arma::Row<Ele>(),
+               intercept);
 }
 
-inline double LinearRegression::Train(const arma::mat& predictors,
-               			      const arma::rowvec& responses,
-               			      const arma::rowvec& weights,
-               			      const bool intercept)
+template <template<class> class M, class Ele>
+inline double LinearRegressionModel<M, Ele>::Train(const M<Ele>& predictors,
+               			              const arma::Row<Ele>& responses,
+               			              const arma::Row<Ele>& weights,
+               			              const bool intercept)
 {
-  return Train(predictors, arma::mat(responses), weights, intercept);
+  return Train(predictors, arma::Mat<Ele>(responses), weights, intercept);
 }
 
-inline double LinearRegression::Train(const arma::mat& predictors,
-                                      const arma::mat& responses,
+template <template<class> class M, class Ele>
+inline double LinearRegressionModel<M, Ele>::Train(const M<Ele>& predictors,
+                                      const arma::Mat<Ele>& responses,
                                       const bool intercept)
 {
-  return Train(predictors, responses, arma::rowvec(), intercept);
+  return Train(predictors, responses, arma::Mat<Ele>(), intercept);
 }
 
-inline double LinearRegression::Train(const arma::mat& predictors,
-                                      const arma::mat& responses,
-                                      const arma::rowvec& weights,
+template <template<class> class M, class Ele>
+inline double LinearRegressionModel<M, Ele>::Train(const M<Ele>& predictors,
+                                      const arma::Mat<Ele>& responses,
+                                      const arma::Row<Ele>& weights,
                                       const bool intercept)
 {
   this->intercept = intercept;
@@ -104,20 +115,24 @@ inline double LinearRegression::Train(const arma::mat& predictors,
   //           that is, columns are actually rows (see: column major order).
 
   // Sanity check on data.
-  util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
+  util::CheckSameSizes(predictors,
+                       responses,
+                       "LinearRegressionModel::Train()");
 
-  const size_t nCols = predictors.n_cols;
+  const int nCols = predictors.n_cols;
 
-  arma::mat p = predictors;
-  arma::mat r = responses;
+  M<Ele> p;
+  arma::Mat<Ele> r = responses;
 
   // Here we add the row of ones to the predictors.
   // The intercept is not penalized. Add an "all ones" row to design and set
   // intercept = false to get a penalized intercept.
-  if (intercept)
-  {
-    p.insert_rows(0, arma::ones<arma::mat>(1, nCols));
+  if (intercept){
+     p = M<Ele>(predictors.n_rows + 1, nCols);
+     p.submat(1, 0, predictors.n_rows, nCols-1) = predictors;
+     for (int i=0; i < nCols; i++) p(0, i) = 1;
   }
+  else p = predictors;
 
   if (weights.n_elem > 0)
   {
@@ -128,24 +143,24 @@ inline double LinearRegression::Train(const arma::mat& predictors,
   // Convert to this form:
   // a * (X X^T) = y X^T.
   // Then we'll use Armadillo to solve it.
-  arma::mat cov = p * p.t() +
-      lambda * arma::eye<arma::mat>(p.n_rows, p.n_rows);
-
-  parameters = arma::solve(cov, p * r.t());
+  M<Ele> cov = p * p.t();
+  cov.diag() += lambda;
+  _solve(cov, p * r.t());
   return ComputeError(predictors, responses);
 }
 
-
-inline void LinearRegression::Predict(const arma::mat& points,
-    				      arma::rowvec& predictions) const
+template <template<class> class M, class Ele>
+inline void LinearRegressionModel<M, Ele>::Predict(const M<Ele>& points,
+    				                  arma::Row<Ele>& predictions) const
 {
-  arma::mat preds_mat;
+  arma::Mat<Ele> preds_mat;
   Predict(points, preds_mat);
-  predictions = arma::rowvec(preds_mat);
+  predictions = arma::Row<Ele>(preds_mat);
 }
 
-inline void LinearRegression::Predict(const arma::mat& points,
-    				      arma::mat& predictions) const
+template <template<class> class M, class Ele>
+inline void LinearRegressionModel<M, Ele>::Predict(const M<Ele>& points,
+    				                  arma::Mat<Ele>& predictions) const
 {
   if (intercept)
   {
@@ -154,42 +169,50 @@ inline void LinearRegression::Predict(const arma::mat& points,
     // Prevent underflow.
     const size_t labels = (parameters.n_rows == 0) ? size_t(0) :
         size_t(parameters.n_rows - 1);
-    util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()", 
-        "points");
+    util::CheckSameDimensionality(points,
+                                  labels,
+                                  "LinearRegressionModel::Predict()", 
+                                  "points");
     // Get the predictions, but this ignores the intercept value
     predictions = arma::trans(parameters.rows(1, parameters.n_rows - 1))
         * points;
     // Now add the intercept.
-    predictions.each_col() += parameters.row(0).t();
+    // predictions.each_col() += parameters.row(0).t();
+    for (size_t i=0; i < predictions.n_cols; i++) 
+            predictions.col(i) += parameters.row(0).t(); 
   }
   else
   {
     // We want to be sure we have the correct number of dimensions in
     // the dataset.
-    util::CheckSameDimensionality(points, parameters, 
-        "LinearRegression::Predict()", "points");
+    util::CheckSameDimensionality(points,
+                                  parameters, 
+                                  "LinearRegressionModel::Predict()",
+                                  "points");
     predictions = arma::trans(parameters) * points;
   }
 }
 
-inline double LinearRegression::ComputeError(const arma::mat& predictors,
-    					     const arma::rowvec& responses
-					    ) const
+template <template<class> class M, class Ele>
+inline double LinearRegressionModel<M, Ele>::ComputeError(
+    const M<Ele>& predictors,
+    const arma::Row<Ele>& responses) const
 {
-  return ComputeError(predictors,
-		      arma::mat(responses));
+  return ComputeError(predictors, arma::Mat<Ele>(responses));
 }
 
-inline double LinearRegression::ComputeError(
-    const arma::mat& predictors,
-    const arma::mat& responses) const
+template <template<class> class M, class Ele>
+inline double LinearRegressionModel<M, Ele>::ComputeError(
+    const M<Ele>& predictors,
+    const arma::Mat<Ele>& responses) const
 {
   // Sanity check on data.
-  util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
-  
+  util::CheckSameSizes(predictors,
+                       responses,
+                       "LinearRegressionModel::Train()");
 
-  arma::mat diff;
-  arma::mat preds;
+  arma::Mat<Ele> diff;
+  arma::Mat<Ele> preds;
   Predict(predictors, preds);
   diff = responses - preds; 
   return arma::accu(diff % diff) / diff.n_cols; 

@@ -25,7 +25,8 @@ namespace regression /** Regression methods. */ {
  * Optionally, this class can perform ridge regression, if the lambda parameter
  * is set to a number greater than zero.
  */
-class LinearRegression
+template <template<class> class M, class Ele>
+class LinearRegressionModel
 {
  public:
   /**
@@ -36,8 +37,8 @@ class LinearRegression
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const arma::mat& predictors,
-                   const arma::rowvec& responses,
+  LinearRegressionModel(const M<Ele>& predictors,
+                   const arma::Row<Ele>& responses,
                    const double lambda = 0,
                    const bool intercept = true);
 
@@ -45,12 +46,12 @@ class LinearRegression
    * Creates the model.
    *
    * @param predictors X, matrix of data points.
-   * @param responses Y, matrix of responses; each point in X has a response vector.
+   * @param responses Y, matrix of responses.
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const arma::mat& predictors,
-                   const arma::mat& responses,
+  LinearRegressionModel(const M<Ele>& predictors,
+                   const arma::Mat<Ele>& responses,
                    const double lambda = 0,
                    const bool intercept = true);
 
@@ -63,9 +64,9 @@ class LinearRegression
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const arma::mat& predictors,
-                   const arma::rowvec& responses,
-                   const arma::rowvec& weights,
+  LinearRegressionModel(const M<Ele>& predictors,
+                   const arma::Row<Ele>& responses,
+                   const arma::Row<Ele>& weights,
                    const double lambda = 0,
                    const bool intercept = true);
 
@@ -73,14 +74,14 @@ class LinearRegression
    * Creates the model with weighted learning.
    *
    * @param predictors X, matrix of data points.
-   * @param responses Y, matrix of responses; each point in X has a response vector.
+   * @param responses Y, matrix of responses.
    * @param weights Observation weights (for boosting).
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const arma::mat& predictors,
-                   const arma::mat& responses,
-                   const arma::rowvec& weights,
+  LinearRegressionModel(const M<Ele>& predictors,
+                   const arma::Mat<Ele>& responses,
+                   const arma::Row<Ele>& weights,
                    const double lambda = 0,
                    const bool intercept = true);
 
@@ -90,7 +91,7 @@ class LinearRegression
    * called (or make sure the model parameters are set) before calling
    * Predict()!
    */
-  LinearRegression() : lambda(0.0), intercept(true) { }
+  LinearRegressionModel() : lambda(0.0), intercept(true) { }
 
   /**
    * Train the LinearRegression model on the given data. Careful! This will
@@ -104,8 +105,8 @@ class LinearRegression
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
+  double Train(const M<Ele>& predictors,
+               const arma::Row<Ele>& responses,
                const bool intercept = true);
 
   /**
@@ -121,9 +122,9 @@ class LinearRegression
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
-               const arma::rowvec& weights,
+  double Train(const M<Ele>& predictors,
+               const arma::Row<Ele>& responses,
+               const arma::Row<Ele>& weights,
                const bool intercept = true);
 
 /**
@@ -134,13 +135,13 @@ class LinearRegression
    * different value in the constructor.
    *
    * @param predictors X, the matrix of data points to train the model on.
-   * @param responses Y, matrix of the responses; each point in X has a response vector.
+   * @param responses Y, matrix of the responses.
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
 
-  double Train(const arma::mat& predictors,
-               const arma::mat& responses,
+  double Train(const M<Ele>& predictors,
+               const arma::Mat<Ele>& responses,
                const bool intercept=true);
 
 
@@ -152,15 +153,15 @@ class LinearRegression
    * different value in the constructor.
    *
    * @param predictors X, the matrix of data points to train the model on.
-   * @param responses Y, matrix of the responses; each point in X has a response vector.
+   * @param responses Y, matrix of the responses.
    * @param weights Observation weights (for boosting).
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
 
-  double Train(const arma::mat& predictors,
-               const arma::mat& responses,
-               const arma::rowvec& weights,
+  double Train(const M<Ele>& predictors,
+               const arma::Mat<Ele>& responses,
+               const arma::Row<Ele>& weights,
                const bool intercept=true);
 
 
@@ -170,7 +171,7 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::rowvec& predictions) const;
+  void Predict(const M<Ele>& points, arma::Row<Ele>& predictions) const;
 
   /**
    * Calculate y_i for each data point in points.
@@ -178,7 +179,7 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::mat& predictions) const;
+  void Predict(const M<Ele>& points, arma::Mat<Ele>& predictions) const;
 
 
   /**
@@ -198,8 +199,8 @@ class LinearRegression
    * @param points Matrix of predictors (X).
    * @param responses Transposed vector of responses (y^T).
    */
-  double ComputeError(const arma::mat& points,
-                      const arma::rowvec& responses) const;
+  double ComputeError(const M<Ele>& points, 
+                      const arma::Row<Ele>& responses) const;
 
   /**
    * Calculate the L2 squared error on the given predictors and responses using
@@ -218,14 +219,14 @@ class LinearRegression
    * @param points Matrix of predictors (X).
    * @param responses Transposed vector of responses (y^T).
    */
-  double ComputeError(const arma::mat& points,
-                      const arma::mat& responses) const;
+  double ComputeError(const M<Ele>& points,
+                      const arma::Mat<Ele>& responses) const;
 
 
   //! Return the parameters (the b vector).
-  const arma::mat& Parameters() const { return parameters; }
+  const arma::Mat<Ele>& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
-  arma::mat& Parameters() { return parameters; }
+  arma::Mat<Ele>& Parameters() { return parameters; }
 
   //! Return the Tikhonov regularization parameter for ridge regression.
   double Lambda() const { return lambda; }
@@ -251,7 +252,7 @@ class LinearRegression
    * The calculated B.
    * Initialized and filled by constructor to hold the least squares solution.
    */
-  arma::mat parameters;
+  arma::Mat<Ele> parameters;
 
   /**
    * The Tikhonov regularization parameter for ridge regression (0 for linear
@@ -261,8 +262,14 @@ class LinearRegression
 
   //! Indicates whether first parameter is intercept.
   bool intercept;
+
+  void _solve(arma::SpMat<Ele>& A,
+                        arma::Mat<Ele> Y){ parameters =  arma::spsolve(A, Y);}
+  void _solve(arma::Mat<Ele>& A,
+                        arma::Mat<Ele> Y) { parameters =  arma::solve(A, Y);} 
 };
 
+typedef LinearRegressionModel <arma::Mat, double> LinearRegression;
 } // namespace regression
 } // namespace mlpack
 
