@@ -439,10 +439,10 @@ TEST_CASE("MultiOutputComputeErrorPerfectFitTest", "[LinearRegressionTest]")
 TEST_CASE("WeightedComputeErrorTest", "[LinearRegressionTest]")
 {
   arma::mat X = { {  0,   1, 2.5, 4, -1 },
-  	          {0.6, 1.8,   4, 2, -2 },
-		  {  1, 2.1, 0.3, 4, -3 } };
+  	              {0.6, 1.8,   4, 2, -2 },
+		          {  1, 2.1, 0.3, 4, -3 } };
   arma::mat Y = { {0, 2.333, 4,    3, 0.666},
-		  {1,     3, 5, 7.22, 0.233 } };
+		          {1,     3, 5, 7.22, 0.233 } };
   arma::rowvec w = "0.8097 0.8361 0.4471 0.5010 0.0343";
   // The error should 1.7371145872376228, as calculated in sklearn.
   LinearRegression lr(X, Y, w);
@@ -450,3 +450,105 @@ TEST_CASE("WeightedComputeErrorTest", "[LinearRegressionTest]")
   REQUIRE(lr.ComputeError(X, Y) == Approx(1.7371145872376228).epsilon(1e-10));
 }
 
+TEST_CASE("FloatLinearRegressionTest", "[LinearRegressionTest]")
+{
+  arma::fmat X = { {  0,   1, 2.5, 4, -1 },
+  	             {0.6, 1.8,   4, 2, -2 },
+		         {  1, 2.1, 0.3, 4, -3 } };
+  arma::fmat Y = { {0, 2.333, 4,    3, 0.666},
+		           {1,     3, 5, 7.22, 0.233 } };
+  arma::frowvec w = "0.8097 0.8361 0.4471 0.5010 0.0343";
+  // The error should 1.7371145872376228, as calculated in sklearn.
+  LinearRegressionModel<arma::Mat, float> lr(X, Y, w);
+
+  REQUIRE(lr.ComputeError(X, Y) == Approx(1.7371145872376228).epsilon(1e-5));
+}
+
+TEST_CASE("SparseLinearRegressionTest", "[LinearRegressionTest]")
+{
+  // generate random data
+  arma::sp_mat sp_X = arma::sprandu<arma::sp_mat>(30, 100, 0.1);
+  arma::mat Y = arma::randu<arma::mat>(20, 100);
+
+  // fit model
+  LinearRegressionModel<arma::SpMat, double> sp_lr(sp_X, Y, 0.2, true);
+
+  arma::mat X = arma::mat(sp_X);
+  LinearRegression lr(X, Y, 0.2, true);
+
+  REQUIRE(arma::norm(lr.Parameters() - sp_lr.Parameters(), "fro") 
+						== Approx(0.0).margin(1e-10));
+
+  arma::mat sp_preds;
+  arma::mat preds;
+  sp_lr.Predict(sp_X, sp_preds);
+  lr.Predict(X, preds);
+  REQUIRE(arma::norm(sp_preds - preds, "fro") == Approx(0.0).margin(1e-10));
+  
+  arma::sp_mat new_sp_X = arma::sprandu<arma::sp_mat>(30, 100, 0.1);
+  arma::mat new_Y = arma::randu<arma::mat>(20, 100);
+  arma::mat new_X = arma::mat(new_sp_X);
+  REQUIRE(lr.ComputeError(new_X, new_Y) - 
+          sp_lr.ComputeError(new_sp_X, new_Y) == Approx(0.0).margin(1e-10));
+}
+
+TEST_CASE("SparseLinearRegressionNoRidgeNoInterceptTest",
+          "[LinearRegressionTest]")
+{
+  // generate random data
+  arma::sp_mat sp_X = arma::sprandu<arma::sp_mat>(30, 100, 0.1);
+  arma::mat Y = arma::randu<arma::mat>(20, 100);
+
+  // fit model
+  LinearRegressionModel<arma::SpMat, double> sp_lr(sp_X, Y, 0, false);
+
+  arma::mat X = arma::mat(sp_X);
+  LinearRegression lr(X, Y, 0, false);
+
+  REQUIRE(arma::norm(lr.Parameters() - sp_lr.Parameters(), "fro") 
+						== Approx(0.0).margin(1e-10));
+
+  arma::mat sp_preds;
+  arma::mat preds;
+  sp_lr.Predict(sp_X, sp_preds);
+  lr.Predict(X, preds);
+  REQUIRE(arma::norm(sp_preds - preds, "fro") == Approx(0.0).margin(1e-10));
+  
+  arma::sp_mat new_sp_X = arma::sprandu<arma::sp_mat>(30, 100, 0.1);
+  arma::mat new_Y = arma::randu<arma::mat>(20, 100);
+  arma::mat new_X = arma::mat(new_sp_X);
+  REQUIRE(lr.ComputeError(new_X, new_Y) - 
+          sp_lr.ComputeError(new_sp_X, new_Y) == Approx(0.0).margin(1e-10));
+}
+
+TEST_CASE("FloatSparseLinearRegressionTest", "[LinearRegressionTest]")
+{
+  arma::fmat X = { {  0,   1, 2.5, 4, -1 },
+  	             {0.6, 1.8,   4, 2, -2 },
+		         {  1, 2.1, 0.3, 4, -3 } };
+  arma::sp_fmat sp_X = arma::sp_fmat(X);
+  arma::fmat Y = { {0, 2.333, 4,    3, 0.666},
+		           {1,     3, 5, 7.22, 0.233 } };
+  arma::frowvec w = "0.8097 0.8361 0.4471 0.5010 0.0343";
+  // The error should 1.7371145872376228, as calculated in sklearn.
+  LinearRegressionModel<arma::SpMat, float> lr(sp_X, Y, w);
+
+  REQUIRE(lr.ComputeError(sp_X, Y) 
+          == Approx(1.7371145872376228).epsilon(1e-5));
+}
+
+TEST_CASE("SparseLinearRegressionErrorTest", "[LinearRegressionTest]")
+{
+  arma::mat X = { {  0,   1, 2.5, 4, -1 },
+  	             {0.6, 1.8,   4, 2, -2 },
+		         {  1, 2.1, 0.3, 4, -3 } };
+  arma::sp_mat sp_X = arma::sp_mat(X);
+  arma::mat Y = { {0, 2.333, 4,    3, 0.666},
+		           {1,     3, 5, 7.22, 0.233 } };
+  arma::rowvec w = "0.8097 0.8361 0.4471 0.5010 0.0343";
+  // The error should 1.7371145872376228, as calculated in sklearn.
+  LinearRegressionModel<arma::SpMat, double> lr(sp_X, Y, w);
+
+  REQUIRE(lr.ComputeError(sp_X, Y) 
+          == Approx(1.7371145872376228).epsilon(1e-10));
+}
