@@ -608,8 +608,9 @@ void GroupedConvolutionType<
 
   if ((inMaps % groups != 0) || (maps % groups != 0))
   {
-    Log::Fatal << "Both input maps and output maps should be divisible by "
-        << "groups." << std::endl;
+    Log::Fatal << "Both input maps (" << inMaps << ") and output maps ("
+        << maps << ") should be divisible by groups (" << groups << ")!"
+        << std::endl;
   }
 
   // Compute and cache the total number of input maps.

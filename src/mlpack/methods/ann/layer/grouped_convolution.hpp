@@ -28,38 +28,19 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Grouped Convolution class. The Grouped Convolution 
- * class represents a single layer of a neural network.
- * Example usage:
- *
- * Suppose we want to pass a matrix M (2744x100) to a `Convolution` layer;
- * in this example, `M` was obtained from "flattening" 100 images (or Mel
- * cepstral coefficients, if we talk about speech, or whatever you like) of
- * dimension 196x14. In other words, the first 196 columns of each row of M
- * will be made of the 196 columns of the first row of each of the 100 images
- * (or Mel cepstral coefficients). Then the next 295 columns of M (196 - 393)
- * will be made of the 196 columns of the second row of the 100 images (or Mel
- * cepstral coefficients), etc.  Given that the size of our 2-D input images is
- * 196x14, the parameters for our `Convolution` layer will be something like
- * this:
- *
- * ```
- * GroupedConvolution<> c(1, // Number of input activation maps.
- *                        14, // Number of output activation maps.
- *                        3, // Filter width.
- *                        3, // Filter height.
- *                        1, // Number of groups.
- *                        1, // Stride along width.
- *                        1, // Stride along height.
- *                        0, // Padding width.
- *                        0, // Padding height.
- *                        196, // Input width.
- *                        14); // Input height.
- * ```
- *
- * This `Convolution<>` layer will treat each column of the input matrix `M` as
- * a 2-D image (or object) of the original 196x14 size, using this as the input
- * for the 14 filters of this example.
+ * Implementation of the Grouped Convolution class.
+ * 
+ * For information on convolution, please refer to the convolution layer.
+ * 
+ * A Grouped Convolution uses a group of convolutions - multiple kernels per
+ * layer - resulting in multiple channel outputs per layer. This leads to wider
+ * networks helping a network learn a varied set of low level and high level
+ * features. The original motivation of using Grouped Convolutions in AlexNet
+ * was to distribute the model over multiple GPUs as an engineering compromise.
+ * But later, with models such as ResNeXt, it was shown this module could be
+ * used to improve classification accuracy. Specifically by exposing a new
+ * dimension through grouped convolutions, cardinality (the size of set of
+ * transformations), we can increase accuracy by increasing it.
  * 
  * The `groups` parameter controls the connections between inputs and outputs.
  * inMaps and outMaps must both be divisible by groups. 
@@ -70,6 +51,19 @@ namespace ann /** Artificial Neural Network. */ {
  *      the output channels, and both subsequently concatenated.
  *    At groups= inMaps, each input channel is convolved with its own set of 
  *      filters (of size \frac{\text{out\_channels}}{\text{in\_channels}}).
+ * 
+ * For more information, kindly refer to the following paper.
+ * 
+ * Paper for Grouped Convolution.
+ *
+ * @code
+ * @article{Huang2018,
+ *  author = {Gao Huang, Shichen Liu, Laurens van der Maaten, Kilian Q. Weinberger},
+ *  title = {CondenseNet: An Efficient DenseNet Using Learned Group Convolutions},
+ *  year = {2018},
+ *  url = {https://openaccess.thecvf.com/content_cvpr_2018/papers/Huang_CondenseNet_An_Efficient_CVPR_2018_paper.pdf}
+ * }
+ * @endcode
  *
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.

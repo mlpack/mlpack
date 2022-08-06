@@ -69,6 +69,105 @@ TEST_CASE("GroupedConvolutionLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Test for testing equivalence of grouped convolution (groups = 1) 
+ * with convolution layer.
+ */
+TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, outputG;
+
+  // The input test matrix is of the form 3 x 2 x 2 x 2 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 } };
+
+  Convolution layer(2, 2, 2, 1, 1, 0, 0);
+  layer.InputDimensions() = std::vector<size_t>({ 2, 2, 2 });
+  layer.ComputeOutputDimensions();
+  arma::mat layerWeights(layer.WeightSize(), 1);
+  layerWeights(0) = 0.23757622;
+  layerWeights(1) = -0.11899071;
+  layerWeights(2) = 0.10450475;
+  layerWeights(3) = -0.1303806;
+  layerWeights(4) = -0.34706244;
+  layerWeights(5) = -0.09472395;
+  layerWeights(6) = 0.04117536;
+  layerWeights(7) = -0.23012237;
+  layerWeights(8) = -0.02827594;
+  layerWeights(9) = -0.24280427;
+  layerWeights(10) = 0.33375624;
+  layerWeights(11) = -0.12285174;
+  layerWeights(12) = -0.05546845;
+  layerWeights(13) = -0.01502632;
+  layerWeights(14) = -0.25894147;
+  layerWeights(15) = -0.2283206;
+  layerWeights(16) = 0.3204123974;
+  layerWeights(17) = 0.2334779799;
+  layer.SetWeights(layerWeights.memptr());
+  output.set_size(layer.OutputSize(), 3);
+
+  GroupedConvolution layerG(2, 2, 2, 1, 1, 1, 0, 0);
+  layerG.InputDimensions() = std::vector<size_t>({ 2, 2, 2 });
+  layerG.ComputeOutputDimensions();
+  arma::mat layerWeightsG(layerG.WeightSize(), 1);
+  layerWeightsG(0) = 0.23757622;
+  layerWeightsG(1) = -0.11899071;
+  layerWeightsG(2) = 0.10450475;
+  layerWeightsG(3) = -0.1303806;
+  layerWeightsG(4) = -0.34706244;
+  layerWeightsG(5) = -0.09472395;
+  layerWeightsG(6) = 0.04117536;
+  layerWeightsG(7) = -0.23012237;
+  layerWeightsG(8) = -0.02827594;
+  layerWeightsG(9) = -0.24280427;
+  layerWeightsG(10) = 0.33375624;
+  layerWeightsG(11) = -0.12285174;
+  layerWeightsG(12) = -0.05546845;
+  layerWeightsG(13) = -0.01502632;
+  layerWeightsG(14) = -0.25894147;
+  layerWeightsG(15) = -0.2283206;
+  layerWeightsG(16) = 0.3204123974;
+  layerWeightsG(17) = 0.2334779799;
+  layerG.SetWeights(layerWeightsG.memptr());
+  outputG.set_size(layerG.OutputSize(), 3);
+
+  layer.Forward(input, output);
+  layerG.Forward(input, outputG);
+
+  // Value calculated using torch.nn.Conv2d().
+  CheckMatrices(output, outputG);
+  REQUIRE(arma::accu(output) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(arma::accu(outputG) == Approx(12.6755657196).epsilon(1e-5));
+
+  arma::mat delta, deltaG;
+  delta.set_size(8, 3);
+  deltaG.set_size(8, 3);
+  layer.Backward(input, output, delta);
+  layerG.Backward(input, outputG, deltaG);
+
+  CheckMatrices(delta, deltaG);
+  REQUIRE(arma::accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(arma::accu(deltaG) == Approx(-1.9237523079).epsilon(1e-5));
+}
+
+TEST_CASE("EdgeCaseFailGroupedConvolutionTest", "[ANNLayerTest]")
+{
+  GroupedConvolution layer(2, 2, 2, 0, 1, 1, 0, 0);
+  layer.InputDimensions() = std::vector<size_t>({ 2, 2, 2 });
+  REQUIRE_THROWS(layer.ComputeOutputDimensions());
+
+  GroupedConvolution layer2(3, 2, 2, 2, 1, 1, 0, 0);
+  layer2.InputDimensions() = std::vector<size_t>({ 2, 2, 2 });
+  REQUIRE_THROWS(layer2.ComputeOutputDimensions());
+}
+
+/**
  * Grouped Convolution layer numerical gradient test.
  */
 TEST_CASE("GradientGroupedConvolutionLayerTest", "[ANNLayerTest]")
