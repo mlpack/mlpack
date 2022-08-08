@@ -125,21 +125,19 @@ void PPO<
   arma::colvec actionLogit;
   actorNetwork.Predict(state.Encode(), actionLogit);
 
-  arma::colvec prob;
+  arma::colvec cumulativeProb;
   ann::Softmax softmax;
-  softmax.Forward(actionLogit, prob);
+  softmax.Forward(actionLogit, cumulativeProb);
 
-  // Calculating cumulative probablity.
-  for (size_t i = 1; i < prob.n_rows; i++)
-      prob[i] += prob[i-1];
+  for (size_t i = 1; i < cumulativeProb.n_rows; i++)
+      cumulativeProb[i] += cumulativeProb[i-1];
 
   // Sampling action from cumulative probablity.
-  double randValue = arma::randu<double>();
-  for (size_t i = 0; i<prob.n_rows; i++)
+  for (size_t actionIdx = 0; actionIdx < cumulativeProb.n_rows; ++actionIdx)
   {
-    if (randValue <= prob[i])
+    if (mlpack::math::Random() <= cumulativeProb[actionIdx])
     {
-      action.action = static_cast<decltype(action.action)>(i);
+      action.action = static_cast<decltype(action.action)>(actionIdx);
       return;
     }
   }
