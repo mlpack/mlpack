@@ -274,7 +274,7 @@ void GroupedConvolutionType<
 {
   MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, 
       (maps * inMaps) / groups);
-    if (useBias)
+  if (useBias)
   {
     MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
     MakeAlias(weights, weightPtr, weight.n_elem + bias.n_elem, 1);
@@ -604,13 +604,14 @@ void GroupedConvolutionType<
   inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
 
   if (groups == 0)
-    Log::Fatal << "Groups must be greater than 0." << std::endl;
+    Log::Fatal << "GroupedConvolution::ComputeOutputDimensions(): groups must "
+        << "be greater than 0." << std::endl;
 
   if ((inMaps % groups != 0) || (maps % groups != 0))
   {
-    Log::Fatal << "Both input maps (" << inMaps << ") and output maps ("
-        << maps << ") should be divisible by groups (" << groups << ")!"
-        << std::endl;
+    Log::Fatal << "GroupedConvolution::ComputeOutputDimensions(): both input "
+        << "maps (" << inMaps << ") and output maps (" << maps << ") should be "
+        << "divisible by groups (" << groups << ")!" << std::endl;
   }
 
   // Compute and cache the total number of input maps.

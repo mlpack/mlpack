@@ -54,8 +54,6 @@ namespace ann /** Artificial Neural Network. */ {
  * 
  * For more information, kindly refer to the following paper.
  * 
- * Paper for Grouped Convolution.
- *
  * @code
  * @article{Huang2018,
  *  author = {Gao Huang, Shichen Liu, Laurens van der Maaten, Kilian Q. Weinberger},
