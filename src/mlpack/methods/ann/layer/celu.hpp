@@ -56,8 +56,8 @@ namespace ann /** Artificial Neural Network. */ {
  *     to also be in this type. The type also allows the computation and weight
  *     type to differ from the input type (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class CELUType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class CELUType : public Layer<MatType>
 {
  public:
   /**
@@ -72,6 +72,22 @@ class CELUType : public Layer<InputType, OutputType>
   //! Clone the CELUType object. This handles polymorphism correctly.
   CELUType* Clone() const { return new CELUType(*this); }
 
+
+  // Virtual destructor
+  virtual ~CELUType(){};
+
+  //Copy constructor
+  CELUType(const CELUType& other);
+
+  //Move Constructor
+  CELUType(CELUType&& other);
+
+  //Copy assignment operator
+  CELUType& operator=(const CELUType& other);
+
+  //Move assignement operator
+  CELUType& operator=(CELUType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -79,7 +95,7 @@ class CELUType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -90,7 +106,7 @@ class CELUType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
@@ -103,7 +119,7 @@ class CELUType : public Layer<InputType, OutputType>
 
  private:
   //! Locally stored first derivative of the activation function.
-  OutputType derivative;
+  MatType derivative;
 
   //! CELU Hyperparameter (alpha > 0).
   double alpha;
@@ -112,7 +128,7 @@ class CELUType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard CELU layer.
-typedef CELUType<arma::mat, arma::mat> CELU;
+typedef CELUType<arma::mat> CELU;
 
 } // namespace ann
 } // namespace mlpack

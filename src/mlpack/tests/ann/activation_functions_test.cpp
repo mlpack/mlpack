@@ -178,6 +178,181 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the ELU activation function test. The function is
+ * implemented as ELU layer in the file elu.hpp
+ *
+ * @param input Input data used for evaluating the ELU activation function.
+ * @param target Target data used to evaluate the ELU activation.
+ */
+void CheckELUActivationCorrect(const arma::colvec input,
+    const arma::colvec target)
+{
+  // Initialize ELU object with alpha = 1.
+  ELU module(1);
+  module.Training() = true;
+  module.InputDimensions() = std::vector<size_t>({ input.n_elem });
+  module.ComputeOutputDimensions();
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations(input.n_elem);
+  module.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the ELU activation function derivative test. The function
+ * is implemented as ELU layer in the file elu.hpp
+ *
+ * @param input Input data used for evaluating the ELU activation function.
+ * @param target Target data used to evaluate the ELU activation.
+ */
+void CheckELUDerivativeCorrect(const arma::colvec input,
+    const arma::colvec target)
+{
+  // Initialize ELU object with alpha = 1.0.
+  ELU module(1);
+  module.Training() = true;
+  module.InputDimensions() = std::vector<size_t>({ input.n_elem });
+  module.ComputeOutputDimensions();
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives(input.n_elem), activations(input.n_elem);
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  module.Forward(input, activations);
+  module.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the CELU activation function test. The function is
+ * implemented as CELU layer in the file celu.hpp.
+ *
+ * @param input Input data used for evaluating the CELU activation function.
+ * @param target Target data used to evaluate the CELU activation.
+ */
+void CheckCELUActivationCorrect(const arma::colvec input,
+    const arma::colvec target)
+{
+  // Initialize CELU object with alpha = 1.
+  CELU module(1);
+  module.Training() = true;
+  module.InputDimensions() = std::vector<size_t>({ input.n_elem });
+  module.ComputeOutputDimensions();
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations(input.n_elem);
+  module.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the CELU activation function derivative test. The function
+ * is implemented as CELU layer in the file celu.hpp.
+ *
+ * @param input Input data used for evaluating the CELU activation function.
+ * @param target Target data used to evaluate the CELU activation.
+ */
+void CheckCELUDerivativeCorrect(const arma::colvec input,
+    const arma::colvec target)
+{
+  // Initialize CELU object with alpha = 1.0.
+  CELU module(1);
+  module.Training() = true;
+  module.InputDimensions() = std::vector<size_t>({ input.n_elem });
+  module.ComputeOutputDimensions();
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives(input.n_elem), activations(input.n_elem);
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  module.Forward(input, activations);
+  module.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Simple SELU activation test to check whether the mean and variance remain
+ * invariant after passing normalized inputs through the function.
+ */
+TEST_CASE("SELUFunctionNormalizedTest", "[ActivationFunctionsTest]")
+{
+  arma::mat input = arma::randn<arma::mat>(1000, 1);
+  arma::mat output(arma::size(input));
+  
+  SELU selu;
+  selu.Forward(input, output);
+
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) -
+      arma::mean(output))) <= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(arma::var(input) -
+      arma::var(output))) <= 0.1);
+}
+
+/**
+ * Simple SELU activation test to check whether the mean and variance
+ * vary significantly after passing unnormalized inputs through the function.
+ */
+TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec input("5.96402758 0.9966824 0.99975321 1 \
+                            7.76159416 -0.76159416 0.96402758 8");
+  arma::mat output(arma::size(input));
+  
+  SELU selu;
+  selu.Forward(input, output);
+
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) -
+      arma::mean(output))) >= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(arma::var(input) -
+      arma::var(output))) >= 0.1);
+}
+
+/**
+ * Simple SELU derivative test to check whether the derivatives
+ * produced by the activation function are correct.
+ */
+TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
+{
+  arma::mat input = arma::ones<arma::mat>(1000, 1);
+  arma::mat error = arma::ones<arma::mat>(input.n_elem, 1);
+  arma::mat derivatives(arma::size(input)), activations(arma::size(input));
+
+  SELU selu;
+  selu.Training() = true;
+  selu.InputDimensions() = std::vector<size_t>({ input.n_elem });
+  selu.ComputeOutputDimensions();
+
+  selu.Forward(input, activations);
+  selu.Backward(activations, error, derivatives);
+  
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
+      selu.Lambda())) <= 10e-4);
+
+  input.fill(-1);
+
+  selu.Forward(input, activations);
+  selu.Backward(activations, error, derivatives);
+
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
+      selu.Lambda() * selu.Alpha() - arma::mean(activations))) <= 10e-4);
+}
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
@@ -269,6 +444,37 @@ TEST_CASE("LeakyReLUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckLeakyReLUActivationCorrect(activationData, desiredActivations);
   CheckLeakyReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
+}
+
+/**
+ * Basic test of the ELU function.
+ */
+TEST_CASE("ELUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec desiredActivations("-0.86466471 3.2 4.5 -1.0 \
+                                         1 -0.63212055 2 0");
+
+  const arma::colvec desiredDerivatives("0.13533529 1 1 0 \
+                                         1 0.36787945 1 1");
+
+  CheckELUActivationCorrect(activationData, desiredActivations);
+  CheckELUDerivativeCorrect(activationData, desiredDerivatives);
+}
+
+/**
+ * Basic test of the CELU activation function.
+ */
+TEST_CASE("CELUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec desiredActivations("-0.86466472 3.2 4.5 \
+                                         -1 1 -0.63212056 2 0");
+
+  const arma::colvec desiredDerivatives("0.42119275 1 1 \
+                                         0.36787944 1 \
+                                         0.5314636 1 1");
+
+  CheckCELUActivationCorrect(activationData, desiredActivations);
+  CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
 
 /**
