@@ -14,6 +14,8 @@ set(SOURCES
   base_layer.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  celu.hpp
+  celu_impl.hpp
   concat.hpp
   concat_impl.hpp
   concatenate.hpp
@@ -24,6 +26,8 @@ set(SOURCES
   dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
+  elu.hpp
+  elu_impl.hpp
   identity.hpp
   identity_impl.hpp
   layer.hpp
