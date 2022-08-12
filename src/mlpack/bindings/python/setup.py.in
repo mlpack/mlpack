@@ -33,7 +33,7 @@ else:
 # We'll link with the exact paths to each library using extra_objects, instead
 # of linking with 'libraries' and 'library_dirs', because of differences in
 # Windows and Linux linking behavior.
-libraries = '${ARMADILLO_LIBRARIES}'.split(' ')
+libraries = '${MLPACK_LIBRARIES}'.split(' ')
 
 # Potentially faulty assumption: we can always link against libraries directly
 # by just specifying the full path to them on the command line.

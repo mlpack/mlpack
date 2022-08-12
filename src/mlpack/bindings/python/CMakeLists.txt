@@ -21,7 +21,7 @@ macro (post_python_bindings)
             -D GENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
             -D GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
             -D PACKAGE_VERSION="${PACKAGE_VERSION}"
-            -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
+            -D MLPACK_LIBRARIES="${MLPACK_LIBRARIES}"
             -D MLPACK_PYXS="${MLPACK_PYXS}"
             -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
             -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
