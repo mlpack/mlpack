@@ -654,6 +654,7 @@ void GroupedConvolutionType<
   ar(CEREAL_NVP(padHTop));
   ar(CEREAL_NVP(useBias));
   ar(CEREAL_NVP(padding));
+  ar(CEREAL_NVP(paddingType));
   ar(CEREAL_NVP(inMaps));
   ar(CEREAL_NVP(higherInDimensions));
 }
