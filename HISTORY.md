@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Bump C++ standard requirement to C++14 (#3233).
+
   * Fix `Perceptron` to work with cross-validation framework (#3190).
 
   * Migrate from boost tests to Catch2 framework (#2523), (#2584).

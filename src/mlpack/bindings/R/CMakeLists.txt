@@ -414,6 +414,7 @@ macro (post_r_setup)
   # Then copy each of the header and source files over to that directory.
   set(MLPACK_SOURCES
     "${CMAKE_BINARY_DIR}/src/mlpack/mlpack_export.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
   )

@@ -263,7 +263,7 @@ inline std::string PrintTypeDocs()
   data.required = false;
   data.input = true;
   data.loaded = false;
-  data.value = ANY(int(0));
+  data.value = MLPACK_ANY(int(0));
 
   std::string type = GetPrintableType<int>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -271,7 +271,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(double).name());
   data.cppType = "double";
-  data.value = ANY(double(0.0));
+  data.value = MLPACK_ANY(double(0.0));
 
   type = GetPrintableType<double>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -280,7 +280,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(bool).name());
   data.cppType = "double";
-  data.value = ANY(bool(0.0));
+  data.value = MLPACK_ANY(bool(0.0));
 
   type = GetPrintableType<bool>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -288,7 +288,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(std::string).name());
   data.cppType = "std::string";
-  data.value = ANY(std::string(""));
+  data.value = MLPACK_ANY(std::string(""));
 
   type = GetPrintableType<std::string>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -297,7 +297,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(std::vector<int>).name());
   data.cppType = "std::vector<int>";
-  data.value = ANY(std::vector<int>());
+  data.value = MLPACK_ANY(std::vector<int>());
 
   type = GetPrintableType<std::vector<int>>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -306,7 +306,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(std::vector<std::string>).name());
   data.cppType = "std::vector<std::string>";
-  data.value = ANY(std::vector<std::string>());
+  data.value = MLPACK_ANY(std::vector<std::string>());
 
   type = GetPrintableType<std::vector<std::string>>(data);
   oss << " - `" << type << "`{: " << "#doc_" << BindingInfo::Language() << "_"
@@ -315,7 +315,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(arma::mat).name());
   data.cppType = "arma::mat";
-  data.value = ANY(arma::mat());
+  data.value = MLPACK_ANY(arma::mat());
 
   type = GetPrintableType<arma::mat>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -324,7 +324,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(arma::Mat<size_t>).name());
   data.cppType = "arma::Mat<size_t>";
-  data.value = ANY(arma::Mat<size_t>());
+  data.value = MLPACK_ANY(arma::Mat<size_t>());
 
   type = GetPrintableType<arma::Mat<size_t>>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -333,7 +333,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(arma::rowvec).name());
   data.cppType = "arma::rowvec";
-  data.value = ANY(arma::rowvec());
+  data.value = MLPACK_ANY(arma::rowvec());
   const std::string& rowType = GetPrintableType<arma::rowvec>(data);
 
   oss << " - `" << rowType << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -342,7 +342,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(arma::Row<size_t>).name());
   data.cppType = "arma::Row<size_t>";
-  data.value = ANY(arma::Row<size_t>());
+  data.value = MLPACK_ANY(arma::Row<size_t>());
   const std::string& urowType = GetPrintableType<arma::Row<size_t>>(data);
 
   oss << " - `" << urowType << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -352,7 +352,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(arma::vec).name());
   data.cppType = "arma::vec";
-  data.value = ANY(arma::vec());
+  data.value = MLPACK_ANY(arma::vec());
   const std::string& colType = GetPrintableType<arma::vec>(data);
 
   // For some languages there is no distinction between column and row vectors.
@@ -366,7 +366,7 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(arma::Col<size_t>).name());
   data.cppType = "arma::Col<size_t>";
-  data.value = ANY(arma::Col<size_t>());
+  data.value = MLPACK_ANY(arma::Col<size_t>());
   const std::string& ucolType = GetPrintableType<arma::Col<size_t>>(data);
 
   // For some languages there is no distinction between column and row vectors.
@@ -381,7 +381,7 @@ inline std::string PrintTypeDocs()
   data.tname =
       std::string(typeid(std::tuple<data::DatasetInfo, arma::mat>).name());
   data.cppType = "std::tuple<data::DatasetInfo, arma::mat>";
-  data.value = ANY(std::tuple<data::DatasetInfo, arma::mat>());
+  data.value = MLPACK_ANY(std::tuple<data::DatasetInfo, arma::mat>());
 
   type = GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
@@ -391,14 +391,14 @@ inline std::string PrintTypeDocs()
 
   data.tname = std::string(typeid(priv::mlpackModel).name());
   data.cppType = "mlpackModel";
-  data.value = ANY(new priv::mlpackModel());
+  data.value = MLPACK_ANY(new priv::mlpackModel());
 
   type = GetPrintableType<priv::mlpackModel*>(data);
   oss << " - `" << type << "`{: #doc_" << BindingInfo::Language()
       << "_model }: " << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
 
   // Clean up memory.
-  delete ANY_CAST<priv::mlpackModel*>(data.value);
+  delete MLPACK_ANY_CAST<priv::mlpackModel*>(data.value);
 
   oss << std::endl << "</div>" << std::endl;
 

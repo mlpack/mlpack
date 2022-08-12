@@ -64,7 +64,7 @@ class PyOption
     data.cppType = cppName;
 
     // Every parameter we'll get from Python will have the correct type.
-    data.value = ANY(defaultValue);
+    data.value = defaultValue;
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and

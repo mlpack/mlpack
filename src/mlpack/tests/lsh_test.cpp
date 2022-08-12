@@ -768,7 +768,7 @@ TEST_CASE("LSHTestEmptyConstructorTest", "[LSHTest]")
 
 // These two tests are only compiled if the user has specified OpenMP to be
 // used.
-#ifdef HAS_OPENMP
+#ifdef MLPACK_USE_OPENMP
 /**
  * Test: This test verifies that parallel query processing returns correct
  * results for the bichromatic search.
