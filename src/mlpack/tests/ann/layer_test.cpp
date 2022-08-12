@@ -18,6 +18,7 @@
 #include "layer/batch_norm.cpp"
 #include "layer/convolution.cpp"
 #include "layer/dropout.cpp"
+#include "layer/grouped_convolution.cpp"
 #include "layer/identity.cpp"
 #include "layer/linear3d.cpp"
 #include "layer/linear_no_bias.cpp"
