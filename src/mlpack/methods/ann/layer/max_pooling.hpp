@@ -166,7 +166,7 @@ class MaxPoolingType : public Layer<MatType>
   {
     // Iterate over all slices individually.
     #pragma omp parallel for
-    for (omp_size_t s = 0; s < (omp_size_t) input.n_slices; ++s)
+    for (size_t s = 0; s < (size_t) input.n_slices; ++s)
     {
       for (size_t j = 0, colidx = 0; j < output.n_cols;
           ++j, colidx += strideHeight)
@@ -227,7 +227,7 @@ class MaxPoolingType : public Layer<MatType>
   {
     // Iterate over all slices individually.
     #pragma omp parallel for
-    for (omp_size_t s = 0; s < (omp_size_t) input.n_slices; ++s)
+    for (size_t s = 0; s < (size_t) input.n_slices; ++s)
     {
       for (size_t j = 0, colidx = 0; j < output.n_cols;
           ++j, colidx += strideHeight)

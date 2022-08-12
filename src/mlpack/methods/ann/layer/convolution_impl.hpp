@@ -323,7 +323,7 @@ void ConvolutionType<
 
     // Iterate over output maps.
     #pragma omp parallel for
-    for (omp_size_t outMap = 0; outMap < (omp_size_t) maps; ++outMap)
+    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
     {
       MatType& convOutput = outputTemp.slice(outMap + fullOutputOffset);
       // Iterate over input maps (we will apply the filter and sum).
@@ -377,7 +377,7 @@ void ConvolutionType<
       weight.n_rows, weight.n_slices);
 
   #pragma omp parallel for
-  for (omp_size_t map = 0; map < (omp_size_t) (maps * inMaps); ++map)
+  for (size_t map = 0; map < (size_t) (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
@@ -390,7 +390,7 @@ void ConvolutionType<
 
     // Iterate over input maps.
     #pragma omp parallel for
-    for (omp_size_t inMap = 0; inMap < (omp_size_t) inMaps; ++inMap)
+    for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
     {
       // Iterate over output maps.
       MatType output;
@@ -490,7 +490,7 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     #pragma omp parallel for
-    for (omp_size_t outMap = 0; outMap < (omp_size_t) maps; ++outMap)
+    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
     {
       MatType& curError = mappedError.slice(outMap + fullOutputOffset);
       for (size_t inMap = 0; inMap < inMaps; ++inMap)
