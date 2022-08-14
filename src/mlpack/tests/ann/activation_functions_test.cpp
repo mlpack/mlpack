@@ -143,7 +143,7 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
   LeakyReLU lrf;
 
   // Test the activation function using the entire vector as input.
-  arma::colvec activations;
+  arma::colvec activations(input.n_elem);
   lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
@@ -166,7 +166,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
   LeakyReLU lrf;
 
   // Test the calculation of the derivatives using the entire vector as input.
-  arma::colvec derivatives;
+  arma::colvec derivatives(input.n_elem);
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
