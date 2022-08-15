@@ -10,6 +10,7 @@
 #include "bounds.hpp"
 
 #include "binary_space_tree.hpp"
+#include "cosine_tree/cosine_tree.hpp"
 #include "cover_tree.hpp"
 #include "example_tree.hpp"
 #include "octree.hpp"

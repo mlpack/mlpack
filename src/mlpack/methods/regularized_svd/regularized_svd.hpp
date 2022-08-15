@@ -15,7 +15,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <ensmallen.hpp>
-#include <mlpack/methods/cf/cf.hpp>
 
 #include "regularized_svd_function.hpp"
 

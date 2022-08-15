@@ -17,7 +17,6 @@
 // Include initialization strategies.
 #include "sample_initialization.hpp"
 #include "kmeans_plus_plus_initialization.hpp"
-#include "refined_start.hpp"
 #include "random_partition.hpp"
 
 // Include empty cluster policies.
@@ -207,5 +206,9 @@ class KMeans
 
 // Include implementation.
 #include "kmeans_impl.hpp"
+
+// The refined start initialization strategy uses KMeans, so it must be included
+// afterwards.
+#include "refined_start.hpp"
 
 #endif // MLPACK_METHODS_KMEANS_KMEANS_HPP

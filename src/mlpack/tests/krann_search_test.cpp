@@ -12,6 +12,7 @@
 #include <time.h>
 #include <mlpack/core.hpp>
 #include <mlpack/methods/rann/rann.hpp>
+#include <mlpack/methods/rann/ra_model.hpp>
 
 #include "catch.hpp"
 

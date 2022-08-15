@@ -11,7 +11,7 @@
 
 #include <type_traits>
 
-#include <mlpack/core/core.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_trees.hpp>

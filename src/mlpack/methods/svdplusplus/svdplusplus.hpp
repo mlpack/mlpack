@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/cf/cf.hpp>
 
 #include <ensmallen.hpp>
 

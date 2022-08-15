@@ -12,6 +12,11 @@
 #include <ensmallen_bits/callbacks/callbacks.hpp>
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ann.hpp>
+#include <mlpack/methods/lmnn/lmnn.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/nca/nca.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 
 #include "catch.hpp"
 

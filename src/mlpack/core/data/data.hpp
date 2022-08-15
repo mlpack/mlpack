@@ -26,6 +26,7 @@
 #include "confusion_matrix.hpp"
 #include "dataset_mapper.hpp"
 #include "image_info.hpp"
+#include "imputer.hpp"
 #include "is_naninf.hpp"
 #include "normalize_labels.hpp"
 #include "one_hot_encoding.hpp"
