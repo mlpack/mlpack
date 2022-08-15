@@ -1,21 +1,7 @@
-# Add core.hpp to list of sources.
-set(MLPACK_SRCS ${MLPACK_SRCS}
-  "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
-)
+# Recurse into the bindings to do any necessary configuration there.
+add_subdirectory(bindings)
 
-## Recurse into both core/ and methods/.
-set(DIRS
-  bindings
-  core
-  methods
-)
-
-foreach(dir ${DIRS})
-  add_subdirectory(${dir})
-endforeach()
-
+# If necessary, configure the tests.
 if (BUILD_TESTS)
   add_subdirectory(tests)
 endif ()
