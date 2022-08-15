@@ -1,19 +1,20 @@
 /**
- * @file methods/ann/layer/convolution_impl.hpp
+ * @file methods/ann/layer/grouped_convolution_impl.hpp
  * @author Marcus Edel
+ * @author Shubham Agrawal
  *
- * Implementation of the Convolution module class.
+ * Implementation of the Grouped Convolution module class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CONVOLUTION_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_CONVOLUTION_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_GROUPED_CONVOLUTION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_GROUPED_CONVOLUTION_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "convolution.hpp"
+#include "grouped_convolution.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -24,12 +25,12 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType() : Layer<MatType>()
+>::GroupedConvolutionType() : Layer<MatType>()
 {
   // Nothing to do here.
 }
@@ -40,25 +41,27 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(
+>::GroupedConvolutionType(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
+    const size_t groups,
     const size_t strideWidth,
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
     const std::string& paddingType,
     const bool useBias) :
-    ConvolutionType(
+    GroupedConvolutionType(
       maps,
       kernelWidth,
       kernelHeight,
+      groups,
       strideWidth,
       strideHeight,
       std::tuple<size_t, size_t>(padW, padW),
@@ -75,15 +78,16 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(
+>::GroupedConvolutionType(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
+    const size_t groups,
     const size_t strideWidth,
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
@@ -94,6 +98,7 @@ ConvolutionType<
     maps(maps),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
+    groups(groups),
     strideWidth(strideWidth),
     strideHeight(strideHeight),
     padWLeft(std::get<0>(padW)),
@@ -112,16 +117,17 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(const ConvolutionType& other) :
+>::GroupedConvolutionType(const GroupedConvolutionType& other) :
     Layer<MatType>(other),
     maps(other.maps),
     kernelWidth(other.kernelWidth),
     kernelHeight(other.kernelHeight),
+    groups(other.groups),
     strideWidth(other.strideWidth),
     strideHeight(other.strideHeight),
     padWLeft(other.padWLeft),
@@ -143,16 +149,17 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::ConvolutionType(ConvolutionType&& other) :
+>::GroupedConvolutionType(GroupedConvolutionType&& other) :
     Layer<MatType>(std::move(other)),
     maps(std::move(other.maps)),
     kernelWidth(std::move(other.kernelWidth)),
     kernelHeight(std::move(other.kernelHeight)),
+    groups(std::move(other.groups)),
     strideWidth(std::move(other.strideWidth)),
     strideHeight(std::move(other.strideHeight)),
     padWLeft(std::move(other.padWLeft)),
@@ -174,18 +181,18 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
 >&
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::operator=(const ConvolutionType& other)
+>::operator=(const GroupedConvolutionType& other)
 {
   if (&other != this)
   {
@@ -193,6 +200,7 @@ ConvolutionType<
     maps = other.maps;
     kernelWidth = other.kernelWidth;
     kernelHeight = other.kernelHeight;
+    groups = other.groups;
     strideWidth = other.strideWidth;
     strideHeight = other.strideHeight;
     padWLeft = other.padWLeft;
@@ -215,18 +223,18 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
 >&
-ConvolutionType<
+GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::operator=(ConvolutionType&& other)
+>::operator=(GroupedConvolutionType&& other)
 {
   if (&other != this)
   {
@@ -234,6 +242,7 @@ ConvolutionType<
     maps = std::move(other.maps);
     kernelWidth = std::move(other.kernelWidth);
     kernelHeight = std::move(other.kernelHeight);
+    groups = std::move(other.groups);
     strideWidth = std::move(other.strideWidth);
     strideHeight = std::move(other.strideHeight);
     padWLeft = std::move(other.padWLeft);
@@ -256,14 +265,15 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
 >::SetWeights(typename MatType::elem_type* weightPtr)
 {
-  MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, maps * inMaps);
+  MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, 
+      (maps * inMaps) / groups);
   if (useBias)
   {
     MakeAlias(bias, weightPtr + weight.n_elem, maps, 1);
@@ -281,7 +291,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -311,8 +321,11 @@ void ConvolutionType<
       this->outputDimensions[1], maps * higherInDimensions * batchSize);
   outputTemp.zeros();
 
-  // We "ignore" dimensions higher than the third---that means that we just pass
-  // them through and treat them like different input points.
+  size_t inGroupSize = inMaps / groups;
+  size_t outGroupSize = maps / groups;
+
+  // We "ignore" dimensions higher than the third---that means that we just 
+  // pass them through and treat them like different input points.
   //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
@@ -321,27 +334,31 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over output maps.
-    for (size_t outMap = 0; outMap < maps; ++outMap)
+    for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over input maps (we will apply the filter and sum).
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
+      // Iterate over output maps.
+      for (size_t outMap = group * outGroupSize;
+          outMap < ((group + 1) * outGroupSize); ++outMap)
       {
-        MatType convOutput;
+        // Iterate over input maps (we will apply the filter and sum).
+        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
+        {
+          MatType convOutput;
 
-        ForwardConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
-            weight.slice((outMap * inMaps) + inMap),
-            convOutput,
-            strideWidth,
-            strideHeight);
+          ForwardConvolutionRule::Convolution(
+              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
+              weight.slice((outMap * inGroupSize) + inMap),
+              convOutput,
+              strideWidth,
+              strideHeight);
 
-        outputTemp.slice(outMap + fullOutputOffset) += convOutput;
+          outputTemp.slice(outMap + fullOutputOffset) += convOutput;
+        }
+
+        // Make sure to add the bias.
+        if (useBias)
+          outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
       }
-
-      // Make sure to add the bias.
-      if (useBias)
-        outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
     }
   }
 }
@@ -352,7 +369,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -374,10 +391,13 @@ void ConvolutionType<
   // To perform the backward pass, we need to rotate all the filters.
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
-  for (size_t map = 0; map < (maps * inMaps); ++map)
+  for (size_t map = 0; map < ((maps * inMaps) / groups); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
+
+  size_t inGroupSize = inMaps / groups;
+  size_t outGroupSize = maps / groups;
 
   // See Forward() for the overall iteration strategy.
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
@@ -385,52 +405,59 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    // Iterate over input maps.
-    for (size_t inMap = 0; inMap < inMaps; ++inMap)
+    for (size_t group = 0; group < groups; group++)
     {
-      // Iterate over output maps.
-      for (size_t outMap = 0; outMap < maps; ++outMap)
+    // Iterate over input maps.
+      for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
       {
-        MatType output;
-
-        BackwardConvolutionRule::Convolution(
-            mappedError.slice(outMap + fullOutputOffset),
-            rotatedFilters.slice((outMap * inMaps) + inMap),
-            output,
-            strideHeight,
-            strideWidth);
-
-        // If the stride width or height is greater than 1, then we have to
-        // insert columns and rows into the convolution output.
-        if (strideWidth == 1 && strideHeight == 1)
+        // Iterate over output maps.
+        for (size_t outMap = group * outGroupSize; 
+            outMap < ((group + 1) * outGroupSize); ++outMap)
         {
-          if (usingPadding)
+          MatType output;
+
+          BackwardConvolutionRule::Convolution(
+              mappedError.slice(outMap + fullOutputOffset),
+              rotatedFilters.slice((outMap * inGroupSize) + inMap),
+              output,
+              strideHeight,
+              strideWidth);
+
+          // If the stride width or height is greater than 1, then we have to
+          // insert columns and rows into the convolution output.
+          if (strideWidth == 1 && strideHeight == 1)
           {
-            gTemp.slice(inMap + fullInputOffset) += output.submat(
-                padWLeft,
-                padHTop,
-                padWLeft + gTemp.n_rows - 1,
-                padHTop + gTemp.n_cols - 1);
+            if (usingPadding)
+            {
+              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) +=
+                  output.submat(
+                      padWLeft,
+                      padHTop,
+                      padWLeft + gTemp.n_rows - 1,
+                      padHTop + gTemp.n_cols - 1);
+            }
+            else
+            {
+              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) +=
+                  output;
+            }
           }
           else
           {
-            gTemp.slice(inMap + fullInputOffset) += output;
-          }
-        }
-        else
-        {
-          // We must iterate over each element of the output and manually
-          // re-insert the stride.
-          size_t col = padWLeft;
-          for (size_t i = 0; i < output.n_cols; ++i)
-          {
-            size_t row = padHTop;
-            for (size_t j = 0; j < output.n_rows; ++j)
+            // We must iterate over each element of the output and manually
+            // re-insert the stride.
+            size_t col = padWLeft;
+            for (size_t i = 0; i < output.n_cols; ++i)
             {
-              gTemp(row, col, inMap + fullInputOffset) += output(j, i);
-              row += strideHeight;
+              size_t row = padHTop;
+              for (size_t j = 0; j < output.n_rows; ++j)
+              {
+                gTemp(row, col, (group * inGroupSize) + inMap +
+                    fullInputOffset) += output(j, i);
+                row += strideHeight;
+              }
+              col += strideWidth;
             }
-            col += strideWidth;
           }
         }
       }
@@ -444,7 +471,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -477,46 +504,59 @@ void ConvolutionType<
   MakeAlias(gradientTemp, gradient.memptr(), weight.n_rows, weight.n_cols,
       weight.n_slices);
 
+  size_t inGroupSize = inMaps / groups;
+  size_t outGroupSize = maps / groups;
+
   // See Forward() for our iteration strategy.
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    for (size_t outMap = 0; outMap < maps; ++outMap)
+    for (size_t group = 0; group < groups; group++)
     {
-      for (size_t inMap = 0; inMap < inMaps; ++inMap)
+      // Iterate over output maps.
+      for (size_t outMap = group * outGroupSize;
+          outMap < ((group + 1) * outGroupSize); ++outMap)
       {
-        MatType output;
-        GradientConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
-            mappedError.slice(outMap + fullOutputOffset),
-            output,
-            strideWidth,
-            strideHeight);
+        // Iterate over input maps (we will apply the filter and sum).
+        for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
+        {
+          MatType output;
+          GradientConvolutionRule::Convolution(
+              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
+              mappedError.slice(outMap + fullOutputOffset),
+              output,
+              strideWidth,
+              strideHeight);
 
-        // TODO: understand this conditional.  Is it needed?
-        if (gradientTemp.n_rows < output.n_rows ||
-            gradientTemp.n_cols < output.n_cols)
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap) += output.submat(0, 0,
-              gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
+          // TODO: understand this conditional.  Is it needed?
+          if (gradientTemp.n_rows < output.n_rows ||
+              gradientTemp.n_cols < output.n_cols)
+          {
+            gradientTemp.slice((outMap * inGroupSize) + inMap) += 
+                output.submat(
+                    0,
+                    0,
+                    gradientTemp.n_rows - 1, 
+                    gradientTemp.n_cols - 1);
+          }
+          else if (gradientTemp.n_rows > output.n_rows ||
+                  gradientTemp.n_cols > output.n_cols)
+          {
+            gradientTemp.slice((outMap * inGroupSize) + inMap).submat(0, 0,
+                output.n_rows - 1, output.n_cols - 1) += output;
+          }
+          else
+          {
+            gradientTemp.slice((outMap * inGroupSize) + inMap) += output;
+          }
         }
-        else if (gradientTemp.n_rows > output.n_rows ||
-                 gradientTemp.n_cols > output.n_cols)
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap).submat(0, 0, output.n_rows - 1,
-              output.n_cols - 1) += output;
-        }
-        else
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap) += output;
-        }
+
+        if (useBias)
+          gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(
+              outMap + fullOutputOffset));
       }
-
-      if (useBias)
-        gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
-            fullOutputOffset));
     }
   }
 }
@@ -527,7 +567,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -563,6 +603,17 @@ void ConvolutionType<
 
   inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
 
+  if (groups == 0)
+    Log::Fatal << "GroupedConvolution::ComputeOutputDimensions(): groups must "
+        << "be greater than 0." << std::endl;
+
+  if ((inMaps % groups != 0) || (maps % groups != 0))
+  {
+    Log::Fatal << "GroupedConvolution::ComputeOutputDimensions(): both input "
+        << "maps (" << inMaps << ") and output maps (" << maps << ") should be "
+        << "divisible by groups (" << groups << ")!" << std::endl;
+  }
+
   // Compute and cache the total number of input maps.
   higherInDimensions = 1;
   for (size_t i = 3; i < this->inputDimensions.size(); ++i)
@@ -581,7 +632,7 @@ template<
     typename MatType
 >
 template<typename Archive>
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -594,6 +645,7 @@ void ConvolutionType<
   ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(groups));
   ar(CEREAL_NVP(strideWidth));
   ar(CEREAL_NVP(strideHeight));
   ar(CEREAL_NVP(padWLeft));
@@ -613,7 +665,7 @@ template<
     typename GradientConvolutionRule,
     typename MatType
 >
-void ConvolutionType<
+void GroupedConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,

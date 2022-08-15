@@ -12,9 +12,9 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
+#include "../serialization.hpp"
 #include "ann_test_tools.hpp"
-#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

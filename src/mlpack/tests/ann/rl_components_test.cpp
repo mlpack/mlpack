@@ -15,8 +15,8 @@
 
 #include <mlpack/methods/reinforcement_learning/reinforcement_learning.hpp>
 
-#include "catch.hpp"
-#include "test_catch_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::rl;

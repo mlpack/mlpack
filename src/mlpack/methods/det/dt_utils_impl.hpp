@@ -236,7 +236,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
       }
 
       // Update the cv regularization constant.
-      cvRegularizationConstants[i] += 2.0 * cvVal / (double) cvData.n_cols;
+      cvRegularizationConstants[i] = 2.0 * cvVal / (double) cvData.n_cols;
 
       // Determine the new alpha value and prune accordingly.
       double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first
@@ -253,8 +253,10 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     }
 
     if (prunedSequence.size() > 2)
-      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal
+    {
+      cvRegularizationConstants[prunedSequence.size() - 2] = 2.0 * cvVal
         / (double) cvData.n_cols;
+    }
 
     #pragma omp critical(DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
@@ -262,18 +264,18 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   timers.Stop("cross_validation");
 
   double optimalAlpha = -1.0;
-  long double cvBestError = -std::numeric_limits<long double>::max();
+  long double cvBestNegError = -std::numeric_limits<long double>::max();
 
   for (size_t i = 0; i < prunedSequence.size() - 1; ++i)
   {
     // We can no longer work in the log-space for this because we have no
     // guarantee the quantity will be positive.
-    long double thisError = -std::exp((long double) prunedSequence[i].second) +
+    long double thisNegError = std::exp((long double) prunedSequence[i].second) -
         (long double) regularizationConstants[i];
 
-    if (thisError > cvBestError)
+    if (thisNegError > cvBestNegError)
     {
-      cvBestError = thisError;
+      cvBestNegError = thisNegError;
       optimalAlpha = prunedSequence[i].first;
     }
   }
