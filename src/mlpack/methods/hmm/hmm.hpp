@@ -547,7 +547,4 @@ class HMM
 // Include implementation.
 #include "hmm_impl.hpp"
 
-// Also include HMMRegression class.
-#include "hmm_regression.hpp"
-
 #endif
