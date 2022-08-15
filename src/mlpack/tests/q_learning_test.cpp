@@ -559,8 +559,7 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   agent.SelectAction();
 
   // Test to check if the action dimension given by the agent is correct.
-  REQUIRE(agent.Action().action.size() ==
-      ContinuousActionEnv<3, 4>::Action::size);
+  REQUIRE(agent.Action().action.size() == 4);
 
   replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
   agent.TotalSteps()++;
