@@ -11,30 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/identity_function.hpp>
-#include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
-#include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
-#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <mlpack/methods/ann/activation_functions/swish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
-#include <mlpack/methods/ann/activation_functions/mish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
-#include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
-#include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
-#include <mlpack/methods/ann/activation_functions/elish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/inverse_quadratic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/quadratic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/multi_quadratic_function.hpp>
-#include <mlpack/methods/ann/activation_functions/spline_function.hpp>
-#include <mlpack/methods/ann/activation_functions/poisson1_function.hpp>
-#include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
-#include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
-#include <mlpack/methods/ann/activation_functions/silu_function.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 #include "catch.hpp"
 

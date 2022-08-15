@@ -9,8 +9,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/emst/dtb.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/methods/emst/emst.hpp>
 
 #include "catch.hpp"
 

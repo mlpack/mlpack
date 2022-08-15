@@ -12,14 +12,25 @@
 #ifndef MLPACK_METHODS_KMEANS_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_KMEANS_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
-#include <mlpack/core/metrics/lmetric.hpp>
+// Include initialization strategies.
 #include "sample_initialization.hpp"
-#include "max_variance_new_cluster.hpp"
-#include "naive_kmeans.hpp"
+#include "kmeans_plus_plus_initialization.hpp"
+#include "refined_start.hpp"
+#include "random_partition.hpp"
 
-#include <mlpack/core/tree/binary_space_tree.hpp>
+// Include empty cluster policies.
+#include "max_variance_new_cluster.hpp"
+#include "kill_empty_clusters.hpp"
+#include "allow_empty_clusters.hpp"
+
+// Include Lloyd step types.
+#include "naive_kmeans.hpp"
+#include "dual_tree_kmeans.hpp"
+#include "elkan_kmeans.hpp"
+#include "hamerly_kmeans.hpp"
+#include "pelleg_moore_kmeans.hpp"
 
 namespace mlpack {
 namespace kmeans /** K-Means clustering. */ {

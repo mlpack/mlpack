@@ -11,9 +11,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/cv/metrics/facilities.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/data/load.hpp>
 
 #include "catch.hpp"
 

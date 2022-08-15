@@ -11,11 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/update_rules/svd_batch_learning.hpp>
-#include <mlpack/methods/amf/init_rules/random_init.hpp>
-#include <mlpack/methods/amf/init_rules/average_init.hpp>
-#include <mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
 
 #include "catch.hpp"
 

@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  ann.hpp
   ffn.hpp
   ffn_impl.hpp
   forward_decls.hpp
@@ -9,6 +10,8 @@ set(SOURCES
   rnn_impl.hpp
 )
 
+add_subdirectory(activation_functions)
+add_subdirectory(augmented)
 add_subdirectory(init_rules)
 add_subdirectory(layer)
 add_subdirectory(loss_functions)

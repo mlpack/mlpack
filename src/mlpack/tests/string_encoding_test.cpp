@@ -11,12 +11,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/tokenizers/split_by_any_of.hpp>
-#include <mlpack/core/data/tokenizers/char_extract.hpp>
-#include <mlpack/core/data/string_encoding.hpp>
-#include <mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp>
-#include <mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp>
-#include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
 #include <memory>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"

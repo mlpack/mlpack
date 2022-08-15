@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_HPP
 #define MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <ensmallen.hpp>
 
 #include "linear_svm_function.hpp"

@@ -9,12 +9,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
-#include <mlpack/core/tree/cover_tree/cover_tree.hpp>
-#include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include <queue>
 #include <stack>

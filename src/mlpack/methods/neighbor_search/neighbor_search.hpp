@@ -13,17 +13,13 @@
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <vector>
-#include <string>
-
-#include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/core/tree/rectangle_tree.hpp>
-#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
+#include <mlpack/core.hpp>
 
 #include "neighbor_search_stat.hpp"
 #include "sort_policies/nearest_neighbor_sort.hpp"
+#include "sort_policies/furthest_neighbor_sort.hpp"
 #include "neighbor_search_rules.hpp"
+#include "unmap.hpp"
 
 namespace mlpack {
 // Neighbor-search routines. These include all-nearest-neighbors and

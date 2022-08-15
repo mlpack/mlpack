@@ -10,10 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-// Is the comment below still relevant ?
-// Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
-// to use FPC_WEAK, and it's not at all intuitive how to do that.
-#include <mlpack/methods/local_coordinate_coding/lcc.hpp>
+#include <mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"

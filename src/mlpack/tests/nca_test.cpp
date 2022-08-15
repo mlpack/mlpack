@@ -11,7 +11,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca.hpp>
 #include <ensmallen.hpp>
 

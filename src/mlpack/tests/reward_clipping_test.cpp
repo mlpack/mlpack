@@ -12,21 +12,8 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp>
-
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/reinforcement_learning/q_learning.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/methods/reinforcement_learning/training_config.hpp>
+#include <mlpack/methods/ann/ann.hpp>
+#include <mlpack/methods/reinforcement_learning/reinforcement_learning.hpp>
 
 #include <ensmallen.hpp>
 

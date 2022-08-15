@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  replay.hpp
   random_replay.hpp
   sumtree.hpp
   prioritized_replay.hpp

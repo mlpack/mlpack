@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  imputation_methods.hpp
   custom_imputation.hpp
   listwise_deletion.hpp
   mean_imputation.hpp

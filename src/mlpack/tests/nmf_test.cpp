@@ -10,12 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/init_rules/random_acol_init.hpp>
-#include <mlpack/methods/amf/init_rules/given_init.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
+#include <mlpack/methods/nmf/nmf.hpp>
 
 #include "catch.hpp"
 

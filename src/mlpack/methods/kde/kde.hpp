@@ -14,7 +14,8 @@
 #define MLPACK_METHODS_KDE_KDE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/tree.hpp>
+#include <mlpack/core/kernels/kernels.hpp>
 
 #include "kde_stat.hpp"
 

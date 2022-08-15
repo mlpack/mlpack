@@ -11,13 +11,9 @@
  */
 #include <time.h>
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/methods/rann/rann.hpp>
 
 #include "catch.hpp"
-
-#include <mlpack/methods/rann/ra_search.hpp>
-#include <mlpack/methods/rann/ra_model.hpp>
 
 using namespace std;
 using namespace mlpack;

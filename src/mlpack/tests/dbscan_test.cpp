@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/dbscan/dbscan.hpp>
-#include <mlpack/methods/dbscan/random_point_selection.hpp>
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"

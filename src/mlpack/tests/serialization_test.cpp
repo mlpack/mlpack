@@ -11,35 +11,21 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-
 #include "catch.hpp"
 #include "serialization.hpp"
 
-#include <mlpack/core/dists/regression_distribution.hpp>
-#include <mlpack/core/tree/ballbound.hpp>
-#include <mlpack/core/tree/hrectbound.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
-#include <mlpack/core/tree/rectangle_tree.hpp>
-
+#include <mlpack/methods/ann/ann.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_trees.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/methods/det/dtree.hpp>
-#include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
-#include <mlpack/methods/rann/ra_search.hpp>
-#include <mlpack/methods/lsh/lsh_search.hpp>
+#include <mlpack/methods/det/det.hpp>
+#include <mlpack/methods/naive_bayes/naive_bayes.hpp>
+#include <mlpack/methods/rann/rann.hpp>
+#include <mlpack/methods/lsh/lsh.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
-//#include <mlpack/methods/ann/rbm/rbm.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;

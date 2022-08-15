@@ -15,8 +15,16 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
+
+#include "categorical_split_info.hpp"
+#include "numeric_split_info.hpp"
+
 #include "gini_impurity.hpp"
+#include "information_gain.hpp"
+
 #include "hoeffding_numeric_split.hpp"
+#include "binary_numeric_split.hpp"
+
 #include "hoeffding_categorical_split.hpp"
 
 namespace mlpack {

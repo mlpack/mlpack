@@ -2,7 +2,7 @@
  * @file core/metrics/nms_metric_impl.hpp
  * @author Kartik Dutt
  *
- * Implementation of Non Maximal Supression metric.
+ * Implementation of Non Maximal Suppression metric.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,7 +13,7 @@
 #define MLPACK_CORE_METRICS_NMS_IMPL_HPP
 
 // In case it hasn't been included.
-#include "non_maximal_supression.hpp"
+#include "non_maximal_suppression.hpp"
 
 namespace mlpack {
 namespace metric {

@@ -12,8 +12,6 @@
 #include <sstream>
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/load_arff.hpp>
-#include <mlpack/core/data/map_policies/missing_policy.hpp>
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
 

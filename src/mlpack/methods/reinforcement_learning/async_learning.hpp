@@ -14,10 +14,9 @@
 #ifndef MLPACK_METHODS_RL_ASYNC_LEARNING_HPP
 #define MLPACK_METHODS_RL_ASYNC_LEARNING_HPP
 
-#include <mlpack/prereqs.hpp>
-#include "worker/one_step_q_learning_worker.hpp"
-#include "worker/one_step_sarsa_worker.hpp"
-#include "worker/n_step_q_learning_worker.hpp"
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann/ann.hpp>
+#include "worker/worker.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {

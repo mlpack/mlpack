@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
-#include <mlpack/methods/perceptron/learning_policies/simple_weight_update.hpp>
 
 #include "catch.hpp"
 

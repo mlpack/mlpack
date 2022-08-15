@@ -13,15 +13,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/double_pole_cart.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
-#include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
+#include <mlpack/methods/reinforcement_learning/reinforcement_learning.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
-#include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
 #include "serialization.hpp"
 #include "test_catch_tools.hpp"

@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  termination_policies.hpp
   simple_residue_termination.hpp
   simple_tolerance_termination.hpp
   validation_rmse_termination.hpp

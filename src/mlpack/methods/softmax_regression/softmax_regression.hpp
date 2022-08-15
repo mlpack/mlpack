@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <ensmallen.hpp>
 
 #include "softmax_regression_function.hpp"

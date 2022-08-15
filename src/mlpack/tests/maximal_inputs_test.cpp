@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/math/columns_to_blocks.hpp>
 #include <mlpack/methods/sparse_autoencoder/maximal_inputs.hpp>
 
 #include "catch.hpp"

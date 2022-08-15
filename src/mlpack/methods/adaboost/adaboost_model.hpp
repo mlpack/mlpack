@@ -2,7 +2,7 @@
  * @file methods/adaboost/adaboost_model.hpp
  * @author Ryan Curtin
  *
- * A serializable AdaBoost model, used by the main program.
+ * A serializable AdaBoost model, used by the AdaBoost binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

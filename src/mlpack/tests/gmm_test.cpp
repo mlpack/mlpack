@@ -13,12 +13,6 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/diagonal_gmm.hpp>
-
-#include <mlpack/methods/gmm/no_constraint.hpp>
-#include <mlpack/methods/gmm/positive_definite_constraint.hpp>
-#include <mlpack/methods/gmm/diagonal_constraint.hpp>
-#include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"

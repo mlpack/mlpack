@@ -8,12 +8,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
 #include <mlpack/methods/kde/kde.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/core/tree/octree.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
-#include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"

@@ -11,7 +11,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

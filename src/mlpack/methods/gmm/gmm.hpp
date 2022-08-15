@@ -14,11 +14,16 @@
 #define MLPACK_METHODS_GMM_GMM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/log_add.hpp>
+
+// Include all constraint types a user may want to use.
+#include "diagonal_constraint.hpp"
+#include "eigenvalue_ratio_constraint.hpp"
+#include "no_constraint.hpp"
+#include "positive_definite_constraint.hpp"
 
 // This is the default fitting method class.
 #include "em_fit.hpp"
-
-#include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
 namespace gmm /** Gaussian Mixture Models. */ {
@@ -324,5 +329,8 @@ class GMM
 
 // Include implementation.
 #include "gmm_impl.hpp"
+
+// Also include the DiagonalGMM class.
+#include "diagonal_gmm.hpp"
 
 #endif

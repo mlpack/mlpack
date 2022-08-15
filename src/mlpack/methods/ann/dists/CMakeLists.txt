@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  dists.hpp
   bernoulli_distribution.hpp
   bernoulli_distribution_impl.hpp
   normal_distribution.hpp

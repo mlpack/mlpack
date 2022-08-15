@@ -1,27 +1,29 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  identity_function.hpp
-  logistic_function.hpp
-  softsign_function.hpp
-  tanh_function.hpp
-  rectifier_function.hpp
-  softplus_function.hpp
-  swish_function.hpp
-  mish_function.hpp
-  lisht_function.hpp
-  gelu_function.hpp
-  elliot_function.hpp
+  activation_functions.hpp
   elish_function.hpp
+  elliot_function.hpp
+  gaussian_function.hpp
+  gelu_function.hpp
+  hard_sigmoid_function.hpp
+  hard_swish_function.hpp
+  identity_function.hpp
   inverse_quadratic_function.hpp
-  quadratic_function.hpp
-  spline_function.hpp
+  lisht_function.hpp
+  logistic_function.hpp
+  mish_function.hpp
   multi_quadratic_function.hpp
   poisson1_function.hpp
-  gaussian_function.hpp
-  hard_swish_function.hpp
-  tanh_exponential_function.hpp
+  quadratic_function.hpp
+  rectifier_function.hpp
   silu_function.hpp
+  softplus_function.hpp
+  softsign_function.hpp
+  spline_function.hpp
+  swish_function.hpp
+  tanh_exponential_function.hpp
+  tanh_function.hpp
 )
 
 # Add directory name to sources.

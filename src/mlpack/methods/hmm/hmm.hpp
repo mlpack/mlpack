@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_HMM_HMM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core/dists/dists.hpp>
 
 namespace mlpack {
 namespace hmm /** Hidden Markov Models. */ {
@@ -546,5 +546,8 @@ class HMM
 
 // Include implementation.
 #include "hmm_impl.hpp"
+
+// Also include HMMRegression class.
+#include "hmm_regression.hpp"
 
 #endif

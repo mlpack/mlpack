@@ -10,18 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core/kernels/cosine_distance.hpp>
-#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
-#include <mlpack/core/kernels/laplacian_kernel.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/spherical_kernel.hpp>
-#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
-#include <mlpack/core/kernels/cauchy_kernel.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
+#include <mlpack/core.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

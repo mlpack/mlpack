@@ -12,9 +12,10 @@
 #ifndef MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
 #define MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <ensmallen.hpp>
 
+#include "maximal_inputs.hpp"
 #include "sparse_autoencoder_function.hpp"
 
 namespace mlpack {

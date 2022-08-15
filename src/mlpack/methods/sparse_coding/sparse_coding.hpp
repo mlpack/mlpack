@@ -13,9 +13,8 @@
 #ifndef MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_HPP
 #define MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
 
 // Include our three simple dictionary initializers.
 #include "nothing_initializer.hpp"

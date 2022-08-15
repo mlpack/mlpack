@@ -10,17 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/reinforcement_learning/async_learning.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
-#include <mlpack/methods/reinforcement_learning/training_config.hpp>
+#include <mlpack/methods/ann/ann.hpp>
+#include <mlpack/methods/reinforcement_learning/reinforcement_learning.hpp>
 
 #include <ensmallen.hpp>
 

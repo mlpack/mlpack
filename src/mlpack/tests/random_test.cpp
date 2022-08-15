@@ -10,8 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
 
 #include "catch.hpp"
 

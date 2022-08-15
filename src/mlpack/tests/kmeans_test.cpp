@@ -8,23 +8,10 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
 #include <mlpack/methods/kmeans/kmeans.hpp>
-#include <mlpack/methods/kmeans/allow_empty_clusters.hpp>
-#include <mlpack/methods/kmeans/refined_start.hpp>
-#include <mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp>
-#include <mlpack/methods/kmeans/elkan_kmeans.hpp>
-#include <mlpack/methods/kmeans/hamerly_kmeans.hpp>
-#include <mlpack/methods/kmeans/pelleg_moore_kmeans.hpp>
-#include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
-#include <mlpack/methods/kmeans/sample_initialization.hpp>
-#include <mlpack/methods/kmeans/random_partition.hpp>
-
-#include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include "catch.hpp"
-#include <mlpack/methods/kmeans/kill_empty_clusters.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kmeans;

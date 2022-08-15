@@ -2,7 +2,8 @@
  * @file methods/hmm/hmm_util.hpp
  * @author Ryan Curtin
  *
- * Utility to read HMM type from file.
+ * Utility to read HMM type from file.  This is used in the HMM bindings
+ * specifically.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

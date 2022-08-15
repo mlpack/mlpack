@@ -11,11 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 #include <ensmallen.hpp>
 

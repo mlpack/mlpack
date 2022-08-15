@@ -1,6 +1,7 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  data.hpp
   check_categorical_param.hpp
   dataset_mapper.hpp
   dataset_mapper_impl.hpp

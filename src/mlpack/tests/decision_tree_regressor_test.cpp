@@ -10,12 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
-#include <mlpack/methods/decision_tree/mad_gain.hpp>
-#include <mlpack/methods/decision_tree/mse_gain.hpp>
-#include <mlpack/methods/decision_tree/random_dimension_select.hpp>
-#include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
-#include <mlpack/core/math/random.hpp>
+#include <mlpack/methods/decision_tree/decision_tree.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"

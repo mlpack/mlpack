@@ -1,8 +1,8 @@
 /**
- * @file core/metrics/non_maximal_supression.hpp
+ * @file core/metrics/non_maximal_suppression.hpp
  * @author Kartik Dutt
  *
- * Definition of Non Maximal Supression metric.
+ * Definition of Non Maximal Suppression metric.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,7 +16,7 @@ namespace mlpack {
 namespace metric {
 
 /**
- * Definition of Non Maximal Supression.
+ * Definition of Non Maximal Suppression.
  *
  * Performs non-maximal suppression (NMS) on the boxes according to their
  * Intersection-over-Union (IoU). NMS iteratively removes lower scoring boxes
@@ -81,6 +81,6 @@ class NMS
 } // namespace mlpack
 
 // Include implementation.
-#include "non_maximal_supression_impl.hpp"
+#include "non_maximal_suppression_impl.hpp"
 
 #endif

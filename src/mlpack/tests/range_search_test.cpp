@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/methods/range_search/rs_model.hpp>
 
 #include "catch.hpp"

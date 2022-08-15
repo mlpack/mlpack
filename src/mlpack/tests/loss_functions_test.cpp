@@ -14,31 +14,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
-#include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_bias_error.hpp>
-#include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/log_cosh_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/multilabel_softmargin_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
-#include <mlpack/methods/ann/loss_functions/vr_class_reward.hpp>
-#include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/hinge_loss.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
