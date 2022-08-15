@@ -26,12 +26,12 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
   </em>
 </p>
 
-**mlpack** is an intuitive, fast, and flexible C++ machine learning library with
-bindings to other languages.  It is meant to be a machine learning analog to
-LAPACK, and aims to implement a wide array of machine learning methods and
-functions as a "swiss army knife" for machine learning researchers.  In addition
-to its powerful C++ interface, mlpack also provides command-line programs,
-Python bindings, Julia bindings, Go bindings and R bindings.
+**mlpack** is an intuitive, fast, and flexible header-only C++ machine learning
+library with bindings to other languages.  It is meant to be a machine learning
+analog to LAPACK, and aims to implement a wide array of machine learning methods
+and functions as a "swiss army knife" for machine learning researchers.  In
+addition to its powerful C++ interface, mlpack also provides command-line
+programs, Python bindings, Julia bindings, Go bindings and R bindings.
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
 
@@ -226,8 +226,8 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
        (default ON)
 
-For example, to build mlpack library and CLI bindings statically the following
-command can be used:
+For example, to build mlpack's CLI bindings statically the following command can
+be used:
 
     $ cmake  -D BUILD_SHARED_LIBS=OFF ../
 
@@ -269,31 +269,15 @@ to those three directories), and simply type
 
     $ make install
 
-You can now run the executables by name; you can link against mlpack with
-    `-lmlpack`
-and the mlpack headers are found in
+You can now run the executables by name; the mlpack headers are found in
     `/usr/local/include/mlpack/`
 and if Python bindings were built, you can access them with the `mlpack`
 package in Python.
 
-If running the programs (i.e. `$ mlpack_knn -h`) gives an error of the form
-
-    error while loading shared libraries: libmlpack.so.2: cannot open shared object file: No such file or directory
-
-then be sure that the runtime linker is searching the directory where
-`libmlpack.so` was installed (probably `/usr/local/lib/` unless you set it
-manually).  One way to do this, on Linux, is to ensure that the
-`LD_LIBRARY_PATH` environment variable has the directory that contains
-`libmlpack.so`.  Using bash, this can be set easily:
-
-    export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
-
-(or whatever directory `libmlpack.so` is installed in.)
-
 ### 5. Running mlpack programs
 
-After building mlpack, the executables will reside in `build/bin/`.  You can call
-them from there, or you can install the library and (depending on system
+After building mlpack, the executables will reside in `build/bin/`.  You can
+call them from there, or you can install the library and (depending on system
 settings) they should be added to your PATH and you can call them directly.  The
 documentation below assumes the executables are in your PATH.
 

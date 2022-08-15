@@ -30,10 +30,10 @@ void* GetAllocatedMemory(
 
 template<typename T>
 void* GetAllocatedMemory(
-    util::ParamData& /* d */,
+    util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  return NULL;
+  return (*MLPACK_ANY_CAST<T>(&d.value)).memptr();
 }
 
 template<typename T>

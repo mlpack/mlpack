@@ -2,8 +2,6 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   arma_traits.hpp
-  arma_config.hpp
-  arma_config_check.hpp
   backtrace.hpp
   backtrace_impl.hpp
   binding_details.hpp

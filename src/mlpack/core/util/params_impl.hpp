@@ -8,6 +8,8 @@
 #ifndef MLPACK_CORE_UTIL_PARAMS_IMPL_HPP
 #define MLPACK_CORE_UTIL_PARAMS_IMPL_HPP
 
+#include "log.hpp"
+
 // Include definition, if needed.
 #include "forward.hpp"
 #include "params.hpp"

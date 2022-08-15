@@ -137,8 +137,10 @@ steps:
     cp build\Release\*.dll dist\win-installer\mlpack-win-installer\Sources\
     cp build\Release\*.exe dist\win-installer\mlpack-win-installer\Sources\
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
-    cp build\include\mlpack dist\win-installer\mlpack-win-installer\Sources -recurse
-    cp doc\examples dist\win-installer\mlpack-win-installer\Sources -recurse
+    cp src\mlpack\*.hpp dist\win-installer\mlpack-win-installer\Sources\
+    cp src\mlpack\core dist\win-installer\mlpack-win-installer\Sources\ -recurse
+    cp src\mlpack\methods dist\win-installer\mlpack-win-installer\Sources\ -recurse
+    cp doc\examples dist\win-installer\mlpack-win-installer\Sources\ -recurse
     cp src\mlpack\tests\data\german.csv dist\win-installer\mlpack-win-installer\Sources\examples\sample-ml-app\sample-ml-app\data\
     # Check current git version or mlpack version.
     $ver = (Get-Content "src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
