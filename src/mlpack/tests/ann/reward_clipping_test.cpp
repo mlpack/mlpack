@@ -15,7 +15,7 @@
 #include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/reinforcement_learning/reinforcement_learning.hpp>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

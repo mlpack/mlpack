@@ -13,6 +13,8 @@
 #define MLPACK_TESTS_ANN_TEST_TOOLS_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;

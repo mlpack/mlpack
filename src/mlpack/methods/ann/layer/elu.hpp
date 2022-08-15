@@ -104,8 +104,8 @@ namespace ann /** Artificial Neural Network. */ {
  *     to also be in this type. The type also allows the computation and weight
  *     type to differ from the input type (Default: arma::mat).
  */
-template <typename InputType = arma::mat, typename OutputType = arma::mat>
-class ELUType : public Layer<InputType, OutputType>
+template <typename MatType = arma::mat>
+class ELUType : public Layer<MatType>
 {
  public:
   /**
@@ -127,6 +127,22 @@ class ELUType : public Layer<InputType, OutputType>
 
   //! Clone the ELUType object. This handles polymorphism correctly.
   ELUType* Clone() const { return new ELUType(*this); }
+
+  // Virtual destructor.
+  virtual ~ELUType() {};
+
+  // Copy constructor.
+  ELUType(const ELUType& other);
+
+  // Move Constructor.
+  ELUType(ELUType&& other);
+
+  // Copy assignment operator.
+  ELUType& operator=(const ELUType& other);
+
+  // Move assignement operator.
+  ELUType& operator=(ELUType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -134,7 +150,7 @@ class ELUType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -145,7 +161,7 @@ class ELUType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
@@ -163,7 +179,7 @@ class ELUType : public Layer<InputType, OutputType>
 
  private:
   //! Locally stored first derivative of the activation function.
-  OutputType derivative;
+  MatType derivative;
 
   //! ELU Hyperparameter (0 < alpha)
   //! SELU parameter fixed to 1.6732632423543774 for normalized inputs.
@@ -178,11 +194,11 @@ class ELUType : public Layer<InputType, OutputType>
 
 // Convenience typedefs.
 
-// Standard flexible ReLU layer.
-typedef ELUType<arma::mat, arma::mat> ELU;
+// ELU layer.
+typedef ELUType<arma::mat> ELU;
 
-// Standard ELU layer.
-typedef ELUType<arma::mat, arma::mat> SELU;
+// SELU layer.
+typedef ELUType<arma::mat> SELU;
 
 } // namespace ann
 } // namespace mlpack

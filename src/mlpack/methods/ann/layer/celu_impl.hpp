@@ -18,8 +18,9 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-CELUType<InputType, OutputType>::CELUType(const double alpha) :
+template<typename MatType>
+CELUType<MatType>::CELUType(const double alpha) :
+    Layer<MatType>(),
     alpha(alpha)
 {
   if (alpha == 0)
@@ -29,11 +30,53 @@ CELUType<InputType, OutputType>::CELUType(const double alpha) :
   }
 }
 
-template<typename InputType, typename OutputType>
-void CELUType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+CELUType<MatType>::CELUType(const CELUType& other) :
+    Layer<MatType>(other),
+    alpha(other.alpha)
 {
-  output = arma::ones<OutputType>(arma::size(input));
+    // Nothing to do.
+}
+
+template<typename MatType>
+CELUType<MatType>::CELUType(
+    CELUType&& other) :
+    Layer<MatType>(std::move(other)),
+    alpha(std::move(other.alpha))
+{
+    // Nothing to do.
+}
+
+template<typename MatType>
+CELUType<MatType>&
+CELUType<MatType>::operator=(const CELUType& other)
+{
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(other);
+    alpha = other.alpha;
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+CELUType<MatType>&
+CELUType<MatType>::operator=(CELUType&& other)
+{
+    if (&other != this)
+    {
+      Layer<MatType>::operator=(std::move(other));
+      alpha = std::move(other.alpha);
+    }
+
+    return *this;
+}
+
+template<typename MatType>
+void CELUType<MatType>::Forward(
+    const MatType& input, MatType& output)
+{
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : alpha *
@@ -51,20 +94,20 @@ void CELUType<InputType, OutputType>::Forward(
   }
 }
 
-template<typename InputType, typename OutputType>
-void CELUType<InputType, OutputType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void CELUType<MatType>::Backward(
+    const MatType& /* input */, const MatType& gy, MatType& g)
 {
   g = gy % derivative;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void CELUType<InputType, OutputType>::serialize(
+void CELUType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(alpha));
   if (Archive::is_loading::value)
