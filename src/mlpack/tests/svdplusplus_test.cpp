@@ -13,8 +13,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/svdplusplus/svdplusplus.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 
 using namespace mlpack;

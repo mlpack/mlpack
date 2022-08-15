@@ -9,8 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -18,22 +17,7 @@
 #define BINDING_NAME kernel_pca
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/kernels/kernel_traits.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/cosine_distance.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
-#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
-#include <mlpack/core/kernels/laplacian_kernel.hpp>
-#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
-#include <mlpack/core/kernels/spherical_kernel.hpp>
-#include <mlpack/core/kernels/triangular_kernel.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
-#include <mlpack/methods/nystroem_method/ordered_selection.hpp>
-#include <mlpack/methods/nystroem_method/random_selection.hpp>
-#include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
 #include <mlpack/methods/nystroem_method/nystroem_method.hpp>
 #include <mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp>
 

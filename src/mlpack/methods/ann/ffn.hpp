@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_ANN_FFN_HPP
 #define MLPACK_METHODS_ANN_FFN_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #include "forward_decls.hpp"
 #include "init_rules/init_rules.hpp"

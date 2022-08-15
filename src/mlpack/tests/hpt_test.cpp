@@ -13,8 +13,6 @@
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 
 using namespace mlpack::cv;

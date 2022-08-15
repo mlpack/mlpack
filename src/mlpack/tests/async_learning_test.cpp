@@ -13,8 +13,6 @@
 #include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/reinforcement_learning/reinforcement_learning.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 
 using namespace mlpack;

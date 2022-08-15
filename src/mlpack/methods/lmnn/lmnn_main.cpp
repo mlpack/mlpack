@@ -9,8 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -18,14 +17,9 @@
 #define BINDING_NAME lmnn
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/data/normalize_labels.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include "lmnn.hpp"
-
-#include <ensmallen.hpp>
 
 // Program Name.
 BINDING_USER_NAME("Large Margin Nearest Neighbors (LMNN)");

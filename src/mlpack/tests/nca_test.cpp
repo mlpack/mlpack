@@ -12,7 +12,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/nca/nca.hpp>
-#include <ensmallen.hpp>
 
 #include "catch.hpp"
 

@@ -9,8 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -18,15 +17,6 @@
 #define BINDING_NAME preprocess_imputer
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/data/load_impl.hpp>
-#include <mlpack/core/data/imputer.hpp>
-#include <mlpack/core/data/dataset_mapper.hpp>
-#include <mlpack/core/data/map_policies/increment_policy.hpp>
-#include <mlpack/core/data/map_policies/missing_policy.hpp>
-#include <mlpack/core/data/imputation_methods/mean_imputation.hpp>
-#include <mlpack/core/data/imputation_methods/median_imputation.hpp>
-#include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
-#include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
 // Program Name.
 BINDING_USER_NAME("Impute Data");

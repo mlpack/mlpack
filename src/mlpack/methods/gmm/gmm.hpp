@@ -13,8 +13,7 @@
 #ifndef MLPACK_METHODS_GMM_GMM_HPP
 #define MLPACK_METHODS_GMM_GMM_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/log_add.hpp>
+#include <mlpack/core.hpp>
 
 // Include all constraint types a user may want to use.
 #include "diagonal_constraint.hpp"

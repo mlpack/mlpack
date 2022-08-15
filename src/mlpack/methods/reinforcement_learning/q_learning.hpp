@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_RL_Q_LEARNING_HPP
 
 #include <mlpack/core.hpp>
-#include <ensmallen.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 
 #include "replay/replay.hpp"

@@ -13,8 +13,6 @@
 
 #include <mlpack/methods/ann/ann.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 #include "serialization.hpp"
 

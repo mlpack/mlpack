@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_LMNN_LMNN_HPP
 
 #include <mlpack/core.hpp>
-#include <ensmallen.hpp>
 
 #include "constraints.hpp"
 #include "lmnn_function.hpp"

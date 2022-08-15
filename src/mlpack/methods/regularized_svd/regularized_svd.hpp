@@ -13,8 +13,7 @@
 #ifndef MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_SVD_HPP
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_SVD_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
 
 #include "regularized_svd_function.hpp"
 

@@ -9,8 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -19,7 +18,6 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include "mean_shift.hpp"
 
 using namespace mlpack;

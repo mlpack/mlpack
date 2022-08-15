@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #include "gini_gain.hpp"
 #include "information_gain.hpp"
@@ -28,8 +28,6 @@
 #include "all_dimension_select.hpp"
 #include "random_dimension_select.hpp"
 #include "multiple_random_dimension_select.hpp"
-
-#include <type_traits>
 
 namespace mlpack {
 namespace tree {

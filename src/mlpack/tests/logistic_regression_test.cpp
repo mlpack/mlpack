@@ -12,7 +12,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <ensmallen.hpp>
 
 #include "catch.hpp"
 

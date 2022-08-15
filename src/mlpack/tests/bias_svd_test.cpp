@@ -13,8 +13,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/bias_svd/bias_svd.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 
 using namespace mlpack;

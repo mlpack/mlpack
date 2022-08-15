@@ -16,8 +16,6 @@
 
 #include <mlpack/core.hpp>
 
-#include <ensmallen.hpp>
-
 #include "svdplusplus_function.hpp"
 
 namespace mlpack {

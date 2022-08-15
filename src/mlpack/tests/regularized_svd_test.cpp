@@ -12,8 +12,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 
 using namespace mlpack;

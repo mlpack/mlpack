@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 
-#include <ensmallen.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 
 #include "catch.hpp"

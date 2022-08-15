@@ -9,8 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -18,14 +17,6 @@
 #define BINDING_NAME preprocess_scale
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/math/ccov.hpp>
-#include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
-#include <mlpack/core/data/scaler_methods/mean_normalization.hpp>
-#include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>
-#include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
-#include <mlpack/core/data/scaler_methods/zca_whitening.hpp>
-#include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
 #include "mlpack/methods/preprocess/scaling_model.hpp"
 
 using namespace mlpack;

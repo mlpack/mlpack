@@ -16,8 +16,6 @@
 #include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/kmeans/kmeans.hpp>
 
-#include <ensmallen.hpp>
-
 #include "catch.hpp"
 #include "serialization.hpp"
 #include "custom_layer.hpp"

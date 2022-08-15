@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/linear_svm/linear_svm.hpp>
-#include <ensmallen.hpp>
 
 #include "catch.hpp"
 

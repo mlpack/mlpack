@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 
 #include <mlpack/core.hpp>
-#include <ensmallen.hpp>
 
 #include "logistic_regression_function.hpp"
 

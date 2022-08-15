@@ -13,8 +13,7 @@
 #ifndef MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
 #define MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/data/dataset_mapper.hpp>
+#include <mlpack/core.hpp>
 
 #include "categorical_split_info.hpp"
 #include "numeric_split_info.hpp"

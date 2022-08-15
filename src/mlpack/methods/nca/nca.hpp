@@ -12,9 +12,7 @@
 #ifndef MLPACK_METHODS_NCA_NCA_HPP
 #define MLPACK_METHODS_NCA_NCA_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
 
 #include "nca_softmax_error_function.hpp"
 

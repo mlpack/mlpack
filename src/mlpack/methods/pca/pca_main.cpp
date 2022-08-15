@@ -10,8 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #ifdef BINDING_NAME
   #undef BINDING_NAME
@@ -21,10 +20,6 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "pca.hpp"
-#include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
-#include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
-#include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
-#include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::pca;

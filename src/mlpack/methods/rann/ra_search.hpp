@@ -25,11 +25,8 @@
 #ifndef MLPACK_METHODS_RANN_RA_SEARCH_HPP
 #define MLPACK_METHODS_RANN_RA_SEARCH_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
-#include <mlpack/core/tree/binary_space_tree.hpp>
-
-#include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 
 #include "ra_query_stat.hpp"

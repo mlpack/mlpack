@@ -11,14 +11,8 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/gan/gan.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-
-#include <ensmallen.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

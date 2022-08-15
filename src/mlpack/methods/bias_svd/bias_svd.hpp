@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_HPP
 
 #include <mlpack/core.hpp>
-#include <ensmallen.hpp>
 
 #include "bias_svd_function.hpp"
 

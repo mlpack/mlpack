@@ -8,9 +8,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <type_traits>
-
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
@@ -21,7 +18,6 @@
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <ensmallen.hpp>
 
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"

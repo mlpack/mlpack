@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_RNN_HPP
 #define MLPACK_METHODS_ANN_RNN_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #include "ffn.hpp"
 
