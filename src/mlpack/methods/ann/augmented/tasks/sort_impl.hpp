@@ -19,10 +19,12 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-SortTask::SortTask(const size_t maxLength,
-                   const size_t bitLen,
-                   bool addSeparator)
-  : maxLength(maxLength), bitLen(bitLen), addSeparator(addSeparator)
+inline SortTask::SortTask(const size_t maxLength,
+                          const size_t bitLen,
+                          bool addSeparator) :
+    maxLength(maxLength),
+    bitLen(bitLen),
+    addSeparator(addSeparator)
 {
   if (maxLength <= 1)
   {
@@ -43,10 +45,10 @@ SortTask::SortTask(const size_t maxLength,
   }
 }
 
-void SortTask::Generate(arma::field<arma::mat>& input,
-                        arma::field<arma::mat>& labels,
-                        const size_t batchSize,
-                        bool fixedLength) const
+inline void SortTask::Generate(arma::field<arma::mat>& input,
+                               arma::field<arma::mat>& labels,
+                               const size_t batchSize,
+                               bool fixedLength) const
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
@@ -97,9 +99,9 @@ void SortTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-void SortTask::Generate(arma::mat& input,
-                        arma::mat& labels,
-                        const size_t batchSize) const
+inline void SortTask::Generate(arma::mat& input,
+                               arma::mat& labels,
+                               const size_t batchSize) const
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
@@ -119,4 +121,5 @@ void SortTask::Generate(arma::mat& input,
 } // namespace augmented
 } // namespace ann
 } // namespace mlpack
+
 #endif

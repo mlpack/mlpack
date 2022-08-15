@@ -20,7 +20,7 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
+inline AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
 {
   if (bitLen <= 0)
   {
@@ -32,10 +32,10 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
   }
 }
 
-void AddTask::Generate(arma::field<arma::mat>& input,
-                       arma::field<arma::mat>& labels,
-                       const size_t batchSize,
-                       bool fixedLength) const
+inline void AddTask::Generate(arma::field<arma::mat>& input,
+                              arma::field<arma::mat>& labels,
+                              const size_t batchSize,
+                              bool fixedLength) const
 {
   arma::field<arma::vec> vecInput = arma::field<arma::colvec>(batchSize);
   arma::field<arma::vec> vecLabels = arma::field<arma::colvec>(batchSize);
@@ -117,9 +117,9 @@ void AddTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-void AddTask::Generate(arma::mat& input,
-                       arma::mat& labels,
-                       const size_t batchSize) const
+inline void AddTask::Generate(arma::mat& input,
+                              arma::mat& labels,
+                              const size_t batchSize) const
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
@@ -132,8 +132,8 @@ void AddTask::Generate(arma::mat& input,
   }
 }
 
-void AddTask::Binarize(const arma::field<arma::vec>& input,
-                       arma::field<arma::mat>& output) const
+inline void AddTask::Binarize(const arma::field<arma::vec>& input,
+                              arma::field<arma::mat>& output) const
 {
   output = arma::field<arma::mat>(input.n_elem);
   for (size_t i = 0; i < input.n_elem; ++i)
@@ -148,9 +148,9 @@ void AddTask::Binarize(const arma::field<arma::vec>& input,
   }
 }
 
-
 } // namespace tasks
 } // namespace augmented
 } // namespace ann
 } // namespace mlpack
+
 #endif

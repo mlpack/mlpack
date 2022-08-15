@@ -20,9 +20,9 @@ namespace ann /* Artificial Neural Network */ {
 namespace augmented /* Augmented neural network */ {
 namespace tasks /* Task utilities for augmented */ {
 
-CopyTask::CopyTask(const size_t maxLength,
-                   const size_t nRepeats,
-                   const bool addSeparator) :
+inline CopyTask::CopyTask(const size_t maxLength,
+                          const size_t nRepeats,
+                          const bool addSeparator) :
     maxLength(maxLength),
     nRepeats(nRepeats),
     addSeparator(addSeparator)
@@ -47,10 +47,10 @@ CopyTask::CopyTask(const size_t maxLength,
   // Just storing task-specific parameters.
 }
 
-void CopyTask::Generate(arma::field<arma::mat>& input,
-                        arma::field<arma::mat>& labels,
-                        const size_t batchSize,
-                        bool fixedLength) const
+inline void CopyTask::Generate(arma::field<arma::mat>& input,
+                               arma::field<arma::mat>& labels,
+                               const size_t batchSize,
+                               bool fixedLength) const
 {
   input = arma::field<arma::mat>(batchSize);
   labels = arma::field<arma::mat>(batchSize);
@@ -89,9 +89,9 @@ void CopyTask::Generate(arma::field<arma::mat>& input,
   }
 }
 
-void CopyTask::Generate(arma::mat& input,
-                        arma::mat& labels,
-                        const size_t batchSize) const
+inline void CopyTask::Generate(arma::mat& input,
+                               arma::mat& labels,
+                               const size_t batchSize) const
 {
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
@@ -104,7 +104,6 @@ void CopyTask::Generate(arma::mat& input,
     labels.col(i) = fieldLabels.at(i);
   }
 }
-
 
 } // namespace tasks
 } // namespace augmented

@@ -18,7 +18,7 @@
 namespace mlpack {
 namespace ann {
 
-OrthogonalRegularizer::OrthogonalRegularizer(double factor) :
+inline OrthogonalRegularizer::OrthogonalRegularizer(double factor) :
     factor(factor)
 {
   // Nothing to do here.
