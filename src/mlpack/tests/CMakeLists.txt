@@ -204,16 +204,12 @@ add_executable(mlpack_test
 if(NOT BUILD_SHARED_LIBS)
 # Build mlpack test executable statically.
   target_link_libraries(mlpack_test -static
-    mlpack
-    ${ARMADILLO_LIBRARIES}
-    ${COMPILER_SUPPORT_LIBRARIES}
+    ${MLPACK_LIBRARIES}
   )
 else()
   # Build mlpack test executable dynamically.
   target_link_libraries(mlpack_test
-    mlpack
-    ${ARMADILLO_LIBRARIES}
-    ${COMPILER_SUPPORT_LIBRARIES}
+    ${MLPACK_LIBRARIES}
   )
 endif()
 

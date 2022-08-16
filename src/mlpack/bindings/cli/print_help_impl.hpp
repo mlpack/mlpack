@@ -1,5 +1,5 @@
 /**
- * @file bindings/cli/print_help.cpp
+ * @file bindings/cli/print_help_impl.hpp
  * @author Matthew Amidon
  * @author Ryan Curtin
  *
@@ -10,6 +10,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_CORE_BINDINGS_CLI_PRINT_HELP_IMPL_HPP
+#define MLPACK_CORE_BINDINGS_CLI_PRINT_HELP_IMPL_HPP
+
 #include "print_help.hpp"
 
 #include <mlpack/core.hpp>
@@ -20,7 +23,7 @@ namespace bindings {
 namespace cli {
 
 /* Prints the descriptions of the current hierarchy. */
-void PrintHelp(util::Params& params, const std::string& param)
+inline void PrintHelp(util::Params& params, const std::string& param)
 {
   std::string usedParam = param;
   std::map<std::string, util::ParamData>& parameters = params.Parameters();
@@ -157,7 +160,8 @@ void PrintHelp(util::Params& params, const std::string& param)
       0) << std::endl;
 }
 
-
 } // namespace cli
 } // namespace bindings
 } // namespace mlpack
+
+#endif

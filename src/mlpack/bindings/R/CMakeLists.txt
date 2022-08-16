@@ -373,7 +373,7 @@ if (BUILD_R_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_input_processing.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_serialize_util.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/print_output_processing.hpp)
-   target_link_libraries(generate_r_${name} mlpack ${MLPACK_LIBRARIES})
+   target_link_libraries(generate_r_${name} ${MLPACK_LIBRARIES})
    set_target_properties(generate_r_${name} PROPERTIES
       COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_R"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/bin/")
@@ -413,7 +413,6 @@ macro (post_r_setup)
 
   # Then copy each of the header and source files over to that directory.
   set(MLPACK_SOURCES
-    "${CMAKE_BINARY_DIR}/src/mlpack/mlpack_export.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"

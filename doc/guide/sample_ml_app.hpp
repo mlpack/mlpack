@@ -28,15 +28,10 @@ mlpack and dependencies in Release Mode).
 - Under C/C++ > General > Additional Include Directories add:
 @code
  - C:\mlpack\armadillo-9.800.3\include
- - C:\mlpack\mlpack-3.4.2\build\include
-@endcode
-- Under Linker > Input > Additional Dependencies add:
-@code
- - C:\mlpack\mlpack-3.4.2\build\Debug\mlpack.lib
+ - C:\mlpack\mlpack-3.4.2\src
 @endcode
 - Under Build Events > Post-Build Event > Command Line add:
 @code
- - xcopy /y "C:\mlpack\mlpack-3.4.2\build\Debug\mlpack.dll" $(OutDir)
  - xcopy /y "C:\mlpack\mlpack-3.4.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 @endcode
 

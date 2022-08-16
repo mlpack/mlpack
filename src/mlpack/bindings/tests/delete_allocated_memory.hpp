@@ -29,10 +29,10 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    util::ParamData& /* d */,
+    util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  // Do nothing.
+  (*MLPACK_ANY_CAST<T>(&d.value)).clear();
 }
 
 template<typename T>

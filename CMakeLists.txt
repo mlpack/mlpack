@@ -32,7 +32,7 @@ set(CEREAL_VERSION "1.1.2")
 # In addition, all mlpack CLI bindings will be linked statically as well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
+      "Compile shared objects for tests and bindings (if OFF, static libraries and binaries are compiled)." OFF)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
@@ -41,7 +41,7 @@ elseif(CMAKE_CROSSCOMPILING)
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 else()
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
+      "Compile shared objects for tests and bindings (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
 # Enable auto-download if we are cross compiling.
@@ -153,10 +153,6 @@ if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 endif()
 
-# These support libraries are used if we need to link against something
-# specific.  This list is a subset of MLPACK_LIBRARIES.
-set(COMPILER_SUPPORT_LIBRARIES "")
-
 # Check if atomics need -latomic linking.
 #include(CheckAtomic)
 if (NOT HAVE_CXX_ATOMICS_WITHOUT_LIB AND
@@ -212,7 +208,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif()
 
   # Link everything with -lm.
-  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
   # Use -pthread, but not on OS X.
   if (NOT APPLE)
@@ -224,8 +219,7 @@ endif()
 # which we do in the tests.
 if (CMAKE_COMPILER_IS_GNUCC)
   find_package(Threads)
-  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
-      ${CMAKE_THREAD_LIBS_INIT})
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
@@ -342,7 +336,7 @@ if (STB_IMAGE_FOUND)
     message(FATAL_ERROR "STB implementations's static mode cannot link across "
         "multiple translation units!  Try upgrading your STB implementation, "
         "or using the auto-downloader (set DOWNLOAD_DEPENDENCIES=ON in the "
-	"CMake configuration command.")
+        "CMake configuration command.")
   endif ()
 endif()
 
@@ -458,21 +452,6 @@ if (GIT_FOUND)
   endif ()
 endif ()
 
-# Create a target to generate arma_config.hpp, which is used to warn the user
-# when they are doing something stupid when linking something against mlpack.
-include(CMake/CreateArmaConfigInfo.cmake)
-
-add_custom_target(mlpack_arma_config ALL
-    COMMAND ${CMAKE_COMMAND}
-        -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
-        -D OPENMP_FOUND="${OPENMP_FOUND}"
-        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
-        -P CMake/CreateArmaConfigInfo.cmake
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Updating arma_config.hpp (if necessary)")
-set(MLPACK_SRCS ${MLPACK_SRCS}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
-
 # Make a target to generate the man page documentation, but only if we are on a
 # UNIX-like system.
 if (BUILD_CLI_EXECUTABLES AND UNIX)
@@ -498,19 +477,12 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
   endif ()
 endif ()
 
+# Finally, add any cross-compilation support libraries (they may need to come
+# last).  If we are not cross-compiling, no changes will happen here.
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CROSS_COMPILE_SUPPORT_LIBRARIES})
+
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
-
-# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
-# depends on it.
-if (USING_GIT STREQUAL "YES")
-  add_dependencies(mlpack_headers mlpack_gitversion)
-endif ()
-
-# Make the mlpack_arma_config target depend on mlpack (we couldn't do this
-# before the add_subdirectory() call because the mlpack target didn't exist
-# before that).
-add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
@@ -593,13 +565,14 @@ if (PKG_CONFIG_FOUND)
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
+    elseif ("${first}" STREQUAL "-")
+      # This argument is already in the right format.  (This happens with, e.g.,
+      # `-lpthread`.)
+      list(APPEND MLPACK_LIBRARIES_LIST "${lib}")
     else ()
       list(APPEND MLPACK_LIBRARIES_LIST "-l${lib}")
     endif ()
   endforeach ()
-  # Don't forget to add mlpack as a dependency too.
-  list(APPEND MLPACK_LIBRARIES_LIST "-L${CMAKE_INSTALL_PREFIX}/lib/")
-  list(APPEND MLPACK_LIBRARIES_LIST "-lmlpack")
 
   # Filter duplicate dependencies and directories.
   list(REMOVE_DUPLICATES MLPACK_LIBRARIES_LIST)
@@ -623,8 +596,8 @@ if (PKG_CONFIG_FOUND)
 
   add_custom_target(pkgconfig ALL
       ${CMAKE_COMMAND}
+          -D MLPACK_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
           -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GeneratePkgConfig.cmake"
-      DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"

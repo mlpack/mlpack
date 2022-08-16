@@ -5,13 +5,13 @@
 # And our goal in this file is to generate/configure mlpack.pc.
 
 # First, we need to extract the version string.
-if (NOT EXISTS "${CMAKE_BINARY_DIR}/include/mlpack/core/util/version.hpp")
+if (NOT EXISTS "${MLPACK_SOURCE_DIR}/src/mlpack/core/util/version.hpp")
   message(FATAL_ERROR "Cannot open "
-      "${CMAKE_BINARY_DIR}/include/mlpack/core/util/version.hpp to extract "
+      "${MLPACK_SOURCE_DIR}/src/mlpack/core/util/version.hpp to extract "
       "version!")
 endif ()
 
-file(READ "${CMAKE_BINARY_DIR}/include/mlpack/core/util/version.hpp"
+file(READ "${MLPACK_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
     VERSION_HPP_CONTENTS)
 string(REGEX REPLACE ".*#define MLPACK_VERSION_MAJOR ([0-9]+).*" "\\1"
     MLPACK_VERSION_MAJOR "${VERSION_HPP_CONTENTS}")

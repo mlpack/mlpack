@@ -6,7 +6,7 @@ This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
 FreeBSD etc). However, mlpack is in the repositories of many Linux distributions
 and so it may be easier to use the package manager for your system.  For example,
-on Ubuntu, you can install the mlpack library and command-line executables (e.g.
+on Ubuntu, you can install the mlpack headers and command-line executables (e.g.
 mlpack_pca, mlpack_kmeans, etc.) with the following command:
 
 @code
@@ -19,8 +19,8 @@ On Fedora or Red Hat(EPEL):
 $ sudo dnf install mlpack-devel mlpack-bin
 @endcode
 
-For installing only the header files and library for building C++ applications
-on top of mlpack, one could use:
+For installing only the header files for building C++ applications on top of
+mlpack, one could use:
 
 @code
 $ sudo apt-get install libmlpack-dev

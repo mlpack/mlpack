@@ -53,7 +53,7 @@ if (BUILD_JULIA_BINDINGS)
   add_library(mlpack_julia_util
     julia_util.h
     julia_util.cpp)
-  target_link_libraries(mlpack_julia_util mlpack)
+  target_link_libraries(mlpack_julia_util ${MLPACK_LIBRARIES})
   set_target_properties(mlpack_julia_util PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
   add_dependencies(julia mlpack_julia_util)
@@ -187,7 +187,7 @@ if (BUILD_JULIA_BINDINGS)
   add_library(mlpack_julia_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp)
-  target_link_libraries(mlpack_julia_${name} mlpack mlpack_julia_util)
+  target_link_libraries(mlpack_julia_${name} mlpack_julia_util)
   set_target_properties(mlpack_julia_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
 
@@ -225,7 +225,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
-  target_link_libraries(generate_jl_${name} mlpack ${MLPACK_LIBRARIES})
+  target_link_libraries(generate_jl_${name} ${MLPACK_LIBRARIES})
   set_target_properties(generate_jl_${name} PROPERTIES
       COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_JL"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/")

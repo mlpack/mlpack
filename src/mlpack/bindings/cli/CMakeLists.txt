@@ -26,7 +26,7 @@ set(SOURCES
   print_doc_functions.hpp
   print_doc_functions_impl.hpp
   print_help.hpp
-  print_help.cpp
+  print_help_impl.hpp
   print_type_doc.hpp
   print_type_doc_impl.hpp
   set_param.hpp
@@ -54,16 +54,12 @@ if (BUILD_CLI_EXECUTABLES)
   # Build mlpack CLI binding binaries statically.
   if(NOT BUILD_SHARED_LIBS)
     target_link_libraries(mlpack_${name} -static
-      mlpack
-      ${ARMADILLO_LIBRARIES}
-      ${COMPILER_SUPPORT_LIBRARIES}
+      ${MLPACK_LIBRARIES}
     )
   else()
     # Build mlpack CLI binding binaries dynamically.
     target_link_libraries(mlpack_${name}
-      mlpack
-      ${ARMADILLO_LIBRARIES}
-      ${COMPILER_SUPPORT_LIBRARIES}
+      ${MLPACK_LIBRARIES}
     )
   endif()
   # Make sure that we set BINDING_TYPE to cli so the command-line program is

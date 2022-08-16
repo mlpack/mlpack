@@ -12,7 +12,6 @@
 #define MLPACK_CORE_MATH_RANDOM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/mlpack_export.hpp>
 #include <random>
 
 namespace mlpack {
@@ -196,4 +195,4 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
 } // namespace math
 } // namespace mlpack
 
-#endif // MLPACK_CORE_MATH_MATH_LIB_HPP
+#endif // MLPACK_CORE_MATH_RANDOM_HPP
