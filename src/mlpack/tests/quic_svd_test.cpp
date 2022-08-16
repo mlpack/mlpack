@@ -11,7 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/quic_svd/quic_svd.hpp>
+#include <mlpack/methods/quic_svd.hpp>
 
 #include "catch.hpp"
 

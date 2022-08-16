@@ -12,7 +12,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/cf/cf.hpp>
+#include <mlpack/methods/cf.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

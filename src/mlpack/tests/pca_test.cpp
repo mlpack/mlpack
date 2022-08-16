@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/pca/pca.hpp>
+#include <mlpack/methods/pca.hpp>
 
 #include "catch.hpp"
 

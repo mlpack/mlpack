@@ -9,15 +9,15 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/ann.hpp>
-#include <mlpack/methods/decision_tree/decision_tree.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_trees.hpp>
-#include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/linear_regression/linear_regression.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
-#include <mlpack/methods/perceptron/perceptron.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+#include <mlpack/methods/ann.hpp>
+#include <mlpack/methods/decision_tree.hpp>
+#include <mlpack/methods/hoeffding_trees.hpp>
+#include <mlpack/methods/lars.hpp>
+#include <mlpack/methods/linear_regression.hpp>
+#include <mlpack/methods/logistic_regression.hpp>
+#include <mlpack/methods/naive_bayes.hpp>
+#include <mlpack/methods/perceptron.hpp>
+#include <mlpack/methods/softmax_regression.hpp>
 
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"

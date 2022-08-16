@@ -10,8 +10,8 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/lars.hpp>
+#include <mlpack/methods/logistic_regression.hpp>
 
 #include "catch.hpp"
 
