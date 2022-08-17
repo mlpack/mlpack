@@ -75,7 +75,7 @@
 #include <mlpack/core/math/math.hpp>
 
 // mlpack::backtrace only for linux
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
 #endif
 

@@ -241,7 +241,7 @@ if (DEBUG)
           ${LIBDL_INCLUDE_DIRS})
       set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
           ${LIBDL_LIBRARIES})
-      add_definitions(-DHAS_BFD_DL)
+      add_definitions(-DMLPACK_HAS_BFD_DL)
     else()
       message(WARNING "No libBFD and/or libDL has been found!")
     endif()
