@@ -376,6 +376,31 @@ void ConvolutionType<
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
 
+  // To perform the backward pass, we need to dilate all the mappedError.
+  arma::Cube<typename MatType::elem_type> dilatedMappedError;
+  if (strideHeight == 1 && strideWidth == 1)
+  {
+    dilatedMappedError = mappedError;
+  }
+  else
+  {
+    dilatedMappedError.zeros(mappedError.n_rows * strideWidth -
+        (strideWidth - 1), mappedError.n_cols * strideHeight -
+        (strideHeight - 1), mappedError.n_slices);
+    #pragma omp parallel for collapse(3)
+    for (size_t i = 0; i < mappedError.n_slices; ++i)
+    {
+      for (size_t j = 0; j < mappedError.n_cols; ++j)
+      {
+        for (size_t k = 0; k < mappedError.n_rows; ++k)
+        {
+          dilatedMappedError(k * strideWidth, j * strideHeight, i)
+              = mappedError(k, j, i);
+        }
+      }
+    }
+  }
+
   #pragma omp parallel for
   for (size_t map = 0; map < (size_t) (maps * inMaps); ++map)
   {
@@ -397,11 +422,11 @@ void ConvolutionType<
       for (size_t outMap = 0; outMap < maps; ++outMap)
       {
         BackwardConvolutionRule::Convolution(
-            mappedError.slice(outMap + fullOutputOffset),
+            dilatedMappedError.slice(outMap + fullOutputOffset),
             rotatedFilters.slice((outMap * inMaps) + inMap),
             output,
-            strideHeight,
-            strideWidth,
+            1,
+            1,
             1,
             1,
             outMap > 0);
@@ -409,36 +434,17 @@ void ConvolutionType<
       // If the stride width or height is greater than 1, then we have to
       // insert columns and rows into the convolution output.
       MatType& curGTemp = gTemp.slice(inMap + fullInputOffset);
-      if (strideWidth == 1 && strideHeight == 1)
+      if (usingPadding)
       {
-        if (usingPadding)
-        {
-          curGTemp = output.submat(
-              padWLeft,
-              padHTop,
-              padWLeft + gTemp.n_rows - 1,
-              padHTop + gTemp.n_cols - 1);
-        }
-        else
-        {
-          curGTemp = output;
-        }
+        curGTemp = output.submat(
+            padWLeft,
+            padHTop,
+            padWLeft + gTemp.n_rows - 1,
+            padHTop + gTemp.n_cols - 1);
       }
       else
       {
-        // We must iterate over each element of the output and manually
-        // re-insert the stride.
-        size_t col = padWLeft;
-        for (size_t i = 0; i < output.n_cols; ++i)
-        {
-          size_t row = padHTop;
-          for (size_t j = 0; j < output.n_rows; ++j)
-          {
-            curGTemp(row, col) = output(j, i);
-            row += strideHeight;
-          }
-          col += strideWidth;
-        }
+        curGTemp = output;
       }
     }
   }
@@ -500,26 +506,12 @@ void ConvolutionType<
             inputTemp.slice(inMap + fullInputOffset),
             curError,
             output,
+            1,
+            1,
             strideWidth,
             strideHeight);
 
-        // TODO: understand this conditional.  Is it needed?
-        if (gradientTemp.n_rows < output.n_rows ||
-            gradientTemp.n_cols < output.n_cols)
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap) += output.submat(0, 0,
-              gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
-        }
-        else if (gradientTemp.n_rows > output.n_rows ||
-                 gradientTemp.n_cols > output.n_cols)
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap).submat(0, 0, output.n_rows - 1,
-              output.n_cols - 1) += output;
-        }
-        else
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap) += output;
-        }
+        gradientTemp.slice((outMap * inMaps) + inMap) += output;
       }
 
       if (useBias)

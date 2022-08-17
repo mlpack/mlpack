@@ -334,30 +334,30 @@ void GroupedConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
+    #pragma omp parallel for collapse(2)
     for (size_t group = 0; group < groups; group++)
     {
       // Iterate over output maps.
-      for (size_t outMap = group * outGroupSize;
-          outMap < ((group + 1) * outGroupSize); ++outMap)
+      for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
       {
+        MatType& convOutput = outputTemp.slice(group * outGroupSize + outMap + fullOutputOffset);
         // Iterate over input maps (we will apply the filter and sum).
         for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
         {
-          MatType convOutput;
-
           ForwardConvolutionRule::Convolution(
               inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
-              weight.slice((outMap * inGroupSize) + inMap),
+              weight.slice(((group * outGroupSize + outMap) * inGroupSize) + inMap),
               convOutput,
               strideWidth,
-              strideHeight);
-
-          outputTemp.slice(outMap + fullOutputOffset) += convOutput;
+              strideHeight,
+              1,
+              1,
+              true);
         }
 
         // Make sure to add the bias.
         if (useBias)
-          outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
+          convOutput += bias(group * outGroupSize + outMap);
       }
     }
   }
@@ -391,9 +391,36 @@ void GroupedConvolutionType<
   // To perform the backward pass, we need to rotate all the filters.
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
+
+  #pragma omp parallel for
   for (size_t map = 0; map < ((maps * inMaps) / groups); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
+  }
+
+  // To perform the backward pass, we need to dilate all the mappedError.
+  arma::Cube<typename MatType::elem_type> dilatedMappedError;
+  if (strideHeight == 1 && strideWidth == 1)
+  {
+    dilatedMappedError = mappedError;
+  }
+  else
+  {
+    dilatedMappedError.zeros(mappedError.n_rows * strideWidth -
+        (strideWidth - 1), mappedError.n_cols * strideHeight -
+        (strideHeight - 1), mappedError.n_slices);
+    #pragma omp parallel for collapse(3)
+    for (size_t i = 0; i < mappedError.n_slices; ++i)
+    {
+      for (size_t j = 0; j < mappedError.n_cols; ++j)
+      {
+        for (size_t k = 0; k < mappedError.n_rows; ++k)
+        {
+          dilatedMappedError(k * strideWidth, j * strideHeight, i)
+              = mappedError(k, j, i);
+        }
+      }
+    }
   }
 
   size_t inGroupSize = inMaps / groups;
@@ -405,60 +432,42 @@ void GroupedConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
+    #pragma omp parallel for collapse(2)
     for (size_t group = 0; group < groups; group++)
     {
-    // Iterate over input maps.
+      // Iterate over input maps.
       for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
       {
+        MatType output;
         // Iterate over output maps.
         for (size_t outMap = group * outGroupSize; 
             outMap < ((group + 1) * outGroupSize); ++outMap)
         {
-          MatType output;
-
           BackwardConvolutionRule::Convolution(
-              mappedError.slice(outMap + fullOutputOffset),
+              dilatedMappedError.slice(outMap + fullOutputOffset),
               rotatedFilters.slice((outMap * inGroupSize) + inMap),
               output,
-              strideHeight,
-              strideWidth);
-
-          // If the stride width or height is greater than 1, then we have to
-          // insert columns and rows into the convolution output.
-          if (strideWidth == 1 && strideHeight == 1)
-          {
-            if (usingPadding)
-            {
-              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) +=
-                  output.submat(
-                      padWLeft,
-                      padHTop,
-                      padWLeft + gTemp.n_rows - 1,
-                      padHTop + gTemp.n_cols - 1);
-            }
-            else
-            {
-              gTemp.slice((group * inGroupSize) + inMap + fullInputOffset) +=
-                  output;
-            }
-          }
-          else
-          {
-            // We must iterate over each element of the output and manually
-            // re-insert the stride.
-            size_t col = padWLeft;
-            for (size_t i = 0; i < output.n_cols; ++i)
-            {
-              size_t row = padHTop;
-              for (size_t j = 0; j < output.n_rows; ++j)
-              {
-                gTemp(row, col, (group * inGroupSize) + inMap +
-                    fullInputOffset) += output(j, i);
-                row += strideHeight;
-              }
-              col += strideWidth;
-            }
-          }
+              1,
+              1,
+              1,
+              1,
+              outMap > group * outGroupSize);
+        }
+        // If the stride width or height is greater than 1, then we have to
+        // insert columns and rows into the convolution output.
+        MatType& curGTemp = gTemp.slice((group * inGroupSize) + inMap +
+            fullInputOffset);
+        if (usingPadding)
+        {
+          curGTemp = output.submat(
+              padWLeft,
+              padHTop,
+              padWLeft + gTemp.n_rows - 1,
+              padHTop + gTemp.n_cols - 1);
+        }
+        else
+        {
+          curGTemp = output;
         }
       }
     }
@@ -513,49 +522,34 @@ void GroupedConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
+    #pragma omp parallel for collapse(2)
     for (size_t group = 0; group < groups; group++)
     {
       // Iterate over output maps.
-      for (size_t outMap = group * outGroupSize;
-          outMap < ((group + 1) * outGroupSize); ++outMap)
+      for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
       {
         // Iterate over input maps (we will apply the filter and sum).
+        MatType& curError = mappedError.slice(group * outGroupSize + outMap +
+            fullOutputOffset);
         for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
         {
           MatType output;
           GradientConvolutionRule::Convolution(
               inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
-              mappedError.slice(outMap + fullOutputOffset),
+              curError,
               output,
+              1,
+              1,
               strideWidth,
               strideHeight);
 
-          // TODO: understand this conditional.  Is it needed?
-          if (gradientTemp.n_rows < output.n_rows ||
-              gradientTemp.n_cols < output.n_cols)
-          {
-            gradientTemp.slice((outMap * inGroupSize) + inMap) += 
-                output.submat(
-                    0,
-                    0,
-                    gradientTemp.n_rows - 1, 
-                    gradientTemp.n_cols - 1);
-          }
-          else if (gradientTemp.n_rows > output.n_rows ||
-                  gradientTemp.n_cols > output.n_cols)
-          {
-            gradientTemp.slice((outMap * inGroupSize) + inMap).submat(0, 0,
-                output.n_rows - 1, output.n_cols - 1) += output;
-          }
-          else
-          {
-            gradientTemp.slice((outMap * inGroupSize) + inMap) += output;
-          }
+          gradientTemp.slice(((group * outGroupSize + outMap) *
+              inGroupSize) + inMap) += output;
         }
 
         if (useBias)
-          gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(
-              outMap + fullOutputOffset));
+          gradient[weight.n_elem + group * outGroupSize + outMap] += 
+              arma::accu(curError);
       }
     }
   }
