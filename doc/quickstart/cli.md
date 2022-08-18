@@ -1,58 +1,50 @@
-/**
- * @file cli_quickstart.hpp
- * @author Ryan Curtin
-
-@page cli_quickstart mlpack command-line quickstart guide
-
-@section cli_quickstart_intro Introduction
+# mlpack command-line quickstart guide
 
 This page describes how you can quickly get started using mlpack from the
 command-line and gives a few examples of usage, and pointers to deeper
 documentation.
 
-This quickstart guide is also available for @ref python_quickstart "Python",
-@ref r_quickstart "R", @ref julia_quickstart "Julia" and
-@ref go_quickstart "Go".
+This quickstart guide is also available for [Python]( ), [R]( ), [Julia]( ), and
+[Go]( ).
 
-@section cli_quickstart_install Installing mlpack
+## Installing mlpack
 
-Installing the mlpack is straightforward and can be done with your system's
-package manager.
+Installing mlpack is straightforward and can be done with your system's package
+manager.  For instance, for Ubuntu or Debian the command is simply
 
-For instance, for Ubuntu or Debian the command is simply
-
-@code{.sh}
+```sh
 sudo apt-get install mlpack-bin
-@endcode
+```
 
 On Fedora or Red Hat:
 
-@code{.sh}
+```sh
 sudo dnf install mlpack
-@endcode
+```
 
 If you use a different distribution, mlpack may be packaged under a different
 name.  And if it is not packaged, you can use a Docker image from Dockerhub:
 
-@code{.sh}
+```sh
 docker run -it mlpack/mlpack /bin/bash
-@endcode
+```
 
-This Docker image has mlpack already built and installed.
+This Docker image has mlpack's command-line bindings already built and
+installed.
 
-If you prefer to build mlpack from scratch, see @ref build.
+If you prefer to build mlpack from scratch, see the [main README]( ).
 
-@section cli_quickstart_example Simple mlpack quickstart example
+## Simple quickstart example
 
 As a really simple example of how to use mlpack from the command-line, let's do
-some simple classification on a subset of the standard machine learning @c
-covertype dataset.  We'll first split the dataset into a training set and a
+some simple classification on a subset of the standard machine learning
+`covertype` dataset.  We'll first split the dataset into a training set and a
 testing set, then we'll train an mlpack random forest on the training data, and
 finally we'll print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into your shell to run it.
 
-@code{.sh}
+```sh
 # Get the dataset and unpack it.
 wget https://www.mlpack.org/datasets/covertype-small.data.csv.gz
 wget https://www.mlpack.org/datasets/covertype-small.labels.csv.gz
@@ -89,42 +81,30 @@ mlpack_random_forest                                    \
     --test_labels_file covertype-small.test.labels.csv  \
     --predictions_file predictions.csv                  \
     --verbose
-@endcode
+```
 
 We can see by looking at the output that we achieve reasonably good accuracy on
-the test dataset (80%+).  The file @c predictions.csv could also be used by
+the test dataset (80%+).  The file `predictions.csv` could also be used by
 other tools; for instance, we can easily calculate the number of points that
 were predicted incorrectly:
 
-@code{.sh}
+```sh
 $ diff -U 0 predictions.csv covertype-small.test.labels.csv | grep '^@@' | wc -l
-@endcode
+```
 
 It's easy to modify the code above to do more complex things, or to use
 different mlpack learners, or to interface with other machine learning toolkits.
 
-@section cli_quickstart_whatelse What else does mlpack implement?
-
-The example above has only shown a little bit of the functionality of mlpack.
-Lots of other commands are available with different functionality.  A full list
-of commands and full documentation for each can be found on the following page:
-
- - <a href="https://mlpack.org/doc/mlpack-git/cli_documentation.html">CLI documentation</a>
-
-For more information on what mlpack does, see https://www.mlpack.org/.  Next,
-let's go through another example for providing movie recommendations with
-mlpack.
-
-@section cli_quickstart_movierecs Using mlpack for movie recommendations
+## Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-@c mlpack_cf program.  We'll train this on the MovieLens dataset from
-https://grouplens.org/datasets/movielens/, and then we'll use the model that we
-train to give recommendations.
+`mlpack_cf` program.  We'll train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+use the model that we train to give recommendations.
 
 You can copy-paste this code directly into the command line to run it.
 
-@code{.sh}
+```sh
 wget https://www.mlpack.org/datasets/ml-20m/ratings-only.csv.gz
 wget https://www.mlpack.org/datasets/ml-20m/movies.csv.gz
 gunzip ratings-only.csv.gz
@@ -165,12 +145,12 @@ for i in `seq 1 10`; do
         sed 's/^[^,]*,[^,]*,//' | \
         sed 's/\(.*\),.*$/\1/' | sed 's/"//g';
 done
-@endcode
+```
 
 Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
-@code{.unparsed}
+```
 Recommendations for user 1:
 Casablanca (1942)
 Pan's Labyrinth (Laberinto del fauno, El) (2006)
@@ -182,30 +162,22 @@ Dark Knight, The (2008)
 Out for Justice (1991)
 Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
 Schindler's List (1993)
-@endcode
+```
+## Next steps wtih mlpack
 
-@section cli_quickstart_nextsteps Next steps with mlpack
+For more information on what mlpack does, see the [mlpack
+homepage](https://www.mlpack.org).  Next, let's go through another example for
+providing movie recommendations with mlpack.
 
 Now that you have done some simple work with mlpack, you have seen how it can
-easily plug into a data science production workflow for the command line.  A
-great thing to do next would be to look at more documentation for the mlpack
-command-line programs:
+easily plug into a data science production workflow for the command line.  But
+these two examples have only shown a little bit of the functionality of mlpack.
+Lots of other commands are available with different functionality.  A full list
+of commands and full documentation for each can be found on the following page:
 
- - <a href="https://www.mlpack.org/doc/mlpack-git/cli_documentation.html">mlpack
-   command-line program documentation</a>
+ - [CLI program documentation](https://www.mlpack.org/doc/stable/cli_documentation.html)
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
-write C++.  To get started learning about mlpack in C++, the following resources
-might be helpful:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack
-   C++ tutorials</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack
-   build and installation guide</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple
-   sample C++ mlpack programs</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack
-   Doxygen documentation homepage</a>
-
- */
+write C++.  To get started learning about mlpack in C++, the [C++ quickstart]( )
+is a good place to start.

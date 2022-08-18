@@ -1,69 +1,45 @@
-/**
- * @file python_quickstart.hpp
- * @author Ryan Curtin
-
-@page python_quickstart mlpack in Python quickstart guide
-
-@section python_quickstart_intro Introduction
+# mlpack in Python quickstart guide
 
 This page describes how you can quickly get started using mlpack from Python and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for 
-@ref cli_quickstart "the command-line" and @ref julia_quickstart "Julia".
+This quickstart guide is also available for [the command line]( ), [Julia]( ),
+[R]( ), and [Go]( ).
 
-@section python_quickstart_install Installing mlpack
+## Installing mlpack
 
 Installing the mlpack bindings for Python is straightforward.  It's easy to use
-conda or pip to do this:
+`conda` or `pip` to do this:
 
-@code{.sh}
+```sh
 pip install mlpack
-@endcode
+```
 
-@code{.sh}
+```sh
 conda install -c conda-forge mlpack
-@endcode
-
-Otherwise, we can build the Python bindings from scratch, as follows.  First we
-have to install the dependencies (the code below is for Ubuntu), then we can
-build and install mlpack.  You can copy-paste the commands into your shell.
-
-@code{.sh}
-sudo apt-get install g++ cmake libarmadillo-dev python-pip wget
-sudo pip install cython setuptools distutils numpy pandas
-wget https://www.mlpack.org/files/mlpack-3.4.2.tar.gz
-tar -xvzpf mlpack-3.4.2.tar.gz
-mkdir -p mlpack-3.4.2/build/ && cd mlpack-3.4.2/build/
-cmake ../ && make -j4 && sudo make install
-@endcode
-
-More information on the build process and details can be found on the @ref build
-page.  You may also need to set the environment variable @c LD_LIBRARY_PATH to
-include @c /usr/local/lib/ on most Linux systems.
-
-@code
-export LD_LIBRARY_PATH=/usr/local/lib/
-@endcode
+```
 
 You can also use the mlpack Docker image on Dockerhub, which has all of the
 Python bindings pre-installed:
 
-@code
+```sh
 docker run -it mlpack/mlpack /bin/bash
-@endcode
+```
 
-@section python_quickstart_example Simple mlpack quickstart example
+Otherwise, you can build the Python bindings from scratch using the
+documentation in the [main README]( ).
+
+## Simple mlpack quickstart example
 
 As a really simple example of how to use mlpack from Python, let's do some
-simple classification on a subset of the standard machine learning @c covertype
+simple classification on a subset of the standard machine learning `covertype`
 dataset.  We'll first split the dataset into a training set and a testing set,
 then we'll train an mlpack random forest on the training data, and finally we'll
 print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into Python to run it.
 
-@code{.py}
+```py
 import mlpack
 import pandas as pd
 import numpy as np
@@ -104,38 +80,26 @@ correct = np.sum(
     output['predictions'] == np.reshape(test_labels, (test_labels.shape[0],)))
 print(str(correct) + ' correct out of ' + str(len(test_labels)) + ' (' +
     str(100 * float(correct) / float(len(test_labels))) + '%).')
-@endcode
+```
 
 We can see that we achieve reasonably good accuracy on the test dataset (80%+);
-if we use the full @c covertype.csv.gz, the accuracy should increase
+if we use the full `covertype.csv.gz`, the accuracy should increase
 significantly (but training will take longer).
 
 It's easy to modify the code above to do more complex things, or to use
 different mlpack learners, or to interface with other machine learning toolkits.
 
-@section python_quickstart_whatelse What else does mlpack implement?
-
-The example above has only shown a little bit of the functionality of mlpack.
-Lots of other commands are available with different functionality.  A full list
-of each of these commands and full documentation can be found on the following
-page:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html">Python documentation</a>
-
-For more information on what mlpack does, see https://www.mlpack.org/.
-Next, let's go through another example for providing movie recommendations with
-mlpack.
-
-@section python_quickstart_movierecs Using mlpack for movie recommendations
+## Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-<tt><a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html#cf">cf()</a></tt> method.  We'll train this on the MovieLens dataset from
-https://grouplens.org/datasets/movielens/, and then we'll use the model that we
-train to give recommendations.
+[`cf()`](https://www.mlpack.org/doc/stable/python_documentation.html#cf) method.
+We'll train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+use the model that we train to give recommendations.
 
 You can copy-paste this code directly into Python to run it.
 
-@code{.py}
+```py
 import mlpack
 import pandas as pd
 import numpy as np
@@ -170,12 +134,12 @@ print("Recommendations for user 1:")
 for i in range(10):
   print("  " + str(i) + ": " + str(movies.loc[movies['movieId'] ==
       output['output'][0, i]].iloc[0]['title']))
-@endcode
+```
 
 Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
-@code{.unparsed}
+```
 Recommendations for user 1:
   0: Casablanca (1942)
   1: Pan's Labyrinth (Laberinto del fauno, El) (2006)
@@ -187,29 +151,19 @@ Recommendations for user 1:
   7: Out for Justice (1991)
   8: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
   9: Schindler's List (1993)
-@endcode
+```
 
-@section python_quickstart_nextsteps Next steps with mlpack
+## Next steps with mlpack
 
 Now that you have done some simple work with mlpack, you have seen how it can
-easily plug into a data science workflow in Python.  A great thing to do next
-would be to look at more documentation for the Python mlpack bindings:
+easily plug into a data science workflow in Python.  But the two examples above
+have only shown a little bit of the functionality of mlpack.  Lots of other
+commands are available with different functionality.  A full list of each of
+these commands and full documentation can be found on the following page:
 
- - <a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html">Python mlpack
-   binding documentation</a>
+ - [Python documentation](https://www.mlpack.org/doc/stable/python_documentation.html)
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
 write C++ (or perhaps Cython).  To get started learning about mlpack in C++, the
-following resources might be helpful:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack
-   C++ tutorials</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack
-   build and installation guide</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple
-   sample C++ mlpack programs</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack
-   Doxygen documentation homepage</a>
-
- */
+[C++ quickstart]( ) would be a good place to go.

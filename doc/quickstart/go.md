@@ -1,43 +1,35 @@
-/**
- * @file go_quickstart.hpp
- * @author Yashwant Singh Parihar
-
-@page go_quickstart mlpack in Go quickstart guide
-
-@section go_quickstart_intro Introduction
+# mlpack in Go quickstart guide
 
 This page describes how you can quickly get started using mlpack from Go and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for @ref python_quickstart "Python",
-@ref cli_quickstart "the command-line", @ref julia_quickstart "Julia" and
-@ref r_quickstart "R".
+This quickstart guide is also available for [Python]( ), [Julia]( ),
+[the command line]( ), and [R]( ).
 
-@section go_quickstart_install Installing mlpack
+## Installing mlpack
 
 Installing the mlpack bindings for Go is somewhat time-consuming as the library
 must be built; you can run the following code:
 
-@code{.sh}
+```sh
 go get -u -d mlpack.org/v1/mlpack
 cd ${GOPATH}/src/mlpack.org/v1/mlpack
 make install
-@endcode
-
+```
 Building the Go bindings from scratch is a little more in-depth, though.  For
-information on that, follow the instructions on the @ref build page, and be sure
-to specify @c -DBUILD_GO_BINDINGS=ON to CMake;
+information on that, follow the instructions in the [main README]( ).
 
-@section go_quickstart_example Simple mlpack quickstart example
+## Simple mlpack quickstart example
 
 As a really simple example of how to use mlpack from Go, let's do some
-simple classification on a subset of the standard machine learning @c covertype
+simple classification on a subset of the standard machine learning `covertype`
 dataset.  We'll first split the dataset into a training set and a testing set,
 then we'll train an mlpack random forest on the training data, and finally we'll
 print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into main.go to run it.
-@code{.go}
+
+```go
 package main
 
 import (
@@ -95,41 +87,26 @@ func main() {
   fmt.Print(sum, " correct out of ", rows, " (",
       (float64(sum) / float64(rows)) * 100, "%).\n")
 }
-@endcode
+```
 
 We can see that we achieve reasonably good accuracy on the test dataset (80%+);
-if we use the full @c covertype.csv.gz, the accuracy should increase
+if we use the full `covertype.csv.gz`, the accuracy should increase
 significantly (but training will take longer).
 
 It's easy to modify the code above to do more complex things, or to use
 different mlpack learners, or to interface with other machine learning toolkits.
 
-@section go_quickstart_whatelse What else does mlpack implement?
-
-The example above has only shown a little bit of the functionality of mlpack.
-Lots of other commands are available with different functionality.  A full list
-of each of these commands and full documentation can be found on the following
-page:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/go_documentation.html">Go documentation</a>
-
-You can also use the GoDoc to explore the @c mlpack module and its
-functions; every function comes with comprehensive documentation.
-
-For more information on what mlpack does, see https://www.mlpack.org/.
-Next, let's go through another example for providing movie recommendations with
-mlpack.
-
-@section go_quickstart_movierecs Using mlpack for movie recommendations
+## Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-<tt><a href="https://www.mlpack.org/doc/mlpack-git/go_documentation.html#cf">Cf()</a></tt> method.  We'll train this on the MovieLens dataset from
-https://grouplens.org/datasets/movielens/, and then we'll use the model that we
-train to give recommendations.
+[`cf()`](https://www.mlpack.org/doc/stable/go_documentation.html#cf) method.
+We'll train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+use the model that we train to give recommendations.
 
 You can copy-paste this code directly into main.go to run it.
 
-@code{.go}
+```go
 package main
 
 import (
@@ -185,12 +162,12 @@ func main() {
     fmt.Println(i, ":", movies[int(output.At(0 , i))])
   }
 }
-@endcode
+```
 
 Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
-@code{.unparsed}
+```
 Recommendations for user 1:
   0: Casablanca (1942)
   1: Pan's Labyrinth (Laberinto del fauno, El) (2006)
@@ -202,29 +179,22 @@ Recommendations for user 1:
   7: Out for Justice (1991)
   8: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
   9: Schindler's List (1993)
-@endcode
+```
 
-@section go_quickstart_nextsteps Next steps with mlpack
+## Next steps with mlpack
 
 Now that you have done some simple work with mlpack, you have seen how it can
-easily plug into a data science workflow in Go.  A great thing to do next
-would be to look at more documentation for the Go mlpack bindings:
+easily plug into a data science workflow in Go.  But the two examples above have
+only shown a little bit of the functionality of mlpack.  Lots of other methods
+are available with different functionality.  A full list of each of these
+methods and full documentation can be found on the following page:
 
- - <a href="https://www.mlpack.org/doc/mlpack-git/go_documentation.html">Go mlpack
-   binding documentation</a>
+ - [mlpack Go binding documentation](https://www.mlpack.org/doc/stable/go_documentation.html)
+
+You can also use GoDoc to explore the `mlpack` module and its functions; every
+function comes with comprehensive documentation.
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
-write C++.  To get started learning about mlpack in C++, the following resources
-might be helpful:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack
-   C++ tutorials</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack
-   build and installation guide</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple
-   sample C++ mlpack programs</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack
-   Doxygen documentation homepage</a>
-
- */
+write C++.  To get started learning about mlpack in C++, the [C++ quickstart]( )
+is a good resource to visit next.

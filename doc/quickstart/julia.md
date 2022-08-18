@@ -1,37 +1,28 @@
-/**
- * @file julia_quickstart.hpp
- * @author Ryan Curtin
-
-@page julia_quickstart mlpack in Julia quickstart guide
-
-@section julia_quickstart_intro Introduction
+# mlpack in Julia quickstart guide
 
 This page describes how you can quickly get started using mlpack from Julia and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for @ref python_quickstart "Python",
-@ref cli_quickstart "the command-line", @ref go_quickstart "Go" and
-@ref r_quickstart "R".
+This quickstart guide is also available for [Python]( ), [the command line]( ),
+[R]( ), and [Go]( ).
 
-@section julia_quickstart_install Installing mlpack
+## Installing mlpack
 
 Installing the mlpack bindings for Julia is straightforward; you can just use
-@c Pkg:
+`Pkg`:
 
-@code{.julia}
+```julia
 using Pkg
 Pkg.add("mlpack")
-@endcode
+```
 
 Building the Julia bindings from scratch is a little more in-depth, though.  For
-information on that, follow the instructions on the @ref build page, and be sure
-to specify @c -DBUILD_JULIA_BINDINGS=ON to CMake; you may need to also set the
-location of the Julia program with @c -DJULIA_EXECUTABLE=/path/to/julia.
+information on that, follow the instructions in the [main README]( ).
 
-@section julia_quickstart_example Simple mlpack quickstart example
+## Simple quickstart example
 
 As a really simple example of how to use mlpack from Julia, let's do some
-simple classification on a subset of the standard machine learning @c covertype
+simple classification on a subset of the standard machine learning `covertype`
 dataset.  We'll first split the dataset into a training set and a testing set,
 then we'll train an mlpack random forest on the training data, and finally we'll
 print the accuracy of the random forest on the test dataset.
@@ -40,7 +31,7 @@ You can copy-paste this code directly into Julia to run it.  You may need to add
 some extra packages with, e.g., `using Pkg; Pkg.add("CSV");
 Pkg.add("DataFrames"); Pkg.add("Libz")`.
 
-@code{.julia}
+```julia
 using CSV
 using DataFrames
 using Libz
@@ -77,41 +68,26 @@ _, predictions, _ = mlpack.random_forest(input_model=rf_model,
 correct = sum(predictions .== test_labels)
 print("$(correct) out of $(length(test_labels)) test points correct " *
     "($(correct / length(test_labels) * 100.0)%).\n")
-@endcode
+```
 
 We can see that we achieve reasonably good accuracy on the test dataset (80%+);
-if we use the full @c covertype.csv.gz, the accuracy should increase
+if we use the full `covertype.csv.gz`, the accuracy should increase
 significantly (but training will take longer).
 
 It's easy to modify the code above to do more complex things, or to use
 different mlpack learners, or to interface with other machine learning toolkits.
 
-@section julia_quickstart_whatelse What else does mlpack implement?
-
-The example above has only shown a little bit of the functionality of mlpack.
-Lots of other commands are available with different functionality.  A full list
-of each of these commands and full documentation can be found on the following
-page:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/julia_documentation.html">Julia documentation</a>
-
-You can also use the Julia REPL to explore the @c mlpack module and its
-functions; every function comes with comprehensive documentation.
-
-For more information on what mlpack does, see https://www.mlpack.org/.
-Next, let's go through another example for providing movie recommendations with
-mlpack.
-
-@section julia_quickstart_movierecs Using mlpack for movie recommendations
+## Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-<tt><a href="https://www.mlpack.org/doc/mlpack-git/julia_documentation.html#cf">cf()</a></tt> method.  We'll train this on the MovieLens dataset from
-https://grouplens.org/datasets/movielens/, and then we'll use the model that we
-train to give recommendations.
+[`cf()`](https://www.mlpack.org/doc/stable/julia_documentation.html#cf) method.
+We'll train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+use the model that we train to give recommendations.
 
 You can copy-paste this code directly into Julia to run it.
 
-@code{.julia}
+```julia
 using CSV
 using mlpack
 using Libz
@@ -147,12 +123,12 @@ print("Recommendations for user 1:\n")
 for i in 1:10
   print("  $(i): $(movies[output[i], :][3])\n")
 end
-@endcode
+```
 
 Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
-@code{.unparsed}
+```
 Recommendations for user 1:
   0: Casablanca (1942)
   1: Pan's Labyrinth (Laberinto del fauno, El) (2006)
@@ -164,29 +140,22 @@ Recommendations for user 1:
   7: Out for Justice (1991)
   8: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
   9: Schindler's List (1993)
-@endcode
+```
 
-@section julia_quickstart_nextsteps Next steps with mlpack
+## Next steps with mlpack
 
 Now that you have done some simple work with mlpack, you have seen how it can
-easily plug into a data science workflow in Julia.  A great thing to do next
-would be to look at more documentation for the Julia mlpack bindings:
+easily plug into a data science workflow in Julia.  But the two examples above
+have only shown a little bit of the functionality of mlpack.  Lots of other
+functions are available with different functionality.  A full list of each of
+these commands and full documentation can be found on the following page:
 
- - <a href="https://www.mlpack.org/doc/mlpack-git/julia_documentation.html">Julia mlpack
-   binding documentation</a>
+ - [Julia documentation](https://www.mlpack.org/doc/stable/julia_documentation.html)
+
+You can also use the Julia REPL to explore the `mlpack` module and its
+functions; every function comes with comprehensive documentation.
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
 write C++ (or perhaps CxxWrap.jl).  To get started learning about mlpack in C++,
-the following resources might be helpful:
-
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack
-   C++ tutorials</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack
-   build and installation guide</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple
-   sample C++ mlpack programs</a>
- - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack
-   Doxygen documentation homepage</a>
-
- */
+the [C++ quickstart]( ) would be a good place to start.
