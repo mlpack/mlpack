@@ -40,7 +40,9 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
 
 ***Quick links:***
 
- - Quickstart guides: [C++]( ), [CLI](doc/quickstart/cli.md), [Python]( ), [R]( ), [Julia]( ), [Go]( )
+ - Quickstart guides: [C++]( ), [CLI](doc/quickstart/cli.md),
+   [Python](doc/quickstart/python.md), [R](doc/quickstart/R.md),
+   [Julia](doc/quickstart/julia.md), [Go](doc/quickstart/go.md)
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack documentation](https://www.mlpack.org/docs.html)
  - [Examples repository](https://github.com/mlpack/examples/)
