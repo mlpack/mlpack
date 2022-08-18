@@ -88,6 +88,11 @@ add_category(preprocess_imputer "preprocessing")
 add_cli_executable(preprocess preprocess_imputer)
 add_markdown_docs(preprocess preprocess_imputer "cli" "")
 
+# The image converter is only enabled if STB is available.
+if (STB_AVAILABLE)
+  add_all_bindings(preprocess image_converter "preprocessing")
+endif()
+
 # Range search provides a vector of vector of results, and this is only
 # supported for the CLI bindings.
 add_category(range_search "geometry")
