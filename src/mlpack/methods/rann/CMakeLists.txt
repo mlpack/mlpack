@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
+  rann.hpp
+
   # rank-approximate search files
   ra_search.hpp
   ra_search_impl.hpp

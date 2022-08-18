@@ -4,6 +4,7 @@
 # In this library, these are specified twice, once here, and once for the individual library it belongs to, so make sure
 # that you have files in both sections
 set(SOURCES
+  local_coordinate_coding.hpp
   lcc.hpp
   lcc_impl.hpp
 )

@@ -16,8 +16,8 @@
 #include <mlpack/core.hpp>
 #include "ftn_param.hpp"
 
-namespace mlpack{
-namespace rl{
+namespace mlpack {
+namespace rl {
 
 /**
  * Implementation of Fruit Tree Navigation Task.
@@ -104,9 +104,10 @@ class FruitTreeNavigation
   FruitTreeNavigation(const size_t maxSteps = 500,
       const size_t depth = 6) :
       maxSteps(maxSteps),
-      stepsPerformed(0)
+      stepsPerformed(0),
+      fruitTree(depth)
   {
-    FruitTree tree(depth);
+    // Nothing to do.
   }
 
   /**
@@ -192,7 +193,7 @@ class FruitTreeNavigation
     }
     return false;
   }
-  
+
   //! Get the number of steps performed.
   size_t StepsPerformed() const { return stepsPerformed; }
 
@@ -216,14 +217,14 @@ class FruitTreeNavigation
   {
     public:
       FruitTree(const size_t depth) : depth(depth)
-      { 
+      {
         if (std::find(validDepths.begin(), validDepths.end(), depth) == validDepths.end())
         {
           throw std::logic_error("FruitTree()::FruitTree: Invalid depth value: " + std::to_string(depth) + " provided. "
                                  "Only depth values of: 5, 6, 7 are allowed.");
         }
 
-        arma::mat branches = arma::zeros((rewardSize, (size_t) std::pow(2, depth - 1)));
+        arma::mat branches = arma::zeros(rewardSize, (size_t) std::pow(2, depth - 1));
         tree = arma::join_rows(branches, Fruits());
       }
 
@@ -264,7 +265,6 @@ class FruitTreeNavigation
 
   //! Locally-stored fruit tree representation.
   FruitTree fruitTree;
-  };
 };
 
 } // namespace rl

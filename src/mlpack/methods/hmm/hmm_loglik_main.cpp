@@ -9,12 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
+#undef BINDING_NAME
 #define BINDING_NAME hmm_loglik
 
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -23,7 +20,6 @@
 #include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 using namespace mlpack;
 using namespace mlpack::hmm;

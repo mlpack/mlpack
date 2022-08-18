@@ -10,17 +10,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/io.hpp>
 
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
+#undef BINDING_NAME
 #define BINDING_NAME random_forest
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/math/random.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
-#include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
 using namespace mlpack;
 using namespace mlpack::math;

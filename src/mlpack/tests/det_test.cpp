@@ -20,8 +20,7 @@
   #define private public
 #endif
 
-#include <mlpack/methods/det/dtree.hpp>
-#include <mlpack/methods/det/dt_utils.hpp>
+#include <mlpack/methods/det.hpp>
 
 #ifndef _WIN32
   #undef protected

@@ -11,9 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/svdplusplus/svdplusplus.hpp>
-
-#include <ensmallen.hpp>
+#include <mlpack/methods/svdplusplus.hpp>
 
 #include "catch.hpp"
 

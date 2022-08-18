@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  decomposition_policies.hpp
   batch_svd_method.hpp
   bias_svd_method.hpp
   nmf_method.hpp

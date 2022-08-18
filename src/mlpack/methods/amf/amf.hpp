@@ -18,19 +18,11 @@
 #ifndef MLPACK_METHODS_AMF_AMF_HPP
 #define MLPACK_METHODS_AMF_AMF_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
-#include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
-#include <mlpack/methods/amf/update_rules/svd_batch_learning.hpp>
-#include <mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp>
-#include <mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp>
-
-#include <mlpack/methods/amf/init_rules/random_init.hpp>
-#include <mlpack/methods/amf/init_rules/random_acol_init.hpp>
-
-#include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
+#include "update_rules/update_rules.hpp"
+#include "init_rules/init_rules.hpp"
+#include "termination_policies/termination_policies.hpp"
 
 namespace mlpack {
 namespace amf /** Alternating Matrix Factorization **/ {

@@ -10,8 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/linear_svm/linear_svm.hpp>
-#include <ensmallen.hpp>
+#include <mlpack/methods/linear_svm.hpp>
 
 #include "catch.hpp"
 

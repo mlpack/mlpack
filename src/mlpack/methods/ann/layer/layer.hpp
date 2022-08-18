@@ -2,7 +2,8 @@
  * @file methods/ann/layer/layer.hpp
  * @author Marcus Edel
  *
- * Base class for neural network layers.
+ * Base class for neural network layers, and convenience include for all layer
+ * types.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -53,7 +54,7 @@ class Layer
 {
  public:
   //! Default constructor.
-  Layer() : 
+  Layer() :
       validOutputDimensions(false),
       training(false)
   { /* Nothing to do here */ }
@@ -336,5 +337,8 @@ class Layer
 
 } // namespace ann
 } // namespace mlpack
+
+// Now include all of the layer types.
+#include "layer_types.hpp"
 
 #endif

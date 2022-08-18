@@ -10,22 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/math/random.hpp>
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-
-#include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/init_rules/oivs_init.hpp>
-#include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/const_init.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
-#include <mlpack/methods/ann/init_rules/he_init.hpp>
-#include <mlpack/methods/ann/init_rules/lecun_normal_init.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 #include "../catch.hpp"
 

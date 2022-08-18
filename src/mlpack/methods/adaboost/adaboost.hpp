@@ -28,7 +28,7 @@
 #ifndef MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 #define MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 

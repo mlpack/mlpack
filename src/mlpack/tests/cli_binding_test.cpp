@@ -11,7 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/bindings/cli/cli_option.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

@@ -16,9 +16,6 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/dists/regression_distribution.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
-
 #include "catch.hpp"
 #include "serialization.hpp"
 #include "test_catch_tools.hpp"

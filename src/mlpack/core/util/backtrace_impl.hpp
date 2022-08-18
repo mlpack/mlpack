@@ -16,7 +16,7 @@
 
 namespace mlpack {
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
 inline Backtrace::Backtrace(int maxDepth)
 {
   frame.address = NULL;
@@ -39,7 +39,7 @@ inline Backtrace::Backtrace()
 }
 #endif
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
 inline void Backtrace::GetAddress(int maxDepth)
 {
   void* trace[maxDepth];
@@ -131,7 +131,7 @@ inline std::string Backtrace::ToString()
 {
   std::string stackStr;
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   std::ostringstream lineOss;
   std::ostringstream it;
 

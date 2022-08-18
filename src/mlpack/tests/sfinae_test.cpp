@@ -11,7 +11,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/sfinae_utility.hpp>
 
 #include "catch.hpp"
 

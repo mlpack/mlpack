@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  block_krylov_svd.hpp
   randomized_block_krylov_svd.hpp
   randomized_block_krylov_svd_impl.hpp
 )

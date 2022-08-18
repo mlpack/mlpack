@@ -13,7 +13,7 @@
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/sparse_coding/sparse_coding.hpp>
+#include <mlpack/methods/sparse_coding.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

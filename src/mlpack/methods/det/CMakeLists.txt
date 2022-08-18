@@ -2,6 +2,9 @@
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
+  # Convenience include.
+  det.hpp
+
   # the DET class
   dtree.hpp
   dtree_impl.hpp

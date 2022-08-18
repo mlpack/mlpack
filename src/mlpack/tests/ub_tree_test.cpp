@@ -10,9 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/methods/neighbor_search.hpp>
 
 #include "catch.hpp"
 

@@ -14,10 +14,7 @@
 #ifndef MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_HPP
 #define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/methods/cf/cf.hpp>
-
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
 
 #include "svdplusplus_function.hpp"
 

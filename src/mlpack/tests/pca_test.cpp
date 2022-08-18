@@ -11,11 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/pca/pca.hpp>
-#include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
-#include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
-#include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
-#include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
+#include <mlpack/methods/pca.hpp>
 
 #include "catch.hpp"
 

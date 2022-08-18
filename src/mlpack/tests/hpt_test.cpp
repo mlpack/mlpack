@@ -9,16 +9,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <mlpack/core/cv/metrics/mse.hpp>
-#include <mlpack/core/cv/metrics/accuracy.hpp>
-#include <mlpack/core/cv/simple_cv.hpp>
-#include <mlpack/core/hpt/cv_function.hpp>
-#include <mlpack/core/hpt/fixed.hpp>
-#include <mlpack/core/hpt/hpt.hpp>
-#include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
+#include <mlpack/methods/lars.hpp>
+#include <mlpack/methods/logistic_regression.hpp>
 
 #include "catch.hpp"
 

@@ -9,7 +9,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
+#include <mlpack/methods/naive_bayes.hpp>
 
 #include "catch.hpp"
 

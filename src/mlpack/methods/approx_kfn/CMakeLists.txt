@@ -1,6 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  # Convenience include.
+  approx_kfn.hpp
   # DrusillaSelect sources.
   drusilla_select.hpp
   drusilla_select_impl.hpp

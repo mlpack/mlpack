@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  interpolation_policies.hpp
   average_interpolation.hpp
   similarity_interpolation.hpp
   regression_interpolation.hpp

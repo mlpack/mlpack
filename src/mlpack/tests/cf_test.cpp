@@ -12,28 +12,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/cf/cf.hpp>
-#include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
-#include <mlpack/methods/cf/normalization/no_normalization.hpp>
-#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
-#include <mlpack/methods/cf/normalization/combined_normalization.hpp>
-#include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
-#include <mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp>
-#include <mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp>
-#include <mlpack/methods/cf/interpolation_policies/average_interpolation.hpp>
-#include <mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp>
-#include <mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp>
-
-#include <iostream>
+#include <mlpack/methods/cf.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

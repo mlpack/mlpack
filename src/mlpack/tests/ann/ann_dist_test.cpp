@@ -11,15 +11,10 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/dists/bernoulli_distribution.hpp>
-#include <mlpack/methods/ann/dists/normal_distribution.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
-
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;

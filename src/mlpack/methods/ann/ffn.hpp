@@ -13,15 +13,12 @@
 #ifndef MLPACK_METHODS_ANN_FFN_HPP
 #define MLPACK_METHODS_ANN_FFN_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 #include "forward_decls.hpp"
-#include "init_rules/network_init.hpp"
+#include "init_rules/init_rules.hpp"
+#include "loss_functions/loss_functions.hpp"
 
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/multi_layer.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 #include <ensmallen.hpp>
 
 namespace mlpack {

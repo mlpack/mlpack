@@ -10,7 +10,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/mean_shift/mean_shift.hpp>
+#include <mlpack/methods/mean_shift.hpp>
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"

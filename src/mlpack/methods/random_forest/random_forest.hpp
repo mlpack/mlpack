@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_RANDOM_FOREST_RANDOM_FOREST_HPP
 
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
-#include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 #include "bootstrap.hpp"
 
 namespace mlpack {

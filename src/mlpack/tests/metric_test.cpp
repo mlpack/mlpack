@@ -9,11 +9,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
 #include "catch.hpp"
-#include <mlpack/core/metrics/iou_metric.hpp>
-#include <mlpack/core/metrics/non_maximal_supression.hpp>
-#include <mlpack/core/metrics/bleu.hpp>
 #include "test_catch_tools.hpp"
 
 using namespace std;

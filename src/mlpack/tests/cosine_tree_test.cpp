@@ -11,7 +11,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

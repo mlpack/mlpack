@@ -9,12 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
+#undef BINDING_NAME
 #define BINDING_NAME hoeffding_tree
 
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -23,7 +20,6 @@
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/information_gain.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp>
-#include <queue>
 
 using namespace std;
 using namespace mlpack;

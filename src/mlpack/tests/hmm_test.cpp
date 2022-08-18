@@ -9,9 +9,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/hmm/hmm.hpp>
-#include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/diagonal_gmm.hpp>
+#include <mlpack/methods/hmm.hpp>
+#include <mlpack/methods/gmm.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

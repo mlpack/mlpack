@@ -11,14 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp>
-#include <mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp>
-#include <mlpack/methods/amf/init_rules/random_init.hpp>
-#include <mlpack/methods/amf/termination_policies/incomplete_incremental_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/complete_incremental_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp>
+#include <mlpack/methods/amf.hpp>
 
 #include "catch.hpp"
 

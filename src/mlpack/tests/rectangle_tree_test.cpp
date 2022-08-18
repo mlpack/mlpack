@@ -12,9 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/tree_traits.hpp>
-#include <mlpack/core/tree/rectangle_tree.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/neighbor_search.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

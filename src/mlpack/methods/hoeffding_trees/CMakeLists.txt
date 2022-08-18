@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  hoeffding_trees.hpp
   binary_numeric_split.hpp
   binary_numeric_split_impl.hpp
   binary_numeric_split_info.hpp

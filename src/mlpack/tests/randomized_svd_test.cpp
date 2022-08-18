@@ -11,7 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/randomized_svd/randomized_svd.hpp>
+#include <mlpack/methods/randomized_svd.hpp>
 
 #include "catch.hpp"
 

@@ -1,6 +1,7 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  tokenizers.hpp
   char_extract.hpp
   split_by_any_of.hpp
 )

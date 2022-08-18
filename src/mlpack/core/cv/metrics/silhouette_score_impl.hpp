@@ -81,10 +81,11 @@ arma::rowvec SilhouetteScore::SamplesScore(const DataType& X,
   return SamplesScore(distances, labels);
 }
 
-double SilhouetteScore::MeanDistanceFromCluster(const arma::colvec& distances,
-                                                const arma::Row<size_t>& labels,
-                                                const size_t& elemLabel,
-                                                const bool& sameCluster)
+inline double SilhouetteScore::MeanDistanceFromCluster(
+    const arma::colvec& distances,
+    const arma::Row<size_t>& labels,
+    const size_t& elemLabel,
+    const bool& sameCluster)
 {
   // Find indices of elements with same label as elemLabel.
   arma::uvec sameClusterIndices = arma::find(labels == elemLabel);
@@ -95,7 +96,9 @@ double SilhouetteScore::MeanDistanceFromCluster(const arma::colvec& distances,
   {
     // Return 0 if subject element is the only element in cluster.
     return 0.0;
-  } else {
+  }
+  else
+  {
     double distance = arma::accu(distances.elem(sameClusterIndices));
     distance /= (numSameCluster - sameCluster);
     return distance;

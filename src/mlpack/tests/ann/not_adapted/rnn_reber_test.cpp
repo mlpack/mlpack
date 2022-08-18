@@ -11,13 +11,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <ensmallen.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/rnn.hpp>
-#include <mlpack/methods/ann/brnn.hpp>
-#include <mlpack/core/data/binarize.hpp>
-#include <mlpack/core/math/random.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
