@@ -70,11 +70,11 @@ variety of other needs.
  2. [Dependencies](#2-dependencies)
  3. [Installing and using mlpack in C++](#4-installing-and-using-mlpack-in-c++)
  4. [Building mlpack bindings to other languages](#5-building-mlpack-bindings-to-other-languages)
-     1. [Command-line programs](#4.1-command-line-programs)
-     2. [Python bindings](#4.2-python-bindings)
-     3. [R bindings](#4.3-r-bindings)
-     4. [Julia bindings](#4.4-julia-bindings)
-     5. [Go bindings](#4.5-go-bindings)
+     1. [Command-line programs](#4i-command-line-programs)
+     2. [Python bindings](#4ii-python-bindings)
+     3. [R bindings](#4iii-r-bindings)
+     4. [Julia bindings](#4iv-julia-bindings)
+     5. [Go bindings](#4v-go-bindings)
  5. [Building mlpack's test suite](#5-building-mlpacks-test-suite)
  6. [Further resources](#6-further-resources)
 
@@ -170,7 +170,7 @@ different options; each example below shows how to configure an individual set
 of bindings, but it is of course possible to combine the options and build
 bindings for many languages at once.
 
-#### 4.1. Command-line programs
+#### 4.i. Command-line programs
 
 The command-line programs have no extra dependencies.  The set of programs that
 will be compiled is detailed and documented on the [command-line program
@@ -189,7 +189,7 @@ sudo make install
 You can use `make -j<N>`, where `N` is the number of cores on your machine, to
 build in parallel; e.g., `make -j4` will use 4 cores to build.
 
-#### 4.2. Python bindings
+#### 4.ii. Python bindings
 
 mlpack's Python bindings are available on
 [PyPI](https://pypi.org/project/mlpack) and
@@ -221,7 +221,7 @@ build in parallel; e.g., `make -j4` will use 4 cores to build.  You can also
 specify a custom Python interpreter with the CMake option
 `-DPYTHON_EXECUTABLE=/path/to/python`.
 
-#### 4.3. R bindings
+#### 4.iii. R bindings
 
 mlpack's R bindings are available as the R package
 [mlpack](https://cran.r-project.org/web/packages/mlpack/index.html) on CRAN.
@@ -258,7 +258,7 @@ Once the build is complete, a tarball can be found under the build directory in
 with a command like `install.packages(mlpack_3.4.3.tar.gz, repos=NULL,
 type='source')`.
 
-#### 4.4. Julia bindings
+#### 4.iv. Julia bindings
 
 mlpack's Julia bindings are available by installing the
 [mlpack.jl](https://github.com/mlpack/mlpack.jl) package using
@@ -289,7 +289,7 @@ JULIA_PROJECT=$PWD julia
 
 and then `using mlpack` should work.
 
-#### 4.5. Go bindings
+#### 4.v. Go bindings
 
 To build mlpack's Go bindings, ensure that Go >= 1.11.0 is installed, and that
 the Gonum package is available.
