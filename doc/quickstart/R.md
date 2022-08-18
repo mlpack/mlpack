@@ -3,8 +3,8 @@
 This page describes how you can quickly get started using mlpack from R and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [Python]( ), [Julia]( ),
-[the command line]( ), and [Go]( ).
+This quickstart guide is also available for [Python](python.md),
+[Julia](julia.md), [the command line](cli.md), and [Go](go.md).
 
 ## Installing mlpack
 
@@ -16,7 +16,8 @@ install.packages('mlpack')
 ```
 
 Building the R bindings from scratch is a little more in-depth, though.  For
-information on that, follow the instructions in the [main README]( ).
+information on that, follow the instructions in the
+[main README](../../README.md).
 
 ## Simple mlpack quickstart example
 

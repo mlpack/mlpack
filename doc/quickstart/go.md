@@ -3,8 +3,8 @@
 This page describes how you can quickly get started using mlpack from Go and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [Python]( ), [Julia]( ),
-[the command line]( ), and [R]( ).
+This quickstart guide is also available for [Python](python.md),
+[Julia](julia.md), [the command line](cli.md), and [R](R.md).
 
 ## Installing mlpack
 
@@ -17,7 +17,8 @@ cd ${GOPATH}/src/mlpack.org/v1/mlpack
 make install
 ```
 Building the Go bindings from scratch is a little more in-depth, though.  For
-information on that, follow the instructions in the [main README]( ).
+information on that, follow the instructions in the
+[main README](../../README.md).
 
 ## Simple mlpack quickstart example
 

@@ -3,8 +3,8 @@
 This page describes how you can quickly get started using mlpack from Julia and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [Python]( ), [the command line]( ),
-[R]( ), and [Go]( ).
+This quickstart guide is also available for [Python](python.md),
+[the command line](cli.md), [R](R.md), and [Go](go.md).
 
 ## Installing mlpack
 
@@ -17,7 +17,8 @@ Pkg.add("mlpack")
 ```
 
 Building the Julia bindings from scratch is a little more in-depth, though.  For
-information on that, follow the instructions in the [main README]( ).
+information on that, follow the instructions in the
+[main README](../../README.md).
 
 ## Simple quickstart example
 

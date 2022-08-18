@@ -3,8 +3,8 @@
 This page describes how you can quickly get started using mlpack from Python and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [the command line]( ), [Julia]( ),
-[R]( ), and [Go]( ).
+This quickstart guide is also available for [the command line](cli.md),
+[Julia](julia.md), [R](R.md), and [Go](go.md).
 
 ## Installing mlpack
 
@@ -27,7 +27,7 @@ docker run -it mlpack/mlpack /bin/bash
 ```
 
 Otherwise, you can build the Python bindings from scratch using the
-documentation in the [main README]( ).
+documentation in the [main README](../../README.md).
 
 ## Simple mlpack quickstart example
 
