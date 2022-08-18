@@ -1,5 +1,7 @@
 # Recurse into the bindings to do any necessary configuration there.
 add_subdirectory(bindings)
+# Recurse into methods/ to get the definitions of any bindings.
+add_subdirectory(methods)
 
 # If necessary, configure the tests.
 if (BUILD_TESTS)
