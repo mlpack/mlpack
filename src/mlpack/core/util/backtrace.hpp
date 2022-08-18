@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   #include <execinfo.h>
   #include <signal.h>
   #include <unistd.h>
@@ -77,7 +77,7 @@ namespace mlpack {
 class Backtrace
 {
  public:
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   /**
    * Constructor initialize fields and call GetAddress to retrieve addresses
    * for each frame of backtrace.
@@ -126,7 +126,7 @@ class Backtrace
   Frames frame;
   std::vector<Frames> stack;
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   // Binary File Descriptor objects.
   bfd* abfd;          // Descriptor datastructure.
   asymbol **syms;     // Symbols datastructure.

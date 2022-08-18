@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_trees.hpp>
+#include <mlpack/methods/hoeffding_trees.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp>
 
 #include "catch.hpp"

@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/regularized_svd/regularized_svd.hpp>
+#include <mlpack/methods/regularized_svd.hpp>
 
 #include "catch.hpp"
 
