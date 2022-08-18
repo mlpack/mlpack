@@ -9,6 +9,9 @@ endif ()
 # At install time, we simply install the src/ directory to include/ (though we
 # omit bindings/ and tests/).
 install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mlpack.hpp"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
