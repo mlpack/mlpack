@@ -64,7 +64,7 @@ variety of other needs.
 </div>
 <br>
 
-### 0. Contents and Quick Links
+## 0. Contents and Quick Links
 
  1. [Citation details](#1-citation-details)
  2. [Dependencies](#2-dependencies)
@@ -78,7 +78,7 @@ variety of other needs.
  5. [Building mlpack's test suite](#5-building-mlpacks-test-suite)
  6. [Further resources](#6-further-resources)
 
-### 1. Citation details
+## 1. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BibTeX format):
@@ -99,7 +99,7 @@ citation below (given in BibTeX format):
 
 Citations are beneficial for the growth and improvement of mlpack.
 
-### 2. Dependencies
+## 2. Dependencies
 
 mlpack requires a C++14 compiler and has the following additional dependencies:
 
@@ -112,7 +112,7 @@ available.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
-### 3. Installing and using mlpack in C++
+## 3. Installing and using mlpack in C++
 
 Since mlpack is a header-only library, installing just the headers for use in a
 C++ application is trivial.  From the root of the sources, configure and install
@@ -155,7 +155,7 @@ g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
 See the [examples](https://github.com/mlpack/examples) repository for some
 examples of mlpack applications in C++, with corresponding `Makefile`s.
 
-### 4. Building mlpack bindings to other languages
+## 4. Building mlpack bindings to other languages
 
 mlpack is not just a header-only library: it also comes with bindings to a
 number of other languages, this allows flexible use of mlpack's efficient
@@ -170,7 +170,7 @@ different options; each example below shows how to configure an individual set
 of bindings, but it is of course possible to combine the options and build
 bindings for many languages at once.
 
-#### 4.i. Command-line programs
+### 4.i. Command-line programs
 
 The command-line programs have no extra dependencies.  The set of programs that
 will be compiled is detailed and documented on the [command-line program
@@ -189,7 +189,7 @@ sudo make install
 You can use `make -j<N>`, where `N` is the number of cores on your machine, to
 build in parallel; e.g., `make -j4` will use 4 cores to build.
 
-#### 4.ii. Python bindings
+### 4.ii. Python bindings
 
 mlpack's Python bindings are available on
 [PyPI](https://pypi.org/project/mlpack) and
@@ -221,7 +221,7 @@ build in parallel; e.g., `make -j4` will use 4 cores to build.  You can also
 specify a custom Python interpreter with the CMake option
 `-DPYTHON_EXECUTABLE=/path/to/python`.
 
-#### 4.iii. R bindings
+### 4.iii. R bindings
 
 mlpack's R bindings are available as the R package
 [mlpack](https://cran.r-project.org/web/packages/mlpack/index.html) on CRAN.
@@ -258,7 +258,7 @@ Once the build is complete, a tarball can be found under the build directory in
 with a command like `install.packages(mlpack_3.4.3.tar.gz, repos=NULL,
 type='source')`.
 
-#### 4.iv. Julia bindings
+### 4.iv. Julia bindings
 
 mlpack's Julia bindings are available by installing the
 [mlpack.jl](https://github.com/mlpack/mlpack.jl) package using
@@ -289,7 +289,7 @@ JULIA_PROJECT=$PWD julia
 
 and then `using mlpack` should work.
 
-#### 4.v. Go bindings
+### 4.v. Go bindings
 
 To build mlpack's Go bindings, ensure that Go >= 1.11.0 is installed, and that
 the Gonum package is available.
@@ -305,7 +305,7 @@ make
 sudo make install
 ```
 
-### 5. Building mlpack's test suite
+## 5. Building mlpack's test suite
 
 mlpack contains an extensive test suite that exercises every part of the
 codebase.  It is easy to build and run the tests with CMake and CTest, as below:
@@ -321,7 +321,7 @@ If you want to test the bindings, too, you will have to adapt the CMake
 configuration command to turn on the language bindings that you want to
 test---see the previous sections for details.
 
-### 6. Further Resources
+## 6. Further Resources
 
 
 
