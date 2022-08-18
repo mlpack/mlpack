@@ -16,7 +16,7 @@
 // Just in case it hasn't been included.
 #include "prefixedoutstream.hpp"
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   #include "backtrace.hpp"
 #endif
 
@@ -222,7 +222,7 @@ PrefixedOutStream::BaseLogic(const T& val)
       destination << std::endl;
 
     // Print a backtrace, if we can.
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
     if (fatal && !ignoreInput && backtrace)
     {
       size_t nl;
@@ -354,7 +354,7 @@ PrefixedOutStream::BaseLogic(const T& val)
       destination << std::endl;
 
     // Print a backtrace, if we can.
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
     if (fatal && !ignoreInput)
     {
       size_t nl;

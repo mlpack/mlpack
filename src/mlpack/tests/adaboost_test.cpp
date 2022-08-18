@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/adaboost/adaboost.hpp>
+#include <mlpack/methods/adaboost.hpp>
 
 #include "serialization.hpp"
 #include "test_catch_tools.hpp"

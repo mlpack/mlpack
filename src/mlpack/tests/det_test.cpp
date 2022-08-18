@@ -20,7 +20,7 @@
   #define private public
 #endif
 
-#include <mlpack/methods/det/det.hpp>
+#include <mlpack/methods/det.hpp>
 
 #ifndef _WIN32
   #undef protected

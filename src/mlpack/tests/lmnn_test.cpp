@@ -13,8 +13,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/lmnn/lmnn.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/lmnn.hpp>
+#include <mlpack/methods/neighbor_search.hpp>
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"

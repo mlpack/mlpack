@@ -14,18 +14,18 @@
 #include "catch.hpp"
 #include "serialization.hpp"
 
-#include <mlpack/methods/ann/ann.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_trees.hpp>
-#include <mlpack/methods/perceptron/perceptron.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/methods/det/det.hpp>
-#include <mlpack/methods/naive_bayes/naive_bayes.hpp>
-#include <mlpack/methods/rann/rann.hpp>
-#include <mlpack/methods/lsh/lsh.hpp>
-#include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
+#include <mlpack/methods/ann.hpp>
+#include <mlpack/methods/hoeffding_trees.hpp>
+#include <mlpack/methods/perceptron.hpp>
+#include <mlpack/methods/logistic_regression.hpp>
+#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack/methods/softmax_regression.hpp>
+#include <mlpack/methods/det.hpp>
+#include <mlpack/methods/naive_bayes.hpp>
+#include <mlpack/methods/rann.hpp>
+#include <mlpack/methods/lsh.hpp>
+#include <mlpack/methods/lars.hpp>
+#include <mlpack/methods/bayesian_linear_regression.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;

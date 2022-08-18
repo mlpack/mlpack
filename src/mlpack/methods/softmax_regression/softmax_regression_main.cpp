@@ -10,9 +10,7 @@
  */
 #include <mlpack/core.hpp>
 
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
+#undef BINDING_NAME
 #define BINDING_NAME softmax_regression
 
 #include <mlpack/core/util/mlpack_main.hpp>

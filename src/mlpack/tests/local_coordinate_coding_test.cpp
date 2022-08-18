@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <mlpack/methods/local_coordinate_coding/local_coordinate_coding.hpp>
+#include <mlpack/methods/local_coordinate_coding.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
