@@ -50,8 +50,9 @@ BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
 BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
 BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
-PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
-PARAM_STRING_OUT("output_file", "File to save output into.", "o");
+// Define parameters for data.
+PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
+PARAM_MATRIX_OUT("output", "Matrix to save imputed data to.", "o");
 PARAM_STRING_IN_REQ("missing_value", "User defined missing value.", "m");
 PARAM_STRING_IN_REQ("strategy", "imputation strategy to be applied. Strategies "
     "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.",
