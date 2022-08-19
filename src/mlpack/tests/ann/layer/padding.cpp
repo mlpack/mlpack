@@ -43,7 +43,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   output.randu();
   module.Forward(input, output);
   REQUIRE(arma::accu(input) == Approx(arma::accu(output)));
-  REQUIRE(output.n_rows == (9 * 8)); // 2x5 --> 9x8
+  REQUIRE(output.n_rows == (5 * 12)); // 2x5 --> 5x12
 
   // Test the Backward function.
   delta.set_size(input.n_rows, input.n_cols);

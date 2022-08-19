@@ -130,9 +130,12 @@ ConvolutionType<
     padHTop(other.padHTop),
     useBias(other.useBias),
     padding(other.padding),
+    paddingBackward(other.paddingBackward),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
-    higherInDimensions(other.higherInDimensions)
+    higherInDimensions(other.higherInDimensions),
+    apparentWidth(other.apparentWidth),
+    apparentHeight(other.apparentHeight)
 {
   // Nothing to do.
 }
@@ -161,9 +164,12 @@ ConvolutionType<
     padHTop(std::move(other.padHTop)),
     useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
+    paddingBackward(std::move(other.paddingBackward)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
-    higherInDimensions(std::move(other.higherInDimensions))
+    higherInDimensions(std::move(other.higherInDimensions)),
+    apparentWidth(std::move(other.apparentWidth)),
+    apparentHeight(std::move(other.apparentHeight))
 {
   // Nothing to do.
 }
@@ -201,9 +207,12 @@ ConvolutionType<
     padHTop = other.padHTop;
     useBias = other.useBias;
     padding = other.padding;
+    paddingBackward = other.paddingBackward;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
     higherInDimensions = other.higherInDimensions;
+    apparentWidth = other.apparentWidth;
+    apparentHeight = other.apparentHeight;
   }
 
   return *this;
@@ -242,9 +251,12 @@ ConvolutionType<
     padHTop = std::move(other.padHTop);
     useBias = std::move(other.useBias);
     padding = std::move(other.padding);
+    paddingBackward = std::move(other.paddingBackward);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
     higherInDimensions = std::move(other.higherInDimensions);
+    apparentWidth = std::move(other.apparentWidth);
+    apparentHeight = std::move(other.apparentHeight);
   }
 
   return *this;
@@ -380,7 +392,8 @@ void ConvolutionType<
   arma::Cube<typename MatType::elem_type> dilatedMappedError;
   if (strideHeight == 1 && strideWidth == 1)
   {
-    dilatedMappedError = mappedError;
+    MakeAlias(dilatedMappedError, mappedError.memptr(),
+        mappedError.n_rows, mappedError.n_cols, mappedError.n_slices);
   }
   else
   {
@@ -407,6 +420,12 @@ void ConvolutionType<
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
 
+  MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
+      batchSize, arma::fill::zeros);
+  arma::Cube<typename MatType::elem_type> outputCube;
+  MakeAlias(outputCube, output.memptr(), apparentWidth, apparentHeight,
+      inMaps * higherInDimensions * batchSize);
+
   // See Forward() for the overall iteration strategy.
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
@@ -418,35 +437,37 @@ void ConvolutionType<
     for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
     {
       // Iterate over output maps.
-      MatType output;
       for (size_t outMap = 0; outMap < maps; ++outMap)
       {
         BackwardConvolutionRule::Convolution(
             dilatedMappedError.slice(outMap + fullOutputOffset),
             rotatedFilters.slice((outMap * inMaps) + inMap),
-            output,
+            outputCube.slice(inMap + fullInputOffset),
             1,
             1,
             1,
             1,
-            outMap > 0);
-      }
-      // If the stride width or height is greater than 1, then we have to
-      // insert columns and rows into the convolution output.
-      MatType& curGTemp = gTemp.slice(inMap + fullInputOffset);
-      if (usingPadding)
-      {
-        curGTemp = output.submat(
-            padWLeft,
-            padHTop,
-            padWLeft + gTemp.n_rows - 1,
-            padHTop + gTemp.n_cols - 1);
-      }
-      else
-      {
-        curGTemp = output;
+            true);
       }
     }
+  }
+  MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] * inMaps * higherInDimensions,
+      batchSize);
+  arma::Cube<typename MatType::elem_type> tempCube;
+  MakeAlias(tempCube, temp.memptr(), padding.OutputDimensions()[0],
+      padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  paddingBackward.Forward(output, temp);
+  if (usingPadding)
+  {
+    gTemp = tempCube.tube(
+        padWLeft,
+        padHTop,
+        padWLeft + gTemp.n_rows - 1,
+        padHTop + gTemp.n_cols - 1);
+  }
+  else
+  {
+    gTemp = tempCube;
   }
 }
 
@@ -482,6 +503,13 @@ void ConvolutionType<
       const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * batchSize, false, false);
 
+  MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
+      batchSize);
+  arma::Cube<typename MatType::elem_type> tempCube;
+  MakeAlias(tempCube, temp.memptr(), apparentWidth, apparentHeight,
+      inMaps * higherInDimensions * batchSize);
+  paddingBackward.Backward(input, usingPadding ? inputPadded : input, temp);
+
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
@@ -501,17 +529,15 @@ void ConvolutionType<
       MatType& curError = mappedError.slice(outMap + fullOutputOffset);
       for (size_t inMap = 0; inMap < inMaps; ++inMap)
       {
-        MatType output;
         GradientConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
+            tempCube.slice(inMap + fullInputOffset),
             curError,
-            output,
+            gradientTemp.slice((outMap * inMaps) + inMap),
             1,
             1,
             strideWidth,
-            strideHeight);
-
-        gradientTemp.slice((outMap * inMaps) + inMap) += output;
+            strideHeight,
+            true);
       }
 
       if (useBias)
@@ -569,6 +595,13 @@ void ConvolutionType<
     higherInDimensions *= this->inputDimensions[i];
     this->outputDimensions[i] = this->inputDimensions[i];
   }
+
+  apparentWidth = (this->outputDimensions[0] - 1) * strideWidth + kernelWidth;
+  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight + kernelHeight;
+
+  paddingBackward = ann::Padding(0, padding.OutputDimensions()[0] - apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
+  paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth, apparentHeight, inMaps * higherInDimensions });
+  paddingBackward.ComputeOutputDimensions();
 
   this->outputDimensions[2] = maps;
 }
