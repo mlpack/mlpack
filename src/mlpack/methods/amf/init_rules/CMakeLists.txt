@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  init_rules.hpp
   random_init.hpp
   random_acol_init.hpp
   average_init.hpp

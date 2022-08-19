@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  tree.hpp
   address.hpp
   ballbound.hpp
   ballbound_impl.hpp

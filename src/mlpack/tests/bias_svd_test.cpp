@@ -11,9 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/bias_svd/bias_svd.hpp>
-
-#include <ensmallen.hpp>
+#include <mlpack/methods/bias_svd.hpp>
 
 #include "catch.hpp"
 

@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  dists.hpp
   discrete_distribution.hpp
   discrete_distribution_impl.hpp
   gaussian_distribution.hpp

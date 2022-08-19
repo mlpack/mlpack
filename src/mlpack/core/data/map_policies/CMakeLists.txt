@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  map_policies.hpp
   increment_policy.hpp
   missing_policy.hpp
   datatype.hpp

@@ -12,7 +12,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/spill_tree.hpp>
 #include "catch.hpp"
 #include <stack>
 

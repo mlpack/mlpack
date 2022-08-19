@@ -8,35 +8,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <type_traits>
-
-#include <mlpack/core/cv/meta_info_extractor.hpp>
-#include <mlpack/core/cv/metrics/accuracy.hpp>
-#include <mlpack/core/cv/metrics/f1.hpp>
-#include <mlpack/core/cv/metrics/mse.hpp>
-#include <mlpack/core/cv/metrics/precision.hpp>
-#include <mlpack/core/cv/metrics/recall.hpp>
-#include <mlpack/core/cv/metrics/roc_auc_score.hpp>
-#include <mlpack/core/cv/metrics/r2_score.hpp>
-#include <mlpack/core/cv/metrics/silhouette_score.hpp>
-#include <mlpack/core/cv/simple_cv.hpp>
-#include <mlpack/core/cv/k_fold_cv.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/const_init.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/decision_tree/decision_tree.hpp>
-#include <mlpack/methods/decision_tree/information_gain.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
-#include <mlpack/methods/lars/lars.hpp>
-#include <mlpack/methods/linear_regression/linear_regression.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
-#include <mlpack/methods/perceptron/perceptron.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/data/confusion_matrix.hpp>
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann.hpp>
+#include <mlpack/methods/decision_tree.hpp>
+#include <mlpack/methods/hoeffding_trees.hpp>
+#include <mlpack/methods/lars.hpp>
+#include <mlpack/methods/linear_regression.hpp>
+#include <mlpack/methods/logistic_regression.hpp>
+#include <mlpack/methods/naive_bayes.hpp>
+#include <mlpack/methods/perceptron.hpp>
+#include <mlpack/methods/softmax_regression.hpp>
 
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"

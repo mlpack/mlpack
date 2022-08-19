@@ -13,14 +13,21 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
+
 #include "gini_gain.hpp"
 #include "information_gain.hpp"
+#include "mad_gain.hpp"
+#include "mse_gain.hpp"
+
 #include "best_binary_numeric_split.hpp"
 #include "random_binary_numeric_split.hpp"
+
 #include "all_categorical_split.hpp"
+
 #include "all_dimension_select.hpp"
-#include <type_traits>
+#include "random_dimension_select.hpp"
+#include "multiple_random_dimension_select.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -604,5 +611,8 @@ typedef DecisionTree<InformationGain,
 
 // Include implementation.
 #include "decision_tree_impl.hpp"
+
+// Also include the DecisionTreeRegressor.
+#include "decision_tree_regressor.hpp"
 
 #endif

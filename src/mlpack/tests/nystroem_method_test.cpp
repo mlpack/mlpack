@@ -11,13 +11,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/methods/nystroem_method.hpp>
 
 #include "catch.hpp"
-
-#include <mlpack/methods/nystroem_method/ordered_selection.hpp>
-#include <mlpack/methods/nystroem_method/random_selection.hpp>
-#include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
-#include <mlpack/methods/nystroem_method/nystroem_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kernel;

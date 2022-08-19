@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  metrics.hpp
   accuracy.hpp
   accuracy_impl.hpp
   average_strategy.hpp

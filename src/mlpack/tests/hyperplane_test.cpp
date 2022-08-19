@@ -9,7 +9,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/space_split/hyperplane.hpp>
 
 #include "catch.hpp"
 

@@ -12,9 +12,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
 
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
+#undef BINDING_NAME
 #define BINDING_NAME test_julia_binding
 
 #include <mlpack/core/util/mlpack_main.hpp>

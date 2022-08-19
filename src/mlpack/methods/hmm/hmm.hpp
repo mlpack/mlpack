@@ -14,8 +14,7 @@
 #ifndef MLPACK_METHODS_HMM_HMM_HPP
 #define MLPACK_METHODS_HMM_HMM_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace hmm /** Hidden Markov Models. */ {

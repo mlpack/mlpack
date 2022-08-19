@@ -10,9 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
+#include <mlpack/methods/amf.hpp>
 
 #include "catch.hpp"
 

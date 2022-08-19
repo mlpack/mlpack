@@ -13,10 +13,8 @@
 #ifndef MLPACK_TESTS_CUSTOM_LAYER_HPP
 #define MLPACK_TESTS_CUSTOM_LAYER_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann/ann.hpp>
 
 namespace mlpack {
 namespace ann {

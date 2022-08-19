@@ -8,22 +8,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <ensmallen.hpp>
-#include <ensmallen_bits/callbacks/callbacks.hpp>
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/rnn.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-//#include <mlpack/methods/ann/rbm/rbm.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/methods/lmnn/lmnn.hpp>
-#include <mlpack/methods/nca/nca.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression_impl.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
+#include <mlpack/methods/ann.hpp>
+#include <mlpack/methods/lmnn.hpp>
+#include <mlpack/methods/logistic_regression.hpp>
+#include <mlpack/methods/nca.hpp>
+#include <mlpack/methods/softmax_regression.hpp>
+#include <mlpack/methods/sparse_autoencoder.hpp>
 
 #include "catch.hpp"
 

@@ -12,10 +12,9 @@
 #ifndef MLPACK_METHODS_LMNN_LMNN_HPP
 #define MLPACK_METHODS_LMNN_LMNN_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
 
+#include "constraints.hpp"
 #include "lmnn_function.hpp"
 
 namespace mlpack {

@@ -14,8 +14,7 @@
 #ifndef MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <ensmallen.hpp>
+#include <mlpack/core.hpp>
 
 #include "logistic_regression_function.hpp"
 

@@ -11,7 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp>
+#include <mlpack/methods/block_krylov_svd.hpp>
 
 #include "catch.hpp"
 

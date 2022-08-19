@@ -10,8 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/dbscan/dbscan.hpp>
-#include <mlpack/methods/dbscan/random_point_selection.hpp>
+#include <mlpack/methods/dbscan.hpp>
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"

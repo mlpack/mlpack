@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  convolution_rules.hpp
   border_modes.hpp
   naive_convolution.hpp
   fft_convolution.hpp

@@ -9,12 +9,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
 
-#include <mlpack/methods/lsh/lsh_search.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/lsh.hpp>
+#include <mlpack/methods/neighbor_search.hpp>
 
 using namespace std;
 using namespace mlpack;

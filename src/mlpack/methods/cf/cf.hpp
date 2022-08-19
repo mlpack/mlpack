@@ -16,18 +16,15 @@
 #ifndef MLPACK_METHODS_CF_CF_HPP
 #define MLPACK_METHODS_CF_CF_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
+
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
-#include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
-#include <mlpack/methods/cf/normalization/no_normalization.hpp>
-#include <mlpack/methods/cf/decomposition_policies/nmf_method.hpp>
-#include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
-#include <mlpack/methods/cf/interpolation_policies/average_interpolation.hpp>
-#include <set>
-#include <map>
-#include <iostream>
+
+#include "normalization/normalization.hpp"
+#include "decomposition_policies/decomposition_policies.hpp"
+#include "neighbor_search_policies/neighbor_search_policies.hpp"
+#include "interpolation_policies/interpolation_policies.hpp"
 
 namespace mlpack {
 namespace cf /** Collaborative filtering. **/ {

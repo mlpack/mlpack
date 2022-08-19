@@ -3,6 +3,7 @@ add_subdirectory(metrics)
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  cv.hpp
   cv_base.hpp
   cv_base_impl.hpp
   k_fold_cv.hpp

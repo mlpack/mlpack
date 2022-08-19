@@ -12,7 +12,6 @@
 #include <mlpack/core.hpp>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
-#include <mlpack/core/data/one_hot_encoding.hpp>
 
 using namespace mlpack;
 using namespace mlpack::data;

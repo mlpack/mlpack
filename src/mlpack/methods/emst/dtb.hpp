@@ -25,13 +25,10 @@
 #ifndef MLPACK_METHODS_EMST_DTB_HPP
 #define MLPACK_METHODS_EMST_DTB_HPP
 
+#include <mlpack/core.hpp>
+
 #include "dtb_stat.hpp"
 #include "edge_pair.hpp"
-
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-
-#include <mlpack/core/tree/binary_space_tree.hpp>
 
 namespace mlpack {
 namespace emst /** Euclidean Minimum Spanning Trees. */ {

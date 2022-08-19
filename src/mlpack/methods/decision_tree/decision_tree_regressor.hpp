@@ -13,15 +13,14 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_REGRESSOR_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_REGRESSOR_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
+
 #include "mad_gain.hpp"
 #include "mse_gain.hpp"
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "random_binary_numeric_split.hpp"
 #include "all_dimension_select.hpp"
-#include <type_traits>
-
 
 namespace mlpack {
 namespace tree {

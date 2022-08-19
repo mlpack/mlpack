@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  update_rules.hpp
   nmf_als.hpp
   nmf_mult_dist.hpp
   nmf_mult_div.hpp

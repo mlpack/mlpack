@@ -11,11 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/convolution_rules.hpp>
 
 #include "../serialization.hpp"
 #include "../catch.hpp"

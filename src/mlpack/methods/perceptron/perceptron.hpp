@@ -12,11 +12,10 @@
 #ifndef MLPACK_METHODS_PERCEPTRON_PERCEPTRON_HPP
 #define MLPACK_METHODS_PERCEPTRON_PERCEPTRON_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
-#include "initialization_methods/zero_init.hpp"
-#include "initialization_methods/random_init.hpp"
-#include "learning_policies/simple_weight_update.hpp"
+#include "initialization_methods/initialization_methods.hpp"
+#include "learning_policies/learning_policies.hpp"
 
 namespace mlpack {
 namespace perceptron {

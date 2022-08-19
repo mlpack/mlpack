@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  normalization.hpp
   no_normalization.hpp
   overall_mean_normalization.hpp
   user_mean_normalization.hpp

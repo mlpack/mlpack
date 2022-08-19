@@ -14,7 +14,7 @@
 
 #include "log.hpp"
 
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
   #include "backtrace.hpp"
 #endif
 
@@ -26,7 +26,7 @@ inline void Log::Assert(bool condition, const std::string& message)
 {
   if (!condition)
   {
-#ifdef HAS_BFD_DL
+#ifdef MLPACK_HAS_BFD_DL
     Backtrace bt;
 
     Log::Debug << bt.ToString();

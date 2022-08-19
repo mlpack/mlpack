@@ -9,11 +9,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/neighbor_search/unmap.hpp>
+#include <mlpack/methods/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/ns_model.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
-#include <mlpack/core/tree/example_tree.hpp>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
 

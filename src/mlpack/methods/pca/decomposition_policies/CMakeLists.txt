@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  decomposition_policies.hpp
   exact_svd_method.hpp
   randomized_block_krylov_method.hpp
   randomized_svd_method.hpp

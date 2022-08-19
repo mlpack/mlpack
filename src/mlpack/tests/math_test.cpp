@@ -9,9 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core/math/clamp.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/math/range.hpp>
+#include <mlpack/core.hpp>
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
 

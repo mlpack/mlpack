@@ -14,6 +14,7 @@
 
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/hpt/deduce_hp_types.hpp>
+#include <mlpack/core/hpt/cv_function.hpp>
 #include <ensmallen.hpp>
 
 namespace mlpack {

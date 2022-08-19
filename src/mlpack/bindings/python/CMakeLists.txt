@@ -157,9 +157,10 @@ get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 set (CYTHON_INCLDIRS "${CYTHON_INCLUDE_DIRECTORIES}")
 
 # By default, Python appears to compile with -DNDEBUG, but if we are in debug
-# mode we don't want that.  We also want to disable HAS_BFD_DL if it is set.
+# mode we don't want that.  We also want to disable MLPACK_HAS_BFD_DL if it is
+# set.
 if (DEBUG)
-  set(DISABLE_CFLAGS "NDEBUG;HAS_BFD_DL" PARENT_SCOPE)
+  set(DISABLE_CFLAGS "NDEBUG;MLPACK_HAS_BFD_DL" PARENT_SCOPE)
 endif ()
 
 add_custom_target(python ALL DEPENDS mlpack)

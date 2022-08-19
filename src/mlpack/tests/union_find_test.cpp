@@ -9,9 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/methods/emst/union_find.hpp>
-
 #include <mlpack/core.hpp>
+#include <mlpack/methods/emst/union_find.hpp>
 #include "catch.hpp"
 
 using namespace mlpack;

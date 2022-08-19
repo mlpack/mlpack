@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
 
 // Classes to test.
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
