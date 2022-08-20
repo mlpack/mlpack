@@ -136,9 +136,12 @@ GroupedConvolutionType<
     padHTop(other.padHTop),
     useBias(other.useBias),
     padding(other.padding),
+    paddingBackward(other.paddingBackward),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
-    higherInDimensions(other.higherInDimensions)
+    higherInDimensions(other.higherInDimensions),
+    apparentWidth(other.apparentWidth),
+    apparentHeight(other.apparentHeight)
 {
   // Nothing to do.
 }
@@ -168,9 +171,12 @@ GroupedConvolutionType<
     padHTop(std::move(other.padHTop)),
     useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
+    paddingBackward(std::move(other.paddingBackward)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
-    higherInDimensions(std::move(other.higherInDimensions))
+    higherInDimensions(std::move(other.higherInDimensions)),
+    apparentWidth(std::move(other.apparentWidth)),
+    apparentHeight(std::move(other.apparentHeight))
 {
   // Nothing to do.
 }
@@ -209,9 +215,12 @@ GroupedConvolutionType<
     padHTop = other.padHTop;
     useBias = other.useBias;
     padding = other.padding;
+    paddingBackward = other.paddingBackward;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
     higherInDimensions = other.higherInDimensions;
+    apparentWidth = other.apparentWidth;
+    apparentHeight = other.apparentHeight;
   }
 
   return *this;
@@ -251,9 +260,12 @@ GroupedConvolutionType<
     padHTop = std::move(other.padHTop);
     useBias = std::move(other.useBias);
     padding = std::move(other.padding);
+    paddingBackward = std::move(other.paddingBackward);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
     higherInDimensions = std::move(other.higherInDimensions);
+    apparentWidth = std::move(other.apparentWidth);
+    apparentHeight = std::move(other.apparentHeight);
   }
 
   return *this;
@@ -402,7 +414,8 @@ void GroupedConvolutionType<
   arma::Cube<typename MatType::elem_type> dilatedMappedError;
   if (strideHeight == 1 && strideWidth == 1)
   {
-    dilatedMappedError = mappedError;
+    MakeAlias(dilatedMappedError, mappedError.memptr(),
+        mappedError.n_rows, mappedError.n_cols, mappedError.n_slices);
   }
   else
   {
@@ -423,6 +436,12 @@ void GroupedConvolutionType<
     }
   }
 
+  MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
+      batchSize, arma::fill::zeros);
+  arma::Cube<typename MatType::elem_type> outputCube;
+  MakeAlias(outputCube, output.memptr(), apparentWidth, apparentHeight,
+      inMaps * higherInDimensions * batchSize);
+
   size_t inGroupSize = inMaps / groups;
   size_t outGroupSize = maps / groups;
 
@@ -432,45 +451,46 @@ void GroupedConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for collapse(3)
     for (size_t group = 0; group < groups; group++)
     {
       // Iterate over input maps.
       for (size_t inMap = 0; inMap < inGroupSize; ++inMap)
       {
-        MatType output;
         // Iterate over output maps.
-        for (size_t outMap = group * outGroupSize; 
-            outMap < ((group + 1) * outGroupSize); ++outMap)
+        for (size_t outMap = 0; outMap < outGroupSize; ++outMap)
         {
           BackwardConvolutionRule::Convolution(
-              dilatedMappedError.slice(outMap + fullOutputOffset),
-              rotatedFilters.slice((outMap * inGroupSize) + inMap),
-              output,
+              dilatedMappedError.slice(group * outGroupSize + outMap + fullOutputOffset),
+              rotatedFilters.slice(((group * outGroupSize + outMap) * inGroupSize) + inMap),
+              outputCube.slice((group * inGroupSize) + inMap + fullInputOffset),
               1,
               1,
               1,
               1,
-              outMap > group * outGroupSize);
-        }
-        // If the stride width or height is greater than 1, then we have to
-        // insert columns and rows into the convolution output.
-        MatType& curGTemp = gTemp.slice((group * inGroupSize) + inMap +
-            fullInputOffset);
-        if (usingPadding)
-        {
-          curGTemp = output.submat(
-              padWLeft,
-              padHTop,
-              padWLeft + gTemp.n_rows - 1,
-              padHTop + gTemp.n_cols - 1);
-        }
-        else
-        {
-          curGTemp = output;
+              true);
         }
       }
     }
+  }
+
+  MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] * inMaps * higherInDimensions,
+      batchSize);
+  arma::Cube<typename MatType::elem_type> tempCube;
+  MakeAlias(tempCube, temp.memptr(), padding.OutputDimensions()[0],
+      padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  paddingBackward.Forward(output, temp);
+  if (usingPadding)
+  {
+    gTemp = tempCube.tube(
+        padWLeft,
+        padHTop,
+        padWLeft + gTemp.n_rows - 1,
+        padHTop + gTemp.n_cols - 1);
+  }
+  else
+  {
+    gTemp = tempCube;
   }
 }
 
@@ -506,6 +526,13 @@ void GroupedConvolutionType<
       const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * batchSize, false, false);
 
+  MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
+      batchSize);
+  arma::Cube<typename MatType::elem_type> tempCube;
+  MakeAlias(tempCube, temp.memptr(), apparentWidth, apparentHeight,
+      inMaps * higherInDimensions * batchSize);
+  paddingBackward.Backward(input, usingPadding ? inputPadded : input, temp);
+
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
@@ -535,16 +562,14 @@ void GroupedConvolutionType<
         {
           MatType output;
           GradientConvolutionRule::Convolution(
-              inputTemp.slice((group * inGroupSize) + inMap + fullInputOffset),
+              tempCube.slice((group * inGroupSize) + inMap + fullInputOffset),
               curError,
-              output,
+              gradientTemp.slice(((group * outGroupSize + outMap) * inGroupSize) + inMap),
               1,
               1,
               strideWidth,
-              strideHeight);
-
-          gradientTemp.slice(((group * outGroupSize + outMap) *
-              inGroupSize) + inMap) += output;
+              strideHeight,
+              true);
         }
 
         if (useBias)
@@ -615,6 +640,13 @@ void GroupedConvolutionType<
     higherInDimensions *= this->inputDimensions[i];
     this->outputDimensions[i] = this->inputDimensions[i];
   }
+
+  apparentWidth = (this->outputDimensions[0] - 1) * strideWidth + kernelWidth;
+  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight + kernelHeight;
+
+  paddingBackward = ann::Padding(0, padding.OutputDimensions()[0] - apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
+  paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth, apparentHeight, inMaps * higherInDimensions });
+  paddingBackward.ComputeOutputDimensions();
 
   this->outputDimensions[2] = maps;
 }

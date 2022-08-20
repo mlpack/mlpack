@@ -433,7 +433,7 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     // Iterate over input maps.
-    #pragma omp parallel for
+    #pragma omp parallel for collapse(2)
     for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
     {
       // Iterate over output maps.
@@ -451,8 +451,8 @@ void ConvolutionType<
       }
     }
   }
-  MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] * inMaps * higherInDimensions,
-      batchSize);
+  MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
+      inMaps * higherInDimensions, batchSize);
   arma::Cube<typename MatType::elem_type> tempCube;
   MakeAlias(tempCube, temp.memptr(), padding.OutputDimensions()[0],
       padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
@@ -597,10 +597,13 @@ void ConvolutionType<
   }
 
   apparentWidth = (this->outputDimensions[0] - 1) * strideWidth + kernelWidth;
-  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight + kernelHeight;
+  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
+      kernelHeight;
 
-  paddingBackward = ann::Padding(0, padding.OutputDimensions()[0] - apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
-  paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth, apparentHeight, inMaps * higherInDimensions });
+  paddingBackward = ann::Padding(0, padding.OutputDimensions()[0] -
+      apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
+  paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
+      apparentHeight, inMaps * higherInDimensions });
   paddingBackward.ComputeOutputDimensions();
 
   this->outputDimensions[2] = maps;
