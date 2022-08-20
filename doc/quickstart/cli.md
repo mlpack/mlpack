@@ -4,8 +4,8 @@ This page describes how you can quickly get started using mlpack from the
 command-line and gives a few examples of usage, and pointers to deeper
 documentation.
 
-This quickstart guide is also available for [Python](python.md), [R](R.md),
-[Julia](julia.md), and [Go](go.md).
+This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
+[R](R.md), [Julia](julia.md), and [Go](go.md).
 
 ## Installing mlpack
 
@@ -164,11 +164,7 @@ Out for Justice (1991)
 Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
 Schindler's List (1993)
 ```
-## Next steps wtih mlpack
-
-For more information on what mlpack does, see the [mlpack
-homepage](https://www.mlpack.org).  Next, let's go through another example for
-providing movie recommendations with mlpack.
+## Next steps with mlpack
 
 Now that you have done some simple work with mlpack, you have seen how it can
 easily plug into a data science production workflow for the command line.  But
@@ -180,5 +176,5 @@ of commands and full documentation for each can be found on the following page:
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
-write C++.  To get started learning about mlpack in C++, the [C++ quickstart]( )
-is a good place to start.
+write C++.  To get started learning about mlpack in C++, the
+[C++ quickstart](cpp.md) is a good place to start.

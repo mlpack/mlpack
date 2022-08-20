@@ -40,9 +40,10 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
 
 ***Quick links:***
 
- - Quickstart guides: [C++]( ), [CLI](doc/quickstart/cli.md),
-   [Python](doc/quickstart/python.md), [R](doc/quickstart/R.md),
-   [Julia](doc/quickstart/julia.md), [Go](doc/quickstart/go.md)
+ - Quickstart guides: [C++](doc/quickstart/cpp.md),
+   [CLI](doc/quickstart/cli.md), [Python](doc/quickstart/python.md),
+   [R](doc/quickstart/R.md), [Julia](doc/quickstart/julia.md),
+   [Go](doc/quickstart/go.md)
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack documentation](https://www.mlpack.org/docs.html)
  - [Examples repository](https://github.com/mlpack/examples/)
@@ -154,8 +155,9 @@ OpenMP support (recommended) and optimizations, compile like this:
 g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
 ```
 
-See the [examples](https://github.com/mlpack/examples) repository for some
-examples of mlpack applications in C++, with corresponding `Makefile`s.
+See the [C++ quickstart](doc/quickstart/cpp.md) and the
+[examples](https://github.com/mlpack/examples) repository for some examples of
+mlpack applications in C++, with corresponding `Makefile`s.
 
 ## 4. Building mlpack bindings to other languages
 

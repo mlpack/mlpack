@@ -3,7 +3,7 @@
 This page describes how you can quickly get started using mlpack from Julia and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [Python](python.md),
+This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
 [the command line](cli.md), [R](R.md), and [Go](go.md).
 
 ## Installing mlpack
@@ -159,4 +159,4 @@ functions; every function comes with comprehensive documentation.
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
 write C++ (or perhaps CxxWrap.jl).  To get started learning about mlpack in C++,
-the [C++ quickstart]( ) would be a good place to start.
+the [C++ quickstart](cpp.md) would be a good place to start.

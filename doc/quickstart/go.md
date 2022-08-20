@@ -3,7 +3,7 @@
 This page describes how you can quickly get started using mlpack from Go and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [Python](python.md),
+This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
 [Julia](julia.md), [the command line](cli.md), and [R](R.md).
 
 ## Installing mlpack
@@ -197,5 +197,5 @@ function comes with comprehensive documentation.
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
-write C++.  To get started learning about mlpack in C++, the [C++ quickstart]( )
-is a good resource to visit next.
+write C++.  To get started learning about mlpack in C++, the
+[C++ quickstart](cpp.md) is a good resource to visit next.

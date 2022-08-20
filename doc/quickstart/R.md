@@ -3,7 +3,7 @@
 This page describes how you can quickly get started using mlpack from R and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for [Python](python.md),
+This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
 [Julia](julia.md), [the command line](cli.md), and [Go](go.md).
 
 ## Installing mlpack
@@ -159,4 +159,4 @@ page:
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to
 write C++ (or perhaps Rcpp).  To get started learning about mlpack in C++, a
-good starting point is the [C++ quickstart guide]( ).
+good starting point is the [C++ quickstart guide](cpp.md).
