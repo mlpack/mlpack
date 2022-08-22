@@ -211,6 +211,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     timers.Stop("imputation");
     
     if (params.Has("output"))
-        params.Get<arma::mat>("output") = std::move(dataset);
+        params.Get<arma::mat>("output") = std::move(output);
   }
 }
