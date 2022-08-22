@@ -69,8 +69,8 @@ using namespace data;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  const string inputFile = params.Get<string>("input_file");
-  const string outputFile = params.Get<string>("output_file");
+  arma::mat& input = params.Get<arma::mat>("input");
+  arma::mat output;
   const string missingValue = params.Get<string>("missing_value");
   const double customValue = params.Get<double>("custom_value");
   const size_t dimension = (size_t) params.Get<int>("dimension");
@@ -98,15 +98,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "custom imputation value when using 'custom' imputation strategy");
   }
 
-  arma::mat input;
   // Policy tells how the DatasetMapper should map the values.
   std::set<std::string> missingSet;
   missingSet.insert(missingValue);
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
   DatasetMapper<MissingPolicy> info(policy);
-
-  Load(inputFile, input, info, true, true);
 
   // print how many mapping exist in each dimensions
   std::vector<size_t> dirtyDimensions;
@@ -212,11 +209,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       }
     }
     timers.Stop("imputation");
-
-    if (!outputFile.empty())
-    {
-      Log::Info << "Saving results to '" << outputFile << "'." << endl;
-      Save(outputFile, input, false);
-    }
+    
+    if (params.Has("output"))
+        params.Get<arma::mat>("output") = std::move(dataset);
   }
 }
