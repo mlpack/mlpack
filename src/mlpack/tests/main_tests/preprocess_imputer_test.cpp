@@ -44,8 +44,7 @@ TEST_CASE_METHOD(
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check for mean strategy.
   SetInputParam("strategy", (std::string) "mean");
@@ -63,8 +62,7 @@ TEST_CASE_METHOD(
   // Check for median strategy.
   SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
   SetInputParam("strategy", (std::string) "median");
 
   RUN_BINDING();
@@ -80,8 +78,7 @@ TEST_CASE_METHOD(
   // Check for custom strategy.
   SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
   SetInputParam("strategy", (std::string) "custom");
   SetInputParam("custom_value", (double) 75.12);
 
@@ -123,8 +120,7 @@ TEST_CASE_METHOD(
   SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   RUN_BINDING();
 
