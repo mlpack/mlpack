@@ -42,10 +42,9 @@ TEST_CASE_METHOD(
   size_t inputSize = inputData.n_cols;
 
   // Input custom data points and labels.
-  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   // Check for mean strategy.
   SetInputParam("strategy", (std::string) "mean");
@@ -53,7 +52,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  arma::mat outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -61,16 +60,15 @@ TEST_CASE_METHOD(
   ResetSettings();
 
   // Check for median strategy.
-  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
   SetInputParam("strategy", (std::string) "median");
 
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  arma::mat outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -78,17 +76,16 @@ TEST_CASE_METHOD(
   ResetSettings();
 
   // Check for custom strategy.
-  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
   SetInputParam("strategy", (std::string) "custom");
   SetInputParam("custom_value", (double) 75.12);
 
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  arma::mat outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -120,17 +117,15 @@ TEST_CASE_METHOD(
   }
 
   // Input custom data points and labels.
-  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
-  SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
 
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  arma::mat outputData;
-  data::Load(params.Get<std::string>("output_file"), outputData);
+  arma::mat outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols + countNaN == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -147,7 +142,7 @@ TEST_CASE_METHOD(
   data::Load("preprocess_imputer_test.csv", inputData);
 
   // Input custom data points and labels.
-  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("input", std::move(inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "notmean"); // Invalid.
 
