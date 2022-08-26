@@ -62,7 +62,7 @@ add_all_bindings(sparse_coding sparse_coding "transformations")
 # few methods.
 add_category(adaboost "classification")
 group_bindings(adaboost adaboost "train;classify;probabilities")
-add_python_wrapper(adaboost)
+add_python_wrapper(adaboost adaboost)
 
 add_cli_executable(adaboost adaboost)
 add_julia_binding(adaboost adaboost)
@@ -74,7 +74,7 @@ add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python")
 # functionality in a few methods.
 add_category(linear_regression "regression")
 group_bindings(linear_regression linear_regression "train;predict")
-add_python_wrapper(linear_regression)
+add_python_wrapper(linear_regression linear_regression)
 
 add_cli_executable(linear_regression linear_regression)
 add_julia_binding(linear_regression linear_regression)

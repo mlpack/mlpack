@@ -3,7 +3,7 @@ macro (not_found_return message)
   macro (add_python_binding directory name)
     # Do nothing.
   endmacro ()
-  macro (add_python_wrapper group_name)
+  macro (add_python_wrapper directory group_name)
     # Do nothing.
   endmacro ()
 
@@ -274,10 +274,10 @@ endmacro()
 
 # this macro creates .so files for all methods in the given group.
 # if using add_python_wrapper(), then must group bindings using group_bindings()
-macro (add_python_wrapper group_name)
+macro (add_python_wrapper directory group_name)
 
   foreach (method ${${group_name}_VALID_METHODS})
-    add_python_binding("${group_name}_${method}")
+    add_python_binding(${directory} "${group_name}_${method}")
   endforeach()
 
   if(EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
