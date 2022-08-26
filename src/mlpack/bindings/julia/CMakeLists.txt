@@ -200,7 +200,7 @@ if (BUILD_JULIA_BINDINGS)
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
           -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bin÷dings/julia/generate_jl.cpp.in
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
 
   add_executable(generate_jl_${name}
