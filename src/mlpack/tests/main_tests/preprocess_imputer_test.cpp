@@ -60,7 +60,7 @@ TEST_CASE_METHOD(
   ResetSettings();
 
   // Check for median strategy.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
   REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
   SetInputParam("strategy", (std::string) "median");
@@ -76,7 +76,7 @@ TEST_CASE_METHOD(
   ResetSettings();
 
   // Check for custom strategy.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
   REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
   SetInputParam("strategy", (std::string) "custom");
@@ -117,7 +117,7 @@ TEST_CASE_METHOD(
   }
 
   // Input custom data points and labels.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
   REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
@@ -142,7 +142,7 @@ TEST_CASE_METHOD(
   data::Load("preprocess_imputer_test.csv", inputData);
 
   // Input custom data points and labels.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "notmean"); // Invalid.
 
