@@ -52,7 +52,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  arma::mat outputData = params.Get<arma::mat>("output");
+  outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -68,7 +68,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  arma::mat outputData = params.Get<arma::mat>("output");
+  outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -85,7 +85,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  arma::mat outputData = params.Get<arma::mat>("output");
+  outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
