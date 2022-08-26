@@ -336,7 +336,7 @@ if (BUILD_R_BINDINGS)
 
   # Append content to the list of models.
   set_property(GLOBAL APPEND PROPERTY R_MODELS
-      ${CMAKE_CURRENT_SOURCE_DIR}/${dorectory}/${name}_main.cpp)
+      ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp)
 
   # 1. Generate ${name}.cpp.
   add_custom_command(OUTPUT
@@ -439,9 +439,7 @@ macro (post_r_setup)
 
       # Collect path of all source files and append to ${R_SRC}.
       if ("${r_src_file}" MATCHES ".cpp" AND
-          NOT "${r_src_file}" MATCHES "main.cpp" AND
-          # Note: this implementation of MVU does not work.  See #189.
-          NOT "${r_src_file}" MATCHES "mvu")
+          NOT "${r_src_file}" MATCHES "main.cpp")
         string(APPEND R_SRC "#include <mlpack/${r_src_file}>\n")
       endif()
 
