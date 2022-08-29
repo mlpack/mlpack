@@ -1,7 +1,7 @@
 macro (not_found_return message)
   message(STATUS "${message}")
 
-  macro (add_markdown_docs name languages category)
+  macro (add_markdown_docs directory name languages category)
     # Do nothing.
   endmacro()
 
@@ -60,7 +60,7 @@ endforeach()
 # 'add_markdown_docs(knn, "cli;python;julia")', for instance.
 # See the file 'Categories.cmake' for valid categories that can be used
 # by the macro.
-macro (add_markdown_docs name languages wrappers)
+macro (add_markdown_docs directory name languages wrappers)
 
   set(category ${${name}_CATEGORY})
 
@@ -121,7 +121,7 @@ macro (add_markdown_docs name languages wrappers)
   endif()
 
   set(INCLUDE_MAIN_FILES
-      "${INCLUDE_MAIN_FILES}\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp>")
+      "${INCLUDE_MAIN_FILES}\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp>")
 
   # Do the actual file configuration.
   set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
