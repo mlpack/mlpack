@@ -120,7 +120,7 @@ TEST_CASE_METHOD(
   SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == inputData.n_cols);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == inputData.n_cols);
 
   RUN_BINDING();
 
