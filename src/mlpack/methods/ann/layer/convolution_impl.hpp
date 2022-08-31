@@ -433,16 +433,17 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     // Iterate over input maps.
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for
     for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
     {
       // Iterate over output maps.
+      MatType& curG = outputCube.slice(inMap + fullInputOffset);
       for (size_t outMap = 0; outMap < maps; ++outMap)
       {
         BackwardConvolutionRule::Convolution(
             dilatedMappedError.slice(outMap + fullOutputOffset),
             rotatedFilters.slice((outMap * inMaps) + inMap),
-            outputCube.slice(inMap + fullInputOffset),
+            curG,
             1,
             1,
             1,
