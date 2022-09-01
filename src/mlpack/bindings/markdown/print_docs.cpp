@@ -19,8 +19,12 @@
 #include "replace_all_copy.hpp"
 
 // Make sure that this is defined.
-#ifndef DOXYGEN_PREFIX
-#define DOXYGEN_PREFIX "https://mlpack.org/doc/mlpack-git/doxygen/"
+#ifndef SRC_PREFIX
+#define SRC_PREFIX "https://github.com/mlpack/mlpack/blob/master/src/"
+#endif
+
+#ifndef DOC_PREFIX
+#define DOC_PREFIX "https://github.com/mlpack/mlpack/blob/master/doc/"
 #endif
 
 using namespace std;
@@ -264,10 +268,14 @@ void PrintDocs(const string& bindingName,
           cout << doc.seeAlso[j].first;
         cout << "](";
 
-        // We need special handling of Doxygen information.
-        if (doc.seeAlso[j].second.substr(0, 8) == "@doxygen")
+        // We need special handling of source links.
+        if (doc.seeAlso[j].second.substr(0, 4) == "@src")
         {
-          cout << DOXYGEN_PREFIX << doc.seeAlso[j].second.substr(9);
+          cout << SRC_PREFIX << doc.seeAlso[j].second.substr(5);
+        }
+        else if (doc.seeAlso[j].second.substr(0, 4) == "@doc")
+        {
+          cout << DOC_PREFIX << doc.seeAlso[j].second.substr(5);
         }
         else if (doc.seeAlso[j].second[0] == '#')
         {

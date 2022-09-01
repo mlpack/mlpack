@@ -77,7 +77,7 @@ BINDING_SEE_ALSO("A density-based algorithm for discovering clusters in large "
         "spatial databases with noise (pdf)",
         "http://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf");
 BINDING_SEE_ALSO("mlpack::dbscan::DBSCAN class documentation",
-        "@doxygen/classmlpack_1_1dbscan_1_1DBSCAN.html");
+        "@src/mlpack/methods/dbscan/dbscan.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
 PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "

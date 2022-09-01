@@ -75,12 +75,13 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("Range search tutorial", "@doc/tutorials/range_search.md");
 BINDING_SEE_ALSO("Range searching on Wikipedia",
         "https://en.wikipedia.org/wiki/Range_searching");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
         "http://proceedings.mlr.press/v28/curtin13.pdf");
 BINDING_SEE_ALSO("mlpack::range::RangeSearch C++ class documentation",
-        "@doxygen/classmlpack_1_1range_1_1RangeSearch.html");
+        "@src/mlpack/methods/range_search/range_search.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

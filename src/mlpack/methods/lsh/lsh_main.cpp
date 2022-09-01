@@ -74,7 +74,7 @@ BINDING_SEE_ALSO("Locality-sensitive hashing on Wikipedia",
 BINDING_SEE_ALSO("Locality-sensitive hashing scheme based on p-stable"
         "  distributions(pdf)", "http://mlpack.org/papers/lsh.pdf");
 BINDING_SEE_ALSO("mlpack::neighbor::LSHSearch C++ class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1LSHSearch.html");
+        "@src/mlpack/methods/lsh/lsh.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

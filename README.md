@@ -117,6 +117,8 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ## 3. Installing and using mlpack in C++
 
+*See also the [C++ quickstart](doc/quickstart/cpp.md).*
+
 Since mlpack is a header-only library, installing just the headers for use in a
 C++ application is trivial.  From the root of the sources, configure and install
 in the standard CMake way:
@@ -176,6 +178,8 @@ bindings for many languages at once.
 
 ### 4.i. Command-line programs
 
+*See also the [command-line quickstart](doc/quickstart/cli.md).*
+
 The command-line programs have no extra dependencies.  The set of programs that
 will be compiled is detailed and documented on the [command-line program
 documentation page](https://www.mlpack.org/doc/stable/cli_documentation.html).
@@ -194,6 +198,8 @@ You can use `make -j<N>`, where `N` is the number of cores on your machine, to
 build in parallel; e.g., `make -j4` will use 4 cores to build.
 
 ### 4.ii. Python bindings
+
+*See also the [Python quickstart](doc/quickstart/python.md).*
 
 mlpack's Python bindings are available on
 [PyPI](https://pypi.org/project/mlpack) and
@@ -226,6 +232,8 @@ specify a custom Python interpreter with the CMake option
 `-DPYTHON_EXECUTABLE=/path/to/python`.
 
 ### 4.iii. R bindings
+
+*See also the [R quickstart](doc/quickstart/R.md).*
 
 mlpack's R bindings are available as the R package
 [mlpack](https://cran.r-project.org/web/packages/mlpack/index.html) on CRAN.
@@ -264,6 +272,8 @@ type='source')`.
 
 ### 4.iv. Julia bindings
 
+*See also the [Julia quickstart](doc/quickstart/julia.md).*
+
 mlpack's Julia bindings are available by installing the
 [mlpack.jl](https://github.com/mlpack/mlpack.jl) package using
 `Pkg.add("mlpack.jl")`.  The process of building, packaging, and distributing
@@ -295,12 +305,21 @@ and then `using mlpack` should work.
 
 ### 4.v. Go bindings
 
-To build mlpack's Go bindings, ensure that Go >= 1.11.0 is installed, and that
-the Gonum package is available.
-***TODO: how do you install these?***
+*See also the [Go quickstart](doc/quickstart/go.md).*
 
-Then, configuring and building the bindings can be done by running the following
-commands from the root of the mlpack sources:
+To build mlpack's Go bindings, ensure that Go >= 1.11.0 is installed, and that
+the Gonum package is available.  You can use `go get` to install mlpack for Go:
+
+```sh
+go get -u -d mlpack.org/v1/mlpack
+cd ${GOPATH}/src/mlpack.org/v1/mlpack
+make install
+```
+
+The process of building the Go bindings by hand is a little tedious, so
+following the steps above is recommended.  However, if you wish to build the Go
+bindings by hand anyway, you can do this by running the following commands from
+the root of the mlpack sources:
 
 ```sh
 mkdir build && cd build/
@@ -327,81 +346,37 @@ test---see the previous sections for details.
 
 ## 6. Further Resources
 
+More documentation is available for both users and developers.
 
+***User documentation***:
 
-****
-Tutorials to keep for users:
+ - [File formats and loading data in mlpack](doc/user/formats.md)
+ - [Matrices in mlpack](doc/user/matrices.md)
+ - [Cross-Validation](doc/user/cv.md)
+ - [Hyper-parameter Tuning](doc/user/hpt.md)
+ - [Building mlpack from source on Windows](doc/user/build_windows.md)
+ - [Sample C++ ML App for Windows](doc/user/sample_ml_app.md)
+ - [Examples repository](https://github.com/mlpack/examples/)
+ - Method-specific tutorials:
+    - [Alternating Matrix Factorization tutorial](doc/tutorials/amf.md)
+    - [
 
-  formats.hpp (fine as-is)
-  build_windows.hpp (needs adaptation)
-  cv.hpp (as-is)
-  hpt.hpp (as-is)
-  sample_ml_app.hpp (pass through and adapt)
+***Developer documentation***:
 
-  needs earlier links:
-    cli_quickstart.hpp
-    go_quickstart.hpp
-    julia_quickstart.hpp
-    python_quickstart.hpp
-    r_quickstart.hpp
-
-Developer tutorials:
-
-  timer.hpp
-  version.hpp
-  policies/
-  bindings.hpp (but it's advanced)
-  iodoc.hpp (also advanced, needs adaptation)
-
-remove sample.hpp, and point instead towards examples/ repository
-****
-
-[mlpack on Github](https://www.github.com/mlpack/mlpack/)
-
-Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
-
-If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
-and `/usr/local/bin/`, make sure you have root privileges (or write permissions
-to those three directories), and simply type
-
-    $ make install
-
-You can now run the executables by name; the mlpack headers are found in
-    `/usr/local/include/mlpack/`
-and if Python bindings were built, you can access them with the `mlpack`
-package in Python.
-
-The documentation given here is only a fraction of the available documentation
-for mlpack.  If doxygen is installed, you can type `make doc` to build the
-documentation locally.  Alternately, up-to-date documentation is available for
-older versions of mlpack:
-
-  - [mlpack homepage](https://www.mlpack.org/)
-  - [mlpack documentation](https://www.mlpack.org/docs.html)
-  - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
-  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+ - [mlpack versions in code](doc/developer/version.md)
+ - [Writing an mlpack binding](doc/devloper/iodoc.md)
+ - [mlpack Timers](doc/developer/timer.md)
+ - [mlpack automatic bindings to other languages](doc/developer/bindings.md)
+ - [The ElemType policy in mlpack](doc/developer/elemtype.md)
+ - [The KernelType policy in mlpack](doc/developer/kerneltype.md)
+ - [The MetricType policy in mlpack](doc/developer/metrictype.md)
+ - [The TreeType policy in mlpack](doc/developer/treetype.md)
 
 To learn about the development goals of mlpack in the short- and medium-term
 future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
-   (see also [mlpack help](https://www.mlpack.org/questions.html))
-
-If you find a bug in mlpack or have any problems, numerous routes are available
-for help.
-
-Github is used for bug tracking, and can be found at
-https://github.com/mlpack/mlpack/issues.
-It is easy to register an account and file a bug there, and the mlpack
-development team will try to quickly resolve your issue.
-
-In addition, mailing lists are available.  The mlpack discussion list is
-available at
-
-  [mlpack discussion list](http://lists.mlpack.org/mailman/listinfo/mlpack)
-
-and the git commit list is available at
-
-  [commit list](http://lists.mlpack.org/mailman/listinfo/mlpack-git)
-
-Lastly, the IRC channel `#mlpack` on Freenode can be used to get help.
+If you have problems, find a bug, or need help, you can try visiting
+the [mlpack help](https://www.mlpack.org/questions.html) page, or [mlpack on
+Github](https://www.github.com/mlpack/mlpack/).  Alternately, mlpack help can be
+found on Matrix at `#mlpack`; see also the
+[community](https://www.mlpack.org/community.html) page.

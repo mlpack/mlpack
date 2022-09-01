@@ -98,7 +98,7 @@ BINDING_SEE_ALSO("Decision trees on Wikipedia",
 BINDING_SEE_ALSO("Induction of Decision Trees (pdf)",
         "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf");
 BINDING_SEE_ALSO("mlpack::tree::DecisionTree class documentation",
-        "@doxygen/classmlpack_1_1tree_1_1DecisionTree.html");
+        "@src/mlpack/methods/decision_tree/decision_tree.hpp");
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",

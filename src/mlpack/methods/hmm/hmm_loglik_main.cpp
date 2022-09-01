@@ -62,7 +62,7 @@ BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
 BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
         "https://en.wikipedia.org/wiki/Hidden_Markov_model");
 BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@doxygen/classmlpack_1_1hmm_1_1HMM.html");
+        "@src/mlpack/methods/hmm/hmm.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "File containing HMM.", "m");

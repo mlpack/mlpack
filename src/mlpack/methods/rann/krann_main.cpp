@@ -78,7 +78,7 @@ BINDING_SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning"
         "3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and"
         "-speed-in-high-dimensions.pdf");
 BINDING_SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html");
+        "@src/mlpack/methods/rann/ra_search.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

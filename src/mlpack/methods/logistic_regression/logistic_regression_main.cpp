@@ -118,7 +118,7 @@ BINDING_SEE_ALSO("Logistic regression on Wikipedia",
         "https://en.wikipedia.org/wiki/Logistic_regression");
 BINDING_SEE_ALSO("mlpack::regression::LogisticRegression C++ class "
         "documentation",
-        "@doxygen/classmlpack_1_1regression_1_1LogisticRegression.html");
+        "@src/mlpack/methods/logistic_regression/logistic_regression.hpp");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
