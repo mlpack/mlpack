@@ -32,7 +32,7 @@ BINDING_LONG_DESC(
     "\n\n"
     "The program does not modify the original file, but instead makes a "
     "separate file to save the output data; You can save the output by "
-    "specifying the file name with" + PRINT_PARAM_STRING("output_file") + ".");
+    "specifying the file name with" + PRINT_PARAM_STRING("output") + ".");
 
 // Example.
 BINDING_EXAMPLE(
@@ -41,7 +41,7 @@ BINDING_EXAMPLE(
     "column-wise" + PRINT_DATASET("dataset") + ", and save the result to " +
     PRINT_DATASET("result") + ", we could run :"
     "\n\n" +
-    PRINT_CALL("preprocess_imputer", "input_file", "dataset", "output_file",
+    PRINT_CALL("preprocess_imputer", "input_file", "dataset", "output",
         "result", "missing_value", "NULL", "dimension", "0", "strategy",
         "listwise_deletion"));
 
