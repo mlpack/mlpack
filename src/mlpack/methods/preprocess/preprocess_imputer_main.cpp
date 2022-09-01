@@ -78,7 +78,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   RequireParamInSet<string>(params, "strategy", { "custom", "mean", "median",
       "listwise_deletion" }, true, "unknown imputation strategy");
-  RequireAtLeastOnePassed(params, { "output_file" }, false,
+  RequireAtLeastOnePassed(params, { "output" }, false,
       "no output will be saved");
 
   if (!params.Has("dimension"))
