@@ -42,12 +42,12 @@ TEST_CASE_METHOD(
   size_t inputSize = inputData.n_cols;
 
   // Input custom data points and labels.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
-  REQUIRE(params.Get<arma::mat>("output").n_cols == inputData.n_cols);
 
   // Check for mean strategy.
   SetInputParam("strategy", (std::string) "mean");
+
 
   RUN_BINDING();
 
@@ -55,14 +55,13 @@ TEST_CASE_METHOD(
   outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
-
+  
   // Reset passed strategy.
   ResetSettings();
 
   // Check for median strategy.
   SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
-  REQUIRE(params.Get<arma::mat>("output").n_cols == inputData.n_cols);
   SetInputParam("strategy", (std::string) "median");
 
   RUN_BINDING();
@@ -78,7 +77,6 @@ TEST_CASE_METHOD(
   // Check for custom strategy.
   SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
-  REQUIRE(params.Get<arma::mat>("output").n_cols == inputData.n_cols);
   SetInputParam("strategy", (std::string) "custom");
   SetInputParam("custom_value", (double) 75.12);
 
@@ -120,7 +118,6 @@ TEST_CASE_METHOD(
   SetInputParam("input", inputData);
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
-  REQUIRE(params.Get<arma::mat>("output").n_cols == inputData.n_cols);
 
   RUN_BINDING();
 
