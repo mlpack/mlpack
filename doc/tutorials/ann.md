@@ -549,9 +549,18 @@ a new reference set. This is functionally equivalent to creating a new model.
 
 Using `cereal` (for more information about the internals see [the Cereal
 website](http://uscilab.github.io/cereal/)), mlpack is able to load and save
-machine learning models with ease. To save a trained neural network to disk. The
-example below builds a model on the `thyroid` dataset and then saves the model
-to the file `model.xml` for later use.
+machine learning models with ease.  Note that due to the large compilation
+overhead of enabling serialization, it is disabled by default.  To enable
+serialization for neural networks, define the `MLPACK_ENABLE_ANN_SERIALIZATION`
+macro before including mlpack:
+
+```c++
+#define MLPACK_ENABLE_ANN_SERIALIZATION
+#include <mlpack.hpp>
+```
+
+The example below builds a model on the `thyroid` dataset and then saves the
+model to the file `model.xml` for later use.
 
 ```c++
 // Load the training set.
