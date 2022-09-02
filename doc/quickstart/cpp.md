@@ -209,8 +209,8 @@ int main()
   cout << "Recommendations for user 1:" << endl;
   for (size_t i = 0; i < recommendations.n_elem; ++i)
   {
-    cout << "  " << i << ". " << moviesInfo.UnmapString(recommendations[i], 2)
-        << "." << endl;
+    cout << "  " << (i + 1) << ". "
+        << moviesInfo.UnmapString(recommendations[i], 2) << "." << endl;
   }
 }
 ```
@@ -232,7 +232,18 @@ Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
 ```
-TODO
+RMSE of trained model is 0.795323.
+Recommendations for user 1:
+  1: Casablanca (1942)
+  2: Pan's Labyrinth (Laberinto del fauno, El) (2006)
+  3: Godfather, The (1972)
+  4: Answer This! (2010)
+  5: Life Is Beautiful (La Vita è bella) (1997)
+  6: Adventures of Tintin, The (2011)
+  7: Dark Knight, The (2008)
+  8: Out for Justice (1991)
+  9: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)
+  10: Schindler's List (1993)
 ```
 
 ## Next steps with mlpack
