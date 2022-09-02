@@ -1,5 +1,7 @@
 # Recurse into the bindings to do any necessary configuration there.
 add_subdirectory(bindings)
+# Recurse into methods/ to get the definitions of any bindings.
+add_subdirectory(methods)
 
 # If necessary, configure the tests.
 if (BUILD_TESTS)
@@ -17,9 +19,9 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mlpack/")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/core" DESTINATION
-    "${CMAKE_INSTALL_INCLUDEDIR}/mlpack/core")
+    "${CMAKE_INSTALL_INCLUDEDIR}/mlpack")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/methods" DESTINATION
-    "${CMAKE_INSTALL_INCLUDEDIR}/mlpack/methods")
+    "${CMAKE_INSTALL_INCLUDEDIR}/mlpack")
 
 # Extract the version number.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/core/util/version.hpp"

@@ -1,6 +1,6 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_r_binding name)
+  macro (add_r_binding directory name)
     # Do nothing.
   endmacro ()
 
@@ -331,11 +331,12 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
-macro (add_r_binding name)
+macro (add_r_binding directory name)
 if (BUILD_R_BINDINGS)
 
   # Append content to the list of models.
-  set_property(GLOBAL APPEND PROPERTY R_MODELS ${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp)
+  set_property(GLOBAL APPEND PROPERTY R_MODELS
+      ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp)
 
   # 1. Generate ${name}.cpp.
   add_custom_command(OUTPUT
@@ -343,7 +344,7 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
-          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
@@ -357,7 +358,7 @@ if (BUILD_R_BINDINGS)
           -DNAME=${name}
           -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
-          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
@@ -438,9 +439,7 @@ macro (post_r_setup)
 
       # Collect path of all source files and append to ${R_SRC}.
       if ("${r_src_file}" MATCHES ".cpp" AND
-          NOT "${r_src_file}" MATCHES "main.cpp" AND
-          # Note: this implementation of MVU does not work.  See #189.
-          NOT "${r_src_file}" MATCHES "mvu")
+          NOT "${r_src_file}" MATCHES "main.cpp")
         string(APPEND R_SRC "#include <mlpack/${r_src_file}>\n")
       endif()
 
