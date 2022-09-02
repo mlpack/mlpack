@@ -385,20 +385,34 @@ More documentation is available for both users and developers.
  - [Building mlpack from source on Windows](doc/user/build_windows.md)
  - [Sample C++ ML App for Windows](doc/user/sample_ml_app.md)
  - [Examples repository](https://github.com/mlpack/examples/)
- - Method-specific tutorials:
-    - [Alternating Matrix Factorization tutorial](doc/tutorials/amf.md)
-    - [
+
+***Tutorials:***
+
+ - [Alternating Matrix Factorization (AMF)](doc/tutorials/amf.md)
+ - [Artificial Neural Networks (ANN)](doc/tutorials/ann.md)
+ - [Approximate k-Furthest Neighbor Search (`approx_kfn`)](doc/tutorials/approx_kfn.md)
+ - [Collaborative Filtering (CF)](doc/tutorials/cf.md)
+ - [DatasetMapper](doc/tutorials/datasetmapper.md)
+ - [Density Estimation Trees (DET)](doc/tutorials/det.md)
+ - [Euclidean Minimum Spanning Trees (EMST)](doc/tutorials/emst.md)
+ - [Fast Max-Kernel Search (FastMKS)](doc/tutorials/fastmks.md)
+ - [Image Utilities](doc/tutorials/image.md)
+ - [k-Means Clustering](doc/tutorials/kmeans.md)
+ - [Linear Regression](doc/tutorials/linear_regression.md)
+ - [Neighbor Search (k-Nearest-Neighbors)](doc/tutorials/neighbor_search.md)
+ - [Range Search](doc/tutorials/range_search.md)
+ - [Reinforcement Learning](doc/tutorials/reinforcement_learning.md)
 
 ***Developer documentation***:
 
  - [mlpack versions in code](doc/developer/version.md)
- - [Writing an mlpack binding](doc/devloper/iodoc.md)
+ - [Writing an mlpack binding](doc/developer/iodoc.md)
  - [mlpack Timers](doc/developer/timer.md)
  - [mlpack automatic bindings to other languages](doc/developer/bindings.md)
  - [The ElemType policy in mlpack](doc/developer/elemtype.md)
- - [The KernelType policy in mlpack](doc/developer/kerneltype.md)
- - [The MetricType policy in mlpack](doc/developer/metrictype.md)
- - [The TreeType policy in mlpack](doc/developer/treetype.md)
+ - [The KernelType policy in mlpack](doc/developer/kernels.md)
+ - [The MetricType policy in mlpack](doc/developer/metrics.md)
+ - [The TreeType policy in mlpack](doc/developer/trees.md)
 
 To learn about the development goals of mlpack in the short- and medium-term
 future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
