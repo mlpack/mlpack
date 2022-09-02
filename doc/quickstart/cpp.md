@@ -77,6 +77,9 @@ int main()
   if (!data::Load("covertype-small.labels.csv", labels))
     throw std::runtime_error("Could not read covertype-small.labels.csv!");
 
+  // Labels are 1-7, but we want 0-6 (we are 0-indexed in C++).
+  labels -= 1;
+
   // Now split the dataset into a training set and test set, using 30% of the
   // dataset for the test set.
   mat trainDataset, testDataset;
@@ -87,7 +90,7 @@ int main()
   // Create the RandomForest object and train it on the training data.
   RandomForest r(trainDataset,
                  trainLabels,
-                 2 /* number of classes */,
+                 7 /* number of classes */,
                  10 /* number of trees */,
                  3 /* minimum leaf size */);
 
@@ -122,9 +125,12 @@ Then, you can run the program easily:
 ```
 
 We can see by looking at the output that we achieve reasonably good accuracy on
-the test dataset (80%+).
+the test dataset (80%+):
 
-***TODO: check the paragraph above!***
+```
+Training error: 19.4329%.
+Test error: 24.17%.
+```
 
 It's easy to modify the code above to do more complex things, or to use
 different mlpack learners, or to interface with other machine learning toolkits.
@@ -203,7 +209,7 @@ int main()
   cout << "Recommendations for user 1:" << endl;
   for (size_t i = 0; i < recommendations.n_elem; ++i)
   {
-    cout << "  " << i << ". " << moviesInfo.UnmapString(recommendations[i], 0)
+    cout << "  " << i << ". " << moviesInfo.UnmapString(recommendations[i], 2)
         << "." << endl;
   }
 }
