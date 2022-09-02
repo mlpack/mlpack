@@ -60,6 +60,7 @@ variety of other needs.
   6. [Using mlpack from Python](#6-using-mlpack-from-python)
   7. [Further documentation](#7-further-documentation)
   8. [Bug reporting](#8-bug-reporting)
+  9. [Building mlpack from vcpkg](#9-building-mlpack-from-vcpkg)
 
 ###  1. Introduction
 
