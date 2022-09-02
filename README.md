@@ -157,9 +157,37 @@ OpenMP support (recommended) and optimizations, compile like this:
 g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
 ```
 
+Note that if you want to serialize (save or load) neural networks, you should
+add `#define MLPACK_ENABLE_ANN_SERIALIZATION` before including `<mlpack.hpp>`.
+
 See the [C++ quickstart](doc/quickstart/cpp.md) and the
 [examples](https://github.com/mlpack/examples) repository for some examples of
 mlpack applications in C++, with corresponding `Makefile`s.
+
+### 3.1. Including mlpack and improving compile time
+
+mlpack is a template-heavy library, and if care is not used, compilation time of
+a project can be increased greatly.  Fortunately, there are a number of ways to
+reduce compilation time:
+
+ * Include individual headers, like `<mlpack/methods/decision_tree.hpp>`, if you
+   are only using one component, instead of `<mlpack.hpp>`.  This reduces the
+   amount of work the compiler has to do.
+
+ * Only use the `MLPACK_ENABLE_ANN_SERIALIZATION` definition if you are
+   serializing neural networks in your code.  When this define is enabled,
+   compilation time will increase significantly, as the compiler must generate
+   code for every possible type of layer.
+
+ * If you are using mlpack in multiple .cpp files, consider using [`extern
+   templates`](https://isocpp.org/wiki/faq/cpp11-language-templates) so that the
+   compiler only instantiates each template once; add an explicit template
+   instantiation for each mlpack template type you want to use in a .cpp file,
+   and then use `extern` definitions elsewhere to let the compiler know it
+   exists in a different file.
+
+Other strategies exist too, such as precompiled headers, compiler options,
+[`ccache`](https://ccache.dev), and others.
 
 ## 4. Building mlpack bindings to other languages
 
