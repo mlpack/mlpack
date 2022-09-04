@@ -462,7 +462,7 @@ class BinarySpaceTree
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree& other) const
+  RangeType<ElemType> RangeDistance(const BinarySpaceTree& other) const
   {
     return bound.RangeDistance(other.Bound());
   }
@@ -487,7 +487,7 @@ class BinarySpaceTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::RangeType<ElemType>
+  RangeType<ElemType>
   RangeDistance(const VecType& point,
                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {

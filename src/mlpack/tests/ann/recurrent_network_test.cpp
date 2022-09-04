@@ -19,7 +19,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
-using namespace mlpack::math;
 
 /**
  * Construct a 2-class dataset out of noisy sines.

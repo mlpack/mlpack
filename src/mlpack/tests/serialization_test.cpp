@@ -1118,12 +1118,12 @@ TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
   HoeffdingNumericSplit<GiniImpurity> split(3);
   // Train until it bins.
   for (size_t i = 0; i < 200; ++i)
-    split.Train(mlpack::math::Random(), mlpack::math::RandInt(3));
+    split.Train(Random(), RandInt(3));
 
   HoeffdingNumericSplit<GiniImpurity> xmlSplit(5);
   HoeffdingNumericSplit<GiniImpurity> jsonSplit(7);
   for (size_t i = 0; i < 200; ++i)
-    jsonSplit.Train(mlpack::math::Random() + 3, 0);
+    jsonSplit.Train(Random() + 3, 0);
   HoeffdingNumericSplit<GiniImpurity> binarySplit(2);
 
   SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
@@ -1170,7 +1170,7 @@ TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
   // Random checks.
   for (size_t i = 0; i < 200; ++i)
   {
-    const double random = mlpack::math::Random() * 1.5;
+    const double random = Random() * 1.5;
     REQUIRE(splitInfo.CalculateDirection(random) ==
                         xmlSplitInfo.CalculateDirection(random));
     REQUIRE(splitInfo.CalculateDirection(random) ==
@@ -1191,12 +1191,12 @@ TEST_CASE("HoeffdingNumericSplitBeforeBinningTest", "[SerializationTest]")
   HoeffdingNumericSplit<GiniImpurity> split(3);
   // Train but not until it bins.
   for (size_t i = 0; i < 50; ++i)
-    split.Train(mlpack::math::Random(), mlpack::math::RandInt(3));
+    split.Train(Random(), RandInt(3));
 
   HoeffdingNumericSplit<GiniImpurity> xmlSplit(5);
   HoeffdingNumericSplit<GiniImpurity> jsonSplit(7);
   for (size_t i = 0; i < 200; ++i)
-    jsonSplit.Train(mlpack::math::Random() + 3, 0);
+    jsonSplit.Train(Random() + 3, 0);
   HoeffdingNumericSplit<GiniImpurity> binarySplit(2);
 
   SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
@@ -1235,13 +1235,13 @@ TEST_CASE("HoeffdingCategoricalSplitTest", "[SerializationTest]")
 
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
   for (size_t i = 0; i < 50; ++i)
-    split.Train(mlpack::math::RandInt(10), mlpack::math::RandInt(3));
+    split.Train(RandInt(10), RandInt(3));
 
   HoeffdingCategoricalSplit<GiniImpurity> xmlSplit(3, 7);
   HoeffdingCategoricalSplit<GiniImpurity> binarySplit(4, 11);
   HoeffdingCategoricalSplit<GiniImpurity> jsonSplit(2, 2);
   for (size_t i = 0; i < 10; ++i)
-    jsonSplit.Train(mlpack::math::RandInt(2), mlpack::math::RandInt(2));
+    jsonSplit.Train(RandInt(2), RandInt(2));
 
   SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
@@ -1427,10 +1427,10 @@ TEST_CASE("HoeffdingTreeTest", "[SerializationTest]")
   arma::Row<size_t> labels(400);
   for (size_t i = 0; i < 200; ++i)
   {
-    dataset(0, 2 * i) = mlpack::math::RandInt(4);
-    dataset(1, 2 * i) = mlpack::math::RandInt(2);
-    dataset(0, 2 * i + 1) = mlpack::math::RandInt(4);
-    dataset(1, 2 * i + 1) = mlpack::math::RandInt(2) + 2;
+    dataset(0, 2 * i) = RandInt(4);
+    dataset(1, 2 * i) = RandInt(2);
+    dataset(0, 2 * i + 1) = RandInt(4);
+    dataset(1, 2 * i + 1) = RandInt(2) + 2;
     labels[2 * i] = 0;
     labels[2 * i + 1] = 1;
   }

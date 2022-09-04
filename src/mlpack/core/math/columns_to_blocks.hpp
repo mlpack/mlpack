@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * Transform the columns of the given matrix into a block format.  This could be
@@ -221,7 +220,6 @@ class ColumnsToBlocks
   size_t cols;
 };
 
-} // namespace math
 } // namespace mlpack
 
 // Include implementation.

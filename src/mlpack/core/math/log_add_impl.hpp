@@ -15,7 +15,6 @@
 #include "log_add.hpp"
 
 namespace mlpack {
-namespace math {
 
 /** Internal log-addition
  *
@@ -135,7 +134,6 @@ void LogSumExpT(const T& x, arma::Col<typename T::elem_type>& y)
   }
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

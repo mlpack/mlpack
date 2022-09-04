@@ -16,7 +16,6 @@
 #include "lin_alg.hpp"
 
 namespace mlpack {
-namespace math {
 
 inline size_t SvecIndex(size_t i, size_t j, size_t n)
 {
@@ -91,8 +90,8 @@ inline void RandVector(arma::vec& v)
 {
   for (size_t i = 0; i + 1 < v.n_elem; i += 2)
   {
-    double a = math::Random();
-    double b = math::Random();
+    double a = Random();
+    double b = Random();
     double first_term = sqrt(-2 * log(a));
     double second_term = 2 * M_PI * b;
     v[i]     = first_term * cos(second_term);
@@ -101,8 +100,7 @@ inline void RandVector(arma::vec& v)
 
   if ((v.n_elem % 2) == 1)
   {
-    v[v.n_elem - 1] = sqrt(-2 * log(math::Random())) * cos(2 * M_PI *
-        math::Random());
+    v[v.n_elem - 1] = sqrt(-2 * log(Random())) * cos(2 * M_PI * Random());
   }
 
   v /= sqrt(dot(v, v));
@@ -286,7 +284,6 @@ inline void SymKronId(const arma::mat& A, arma::mat& op)
   }
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

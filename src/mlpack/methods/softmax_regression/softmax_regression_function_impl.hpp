@@ -23,7 +23,7 @@ inline SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const size_t numClasses,
     const double lambda,
     const bool fitIntercept) :
-    data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
+    data(MakeAlias(const_cast<arma::mat&>(data), false)),
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -46,7 +46,7 @@ inline void SoftmaxRegressionFunction::Shuffle()
 
   // Re-sort data.
   arma::mat newData = data.cols(ordering);
-  math::ClearAlias(data);
+  ClearAlias(data);
   data = std::move(newData);
 
   // Assemble data for batch constructor.  We need reverse orderings though...

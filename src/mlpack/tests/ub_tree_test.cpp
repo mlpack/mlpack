@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
@@ -191,7 +190,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       REQUIRE(maxDist <= tree.Bound().MaxDistance(point) *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
-      math::RangeType<ElemType> r = tree.Bound().RangeDistance(point);
+      RangeType<ElemType> r = tree.Bound().RangeDistance(point);
 
       REQUIRE(r.Lo() <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
@@ -229,7 +228,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       REQUIRE(maxDist <= tree.Bound().MaxDistance(node->Bound()) *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
-      math::RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
+      RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
 
       REQUIRE(r.Lo() <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));

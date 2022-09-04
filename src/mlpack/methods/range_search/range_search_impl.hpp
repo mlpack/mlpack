@@ -308,7 +308,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const MatType& querySet,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
@@ -478,7 +478,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
@@ -544,7 +544,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {

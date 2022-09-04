@@ -51,7 +51,7 @@ class NystroemKernelRule
     transformedData = G.t() * G;
 
     // Center the reconstructed approximation.
-    math::Center(transformedData, transformedData);
+    Center(transformedData, transformedData);
 
     // For PCA the data has to be centered, even if the data is centered. But
     // it is not guaranteed that the data, when mapped to the kernel space, is

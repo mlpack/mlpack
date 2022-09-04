@@ -92,7 +92,7 @@ class RewardClipping
     // Get original unclipped reward from base environment.
     double unclippedReward =  environment.Sample(state, action, nextState);
     // Clip rewards according to the min and max limit and return.
-    return math::ClampRange(unclippedReward, minReward, maxReward);
+    return ClampRange(unclippedReward, minReward, maxReward);
   }
 
   /**

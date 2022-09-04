@@ -30,7 +30,7 @@ inline arma::vec DiscreteDistribution::Random() const
   for (size_t d = 0; d < dimension; d++)
   {
     // Generate a random number.
-    double randObs = math::Random();
+    double randObs = mlpack::Random();
 
     double sumProb = 0;
 

@@ -40,7 +40,7 @@ TEST_CASE("JacobianBernoulliDistributionTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat param;
     param.randn(targetElements, 1);
@@ -82,7 +82,7 @@ TEST_CASE("JacobianBernoulliDistributionLogisticTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat param;
     param.randn(targetElements, 1);
@@ -162,7 +162,7 @@ TEST_CASE("JacobianNormalDistributionMeanTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; i++)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat mu;
     mu.randn(targetElements, 1);
@@ -228,7 +228,7 @@ TEST_CASE("JacobianNormalDistributionStandardDeviationTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; i++)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat mu;
     mu.randn(targetElements, 1);

@@ -116,9 +116,9 @@ class CellBound
 
   //! Get the range for a particular dimension.  No bounds checking.  Be
   //! careful: this may make MinWidth() invalid.
-  math::RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
+  RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
-  const math::RangeType<ElemType>& operator[](const size_t i) const
+  const RangeType<ElemType>& operator[](const size_t i) const
   { return bounds[i]; }
 
   //! Get lower address.
@@ -196,7 +196,7 @@ class CellBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const CellBound& other) const;
+  RangeType<ElemType> RangeDistance(const CellBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point distance.
@@ -205,7 +205,7 @@ class CellBound
    *     requested.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
@@ -262,7 +262,7 @@ class CellBound
   //! The dimensionality of the bound.
   size_t dim;
   //! The bounds for each dimension.
-  math::RangeType<ElemType>* bounds;
+  RangeType<ElemType>* bounds;
   //! Lower bounds of subrectangles.
   arma::Mat<ElemType> loBound;
   //! High bounds of subrectangles.

@@ -242,7 +242,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double max = params.Has("max") ? params.Get<double>("max") :
         DBL_MAX;
 
-    math::Range r(min, max);
+    Range r(min, max);
 
     arma::mat queryData;
     if (params.Has("query"))

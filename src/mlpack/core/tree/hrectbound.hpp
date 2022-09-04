@@ -97,9 +97,9 @@ class HRectBound
 
   //! Get the range for a particular dimension.  No bounds checking.  Be
   //! careful: this may make MinWidth() invalid.
-  math::RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
+  RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
-  const math::RangeType<ElemType>& operator[](const size_t i) const
+  const RangeType<ElemType>& operator[](const size_t i) const
   { return bounds[i]; }
 
   //! Get the minimum width of the bound.
@@ -166,7 +166,7 @@ class HRectBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const HRectBound& other) const;
+  RangeType<ElemType> RangeDistance(const HRectBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point distance.
@@ -175,7 +175,7 @@ class HRectBound
    *     requested.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
@@ -239,7 +239,7 @@ class HRectBound
   //! The dimensionality of the bound.
   size_t dim;
   //! The bounds for each dimension.
-  math::RangeType<ElemType>* bounds;
+  RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
   //! Instantiated metric (likely has size 0).

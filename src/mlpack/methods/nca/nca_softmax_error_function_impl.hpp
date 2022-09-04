@@ -26,8 +26,8 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
     MetricType metric) :
-    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
-    labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
+    dataset(MakeAlias(const_cast<arma::mat&>(dataset), false)),
+    labels(MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
     metric(metric),
     precalculated(false)
 { /* nothing to do */ }
@@ -39,10 +39,10 @@ void SoftmaxErrorFunction<MetricType>::Shuffle()
   arma::mat newDataset;
   arma::Row<size_t> newLabels;
 
-  math::ShuffleData(dataset, labels, newDataset, newLabels);
+  ShuffleData(dataset, labels, newDataset, newLabels);
 
-  math::ClearAlias(dataset);
-  math::ClearAlias(labels);
+  ClearAlias(dataset);
+  ClearAlias(labels);
 
   dataset = std::move(newDataset);
   labels = std::move(newLabels);

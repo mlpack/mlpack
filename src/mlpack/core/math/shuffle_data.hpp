@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * Shuffle a dataset and associated labels (or responses).  It is expected that
@@ -237,7 +236,6 @@ void ShuffleData(const MatType& inputPoints,
   }
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

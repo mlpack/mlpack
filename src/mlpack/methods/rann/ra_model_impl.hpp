@@ -151,7 +151,7 @@ inline void RAModel::BuildModel(util::Timers& timers,
   {
     timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
-    math::RandomBasis(q, referenceSet.n_rows);
+    RandomBasis(q, referenceSet.n_rows);
 
     referenceSet = q * referenceSet;
     timers.Stop("computing_random_basis");

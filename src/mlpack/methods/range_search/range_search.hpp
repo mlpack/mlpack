@@ -190,7 +190,7 @@ class RangeSearch
    *      point which fell into the given range, for each query point.
    */
   void Search(const MatType& querySet,
-              const math::Range& range,
+              const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
@@ -231,7 +231,7 @@ class RangeSearch
    *      point which fell into the given range, for each query point.
    */
   void Search(Tree* queryTree,
-              const math::Range& range,
+              const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
@@ -264,7 +264,7 @@ class RangeSearch
    * @param distances Object which will hold the list of distances for each
    *      point which fell into the given range, for each query point.
    */
-  void Search(const math::Range& range,
+  void Search(const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 

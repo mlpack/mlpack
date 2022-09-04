@@ -15,7 +15,6 @@
 #include <random>
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 /**
  * MLPACK_EXPORT is required for global variables; it exports the symbols
@@ -177,7 +176,7 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
     samples.zeros(samplesRangeSize);
 
     for (size_t i = 0; i < maxNumSamples; ++i)
-      samples [ (size_t) math::RandInt(samplesRangeSize) ]++;
+      samples [ (size_t) RandInt(samplesRangeSize) ]++;
 
     distinctSamples = arma::find(samples > 0);
 
@@ -192,7 +191,6 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
   }
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif // MLPACK_CORE_MATH_RANDOM_HPP

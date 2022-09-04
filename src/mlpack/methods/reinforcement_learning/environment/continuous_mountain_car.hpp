@@ -137,15 +137,15 @@ class ContinuousMountainCar
     stepsPerformed++;
 
     // Calculate acceleration.
-    double force = math::ClampRange(action.action[0], -1.0, 1.0);
+    double force = ClampRange(action.action[0], -1.0, 1.0);
 
     // Update states.
     nextState.Velocity() = state.Velocity() + force * duration - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = math::ClampRange(nextState.Velocity(),
+    nextState.Velocity() = ClampRange(nextState.Velocity(),
       velocityMin, velocityMax);
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = math::ClampRange(nextState.Position(),
+    nextState.Position() = ClampRange(nextState.Position(),
       positionMin, positionMax);
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
@@ -187,7 +187,7 @@ class ContinuousMountainCar
     State state;
     stepsPerformed = 0;
     state.Velocity() = 0.0;
-    state.Position() = math::Random(-0.6, -0.4);
+    state.Position() = Random(-0.6, -0.4);
     return state;
   }
 

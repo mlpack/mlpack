@@ -23,7 +23,6 @@
 using namespace mlpack;
 using namespace mlpack::distribution;
 using namespace mlpack::metric;
-using namespace mlpack::math;
 
 /*********************************/
 /** Discrete Distribution Tests **/
@@ -468,7 +467,7 @@ TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]")
 
   // Now make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
+  arma::mat obsCov = ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   REQUIRE(obsMean[0] == Approx(mean[0]).epsilon(0.1));
@@ -503,7 +502,7 @@ TEST_CASE("GaussianDistributionTrainTest", "[DistributionTest]")
 
   // Find actual mean and covariance of data.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
+  arma::mat actualCov = ColumnCovariance(observations);
 
   d.Train(observations);
 
@@ -666,7 +665,7 @@ TEST_CASE("GammaDistributionTrainTest", "[DistributionTest]")
   // Random generation of gamma-like points.
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::RandGen());
+      rdata(j, i) = dist(RandGen());
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist;
@@ -684,7 +683,7 @@ TEST_CASE("GammaDistributionTrainTest", "[DistributionTest]")
   // Random generation of gamma-like points.
   for (size_t j = 0; j < d2; ++j)
     for (size_t i = 0; i < N2; ++i)
-      rdata2(j, i) = dist(math::RandGen());
+      rdata2(j, i) = dist(RandGen());
 
   // Fit results using old object.
   gDist.Train(rdata2);
@@ -712,7 +711,7 @@ TEST_CASE("GammaDistributionTrainWithProbabilitiesTest", "[DistributionTest]")
 
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::RandGen());
+      rdata(j, i) = dist(RandGen());
 
   // Fill the probabilities randomly.
   arma::vec probabilities(N, arma::fill::randu);
@@ -756,7 +755,7 @@ TEST_CASE("GammaDistributionTrainAllProbabilities1Test", "[DistributionTest]")
 
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::RandGen());
+      rdata(j, i) = dist(RandGen());
 
   // Fit results with only data.
   GammaDistribution gDist;
@@ -805,18 +804,18 @@ TEST_CASE("GammaDistributionTrainTwoDistProbabilities1Test",
     for (size_t i = 0; i < N; ++i)
     {
       if (i % 2 == 0)
-        rdata(j, i) = dist(math::RandGen());
+        rdata(j, i) = dist(RandGen());
       else
-        rdata(j, i) = dist2(math::RandGen());
+        rdata(j, i) = dist2(RandGen());
     }
   }
 
   for (size_t i = 0; i < N; ++i)
   {
     if (i % 2 == 0)
-      probabilities(i) = 0.02 * math::Random();
+      probabilities(i) = 0.02 * Random();
     else
-      probabilities(i) = 0.98 + 0.02 * math::Random();
+      probabilities(i) = 0.98 + 0.02 * Random();
   }
 
   GammaDistribution gDist;
@@ -856,7 +855,7 @@ TEST_CASE("GammaDistributionFittingTest", "[DistributionTest]")
   arma::mat rdata(d, N);
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata(j, i) = dist(math::RandGen());
+      rdata(j, i) = dist(RandGen());
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist;
@@ -877,7 +876,7 @@ TEST_CASE("GammaDistributionFittingTest", "[DistributionTest]")
   arma::mat rdata2(d, N);
   for (size_t j = 0; j < d; ++j)
     for (size_t i = 0; i < N; ++i)
-      rdata2(j, i) = dist2(math::RandGen());
+      rdata2(j, i) = dist2(RandGen());
 
   // Create Gamma object and call Train() on reference set.
   GammaDistribution gDist2;
@@ -1438,7 +1437,7 @@ TEST_CASE("DiagonalGaussianDistributionRandomTest", "[DistributionTest]")
 
   // Make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
+  arma::mat obsCov = ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   REQUIRE(obsMean(0) == Approx(mean(0)).epsilon(0.1));
@@ -1466,7 +1465,7 @@ TEST_CASE("DiagonalGaussianDistributionTrainTest", "[DistributionTest]")
 
   // Calculate the actual mean and covariance of data using armadillo.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
+  arma::mat actualCov = ColumnCovariance(observations);
 
   // Estimate the parameters.
   d.Train(observations);

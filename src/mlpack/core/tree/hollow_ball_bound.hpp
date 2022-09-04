@@ -38,7 +38,7 @@ class HollowBallBound
 
  private:
   //! The inner and the outer radii of the bound.
-  math::RangeType<ElemType> radii;
+  RangeType<ElemType> radii;
   //! The center of the ball bound.
   arma::Col<ElemType> center;
   //! The center of the hollow.
@@ -122,7 +122,7 @@ class HollowBallBound
   ElemType MinWidth() const { return radii.Hi() * 2.0; }
 
   //! Get the range in a certain dimension.
-  math::RangeType<ElemType> operator[](const size_t i) const;
+  RangeType<ElemType> operator[](const size_t i) const;
 
   /**
    * Determines if a point is within this bound.
@@ -188,7 +188,7 @@ class HollowBallBound
    *     requested.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& other,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
@@ -200,7 +200,7 @@ class HollowBallBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const HollowBallBound& other) const;
+  RangeType<ElemType> RangeDistance(const HollowBallBound& other) const;
 
   /**
    * Expand the bound to include the given point.  The centroid will not be

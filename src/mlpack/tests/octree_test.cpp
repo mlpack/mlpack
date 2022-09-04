@@ -16,7 +16,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;

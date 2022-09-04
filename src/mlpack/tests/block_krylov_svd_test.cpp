@@ -61,7 +61,7 @@ TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
 
   // Center the data into a temporary matrix.
   arma::mat centeredData;
-  math::Center(data, centeredData);
+  Center(data, centeredData);
 
   arma::mat U1, U2, V1, V2;
   arma::vec s1, s2, s3;

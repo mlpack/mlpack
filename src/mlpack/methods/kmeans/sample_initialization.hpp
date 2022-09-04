@@ -43,7 +43,7 @@ class SampleInitialization
     for (size_t i = 0; i < clusters; ++i)
     {
       // Randomly sample a point.
-      const size_t index = math::RandInt(0, data.n_cols);
+      const size_t index = RandInt(0, data.n_cols);
       centroids.col(i) = data.col(index);
     }
   }

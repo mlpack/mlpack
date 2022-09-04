@@ -23,7 +23,7 @@ template <typename MatType>
 BiasSVDFunction<MatType>::BiasSVDFunction(const MatType& data,
                                           const size_t rank,
                                           const double lambda) :
-    data(math::MakeAlias(const_cast<MatType&>(data), false)),
+    data(MakeAlias(const_cast<MatType&>(data), false)),
     rank(rank),
     lambda(lambda)
 {
@@ -317,7 +317,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
     if (shuffle) // Determine order of visitation.
       std::shuffle(visitationOrder.begin(), visitationOrder.end(),
-          mlpack::math::RandGen());
+          mlpack::RandGen());
 
     #pragma omp parallel
     {

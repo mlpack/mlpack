@@ -385,19 +385,19 @@ class CoverTree
   ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const CoverTree& other) const;
+  RangeType<ElemType> RangeDistance(const CoverTree& other) const;
 
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const CoverTree& other,
+  RangeType<ElemType> RangeDistance(const CoverTree& other,
                                           const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.
-  math::RangeType<ElemType> RangeDistance(const arma::vec& other) const;
+  RangeType<ElemType> RangeDistance(const arma::vec& other) const;
 
   //! Return the minimum and maximum distance to another point given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const arma::vec& other,
+  RangeType<ElemType> RangeDistance(const arma::vec& other,
                                           const ElemType distance) const;
 
   //! Get the parent node.

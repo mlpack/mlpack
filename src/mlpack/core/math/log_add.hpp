@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * Internal log-addition.
@@ -68,7 +67,6 @@ void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y);
 template<typename T, bool InPlace = false>
 void LogSumExpT(const T& x, arma::Col<typename T::elem_type>& y);
 
-} // namespace math
 } // namespace mlpack
 
 // Include implementation.

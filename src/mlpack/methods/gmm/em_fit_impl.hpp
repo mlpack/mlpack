@@ -102,7 +102,7 @@ Estimate(const arma::mat& observations,
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
-      const double probSum = mlpack::math::AccuLog(condLogProb.row(i));
+      const double probSum = AccuLog(condLogProb.row(i));
       if (probSum != -std::numeric_limits<double>::infinity())
         condLogProb.row(i) -= probSum;
     }
@@ -111,7 +111,7 @@ Estimate(const arma::mat& observations,
     arma::vec probRowSums(dists.size());
     for (size_t i = 0; i < dists.size(); ++i)
     {
-      probRowSums(i) = mlpack::math::AccuLog(condLogProb.col(i));
+      probRowSums(i) = AccuLog(condLogProb.col(i));
     }
 
     // Calculate the new value of the means using the updated conditional
@@ -207,7 +207,7 @@ Estimate(const arma::mat& observations,
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
-      const double probSum = mlpack::math::AccuLog(condLogProb.row(i));
+      const double probSum = AccuLog(condLogProb.row(i));
       if (probSum != -std::numeric_limits<double>::infinity())
         condLogProb.row(i) -= probSum;
     }
@@ -226,7 +226,7 @@ Estimate(const arma::mat& observations,
       // multiplied by the probability of the point being from this mixture
       // model.
       arma::vec tmpProb = condLogProb.col(i) + logProbabilities;
-      probRowSums[i] = mlpack::math::AccuLog(tmpProb);
+      probRowSums[i] = AccuLog(tmpProb);
 
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != -std::numeric_limits<double>::infinity())
@@ -269,7 +269,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = arma::exp(probRowSums - mlpack::math::AccuLog(logProbabilities));
+    weights = arma::exp(probRowSums - AccuLog(logProbabilities));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;
@@ -395,13 +395,13 @@ LogLikelihood(const arma::mat& observations,
   // Now sum over every point.
   for (size_t j = 0; j < observations.n_cols; ++j)
   {
-    if (mlpack::math::AccuLog(logLikelihoods.col(j)) ==
+    if (AccuLog(logLikelihoods.col(j)) ==
         -std::numeric_limits<double>::infinity())
     {
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
           << "outlier." << std::endl;
     }
-    logLikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
+    logLikelihood += AccuLog(logLikelihoods.col(j));
   }
 
   return logLikelihood;

@@ -219,7 +219,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
 
     // Create matrix holding only active codes.
     arma::mat activeCodes;
-    math::RemoveRows(codes, inactiveAtoms, activeCodes);
+    RemoveRows(codes, inactiveAtoms, activeCodes);
 
     // Create reverse atom lookup for active atoms.
     arma::uvec atomReverseLookup(atoms);
@@ -294,9 +294,9 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
       if (inactiveAtoms[currentInactiveIndex] == i)
       {
         // This atom is inactive.  Reinitialize it randomly.
-        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)));
+        dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)));
 
         // Now normalize the atom.
         dictionary.col(i) /= norm(dictionary.col(i), 2);

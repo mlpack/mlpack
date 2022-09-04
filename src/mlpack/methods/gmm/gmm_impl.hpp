@@ -65,7 +65,7 @@ inline double GMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; ++i)
-    sum = math::LogAdd(sum, log(weights[i]) +
+    sum = LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
 
   return sum;
@@ -99,7 +99,7 @@ inline void GMM::LogProbability(const arma::mat& observation,
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);
-  math::LogSumExp(logProb, logProbs);
+  LogSumExp(logProb, logProbs);
 }
 
 /**
@@ -161,7 +161,7 @@ inline double GMM::Probability(const arma::vec& observation,
 inline arma::vec GMM::Random() const
 {
   // Determine which Gaussian it will be coming from.
-  double gaussRand = math::Random();
+  double gaussRand = mlpack::Random();
   size_t gaussian = 0;
 
   double sumProb = 0;
@@ -242,7 +242,7 @@ inline double GMM::LogLikelihood(
 
   // Now sum over every point.
   for (size_t j = 0; j < data.n_cols; ++j)
-    loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
+    loglikelihood += AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }
 

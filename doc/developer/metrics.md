@@ -88,7 +88,7 @@ int main()
 
   // Find those points with distance (according to ExampleMetric) between 1 and
   // 2 from the query point.
-  rs.Search(query, math::Range(1.0, 2.0), neighbors, distances);
+  rs.Search(query, Range(1.0, 2.0), neighbors, distances);
 
   // Now, print the number of points inside the desired range.  We know that
   // neighbors and distances will have length 1, since there was only one query

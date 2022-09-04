@@ -20,7 +20,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::math;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
@@ -111,7 +110,7 @@ TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
-      return math::RandNormal(0, 1);};
+      return RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcgan(generator, discriminator, gaussian,
       noiseFunction, noiseDim, batchSize, generatorUpdateStep,
@@ -140,7 +139,7 @@ TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -266,7 +265,7 @@ TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
-      return math::RandNormal(0, 1);};
+      return RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
@@ -295,7 +294,7 @@ TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -425,7 +424,7 @@ TEST_CASE("DCGANCelebATest", "[DCGANNetworkTest]")
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
-      return math::RandNormal(0, 1);};
+      return RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
@@ -451,7 +450,7 @@ TEST_CASE("DCGANCelebATest", "[DCGANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 

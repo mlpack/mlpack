@@ -105,7 +105,7 @@ TEST_CASE("GMMTrainEMOneGaussian", "[GMMTest]")
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::mat actualCovar = mlpack::math::ColumnCovariance(data,
+    arma::mat actualCovar = ColumnCovariance(data,
         1 /* biased estimator */);
 
     // Check the model to see that it is correct.
@@ -194,7 +194,7 @@ TEST_CASE("GMMTrainEMMultipleGaussians", "[GMMTest]")
       // Calculate the actual means and covariances because they will probably
       // be different (this is easier to do before we shuffle the points).
       means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-      covars[i] = mlpack::math::ColumnCovariance(arma::mat(data.cols(point,
+      covars[i] = ColumnCovariance(arma::mat(data.cols(point,
           point + counts[i] - 1)), 1 /* biased */);
 
       point += counts[i];
@@ -317,7 +317,7 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
 
   for (size_t i = 0; i < 2000; ++i)
   {
-    double randValue = math::Random();
+    double randValue = Random();
 
     if (randValue <= 0.20) // p(d1) = 0.20
       points.col(i) = d1.Random();
@@ -333,7 +333,7 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
     // plus or minus a little bit of noise.  The base probability (minus the
     // noise) is parameterizable for easy modification of the test.
     double confidence = 0.998;
-    double perturbation = math::Random(-0.002, 0.002);
+    double perturbation = Random(-0.002, 0.002);
 
     if (randValue <= 0.90)
       probabilities(i) = confidence + perturbation;
@@ -601,8 +601,8 @@ TEST_CASE("NoConstraintTest", "[GMMTest]")
   // Generate random matrices and make sure they end up the same.
   for (size_t i = 0; i < 30; ++i)
   {
-    const size_t rows = 5 + math::RandInt(100);
-    const size_t cols = 5 + math::RandInt(100);
+    const size_t rows = 5 + RandInt(100);
+    const size_t cols = 5 + RandInt(100);
     arma::mat cov(rows, cols);
     cov.randu();
     arma::mat newcov(cov);
@@ -620,7 +620,7 @@ TEST_CASE("PositiveDefiniteConstraintTest", "[GMMTest]")
   // that they can be Cholesky decomposed.
   for (size_t i = 0; i < 30; ++i)
   {
-    const size_t elem = 5 + math::RandInt(50);
+    const size_t elem = 5 + RandInt(50);
     arma::mat cov(elem, elem);
     cov.randu();
 
@@ -636,7 +636,7 @@ TEST_CASE("DiagonalConstraintTest", "[GMMTest]")
   // Make sure matrices are made to be positive definite.
   for (size_t i = 0; i < 30; ++i)
   {
-    const size_t elem = 5 + math::RandInt(50);
+    const size_t elem = 5 + RandInt(50);
     arma::mat cov(elem, elem);
     cov.randu();
 
@@ -732,7 +732,7 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
     // Calculate the actual means and covariances because they will probably
     // be different (this is easier to do before we shuffle the points).
     means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-    covars[i] = mlpack::math::ColumnCovariance(arma::mat(data.cols(point,
+    covars[i] = ColumnCovariance(arma::mat(data.cols(point,
         point + counts[i] - 1)), 1 /* biased */);
 
     point += counts[i];
@@ -907,7 +907,7 @@ TEST_CASE("DiagonalGMMTrainEMOneGaussian", "[GMMTest]")
 
     arma::vec actualMean = arma::mean(data, 1);
     arma::vec actualCovar = arma::diagvec(
-        mlpack::math::ColumnCovariance(data,
+        ColumnCovariance(data,
         1 /* biased estimator */));
 
     // Check the model to see that it is correct.
@@ -976,7 +976,7 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussians", "[GMMTest]")
 
   for (size_t i = 0; i < 5000; ++i)
   {
-    double randValue = math::Random();
+    double randValue = Random();
 
     if (randValue <= 0.20) // p(d1) = 0.20
       observations.col(i) = d1.Random();
@@ -1062,7 +1062,7 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
 
   for (size_t i = 0; i < 10000; ++i)
   {
-    double randValue = math::Random();
+    double randValue = Random();
 
     if (randValue <= 0.20) // p(d1) = 0.20
       observations.col(i) = d1.Random();

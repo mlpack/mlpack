@@ -58,7 +58,7 @@ inline void SortTask::Generate(arma::field<arma::mat>& input,
     if (!fixedLength)
     {
       // Generate random uniform length from [2..maxLength].
-      size = mlpack::math::RandInt(2, maxLength+1);
+      size = RandInt(2, maxLength+1);
     }
     input(i) = arma::randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
     arma::mat itemAns(bitLen, size);

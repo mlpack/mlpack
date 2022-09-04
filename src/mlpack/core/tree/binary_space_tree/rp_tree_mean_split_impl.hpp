@@ -30,7 +30,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
   arma::uvec samples;
 
   // Get no more than numSamples distinct samples.
-  math::ObtainDistinctSamples(begin, begin + count, numSamples, samples);
+  ObtainDistinctSamples(begin, begin + count, numSamples, samples);
 
   // Find the average distance between points.
   ElemType averageDistanceSq = GetAveragePointDistance(data, samples);
@@ -45,7 +45,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
     splitInfo.direction.zeros(data.n_rows);
 
     // Get a random normal vector.
-    math::RandVector(splitInfo.direction);
+    RandVector(splitInfo.direction);
 
     // Get the median value of the scalar products of the normal and the
     // sampled points. The node will be split according to this value.

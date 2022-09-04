@@ -296,10 +296,10 @@ class ExampleTree
 
   // Return the combined results of MinDistance() and MaxDistance().
   template<typename VecType>
-  math::Range RangeDistance(VecType& point);
+  Range RangeDistance(VecType& point);
 
   // Return the combined results of MinDistance() and MaxDistance().
-  math::Range RangeDistance(ExampleTree& otherNode);
+  Range RangeDistance(ExampleTree& otherNode);
 
   // //////////////////////////////////// //
   // // Serialization (loading/saving) // //
@@ -677,10 +677,10 @@ double MaxDistance(ExampleTree& otherNode);
 
 // Return the combined results of MinDistance() and MaxDistance().
 template<typename VecType>
-math::Range RangeDistance(VecType& point);
+Range RangeDistance(VecType& point);
 
 // Return the combined results of MinDistance() and MaxDistance().
-math::Range RangeDistance(ExampleTree& otherNode);
+Range RangeDistance(ExampleTree& otherNode);
 ```
 
 These six functions are almost without a doubt the most important functionality

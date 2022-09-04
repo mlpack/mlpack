@@ -2,7 +2,7 @@
  * @file tests/random_test.cpp
  * @author Konstantin Sidorov
  *
- * Tests for generators of random numbers from math:: namespace.
+ * Tests for generators of random numbers from  namespace.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace math;
 
 // Test for RandInt() sampler from discrete uniform distribution.
 TEST_CASE("DiscreteUniformRandomTest", "[RandomTest]")

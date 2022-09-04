@@ -17,7 +17,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
@@ -402,7 +401,7 @@ TEST_CASE("HRectBoundRangeDistanceBound", "[TreeTest]")
 {
   for (int i = 0; i < 50; ++i)
   {
-    size_t dim = math::RandInt(20);
+    size_t dim = RandInt(20);
 
     HRectBound<EuclideanDistance> a(dim);
     HRectBound<EuclideanDistance> b(dim);
@@ -453,7 +452,7 @@ TEST_CASE("HRectBoundRangeDistancePoint", "[TreeTest]")
 {
   for (int i = 0; i < 20; ++i)
   {
-    size_t dim = math::RandInt(20);
+    size_t dim = RandInt(20);
 
     HRectBound<EuclideanDistance> a(dim);
 
@@ -925,7 +924,7 @@ TEST_CASE("HRectBoundRootRangeDistanceBound", "[TreeTest]")
 {
   for (int i = 0; i < 50; ++i)
   {
-    size_t dim = math::RandInt(20);
+    size_t dim = RandInt(20);
 
     HRectBound<EuclideanDistance> a(dim);
     HRectBound<EuclideanDistance> b(dim);
@@ -976,7 +975,7 @@ TEST_CASE("HRectBoundRootRangeDistancePoint", "[TreeTest]")
 {
   for (int i = 0; i < 20; ++i)
   {
-    size_t dim = math::RandInt(20);
+    size_t dim = RandInt(20);
 
     HRectBound<EuclideanDistance> a(dim);
 
@@ -1012,24 +1011,24 @@ TEST_CASE("HRectBoundRootRangeDistancePoint", "[TreeTest]")
 TEST_CASE("HRectBoundDiameter", "[TreeTest]")
 {
   HRectBound<LMetric<3, true>> b(4);
-  b[0] = math::Range(0.0, 1.0);
-  b[1] = math::Range(-1.0, 0.0);
-  b[2] = math::Range(2.0, 3.0);
-  b[3] = math::Range(7.0, 7.0);
+  b[0] = Range(0.0, 1.0);
+  b[1] = Range(-1.0, 0.0);
+  b[2] = Range(2.0, 3.0);
+  b[3] = Range(7.0, 7.0);
 
   REQUIRE(b.Diameter()== Approx(std::pow(3.0, 1.0 / 3.0)).epsilon(1e-7));
 
   HRectBound<LMetric<2, false>> c(4);
-  c[0] = math::Range(0.0, 1.0);
-  c[1] = math::Range(-1.0, 0.0);
-  c[2] = math::Range(2.0, 3.0);
-  c[3] = math::Range(0.0, 0.0);
+  c[0] = Range(0.0, 1.0);
+  c[1] = Range(-1.0, 0.0);
+  c[2] = Range(2.0, 3.0);
+  c[3] = Range(0.0, 0.0);
 
   REQUIRE(c.Diameter() == Approx(3.0).epsilon(1e-7));
 
   HRectBound<LMetric<5, true>> d(2);
-  d[0] = math::Range(2.2, 2.2);
-  d[1] = math::Range(1.0, 1.0);
+  d[0] = Range(2.2, 2.2);
+  d[1] = Range(1.0, 1.0);
 
   REQUIRE(d.Diameter() == Approx(0.0).margin(1e-5));
 }
@@ -1466,7 +1465,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
     // The norm of the direction shouldn't be equal to zero.
     if (arma::norm(x.rows(0, dataset.n_rows-1)) < 1e-8)
     {
-      x[math::RandInt(0, dataset.n_rows)] = 1.0;
+      x[RandInt(0, dataset.n_rows)] = 1.0;
       success = false;
     }
 

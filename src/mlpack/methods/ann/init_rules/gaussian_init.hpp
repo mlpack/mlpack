@@ -53,7 +53,7 @@ class GaussianInitialization
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W.imbue( [&]() { return arma::as_scalar(mlpack::math::RandNormal(mean, variance)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
   /**
@@ -67,7 +67,7 @@ class GaussianInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W.imbue( [&]() { return arma::as_scalar(mlpack::math::RandNormal(mean, variance)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
   /**

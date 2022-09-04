@@ -40,7 +40,7 @@ void RefinedStart::Cluster(const MatType& data,
     while (curSample < numPoints)
     {
       // Pick a random point in [0, numPoints).
-      size_t sample = (size_t) math::RandInt(data.n_cols);
+      size_t sample = (size_t) RandInt(data.n_cols);
 
       if (!pointsUsed[sample])
       {

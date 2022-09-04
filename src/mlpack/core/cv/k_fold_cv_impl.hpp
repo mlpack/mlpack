@@ -320,7 +320,7 @@ void KFoldCV<MLAlgorithm,
   PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
 
   // Now shuffle the data.
-  math::ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
+  ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
   InitKFoldCVMat(xsOrig, xs);
   InitKFoldCVMat(ysOrig, ys);
@@ -346,9 +346,9 @@ void KFoldCV<MLAlgorithm,
 
   // Now shuffle the data.
   if (weights.n_elem > 0)
-    math::ShuffleData(xsOrig, ysOrig, weightsOrig, xsOrig, ysOrig, weightsOrig);
+    ShuffleData(xsOrig, ysOrig, weightsOrig, xsOrig, ysOrig, weightsOrig);
   else
-    math::ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
+    ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
   InitKFoldCVMat(xsOrig, xs);
   InitKFoldCVMat(ysOrig, ys);

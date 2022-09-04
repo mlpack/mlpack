@@ -22,7 +22,7 @@ template<typename MetricType, typename TreeType>
 RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
     const arma::mat& referenceSet,
     const arma::mat& querySet,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t> >& neighbors,
     std::vector<std::vector<double> >& distances,
     MetricType& metric,
@@ -82,7 +82,7 @@ double RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
 {
   // We must get the minimum and maximum distances and store them in this
   // object.
-  math::Range distances;
+  Range distances;
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
@@ -151,7 +151,7 @@ template<typename MetricType, typename TreeType>
 double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
                                                      TreeType& referenceNode)
 {
-  math::Range distances;
+  Range distances;
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // It is possible that the base case has already been calculated.

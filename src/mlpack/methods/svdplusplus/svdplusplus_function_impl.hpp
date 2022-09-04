@@ -25,7 +25,7 @@ SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(
     const arma::sp_mat& implicitData,
     const size_t rank,
     const double lambda) :
-    data(math::MakeAlias(const_cast<MatType&>(data), false)),
+    data(MakeAlias(const_cast<MatType&>(data), false)),
     implicitData(implicitData),
     rank(rank),
     lambda(lambda)
@@ -454,7 +454,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
     if (shuffle) // Determine order of visitation.
       std::shuffle(visitationOrder.begin(), visitationOrder.end(),
-          mlpack::math::RandGen());
+          mlpack::RandGen());
 
     #pragma omp parallel
     {

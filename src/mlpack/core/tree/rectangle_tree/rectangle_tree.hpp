@@ -496,7 +496,7 @@ class RectangleTree
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const RectangleTree& other) const
+  RangeType<ElemType> RangeDistance(const RectangleTree& other) const
   {
     return bound.RangeDistance(other.Bound());
   }
@@ -521,7 +521,7 @@ class RectangleTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {

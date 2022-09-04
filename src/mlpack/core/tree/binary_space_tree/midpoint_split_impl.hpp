@@ -51,7 +51,7 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   else
   {
     // We must individually calculate bounding boxes.
-    math::Range* ranges = new math::Range[data.n_rows];
+    Range* ranges = new Range[data.n_rows];
     for (size_t i = begin; i < begin + count; ++i)
     {
       // Expand each dimension as necessary.

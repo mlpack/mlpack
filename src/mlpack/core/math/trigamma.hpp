@@ -1,11 +1,11 @@
 /**
  * @file core/math/trigamma.hpp
- * @author Gopi Tatiraju 
+ * @author Gopi Tatiraju
  *
  * Some parts of the implementation are inspired from boost.
  * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- * 
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * This function evaluates the polynomial based on the
@@ -78,7 +77,7 @@ EvaluatePolyPrec(const T(&a)[N], const T& x)
   t[1] += a[1];
   t[1] *= x;
 
-  return t[0] + t[1]; 
+  return t[0] + t[1];
 }
 
 /**
@@ -88,7 +87,7 @@ EvaluatePolyPrec(const T(&a)[N], const T& x)
  * 1. 1 < x <= 2
  * 2. 2 < x <= 4
  * 3. x > 4
- * 
+ *
  * @param x Input for which we have to calculate trigamma.
  */
 template<typename T>
@@ -171,7 +170,7 @@ T TrigammaPrec(T x)
  * This function calculates and returns Trigamma(x).
  * For x < 0 we use reflection.
  * For 0 < x < 1 bring x to interval [1, INF].
- * 
+ *
  * @param x Input for which we have to calculate trigamma.
  */
 template<typename T>
@@ -187,9 +186,9 @@ T Trigamma(T x)
     // Check for evaluation on pole.
     if (floor(x) == x)
       throw std::runtime_error("Evaluation of the function at pole.");
-    
+
     T s = fabs(x) < fabs(z) ? sin(M_PI * x) : sin(M_PI * z);
-    
+
     return -Trigamma(z) + pow(M_PI, 2) / (s * s);
   }
 
@@ -204,7 +203,6 @@ T Trigamma(T x)
   return result + TrigammaPrec(x);
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

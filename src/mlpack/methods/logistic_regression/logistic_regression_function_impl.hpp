@@ -26,8 +26,8 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const arma::Row<size_t>& responses,
     const double lambda) :
     // We promise to be well-behaved... the elements won't be modified.
-    predictors(math::MakeAlias(const_cast<MatType&>(predictors), false)),
-    responses(math::MakeAlias(const_cast<arma::Row<size_t>&>(responses),
+    predictors(MakeAlias(const_cast<MatType&>(predictors), false)),
+    responses(MakeAlias(const_cast<arma::Row<size_t>&>(responses),
         false)),
     lambda(lambda)
 {
@@ -50,11 +50,11 @@ void LogisticRegressionFunction<MatType>::Shuffle()
   MatType newPredictors;
   arma::Row<size_t> newResponses;
 
-  math::ShuffleData(predictors, responses, newPredictors, newResponses);
+  ShuffleData(predictors, responses, newPredictors, newResponses);
 
   // If we are an alias, make sure we don't write to the original data.
-  math::ClearAlias(predictors);
-  math::ClearAlias(responses);
+  ClearAlias(predictors);
+  ClearAlias(responses);
 
   // Take ownership of the new data.
   predictors = std::move(newPredictors);

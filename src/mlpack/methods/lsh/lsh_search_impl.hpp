@@ -195,8 +195,8 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
     // Compute a heuristic hash width from the data.
     for (size_t i = 0; i < numSamples; ++i)
     {
-      size_t p1 = (size_t) math::RandInt(this->referenceSet.n_cols);
-      size_t p2 = (size_t) math::RandInt(this->referenceSet.n_cols);
+      size_t p1 = (size_t) RandInt(this->referenceSet.n_cols);
+      size_t p2 = (size_t) RandInt(this->referenceSet.n_cols);
 
       hashWidth += std::sqrt(metric::EuclideanDistance::Evaluate(
           this->referenceSet.col(p1),

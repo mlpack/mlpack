@@ -375,7 +375,7 @@ class Octree
   //! Return the maximum distance to another node.
   ElemType MaxDistance(const Octree& other) const;
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const Octree& other) const;
+  RangeType<ElemType> RangeDistance(const Octree& other) const;
 
   //! Return the minimum distance to the given point.
   template<typename VecType>
@@ -389,7 +389,7 @@ class Octree
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
   //! Return the minimum and maximum distance to another node.
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 

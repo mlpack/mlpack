@@ -234,7 +234,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   if (score != DBL_MAX)
   {
     // Get minimum and maximum distances.
-    const math::Range distances = queryNode.RangeDistance(referenceNode);
+    const Range distances = queryNode.RangeDistance(referenceNode);
 
     score = distances.Lo();
     ++scores;

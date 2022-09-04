@@ -107,7 +107,7 @@ class BallBound
   ElemType MinWidth() const { return radius * 2.0; }
 
   //! Get the range in a certain dimension.
-  math::RangeType<ElemType> operator[](const size_t i) const;
+  RangeType<ElemType> operator[](const size_t i) const;
 
   /**
    * Determines if a point is within this bound.
@@ -164,7 +164,7 @@ class BallBound
    *     requested.
    */
   template<typename OtherVecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const OtherVecType& other,
       typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
@@ -176,7 +176,7 @@ class BallBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const BallBound& other) const;
+  RangeType<ElemType> RangeDistance(const BallBound& other) const;
 
   /**
    * Expand the bound to include the given node.

@@ -174,7 +174,7 @@ class ExampleTree
 
   /**
    * Return both the minimum and maximum distances between this node and a point
-   * as a math::Range object.  This overload is given because it is possible
+   * as a Range object.  This overload is given because it is possible
    * that, for some tree types, calculation of both at once is faster than a
    * call to MinDistance() then MaxDistance().  It is not necessary that the
    * minimum and maximum distances be exact; it is sufficient to return a lower
@@ -183,11 +183,11 @@ class ExampleTree
    *
    * @param point Point to return [bounds on] minimum and maximum distances to.
    */
-  math::Range RangeDistance(const MatType& point) const;
+  Range RangeDistance(const MatType& point) const;
 
   /**
    * Return both the minimum and maximum distances between this node and another
-   * node as a math::Range object.  This overload is given because it is
+   * node as a Range object.  This overload is given because it is
    * possible that, for some tree types, calculation of both at once is faster
    * than a call to MinDistance() then MaxDistance().  It is not necessary that
    * the minimum and maximum distances be exact; it is sufficient to return a
@@ -196,7 +196,7 @@ class ExampleTree
    *
    * @param other Node to return [bounds on] minimum and maximum distances to.
    */
-  math::Range RangeDistance(const ExampleTree& other) const;
+  Range RangeDistance(const ExampleTree& other) const;
 
   /**
    * Fill the given vector with the center of the node.

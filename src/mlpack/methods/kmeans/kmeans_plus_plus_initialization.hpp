@@ -12,7 +12,9 @@
 #ifndef MLPACK_METHODS_KMEANS_KMEANS_PLUS_PLUS_INITIALIZATION_HPP
 #define MLPACK_METHODS_KMEANS_KMEANS_PLUS_PLUS_INITIALIZATION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
+
+namespace mlpack {
 
 /**
  * This class implements the k-means++ initialization, as described in the
@@ -56,7 +58,7 @@ class KMeansPlusPlusInitialization
     centroids.set_size(data.n_rows, clusters);
 
     // We'll sample our first point fully randomly.
-    size_t firstPoint = mlpack::math::RandInt(0, data.n_cols);
+    size_t firstPoint = RandInt(0, data.n_cols);
     centroids.col(0) = data.col(firstPoint);
 
     // Utility variable.
@@ -95,7 +97,7 @@ class KMeansPlusPlusInitialization
         distribution[j] += distribution[j - 1];
 
       // Sample a point...
-      const double sampleValue = mlpack::math::Random();
+      const double sampleValue = Random();
       const double* elem = std::lower_bound(distribution.begin(),
           distribution.end(), sampleValue);
       const size_t position = (size_t)
@@ -104,5 +106,7 @@ class KMeansPlusPlusInitialization
     }
   }
 };
+
+} // namespace mlpack
 
 #endif

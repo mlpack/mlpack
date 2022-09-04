@@ -62,9 +62,9 @@ TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inSize = math::RandInt(2, 10);
-    const size_t outSize = math::RandInt(2, 10);
-    const size_t nPoints = math::RandInt(2, 10);
+    const size_t inSize = RandInt(2, 10);
+    const size_t outSize = RandInt(2, 10);
+    const size_t nPoints = RandInt(2, 10);
     const size_t batchSize = 1;
 
     arma::mat input;

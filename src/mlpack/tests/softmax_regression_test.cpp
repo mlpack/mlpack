@@ -32,7 +32,7 @@ TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
   SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
@@ -79,7 +79,7 @@ TEST_CASE("SoftmaxRegressionFunctionRegularizationEvaluate",
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
   SoftmaxRegressionFunction srfNoReg(data, labels, numClasses, 0);
@@ -121,7 +121,7 @@ TEST_CASE("SoftmaxRegressionFunctionGradient",
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.

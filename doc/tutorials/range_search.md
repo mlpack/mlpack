@@ -248,7 +248,7 @@ std::vector<std::vector<size_t> > resultingNeighbors;
 std::vector<std::vector<double> > resultingDistances;
 
 // The range we will use.
-math::Range r(0.0, 2.0); // [0.0, 2.0].
+Range r(0.0, 2.0); // [0.0, 2.0].
 
 a.Search(r, resultingNeighbors, resultingDistances);
 ```
@@ -273,7 +273,7 @@ std::vector<std::vector<size_t> > resultingNeighbors;
 std::vector<std::vector<double> > resultingDistances;
 
 // The range we will use.
-math::Range r(3.0, 4.0); // [3.0, 4.0].
+Range r(3.0, 4.0); // [3.0, 4.0].
 
 a.Search(queryData, r, resultingNeighbors, resultingDistances);
 ```
@@ -298,7 +298,7 @@ std::vector<std::vector<size_t> > resultingNeighbors;
 std::vector<std::vector<double> > resultingDistances;
 
 // The range we will use.  The upper bound is DBL_MAX.
-math::Range r(5.0, DBL_MAX); // [5.0, inf).
+Range r(5.0, DBL_MAX); // [5.0, inf).
 
 a.Search(r, resultingNeighbors, resultingDistances);
 ```

@@ -66,14 +66,14 @@ class GreedyPolicy
                     bool deterministic = false,
                     const bool isNoisy = false)
   {
-    double exploration = math::Random();
+    double exploration = Random();
     ActionType action;
 
     // Select the action randomly.
     if (!deterministic && exploration < epsilon && isNoisy == false)
     {
       action.action = static_cast<decltype(action.action)>
-          (math::RandInt(ActionType::size));
+          (RandInt(ActionType::size));
     }
     // Select the action greedily.
     else

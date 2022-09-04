@@ -55,7 +55,7 @@ class AxisParallelProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename ElemType>
-  math::RangeType<ElemType> Project(
+  RangeType<ElemType> Project(
       const bound::HRectBound<MetricType, ElemType>& bound) const
   {
     return bound[dim];
@@ -68,7 +68,7 @@ class AxisParallelProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename VecType>
-  math::RangeType<typename VecType::elem_type> Project(
+  RangeType<typename VecType::elem_type> Project(
       const bound::BallBound<MetricType, VecType>& bound) const
   {
     return bound[dim];
@@ -129,13 +129,13 @@ class ProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename VecType>
-  math::RangeType<typename VecType::elem_type> Project(
+  RangeType<typename VecType::elem_type> Project(
       const bound::BallBound<MetricType, VecType>& bound) const
   {
     typedef typename VecType::elem_type ElemType;
     const double center = Project(bound.Center());
     const ElemType radius = bound.Radius();
-    return math::RangeType<ElemType>(center - radius, center + radius);
+    return RangeType<ElemType>(center - radius, center + radius);
   };
 
   /**

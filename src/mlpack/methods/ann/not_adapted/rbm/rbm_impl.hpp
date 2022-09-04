@@ -171,7 +171,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
-    output(i) = math::RandBernoulli(output(i));
+    output(i) = RandBernoulli(output(i));
   }
 }
 
@@ -190,7 +190,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
-    output(i) = math::RandBernoulli(output(i));
+    output(i) = RandBernoulli(output(i));
   }
 }
 

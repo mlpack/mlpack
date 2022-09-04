@@ -33,7 +33,7 @@ class RandomSelection
   {
     arma::Col<size_t> selectedPoints(m);
     for (size_t i = 0; i < m; ++i)
-      selectedPoints(i) = math::RandInt(0, data.n_cols);
+      selectedPoints(i) = RandInt(0, data.n_cols);
 
     return selectedPoints;
   }

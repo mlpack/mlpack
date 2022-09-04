@@ -161,7 +161,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(i), math::Range(0.0, epsilon), neighbors,
+    rangeSearch.Search(data.col(i), Range(0.0, epsilon), neighbors,
         distances);
 
     // Union to all neighbors.
@@ -186,7 +186,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   std::vector<std::vector<double>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
+  rangeSearch.Search(data, Range(0.0, epsilon), neighbors, distances);
   Log::Info << "Range search complete." << std::endl;
 
   // Now loop over all points.

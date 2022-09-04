@@ -88,7 +88,7 @@ RASearchRules(const arma::mat& referenceSet,
     arma::uvec distinctSamples;
     for (size_t i = 0; i < querySet.n_cols; ++i)
     {
-      math::ObtainDistinctSamples(0, n, numSamplesReqd, distinctSamples);
+      ObtainDistinctSamples(0, n, numSamplesReqd, distinctSamples);
       for (size_t j = 0; j < distinctSamples.n_elem; ++j)
         BaseCase(i, (size_t) distinctSamples[j]);
     }
@@ -202,7 +202,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           // Then samplesReqd <= singleSampleLimit.
           // Hence, approximate the node by sampling enough number of points.
           arma::uvec distinctSamples;
-          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+          ObtainDistinctSamples(0, referenceNode.NumDescendants(),
               samplesReqd, distinctSamples);
           for (size_t i = 0; i < distinctSamples.n_elem; ++i)
             // The counting of the samples are done in the 'BaseCase' function
@@ -218,7 +218,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           {
             // Approximate node by sampling enough number of points.
             arma::uvec distinctSamples;
-            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+            ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                 samplesReqd, distinctSamples);
             for (size_t i = 0; i < distinctSamples.n_elem; ++i)
               // The counting of the samples are done in the 'BaseCase' function
@@ -306,7 +306,7 @@ Rescore(const size_t queryIndex,
         // Then, samplesReqd <= singleSampleLimit.  Hence, approximate the node
         // by sampling enough number of points.
         arma::uvec distinctSamples;
-        math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+        ObtainDistinctSamples(0, referenceNode.NumDescendants(),
             samplesReqd, distinctSamples);
         for (size_t i = 0; i < distinctSamples.n_elem; ++i)
           // The counting of the samples are done in the 'BaseCase' function so
@@ -322,7 +322,7 @@ Rescore(const size_t queryIndex,
         {
           // Approximate node by sampling enough points.
           arma::uvec distinctSamples;
-          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+          ObtainDistinctSamples(0, referenceNode.NumDescendants(),
               samplesReqd, distinctSamples);
           for (size_t i = 0; i < distinctSamples.n_elem; ++i)
             // The counting of the samples are done in the 'BaseCase' function
@@ -509,7 +509,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
-            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+            ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                 samplesReqd, distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; ++j)
               // The counting of the samples are done in the 'BaseCase' function
@@ -539,7 +539,7 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
             for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
             {
               const size_t queryIndex = queryNode.Descendant(i);
-              math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+              ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                   samplesReqd, distinctSamples);
               for (size_t j = 0; j < distinctSamples.n_elem; ++j)
                 // The counting of the samples are done in the 'BaseCase'
@@ -714,7 +714,7 @@ Rescore(TreeType& queryNode,
         for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         {
           const size_t queryIndex = queryNode.Descendant(i);
-          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+          ObtainDistinctSamples(0, referenceNode.NumDescendants(),
               samplesReqd, distinctSamples);
           for (size_t j = 0; j < distinctSamples.n_elem; ++j)
             // The counting of the samples are done in the 'BaseCase'
@@ -743,7 +743,7 @@ Rescore(TreeType& queryNode,
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
-            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
+            ObtainDistinctSamples(0, referenceNode.NumDescendants(),
                 samplesReqd, distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; ++j)
               // The counting of the samples are done in BaseCase() so no

@@ -30,7 +30,7 @@ class RandomDimensionSelect
   /**
    * Get the first dimension to select from.
    */
-  size_t Begin() const { return math::RandInt(dimensions); }
+  size_t Begin() const { return RandInt(dimensions); }
 
   /**
    * Get the last dimension to select from.

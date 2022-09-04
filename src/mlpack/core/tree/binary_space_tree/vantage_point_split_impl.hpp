@@ -48,7 +48,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   arma::Col<ElemType> distances(MaxNumSamples);
 
   // Get no more than max(MaxNumSamples, count) vantage point candidates
-  math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
+  ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
       vantagePointCandidates);
 
   ElemType bestSpread = 0;
@@ -58,7 +58,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   for (size_t i = 0; i < vantagePointCandidates.n_elem; ++i)
   {
     // Get no more than min(MaxNumSamples, count) random samples
-    math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
+    ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
 
     // Calculate the second moment of the distance to the vantage point
     // candidate using these random samples.

@@ -15,7 +15,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace math;
 
 /**
  * Test the output of trigamma for input values.

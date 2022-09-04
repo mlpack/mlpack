@@ -77,7 +77,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
       discriminator.network.back())), std::move(currentTarget));
 
   // Gradient Penalty is calculated here.
-  double epsilon = math::Random();
+  double epsilon = Random();
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       (epsilon * currentInput) + ((1.0 - epsilon) * generatedData);
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
@@ -154,7 +154,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       generator.network.back());
 
   // Gradient Penalty is calculated here.
-  double epsilon = math::Random();
+  double epsilon = Random();
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       (epsilon * currentInput) + ((1.0 - epsilon) * generatedData);
   responses.cols(numFunctions, numFunctions + batchSize - 1) =

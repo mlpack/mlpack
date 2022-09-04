@@ -51,7 +51,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     return DBL_MAX;
 
   // Picking a random pivot to split the dimension.
-  double randomPivot = math::Random(minValue, maxValue);
+  double randomPivot = Random(minValue, maxValue);
 
   // We need to count the number of points for each class.
   arma::Mat<size_t> classCounts;
@@ -184,7 +184,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   }
 
   // Picking a random pivot to split the dimension.
-  double randomPivot = math::Random(minValue, maxValue);
+  double randomPivot = Random(minValue, maxValue);
 
   // We need to count the number of points for each leaf.
   size_t leftLeafSize = 0;

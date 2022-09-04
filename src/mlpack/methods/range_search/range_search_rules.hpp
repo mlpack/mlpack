@@ -43,7 +43,7 @@ class RangeSearchRules
    */
   RangeSearchRules(const arma::mat& referenceSet,
                    const arma::mat& querySet,
-                   const math::Range& range,
+                   const Range& range,
                    std::vector<std::vector<size_t> >& neighbors,
                    std::vector<std::vector<double> >& distances,
                    MetricType& metric,
@@ -129,7 +129,7 @@ class RangeSearchRules
   const arma::mat& querySet;
 
   //! The range of distances for which we are searching.
-  const math::Range& range;
+  const Range& range;
 
   //! The vector the resultant neighbor indices should be stored in.
   std::vector<std::vector<size_t> >& neighbors;

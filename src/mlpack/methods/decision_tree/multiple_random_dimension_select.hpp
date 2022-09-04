@@ -53,7 +53,7 @@ class MultipleRandomDimensionSelect
       size_t value;
       while (!unique)
       {
-        value = math::RandInt(dimensions);
+        value = RandInt(dimensions);
 
         // Check if we already have the value.
         unique = true;

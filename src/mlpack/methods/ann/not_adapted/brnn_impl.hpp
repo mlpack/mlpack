@@ -611,7 +611,7 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::Shuffle()
 {
   arma::cube newPredictors, newResponses;
-  math::ShuffleData(predictors, responses, newPredictors, newResponses);
+  ShuffleData(predictors, responses, newPredictors, newResponses);
 
   predictors = std::move(newPredictors);
   responses = std::move(newResponses);

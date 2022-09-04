@@ -31,7 +31,7 @@ LinearSVMFunction<MatType>::LinearSVMFunction(
     const double lambda,
     const double delta,
     const bool fitIntercept) :
-    dataset(math::MakeAlias(const_cast<MatType&>(dataset), false)),
+    dataset(MakeAlias(const_cast<MatType&>(dataset), false)),
     numClasses(numClasses),
     lambda(lambda),
     delta(delta),
@@ -116,7 +116,7 @@ void LinearSVMFunction<MatType>::Shuffle()
 
   // Re-sort data.
   MatType newData = dataset.cols(ordering);
-  math::ClearAlias(dataset);
+  ClearAlias(dataset);
   dataset = std::move(newData);
 
   // Assemble data for batch constructor.  We need reverse orderings though...

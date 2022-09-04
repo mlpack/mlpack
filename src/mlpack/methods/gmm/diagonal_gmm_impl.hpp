@@ -148,7 +148,7 @@ inline double DiagonalGMM::LogProbability(const arma::vec& observation) const
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; ++i)
   {
-    sum = math::LogAdd(sum, log(weights[i]) +
+    sum = LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
   }
   return sum;
@@ -182,7 +182,7 @@ inline void DiagonalGMM::LogProbability(const arma::mat& observation,
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);
-  math::LogSumExp(logProb, logProbs);
+  LogSumExp(logProb, logProbs);
 }
 
 /**
@@ -237,7 +237,7 @@ inline double DiagonalGMM::Probability(const arma::vec& observation,
 inline arma::vec DiagonalGMM::Random() const
 {
   // Determine which Gaussian it will be coming from.
-  double gaussRand = math::Random();
+  double gaussRand = mlpack::Random();
   size_t gaussian = 0;
 
   double sumProb = 0;

@@ -208,7 +208,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   assignments.set_size(data.n_cols);
 
   range::RangeSearch<> rangeSearcher(data);
-  math::Range validRadius(0, radius);
+  Range validRadius(0, radius);
   std::vector<std::vector<size_t> > neighbors;
   std::vector<std::vector<double> > distances;
 

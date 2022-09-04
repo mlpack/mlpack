@@ -179,7 +179,7 @@ inline void RSModel::BuildModel(util::Timers& timers,
   {
     timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
-    math::RandomBasis(q, referenceSet.n_rows);
+    RandomBasis(q, referenceSet.n_rows);
 
     // Do we need to modify the reference set?
     if (randomBasis)
@@ -203,7 +203,7 @@ inline void RSModel::BuildModel(util::Timers& timers,
 // Perform range search.
 inline void RSModel::Search(util::Timers& timers,
                             arma::mat&& querySet,
-                            const math::Range& range,
+                            const Range& range,
                             std::vector<std::vector<size_t>>& neighbors,
                             std::vector<std::vector<double>>& distances)
 {
@@ -230,7 +230,7 @@ inline void RSModel::Search(util::Timers& timers,
 
 // Perform range search (monochromatic case).
 inline void RSModel::Search(util::Timers& timers,
-                            const math::Range& range,
+                            const Range& range,
                             std::vector<std::vector<size_t>>& neighbors,
                             std::vector<std::vector<double>>& distances)
 {
@@ -310,7 +310,7 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Search(util::Timers& timers,
                                  arma::mat&& querySet,
-                                 const math::Range& range,
+                                 const Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances,
                                  const size_t /* leafSize */)
@@ -338,7 +338,7 @@ template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Search(util::Timers& timers,
-                                 const math::Range& range,
+                                 const Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances)
 {
@@ -381,7 +381,7 @@ template<template<typename TreeMetricType,
 void LeafSizeRSWrapper<TreeType>::Search(
     util::Timers& timers,
     arma::mat&& querySet,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances,
     const size_t leafSize)

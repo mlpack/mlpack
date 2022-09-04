@@ -126,7 +126,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   arma::mat matActiveZ;
   if (nInactiveAtoms > 0)
   {
-    math::RemoveRows(codes, inactiveAtoms, matActiveZ);
+    RemoveRows(codes, inactiveAtoms, matActiveZ);
   }
 
   if (nInactiveAtoms > 0)
@@ -243,9 +243,9 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
       if (inactiveAtoms[currentInactiveIndex] == i)
       {
         // This atom is inactive.  Reinitialize it randomly.
-        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)));
+        dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)));
 
         dictionary.col(i) /= arma::norm(dictionary.col(i), 2);
 

@@ -667,7 +667,7 @@ Octree<MetricType, StatisticType, MatType>::MaxDistance(const Octree& other)
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
-math::RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
+RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
 Octree<MetricType, StatisticType, MatType>::RangeDistance(const Octree& other)
     const
 {
@@ -697,7 +697,7 @@ Octree<MetricType, StatisticType, MatType>::MaxDistance(
 
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename VecType>
-math::RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
+RangeType<typename Octree<MetricType, StatisticType, MatType>::ElemType>
 Octree<MetricType, StatisticType, MatType>::RangeDistance(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>*) const
