@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The standard Laplacian kernel.  Given two vectors @f$ x @f$, @f$ y @f$, and a
@@ -119,7 +118,6 @@ class KernelTraits<LaplacianKernel>
   static const bool UsesSquaredDistance = false;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

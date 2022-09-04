@@ -162,24 +162,24 @@ KDEWrapperBase* InitializeModelHelper(const KDEModel::KernelTypes kernelType,
   switch (kernelType)
   {
     case KDEModel::GAUSSIAN_KERNEL:
-      return new KDEWrapper<kernel::GaussianKernel, TreeType>(
-          relError, absError, kernel::GaussianKernel(bandwidth));
+      return new KDEWrapper<GaussianKernel, TreeType>(
+          relError, absError, GaussianKernel(bandwidth));
 
     case KDEModel::EPANECHNIKOV_KERNEL:
-      return new KDEWrapper<kernel::EpanechnikovKernel, TreeType>(
-          relError, absError, kernel::EpanechnikovKernel(bandwidth));
+      return new KDEWrapper<EpanechnikovKernel, TreeType>(
+          relError, absError, EpanechnikovKernel(bandwidth));
 
     case KDEModel::LAPLACIAN_KERNEL:
-      return new KDEWrapper<kernel::LaplacianKernel, TreeType>(
-          relError, absError, kernel::LaplacianKernel(bandwidth));
+      return new KDEWrapper<LaplacianKernel, TreeType>(
+          relError, absError, LaplacianKernel(bandwidth));
 
     case KDEModel::SPHERICAL_KERNEL:
-      return new KDEWrapper<kernel::SphericalKernel, TreeType>(
-          relError, absError, kernel::SphericalKernel(bandwidth));
+      return new KDEWrapper<SphericalKernel, TreeType>(
+          relError, absError, SphericalKernel(bandwidth));
 
     case KDEModel::TRIANGULAR_KERNEL:
-      return new KDEWrapper<kernel::TriangularKernel, TreeType>(
-          relError, absError, kernel::TriangularKernel(bandwidth));
+      return new KDEWrapper<TriangularKernel, TreeType>(
+          relError, absError, TriangularKernel(bandwidth));
   }
 
   // This should never happen.
@@ -406,41 +406,36 @@ void SerializationHelper(Archive& ar,
   {
     case KDEModel::GAUSSIAN_KERNEL:
       {
-        KDEWrapper<kernel::GaussianKernel, TreeType>& typedModel =
-            dynamic_cast<KDEWrapper<kernel::GaussianKernel,
-                                    TreeType>&>(*kdeModel);
+        KDEWrapper<GaussianKernel, TreeType>& typedModel =
+            dynamic_cast<KDEWrapper<GaussianKernel, TreeType>&>(*kdeModel);
         ar(CEREAL_NVP(typedModel));
         break;
       }
     case KDEModel::EPANECHNIKOV_KERNEL:
       {
-        KDEWrapper<kernel::EpanechnikovKernel, TreeType>& typedModel =
-            dynamic_cast<KDEWrapper<kernel::EpanechnikovKernel,
-                                    TreeType>&>(*kdeModel);
+        KDEWrapper<EpanechnikovKernel, TreeType>& typedModel =
+            dynamic_cast<KDEWrapper<EpanechnikovKernel, TreeType>&>(*kdeModel);
         ar(CEREAL_NVP(typedModel));
         break;
       }
     case KDEModel::LAPLACIAN_KERNEL:
       {
-        KDEWrapper<kernel::LaplacianKernel, TreeType>& typedModel =
-            dynamic_cast<KDEWrapper<kernel::LaplacianKernel,
-                                    TreeType>&>(*kdeModel);
+        KDEWrapper<LaplacianKernel, TreeType>& typedModel =
+            dynamic_cast<KDEWrapper<LaplacianKernel, TreeType>&>(*kdeModel);
         ar(CEREAL_NVP(typedModel));
         break;
       }
     case KDEModel::SPHERICAL_KERNEL:
       {
-        KDEWrapper<kernel::SphericalKernel, TreeType>& typedModel =
-            dynamic_cast<KDEWrapper<kernel::SphericalKernel,
-                                    TreeType>&>(*kdeModel);
+        KDEWrapper<SphericalKernel, TreeType>& typedModel =
+            dynamic_cast<KDEWrapper<SphericalKernel, TreeType>&>(*kdeModel);
         ar(CEREAL_NVP(typedModel));
         break;
       }
     case KDEModel::TRIANGULAR_KERNEL:
       {
-        KDEWrapper<kernel::TriangularKernel, TreeType>& typedModel =
-            dynamic_cast<KDEWrapper<kernel::TriangularKernel,
-                                    TreeType>&>(*kdeModel);
+        KDEWrapper<TriangularKernel, TreeType>& typedModel =
+            dynamic_cast<KDEWrapper<TriangularKernel, TreeType>&>(*kdeModel);
         ar(CEREAL_NVP(typedModel));
         break;
       }

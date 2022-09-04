@@ -521,7 +521,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
-  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)
   {
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
@@ -585,7 +585,7 @@ Evaluate(arma::vec& estimations)
   estimations.fill(arma::fill::zeros);
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
-  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)
   {
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);

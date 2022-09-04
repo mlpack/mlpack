@@ -70,7 +70,7 @@ struct KDEDefaultParams
  * @tparam DualTreeTraversalType Type of dual-tree traversal to use.
  * @tparam SingleTreeTraversalType Type of single-tree traversal to use.
  */
-template<typename KernelType = kernel::GaussianKernel,
+template<typename KernelType = GaussianKernel,
          typename MetricType = mlpack::metric::EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,

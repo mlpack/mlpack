@@ -42,7 +42,7 @@ namespace meanshift /** Mean shift clustering. */ {
  * @tparam MatType The type of matrix the data is stored in.
  */
 template<bool UseKernel = false,
-         typename KernelType = kernel::GaussianKernel,
+         typename KernelType = GaussianKernel,
          typename MatType = arma::mat>
 class MeanShift
 {

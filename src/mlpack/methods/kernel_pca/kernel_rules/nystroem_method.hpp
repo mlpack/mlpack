@@ -22,7 +22,7 @@ namespace kpca {
 
 template<
   typename KernelType,
-  typename PointSelectionPolicy = kernel::KMeansSelection<>
+  typename PointSelectionPolicy = KMeansSelection<>
 >
 class NystroemKernelRule
 {
@@ -45,8 +45,7 @@ class NystroemKernelRule
                                 KernelType kernel = KernelType())
   {
     arma::mat G, v;
-    kernel::NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel,
-        rank);
+    NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel, rank);
     nm.Apply(G);
     transformedData = G.t() * G;
 

@@ -44,7 +44,7 @@ typename MatType::elem_type CosineEmbeddingLossType<MatType>::Forward(
 
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
-    const ElemType cosDist = kernel::CosineDistance::Evaluate(
+    const ElemType cosDist = CosineDistance::Evaluate(
         inputTemp1(arma::span(i, i + cols - 1)), inputTemp2(arma::span(i,
         i + cols - 1)));
     if (similarity)
@@ -83,7 +83,7 @@ void CosineEmbeddingLossType<MatType>::Backward(
       false, false);
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {
-    const ElemType cosDist = kernel::CosineDistance::Evaluate(inputTemp1(
+    const ElemType cosDist = CosineDistance::Evaluate(inputTemp1(
         arma::span(i, i + cols -1)), inputTemp2(arma::span(i, i + cols -1)));
 
     if (cosDist < margin && !similarity)

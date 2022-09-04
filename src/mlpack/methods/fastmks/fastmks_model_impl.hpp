@@ -33,19 +33,19 @@ inline FastMKSModel::FastMKSModel(const int kernelType) :
 inline FastMKSModel::FastMKSModel(const FastMKSModel& other) :
     kernelType(other.kernelType),
     linear(other.linear == NULL ? NULL :
-        new FastMKS<kernel::LinearKernel>(*other.linear)),
+        new FastMKS<LinearKernel>(*other.linear)),
     polynomial(other.polynomial == NULL ? NULL :
-        new FastMKS<kernel::PolynomialKernel>(*other.polynomial)),
+        new FastMKS<PolynomialKernel>(*other.polynomial)),
     cosine(other.cosine == NULL ? NULL :
-        new FastMKS<kernel::CosineDistance>(*other.cosine)),
+        new FastMKS<CosineDistance>(*other.cosine)),
     gaussian(other.gaussian == NULL ? NULL :
-        new FastMKS<kernel::GaussianKernel>(*other.gaussian)),
+        new FastMKS<GaussianKernel>(*other.gaussian)),
     epan(other.epan == NULL ? NULL :
-        new FastMKS<kernel::EpanechnikovKernel>(*other.epan)),
+        new FastMKS<EpanechnikovKernel>(*other.epan)),
     triangular(other.triangular == NULL ? NULL :
-        new FastMKS<kernel::TriangularKernel>(*other.triangular)),
+        new FastMKS<TriangularKernel>(*other.triangular)),
     hyptan(other.hyptan == NULL ? NULL :
-        new FastMKS<kernel::HyperbolicTangentKernel>(*other.hyptan))
+        new FastMKS<HyperbolicTangentKernel>(*other.hyptan))
 {
   // Nothing to do.
 }
@@ -95,19 +95,19 @@ inline FastMKSModel& FastMKSModel::operator=(const FastMKSModel& other)
 
     kernelType = other.kernelType;
     if (other.linear)
-      linear = new FastMKS<kernel::LinearKernel>(*other.linear);
+      linear = new FastMKS<LinearKernel>(*other.linear);
     if (other.polynomial)
-      polynomial = new FastMKS<kernel::PolynomialKernel>(*other.polynomial);
+      polynomial = new FastMKS<PolynomialKernel>(*other.polynomial);
     if (other.cosine)
-      cosine = new FastMKS<kernel::CosineDistance>(*other.cosine);
+      cosine = new FastMKS<CosineDistance>(*other.cosine);
     if (other.gaussian)
-      gaussian = new FastMKS<kernel::GaussianKernel>(*other.gaussian);
+      gaussian = new FastMKS<GaussianKernel>(*other.gaussian);
     if (other.epan)
-      epan = new FastMKS<kernel::EpanechnikovKernel>(*other.epan);
+      epan = new FastMKS<EpanechnikovKernel>(*other.epan);
     if (other.triangular)
-      triangular = new FastMKS<kernel::TriangularKernel>(*other.triangular);
+      triangular = new FastMKS<TriangularKernel>(*other.triangular);
     if (other.hyptan)
-      hyptan = new FastMKS<kernel::HyperbolicTangentKernel>(*other.hyptan);
+      hyptan = new FastMKS<HyperbolicTangentKernel>(*other.hyptan);
   }
   return *this;
 }
@@ -330,40 +330,40 @@ void FastMKSModel::BuildModel(util::Timers& timers,
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      linear = new FastMKS<kernel::LinearKernel>(singleMode, naive);
+      linear = new FastMKS<LinearKernel>(singleMode, naive);
       BuildFastMKSModel(timers, *linear, kernel, std::move(referenceData), base);
       break;
 
     case POLYNOMIAL_KERNEL:
-      polynomial = new FastMKS<kernel::PolynomialKernel>(singleMode, naive);
+      polynomial = new FastMKS<PolynomialKernel>(singleMode, naive);
       BuildFastMKSModel(timers, *polynomial, kernel, std::move(referenceData),
           base);
       break;
 
     case COSINE_DISTANCE:
-      cosine = new FastMKS<kernel::CosineDistance>(singleMode, naive);
+      cosine = new FastMKS<CosineDistance>(singleMode, naive);
       BuildFastMKSModel(timers, *cosine, kernel, std::move(referenceData), base);
       break;
 
     case GAUSSIAN_KERNEL:
-      gaussian = new FastMKS<kernel::GaussianKernel>(singleMode, naive);
+      gaussian = new FastMKS<GaussianKernel>(singleMode, naive);
       BuildFastMKSModel(timers, *gaussian, kernel, std::move(referenceData),
           base);
       break;
 
     case EPANECHNIKOV_KERNEL:
-      epan = new FastMKS<kernel::EpanechnikovKernel>(singleMode, naive);
+      epan = new FastMKS<EpanechnikovKernel>(singleMode, naive);
       BuildFastMKSModel(timers, *epan, kernel, std::move(referenceData), base);
       break;
 
     case TRIANGULAR_KERNEL:
-      triangular = new FastMKS<kernel::TriangularKernel>(singleMode, naive);
+      triangular = new FastMKS<TriangularKernel>(singleMode, naive);
       BuildFastMKSModel(timers, *triangular, kernel, std::move(referenceData),
           base);
       break;
 
     case HYPTAN_KERNEL:
-      hyptan = new FastMKS<kernel::HyperbolicTangentKernel>(singleMode, naive);
+      hyptan = new FastMKS<HyperbolicTangentKernel>(singleMode, naive);
       BuildFastMKSModel(timers, *hyptan, kernel, std::move(referenceData), base);
       break;
   }

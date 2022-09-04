@@ -17,7 +17,6 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The Cauchy kernel. Given two vector @f$ x @f$, @f$ y @f$, and a bandwidth
@@ -91,7 +90,6 @@ class KernelTraits<CauchyKernel>
   static const bool IsNormalized = true;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

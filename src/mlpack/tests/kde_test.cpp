@@ -17,7 +17,6 @@ using namespace mlpack;
 using namespace mlpack::kde;
 using namespace mlpack::metric;
 using namespace mlpack::tree;
-using namespace mlpack::kernel;
 
 using namespace cereal;
 
@@ -849,7 +848,7 @@ TEST_CASE("CopyConstructor", "[KDETest]")
       KDEType;
 
   // KDE.
-  KDEType kde(relError, 0, kernel::GaussianKernel(kernelBandwidth));
+  KDEType kde(relError, 0, GaussianKernel(kernelBandwidth));
   kde.Train(std::move(reference));
 
   // Copy constructor KDE.
@@ -886,7 +885,7 @@ TEST_CASE("MoveConstructor", "[KDETest]")
       KDEType;
 
   // KDE.
-  KDEType kde(relError, 0, kernel::EpanechnikovKernel(kernelBandwidth));
+  KDEType kde(relError, 0, EpanechnikovKernel(kernelBandwidth));
   kde.Train(std::move(reference));
   kde.Evaluate(query, estimations1);
 

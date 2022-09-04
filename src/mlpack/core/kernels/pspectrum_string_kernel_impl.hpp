@@ -20,7 +20,6 @@
 #include "pspectrum_string_kernel.hpp"
 
 namespace mlpack {
-namespace kernel {
 
 inline PSpectrumStringKernel::PSpectrumStringKernel(
     const std::vector<std::vector<std::string> >& datasets,
@@ -132,7 +131,6 @@ double PSpectrumStringKernel::Evaluate(const VecType& a,
 
   return eval;
 }
-} // namespace kernel
 } // namespace mlpack
 
 #endif

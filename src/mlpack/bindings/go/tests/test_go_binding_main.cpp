@@ -20,7 +20,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::kernel;
 
 // Program Name.
 BINDING_USER_NAME("Golang binding test");

@@ -18,25 +18,6 @@
 namespace mlpack {
 
 /**
- * @brief Kernel functions.
- *
- * This namespace contains kernel functions, which evaluate some kernel function
- * @f$ K(x, y) @f$ for some arbitrary vectors @f$ x @f$ and @f$ y @f$ of the
- * same dimension.  The single restriction on the function @f$ K(x, y) @f$ is
- * that it must satisfy Mercer's condition:
- *
- * @f[
- * \int \int K(x, y) g(x) g(y) dx dy \ge 0
- * @f]
- *
- * for all square integrable functions @f$ g(x) @f$.
- *
- * The kernels in this namespace all implement the KernelType policy.  For more
- * information, see \ref kernels "The KernelType policy documentation".
- */
-namespace kernel {
-
-/**
  * An example kernel function.  This is not a useful kernel, but it implements
  * the two functions necessary to satisfy the Kernel policy (so that a class can
  * be used whenever an mlpack method calls for a `typename Kernel` template
@@ -141,7 +122,6 @@ class ExampleKernel
   // static double Normalizer(size_t dimension=1) { return 0; }
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

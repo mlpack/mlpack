@@ -13,7 +13,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The spherical kernel, which is 1 when the distance between the two argument
@@ -125,7 +124,6 @@ class KernelTraits<SphericalKernel>
   static const bool UsesSquaredDistance = false;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

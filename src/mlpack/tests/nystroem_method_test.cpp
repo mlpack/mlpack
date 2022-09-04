@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::kernel;
 
 /**
  * Make sure that if the rank is the same and we do a full-rank approximation,

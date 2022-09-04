@@ -19,7 +19,6 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The standard Gaussian kernel.  Given two vectors @f$ x @f$, @f$ y @f$, and a
@@ -173,7 +172,6 @@ class KernelTraits<GaussianKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

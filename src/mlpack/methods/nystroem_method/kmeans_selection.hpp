@@ -17,7 +17,6 @@
 #include <mlpack/methods/kmeans/kmeans.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * Implementation of the kmeans sampling scheme.
@@ -50,7 +49,6 @@ class KMeansSelection
   }
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

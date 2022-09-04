@@ -19,7 +19,6 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 template<typename VecTypeA, typename VecTypeB>
 inline double EpanechnikovKernel::Evaluate(const VecTypeA& a, const VecTypeB& b)
@@ -146,7 +145,6 @@ void EpanechnikovKernel::serialize(Archive& ar,
   ar(CEREAL_NVP(inverseBandwidthSquared));
 }
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

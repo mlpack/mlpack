@@ -63,22 +63,21 @@ mlpack provides a command-line program, `mlpack_fastmks`, which is used to
 perform FastMKS on a given query and reference dataset.  It supports numerous
 different types of kernels:
 
- - `mlpack::kernel::LinearKernel`
- - `mlpack::kernel::PolynomialKernel`
- - `mlpack::kernel::CosineDistance`
- - `mlpack::kernel::GaussianKernel`
- - `mlpack::kernel::EpanechnikovKernel`
- - `mlpack::kernel::TriangularKernel`
- - `mlpack::kernel::HyperbolicTangentKernel`
+ - `LinearKernel`
+ - `PolynomialKernel`
+ - `CosineDistance`
+ - `GaussianKernel`
+ - `EpanechnikovKernel`
+ - `TriangularKernel`
+ - `HyperbolicTangentKernel`
 
 Note that when a shift-invariant kernel is used, the results will be the same as
 nearest neighbor search, so [KNN](neighbor_search.md) may be a better option.  A
 shift-invariant kernel is a kernel that depends only on the distance between the
-two input points.  The `mlpack::kernel::GaussianKernel`,
-`mlpack::kernel::EpanechnikovKernel`, and `mlpack::kernel::TriangularKernel` are
-instances of shift-invariant kernels.  The paper contains more details on this
-situation.  The `mlpack_fastmks` executable still provides these kernels as
-options, though.
+two input points.  The `GaussianKernel`, `EpanechnikovKernel`, and
+`TriangularKernel` are instances of shift-invariant kernels.  The paper contains
+more details on this situation.  The `mlpack_fastmks` executable still provides
+these kernels as options, though.
 
 The following examples detail usage of the `mlpack_fastmks` program.  Note that
 you can get documentation on all the possible parameters by typing:
@@ -200,12 +199,11 @@ are detailed in this section.
 
  - `-o` (`--offset`): this sets the offset of the kernel, for the
    `'polynomial'` and `'hyptan'` kernel.  See the documentation for
-   `mlpack::kernel::PolynomialKernel` and
-   `mlpack::kernel::HyperbolicTangentKernel` for more information.
+   `PolynomialKernel` and `HyperbolicTangentKernel` for more information.
 
  - `-s` (`--scale`): this sets the scale of the kernel, and is only applicable
    to the `'hyptan'` kernel.  See the documentation for
-   `mlpack::kernel::HyperbolicTangentKernel` for more information.
+   `HyperbolicTangentKernel` for more information.
 
 ### Saving a FastMKS model/tree
 
@@ -250,15 +248,15 @@ allows further flexibility in kernel choice and tree type choice.  However,
 `FastMKS<>` has no default template parameter for the kernel type---that must be
 manually specified.  Choices that mlpack provides include:
 
- - `mlpack::kernel::LinearKernel`
- - `mlpack::kernel::PolynomialKernel`
- - `mlpack::kernel::CosineDistance`
- - `mlpack::kernel::GaussianKernel`
- - `mlpack::kernel::EpanechnikovKernel`
- - `mlpack::kernel::TriangularKernel`
- - `mlpack::kernel::HyperbolicTangentKernel`
- - `mlpack::kernel::LaplacianKernel`
- - `mlpack::kernel::PSpectrumStringKernel`
+ - `LinearKernel`
+ - `PolynomialKernel`
+ - `CosineDistance`
+ - `GaussianKernel`
+ - `EpanechnikovKernel`
+ - `TriangularKernel`
+ - `HyperbolicTangentKernel`
+ - `LaplacianKernel`
+ - `PSpectrumStringKernel`
 
 The following examples use kernels from that list.  Writing your own kernel is
 detailed in the next section.  Remember that when you are using the C++
@@ -479,10 +477,10 @@ terms 'Fritz', 'E28', and 'popsicle'.
 
 However, what we can do is define some sort of kernel on these objects.  These
 kernels generally correspond to some similarity measure, with one example being
-the p-spectrum string kernel (see `mlpack::kernel::PSpectrumStringKernel`).
-Using that, we can say "how similar is 'dog' to 'Taki Inoue'?" and get an actual
-numerical result by evaluating `K('dog', 'Taki Inoue')` (where `K` is our
-p-spectrum string kernel).
+the p-spectrum string kernel (see `PSpectrumStringKernel`).  Using that, we can
+say "how similar is 'dog' to 'Taki Inoue'?" and get an actual numerical result
+by evaluating `K('dog', 'Taki Inoue')` (where `K` is our p-spectrum string
+kernel).
 
 The only requirement on these kernels is that they are positive definite kernels
 (or Mercer kernels).  For more information on those details, refer to the
@@ -504,7 +502,7 @@ different lengths.
 
 The way to work around this problem is to create a "fake" data matrix which
 simply holds indices to objects.  A good example of how to do this is detailed
-in the documentation for the `mlpack::kernel::PSpectrumStringKernel` class.
+in the documentation for the `PSpectrumStringKernel` class.
 
 In short, the trick is to make each data matrix one-dimensional and containing
 linear indices:
@@ -541,12 +539,12 @@ double ObjectKernel::Evaluate(const VecType& a, const VecType& b) const
 }
 ```
 
-As written earlier, the documentation for
-`mlpack::kernel::PSpectrumStringKernel` is a good place to consult for further
-reference on this.  That kernel uses two dimensional indices; one dimension
-represents the index of the string, and the other represents whether it is
-referring to the query set or the reference set.  If your kernel is meant to
-work on separate query and reference sets, that strategy should be considered.
+As written earlier, the documentation for `PSpectrumStringKernel` is a good
+place to consult for further reference on this.  That kernel uses two
+dimensional indices; one dimension represents the index of the string, and the
+other represents whether it is referring to the query set or the reference set.
+If your kernel is meant to work on separate query and reference sets, that
+strategy should be considered.
 
 ## Further documentation
 

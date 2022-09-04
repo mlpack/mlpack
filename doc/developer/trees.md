@@ -765,9 +765,9 @@ Some tree-based algorithms can specialize if the tree fulfills certain
 conditions.  For instance, if the regions represented by two sibling nodes
 cannot overlap, an algorithm may be able to perform a simpler computation.
 Based on this reasoning, the `TreeTraits` trait class (much like the
-`mlpack::kernel::KernelTraits` class) exists in order to allow a tree to specify
-(via a `const static bool`) when these types of conditions are satisfied.
-***Note that a TreeTraits class is not required***, but may be helpful.
+`KernelTraits` class) exists in order to allow a tree to specify (via a `const
+static bool`) when these types of conditions are satisfied.  ***Note that a
+TreeTraits class is not required***, but may be helpful.
 
 The `TreeTraits` trait class is a template class that takes a `TreeType` as a
 parameter, and exposes `const static bool` values that depend on the tree.

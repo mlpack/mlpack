@@ -136,7 +136,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
     const double parentDist = referenceNode.ParentDistance();
     const double combinedDistBound = parentDist + furthestDist;
     const double lastKernel = referenceNode.Parent()->Stat().LastKernel();
-    if (kernel::KernelTraits<KernelType>::IsNormalized)
+    if (KernelTraits<KernelType>::IsNormalized)
     {
       const double squaredDist = std::pow(combinedDistBound, 2.0);
       const double delta = (1 - 0.5 * squaredDist);
@@ -190,7 +190,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
   referenceNode.Stat().LastKernel() = kernelEval;
 
   double maxKernel;
-  if (kernel::KernelTraits<KernelType>::IsNormalized)
+  if (KernelTraits<KernelType>::IsNormalized)
   {
     const double squaredDist = std::pow(furthestDist, 2.0);
     const double delta = (1 - 0.5 * squaredDist);
@@ -361,7 +361,7 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   ++scores;
 
   double maxKernel;
-  if (kernel::KernelTraits<KernelType>::IsNormalized)
+  if (KernelTraits<KernelType>::IsNormalized)
   {
     // We have a tighter bound for normalized kernels.
     const double querySqDist = std::pow(queryDescDist, 2.0);

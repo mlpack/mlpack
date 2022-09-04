@@ -103,7 +103,7 @@ void IPMetric<KernelType>::serialize(Archive& ar,
 // the Euclidean distance.
 template<>
 template<typename Vec1Type, typename Vec2Type>
-inline typename Vec1Type::elem_type IPMetric<kernel::LinearKernel>::Evaluate(
+inline typename Vec1Type::elem_type IPMetric<LinearKernel>::Evaluate(
     const Vec1Type& a,
     const Vec2Type& b)
 {

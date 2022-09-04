@@ -55,8 +55,7 @@ enum NeighborSearchMode
  *
  * The template parameters SortPolicy and Metric define the sort function used
  * and the metric (distance function) used.  More information on those classes
- * can be found in the NearestNeighborSort class and the kernel::ExampleKernel
- * class.
+ * can be found in the NearestNeighborSort class and the ExampleKernel class.
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  * @tparam MetricType The metric to use for computation.

@@ -37,9 +37,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianRTreeResultsMain",
   double kernelBandwidth = 1.5;
   double relError = 0.05;
 
-  kernel::GaussianKernel kernel(kernelBandwidth);
+  GaussianKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<kernel::GaussianKernel,
+  KDE<GaussianKernel,
       metric::EuclideanDistance,
       arma::mat,
       tree::RTree>
@@ -80,9 +80,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
   double kernelBandwidth = 3.0;
   double relError = 0.06;
 
-  kernel::TriangularKernel kernel(kernelBandwidth);
+  TriangularKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<kernel::TriangularKernel,
+  KDE<TriangularKernel,
       metric::EuclideanDistance,
       arma::mat,
       tree::BallTree>
@@ -120,9 +120,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
   double kernelBandwidth = 2.3;
   double relError = 0.05;
 
-  kernel::EpanechnikovKernel kernel(kernelBandwidth);
+  EpanechnikovKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<kernel::EpanechnikovKernel,
+  KDE<EpanechnikovKernel,
       metric::EuclideanDistance,
       arma::mat,
       tree::StandardCoverTree>
@@ -237,9 +237,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianSingleKDTreeResultsMain",
   double kernelBandwidth = 3.0;
   double relError = 0.06;
 
-  kernel::GaussianKernel kernel(kernelBandwidth);
+  GaussianKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<kernel::GaussianKernel,
+  KDE<GaussianKernel,
       metric::EuclideanDistance,
       arma::mat,
       tree::BallTree>

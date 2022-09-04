@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 class RandomSelection
 {
@@ -39,7 +38,6 @@ class RandomSelection
   }
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

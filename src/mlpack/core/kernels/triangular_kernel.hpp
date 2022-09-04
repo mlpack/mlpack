@@ -16,7 +16,6 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The trivially simple triangular kernel, defined by
@@ -114,7 +113,6 @@ class KernelTraits<TriangularKernel>
   static const bool UsesSquaredDistance = false;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif
