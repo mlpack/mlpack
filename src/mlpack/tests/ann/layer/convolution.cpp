@@ -160,7 +160,48 @@ TEST_CASE("GradientConvolutionLayerTest", "[ANNLayerTest]")
     arma::mat input, target;
   } function;
 
-  REQUIRE(CheckGradient(function) < 1e3);
+  REQUIRE(CheckGradient(function) < 1e-1);
+}
+
+/**
+ * Convolution layer numerical gradient test with stride = 2.
+ */
+TEST_CASE("GradientConvolutionLayerWithStrideTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::linspace<arma::colvec>(0, 35, 36)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood, RandomInitialization>();
+      model->ResetData(input, target);
+      model->Add<Convolution>(1, 3, 3, 2, 2, std::tuple<size_t, size_t>(0, 0),
+          std::tuple<size_t, size_t>(0, 0), "same");
+      model->Add<LogSoftMax>();
+
+      model->InputDimensions() = std::vector<size_t>({ 6, 6 });
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) < 1e-1);
 }
 
 TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
@@ -326,4 +367,82 @@ TEST_CASE("AdvancedConvolutionLayerTest", "[ANNLayerTest]")
   delta.set_size(8, 3);
   layer.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
+}
+
+/**
+ * Advanced test for the Convolution layer with stride = 2.
+ */
+TEST_CASE("AdvancedConvolutionLayerWithStrideTest", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+
+  // The input test matrix is of the form 3 x 2 x 2 x 2 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 } };
+
+  Convolution layer(2, 2, 2, 2, 2, 0, 0);
+  layer.InputDimensions() = std::vector<size_t>({ 4, 4, 2 });
+  layer.ComputeOutputDimensions();
+  arma::mat layerWeights(layer.WeightSize(), 1);
+  layerWeights(0) = 0.34526727;
+  layerWeights(1) = 0.10398731;
+  layerWeights(2) = -0.23198915;
+  layerWeights(3) = 0.05350551;
+  layerWeights(4) = -0.2239646;
+  layerWeights(5) = 0.30852968;
+  layerWeights(6) = -0.2635072;
+  layerWeights(7) = 0.01724506;
+  layerWeights(8) = -0.20932047;
+  layerWeights(9) = 0.2990749;
+  layerWeights(10) = -0.2981235;
+  layerWeights(11) = -0.14024211;
+  layerWeights(12) = -0.09744886;
+  layerWeights(13) = 0.16249102;
+  layerWeights(14) = 0.2692932;
+  layerWeights(15) = -0.12563613;
+  layerWeights(16) = -0.1114468053;
+  layerWeights(17) = -0.3029643595;
+  layer.SetWeights(layerWeights.memptr());
+  output.set_size(layer.OutputSize(), 3);
+
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == Approx(364.7379150391).epsilon(1e-5));
+
+  arma::mat delta;
+  delta.set_size(32, 3);
+  layer.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == Approx(115.3515701294).epsilon(1e-5));
 }

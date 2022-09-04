@@ -85,29 +85,29 @@ TEST_CASE("PaddingTest", "[ConvolutionalNetworktest]")
   model.Forward(X, results);
 
   // Ensure that things are correctly padded.
-  arma::cube reshapedResults(results.memptr(), 35, 31, results.n_cols, false,
+  arma::cube reshapedResults(results.memptr(), 31, 35, results.n_cols, false,
       true);
 
   for (size_t i = 0; i < reshapedResults.n_slices; ++i)
   {
     // Check left.
-    for (size_t j = 0; j < reshapedResults.n_rows; ++j)
-      REQUIRE(reshapedResults(j, 0, i) == 0.0);
+    for (size_t j = 0; j < reshapedResults.n_cols; ++j)
+      REQUIRE(reshapedResults(0, j, i) == 0.0);
 
     // Check top.
     for (size_t j = 0; j < 3; ++j)
-      for (size_t k = 0; k < reshapedResults.n_cols; ++k)
-        REQUIRE(reshapedResults(j, k, i) == 0.0);
+      for (size_t k = 0; k < reshapedResults.n_rows; ++k)
+        REQUIRE(reshapedResults(k, j, i) == 0.0);
 
     // Check bottom.
-    for (size_t j = 31; j < reshapedResults.n_rows; ++j)
-      for (size_t k = 0; k < reshapedResults.n_cols; ++k)
-        REQUIRE(reshapedResults(j, k, i) == 0.0);
+    for (size_t j = 31; j < reshapedResults.n_cols; ++j)
+      for (size_t k = 0; k < reshapedResults.n_rows; ++k)
+        REQUIRE(reshapedResults(k, j, i) == 0.0);
 
     // Check right.
-    for (size_t j = 0; j < reshapedResults.n_rows; ++j)
-      for (size_t k = 29; k < reshapedResults.n_cols; ++k)
-        REQUIRE(reshapedResults(j, k, i) == 0.0);
+    for (size_t j = 0; j < reshapedResults.n_cols; ++j)
+      for (size_t k = 29; k < reshapedResults.n_rows; ++k)
+        REQUIRE(reshapedResults(k, j, i) == 0.0);
   }
 }
 
