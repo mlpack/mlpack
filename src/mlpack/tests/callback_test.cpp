@@ -24,7 +24,6 @@ using namespace mlpack::regression;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
 using namespace mlpack::nca;
-using namespace mlpack::distribution;
 
 /**
  * Test a FFN model with PrintLoss callback.

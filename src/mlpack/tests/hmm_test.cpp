@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::hmm;
-using namespace mlpack::distribution;
 using namespace mlpack::gmm;
 
 /**

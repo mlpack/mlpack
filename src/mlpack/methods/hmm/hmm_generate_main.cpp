@@ -25,7 +25,6 @@
 
 using namespace mlpack;
 using namespace mlpack::hmm;
-using namespace mlpack::distribution;
 using namespace mlpack::util;
 using namespace mlpack::gmm;
 using namespace arma;

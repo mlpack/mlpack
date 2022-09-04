@@ -18,7 +18,6 @@
 #include <mlpack/core/data/split_data.hpp>
 
 using namespace mlpack;
-using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
 /**

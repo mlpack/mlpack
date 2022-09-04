@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::distribution;
 
 /**
  * Test the LogisticRegressionFunction on a simple set of points.

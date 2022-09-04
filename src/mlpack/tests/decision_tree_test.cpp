@@ -18,7 +18,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::distribution;
 
 /**
  * Make sure the Gini gain is zero when the labels are perfect.

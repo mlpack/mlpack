@@ -19,7 +19,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::distribution;
 
 /**
  * Creates dataset with 5 groups with all the points in same group have exactly

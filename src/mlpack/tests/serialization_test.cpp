@@ -28,7 +28,6 @@
 #include <mlpack/methods/bayesian_linear_regression.hpp>
 
 using namespace mlpack;
-using namespace mlpack::distribution;
 using namespace mlpack::regression;
 using namespace mlpack::bound;
 using namespace mlpack::metric;

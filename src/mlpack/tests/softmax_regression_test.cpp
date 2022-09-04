@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::distribution;
 
 TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
 {

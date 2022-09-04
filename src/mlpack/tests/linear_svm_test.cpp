@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace mlpack::svm;
-using namespace mlpack::distribution;
 
 /**
  * Callback test function, based on the EndOptimization callback function.
