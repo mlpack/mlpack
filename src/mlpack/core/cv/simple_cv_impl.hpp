@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_SIMPLE_CV_IMPL_HPP
 
 namespace mlpack {
-namespace cv {
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -320,7 +319,6 @@ double SimpleCV<MLAlgorithm,
   return Metric::Evaluate(*modelPtr, validationXs, validationYs);
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

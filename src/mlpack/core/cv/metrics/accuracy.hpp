@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * The Accuracy is a metric of performance for classification algorithms that is
@@ -45,7 +44,6 @@ class Accuracy
   static const bool NeedsMinimization = false;
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation.

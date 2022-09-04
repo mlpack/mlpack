@@ -15,7 +15,6 @@
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * An auxiliary class for cross-validation. It serves to handle basic non-data
@@ -227,7 +226,6 @@ class CVBase
                          const MLAlgorithmArgs&... args);
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation

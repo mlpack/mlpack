@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_K_FOLD_CV_IMPL_HPP
 
 namespace mlpack {
-namespace cv {
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -456,7 +455,6 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
       subsetSize, false, true);
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

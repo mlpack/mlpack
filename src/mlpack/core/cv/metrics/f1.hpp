@@ -18,7 +18,6 @@
 #include <mlpack/core/cv/metrics/average_strategy.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * F1 is a metric of performance for classification algorithms that for binary
@@ -101,7 +100,6 @@ class F1
                         const arma::Row<size_t>& labels);
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation.

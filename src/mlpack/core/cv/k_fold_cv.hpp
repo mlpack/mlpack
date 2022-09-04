@@ -16,7 +16,6 @@
 #include <mlpack/core/cv/cv_base.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * The class KFoldCV implements k-fold cross-validation for regression and
@@ -307,7 +306,6 @@ class KFoldCV
                                                     const size_t i);
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation

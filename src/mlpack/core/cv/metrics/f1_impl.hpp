@@ -15,7 +15,6 @@
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 
 namespace mlpack {
-namespace cv {
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
 template<typename MLAlgorithm, typename DataType>
@@ -92,7 +91,6 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
   return arma::mean(f1s);
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

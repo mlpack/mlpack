@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace hpt {
 
 /**
  * This wrapper serves for adapting the interface of the cross-validation
@@ -170,7 +169,6 @@ class CVFunction
 };
 
 
-} // namespace hpt
 } // namespace mlpack
 
 // Include implementation

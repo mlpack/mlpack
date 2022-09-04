@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_METRICS_AVERAGE_STRATEGY_HPP
 
 namespace mlpack {
-namespace cv {
 
 /**
  * This enum declares possible strategies for averaging that can be used in some
@@ -29,7 +28,6 @@ enum AverageStrategy
   Macro
 };
 
-} // namespace cv
 } // namespace mlpack
 
 #endif
