@@ -20,7 +20,6 @@
 #include "cf_model.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::cf;
 using namespace mlpack::amf;
 using namespace mlpack::svd;

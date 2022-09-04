@@ -27,7 +27,6 @@
 #include "dual_tree_kmeans.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::kmeans;
 using namespace mlpack::util;
 using namespace std;

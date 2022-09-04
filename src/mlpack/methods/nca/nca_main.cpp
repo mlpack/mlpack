@@ -136,7 +136,6 @@ PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace mlpack::util;

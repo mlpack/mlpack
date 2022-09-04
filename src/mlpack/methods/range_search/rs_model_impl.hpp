@@ -179,7 +179,7 @@ inline void RSModel::BuildModel(util::Timers& timers,
   {
     timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
-    RandomBasis(q, referenceSet.n_rows);
+    mlpack::RandomBasis(q, referenceSet.n_rows);
 
     // Do we need to modify the reference set?
     if (randomBasis)

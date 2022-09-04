@@ -18,7 +18,6 @@
 #include <mlpack/methods/random_forest/random_forest.hpp>
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;

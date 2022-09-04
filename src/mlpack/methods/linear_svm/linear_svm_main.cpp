@@ -20,7 +20,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::svm;
 using namespace mlpack::util;
 

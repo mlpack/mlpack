@@ -18,7 +18,6 @@
 #include "mlpack/methods/preprocess/scaling_model.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::util;
 using namespace mlpack::data;
 using namespace arma;

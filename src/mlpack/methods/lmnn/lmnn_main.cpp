@@ -179,7 +179,6 @@ PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
 using namespace mlpack::util;

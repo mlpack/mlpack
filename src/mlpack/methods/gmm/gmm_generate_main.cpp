@@ -19,7 +19,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::gmm;
 using namespace mlpack::util;
 

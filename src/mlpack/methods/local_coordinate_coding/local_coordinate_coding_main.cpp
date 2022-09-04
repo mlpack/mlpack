@@ -21,7 +21,6 @@
 using namespace arma;
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::lcc;
 using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;

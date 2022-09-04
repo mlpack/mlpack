@@ -19,7 +19,6 @@
 #include <mlpack/methods/amf/amf.hpp>
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::amf;
 using namespace mlpack::util;
 using namespace std;

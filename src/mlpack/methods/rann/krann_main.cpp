@@ -22,7 +22,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 using namespace mlpack::metric;

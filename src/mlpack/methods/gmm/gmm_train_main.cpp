@@ -24,7 +24,6 @@
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::gmm;
 using namespace mlpack::util;
 using namespace mlpack::kmeans;

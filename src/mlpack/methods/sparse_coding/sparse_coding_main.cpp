@@ -21,7 +21,6 @@
 using namespace arma;
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::sparse_coding;
 using namespace mlpack::util;
 
