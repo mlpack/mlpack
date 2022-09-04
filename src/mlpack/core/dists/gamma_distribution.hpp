@@ -25,7 +25,6 @@
 #include <mlpack/core/math/trigamma.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * This class represents the Gamma distribution.  It supports training a Gamma
@@ -229,7 +228,6 @@ class GammaDistribution
                         const double tol);
 };
 
-} // namespace distribution
 } // namespace mlpack
 
 // Include implementation.

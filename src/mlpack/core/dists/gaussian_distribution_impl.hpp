@@ -17,7 +17,6 @@
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 inline GaussianDistribution::GaussianDistribution(
     const arma::vec& mean,
@@ -185,7 +184,6 @@ inline void GaussianDistribution::Train(const arma::mat& observations,
   FactorCovariance();
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

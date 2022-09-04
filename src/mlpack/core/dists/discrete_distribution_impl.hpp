@@ -16,7 +16,6 @@
 #include "discrete_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * Return a randomly generated observation according to the probability
@@ -162,7 +161,6 @@ inline void DiscreteDistribution::Train(const arma::mat& observations,
   }
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

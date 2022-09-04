@@ -45,8 +45,7 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
-  if (std::is_same<Distribution,
-      distribution::DiagonalGaussianDistribution>::value)
+  if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
   {
     #ifdef _WIN32
       Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
@@ -58,7 +57,7 @@ Estimate(const arma::mat& observations,
     #endif
   }
   else if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value
-      && std::is_same<Distribution, distribution::GaussianDistribution>::value)
+      && std::is_same<Distribution, GaussianDistribution>::value)
   {
     // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
     // makes use of slower implementation.
@@ -131,8 +130,7 @@ Estimate(const arma::mat& observations,
 
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
-      if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
+      if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
         arma::vec covariance = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
@@ -243,8 +241,7 @@ Estimate(const arma::mat& observations,
 
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
-      if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
+      if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
         arma::vec cov = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
@@ -297,7 +294,7 @@ InitialClustering(const arma::mat& observations,
   // we can get faster performance by using diagonal elements when calculating
   // the covariance.
   const bool isDiagGaussDist = std::is_same<Distribution,
-      distribution::DiagonalGaussianDistribution>::value;
+      DiagonalGaussianDistribution>::value;
 
   std::vector<arma::vec> means(dists.size());
 

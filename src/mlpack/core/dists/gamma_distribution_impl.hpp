@@ -16,7 +16,6 @@
 #include "gamma_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 inline GammaDistribution::GammaDistribution(const size_t dimensionality)
 {
@@ -246,7 +245,6 @@ inline arma::vec GammaDistribution::Random() const
   return randVec;
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

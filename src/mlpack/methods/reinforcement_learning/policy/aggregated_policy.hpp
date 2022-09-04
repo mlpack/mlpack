@@ -71,7 +71,7 @@ class AggregatedPolicy
   std::vector<PolicyType> policies;
 
   //! Locally-stored sampler under the given distribution.
-  distribution::DiscreteDistribution sampler;
+  DiscreteDistribution sampler;
 };
 
 } // namespace rl

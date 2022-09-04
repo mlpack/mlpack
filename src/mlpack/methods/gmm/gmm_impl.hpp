@@ -30,7 +30,7 @@ namespace gmm {
 inline GMM::GMM(const size_t gaussians, const size_t dimensionality) :
     gaussians(gaussians),
     dimensionality(dimensionality),
-    dists(gaussians, distribution::GaussianDistribution(dimensionality)),
+    dists(gaussians, GaussianDistribution(dimensionality)),
     weights(gaussians)
 {
   // Set equal weights.  Technically this model is still valid, but only barely.
@@ -226,7 +226,7 @@ inline void GMM::Classify(const arma::mat& observations,
  */
 inline double GMM::LogLikelihood(
     const arma::mat& data,
-    const std::vector<distribution::GaussianDistribution>& distsL,
+    const std::vector<GaussianDistribution>& distsL,
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
@@ -271,7 +271,7 @@ double GMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::GaussianDistribution> distsOrig;
+    std::vector<GaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -289,8 +289,8 @@ double GMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<GaussianDistribution> distsTrial(gaussians,
+        GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -355,7 +355,7 @@ double GMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::GaussianDistribution> distsOrig;
+    std::vector<GaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -374,8 +374,8 @@ double GMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<GaussianDistribution> distsTrial(gaussians,
+        GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)

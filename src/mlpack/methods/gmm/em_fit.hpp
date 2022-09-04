@@ -40,7 +40,7 @@ namespace gmm {
  */
 template<typename InitialClusteringType = kmeans::KMeans<>,
          typename CovarianceConstraintPolicy = PositiveDefiniteConstraint,
-         typename Distribution = distribution::GaussianDistribution>
+         typename Distribution = GaussianDistribution>
 class EMFit
 {
  public:

@@ -17,7 +17,6 @@
 #include "regression_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * Estimate parameters using provided observation weights.
@@ -83,7 +82,6 @@ inline void RegressionDistribution::Predict(const arma::mat& points,
   rf.Predict(points, predictions);
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

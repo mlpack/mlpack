@@ -18,7 +18,6 @@
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * A class that represents a univariate conditionally Gaussian distribution.
@@ -157,7 +156,6 @@ class RegressionDistribution
 };
 
 
-} // namespace distribution
 } // namespace mlpack
 
 // Include implementation.

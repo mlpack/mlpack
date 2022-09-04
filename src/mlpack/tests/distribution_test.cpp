@@ -5,9 +5,9 @@
  * @author Rohan Raj
  *
  * Tests for the classes:
- *  * mlpack::distribution::DiscreteDistribution
- *  * mlpack::distribution::GaussianDistribution
- *  * mlpack::distribution::GammaDistribution
+ *  * DiscreteDistribution
+ *  * GaussianDistribution
+ *  * GammaDistribution
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,7 +21,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::distribution;
 using namespace mlpack::metric;
 
 /*********************************/
