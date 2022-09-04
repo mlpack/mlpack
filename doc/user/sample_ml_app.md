@@ -54,13 +54,11 @@ cover:
 
 ## Headers and namespaces
 
-For this app, we will need to include the following headers (i.e. add into
+For this app, we will need to include the mlpack header (i.e. add into
 `stdafx.h`):
 
 ```c++
-#include "mlpack/core.hpp"
-#include "mlpack/methods/random_forest/random_forest.hpp"
-#include "mlpack/methods/decision_tree/random_dimension_select.hpp"
+#include "mlpack.hpp"
 ```
 
 Also, we will use the following namespaces:

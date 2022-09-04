@@ -196,7 +196,7 @@ This class implements density estimation trees.  Below is a simple example which
 initializes a density estimation tree.
 
 ```c++
-#include <mlpack/methods/det.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::det;
 
@@ -271,7 +271,7 @@ The code below details how to train a density estimation tree with
 cross-validation.
 
 ```c++
-#include <mlpack/methods/det/dt_utils.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::det;
 

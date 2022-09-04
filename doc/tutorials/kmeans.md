@@ -209,7 +209,7 @@ the dataset must be column-major---that is, one column corresponds to one point.
 See [the matrices guide](../user/matrices.md) for more information.
 
 ```c++
-#include <mlpack/methods/kmeans.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::kmeans;
 
@@ -235,7 +235,7 @@ Often it is useful to not only have the cluster assignments, but the centroids
 of each cluster.  Another overload of `Cluster()` makes this easily possible:
 
 ```c++
-#include <mlpack/methods/kmeans.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::kmeans;
 
@@ -284,7 +284,7 @@ fill the assignments vector with the guess and then pass an extra boolean
 examples for either overload of `Cluster()`.
 
 ```c++
-#include <mlpack/methods/kmeans.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::kmeans;
 
@@ -304,7 +304,7 @@ k.Cluster(dataset, clusters, assignments, true);
 ```
 
 ```c++
-#include <mlpack/methods/kmeans.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::kmeans;
 
@@ -350,7 +350,7 @@ This, of course, only works with the overload of `Cluster()` that takes a matrix
 to put the resulting centroids in.  Below is an example.
 
 ```c++
-#include <mlpack/methods/kmeans.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::kmeans;
 

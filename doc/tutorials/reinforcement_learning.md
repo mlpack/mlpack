@@ -107,9 +107,7 @@ the training of a Q-Learning agent on the `CartPole` environment. The code has
 been broken into chunks for easy understanding.
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/ann.hpp>
-#include <mlpack/methods/reinforcement_learning.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -328,9 +326,7 @@ Voila, that's all there is to it.
 Here is the full code to try this right away:
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/ann.hpp>
-#include <mlpack/methods/reinforcement_learning.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;

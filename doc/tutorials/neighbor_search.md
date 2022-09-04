@@ -228,7 +228,7 @@ given below.
 ### 5 nearest neighbors on a single dataset
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -250,7 +250,7 @@ The output of the search is stored in `resultingNeighbors` and
 ### 10 nearest neighbors on a query and reference dataset
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -271,7 +271,7 @@ a.Search(queryData, 10, resultingNeighbors, resultingDistances);
 This example uses the `O(n^2)` naive search (not the tree-based search).
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 

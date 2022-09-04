@@ -73,8 +73,7 @@ using the `ExampleKernel`.  The results are saved to a file called
 this example kernel isn't actually likely to be useful in practice.)
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/kernel_pca/kernel_pca.hpp>
+#include <mlpack.hpp>
 #include "example_kernel.hpp" // Contains the ExampleKernel class.
 
 using namespace mlpack;

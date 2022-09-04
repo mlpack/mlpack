@@ -64,8 +64,7 @@ and `TreeType`.  (All three have defaults, so we will just leave `MatType` and
 `TreeType` to their defaults.)
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/range_search/range_search.hpp>
+#include <mlpack.hpp>
 #include "example_metric.hpp" // A file that contains ExampleKernel.
 
 using namespace mlpack;

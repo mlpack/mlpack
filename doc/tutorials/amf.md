@@ -126,8 +126,7 @@ defines `mlpack::amf::NMFALSFactorizer` which can be used directly without
 knowing the internal structure of `AMF`. For example:
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/amf/amf.hpp>
+#include <mlpack.hpp>
 
 using namespace std;
 using namespace arma;
@@ -162,8 +161,7 @@ the type of the matrix `V` (dense or sparse---these have types `arma::mat` and
 sparse, specifying `MatType = arma::sp_mat` can provide a runtime boost.
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/amf/amf.hpp>
+#include <mlpack.hpp>
 
 using namespace std;
 using namespace arma;

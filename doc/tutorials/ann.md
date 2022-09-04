@@ -174,9 +174,7 @@ number of features in the thyroid dataset and are just used as an abstract
 representation.
 
 ```c++
-#include <mlpack/core.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;

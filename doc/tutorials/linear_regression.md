@@ -350,7 +350,7 @@ corresponding to each row of the points matrix.
 ### Generating a model
 
 ```c++
-#include <mlpack/methods/linear_regression.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::regression;
 
@@ -414,7 +414,7 @@ covariance of the predictors is not invertible.  The standard constructor can be
 used to set a value of lambda:
 
 ```c++
-#include <mlpack/methods/linear_regression.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::regression;
 

@@ -271,7 +271,7 @@ Given only a reference dataset, the following code will run FastMKS with k set
 to 5.
 
 ```c++
-#include <mlpack/methods/fastmks.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::fastmks;
 
@@ -296,7 +296,7 @@ In this setting we have both a query and reference dataset.  We search for 10
 maximum kernels.
 
 ```
-#include <mlpack/methods/fastmks.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
@@ -326,7 +326,7 @@ be passed as an argument.  The example below initializes a `PolynomialKernel`
 object and then runs FastMKS with a query and reference dataset.
 
 ```c++
-#include <mlpack/methods/fastmks.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
@@ -370,7 +370,7 @@ must use `mlpack::metric::IPMetric` so that our tree is built on the metric
 induced by our kernel function.
 
 ```c++
-#include <mlpack/methods/fastmks.hpp>
+#include <mlpack.hpp>
 
 // The reference dataset, which is column-major.
 extern arma::mat data;
@@ -444,7 +444,7 @@ Below is an example where a custom tree class, `CustomTree`, is used as the
 tree type for FastMKS.  In this example FastMKS is only run on one dataset.
 
 ```c++
-#include <mlpack/methods/fastmks.hpp>
+#include <mlpack.hpp>
 #include "custom_tree.hpp"
 
 using namespace mlpack::fastmks;

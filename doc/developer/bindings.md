@@ -97,13 +97,10 @@ Here is a simple example file:
 
 ```c++
 // This is a stripped version of mean_shift_main.cpp.
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 // Define the name of the binding (as seen by the binding generation system).
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
+#undef BINDING_NAME
 #define BINDING_NAME mean_shift
 
 #include <mlpack/core/util/mlpack_main.hpp>

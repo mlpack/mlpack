@@ -241,7 +241,7 @@ recommendations for each user, storing the output in the `recommendations`
 matrix.
 
 ```c++
-#include <mlpack/methods/cf.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::cf;
 
@@ -286,8 +286,7 @@ The use of another factorizer is straightforward; the example from the previous
 section is adapted below to use `svd::RegularizedSVD`:
 
 ```c++
-#include <mlpack/methods/cf.hpp>
-#include <mlpack/methods/regularized_svd.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::cf;
 
@@ -318,7 +317,7 @@ function.
 The example below will obtain the predicted rating for item 50 by user 12.
 
 ```c++
-#include <mlpack/methods/cf.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::cf;
 
@@ -344,7 +343,7 @@ below obtains these matrices, and multiplies them against each other to obtain a
 reconstructed data matrix with no missing values.
 
 ```c++
-#include <mlpack/methods/cf.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::cf;
 

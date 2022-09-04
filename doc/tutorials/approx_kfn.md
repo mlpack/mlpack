@@ -608,7 +608,7 @@ matrix `dataset`, then queries for the approximate furthest neighbor of every
 point in the `queries` matrix.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -638,7 +638,7 @@ projections.  Once that is done it performs the same task as the previous
 example.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -664,7 +664,7 @@ number of points that will be queried in a brute-force fashion when the
 method.  The code below prints the fifth point of the candidate set.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -687,7 +687,7 @@ and 10 projections, and then retrains this with the same reference set using 10
 tables and 3 projections.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -709,7 +709,7 @@ creates a `DrusillaSelect` model using 4 tables and 6 projections with sparse
 input data, then searches for 3 approximate furthest neighbors.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -744,7 +744,7 @@ The code below builds a `QDAFN` model with default options on the matrix
 the `queries` matrix.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -774,7 +774,7 @@ projections.  Once that is done it performs the same task as the previous
 example.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -801,7 +801,7 @@ be accessed with the `CandidateSet()` method.  The code below prints the fifth
 point of the candidate set of the third table.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -824,7 +824,7 @@ projections, and then retrains this with the same reference set using 15 tables
 and 25 projections.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -846,7 +846,7 @@ perform furthest neighbor search on sparse data.  This code below creates a
 searches for 3 approximate furthest neighbors.
 
 ```c++
-#include <mlpack/methods/approx_kfn.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -885,7 +885,7 @@ choose `epsilon = 0.05`.  Then, the code searches for 3 approximate furthest
 neighbors.
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -910,7 +910,7 @@ Like the `QDAFN` and `DrusillaSelect` classes, the `KFN` class is capable of
 retraining on a new reference set.  The code below demonstrates this.
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -933,7 +933,7 @@ In this example, we use single-tree search (as opposed to the default of
 dual-tree search).
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 
@@ -960,7 +960,7 @@ every possibility will be considered).  The code below performs exact furthest
 neighbor search by using the `KFN` class in brute-force mode.
 
 ```c++
-#include <mlpack/methods/neighbor_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::neighbor;
 

@@ -234,7 +234,7 @@ the `RangeSearch` class are given below.
 ### Distance less than `2.0` on a single dataset
 
 ```c++
-#include <mlpack/methods/range_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::range;
 
@@ -259,7 +259,7 @@ The output of the search is stored in `resultingNeighbors` and
 ### Range `[3.0, 4.0]` on a query and reference dataset
 
 ```c++
-#include <mlpack/methods/range_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::range;
 
@@ -283,7 +283,7 @@ a.Search(queryData, r, resultingNeighbors, resultingDistances);
 This example uses the `O(n^2)` naive search (not the tree-based search).
 
 ```c++
-#include <mlpack/methods/range_search.hpp>
+#include <mlpack.hpp>
 
 using namespace mlpack::range;
 
