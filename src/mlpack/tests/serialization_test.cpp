@@ -29,7 +29,6 @@
 
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::bound;
 using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::regression;

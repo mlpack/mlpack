@@ -16,7 +16,6 @@
 #include "hollow_ball_bound.hpp"
 
 namespace mlpack {
-namespace bound {
 
 //! Empty Constructor.
 template<typename TMetricType, typename ElemType>
@@ -468,7 +467,6 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
   }
 }
 
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_HOLLOW_BALL_BOUND_IMPL_HPP

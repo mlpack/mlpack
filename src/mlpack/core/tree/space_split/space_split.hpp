@@ -36,7 +36,7 @@ class SpaceSplit
    * @return Flag to determine if it is possible.
    */
   static bool GetProjVector(
-      const bound::HRectBound<MetricType>& bound,
+      const HRectBound<MetricType>& bound,
       const MatType& data,
       const arma::Col<size_t>& points,
       AxisParallelProjVector& projVector,

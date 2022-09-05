@@ -65,9 +65,8 @@ class RPlusTreeSplitPolicy
    * @param node The node whose bound is requested.
     */
   template<typename TreeType>
-  static const
-      bound::HRectBound<EuclideanDistance, typename TreeType::ElemType>&
-          Bound(const TreeType& node)
+  static const HRectBound<EuclideanDistance, typename TreeType::ElemType>&
+      Bound(const TreeType& node)
   {
     return node.Bound();
   }

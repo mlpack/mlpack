@@ -16,7 +16,6 @@
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 /**
  * Simple furthest-neighbors test with small, synthetic dataset.  This is an

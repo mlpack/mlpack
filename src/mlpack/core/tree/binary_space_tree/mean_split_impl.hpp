@@ -31,7 +31,7 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
 
   // Find the split dimension.  If the bound is tight, we only need to consult
   // the bound's width.
-  if (bound::BoundTraits<BoundType>::HasTightBounds)
+  if (BoundTraits<BoundType>::HasTightBounds)
   {
     for (size_t d = 0; d < data.n_rows; d++)
     {

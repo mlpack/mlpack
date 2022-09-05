@@ -18,7 +18,6 @@
 #include "hrectbound.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Empty constructor.
@@ -692,7 +691,6 @@ void HRectBound<MetricType, ElemType>::serialize(
   ar(CEREAL_NVP(metric));
 }
 
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP

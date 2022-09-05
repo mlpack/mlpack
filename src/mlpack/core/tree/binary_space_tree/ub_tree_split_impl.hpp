@@ -151,7 +151,7 @@ void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     addresses[i].first.zeros(data.n_rows);
-    bound::addr::PointToAddress(addresses[i].first, data.col(i));
+    PointToAddress(addresses[i].first, data.col(i));
     addresses[i].second = i;
   }
 }

@@ -41,7 +41,6 @@
 #include "address.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * The CellBound class describes a bound that consists of a number of
@@ -320,7 +319,6 @@ struct BoundTraits<CellBound<MetricType, ElemType>>
   const static bool HasTightBounds = true;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "cellbound_impl.hpp"

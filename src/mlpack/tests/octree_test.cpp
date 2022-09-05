@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 /**
  * Build a quad-tree (2-d octree) on 4 points, and guarantee four points are

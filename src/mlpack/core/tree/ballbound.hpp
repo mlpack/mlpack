@@ -17,7 +17,6 @@
 #include "bound_traits.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Ball bound encloses a set of points at a specific distance (radius) from a
@@ -217,7 +216,6 @@ struct BoundTraits<BallBound<MetricType, VecType>>
   const static bool HasTightBounds = false;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "ballbound_impl.hpp"

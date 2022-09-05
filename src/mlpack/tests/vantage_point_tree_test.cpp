@@ -17,7 +17,6 @@
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::neighbor;
-using namespace mlpack::bound;
 
 TEST_CASE("VPTreeTraitsTest", "[VantagePointTreeTest]")
 {

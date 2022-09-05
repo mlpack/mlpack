@@ -17,7 +17,6 @@
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 /**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).

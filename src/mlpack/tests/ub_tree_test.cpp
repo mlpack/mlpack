@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 using namespace mlpack::neighbor;
 
 TEST_CASE("AddressTest", "[UBTreeTest]")

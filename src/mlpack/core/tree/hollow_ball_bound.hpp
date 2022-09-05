@@ -17,7 +17,6 @@
 #include "bound_traits.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Hollow ball bound encloses a set of points at a specific distance (radius)
@@ -246,7 +245,6 @@ struct BoundTraits<HollowBallBound<MetricType, ElemType>>
   const static bool HasTightBounds = false;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "hollow_ball_bound_impl.hpp"

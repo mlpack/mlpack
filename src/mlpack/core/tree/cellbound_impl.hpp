@@ -19,7 +19,6 @@
 #include "cellbound.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Empty constructor.
@@ -269,8 +268,8 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
     // rectangle and tmpLoAddress corresponds to the lower corner.
     if (!(tmpHiAddress[row] & ((AddressElemType) 1 << bit)))
     {
-      addr::AddressToPoint(loCorner, tmpLoAddress);
-      addr::AddressToPoint(hiCorner, tmpHiAddress);
+      AddressToPoint(loCorner, tmpLoAddress);
+      AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner, data);
       break;
@@ -282,8 +281,8 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
   // Add the enlarged rectangle if we have not done that.
   if (pos == numEqualBits)
   {
-    addr::AddressToPoint(loCorner, tmpLoAddress);
-    addr::AddressToPoint(hiCorner, tmpHiAddress);
+    AddressToPoint(loCorner, tmpLoAddress);
+    AddressToPoint(hiCorner, tmpHiAddress);
 
     AddBound(loCorner, hiCorner, data);
   }
@@ -303,8 +302,8 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
       // tmpLoAddress and tmpHiAddress is less that the lower addresses
       // of hyperrectangles that we have added previously.
       tmpHiAddress[row] ^= (AddressElemType) 1 << bit;
-      addr::AddressToPoint(loCorner, tmpLoAddress);
-      addr::AddressToPoint(hiCorner, tmpHiAddress);
+      AddressToPoint(loCorner, tmpLoAddress);
+      AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner, data);
     }
@@ -356,8 +355,8 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
     // rectangle and tmpLoAddress corresponds to the lower corner.
     if (tmpLoAddress[row] & ((AddressElemType) 1 << bit))
     {
-      addr::AddressToPoint(loCorner, tmpLoAddress);
-      addr::AddressToPoint(hiCorner, tmpHiAddress);
+      AddressToPoint(loCorner, tmpLoAddress);
+      AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner, data);
       break;
@@ -370,8 +369,8 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
   // Add the enlarged rectangle if we have not done that.
   if (pos == numEqualBits)
   {
-    addr::AddressToPoint(loCorner, tmpLoAddress);
-    addr::AddressToPoint(hiCorner, tmpHiAddress);
+    AddressToPoint(loCorner, tmpLoAddress);
+    AddressToPoint(hiCorner, tmpHiAddress);
 
     AddBound(loCorner, hiCorner, data);
   }
@@ -392,8 +391,8 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
       // of hyperrectangles that we have added previously.
       tmpLoAddress[row] ^= (AddressElemType) 1 << bit;
 
-      addr::AddressToPoint(loCorner, tmpLoAddress);
-      addr::AddressToPoint(hiCorner, tmpHiAddress);
+      AddressToPoint(loCorner, tmpLoAddress);
+      AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner, data);
     }
@@ -915,10 +914,10 @@ CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
       minWidth = width;
   }
 
-  if (addr::CompareAddresses(other.loAddress, loAddress) < 0)
+  if (CompareAddresses(other.loAddress, loAddress) < 0)
     loAddress = other.loAddress;
 
-  if (addr::CompareAddresses(other.hiAddress, hiAddress) > 0)
+  if (CompareAddresses(other.hiAddress, hiAddress) > 0)
     hiAddress = other.hiAddress;
 
   if (loAddress[0] > hiAddress[0])
@@ -954,9 +953,9 @@ inline bool CellBound<MetricType, ElemType>::Contains(
 
   arma::Col<AddressElemType> address(dim);
 
-  addr::PointToAddress(address, point);
+  PointToAddress(address, point);
 
-  return addr::Contains(address, loAddress, hiAddress);
+  return Contains(address, loAddress, hiAddress);
 }
 
 
@@ -994,7 +993,6 @@ void CellBound<MetricType, ElemType>::serialize(
   ar(CEREAL_NVP(metric));
 }
 
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP

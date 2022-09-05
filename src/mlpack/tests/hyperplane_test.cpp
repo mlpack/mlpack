@@ -14,7 +14,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 /**
  * Ensure that a hyperplane, by default, consider all points to the left.

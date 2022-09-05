@@ -16,7 +16,6 @@
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 /**
  * Test the dual-tree furthest-neighbors method with different values for

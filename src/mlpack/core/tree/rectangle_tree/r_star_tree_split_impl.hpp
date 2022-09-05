@@ -85,7 +85,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   bestAxis = 0;
   bestIndex = 0;
@@ -274,7 +274,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   // Reinsertion isn't done for non-leaf nodes; the paper doesn't seem to make
   // it clear how to reinsert an entire node without reinserting each of the

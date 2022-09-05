@@ -48,7 +48,7 @@ template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          template<typename BoundMetricType, typename...> class BoundType =
-            bound::HRectBound,
+            HRectBound,
          template<typename SplitBoundType, typename SplitMatType>
             class SplitType = MidpointSplit>
 class BinarySpaceTree
@@ -544,7 +544,7 @@ class BinarySpaceTree
    *
    * @param boundToUpdate The bound to update.
    */
-  void UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate);
+  void UpdateBound(HollowBallBound<MetricType>& boundToUpdate);
 
  protected:
   /**

@@ -20,7 +20,6 @@
 #include "bound_traits.hpp"
 
 namespace mlpack {
-namespace bound {
 
 namespace meta /** Metaprogramming utilities. */ {
 
@@ -254,7 +253,6 @@ struct BoundTraits<HRectBound<MetricType, ElemType>>
   const static bool HasTightBounds = true;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "hrectbound_impl.hpp"

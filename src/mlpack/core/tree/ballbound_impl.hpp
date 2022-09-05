@@ -19,7 +19,6 @@
 #include <string>
 
 namespace mlpack {
-namespace bound {
 
 //! Empty Constructor.
 template<typename MetricType, typename VecType>
@@ -325,7 +324,6 @@ void BallBound<MetricType, VecType>::serialize(
   ar(CEREAL_NVP(ownsMetric));
 }
 
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

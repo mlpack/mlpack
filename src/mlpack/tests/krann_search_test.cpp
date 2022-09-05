@@ -20,7 +20,6 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 // Test the correctness and guarantees of KRANN when in naive mode.
 TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")

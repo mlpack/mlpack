@@ -20,7 +20,7 @@ namespace tree {
 
 template<typename MetricType, typename MatType>
 bool SpaceSplit<MetricType, MatType>::GetProjVector(
-    const bound::HRectBound<MetricType>& bound,
+    const HRectBound<MetricType>& bound,
     const MatType& data,
     const arma::Col<size_t>& /* points */,
     AxisParallelProjVector& projVector,

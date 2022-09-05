@@ -1013,7 +1013,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
+UpdateBound(HollowBallBound<MetricType>& boundToUpdate)
 {
   if (!parent)
   {

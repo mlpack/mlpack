@@ -90,7 +90,7 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  bound::HRectBound<EuclideanDistance, ElemType> bound;
+  HRectBound<EuclideanDistance, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -312,9 +312,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const bound::HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<MetricType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  bound::HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -619,7 +619,7 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const bound::HRectBound<MetricType>& changedBound);
+  bool ShrinkBoundForBound(const HRectBound<MetricType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.

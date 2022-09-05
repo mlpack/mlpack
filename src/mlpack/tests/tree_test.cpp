@@ -18,7 +18,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::bound;
 
 /**
  * Ensure that a bound, by default, is empty and has no dimensionality.

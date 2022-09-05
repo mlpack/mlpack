@@ -1028,8 +1028,7 @@ TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
 template<typename TreeType>
 void CheckRPlusPlusTreeBound(const TreeType& tree)
 {
-  typedef bound::HRectBound<EuclideanDistance, typename TreeType::ElemType>
-      Bound;
+  typedef HRectBound<EuclideanDistance, typename TreeType::ElemType> Bound;
 
   bool success = true;
 

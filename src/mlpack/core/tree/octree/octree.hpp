@@ -50,7 +50,7 @@ class Octree
   size_t count;
   //! The minimum bounding rectangle of the points held in the node (and its
   //! children).
-  bound::HRectBound<MetricType> bound;
+  HRectBound<MetricType> bound;
   //! The dataset.
   MatType* dataset;
   //! The parent (NULL if this node is the root).
@@ -258,9 +258,9 @@ class Octree
   Octree*& Parent() { return parent; }
 
   //! Return the bound object for this node.
-  const bound::HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<MetricType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  bound::HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
