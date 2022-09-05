@@ -150,4 +150,4 @@ These kernels (or a custom kernel) may be used in a variety of mlpack methods:
  - `mlpack::kpca::KernelPCA` - kernel principal components analysis
  - `mlpack::fastmks::FastMKS` - fast max-kernel search
  - `NystroemMethod` - the Nystroem method for sampling
- - `mlpack::metric::IPMetric` - a metric built on a kernel
+ - `IPMetric` - a metric built on a kernel

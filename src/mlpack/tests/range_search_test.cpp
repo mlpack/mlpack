@@ -20,7 +20,6 @@ using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::tree;
 using namespace mlpack::bound;
-using namespace mlpack::metric;
 using namespace std;
 
 // Get our results into a sorted format, so we can actually then test for

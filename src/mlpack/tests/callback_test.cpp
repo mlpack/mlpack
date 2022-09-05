@@ -22,7 +22,6 @@ using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::regression;
 using namespace mlpack::lmnn;
-using namespace mlpack::metric;
 using namespace mlpack::nca;
 
 /**

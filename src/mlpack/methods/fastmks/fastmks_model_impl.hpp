@@ -271,7 +271,7 @@ void BuildFastMKSModel(util::Timers& timers,
   {
     // Create the tree with the specified base.
     timers.Start("tree_building");
-    metric::IPMetric<KernelType> metric(k);
+    IPMetric<KernelType> metric(k);
     typename FastMKS<KernelType>::Tree* tree =
         new typename FastMKS<KernelType>::Tree(std::move(referenceData),
                                                 metric, base);

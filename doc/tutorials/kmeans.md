@@ -403,7 +403,7 @@ arma::Row<size_t> assignments;
 arma::sp_mat sparseCentroids;
 
 // We must change the fifth (and last) template parameter.
-KMeans<metric::EuclideanDistance, SampleInitialization, MaxVarianceNewCluster,
+KMeans<EuclideanDistance, SampleInitialization, MaxVarianceNewCluster,
        NaiveKMeans, arma::sp_mat> k;
 k.Cluster(sparseDataset, clusters, assignments, sparseCentroids);
 ```
@@ -429,7 +429,7 @@ The class is defined like below:
 
 ```c++
 template<
-  typename DistanceMetric = mlpack::metric::SquaredEuclideanDistance,
+  typename DistanceMetric = SquaredEuclideanDistance,
   typename InitialPartitionPolicy = SampleInitialization,
   typename EmptyClusterPolicy = MaxVarianceNewCluster,
   template<class, class> class LloydStepType = NaiveKMeans,
@@ -445,9 +445,9 @@ how to modify them.
 
 Most machine learning algorithms in mlpack support modifying the distance
 metric, and `KMeans<>` is no exception.  Similar to `NeighborSearch` (see the
-section in the [NeighborSearch tutorial](neighbor_search.md)), any class in
-`mlpack::metric` can be given as an argument.  The `mlpack::metric::LMetric`
-class is a good example implementation.
+section in the [NeighborSearch tutorial](neighbor_search.md)), any of mlpack's
+metric classes (found in `mlpack/core/metrics/`) can be given as an argument.
+The `LMetric` class is a good example implementation.
 
 A class fulfilling the [MetricType policy](../developer/metrictype.md) must
 provide the following two functions:
@@ -463,24 +463,23 @@ double Evaluate(const VecType& a, const VecType& b);
 
 Most of the standard metrics that could be used are stateless and therefore the
 `Evaluate()` method is implemented statically.  However, there are metrics, such
-as the Mahalanobis distance (`mlpack::metric::MahalanobisDistance`), that store
-state.  To this end, an instantiated `MetricType` object is stored within the
-`KMeans` class.  The example below shows how to pass an instantiated
-`MahalanobisDistance` in the constructor.
+as the Mahalanobis distance (`MahalanobisDistance`), that store state.  To this
+end, an instantiated `MetricType` object is stored within the `KMeans` class.
+The example below shows how to pass an instantiated `MahalanobisDistance` in the
+constructor.
 
 ```c++
 // The initialized Mahalanobis distance.
-extern mlpack::metric::MahalanobisDistance distance;
+extern MahalanobisDistance distance;
 
 // We keep the default arguments for the maximum number of iterations, but pass
 // our instantiated metric.
-KMeans<mlpack::metric::MahalanobisDistance> k(1000, distance);
+KMeans<MahalanobisDistance> k(1000, distance);
 ```
 
 ***Note***: While the `MetricType` policy only requires two methods, one of
-which is an empty constructor, more can always be added.
-`mlpack::metric::MahalanobisDistance` also has constructors with parameters,
-because it is a stateful metric.
+which is an empty constructor, more can always be added.  `MahalanobisDistance`
+also has constructors with parameters, because it is a stateful metric.
 
 ### Changing the initial partitioning strategy used for k-means
 

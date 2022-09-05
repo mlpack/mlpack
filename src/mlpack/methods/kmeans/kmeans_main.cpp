@@ -351,10 +351,10 @@ void RunKMeans(util::Params& params,
   }
 
   timers.Start("clustering");
-  KMeans<metric::EuclideanDistance,
+  KMeans<EuclideanDistance,
          InitialPartitionPolicy,
          EmptyClusterPolicy,
-         LloydStepType> kmeans(maxIterations, metric::EuclideanDistance(), ipp);
+         LloydStepType> kmeans(maxIterations, EuclideanDistance(), ipp);
 
   if (params.Has("output") || params.Has("in_place"))
   {

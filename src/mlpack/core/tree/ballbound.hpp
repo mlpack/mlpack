@@ -27,7 +27,7 @@ namespace bound {
  * @tparam MetricType metric type used in the distance measure.
  * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename VecType = arma::vec>
 class BallBound
 {

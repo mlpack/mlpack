@@ -131,7 +131,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     std::vector<size_t> oldFromNew;
     KDTree<EuclideanDistance, DTBStat, arma::mat> tree(dataPoints, oldFromNew,
         leafSize);
-    metric::LMetric<2, true> metric;
+    LMetric<2, true> metric;
     timers.Stop("tree_building");
 
     DualTreeBoruvka<> dtb(&tree, metric);

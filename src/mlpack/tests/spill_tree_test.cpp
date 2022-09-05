@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 
 /**
  * Test to make sure the tree contains the correct number of points after

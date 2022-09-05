@@ -34,7 +34,7 @@ struct IsLMetric
 
 //! Specialization for IsLMetric when the argument is of type LMetric.
 template<int Power, bool TakeRoot>
-struct IsLMetric<metric::LMetric<Power, TakeRoot>>
+struct IsLMetric<LMetric<Power, TakeRoot>>
 {
   static const bool Value = true;
 };
@@ -49,7 +49,7 @@ struct IsLMetric<metric::LMetric<Power, TakeRoot>>
  * @tparam MetricType Type of metric to use; must be of type LMetric.
  * @tparam ElemType Element type (double/float/int/etc.).
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename ElemType = double>
 class HRectBound
 {

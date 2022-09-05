@@ -198,7 +198,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
       size_t p1 = (size_t) RandInt(this->referenceSet.n_cols);
       size_t p2 = (size_t) RandInt(this->referenceSet.n_cols);
 
-      hashWidth += std::sqrt(metric::EuclideanDistance::Evaluate(
+      hashWidth += std::sqrt(EuclideanDistance::Evaluate(
           this->referenceSet.col(p1),
           this->referenceSet.col(p2)));
     }
@@ -375,7 +375,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
     if (queryIndex == referenceIndex)
       continue;
 
-    const double distance = metric::EuclideanDistance::Evaluate(
+    const double distance = EuclideanDistance::Evaluate(
         referenceSet.col(queryIndex),
         referenceSet.col(referenceIndex));
 
@@ -418,7 +418,7 @@ void LSHSearch<SortPolicy, MatType>::BaseCase(
   for (size_t j = 0; j < referenceIndices.n_elem; ++j)
   {
     const size_t referenceIndex = referenceIndices[j];
-    const double distance = metric::EuclideanDistance::Evaluate(
+    const double distance = EuclideanDistance::Evaluate(
         querySet.col(queryIndex),
         referenceSet.col(referenceIndex));
 

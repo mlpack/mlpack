@@ -67,7 +67,7 @@ enum NeighborSearchMode
  *     (defaults to the tree's default traverser).
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = mlpack::metric::EuclideanDistance,
+         typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,

@@ -19,7 +19,7 @@
 namespace mlpack {
 namespace tree {
 
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat>
 class Octree

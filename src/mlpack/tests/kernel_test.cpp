@@ -17,7 +17,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::metric;
 
 /**
  * Basic test of the Manhattan distance.

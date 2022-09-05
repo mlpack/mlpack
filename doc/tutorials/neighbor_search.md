@@ -213,8 +213,7 @@ The `KNN` class is, specifically, a typedef of the more extensible
 distance.
 
 ```c++
-typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance>
-    KNN;
+typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
 ```
 
 Using the `KNN` class is particularly simple; first, the object must be
@@ -297,7 +296,7 @@ arguments:
 ```c++
 template<
   typename SortPolicy = NearestNeighborSort,
-  typename MetricType = mlpack::metric::EuclideanDistance,
+  typename MetricType = EuclideanDistance,
   typename MatType = arma::mat,
   template<typename TreeMetricType,
            typename TreeStatType,
@@ -346,8 +345,8 @@ neighbors, as opposed to the nearest neighbors.
 ## `MetricType` policy class
 
 The `MetricType` policy class allows the neighbor search to take place in any
-arbitrary metric space.  The `mlpack::metric::LMetric` class is a good example
-implementation.  A MetricType class must provide the following functions:
+arbitrary metric space.  The `LMetric` class is a good example implementation.
+A `MetricType` class must provide the following functions:
 
 ```c++
 // Empty constructor is required.
@@ -360,9 +359,9 @@ double Evaluate(const VecType& a, const VecType& b);
 
 Internally, the `NeighborSearch` class keeps an instantiated `MetricType` class
 (which can be given in the constructor).   This is useful for a metric like the
-Mahalanobis distance (`mlpack::metric::MahalanobisDistance`), which must store
-state (the covariance matrix).  Therefore, you can write a non-static MetricType
-class and use it seamlessly with `NeighborSearch`.
+Mahalanobis distance (`MahalanobisDistance`), which must store state (the
+covariance matrix).  Therefore, you can write a non-static MetricType class and
+use it seamlessly with `NeighborSearch`.
 
 For more information on the `MetricType` policy, see the [documentation for
 `MetricType`s](../developer/metrics.md).
@@ -391,7 +390,7 @@ An example of using the `NeighborSearch` class with a ball tree is given below.
 // Construct a NeighborSearch object with ball bounds.
 NeighborSearch<
     NearestNeighborSort,
-    metric::EuclideanDistance,
+    EuclideanDistance,
     arma::mat,
     tree::BallTree
 > neighborSearch(dataset);

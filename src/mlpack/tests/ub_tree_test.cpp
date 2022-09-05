@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::bound;
 using namespace mlpack::neighbor;
 
@@ -308,8 +307,8 @@ TEST_CASE("SingleUBTreeTraverserTest", "[UBTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNS, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, SINGLE_TREE_MODE);
+  NeighborSearch<NearestNS, LMetric<2, true>, arma::mat, UBTree> knn1(dataset,
+      SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -335,8 +334,8 @@ TEST_CASE("DualUBTreeTraverserTest", "[UBTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNS, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, DUAL_TREE_MODE);
+  NeighborSearch<NearestNS, LMetric<2, true>, arma::mat, UBTree> knn1(dataset,
+      DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

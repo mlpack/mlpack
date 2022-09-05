@@ -28,7 +28,7 @@ namespace bound {
  * @tparam TMetricType metric type used in the distance measure.
  * @tparam ElemType Type of element (float or double or similar).
  */
-template<typename TMetricType = metric::LMetric<2, true>,
+template<typename TMetricType = LMetric<2, true>,
          typename ElemType = double>
 class HollowBallBound
 {

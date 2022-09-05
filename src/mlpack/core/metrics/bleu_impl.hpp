@@ -16,7 +16,6 @@
 #include "bleu.hpp"
 
 namespace mlpack {
-namespace metric {
 
 template <typename ElemType, typename PrecisionType>
 BLEU<ElemType, PrecisionType>::BLEU(const size_t maxOrder) :
@@ -196,7 +195,6 @@ void BLEU<ElemType, PrecisionType>::serialize(Archive& ar,
   ar(CEREAL_NVP(maxOrder));
 }
 
-} // namespace metric
 } // namespace mlpack
 
 #endif

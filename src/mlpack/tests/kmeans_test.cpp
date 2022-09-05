@@ -15,7 +15,6 @@
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
-using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::neighbor;
 
@@ -107,7 +106,7 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
   arma::Col<size_t> countsOld = counts;
 
   // Make sure the method doesn't modify any points.
-  metric::LMetric<2, true> metric;
+  LMetric<2, true> metric;
 
   AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
       metric, 0);
@@ -140,7 +139,7 @@ TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
   arma::Col<size_t> countsOld = counts;
 
   // Make sure the method modify the specified point.
-  metric::LMetric<2, true> metric;
+  LMetric<2, true> metric;
 
   KillEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
       metric, 0);
@@ -177,7 +176,7 @@ TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 
   arma::Col<size_t> counts("3 2 0");
 
-  metric::LMetric<2, true> metric;
+  LMetric<2, true> metric;
 
   // This should only change one point.
   MaxVarianceNewCluster mvnc;
@@ -463,7 +462,7 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   // Calculate sum of distances from centroid means.
   double distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
-    distortion += metric::EuclideanDistance::Evaluate(data.col(i),
+    distortion += EuclideanDistance::Evaluate(data.col(i),
         resultingCentroids.col(assignments[i]));
 
   // Using the refined start, the distance for this dataset is usually around
@@ -515,7 +514,7 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest]")
     double bestDist = DBL_MAX;
     for (size_t j = 0; j < 5; ++j)
     {
-      const double dist = metric::EuclideanDistance::Evaluate(data.col(i),
+      const double dist = EuclideanDistance::Evaluate(data.col(i),
           resultingCentroids.col(j));
       if (dist < bestDist)
       {
@@ -528,7 +527,7 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest]")
   // Calculate sum of distances from centroid means.
   double distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
-    distortion += metric::EuclideanDistance::Evaluate(data.col(i),
+    distortion += EuclideanDistance::Evaluate(data.col(i),
         resultingCentroids.col(assignments[i]));
 
   // Using k-means++, the distance for this dataset is usually around
@@ -563,8 +562,8 @@ TEST_CASE("SparseKMeansTest", "[KMeansTest]")
 
   arma::Row<size_t> assignments;
 
-  KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-         NaiveKMeans, arma::sp_mat> kmeans; // Default options.
+  KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster, NaiveKMeans,
+         arma::sp_mat> kmeans; // Default options.
 
   kmeans.Cluster(data, 2, assignments);
 
@@ -607,8 +606,8 @@ TEST_CASE("ElkanTest", "[KMeansTest]")
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-         ElkanKMeans> elkan;
+    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+        ElkanKMeans> elkan;
     arma::Row<size_t> elkanAssignments;
     arma::mat elkanCentroids(centroids);
     elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
@@ -641,7 +640,7 @@ TEST_CASE("HamerlyTest", "[KMeansTest]")
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         HamerlyKMeans> hamerly;
     arma::Row<size_t> hamerlyAssignments;
     arma::mat hamerlyCentroids(centroids);
@@ -676,7 +675,7 @@ TEST_CASE("PellegMooreTest", "[KMeansTest]")
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         PellegMooreKMeans> pellegMoore;
     arma::Row<size_t> pmAssignments;
     arma::mat pmCentroids(centroids);
@@ -708,7 +707,7 @@ TEST_CASE("DTNNTest", "[KMeansTest]")
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         DefaultDualTreeKMeans> dtnn;
     arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
@@ -740,7 +739,7 @@ TEST_CASE("DTNNCoverTreeTest", "[KMeansTest]")
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         CoverTreeDualTreeKMeans> dtnn;
     arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
@@ -778,7 +777,7 @@ TEST_CASE("SampleInitializationTest", "[KMeansTest]")
     size_t j;
     for (j = 0; j < dataset.n_cols; ++j)
     {
-      const double distance = metric::EuclideanDistance::Evaluate(
+      const double distance = EuclideanDistance::Evaluate(
           centroids.col(i), dataset.col(j));
       if (distance < 1e-10)
         break;

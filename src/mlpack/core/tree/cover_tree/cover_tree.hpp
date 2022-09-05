@@ -92,7 +92,7 @@ namespace tree {
  * @tparam MatType Type of matrix to build the tree on (generally mat or
  *      sp_mat).
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          typename RootPointPolicy = FirstPointIsRoot>

@@ -21,7 +21,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::metric;
 
 /*********************************/
 /** Discrete Distribution Tests **/

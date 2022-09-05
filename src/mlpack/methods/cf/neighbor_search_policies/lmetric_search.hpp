@@ -44,7 +44,7 @@ class LMetricSearch
  public:
   using NeighborSearchType = neighbor::NeighborSearch<
       neighbor::NearestNeighborSort,
-      metric::LMetric<TPower, true>>;
+      LMetric<TPower, true>>;
 
   /**
    * @param referenceSet Set of reference points.

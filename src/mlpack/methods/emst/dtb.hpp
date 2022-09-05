@@ -71,7 +71,7 @@ namespace emst /** Euclidean Minimum Spanning Trees. */ {
  *      API.
  */
 template<
-    typename MetricType = metric::EuclideanDistance,
+    typename MetricType = EuclideanDistance,
     typename MatType = arma::mat,
     template<typename TreeMetricType,
              typename TreeStatType,

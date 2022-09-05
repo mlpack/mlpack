@@ -231,9 +231,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const int samplings = params.Get<int>("samplings");
     const double percentage = params.Get<double>("percentage");
 
-    typedef KMeans<metric::SquaredEuclideanDistance, RefinedStart> KMeansType;
+    typedef KMeans<SquaredEuclideanDistance, RefinedStart> KMeansType;
 
-    KMeansType k(kmeansMaxIterations, metric::SquaredEuclideanDistance(),
+    KMeansType k(kmeansMaxIterations, SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
 
     // Depending on the value of forcePositive and diagonalCovariance, we have

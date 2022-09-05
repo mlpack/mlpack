@@ -38,12 +38,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianRTreeResultsMain",
   double relError = 0.05;
 
   GaussianKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<GaussianKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::RTree>
-      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  EuclideanDistance metric;
+  KDE<GaussianKernel, EuclideanDistance, arma::mat, tree::RTree> kde(
+      relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   // Normalize estimations.
@@ -81,12 +78,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
   double relError = 0.06;
 
   TriangularKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<TriangularKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::BallTree>
-      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  EuclideanDistance metric;
+  KDE<TriangularKernel, EuclideanDistance, arma::mat, tree::BallTree> kde(
+      relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
 
@@ -121,12 +115,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
   double relError = 0.05;
 
   EpanechnikovKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<EpanechnikovKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::StandardCoverTree>
-    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  EuclideanDistance metric;
+  KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, tree::StandardCoverTree>
+      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   // Perform monochromatic KDE.
   kde.Evaluate(kdeEstimations);
@@ -238,12 +229,9 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianSingleKDTreeResultsMain",
   double relError = 0.06;
 
   GaussianKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<GaussianKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::BallTree>
-      kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
+  EuclideanDistance metric;
+  KDE<GaussianKernel, EuclideanDistance, arma::mat, tree::BallTree> kde(
+      relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   kdeEstimations /= kernel.Normalizer(reference.n_rows);

@@ -233,14 +233,14 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         newCentroid = allCentroids.unsafe_col(i);
 
       // If the mean shift vector is small enough, it has converged.
-      if (metric::EuclideanDistance::Evaluate(newCentroid,
+      if (EuclideanDistance::Evaluate(newCentroid,
           allCentroids.unsafe_col(i)) < 1e-3 * radius)
       {
         // Determine if the new centroid is duplicate with old ones.
         bool isDuplicated = false;
         for (size_t k = 0; k < centroids.n_cols; ++k)
         {
-          const double distance = metric::EuclideanDistance::Evaluate(
+          const double distance = EuclideanDistance::Evaluate(
               allCentroids.unsafe_col(i), centroids.unsafe_col(k));
           if (distance < radius)
           {

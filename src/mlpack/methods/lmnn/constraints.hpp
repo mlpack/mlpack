@@ -27,7 +27,7 @@ namespace lmnn {
  * data point) and Triplets() (Generates sets of {dataset, target neighbors,
  * impostors} tripltets.)
  */
-template<typename MetricType = metric::SquaredEuclideanDistance>
+template<typename MetricType = SquaredEuclideanDistance>
 class Constraints
 {
  public:

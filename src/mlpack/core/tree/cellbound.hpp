@@ -70,7 +70,7 @@ namespace bound {
  * }
  * @endcode
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename ElemType = double>
 class CellBound
 {

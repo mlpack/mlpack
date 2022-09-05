@@ -42,7 +42,7 @@ namespace nca /** Neighborhood Components Analysis. */ {
  * }
  * @endcode
  */
-template<typename MetricType = metric::SquaredEuclideanDistance,
+template<typename MetricType = SquaredEuclideanDistance,
          typename OptimizerType = ens::StandardSGD>
 class NCA
 {

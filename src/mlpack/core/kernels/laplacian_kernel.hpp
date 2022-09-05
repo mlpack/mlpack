@@ -60,7 +60,7 @@ class LaplacianKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(-metric::EuclideanDistance::Evaluate(a, b) / bandwidth);
+    return exp(-EuclideanDistance::Evaluate(a, b) / bandwidth);
   }
 
   /**

@@ -25,7 +25,7 @@ TEST_CASE("PairwiseDistanceTest", "[FacilitiesTest]")
   X = { { 0, 1, 1, 0, 0 },
         { 0, 1, 2, 0, 0 },
         { 1, 1, 3, 2, 0 } };
-  metric::EuclideanDistance metric;
+  EuclideanDistance metric;
   arma::mat dist = PairwiseDistances(X, metric);
   REQUIRE(dist(0, 0) == 0);
   REQUIRE(dist(1, 0) == Approx(1.41421).epsilon(1e-5));

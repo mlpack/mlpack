@@ -66,7 +66,7 @@ class RPlusPlusTreeSplitPolicy
    */
   template<typename TreeType>
   static const
-      bound::HRectBound<metric::EuclideanDistance, typename TreeType::ElemType>&
+      bound::HRectBound<EuclideanDistance, typename TreeType::ElemType>&
           Bound(const TreeType& node)
   {
     return node.AuxiliaryInfo().OuterBound();

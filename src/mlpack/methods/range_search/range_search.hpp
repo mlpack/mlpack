@@ -37,7 +37,7 @@ class LeafSizeRSWrapper;
  * @tparam MatType Type of data to use.
  * @tparam TreeType Type of tree to use; must satisfy the TreeType policy API.
  */
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,

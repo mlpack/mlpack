@@ -64,7 +64,7 @@ class CauchyKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b)
   {
     return 1 / (1 + (
-        std::pow(metric::EuclideanDistance::Evaluate(a, b) / bandwidth, 2)));
+        std::pow(EuclideanDistance::Evaluate(a, b) / bandwidth, 2)));
   }
 
   /**

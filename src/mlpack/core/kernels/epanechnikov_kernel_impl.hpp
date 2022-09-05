@@ -24,7 +24,7 @@ template<typename VecTypeA, typename VecTypeB>
 inline double EpanechnikovKernel::Evaluate(const VecTypeA& a, const VecTypeB& b)
     const
 {
-  return std::max(0.0, 1.0 - metric::SquaredEuclideanDistance::Evaluate(a, b)
+  return std::max(0.0, 1.0 - SquaredEuclideanDistance::Evaluate(a, b)
       * inverseBandwidthSquared);
 }
 
@@ -43,7 +43,7 @@ template<typename VecTypeA, typename VecTypeB>
 inline double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
                                                       const VecTypeB& b)
 {
-  double distance = sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b));
+  double distance = sqrt(SquaredEuclideanDistance::Evaluate(a, b));
   if (distance >= 2.0 * bandwidth)
     return 0.0;
 

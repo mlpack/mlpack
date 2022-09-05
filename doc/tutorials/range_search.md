@@ -311,7 +311,7 @@ Similar to the [`NeighborSearch` class](neighbor_search.md), the `RangeSearch`
 class is very extensible, having the following template arguments:
 
 ```c++
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
@@ -325,8 +325,8 @@ arbitrary range searching object can be constructed.
 ### `MetricType` policy class
 
 The `MetricType` policy class allows the range search to take place in any
-arbitrary metric space.  The `mlpack::metric::LMetric` class is a good example
-implementation.  A `MetricType` class must provide the following functions:
+arbitrary metric space.  The `LMetric` class is a good example implementation.
+A `MetricType` class must provide the following functions:
 
 ```c++
 // Empty constructor is required.
@@ -339,9 +339,9 @@ double Evaluate(const VecType& a, const VecType& b);
 
 Internally, the `RangeSearch` class keeps an instantiated `MetricType` class
 (which can be given in the constructor).   This is useful for a metric like the
-Mahalanobis distance (`mlpack::metric::MahalanobisDistance`), which must store
-state (the covariance matrix).  Therefore, you can write a non-static
-`MetricType` class and use it seamlessly with `RangeSearch`.
+Mahalanobis distance (`MahalanobisDistance`), which must store state (the
+covariance matrix).  Therefore, you can write a non-static `MetricType` class
+and use it seamlessly with `RangeSearch`.
 
 See also the [documentation for the `MetricType`
 policy](../developer/metrics.md).
@@ -365,11 +365,7 @@ Typical choices might include `mlpack::tree::KDTree` (the default),
 
 ```c++
 // Construct a RangeSearch object with ball bounds.
-RangeSearch<
-    metric::EuclideanDistance,
-    arma::mat,
-    tree::RTree
-> rangeSearch(dataset);
+RangeSearch<EuclideanDistance, arma::mat, tree::RTree> rangeSearch(dataset);
 ```
 
 For further information on trees, including how to write your own tree for use

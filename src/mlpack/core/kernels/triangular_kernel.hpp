@@ -47,8 +47,7 @@ class TriangularKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
-    return std::max(0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) /
-        bandwidth));
+    return std::max(0.0, (1 - EuclideanDistance::Evaluate(a, b) / bandwidth));
   }
 
   /**

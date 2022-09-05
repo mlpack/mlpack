@@ -130,13 +130,13 @@ TEST_CASE("GaussianClustering", "[MeanShiftTest]")
     arma::uvec minIndices(4);
     for (size_t i = 0; i < 4; ++i)
     {
-      centroidDistances(0) = metric::EuclideanDistance::Evaluate(g1.Mean(),
+      centroidDistances(0) = EuclideanDistance::Evaluate(g1.Mean(),
           centroids.col(i));
-      centroidDistances(1) = metric::EuclideanDistance::Evaluate(g2.Mean(),
+      centroidDistances(1) = EuclideanDistance::Evaluate(g2.Mean(),
           centroids.col(i));
-      centroidDistances(2) = metric::EuclideanDistance::Evaluate(g3.Mean(),
+      centroidDistances(2) = EuclideanDistance::Evaluate(g3.Mean(),
           centroids.col(i));
-      centroidDistances(3) = metric::EuclideanDistance::Evaluate(g4.Mean(),
+      centroidDistances(3) = EuclideanDistance::Evaluate(g4.Mean(),
           centroids.col(i));
 
       // Are we near a centroid of a Gaussian?

@@ -79,9 +79,8 @@ class KMeansPlusPlusInitialization
         double minDistance = std::numeric_limits<double>::max();
         for (size_t j = 0; j < i; ++j)
         {
-          const double distance =
-              mlpack::metric::SquaredEuclideanDistance::Evaluate(data.col(p),
-              centroids.col(j));
+          const double distance = SquaredEuclideanDistance::Evaluate(
+              data.col(p), centroids.col(j));
           minDistance = std::min(distance, minDistance);
         }
 

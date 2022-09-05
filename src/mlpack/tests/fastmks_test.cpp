@@ -19,7 +19,6 @@
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::fastmks;
-using namespace mlpack::metric;
 
 /**
  * Compare single-tree and naive.

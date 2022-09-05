@@ -39,7 +39,7 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
   // the resulting node do not overlap other nodes.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
-    bound::HRectBound<metric::EuclideanDistance, ElemType> bound =
+    bound::HRectBound<EuclideanDistance, ElemType> bound =
         node->Child(bestIndex).Bound();
     bound |= node->Dataset().col(point);
 

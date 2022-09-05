@@ -29,13 +29,13 @@ namespace neighbor {
  * The KNN class is the k-nearest-neighbors method.  It returns L2 distances
  * (Euclidean distances) for each of the k nearest neighbors.
  */
-typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> KNN;
+typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
 
 /**
  * The KFN class is the k-furthest-neighbors method.  It returns L2 distances
  * (Euclidean distances) for each of the k furthest neighbors.
  */
-typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> KFN;
+typedef NeighborSearch<FurthestNeighborSort, EuclideanDistance> KFN;
 
 /**
  * The DefeatistKNN class is the k-nearest-neighbors method considering
@@ -49,13 +49,13 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType = tree::SPTree>
 using DefeatistKNN = NeighborSearch<
     NearestNeighborSort,
-    metric::EuclideanDistance,
+    EuclideanDistance,
     arma::mat,
     TreeType,
-    TreeType<metric::EuclideanDistance,
+    TreeType<EuclideanDistance,
         NeighborSearchStat<NearestNeighborSort>,
         arma::mat>::template DefeatistDualTreeTraverser,
-    TreeType<metric::EuclideanDistance,
+    TreeType<EuclideanDistance,
         NeighborSearchStat<NearestNeighborSort>,
         arma::mat>::template DefeatistSingleTreeTraverser>;
 

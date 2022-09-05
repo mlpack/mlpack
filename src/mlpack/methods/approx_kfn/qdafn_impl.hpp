@@ -136,8 +136,8 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       const size_t tableIndex = tableLocations[p.second];
 
       // Calculate distance from query point.
-      const double dist = mlpack::metric::EuclideanDistance::Evaluate(
-          querySet.col(q), candidateSet[p.second].col(tableIndex));
+      const double dist = EuclideanDistance::Evaluate( querySet.col(q),
+          candidateSet[p.second].col(tableIndex));
 
       resultsQueue.push(std::make_pair(dist, sIndices(tableIndex, p.second)));
 

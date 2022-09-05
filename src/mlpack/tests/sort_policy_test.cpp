@@ -21,7 +21,6 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::bound;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 
 // Tests for NearestNeighborSort
 

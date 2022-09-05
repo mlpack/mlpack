@@ -42,7 +42,7 @@ namespace lmnn {
  * operate on one point in the dataset.  This is useful for optimizers like
  * stochastic gradient descent (see ens::SGD).
  */
-template<typename MetricType = metric::SquaredEuclideanDistance>
+template<typename MetricType = SquaredEuclideanDistance>
 class LMNNFunction
 {
  public:

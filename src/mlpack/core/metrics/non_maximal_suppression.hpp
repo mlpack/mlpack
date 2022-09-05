@@ -13,7 +13,6 @@
 #define MLPACK_CORE_METRICS_NMS_HPP
 
 namespace mlpack {
-namespace metric {
 
 /**
  * Definition of Non Maximal Suppression.
@@ -77,7 +76,6 @@ class NMS
   void serialize(Archive &ar, const uint32_t /* version */);
 }; // Class NMS.
 
-} // namespace metric
 } // namespace mlpack
 
 // Include implementation.

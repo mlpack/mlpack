@@ -195,7 +195,7 @@ class RAWrapper : public RAWrapperBase
 
  protected:
   typedef RASearch<NearestNeighborSort,
-                   metric::EuclideanDistance,
+                   EuclideanDistance,
                    arma::mat,
                    TreeType> RAType;
 

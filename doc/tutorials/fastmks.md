@@ -364,8 +364,8 @@ example on just a reference dataset is shown below, where the base of the cover
 tree is modified.
 
 We also use an instantiated kernel, but because we are building our own tree, we
-must use `mlpack::metric::IPMetric` so that our tree is built on the metric
-induced by our kernel function.
+must use `IPMetric` so that our tree is built on the metric induced by our
+kernel function.
 
 ```c++
 #include <mlpack.hpp>

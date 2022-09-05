@@ -93,7 +93,7 @@ void RefinedStart::Cluster(const MatType& data,
       // a lot of refactoring and redesign to make this more general... we would
       // probably need to have KMeans take a template template parameter for the
       // initial partition policy.  It's not clear how to best do this.
-      const double distance = metric::EuclideanDistance::Evaluate(data.col(i),
+      const double distance = EuclideanDistance::Evaluate(data.col(i),
           centroids.col(j));
 
       if (distance < minDistance)

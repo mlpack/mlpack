@@ -18,7 +18,6 @@
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::bound;
 
 /**
@@ -1156,7 +1155,7 @@ TEST_CASE("FurthestPointDistanceTest", "[TreeTest]")
       double maxDist = 0.0;
       for (size_t i = 0; i < node->NumPoints(); ++i)
       {
-        const double dist = metric::EuclideanDistance::Evaluate(center,
+        const double dist = EuclideanDistance::Evaluate(center,
             dataset.col(node->Point(i)));
         if (dist > maxDist)
           maxDist = dist;

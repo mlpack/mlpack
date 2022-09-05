@@ -49,7 +49,7 @@ namespace lmnn /** Large Margin Nearest Neighbor. */ {
  * @tparam MetricType The type of metric to use for computation.
  * @tparam OptimizerType Optimizer to use for developing distance.
  */
-template<typename MetricType = metric::SquaredEuclideanDistance,
+template<typename MetricType = SquaredEuclideanDistance,
          typename OptimizerType = ens::AMSGrad>
 class LMNN
 {

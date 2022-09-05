@@ -39,7 +39,7 @@ namespace tree {
  *      metaprogramming approach should be used to issue a compile-time error if
  *      a metric cannot be used with a specific tree type.  One example is the
  *      tree::BinarySpaceTree tree type, which cannot work with the
- *      metric::IPMetric class.
+ *      IPMetric class.
  * @tparam StatisticType A tree node can hold a statistic, which is sometimes
  *      useful for various dual-tree algorithms.  The tree itself does not need
  *      to know anything about how the statistic works, but it needs to hold a
@@ -50,7 +50,7 @@ namespace tree {
  *      matrix type.  When the tree is written it should be assumed that MatType
  *      has the same functionality as arma::mat.
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat>
 class ExampleTree
@@ -228,8 +228,8 @@ class ExampleTree
    * This member is just here so the ExampleTree compiles without warnings.  It
    * is not required to be a member in every type of tree.  Be aware that
    * storing the metric as a member and not a reference may mean that for some
-   * metrics (such as metric::MahalanobisDistance in high dimensionality) may
-   * incur lots of unnecessary matrix copying.
+   * metrics (such as MahalanobisDistance in high dimensionality) may incur lots
+   * of unnecessary matrix copying.
    */
   MetricType& metric;
 };

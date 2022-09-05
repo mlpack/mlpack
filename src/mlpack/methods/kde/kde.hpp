@@ -71,7 +71,7 @@ struct KDEDefaultParams
  * @tparam SingleTreeTraversalType Type of single-tree traversal to use.
  */
 template<typename KernelType = GaussianKernel,
-         typename MetricType = mlpack::metric::EuclideanDistance,
+         typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,

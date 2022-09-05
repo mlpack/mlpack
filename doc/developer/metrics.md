@@ -101,9 +101,9 @@ int main()
 mlpack comes with a number of pre-written metrics that satisfy the `MetricType`
 policy:
 
- - `mlpack::metric::ManhattanDistance`
- - `mlpack::metric::EuclideanDistance`
- - `mlpack::metric::ChebyshevDistance`
- - `mlpack::metric::MahalanobisDistance`
- - `mlpack::metric::LMetric` (for arbitrary L-metrics)
- - `mlpack::metric::IPMetric` (requires a [KernelType](kerneltype.md) parameter)
+ - `ManhattanDistance`
+ - `EuclideanDistance`
+ - `ChebyshevDistance`
+ - `MahalanobisDistance`
+ - `LMetric` (for arbitrary L-metrics)
+ - `IPMetric` (requires a [KernelType](kerneltype.md) parameter)

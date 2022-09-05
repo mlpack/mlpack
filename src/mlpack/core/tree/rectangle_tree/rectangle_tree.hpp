@@ -44,7 +44,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  *    in the node. This information depends on the type of the RectangleTree.
  */
 
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          typename SplitType = RTreeSplit,
@@ -54,8 +54,8 @@ template<typename MetricType = metric::EuclideanDistance,
 class RectangleTree
 {
   // The metric *must* be the euclidean distance.
-  static_assert(std::is_same<MetricType, metric::EuclideanDistance>::value,
-      "RectangleTree: MetricType must be metric::EuclideanDistance.");
+  static_assert(std::is_same<MetricType, EuclideanDistance>::value,
+      "RectangleTree: MetricType must be EuclideanDistance.");
 
  public:
   //! So other classes can use TreeType::Mat.
@@ -90,7 +90,7 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  bound::HRectBound<metric::EuclideanDistance, ElemType> bound;
+  bound::HRectBound<EuclideanDistance, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.

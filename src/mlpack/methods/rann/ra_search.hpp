@@ -66,7 +66,7 @@ class LeafSizeRAWrapper;
  * @tparam TreeType The tree type to use.
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = metric::EuclideanDistance,
+         typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
