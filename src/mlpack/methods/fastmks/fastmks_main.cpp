@@ -23,7 +23,6 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::fastmks;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.

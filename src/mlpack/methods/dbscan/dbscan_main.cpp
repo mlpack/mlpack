@@ -20,7 +20,6 @@
 using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::dbscan;
-using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;

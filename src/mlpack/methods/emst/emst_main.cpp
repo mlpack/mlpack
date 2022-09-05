@@ -91,7 +91,6 @@ PARAM_INT_IN("leaf_size", "Leaf size in the kd-tree.  One-element leaves give "
 using namespace mlpack;
 using namespace mlpack::emst;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 

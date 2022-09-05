@@ -137,7 +137,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::nca;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 

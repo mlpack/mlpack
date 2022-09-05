@@ -25,7 +25,6 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
