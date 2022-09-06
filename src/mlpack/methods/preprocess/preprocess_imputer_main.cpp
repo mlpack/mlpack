@@ -69,7 +69,7 @@ using namespace data;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  arma::mat input = params.Get<arma::mat>("input");
+  arma::mat input = std::move(params.Get<arma::mat>("input"));
   arma::mat output;
   const string missingValue = params.Get<string>("missing_value");
   const double customValue = params.Get<double>("custom_value");
