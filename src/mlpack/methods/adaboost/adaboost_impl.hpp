@@ -29,7 +29,6 @@
 #include "adaboost.hpp"
 
 namespace mlpack {
-namespace adaboost {
 
 /**
  * Constructor. Currently runs the AdaBoost.MH algorithm.
@@ -289,7 +288,6 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(wl));
 }
 
-} // namespace adaboost
 } // namespace mlpack
 
 #endif

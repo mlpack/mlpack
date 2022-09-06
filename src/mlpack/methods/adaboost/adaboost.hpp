@@ -33,7 +33,6 @@
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 
 namespace mlpack {
-namespace adaboost {
 
 /**
  * The AdaBoost class.  AdaBoost is a boosting algorithm, meaning that it
@@ -191,7 +190,6 @@ class AdaBoost
   std::vector<double> alpha;
 }; // class AdaBoost
 
-} // namespace adaboost
 } // namespace mlpack
 
 // Include implementation.

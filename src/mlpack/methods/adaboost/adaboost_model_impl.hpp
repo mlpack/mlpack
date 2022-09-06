@@ -16,7 +16,6 @@
 #include "adaboost_model.hpp"
 
 namespace mlpack {
-namespace adaboost {
 
 //! Create an empty AdaBoost model.
 inline AdaBoostModel::AdaBoostModel() :
@@ -159,7 +158,6 @@ inline void AdaBoostModel::Classify(const arma::mat& testData,
     pBoost->Classify(testData, predictions);
 }
 
-} // namespace adaboost
 } // namespace mlpack
 
 #endif

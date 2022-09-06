@@ -18,7 +18,6 @@
 class AdaBoost;
 
 namespace mlpack {
-namespace adaboost {
 
 /**
  * The model to save to disk.
@@ -123,7 +122,6 @@ class AdaBoostModel
   }
 };
 
-} // namespace adaboost
 } // namespace mlpack
 
 // Include implementation.

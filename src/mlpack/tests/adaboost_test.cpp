@@ -18,7 +18,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::adaboost;
 using namespace mlpack::perceptron;
 
 /**
