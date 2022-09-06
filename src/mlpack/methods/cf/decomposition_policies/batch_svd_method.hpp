@@ -65,20 +65,20 @@ class BatchSVDPolicy
   {
     if (mit)
     {
-      amf::MaxIterationTermination iter(maxIterations);
+      MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using the batch SVD algorithm.
-      amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
-          amf::SVDBatchLearning> svdbatch(iter);
+      AMF<MaxIterationTermination, RandomInitialization, SVDBatchLearning>
+          svdbatch(iter);
 
       svdbatch.Apply(cleanedData, rank, w, h);
     }
     else
     {
-      amf::SimpleResidueTermination srt(minResidue, maxIterations);
+      SimpleResidueTermination srt(minResidue, maxIterations);
 
       // Do singular value decomposition using the batch SVD algorithm.
-      amf::SVDBatchFactorizer<> svdbatch(srt);
+      SVDBatchFactorizer<> svdbatch(srt);
 
       svdbatch.Apply(cleanedData, rank, w, h);
     }

@@ -16,7 +16,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::amf;
 using namespace arma;
 
 /**

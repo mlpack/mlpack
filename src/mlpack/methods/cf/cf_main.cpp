@@ -21,7 +21,6 @@
 
 using namespace mlpack;
 using namespace mlpack::cf;
-using namespace mlpack::amf;
 using namespace mlpack::svd;
 using namespace mlpack::util;
 using namespace std;

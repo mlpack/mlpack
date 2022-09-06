@@ -17,7 +17,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::amf;
 
 /**
  * Check the if the product of the calculated factorization is close to the

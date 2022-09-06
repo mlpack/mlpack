@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_AMF_COMPLETE_INCREMENTAL_TERMINATION_HPP
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This class acts as a wrapper for basic termination policies to be used by
@@ -116,7 +115,6 @@ class CompleteIncrementalTermination
   size_t iteration;
 }; // class CompleteIncrementalTermination
 
-} // namespace amf
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_AMF_COMPLETE_INCREMENTAL_TERMINATION_HPP

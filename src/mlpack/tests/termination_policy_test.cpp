@@ -17,7 +17,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::amf;
 
 /**
  * Simple test -- make sure termination happens after the right number of

@@ -16,7 +16,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This class initializes the W matrix of the AMF algorithm by averaging p
@@ -88,7 +87,6 @@ class RandomAcolInitialization
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

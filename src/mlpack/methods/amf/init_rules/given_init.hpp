@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This initialization rule for AMF simply fills the W and H matrices with the
@@ -217,7 +216,6 @@ class GivenInitialization
   bool hIsGiven;
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif
