@@ -43,8 +43,8 @@ must be positive semidefinite.
 
 The FastMKS algorithm builds trees on the datasets `Q` and `R` in such a way
 that explicit representation of the points in the kernel space is unnecessary,
-by using cover trees (see `mlpack::tree::CoverTree`).  This allows the algorithm
-to be run, for instance, on string kernels, where there is no sensible explicit
+by using cover trees (see `CoverTree`).  This allows the algorithm to be run,
+for instance, on string kernels, where there is no sensible explicit
 representation.  The mlpack implementation allows any type of tree that does not
 require an explicit representation to be used.  For more details, see the paper.
 
@@ -356,12 +356,11 @@ f.Search(10, indices, products);
 
 ### FastMKS with an already-created tree
 
-By default, `FastMKS<>` uses the cover tree datastructure (see the
-`mlpack::tree::CoverTree` documentation).  Sometimes, it is useful to modify the
-parameters of the cover tree.  In this scenario, a tree must be built outside of
-the constructor, and then passed to the appropriate `FastMKS<>` constructor.  An
-example on just a reference dataset is shown below, where the base of the cover
-tree is modified.
+By default, `FastMKS<>` uses the cover tree datastructure (see the `CoverTree`
+documentation).  Sometimes, it is useful to modify the parameters of the cover
+tree.  In this scenario, a tree must be built outside of the constructor, and
+then passed to the appropriate `FastMKS<>` constructor.  An example on just a
+reference dataset is shown below, where the base of the cover tree is modified.
 
 We also use an instantiated kernel, but because we are building our own tree, we
 must use `IPMetric` so that our tree is built on the metric induced by our
@@ -384,8 +383,8 @@ IPMetric<PolynomialKernel> metric(pk);
 // the custom base of 1.5 (default is 1.3).  We have to be sure to use the right
 // type here -- FastMKS needs the FastMKSStat object as the tree's
 // StatisticType.
-typedef tree::CoverTree<IPMetric<PolynomialKernel>, tree::FirstPointIsRoot,
-    FastMKSStat> TreeType; // Convenience typedef.
+typedef CoverTree<IPMetric<PolynomialKernel>, FirstPointIsRoot, FastMKSStat>
+    TreeType; // Convenience typedef.
 TreeType* tree = new TreeType(data, metric, 1.5);
 
 // Now initialize FastMKS with that statistic.  We don't need to specify the

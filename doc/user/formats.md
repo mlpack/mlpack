@@ -479,7 +479,7 @@ For more information on this method and how it works, see the
 
 Examples of `serialize()` methods can be found in most classes; one simple one
 is in the `Range` class.  A more complex example is found in the
-`mlpack::tree::BinarySpaceTree` class.
+`BinarySpaceTree` class.
 
 Using the `mlpack::data::Load()` and `mlpack::data::Save()` classes is easy if
 the type being saved has a `serialize()` method implemented: simply call either

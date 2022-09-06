@@ -315,7 +315,7 @@ template<typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::KDTree>
+                  typename TreeMatType> class TreeType = KDTree>
 class RangeSearch;
 ```
 
@@ -358,14 +358,13 @@ The `RangeSearch` class also allows a custom tree to be used.  The `TreeType`
 policy is also used elsewhere in mlpack and is documented more thoroughly
 [here](../developer/trees.md).
 
-Typical choices might include `mlpack::tree::KDTree` (the default),
-`mlpack::tree::BallTree`, `mlpack::tree::RTree`, `mlpack::tree::RStarTree`, or
-`mlpack::tree::StandardCoverTree`.  Below is an example that uses the
+Typical choices might include `KDTree` (the default), `BallTree`, `RTree`,
+`RStarTree`, or `StandardCoverTree`.  Below is an example that uses the
 `RangeSearch` class with an R-tree:
 
 ```c++
 // Construct a RangeSearch object with ball bounds.
-RangeSearch<EuclideanDistance, arma::mat, tree::RTree> rangeSearch(dataset);
+RangeSearch<EuclideanDistance, arma::mat, RTree> rangeSearch(dataset);
 ```
 
 For further information on trees, including how to write your own tree for use

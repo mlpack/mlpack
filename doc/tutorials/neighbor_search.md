@@ -300,7 +300,7 @@ template<
   typename MatType = arma::mat,
   template<typename TreeMetricType,
            typename TreeStatType,
-           typename TreeMatType> class TreeType = tree::KDTree,
+           typename TreeMatType> class TreeType = KDTree,
   template<typename RuleType> class TraversalType =
       TreeType<MetricType, NeighborSearchStat<SortPolicy>,
                MatType>::template DualTreeTraverser>
@@ -378,9 +378,8 @@ The NeighborSearch class allows great extensibility in the selection of the type
 of tree used for search.  This type must follow the typical mlpack TreeType
 policy, documented [here](../developer/trees.md).
 
-Typical choices might include `mlpack::tree::KDTree`, `mlpack::tree::BallTree`,
-`mlpack::tree::StandardCoverTree`, `mlpack::tree::RTree`, or
-`mlpack::tree::RStarTree`.  It is easily possible to make your own tree type for
+Typical choices might include `KDTree`, `BallTree`, `StandardCoverTree`,
+`RTree`, or `RStarTree`.  It is easily possible to make your own tree type for
 use with NeighborSearch; consult the [TreeType
 documentation](../developer/trees.md) for more details.
 
@@ -392,7 +391,7 @@ NeighborSearch<
     NearestNeighborSort,
     EuclideanDistance,
     arma::mat,
-    tree::BallTree
+    BallTree
 > neighborSearch(dataset);
 ```
 

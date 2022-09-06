@@ -799,10 +799,9 @@ class TreeTraits
 };
 ```
 
-An example specialization for the `mlpack::tree::KDTree` class is given below.
-Note that `mlpack::tree::KDTree` is itself a template class (like every class
-satisfying the `TreeType` policy), so we are specializing to a template
-parameter.
+An example specialization for the `:KDTree` class is given below.  Note that
+`KDTree` is itself a template class (like every class satisfying the `TreeType`
+policy), so we are specializing to a template parameter.
 
 ```c++
 template<typename MetricType,
@@ -830,25 +829,23 @@ class TreeTraits<KDTree<MetricType, StatisticType, MatType>>
 ```
 
 Currently, the traits available are each of the five detailed above.  For more
-information, see the `mlpack::tree::TreeTraits` source code for more
-documentation.
+information, see the `TreeTraits` source code for more documentation.
 
 ## A list of trees in mlpack and more information
 
 mlpack contains several ready-to-use implementations of trees that satisfy the
 TreeType policy API:
 
- - `mlpack::tree::KDTree`
- - `mlpack::tree::MeanSplitKDTree`
- - `mlpack::tree::BallTree`
- - `mlpack::tree::MeanSplitBallTree`
- - `mlpack::tree::RTree`
- - `mlpack::tree::RStarTree`
- - `mlpack::tree::StandardCoverTree`
+ - `KDTree`
+ - `MeanSplitKDTree`
+ - `BallTree`
+ - `MeanSplitBallTree`
+ - `RTree`
+ - `RStarTree`
+ - `StandardCoverTree`
 
 Often, these are template typedefs of more flexible tree classes:
 
- - `mlpack::tree::BinarySpaceTree` -- binary trees, such as the KD-tree and ball
-   tree
- - `mlpack::tree::RectangleTree` -- the R tree and variants
- - `mlpack::tree::CoverTree` -- the cover tree and variants
+ - `BinarySpaceTree` -- binary trees, such as the KD-tree and ball tree
+ - `RectangleTree` -- the R tree and variants
+ - `CoverTree` -- the cover tree and variants
