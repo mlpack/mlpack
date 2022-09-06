@@ -79,7 +79,7 @@ class KDERules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }

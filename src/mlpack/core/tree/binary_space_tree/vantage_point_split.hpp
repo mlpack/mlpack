@@ -93,7 +93,7 @@ class VantagePointSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return PerformSplit<MatType, VantagePointSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
         splitInfo);
   }
 
@@ -118,7 +118,7 @@ class VantagePointSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return PerformSplit<MatType, VantagePointSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
         splitInfo, oldFromNew);
   }
 

@@ -73,7 +73,8 @@ class MidpointSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return PerformSplit<MatType, MidpointSplit>(data, begin, count, splitInfo);
+    return mlpack::PerformSplit<MatType, MidpointSplit>(data, begin, count,
+        splitInfo);
   }
 
   /**
@@ -97,8 +98,8 @@ class MidpointSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return PerformSplit<MatType, MidpointSplit>(data, begin, count, splitInfo,
-        oldFromNew);
+    return mlpack::PerformSplit<MatType, MidpointSplit>(data, begin, count,
+        splitInfo, oldFromNew);
   }
 
   /**

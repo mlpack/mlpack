@@ -76,7 +76,8 @@ class RPTreeMaxSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count, splitInfo);
+    return mlpack::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
+        splitInfo);
   }
 
   /**
@@ -100,8 +101,8 @@ class RPTreeMaxSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count, splitInfo,
-        oldFromNew);
+    return mlpack::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
+        splitInfo, oldFromNew);
   }
 
   /**

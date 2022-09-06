@@ -73,7 +73,8 @@ class MeanSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return PerformSplit<MatType, MeanSplit>(data, begin, count, splitInfo);
+    return mlpack::PerformSplit<MatType, MeanSplit>(data, begin, count,
+        splitInfo);
   }
 
   /**
@@ -97,8 +98,8 @@ class MeanSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return PerformSplit<MatType, MeanSplit>(data, begin, count, splitInfo,
-        oldFromNew);
+    return mlpack::PerformSplit<MatType, MeanSplit>(data, begin, count,
+        splitInfo, oldFromNew);
   }
 
   /**

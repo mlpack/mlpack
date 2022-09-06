@@ -83,7 +83,7 @@ class RPTreeMeanSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
         splitInfo);
   }
 
@@ -108,8 +108,8 @@ class RPTreeMeanSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count, splitInfo,
-        oldFromNew);
+    return mlpack::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
+        splitInfo, oldFromNew);
   }
 
   /**
