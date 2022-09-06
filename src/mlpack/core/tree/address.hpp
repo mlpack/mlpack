@@ -251,7 +251,8 @@ int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
  * Returns true if an address is contained between two other addresses.
  */
 template<typename AddressType1, typename AddressType2, typename AddressType3>
-bool Contains(const AddressType1& address, const AddressType2& loBound,
+bool ContainsAddress(const AddressType1& address,
+                     const AddressType2& loBound,
                      const AddressType3& hiBound)
 {
   return ((CompareAddresses(loBound, address) <= 0) &&

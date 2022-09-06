@@ -211,7 +211,7 @@ class KDECleanRules
                  TreeType& /* referenceNode*/ ,
                  const double oldScore) const { return oldScore; }
 
-  typedef typename TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }

@@ -955,7 +955,7 @@ inline bool CellBound<MetricType, ElemType>::Contains(
 
   PointToAddress(address, point);
 
-  return Contains(address, loAddress, hiAddress);
+  return ContainsAddress(address, loAddress, hiAddress);
 }
 
 

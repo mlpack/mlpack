@@ -44,7 +44,7 @@ class DualTreeKMeansRules
                  TreeType& referenceNode,
                  const double oldScore);
 
-  typedef typename TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }

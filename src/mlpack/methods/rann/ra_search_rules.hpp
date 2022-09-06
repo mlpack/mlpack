@@ -236,7 +236,7 @@ class RASearchRules
       return arma::sum(numSamplesMade);
   }
 
-  typedef typename TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
