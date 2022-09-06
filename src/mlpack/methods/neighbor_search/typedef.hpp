@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
-#define MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#ifndef MLPACK_NEIGHBOR_SEARCH_TYPEDEF_HPP
+#define MLPACK_NEIGHBOR_SEARCH_TYPEDEF_HPP
 
 // In case someone included this directly.
 #include "neighbor_search.hpp"
@@ -46,7 +46,7 @@ typedef NeighborSearch<FurthestNeighborSort, EuclideanDistance> KFN;
  */
 template<template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::SPTree>
+                  typename TreeMatType> class TreeType = SPTree>
 using DefeatistKNN = NeighborSearch<
     NearestNeighborSort,
     EuclideanDistance,
@@ -64,7 +64,7 @@ using DefeatistKNN = NeighborSearch<
  * search on SPTree.  It returns L2 distances (Euclidean distances) for each of
  * the k nearest neighbors found.
  */
-typedef DefeatistKNN<tree::SPTree> SpillKNN;
+typedef DefeatistKNN<SPTree> SpillKNN;
 
 } // namespace neighbor
 } // namespace mlpack

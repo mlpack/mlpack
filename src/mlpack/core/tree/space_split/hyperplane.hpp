@@ -16,7 +16,6 @@
 #include "projection_vector.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * HyperplaneBase defines a splitting hyperplane based on a projection vector
@@ -150,7 +149,6 @@ using AxisOrthogonalHyperplane = HyperplaneBase<HRectBound<MetricType>,
 template<typename MetricType>
 using Hyperplane = HyperplaneBase<BallBound<MetricType>, ProjVector>;
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

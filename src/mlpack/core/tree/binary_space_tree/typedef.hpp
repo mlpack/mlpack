@@ -17,7 +17,6 @@
 #include "../binary_space_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The standard midpoint-split kd-tree.  This is not the original formulation by
@@ -300,7 +299,6 @@ using UBTree = BinarySpaceTree<MetricType,
                                CellBound,
                                UBTreeSplit>;
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DECISION_TREE_ALL_DIMENSION_SELECT_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This dimension selection policy allows any dimension to be selected for
@@ -58,7 +57,6 @@ class AllDimensionSelect
   size_t dimensions;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

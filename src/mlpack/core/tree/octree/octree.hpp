@@ -17,7 +17,6 @@
 #include "../statistic.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
@@ -463,7 +462,6 @@ class Octree
   };
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

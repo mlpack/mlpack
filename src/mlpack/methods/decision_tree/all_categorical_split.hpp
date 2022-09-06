@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The AllCategoricalSplit is a splitting function that will split categorical
@@ -131,7 +130,6 @@ class AllCategoricalSplit
       const AuxiliarySplitInfo& /* aux */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -114,7 +114,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   else
     depthAlpha = -1;
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+  if (TreeTraits<TreeType>::FirstPointIsCentroid &&
       lastQueryIndex == queryIndex &&
       traversalInfo.LastReferenceNode() != NULL &&
       lastReferenceIndex == referenceNode.Point(0))
@@ -134,7 +134,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     maxDistance = r.Hi();
 
     // Check if we are a self-child.
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+    if (TreeTraits<TreeType>::HasSelfChildren &&
         referenceNode.Parent() != NULL &&
         referenceNode.Parent()->Point(0) == referenceNode.Point(0))
     {
@@ -325,7 +325,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
                                referenceNode.IsLeaf() &&
                                queryNode.IsLeaf();
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+  if (TreeTraits<TreeType>::FirstPointIsCentroid &&
       (traversalInfo.LastQueryNode() != NULL) &&
       (traversalInfo.LastReferenceNode() != NULL) &&
       (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&

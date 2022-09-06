@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DECISION_TREE_RANDOM_DIMENSION_SELECT_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This dimension selection policy only selects one single random dimension.
@@ -53,7 +52,6 @@ class RandomDimensionSelect
   size_t dimensions;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

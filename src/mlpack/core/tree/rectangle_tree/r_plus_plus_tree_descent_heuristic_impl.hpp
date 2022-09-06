@@ -17,7 +17,6 @@
 #include "../hrectbound.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(
@@ -47,7 +46,6 @@ size_t RPlusPlusTreeDescentHeuristic::ChooseDescentNode(
   return 0;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_DESCENT_HEURISTIC_IMPL_HPP

@@ -16,7 +16,6 @@
 #include "space_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType, typename MatType>
 bool SpaceSplit<MetricType, MatType>::GetProjVector(
@@ -102,7 +101,6 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

@@ -79,7 +79,7 @@ class KDERules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -211,7 +211,7 @@ class KDECleanRules
                  TreeType& /* referenceNode*/ ,
                  const double oldScore) const { return oldScore; }
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }

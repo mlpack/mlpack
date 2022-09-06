@@ -16,7 +16,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Build a quad-tree (2-d octree) on 4 points, and guarantee four points are

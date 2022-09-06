@@ -71,7 +71,7 @@ template<typename SortPolicy = NearestNeighborSort,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::KDTree,
+                  typename TreeMatType> class TreeType = KDTree,
          template<typename RuleType> class DualTreeTraversalType =
              TreeType<MetricType,
                       NeighborSearchStat<SortPolicy>,

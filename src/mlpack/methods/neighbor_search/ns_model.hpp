@@ -261,13 +261,13 @@ template<typename SortPolicy>
 class SpillNSWrapper :
     public NSWrapper<
         SortPolicy,
-        tree::SPTree,
-        tree::SPTree<EuclideanDistance,
-                     NeighborSearchStat<SortPolicy>,
-                     arma::mat>::template DefeatistDualTreeTraverser,
-        tree::SPTree<EuclideanDistance,
-                     NeighborSearchStat<SortPolicy>,
-                     arma::mat>::template DefeatistSingleTreeTraverser>
+        SPTree,
+        SPTree<EuclideanDistance,
+               NeighborSearchStat<SortPolicy>,
+               arma::mat>::template DefeatistDualTreeTraverser,
+        SPTree<EuclideanDistance,
+               NeighborSearchStat<SortPolicy>,
+               arma::mat>::template DefeatistSingleTreeTraverser>
 {
  public:
   //! Construct the SpillNSWrapper.
@@ -275,13 +275,13 @@ class SpillNSWrapper :
                  const double epsilon) :
       NSWrapper<
           SortPolicy,
-          tree::SPTree,
-          tree::SPTree<EuclideanDistance,
-                       NeighborSearchStat<SortPolicy>,
-                       arma::mat>::template DefeatistDualTreeTraverser,
-          tree::SPTree<EuclideanDistance,
-                       NeighborSearchStat<SortPolicy>,
-                       arma::mat>::template DefeatistSingleTreeTraverser>(
+          SPTree,
+          SPTree<EuclideanDistance,
+                 NeighborSearchStat<SortPolicy>,
+                 arma::mat>::template DefeatistDualTreeTraverser,
+          SPTree<EuclideanDistance,
+                 NeighborSearchStat<SortPolicy>,
+                 arma::mat>::template DefeatistSingleTreeTraverser>(
           searchMode, epsilon)
   {
     // Nothing to do.
@@ -320,13 +320,13 @@ class SpillNSWrapper :
  protected:
   using NSWrapper<
       SortPolicy,
-      tree::SPTree,
-      tree::SPTree<EuclideanDistance,
-                   NeighborSearchStat<SortPolicy>,
-                   arma::mat>::template DefeatistDualTreeTraverser,
-      tree::SPTree<EuclideanDistance,
-                   NeighborSearchStat<SortPolicy>,
-                   arma::mat>::template DefeatistSingleTreeTraverser>::ns;
+      SPTree,
+      SPTree<EuclideanDistance,
+             NeighborSearchStat<SortPolicy>,
+             arma::mat>::template DefeatistDualTreeTraverser,
+      SPTree<EuclideanDistance,
+             NeighborSearchStat<SortPolicy>,
+             arma::mat>::template DefeatistSingleTreeTraverser>::ns;
 };
 
 /**

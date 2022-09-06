@@ -16,7 +16,6 @@
 #include "hoeffding_categorical_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename FitnessFunction>
 HoeffdingCategoricalSplit<FitnessFunction>::HoeffdingCategoricalSplit(
@@ -94,7 +93,6 @@ double HoeffdingCategoricalSplit<FitnessFunction>::MajorityProbability() const
   return double(classCounts.max()) / double(arma::accu(classCounts));
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

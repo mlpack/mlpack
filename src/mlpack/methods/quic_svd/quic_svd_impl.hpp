@@ -29,11 +29,11 @@ inline QUIC_SVD::QUIC_SVD(
 {
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.
-  tree::CosineTree* ctree;
+  CosineTree* ctree;
   if (dataset.n_cols > dataset.n_rows)
-    ctree = new tree::CosineTree(dataset, epsilon, delta);
+    ctree = new CosineTree(dataset, epsilon, delta);
   else
-    ctree = new tree::CosineTree(dataset.t(), epsilon, delta);
+    ctree = new CosineTree(dataset.t(), epsilon, delta);
 
   // Get subspace basis by creating the cosine tree.
   ctree->GetFinalBasis(basis);

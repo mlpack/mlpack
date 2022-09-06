@@ -56,7 +56,7 @@ template<
     typename MatType = arma::mat,
     template<typename TreeMetricType,
              typename TreeStatType,
-             typename TreeMatType> class TreeType = tree::StandardCoverTree
+             typename TreeMatType> class TreeType = StandardCoverTree
 >
 class FastMKS
 {

@@ -17,7 +17,6 @@
 #include "hyperplane.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType, typename MatType>
 class SpaceSplit
@@ -63,7 +62,6 @@ class SpaceSplit
       double& midValue);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

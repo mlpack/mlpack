@@ -16,7 +16,6 @@
 #include "mean_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType>
 bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
@@ -90,7 +89,6 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

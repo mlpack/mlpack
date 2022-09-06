@@ -16,7 +16,6 @@
 #include "octree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -74,7 +73,6 @@ class Octree<MetricType, StatisticType, MatType>::DualTreeTraverser
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

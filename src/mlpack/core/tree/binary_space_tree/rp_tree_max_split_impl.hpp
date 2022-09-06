@@ -17,7 +17,6 @@
 #include "rp_tree_mean_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType>
 bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
@@ -81,7 +80,6 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MAX_SPLIT_IMPL_HPP

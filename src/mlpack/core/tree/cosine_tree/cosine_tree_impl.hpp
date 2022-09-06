@@ -15,7 +15,6 @@
 #include "cosine_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 inline CosineTree::CosineTree(const arma::mat& dataset) :
     dataset(&dataset),
@@ -666,7 +665,6 @@ inline void CosineTree::CalculateCentroid()
   centroid /= numColumns;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

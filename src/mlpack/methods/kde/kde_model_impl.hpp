@@ -162,24 +162,24 @@ KDEWrapperBase* InitializeModelHelper(const KDEModel::KernelTypes kernelType,
   switch (kernelType)
   {
     case KDEModel::GAUSSIAN_KERNEL:
-      return new KDEWrapper<GaussianKernel, TreeType>(
-          relError, absError, GaussianKernel(bandwidth));
+      return new KDEWrapper<GaussianKernel, TreeType>(relError, absError,
+          GaussianKernel(bandwidth));
 
     case KDEModel::EPANECHNIKOV_KERNEL:
-      return new KDEWrapper<EpanechnikovKernel, TreeType>(
-          relError, absError, EpanechnikovKernel(bandwidth));
+      return new KDEWrapper<EpanechnikovKernel, TreeType>(relError, absError,
+          EpanechnikovKernel(bandwidth));
 
     case KDEModel::LAPLACIAN_KERNEL:
-      return new KDEWrapper<LaplacianKernel, TreeType>(
-          relError, absError, LaplacianKernel(bandwidth));
+      return new KDEWrapper<LaplacianKernel, TreeType>(relError, absError,
+          LaplacianKernel(bandwidth));
 
     case KDEModel::SPHERICAL_KERNEL:
-      return new KDEWrapper<SphericalKernel, TreeType>(
-          relError, absError, SphericalKernel(bandwidth));
+      return new KDEWrapper<SphericalKernel, TreeType>(relError, absError,
+          SphericalKernel(bandwidth));
 
     case KDEModel::TRIANGULAR_KERNEL:
-      return new KDEWrapper<TriangularKernel, TreeType>(
-          relError, absError, TriangularKernel(bandwidth));
+      return new KDEWrapper<TriangularKernel, TreeType>(relError, absError,
+          TriangularKernel(bandwidth));
   }
 
   // This should never happen.
@@ -195,28 +195,28 @@ inline void KDEModel::InitializeModel()
   switch (treeType)
   {
     case KD_TREE:
-      kdeModel = InitializeModelHelper<tree::KDTree>(kernelType, relError,
-          absError, bandwidth);
+      kdeModel = InitializeModelHelper<KDTree>(kernelType, relError, absError,
+          bandwidth);
       break;
 
     case BALL_TREE:
-      kdeModel = InitializeModelHelper<tree::BallTree>(kernelType, relError,
-          absError, bandwidth);
+      kdeModel = InitializeModelHelper<BallTree>(kernelType, relError, absError,
+          bandwidth);
       break;
 
     case COVER_TREE:
-      kdeModel = InitializeModelHelper<tree::StandardCoverTree>(kernelType,
-          relError, absError, bandwidth);
+      kdeModel = InitializeModelHelper<StandardCoverTree>(kernelType, relError,
+          absError, bandwidth);
       break;
 
     case OCTREE:
-      kdeModel = InitializeModelHelper<tree::Octree>(kernelType, relError,
-          absError, bandwidth);
+      kdeModel = InitializeModelHelper<Octree>(kernelType, relError, absError,
+          bandwidth);
       break;
 
     case R_TREE:
-      kdeModel = InitializeModelHelper<tree::RTree>(kernelType, relError,
-          absError, bandwidth);
+      kdeModel = InitializeModelHelper<RTree>(kernelType, relError, absError,
+          bandwidth);
       break;
   }
 }
@@ -473,23 +473,23 @@ void KDEModel::serialize(Archive& ar, const uint32_t /* version */)
   switch (treeType)
   {
     case KD_TREE:
-      SerializationHelper<tree::KDTree>(ar, kdeModel, kernelType);
+      SerializationHelper<KDTree>(ar, kdeModel, kernelType);
       break;
 
     case BALL_TREE:
-      SerializationHelper<tree::BallTree>(ar, kdeModel, kernelType);
+      SerializationHelper<BallTree>(ar, kdeModel, kernelType);
       break;
 
     case COVER_TREE:
-      SerializationHelper<tree::StandardCoverTree>(ar, kdeModel, kernelType);
+      SerializationHelper<StandardCoverTree>(ar, kdeModel, kernelType);
       break;
 
     case OCTREE:
-      SerializationHelper<tree::Octree>(ar, kdeModel, kernelType);
+      SerializationHelper<Octree>(ar, kdeModel, kernelType);
       break;
 
     case R_TREE:
-      SerializationHelper<tree::RTree>(ar, kdeModel, kernelType);
+      SerializationHelper<RTree>(ar, kdeModel, kernelType);
       break;
   }
 }

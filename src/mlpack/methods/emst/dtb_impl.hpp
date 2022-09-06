@@ -23,7 +23,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
@@ -34,7 +34,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -226,7 +226,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
   results.set_size(3, edges.size());
 
   // Need to unpermute the point labels.
-  if (!naive && ownTree && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!naive && ownTree && TreeTraits<Tree>::RearrangesDataset)
   {
     for (size_t i = 0; i < (data.n_cols - 1); ++i)
     {

@@ -13,7 +13,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Ensure that a hyperplane, by default, consider all points to the left.

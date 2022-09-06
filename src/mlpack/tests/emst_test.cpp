@@ -15,7 +15,6 @@
 
 using namespace mlpack;
 using namespace mlpack::emst;
-using namespace mlpack::tree;
 
 /**
  * Simple emst test with small, synthetic dataset.  This is an

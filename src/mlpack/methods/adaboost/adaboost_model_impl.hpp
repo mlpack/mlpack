@@ -46,7 +46,7 @@ inline AdaBoostModel::AdaBoostModel(const AdaBoostModel& other) :
     mappings(other.mappings),
     weakLearnerType(other.weakLearnerType),
     dsBoost(other.dsBoost == NULL ? NULL :
-        new AdaBoost<tree::ID3DecisionStump>(*other.dsBoost)),
+        new AdaBoost<ID3DecisionStump>(*other.dsBoost)),
     pBoost(other.pBoost == NULL ? NULL :
         new AdaBoost<perceptron::Perceptron<>>(*other.pBoost)),
     dimensionality(other.dimensionality)
@@ -78,7 +78,7 @@ inline AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
 
     delete dsBoost;
     dsBoost = (other.dsBoost == NULL) ? NULL :
-        new AdaBoost<tree::ID3DecisionStump>(*other.dsBoost);
+        new AdaBoost<ID3DecisionStump>(*other.dsBoost);
 
     delete pBoost;
     pBoost = (other.pBoost == NULL) ? NULL :
@@ -125,8 +125,8 @@ inline void AdaBoostModel::Train(const arma::mat& data,
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
   {
     delete dsBoost;
-    tree::ID3DecisionStump ds(data, labels, max(labels) + 1);
-    dsBoost = new AdaBoost<tree::ID3DecisionStump>(data, labels, numClasses,
+    ID3DecisionStump ds(data, labels, max(labels) + 1);
+    dsBoost = new AdaBoost<ID3DecisionStump>(data, labels, numClasses,
         ds, iterations, tolerance);
   }
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)

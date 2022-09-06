@@ -19,7 +19,6 @@
 #include <string>
 
 namespace mlpack {
-namespace tree {
 
 // Build the statistics, bottom-up.
 template<typename TreeType, typename StatisticType>
@@ -1800,7 +1799,6 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

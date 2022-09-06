@@ -18,7 +18,6 @@
 #include <mlpack/core/util/log.hpp>
 
 namespace mlpack {
-namespace tree {
 
 // Build the statistics, bottom-up.
 template<typename MetricType,
@@ -1473,7 +1472,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

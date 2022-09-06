@@ -27,7 +27,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+        TreeTraits<TreeType>::RearrangesDataset, TreeType
     >* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
@@ -39,7 +39,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename std::enable_if_t<
-        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
+        !TreeTraits<TreeType>::RearrangesDataset, TreeType
     >* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
@@ -414,7 +414,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   arma::mat* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (searchMode == DUAL_TREE_MODE)
     {
@@ -503,7 +503,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       RuleType rules(*referenceSet, querySet, k, metric);
 
       // Create the traverser.
-      tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
+      GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
       // Now have it traverse for each point.
       for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -523,7 +523,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   }
 
   // Map points back to original indices, if necessary.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (searchMode == DUAL_TREE_MODE && !oldFromNewReferences.empty())
     {
@@ -620,8 +620,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   arma::Mat<size_t>* neighborPtr = &neighbors;
 
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() && TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
@@ -647,8 +646,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   Log::Info << rules.BaseCases() << " base cases were calculated.\n";
 
   // Do we need to map indices?
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() && TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.set_size(k, querySet.n_cols);
@@ -699,8 +697,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   arma::Mat<size_t>* neighborPtr = &neighbors;
   arma::mat* distancePtr = &distances;
 
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() && TreeTraits<Tree>::RearrangesDataset)
   {
     // We will always need to rearrange in this case.
     distancePtr = new arma::mat;
@@ -771,7 +768,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       DualTreeTraversalType<RuleType> traverser(rules);
 
-      if (tree::IsSpillTree<Tree>::value)
+      if (IsSpillTree<Tree>::value)
       {
         // For Dual Tree Search on SpillTree, the queryTree must be built with
         // non overlapping (tau = 0).
@@ -800,7 +797,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     case GREEDY_SINGLE_TREE_MODE:
     {
       // Create the traverser.
-      tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
+      GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
       // Now have it traverse for each point.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)
@@ -820,8 +817,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   rules.GetResults(*neighborPtr, *distancePtr);
 
   // Do we need to map the reference indices?
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty() && TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.set_size(k, referenceSet->n_cols);
     distances.set_size(k, referenceSet->n_cols);

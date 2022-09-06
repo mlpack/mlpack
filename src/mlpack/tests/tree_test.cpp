@@ -17,7 +17,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Ensure that a bound, by default, is empty and has no dimensionality.

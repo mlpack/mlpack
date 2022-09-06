@@ -22,7 +22,6 @@
 #include "no_auxiliary_information.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A rectangle type tree tree, such as an R-tree or X-tree.  Once the
@@ -633,7 +632,6 @@ class RectangleTree
   void serialize(Archive& ar, const uint32_t /* version */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

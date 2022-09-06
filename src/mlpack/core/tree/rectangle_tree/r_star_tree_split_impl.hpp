@@ -18,7 +18,6 @@
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * Reinsert any points into the tree, if needed.  This returns the number of
@@ -486,7 +485,6 @@ void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

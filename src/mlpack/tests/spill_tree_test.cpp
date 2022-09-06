@@ -16,7 +16,6 @@
 #include <stack>
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Test to make sure the tree contains the correct number of points after

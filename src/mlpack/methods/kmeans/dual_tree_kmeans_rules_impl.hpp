@@ -75,7 +75,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
   {
     lowerBounds[queryIndex] = upperBounds[queryIndex];
     upperBounds[queryIndex] = distance;
-    assignments[queryIndex] = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+    assignments[queryIndex] = (TreeTraits<TreeType>::RearrangesDataset) ?
         oldFromNewCentroids[referenceIndex] : referenceIndex;
   }
   else if (distance < lowerBounds[queryIndex])
@@ -138,7 +138,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   // We want to set adjustedScore to be the distance between the centroid of the
   // last query node and last reference node.  We will do this by adjusting the
   // last score.  In some cases, we can just use the last base case.
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     adjustedScore = traversalInfo.LastBaseCase();
   }
@@ -213,7 +213,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   // Now, check if we can prune.
   if (adjustedScore > queryNode.Stat().UpperBound())
   {
-    if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
+    if (!(TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
     {
       // There isn't any need to set the traversal information because no
       // descendant combinations will be visited, and those are the only
@@ -267,7 +267,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
         // owner, but note that the node is not truly owned unless
         // Stat().Pruned() is centroids.n_cols.
         queryNode.Stat().Owner() =
-            (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+            (TreeTraits<TreeType>::RearrangesDataset) ?
             oldFromNewCentroids[referenceNode.Descendant(0)] :
             referenceNode.Descendant(0);
       }

@@ -29,7 +29,6 @@
 
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
@@ -1110,8 +1109,6 @@ TEST_CASE("LARSTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   HoeffdingNumericSplit<GiniImpurity> split(3);
   // Train until it bins.
   for (size_t i = 0; i < 200; ++i)
@@ -1183,8 +1180,6 @@ TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingNumericSplitBeforeBinningTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   HoeffdingNumericSplit<GiniImpurity> split(3);
   // Train but not until it bins.
   for (size_t i = 0; i < 50; ++i)
@@ -1228,8 +1223,6 @@ TEST_CASE("HoeffdingNumericSplitBeforeBinningTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingCategoricalSplitTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
   for (size_t i = 0; i < 50; ++i)
     split.Train(RandInt(10), RandInt(3));
@@ -1396,8 +1389,6 @@ TEST_CASE("HoeffdingTreeAfterSplitTest", "[SerializationTest]")
 
 TEST_CASE("EmptyHoeffdingTreeTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   data::DatasetInfo info(6);
   HoeffdingTree<> tree(info, 2);
   HoeffdingTree<> xmlTree(info, 3);
@@ -1418,8 +1409,6 @@ TEST_CASE("EmptyHoeffdingTreeTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingTreeTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   arma::mat dataset(2, 400);
   arma::Row<size_t> labels(400);
   for (size_t i = 0; i < 200; ++i)

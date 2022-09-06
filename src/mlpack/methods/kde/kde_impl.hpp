@@ -22,7 +22,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
@@ -33,7 +33,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -834,7 +834,7 @@ void KDE<KernelType,
 RearrangeEstimations(const std::vector<size_t>& oldFromNew,
                      arma::vec& estimations)
 {
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     const size_t nQueries = oldFromNew.size();
     arma::vec rearrangedEstimations(nQueries);

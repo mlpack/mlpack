@@ -17,7 +17,6 @@
 #include "../address.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * Split a node into two parts according to the median address of points
@@ -111,7 +110,6 @@ class UBTreeSplit
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

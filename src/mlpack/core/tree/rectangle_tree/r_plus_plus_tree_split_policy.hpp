@@ -15,7 +15,6 @@
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_SPLIT_POLICY_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The RPlusPlusTreeSplitPolicy helps to determine the subtree into which
@@ -72,7 +71,6 @@ class RPlusPlusTreeSplitPolicy
   }
 };
 
-} //  namespace tree
 } //  namespace mlpack
 
 #endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_PLUS_TREE_SPLIT_POLICY_HPP

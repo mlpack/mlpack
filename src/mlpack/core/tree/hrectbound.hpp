@@ -21,8 +21,6 @@
 
 namespace mlpack {
 
-namespace meta /** Metaprogramming utilities. */ {
-
 //! Utility struct where Value is true if and only if the argument is of type
 //! LMetric.
 template<typename MetricType>
@@ -38,8 +36,6 @@ struct IsLMetric<LMetric<Power, TakeRoot>>
   static const bool Value = true;
 };
 
-} // namespace meta
-
 /**
  * Hyper-rectangle bound for an L-metric.  This should be used in conjunction
  * with the LMetric class.  Be sure to use the same template parameters for
@@ -53,7 +49,7 @@ template<typename MetricType = LMetric<2, true>,
 class HRectBound
 {
   // It is required that HRectBound have an LMetric as the given MetricType.
-  static_assert(meta::IsLMetric<MetricType>::Value == true,
+  static_assert(IsLMetric<MetricType>::Value == true,
       "HRectBound can only be used with the LMetric<> metric type.");
 
  public:

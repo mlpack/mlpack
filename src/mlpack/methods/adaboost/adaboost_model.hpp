@@ -38,7 +38,7 @@ class AdaBoostModel
   //! The type of weak learner.
   size_t weakLearnerType;
   //! Non-NULL if using decision stumps.
-  AdaBoost<tree::ID3DecisionStump>* dsBoost;
+  AdaBoost<ID3DecisionStump>* dsBoost;
   //! Non-NULL if using perceptrons.
   AdaBoost<perceptron::Perceptron<>>* pBoost;
   //! Number of dimensions in training data.

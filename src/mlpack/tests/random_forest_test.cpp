@@ -18,7 +18,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Make sure bootstrap sampling produces numbers in the dataset.

@@ -15,7 +15,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace tree {
 
 // Overload used for classification.
 template<typename FitnessFunction>
@@ -269,7 +268,6 @@ size_t RandomBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     return 1; // Go right.
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

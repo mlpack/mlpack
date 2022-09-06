@@ -18,7 +18,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This class is a serializable Hoeffding tree model that can hold four
@@ -218,7 +217,6 @@ class HoeffdingTreeModel
   InfoBinaryTreeType* infoBinaryTree;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

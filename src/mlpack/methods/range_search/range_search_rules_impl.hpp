@@ -84,12 +84,12 @@ double RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
   // object.
   Range distances;
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // In this situation, we calculate the base case.  So we should check to be
     // sure we haven't already done that.
     double baseCase;
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+    if (TreeTraits<TreeType>::HasSelfChildren &&
         (referenceNode.Parent() != NULL) &&
         (referenceNode.Point(0) == referenceNode.Parent()->Point(0)))
     {
@@ -152,7 +152,7 @@ double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
                                                      TreeType& referenceNode)
 {
   Range distances;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // It is possible that the base case has already been calculated.
     double baseCase = 0.0;
@@ -229,7 +229,7 @@ void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
   // called, so if the base case has already been calculated, then we must avoid
   // adding that point to the results again.
   size_t baseCaseMod = 0;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+  if (TreeTraits<TreeType>::FirstPointIsCentroid &&
       (queryIndex == lastQueryIndex) &&
       (referenceNode.Point(0) == lastReferenceIndex))
   {

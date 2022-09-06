@@ -17,7 +17,6 @@
 #include "r_plus_plus_tree_auxiliary_information.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
@@ -132,7 +131,6 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
   ar(CEREAL_NVP(outerBound));
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_IMPL_HPP

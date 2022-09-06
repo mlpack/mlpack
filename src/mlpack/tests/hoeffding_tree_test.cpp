@@ -23,7 +23,6 @@ using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::data;
-using namespace mlpack::tree;
 
 TEST_CASE("GiniImpurityPerfectSimpleTest", "[HoeffdingTreeTest]")
 {

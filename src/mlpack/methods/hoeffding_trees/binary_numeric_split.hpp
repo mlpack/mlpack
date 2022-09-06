@@ -16,7 +16,6 @@
 #include "binary_numeric_split_info.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The BinaryNumericSplit class implements the numeric feature splitting
@@ -127,7 +126,6 @@ class BinaryNumericSplit
 template<typename FitnessFunction>
 using BinaryDoubleNumericSplit = BinaryNumericSplit<FitnessFunction, double>;
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

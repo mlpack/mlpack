@@ -16,7 +16,6 @@
 #include "minimal_coverage_sweep.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename SplitPolicy>
 template<typename TreeType>
@@ -192,7 +191,6 @@ CheckLeafSweep(const TreeType* node,
   return false;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_IMPL_HPP

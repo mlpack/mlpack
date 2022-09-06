@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 class RPlusPlusTreeDescentHeuristic
 {
@@ -45,7 +44,6 @@ class RPlusPlusTreeDescentHeuristic
                                   const TreeType* insertedNode);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #include "r_plus_plus_tree_descent_heuristic_impl.hpp"

@@ -18,7 +18,6 @@
 #include <mlpack/core/tree/bounds.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType>
 bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
@@ -90,7 +89,6 @@ bool MidpointSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

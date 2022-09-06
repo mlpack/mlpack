@@ -18,7 +18,6 @@
 #include "r_plus_plus_tree_split_policy.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename SplitPolicyType,
          template<typename> class SweepType>
@@ -374,7 +373,6 @@ InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_IMPL_HPP

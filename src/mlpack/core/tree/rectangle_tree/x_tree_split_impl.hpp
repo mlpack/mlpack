@@ -17,7 +17,6 @@
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
@@ -718,7 +717,6 @@ void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

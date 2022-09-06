@@ -17,7 +17,6 @@
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<size_t splitOrder>
 template<typename TreeType>
@@ -344,7 +343,6 @@ RedistributePointsEvenly(TreeType* parent,
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_HILBERT_R_TREE_SPLIT_IMPL_HPP

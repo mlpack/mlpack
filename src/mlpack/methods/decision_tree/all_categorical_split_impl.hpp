@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DECISION_TREE_ALL_CATEGORICAL_SPLIT_IMPL_HPP
 
 namespace mlpack {
-namespace tree {
 
 // Overload used in classification.
 template<typename FitnessFunction>
@@ -226,7 +225,6 @@ size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
   return (size_t) point;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

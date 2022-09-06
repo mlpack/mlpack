@@ -15,7 +15,6 @@
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
-using namespace mlpack::tree;
 using namespace mlpack::neighbor;
 
 // Generate dataset; written transposed because it's easier to read.

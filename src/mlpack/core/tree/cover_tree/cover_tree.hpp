@@ -19,7 +19,6 @@
 #include "first_point_is_root.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * A cover tree is a tree specifically designed to speed up nearest-neighbor
@@ -575,7 +574,6 @@ class CoverTree
   size_t distanceComps;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -236,7 +236,7 @@ class RASearchRules
       return arma::sum(numSamplesMade);
   }
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
@@ -330,8 +330,8 @@ class RASearchRules
                const double distance,
                const double bestDistance);
 
-  static_assert(tree::TreeTraits<TreeType>::UniqueNumDescendants, "TreeType "
-      "must provide a unique number of descendants points.");
+  static_assert(TreeTraits<TreeType>::UniqueNumDescendants, "TreeType must "
+      "provide a unique number of descendants points.");
 }; // class RASearchRules
 
 } // namespace neighbor

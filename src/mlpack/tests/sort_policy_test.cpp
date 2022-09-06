@@ -19,7 +19,6 @@
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
-using namespace mlpack::tree;
 
 // Tests for NearestNeighborSort
 

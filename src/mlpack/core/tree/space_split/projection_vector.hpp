@@ -14,8 +14,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include "../bounds.hpp"
+
 namespace mlpack {
-namespace tree {
 
 /**
  * AxisParallelProjVector defines an axis-parallel projection vector.
@@ -148,7 +148,6 @@ class ProjVector
   };
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

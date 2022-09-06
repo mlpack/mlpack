@@ -18,7 +18,6 @@
 #include "test_function_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Creates dataset with 5 groups with all the points in same group have exactly

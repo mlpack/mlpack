@@ -327,7 +327,7 @@ PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) :
   // number of _nodes_ in the tree.
   pathCache.resize(dtree->TagTree(0, true));
   pathCache[0] = PathCacheType::value_type(-1, "");
-  tree::EnumerateTree(dtree, *this);
+  EnumerateTree(dtree, *this);
 }
 
 template<typename MatType>

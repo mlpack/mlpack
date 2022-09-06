@@ -70,8 +70,7 @@ class PellegMooreKMeans
   size_t& DistanceCalculations() { return distanceCalculations; }
 
   //! Convenience typedef for the tree.
-  typedef tree::KDTree<MetricType, PellegMooreKMeansStatistic, MatType>
-      TreeType;
+  typedef KDTree<MetricType, PellegMooreKMeansStatistic, MatType> TreeType;
 
  private:
   //! The original dataset reference.

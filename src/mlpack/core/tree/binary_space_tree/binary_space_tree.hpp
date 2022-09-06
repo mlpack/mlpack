@@ -17,7 +17,6 @@
 #include "midpoint_split.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A binary space partitioning tree, such as a KD-tree or a ball tree.  Once the
@@ -566,7 +565,6 @@ class BinarySpaceTree
   void serialize(Archive& ar, const uint32_t version);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

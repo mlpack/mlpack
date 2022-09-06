@@ -54,7 +54,7 @@ class DualTreeKMeansStatistic : public
     {
       // Correct handling of cover tree: don't double-count the point which
       // appears in the children.
-      if (tree::TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
+      if (TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
           node.NumChildren() > 0)
         continue;
       centroid += node.Dataset().col(node.Point(i));

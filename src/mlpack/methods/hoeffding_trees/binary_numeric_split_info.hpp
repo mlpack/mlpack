@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<typename ObservationType = double>
 class BinaryNumericSplitInfo
@@ -43,7 +42,6 @@ class BinaryNumericSplitInfo
   ObservationType splitPoint;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

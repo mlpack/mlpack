@@ -16,11 +16,9 @@
 #include "hoeffding_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 typedef StreamingDecisionTree<HoeffdingTree<>> HoeffdingTreeType;
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

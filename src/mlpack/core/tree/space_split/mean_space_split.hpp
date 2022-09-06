@@ -17,7 +17,6 @@
 #include "hyperplane.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType, typename MatType>
 class MeanSpaceSplit
@@ -41,7 +40,6 @@ class MeanSpaceSplit
       HyperplaneType& hyp);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

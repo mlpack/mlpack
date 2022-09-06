@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * The splitting procedure for the Hilbert R tree.  The template parameter
@@ -90,7 +89,6 @@ class HilbertRTreeSplit
                                        const size_t lastSibling);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

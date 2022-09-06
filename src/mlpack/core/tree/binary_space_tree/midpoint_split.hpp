@@ -19,7 +19,6 @@
 #include <mlpack/core/tree/perform_split.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A binary space partitioning tree node is split into its left and right child.
@@ -74,8 +73,7 @@ class MidpointSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, MidpointSplit>(data, begin, count,
-        splitInfo);
+    return PerformSplit<MatType, MidpointSplit>(data, begin, count, splitInfo);
   }
 
   /**
@@ -99,8 +97,8 @@ class MidpointSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, MidpointSplit>(data, begin, count,
-        splitInfo, oldFromNew);
+    return PerformSplit<MatType, MidpointSplit>(data, begin, count, splitInfo,
+        oldFromNew);
   }
 
   /**
@@ -117,7 +115,6 @@ class MidpointSplit
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

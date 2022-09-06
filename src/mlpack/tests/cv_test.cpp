@@ -27,7 +27,6 @@ using namespace mlpack::ann;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::perceptron;
 using namespace mlpack::regression;
-using namespace mlpack::tree;
 using namespace mlpack::data;
 
 /**

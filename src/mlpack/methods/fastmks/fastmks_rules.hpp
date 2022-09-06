@@ -119,7 +119,7 @@ class FastMKSRules
   //! Modify the number of times Score() was called.
   size_t& Scores() { return scores; }
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

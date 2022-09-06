@@ -82,7 +82,7 @@ class DTBRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

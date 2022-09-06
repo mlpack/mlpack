@@ -17,7 +17,6 @@
 #include <stack>
 
 namespace mlpack {
-namespace tree {
 
 //! Construct the tree.
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -808,7 +807,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     // all points belonging to children of index 2^(d - 1) and above will be on
     // the right side.
     typename SplitType::SplitInfo s(d, center);
-    const size_t firstRight = split::PerformSplit<MatType, SplitType>(*dataset,
+    const size_t firstRight = PerformSplit<MatType, SplitType>(*dataset,
         childBegin, childCount, s);
 
     // We can set the first index of the right child.  The first index of the
@@ -910,7 +909,7 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     // all points belonging to children of index 2^(d - 1) and above will be on
     // the right side.
     typename SplitType::SplitInfo s(d, center);
-    const size_t firstRight = split::PerformSplit<MatType, SplitType>(*dataset,
+    const size_t firstRight = PerformSplit<MatType, SplitType>(*dataset,
         childBegin, childCount, s, oldFromNew);
 
     // We can set the first index of the right child.  The first index of the
@@ -973,7 +972,6 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

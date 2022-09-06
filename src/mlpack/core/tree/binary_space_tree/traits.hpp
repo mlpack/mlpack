@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/ballbound.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This is a specialization of the TreeTraits class to the BinarySpaceTree tree
@@ -245,7 +244,6 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, CellBound,
   static const bool UniqueNumDescendants = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

@@ -18,7 +18,6 @@
 #include "../hrectbound.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 class RPlusPlusTreeAuxiliaryInformation
@@ -160,7 +159,6 @@ class RPlusPlusTreeAuxiliaryInformation
   void serialize(Archive &, const uint32_t /* version */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #include "r_plus_plus_tree_auxiliary_information_impl.hpp"

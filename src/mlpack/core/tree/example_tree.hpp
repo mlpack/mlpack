@@ -15,7 +15,6 @@
 #define MLPACK_CORE_TREE_EXAMPLE_TREE_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This is not an actual space tree but instead an example tree that exists to
@@ -26,9 +25,9 @@ namespace tree {
  * implementation.
  *
  * Note that trees often have different properties.  These properties are known
- * at compile-time through the mlpack::tree::TreeTraits class, and some
- * properties may imply the existence (or non-existence) of certain functions.
- * Refer to the TreeTraits for more documentation on that.
+ * at compile-time through the TreeTraits class, and some properties may imply
+ * the existence (or non-existence) of certain functions.  Refer to the
+ * TreeTraits for more documentation on that.
  *
  * The three template parameters below must be template parameters to the tree,
  * in the order given below.  More template parameters are fine, but they must
@@ -38,8 +37,7 @@ namespace tree {
  *      For some trees, arbitrary metrics cannot be used, and a template
  *      metaprogramming approach should be used to issue a compile-time error if
  *      a metric cannot be used with a specific tree type.  One example is the
- *      tree::BinarySpaceTree tree type, which cannot work with the
- *      IPMetric class.
+ *      BinarySpaceTree tree type, which cannot work with the IPMetric class.
  * @tparam StatisticType A tree node can hold a statistic, which is sometimes
  *      useful for various dual-tree algorithms.  The tree itself does not need
  *      to know anything about how the statistic works, but it needs to hold a
@@ -60,18 +58,17 @@ class ExampleTree
    * This constructor will build the tree given a dataset and an instantiated
    * metric.  Note that the parameter is a MatType& and not an arma::mat&.  The
    * dataset is not modified by the tree-building process (if it is, see the
-   * documentation for mlpack::tree::TreeTraits::RearrangesDataset for how to
-   * deal with that situation).  The MetricType parameter is necessary even
-   * though some metrics do not hold any state.  This is so that the tree does
-   * not have to worry about instantiating the metric (if the tree had to worry
-   * about this, this would almost certainly incur additional runtime complexity
-   * and a larger runtime size of the tree node objects, which is to be
-   * avoided).  The metric can't be const, in case MetricType::Evaluate() is
-   * non-const.
+   * documentation for TreeTraits::RearrangesDataset for how to deal with that
+   * situation).  The MetricType parameter is necessary even though some metrics
+   * do not hold any state.  This is so that the tree does not have to worry
+   * about instantiating the metric (if the tree had to worry about this, this
+   * would almost certainly incur additional runtime complexity and a larger
+   * runtime size of the tree node objects, which is to be avoided).  The metric
+   * can't be const, in case MetricType::Evaluate() is non-const.
    *
    * When this constructor is finished, the entire tree will be built and ready
    * to use.  The constructor should call the constructor of the statistic for
-   * each node that is built (see tree::EmptyStatistic for more information).
+   * each node that is built (see EmptyStatistic for more information).
    *
    * @param dataset The dataset that the tree will be built on.
    * @param metric The instantiated metric to use to build the dataset.
@@ -234,7 +231,6 @@ class ExampleTree
   MetricType& metric;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

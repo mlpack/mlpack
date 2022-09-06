@@ -184,7 +184,7 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
   // TreeType.
   EuclideanDistance metric;
   NeighborSearchRules<FurthestNeighborSort, EuclideanDistance,
-      tree::KDTree<EuclideanDistance, tree::EmptyStatistic, MatType>>
+      KDTree<EuclideanDistance, EmptyStatistic, MatType>>
       rules(candidateSet, querySet, k, metric, 0, false);
 
   for (size_t q = 0; q < querySet.n_cols; ++q)

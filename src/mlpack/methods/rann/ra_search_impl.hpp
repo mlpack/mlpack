@@ -28,7 +28,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
@@ -39,7 +39,7 @@ TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -271,7 +271,7 @@ Search(const MatType& querySet,
 
   // Mapping is only required if this tree type rearranges points and we are not
   // in naive mode.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive)
     {
@@ -363,7 +363,7 @@ Search(const MatType& querySet,
   }
 
   // Map points back to original indices, if necessary.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive && treeOwner)
     {
@@ -445,7 +445,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   arma::Mat<size_t>* neighborPtr = &neighbors;
 
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
@@ -463,7 +463,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   rules.GetResults(*neighborPtr, distances);
 
   // Do we need to map indices?
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.set_size(k, querySet.n_cols);
@@ -492,7 +492,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   arma::Mat<size_t>* neighborPtr = &neighbors;
   arma::mat* distancePtr = &distances;
 
-  if (tree::TreeTraits<Tree>::RearrangesDataset && treeOwner)
+  if (TreeTraits<Tree>::RearrangesDataset && treeOwner)
   {
     // We will always need to rearrange in this case.
     distancePtr = new arma::mat;
@@ -543,7 +543,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
   rules.GetResults(*neighborPtr, *distancePtr);
 
   // Do we need to map the reference indices?
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.set_size(k, referenceSet->n_cols);
     distances.set_size(k, referenceSet->n_cols);

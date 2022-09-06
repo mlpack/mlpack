@@ -16,7 +16,6 @@
 #include "../statistic.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A hybrid spill tree is a variant of binary space trees in which the children
@@ -486,7 +485,6 @@ class SpillTree
   void serialize(Archive& ar, const uint32_t version);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.
