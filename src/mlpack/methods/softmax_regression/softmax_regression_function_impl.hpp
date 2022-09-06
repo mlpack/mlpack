@@ -15,7 +15,6 @@
 #include "softmax_regression_function.hpp"
 
 namespace mlpack {
-namespace regression {
 
 inline SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const arma::mat& data,
@@ -338,7 +337,6 @@ inline void SoftmaxRegressionFunction::PartialGradient(const arma::mat& paramete
   }
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif

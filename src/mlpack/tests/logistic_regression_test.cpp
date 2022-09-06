@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
 
 /**
  * Test the LogisticRegressionFunction on a simple set of points.

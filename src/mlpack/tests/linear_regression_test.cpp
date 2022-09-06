@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
 
 /**
  * Creates two 10x3 random matrices and one 10x1 "results" matrix.

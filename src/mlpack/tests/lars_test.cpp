@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
 
 void GenerateProblem(
     arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)

@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::data;
-using namespace mlpack::regression;
 using namespace ens;
 
 /**

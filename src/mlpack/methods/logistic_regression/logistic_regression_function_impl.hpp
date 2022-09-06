@@ -18,7 +18,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace regression {
 
 template<typename MatType>
 LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
@@ -278,7 +277,6 @@ double LogisticRegressionFunction<MatType>::EvaluateWithGradient(
   return objectiveRegularization - result;
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif

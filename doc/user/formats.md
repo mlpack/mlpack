@@ -46,7 +46,7 @@ data::Load("dataset.arff", matrix4, datasetInfo);
 ```c++
 using namespace mlpack;
 
-regression::LogisticRegression lr;
+LogisticRegression lr;
 data::Load("model.bin", "logistic_regression_model", lr);
 ```
 
@@ -498,10 +498,10 @@ mlpack::data::Load("range.json", "range", newRange);
 ```
 
 It is important to be sure that you load the appropriate type; if you save, for
-instance, an `mlpack::regression::LogisticRegression` object and attempt to load
-it as an `Range` object, the load will fail and an exception will be thrown.
-(When the object is saved as binary (.bin), it is possible that the load will
-not fail, but instead load with mangled data, which is perhaps even worse!)
+instance, a `LogisticRegression` object and attempt to load it as an `Range`
+object, the load will fail and an exception will be thrown.  (When the object is
+saved as binary (.bin), it is possible that the load will not fail, but instead
+load with mangled data, which is perhaps even worse!)
 
 ## Final Notes
 

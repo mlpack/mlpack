@@ -26,7 +26,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::regression;
 using namespace std::placeholders;
 
 /*

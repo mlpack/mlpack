@@ -31,7 +31,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
-using namespace mlpack::regression;
 
 /*
  * Tests the BinaryRBM implementation on the Digits dataset.

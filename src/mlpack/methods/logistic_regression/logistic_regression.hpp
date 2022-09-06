@@ -19,7 +19,6 @@
 #include "logistic_regression_function.hpp"
 
 namespace mlpack {
-namespace regression {
 
 /**
  * The LogisticRegression class implements an L2-regularized logistic regression
@@ -247,7 +246,6 @@ class LogisticRegression
   double lambda;
 };
 
-} // namespace regression
 } // namespace mlpack
 
 // Include implementation.

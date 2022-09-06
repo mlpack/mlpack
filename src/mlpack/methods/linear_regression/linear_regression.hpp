@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace regression /** Regression methods. */ {
 
 /**
  * A simple linear regression algorithm using ordinary least squares.
@@ -164,7 +163,6 @@ class LinearRegression
   bool intercept;
 };
 
-} // namespace regression
 } // namespace mlpack
 
 // Include implementation.

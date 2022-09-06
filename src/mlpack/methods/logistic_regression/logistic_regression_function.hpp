@@ -19,7 +19,6 @@
 #include <mlpack/core/math/shuffle_data.hpp>
 
 namespace mlpack {
-namespace regression {
 
 /**
  * The log-likelihood function for the logistic regression objective function.
@@ -169,7 +168,6 @@ class LogisticRegressionFunction
   double lambda;
 };
 
-} // namespace regression
 } // namespace mlpack
 
 // Include implementation.

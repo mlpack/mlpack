@@ -28,9 +28,7 @@
 #include <mlpack/methods/bayesian_linear_regression.hpp>
 
 using namespace mlpack;
-using namespace mlpack::regression;
 using namespace mlpack::perceptron;
-using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
 using namespace mlpack::ann;
@@ -1069,8 +1067,6 @@ TEST_CASE("LSHTest", "[SerializationTest]")
 // Make sure serialization works for LARS.
 TEST_CASE("LARSTest", "[SerializationTest]")
 {
-  using namespace mlpack::regression;
-
   // Create a dataset.
   arma::mat X = arma::randn(75, 250);
   arma::vec beta = arma::randn(75, 1);
@@ -1562,8 +1558,6 @@ TEST_CASE("ssRBMTest", "[SerializationTest]")
 // Make sure serialization works for BayesianLinearRegression.
 TEST_CASE("BayesianLinearRegressionTest", "[SerializationTest]")
 {
-  using namespace mlpack::regression;
-
   // Create a dataset.
   arma::mat matX = arma::randn(75, 250);
   arma::vec omega = arma::randn(75, 1);
