@@ -18,7 +18,6 @@
 #include "ra_search_rules.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 namespace aux {
 
@@ -655,7 +654,6 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

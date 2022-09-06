@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 class RAUtil
 {
@@ -50,7 +49,6 @@ class RAUtil
                                    const size_t t);
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

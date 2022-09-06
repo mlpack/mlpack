@@ -16,7 +16,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 // Construct the object with random tables
 template<typename SortPolicy, typename MatType>
@@ -1048,7 +1047,6 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(distanceEvaluations));
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

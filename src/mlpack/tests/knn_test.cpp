@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 /**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).

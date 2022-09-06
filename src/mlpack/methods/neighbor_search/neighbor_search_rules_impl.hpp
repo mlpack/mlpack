@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/spill_tree/is_spill_tree.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
@@ -507,7 +506,6 @@ InsertNeighbor(
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_RULES_IMPL_HPP

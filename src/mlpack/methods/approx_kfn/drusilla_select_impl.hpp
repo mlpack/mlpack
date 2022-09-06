@@ -22,7 +22,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace neighbor {
 
 // Constructor.
 template<typename MatType>
@@ -210,7 +209,6 @@ void DrusillaSelect<MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(m));
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

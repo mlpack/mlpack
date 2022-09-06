@@ -52,7 +52,7 @@ template<bool UseKernel, typename KernelType, typename MatType>
 double MeanShift<UseKernel, KernelType, MatType>::
 EstimateRadius(const MatType& data, double ratio)
 {
-  neighbor::KNN neighborSearch(data);
+  KNN neighborSearch(data);
 
   /**
    * For each point in dataset, select nNeighbors nearest points and get
@@ -286,7 +286,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   else
   {
     // Assign centroids to each point.
-    neighbor::KNN neighborSearcher(centroids);
+    KNN neighborSearcher(centroids);
     arma::mat neighborDistances;
     arma::Mat<size_t> resultingNeighbors;
     neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);

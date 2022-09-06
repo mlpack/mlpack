@@ -32,8 +32,7 @@ class Constraints
 {
  public:
   //! Convenience typedef.
-  typedef neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType>
-      KNN;
+  typedef NeighborSearch<NearestNeighborSort, MetricType> KNN;
 
   /**
    * Constructor for creating a Constraints instance.

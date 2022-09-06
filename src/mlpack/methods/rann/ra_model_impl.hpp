@@ -17,7 +17,6 @@
 #include <mlpack/core/math/random_basis.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 inline RAModel::RAModel(const TreeTypes treeType, const bool randomBasis) :
     treeType(treeType),
@@ -460,7 +459,6 @@ void RAModel::serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

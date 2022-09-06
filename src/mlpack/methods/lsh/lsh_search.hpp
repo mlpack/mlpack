@@ -52,7 +52,6 @@
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The LSHSearch class; this class builds a hash on the reference set and uses
@@ -478,7 +477,6 @@ class LSHSearch
       CandidateList;
 }; // class LSHSearch
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

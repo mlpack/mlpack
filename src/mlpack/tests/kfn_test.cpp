@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 /**
  * Simple furthest-neighbors test with small, synthetic dataset.  This is an

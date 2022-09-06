@@ -19,7 +19,6 @@
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 // Non-training constructor.
 template<typename MatType>
@@ -194,7 +193,6 @@ void QDAFN<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(candidateSet));
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

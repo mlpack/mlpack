@@ -30,7 +30,6 @@
 using namespace mlpack;
 using namespace mlpack::perceptron;
 using namespace mlpack::naive_bayes;
-using namespace mlpack::neighbor;
 using namespace mlpack::ann;
 
 using namespace arma;
@@ -609,7 +608,6 @@ TEST_CASE("LogisticRegressionTest", "[SerializationTest]")
 
 TEST_CASE("KNNTest", "[SerializationTest]")
 {
-  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
   KNN knn(dataset, DUAL_TREE_MODE);
@@ -948,8 +946,6 @@ TEST_CASE("NaiveBayesSerializationTest", "[SerializationTest]")
 
 TEST_CASE("RASearchTest", "[SerializationTest]")
 {
-  using neighbor::KRANN;
-  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 200);
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
 

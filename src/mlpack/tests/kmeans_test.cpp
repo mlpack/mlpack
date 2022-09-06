@@ -15,7 +15,6 @@
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
-using namespace mlpack::neighbor;
 
 // Generate dataset; written transposed because it's easier to read.
 arma::mat kMeansData("  0.0   0.0;" // Class 1.

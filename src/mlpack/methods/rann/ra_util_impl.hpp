@@ -16,7 +16,6 @@
 #include "ra_util.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 inline size_t RAUtil::MinimumSamplesReqd(const size_t n,
                                          const size_t k,
@@ -165,7 +164,6 @@ inline double RAUtil::SuccessProbability(const size_t n,
   } // For k > 1.
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

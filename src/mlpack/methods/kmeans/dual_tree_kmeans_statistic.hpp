@@ -17,12 +17,11 @@
 namespace mlpack {
 namespace kmeans {
 
-class DualTreeKMeansStatistic : public
-    neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>
+class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
 {
  public:
   DualTreeKMeansStatistic() :
-      neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
+      NeighborSearchStat<NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
@@ -38,7 +37,7 @@ class DualTreeKMeansStatistic : public
 
   template<typename TreeType>
   DualTreeKMeansStatistic(TreeType& node) :
-      neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
+      NeighborSearchStat<NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
       owner(size_t(-1)),

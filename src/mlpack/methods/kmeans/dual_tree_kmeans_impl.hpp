@@ -107,15 +107,14 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // Find the nearest neighbors of each of the clusters.  We have to make our
   // own TreeType, which is a little bit abuse, but we know for sure the
   // TreeStatType we have will work.
-  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
-      NNSTreeType> nns(std::move(*centroidTree));
+  NeighborSearch<NearestNeighborSort, MetricType, MatType, NNSTreeType>
+      nns(std::move(*centroidTree));
 
   // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
     // If the tree maps points, we need an intermediate result matrix.
-    arma::mat* interclusterDistancesTemp =
-        (TreeTraits<Tree>::RearrangesDataset) ?
+    arma::mat* interclusterDistancesTemp = TreeTraits<Tree>::RearrangesDataset ?
         new arma::mat(1, centroids.n_elem) : &interclusterDistances;
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.

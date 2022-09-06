@@ -195,7 +195,7 @@ double KNNAccuracy(const arma::mat& dataset,
   arma::mat distances;
 
   // KNN instance.
-  neighbor::KNN knn;
+  KNN knn;
 
   knn.Train(dataset);
   knn.Search(k, neighbors, distances);

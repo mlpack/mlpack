@@ -24,7 +24,6 @@
 #include "neighbor_search.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * NSWrapperBase is a base wrapper class for holding all NeighborSearch types
@@ -486,7 +485,6 @@ class NSModel
   std::string TreeName() const;
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

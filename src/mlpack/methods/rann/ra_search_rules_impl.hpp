@@ -16,7 +16,6 @@
 #include "ra_search_rules.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 RASearchRules<SortPolicy, MetricType, TreeType>::
@@ -820,7 +819,6 @@ InsertNeighbor(
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_RANN_RA_SEARCH_RULES_IMPL_HPP

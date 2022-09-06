@@ -18,7 +18,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The NeighborSearchRules class is a template helper class used by
@@ -231,7 +230,6 @@ class NeighborSearchRules
                       const double distance);
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

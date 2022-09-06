@@ -22,9 +22,6 @@
 #include "unmap.hpp"
 
 namespace mlpack {
-// Neighbor-search routines. These include all-nearest-neighbors and
-// all-furthest-neighbors searches.
-namespace neighbor  {
 
 // Forward declaration.
 template<typename SortPolicy,
@@ -363,7 +360,6 @@ class NeighborSearch
       SingleTreeTraversalType>;
 }; // class NeighborSearch
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

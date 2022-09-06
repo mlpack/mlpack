@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_FURTHEST_NEIGHBOR_SORT_IMPL_HPP
 
 namespace mlpack {
-namespace neighbor {
 
 template<typename TreeType>
 inline double FurthestNS::BestNodeToNodeDistance(
@@ -65,7 +64,6 @@ inline double FurthestNS::BestPointToNodeDistance(
   return referenceNode->MaxDistance(point, pointToCenterDistance);
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

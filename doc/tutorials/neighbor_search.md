@@ -229,7 +229,7 @@ given below.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat data;
@@ -251,7 +251,7 @@ The output of the search is stored in `resultingNeighbors` and
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
@@ -272,7 +272,7 @@ This example uses the `O(n^2)` naive search (not the tree-based search).
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat dataset;
@@ -316,9 +316,8 @@ template parameters have defaults, so it is not necessary to specify each one.
 
 The `SortPolicy` template parameter allows specification of how the
 NeighborSearch object will decide which points are to be searched for.  The
-`mlpack::neighbor::NearestNeighborSort` class is a well-documented example.  A
-custom `SortPolicy` class must implement the same methods which
-`NearestNeighborSort` does:
+`NearestNeighborSort` class is a well-documented example.  A custom `SortPolicy`
+class must implement the same methods which `NearestNeighborSort` does:
 
 ```c++
 static size_t SortDistance(const arma::vec& list, double newDistance);
@@ -338,9 +337,9 @@ static const double WorstDistance();
 static const double BestDistance();
 ```
 
-The `mlpack::neighbor::FurthestNeighborSort` class is another implementation,
-which is used to create the `KFN` typedef class, which finds the furthest
-neighbors, as opposed to the nearest neighbors.
+The `FurthestNeighborSort` class is another implementation, which is used to
+create the `KFN` typedef class, which finds the furthest neighbors, as opposed
+to the nearest neighbors.
 
 ## `MetricType` policy class
 

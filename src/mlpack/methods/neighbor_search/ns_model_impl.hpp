@@ -19,7 +19,6 @@
 #include "ns_model.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 //! Train the model with the given options.  For NSWrapper, we ignore the
 //! extra parameters.
@@ -726,7 +725,6 @@ std::string NSModel<SortPolicy>::TreeName() const
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

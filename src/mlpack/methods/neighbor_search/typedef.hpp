@@ -23,7 +23,6 @@
 #include "sort_policies/furthest_neighbor_sort.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The KNN class is the k-nearest-neighbors method.  It returns L2 distances
@@ -66,7 +65,6 @@ using DefeatistKNN = NeighborSearch<
  */
 typedef DefeatistKNN<SPTree> SpillKNN;
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

@@ -42,9 +42,8 @@ template<int TPower>
 class LMetricSearch
 {
  public:
-  using NeighborSearchType = neighbor::NeighborSearch<
-      neighbor::NearestNeighborSort,
-      LMetric<TPower, true>>;
+  using NeighborSearchType = NeighborSearch<
+      NearestNeighborSort, LMetric<TPower, true>>;
 
   /**
    * @param referenceSet Set of reference points.

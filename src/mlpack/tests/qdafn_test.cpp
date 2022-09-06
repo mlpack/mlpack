@@ -19,7 +19,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 /**
  * With one reference point, make sure that is the one that is returned.

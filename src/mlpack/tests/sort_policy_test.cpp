@@ -18,7 +18,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 // Tests for NearestNeighborSort
 

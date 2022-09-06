@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 TEST_CASE("AddressTest", "[UBTreeTest]")
 {

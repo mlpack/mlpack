@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 /**
  * Test the dual-tree nearest-neighbors method with different values for

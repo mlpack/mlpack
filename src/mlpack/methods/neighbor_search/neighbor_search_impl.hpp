@@ -19,7 +19,6 @@
 #include <mlpack/core/tree/spill_tree/is_spill_tree.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 //! Call the tree constructor that does mapping.
 template<typename TreeType, typename MatType>
@@ -977,7 +976,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

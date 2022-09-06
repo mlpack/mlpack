@@ -19,7 +19,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The RASearchRules class is a template helper class used by RASearch class
@@ -334,7 +333,6 @@ class RASearchRules
       "provide a unique number of descendants points.");
 }; // class RASearchRules
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

@@ -21,11 +21,11 @@ namespace cf {
 /**
  * Nearest neighbor search with cosine distance.
  * Note that, with normalized vectors, neighbor search with cosine distance is
- * equivalent to neighbor search with Euclidean distance. Therefore, instead
- * of performing neighbor search directly with cosine distance, we first
- * normalize all vectors to unit length, and then use neighbor::KNN (i.e.
- * NeighborSearch with Euclidean distance, KDTree). Cosine similarities are
- * calculated from Euclidean distance.
+ * equivalent to neighbor search with Euclidean distance. Therefore, instead of
+ * performing neighbor search directly with cosine distance, we first normalize
+ * all vectors to unit length, and then use KNN (i.e.  NeighborSearch with
+ * Euclidean distance, KDTree). Cosine similarities are calculated from
+ * Euclidean distance.
  *
  * An example of how to use CosineSearch in CF is shown below:
  *
@@ -86,7 +86,7 @@ class CosineSearch
 
  private:
   //! NeighborSearch object.
-  neighbor::KNN neighborSearch;
+  KNN neighborSearch;
 };
 
 } // namespace cf

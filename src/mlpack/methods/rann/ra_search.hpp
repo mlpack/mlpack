@@ -33,7 +33,6 @@
 #include "ra_util.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 // Forward declaration.
 template<template<typename TreeMetricType,
@@ -396,7 +395,6 @@ class RASearch
   friend class LeafSizeRAWrapper<TreeType>;
 }; // class RASearch
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.
