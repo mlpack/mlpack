@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::range;
-using namespace mlpack::dbscan;
 
 TEST_CASE("OneClusterTest", "[DBSCANTest]")
 {

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace dbscan {
 
 /**
  * This class can be used to sequentially select the next point to use for DBSCAN.
@@ -37,7 +36,6 @@ class OrderedPointSelection
   }
 };
 
-} // namespace dbscan
 } // namespace mlpack
 
 #endif

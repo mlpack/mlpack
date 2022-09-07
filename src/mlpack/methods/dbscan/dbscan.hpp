@@ -20,7 +20,6 @@
 #include "ordered_point_selection.hpp"
 
 namespace mlpack {
-namespace dbscan {
 
 /**
  * DBSCAN (Density-Based Spatial Clustering of Applications with Noise) is a
@@ -156,7 +155,6 @@ class DBSCAN
                     emst::UnionFind& uf);
 };
 
-} // namespace dbscan
 } // namespace mlpack
 
 // Include implementation.

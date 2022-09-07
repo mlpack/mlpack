@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace dbscan {
 
 /**
  * This class can be used to randomly select the next point to use for DBSCAN.
@@ -63,7 +62,6 @@ class RandomPointSelection
   std::vector<bool> unvisited;
 };
 
-} // namespace dbscan
 } // namespace mlpack
 
 #endif

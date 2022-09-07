@@ -15,7 +15,6 @@
 #include "dbscan.hpp"
 
 namespace mlpack {
-namespace dbscan {
 
 /**
  * Construct the DBSCAN object with the given parameters.
@@ -199,7 +198,6 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   }
 }
 
-} // namespace dbscan
 } // namespace mlpack
 
 #endif
