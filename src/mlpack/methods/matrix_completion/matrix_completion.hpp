@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace matrix_completion {
 
 /**
  * This class implements the popular nuclear norm minimization heuristic for
@@ -141,7 +140,6 @@ class MatrixCompletion
   static size_t DefaultRank(const size_t m, const size_t n, const size_t p);
 };
 
-} // namespace matrix_completion
 } // namespace mlpack
 
 // Include implementation.
