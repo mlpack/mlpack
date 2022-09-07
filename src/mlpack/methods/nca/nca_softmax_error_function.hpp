@@ -1,25 +1,3 @@
-/**
- * @file methods/nca/nca_softmax_error_function.hpp
- * @author Ryan Curtin
- *
- * Implementation of the stochastic neighbor assignment probability error
- * function (the "softmax error").
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#ifndef MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
-#define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
-
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/math/make_alias.hpp>
-#include <mlpack/core/math/shuffle_data.hpp>
-
-namespace mlpack {
-namespace nca {
 
 /**
  * The "softmax" stochastic neighbor assignment probability function.
@@ -170,7 +148,6 @@ class SoftmaxErrorFunction
   void Precalculate(const arma::mat& coordinates);
 };
 
-} // namespace nca
 } // namespace mlpack
 
 // Include implementation.

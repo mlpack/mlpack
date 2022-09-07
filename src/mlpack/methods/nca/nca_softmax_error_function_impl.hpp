@@ -18,7 +18,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace nca {
 
 // Initialize with the given kernel.
 template<typename MetricType>
@@ -306,7 +305,6 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   precalculated = true;
 }
 
-} // namespace nca
 } // namespace mlpack
 
 #endif

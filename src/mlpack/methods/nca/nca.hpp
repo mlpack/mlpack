@@ -17,7 +17,6 @@
 #include "nca_softmax_error_function.hpp"
 
 namespace mlpack {
-namespace nca /** Neighborhood Components Analysis. */ {
 
 /**
  * An implementation of Neighborhood Components Analysis, both a linear
@@ -100,7 +99,6 @@ class NCA
   OptimizerType optimizer;
 };
 
-} // namespace nca
 } // namespace mlpack
 
 // Include the implementation.

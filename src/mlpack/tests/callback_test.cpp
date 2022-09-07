@@ -20,7 +20,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::nca;
 
 /**
  * Test a FFN model with PrintLoss callback.
