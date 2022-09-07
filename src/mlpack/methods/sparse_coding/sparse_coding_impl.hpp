@@ -17,7 +17,6 @@
 #include "sparse_coding.hpp"
 
 namespace mlpack {
-namespace sparse_coding {
 
 template<typename DictionaryInitializer>
 SparseCoding::SparseCoding(
@@ -378,7 +377,6 @@ void SparseCoding::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(newtonTolerance));
 }
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace sparse_coding {
 
 /**
  * A data-dependent random dictionary initializer for SparseCoding.  This
@@ -56,7 +55,6 @@ class DataDependentRandomInitializer
   }
 };
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 #endif
