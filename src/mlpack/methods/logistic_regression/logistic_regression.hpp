@@ -29,7 +29,7 @@ namespace mlpack {
  *
  * LogisticRegression can be used for general classification tasks, but the
  * class is restricted to support only two classes.  For multiclass logistic
- * regression, see mlpack::regression::SoftmaxRegression.
+ * regression, see SoftmaxRegression.
  *
  * @tparam MatType Type of data matrix.
  */

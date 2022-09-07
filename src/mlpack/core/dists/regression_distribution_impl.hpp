@@ -25,7 +25,7 @@ namespace mlpack {
  */
 inline void RegressionDistribution::Train(const arma::mat& observations)
 {
-  regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
+  LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), 0, true);
   rf = lr;
   arma::rowvec fitted;
@@ -47,7 +47,7 @@ inline void RegressionDistribution::Train(const arma::mat& observations,
 inline void RegressionDistribution::Train(const arma::mat& observations,
                                           const arma::rowvec& weights)
 {
-  regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
+  LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), weights, 0, true);
   rf = lr;
   arma::rowvec fitted;

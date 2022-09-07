@@ -71,7 +71,7 @@ inline void SparseCoding::Encode(const arma::mat& data,
       Log::Debug << "Optimization at point " << i << "." << std::endl;
 
     bool useCholesky = true;
-    regression::LARS lars(useCholesky, matGram, lambda1, lambda2);
+    LARS lars(useCholesky, matGram, lambda1, lambda2);
 
     // Create an alias of the code (using the same memory), and then LARS will
     // place the result directly into that; then we will not need to have an

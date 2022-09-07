@@ -31,7 +31,7 @@ class RegressionDistribution
 {
  private:
   //! Regression function for representing conditional mean.
-  regression::LinearRegression rf;
+  LinearRegression rf;
   //! Error distribution.
   GaussianDistribution err;
 
@@ -81,9 +81,9 @@ class RegressionDistribution
   }
 
   //! Return regression function.
-  const regression::LinearRegression& Rf() const { return rf; }
+  const LinearRegression& Rf() const { return rf; }
   //! Modify regression function.
-  regression::LinearRegression& Rf() { return rf; }
+  LinearRegression& Rf() { return rf; }
 
   //! Return error distribution.
   const GaussianDistribution& Err() const { return err; }

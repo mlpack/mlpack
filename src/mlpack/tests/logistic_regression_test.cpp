@@ -1039,7 +1039,7 @@ TEST_CASE("ConstructionThenTraining", "[LogisticRegressionTest]")
 
   arma::Row<size_t> myTargets("1 0 1 0");
 
-  regression::LogisticRegression<> lr;
+  LogisticRegression<> lr;
 
   // Make sure that training doesn't crash with invalid parameter sizes.
   REQUIRE_NOTHROW(lr.Train(myMatrix, myTargets));

@@ -635,8 +635,6 @@ TEST_CASE("KNNTest", "[SerializationTest]")
 
 TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
 {
-  using regression::SoftmaxRegression;
-
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
   arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 500; ++i)

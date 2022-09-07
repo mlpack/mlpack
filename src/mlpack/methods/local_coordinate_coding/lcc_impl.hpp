@@ -141,7 +141,7 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
     arma::mat dictGramTD = diagmat(invW) * dictGram * diagmat(invW);
 
     bool useCholesky = false;
-    regression::LARS lars(useCholesky, dictGramTD, 0.5 * lambda);
+    LARS lars(useCholesky, dictGramTD, 0.5 * lambda);
 
     // Run LARS for this point, by making an alias of the point and passing
     // that.
