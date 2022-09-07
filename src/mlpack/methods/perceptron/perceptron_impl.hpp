@@ -15,7 +15,6 @@
 #include "perceptron.hpp"
 
 namespace mlpack {
-namespace perceptron {
 
 /**
  * Construct the perceptron with the given number of classes and maximum number
@@ -235,7 +234,6 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
   ar(CEREAL_NVP(biases));
 }
 
-} // namespace perceptron
 } // namespace mlpack
 
 #endif

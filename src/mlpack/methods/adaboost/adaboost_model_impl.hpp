@@ -47,7 +47,7 @@ inline AdaBoostModel::AdaBoostModel(const AdaBoostModel& other) :
     dsBoost(other.dsBoost == NULL ? NULL :
         new AdaBoost<ID3DecisionStump>(*other.dsBoost)),
     pBoost(other.pBoost == NULL ? NULL :
-        new AdaBoost<perceptron::Perceptron<>>(*other.pBoost)),
+        new AdaBoost<Perceptron<>>(*other.pBoost)),
     dimensionality(other.dimensionality)
 {
   // Nothing to do.
@@ -81,7 +81,7 @@ inline AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
 
     delete pBoost;
     pBoost = (other.pBoost == NULL) ? NULL :
-        new AdaBoost<perceptron::Perceptron<>>(*other.pBoost);
+        new AdaBoost<Perceptron<>>(*other.pBoost);
 
     dimensionality = other.dimensionality;
   }
@@ -125,15 +125,15 @@ inline void AdaBoostModel::Train(const arma::mat& data,
   {
     delete dsBoost;
     ID3DecisionStump ds(data, labels, max(labels) + 1);
-    dsBoost = new AdaBoost<ID3DecisionStump>(data, labels, numClasses,
-        ds, iterations, tolerance);
+    dsBoost = new AdaBoost<ID3DecisionStump>(data, labels, numClasses, ds,
+        iterations, tolerance);
   }
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
   {
     delete pBoost;
-    perceptron::Perceptron<> p(data, labels, max(labels) + 1);
-    pBoost = new AdaBoost<perceptron::Perceptron<>>(data, labels, numClasses,
-        p, iterations, tolerance);
+    Perceptron<> p(data, labels, max(labels) + 1);
+    pBoost = new AdaBoost<Perceptron<>>(data, labels, numClasses, p, iterations,
+        tolerance);
   }
 }
 

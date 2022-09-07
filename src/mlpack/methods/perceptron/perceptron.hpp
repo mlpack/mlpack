@@ -18,7 +18,6 @@
 #include "learning_policies/learning_policies.hpp"
 
 namespace mlpack {
-namespace perceptron {
 
 /**
  * This class implements a simple perceptron (i.e., a single layer neural
@@ -178,7 +177,6 @@ class Perceptron
   arma::vec biases;
 };
 
-} // namespace perceptron
 } // namespace mlpack
 
 #include "perceptron_impl.hpp"

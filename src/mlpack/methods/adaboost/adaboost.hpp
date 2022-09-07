@@ -69,13 +69,13 @@ namespace mlpack {
  * void Classify(const MatType& data, arma::Row<size_t>& predictedLabels);
  * @endcode
  *
- * For more information on and examples of weak learners, see
- * perceptron::Perceptron<> and ID3DecisionStump.
+ * For more information on and examples of weak learners, see Perceptron<> and
+ * ID3DecisionStump.
  *
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  * @tparam WeakLearnerType Type of weak learner to use.
  */
-template<typename WeakLearnerType = mlpack::perceptron::Perceptron<>,
+template<typename WeakLearnerType = Perceptron<>,
          typename MatType = arma::mat>
 class AdaBoost
 {

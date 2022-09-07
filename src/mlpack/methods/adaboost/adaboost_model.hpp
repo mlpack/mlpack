@@ -39,7 +39,7 @@ class AdaBoostModel
   //! Non-NULL if using decision stumps.
   AdaBoost<ID3DecisionStump>* dsBoost;
   //! Non-NULL if using perceptrons.
-  AdaBoost<perceptron::Perceptron<>>* pBoost;
+  AdaBoost<Perceptron<>>* pBoost;
   //! Number of dimensions in training data.
   size_t dimensionality;
 

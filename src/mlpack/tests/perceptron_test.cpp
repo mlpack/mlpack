@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace arma;
-using namespace mlpack::perceptron;
 
 /**
  * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,

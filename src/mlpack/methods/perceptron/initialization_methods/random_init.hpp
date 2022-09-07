@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace perceptron {
 
 /**
  * This class is used to initialize weights for the weightVectors matrix in a
@@ -36,7 +35,6 @@ class RandomInitialization
   }
 }; // class RandomInitialization
 
-} // namespace perceptron
 } // namespace mlpack
 
 #endif

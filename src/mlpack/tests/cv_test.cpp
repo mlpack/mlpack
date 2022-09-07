@@ -24,7 +24,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::perceptron;
 using namespace mlpack::data;
 
 /**
