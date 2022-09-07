@@ -198,7 +198,7 @@ initializes a density estimation tree.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::det;
+using namespace mlpack;
 
 // The dataset matrix, on which to learn the density estimation tree.
 extern arma::Mat<float> data;
@@ -273,7 +273,7 @@ cross-validation.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::det;
+using namespace mlpack;
 
 // The dataset matrix, on which to learn the density estimation tree.
 extern arma::Mat<float> data;

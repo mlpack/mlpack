@@ -652,8 +652,7 @@ TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
 
 TEST_CASE("DETTest", "[SerializationTest]")
 {
-  using det::DTree;
-  typedef DTree<arma::mat>   DTreeX;
+  typedef DTree<arma::mat> DTreeX;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);

@@ -18,7 +18,6 @@
 #include "dt_utils.hpp"
 
 using namespace mlpack;
-using namespace mlpack::det;
 using namespace mlpack::util;
 using namespace std;
 
