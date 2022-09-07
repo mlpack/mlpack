@@ -16,7 +16,6 @@
 #include "sparse_autoencoder.hpp"
 
 namespace mlpack {
-namespace nn {
 
 template<typename OptimizerType>
 SparseAutoencoder::SparseAutoencoder(const arma::mat& data,
@@ -83,7 +82,6 @@ inline void SparseAutoencoder::GetNewFeatures(arma::mat& data,
       features);
 }
 
-} // namespace nn
 } // namespace mlpack
 
 #endif

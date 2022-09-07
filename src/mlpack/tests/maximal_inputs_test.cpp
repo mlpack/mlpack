@@ -26,7 +26,7 @@ arma::mat CreateMaximalInput()
   input.submat(0, 0, 1, 3) = w1;
 
   arma::mat maximalInputs;
-  mlpack::nn::MaximalInputs(input, maximalInputs);
+  MaximalInputs(input, maximalInputs);
 
   return maximalInputs;
 }

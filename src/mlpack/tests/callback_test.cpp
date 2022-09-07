@@ -261,6 +261,6 @@ TEST_CASE("SparseAutoencodeCallbackTest", "[CallbackTest]")
 
   ens::L_BFGS optimizer(5, 100);
   ens::StoreBestCoordinates<arma::mat> cb;
-  mlpack::nn::SparseAutoencoder encoder2(data1, 5, 1, 0, 0, 0 , optimizer, cb);
+  SparseAutoencoder encoder2(data1, 5, 1, 0, 0, 0 , optimizer, cb);
   REQUIRE(cb.BestObjective() > 0);
 }
