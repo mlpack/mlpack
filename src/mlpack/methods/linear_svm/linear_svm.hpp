@@ -18,7 +18,6 @@
 #include "linear_svm_function.hpp"
 
 namespace mlpack {
-namespace svm {
 
 /**
  * The LinearSVM class implements an L2-regularized support vector machine
@@ -312,7 +311,6 @@ class LinearSVM
   bool fitIntercept;
 };
 
-} // namespace svm
 } // namespace mlpack
 
 // Include implementation.

@@ -21,7 +21,6 @@
 #include "linear_svm_function.hpp"
 
 namespace mlpack {
-namespace svm {
 
 template <typename MatType>
 LinearSVMFunction<MatType>::LinearSVMFunction(
@@ -498,7 +497,6 @@ size_t LinearSVMFunction<MatType>::NumFunctions() const
   return dataset.n_cols;
 }
 
-} // namespace svm
 } // namespace mlpack
 
 

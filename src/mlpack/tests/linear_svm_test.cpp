@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::svm;
 
 /**
  * Callback test function, based on the EndOptimization callback function.
