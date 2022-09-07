@@ -27,7 +27,7 @@
 #include "interpolation_policies/interpolation_policies.hpp"
 
 namespace mlpack {
-namespace cf /** Collaborative filtering. **/ {
+
 /**
  * This class implements Collaborative Filtering (CF). This implementation
  * presently supports Alternating Least Squares (ALS) for collaborative
@@ -283,7 +283,6 @@ class CFType
   };
 }; // class CFType
 
-} // namespace cf
 } // namespace mlpack
 
 // Include implementation of templated functions.

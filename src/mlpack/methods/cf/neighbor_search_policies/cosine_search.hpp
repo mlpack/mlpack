@@ -16,7 +16,6 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Nearest neighbor search with cosine distance.
@@ -89,7 +88,6 @@ class CosineSearch
   KNN neighborSearch;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

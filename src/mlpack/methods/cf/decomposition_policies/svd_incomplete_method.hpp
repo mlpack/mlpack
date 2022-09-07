@@ -21,7 +21,6 @@
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the SVD incomplete incremental to act as a wrapper when
@@ -170,7 +169,6 @@ class SVDIncompletePolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

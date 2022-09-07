@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This normalization class performs z-score normalization on raw ratings.
@@ -164,7 +163,6 @@ class ZScoreNormalization
   double stddev;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

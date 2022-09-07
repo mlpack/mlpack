@@ -17,7 +17,6 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Nearest neighbor search with L_p distance.
@@ -77,7 +76,6 @@ class LMetricSearch
 
 using EuclideanSearch = LMetricSearch<2>;
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

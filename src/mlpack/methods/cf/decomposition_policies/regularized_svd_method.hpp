@@ -18,7 +18,6 @@
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Regularized SVD policy to act as a wrapper when
@@ -168,7 +167,6 @@ class RegSVDPolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

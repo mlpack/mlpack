@@ -20,7 +20,6 @@
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the NMF policy to act as a wrapper when accessing
@@ -165,7 +164,6 @@ class NMFPolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

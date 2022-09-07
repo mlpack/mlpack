@@ -18,7 +18,6 @@
 #include <mlpack/methods/svdplusplus/svdplusplus.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the SVDPlusPlus policy to act as a wrapper when
@@ -237,7 +236,6 @@ class SVDPlusPlusPolicy
   arma::sp_mat implicitData;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Nearest neighbor search with pearson distance (or furthest neighbor search
@@ -98,7 +97,6 @@ class PearsonSearch
   KNN neighborSearch;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

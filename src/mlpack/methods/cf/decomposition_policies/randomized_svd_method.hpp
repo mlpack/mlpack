@@ -18,7 +18,6 @@
 #include <mlpack/methods/randomized_svd/randomized_svd.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Randomized SVD policy to act as a wrapper when
@@ -188,7 +187,6 @@ class RandomizedSVDPolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

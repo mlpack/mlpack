@@ -18,7 +18,6 @@
 #include <mlpack/methods/bias_svd/bias_svd.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Bias SVD policy to act as a wrapper when
@@ -192,7 +191,6 @@ class BiasSVDPolicy
   arma::vec q;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

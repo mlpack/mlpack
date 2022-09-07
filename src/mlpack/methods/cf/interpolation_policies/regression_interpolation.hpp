@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of regression-based interpolation method. Predicting a user's
@@ -182,7 +181,6 @@ class RegressionInterpolation
   arma::sp_mat b;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

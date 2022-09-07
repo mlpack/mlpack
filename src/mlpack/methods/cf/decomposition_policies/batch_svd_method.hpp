@@ -20,7 +20,6 @@
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Batch SVD policy to act as a wrapper when accessing
@@ -168,7 +167,6 @@ class BatchSVDPolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This normalization class performs overall mean normalization on raw ratings.
@@ -141,7 +140,6 @@ class OverallMeanNormalization
   double mean;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

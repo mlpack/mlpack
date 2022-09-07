@@ -243,7 +243,7 @@ matrix.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -287,7 +287,7 @@ section is adapted below to use `RegularizedSVD`:
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -318,7 +318,7 @@ The example below will obtain the predicted rating for item 50 by user 12.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -344,7 +344,7 @@ reconstructed data matrix with no missing values.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
