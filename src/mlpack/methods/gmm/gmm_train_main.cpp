@@ -24,7 +24,6 @@
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
 using namespace mlpack;
-using namespace mlpack::gmm;
 using namespace mlpack::util;
 using namespace mlpack::kmeans;
 using namespace std;
@@ -107,9 +106,8 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@gmm_generate", "#gmm_generate");
 BINDING_SEE_ALSO("@gmm_probability", "#gmm_probability");
 BINDING_SEE_ALSO("Gaussian Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
-BINDING_SEE_ALSO("mlpack::gmm::GMM class documentation",
-        "@src/mlpack/methods/gmm/gmm.hpp");
+    "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
+BINDING_SEE_ALSO("GMM class documentation", "@src/mlpack/methods/gmm/gmm.hpp");
 
 // Parameters for training.
 PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "

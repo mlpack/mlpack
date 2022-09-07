@@ -121,7 +121,7 @@ inline void GaussianDistribution::Train(const arma::mat& observations)
   covariance /= (observations.n_cols - 1);
 
   // Ensure that the covariance is positive definite.
-  gmm::PositiveDefiniteConstraint::ApplyConstraint(covariance);
+  PositiveDefiniteConstraint::ApplyConstraint(covariance);
 
   FactorCovariance();
 }
@@ -179,7 +179,7 @@ inline void GaussianDistribution::Train(const arma::mat& observations,
     covariance /= sumProb;
 
   // Ensure that the covariance is positive definite.
-  gmm::PositiveDefiniteConstraint::ApplyConstraint(covariance);
+  PositiveDefiniteConstraint::ApplyConstraint(covariance);
 
   FactorCovariance();
 }

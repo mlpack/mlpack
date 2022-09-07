@@ -92,12 +92,12 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
 
     case HMMType::GaussianMixtureModelHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<gmm::GMM>>(ar, x);
+          HMM<GMM>>(ar, x);
       break;
 
     case HMMType::DiagonalGaussianMixtureModelHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<gmm::DiagonalGMM>>(ar, x);
+          HMM<DiagonalGMM>>(ar, x);
 
     default:
       Log::Fatal << "Unknown HMM type '" << (unsigned int) type << "'!"
@@ -174,13 +174,13 @@ char GetHMMType<HMM<GaussianDistribution>>()
 }
 
 template<>
-char GetHMMType<HMM<gmm::GMM>>()
+char GetHMMType<HMM<GMM>>()
 {
   return HMMType::GaussianMixtureModelHMM;
 }
 
 template<>
-char GetHMMType<HMM<gmm::DiagonalGMM>>()
+char GetHMMType<HMM<DiagonalGMM>>()
 {
   return HMMType::DiagonalGaussianMixtureModelHMM;
 }

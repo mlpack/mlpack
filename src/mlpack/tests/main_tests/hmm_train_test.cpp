@@ -116,8 +116,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GMMHMM()->Initial()*100,
         tolerance);
     // Check if emission dists are equal
-    std::vector<gmm::GMM> d1 = h1.GMMHMM()->Emission();
-    std::vector<gmm::GMM> d2 = h2.GMMHMM()->Emission();
+    std::vector<GMM> d1 = h1.GMMHMM()->Emission();
+    std::vector<GMM> d2 = h2.GMMHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 
@@ -149,8 +149,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.DiagGMMHMM()->Initial()*100,
         tolerance);
     // Check if emission dists are equal.
-    std::vector<gmm::DiagonalGMM> d1 = h1.DiagGMMHMM()->Emission();
-    std::vector<gmm::DiagonalGMM> d2 = h2.DiagGMMHMM()->Emission();
+    std::vector<DiagonalGMM> d1 = h1.DiagGMMHMM()->Emission();
+    std::vector<DiagonalGMM> d2 = h2.DiagGMMHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 

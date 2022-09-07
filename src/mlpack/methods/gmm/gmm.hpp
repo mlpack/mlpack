@@ -25,7 +25,6 @@
 #include "em_fit.hpp"
 
 namespace mlpack {
-namespace gmm /** Gaussian Mixture Models. */ {
 
 /**
  * A Gaussian Mixture Model (GMM). This class uses maximum likelihood loss
@@ -322,7 +321,6 @@ class GMM
       const arma::vec& weights) const;
 };
 
-} // namespace gmm
 } // namespace mlpack
 
 // Include implementation.

@@ -23,7 +23,6 @@
 #include "positive_definite_constraint.hpp"
 
 namespace mlpack {
-namespace gmm {
 
 /**
  * This class contains methods which can fit a GMM to observations using the EM
@@ -187,7 +186,6 @@ class EMFit
   CovarianceConstraintPolicy constraint;
 };
 
-} // namespace gmm
 } // namespace mlpack
 
 // Include implementation.

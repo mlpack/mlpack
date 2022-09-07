@@ -25,7 +25,6 @@
 #include "diagonal_constraint.hpp"
 
 namespace mlpack {
-namespace gmm /** Gaussian Mixture Models. */ {
 
 /**
  * A Diagonal Gaussian Mixture Model. 
@@ -322,7 +321,6 @@ class DiagonalGMM
       const arma::vec& weights) const;
 };
 
-} // namespace gmm
 } // namespace mlpack
 
 // Include implementation.

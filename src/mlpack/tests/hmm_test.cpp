@@ -17,7 +17,6 @@
 
 using namespace mlpack;
 using namespace mlpack::hmm;
-using namespace mlpack::gmm;
 
 /**
  * We will use the simple case proposed by Russell and Norvig in Artificial

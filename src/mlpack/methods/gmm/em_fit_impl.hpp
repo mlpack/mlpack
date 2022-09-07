@@ -19,7 +19,6 @@
 #include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
-namespace gmm {
 
 //! Constructor.
 template<typename InitialClusteringType,
@@ -485,7 +484,6 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   }
 }
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif

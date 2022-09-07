@@ -18,7 +18,6 @@
 #include "gmm.hpp"
 
 namespace mlpack {
-namespace gmm {
 
 /**
  * Create a GMM with the given number of Gaussians, each of which have the
@@ -433,7 +432,6 @@ void GMM::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(weights));
 }
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif

@@ -18,7 +18,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::gmm;
 
 /**
  * Test GMM::Probability() with a single observation at a time for a few cases.

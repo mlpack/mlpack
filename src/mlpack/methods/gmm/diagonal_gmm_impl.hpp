@@ -17,7 +17,6 @@
 #include "diagonal_gmm.hpp"
 
 namespace mlpack {
-namespace gmm {
 
 //! Fit the DiagonalGMM to the given observations.
 template<typename FittingType>
@@ -411,7 +410,6 @@ void DiagonalGMM::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(weights));
 }
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_GMM_DIAGONAL_GMM_IMPL_HPP

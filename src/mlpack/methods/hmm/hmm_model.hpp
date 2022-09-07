@@ -41,9 +41,9 @@ class HMMModel
   //! Not used if type is not GaussianHMM.
   HMM<GaussianDistribution>* gaussianHMM;
   //! Not used if type is not GaussianMixtureModelHMM.
-  HMM<gmm::GMM>* gmmHMM;
+  HMM<GMM>* gmmHMM;
   //! Not used if type is not DiagonalGaussianMixtureModelHMM.
-  HMM<gmm::DiagonalGMM>* diagGMMHMM;
+  HMM<DiagonalGMM>* diagGMMHMM;
 
  public:
   //! Construct a model of the given type.
@@ -59,9 +59,9 @@ class HMMModel
     else if (type == HMMType::GaussianHMM)
       gaussianHMM = new HMM<GaussianDistribution>();
     else if (type == HMMType::GaussianMixtureModelHMM)
-      gmmHMM = new HMM<gmm::GMM>();
+      gmmHMM = new HMM<GMM>();
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-      diagGMMHMM = new HMM<gmm::DiagonalGMM>();
+      diagGMMHMM = new HMM<DiagonalGMM>();
   }
 
   //! Copy another model.
@@ -79,9 +79,9 @@ class HMMModel
       gaussianHMM =
           new HMM<GaussianDistribution>(*other.gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      gmmHMM = new HMM<gmm::GMM>(*other.gmmHMM);
+      gmmHMM = new HMM<GMM>(*other.gmmHMM);
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-      diagGMMHMM = new HMM<gmm::DiagonalGMM>(*other.diagGMMHMM);
+      diagGMMHMM = new HMM<DiagonalGMM>(*other.diagGMMHMM);
   }
 
   //! Take ownership of another model.
@@ -123,9 +123,9 @@ class HMMModel
       gaussianHMM =
           new HMM<GaussianDistribution>(*other.gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      gmmHMM = new HMM<gmm::GMM>(*other.gmmHMM);
+      gmmHMM = new HMM<GMM>(*other.gmmHMM);
     else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-      diagGMMHMM = new HMM<gmm::DiagonalGMM>(*other.diagGMMHMM);
+      diagGMMHMM = new HMM<DiagonalGMM>(*other.diagGMMHMM);
 
     return *this;
   }
@@ -231,8 +231,8 @@ class HMMModel
    */
   HMM<DiscreteDistribution>* DiscreteHMM() { return discreteHMM; }
   HMM<GaussianDistribution>* GaussianHMM() { return gaussianHMM; }
-  HMM<gmm::GMM>* GMMHMM() { return gmmHMM; }
-  HMM<gmm::DiagonalGMM>* DiagGMMHMM() { return diagGMMHMM; }
+  HMM<GMM>* GMMHMM() { return gmmHMM; }
+  HMM<DiagonalGMM>* DiagGMMHMM() { return diagGMMHMM; }
 };
 
 } // namespace hmm
