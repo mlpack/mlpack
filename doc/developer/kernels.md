@@ -67,17 +67,16 @@ class ExampleKernel
 ```
 
 Then, this kernel may be easily used inside of mlpack algorithms.  For instance,
-the code below runs kernel PCA (`mlpack::kpca::KernelPCA`) on a random dataset
-using the `ExampleKernel`.  The results are saved to a file called
-`results.csv`.  (Note that this is simply an example to demonstrate usage, and
-this example kernel isn't actually likely to be useful in practice.)
+the code below runs kernel PCA (`KernelPCA`) on a random dataset using the
+`ExampleKernel`.  The results are saved to a file called `results.csv`.  (Note
+that this is simply an example to demonstrate usage, and this example kernel
+isn't actually likely to be useful in practice.)
 
 ```c++
 #include <mlpack.hpp>
 #include "example_kernel.hpp" // Contains the ExampleKernel class.
 
 using namespace mlpack;
-using namespace mlpack::kpca;
 using namespace arma;
 
 int main()
@@ -147,7 +146,7 @@ policy:
 
 These kernels (or a custom kernel) may be used in a variety of mlpack methods:
 
- - `mlpack::kpca::KernelPCA` - kernel principal components analysis
- - `mlpack::fastmks::FastMKS` - fast max-kernel search
+ - `KernelPCA` - kernel principal components analysis
+ - `FastMKS` - fast max-kernel search
  - `NystroemMethod` - the Nystroem method for sampling
  - `IPMetric` - a metric built on a kernel

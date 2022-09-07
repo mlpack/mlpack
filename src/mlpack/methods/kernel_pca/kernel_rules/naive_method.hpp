@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kpca {
 
 template<typename KernelType>
 class NaiveKernelRule
@@ -92,7 +91,6 @@ class NaiveKernelRule
 }
 };
 
-} // namespace kpca
 } // namespace mlpack
 
 #endif

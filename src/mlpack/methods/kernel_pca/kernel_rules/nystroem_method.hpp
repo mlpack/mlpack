@@ -18,7 +18,6 @@
 #include <mlpack/methods/nystroem_method/nystroem_method.hpp>
 
 namespace mlpack {
-namespace kpca {
 
 template<
   typename KernelType,
@@ -81,7 +80,6 @@ class NystroemKernelRule
   }
 };
 
-} // namespace kpca
 } // namespace mlpack
 
 #endif

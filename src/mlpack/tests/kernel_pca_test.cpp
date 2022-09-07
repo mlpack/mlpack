@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::kpca;
 using namespace std;
 using namespace arma;
 
