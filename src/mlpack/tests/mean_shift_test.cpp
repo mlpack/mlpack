@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::meanshift;
 
 // Generate dataset; written transposed because it's easier to read.
 arma::mat meanShiftData("  0.0   0.0;" // Class 1.

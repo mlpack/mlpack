@@ -24,7 +24,6 @@
 #include "mean_shift.hpp"
 
 namespace mlpack {
-namespace meanshift {
 
 /**
  * Construct the Mean Shift object.
@@ -294,7 +293,6 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   }
 }
 
-} // namespace meanshift
 } // namespace mlpack
 
 #endif

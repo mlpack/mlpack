@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace meanshift /** Mean shift clustering. */ {
 
 /**
  * This class implements mean shift clustering.  For each point in dataset,
@@ -166,7 +165,6 @@ class MeanShift
   KernelType kernel;
 };
 
-} // namespace meanshift
 } // namespace mlpack
 
 // Include implementation.
