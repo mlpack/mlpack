@@ -19,7 +19,6 @@
 #include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
-namespace hmm {
 
 /**
  * Create the Hidden Markov Model with the given number of hidden states and the
@@ -888,7 +887,6 @@ void HMM<Distribution>::save(Archive& ar,
   ar(CEREAL_NVP(emission));
 }
 
-} // namespace hmm
 } // namespace mlpack
 
 #endif

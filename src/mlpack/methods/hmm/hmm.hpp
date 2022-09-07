@@ -17,7 +17,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace hmm /** Hidden Markov Models. */ {
 
 /**
  * A class that represents a Hidden Markov Model with an arbitrary type of
@@ -540,7 +539,6 @@ class HMM
   mutable bool recalculateTransition;
 };
 
-} // namespace hmm
 } // namespace mlpack
 
 // Include implementation.

@@ -18,7 +18,6 @@
 #include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
-namespace hmm {
 
 enum HMMType : char
 {
@@ -235,7 +234,6 @@ class HMMModel
   HMM<DiagonalGMM>* DiagGMMHMM() { return diagGMMHMM; }
 };
 
-} // namespace hmm
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::hmm;
 
 /**
  * We will use the simple case proposed by Russell and Norvig in Artificial

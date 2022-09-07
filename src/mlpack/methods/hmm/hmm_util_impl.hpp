@@ -19,7 +19,6 @@
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 namespace mlpack {
-namespace hmm {
 
 // Forward declarations of utility functions.
 
@@ -185,7 +184,6 @@ char GetHMMType<HMM<DiagonalGMM>>()
   return HMMType::DiagonalGaussianMixtureModelHMM;
 }
 
-} // namespace hmm
 } // namespace mlpack
 
 #endif
