@@ -17,7 +17,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace radical {
 
 /**
  * An implementation of RADICAL, an algorithm for independent component
@@ -144,7 +143,6 @@ void WhitenFeatureMajorMatrix(const arma::mat& matX,
                               arma::mat& matXWhitened,
                               arma::mat& matWhitening);
 
-} // namespace radical
 } // namespace mlpack
 
 // Include implementation.
