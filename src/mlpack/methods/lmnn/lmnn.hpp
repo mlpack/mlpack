@@ -18,7 +18,6 @@
 #include "lmnn_function.hpp"
 
 namespace mlpack {
-namespace lmnn /** Large Margin Nearest Neighbor. */ {
 
 /**
  * An implementation of Large Margin nearest neighbor metric learning technique.
@@ -133,7 +132,6 @@ class LMNN
   OptimizerType optimizer;
 }; // class LMNN
 
-} // namespace lmnn
 } // namespace mlpack
 
 // Include the implementation.

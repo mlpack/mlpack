@@ -19,7 +19,6 @@
 #include "constraints.hpp"
 
 namespace mlpack {
-namespace lmnn {
 
 /**
  * The Large Margin Nearest Neighbors function.
@@ -253,7 +252,6 @@ class LMNNFunction
                         const size_t batchSize);
 };
 
-} // namespace lmnn
 } // namespace mlpack
 
 #include "lmnn_function_impl.hpp"

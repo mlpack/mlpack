@@ -20,7 +20,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::lmnn;
 using namespace mlpack::nca;
 
 /**

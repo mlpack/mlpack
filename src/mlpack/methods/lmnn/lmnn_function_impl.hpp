@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace lmnn {
 
 template<typename MetricType>
 LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
@@ -1031,7 +1030,6 @@ inline void LMNNFunction<MetricType>::Precalculate()
   }
 }
 
-} // namespace lmnn
 } // namespace mlpack
 
 #endif

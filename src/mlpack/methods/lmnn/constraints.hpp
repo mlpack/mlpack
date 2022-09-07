@@ -16,7 +16,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 namespace mlpack {
-namespace lmnn {
+
 /**
  * Interface for generating distance based constraints on a given
  * dataset, provided corresponding true labels and a quantity parameter (k)
@@ -221,7 +221,6 @@ class Constraints
                              const arma::vec& norms);
 };
 
-} // namespace lmnn
 } // namespace mlpack
 
 // Include implementation.
