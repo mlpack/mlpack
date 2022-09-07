@@ -19,7 +19,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace fastmks {
 
 /**
  * The FastMKSRules class is a template helper class used by FastMKS class when
@@ -190,7 +189,6 @@ class FastMKSRules
   TraversalInfoType traversalInfo;
 };
 
-} // namespace fastmks
 } // namespace mlpack
 
 // Include implementation.

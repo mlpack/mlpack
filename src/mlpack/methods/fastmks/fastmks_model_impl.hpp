@@ -15,7 +15,6 @@
 #include "fastmks_model.hpp"
 
 namespace mlpack {
-namespace fastmks {
 
 inline FastMKSModel::FastMKSModel(const int kernelType) :
     kernelType(kernelType),
@@ -533,7 +532,6 @@ inline void FastMKSModel::Search(
   timers.Stop("computing_products");
 }
 
-} // namespace fastmks
 } // namespace mlpack
 
 #endif

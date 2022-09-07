@@ -27,7 +27,6 @@
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 
 namespace mlpack {
-namespace fastmks {
 
 //! A utility struct to contain all the possible FastMKS models, for use by the
 //! mlpack_fastmks program.
@@ -164,7 +163,6 @@ class FastMKSModel
               const double base);
 };
 
-} // namespace fastmks
 } // namespace mlpack
 
 #include "fastmks_model_impl.hpp"

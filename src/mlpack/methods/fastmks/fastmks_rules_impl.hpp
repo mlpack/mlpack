@@ -16,7 +16,6 @@
 #include "fastmks_rules.hpp"
 
 namespace mlpack {
-namespace fastmks {
 
 template<typename KernelType, typename TreeType>
 FastMKSRules<KernelType, TreeType>::FastMKSRules(
@@ -537,7 +536,6 @@ inline void FastMKSRules<KernelType, TreeType>::InsertNeighbor(
   }
 }
 
-} // namespace fastmks
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/tree_traits.hpp>
 
 namespace mlpack {
-namespace fastmks {
 
 /**
  * The statistic used in trees with FastMKS.  This stores both the bound and the
@@ -128,7 +127,6 @@ class FastMKSStat
   void* lastKernelNode;
 };
 
-} // namespace fastmks
 } // namespace mlpack
 
 #endif

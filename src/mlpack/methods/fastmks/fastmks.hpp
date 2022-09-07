@@ -18,7 +18,6 @@
 #include "fastmks_stat.hpp"
 
 namespace mlpack {
-namespace fastmks /** Fast max-kernel search. */ {
 
 /**
  * An implementation of fast exact max-kernel search.  Given a query dataset and
@@ -339,7 +338,6 @@ class FastMKS
       CandidateCmp> CandidateList;
 };
 
-} // namespace fastmks
 } // namespace mlpack
 
 // Include implementation.

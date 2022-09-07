@@ -18,7 +18,6 @@
 #include "fastmks_rules.hpp"
 
 namespace mlpack {
-namespace fastmks {
 
 // No data; create a model on an empty dataset.
 template<typename KernelType,
@@ -682,7 +681,6 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
   }
 }
 
-} // namespace fastmks
 } // namespace mlpack
 
 #endif
