@@ -61,7 +61,7 @@ class QUICSVDPolicy
     arma::mat v, sigma;
 
     // Do singular value decomposition using the QUIC-SVD algorithm.
-    svd::QUIC_SVD quicsvd(centeredData, eigvec, v, sigma, epsilon, delta);
+    QUIC_SVD quicsvd(centeredData, eigvec, v, sigma, epsilon, delta);
 
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the

@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace svd {
 
 template <typename MatType>
 SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(
@@ -285,7 +284,6 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
   }
 }
 
-} // namespace svd
 } // namespace mlpack
 
 // Template specialization for the SGD optimizer.
@@ -294,7 +292,7 @@ namespace ens {
 template <>
 template <>
 double StandardSGD::Optimize(
-    mlpack::svd::SVDPlusPlusFunction<arma::mat>& function,
+    mlpack::SVDPlusPlusFunction<arma::mat>& function,
     arma::mat& parameters)
 {
   // Find the number of functions to use.
@@ -396,7 +394,7 @@ double StandardSGD::Optimize(
 template <>
 template <>
 inline double ParallelSGD<ExponentialBackoff>::Optimize(
-    mlpack::svd::SVDPlusPlusFunction<arma::mat>& function,
+    mlpack::SVDPlusPlusFunction<arma::mat>& function,
     arma::mat& iterate)
 {
   double overallObjective = DBL_MAX;

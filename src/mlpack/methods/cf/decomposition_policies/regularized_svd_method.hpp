@@ -73,7 +73,7 @@ class RegSVDPolicy
              const bool /* mit */)
   {
     // Do singular value decomposition using the regularized SVD algorithm.
-    svd::RegularizedSVD<> regsvd(maxIterations);
+    RegularizedSVD<> regsvd(maxIterations);
     regsvd.Apply(data, rank, w, h);
   }
 

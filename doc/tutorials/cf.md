@@ -195,7 +195,7 @@ Several options are available:
  - `SVDBatch`: SVD batch factorization
  - `SVDIncompleteIncremental`: incomplete incremental SVD
  - `SVDCompleteIncremental`: complete incremental SVD
- - `RegSVD`: regularized SVD; see `mlpack::svd::RegularizedSVD`
+ - `RegSVD`: regularized SVD; see `RegularizedSVD`
 
 The default factorizer is `NMF`.  The example below uses the `RegSVD`
 factorizer:
@@ -274,15 +274,15 @@ alternating least squares update rules).  These include:
  - `SVDCompleteIncrementalFactorizer`
  - `SVDIncompleteIncrementalFactorizer`
  - `NMFALSFactorizer`
- - `mlpack::svd::RegularizedSVD`
- - `mlpack::svd::QUIC_SVD`
+ - `RegularizedSVD`
+ - `QUIC_SVD`
 
 The `AMF` class has many other possibilities than those listed here; it is a
 framework for alternating matrix factorization techniques.  See the `AMF` class
 documentation or [tutorial on AMF](amf.md) for more information.
 
 The use of another factorizer is straightforward; the example from the previous
-section is adapted below to use `svd::RegularizedSVD`:
+section is adapted below to use `RegularizedSVD`:
 
 ```c++
 #include <mlpack.hpp>
@@ -297,7 +297,7 @@ extern size_t neighborhood;
 extern size_t rank;
 
 // Build the CF object and perform the decomposition.
-CF cf(data, svd::RegularizedSVD(), neighborhood, rank);
+CF cf(data, RegularizedSVD(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;

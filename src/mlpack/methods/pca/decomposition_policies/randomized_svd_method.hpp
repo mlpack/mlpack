@@ -65,7 +65,7 @@ class RandomizedSVDPolicy
     arma::mat v;
 
     // Do singular value decomposition using the randomized SVD algorithm.
-    svd::RandomizedSVD rsvd(iteratedPower, maxIterations);
+    RandomizedSVD rsvd(iteratedPower, maxIterations);
     rsvd.Apply(data, eigvec, eigVal, v, rank);
 
     // Now we must square the singular values to get the eigenvalues.

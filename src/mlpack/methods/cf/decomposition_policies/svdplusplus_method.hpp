@@ -77,7 +77,7 @@ class SVDPlusPlusPolicy
              const double /* minResidue */,
              const bool /* mit */)
   {
-    svd::SVDPlusPlus<> svdpp(maxIterations, alpha, lambda);
+    SVDPlusPlus<> svdpp(maxIterations, alpha, lambda);
 
     // Save implicit data in the form of sparse matrix.
     arma::mat implicitDenseData = data.submat(0, 0, 1, data.n_cols - 1);

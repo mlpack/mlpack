@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace svd {
 
 template <typename MatType>
 BiasSVDFunction<MatType>::BiasSVDFunction(const MatType& data,
@@ -178,7 +177,6 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
   }
 }
 
-} // namespace svd
 } // namespace mlpack
 
 // Template specialization for the SGD optimizer.
@@ -187,7 +185,7 @@ namespace ens {
 template <>
 template <>
 double StandardSGD::Optimize(
-    mlpack::svd::BiasSVDFunction<arma::mat>& function,
+    mlpack::BiasSVDFunction<arma::mat>& function,
     arma::mat& parameters)
 {
   // Find the number of functions to use.
@@ -261,7 +259,7 @@ double StandardSGD::Optimize(
 template <>
 template <>
 inline double ParallelSGD<ExponentialBackoff>::Optimize(
-    mlpack::svd::BiasSVDFunction<arma::mat>& function,
+    mlpack::BiasSVDFunction<arma::mat>& function,
     arma::mat& iterate)
 {
   double overallObjective = DBL_MAX;

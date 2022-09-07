@@ -80,7 +80,7 @@ class RandomizedSVDPolicy
     arma::vec sigma;
 
     // Do singular value decomposition using the randomized SVD algorithm.
-    svd::RandomizedSVD rsvd(iteratedPower, maxIterations);
+    RandomizedSVD rsvd(iteratedPower, maxIterations);
     rsvd.Apply(cleanedData, w, sigma, h, rank);
 
     // Sigma matrix is multiplied to w.

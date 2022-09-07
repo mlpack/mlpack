@@ -16,7 +16,6 @@
 #include "quic_svd.hpp"
 
 namespace mlpack {
-namespace svd {
 
 inline QUIC_SVD::QUIC_SVD(
     const arma::mat& dataset,
@@ -81,7 +80,6 @@ inline void QUIC_SVD::ExtractSVD(arma::mat& u,
   }
 }
 
-} // namespace svd
 } // namespace mlpack
 
 #endif

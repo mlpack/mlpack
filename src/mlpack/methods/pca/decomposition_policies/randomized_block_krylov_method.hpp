@@ -65,7 +65,7 @@ class RandomizedBlockKrylovSVDPolicy
 
     // Do singular value decomposition using the randomized block krylov SVD
     // algorithm.
-    svd::RandomizedBlockKrylovSVD rsvd(maxIterations, blockSize);
+    RandomizedBlockKrylovSVD rsvd(maxIterations, blockSize);
     rsvd.Apply(centeredData, eigvec, eigVal, v, rank);
 
     // Now we must square the singular values to get the eigenvalues.

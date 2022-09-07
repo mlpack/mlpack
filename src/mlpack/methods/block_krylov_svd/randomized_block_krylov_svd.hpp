@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace svd {
 
 /**
  * Randomized block krylov SVD is a matrix factorization that is based on
@@ -122,7 +121,6 @@ class RandomizedBlockKrylovSVD
   size_t blockSize;
 };
 
-} // namespace svd
 } // namespace mlpack
 
 // Include implementation.
