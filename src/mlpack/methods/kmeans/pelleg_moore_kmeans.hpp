@@ -17,7 +17,6 @@
 #include "pelleg_moore_kmeans_statistic.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means
@@ -86,7 +85,6 @@ class PellegMooreKMeans
   size_t distanceCalculations;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #include "pelleg_moore_kmeans_impl.hpp"

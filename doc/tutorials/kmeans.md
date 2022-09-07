@@ -211,7 +211,7 @@ See [the matrices guide](../user/matrices.md) for more information.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering.
 extern arma::mat data;
@@ -237,7 +237,7 @@ of each cluster.  Another overload of `Cluster()` makes this easily possible:
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering.
 extern arma::mat data;
@@ -286,7 +286,7 @@ examples for either overload of `Cluster()`.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering on.
 extern arma::mat dataset;
@@ -306,7 +306,7 @@ k.Cluster(dataset, clusters, assignments, true);
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering on.
 extern arma::mat dataset;
@@ -352,7 +352,7 @@ to put the resulting centroids in.  Below is an example.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering on.
 extern arma::mat dataset;
@@ -488,9 +488,9 @@ literature.  Fortunately, the `KMeans<>` class makes it very easy to implement
 one of these methods and plug it in without needing to modify the existing
 algorithm code at all.
 
-By default, the `KMeans<>` class uses `mlpack::kmeans::SampleInitialization`,
-which randomly samples points as initial centroids.  However, writing a new
-policy is simple; it needs to only implement the following functions:
+By default, the `KMeans<>` class uses `SampleInitialization`, which randomly
+samples points as initial centroids.  However, writing a new policy is simple;
+it needs to only implement the following functions:
 
 ```c++
 // Empty constructor is required.
@@ -540,8 +540,7 @@ finding initial points detailed in "Refined initial points for k-means
 clustering" and other places in this document.  Another option is the
 `RandomPartition class`, which randomly assigns points to clusters, but this may
 not work very well for most settings.  See the documentation for
-`mlpack::kmeans::RefinedStart` and `mlpack::kmeans::RandomPartition` for more
-information.
+`RefinedStart` and `RandomPartition` for more information.
 
 If the `Cluster()` method returns point assignments instead of centroids, then
 valid initial assignments must be returned for every point in the dataset.
@@ -556,9 +555,9 @@ Sometimes, during clustering, a situation will arise where a cluster has no
 points in it.  The `KMeans` class allows easy customization of the action to be
 taken when this occurs.  By default, the point furthest from the centroid of the
 cluster with maximum variance is taken as the centroid of the empty cluster;
-this is implemented in the `mlpack::kmeans::MaxVarianceNewCluster` class.
-Another alternate choice is the `mlpack::kmeans::AllowEmptyClusters` class,
-which simply allows empty clusters to persist.
+this is implemented in the `MaxVarianceNewCluster` class.  Another alternate
+choice is the `AllowEmptyClusters` class, which simply allows empty clusters to
+persist.
 
 A custom policy can be written and it must implement the following methods:
 
@@ -586,7 +585,7 @@ compilation errors.
 
 Like the other template parameters to `KMeans`, `EmptyClusterPolicy`
 implementations that have state can be passed to the constructor of `KMeans` as
-a fifth argument.  See the `kmeans::KMeans` documentation for further details.
+a fifth argument.  See the `KMeans` documentation for further details.
 
 ### The `LloydStepType` template parameter
 
@@ -594,11 +593,11 @@ The internal algorithm used for a single step of the k-means algorithm can
 easily be changed; mlpack implements several existing classes that satisfy
 the `LloydStepType` policy:
 
- - `mlpack::kmeans::NaiveKMeans`
- - `mlpack::kmeans::ElkanKMeans`
- - `mlpack::kmeans::HamerlyKMeans`
- - `mlpack::kmeans::PellegMooreKMeans`
- - `mlpack::kmeans::DualTreeKMeans`
+ - `NaiveKMeans`
+ - `ElkanKMeans`
+ - `HamerlyKMeans`
+ - `PellegMooreKMeans`
+ - `DualTreeKMeans`
 
 Note that the `LloydStepType` policy is itself a template template parameter,
 and must accept two template parameters of its own:

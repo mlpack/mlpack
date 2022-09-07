@@ -15,7 +15,6 @@
 #include "dual_tree_kmeans_rules.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename TreeType>
 DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
@@ -334,7 +333,6 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
   return oldScore;
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

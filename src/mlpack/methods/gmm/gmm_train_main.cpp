@@ -25,7 +25,6 @@
 
 using namespace mlpack;
 using namespace mlpack::util;
-using namespace mlpack::kmeans;
 using namespace std;
 
 // Program Name.

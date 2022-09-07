@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename TreeType>
 class DualTreeKMeansRules
@@ -83,7 +82,6 @@ class DualTreeKMeansRules
   size_t lastBaseCase;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #include "dual_tree_kmeans_rules_impl.hpp"

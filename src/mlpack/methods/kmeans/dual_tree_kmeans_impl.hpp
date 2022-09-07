@@ -21,7 +21,6 @@
 #include "dual_tree_kmeans_rules.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 //! Call the tree constructor that does mapping.
 template<typename TreeType, typename MatType>
@@ -675,7 +674,6 @@ void RestoreChildren(TreeType& node,
   }
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

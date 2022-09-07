@@ -437,8 +437,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
   // something that is reliably quicker than the Lloyd iteration k-means update,
   // then this code maybe should be revisited.
-  if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value ||
-      useInitialModel)
+  if (!std::is_same<InitialClusteringType, KMeans<>>::value || useInitialModel)
   {
     // Use clusterer to get initial values.
     if (!useInitialModel)

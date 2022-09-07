@@ -32,7 +32,6 @@
 #include "pelleg_moore_kmeans.hpp"
 
 namespace mlpack {
-namespace kmeans /** K-Means clustering. */ {
 
 /**
  * This class implements K-Means clustering, using a variety of possible
@@ -201,7 +200,6 @@ class KMeans
   EmptyClusterPolicy emptyClusterAction;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

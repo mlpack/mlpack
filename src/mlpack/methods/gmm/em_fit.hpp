@@ -37,7 +37,7 @@ namespace mlpack {
  * This method should create 'clusters' clusters, and return the assignment of
  * each point to a cluster.
  */
-template<typename InitialClusteringType = kmeans::KMeans<>,
+template<typename InitialClusteringType = KMeans<>,
          typename CovarianceConstraintPolicy = PositiveDefiniteConstraint,
          typename Distribution = GaussianDistribution>
 class EMFit
@@ -162,7 +162,7 @@ class EMFit
 
   /**
    * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
-   * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
+   * covariance.  If InitialClusteringType == KMeans<>, this will use
    * Armadillo's initialization also.
    *
    * @param observations Data to train on.

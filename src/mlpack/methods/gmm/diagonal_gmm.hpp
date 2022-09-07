@@ -239,7 +239,7 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<kmeans::KMeans<>, DiagonalConstraint,
+  template<typename FittingType = EMFit<KMeans<>, DiagonalConstraint,
       DiagonalGaussianDistribution>>
   double Train(const arma::mat& observations,
                const size_t trials = 1,
@@ -271,7 +271,7 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<kmeans::KMeans<>, DiagonalConstraint,
+  template<typename FittingType = EMFit<KMeans<>, DiagonalConstraint,
       DiagonalGaussianDistribution>>
   double Train(const arma::mat& observations,
                const arma::vec& probabilities,

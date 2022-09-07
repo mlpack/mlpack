@@ -17,7 +17,6 @@
 #include "pelleg_moore_kmeans_rules.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename MatType>
 PellegMooreKMeans<MetricType, MatType>::PellegMooreKMeans(
@@ -78,7 +77,6 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
   return std::sqrt(residual);
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

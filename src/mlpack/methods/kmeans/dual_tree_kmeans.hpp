@@ -22,7 +22,6 @@
 #include "dual_tree_kmeans_statistic.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * An algorithm for an exact Lloyd iteration which simply uses dual-tree
@@ -169,7 +168,6 @@ template<typename MetricType, typename MatType>
 using CoverTreeDualTreeKMeans = DualTreeKMeans<MetricType, MatType,
     StandardCoverTree>;
 
-} // namespace kmeans
 } // namespace mlpack
 
 #include "dual_tree_kmeans_impl.hpp"

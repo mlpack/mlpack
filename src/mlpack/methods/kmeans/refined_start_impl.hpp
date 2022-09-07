@@ -18,7 +18,6 @@
 #include "refined_start.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 //! Partition the given dataset according to Bradley and Fayyad's algorithm.
 template<typename MatType>
@@ -108,7 +107,6 @@ void RefinedStart::Cluster(const MatType& data,
   }
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

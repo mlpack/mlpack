@@ -17,7 +17,6 @@
 #include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * This gives us a GivesCentroids object that we can use to tell whether or not
@@ -346,5 +345,4 @@ void KMeans<MetricType,
   ar(CEREAL_NVP(emptyClusterAction));
 }
 
-} // namespace kmeans
 } // namespace mlpack

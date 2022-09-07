@@ -20,7 +20,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::kmeans;
 
 /**
  * Train and evaluate a model with the specified structure.

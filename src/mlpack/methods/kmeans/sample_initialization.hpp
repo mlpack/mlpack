@@ -18,7 +18,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 class SampleInitialization
 {
@@ -49,7 +48,6 @@ class SampleInitialization
   }
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif
