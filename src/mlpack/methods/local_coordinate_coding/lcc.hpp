@@ -22,7 +22,6 @@
 #include <mlpack/methods/sparse_coding/random_initializer.hpp>
 
 namespace mlpack {
-namespace lcc {
 
 /**
  * An implementation of Local Coordinate Coding (LCC) that codes data which
@@ -223,7 +222,6 @@ class LocalCoordinateCoding
   double tolerance;
 };
 
-} // namespace lcc
 } // namespace mlpack
 
 // Include implementation.

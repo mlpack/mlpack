@@ -16,7 +16,6 @@
 #include "lcc.hpp"
 
 namespace mlpack {
-namespace lcc {
 
 template<typename DictionaryInitializer>
 LocalCoordinateCoding::LocalCoordinateCoding(
@@ -345,7 +344,6 @@ void LocalCoordinateCoding::serialize(Archive& ar,
   ar(CEREAL_NVP(tolerance));
 }
 
-} // namespace lcc
 } // namespace mlpack
 
 #endif
