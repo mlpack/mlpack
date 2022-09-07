@@ -100,7 +100,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     arma::Row<size_t>& assignments)
 {
   // Initialize the UnionFind object.
-  emst::UnionFind uf(data.n_cols);
+  UnionFind uf(data.n_cols);
   rangeSearch.Train(data);
 
   if (batchMode)
@@ -149,7 +149,7 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
-    emst::UnionFind& uf)
+    UnionFind& uf)
 {
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
@@ -178,7 +178,7 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
-    emst::UnionFind& uf)
+    UnionFind& uf)
 {
   // For each point, find the points in epsilon-nighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;

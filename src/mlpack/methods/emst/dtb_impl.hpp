@@ -15,7 +15,6 @@
 #include "dtb_rules.hpp"
 
 namespace mlpack {
-namespace emst {
 
 //! Call the tree constructor that does mapping.
 template<typename TreeType, typename MatType>
@@ -321,7 +320,6 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
     CleanupHelper(tree);
 }
 
-} // namespace emst
 } // namespace mlpack
 
 #endif

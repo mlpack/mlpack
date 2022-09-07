@@ -31,7 +31,6 @@
 #include "edge_pair.hpp"
 
 namespace mlpack {
-namespace emst /** Euclidean Minimum Spanning Trees. */ {
 
 /**
  * Performs the MST calculation using the Dual-Tree Boruvka algorithm, using any
@@ -200,7 +199,6 @@ class DualTreeBoruvka
   void Cleanup();
 }; // class DualTreeBoruvka
 
-} // namespace emst
 } // namespace mlpack
 
 #include "dtb_impl.hpp"

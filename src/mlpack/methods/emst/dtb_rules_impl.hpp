@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_EMST_DTB_RULES_IMPL_HPP
 
 namespace mlpack {
-namespace emst {
 
 template<typename MetricType, typename TreeType>
 DTBRules<MetricType, TreeType>::
@@ -188,10 +187,7 @@ inline double DTBRules<MetricType, TreeType>::CalculateBound(
   return queryNode.Stat().Bound();
 }
 
-} // namespace emst
 } // namespace mlpack
-
-
 
 #endif
 

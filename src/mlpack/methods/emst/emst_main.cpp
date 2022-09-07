@@ -78,7 +78,7 @@ BINDING_SEE_ALSO("Minimum spanning tree on Wikipedia",
         "https://en.wikipedia.org/wiki/Minimum_spanning_tree");
 BINDING_SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,"
         " and Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf");
-BINDING_SEE_ALSO("mlpack::emst::DualTreeBoruvka class documentation",
+BINDING_SEE_ALSO("DualTreeBoruvka class documentation",
         "@src/mlpack/methods/emst/dtb.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
@@ -89,7 +89,6 @@ PARAM_INT_IN("leaf_size", "Leaf size in the kd-tree.  One-element leaves give "
     "requirements.", "l", 1);
 
 using namespace mlpack;
-using namespace mlpack::emst;
 using namespace mlpack::util;
 using namespace std;
 

@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace emst {
 
 template<typename MetricType, typename TreeType>
 class DTBRules
@@ -131,7 +130,6 @@ class DTBRules
   size_t scores;
 }; // class DTBRules
 
-} // namespace emst
 } // namespace mlpack
 
 #include "dtb_rules_impl.hpp"

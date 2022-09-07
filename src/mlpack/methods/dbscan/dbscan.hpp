@@ -128,31 +128,29 @@ class DBSCAN
   PointSelectionPolicy pointSelector;
 
   /**
-   * Performs DBSCAN clustering on the data, returning the number of clusters and
-   * also the list of cluster assignments.  This searches each point iteratively,
-   * and can save on RAM usage.  It may be slower than the batch search with a
-   * dual-tree algorithm.
+   * Performs DBSCAN clustering on the data, returning the number of clusters
+   * and also the list of cluster assignments.  This searches each point
+   * iteratively, and can save on RAM usage.  It may be slower than the batch
+   * search with a dual-tree algorithm.
    *
    * @param data Dataset to cluster.
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
    */
   template<typename MatType>
-  void PointwiseCluster(const MatType& data,
-                        emst::UnionFind& uf);
+  void PointwiseCluster(const MatType& data, UnionFind& uf);
 
   /**
-   * Performs DBSCAN clustering on the data, returning number of clusters
-   * and also the list of cluster assignments.  This can perform search in batch,
-   * so it is well suited for dual-tree or naive search.
+   * Performs DBSCAN clustering on the data, returning number of clusters and
+   * also the list of cluster assignments.  This can perform search in batch, so
+   * it is well suited for dual-tree or naive search.
    *
    * @param data Dataset to cluster.
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
    */
   template<typename MatType>
-  void BatchCluster(const MatType& data,
-                    emst::UnionFind& uf);
+  void BatchCluster(const MatType& data, UnionFind& uf);
 };
 
 } // namespace mlpack

@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::emst;
 
 TEST_CASE("TestFind", "[UnionFindTest]")
 {
