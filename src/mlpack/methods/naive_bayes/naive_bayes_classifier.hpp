@@ -18,7 +18,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace naive_bayes /** The Naive Bayes Classifier. */ {
 
 /**
  * The simple Naive Bayes classifier.  This class trains on the data by
@@ -243,7 +242,6 @@ class NaiveBayesClassifier
                      ModelMatType& logLikelihoods) const;
 };
 
-} // namespace naive_bayes
 } // namespace mlpack
 
 // Include implementation.

@@ -29,7 +29,6 @@
 
 using namespace mlpack;
 using namespace mlpack::perceptron;
-using namespace mlpack::naive_bayes;
 using namespace mlpack::ann;
 
 using namespace arma;

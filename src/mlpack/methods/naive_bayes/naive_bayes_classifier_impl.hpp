@@ -23,7 +23,6 @@
 #include "naive_bayes_classifier.hpp"
 
 namespace mlpack {
-namespace naive_bayes {
 
 template<typename ModelMatType>
 template<typename MatType>
@@ -358,7 +357,6 @@ void NaiveBayesClassifier<ModelMatType>::serialize(
   ar(CEREAL_NVP(probabilities));
 }
 
-} // namespace naive_bayes
 } // namespace mlpack
 
 #endif
