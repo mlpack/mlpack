@@ -18,7 +18,6 @@
 #include <mlpack/core/math/random_basis.hpp>
 
 namespace mlpack {
-namespace range {
 
 /**
  * Initialize the RSModel with the given tree type and whether or not a random
@@ -546,7 +545,6 @@ void RSModel::serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace range
 } // namespace mlpack
 
 #endif

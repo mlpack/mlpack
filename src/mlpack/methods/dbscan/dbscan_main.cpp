@@ -18,7 +18,6 @@
 #include "dbscan.hpp"
 
 using namespace mlpack;
-using namespace mlpack::range;
 using namespace mlpack::util;
 using namespace std;
 

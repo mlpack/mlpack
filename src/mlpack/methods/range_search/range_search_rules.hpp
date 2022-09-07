@@ -15,7 +15,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace range {
 
 /**
  * The RangeSearchRules class is a template helper class used by RangeSearch
@@ -162,7 +161,6 @@ class RangeSearchRules
   size_t scores;
 };
 
-} // namespace range
 } // namespace mlpack
 
 // Include implementation.

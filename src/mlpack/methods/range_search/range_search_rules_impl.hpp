@@ -16,7 +16,6 @@
 #include "range_search_rules.hpp"
 
 namespace mlpack {
-namespace range {
 
 template<typename MetricType, typename TreeType>
 RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
@@ -259,7 +258,6 @@ void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
   }
 }
 
-} // namespace range
 } // namespace mlpack
 
 #endif

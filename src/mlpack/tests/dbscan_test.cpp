@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::range;
 
 TEST_CASE("OneClusterTest", "[DBSCANTest]")
 {

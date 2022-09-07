@@ -57,18 +57,17 @@ class ExampleMetric
 
 Then, this metric can easily be used inside of other mlpack algorithms.  For
 example, the code below runs range search on a random dataset with the
-`ExampleKernel`, by instantiating a `mlpack::range::RangeSearch` object that
-uses the `ExampleKernel`.  Then, the number of results are printed.  The
-`RangeSearch` class takes three template parameters: `MetricType`, `MatType`,
-and `TreeType`.  (All three have defaults, so we will just leave `MatType` and
-`TreeType` to their defaults.)
+`ExampleKernel`, by instantiating a `RangeSearch` object that uses the
+`ExampleKernel`.  Then, the number of results are printed.  The `RangeSearch`
+class takes three template parameters: `MetricType`, `MatType`, and `TreeType`.
+(All three have defaults, so we will just leave `MatType` and `TreeType` to
+their defaults.)
 
 ```c++
 #include <mlpack.hpp>
 #include "example_metric.hpp" // A file that contains ExampleKernel.
 
 using namespace mlpack;
-using namespace mlpack::range;
 using namespace std;
 
 int main()

@@ -23,7 +23,6 @@
 #include "range_search.hpp"
 
 namespace mlpack {
-namespace range {
 
 /**
  * RSWrapperBase is a base wrapper class for holding all RangeSearch types
@@ -388,7 +387,6 @@ class RSModel
   void CleanMemory();
 };
 
-} // namespace range
 } // namespace mlpack
 
 // Include implementation (of serialize() and templated wrapper classes).

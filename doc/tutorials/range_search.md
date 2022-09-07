@@ -236,7 +236,7 @@ the `RangeSearch` class are given below.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::range;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat data;
@@ -261,7 +261,7 @@ The output of the search is stored in `resultingNeighbors` and
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::range;
+using namespace mlpack;
 
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
@@ -285,7 +285,7 @@ This example uses the `O(n^2)` naive search (not the tree-based search).
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::range;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat dataset;

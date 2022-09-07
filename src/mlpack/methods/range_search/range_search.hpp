@@ -19,7 +19,6 @@
 #include "range_search_stat.hpp"
 
 namespace mlpack {
-namespace range /** Range-search routines. */ {
 
 //! Forward declaration.
 template<template<typename TreeMetricType,
@@ -322,7 +321,6 @@ class RangeSearch
   friend class LeafSizeRSWrapper<TreeType>;
 };
 
-} // namespace range
 } // namespace mlpack
 
 // Include implementation.

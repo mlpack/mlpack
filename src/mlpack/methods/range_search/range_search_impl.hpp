@@ -19,7 +19,6 @@
 #include "range_search_rules.hpp"
 
 namespace mlpack {
-namespace range {
 
 template<typename TreeType, typename MatType>
 TreeType* BuildTree(
@@ -704,7 +703,6 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   }
 }
 
-} // namespace range
 } // namespace mlpack
 
 #endif
