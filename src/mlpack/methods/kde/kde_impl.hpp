@@ -14,7 +14,6 @@
 #include "kde_rules.hpp"
 
 namespace mlpack {
-namespace kde {
 
 //! Construct tree that rearranges the dataset.
 template<typename TreeType, typename MatType>
@@ -847,5 +846,4 @@ RearrangeEstimations(const std::vector<size_t>& oldFromNew,
   }
 }
 
-} // namespace kde
 } // namespace mlpack

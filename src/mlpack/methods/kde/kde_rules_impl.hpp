@@ -20,7 +20,6 @@
 #include <mlpack/core/math/quantile.hpp>
 
 namespace mlpack {
-namespace kde {
 
 template<typename MetricType, typename KernelType, typename TreeType>
 KDERules<MetricType, KernelType, TreeType>::KDERules(
@@ -306,7 +305,7 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  kde::KDEStat& queryStat = queryNode.Stat();
+  KDEStat& queryStat = queryNode.Stat();
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
   // Calculations are not duplicated.
@@ -604,7 +603,6 @@ double KDECleanRules<TreeType>::Score(TreeType& queryNode,
   return 0;
 }
 
-} // namespace kde
 } // namespace mlpack
 
 #endif

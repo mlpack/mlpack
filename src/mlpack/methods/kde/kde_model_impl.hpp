@@ -16,7 +16,6 @@
 #include "kde_model.hpp"
 
 namespace mlpack {
-namespace kde {
 
 //! Initialize the KDEModel with the given parameters.
 inline KDEModel::KDEModel(
@@ -494,7 +493,6 @@ void KDEModel::serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace kde
 } // namespace mlpack
 
 #endif

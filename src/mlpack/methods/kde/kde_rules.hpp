@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace kde {
 
 /**
  * A dual-tree traversal Rules class for kernel density estimation.  This
@@ -224,7 +223,6 @@ class KDECleanRules
   TraversalInfoType traversalInfo;
 };
 
-} // namespace kde
 } // namespace mlpack
 
 // Include implementation.

@@ -25,7 +25,6 @@
 #include "kde.hpp"
 
 namespace mlpack {
-namespace kde {
 
 /**
  * KernelNormalizer holds a set of methods to normalize estimations applying
@@ -462,7 +461,6 @@ class KDEModel
   void CleanMemory();
 };
 
-} // namespace kde
 } // namespace mlpack
 
 #include "kde_model_impl.hpp"

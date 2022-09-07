@@ -18,7 +18,6 @@
 #include "kde_stat.hpp"
 
 namespace mlpack {
-namespace kde /** Kernel Density Estimation. */ {
 
 //! KDEMode represents the ways in which KDE algorithm can be executed.
 enum KDEMode
@@ -77,18 +76,15 @@ template<typename KernelType = GaussianKernel,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = KDTree,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<MetricType,
-                      kde::KDEStat,
-                      MatType>::template DualTreeTraverser,
+             TreeType<MetricType, KDEStat, MatType>::template DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<MetricType,
-                      kde::KDEStat,
-                      MatType>::template SingleTreeTraverser>
+             TreeType<MetricType, KDEStat, MatType>::template
+             SingleTreeTraverser>
 class KDE
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, kde::KDEStat, MatType> Tree;
+  typedef TreeType<MetricType, KDEStat, MatType> Tree;
 
   /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.
@@ -353,7 +349,6 @@ class KDE
                                    arma::vec& estimations);
 };
 
-} // namespace kde
 } // namespace mlpack
 
 // Include implementation.

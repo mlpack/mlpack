@@ -20,7 +20,6 @@
 #include "kde_model.hpp"
 
 using namespace mlpack;
-using namespace mlpack::kde;
 using namespace mlpack::util;
 using namespace std;
 
@@ -121,15 +120,14 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("Kernel density estimation on Wikipedia",
-        "https://en.wikipedia.org/wiki/Kernel_density_estimation");
+    "https://en.wikipedia.org/wiki/Kernel_density_estimation");
 BINDING_SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
-             "https://arxiv.org/pdf/1304.4327.pdf");
+    "https://arxiv.org/pdf/1304.4327.pdf");
 BINDING_SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo"
-        " Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
-        "dimensional-kernel-summations-using-the-monte-carlo-multipole-method."
-        "pdf");
-BINDING_SEE_ALSO("mlpack::kde::KDE C++ class documentation",
-        "@src/mlpack/methods/kde/kde.hpp");
+    " Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
+    "dimensional-kernel-summations-using-the-monte-carlo-multipole-method.pdf");
+BINDING_SEE_ALSO("KDE C++ class documentation",
+    "@src/mlpack/methods/kde/kde.hpp");
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input reference dataset use for KDE.", "r");

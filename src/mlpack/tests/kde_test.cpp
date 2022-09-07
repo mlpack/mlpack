@@ -14,8 +14,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::kde;
-
 using namespace cereal;
 
 // Brute force gaussian KDE.
@@ -102,7 +100,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
                                 kernel);
 
   // Get dual-tree results.
-  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -297,7 +295,7 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
                                 kernel);
 
   // BallTree KDE.
-  typedef BallTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef BallTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -469,7 +467,7 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
                                 kernel);
 
   // Dual-tree KDE.
-  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -504,7 +502,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
   query.col(2) = query.col(3);
 
   // Dual-tree KDE.
-  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
@@ -549,9 +547,8 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
       EuclideanDistance,
       arma::mat,
       KDTree,
-      KDTree<EuclideanDistance,
-             kde::KDEStat,
-             arma::mat>::template BreadthFirstDualTreeTraverser>
+      KDTree<EuclideanDistance, KDEStat, arma::mat>::template
+          BreadthFirstDualTreeTraverser>
       kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
@@ -614,7 +611,7 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
 
   // When training using a tree.
   std::vector<size_t> oldFromNewReferences;
-  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   REQUIRE_THROWS_AS(
       kde.Train(referenceTree, &oldFromNewReferences), std::invalid_argument);
@@ -647,7 +644,7 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
                     std::invalid_argument);
 
   // When evaluating using a query tree.
-  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   REQUIRE_THROWS_AS(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
@@ -682,7 +679,7 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   REQUIRE_NOTHROW(kde.Evaluate(query, estimations));
 
   // When evaluating using a query tree.
-  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   REQUIRE_NOTHROW(
@@ -1204,9 +1201,8 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
       EuclideanDistance,
       arma::mat,
       KDTree,
-      KDTree<EuclideanDistance,
-             kde::KDEStat,
-             arma::mat>::template BreadthFirstDualTreeTraverser>
+      KDTree<EuclideanDistance, KDEStat, arma::mat>::template
+          BreadthFirstDualTreeTraverser>
     kde(relError,
         0.0,
         kernel,
