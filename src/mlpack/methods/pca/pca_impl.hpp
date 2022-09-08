@@ -21,7 +21,6 @@
 #include "pca.hpp"
 
 namespace mlpack {
-namespace pca {
 
 template<typename DecompositionPolicy>
 PCA<DecompositionPolicy>::PCA(
@@ -178,7 +177,6 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   return varSum;
 }
 
-} // namespace pca
 } // namespace mlpack
 
 #endif

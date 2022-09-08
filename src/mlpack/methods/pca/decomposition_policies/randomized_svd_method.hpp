@@ -18,7 +18,6 @@
 #include <mlpack/methods/randomized_svd/randomized_svd.hpp>
 
 namespace mlpack {
-namespace pca {
 
 /**
  * Implementation of the randomized SVD policy.
@@ -95,7 +94,6 @@ class RandomizedSVDPolicy
   size_t maxIterations;
 };
 
-} // namespace pca
 } // namespace mlpack
 
 #endif

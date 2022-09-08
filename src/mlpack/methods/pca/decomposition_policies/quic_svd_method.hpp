@@ -18,7 +18,6 @@
 #include <mlpack/methods/quic_svd/quic_svd.hpp>
 
 namespace mlpack {
-namespace pca {
 
 /**
  * Implementation of the QUIC-SVD policy.
@@ -90,7 +89,6 @@ class QUICSVDPolicy
   double delta;
 };
 
-} // namespace pca
 } // namespace mlpack
 
 #endif

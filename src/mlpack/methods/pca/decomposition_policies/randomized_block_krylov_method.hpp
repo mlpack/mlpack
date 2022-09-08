@@ -18,7 +18,6 @@
 #include <mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp>
 
 namespace mlpack {
-namespace pca {
 
 /**
  * Implementation of the randomized block krylov SVD policy.
@@ -95,7 +94,6 @@ class RandomizedBlockKrylovSVDPolicy
   size_t blockSize;
 };
 
-} // namespace pca
 } // namespace mlpack
 
 #endif

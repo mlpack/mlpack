@@ -17,7 +17,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::pca;
 
 /*
  * Compare the output of the our PCA implementation with Armadillo's using the

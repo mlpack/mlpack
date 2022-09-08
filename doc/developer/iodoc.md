@@ -152,9 +152,9 @@ BINDING_LONG_DESC(
 
 // See also...
 BINDING_SEE_ALSO("Principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Principal_component_analysis");
-BINDING_SEE_ALSO("mlpack::pca::PCA C++ class documentation",
-        "@doxygen/classmlpack_1_1pca_1_1PCA.html"));
+    "https://en.wikipedia.org/wiki/Principal_component_analysis");
+BINDING_SEE_ALSO("PCA C++ class documentation",
+    "@src/mlpack/methods/pca/pca.hpp");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
