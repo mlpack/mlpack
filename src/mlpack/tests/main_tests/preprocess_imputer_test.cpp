@@ -36,7 +36,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("preprocess_imputer_test.csv", inputData, info))
-    FAIL("Cannot load train dataset vc2.csv!");
+      FAIL("Cannot load preprocess_imputer_test.csv");
 
   arma::mat outputData;
 
@@ -101,7 +101,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("preprocess_imputer_test.csv", inputData, info))
-    FAIL("Cannot load train dataset vc2.csv!");
+      FAIL("Cannot load preprocess_imputer_test.csv!");
 
   // Store size of input dataset.
   size_t inputSize  = inputData.n_cols;
@@ -142,7 +142,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("preprocess_imputer_test.csv", inputData, info))
-    FAIL("Cannot load train dataset vc2.csv!");
+      FAIL("Cannot load preprocess_imputer_test.csv");
 
 
   // Input custom data points and labels.
