@@ -93,7 +93,7 @@ BINDING_SEE_ALSO("Multinomial logistic regression (softmax regression) on "
         "https://en.wikipedia.org/wiki/Multinomial_logistic_regression");
 BINDING_SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class "
         "documentation",
-        "@doxygen/classmlpack_1_1regression_1_1SoftmaxRegression.html");
+        "@src/mlpack/methods/softmax_regression/softmax_regression.hpp");
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

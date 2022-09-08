@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#define MLPACK_ENABLE_ANN_SERIALIZATION
 #include <mlpack/core.hpp>
-
 #include <mlpack/methods/ann/ann.hpp>
 #include <mlpack/methods/kmeans/kmeans.hpp>
 

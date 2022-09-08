@@ -57,7 +57,11 @@
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 
-// Include definitions for polymorphic serialization.
+// Include definitions for polymorphic serialization.  Note that this can cause
+// significant compilation overhead, so we only do it if
+// MLPACK_ENABLE_ANN_SERIALIZATION is enabled.
+#ifdef MLPACK_ENABLE_ANN_SERIALIZATION
 #include <mlpack/methods/ann/layer/serialization.hpp>
+#endif
 
 #endif

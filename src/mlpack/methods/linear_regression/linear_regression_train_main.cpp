@@ -54,7 +54,7 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
-       "@doxygen/lrtutorial.html");
+       "@doc/tutorials/linear_regression.md");
 
 PARAM_MATRIX_IN_REQ("training", "Matrix containing training set X (regressors).",
     "t");

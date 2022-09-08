@@ -45,7 +45,7 @@ class RegSVDPolicy
    * Use regularized SVD method to perform collaborative filtering.
    *
    * @param maxIterations Number of iterations for the power method
-   *        (Default: 2).
+   *        (Default: 10).
    */
   RegSVDPolicy(const size_t maxIterations = 10) :
       maxIterations(maxIterations)

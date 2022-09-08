@@ -118,9 +118,9 @@ BINDING_SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
         "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
         "9c20.pdf");
 BINDING_SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1QDAFN.html");
+        "@src/mlpack/methods/approx_kfn/qdafn.hpp.");
 BINDING_SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1DrusillaSelect.html");
+        "@src/mlpack/methods/approx_kfn/drusilla_select.hpp");
 
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");

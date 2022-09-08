@@ -71,7 +71,7 @@ BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
         "http://proceedings.mlr.press/v28/curtin13.pdf");
 BINDING_SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1NeighborSearch.html");
+        "@src/mlpack/methods/neighbor_search/neighbor_search.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

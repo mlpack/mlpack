@@ -73,14 +73,14 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@cf", "#cf");
 BINDING_SEE_ALSO("Alternating matrix factorization tutorial",
-        "@doxygen/amftutorial.html");
+        "@doc/tutorials/amf.md");
 BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
         "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
 BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
         "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
         "factorization.pdf");
 BINDING_SEE_ALSO("mlpack::amf::AMF C++ class documentation",
-        "@doxygen/classmlpack_1_1amf_1_1AMF.html");
+        "@src/mlpack/methods/amf/amf.hpp");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");

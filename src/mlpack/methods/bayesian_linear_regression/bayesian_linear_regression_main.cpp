@@ -103,8 +103,8 @@ BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
         "MLA Bishop, Christopher M. Pattern Recognition and Machine "
         "Learning. New York :Springer, 2006, section 3.3.");
 BINDING_SEE_ALSO("mlpack::regression::BayesianLinearRegression C++ class "
-        "documentation",
-        "@doxygen/classmlpack_1_1regression_1_1BayesianLinearRegression.html");
+        "documentation", "@src/mlpack/methods/bayesian_linear_regression/"
+        "bayesian_linear_regression.hpp");
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 

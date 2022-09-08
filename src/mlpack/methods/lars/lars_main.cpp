@@ -103,7 +103,7 @@ BINDING_SEE_ALSO("@linear_regression", "#linear_regression");
 BINDING_SEE_ALSO("Least angle regression (pdf)",
         "http://mlpack.org/papers/lars.pdf");
 BINDING_SEE_ALSO("mlpack::regression::LARS C++ class documentation",
-        "@doxygen/classmlpack_1_1regression_1_1LARS.html");
+        "@src/mlpack/methods/lars/lars.hpp");
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");

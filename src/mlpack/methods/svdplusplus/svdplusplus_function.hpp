@@ -147,10 +147,6 @@ class SVDPlusPlusFunction
 } // namespace svd
 } // namespace mlpack
 
-/**
- * @cond NO_DOXYGEN
- */
-
 namespace ens {
 
   /**
@@ -173,9 +169,6 @@ namespace ens {
 
 } // namespace ens
 
-/**
- * @endcond
- */
 #include "svdplusplus_function_impl.hpp"
 
 #endif

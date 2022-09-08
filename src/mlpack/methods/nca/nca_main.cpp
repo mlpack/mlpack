@@ -100,7 +100,7 @@ BINDING_SEE_ALSO("Neighbourhood components analysis (pdf)",
         "http://papers.nips.cc/paper/2566-neighbourhood-components-"
         "analysis.pdf");
 BINDING_SEE_ALSO("mlpack::nca::NCA C++ class documentation",
-        "@doxygen/classmlpack_1_1nca_1_1NCA.html");
+        "@src/mlpack/methods/nca/nca.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
