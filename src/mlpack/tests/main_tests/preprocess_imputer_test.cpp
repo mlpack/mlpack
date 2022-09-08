@@ -34,7 +34,9 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  DatasetInfo info;
+  if (!data::Load("preprocess_imputer_test.csv", inputData, info))
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::mat outputData;
 
@@ -42,7 +44,7 @@ TEST_CASE_METHOD(
   size_t inputSize = inputData.n_cols;
 
   // Input custom data points and labels.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input",  std::make_tuple(info, inputData));
   SetInputParam("missing_value", (std::string) "nan");
 
   // Check for mean strategy.
@@ -52,22 +54,22 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  outputData = std::move(params.Get<arma::mat>("output"));
+  outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
-  
+
   // Reset passed strategy.
   ResetSettings();
 
   // Check for median strategy.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input",  std::make_tuple(info, inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "median");
 
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  outputData = std::move(params.Get<arma::mat>("output"));
+  outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -75,7 +77,7 @@ TEST_CASE_METHOD(
   ResetSettings();
 
   // Check for custom strategy.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input",  std::make_tuple(info, inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "custom");
   SetInputParam("custom_value", (double) 75.12);
@@ -83,7 +85,7 @@ TEST_CASE_METHOD(
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  outputData = std::move(params.Get<arma::mat>("output"));
+  outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -97,7 +99,9 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  DatasetInfo info;
+  if (!data::Load("preprocess_imputer_test.csv", inputData, info))
+    FAIL("Cannot load train dataset vc2.csv!");
 
   // Store size of input dataset.
   size_t inputSize  = inputData.n_cols;
@@ -115,14 +119,14 @@ TEST_CASE_METHOD(
   }
 
   // Input custom data points and labels.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input",  std::make_tuple(info, inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
 
   RUN_BINDING();
 
   // Now check that the output has desired dimensions.
-  arma::mat outputData = std::move(params.Get<arma::mat>("output"));
+  arma::mat outputData = params.Get<arma::mat>("output");
   REQUIRE(outputData.n_cols + countNaN == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -136,10 +140,13 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  DatasetInfo info;
+  if (!data::Load("preprocess_imputer_test.csv", inputData, info))
+    FAIL("Cannot load train dataset vc2.csv!");
+
 
   // Input custom data points and labels.
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input",  std::make_tuple(info, inputData));
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "notmean"); // Invalid.
 
