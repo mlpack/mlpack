@@ -16,28 +16,6 @@
 
 namespace mlpack {
 
-//! Call the tree constructor that does mapping.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
-}
-
-//! Call the tree constructor that does not do mapping.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset));
-}
-
 /**
  * Takes in a reference to the data set.  Copies the data, builds the tree,
  * and initializes all of the member variables.

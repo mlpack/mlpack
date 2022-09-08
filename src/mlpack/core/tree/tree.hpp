@@ -23,6 +23,7 @@
 #include "spill_tree.hpp"
 
 #include "tree_traits.hpp"
+#include "build_tree.hpp"
 
 #include "statistic.hpp"
 #include "traversal_info.hpp"

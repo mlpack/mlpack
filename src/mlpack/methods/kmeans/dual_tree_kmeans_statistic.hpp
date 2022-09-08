@@ -15,7 +15,6 @@
 #include <mlpack/methods/neighbor_search/neighbor_search_stat.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
 {
@@ -116,7 +115,6 @@ class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
   std::vector<void*> trueChildren;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

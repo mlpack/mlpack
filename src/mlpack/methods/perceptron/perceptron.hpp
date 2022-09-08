@@ -26,7 +26,7 @@ namespace mlpack {
  *
  * @tparam LearnPolicy Options of SimpleWeightUpdate and GradientDescent.
  * @tparam WeightInitializationPolicy Option of ZeroInitialization and
- *      RandomInitialization.
+ *      RandomPerceptronInitialization.
  */
 template<typename LearnPolicy = SimpleWeightUpdate,
          typename WeightInitializationPolicy = ZeroInitialization,

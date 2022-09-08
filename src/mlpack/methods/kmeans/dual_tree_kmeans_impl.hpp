@@ -24,20 +24,20 @@ namespace mlpack {
 
 //! Call the tree constructor that does mapping.
 template<typename TreeType, typename MatType>
-TreeType* BuildTree(
+TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     const typename std::enable_if<
         TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
-  // of two.
+  // of one.
   return new TreeType(std::forward<MatType>(dataset), oldFromNew, 1);
 }
 
 //! Call the tree constructor that does not do mapping.
 template<typename TreeType, typename MatType>
-TreeType* BuildTree(
+TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename std::enable_if<
@@ -101,7 +101,8 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // Build a tree on the centroids.  This will make a copy if necessary, which
   // is unfortunate, but I don't see a reasonable way around it.
   std::vector<size_t> oldFromNewCentroids;
-  Tree* centroidTree = BuildTree<Tree>(centroids, oldFromNewCentroids);
+  Tree* centroidTree = BuildForcedLeafSizeTree<Tree>(centroids,
+      oldFromNewCentroids);
 
   // Find the nearest neighbors of each of the clusters.  We have to make our
   // own TreeType, which is a little bit abuse, but we know for sure the

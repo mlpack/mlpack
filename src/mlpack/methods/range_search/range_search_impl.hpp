@@ -20,27 +20,6 @@
 
 namespace mlpack {
 
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
-}
-
-//! Call the tree constructor that does not do mapping.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset));
-}
-
 template<typename MetricType,
          typename MatType,
          template<typename TreeMetricType,

@@ -46,7 +46,7 @@ namespace mlpack {
  * @tparam PointSelectionPolicy Strategy for selecting next point to cluster
  *      with.
  */
-template<typename RangeSearchType = range::RangeSearch<>,
+template<typename RangeSearchType = RangeSearch<>,
          typename PointSelectionPolicy = OrderedPointSelection>
 class DBSCAN
 {

@@ -15,28 +15,6 @@
 
 namespace mlpack {
 
-//! Construct tree that rearranges the dataset.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
-}
-
-//! Construct tree that doesn't rearrange the dataset.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset));
-}
-
 template<typename KernelType,
          typename MetricType,
          typename MatType,

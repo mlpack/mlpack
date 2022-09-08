@@ -19,32 +19,6 @@
 
 namespace mlpack {
 
-namespace aux {
-
-//! Call the tree constructor that does mapping.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
-    typename std::enable_if<
-        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
-}
-
-//! Call the tree constructor that does not do mapping.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset));
-}
-
-} // namespace aux
-
 // Construct the object, taking ownership of the data matrix.
 template<typename SortPolicy,
          typename MetricType,
@@ -62,7 +36,7 @@ RASearch(MatType referenceSetIn,
          const bool firstLeafExact,
          const size_t singleSampleLimit,
          const MetricType metric) :
-    referenceTree(naive ? NULL : aux::BuildTree<Tree>(
+    referenceTree(naive ? NULL : BuildTree<Tree>(
         std::move(referenceSetIn), oldFromNewReferences)),
     referenceSet(naive ? new MatType(std::move(referenceSetIn)) :
         &referenceTree->Dataset()),
@@ -143,7 +117,7 @@ RASearch(const bool naive,
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
   {
-    referenceTree = aux::BuildTree<Tree>(*referenceSet, oldFromNewReferences);
+    referenceTree = BuildTree<Tree>(*referenceSet, oldFromNewReferences);
     treeOwner = true;
   }
 }
@@ -184,7 +158,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
   // We may need to rebuild the tree.
   if (!naive)
   {
-    referenceTree = aux::BuildTree<Tree>(std::move(referenceSet),
+    referenceTree = BuildTree<Tree>(std::move(referenceSet),
         oldFromNewReferences);
     treeOwner = true;
   }
@@ -340,7 +314,7 @@ Search(const MatType& querySet,
     Log::Info << "Performing dual-tree traversal..." << std::endl;
 
     // Build the query tree.
-    Tree* queryTree = aux::BuildTree<Tree>(const_cast<MatType&>(querySet),
+    Tree* queryTree = BuildTree<Tree>(const_cast<MatType&>(querySet),
         oldFromNewQueries);
 
     RuleType rules(*referenceSet, queryTree->Dataset(), k, metric, tau, alpha,
