@@ -21,7 +21,6 @@
 #include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Continuous Mountain Car task.
@@ -250,7 +249,6 @@ class ContinuousMountainCar
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

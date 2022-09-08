@@ -21,7 +21,6 @@
 #include "training_config.hpp"
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Soft Actor-Critic, a model-free off-policy actor-critic
@@ -191,7 +190,6 @@ class SAC
   MeanSquaredError lossFunction;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 // Include implementation

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation for epsilon greedy policy.
@@ -109,7 +108,6 @@ class GreedyPolicy
   double delta;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

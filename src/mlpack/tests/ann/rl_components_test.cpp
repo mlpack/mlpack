@@ -19,7 +19,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::rl;
 
 /**
  * Constructs a Pendulum instance and check if the main routine works as it

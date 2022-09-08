@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack{
-namespace rl{
 
 /**
  * Implementation of Acrobot game. Acrobot is a 2-link pendulum with only the
@@ -395,7 +394,6 @@ class Acrobot
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

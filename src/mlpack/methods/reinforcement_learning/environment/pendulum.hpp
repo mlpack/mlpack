@@ -20,7 +20,6 @@
 #include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Pendulum task. The inverted pendulum swingup problem is a
@@ -263,7 +262,6 @@ class Pendulum
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

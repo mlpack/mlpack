@@ -20,7 +20,6 @@
 #include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of the Dueling Deep Q-Learning network.
@@ -278,7 +277,6 @@ class DuelingDQN
   MeanSquaredError lossFunction;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

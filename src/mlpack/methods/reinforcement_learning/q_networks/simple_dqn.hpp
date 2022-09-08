@@ -19,7 +19,6 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * @tparam OutputLayerType The output layer type of the network.
@@ -163,7 +162,6 @@ class SimpleDQN
   std::vector<size_t> noisyLayerIndex;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

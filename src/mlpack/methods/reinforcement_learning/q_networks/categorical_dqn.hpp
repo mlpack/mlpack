@@ -21,7 +21,6 @@
 #include "../training_config.hpp"
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of the Categorical Deep Q-Learning network.
@@ -238,7 +237,6 @@ class CategoricalDQN
   arma::mat activations;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

@@ -19,7 +19,6 @@
 
 using namespace mlpack;
 using namespace ens;
-using namespace mlpack::rl;
 
 template<typename AgentType>
 bool testAgent(AgentType& agent,

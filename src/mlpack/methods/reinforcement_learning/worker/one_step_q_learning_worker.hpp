@@ -17,7 +17,6 @@
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * One step Q-Learning worker.
@@ -400,7 +399,6 @@ class OneStepQLearningWorker
   StateType state;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

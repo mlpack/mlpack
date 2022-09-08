@@ -19,8 +19,6 @@
 
 using namespace mlpack;
 using namespace ens;
-using namespace mlpack::rl;
-
 
 // Test checking that reward clipping works with vanilla update.
 TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")

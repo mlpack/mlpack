@@ -18,7 +18,6 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * @tparam PolicyType The type of the child policy.
@@ -74,7 +73,6 @@ class AggregatedPolicy
   DiscreteDistribution sampler;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

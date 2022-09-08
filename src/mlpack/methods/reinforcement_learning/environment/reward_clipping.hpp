@@ -16,7 +16,6 @@
 #include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Interface for clipping the reward to some value between the specified maximum and minimum value
@@ -135,7 +134,6 @@ class RewardClipping
   double maxReward;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif
