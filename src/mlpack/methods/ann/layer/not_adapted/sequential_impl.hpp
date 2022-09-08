@@ -19,7 +19,6 @@
 // TODO: can this be merged with MultiLayer more closely?
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputType, bool Residual>
 SequentialType<InputType, OutputType, Residual>::
@@ -157,7 +156,6 @@ void SequentialType<InputType, OutputType, Residual>::serialize(
   ar(CEREAL_NVP(ownsLayers));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Softmin layer. The Softmin function takes as a input
@@ -72,7 +71,6 @@ class SoftminType : public Layer<InputType, OutputType>
 typedef SoftminType<arma::mat, arma::mat> Softmin;
 
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

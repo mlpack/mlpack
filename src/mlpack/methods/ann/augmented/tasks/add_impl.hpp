@@ -16,9 +16,6 @@
 #include "add.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 inline AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
 {
@@ -148,9 +145,6 @@ inline void AddTask::Binarize(const arma::field<arma::vec>& input,
   }
 }
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #endif

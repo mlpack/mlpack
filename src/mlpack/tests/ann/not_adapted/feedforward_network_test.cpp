@@ -22,7 +22,6 @@
 #include "../serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Check whether copying and moving network with Reparametrization is working or not.

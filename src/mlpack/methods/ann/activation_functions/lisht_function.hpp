@@ -29,7 +29,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The LiSHT function, defined by
@@ -89,7 +88,6 @@ class LiSHTFunction
   }
 }; // class LishtFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -19,7 +19,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Test a FFN model with PrintLoss callback.

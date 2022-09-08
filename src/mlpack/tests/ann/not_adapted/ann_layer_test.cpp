@@ -19,7 +19,6 @@
 #include "ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 // // network1 should be allocated with `new`, and trained on some data.
 // template<typename MatType = arma::cube, typename ModelType>

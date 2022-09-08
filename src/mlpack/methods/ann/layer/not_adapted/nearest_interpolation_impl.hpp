@@ -16,7 +16,6 @@
 #include "nearest_interpolation.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
@@ -155,7 +154,6 @@ void NearestInterpolation<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(depth));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

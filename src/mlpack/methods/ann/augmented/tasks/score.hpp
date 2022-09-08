@@ -16,9 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace scorers /* Scoring utilities for augmented */ {
 
 /**
 * Function that computes the sequences precision
@@ -35,9 +32,6 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
                          arma::field<MatType> predOutputs,
                          double tol = 1e-4);
 
-} // namespace scorers
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #include "score_impl.hpp"

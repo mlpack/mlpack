@@ -16,7 +16,6 @@
 #include "celu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 CELUType<MatType>::CELUType(const double alpha) :
@@ -114,7 +113,6 @@ void CELUType<MatType>::serialize(
     derivative.clear();
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

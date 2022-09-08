@@ -17,7 +17,6 @@
 #include "lp_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 LpPooling<InputDataType, OutputDataType>::LpPooling()
@@ -130,7 +129,6 @@ void LpPooling<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(outputHeight));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

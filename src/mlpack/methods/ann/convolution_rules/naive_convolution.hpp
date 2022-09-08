@@ -17,7 +17,6 @@
 #include "border_modes.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Computes the two-dimensional convolution. This class allows specification of
@@ -235,7 +234,6 @@ class NaiveConvolution
   }
 };  // class NaiveConvolution
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

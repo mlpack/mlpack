@@ -27,7 +27,6 @@
 #include "relu6.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 ReLU6<InputDataType, OutputDataType>::ReLU6()
@@ -71,7 +70,6 @@ void ReLU6<InputDataType, OutputDataType>::serialize(
   // Nothing to do here.
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

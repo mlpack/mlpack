@@ -20,7 +20,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network. */ {
 
 /**
  * Hard Shrink operator is defined as,
@@ -101,7 +100,6 @@ class HardShrinkType : public Layer<InputType, OutputType>
 // Standard HardShrink layer.
 typedef HardShrinkType<arma::mat, arma::mat> HardShrink;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

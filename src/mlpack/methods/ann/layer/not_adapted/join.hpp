@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // TODO: should we clarify the comments?  This seems to join together points of
 // a different batch
@@ -91,7 +90,6 @@ class JoinType : public Layer<InputType, OutputType>
 //Standard Join layer.
 typedef JoinType<arma::mat, arma::mat> Join;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

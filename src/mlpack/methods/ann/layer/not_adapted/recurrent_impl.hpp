@@ -16,7 +16,6 @@
 #include "recurrent.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 Recurrent<InputType, OutputType>::Recurrent() :
@@ -278,7 +277,6 @@ void Recurrent<InputType, OutputType>::serialize(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

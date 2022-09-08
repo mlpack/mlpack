@@ -18,7 +18,6 @@
 
 
 namespace mlpack {
-namespace ann {
 
 template<
   typename InitializationRuleType,
@@ -301,7 +300,6 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

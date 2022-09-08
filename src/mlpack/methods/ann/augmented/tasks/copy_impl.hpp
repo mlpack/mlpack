@@ -16,9 +16,6 @@
 #include "copy.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 inline CopyTask::CopyTask(const size_t maxLength,
                           const size_t nRepeats,
@@ -105,9 +102,6 @@ inline void CopyTask::Generate(arma::mat& input,
   }
 }
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #endif

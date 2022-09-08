@@ -17,7 +17,6 @@
 #include "vr_class_reward.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 VRClassRewardType<MatType>::VRClassRewardType(
@@ -98,7 +97,6 @@ void VRClassRewardType<MatType>::serialize(
   ar(CEREAL_NVP(network));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

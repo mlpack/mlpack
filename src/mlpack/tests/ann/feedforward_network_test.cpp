@@ -19,7 +19,6 @@
 #include "../serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Train and evaluate a model with the specified structure.

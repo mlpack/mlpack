@@ -19,7 +19,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize weight matrix with the Lecun Normalization
@@ -144,7 +143,6 @@ class LecunNormalInitialization
   }
 }; // class LecunNormalInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

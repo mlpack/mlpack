@@ -16,7 +16,6 @@
 #include "softshrink.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for Soft Shrink activation function.
 // lambda is a hyperparameter.
@@ -53,7 +52,6 @@ void SoftShrinkType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(lambda));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

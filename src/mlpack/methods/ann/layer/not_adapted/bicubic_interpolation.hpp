@@ -13,7 +13,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Definition and Implementation of the Bicubic Interpolation Layer.
@@ -168,7 +167,6 @@ class BicubicInterpolation
   OutputDataType weights;
 }; // class BicubicInterpolation
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

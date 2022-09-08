@@ -16,7 +16,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Add layer. The Add module applies a bias term to the
@@ -112,7 +111,6 @@ class AddType : public Layer<MatType>
 // Standard Add layer.
 typedef AddType<arma::mat> Add;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

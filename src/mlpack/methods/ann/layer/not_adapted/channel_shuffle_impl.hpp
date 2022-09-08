@@ -16,7 +16,6 @@
 #include "channel_shuffle.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
@@ -131,7 +130,6 @@ void ChannelShuffle<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(depth));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

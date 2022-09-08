@@ -16,7 +16,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 // Generate dataset for activation function tests.
 const arma::colvec activationData("-2 3.2 4.5 -100.2 1 -1 2 0");

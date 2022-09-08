@@ -18,7 +18,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize weigth matrix with a gaussian.
@@ -114,7 +113,6 @@ class GaussianInitialization
   double variance;
 }; // class GaussianInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

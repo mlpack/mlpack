@@ -16,7 +16,6 @@
 #include "recurrent_layer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 template<typename MatType>
 RecurrentLayer<MatType>::RecurrentLayer() :
@@ -78,7 +77,6 @@ void RecurrentLayer<MatType>::serialize(
   ar(CEREAL_NVP(previousStep));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

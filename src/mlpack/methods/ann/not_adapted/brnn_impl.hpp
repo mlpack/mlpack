@@ -27,7 +27,6 @@
 #include "visitor/run_set_visitor.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
@@ -726,7 +725,6 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   // TODO: are there more parameters to be serialized?
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

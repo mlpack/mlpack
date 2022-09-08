@@ -20,7 +20,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Tests the BatchNorm Layer, compares the layers parameters with

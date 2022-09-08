@@ -19,7 +19,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Test that the functions that can modify and access the parameters of the

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Implementation of the NoRegularizer. This does not add any
@@ -52,7 +51,6 @@ class NoRegularizer
   }
 };
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -17,7 +17,6 @@
 #include "gru.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 GRU<InputType, OutputType>::GRU()
@@ -363,7 +362,6 @@ void GRU<InputType, OutputType>::serialize(
   ar(CEREAL_POINTER(hiddenStateModule));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

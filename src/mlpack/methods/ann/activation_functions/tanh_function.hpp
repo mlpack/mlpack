@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The tanh function, defined by
@@ -99,7 +98,6 @@ class TanhFunction
   }
 }; // class TanhFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

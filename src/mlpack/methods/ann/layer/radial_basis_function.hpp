@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Radial Basis Function layer. The RBFType class, when
@@ -39,7 +38,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
- * @tparam Activation Type of the activation function (mlpack::ann::Gaussian).
+ * @tparam Activation Type of the activation function (GaussianFunction).
  */
 
 template <
@@ -123,7 +122,6 @@ class RBFType : public Layer<MatType>
 
 typedef RBFType<arma::mat> RBF;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

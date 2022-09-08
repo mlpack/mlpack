@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_ANN_RBM_RBM_POLICIES_HPP
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * For more information, see the following paper:
@@ -43,7 +42,6 @@ class BinaryRBM { /* Nothing to do here */ };
  */
 class SpikeSlabRBM { /* Nothing to do here */ };
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

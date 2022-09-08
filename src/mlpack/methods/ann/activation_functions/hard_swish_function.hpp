@@ -27,7 +27,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 /**
  * The Hard Swish function, defined by
  *
@@ -110,7 +109,6 @@ class HardSwishFunction
   }
 }; // class HardSwishFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

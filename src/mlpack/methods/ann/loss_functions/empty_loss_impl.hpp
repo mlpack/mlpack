@@ -18,7 +18,6 @@
 #include "empty_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 EmptyLossType<MatType>::EmptyLossType()
@@ -42,7 +41,6 @@ void EmptyLossType<MatType>::Backward(
   loss = target;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

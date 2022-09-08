@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Quadratic function, defined by
@@ -75,7 +74,6 @@ class QuadraticFunction
   }
 }; // class QUADFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

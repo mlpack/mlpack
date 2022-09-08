@@ -15,9 +15,6 @@
 #include "sort.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 inline SortTask::SortTask(const size_t maxLength,
                           const size_t bitLen,
@@ -117,9 +114,6 @@ inline void SortTask::Generate(arma::mat& input,
   }
 }
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #endif

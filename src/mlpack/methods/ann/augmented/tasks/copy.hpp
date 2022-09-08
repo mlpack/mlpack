@@ -18,9 +18,6 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 /**
  * Generator of instances of the binary sequence copy task.
@@ -95,9 +92,6 @@ class CopyTask
   bool addSeparator;
 };
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #include "copy_impl.hpp"

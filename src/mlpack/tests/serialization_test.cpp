@@ -28,7 +28,6 @@
 #include <mlpack/methods/bayesian_linear_regression.hpp>
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 using namespace arma;
 using namespace cereal;

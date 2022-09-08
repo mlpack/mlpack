@@ -16,7 +16,6 @@
 #include "cosine_embedding_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 CosineEmbeddingLossType<MatType>::CosineEmbeddingLossType(
@@ -113,7 +112,6 @@ void CosineEmbeddingLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

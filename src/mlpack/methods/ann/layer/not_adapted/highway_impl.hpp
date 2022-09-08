@@ -17,7 +17,6 @@
 #include "highway.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 HighwayType<InputType, OutputType>::HighwayType()
@@ -188,7 +187,6 @@ void HighwayType<InputType, OutputType>::serialize(
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

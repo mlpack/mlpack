@@ -17,7 +17,6 @@
 #include "fast_lstm.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 FastLSTMType<InputType, OutputType>::FastLSTMType()
@@ -372,7 +371,6 @@ void FastLSTMType<InputType, OutputType>::serialize(
     Reset();
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

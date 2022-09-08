@@ -17,7 +17,6 @@
 #include "padding.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 PaddingType<MatType>::PaddingType(
@@ -195,7 +194,6 @@ void PaddingType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(totalInMaps));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -33,7 +33,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the base layer. The base layer works as a metaclass which
@@ -242,7 +241,6 @@ typedef BaseLayer<SILUFunction, arma::mat> SILU;
 template<typename MatType = arma::mat>
 using SILUType = BaseLayer<SILUFunction, MatType>;
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

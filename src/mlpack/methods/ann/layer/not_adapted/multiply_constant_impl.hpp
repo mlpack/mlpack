@@ -17,7 +17,6 @@
 #include "multiply_constant.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 MultiplyConstantType<InputType, OutputType>::MultiplyConstantType(
@@ -50,7 +49,6 @@ void MultiplyConstantType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(scalar));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

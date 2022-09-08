@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network. */ {
 
 /**
  * The Lookup class stores word embeddings and retrieves them using tokens. The
@@ -132,7 +131,6 @@ class LookupType : public Layer<InputType, OutputType>
 typedef LookupType<arma::mat, arma::mat> Lookup;
 typedef LookupType<arma::mat, arma::mat> Embedding;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

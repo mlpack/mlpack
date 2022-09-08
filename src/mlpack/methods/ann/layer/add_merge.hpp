@@ -16,7 +16,6 @@
 #include "multi_layer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Implementation of the AddMerge class. The AddMerge class works as a
@@ -97,7 +96,6 @@ class AddMergeType : public MultiLayer<MatType>
 
 typedef AddMergeType<arma::mat> AddMerge;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

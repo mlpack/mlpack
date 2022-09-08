@@ -18,7 +18,6 @@
 #include "instance_norm.hpp"
 
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 InstanceNorm<InputDataType, OutputDataType>::InstanceNorm() :
@@ -47,7 +46,7 @@ InstanceNorm<InputDataType, OutputDataType>::InstanceNorm(
     deterministic(false),
     reset(false)
 {
-    batchNorm = ann::BatchNorm<> (size * batchSize,
+    batchNorm = BatchNorm<> (size * batchSize,
                                   eps,
                                   average,
                                   momentum);
@@ -146,7 +145,6 @@ void InstanceNorm<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(batchNorm));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

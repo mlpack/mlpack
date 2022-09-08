@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The mean squared logarithmic error performance function measures the
@@ -81,7 +80,6 @@ class MeanSquaredLogarithmicErrorType
 // Default typedef for typical `arma::mat` usage.
 typedef MeanSquaredLogarithmicErrorType<arma::mat> MeanSquaredLogarithmicError;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

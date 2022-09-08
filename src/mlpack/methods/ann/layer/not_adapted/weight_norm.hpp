@@ -16,7 +16,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Declaration of the WeightNorm layer class. The layer reparameterizes
@@ -173,7 +172,6 @@ class WeightNormType : public Layer<InputType, OutputType>
 // Standard WeightNorm layer.
 typedef WeightNormType<arma::mat, arma::mat> WeightNorm;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include the implementation.

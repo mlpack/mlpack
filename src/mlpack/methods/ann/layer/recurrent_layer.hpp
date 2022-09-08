@@ -16,7 +16,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 /**
  * The `RecurrentLayer` provides a base layer for all layers that have recurrent
@@ -99,7 +98,6 @@ class RecurrentLayer : public Layer<MatType>
   size_t previousStep;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 #include "recurrent_layer_impl.hpp"

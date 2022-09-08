@@ -24,7 +24,6 @@
 #include "padding.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Convolution class. The Convolution class represents a
@@ -375,7 +374,7 @@ class ConvolutionType : public Layer<MatType>
   arma::Cube<typename MatType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding padding;
+  Padding padding;
 
   //! Type of padding.
   std::string paddingType;
@@ -394,7 +393,6 @@ typedef ConvolutionType<
     arma::mat
 > Convolution;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

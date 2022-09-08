@@ -15,7 +15,6 @@
 #include <mlpack/methods/ann/rbm/rbm_policies.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The implementation of the RBM module. A Restricted Boltzmann Machines (RBM)
@@ -448,7 +447,6 @@ class RBM
   bool reset;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 #include "rbm_impl.hpp"

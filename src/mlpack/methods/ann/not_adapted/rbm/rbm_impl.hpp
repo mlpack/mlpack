@@ -17,7 +17,6 @@
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial neural networks. */ {
 
 template<
   typename InitializationRuleType,
@@ -344,6 +343,5 @@ void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 #endif

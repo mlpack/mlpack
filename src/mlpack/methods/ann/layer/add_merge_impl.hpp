@@ -15,7 +15,6 @@
 #include "add_merge.hpp"
 
 namespace mlpack {
-namespace ann {
 
 template<typename MatType>
 AddMergeType<MatType>::AddMergeType() :
@@ -200,7 +199,6 @@ void AddMergeType<MatType>::serialize(
   ar(cereal::base_class<MultiLayer<MatType>>(this));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

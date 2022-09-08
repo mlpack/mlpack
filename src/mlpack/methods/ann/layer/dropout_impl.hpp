@@ -17,7 +17,6 @@
 #include "dropout.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 DropoutType<MatType>::DropoutType(
@@ -116,7 +115,6 @@ void DropoutType<MatType>::serialize(
   scale = 1.0 / (1.0 - ratio);
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

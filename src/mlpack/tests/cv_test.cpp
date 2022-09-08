@@ -23,7 +23,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace mlpack::data;
 
 /**

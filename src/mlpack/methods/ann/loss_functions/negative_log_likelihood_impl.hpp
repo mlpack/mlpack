@@ -16,7 +16,6 @@
 #include "negative_log_likelihood.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 NegativeLogLikelihoodType<MatType>::NegativeLogLikelihoodType(
@@ -73,7 +72,6 @@ void NegativeLogLikelihoodType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

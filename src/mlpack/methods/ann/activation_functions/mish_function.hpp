@@ -27,7 +27,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Mish function, defined by
@@ -93,7 +92,6 @@ class MishFunction
   }
 }; // class MishFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

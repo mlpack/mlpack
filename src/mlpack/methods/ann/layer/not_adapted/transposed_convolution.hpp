@@ -26,7 +26,6 @@
 #include "padding.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Transposed Convolution class. The Transposed
@@ -449,10 +448,10 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   arma::Cube<typename OutputType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer for forward propagation.
-  ann::Padding paddingForward;
+  Padding paddingForward;
 
   //! Locally-stored padding layer for back propagation.
-  ann::Padding paddingBackward;
+  Padding paddingBackward;
 }; // class TransposedConvolutionType
 
 // Standard TransposedConvolution
@@ -464,7 +463,6 @@ typedef TransposedConvolutionType<
   arma::mat
 > TransposedConvolution;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

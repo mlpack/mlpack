@@ -17,7 +17,6 @@
 #include "pixel_shuffle.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 PixelShuffle<InputDataType, OutputDataType>::PixelShuffle() :
@@ -135,7 +134,6 @@ void PixelShuffle<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(sizeOut));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

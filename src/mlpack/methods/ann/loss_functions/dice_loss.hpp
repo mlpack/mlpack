@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The dice loss performance function measures the network's
@@ -93,7 +92,6 @@ class DiceLossType
 // Default typedef for typical `arma::mat` usage.
 typedef DiceLossType<arma::mat> DiceLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

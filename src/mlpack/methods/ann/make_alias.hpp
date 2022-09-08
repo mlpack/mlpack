@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
@@ -54,7 +53,6 @@ void MakeAlias(CubeType& c,
   new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

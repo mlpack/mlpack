@@ -25,7 +25,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace std::placeholders;
 
 /*

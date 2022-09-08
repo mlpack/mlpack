@@ -19,7 +19,6 @@
 #include "sequential.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // TODO: refactor recurrent layer
 /**
@@ -190,7 +189,6 @@ class RecurrentAttention : public MultiLayer<InputType, OutputType>
   OutputType intermediateGradient;
 }; // class RecurrentAttention
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

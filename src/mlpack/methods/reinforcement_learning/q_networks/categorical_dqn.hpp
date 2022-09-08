@@ -41,9 +41,9 @@ namespace rl {
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
-  typename OutputLayerType = ann::EmptyLoss,
-  typename InitType = ann::GaussianInitialization,
-  typename NetworkType = ann::FFN<OutputLayerType, InitType>
+  typename OutputLayerType = EmptyLoss,
+  typename InitType = GaussianInitialization,
+  typename NetworkType = FFN<OutputLayerType, InitType>
 >
 class CategoricalDQN
 {
@@ -79,21 +79,21 @@ class CategoricalDQN
       vMax(config.VMax()),
       isNoisy(isNoisy)
   {
-    network.Add(new ann::Linear(h1));
-    network.Add(new ann::ReLU());
+    network.Add(new Linear(h1));
+    network.Add(new ReLU());
     if (isNoisy)
     {
       noisyLayerIndex.push_back(network.Network().size());
-      network.Add(new ann::NoisyLinear(h2));
-      network.Add(new ann::ReLU());
+      network.Add(new NoisyLinear(h2));
+      network.Add(new ReLU());
       noisyLayerIndex.push_back(network.Network().size());
-      network.Add(new ann::NoisyLinear(outputDim * atomSize));
+      network.Add(new NoisyLinear(outputDim * atomSize));
     }
     else
     {
-      network.Add(new ann::Linear(h2));
-      network.Add(new ann::ReLU());
-      network.Add(new ann::Linear(outputDim * atomSize));
+      network.Add(new Linear(h2));
+      network.Add(new ReLU());
+      network.Add(new Linear(outputDim * atomSize));
     }
   }
 
@@ -179,7 +179,7 @@ class CategoricalDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); ++i)
     {
-      dynamic_cast<ann::NoisyLinear*>(
+      dynamic_cast<NoisyLinear*>(
           (network.Network()[noisyLayerIndex[i]]))->ResetNoise();
     }
   }
@@ -232,7 +232,7 @@ class CategoricalDQN
   std::vector<size_t> noisyLayerIndex;
 
   //! Locally-stored softmax activation function.
-  ann::Softmax softMax;
+  Softmax softMax;
 
   //! Locally-stored activations from softMax.
   arma::mat activations;

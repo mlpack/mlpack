@@ -16,7 +16,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // TODO: what about sizes for this layer?
 /**
@@ -177,7 +176,6 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
 // Standard VirtualBatchNorm layer.
 typedef VirtualBatchNormType<arma::mat, arma::mat> VirtualBatchNorm;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include the implementation.

@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * A concatenated ReLU has two outputs, one ReLU and one negative ReLU,
@@ -87,7 +86,6 @@ class CReLUType : public Layer<InputType, OutputType>
 // Standard CReLU layer.
 typedef CReLUType<arma::mat, arma::mat> CReLU;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

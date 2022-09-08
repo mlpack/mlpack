@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The dropout layer is a regularizer that randomly with probability 'ratio'
@@ -119,7 +118,6 @@ class DropoutType : public Layer<MatType>
 // Standard Dropout layer.
 typedef DropoutType<arma::mat> Dropout;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

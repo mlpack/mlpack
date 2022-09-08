@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the LPPooling.
@@ -315,7 +314,6 @@ class LpPooling
 }; // class LpPooling
 
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

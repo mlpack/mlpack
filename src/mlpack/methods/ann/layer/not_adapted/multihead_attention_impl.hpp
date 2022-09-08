@@ -19,7 +19,6 @@
 #include <mlpack/core/math/multiply_slices.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputType, typename RegularizerType>
 MultiheadAttentionType<InputType, OutputType, RegularizerType>::
@@ -462,7 +461,6 @@ serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

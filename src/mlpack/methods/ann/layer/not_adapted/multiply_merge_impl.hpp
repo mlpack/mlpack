@@ -21,7 +21,6 @@
 // #include "../visitor/gradient_visitor.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 MultiplyMergeType<InputType, OutputType>::MultiplyMergeType(
@@ -110,7 +109,6 @@ void MultiplyMergeType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(run));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

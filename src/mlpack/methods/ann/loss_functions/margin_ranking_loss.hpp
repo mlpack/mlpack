@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Margin ranking loss measures the loss given inputs and a label vector with
@@ -94,7 +93,6 @@ class MarginRankingLossType
 // Default typedef for typical `arma::mat` usage.
 typedef MarginRankingLossType<arma::mat> MarginRankingLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation.

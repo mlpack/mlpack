@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Spline function, defined by
@@ -75,7 +74,6 @@ class SplineFunction
   }
 }; // class SplineFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -17,7 +17,6 @@
 #include "max_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MaxPoolingType<MatType>::MaxPoolingType() :
@@ -208,7 +207,6 @@ void MaxPoolingType<MatType>::serialize(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

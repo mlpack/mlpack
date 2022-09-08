@@ -18,7 +18,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::rl;
 

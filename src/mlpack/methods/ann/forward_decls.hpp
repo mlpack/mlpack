@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_FORWARD_DECLS_HPP
 
 namespace mlpack {
-namespace ann {
 
 // See ffn.hpp.
 template<typename OutputLayerType,
@@ -28,7 +27,6 @@ template<typename OutputLayerType,
          typename MatType>
 class RNN;
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

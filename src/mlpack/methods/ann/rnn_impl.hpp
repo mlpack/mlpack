@@ -17,7 +17,6 @@
 #include "layer/recurrent_layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename OutputLayerType,
@@ -614,7 +613,6 @@ void RNN<
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

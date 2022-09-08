@@ -17,7 +17,6 @@
 #include "grouped_convolution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename ForwardConvolutionRule,
@@ -588,7 +587,7 @@ void GroupedConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = ann::Padding(padWLeft, padWRight, padHTop, padHBottom);
+  padding = Padding(padWLeft, padWRight, padHTop, padHBottom);
   padding.InputDimensions() = this->inputDimensions;
   padding.ComputeOutputDimensions();
 
@@ -686,7 +685,6 @@ void GroupedConvolutionType<
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

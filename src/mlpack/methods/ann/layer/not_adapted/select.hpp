@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The select module selects the specified dimensions from a given input point.
@@ -110,7 +109,6 @@ class SelectType : public Layer<InputType, OutputType>
 // Standard Select layer.
 typedef SelectType<arma::mat, arma::mat> Select;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

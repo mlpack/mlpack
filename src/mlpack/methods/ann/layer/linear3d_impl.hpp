@@ -16,7 +16,6 @@
 #include "linear3d.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename RegularizerType>
 Linear3DType<MatType, RegularizerType>::Linear3DType() :
@@ -204,7 +203,6 @@ void Linear3DType<MatType, RegularizerType>::serialize(
   ar(CEREAL_NVP(regularizer));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

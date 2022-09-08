@@ -16,7 +16,6 @@
 #include "../activation_functions/logistic_function.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Multiple independent Bernoulli distributions.
@@ -138,7 +137,6 @@ class BernoulliDistribution
   double eps;
 }; // class BernoulliDistribution
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

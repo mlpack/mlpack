@@ -17,7 +17,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Simple bernoulli distribution module test.
@@ -128,7 +127,7 @@ TEST_CASE("NormalDistributionTest", "[ANNDistTest]")
   arma::vec mu = {1.1, 1.2, 1.5, 1.7};
   arma::vec sigma = {0.1, 0.11, 0.5, 0.23};
 
-  ann::NormalDistribution<> normalDist(mu, sigma);
+  NormalDistribution<> normalDist(mu, sigma);
 
   arma::vec x = {1.05, 1.1, 1.7, 2.5};
 
