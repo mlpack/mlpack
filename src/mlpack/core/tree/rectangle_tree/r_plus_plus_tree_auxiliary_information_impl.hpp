@@ -27,9 +27,7 @@ RPlusPlusTreeAuxiliaryInformation() :
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
-    outerBound(tree->Parent() ?
-               tree->Parent()->AuxiliaryInfo().OuterBound() :
-               tree->Bound().Dim())
+    outerBound(tree->Bound().Dim())
 {
   // Initialize the maximum bounding rectangle if the node is the root
   if (!tree->Parent())
@@ -39,6 +37,10 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
       outerBound[k].Lo() = std::numeric_limits<ElemType>::lowest();
       outerBound[k].Hi() = std::numeric_limits<ElemType>::max();
     }
+  }
+  else
+  {
+    outerBound = tree->Parent()->AuxiliaryInfo().OuterBound();
   }
 }
 
