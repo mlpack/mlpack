@@ -72,4 +72,7 @@
 #include "mlpack/methods/sparse_coding.hpp"
 #include "mlpack/methods/svdplusplus.hpp"
 
+// Include reverse compatibility.
+#include "mlpack/namespace_compat.hpp"
+
 #endif
