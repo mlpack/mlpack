@@ -417,30 +417,6 @@ More documentation is available for both users and developers.
 To learn about the development goals of mlpack in the short- and medium-term
 future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
-<<<<<<< HEAD
-### 8. Bug reporting
-
-   (see also [mlpack help](https://www.mlpack.org/questions.html))
-
-If you find a bug in mlpack or have any problems, numerous routes are available
-for help.
-
-Github is used for bug tracking, and can be found at
-https://github.com/mlpack/mlpack/issues.
-It is easy to register an account and file a bug there, and the mlpack
-development team will try to quickly resolve your issue.
-
-In addition, mailing lists are available.  The mlpack discussion list is
-available at
-
-  [mlpack discussion list](http://lists.mlpack.org/mailman/listinfo/mlpack)
-
-and the git commit list is available at
-
-  [commit list](http://lists.mlpack.org/mailman/listinfo/mlpack-git)
-
-Lastly, the IRC channel `#mlpack` on Freenode can be used to get help.
-
 If you have problems, find a bug, or need help, you can try visiting
 the [mlpack help](https://www.mlpack.org/questions.html) page, or [mlpack on
 Github](https://www.github.com/mlpack/mlpack/).  Alternately, mlpack help can be
