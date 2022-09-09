@@ -110,7 +110,7 @@ BINDING_SEE_ALSO("@gmm_probability", "#gmm_probability");
 BINDING_SEE_ALSO("Gaussian Mixture Models on Wikipedia",
         "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
 BINDING_SEE_ALSO("mlpack::gmm::GMM class documentation",
-        "@doxygen/classmlpack_1_1gmm_1_1GMM.html");
+        "@src/mlpack/methods/gmm/gmm.hpp");
 
 // Parameters for training.
 PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "

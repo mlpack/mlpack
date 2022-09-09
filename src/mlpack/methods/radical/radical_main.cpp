@@ -57,7 +57,7 @@ BINDING_SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
         "http://www.jmlr.org/papers/volume4/learned-miller03a/"
         "learned-miller03a.pdf");
 BINDING_SEE_ALSO("mlpack::radical::Radical C++ class documentation",
-        "@doxygen/classmlpack_1_1radical_1_1Radical.html");
+        "@src/mlpack/methods/radical/radical.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 

@@ -93,7 +93,8 @@ BINDING_SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
         "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
         "coordinate-coding.pdf");
 BINDING_SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
-        "@doxygen/classmlpack_1_1lcc_1_1LocalCoordinateCoding.html");
+        "@src/mlpack/methods/local_coordinate_coding/local_coordinate_coding."
+        "hpp");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

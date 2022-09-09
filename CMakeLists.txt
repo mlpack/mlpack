@@ -17,7 +17,6 @@ option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not available." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
-option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 # Set minimum library versions required by mlpack.
 #
@@ -483,48 +482,6 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CROSS_COMPILE_SUPPORT_LIBRARIES})
 
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
-
-# Make a target to generate the documentation.  If Doxygen isn't installed, then
-# I guess this option will just be unavailable.
-if (BUILD_DOCS)
-  find_package(Doxygen)
-  if (DOXYGEN_FOUND)
-    if (MATHJAX)
-      find_package(MathJax)
-      if (NOT MATHJAX_FOUND)
-        message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
-            "Be careful, formulas will not be shown without the internet.")
-      endif ()
-    endif ()
-    # Preprocess the Doxyfile.  This is done before 'make doc'.
-    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
-        PRE_BUILD
-        COMMAND ${CMAKE_COMMAND}
-            -D DESTDIR=${CMAKE_BINARY_DIR}
-            -D MATHJAX="${MATHJAX}"
-            -D MATHJAX_FOUND="${MATHJAX_FOUND}"
-            -D MATHJAX_PATH="${MATHJAX_PATH}"
-            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-        COMMENT "Creating Doxyfile to generate Doxygen documentation"
-    )
-
-    # Generate documentation.
-    add_custom_target(doc
-        COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
-        DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-        COMMENT "Generating API documentation with Doxygen"
-    )
-
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
-        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-        COMPONENT doc
-        OPTIONAL
-    )
-  endif ()
-endif()
 
 # Create the pkg-config file, if we have pkg-config.
 find_package(PkgConfig)

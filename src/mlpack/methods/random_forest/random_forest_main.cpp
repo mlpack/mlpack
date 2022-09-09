@@ -105,7 +105,7 @@ BINDING_SEE_ALSO("Random forest on Wikipedia",
 BINDING_SEE_ALSO("Random forests (pdf)",
         "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf");
 BINDING_SEE_ALSO("mlpack::tree::RandomForest C++ class documentation",
-        "@doxygen/classmlpack_1_1tree_1_1RandomForest.html");
+        "@src/mlpack/methods/random_forest/random_forest.cpp");
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");

@@ -129,7 +129,7 @@ BINDING_SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo"
         "dimensional-kernel-summations-using-the-monte-carlo-multipole-method."
         "pdf");
 BINDING_SEE_ALSO("mlpack::kde::KDE C++ class documentation",
-        "@doxygen/classmlpack_1_1kde_1_1KDE.html");
+        "@src/mlpack/methods/kde/kde.hpp");
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input reference dataset use for KDE.", "r");

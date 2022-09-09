@@ -29,9 +29,26 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 **mlpack** is an intuitive, fast, and flexible header-only C++ machine learning
 library with bindings to other languages.  It is meant to be a machine learning
 analog to LAPACK, and aims to implement a wide array of machine learning methods
-and functions as a "swiss army knife" for machine learning researchers.  In
-addition to its powerful C++ interface, mlpack also provides command-line
+and functions as a "swiss army knife" for machine learning researchers.
+
+mlpack's lightweight C++ implementation makes it ideal for deployment, and it
+can also be used for interactive prototyping via C++ notebooks (these can be
+seen in action on mlpack's [homepage](https://www.mlpack.org/)).
+
+In addition to its powerful C++ interface, mlpack also provides command-line
 programs, Python bindings, Julia bindings, Go bindings and R bindings.
+
+***Quick links:***
+
+ - Quickstart guides: [C++](doc/quickstart/cpp.md),
+   [CLI](doc/quickstart/cli.md), [Python](doc/quickstart/python.md),
+   [R](doc/quickstart/R.md), [Julia](doc/quickstart/julia.md),
+   [Go](doc/quickstart/go.md)
+ - [mlpack homepage](https://www.mlpack.org/)
+ - [mlpack documentation](https://www.mlpack.org/docs.html)
+ - [Examples repository](https://github.com/mlpack/examples/)
+ - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
+ - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
 
@@ -50,32 +67,21 @@ variety of other needs.
 </div>
 <br>
 
-### 0. Contents
+## 0. Contents and Quick Links
 
-  1. [Introduction](#1-introduction)
-  2. [Citation details](#2-citation-details)
-  3. [Dependencies](#3-dependencies)
-  4. [Building mlpack from source](#4-building-mlpack-from-source)
-  5. [Running mlpack programs](#5-running-mlpack-programs)
-  6. [Using mlpack from Python](#6-using-mlpack-from-python)
-  7. [Further documentation](#7-further-documentation)
-  8. [Bug reporting](#8-bug-reporting)
-  9. [Building mlpack from vcpkg](#9-building-mlpack-from-vcpkg)
+ 1. [Citation details](#1-citation-details)
+ 2. [Dependencies](#2-dependencies)
+ 3. [Installing and using mlpack in C++](#4-installing-and-using-mlpack-in-c++)
+ 4. [Building mlpack bindings to other languages](#5-building-mlpack-bindings-to-other-languages)
+     1. [Command-line programs](#4i-command-line-programs)
+     2. [Python bindings](#4ii-python-bindings)
+     3. [R bindings](#4iii-r-bindings)
+     4. [Julia bindings](#4iv-julia-bindings)
+     5. [Go bindings](#4v-go-bindings)
+ 5. [Building mlpack's test suite](#5-building-mlpacks-test-suite)
+ 6. [Further resources](#6-further-resources)
 
-###  1. Introduction
-
-The mlpack website can be found at https://www.mlpack.org and it contains
-numerous tutorials and extensive documentation.  This README serves as a guide
-for what mlpack is, how to install it, how to run it, and where to find more
-documentation. The website should be consulted for further information:
-
-  - [mlpack homepage](https://www.mlpack.org/)
-  - [mlpack documentation](https://www.mlpack.org/docs.html)
-  - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
-  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
-
-### 2. Citation details
+## 1. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BibTeX format):
@@ -96,266 +102,322 @@ citation below (given in BibTeX format):
 
 Citations are beneficial for the growth and improvement of mlpack.
 
-### 3. Dependencies
+## 2. Dependencies
 
-mlpack has the following dependencies:
+mlpack requires a C++14 compiler and has the following additional dependencies:
 
-      Armadillo      >= 9.800
-      CMake          >= 3.6
-      ensmallen      >= 2.10.0
-      cereal         >= 1.1.2
-
-All of those should be available in your distribution's package manager.  If
-not, you will have to compile each of them by hand.  See the documentation for
-each of those packages for more information.
-
-If you would like to use or build the mlpack Python bindings, make sure that the
-following Python packages are installed:
-
-      setuptools
-      cython >= 0.24
-      numpy
-      pandas >= 0.15.0
-
-If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
-installed.
-
-If you would like to build the Go bindings, make sure that Go >= 1.11.0 is
-installed with this package:
-
-     Gonum
-
-If you would like to build the R bindings, make sure that R >= 4.0 is
-installed with these R packages.
-
-     Rcpp >= 0.12.12
-     RcppArmadillo >= 0.8.400.0
-     RcppEnsmallen >= 0.2.10.0
-     BH >= 1.58
-     roxygen2
+ - Armadillo      >= 9.800
+ - ensmallen      >= 2.10.0
+ - cereal         >= 1.1.2
 
 If the STB library headers are available, image loading support will be
-compiled.
+available.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
-### 4. Building mlpack from source
+## 3. Installing and using mlpack in C++
 
-This document discusses how to build mlpack from source. These build directions
-will work for any Linux-like shell environment (for example Ubuntu, macOS,
-FreeBSD etc). However, mlpack is in the repositories of many Linux distributions
-and so it may be easier to use the package manager for your system.  For example,
-on Ubuntu, you can install the mlpack library and command-line executables (e.g.
-mlpack_pca, mlpack_kmeans etc.) with the following command:
+*See also the [C++ quickstart](doc/quickstart/cpp.md).*
 
-    $ sudo apt-get install libmlpack-dev mlpack-bin
+Since mlpack is a header-only library, installing just the headers for use in a
+C++ application is trivial.  From the root of the sources, configure and install
+in the standard CMake way:
 
-On Fedora or Red Hat (EPEL):
-
-    $ sudo dnf install mlpack-devel mlpack-bin
-
-*Note*: Older Ubuntu versions may not have the most recent version of mlpack
-available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.4.2 available.  Options include upgrading your Ubuntu version, finding
-a PPA or other non-official sources, or installing with a manual build.
-
-*Note*: If you are using RHEL7/CentOS 7, gcc 4.8 is too old to compile mlpack.
-One option is to use `devtoolset-8`; see
-[here](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/) for more
-information.
-
-There are some useful pages to consult in addition to this section:
-
-  - [Building mlpack From Source](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html)
-  - [Building mlpack From Source on Windows](https://www.mlpack.org/doc/mlpack-git/doxygen/build_windows.html)
-
-mlpack uses CMake as a build system and allows several flexible build
-configuration options. You can consult any of the CMake tutorials for
-further documentation, but this tutorial should be enough to get mlpack built
-and installed.
-
-First, unpack the mlpack source and change into the unpacked directory.  Here we
-use mlpack-x.y.z where x.y.z is the version.
-
-    $ tar -xzf mlpack-x.y.z.tar.gz
-    $ cd mlpack-x.y.z
-
-Then, make a build directory.  The directory can have any name, but 'build' is
-sufficient.
-
-    $ mkdir build
-    $ cd build
-
-The next step is to run CMake to configure the project.  Running CMake is the
-equivalent to running `./configure` with autotools. If you run CMake with no
-options, it will configure the project to build with no debugging symbols and
-no profiling information:
-
-    $ cmake ../
-
-Options can be specified to compile with debugging information and profiling information:
-
-    $ cmake -D DEBUG=ON -D PROFILE=ON ../
-
-Options are specified with the -D flag.  The allowed options include:
-
-    DEBUG=(ON/OFF): compile with debugging symbols
-    PROFILE=(ON/OFF): compile with profiling symbols
-    ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
-    ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
-    ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
-    BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
-    BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
-    PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
-    PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
-    BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
-    JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
-    BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
-    GO_EXECUTABLE=(/path/to/go): Path to specific Go executable
-    BUILD_GO_SHLIB=(ON/OFF): whether or not to build shared libraries required by Go bindings
-    BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
-    R_EXECUTABLE=(/path/to/R): Path to specific R executable
-    BUILD_TESTS=(ON/OFF): whether or not to build tests
-    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as
-        opposed to static libraries
-    DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
-    ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
-       for ensmallen
-    STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
-       STB image library
-    USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
-    BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
-       (default ON)
-
-For example, to build mlpack's CLI bindings statically the following command can
-be used:
-
-    $ cmake  -D BUILD_SHARED_LIBS=OFF ../
-
-Other tools can also be used to configure CMake, but those are not documented
-here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)
-for more details, including a full list of options, and their default values.
-
-By default, command-line programs will be built, and if the Python dependencies
-(Cython, setuptools, numpy, pandas) are available, then Python bindings will
-also be built.  OpenMP will be used for parallelization when possible by
-default.
-
-Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components and bindings.
-
-    $ make
-
-If you do not want to build everything in the library, individual components
-of the build can be specified:
-
-    $ make mlpack_pca mlpack_knn mlpack_kfn
-
-If you want to build the tests, just make the `mlpack_test` target, and use
-`ctest` to run the tests:
-
-    $ make mlpack_test
-    $ ctest .
-
-If the build fails and you cannot figure out why, register an account on Github
-and submit an issue. The mlpack developers will quickly help you figure it out:
-
-[mlpack on Github](https://www.github.com/mlpack/mlpack/)
-
-Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
-
-If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
-and `/usr/local/bin/`, make sure you have root privileges (or write permissions
-to those three directories), and simply type
-
-    $ make install
-
-You can now run the executables by name; the mlpack headers are found in
-    `/usr/local/include/mlpack/`
-and if Python bindings were built, you can access them with the `mlpack`
-package in Python.
-
-### 5. Running mlpack programs
-
-After building mlpack, the executables will reside in `build/bin/`.  You can
-call them from there, or you can install the library and (depending on system
-settings) they should be added to your PATH and you can call them directly.  The
-documentation below assumes the executables are in your PATH.
-
-Consider the 'mlpack_knn' program, which finds the k nearest neighbors in a
-reference dataset of all the points in a query set.  That is, we have a query
-and a reference dataset. For each point in the query dataset, we wish to know
-the k points in the reference dataset which are closest to the given query
-point.
-
-Alternately, if the query and reference datasets are the same, the problem can
-be stated more simply: for each point in the dataset, we wish to know the k
-nearest points to that point.
-
-Each mlpack program has extensive help documentation which details what the
-method does, what each of the parameters is, and how to use them:
-
-```shell
-$ mlpack_knn --help
+```sh
+mkdir build && cd build/
+cmake ../
+sudo make install
 ```
 
-Running `mlpack_knn` on one dataset (that is, the query and reference
-datasets are the same) and finding the 5 nearest neighbors is very simple:
+You can add a few arguments to the `cmake` command to control the behavior of
+the configuration and build process.  Simply add these to the `cmake` command.
+Some options are given below:
 
-```shell
-$ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+ - `-DCMAKE_INSTALL_PREFIX=/install/root/` will set the root of the install
+   directory to `/install/root` when `make install` is run.
+ - `-DDOWNLOAD_DEPENDENCIES=ON` will automatically download mlpack's
+   dependencies (ensmallen, Armadillo, and cereal).
+ - `-DDEBUG=ON` will enable debugging symbols in any compiled bindings or tests.
+
+There are also options to enable building bindings to each language that mlpack
+supports; those are detailed in the following sections.
+
+Once headers are installed with `make install`, using mlpack in an application
+consists only of including it.  So, your program should include mlpack:
+
+```c++
+#include <mlpack.hpp>
 ```
 
-The `-v (--verbose)` flag is optional; it gives informational output.  It is not
-unique to `mlpack_knn` but is available in all mlpack programs.  Verbose
-output also gives timing output at the end of the program, which can be very
-useful.
+and when you link, be sure to link against Armadillo.  If your example program
+is `my_program.cpp`, your compiler is GCC, and you would like to compile with
+OpenMP support (recommended) and optimizations, compile like this:
 
-### 6. Using mlpack from Python
-
-If mlpack is installed to the system, then the mlpack Python bindings should be
-automatically in your PYTHONPATH, and importing mlpack functionality into Python
-should be very simple:
-
-```python
->>> from mlpack import knn
+```sh
+g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
 ```
 
-Accessing help is easy:
+Note that if you want to serialize (save or load) neural networks, you should
+add `#define MLPACK_ENABLE_ANN_SERIALIZATION` before including `<mlpack.hpp>`.
 
-```python
->>> help(knn)
+See the [C++ quickstart](doc/quickstart/cpp.md) and the
+[examples](https://github.com/mlpack/examples) repository for some examples of
+mlpack applications in C++, with corresponding `Makefile`s.
+
+### 3.1. Including mlpack and improving compile time
+
+mlpack is a template-heavy library, and if care is not used, compilation time of
+a project can be increased greatly.  Fortunately, there are a number of ways to
+reduce compilation time:
+
+ * Include individual headers, like `<mlpack/methods/decision_tree.hpp>`, if you
+   are only using one component, instead of `<mlpack.hpp>`.  This reduces the
+   amount of work the compiler has to do.
+
+ * Only use the `MLPACK_ENABLE_ANN_SERIALIZATION` definition if you are
+   serializing neural networks in your code.  When this define is enabled,
+   compilation time will increase significantly, as the compiler must generate
+   code for every possible type of layer.
+
+ * If you are using mlpack in multiple .cpp files, consider using [`extern
+   templates`](https://isocpp.org/wiki/faq/cpp11-language-templates) so that the
+   compiler only instantiates each template once; add an explicit template
+   instantiation for each mlpack template type you want to use in a .cpp file,
+   and then use `extern` definitions elsewhere to let the compiler know it
+   exists in a different file.
+
+Other strategies exist too, such as precompiled headers, compiler options,
+[`ccache`](https://ccache.dev), and others.
+
+## 4. Building mlpack bindings to other languages
+
+mlpack is not just a header-only library: it also comes with bindings to a
+number of other languages, this allows flexible use of mlpack's efficient
+implementations from languages that aren't C++.
+
+In general, you should *not* need to build these by hand---they should be
+provided by either your system package manager or your language's package
+manager.
+
+Building the bindings for a particular language is done by calling `cmake` with
+different options; each example below shows how to configure an individual set
+of bindings, but it is of course possible to combine the options and build
+bindings for many languages at once.
+
+### 4.i. Command-line programs
+
+*See also the [command-line quickstart](doc/quickstart/cli.md).*
+
+The command-line programs have no extra dependencies.  The set of programs that
+will be compiled is detailed and documented on the [command-line program
+documentation page](https://www.mlpack.org/doc/stable/cli_documentation.html).
+
+From the root of the mlpack sources, run the following commands to build and
+install the command-line bindings:
+
+```sh
+mkdir build && cd build/
+cmake -DBUILD_CLI_PROGRAMS=ON ../
+make
+sudo make install
 ```
 
-The API is similar to the command-line programs.  So, running `knn()`
-(k-nearest-neighbor search) on the numpy matrix `dataset` and finding the 5
-nearest neighbors is very simple:
+You can use `make -j<N>`, where `N` is the number of cores on your machine, to
+build in parallel; e.g., `make -j4` will use 4 cores to build.
 
-```python
->>> output = knn(reference=dataset, k=5, verbose=True)
+### 4.ii. Python bindings
+
+*See also the [Python quickstart](doc/quickstart/python.md).*
+
+mlpack's Python bindings are available on
+[PyPI](https://pypi.org/project/mlpack) and
+[conda-forge](https://conda-forge.org/packages/mlpack), and can be installed
+with either `pip install mlpack` or `conda install -c conda-forge mlpack`.
+These sources are recommended, as building the Python bindings by hand can be
+complex.
+
+With that in mind, if you would still like to manually build the mlpack Python
+bindings, first make sure that the following Python packages are installed:
+
+ - setuptools
+ - cython >= 0.24
+ - numpy
+ - pandas >= 0.15.0
+
+Now, from the root of the mlpack sources, run the following commands to build
+and install the Python bindings:
+
+```sh
+mkdir build && cd build/
+cmake -DBUILD_PYTHON_BINDINGS=ON ../
+make
+sudo make install
 ```
 
-This will store the output neighbors in `output['neighbors']` and the output
-distances in `output['distances']`.  Other mlpack bindings function similarly,
-and the input/output parameters exactly match those of the command-line
-programs.
+You can use `make -j<N>`, where `N` is the number of cores on your machine, to
+build in parallel; e.g., `make -j4` will use 4 cores to build.  You can also
+specify a custom Python interpreter with the CMake option
+`-DPYTHON_EXECUTABLE=/path/to/python`.
 
-### 7. Further documentation
+### 4.iii. R bindings
 
-The documentation given here is only a fraction of the available documentation
-for mlpack.  If doxygen is installed, you can type `make doc` to build the
-documentation locally.  Alternately, up-to-date documentation is available for
-older versions of mlpack:
+*See also the [R quickstart](doc/quickstart/R.md).*
 
-  - [mlpack homepage](https://www.mlpack.org/)
-  - [mlpack documentation](https://www.mlpack.org/docs.html)
-  - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
-  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+mlpack's R bindings are available as the R package
+[mlpack](https://cran.r-project.org/web/packages/mlpack/index.html) on CRAN.
+You can install the package by running `install.packages('mlpack')`, and this is
+the recommended way of getting mlpack in R.
+
+If you still wish to build the R bindings by hand, first make sure the following
+dependencies are installed:
+
+ - R >= 4.0
+ - Rcpp >= 0.12.12
+ - RcppArmadillo >= 0.9.800.0
+ - RcppEnsmallen >= 0.2.10.0
+ - roxygen2
+ - testthat
+ - pkgbuild
+
+These can be installed with `install.packages()` inside of your R environment.
+Once the dependencies are available, you can configure mlpack and build the R
+bindings by running the following commands from the root of the mlpack sources:
+
+```sh
+mkdir build && cd build/
+cmake -DBUILD_R_BINDINGS=ON ../
+make
+sudo make install
+```
+
+You may need to specify the location of the R program in the `cmake` command
+with the option `-DR_EXECUTABLE=/path/to/R`.
+
+Once the build is complete, a tarball can be found under the build directory in
+`src/mlpack/bindings/R/`, and then that can be installed into your R environment
+with a command like `install.packages(mlpack_3.4.3.tar.gz, repos=NULL,
+type='source')`.
+
+### 4.iv. Julia bindings
+
+*See also the [Julia quickstart](doc/quickstart/julia.md).*
+
+mlpack's Julia bindings are available by installing the
+[mlpack.jl](https://github.com/mlpack/mlpack.jl) package using
+`Pkg.add("mlpack.jl")`.  The process of building, packaging, and distributing
+mlpack's Julia bindings is very nontrivial, so it is recommended to simply use
+the version available in `Pkg`, but if you want to build the bindings by hand
+anyway, you can configure and build them by running the following commands from
+the root of the mlpack sources:
+
+```sh
+mkdir build && cd build/
+cmake -DBUILD_JULIA_BINDINGS=ON ../
+make
+```
+
+If CMake cannot find your Julia installation, you can add
+`-DJULIA_EXECUTABLE=/path/to/julia` to the CMake configuration step.
+
+Note that the `make install` step is not done above, since the Julia binding
+build system was not meant to be installed directly.  Instead, to use handbuilt
+bindings (for instance, to test them), one option is to start Julia with
+`JULIA_PROJECT` set as an environment variable:
+
+```sh
+cd build/src/mlpack/bindings/julia/mlpack/
+JULIA_PROJECT=$PWD julia
+```
+
+and then `using mlpack` should work.
+
+### 4.v. Go bindings
+
+*See also the [Go quickstart](doc/quickstart/go.md).*
+
+To build mlpack's Go bindings, ensure that Go >= 1.11.0 is installed, and that
+the Gonum package is available.  You can use `go get` to install mlpack for Go:
+
+```sh
+go get -u -d mlpack.org/v1/mlpack
+cd ${GOPATH}/src/mlpack.org/v1/mlpack
+make install
+```
+
+The process of building the Go bindings by hand is a little tedious, so
+following the steps above is recommended.  However, if you wish to build the Go
+bindings by hand anyway, you can do this by running the following commands from
+the root of the mlpack sources:
+
+```sh
+mkdir build && cd build/
+cmake -DBUILD_GO_BINDINGS=ON ../
+make
+sudo make install
+```
+
+## 5. Building mlpack's test suite
+
+mlpack contains an extensive test suite that exercises every part of the
+codebase.  It is easy to build and run the tests with CMake and CTest, as below:
+
+```sh
+mkdir build && cd build/
+cmake -DBUILD_TESTS=ON ../
+make
+ctest .
+```
+
+If you want to test the bindings, too, you will have to adapt the CMake
+configuration command to turn on the language bindings that you want to
+test---see the previous sections for details.
+
+## 6. Further Resources
+
+More documentation is available for both users and developers.
+
+***User documentation***:
+
+ - [File formats and loading data in mlpack](doc/user/formats.md)
+ - [Matrices in mlpack](doc/user/matrices.md)
+ - [Cross-Validation](doc/user/cv.md)
+ - [Hyper-parameter Tuning](doc/user/hpt.md)
+ - [Building mlpack from source on Windows](doc/user/build_windows.md)
+ - [Sample C++ ML App for Windows](doc/user/sample_ml_app.md)
+ - [Examples repository](https://github.com/mlpack/examples/)
+
+***Tutorials:***
+
+ - [Alternating Matrix Factorization (AMF)](doc/tutorials/amf.md)
+ - [Artificial Neural Networks (ANN)](doc/tutorials/ann.md)
+ - [Approximate k-Furthest Neighbor Search (`approx_kfn`)](doc/tutorials/approx_kfn.md)
+ - [Collaborative Filtering (CF)](doc/tutorials/cf.md)
+ - [DatasetMapper](doc/tutorials/datasetmapper.md)
+ - [Density Estimation Trees (DET)](doc/tutorials/det.md)
+ - [Euclidean Minimum Spanning Trees (EMST)](doc/tutorials/emst.md)
+ - [Fast Max-Kernel Search (FastMKS)](doc/tutorials/fastmks.md)
+ - [Image Utilities](doc/tutorials/image.md)
+ - [k-Means Clustering](doc/tutorials/kmeans.md)
+ - [Linear Regression](doc/tutorials/linear_regression.md)
+ - [Neighbor Search (k-Nearest-Neighbors)](doc/tutorials/neighbor_search.md)
+ - [Range Search](doc/tutorials/range_search.md)
+ - [Reinforcement Learning](doc/tutorials/reinforcement_learning.md)
+
+***Developer documentation***:
+
+ - [mlpack versions in code](doc/developer/version.md)
+ - [Writing an mlpack binding](doc/developer/iodoc.md)
+ - [mlpack Timers](doc/developer/timer.md)
+ - [mlpack automatic bindings to other languages](doc/developer/bindings.md)
+ - [The ElemType policy in mlpack](doc/developer/elemtype.md)
+ - [The KernelType policy in mlpack](doc/developer/kernels.md)
+ - [The MetricType policy in mlpack](doc/developer/metrics.md)
+ - [The TreeType policy in mlpack](doc/developer/trees.md)
 
 To learn about the development goals of mlpack in the short- and medium-term
 future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
+<<<<<<< HEAD
 ### 8. Bug reporting
 
    (see also [mlpack help](https://www.mlpack.org/questions.html))
@@ -379,16 +441,8 @@ and the git commit list is available at
 
 Lastly, the IRC channel `#mlpack` on Freenode can be used to get help.
 
-### 9. Building mlpack from vcpkg
-
-The mlpack port in vcpkg is kept up to date by Microsoft team members and community contributors. The url of vcpkg is: https://github.com/Microsoft/vcpkg . You can download and install mlpack using the vcpkg dependency manager:
-
-```shell
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg
-./bootstrap-vcpkg.sh  # ./bootstrap-vcpkg.bat for Windows
-./vcpkg integrate install
-./vcpkg install mlpack
-```
-
-If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+If you have problems, find a bug, or need help, you can try visiting
+the [mlpack help](https://www.mlpack.org/questions.html) page, or [mlpack on
+Github](https://www.github.com/mlpack/mlpack/).  Alternately, mlpack help can be
+found on Matrix at `#mlpack`; see also the
+[community](https://www.mlpack.org/community.html) page.

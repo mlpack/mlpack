@@ -71,7 +71,7 @@ BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
 BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
         "https://en.wikipedia.org/wiki/Hidden_Markov_model");
 BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@doxygen/classmlpack_1_1hmm_1_1HMM.html");
+        "@src/mlpack/methods/hmm/hmm.hpp");
 
 PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
     "m");

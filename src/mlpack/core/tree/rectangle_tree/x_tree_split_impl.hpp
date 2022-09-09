@@ -149,7 +149,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
   for (size_t i = lastDim + 1; i < axes.size(); ++i)
   {
     for (size_t j = 0; j < tree->NumChildren(); ++j)
-      axes[i] = axes[i] &
+      axes[i] = axes[i] &&
           tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
     if (axes[i] == true)
     {
@@ -164,7 +164,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
     {
       axes[i] = true;
       for (size_t j = 0; j < tree->NumChildren(); ++j)
-        axes[i] = axes[i] &
+        axes[i] = axes[i] &&
                   tree->Child(j).AuxiliaryInfo().SplitHistory().history[i];
       if (axes[i] == true)
       {

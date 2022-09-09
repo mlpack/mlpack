@@ -4,6 +4,9 @@
  *
  * Convenience include for all aspects of the neural network framework in
  * mlpack.
+ *
+ * Note that serialization for neural networks is not enabled unless the
+ * MLPACK_ENABLE_ANN_SERIALIZATION macro is defined!
  */
 #ifndef MLPACK_METHODS_ANN_ANN_HPP
 #define MLPACK_METHODS_ANN_ANN_HPP

@@ -108,7 +108,7 @@ BINDING_EXAMPLE(
         "clusters", 10, "max_iterations", 500, "centroid", "final"));
 
 // See also...
-BINDING_SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html");
+BINDING_SEE_ALSO("K-Means tutorial", "@doc/tutorials/kmeans.md");
 BINDING_SEE_ALSO("@dbscan", "#dbscan");
 BINDING_SEE_ALSO("k-means++", "https://en.wikipedia.org/wiki/K-means%2B%2B");
 BINDING_SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
@@ -122,7 +122,7 @@ BINDING_SEE_ALSO("Accelerating exact k-means algorithms with geometric"
 BINDING_SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large "
         "k (pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf");
 BINDING_SEE_ALSO("mlpack::kmeans::KMeans class documentation",
-        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html");
+        "@src/mlpack/methods/kmeans/kmeans.hpp");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

@@ -101,7 +101,7 @@ BINDING_SEE_ALSO("Kernel principal component analysis on Wikipedia",
 BINDING_SEE_ALSO("Kernel Principal Component Analysis (pdf)",
         "http://pca.narod.ru/scholkopf_kernel.pdf");
 BINDING_SEE_ALSO("mlpack::kpca::KernelPCA class documentation",
-        "@doxygen/classmlpack_1_1kpca_1_1KernelPCA.html");
+        "@src/mlpack/methods/kernel_pca/kernel_pca.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");

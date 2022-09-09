@@ -66,13 +66,13 @@ BINDING_LONG_DESC(
 
 // See also...
 BINDING_SEE_ALSO("Density estimation tree (DET) tutorial",
-        "@doxygen/dettutorial.html");
+        "@doc/tutorials/det.md");
 BINDING_SEE_ALSO("Density estimation on Wikipedia",
         "https://en.wikipedia.org/wiki/Density_estimation");
 BINDING_SEE_ALSO("Density estimation trees (pdf)",
         "http://www.mlpack.org/papers/det.pdf");
 BINDING_SEE_ALSO("mlpack::tree::DTree class documentation",
-        "@doxygen/classmlpack_1_1det_1_1DTree.html");
+        "@src/mlpack/methods/det/dtree.hpp");
 
 // Input data files.
 PARAM_MATRIX_IN("training", "The data set on which to build a density "
