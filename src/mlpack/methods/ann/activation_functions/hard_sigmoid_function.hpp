@@ -55,7 +55,8 @@ class HardSigmoidFunction
   {
     y.set_size(size(x));
 
-    for (size_t i = 0; i < x.n_elem; ++i)
+    #pragma omp for
+    for (size_t i = 0; i < (size_t) x.n_elem; ++i)
       y(i) = Fn(x(i));
   }
 
@@ -85,7 +86,8 @@ class HardSigmoidFunction
   {
     x.set_size(size(y));
 
-    for (size_t i = 0; i < y.n_elem; ++i)
+    #pragma omp for
+    for (size_t i = 0; i < (size_t) y.n_elem; ++i)
     {
       x(i) = Deriv(y(i));
     }

@@ -129,9 +129,12 @@ ConvolutionType<
     padHTop(other.padHTop),
     useBias(other.useBias),
     padding(other.padding),
+    paddingBackward(other.paddingBackward),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
-    higherInDimensions(other.higherInDimensions)
+    higherInDimensions(other.higherInDimensions),
+    apparentWidth(other.apparentWidth),
+    apparentHeight(other.apparentHeight)
 {
   // Nothing to do.
 }
@@ -160,9 +163,12 @@ ConvolutionType<
     padHTop(std::move(other.padHTop)),
     useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
+    paddingBackward(std::move(other.paddingBackward)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
-    higherInDimensions(std::move(other.higherInDimensions))
+    higherInDimensions(std::move(other.higherInDimensions)),
+    apparentWidth(std::move(other.apparentWidth)),
+    apparentHeight(std::move(other.apparentHeight))
 {
   // Nothing to do.
 }
@@ -200,9 +206,12 @@ ConvolutionType<
     padHTop = other.padHTop;
     useBias = other.useBias;
     padding = other.padding;
+    paddingBackward = other.paddingBackward;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
     higherInDimensions = other.higherInDimensions;
+    apparentWidth = other.apparentWidth;
+    apparentHeight = other.apparentHeight;
   }
 
   return *this;
@@ -241,9 +250,12 @@ ConvolutionType<
     padHTop = std::move(other.padHTop);
     useBias = std::move(other.useBias);
     padding = std::move(other.padding);
+    paddingBackward = std::move(other.paddingBackward);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
     higherInDimensions = std::move(other.higherInDimensions);
+    apparentWidth = std::move(other.apparentWidth);
+    apparentHeight = std::move(other.apparentHeight);
   }
 
   return *this;
@@ -321,26 +333,27 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     // Iterate over output maps.
-    for (size_t outMap = 0; outMap < maps; ++outMap)
+    #pragma omp parallel for
+    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
     {
+      MatType& convOutput = outputTemp.slice(outMap + fullOutputOffset);
       // Iterate over input maps (we will apply the filter and sum).
       for (size_t inMap = 0; inMap < inMaps; ++inMap)
       {
-        MatType convOutput;
-
         ForwardConvolutionRule::Convolution(
             inputTemp.slice(inMap + fullInputOffset),
             weight.slice((outMap * inMaps) + inMap),
             convOutput,
             strideWidth,
-            strideHeight);
-
-        outputTemp.slice(outMap + fullOutputOffset) += convOutput;
+            strideHeight,
+            1,
+            1,
+            true);
       }
 
       // Make sure to add the bias.
       if (useBias)
-        outputTemp.slice(outMap + fullOutputOffset) += bias(outMap);
+        convOutput += bias(outMap);
     }
   }
 }
@@ -373,10 +386,44 @@ void ConvolutionType<
   // To perform the backward pass, we need to rotate all the filters.
   arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
       weight.n_rows, weight.n_slices);
-  for (size_t map = 0; map < (maps * inMaps); ++map)
+
+  // To perform the backward pass, we need to dilate all the mappedError.
+  arma::Cube<typename MatType::elem_type> dilatedMappedError;
+  if (strideHeight == 1 && strideWidth == 1)
+  {
+    MakeAlias(dilatedMappedError, mappedError.memptr(),
+        mappedError.n_rows, mappedError.n_cols, mappedError.n_slices);
+  }
+  else
+  {
+    dilatedMappedError.zeros(mappedError.n_rows * strideWidth -
+        (strideWidth - 1), mappedError.n_cols * strideHeight -
+        (strideHeight - 1), mappedError.n_slices);
+    #pragma omp parallel for collapse(3)
+    for (size_t i = 0; i < mappedError.n_slices; ++i)
+    {
+      for (size_t j = 0; j < mappedError.n_cols; ++j)
+      {
+        for (size_t k = 0; k < mappedError.n_rows; ++k)
+        {
+          dilatedMappedError(k * strideWidth, j * strideHeight, i)
+              = mappedError(k, j, i);
+        }
+      }
+    }
+  }
+
+  #pragma omp parallel for
+  for (size_t map = 0; map < (size_t) (maps * inMaps); ++map)
   {
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
   }
+
+  MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
+      batchSize, arma::fill::zeros);
+  arma::Cube<typename MatType::elem_type> outputCube;
+  MakeAlias(outputCube, output.memptr(), apparentWidth, apparentHeight,
+      inMaps * higherInDimensions * batchSize);
 
   // See Forward() for the overall iteration strategy.
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
@@ -385,55 +432,42 @@ void ConvolutionType<
     const size_t fullOutputOffset = offset * maps;
 
     // Iterate over input maps.
-    for (size_t inMap = 0; inMap < inMaps; ++inMap)
+    #pragma omp parallel for
+    for (size_t inMap = 0; inMap < (size_t) inMaps; ++inMap)
     {
       // Iterate over output maps.
+      MatType& curG = outputCube.slice(inMap + fullInputOffset);
       for (size_t outMap = 0; outMap < maps; ++outMap)
       {
-        MatType output;
-
         BackwardConvolutionRule::Convolution(
-            mappedError.slice(outMap + fullOutputOffset),
+            dilatedMappedError.slice(outMap + fullOutputOffset),
             rotatedFilters.slice((outMap * inMaps) + inMap),
-            output,
-            strideHeight,
-            strideWidth);
-
-        // If the stride width or height is greater than 1, then we have to
-        // insert columns and rows into the convolution output.
-        if (strideWidth == 1 && strideHeight == 1)
-        {
-          if (usingPadding)
-          {
-            gTemp.slice(inMap + fullInputOffset) += output.submat(
-                padWLeft,
-                padHTop,
-                padWLeft + gTemp.n_rows - 1,
-                padHTop + gTemp.n_cols - 1);
-          }
-          else
-          {
-            gTemp.slice(inMap + fullInputOffset) += output;
-          }
-        }
-        else
-        {
-          // We must iterate over each element of the output and manually
-          // re-insert the stride.
-          size_t col = padWLeft;
-          for (size_t i = 0; i < output.n_cols; ++i)
-          {
-            size_t row = padHTop;
-            for (size_t j = 0; j < output.n_rows; ++j)
-            {
-              gTemp(row, col, inMap + fullInputOffset) += output(j, i);
-              row += strideHeight;
-            }
-            col += strideWidth;
-          }
-        }
+            curG,
+            1,
+            1,
+            1,
+            1,
+            true);
       }
     }
+  }
+  MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
+      inMaps * higherInDimensions, batchSize);
+  arma::Cube<typename MatType::elem_type> tempCube;
+  MakeAlias(tempCube, temp.memptr(), padding.OutputDimensions()[0],
+      padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  paddingBackward.Forward(output, temp);
+  if (usingPadding)
+  {
+    gTemp = tempCube.tube(
+        padWLeft,
+        padHTop,
+        padWLeft + gTemp.n_rows - 1,
+        padHTop + gTemp.n_cols - 1);
+  }
+  else
+  {
+    gTemp = tempCube;
   }
 }
 
@@ -469,6 +503,13 @@ void ConvolutionType<
       const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * batchSize, false, false);
 
+  MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
+      batchSize);
+  arma::Cube<typename MatType::elem_type> tempCube;
+  MakeAlias(tempCube, temp.memptr(), apparentWidth, apparentHeight,
+      inMaps * higherInDimensions * batchSize);
+  paddingBackward.Backward(input, usingPadding ? inputPadded : input, temp);
+
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
@@ -482,40 +523,25 @@ void ConvolutionType<
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    for (size_t outMap = 0; outMap < maps; ++outMap)
+    #pragma omp parallel for
+    for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
     {
+      MatType& curError = mappedError.slice(outMap + fullOutputOffset);
       for (size_t inMap = 0; inMap < inMaps; ++inMap)
       {
-        MatType output;
         GradientConvolutionRule::Convolution(
-            inputTemp.slice(inMap + fullInputOffset),
-            mappedError.slice(outMap + fullOutputOffset),
-            output,
+            tempCube.slice(inMap + fullInputOffset),
+            curError,
+            gradientTemp.slice((outMap * inMaps) + inMap),
+            1,
+            1,
             strideWidth,
-            strideHeight);
-
-        // TODO: understand this conditional.  Is it needed?
-        if (gradientTemp.n_rows < output.n_rows ||
-            gradientTemp.n_cols < output.n_cols)
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap) += output.submat(0, 0,
-              gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
-        }
-        else if (gradientTemp.n_rows > output.n_rows ||
-                 gradientTemp.n_cols > output.n_cols)
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap).submat(0, 0, output.n_rows - 1,
-              output.n_cols - 1) += output;
-        }
-        else
-        {
-          gradientTemp.slice((outMap * inMaps) + inMap) += output;
-        }
+            strideHeight,
+            true);
       }
 
       if (useBias)
-        gradient[weight.n_elem + outMap] += arma::accu(mappedError.slice(outMap +
-            fullOutputOffset));
+        gradient[weight.n_elem + outMap] += arma::accu(curError);
     }
   }
 }
@@ -570,6 +596,16 @@ void ConvolutionType<
     this->outputDimensions[i] = this->inputDimensions[i];
   }
 
+  apparentWidth = (this->outputDimensions[0] - 1) * strideWidth + kernelWidth;
+  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
+      kernelHeight;
+
+  paddingBackward = ann::Padding(0, padding.OutputDimensions()[0] -
+      apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
+  paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
+      apparentHeight, inMaps * higherInDimensions });
+  paddingBackward.ComputeOutputDimensions();
+
   this->outputDimensions[2] = maps;
 }
 
@@ -619,7 +655,7 @@ void ConvolutionType<
     MatType
 >::InitializeSamePadding()
 {
-  /*
+  /**
    * Using O = (W - F + 2P) / s + 1;
    */
   size_t totalVerticalPadding = (strideWidth - 1) * this->inputDimensions[0] +

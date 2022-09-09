@@ -376,6 +376,9 @@ class ConvolutionType : public Layer<MatType>
   //! Locally-stored padding layer.
   Padding padding;
 
+  //! Locally-stored padding layer for backward pass.
+  ann::Padding paddingBackward;
+
   //! Type of padding.
   std::string paddingType;
 
@@ -383,6 +386,12 @@ class ConvolutionType : public Layer<MatType>
   size_t inMaps;
   //! Locally-cached higher-order input dimensions.
   size_t higherInDimensions;
+
+  //! Locally-stored apparent width.
+  size_t apparentWidth;
+
+  //! Locally-stored apparent height.
+  size_t apparentHeight;
 }; // class Convolution
 
 // Standard Convolution layer.

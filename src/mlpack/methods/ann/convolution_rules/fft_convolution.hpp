@@ -36,7 +36,7 @@ template<typename BorderMode = FullConvolution, const bool padLastDim = false>
 class FFTConvolution
 {
  public:
-  /*
+  /**
    * Perform a convolution through fft (valid mode). This method only supports
    * input which is even on the last dimension. In case of an odd input width, a
    * user can manually pad the input or specify the padLastDim parameter which
@@ -72,7 +72,7 @@ class FFTConvolution
         input.n_rows - 1, input.n_cols - 1);
   }
 
-  /*
+  /**
    * Perform a convolution through fft (full mode). This method only supports
    * input which is even on the last dimension. In case of an odd input width, a
    * user can manually pad the input or specify the padLastDim parameter which
@@ -119,7 +119,7 @@ class FFTConvolution
         2 * (filter.n_cols - 1) + input.n_cols - 1);
   }
 
-  /*
+  /**
    * Perform a convolution through fft using 3rd order tensors. This method only
    * supports input which is even on the last dimension. In case of an odd input
    * width, a user can manually pad the input or specify the padLastDim
@@ -150,7 +150,7 @@ class FFTConvolution
     }
   }
 
-  /*
+  /**
    * Perform a convolution through fft using dense matrix as input and a 3rd
    * order tensors as filter and output. This method only supports input which
    * is even on the last dimension. In case of an odd input width, a user can
@@ -181,7 +181,7 @@ class FFTConvolution
     }
   }
 
-  /*
+  /**
    * Perform a convolution using a 3rd order tensors as input and output and a
    * dense matrix as filter.
    *

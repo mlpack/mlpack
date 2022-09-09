@@ -164,7 +164,8 @@ class MaxPoolingType : public Layer<MatType>
       arma::Cube<size_t>& poolingIndices)
   {
     // Iterate over all slices individually.
-    for (size_t s = 0; s < input.n_slices; ++s)
+    #pragma omp parallel for
+    for (size_t s = 0; s < (size_t) input.n_slices; ++s)
     {
       for (size_t j = 0, colidx = 0; j < output.n_cols;
           ++j, colidx += strideHeight)
@@ -203,8 +204,7 @@ class MaxPoolingType : public Layer<MatType>
           const size_t poolingCol = poolIndex / (kernelWidth);
           const size_t poolingRow = poolIndex % (kernelWidth);
           const size_t unmappedPoolingIndex = (rowidx + poolingRow) +
-              input.n_rows * (colidx + poolingCol) +
-              input.n_rows * input.n_cols * s;
+              input.n_rows * (colidx + poolingCol);
 
           poolingIndices(i, j, s) = unmappedPoolingIndex;
           output(i, j, s) = std::get<1>(poolResult);
@@ -225,7 +225,8 @@ class MaxPoolingType : public Layer<MatType>
       arma::Cube<typename MatType::elem_type>& output)
   {
     // Iterate over all slices individually.
-    for (size_t s = 0; s < input.n_slices; ++s)
+    #pragma omp parallel for
+    for (size_t s = 0; s < (size_t) input.n_slices; ++s)
     {
       for (size_t j = 0, colidx = 0; j < output.n_cols;
           ++j, colidx += strideHeight)
@@ -270,12 +271,10 @@ class MaxPoolingType : public Layer<MatType>
    * @param poolingIndices The pooled indices (from `PoolingOperation()`).
    */
   void UnpoolingOperation(
-      const arma::Cube<typename MatType::elem_type>& error,
-      arma::Cube<typename MatType::elem_type>& output,
-      const arma::Cube<size_t>& poolingIndices)
+      const MatType& error,
+      MatType& output,
+      const arma::Mat<size_t>& poolingIndices)
   {
-    output.zeros();
-
     for (size_t i = 0; i < poolingIndices.n_elem; ++i)
     {
       output(poolingIndices(i)) += error(i);

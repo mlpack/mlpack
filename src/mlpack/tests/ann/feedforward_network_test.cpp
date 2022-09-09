@@ -78,8 +78,7 @@ void CheckCopyFunction(ModelType* network1,
 template<typename MatType = arma::mat, typename ModelType>
 void CheckMoveFunction(ModelType* network1,
                        MatType& trainData,
-                       MatType& trainLabels,
-                       const size_t maxEpochs)
+                       MatType& trainLabels)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
@@ -148,7 +147,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction(model1, trainData, trainLabels);
 }
 
 /**
@@ -182,7 +181,7 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
   CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction(model1, trainData, trainLabels);
 }
 
 /**
@@ -213,7 +212,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   model2->Add<LogSoftMax>();
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model2, input, output, 1);
+  CheckMoveFunction(model2, input, output);
 }
 
 /**
@@ -259,7 +258,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model2->Add<LogSoftMax>();
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model2, input, output, 1);
+  CheckMoveFunction(model2, input, output);
 }
 
 /**
@@ -293,7 +292,7 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction(model1, trainData, trainLabels, 1);
+  CheckMoveFunction(model1, trainData, trainLabels);
 }
 
 /**
@@ -340,7 +339,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTestNoBias", "[FeedForwardNetworkTest]")
   CheckCopyFunction<>(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
-  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+  CheckMoveFunction<>(model1, trainData, trainLabels);
 }
 
 /**
