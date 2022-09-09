@@ -66,7 +66,7 @@ class NMFPolicy
       MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using the NMF algorithm.
-      AMF<MaxIterationTermination, RandomInitialization, NMFALSUpdate>
+      AMF<MaxIterationTermination, RandomAMFInitialization, NMFALSUpdate>
           nmf(iter);
       nmf.Apply(cleanedData, rank, w, h);
     }

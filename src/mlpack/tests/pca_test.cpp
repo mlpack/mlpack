@@ -195,7 +195,7 @@ TEST_CASE("ArmaComparisonRandomizedBlockKrylovPCATest", "[PCATest]")
  */
 TEST_CASE("ArmaComparisonRandomizedPCATest", "[PCATest]")
 {
-  ArmaComparisonPCA<RandomizedSVDPolicy>();
+  ArmaComparisonPCA<RandomizedSVDPCAPolicy>();
 }
 
 /**
@@ -224,7 +224,7 @@ TEST_CASE("RandomizedBlockKrylovPCADimensionalityReductionTest", "[PCATest]")
  */
 TEST_CASE("RandomizedPCADimensionalityReductionTest", "[PCATest]")
 {
-  PCADimensionalityReduction<RandomizedSVDPolicy>();
+  PCADimensionalityReduction<RandomizedSVDPCAPolicy>();
 }
 
 /**

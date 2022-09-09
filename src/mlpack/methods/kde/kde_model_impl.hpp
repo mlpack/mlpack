@@ -344,7 +344,7 @@ void KDEWrapper<KernelType, TreeType>::Evaluate(util::Timers& timers,
                                                 arma::vec& estimates)
 {
   const size_t dimension = querySet.n_rows;
-  if (kde.Mode() == DUAL_TREE_MODE)
+  if (kde.Mode() == KDE_DUAL_TREE_MODE)
   {
     // Build the query tree separately, so that we can time it.
     timers.Start("tree_building");

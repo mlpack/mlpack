@@ -22,8 +22,8 @@ namespace mlpack {
 //! KDEMode represents the ways in which KDE algorithm can be executed.
 enum KDEMode
 {
-  DUAL_TREE_MODE,
-  SINGLE_TREE_MODE
+  KDE_DUAL_TREE_MODE,
+  KDE_SINGLE_TREE_MODE
 };
 
 //! KDEDefaultParams contains the default input parameter values for KDE.
@@ -36,7 +36,7 @@ struct KDEDefaultParams
   static constexpr double absError = 0;
 
   //! KDE algorithm mode.
-  static constexpr KDEMode mode = KDEMode::DUAL_TREE_MODE;
+  static constexpr KDEMode mode = KDEMode::KDE_DUAL_TREE_MODE;
 
   //! Whether to use Monte Carlo estimations when possible.
   static constexpr bool monteCarlo = false;

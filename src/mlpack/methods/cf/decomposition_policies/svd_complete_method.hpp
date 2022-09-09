@@ -69,7 +69,7 @@ class SVDCompletePolicy
 
       // Do singular value decomposition using complete incremental method
       // using cleaned data in form of sparse matrix.
-      AMF<MaxIterationTermination, RandomInitialization,
+      AMF<MaxIterationTermination, RandomAMFInitialization,
           SVDCompleteIncrementalLearning<arma::sp_mat>> svdci(iter);
 
       svdci.Apply(cleanedData, rank, w, h);

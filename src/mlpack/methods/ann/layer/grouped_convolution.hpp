@@ -393,7 +393,7 @@ class GroupedConvolutionType : public Layer<MatType>
   Padding padding;
 
   //! Locally-stored padding layer for backward pass.
-  ann::Padding paddingBackward;
+  Padding paddingBackward;
 
   //! Type of padding.
   std::string paddingType;

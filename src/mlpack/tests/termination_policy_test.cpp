@@ -50,7 +50,7 @@ TEST_CASE("AMFMaxIterationTerminationTest", "[TerminationPolicyTest]")
   // Custom tighter tolerance.
   MaxIterationTermination mit(10); // Only 10 iterations.
   AMF<MaxIterationTermination,
-      RandomInitialization,
+      RandomAMFInitialization,
       NMFMultiplicativeDivergenceUpdate> nmf(mit);
   nmf.Apply(v, r, w, h);
 

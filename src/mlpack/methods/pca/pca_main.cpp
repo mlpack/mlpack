@@ -164,7 +164,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   else if (decompositionMethod == "randomized")
   {
-    RunPCA<RandomizedSVDPolicy>(params, timers, dataset, newDimension, scale,
+    RunPCA<RandomizedSVDPCAPolicy>(params, timers, dataset, newDimension, scale,
         varToRetain);
   }
   else if (decompositionMethod == "randomized-block-krylov")

@@ -367,7 +367,7 @@ void KDE<KernelType,
          SingleTreeTraversalType>::
 Evaluate(MatType querySet, arma::vec& estimations)
 {
-  if (mode == DUAL_TREE_MODE)
+  if (mode == KDE_DUAL_TREE_MODE)
   {
     std::vector<size_t> oldFromNewQueries;
     Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
@@ -383,7 +383,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
     }
     delete queryTree;
   }
-  else if (mode == SINGLE_TREE_MODE)
+  else if (mode == KDE_SINGLE_TREE_MODE)
   {
     // Get estimations vector ready.
     estimations.clear();
@@ -490,7 +490,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Check the mode is correct.
-  if (mode != DUAL_TREE_MODE)
+  if (mode != KDE_DUAL_TREE_MODE)
   {
     throw std::invalid_argument("cannot evaluate KDE model: cannot use "
                                 "a query tree when mode is different from "
@@ -585,13 +585,13 @@ Evaluate(arma::vec& estimations)
                             monteCarlo,
                             true);
 
-  if (mode == DUAL_TREE_MODE)
+  if (mode == KDE_DUAL_TREE_MODE)
   {
     // Create traverser.
     DualTreeTraversalType<RuleType> traverser(rules);
     traverser.Traverse(*referenceTree, *referenceTree);
   }
-  else if (mode == SINGLE_TREE_MODE)
+  else if (mode == KDE_SINGLE_TREE_MODE)
   {
     SingleTreeTraversalType<RuleType> traverser(rules);
     for (size_t i = 0; i < referenceTree->Dataset().n_cols; ++i)

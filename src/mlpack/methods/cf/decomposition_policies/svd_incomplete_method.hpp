@@ -68,7 +68,7 @@ class SVDIncompletePolicy
       MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using incomplete incremental method.
-      AMF<MaxIterationTermination, RandomInitialization,
+      AMF<MaxIterationTermination, RandomAMFInitialization,
           SVDIncompleteIncrementalLearning> svdici(iter);
 
       svdici.Apply(cleanedData, rank, w, h);

@@ -22,7 +22,7 @@ namespace mlpack {
 /**
  * Implementation of the randomized SVD policy.
  */
-class RandomizedSVDPolicy
+class RandomizedSVDPCAPolicy
 {
  public:
   /**
@@ -34,8 +34,8 @@ class RandomizedSVDPolicy
    * @param maxIterations Number of iterations for the power method
    *        (Default: 2).
    */
-  RandomizedSVDPolicy(const size_t iteratedPower = 0,
-                      const size_t maxIterations = 2) :
+  RandomizedSVDPCAPolicy(const size_t iteratedPower = 0,
+                         const size_t maxIterations = 2) :
       iteratedPower(iteratedPower),
       maxIterations(maxIterations)
   {

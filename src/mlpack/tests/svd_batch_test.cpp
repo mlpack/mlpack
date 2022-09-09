@@ -172,9 +172,9 @@ TEST_CASE("SVDBatchNegativeElementTest", "[SVDBatchTest]")
   mat test = testLeft * testRight;
 
   AMF<SimpleToleranceTermination<mat>,
-      RandomInitialization,
+      RandomAMFInitialization,
       SVDBatchLearning> amf(SimpleToleranceTermination<mat>(),
-                            RandomInitialization(),
+                            RandomAMFInitialization(),
                             SVDBatchLearning(0.1, 0.001, 0.001, 0));
   mat m1, m2;
   amf.Apply(test, 3, m1, m2);
