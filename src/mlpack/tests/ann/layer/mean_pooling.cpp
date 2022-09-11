@@ -47,15 +47,14 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
 
   // Calculated using torch.nn.MeanPool2d().
-  arma::mat result1, result2;
-  result1  <<  0.7500  <<  4.2500  <<  arma::endr
-           <<  1.7500  <<  4.0000  <<  arma::endr
-           <<  2.7500  <<  6.0000  <<  arma::endr
-           <<  3.5000  <<  2.5000  <<  arma::endr;
+  arma::mat result1 = { { 0.75, 4.25 },
+                        { 1.75, 4.00 },
+                        { 2.75, 6.00 },
+                        { 3.50, 2.50 } };
 
-  result2  <<  0.7500  <<  4.2500  <<  arma::endr
-           <<  1.7500  <<  4.0000  <<  arma::endr
-           <<  2.7500  <<  6.0000  <<  arma::endr;
+  arma::mat result2 = { { 0.75, 4.25 },
+                        { 1.75, 4.00 },
+                        { 2.75, 6.00 } };
 
   arma::mat output1, output2;
   output1.set_size(8, 1);
@@ -69,15 +68,15 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat prevDelta1, prevDelta2;
-  prevDelta1  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat prevDelta1 = { { 3.6, -0.9 },
+                           { 3.6, -0.9 },
+                           { 3.6, -0.9 },
+                           { 3.6, -0.9 } };
 
-  prevDelta2  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat prevDelta2 = { { 3.6, -0.9 },
+                           { 3.6, -0.9 },
+                           { 3.6, -0.9 } };
+  
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);

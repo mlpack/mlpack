@@ -29,10 +29,10 @@ using namespace mlpack::ann;
  */
 TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 {
-  arma::mat input, output;
-  input << 5.1 << 3.5 << 1.4 << arma::endr
-        << 4.9 << 3.0 << 1.4 << arma::endr
-        << 4.7 << 3.2 << 1.3 << arma::endr;
+  arma::mat output;
+  arma::mat input = { { 5.1, 3.5, 1.4 },
+                      { 4.9, 3.0, 1.4 },
+                      { 4.7, 3.2, 1.3 } };
 
   input = input.t();
 

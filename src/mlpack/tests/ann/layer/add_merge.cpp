@@ -53,15 +53,14 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
 
   // Calculated using torch.nn.MeanPool2d().
-  arma::mat result1, result2;
-  result1  <<  1.5000  <<  8.5000  <<  arma::endr
-           <<  3.5000  <<  8.0000  <<  arma::endr
-           <<  5.5000  <<  12.0000 <<  arma::endr
-           <<  7.0000  <<  5.0000  <<  arma::endr;
+  arma::mat result1 = { { 1.5,  8.5 },
+                        { 3.5,  8.0 },
+                        { 5.5, 12.0 },
+                        { 7.0,  5.0 } };
 
-  result2  <<  1.5000  <<  8.5000  <<  arma::endr
-           <<  3.5000  <<  8.0000  <<  arma::endr
-           <<  5.5000  <<  12.0000 <<  arma::endr;
+  arma::mat result2 = { { 1.5,  8.5 },
+                        { 3.5,  8.0 }, 
+                        { 5.5, 12.0 } };
 
   arma::mat output1, output2;
   output1.set_size(8, 1);
@@ -75,15 +74,14 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat prevDelta1, prevDelta2;
-  prevDelta1  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat prevDelta1 = { { 3.6, -0.9 },
+                           { 3.6, -0.9 }, 
+                           { 3.6, -0.9 }, 
+                           { 3.6, -0.9 } };
 
-  prevDelta2  << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr
-              << 3.6000 << -0.9000 << arma::endr;
+  arma::mat prevDelta2 = { { 3.6, -0.9 },
+                           { 3.6, -0.9 },
+                           { 3.6, -0.9 } };
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);
