@@ -38,6 +38,20 @@ This Docker image has mlpack headers already installed.
 If you prefer to build mlpack from scratch, see the
 [main README](../../README.md).
 
+## Installing mlpack from vcpkg
+
+The mlpack port in vcpkg is kept up to date by Microsoft team members and community contributors. The url of vcpkg is: https://github.com/Microsoft/vcpkg . You can download and install mlpack using the vcpkg dependency manager:
+
+```shell
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh  # ./bootstrap-vcpkg.bat for Windows
+./vcpkg integrate install
+./vcpkg install mlpack
+```
+
+If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+
 ## Simple quickstart example
 
 As a really simple example of how to use mlpack in C++, let's do some simple
