@@ -202,7 +202,6 @@ using XavierInitialization = GlorotInitializationType<true>;
  */
 using GlorotInitialization = GlorotInitializationType<false>;
 // Uses normal distribution
-
 } // namespace mlpack
 
 #endif
