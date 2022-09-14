@@ -18,7 +18,6 @@
 
 // #include "../visitor/forward_visitor.hpp"
 // #include "../visitor/backward_visitor.hpp"
-// #include "../visitor/gradient_visitor.hpp"
 
 namespace mlpack {
 
