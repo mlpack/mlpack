@@ -24,7 +24,6 @@ extern "C" {
 void* mlpackGetParams(const char* bindingName)
 {
   util::Params* p = new util::Params(IO::Parameters(bindingName));
-  std::cout << "created params p " << p << "\n";
   return (void*) p;
 }
 

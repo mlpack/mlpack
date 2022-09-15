@@ -157,7 +157,7 @@ void SetParamMat(void* params,
   util::Params* p = (util::Params*) params;
 
   // Create the matrix as an alias.
-  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
+  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, false);
   p->Get<arma::mat>(paramName) = pointsAsRows ? m.t() : std::move(m);
   p->SetPassed(paramName);
 }
@@ -176,7 +176,7 @@ void SetParamUMat(void* params,
 
   // Create the matrix as an alias.
   arma::Mat<size_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
-      true);
+      false);
   p->Get<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
       std::move(m);
   p->SetPassed(paramName);
@@ -191,7 +191,7 @@ void SetParamRow(void* params,
                  const size_t cols)
 {
   util::Params* p = (util::Params*) params;
-  arma::rowvec m(memptr, arma::uword(cols), false, true);
+  arma::rowvec m(memptr, arma::uword(cols), false, false);
   p->Get<arma::rowvec>(paramName) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -205,7 +205,7 @@ void SetParamURow(void* params,
                   const size_t cols)
 {
   util::Params* p = (util::Params*) params;
-  arma::Row<size_t> m(memptr, arma::uword(cols), false, true);
+  arma::Row<size_t> m(memptr, arma::uword(cols), false, false);
   p->Get<arma::Row<size_t>>(paramName) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -219,7 +219,7 @@ void SetParamCol(void* params,
                  const size_t rows)
 {
   util::Params* p = (util::Params*) params;
-  arma::vec m(memptr, arma::uword(rows), false, true);
+  arma::vec m(memptr, arma::uword(rows), false, false);
   p->Get<arma::vec>(paramName) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -233,7 +233,7 @@ void SetParamUCol(void* params,
                   const size_t rows)
 {
   util::Params* p = (util::Params*) params;
-  arma::Col<size_t> m(memptr, arma::uword(rows), false, true);
+  arma::Col<size_t> m(memptr, arma::uword(rows), false, false);
   p->Get<arma::Col<size_t>>(paramName) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -260,7 +260,7 @@ void SetParamMatWithInfo(void* params,
       hasCategoricals = true;
   }
 
-  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
+  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, false);
 
   // Do we need to find how many categories we have?
   if (hasCategoricals)
