@@ -58,6 +58,10 @@ For this app, we will need to include the mlpack header (i.e. add into
 `stdafx.h`):
 
 ```c++
+// Define these to print extra informational output and warnings.
+#define MLPACK_PRINT_INFO
+#define MLPACK_PRINT_WARN
+
 #include "mlpack.hpp"
 ```
 
