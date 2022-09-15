@@ -61,9 +61,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
   SetInputParam("k", (int) 6);
   SetInputParam("bucket_size", (int) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
   ResetSettings();
@@ -74,9 +72,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
   SetInputParam("k", (int) 6);
   SetInputParam("second_hash_size", (int) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
   ResetSettings();
@@ -86,9 +82,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
   SetInputParam("reference", std::move(reference));
   SetInputParam("k", (int) -2);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -106,9 +100,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelValidityTest",
 
   SetInputParam("input_model", params.Get<LSHSearch<>*>("output_model"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -387,7 +379,5 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelTrueNighborsDimTest",
   SetInputParam("true_neighbors", std::move(trueNeighbors));
   SetInputParam("k", (int) 6);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

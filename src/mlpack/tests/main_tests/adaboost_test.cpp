@@ -147,9 +147,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostItrTest",
   SetInputParam("training", std::move(trainData));
   SetInputParam("iterations", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -219,9 +217,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostTrainingDataOrModelTest",
   SetInputParam("input_model",
                 params.Get<AdaBoostModel*>("output_model"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -261,9 +257,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWeakLearnerTest",
   SetInputParam("training", std::move(trainData));
   SetInputParam("weak_learner", std::string("decision tree"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

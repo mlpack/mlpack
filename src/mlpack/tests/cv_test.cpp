@@ -62,7 +62,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   // Testing binary ROC-AUC Score.
   //
   // NOTE:
-  // 	For comparing these ROCAUCScore testcases with "scikit-learn"
+  // For comparing these ROCAUCScore testcases with "scikit-learn"
   // library's "roc_auc_score", refer the pull request thread comment
   // https://github.com/mlpack/mlpack/pull/3086#issuecomment-1046003548
   //
@@ -110,34 +110,28 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   rocTrueLabels = arma::Row<size_t>();
   rocScoresOfPC = arma::Row<double>();
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
   REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 
   // Test - 5 (labels and scores with one size)
   rocTrueLabels = arma::Row<size_t>("1");
   rocScoresOfPC = arma::Row<double>("0.8");
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
   REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 
   // Test - 6 (mismatch labels and scores size)
   rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
   rocScoresOfPC = arma::Row<double>("0.1 0.2 0.3 0.4 0.5");
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
   REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

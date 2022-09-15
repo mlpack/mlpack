@@ -71,9 +71,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
   SetInputParam("training", trainingData);
   SetInputParam("max_leaf_size", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
 
@@ -82,9 +80,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
   SetInputParam("training", trainingData);
   SetInputParam("min_leaf_size", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
 
@@ -93,9 +89,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
   SetInputParam("training", move(trainingData));
   SetInputParam("folds", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -183,9 +177,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETModelValidityTest",
 
   SetInputParam("input_model", m);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

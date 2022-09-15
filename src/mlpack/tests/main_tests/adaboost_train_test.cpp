@@ -40,9 +40,7 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitToleranceTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("tolerance", (double) -0.001); // Invalid!
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Test if error is thrown for invalid iterations.
@@ -61,9 +59,7 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitIterationsTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("iterations", -1); // Invalid!
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Test if error is thrown for invalid weak learner.
@@ -82,9 +78,7 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitWeakLearnerTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("weak_learner", std::string("xyz")); // Invalid!
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Make sure that the output model is "trained" and usable.

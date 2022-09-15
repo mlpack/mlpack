@@ -43,9 +43,7 @@ TEST_CASE_METHOD(LRPredictTestFixture, "LRPredictWrongDimOfDataTest1t",
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

@@ -151,9 +151,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
   SetInputParam("atoms", (int) 10);
   SetInputParam("lambda1", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Test for L2 value.
 
@@ -164,9 +162,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
   SetInputParam("atoms", (int) 10);
   SetInputParam("lambda2", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Test for max_iterations.
 
@@ -177,9 +173,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
   SetInputParam("atoms", (int) 10);
   SetInputParam("max_iterations", (int) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Test for objective_tolerance.
 
@@ -190,9 +184,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
   SetInputParam("atoms", (int) 10);
   SetInputParam("objective_tolerance", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Test for newton_tolerance.
 
@@ -203,9 +195,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
   SetInputParam("atoms", (int) 10);
   SetInputParam("newton_tolerance", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Test for atoms.
 
@@ -213,9 +203,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -231,9 +219,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingReqAtomsTest",
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -254,9 +240,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingModelVerTest",
   SetInputParam("input_model", c);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -278,9 +262,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingAtomsVerTest",
   SetInputParam("initial_dictionary", std::move(initialDictionary));
   SetInputParam("max_iterations", (int) 100);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -306,9 +288,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingRowsVerTest",
   SetInputParam("max_iterations", (int) 100);
   SetInputParam("normalize", (bool) true);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -333,9 +313,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDataDimensionalityTest",
   SetInputParam("max_iterations", (int) 100);
   SetInputParam("test", std::move(testData));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

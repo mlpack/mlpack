@@ -69,9 +69,7 @@ TEST_CASE_METHOD(
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {1, 3});
   // This will throw an error since dimensions are bigger than the matrix.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -115,9 +113,7 @@ TEST_CASE_METHOD(
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {10000});
   // Error since dimensions are bigger than matrix.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -136,9 +132,7 @@ TEST_CASE_METHOD(
 
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {-10000});
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

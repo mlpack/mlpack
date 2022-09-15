@@ -45,9 +45,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNEqualDimensionTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 5);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -64,7 +62,6 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidKTest",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 101);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   ResetSettings();
@@ -88,7 +85,6 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidKTest",
   SetInputParam("k", (int) 5);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -109,7 +105,6 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidKQueryDataTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 101);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   ResetSettings();
@@ -133,7 +128,6 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidKQueryDataTest",
   SetInputParam("k", (int)  5);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -149,9 +143,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNLeafSizeTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -173,9 +165,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNRefModelTest",
   SetInputParam("input_model",
       std::move(params.Get<RAModel*>("output_model")));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -192,9 +182,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidTreeTypeTest",
   SetInputParam("k", (int) 5);
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -211,9 +199,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidTauTest",
   SetInputParam("k", (int) 5);
   SetInputParam("tau", (double) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -542,7 +528,6 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidAlphaTest",
   SetInputParam("k", (int) 5);
   SetInputParam("alpha", (double) 1.2);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   ResetSettings();
@@ -551,5 +536,4 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNInvalidAlphaTest",
   SetInputParam("alpha", (double) -1);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

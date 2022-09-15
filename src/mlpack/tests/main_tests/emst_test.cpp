@@ -82,9 +82,7 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTInvalidLeafSizeTest",
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) -1); // Invalid leaf size.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

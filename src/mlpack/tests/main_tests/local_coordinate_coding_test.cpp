@@ -101,9 +101,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCInitDictTrainTest",
   SetInputParam("initial_dictionary", std::move(initDict));
   SetInputParam("atoms", (int) 2);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -120,9 +118,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCInitDictAtomTest",
   SetInputParam("initial_dictionary", std::move(initDict));
   SetInputParam("atoms", (int) 3);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -144,9 +140,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndTestDataDimTest",
   SetInputParam("max_iterations", (int) 2);
   SetInputParam("test", std::move(t));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -170,9 +164,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndInputModelTest",
   // No need to input training data again.
   SetInputParam("input_model", std::move(outputModel));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -199,9 +191,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainedModelDimTest",
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -215,12 +205,10 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCAtomsBoundTest",
   SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 5);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   SetInputParam("atoms", (int) -1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -234,9 +222,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCNegativeLambdaTest",
   SetInputParam("atoms", (int) 2);
   SetInputParam("lambda", -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -250,9 +236,7 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCNegativeToleranceTest",
   SetInputParam("atoms", (int) 2);
   SetInputParam("tolerance", -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*

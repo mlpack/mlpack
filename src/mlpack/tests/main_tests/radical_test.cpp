@@ -58,9 +58,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalBoundsTest",
   SetInputParam("input", input);
   SetInputParam("replicates", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
   ResetSettings();
@@ -70,9 +68,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalBoundsTest",
   SetInputParam("input", input);
   SetInputParam("noise_std_dev", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
   ResetSettings();
@@ -82,9 +78,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalBoundsTest",
   SetInputParam("input", input);
   SetInputParam("angles", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   CleanMemory();
   ResetSettings();
@@ -94,9 +88,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalBoundsTest",
   SetInputParam("input", input);
   SetInputParam("sweeps", (int) -2);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

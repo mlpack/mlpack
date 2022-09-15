@@ -94,7 +94,5 @@ TEST_CASE_METHOD(PCATestFixture, "PCATooHighNewDimensionalityTest",
   SetInputParam("input", std::move(x));
   SetInputParam("new_dimensionality", (int) 7); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

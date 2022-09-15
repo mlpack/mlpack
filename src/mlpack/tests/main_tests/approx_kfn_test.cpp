@@ -41,9 +41,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNRefModelTest",
   SetInputParam("input_model", m);
 
   // Input pre-trained model.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -59,9 +57,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNInvalidKTest",
   // Random input, k > reference points.
   SetInputParam("k", (int) 81); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -101,9 +97,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNInvalidAlgorithmTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("algorithm", (string) "any_algo"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -119,9 +113,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNZeroNumProjTest",
   SetInputParam("k", (int) 10);
   SetInputParam("num_projections", (int) 0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -137,9 +129,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNegativeNumProjTest",
   SetInputParam("k", (int) 10);
   SetInputParam("num_projections", (int) -5); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -155,9 +145,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNZeroNumTablesTest",
   SetInputParam("k", (int) 10);
   SetInputParam("num_tables", (int) 0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -173,9 +161,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNegativeNumTablesTest",
   SetInputParam("k", (int) 10);
   SetInputParam("num_tables", (int) -5); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -339,9 +325,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNExactDistDimensionTest",
   exactDistances.randu(9, 90); // Wrong size (should be (1, 80)).
   SetInputParam("exact_distances", std::move(exactDistances));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

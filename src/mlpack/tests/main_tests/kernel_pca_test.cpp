@@ -62,9 +62,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCANoKernelTest",
   SetInputParam("input", std::move(x));
   SetInputParam("new_dimensionality", (int) 3);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -79,9 +77,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCAInvalidKernelTest",
   SetInputParam("new_dimensionality", (int) 3);
   SetInputParam("kernel", (std::string) "badName");
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -140,9 +136,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCATooHighNewDimensionalityTest",
   SetInputParam("new_dimensionality", (int) 7); // Invalid.
   SetInputParam("kernel", (std::string) "linear");
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -156,9 +150,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCANoInputTest",
   SetInputParam("new_dimensionality", (int) 2);
   SetInputParam("kernel", (std::string) "linear");
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -175,9 +167,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCABadSamplingTest",
   SetInputParam("nystroem_method", true);
   SetInputParam("sampling", (std::string) "badName");
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

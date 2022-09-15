@@ -133,10 +133,8 @@ TEST_CASE("TestDuplicateParam", "[IOTest]")
   argv[4] = "test2";
 
   // This should throw an exception.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
       "TestDuplicateParam"), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -258,9 +256,7 @@ TEST_CASE("InputColVectorParamTest", "[IOTest]")
   REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::vec vec1 = p.Get<arma::vec>("vector");
   arma::vec vec2 = p.Get<arma::vec>("vector");
@@ -296,9 +292,7 @@ TEST_CASE("InputUnsignedColVectorParamTest", "[IOTest]")
   REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::Col<size_t> vec1 = p.Get<arma::Col<size_t>>("vector");
   arma::Col<size_t> vec2 = p.Get<arma::Col<size_t>>("vector");
@@ -334,9 +328,7 @@ TEST_CASE("InputRowVectorParamTest", "[IOTest]")
   REQUIRE(p.Has("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::rowvec vec1 = p.Get<arma::rowvec>("row");
   arma::rowvec vec2 = p.Get<arma::rowvec>("row");
@@ -372,9 +364,7 @@ TEST_CASE("InputUnsignedRowVectorParamTest", "[IOTest]")
   REQUIRE(p.Has("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::Row<size_t> vec1 = p.Get<arma::Row<size_t>>("row");
   arma::Row<size_t> vec2 = p.Get<arma::Row<size_t>>("row");
@@ -410,9 +400,7 @@ TEST_CASE("OutputColParamTest", "[IOTest]")
   REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
@@ -460,9 +448,7 @@ TEST_CASE("OutputUnsignedColParamTest", "[IOTest]")
   REQUIRE(p.Has("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("vector_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
@@ -510,9 +496,7 @@ TEST_CASE("OutputRowParamTest", "[IOTest]")
   REQUIRE(p.Has("row"));
   // The --row_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
@@ -560,9 +544,7 @@ TEST_CASE("OutputUnsignedRowParamTest", "[IOTest]")
   REQUIRE(p.Has("row"));
   // The --row_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("row_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
@@ -611,9 +593,7 @@ TEST_CASE("InputMatrixParamTest", "[IOTest]")
   REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = p.Get<arma::mat>("matrix");
   arma::mat dataset2 = p.Get<arma::mat>("matrix");
@@ -653,9 +633,7 @@ TEST_CASE("RequiredInputMatrixParamTest", "[IOTest]")
   REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = p.Get<arma::mat>("matrix");
   arma::mat dataset2 = p.Get<arma::mat>("matrix");
@@ -695,9 +673,7 @@ TEST_CASE("RequiredInputMatrixParamAliasTest", "[IOTest]")
   REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = p.Get<arma::mat>("matrix");
   arma::mat dataset2 = p.Get<arma::mat>("matrix");
@@ -728,10 +704,8 @@ TEST_CASE("RequiredUnspecifiedInputMatrixParamTest", "[IOTest]")
   int argc = 1;
 
   // The const-cast is a little hacky but should be fine...
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
       "RequiredUnspecifiedInputMatrixParamTest"), std::exception);
-  Log::Fatal.ignoreInput = false;
 }
 
 TEST_CASE("InputMatrixNoTransposeParamTest", "[IOTest]")
@@ -759,9 +733,7 @@ TEST_CASE("InputMatrixNoTransposeParamTest", "[IOTest]")
   REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = p.Get<arma::mat>("matrix");
   arma::mat dataset2 = p.Get<arma::mat>("matrix");
@@ -799,9 +771,7 @@ TEST_CASE("OutputMatrixParamTest", "[IOTest]")
   REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
@@ -850,9 +820,7 @@ TEST_CASE("OutputMatrixNoTransposeParamTest", "[IOTest]")
   REQUIRE(p.Has("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(p.Has("matrix_file"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
   // call ParseCommandLine().
@@ -956,10 +924,8 @@ TEST_CASE("RequiredOptionTest", "[IOTest]")
 
   int argc = 1;
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
       "RequiredOptionTest"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 TEST_CASE("UnknownOptionTest", "[IOTest]")
@@ -972,10 +938,8 @@ TEST_CASE("UnknownOptionTest", "[IOTest]")
 
   int argc = 2;
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
       "UnknownOptionTest"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -1090,10 +1054,8 @@ TEST_CASE("RequiredModelTest", "[IOTest]")
 
   int argc = 1;
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv),
       "RequiredModelTest"), runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

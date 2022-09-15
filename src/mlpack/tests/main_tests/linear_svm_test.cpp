@@ -37,9 +37,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNoTrainingData",
   SetInputParam("labels", std::move(trainLabels));
 
   // Training data is not provided. Should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -96,9 +94,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckLabelsSizeTest",
   SetInputParam("labels", std::move(trainLabels));
 
   // Labels with incorrect size. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -217,9 +213,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData",
   SetInputParam("test", std::move(testData));
 
   // Dimensionality of test data is wrong. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -254,9 +248,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData2",
   SetInputParam("test", std::move(testData));
 
   // Test data dimensionality is wrong. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -278,9 +270,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeMaxIterationTest",
   SetInputParam("max_iterations", int(-1));
 
   // Maximum iterations is negative. It should a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -302,9 +292,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeLambdaTest",
   SetInputParam("lambda", double(-0.01));
 
   // Lambda is negative. It should a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -327,9 +315,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture,
   SetInputParam("num_classes", int(-1));
 
   // Number of classes is negative. It should a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -351,9 +337,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeToleranceTest",
   SetInputParam("tolerance", double(-0.01));
 
   // Tolerance is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -375,9 +359,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeDeltaTest",
   SetInputParam("delta", double(-0.01));
 
   // Delta is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -399,9 +381,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeEpochsTest",
   SetInputParam("epochs", int(-1));
 
   // Epochs is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -423,9 +403,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMZeroNumberOfClassesTest",
 
   // Number of classes for optimizer is only one.
   // It should throw a invalid_argument error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -446,9 +424,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOptimizerTest",
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("hello"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -710,9 +686,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeStepSizeTest",
   SetInputParam("step_size", double(-0.01));
 
   // Step size for optimizer is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

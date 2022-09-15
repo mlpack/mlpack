@@ -241,9 +241,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronMaxItrTest",
   SetInputParam("training", std::move(inputData));
   SetInputParam("max_iterations", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -298,9 +296,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronReTrainWithWrongClasses",
 
   // Re-training an existing model of 3 classes
   // with training data of 5 classes. It should give runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -327,9 +323,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData",
   SetInputParam("test", std::move(testX));
 
   // Test data set with wrong dimensionality. It should give runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -351,9 +345,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongResponseSizeTest",
   SetInputParam("labels", std::move(trainY));
 
   // Labels for training data have wrong size. It should give runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -369,9 +361,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoResponsesTest",
   SetInputParam("training", std::move(trainX));
 
   // No labels for training data. It should give runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -386,9 +376,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoTrainingDataTest",
   SetInputParam("labels", std::move(trainY));
 
   // No training data. It should give runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -427,7 +415,5 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData2",
   SetInputParam("test", std::move(testX));
 
   // Wrong dimensionality of test data. It should give runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

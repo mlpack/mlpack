@@ -45,9 +45,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNEqualDimensionTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 10);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -64,7 +62,6 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidKTest",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 101);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   delete params.Get<KFNModel*>("output_model");
@@ -78,7 +75,6 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidKTest",
   SetInputParam("k", (int) -1); // Invalid.
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -99,9 +95,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidKQueryDataTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 101);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -117,9 +111,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNLeafSizeTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -141,9 +133,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNRefModelTest",
   SetInputParam("input_model",
       std::move(params.Get<KFNModel*>("output_model")));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -160,9 +150,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidTreeTypeTest",
   SetInputParam("k", (int) 10);
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -179,9 +167,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidAlgoTest",
   SetInputParam("k", (int) 10);
   SetInputParam("algorithm", (string) "triple_tree"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -198,7 +184,6 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidEpsilonTest",
   SetInputParam("k", (int) 10);
   SetInputParam("epsilon", (double) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   ResetSettings();
@@ -214,7 +199,6 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidEpsilonTest",
   SetInputParam("epsilon", (double) 1); // Invalid.
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -231,7 +215,6 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidPercentageTest",
   SetInputParam("k", (int) 10);
   SetInputParam("percentage", (double) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   ResetSettings();
@@ -247,7 +230,6 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidPercentageTest",
   SetInputParam("percentage", (double) 2); // Invalid.
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -474,9 +456,7 @@ TEST_CASE_METHOD(KFNTestFixture, "KFNTrueNeighborDistanceTest",
   SetInputParam("true_distances", std::move(dummyDistances));
   SetInputParam("k", (int) 10);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*

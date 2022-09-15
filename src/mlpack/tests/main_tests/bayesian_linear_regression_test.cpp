@@ -111,9 +111,7 @@ TEST_CASE_METHOD(BRTestFixture,
   // is specified.
   SetInputParam("responses", std::move(y));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Continue only with input passed.
   SetInputParam("input", std::move(matX));
@@ -126,7 +124,5 @@ TEST_CASE_METHOD(BRTestFixture,
                 params.Get<BayesianLinearRegression*>("output_model"));
   SetInputParam("test", std::move(matXtest));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
