@@ -14,6 +14,11 @@
 
 #include <Rcpp.h>
 
+#undef MLPACK_PRINT_INFO
+#define MLPACK_PRINT_INFO
+#undef MLPACK_PRINT_WARN
+#define MLPACK_PRINT_WARN
+
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
 // And as of armadillo and mlpack, we can use this stream object as well.
 #if !defined(ARMA_COUT_STREAM)
