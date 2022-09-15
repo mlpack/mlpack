@@ -264,11 +264,6 @@ if (CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif()
 
-# If the user asked for running test cases with verbose output, turn that on.
-if (TEST_VERBOSE)
-  add_definitions(-DTEST_VERBOSE)
-endif()
-
 # If the user asked for extra Armadillo debugging output, turn that on.
 if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
