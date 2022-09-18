@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
+#include <mlpack/core/util/log.hpp>
 
 #include "ppo.hpp"
 
@@ -59,11 +60,16 @@ PPO<
   // This is because we don't want to reset a loaded(possibly pretrained) model
   // passed using this constructor.
   const size_t envSampleSize = environment.InitialSample().Encode().n_elem;
-  if (actorNetwork.Parameters().n_elem != envSampleSize)
-    actorNetwork.Reset(envSampleSize);
+  std::cout<< "env sample size "<< envSampleSize<< std::endl;
+  std::cout<< "criic network elements "<< criticNetwork.Parameters().n_elem << std::endl;
+  // if (actorNetwork.Parameters().n_elem != envSampleSize)
+  //   actorNetwork.Reset(envSampleSize);
 
-  if (criticNetwork.Parameters().n_elem != envSampleSize)
-    criticNetwork.Reset(envSampleSize);
+  // if (criticNetwork.Parameters().n_elem != envSampleSize)
+  //   criticNetwork.Reset(envSampleSize);
+
+  std::cout<< "criic network dimensions "<< criticNetwork.Parameters().n_rows << " "<< criticNetwork.Parameters().n_cols << std::endl;
+  std::cout<< "actor network dimensions "<< actorNetwork.Parameters().n_rows << " "<< actorNetwork.Parameters().n_cols << std::endl;
 
   #if ENS_VERSION_MAJOR == 1
   this->criticUpdater.Initialize(criticNetwork.Parameters().n_rows,
@@ -162,8 +168,12 @@ void PPO<
   arma::irowvec isTerminal = {done};
   arma::mat criticGradients, actorGradients;
 
+  std::cout<< "critic 1 old weights \n" << criticNetwork.Parameters() <<std::endl;
+
   arma::rowvec actionValues, advantages;
   criticNetwork.Forward(sampledStates, actionValues);
+
+  std::cout << "critic network' action values \n"<<actionValues<<std::endl;
 
   arma::rowvec discountedRewards(sampledRewards.n_cols);
   arma::rowvec nextActionValue;
@@ -182,8 +192,19 @@ void PPO<
 
   // since empty loss is used, we give the gradient as input to Backward(),
   // instead of target.
-  arma::mat dLossCritic = - (advantages);
+  // arma::mat dLossCritic = - (advantages);
+  arma::mat dLossCritic = - (advantages) * actionValues;
+
+  std::cout << "critic network' loss values \n"<<dLossCritic<<std::endl;
+  
+
   criticNetwork.Backward(sampledStates, dLossCritic, criticGradients);
+
+  std::cout<< "critic gradients \n" << criticGradients<<std::endl;
+
+  std::cout<< "critic old weights \n" << criticNetwork.Parameters() <<std::endl;
+
+
   #if ENS_VERSION_MAJOR == 1
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
                        criticGradients);
@@ -192,15 +213,21 @@ void PPO<
                              criticGradients);
   #endif
 
-  ann::Softmax softmax;
+  std::cout<< "critic updated weights \n" << criticNetwork.Parameters() <<std::endl;
+
+  ann::LogSoftMax softmax;
   arma::mat actionLogit, actionProb;
 
   oldActorNetwork.Forward(sampledStates, actionLogit);
   softmax.Forward(actionLogit, actionProb);
+  std::cout<<" actor forward actionlogit" << actionLogit <<std::endl;
+  std::cout<<" old actor forward actionprobs" << actionProb <<std::endl;
   arma::mat oldProb = actionProb.row(action.action);
 
   actorNetwork.Forward(sampledStates, actionLogit);
   softmax.Forward(actionLogit, actionProb);
+
+  std::cout<<" actor forward actionprob" << actionProb <<std::endl;
   arma::mat prob = actionProb.row(action.action);
 
   arma::mat ratio = prob / oldProb;
@@ -220,11 +247,22 @@ void PPO<
     dLoss(sampledActions[i].action, i) = dSurroLoss(0, i);
 
   arma::mat dGrad;
+
+  std::cout<<" actor loss" << dLoss <<std::endl;
   softmax.Backward(actionProb, dLoss, dGrad);
 
   // Since empty loss is used, we give the gradient as input to Backward(),
   // instead of target.
+
+  std::cout<<" actor backward dGrad" << dGrad <<std::endl;
   actorNetwork.Backward(sampledStates, dGrad, actorGradients);
+
+  std::cout<<" actor backward gradients" << actorGradients <<std::endl;
+
+  arma::colvec oldweights=actorNetwork.Parameters();
+
+  std::cout<< "actor weigh \n" << actorNetwork.Parameters() <<std::endl;
+
 
   #if ENS_VERSION_MAJOR == 1
   actorUpdater.Update(actorNetwork.Parameters(), config.StepSize(),
@@ -233,6 +271,10 @@ void PPO<
   actorUpdatePolicy->Update(actorNetwork.Parameters(), config.StepSize(),
                             actorGradients);
   #endif
+
+  arma::colvec updatedweights=actorNetwork.Parameters();
+  std::cout<< "actor weight difference \n" << sum(updatedweights-oldweights) <<std::endl;
+
 
   // Update the oldActorNetwork, synchronize the parameter.
   oldActorNetwork.Parameters() = actorNetwork.Parameters();
@@ -254,16 +296,23 @@ double PPO<
   // Get the initial state from environment.
   state = environment.InitialSample();
 
+  std::cout<<"Initial State "<< state.Position() << " " << state.Velocity() << " " << state.Angle() <<" " << state.AngularVelocity() <<  std::endl;
+
   // Track the return of this episode.
   double totalReturn = 0.0;
 
+  int i=0;
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
     SelectAction();
 
+    // std::cout<<"Action selected "<<action.action<<std::endl;
+
     // Interact with the environment to advance to next state.
     reward = environment.Sample(state, action, nextState);
+
+    // std::cout<<"Reward on Action "<<reward<<std::endl;
 
     totalReturn += reward;
     totalSteps++;
@@ -276,6 +325,9 @@ double PPO<
 
     // Update current state.
     state = nextState;
+    i++;
+
+    if(i>1) break;
   }
 
   return totalReturn;

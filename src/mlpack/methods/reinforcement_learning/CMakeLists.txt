@@ -8,6 +8,8 @@ set(SOURCES
   sac.hpp
   sac_impl.hpp
   training_config.hpp
+  ppo.hpp
+  ppo_impl.hpp
 )
 
 add_subdirectory(environment)

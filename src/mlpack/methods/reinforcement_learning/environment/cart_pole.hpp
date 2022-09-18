@@ -207,7 +207,9 @@ class CartPole
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0);
+    arma::colvec initialstate = {0.01533963, 0.00261948, 0.01974877, 0.00626023};
+    // return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0);
+    return State(initialstate);
   }
 
   /**
