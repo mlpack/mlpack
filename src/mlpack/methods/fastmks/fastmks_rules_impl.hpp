@@ -16,7 +16,6 @@
 #include "fastmks_rules.hpp"
 
 namespace mlpack {
-namespace fastmks {
 
 template<typename KernelType, typename TreeType>
 FastMKSRules<KernelType, TreeType>::FastMKSRules(
@@ -91,7 +90,7 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
   // cover trees, the kernel evaluation between the two centroid points already
   // happened.  So we don't need to do it.  Note that this optimizes out if the
   // first conditional is false (its result is known at compile time).
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     if ((queryIndex == lastQueryIndex) &&
         (referenceIndex == lastReferenceIndex))
@@ -107,7 +106,7 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
                                       referenceSet.col(referenceIndex));
 
   // Update the last kernel value, if we need to.
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
     lastKernel = kernelEval;
 
   // If the reference and query sets are identical, we still need to compute the
@@ -136,7 +135,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
     const double parentDist = referenceNode.ParentDistance();
     const double combinedDistBound = parentDist + furthestDist;
     const double lastKernel = referenceNode.Parent()->Stat().LastKernel();
-    if (kernel::KernelTraits<KernelType>::IsNormalized)
+    if (KernelTraits<KernelType>::IsNormalized)
     {
       const double squaredDist = std::pow(combinedDistBound, 2.0);
       const double delta = (1 - 0.5 * squaredDist);
@@ -165,10 +164,10 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
   // centroid or, if the centroid is a point, use that.
   ++scores;
   double kernelEval;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // Could it be that this kernel evaluation has already been calculated?
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+    if (TreeTraits<TreeType>::HasSelfChildren &&
         referenceNode.Parent() != NULL &&
         referenceNode.Point(0) == referenceNode.Parent()->Point(0))
     {
@@ -190,7 +189,7 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
   referenceNode.Stat().LastKernel() = kernelEval;
 
   double maxKernel;
-  if (kernel::KernelTraits<KernelType>::IsNormalized)
+  if (KernelTraits<KernelType>::IsNormalized)
   {
     const double squaredDist = std::pow(furthestDist, 2.0);
     const double delta = (1 - 0.5 * squaredDist);
@@ -319,7 +318,7 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   // We were unable to perform a parent-child or parent-parent prune, so now we
   // must calculate kernel evaluation, if necessary.
   double kernelEval = 0.0;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // For this type of tree, we may have already calculated the base case in
     // the parents.
@@ -361,7 +360,7 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   ++scores;
 
   double maxKernel;
-  if (kernel::KernelTraits<KernelType>::IsNormalized)
+  if (KernelTraits<KernelType>::IsNormalized)
   {
     // We have a tighter bound for normalized kernels.
     const double querySqDist = std::pow(queryDescDist, 2.0);
@@ -537,7 +536,6 @@ inline void FastMKSRules<KernelType, TreeType>::InsertNeighbor(
   }
 }
 
-} // namespace fastmks
 } // namespace mlpack
 
 #endif

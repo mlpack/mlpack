@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace kde {
 
 /**
  * A dual-tree traversal Rules class for kernel density estimation.  This
@@ -79,7 +78,7 @@ class KDERules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -160,7 +159,7 @@ class KDERules
 
   //! Whether the kernel used for the rule is the Gaussian Kernel.
   constexpr static bool kernelIsGaussian =
-      std::is_same<KernelType, kernel::GaussianKernel>::value;
+      std::is_same<KernelType, GaussianKernel>::value;
 
   //! Absolute error tolerance available for each reference point.
   const double absErrorTol;
@@ -211,7 +210,7 @@ class KDECleanRules
                  TreeType& /* referenceNode*/ ,
                  const double oldScore) const { return oldScore; }
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -224,7 +223,6 @@ class KDECleanRules
   TraversalInfoType traversalInfo;
 };
 
-} // namespace kde
 } // namespace mlpack
 
 // Include implementation.

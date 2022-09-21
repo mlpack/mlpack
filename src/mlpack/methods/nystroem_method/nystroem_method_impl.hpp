@@ -17,7 +17,6 @@
 #include "nystroem_method.hpp"
 
 namespace mlpack {
-namespace kernel {
 
 template<typename KernelType, typename PointSelectionPolicy>
 NystroemMethod<KernelType, PointSelectionPolicy>::NystroemMethod(
@@ -99,7 +98,6 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::Apply(arma::mat& output)
   output = semiKernel * U * normalization * V;
 }
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

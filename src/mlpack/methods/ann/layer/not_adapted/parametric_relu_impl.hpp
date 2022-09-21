@@ -19,7 +19,6 @@
 #include "parametric_relu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 PReLUType<InputType, OutputType>::PReLUType(
@@ -84,7 +83,6 @@ void PReLUType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(alpha));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

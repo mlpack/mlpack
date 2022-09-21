@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The simple linear kernel (dot product).  For any two vectors @f$ x @f$ and
@@ -60,7 +59,6 @@ class LinearKernel
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

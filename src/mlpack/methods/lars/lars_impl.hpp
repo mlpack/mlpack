@@ -16,7 +16,6 @@
 #include "lars.hpp"
 
 namespace mlpack {
-namespace regression {
 
 inline LARS::LARS(
     const bool useCholesky,
@@ -692,7 +691,6 @@ void LARS::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(isIgnored));
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif

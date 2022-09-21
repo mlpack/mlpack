@@ -22,7 +22,6 @@
 #include "layer_types.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the MultiplyMerge module class. The MultiplyMerge class
@@ -128,7 +127,6 @@ class MultiplyMergeType : public MultiLayer<InputType, OutputType>
 // Standard MultiplyMerge layer.
 typedef MultiplyMergeType<arma::mat, arma::mat> MultiplyMerge;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

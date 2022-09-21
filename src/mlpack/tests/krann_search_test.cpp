@@ -18,10 +18,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::neighbor;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
-using namespace mlpack::bound;
 
 // Test the correctness and guarantees of KRANN when in naive mode.
 TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")
@@ -427,7 +423,7 @@ TEST_CASE("SingleBallTreeTest", "[KRANNTest]")
 
   typedef BinarySpaceTree<BallBound<>, RAQueryStat<NearestNeighborSort> >
       TreeType;
-  typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
+  typedef RASearch<NearestNeighborSort, EuclideanDistance, TreeType>
       RABallTreeSearch;
 
   RABallTreeSearch tssRann(refData, queryData, false, true);
@@ -490,7 +486,7 @@ TEST_CASE("DualBallTreeTest", "[KRANNTest]")
 
   typedef BinarySpaceTree<BallBound<>, RAQueryStat<NearestNeighborSort> >
     TreeType;
-  typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
+  typedef RASearch<NearestNeighborSort, EuclideanDistance, TreeType>
       RABallTreeSearch;
 
   TreeType refTree(refData);

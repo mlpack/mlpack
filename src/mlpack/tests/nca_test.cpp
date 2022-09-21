@@ -16,8 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::metric;
-using namespace mlpack::nca;
 using namespace ens;
 
 //

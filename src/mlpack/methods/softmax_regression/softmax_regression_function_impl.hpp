@@ -15,7 +15,6 @@
 #include "softmax_regression_function.hpp"
 
 namespace mlpack {
-namespace regression {
 
 inline SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const arma::mat& data,
@@ -23,7 +22,7 @@ inline SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const size_t numClasses,
     const double lambda,
     const bool fitIntercept) :
-    data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
+    data(MakeAlias(const_cast<arma::mat&>(data), false)),
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -46,7 +45,7 @@ inline void SoftmaxRegressionFunction::Shuffle()
 
   // Re-sort data.
   arma::mat newData = data.cols(ordering);
-  math::ClearAlias(data);
+  ClearAlias(data);
   data = std::move(newData);
 
   // Assemble data for batch constructor.  We need reverse orderings though...
@@ -338,7 +337,6 @@ inline void SoftmaxRegressionFunction::PartialGradient(const arma::mat& paramete
   }
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif

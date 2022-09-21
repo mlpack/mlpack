@@ -18,8 +18,6 @@
 #include <mlpack/core/data/split_data.hpp>
 
 using namespace mlpack;
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
 
 /**
  * Create the data for the a logistic regression test.

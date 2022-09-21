@@ -16,7 +16,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 /**
  * A "multi-layer" is a layer that is a wrapper around other layers.  It passes
@@ -253,7 +252,6 @@ class MultiLayer : public Layer<MatType>
   std::vector<MatType> layerGradients;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -18,7 +18,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::math;
 
 /**
  * Test for linalg__private::Center().  There are no edge cases here, so we'll
@@ -95,7 +94,7 @@ TEST_CASE("TestOrthogonalize", "[LinAlgTest]")
   Orthogonalize(tmp, orth);
 
   // test orthogonality
-  mat test = mlpack::math::ColumnCovariance(orth);
+  mat test = ColumnCovariance(orth);
   double ival = test(0, 0);
   for (size_t row = 0; row < test.n_rows; row++)
   {

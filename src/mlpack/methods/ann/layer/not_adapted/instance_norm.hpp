@@ -17,7 +17,6 @@
 #include "layer_types.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Declaration of the Instance Normalization layer class. The layer transforms
@@ -214,7 +213,6 @@ class InstanceNorm
   OutputDataType runningVariance;
 }; // class InstanceNorm
 
-} // namespace ann
 } // namespace mlpack
 
 // Include the implementation.

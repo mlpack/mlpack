@@ -14,7 +14,6 @@
 #include "spill_tree.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 // Useful struct when specific behaviour for SpillTrees is required.
 template<typename TreeType>
@@ -31,13 +30,12 @@ template<typename MetricType,
             class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
             class SplitType>
-struct IsSpillTree<tree::SpillTree<MetricType, StatisticType, MatType,
-    HyperplaneType, SplitType>>
+struct IsSpillTree<SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
+    SplitType>>
 {
   static const bool value = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

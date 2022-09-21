@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * ROC-AUC is a metric of performance for classification algorithms that for
@@ -51,7 +50,6 @@ class ROCAUCScore
   static const bool NeedsMinimization = false;
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation.

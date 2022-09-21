@@ -352,7 +352,7 @@ corresponding to each row of the points matrix.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::regression;
+using namespace mlpack;
 
 arma::mat data; // The dataset itself.
 arma::vec responses; // The responses, one row for each row in data.
@@ -416,7 +416,7 @@ used to set a value of lambda:
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::regression;
+using namespace mlpack;
 
 arma::mat data; // The dataset itself.
 arma::vec responses; // The responses, one row for each row in data.

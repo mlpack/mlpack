@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Linear3D layer class. The Linear class represents a
@@ -151,7 +150,6 @@ class Linear3DType : public Layer<MatType>
 // Standard Linear3D layer.
 typedef Linear3DType<arma::mat, NoRegularizer> Linear3D;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

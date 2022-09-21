@@ -16,7 +16,6 @@
 #include "lstm.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 LSTMType<MatType>::LSTMType() :
@@ -414,7 +413,6 @@ void LSTMType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

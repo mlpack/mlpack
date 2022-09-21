@@ -17,8 +17,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
-using namespace mlpack::distribution;
 
 /**
  * Make sure the Gini gain is zero when the labels are perfect.
@@ -439,9 +437,9 @@ TEST_CASE("RandomBinaryNumericSplitDiffSplitTest", "[DecisionTreeTest]")
   arma::rowvec weights;
   for (size_t i = 0; i < 1000; i += 2)
   {
-    values[i] = math::Random(0, 5);
+    values[i] = Random(0, 5);
     labels[i] = 0;
-    values[i + 1] = math::Random(0, 5);
+    values[i + 1] = Random(0, 5);
     labels[i + 1] = 1;
   }
 
@@ -945,7 +943,7 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
   arma::Row<size_t> noiseLabels(1000);
   for (size_t i = 0; i < noiseLabels.n_elem; ++i)
-    noiseLabels[i] = math::RandInt(3); // Random label.
+    noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(dataset, noise);
@@ -954,9 +952,9 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
   for (size_t i = 0; i < dataset.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Now build the decision tree.  I think the syntax is right here.
   DecisionTree<> d(data, fullLabels, 3, weights, 10);
@@ -1005,19 +1003,19 @@ TEST_CASE("CategoricalWeightedBuildTest", "[DecisionTreeTest]")
   arma::Row<size_t> randomLabels(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
-    randomNoise(0, i) = math::Random();
-    randomNoise(1, i) = math::Random();
-    randomNoise(2, i) = math::RandInt(4);
-    randomNoise(3, i) = math::RandInt(2);
-    randomLabels[i] = math::RandInt(5);
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random();
+    randomNoise(2, i) = RandInt(4);
+    randomNoise(3, i) = RandInt(2);
+    randomLabels[i] = RandInt(5);
   }
 
   // Generate weights.
   arma::rowvec weights(4000);
   for (size_t i = 0; i < 2000; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = 2000; i < 4000; ++i)
-    weights[i] = math::Random(0.0, 0.001);
+    weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
@@ -1058,7 +1056,7 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
   arma::Row<size_t> noiseLabels(1000);
   for (size_t i = 0; i < noiseLabels.n_elem; ++i)
-    noiseLabels[i] = math::RandInt(3); // Random label.
+    noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(dataset, noise);
@@ -1067,9 +1065,9 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
   for (size_t i = 0; i < dataset.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Now build the decision tree.  I think the syntax is right here.
   DecisionTree<InformationGain> d(data, fullLabels, 3, weights, 10);
@@ -1118,19 +1116,19 @@ TEST_CASE("CategoricalInformationGainWeightedBuildTest", "[DecisionTreeTest]")
   arma::Row<size_t> randomLabels(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
-    randomNoise(0, i) = math::Random();
-    randomNoise(1, i) = math::Random();
-    randomNoise(2, i) = math::RandInt(4);
-    randomNoise(3, i) = math::RandInt(2);
-    randomLabels[i] = math::RandInt(5);
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random();
+    randomNoise(2, i) = RandInt(4);
+    randomNoise(3, i) = RandInt(2);
+    randomLabels[i] = RandInt(5);
   }
 
   // Generate weights.
   arma::rowvec weights(4000);
   for (size_t i = 0; i < 2000; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = 2000; i < 4000; ++i)
-    weights[i] = math::Random(0.0, 0.001);
+    weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);

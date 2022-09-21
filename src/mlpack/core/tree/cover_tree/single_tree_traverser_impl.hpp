@@ -19,7 +19,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace tree {
 
 //! This is the structure the cover tree map will use for traversal.
 template<
@@ -237,7 +236,6 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

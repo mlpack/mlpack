@@ -13,7 +13,6 @@
 #define MLPACK_CORE_HPT_CV_FUNCTION_IMPL_HPP
 
 namespace mlpack {
-namespace hpt {
 
 template<typename CVType,
          typename MLAlgorithm,
@@ -172,7 +171,6 @@ double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
   }
 }
 
-} // namespace hpt
 } // namespace mlpack
 
 #endif

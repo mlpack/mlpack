@@ -15,7 +15,6 @@
 #include "unmap.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 // Useful in the dual-tree setting.
 inline void Unmap(const arma::Mat<size_t>& neighbors,
@@ -68,7 +67,6 @@ inline void Unmap(const arma::Mat<size_t>& neighbors,
     neighborsOut[j] = referenceMap[neighbors[j]];
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

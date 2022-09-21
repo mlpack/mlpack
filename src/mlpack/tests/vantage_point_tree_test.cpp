@@ -15,11 +15,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::tree;
-using namespace mlpack::neighbor;
-using namespace mlpack::metric;
-using namespace mlpack::bound;
 
 TEST_CASE("VPTreeTraitsTest", "[VantagePointTreeTest]")
 {
@@ -235,8 +230,8 @@ TEST_CASE("SingleVPTreeTraverserTest", "[VantagePointTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the VP tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      VPTree> knn1(dataset, SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, VPTree>
+      knn1(dataset, SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -262,8 +257,8 @@ TEST_CASE("DualVPTreeTraverserTest", "[VantagePointTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the VP tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      VPTree> knn1(dataset, DUAL_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, VPTree>
+      knn1(dataset, DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

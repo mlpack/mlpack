@@ -16,7 +16,6 @@
 #include "bernoulli_distribution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename DataType>
 BernoulliDistribution<DataType>::BernoulliDistribution() :
@@ -84,7 +83,6 @@ void BernoulliDistribution<DataType>::LogProbBackward(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

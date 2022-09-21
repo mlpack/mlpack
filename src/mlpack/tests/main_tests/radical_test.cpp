@@ -114,7 +114,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffNoiseStdDevTest",
 
   SetInputParam("input", input);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::mat Y = params.Get<arma::mat>("output_ic");
@@ -125,7 +125,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffNoiseStdDevTest",
   SetInputParam("input", std::move(input));
   SetInputParam("noise_std_dev", (double) 0.01);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
@@ -146,7 +146,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffReplicatesTest",
 
   SetInputParam("input", input);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::mat Y = params.Get<arma::mat>("output_ic");
@@ -157,7 +157,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffReplicatesTest",
   SetInputParam("input", std::move(input));
   SetInputParam("replicates", (int) 10);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
@@ -178,7 +178,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffAnglesTest",
 
   SetInputParam("input", input);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::mat Y = params.Get<arma::mat>("output_ic");
@@ -189,7 +189,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffAnglesTest",
   SetInputParam("input", std::move(input));
   SetInputParam("angles", (int) 20);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
@@ -210,7 +210,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffSweepsTest",
 
   SetInputParam("input", input);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::mat Y = params.Get<arma::mat>("output_ic");
@@ -222,7 +222,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffSweepsTest",
   SetInputParam("input", std::move(input));
   SetInputParam("sweeps", (int) 2);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.

@@ -40,9 +40,9 @@ bool IsConverged(arma::mat& W, arma::mat& H)
 
 Below is a list of all the termination policies that mlpack contains.
 
- - `mlpack::amf::SimpleResidueTermination`
- - `mlpack::amf::SimpleToleranceTermination`
- - `mlpack::amf::ValidationRMSETermination`
+ - `SimpleResidueTermination`
+ - `SimpleToleranceTermination`
+ - `ValidationRMSETermination`
 
 In `SimpleResidueTermination`, the termination decision depends on two factors,
 value of residue and number of iteration. If the current value of residue drops
@@ -75,8 +75,8 @@ respectively.
 
 mlpack currently has 2 initialization policies implemented for AMF:
 
- - `mlpack::amf::RandomInitialization`
- - `mlpack::amf::RandomAcolInitialization`
+ - `RandomInitialization`
+ - `RandomAcolInitialization`
 
 `RandomInitialization` initializes matrices `W` and `H` with random uniform
 distribution while `RandomAcolInitialization` initializes the `W` matrix by
@@ -98,12 +98,12 @@ inline static void Initialize(const MatType& V,
 
 mlpack implements the following update rules for the AMF class:
 
- - `mlpack::amf::NMFALSUpdate`
- - `mlpack::amf::NMFMultiplicativeDistanceUpdate`
- - `mlpack::amf::NMFMultiplicativeDivergenceUpdate`
- - `mlpack::amf::SVDBatchLearning`
- - `mlpack::amf::SVDIncompleteIncrementalLearning`
- - `mlpack::amf::SVDCompleteIncrementalLearning`
+ - `NMFALSUpdate`
+ - `NMFMultiplicativeDistanceUpdate`
+ - `NMFMultiplicativeDivergenceUpdate`
+ - `SVDBatchLearning`
+ - `SVDIncompleteIncrementalLearning`
+ - `SVDCompleteIncrementalLearning`
 
 Non-Negative Matrix factorization can be achieved with `NMFALSUpdate`,
 `NMFMultiplicativeDivergenceUpdate` or `NMFMultiplicativeDivergenceUpdate`.
@@ -122,15 +122,15 @@ algorithms refer to the respective class documentation.
 ## Using Non-Negative Matrix Factorization with `AMF`
 
 The use of `AMF` for Non-Negative Matrix factorization is simple. The AMF module
-defines `mlpack::amf::NMFALSFactorizer` which can be used directly without
-knowing the internal structure of `AMF`. For example:
+defines `NMFALSFactorizer` which can be used directly without knowing the
+internal structure of `AMF`. For example:
 
 ```c++
 #include <mlpack.hpp>
 
 using namespace std;
 using namespace arma;
-using namespace mlpack::amf;
+using namespace mlpack;
 
 int main()
 {
@@ -151,9 +151,9 @@ obtained by comparing the constructed matrix `W * H` with the original matrix
 
 mlpack has the following SVD factorizers implemented for AMF:
 
- - `mlpack::amf::SVDBatchFactorizer`
- - `mlpack::amf::SVDIncompleteIncrementalFactorizer`
- - `mlpack::amf::SVDCompleteIncrementalFactorizer`
+ - `SVDBatchFactorizer`
+ - `SVDIncompleteIncrementalFactorizer`
+ - `SVDCompleteIncrementalFactorizer`
 
 Each of these factorizers takes a template parameter `MatType`, which specifies
 the type of the matrix `V` (dense or sparse---these have types `arma::mat` and
@@ -165,7 +165,7 @@ sparse, specifying `MatType = arma::sp_mat` can provide a runtime boost.
 
 using namespace std;
 using namespace arma;
-using namespace mlpack::amf;
+using namespace mlpack;
 
 int main()
 {
@@ -179,5 +179,5 @@ int main()
 
 ## Further documentation
 
-For further documentation on the `AMF` class, consult the `mlpack::amf::AMF`
+For further documentation on the `AMF` class, consult the `AMF`
 source code comments.

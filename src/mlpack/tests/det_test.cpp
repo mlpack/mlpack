@@ -28,7 +28,6 @@
 #endif
 
 using namespace mlpack;
-using namespace mlpack::det;
 using namespace std;
 
 // Tests for the private functions.  We cannot perform these if we are on

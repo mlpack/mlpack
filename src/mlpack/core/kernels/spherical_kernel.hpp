@@ -13,7 +13,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The spherical kernel, which is 1 when the distance between the two argument
@@ -42,8 +41,7 @@ class SphericalKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
-    return
-        (metric::SquaredEuclideanDistance::Evaluate(a, b) <= bandwidthSquared) ?
+    return (SquaredEuclideanDistance::Evaluate(a, b) <= bandwidthSquared) ?
         1.0 : 0.0;
   }
   /**
@@ -60,7 +58,7 @@ class SphericalKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b) const
   {
-    double distance = sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b));
+    double distance = sqrt(SquaredEuclideanDistance::Evaluate(a, b));
     if (distance >= 2.0 * bandwidth)
     {
       return 0.0;
@@ -125,7 +123,6 @@ class KernelTraits<SphericalKernel>
   static const bool UsesSquaredDistance = false;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

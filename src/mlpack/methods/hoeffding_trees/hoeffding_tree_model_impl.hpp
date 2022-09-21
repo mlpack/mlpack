@@ -15,7 +15,6 @@
 #include "hoeffding_tree_model.hpp"
 
 namespace mlpack {
-namespace tree {
 
 // Constructor.
 inline HoeffdingTreeModel::HoeffdingTreeModel(const TreeType& type) :
@@ -308,7 +307,6 @@ inline size_t HoeffdingTreeModel::NumNodes() const
   return 0; // This should never happen!
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

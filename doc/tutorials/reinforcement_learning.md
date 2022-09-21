@@ -110,7 +110,6 @@ been broken into chunks for easy understanding.
 #include <mlpack.hpp>
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::rl;
 ```
@@ -329,7 +328,6 @@ Here is the full code to try this right away:
 #include <mlpack.hpp>
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace mlpack::rl;
 
 int main()

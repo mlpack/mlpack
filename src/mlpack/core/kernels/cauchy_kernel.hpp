@@ -17,7 +17,6 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The Cauchy kernel. Given two vector @f$ x @f$, @f$ y @f$, and a bandwidth
@@ -65,7 +64,7 @@ class CauchyKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b)
   {
     return 1 / (1 + (
-        std::pow(metric::EuclideanDistance::Evaluate(a, b) / bandwidth, 2)));
+        std::pow(EuclideanDistance::Evaluate(a, b) / bandwidth, 2)));
   }
 
   /**
@@ -91,7 +90,6 @@ class KernelTraits<CauchyKernel>
   static const bool IsNormalized = true;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include "discrete_hilbert_value.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>::DiscreteHilbertValue() :
@@ -552,7 +551,6 @@ void DiscreteHilbertValue<TreeElemType>::serialize(
   ar(CEREAL_NVP(ownsValueToInsert));
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_IMPL_HPP

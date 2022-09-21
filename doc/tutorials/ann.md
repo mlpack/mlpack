@@ -177,7 +177,6 @@ representation.
 #include <mlpack.hpp>
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 int main()
 {
@@ -378,9 +377,8 @@ which may be `arma::mat` (dense Armadillo matrix) or `arma::sp_mat`
 (sparse Armadillo matrix). This allows support for both sparse-supporting and
 non-sparse-supporting layer without explicitly passing the type.
 
-Every new layer should inherit from `mlpack::ann::Layer<MatType>`, which defines
-some core functionality.  There are three additional functions that must be
-implemented:
+Every new layer should inherit from `Layer<MatType>`, which defines some core
+functionality.  There are three additional functions that must be implemented:
 
  - `void ComputeOutputDimensions()`: this sets the internal member
    `outputDimensions` to the correct output dimensions of the layer, given that

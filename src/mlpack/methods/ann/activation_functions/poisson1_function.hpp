@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Poisson one function, defined by
@@ -75,7 +74,6 @@ class Poisson1Function
   }
 }; // class Poisson1Function
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

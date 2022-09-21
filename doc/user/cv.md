@@ -162,13 +162,13 @@ double lrMSE = cv4.Evaluate(lrLambda);
 ## Performance measures
 
 The cross-validation classes require a performance measure to be specified.
-\b mlpack has a number of performance measures implemented; below is a list:
+mlpack has a number of performance measures implemented; below is a list:
 
- - `mlpack::cv::Accuracy`: a simple measure of accuracy
- - `mlpack::cv::F1`: the F1 score; depends on an averaging strategy
- - `mlpack::cv::MSE`: minimum squared error (for regression problems)
- - `mlpack::cv::Precision`: the precision, for classification problems
- - `mlpack::cv::Recall`: the recall, for classification problems
+ - `Accuracy`: a simple measure of accuracy
+ - `F1`: the F1 score; depends on an averaging strategy
+ - `MSE`: minimum squared error (for regression problems)
+ - `Precision`: the precision, for classification problems
+ - `Recall`: the recall, for classification problems
 
 In addition, it is not difficult to implement a custom performance measure.  A
 class following the structure below can be used:
@@ -329,22 +329,23 @@ double result3 = cv.Evaluate(0.5, false, sgd);
 The same general idea applies to any `MLAlgorithm`: all hyperparameters must be
 passed to the `Evaluate()` method of `KFoldCV` or `SimpleCV`.
 
-@section cvbasic_further Further references
+## Further references
 
 For further documentation, please see the source code for each of the relevant
 classes:
 
- - `mlpack::cv::SimpleCV`
- - `mlpack::cv::KFoldCV`
- - `mlpack::cv::Accuracy`
- - `mlpack::cv::F1`
- - `mlpack::cv::MSE`
- - `mlpack::cv::Precision`
- - `mlpack::cv::Recall`
+ - `SimpleCV`
+ - `KFoldCV`
+ - `Accuracy`
+ - `F1`
+ - `MSE`
+ - `Precision`
+ - `Recall`
 
-If you are interested in implementing a different cross-validation strategy than
-k-fold cross-validation or simple cross-validation, take a look at the
-implementations of each of those classes to guide your implementation.
+This code is located in `mlpack/core/cv/`.  If you are interested in
+implementing a different cross-validation strategy than k-fold cross-validation
+or simple cross-validation, take a look at the implementations of each of those
+classes to guide your implementation.
 
 In addition, the [hyperparameter tuner](hpt.md) documentation may also be
 relevant.

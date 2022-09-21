@@ -20,7 +20,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize weight matrix with the He
@@ -144,7 +143,6 @@ class HeInitialization
   }
 }; // class HeInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

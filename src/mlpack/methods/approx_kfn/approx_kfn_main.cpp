@@ -21,7 +21,6 @@
 #include "qdafn.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 using namespace mlpack::util;
 using namespace std;
 
@@ -113,14 +112,14 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("k-furthest-neighbor search", "#kfn");
 BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
 BINDING_SEE_ALSO("Fast approximate furthest neighbors with data-dependent"
-        " candidate selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf");
+    " candidate selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf");
 BINDING_SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
-        "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
-        "9c20.pdf");
-BINDING_SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
-        "@src/mlpack/methods/approx_kfn/qdafn.hpp.");
-BINDING_SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
-        "@src/mlpack/methods/approx_kfn/drusilla_select.hpp");
+    "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
+    "9c20.pdf");
+BINDING_SEE_ALSO("QDAFN class documentation",
+    "@src/mlpack/methods/approx_kfn/qdafn.hpp");
+BINDING_SEE_ALSO("DrusillaSelect class documentation",
+    "@src/mlpack/methods/approx_kfn/drusilla_select.hpp");
 
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");

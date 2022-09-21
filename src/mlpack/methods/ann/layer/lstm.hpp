@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the LSTM module class.
@@ -272,7 +271,6 @@ class LSTMType : public RecurrentLayer<MatType>
 // Standard LSTM layer.
 typedef LSTMType<arma::mat> LSTM;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

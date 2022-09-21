@@ -16,7 +16,6 @@
 #include "hilbert_r_tree_auxiliary_information.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType,
          template<typename> class HilbertValueType>
@@ -186,7 +185,6 @@ void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::serialize(
 }
 
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_AUXILIARY_INFO_IMPL_HPP

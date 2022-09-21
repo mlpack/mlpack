@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename TreeType>
 class DualTreeKMeansRules
@@ -44,7 +43,7 @@ class DualTreeKMeansRules
                  TreeType& referenceNode,
                  const double oldScore);
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -83,7 +82,6 @@ class DualTreeKMeansRules
   size_t lastBaseCase;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #include "dual_tree_kmeans_rules_impl.hpp"

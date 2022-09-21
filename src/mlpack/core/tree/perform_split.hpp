@@ -17,8 +17,6 @@
 #define MLPACK_CORE_TREE_PERFORM_SPLIT_HPP
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
-namespace split {
 
 /**
  * This function implements the default split behavior i.e. it rearranges
@@ -152,8 +150,6 @@ size_t PerformSplit(MatType& data,
   return left;
 }
 
-} // namespace split
-} // namespace tree
 } // namespace mlpack
 
 

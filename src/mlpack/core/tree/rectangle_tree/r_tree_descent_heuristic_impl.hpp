@@ -16,7 +16,6 @@
 #include "r_tree_descent_heuristic.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
@@ -108,7 +107,6 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
   return bestIndex;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

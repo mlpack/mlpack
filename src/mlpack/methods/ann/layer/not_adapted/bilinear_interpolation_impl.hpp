@@ -17,7 +17,6 @@
 #include "bilinear_interpolation.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 BilinearInterpolationType<InputType, OutputType>::
@@ -168,7 +167,6 @@ void BilinearInterpolationType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(outColSize));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

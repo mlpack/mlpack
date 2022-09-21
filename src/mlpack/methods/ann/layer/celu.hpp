@@ -28,7 +28,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The CELU activation function, defined by
@@ -130,7 +129,6 @@ class CELUType : public Layer<MatType>
 // Standard CELU layer.
 typedef CELUType<arma::mat> CELU;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

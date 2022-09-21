@@ -18,9 +18,6 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 /**
  * Generator of instances of the binary addition task.
@@ -93,9 +90,6 @@ class AddTask
                 arma::field<arma::mat>& output) const;
 };
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #include "add_impl.hpp"

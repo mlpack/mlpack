@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_ANN_GAN_GAN_POLICIES_HPP
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * For more information, see the following paper:
@@ -78,7 +77,6 @@ class WGAN { /* Nothing to do here */ };
  */
 class WGANGP { /* Nothing to do here */ };
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

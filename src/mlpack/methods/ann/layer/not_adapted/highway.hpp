@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Highway layer.  The Highway class can vary its behavior
@@ -148,7 +147,6 @@ class HighwayType : public MultiLayer<InputType, OutputType>
 // Standard Highway layer.
 typedef HighwayType<arma::mat, arma::mat> Highway;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

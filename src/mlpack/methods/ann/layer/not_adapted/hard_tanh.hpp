@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Hard Tanh activation function, defined by
@@ -111,7 +110,6 @@ class HardTanHType : public Layer<InputType, OutputType>
 // Standard HardTanH layer.
 typedef HardTanHType<arma::mat, arma::mat> HardTanH;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

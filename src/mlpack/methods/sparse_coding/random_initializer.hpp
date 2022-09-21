@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace sparse_coding {
 
 /**
  * A DictionaryInitializer for use with the SparseCoding class.  This provides a
@@ -47,7 +46,6 @@ class RandomInitializer
   }
 };
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 #endif

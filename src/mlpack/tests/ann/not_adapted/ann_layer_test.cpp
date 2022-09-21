@@ -19,7 +19,6 @@
 #include "ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 // // network1 should be allocated with `new`, and trained on some data.
 // template<typename MatType = arma::cube, typename ModelType>
@@ -104,7 +103,7 @@ TEST_CASE("JacobianAddLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t elements = math::RandInt(2, 1000);
+    const size_t elements = RandInt(2, 1000);
     arma::mat input;
     input.set_size(elements, 1);
 
@@ -205,7 +204,7 @@ TEST_CASE("JacobianConstantLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t elements = math::RandInt(2, 1000);
+    const size_t elements = RandInt(2, 1000);
     arma::mat input;
     input.set_size(elements, 1);
 
@@ -258,8 +257,8 @@ TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
 // {
 //   for (size_t i = 0; i < 5; ++i)
 //   {
-//     const size_t inputElements = math::RandInt(2, 1000);
-//     const size_t outputElements = math::RandInt(2, 1000);
+//     const size_t inputElements = RandInt(2, 1000);
+//     const size_t outputElements = RandInt(2, 1000);
 
 //     arma::mat input;
 //     input.set_size(inputElements, 1);
@@ -333,8 +332,8 @@ TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
 //  */
 // TEST_CASE("JacobianNoisyLinearLayerTest", "[ANNLayerTest]")
 // {
-//   const size_t inputElements = math::RandInt(2, 1000);
-//   const size_t outputElements = math::RandInt(2, 1000);
+//   const size_t inputElements = RandInt(2, 1000);
+//   const size_t outputElements = RandInt(2, 1000);
 
 //   arma::mat input;
 //   input.set_size(inputElements, 1);
@@ -395,13 +394,13 @@ TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
 //   for (size_t i = 0; i < 5; ++i)
 //   {
 //     NegativeLogLikelihood module;
-//     const size_t inputElements = math::RandInt(5, 100);
+//     const size_t inputElements = RandInt(5, 100);
 //     arma::mat input;
 //     RandomInitialization init(0, 1);
 //     init.Initialize(input, inputElements, 1);
 
 //     arma::mat target(1, 1);
-//     target(0) = math::RandInt(0, inputElements - 2);
+//     target(0) = RandInt(0, inputElements - 2);
 
 //     double error = JacobianPerformanceTest(module, input, target);
 //     REQUIRE(error <= 1e-5);
@@ -415,7 +414,7 @@ TEST_CASE("JacobianLeakyReLULayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElements = math::RandInt(2, 1000);
+    const size_t inputElements = RandInt(2, 1000);
 
     arma::mat input;
     input.set_size(inputElements, 1);
@@ -435,7 +434,7 @@ TEST_CASE("JacobianFlexibleReLULayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElements = math::RandInt(2, 1000);
+    const size_t inputElements = RandInt(2, 1000);
 
     arma::mat input;
     input.set_size(inputElements, 1);
@@ -499,7 +498,7 @@ TEST_CASE("JacobianMultiplyConstantLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElements = math::RandInt(2, 1000);
+    const size_t inputElements = RandInt(2, 1000);
 
     arma::mat input;
     input.set_size(inputElements, 1);
@@ -552,7 +551,7 @@ TEST_CASE("JacobianHardTanHLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElements = math::RandInt(2, 1000);
+    const size_t inputElements = RandInt(2, 1000);
 
     arma::mat input;
     input.set_size(inputElements, 1);
@@ -650,7 +649,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   for (size_t i = 0; i < 5; ++i)
 //   {
 //     AddMerge<> module(false, false);
-//     const size_t numMergeModules = math::RandInt(2, 10);
+//     const size_t numMergeModules = RandInt(2, 10);
 //     for (size_t m = 0; m < numMergeModules; ++m)
 //     {
 //       IdentityLayer<> identityLayer;
@@ -1255,7 +1254,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   for (size_t i = 0; i < 5; ++i)
 //   {
 //     AddMerge<> module(false, false);
-//     const size_t numMergeModules = math::RandInt(2, 10);
+//     const size_t numMergeModules = RandInt(2, 10);
 //     for (size_t m = 0; m < numMergeModules; ++m)
 //     {
 //       IdentityLayer<> identityLayer;
@@ -2147,7 +2146,7 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   input = arma::zeros(seqLength, batchSize);
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    int token = math::RandInt(1, vocabSize);
+    int token = RandInt(1, vocabSize);
     input(i) = token;
   }
 
@@ -2182,12 +2181,12 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
       input.set_size(seqLength, batchSize);
       for (size_t i = 0; i < input.n_elem; ++i)
       {
-        input(i) = math::RandInt(1, vocabSize);
+        input(i) = RandInt(1, vocabSize);
       }
       target = arma::zeros(vocabSize, batchSize);
       for (size_t i = 0; i < batchSize; ++i)
       {
-        const size_t targetWord = math::RandInt(1, vocabSize);
+        const size_t targetWord = RandInt(1, vocabSize);
         target(targetWord, i) = 1;
       }
 
@@ -2832,7 +2831,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     MultiplyMerge module(false, false);
-    const size_t numMergeModules = math::RandInt(2, 10);
+    const size_t numMergeModules = RandInt(2, 10);
     for (size_t m = 0; m < numMergeModules; ++m)
     {
       IdentityLayer* identityLayer = new IdentityLayer();
@@ -2866,7 +2865,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   arma::mat output3;
 //   arma::mat output4;
 //
-//   const size_t numMergeModules = math::RandInt(2, 10);
+//   const size_t numMergeModules = RandInt(2, 10);
 //
 //   MultiplyMerge<> *module1 = new MultiplyMerge<>(true, false);
 //   for (size_t m = 0; m < numMergeModules; ++m)
@@ -3517,7 +3516,7 @@ TEST_CASE("JacobianReparametrizationLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElementsHalf = math::RandInt(2, 10);
+    const size_t inputElementsHalf = RandInt(2, 10);
 
     arma::mat input;
     input.set_size(inputElementsHalf * 2, 1);
@@ -4638,7 +4637,7 @@ TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     const size_t embedDim = 4;
-    const size_t seqLength = math::RandInt(5, 10);
+    const size_t seqLength = RandInt(5, 10);
     arma::mat input;
     input.set_size(embedDim * seqLength, 1);
 
@@ -4733,7 +4732,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t srcSeqLen = RandInt(2, 5);
     const size_t embedDim = 4;
     const size_t nHeads = 2;
     const size_t batchSize = 1;
@@ -4753,7 +4752,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t srcSeqLen = RandInt(2, 5);
     const size_t embedDim = 4;
     const size_t nHeads = 2;
     const size_t batchSize = 1;
@@ -4791,7 +4790,7 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       target = arma::zeros(vocabSize, batchSize);
       for (size_t i = 0; i < target.n_elem; ++i)
       {
-        const size_t label = mlpack::math::RandInt(1, vocabSize);
+        const size_t label = RandInt(1, vocabSize);
         target(i) = label;
       }
 

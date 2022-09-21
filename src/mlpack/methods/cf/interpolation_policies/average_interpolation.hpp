@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This class performs average interpolation to generate interpolation weights
@@ -86,7 +85,6 @@ class AverageInterpolation
   }
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

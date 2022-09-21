@@ -16,7 +16,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace tree {
 
 template<
     typename MetricType,
@@ -105,7 +104,6 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
         std::greater<int>>& referenceMap);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -21,8 +21,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::regression;
-using namespace mlpack::sparse_coding;
 
 void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
 {

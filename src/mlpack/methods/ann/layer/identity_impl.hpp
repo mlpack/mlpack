@@ -16,7 +16,6 @@
 #include "identity.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 IdentityType<MatType>::IdentityType() : 
@@ -90,7 +89,6 @@ void IdentityType<MatType>::serialize(
   ar(cereal::base_class<Layer<MatType>>(this));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

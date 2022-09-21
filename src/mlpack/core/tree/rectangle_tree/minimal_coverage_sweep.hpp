@@ -14,7 +14,6 @@
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The MinimalCoverageSweep class finds a partition along which we
@@ -92,7 +91,6 @@ class MinimalCoverageSweep
                              const ElemType cut);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation

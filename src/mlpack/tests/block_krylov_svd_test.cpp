@@ -61,14 +61,14 @@ TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
 
   // Center the data into a temporary matrix.
   arma::mat centeredData;
-  math::Center(data, centeredData);
+  Center(data, centeredData);
 
   arma::mat U1, U2, V1, V2;
   arma::vec s1, s2, s3;
 
   arma::svd_econ(U1, s1, V1, centeredData);
 
-  svd::RandomizedBlockKrylovSVD rSVD(20, 10);
+  RandomizedBlockKrylovSVD rSVD(20, 10);
   rSVD.Apply(centeredData, U2, s2, V2, 3);
 
   // Use the same amount of data for the compariosn (matrix rank).
@@ -101,7 +101,7 @@ TEST_CASE("RandomizedBlockKrylovSVDNoisyLowRankTest", "[BlockKrylovSVDTest]")
 
   arma::svd_econ(U1, s1, V1, data);
 
-  svd::RandomizedBlockKrylovSVD rSVDB(data, U2, s2, V2, 10, rank, 20);
+  RandomizedBlockKrylovSVD rSVDB(data, U2, s2, V2, 10, rank, 20);
 
   double error = arma::max(arma::abs(s1.subvec(0, rank) - s2.subvec(0, rank)));
   REQUIRE(error == Approx(0.0).margin(1e-4));

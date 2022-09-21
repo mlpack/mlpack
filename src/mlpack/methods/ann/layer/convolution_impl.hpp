@@ -16,7 +16,6 @@
 #include "convolution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename ForwardConvolutionRule,
@@ -574,7 +573,7 @@ void ConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = ann::Padding(padWLeft, padWRight, padHTop, padHBottom);
+  padding = Padding(padWLeft, padWRight, padHTop, padHBottom);
   padding.InputDimensions() = this->inputDimensions;
   padding.ComputeOutputDimensions();
 
@@ -601,7 +600,7 @@ void ConvolutionType<
   apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
       kernelHeight;
 
-  paddingBackward = ann::Padding(0, padding.OutputDimensions()[0] -
+  paddingBackward = Padding(0, padding.OutputDimensions()[0] -
       apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
   paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
       apparentHeight, inMaps * higherInDimensions });
@@ -670,7 +669,6 @@ void ConvolutionType<
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

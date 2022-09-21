@@ -19,7 +19,6 @@
 // #include "../activation_functions/softplus_function.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Reparametrization layer class. This layer samples from
@@ -193,7 +192,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
 // Standard Reparametrization layer.
 typedef ReparametrizationType<arma::mat, arma::mat> Reparametrization;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

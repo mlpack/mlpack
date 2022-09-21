@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the PixelShuffle layer.
@@ -172,7 +171,6 @@ class PixelShuffle
   bool reset;
 }; // class PixelShuffle
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

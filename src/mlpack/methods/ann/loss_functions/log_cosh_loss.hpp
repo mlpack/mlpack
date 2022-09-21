@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Log-Hyperbolic-Cosine loss function is often used to improve
@@ -97,7 +96,6 @@ class LogCoshLossType
 // Default typedef for typical `arma::mat` usage.
 typedef LogCoshLossType<arma::mat> LogCoshLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation

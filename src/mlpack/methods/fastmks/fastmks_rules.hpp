@@ -19,7 +19,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace fastmks {
 
 /**
  * The FastMKSRules class is a template helper class used by FastMKS class when
@@ -119,7 +118,7 @@ class FastMKSRules
   //! Modify the number of times Score() was called.
   size_t& Scores() { return scores; }
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
@@ -190,7 +189,6 @@ class FastMKSRules
   TraversalInfoType traversalInfo;
 };
 
-} // namespace fastmks
 } // namespace mlpack
 
 // Include implementation.

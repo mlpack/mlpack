@@ -18,7 +18,6 @@
 #include "mean_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MeanPoolingType<MatType>::MeanPoolingType() :
@@ -389,7 +388,6 @@ void MeanPoolingType<MatType>::Unpooling(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

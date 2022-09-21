@@ -15,7 +15,6 @@
 #include "q_learning.hpp"
 
 namespace mlpack {
-namespace rl {
 
 template <
   typename EnvironmentType,
@@ -386,7 +385,6 @@ double QLearning<
   return totalReturn;
 }
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

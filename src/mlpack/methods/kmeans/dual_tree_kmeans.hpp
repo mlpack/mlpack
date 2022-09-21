@@ -22,7 +22,6 @@
 #include "dual_tree_kmeans_statistic.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * An algorithm for an exact Lloyd iteration which simply uses dual-tree
@@ -37,7 +36,7 @@ template<
     template<typename TreeMetricType,
              typename TreeStatType,
              typename TreeMatType>
-        class TreeType = tree::KDTree>
+        class TreeType = KDTree>
 class DualTreeKMeans
 {
  public:
@@ -135,7 +134,7 @@ template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
                const typename std::enable_if_t<
-                   !tree::TreeTraits<TreeType>::BinaryTree>* junk = 0);
+                   !TreeTraits<TreeType>::BinaryTree>* junk = 0);
 
 //! Utility function for hiding children.  This is called when the tree is a
 //! binary tree, and does nothing, because we don't hide binary children in this
@@ -144,18 +143,18 @@ template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
                const typename std::enable_if_t<
-                   tree::TreeTraits<TreeType>::BinaryTree>* junk = 0);
+                   TreeTraits<TreeType>::BinaryTree>* junk = 0);
 
 //! Utility function for restoring children to a non-binary tree.
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
-                     const typename std::enable_if_t<!tree::TreeTraits<
+                     const typename std::enable_if_t<!TreeTraits<
                          TreeType>::BinaryTree>* junk = 0);
 
 //! Utility function for restoring children to a binary tree.
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
-                     const typename std::enable_if_t<tree::TreeTraits<
+                     const typename std::enable_if_t<TreeTraits<
                          TreeType>::BinaryTree>* junk = 0);
 
 //! A template typedef for the DualTreeKMeans algorithm with the default tree
@@ -167,9 +166,8 @@ using DefaultDualTreeKMeans = DualTreeKMeans<MetricType, MatType>;
 //! type.
 template<typename MetricType, typename MatType>
 using CoverTreeDualTreeKMeans = DualTreeKMeans<MetricType, MatType,
-    tree::StandardCoverTree>;
+    StandardCoverTree>;
 
-} // namespace kmeans
 } // namespace mlpack
 
 #include "dual_tree_kmeans_impl.hpp"

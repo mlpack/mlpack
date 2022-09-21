@@ -16,7 +16,6 @@
 #include "minibatch_discrimination.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 MiniBatchDiscrimination<InputType, OutputType
@@ -132,7 +131,6 @@ void MiniBatchDiscrimination<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(c));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -18,7 +18,6 @@
 #include <mlpack/methods/svdplusplus/svdplusplus.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the SVDPlusPlus policy to act as a wrapper when
@@ -77,7 +76,7 @@ class SVDPlusPlusPolicy
              const double /* minResidue */,
              const bool /* mit */)
   {
-    svd::SVDPlusPlus<> svdpp(maxIterations, alpha, lambda);
+    SVDPlusPlus<> svdpp(maxIterations, alpha, lambda);
 
     // Save implicit data in the form of sparse matrix.
     arma::mat implicitDenseData = data.submat(0, 0, 1, data.n_cols - 1);
@@ -237,7 +236,6 @@ class SVDPlusPlusPolicy
   arma::sp_mat implicitData;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

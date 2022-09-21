@@ -14,7 +14,6 @@
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_SPLITS_NUMBER_SWEEP_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The MinimalSplitsNumberSweep class finds a partition along which we
@@ -67,7 +66,6 @@ class MinimalSplitsNumberSweep
       typename TreeType::ElemType& axisCut);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation

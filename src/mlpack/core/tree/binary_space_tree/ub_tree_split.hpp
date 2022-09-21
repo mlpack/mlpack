@@ -17,7 +17,6 @@
 #include "../address.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * Split a node into two parts according to the median address of points
@@ -107,11 +106,10 @@ class UBTreeSplit
       const std::pair<arma::Col<AddressElemType>, size_t>& p1,
       const std::pair<arma::Col<AddressElemType>, size_t>& p2)
   {
-    return bound::addr::CompareAddresses(p1.first, p2.first) < 0;
+    return CompareAddresses(p1.first, p2.first) < 0;
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

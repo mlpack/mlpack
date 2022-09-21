@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The DropConnect layer is a regularizer that randomly with probability
@@ -151,7 +150,6 @@ class DropConnectType : public Layer<MatType>
 // Standard DropConnect layer.
 typedef DropConnectType<arma::mat> DropConnect;
 
-}  // namespace ann
 }  // namespace mlpack
 
 // Include implementation.

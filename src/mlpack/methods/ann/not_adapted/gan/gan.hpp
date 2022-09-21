@@ -23,7 +23,6 @@
 
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. **/ {
 
 /**
  * The implementation of the standard GAN module. Generative Adversarial
@@ -403,7 +402,6 @@ class GAN
   size_t discWeights;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

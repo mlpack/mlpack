@@ -16,7 +16,6 @@
 #include <mlpack/core/hpt/fixed.hpp>
 
 namespace mlpack {
-namespace hpt {
 
 /**
  * A type function for deducing types of hyper-parameters from types of
@@ -126,7 +125,6 @@ template<typename... Args>
 using TupleOfHyperParameters =
     typename DeduceHyperParameterTypes<Args...>::TupleType;
 
-} // namespace hpt
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace hmm {
 
 //! HMMType, to be stored on disk.  This is of type char, which is one byte.
 //! (I'm not sure what will happen on systems where one byte is not eight bits.)
@@ -38,7 +37,6 @@ void LoadHMMAndPerformAction(const std::string& modelFile,
 template<typename HMMType>
 void SaveHMM(HMMType& hmm, const std::string& modelFile);
 
-} // namespace hmm
 } // namespace mlpack
 
 #include "hmm_util_impl.hpp"

@@ -24,7 +24,6 @@
 #include "mean_shift.hpp"
 
 namespace mlpack {
-namespace meanshift {
 
 /**
  * Construct the Mean Shift object.
@@ -52,7 +51,7 @@ template<bool UseKernel, typename KernelType, typename MatType>
 double MeanShift<UseKernel, KernelType, MatType>::
 EstimateRadius(const MatType& data, double ratio)
 {
-  neighbor::KNN neighborSearch(data);
+  KNN neighborSearch(data);
 
   /**
    * For each point in dataset, select nNeighbors nearest points and get
@@ -207,8 +206,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
 
   assignments.set_size(data.n_cols);
 
-  range::RangeSearch<> rangeSearcher(data);
-  math::Range validRadius(0, radius);
+  RangeSearch<> rangeSearcher(data);
+  Range validRadius(0, radius);
   std::vector<std::vector<size_t> > neighbors;
   std::vector<std::vector<double> > distances;
 
@@ -233,14 +232,14 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         newCentroid = allCentroids.unsafe_col(i);
 
       // If the mean shift vector is small enough, it has converged.
-      if (metric::EuclideanDistance::Evaluate(newCentroid,
+      if (EuclideanDistance::Evaluate(newCentroid,
           allCentroids.unsafe_col(i)) < 1e-3 * radius)
       {
         // Determine if the new centroid is duplicate with old ones.
         bool isDuplicated = false;
         for (size_t k = 0; k < centroids.n_cols; ++k)
         {
-          const double distance = metric::EuclideanDistance::Evaluate(
+          const double distance = EuclideanDistance::Evaluate(
               allCentroids.unsafe_col(i), centroids.unsafe_col(k));
           if (distance < radius)
           {
@@ -286,7 +285,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   else
   {
     // Assign centroids to each point.
-    neighbor::KNN neighborSearcher(centroids);
+    KNN neighborSearcher(centroids);
     arma::mat neighborDistances;
     arma::Mat<size_t> resultingNeighbors;
     neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
@@ -294,7 +293,6 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   }
 }
 
-} // namespace meanshift
 } // namespace mlpack
 
 #endif

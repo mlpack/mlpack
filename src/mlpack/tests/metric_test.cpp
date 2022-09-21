@@ -13,7 +13,7 @@
 #include "test_catch_tools.hpp"
 
 using namespace std;
-using namespace mlpack::metric;
+using namespace mlpack;
 
 /**
  * Simple test for L-1 metric.

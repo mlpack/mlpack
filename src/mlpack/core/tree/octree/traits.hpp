@@ -15,7 +15,6 @@
 #include <mlpack/core/tree/tree_traits.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This is a specialization of the TreeTraits class to the Octree tree type.  It
@@ -65,7 +64,6 @@ class TreeTraits<Octree<MetricType, StatisticType, MatType>>
   static const bool UniqueNumDescendants = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

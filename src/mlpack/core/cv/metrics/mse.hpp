@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * The MeanSquaredError is a metric of performance for regression algorithms
@@ -45,7 +44,6 @@ class MSE
   static const bool NeedsMinimization = true;
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation.

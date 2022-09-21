@@ -22,7 +22,6 @@
 #include "spill_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -66,7 +65,6 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   size_t numPrunes;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

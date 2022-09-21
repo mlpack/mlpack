@@ -16,7 +16,6 @@
 #include "multi_layer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 template<typename MatType>
 MultiLayer<MatType>::MultiLayer() :
@@ -434,7 +433,6 @@ void MultiLayer<MatType>::InitializeGradientPassMemory(MatType& gradient)
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

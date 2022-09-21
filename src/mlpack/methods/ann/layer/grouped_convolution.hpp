@@ -25,7 +25,6 @@
 #include "padding.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Grouped Convolution class.
@@ -391,10 +390,10 @@ class GroupedConvolutionType : public Layer<MatType>
   arma::Cube<typename MatType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding padding;
+  Padding padding;
 
   //! Locally-stored padding layer for backward pass.
-  ann::Padding paddingBackward;
+  Padding paddingBackward;
 
   //! Type of padding.
   std::string paddingType;
@@ -419,7 +418,6 @@ typedef GroupedConvolutionType<
     arma::mat
 > GroupedConvolution;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

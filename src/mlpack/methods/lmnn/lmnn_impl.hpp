@@ -16,7 +16,6 @@
 #include "lmnn.hpp"
 
 namespace mlpack {
-namespace lmnn {
 
 /**
  * Takes in a reference to the dataset. Copies the data, initializes
@@ -60,7 +59,6 @@ void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
 }
 
 
-} // namespace lmnn
 } // namespace mlpack
 
 #endif

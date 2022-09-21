@@ -15,7 +15,6 @@
 #include "cosine_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 inline CosineTree::CosineTree(const arma::mat& dataset) :
     dataset(&dataset),
@@ -481,7 +480,7 @@ inline double CosineTree::MonteCarloError(CosineTree* node,
 
   // Fit a normal distribution using the calculated statistics, and calculate a
   // lower bound on the magnitudes for the passed 'delta' parameter.
-  double lowerBound = math::Quantile(delta, mu, sigma);
+  double lowerBound = Quantile(delta, mu, sigma);
 
   // Upper bound on the subspace reconstruction error.
   node->L2Error(node->FrobNormSquared() - lowerBound);
@@ -666,7 +665,6 @@ inline void CosineTree::CalculateCentroid()
   centroid /= numColumns;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

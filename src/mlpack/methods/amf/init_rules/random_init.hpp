@@ -16,17 +16,16 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This initialization rule for AMF simply fills the W and H matrices with
  * uniform random noise in [0, 1].
  */
-class RandomInitialization
+class RandomAMFInitialization
 {
  public:
   // Empty constructor required for the InitializeRule template
-  RandomInitialization() { }
+  RandomAMFInitialization() { }
 
   /**
    * Fill W and H with random uniform noise.
@@ -85,7 +84,6 @@ class RandomInitialization
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

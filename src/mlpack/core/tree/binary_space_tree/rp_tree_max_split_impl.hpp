@@ -17,7 +17,6 @@
 #include "rp_tree_mean_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType>
 bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
@@ -29,7 +28,7 @@ bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
   splitInfo.direction.zeros(data.n_rows);
 
   // Get the normal to the hyperplane.
-  math::RandVector(splitInfo.direction);
+  RandVector(splitInfo.direction);
 
   // Get the value according to which we will perform the split.
   return GetSplitVal(data, begin, count, splitInfo.direction,
@@ -49,7 +48,7 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   arma::uvec samples;
 
   // Get no more than numSamples distinct samples.
-  math::ObtainDistinctSamples(begin, begin + count, numSamples, samples);
+  ObtainDistinctSamples(begin, begin + count, numSamples, samples);
 
   arma::Col<ElemType> values(samples.n_elem);
 
@@ -72,7 +71,7 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   //   2. The proposed method does not appear to guarantee that a valid split
   //      value will be generated (i.e. it can produce a split value where there
   //      may be no points on the left or the right).
-  splitVal += math::Random((minimum - splitVal) * 0.75,
+  splitVal += Random((minimum - splitVal) * 0.75,
       (maximum - splitVal) * 0.75);
 
   if (splitVal == maximum)
@@ -81,7 +80,6 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MAX_SPLIT_IMPL_HPP

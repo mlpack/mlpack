@@ -17,7 +17,6 @@
 #include "r_plus_plus_tree_auxiliary_information.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
@@ -28,9 +27,7 @@ RPlusPlusTreeAuxiliaryInformation() :
 template<typename TreeType>
 RPlusPlusTreeAuxiliaryInformation<TreeType>::
 RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
-    outerBound(tree->Parent() ?
-               tree->Parent()->AuxiliaryInfo().OuterBound() :
-               tree->Bound().Dim())
+    outerBound(tree->Bound().Dim())
 {
   // Initialize the maximum bounding rectangle if the node is the root
   if (!tree->Parent())
@@ -40,6 +37,10 @@ RPlusPlusTreeAuxiliaryInformation(const TreeType* tree) :
       outerBound[k].Lo() = std::numeric_limits<ElemType>::lowest();
       outerBound[k].Hi() = std::numeric_limits<ElemType>::max();
     }
+  }
+  else
+  {
+    outerBound = tree->Parent()->AuxiliaryInfo().OuterBound();
   }
 }
 
@@ -103,7 +104,7 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::SplitAuxiliaryInfo(
     const size_t axis,
     const typename TreeType::ElemType cut)
 {
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> Bound;
+  typedef HRectBound<EuclideanDistance, ElemType> Bound;
   Bound& treeOneBound = treeOne->AuxiliaryInfo().OuterBound();
   Bound& treeTwoBound = treeTwo->AuxiliaryInfo().OuterBound();
 
@@ -132,7 +133,6 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
   ar(CEREAL_NVP(outerBound));
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_RECTANGLE_TREE_RPP_TREE_AUXILIARY_INFO_IMPL_HPP

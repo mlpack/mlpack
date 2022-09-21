@@ -18,13 +18,12 @@
 #include "kde_stat.hpp"
 
 namespace mlpack {
-namespace kde /** Kernel Density Estimation. */ {
 
 //! KDEMode represents the ways in which KDE algorithm can be executed.
 enum KDEMode
 {
-  DUAL_TREE_MODE,
-  SINGLE_TREE_MODE
+  KDE_DUAL_TREE_MODE,
+  KDE_SINGLE_TREE_MODE
 };
 
 //! KDEDefaultParams contains the default input parameter values for KDE.
@@ -37,7 +36,7 @@ struct KDEDefaultParams
   static constexpr double absError = 0;
 
   //! KDE algorithm mode.
-  static constexpr KDEMode mode = KDEMode::DUAL_TREE_MODE;
+  static constexpr KDEMode mode = KDEMode::KDE_DUAL_TREE_MODE;
 
   //! Whether to use Monte Carlo estimations when possible.
   static constexpr bool monteCarlo = false;
@@ -70,25 +69,22 @@ struct KDEDefaultParams
  * @tparam DualTreeTraversalType Type of dual-tree traversal to use.
  * @tparam SingleTreeTraversalType Type of single-tree traversal to use.
  */
-template<typename KernelType = kernel::GaussianKernel,
-         typename MetricType = mlpack::metric::EuclideanDistance,
+template<typename KernelType = GaussianKernel,
+         typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::KDTree,
+                  typename TreeMatType> class TreeType = KDTree,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<MetricType,
-                      kde::KDEStat,
-                      MatType>::template DualTreeTraverser,
+             TreeType<MetricType, KDEStat, MatType>::template DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<MetricType,
-                      kde::KDEStat,
-                      MatType>::template SingleTreeTraverser>
+             TreeType<MetricType, KDEStat, MatType>::template
+             SingleTreeTraverser>
 class KDE
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<MetricType, kde::KDEStat, MatType> Tree;
+  typedef TreeType<MetricType, KDEStat, MatType> Tree;
 
   /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.
@@ -353,7 +349,6 @@ class KDE
                                    arma::vec& estimations);
 };
 
-} // namespace kde
 } // namespace mlpack
 
 // Include implementation.

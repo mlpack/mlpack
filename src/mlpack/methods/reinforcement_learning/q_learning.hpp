@@ -20,7 +20,6 @@
 #include "training_config.hpp"
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of various Q-Learning algorithms, such as DQN, double DQN.
@@ -183,7 +182,6 @@ class QLearning
   bool deterministic;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 // Include implementation

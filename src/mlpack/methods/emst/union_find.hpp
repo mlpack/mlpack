@@ -18,7 +18,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace emst {
 
 /**
  * A Union-Find data structure.  See Cormen, Rivest, & Stein for details.  The
@@ -98,7 +97,6 @@ class UnionFind
   }
 }; // class UnionFind
 
-} // namespace emst
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_EMST_UNION_FIND_HPP

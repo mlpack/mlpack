@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Concat class. The Concat class works as a
@@ -227,7 +226,6 @@ class ConcatType : public MultiLayer<MatType>
 // Standard Concat layer.
 typedef ConcatType<arma::mat> Concat;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

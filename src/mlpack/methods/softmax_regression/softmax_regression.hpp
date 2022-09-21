@@ -17,7 +17,6 @@
 #include "softmax_regression_function.hpp"
 
 namespace mlpack {
-namespace regression {
 
 /**
  * Softmax Regression is a classifier which can be used for classification when
@@ -250,7 +249,6 @@ class SoftmaxRegression
   bool fitIntercept;
 };
 
-} // namespace regression
 } // namespace mlpack
 
 // Include implementation.

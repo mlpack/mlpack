@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace emst {
 
 /**
  * A statistic for use with mlpack trees, which stores the upper bound on
@@ -89,7 +88,6 @@ class DTBStat
   int& ComponentMembership() { return componentMembership; }
 }; // class DTBStat
 
-} // namespace emst
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_EMST_DTB_STAT_HPP

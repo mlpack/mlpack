@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This class implements a method titled 'Alternating Least Squares' described
@@ -123,7 +122,6 @@ class NMFALSUpdate
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class NMFALSUpdate
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

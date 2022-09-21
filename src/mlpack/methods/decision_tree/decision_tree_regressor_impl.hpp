@@ -16,7 +16,6 @@
 #include "utils.hpp"
 
 namespace mlpack {
-namespace tree {
 
 //! Construct, don't train.
 template<typename FitnessFunction,
@@ -1061,7 +1060,6 @@ size_t DecisionTreeRegressor<FitnessFunction,
   return numLeaves;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

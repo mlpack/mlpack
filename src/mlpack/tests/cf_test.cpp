@@ -19,7 +19,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::cf;
 using namespace std;
 
 // Get train and test datasets.

@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace meanshift /** Mean shift clustering. */ {
 
 /**
  * This class implements mean shift clustering.  For each point in dataset,
@@ -42,7 +41,7 @@ namespace meanshift /** Mean shift clustering. */ {
  * @tparam MatType The type of matrix the data is stored in.
  */
 template<bool UseKernel = false,
-         typename KernelType = kernel::GaussianKernel,
+         typename KernelType = GaussianKernel,
          typename MatType = arma::mat>
 class MeanShift
 {
@@ -166,7 +165,6 @@ class MeanShift
   KernelType kernel;
 };
 
-} // namespace meanshift
 } // namespace mlpack
 
 // Include implementation.

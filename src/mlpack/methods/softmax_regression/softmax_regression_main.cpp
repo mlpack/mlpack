@@ -19,7 +19,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
@@ -89,11 +88,10 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Multinomial logistic regression (softmax regression) on "
-        "Wikipedia",
-        "https://en.wikipedia.org/wiki/Multinomial_logistic_regression");
-BINDING_SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class "
-        "documentation",
-        "@src/mlpack/methods/softmax_regression/softmax_regression.hpp");
+    "Wikipedia",
+    "https://en.wikipedia.org/wiki/Multinomial_logistic_regression");
+BINDING_SEE_ALSO("SoftmaxRegression C++ class documentation",
+    "@src/mlpack/methods/softmax_regression/softmax_regression.hpp");
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

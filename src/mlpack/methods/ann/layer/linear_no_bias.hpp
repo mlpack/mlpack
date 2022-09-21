@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the LinearNoBias class. The LinearNoBias class represents a
@@ -137,7 +136,6 @@ class LinearNoBiasType : public Layer<MatType>
 // Standard Linear without bias layer using no regularization.
 typedef LinearNoBiasType<arma::mat, NoRegularizer> LinearNoBias;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

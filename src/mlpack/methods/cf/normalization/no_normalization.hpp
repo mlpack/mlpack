@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This normalization class doesn't perform any normalization. It is the default
@@ -67,7 +66,6 @@ class NoNormalization
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

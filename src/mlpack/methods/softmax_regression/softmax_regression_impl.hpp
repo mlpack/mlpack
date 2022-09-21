@@ -16,7 +16,6 @@
 #include "softmax_regression.hpp"
 
 namespace mlpack {
-namespace regression {
 
 template<typename OptimizerType>
 SoftmaxRegression::SoftmaxRegression(
@@ -219,7 +218,6 @@ double SoftmaxRegression::Train(const arma::mat& data,
   return out;
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif

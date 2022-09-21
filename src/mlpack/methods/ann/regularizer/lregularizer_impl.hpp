@@ -16,7 +16,6 @@
 #include "lregularizer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 template<int Power>
 LRegularizer<Power>::LRegularizer(double factor) :
@@ -57,7 +56,6 @@ void LRegularizer<Power>::serialize(
   ar(CEREAL_NVP(factor));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

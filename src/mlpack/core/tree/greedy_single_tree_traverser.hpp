@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType, typename RuleType>
 class GreedySingleTreeTraverser
@@ -48,7 +47,6 @@ class GreedySingleTreeTraverser
   size_t numPrunes;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

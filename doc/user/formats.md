@@ -46,7 +46,7 @@ data::Load("dataset.arff", matrix4, datasetInfo);
 ```c++
 using namespace mlpack;
 
-regression::LogisticRegression lr;
+LogisticRegression lr;
 data::Load("model.bin", "logistic_regression_model", lr);
 ```
 
@@ -477,33 +477,31 @@ void serialize(Archive& ar);
 For more information on this method and how it works, see the
 [cereal documentation](https://uscilab.github.io/cereal/index.html).
 
-Examples of `serialize()` methods can be found in most classes; one fairly in
-the `mlpack::math::Range` class.  A more complex example is found in the
-`mlpack::tree::BinarySpaceTree` class.
+Examples of `serialize()` methods can be found in most classes; one simple one
+is in the `Range` class.  A more complex example is found in the
+`BinarySpaceTree` class.
 
 Using the `mlpack::data::Load()` and `mlpack::data::Save()` classes is easy if
 the type being saved has a `serialize()` method implemented: simply call either
 function with a filename, a name for the object to save, and the object itself.
-The example below, for instance, creates an `mlpack::math::Range` object and
-saves it as `range.txt`.  Then, that range is loaded from file into another
-`mlpack::math::Range` object.
+The example below, for instance, creates an `Range` object and saves it as
+`range.txt`.  Then, that range is loaded from file into another `Range` object.
 
 ```c++
 // Create range and save it.
-mlpack::math::Range r(0.0, 5.0);
+Range r(0.0, 5.0);
 mlpack::data::Save("range.json", "range", r);
 
 // Load into new range.
-mlpack::math::Range newRange;
+Range newRange;
 mlpack::data::Load("range.json", "range", newRange);
 ```
 
 It is important to be sure that you load the appropriate type; if you save, for
-instance, an `mlpack::regression::LogisticRegression` object and attempt to load
-it as an `mlpack::math::Range` object, the load will fail and an exception will
-be thrown.  (When the object is saved as binary (.bin), it is possible that the
-load will not fail, but instead load with mangled data, which is perhaps even
-worse!)
+instance, a `LogisticRegression` object and attempt to load it as an `Range`
+object, the load will fail and an exception will be thrown.  (When the object is
+saved as binary (.bin), it is possible that the load will not fail, but instead
+load with mangled data, which is perhaps even worse!)
 
 ## Final Notes
 

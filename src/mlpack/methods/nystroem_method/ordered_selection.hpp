@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 class OrderedSelection
 {
@@ -37,7 +36,6 @@ class OrderedSelection
   }
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

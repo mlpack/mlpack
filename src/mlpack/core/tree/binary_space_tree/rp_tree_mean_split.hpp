@@ -19,7 +19,6 @@
 #include <mlpack/core/math/lin_alg.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * This class splits a binary space tree. This class provides two different
@@ -84,7 +83,7 @@ class RPTreeMeanSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
         splitInfo);
   }
 
@@ -109,7 +108,7 @@ class RPTreeMeanSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
         splitInfo, oldFromNew);
   }
 
@@ -168,7 +167,6 @@ class RPTreeMeanSplit
                             ElemType& splitVal);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

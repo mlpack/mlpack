@@ -213,8 +213,7 @@ The `KNN` class is, specifically, a typedef of the more extensible
 distance.
 
 ```c++
-typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance>
-    KNN;
+typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
 ```
 
 Using the `KNN` class is particularly simple; first, the object must be
@@ -230,7 +229,7 @@ given below.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat data;
@@ -252,7 +251,7 @@ The output of the search is stored in `resultingNeighbors` and
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
@@ -273,7 +272,7 @@ This example uses the `O(n^2)` naive search (not the tree-based search).
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat dataset;
@@ -297,11 +296,11 @@ arguments:
 ```c++
 template<
   typename SortPolicy = NearestNeighborSort,
-  typename MetricType = mlpack::metric::EuclideanDistance,
+  typename MetricType = EuclideanDistance,
   typename MatType = arma::mat,
   template<typename TreeMetricType,
            typename TreeStatType,
-           typename TreeMatType> class TreeType = tree::KDTree,
+           typename TreeMatType> class TreeType = KDTree,
   template<typename RuleType> class TraversalType =
       TreeType<MetricType, NeighborSearchStat<SortPolicy>,
                MatType>::template DualTreeTraverser>
@@ -317,9 +316,8 @@ template parameters have defaults, so it is not necessary to specify each one.
 
 The `SortPolicy` template parameter allows specification of how the
 NeighborSearch object will decide which points are to be searched for.  The
-`mlpack::neighbor::NearestNeighborSort` class is a well-documented example.  A
-custom `SortPolicy` class must implement the same methods which
-`NearestNeighborSort` does:
+`NearestNeighborSort` class is a well-documented example.  A custom `SortPolicy`
+class must implement the same methods which `NearestNeighborSort` does:
 
 ```c++
 static size_t SortDistance(const arma::vec& list, double newDistance);
@@ -339,15 +337,15 @@ static const double WorstDistance();
 static const double BestDistance();
 ```
 
-The `mlpack::neighbor::FurthestNeighborSort` class is another implementation,
-which is used to create the `KFN` typedef class, which finds the furthest
-neighbors, as opposed to the nearest neighbors.
+The `FurthestNeighborSort` class is another implementation, which is used to
+create the `KFN` typedef class, which finds the furthest neighbors, as opposed
+to the nearest neighbors.
 
 ## `MetricType` policy class
 
 The `MetricType` policy class allows the neighbor search to take place in any
-arbitrary metric space.  The `mlpack::metric::LMetric` class is a good example
-implementation.  A MetricType class must provide the following functions:
+arbitrary metric space.  The `LMetric` class is a good example implementation.
+A `MetricType` class must provide the following functions:
 
 ```c++
 // Empty constructor is required.
@@ -360,9 +358,9 @@ double Evaluate(const VecType& a, const VecType& b);
 
 Internally, the `NeighborSearch` class keeps an instantiated `MetricType` class
 (which can be given in the constructor).   This is useful for a metric like the
-Mahalanobis distance (`mlpack::metric::MahalanobisDistance`), which must store
-state (the covariance matrix).  Therefore, you can write a non-static MetricType
-class and use it seamlessly with `NeighborSearch`.
+Mahalanobis distance (`MahalanobisDistance`), which must store state (the
+covariance matrix).  Therefore, you can write a non-static MetricType class and
+use it seamlessly with `NeighborSearch`.
 
 For more information on the `MetricType` policy, see the [documentation for
 `MetricType`s](../developer/metrics.md).
@@ -379,9 +377,8 @@ The NeighborSearch class allows great extensibility in the selection of the type
 of tree used for search.  This type must follow the typical mlpack TreeType
 policy, documented [here](../developer/trees.md).
 
-Typical choices might include `mlpack::tree::KDTree`, `mlpack::tree::BallTree`,
-`mlpack::tree::StandardCoverTree`, `mlpack::tree::RTree`, or
-`mlpack::tree::RStarTree`.  It is easily possible to make your own tree type for
+Typical choices might include `KDTree`, `BallTree`, `StandardCoverTree`,
+`RTree`, or `RStarTree`.  It is easily possible to make your own tree type for
 use with NeighborSearch; consult the [TreeType
 documentation](../developer/trees.md) for more details.
 
@@ -391,9 +388,9 @@ An example of using the `NeighborSearch` class with a ball tree is given below.
 // Construct a NeighborSearch object with ball bounds.
 NeighborSearch<
     NearestNeighborSort,
-    metric::EuclideanDistance,
+    EuclideanDistance,
     arma::mat,
-    tree::BallTree
+    BallTree
 > neighborSearch(dataset);
 ```
 

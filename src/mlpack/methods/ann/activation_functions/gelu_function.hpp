@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The GELU function, defined by
@@ -86,7 +85,6 @@ class GELUFunction
   }
 }; // class GELUFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

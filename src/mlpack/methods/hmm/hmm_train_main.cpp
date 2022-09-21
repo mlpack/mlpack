@@ -22,11 +22,7 @@
 #include <mlpack/methods/gmm/gmm.hpp>
 
 using namespace mlpack;
-using namespace mlpack::hmm;
-using namespace mlpack::distribution;
 using namespace mlpack::util;
-using namespace mlpack::gmm;
-using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
@@ -71,9 +67,8 @@ BINDING_SEE_ALSO("@hmm_generate", "#hmm_generate");
 BINDING_SEE_ALSO("@hmm_loglik", "#hmm_loglik");
 BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
 BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Hidden_Markov_model");
-BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@src/mlpack/methods/hmm/hmm.hpp");
+    "https://en.wikipedia.org/wiki/Hidden_Markov_model");
+BINDING_SEE_ALSO("HMM class documentation", "@src/mlpack/methods/hmm/hmm.hpp");
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
 PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | diag_gmm | gmm.",

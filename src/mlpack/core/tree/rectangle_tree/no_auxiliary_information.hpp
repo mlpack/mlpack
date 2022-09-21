@@ -14,7 +14,6 @@
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 class NoAuxiliaryInformation
@@ -144,7 +143,6 @@ class NoAuxiliaryInformation
   void serialize(Archive &, const uint32_t /* version */) { }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP

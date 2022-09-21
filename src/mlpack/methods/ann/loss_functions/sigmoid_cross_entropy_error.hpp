@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The SigmoidCrossEntropyErrorType performance function measures the network's
@@ -101,7 +100,6 @@ class SigmoidCrossEntropyErrorType
 // Default typedef for typical `arma::mat` usage.
 typedef SigmoidCrossEntropyErrorType<arma::mat> SigmoidCrossEntropyError;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

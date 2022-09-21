@@ -16,7 +16,6 @@
 #include "hardshrink.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for Hard Shrink activation function.
 // 'lambda' is a hyperparameter.
@@ -52,7 +51,6 @@ void HardShrinkType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(lambda));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

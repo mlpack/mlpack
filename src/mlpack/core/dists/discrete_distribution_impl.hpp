@@ -16,7 +16,6 @@
 #include "discrete_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * Return a randomly generated observation according to the probability
@@ -30,7 +29,7 @@ inline arma::vec DiscreteDistribution::Random() const
   for (size_t d = 0; d < dimension; d++)
   {
     // Generate a random number.
-    double randObs = math::Random();
+    double randObs = mlpack::Random();
 
     double sumProb = 0;
 
@@ -162,7 +161,6 @@ inline void DiscreteDistribution::Train(const arma::mat& observations,
   }
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace metric {
 
 /**
  * Definition of Intersection over Union metric.
@@ -66,7 +65,6 @@ class IoU
   void serialize(Archive& ar, const uint32_t /* version */);
 }; // class IoU
 
-} // namespace metric
 } // namespace mlpack
 
 // Include implementation.

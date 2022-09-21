@@ -15,7 +15,6 @@
 #include "bayesian_linear_regression.hpp"
 
 namespace mlpack {
-namespace regression {
 
 inline BayesianLinearRegression::BayesianLinearRegression(
     const bool centerData,
@@ -208,7 +207,6 @@ void BayesianLinearRegression::serialize(Archive& ar,
   ar(CEREAL_NVP(matCovariance));
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif

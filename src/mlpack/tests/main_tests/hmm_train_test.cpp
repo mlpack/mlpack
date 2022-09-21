@@ -70,10 +70,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         tolerance);
 
     // Check if emission dists are equal
-    std::vector<distribution::DiscreteDistribution> d1 =
-        h1.DiscreteHMM()->Emission();
-    std::vector<distribution::DiscreteDistribution> d2 =
-        h2.DiscreteHMM()->Emission();
+    std::vector<DiscreteDistribution> d1 = h1.DiscreteHMM()->Emission();
+    std::vector<DiscreteDistribution> d2 = h2.DiscreteHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 
@@ -95,10 +93,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GaussianHMM()->Initial()*100,
         tolerance);
     // Check if emission dists are equal by comparing the mean and coviariance
-    std::vector<distribution::GaussianDistribution> d1 =
-        h1.GaussianHMM()->Emission();
-    std::vector<distribution::GaussianDistribution> d2 =
-        h2.GaussianHMM()->Emission();
+    std::vector<GaussianDistribution> d1 = h1.GaussianHMM()->Emission();
+    std::vector<GaussianDistribution> d2 = h2.GaussianHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 
@@ -120,8 +116,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GMMHMM()->Initial()*100,
         tolerance);
     // Check if emission dists are equal
-    std::vector<gmm::GMM> d1 = h1.GMMHMM()->Emission();
-    std::vector<gmm::GMM> d2 = h2.GMMHMM()->Emission();
+    std::vector<GMM> d1 = h1.GMMHMM()->Emission();
+    std::vector<GMM> d2 = h2.GMMHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 
@@ -153,8 +149,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.DiagGMMHMM()->Initial()*100,
         tolerance);
     // Check if emission dists are equal.
-    std::vector<gmm::DiagonalGMM> d1 = h1.DiagGMMHMM()->Emission();
-    std::vector<gmm::DiagonalGMM> d2 = h2.DiagGMMHMM()->Emission();
+    std::vector<DiagonalGMM> d1 = h1.DiagGMMHMM()->Emission();
+    std::vector<DiagonalGMM> d2 = h2.DiagGMMHMM()->Emission();
 
     REQUIRE(d1.size() == d2.size());
 

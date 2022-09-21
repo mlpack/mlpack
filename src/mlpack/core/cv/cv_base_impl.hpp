@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cv {
 
 template<typename MLAlgorithm,
          typename MatType,
@@ -303,7 +302,6 @@ MLAlgorithm CVBase<MLAlgorithm,
   return MLAlgorithm(xs, datasetInfo, ys, numClasses, args...);
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

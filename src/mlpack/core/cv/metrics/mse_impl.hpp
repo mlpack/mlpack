@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_METRICS_MSE_IMPL_HPP
 
 namespace mlpack {
-namespace cv {
 
 template<typename MLAlgorithm, typename DataType, typename ResponsesType>
 double MSE::Evaluate(MLAlgorithm& model,
@@ -30,7 +29,6 @@ double MSE::Evaluate(MLAlgorithm& model,
   return sum / responses.n_elem;
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

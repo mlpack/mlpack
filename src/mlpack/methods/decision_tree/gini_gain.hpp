@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The Gini gain, a measure of set purity usable as a fitness function
@@ -209,7 +208,6 @@ class GiniGain
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

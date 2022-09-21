@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Implementation of the OrthogonalRegularizer. Orthogonality of weights is a
@@ -63,7 +62,6 @@ class OrthogonalRegularizer
   double factor;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

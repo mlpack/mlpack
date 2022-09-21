@@ -18,7 +18,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /*
  * Implementation of the convolution function test.

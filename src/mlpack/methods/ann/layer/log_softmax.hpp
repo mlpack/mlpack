@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the log softmax layer. The log softmax loss layer computes
@@ -88,7 +87,6 @@ class LogSoftMaxType : public Layer<MatType>
 // Standard Linear layer using no regularization.
 typedef LogSoftMaxType<arma::mat> LogSoftMax;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

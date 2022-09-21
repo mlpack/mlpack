@@ -16,7 +16,6 @@
 #include "rp_tree_max_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType>
 bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
@@ -30,7 +29,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
   arma::uvec samples;
 
   // Get no more than numSamples distinct samples.
-  math::ObtainDistinctSamples(begin, begin + count, numSamples, samples);
+  ObtainDistinctSamples(begin, begin + count, numSamples, samples);
 
   // Find the average distance between points.
   ElemType averageDistanceSq = GetAveragePointDistance(data, samples);
@@ -45,7 +44,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
     splitInfo.direction.zeros(data.n_rows);
 
     // Get a random normal vector.
-    math::RandVector(splitInfo.direction);
+    RandVector(splitInfo.direction);
 
     // Get the median value of the scalar products of the normal and the
     // sampled points. The node will be split according to this value.
@@ -72,7 +71,7 @@ GetAveragePointDistance(
 
   for (size_t i = 0; i < samples.n_elem; ++i)
     for (size_t j = i + 1; j < samples.n_elem; ++j)
-      dist += metric::SquaredEuclideanDistance::Evaluate(data.col(samples[i]),
+      dist += SquaredEuclideanDistance::Evaluate(data.col(samples[i]),
           data.col(samples[j]));
 
   dist /= (samples.n_elem * (samples.n_elem - 1) / 2);
@@ -139,7 +138,6 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_RP_TREE_MEAN_SPLIT_IMPL_HPP

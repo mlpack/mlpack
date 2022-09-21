@@ -72,7 +72,7 @@ class PCAWhitening
   {
     itemMean = arma::mean(input, 1);
     // Get eigenvectors and eigenvalues of covariance of input matrix.
-    eig_sym(eigenValues, eigenVectors, mlpack::math::ColumnCovariance(
+    eig_sym(eigenValues, eigenVectors, ColumnCovariance(
         input.each_col() - itemMean));
     eigenValues += epsilon;
   }

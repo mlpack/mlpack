@@ -16,7 +16,6 @@
 #include "c_relu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 CReLUType<InputType, OutputType>::CReLUType()
@@ -50,7 +49,6 @@ void CReLUType<InputType, OutputType>::serialize(
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

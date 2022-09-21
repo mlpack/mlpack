@@ -18,7 +18,6 @@
 #include "hrectbound.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Empty constructor.
@@ -37,7 +36,7 @@ inline HRectBound<MetricType, ElemType>::HRectBound() :
 template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>::HRectBound(const size_t dimension) :
     dim(dimension),
-    bounds(new math::RangeType<ElemType>[dim]),
+    bounds(new RangeType<ElemType>[dim]),
     minWidth(0)
 { /* Nothing to do. */ }
 
@@ -48,7 +47,7 @@ template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>::HRectBound(
     const HRectBound<MetricType, ElemType>& other) :
     dim(other.Dim()),
-    bounds(new math::RangeType<ElemType>[dim]),
+    bounds(new RangeType<ElemType>[dim]),
     minWidth(other.MinWidth())
 {
   // Copy other bounds over.
@@ -75,7 +74,7 @@ inline HRectBound<
       delete[] bounds;
 
     dim = other.Dim();
-    bounds = new math::RangeType<ElemType>[dim];
+    bounds = new RangeType<ElemType>[dim];
   }
 
   // Now copy each of the bound values.
@@ -140,7 +139,7 @@ template<typename MetricType, typename ElemType>
 inline void HRectBound<MetricType, ElemType>::Clear()
 {
   for (size_t i = 0; i < dim; ++i)
-    bounds[i] = math::RangeType<ElemType>();
+    bounds[i] = RangeType<ElemType>();
   minWidth = 0;
 }
 
@@ -250,8 +249,8 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
   Log::Assert(dim == other.dim);
 
   ElemType sum = 0;
-  const math::RangeType<ElemType>* mbound = bounds;
-  const math::RangeType<ElemType>* obound = other.bounds;
+  const RangeType<ElemType>* mbound = bounds;
+  const RangeType<ElemType>* obound = other.bounds;
 
   ElemType lower, higher;
   for (size_t d = 0; d < dim; d++)
@@ -387,7 +386,7 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<typename MetricType, typename ElemType>
-inline math::RangeType<ElemType>
+inline RangeType<ElemType>
 HRectBound<MetricType, ElemType>::RangeDistance(
     const HRectBound& other) const
 {
@@ -434,19 +433,19 @@ HRectBound<MetricType, ElemType>::RangeDistance(
   if (MetricType::TakeRoot)
   {
     if (MetricType::Power == 1)
-      return math::RangeType<ElemType>(loSum, hiSum);
+      return RangeType<ElemType>(loSum, hiSum);
     else if (MetricType::Power == 2)
-      return math::RangeType<ElemType>((ElemType) std::sqrt(loSum),
+      return RangeType<ElemType>((ElemType) std::sqrt(loSum),
                                        (ElemType) std::sqrt(hiSum));
     else
     {
-      return math::RangeType<ElemType>(
+      return RangeType<ElemType>(
           (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
           (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
     }
   }
   else
-    return math::RangeType<ElemType>(loSum, hiSum);
+    return RangeType<ElemType>(loSum, hiSum);
 }
 
 /**
@@ -454,7 +453,7 @@ HRectBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename VecType>
-inline math::RangeType<ElemType>
+inline RangeType<ElemType>
 HRectBound<MetricType, ElemType>::RangeDistance(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
@@ -510,19 +509,19 @@ HRectBound<MetricType, ElemType>::RangeDistance(
   if (MetricType::TakeRoot)
   {
     if (MetricType::Power == 1)
-      return math::RangeType<ElemType>(loSum, hiSum);
+      return RangeType<ElemType>(loSum, hiSum);
     else if (MetricType::Power == 2)
-      return math::RangeType<ElemType>((ElemType) std::sqrt(loSum),
+      return RangeType<ElemType>((ElemType) std::sqrt(loSum),
                                        (ElemType) std::sqrt(hiSum));
     else
     {
-      return math::RangeType<ElemType>(
+      return RangeType<ElemType>(
           (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
           (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
     }
   }
   else
-    return math::RangeType<ElemType>(loSum, hiSum);
+    return RangeType<ElemType>(loSum, hiSum);
 }
 
 /**
@@ -541,7 +540,7 @@ HRectBound<MetricType, ElemType>::operator|=(const MatType& data)
   minWidth = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < dim; ++i)
   {
-    bounds[i] |= math::RangeType<ElemType>(mins[i], maxs[i]);
+    bounds[i] |= RangeType<ElemType>(mins[i], maxs[i]);
     const ElemType width = bounds[i].Width();
     if (width < minWidth)
       minWidth = width;
@@ -597,8 +596,8 @@ inline bool HRectBound<MetricType, ElemType>::Contains(
 {
   for (size_t i = 0; i < dim; ++i)
   {
-    const math::RangeType<ElemType>& r_a = bounds[i];
-    const math::RangeType<ElemType>& r_b = bound.bounds[i];
+    const RangeType<ElemType>& r_a = bounds[i];
+    const RangeType<ElemType>& r_b = bound.bounds[i];
 
     // If a does not overlap b at all.
     if (r_a.Hi() <= r_b.Lo() || r_a.Lo() >= r_b.Hi())
@@ -692,7 +691,6 @@ void HRectBound<MetricType, ElemType>::serialize(
   ar(CEREAL_NVP(metric));
 }
 
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP

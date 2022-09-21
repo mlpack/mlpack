@@ -29,7 +29,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The softplus function, defined by
@@ -125,7 +124,6 @@ class SoftplusFunction
   }
 }; // class SoftplusFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

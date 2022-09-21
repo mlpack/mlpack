@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This normalization class performs item mean normalization on raw ratings.
@@ -169,7 +168,6 @@ class ItemMeanNormalization
   arma::vec itemMean;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

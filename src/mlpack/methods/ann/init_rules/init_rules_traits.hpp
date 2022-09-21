@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_INIT_RULES_TRAITS_HPP
 
 namespace mlpack {
-namespace ann {
 
 /**
  * This is a template class that can provide information about various
@@ -34,7 +33,6 @@ class InitTraits
   static const bool UseLayer = true;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

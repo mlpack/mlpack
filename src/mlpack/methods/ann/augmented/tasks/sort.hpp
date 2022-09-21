@@ -17,9 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 /**
  * Generator of instances of the sequence sort task.
@@ -88,9 +85,6 @@ class SortTask
   bool addSeparator;
 };
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #include "sort_impl.hpp"

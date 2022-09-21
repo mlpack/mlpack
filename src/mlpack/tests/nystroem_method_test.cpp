@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::kernel;
 
 /**
  * Make sure that if the rank is the same and we do a full-rank approximation,
@@ -83,7 +82,6 @@ TEST_CASE("Rank10Test", "[NystroemMethodTest]")
   dataMod += 1e-5 * arma::randu<arma::mat>(dataMod.n_rows, dataMod.n_cols);
 
   // Calculate the true kernel matrix.
-  LinearKernel lk;
   arma::mat kernel = dataMod.t() * dataMod;
 
   size_t successes = 0;

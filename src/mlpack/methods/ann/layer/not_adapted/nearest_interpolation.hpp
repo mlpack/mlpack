@@ -13,7 +13,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Definition and Implementation of the Nearest Interpolation Layer.
@@ -144,7 +143,6 @@ class NearestInterpolation
   OutputDataType outputParameter;
 }; // class NearestInterpolation
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

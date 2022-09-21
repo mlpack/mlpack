@@ -21,7 +21,6 @@
 using namespace arma;
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
@@ -98,13 +97,13 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Bayesian Interpolation",
-        "https://authors.library.caltech.edu/13792/1/MACnc92a.pdf");
-BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
-        "MLA Bishop, Christopher M. Pattern Recognition and Machine "
-        "Learning. New York :Springer, 2006, section 3.3.");
-BINDING_SEE_ALSO("mlpack::regression::BayesianLinearRegression C++ class "
-        "documentation", "@src/mlpack/methods/bayesian_linear_regression/"
-        "bayesian_linear_regression.hpp");
+    "https://authors.library.caltech.edu/13792/1/MACnc92a.pdf");
+BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3", "MLA Bishop, "
+    "Christopher M. Pattern Recognition and Machine Learning. New York: "
+    "Springer, 2006, section 3.3.");
+BINDING_SEE_ALSO("BayesianLinearRegression C++ class documentation",
+    "@src/mlpack/methods/bayesian_linear_regression/"
+    "bayesian_linear_regression.hpp");
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 

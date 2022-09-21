@@ -22,7 +22,6 @@
 #include <ensmallen.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of a standard feed forward network.  Any layer that inherits
@@ -552,7 +551,6 @@ class FFN
   friend class RNN<OutputLayerType, InitializationRuleType, MatType>;
 }; // class FFN
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

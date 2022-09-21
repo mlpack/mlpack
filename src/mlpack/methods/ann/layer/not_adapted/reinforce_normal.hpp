@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the reinforce normal layer. The reinforce normal layer
@@ -98,7 +97,6 @@ class ReinforceNormalType : public Layer<InputType, OutputType>
 // Standard ReinforceNormal layer.
 typedef ReinforceNormalType<arma::mat, arma::mat> ReinforceNormal;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

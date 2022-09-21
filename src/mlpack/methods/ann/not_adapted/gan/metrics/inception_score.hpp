@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
 
 /**
 * Function that computes Inception Score for a set of images produced by a GAN.
@@ -42,7 +41,6 @@ double InceptionScore(ModelType Model,
                       size_t splits = 1);
 
 
-} // namespace ann
 } // namespace mlpack
 
 #include "inception_score_impl.hpp"

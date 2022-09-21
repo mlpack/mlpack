@@ -16,7 +16,6 @@
 #include "lcc.hpp"
 
 namespace mlpack {
-namespace lcc {
 
 template<typename DictionaryInitializer>
 LocalCoordinateCoding::LocalCoordinateCoding(
@@ -141,7 +140,7 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
     arma::mat dictGramTD = diagmat(invW) * dictGram * diagmat(invW);
 
     bool useCholesky = false;
-    regression::LARS lars(useCholesky, dictGramTD, 0.5 * lambda);
+    LARS lars(useCholesky, dictGramTD, 0.5 * lambda);
 
     // Run LARS for this point, by making an alias of the point and passing
     // that.
@@ -219,7 +218,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
 
     // Create matrix holding only active codes.
     arma::mat activeCodes;
-    math::RemoveRows(codes, inactiveAtoms, activeCodes);
+    RemoveRows(codes, inactiveAtoms, activeCodes);
 
     // Create reverse atom lookup for active atoms.
     arma::uvec atomReverseLookup(atoms);
@@ -294,9 +293,9 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
       if (inactiveAtoms[currentInactiveIndex] == i)
       {
         // This atom is inactive.  Reinitialize it randomly.
-        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)));
+        dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)));
 
         // Now normalize the atom.
         dictionary.col(i) /= norm(dictionary.col(i), 2);
@@ -345,7 +344,6 @@ void LocalCoordinateCoding::serialize(Archive& ar,
   ar(CEREAL_NVP(tolerance));
 }
 
-} // namespace lcc
 } // namespace mlpack
 
 #endif

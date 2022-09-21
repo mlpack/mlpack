@@ -27,8 +27,6 @@
 #define MLPACK_CORE_TREE_ADDRESS_HPP
 
 namespace mlpack {
-namespace bound {
-namespace addr {
 
 /**
  * Calculate the address of a point. Be careful, the point and the address
@@ -253,15 +251,14 @@ int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
  * Returns true if an address is contained between two other addresses.
  */
 template<typename AddressType1, typename AddressType2, typename AddressType3>
-bool Contains(const AddressType1& address, const AddressType2& loBound,
+bool ContainsAddress(const AddressType1& address,
+                     const AddressType2& loBound,
                      const AddressType3& hiBound)
 {
   return ((CompareAddresses(loBound, address) <= 0) &&
           (CompareAddresses(hiBound, address) >= 0));
 }
 
-} // namespace addr
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_ADDRESS_HPP

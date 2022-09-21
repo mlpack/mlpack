@@ -16,7 +16,6 @@
 #include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Interface for clipping the reward to some value between the specified maximum and minimum value
@@ -92,7 +91,7 @@ class RewardClipping
     // Get original unclipped reward from base environment.
     double unclippedReward =  environment.Sample(state, action, nextState);
     // Clip rewards according to the min and max limit and return.
-    return math::ClampRange(unclippedReward, minReward, maxReward);
+    return ClampRange(unclippedReward, minReward, maxReward);
   }
 
   /**
@@ -135,7 +134,6 @@ class RewardClipping
   double maxReward;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

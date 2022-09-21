@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_STATISTIC_HPP
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * A statistic for trees which holds the blacklist for Pelleg-Moore k-means
@@ -70,7 +69,6 @@ class PellegMooreKMeansStatistic
   arma::vec centroid;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

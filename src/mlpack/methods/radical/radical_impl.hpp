@@ -15,7 +15,6 @@
 #include "radical.hpp"
 
 namespace mlpack {
-namespace radical {
 
 // Set the parameters to RADICAL.
 inline Radical::Radical(
@@ -196,7 +195,6 @@ inline void WhitenFeatureMajorMatrix(const arma::mat& matX,
   matXWhitened = matX * matWhitening;
 }
 
-} // namespace radical
 } // namespace mlpack
 
 #endif

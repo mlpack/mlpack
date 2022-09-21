@@ -16,10 +16,9 @@
 #include "adaptive_max_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
-AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType() : 
+AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType() :
     Layer<MatType>()
 {
   // Nothing to do here.
@@ -28,9 +27,9 @@ AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType() :
 template <typename MatType>
 AdaptiveMaxPoolingType<MatType>::AdaptiveMaxPoolingType(
     const size_t outputWidth,
-    const size_t outputHeight) : 
+    const size_t outputHeight) :
     Layer<MatType>(),
-    poolingLayer(ann::MaxPoolingType<MatType>(1, 1)),
+    poolingLayer(MaxPoolingType<MatType>(1, 1)),
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
@@ -150,7 +149,6 @@ void AdaptiveMaxPoolingType<MatType>::serialize(
   ar(CEREAL_NVP(outputHeight));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

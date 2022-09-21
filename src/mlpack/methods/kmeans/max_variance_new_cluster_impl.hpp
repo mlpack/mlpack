@@ -16,7 +16,6 @@
 #include "max_variance_new_cluster.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * Take action about an empty cluster.
@@ -157,7 +156,6 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
       variances[i] /= clusterCounts[i];
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

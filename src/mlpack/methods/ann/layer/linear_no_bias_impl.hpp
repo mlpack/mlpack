@@ -17,7 +17,6 @@
 #include "linear_no_bias.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename RegularizerType>
 LinearNoBiasType<MatType, RegularizerType>::LinearNoBiasType() :
@@ -151,7 +150,6 @@ void LinearNoBiasType<MatType, RegularizerType>::serialize(
   ar(CEREAL_NVP(regularizer));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

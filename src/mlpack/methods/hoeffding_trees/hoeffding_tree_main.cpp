@@ -23,7 +23,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::tree;
 using namespace mlpack::data;
 using namespace mlpack::util;
 
@@ -91,9 +90,9 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
-        "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
-BINDING_SEE_ALSO("mlpack::tree::HoeffdingTree class documentation",
-        "@src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp");
+    "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
+BINDING_SEE_ALSO("HoeffdingTree class documentation",
+    "@src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp");
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");

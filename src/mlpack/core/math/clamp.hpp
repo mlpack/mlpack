@@ -16,7 +16,6 @@
 #include <float.h>
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 /**
  * Forces a number to be non-negative, turning negative numbers into zero.
@@ -61,7 +60,6 @@ inline double ClampRange(double value,
   return value;
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif // MLPACK_CORE_MATH_CLAMP_HPP

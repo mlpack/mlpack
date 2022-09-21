@@ -22,7 +22,6 @@
 #include <mlpack/methods/sparse_coding/random_initializer.hpp>
 
 namespace mlpack {
-namespace lcc {
 
 /**
  * An implementation of Local Coordinate Coding (LCC) that codes data which
@@ -89,8 +88,7 @@ class LocalCoordinateCoding
    * Initialize(const arma::mat& data, arma::mat& dictionary) function), or call
    * the constructor that does not take a data matrix, then call Dictionary() to
    * set the dictionary matrix to a matrix of your choosing, and then call
-   * Train() with sparse_coding::NothingInitializer (i.e.
-   * Train<sparse_coding::NothingInitializer>(data)).
+   * Train() with NothingInitializer (i.e.  Train<NothingInitializer>(data)).
    *
    * @param data Data matrix.
    * @param atoms Number of atoms in dictionary.
@@ -100,10 +98,7 @@ class LocalCoordinateCoding
    * @param tolerance Tolerance for the objective function.
    * @param initializer Intializer to use.
    */
-  template<
-      typename DictionaryInitializer =
-          sparse_coding::DataDependentRandomInitializer
-  >
+  template<typename DictionaryInitializer = DataDependentRandomInitializer>
   LocalCoordinateCoding(const arma::mat& data,
                         const size_t atoms,
                         const double lambda,
@@ -136,10 +131,7 @@ class LocalCoordinateCoding
    * @param initializer Intializer to use.
    * @return The final objective value.
    */
-  template<
-      typename DictionaryInitializer =
-          sparse_coding::DataDependentRandomInitializer
-  >
+  template<typename DictionaryInitializer = DataDependentRandomInitializer>
   double Train(const arma::mat& data,
                const DictionaryInitializer& initializer =
                    DictionaryInitializer());
@@ -223,7 +215,6 @@ class LocalCoordinateCoding
   double tolerance;
 };
 
-} // namespace lcc
 } // namespace mlpack
 
 // Include implementation.

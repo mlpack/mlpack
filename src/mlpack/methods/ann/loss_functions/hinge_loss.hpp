@@ -13,10 +13,9 @@
 #ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_LOSS_HPP
 #define MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_LOSS_HPP
 
-#include<mlpack/prereqs.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Computes the hinge loss between \f$y_true\f$ and \f$y_pred\f$. Expects
@@ -85,7 +84,6 @@ class HingeLossType
 // Default typedef for typical `arma::mat` usage.
 typedef HingeLossType<arma::mat> HingeLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation

@@ -16,7 +16,6 @@
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 inline DiagonalGaussianDistribution::DiagonalGaussianDistribution(
     const arma::vec& mean,
@@ -150,7 +149,6 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   logDetCov = arma::accu(log(covariance));
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

@@ -18,9 +18,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 
 // Test the traits on RectangleTrees.
 
@@ -414,8 +411,8 @@ TEST_CASE("PointDeletion", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(tree);
 
   // Single-tree search.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> knn1(std::move(tree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RTree>
+      knn1(std::move(tree), SINGLE_TREE_MODE);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
@@ -504,8 +501,8 @@ TEST_CASE("PointDynamicAdd", "[RectangleTreeTraitsTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RTree> knn1(std::move(tree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RTree>
+      knn1(std::move(tree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -544,8 +541,8 @@ TEST_CASE("SingleTreeTraverserTest", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(rTree);
 
   // Nearest neighbor search with the R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RStarTree> knn1(std::move(rTree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RStarTree>
+      knn1(std::move(rTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -587,8 +584,8 @@ TEST_CASE("XTreeTraverserTest", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(xTree);
 
   // Nearest neighbor search with the X tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      XTree> knn1(std::move(xTree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, XTree>
+      knn1(std::move(xTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -628,8 +625,8 @@ TEST_CASE("HilbertRTreeTraverserTest", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(hilbertRTree);
 
   // Nearest neighbor search with the Hilbert R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      HilbertRTree> knn1(std::move(hilbertRTree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, HilbertRTree>
+      knn1(std::move(hilbertRTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -1009,8 +1006,8 @@ TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(rPlusTree);
 
   // Nearest neighbor search with the R+ tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      RPlusTree > knn1(std::move(rPlusTree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>, arma::mat, RPlusTree>
+      knn1(std::move(rPlusTree), SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -1029,8 +1026,7 @@ TEST_CASE("RPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
 template<typename TreeType>
 void CheckRPlusPlusTreeBound(const TreeType& tree)
 {
-  typedef bound::HRectBound<metric::EuclideanDistance,
-      typename TreeType::ElemType> Bound;
+  typedef HRectBound<EuclideanDistance, typename TreeType::ElemType> Bound;
 
   bool success = true;
 
@@ -1139,8 +1135,8 @@ TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
   CheckNumDescendants(rPlusPlusTree);
 
   // Nearest neighbor search with the R++ tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-      arma::mat, RPlusPlusTree > knn1(std::move(rPlusPlusTree),
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>,
+      arma::mat, RPlusPlusTree> knn1(std::move(rPlusPlusTree),
       SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);

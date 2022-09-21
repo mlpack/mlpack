@@ -18,9 +18,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::adaboost;
-using namespace mlpack::tree;
-using namespace mlpack::perceptron;
 
 /**
  * This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.  It

@@ -18,7 +18,6 @@
 #include "kernel_pca.hpp"
 
 namespace mlpack {
-namespace kpca {
 
 template <typename KernelType, typename KernelRule>
 KernelPCA<KernelType, KernelRule>::KernelPCA(const KernelType kernel,
@@ -81,7 +80,6 @@ void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 
-} // namespace kpca
 } // namespace mlpack
 
 #endif

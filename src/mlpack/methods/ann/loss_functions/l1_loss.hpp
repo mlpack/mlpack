@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The L1 loss is a loss function that measures the mean absolute error (MAE)
@@ -82,7 +81,6 @@ class L1LossType
 // Default typedef for typical `arma::mat` usage.
 typedef L1LossType<arma::mat> L1Loss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -22,7 +22,6 @@
 #include "random_initializer.hpp"
 
 namespace mlpack {
-namespace sparse_coding {
 
 /**
  * An implementation of Sparse Coding with Dictionary Learning that achieves
@@ -278,7 +277,6 @@ class SparseCoding
   double newtonTolerance;
 };
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 // Include implementation.

@@ -18,7 +18,6 @@
 #include "make_alias.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -528,7 +527,7 @@ void FFN<
     MatType
 >::Shuffle()
 {
-  math::ShuffleData(predictors, responses, predictors, responses);
+  ShuffleData(predictors, responses, predictors, responses);
 }
 
 template<typename OutputLayerType,
@@ -709,7 +708,6 @@ FFN<
   // Nothing to do here.
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

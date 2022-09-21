@@ -19,28 +19,6 @@
 #include "range_search_rules.hpp"
 
 namespace mlpack {
-namespace range {
-
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
-}
-
-//! Call the tree constructor that does not do mapping.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset));
-}
 
 template<typename MetricType,
          typename MatType,
@@ -308,7 +286,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const MatType& querySet,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
@@ -330,7 +308,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   std::vector<std::vector<double>>* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     // Query indices only need to be mapped if we are building the query tree
     // ourselves.
@@ -405,7 +383,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   }
 
   // Map points back to original indices, if necessary.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive && treeOwner)
     {
@@ -478,7 +456,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
@@ -497,7 +475,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
 
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new std::vector<std::vector<size_t>>;
 
   // Resize each vector.
@@ -520,7 +498,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   scores = rules.Scores();
 
   // Do we need to map indices?
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.clear();
@@ -544,7 +522,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
@@ -556,7 +534,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
   std::vector<std::vector<double>>* distancePtr = &distances;
 
-  if (tree::TreeTraits<Tree>::RearrangesDataset && treeOwner)
+  if (TreeTraits<Tree>::RearrangesDataset && treeOwner)
   {
     // We will always need to rearrange in this case.
     distancePtr = new std::vector<std::vector<double>>;
@@ -608,7 +586,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   }
 
   // Do we need to map the reference indices?
-  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.clear();
     neighbors.resize(referenceSet->n_cols);
@@ -704,7 +682,6 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   }
 }
 
-} // namespace range
 } // namespace mlpack
 
 #endif

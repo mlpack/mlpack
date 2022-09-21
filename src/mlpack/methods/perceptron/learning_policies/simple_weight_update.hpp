@@ -25,7 +25,6 @@
  *  where w' is the weight vector which correctly classifies x.
  */
 namespace mlpack {
-namespace perceptron {
 
 class SimpleWeightUpdate
 {
@@ -62,7 +61,6 @@ class SimpleWeightUpdate
   }
 };
 
-} // namespace perceptron
 } // namespace mlpack
 
 #endif

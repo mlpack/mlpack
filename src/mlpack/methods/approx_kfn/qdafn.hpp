@@ -27,7 +27,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 template<typename MatType = arma::mat>
 class QDAFN
@@ -109,7 +108,6 @@ class QDAFN
   std::vector<MatType> candidateSet;
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_HPP
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename MatType>
 class HamerlyKMeans
@@ -59,7 +58,6 @@ class HamerlyKMeans
   size_t distanceCalculations;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

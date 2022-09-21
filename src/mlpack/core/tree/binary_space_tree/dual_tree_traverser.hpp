@@ -20,7 +20,6 @@
 #include "binary_space_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -88,7 +87,6 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -27,7 +27,6 @@
 #include "hoeffding_categorical_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The HoeffdingTree object represents all of the necessary information for a
@@ -430,7 +429,6 @@ class HoeffdingTree
           NumericSplitType<FitnessFunction>(0));
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #include "hoeffding_tree_impl.hpp"

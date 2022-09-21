@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_METRICS_R2SCORE_IMPL_HPP
 
 namespace mlpack {
-namespace cv {
 
 template<bool AdjustedR2>
 template<typename MLAlgorithm, typename DataType, typename ResponsesType>
@@ -55,7 +54,6 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
   }
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

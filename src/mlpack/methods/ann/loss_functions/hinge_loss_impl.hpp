@@ -17,7 +17,6 @@
 #include "hinge_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 HingeLossType<MatType>::HingeLossType(const bool reduction):
@@ -66,7 +65,6 @@ void HingeLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

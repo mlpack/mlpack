@@ -20,7 +20,6 @@
 #include "pca.hpp"
 
 using namespace mlpack;
-using namespace mlpack::pca;
 using namespace mlpack::util;
 using namespace std;
 
@@ -67,9 +66,9 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Principal_component_analysis");
-BINDING_SEE_ALSO("mlpack::pca::PCA C++ class documentation",
-        "@src/mlpack/methods/pca/pca.hpp");
+    "https://en.wikipedia.org/wiki/Principal_component_analysis");
+BINDING_SEE_ALSO("PCA C++ class documentation",
+    "@src/mlpack/methods/pca/pca.hpp");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
@@ -165,7 +164,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   else if (decompositionMethod == "randomized")
   {
-    RunPCA<RandomizedSVDPolicy>(params, timers, dataset, newDimension, scale,
+    RunPCA<RandomizedSVDPCAPolicy>(params, timers, dataset, newDimension, scale,
         varToRetain);
   }
   else if (decompositionMethod == "randomized-block-krylov")

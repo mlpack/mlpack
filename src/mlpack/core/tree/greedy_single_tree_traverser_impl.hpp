@@ -18,7 +18,6 @@
 #include "greedy_single_tree_traverser.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType, typename RuleType>
 GreedySingleTreeTraverser<TreeType, RuleType>::GreedySingleTreeTraverser(
@@ -68,7 +67,6 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

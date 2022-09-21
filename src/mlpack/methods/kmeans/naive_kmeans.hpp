@@ -14,16 +14,16 @@
  */
 #ifndef MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
 #define MLPACK_METHODS_KMEANS_NAIVE_KMEANS_HPP
+
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * This is an implementation of a single iteration of Lloyd's algorithm for
  * k-means.  If your intention is to run the full k-means algorithm, you are
- * looking for the mlpack::kmeans::KMeans class instead of this one.  This class
- * is used by KMeans as the actual implementation of the Lloyd iteration.
+ * looking for the KMeans class instead of this one.  This class is used by
+ * KMeans as the actual implementation of the Lloyd iteration.
  *
  * @param MetricType Type of metric used with this implementation.
  * @param MatType Matrix type (arma::mat or arma::sp_mat).
@@ -66,7 +66,6 @@ class NaiveKMeans
   size_t distanceCalculations;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

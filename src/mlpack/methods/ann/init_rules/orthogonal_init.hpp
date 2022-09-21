@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the weight matrix with the orthogonal
@@ -109,7 +108,6 @@ class OrthogonalInitialization
 }; // class OrthogonalInitialization
 
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

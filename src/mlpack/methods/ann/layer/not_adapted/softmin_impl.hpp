@@ -16,7 +16,6 @@
 #include "softmin.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 SoftminType<InputType, OutputType>::SoftminType()
@@ -52,7 +51,6 @@ void SoftminType<InputType, OutputType>::serialize(
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

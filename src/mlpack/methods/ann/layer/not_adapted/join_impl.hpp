@@ -16,7 +16,6 @@
 #include "join.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 JoinType<InputType, OutputType>::JoinType() :
@@ -57,7 +56,6 @@ void JoinType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(inSizeCols));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

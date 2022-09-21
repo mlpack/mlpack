@@ -13,7 +13,6 @@
 #define MLPACK_CORE_MATH_RANGE_HPP
 
 namespace mlpack {
-namespace math {
 
 template<typename T>
 class RangeType;
@@ -25,8 +24,8 @@ typedef RangeType<double> Range;
  * Simple real-valued range.  It contains an upper and lower bound.
  *
  * Note that until mlpack 3.0.0, this class is named RangeType<> and for the
- * specification where T is double, you can use math::Range.  As of mlpack
- * 3.0.0, this class will be renamed math::Range<>.
+ * specification where T is double, you can use Range.  As of mlpack 3.0.0, this
+ * class will be renamed Range<>.
  *
  * @tparam T type of element held by this range.
  */
@@ -183,7 +182,6 @@ class RangeType
   void serialize(Archive& ar, const uint32_t version);
 };
 
-} // namespace math
 } // namespace mlpack
 
 // Include inlined implementation.

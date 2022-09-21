@@ -16,7 +16,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace sparse_coding {
 
 /**
  * A data-dependent random dictionary initializer for SparseCoding.  This
@@ -46,9 +45,9 @@ class DataDependentRandomInitializer
     for (size_t i = 0; i < atoms; ++i)
     {
       // Add three atoms together.
-      dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-          data.col(math::RandInt(data.n_cols)) +
-          data.col(math::RandInt(data.n_cols)));
+      dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
+          data.col(RandInt(data.n_cols)) +
+          data.col(RandInt(data.n_cols)));
 
       // Now normalize the atom.
       dictionary.col(i) /= norm(dictionary.col(i), 2);
@@ -56,7 +55,6 @@ class DataDependentRandomInitializer
   }
 };
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 #endif

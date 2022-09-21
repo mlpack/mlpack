@@ -19,8 +19,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 
 // Be careful!  When writing new tests, always get the boolean value of each
 // trait and store it in a temporary, because the Boost unit test macros do

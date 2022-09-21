@@ -20,7 +20,6 @@
 #include <mlpack/core/math/quantile.hpp>
 
 namespace mlpack {
-namespace kde {
 
 template<typename MetricType, typename KernelType, typename TreeType>
 KDERules<MetricType, KernelType, TreeType>::KDERules(
@@ -114,7 +113,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   else
     depthAlpha = -1;
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+  if (TreeTraits<TreeType>::FirstPointIsCentroid &&
       lastQueryIndex == queryIndex &&
       traversalInfo.LastReferenceNode() != NULL &&
       lastReferenceIndex == referenceNode.Point(0))
@@ -129,12 +128,12 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   else
   {
     // All Calculations are new.
-    const math::Range r = referenceNode.RangeDistance(queryPoint);
+    const Range r = referenceNode.RangeDistance(queryPoint);
     minDistance = r.Lo();
     maxDistance = r.Hi();
 
     // Check if we are a self-child.
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+    if (TreeTraits<TreeType>::HasSelfChildren &&
         referenceNode.Parent() != NULL &&
         referenceNode.Parent()->Point(0) == referenceNode.Point(0))
     {
@@ -191,7 +190,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // Monte Carlo probabilistic estimation.
     // Calculate z using accumulated alpha if possible.
     const double alpha = depthAlpha + accumMCAlpha(queryIndex);
-    const double z = std::abs(math::Quantile(alpha / 2.0));
+    const double z = std::abs(Quantile(alpha / 2.0));
 
     // Auxiliary variables.
     arma::vec sample;
@@ -220,9 +219,9 @@ Score(const size_t queryIndex, TreeType& referenceNode)
         // Sample and evaluate random points from the reference node.
         size_t randomPoint;
         if (alreadyDidRefPoint0)
-          randomPoint = math::RandInt(1, refNumDesc);
+          randomPoint = RandInt(1, refNumDesc);
         else
-          randomPoint = math::RandInt(0, refNumDesc);
+          randomPoint = RandInt(0, refNumDesc);
 
         sample(oldSize + i) =
             EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
@@ -306,7 +305,7 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  kde::KDEStat& queryStat = queryNode.Stat();
+  KDEStat& queryStat = queryNode.Stat();
   const size_t refNumDesc = referenceNode.NumDescendants();
   double score, minDistance, maxDistance, depthAlpha;
   // Calculations are not duplicated.
@@ -325,7 +324,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
                                referenceNode.IsLeaf() &&
                                queryNode.IsLeaf();
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+  if (TreeTraits<TreeType>::FirstPointIsCentroid &&
       (traversalInfo.LastQueryNode() != NULL) &&
       (traversalInfo.LastReferenceNode() != NULL) &&
       (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
@@ -346,7 +345,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   else
   {
     // All calculations are new.
-    const math::Range r = queryNode.RangeDistance(referenceNode);
+    const Range r = queryNode.RangeDistance(referenceNode);
     minDistance = r.Lo();
     maxDistance = r.Hi();
   }
@@ -398,7 +397,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Monte Carlo probabilistic estimation.
     // Calculate z using accumulated alpha if possible.
     const double alpha = depthAlpha + queryStat.AccumAlpha();
-    const double z = std::abs(math::Quantile(alpha / 2));
+    const double z = std::abs(Quantile(alpha / 2));
 
     // Auxiliary variables.
     arma::vec sample;
@@ -435,9 +434,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           // Sample and evaluate random points from the reference node.
           size_t randomPoint;
           if (alreadyDidRefPoint0)
-            randomPoint = math::RandInt(1, refNumDesc);
+            randomPoint = RandInt(1, refNumDesc);
           else
-            randomPoint = math::RandInt(0, refNumDesc);
+            randomPoint = RandInt(0, refNumDesc);
 
           sample(oldSize + i) =
               EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
@@ -604,7 +603,6 @@ double KDECleanRules<TreeType>::Score(TreeType& queryNode,
   return 0;
 }
 
-} // namespace kde
 } // namespace mlpack
 
 #endif

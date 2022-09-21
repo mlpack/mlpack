@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * A very simple partitioner which partitions the data randomly into the number
@@ -55,7 +54,6 @@ class RandomPartition
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

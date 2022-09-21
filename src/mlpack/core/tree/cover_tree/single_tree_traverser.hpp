@@ -19,7 +19,6 @@
 #include "cover_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<
     typename MetricType,
@@ -59,7 +58,6 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   size_t numPrunes;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

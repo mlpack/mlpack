@@ -19,7 +19,6 @@
 #include "naive_convolution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Computes the two-dimensional convolution using singular value decomposition.
@@ -189,7 +188,6 @@ class SVDConvolution
   }
 };  // class SVDConvolution
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

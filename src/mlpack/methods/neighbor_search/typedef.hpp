@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
-#define MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#ifndef MLPACK_NEIGHBOR_SEARCH_TYPEDEF_HPP
+#define MLPACK_NEIGHBOR_SEARCH_TYPEDEF_HPP
 
 // In case someone included this directly.
 #include "neighbor_search.hpp"
@@ -23,19 +23,18 @@
 #include "sort_policies/furthest_neighbor_sort.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The KNN class is the k-nearest-neighbors method.  It returns L2 distances
  * (Euclidean distances) for each of the k nearest neighbors.
  */
-typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> KNN;
+typedef NeighborSearch<NearestNeighborSort, EuclideanDistance> KNN;
 
 /**
  * The KFN class is the k-furthest-neighbors method.  It returns L2 distances
  * (Euclidean distances) for each of the k furthest neighbors.
  */
-typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> KFN;
+typedef NeighborSearch<FurthestNeighborSort, EuclideanDistance> KFN;
 
 /**
  * The DefeatistKNN class is the k-nearest-neighbors method considering
@@ -46,16 +45,16 @@ typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> KFN;
  */
 template<template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::SPTree>
+                  typename TreeMatType> class TreeType = SPTree>
 using DefeatistKNN = NeighborSearch<
     NearestNeighborSort,
-    metric::EuclideanDistance,
+    EuclideanDistance,
     arma::mat,
     TreeType,
-    TreeType<metric::EuclideanDistance,
+    TreeType<EuclideanDistance,
         NeighborSearchStat<NearestNeighborSort>,
         arma::mat>::template DefeatistDualTreeTraverser,
-    TreeType<metric::EuclideanDistance,
+    TreeType<EuclideanDistance,
         NeighborSearchStat<NearestNeighborSort>,
         arma::mat>::template DefeatistSingleTreeTraverser>;
 
@@ -64,9 +63,8 @@ using DefeatistKNN = NeighborSearch<
  * search on SPTree.  It returns L2 distances (Euclidean distances) for each of
  * the k nearest neighbors found.
  */
-typedef DefeatistKNN<tree::SPTree> SpillKNN;
+typedef DefeatistKNN<SPTree> SpillKNN;
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

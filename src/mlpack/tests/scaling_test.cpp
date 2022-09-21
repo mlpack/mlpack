@@ -138,7 +138,7 @@ TEST_CASE("PCAWhiteningTest", "[ScalingTest]")
   arma::mat output;
   scale.Fit(dataset);
   scale.Transform(dataset, output);
-  arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
+  arma::vec diagonals = (ColumnCovariance(output)).diag();
   // Checking covarience is close to 1.0
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; ++i)
@@ -157,7 +157,7 @@ TEST_CASE("ZCAWhiteningTest", "[ScalingTest]")
   arma::mat output;
   scale.Fit(dataset);
   scale.Transform(dataset, output);
-  arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
+  arma::vec diagonals = (ColumnCovariance(output)).diag();
   // Check that the covariance is close to 1.0.
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; ++i)

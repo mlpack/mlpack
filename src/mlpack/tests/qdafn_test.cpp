@@ -19,7 +19,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 /**
  * With one reference point, make sure that is the one that is returned.
@@ -48,7 +47,7 @@ TEST_CASE("QDAFNTrivialTest", "[QDAFNTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     REQUIRE(neighbors[i] == 0);
-    const double dist = metric::EuclideanDistance::Evaluate(querySet.col(i),
+    const double dist = EuclideanDistance::Evaluate(querySet.col(i),
         refSet.col(0));
     REQUIRE(distances[i] == Approx(dist).epsilon(1e-7));
   }

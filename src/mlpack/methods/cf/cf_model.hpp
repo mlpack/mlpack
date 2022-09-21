@@ -17,7 +17,6 @@
 #include "cf.hpp"
 
 namespace mlpack {
-namespace cf {
 
 /**
  * NeighborSearchTypes contains the set of NeighborSearchPolicy classes that are
@@ -272,7 +271,6 @@ class CFModel
   void serialize(Archive& ar, const uint32_t /* version */);
 };
 
-} // namespace cf
 } // namespace mlpack
 
 // Include implementation.

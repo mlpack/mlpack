@@ -5,6 +5,11 @@
  * Implementation of `MakeAlias()`, a utility function.  This is meant to be
  * used in `SetWeights()` calls in various layers, to wrap internal weight
  * objects as aliases around the given memory pointers.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_MAKE_ALIAS_HPP
 #define MLPACK_METHODS_ANN_MAKE_ALIAS_HPP
@@ -12,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
@@ -49,7 +53,6 @@ void MakeAlias(CubeType& c,
   new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

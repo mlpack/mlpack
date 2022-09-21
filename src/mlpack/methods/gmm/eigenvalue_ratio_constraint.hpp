@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace gmm {
 
 /**
  * Given a vector of eigenvalue ratios, ensure that the covariance matrix always
@@ -116,7 +115,6 @@ class EigenvalueRatioConstraint
   const arma::vec ratios;
 };
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif
