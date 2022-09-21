@@ -16,7 +16,6 @@
 #include "earth_mover_distance.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 EarthMoverDistanceType<MatType>::EarthMoverDistanceType(const bool reduction) :
@@ -59,7 +58,6 @@ void EarthMoverDistanceType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

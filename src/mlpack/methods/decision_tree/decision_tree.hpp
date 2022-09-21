@@ -30,7 +30,6 @@
 #include "multiple_random_dimension_select.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This class implements a generic decision tree learner.  Its behavior can be
@@ -606,7 +605,6 @@ typedef DecisionTree<InformationGain,
                      AllCategoricalSplit,
                      AllDimensionSelect,
                      true> ID3DecisionStump;
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

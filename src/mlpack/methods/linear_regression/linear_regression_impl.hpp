@@ -16,7 +16,6 @@
 #include "linear_regression.hpp"
 
 namespace mlpack {
-namespace regression {
 
 inline LinearRegression::LinearRegression(
     const arma::mat& predictors,
@@ -166,7 +165,6 @@ inline double LinearRegression::ComputeError(
   return cost;
 }
 
-} // namespace regression 
 } // namespace mlpack
 
 #endif

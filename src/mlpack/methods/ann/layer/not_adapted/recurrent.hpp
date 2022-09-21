@@ -19,7 +19,6 @@
 #include "sequential.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the RecurrentLayer class. Recurrent layers can be used
@@ -157,7 +156,6 @@ class Recurrent : public MultiLayer<InputType, OutputType>
   OutputType recurrentError;
 }; // class Recurrent
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

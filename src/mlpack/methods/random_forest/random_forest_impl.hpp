@@ -16,7 +16,6 @@
 #include "random_forest.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<
     typename FitnessFunction,
@@ -569,7 +568,6 @@ double RandomForest<
   return avgGain;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

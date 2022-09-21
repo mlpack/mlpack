@@ -17,7 +17,6 @@
 #include "softmax.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 SoftmaxType<MatType>::SoftmaxType() :
@@ -86,7 +85,6 @@ void SoftmaxType<MatType>::serialize(
   ar(cereal::base_class<Layer<MatType>>(this));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

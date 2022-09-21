@@ -17,7 +17,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Train and evaluate a vanilla network with the specified initialisation

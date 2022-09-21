@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
 namespace mlpack {
-namespace ann {
 
 /**
  * A layer is an abstract class implementing common neural networks operations,
@@ -335,7 +334,6 @@ class Layer
   bool training;
 };
 
-} // namespace ann
 } // namespace mlpack
 
 // Now include all of the layer types.

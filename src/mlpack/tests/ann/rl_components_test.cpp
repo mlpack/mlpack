@@ -19,7 +19,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::rl;
 
 /**
  * Constructs a Pendulum instance and check if the main routine works as it
@@ -32,7 +31,7 @@ TEST_CASE("SimplePendulumTest", "[RLComponentsTest]")
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
-  action.action[0] = math::Random(-2.0, 2.0);
+  action.action[0] = Random(-2.0, 2.0);
   double reward, minReward = 0.0;
 
   REQUIRE(!task.IsTerminal(state));
@@ -66,7 +65,7 @@ TEST_CASE("SimpleContinuousMountainCarTest", "[RLComponentsTest]")
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
-  action.action[0] = math::Random(-1.0, 1.0);
+  action.action[0] = Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.
   REQUIRE(reward <= 100.0);
@@ -198,7 +197,7 @@ TEST_CASE("ContinuousDoublePoleCartTest", "[RLComponentsTest]")
 
   ContinuousDoublePoleCart::State state = task.InitialSample();
   ContinuousDoublePoleCart::Action action;
-  action.action[0] = math::Random(-1.0, 1.0);
+  action.action[0] = Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
 
   REQUIRE(reward == 1.0);

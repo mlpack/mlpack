@@ -16,7 +16,6 @@
 #include "randomized_svd.hpp"
 
 namespace mlpack {
-namespace svd {
 
 inline RandomizedSVD::RandomizedSVD(
     const arma::mat& data,
@@ -77,7 +76,6 @@ inline void RandomizedSVD::Apply(const arma::mat& data,
   Apply(data, u, s, v, rank, rowMean);
 }
 
-} // namespace svd
 } // namespace mlpack
 
 #endif

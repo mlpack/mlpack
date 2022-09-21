@@ -19,7 +19,6 @@
 #include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
-namespace hmm {
 
 /**
  * Create the Hidden Markov Model with the given number of hidden states and the
@@ -149,7 +148,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
           backwardLog, logScales);
 
       // Add to estimate of initial probability for state j.
-      math::LogSumExp<arma::vec, true>(stateLogProb.unsafe_col(0),
+      LogSumExp<arma::vec, true>(stateLogProb.unsafe_col(0),
           newLogInitial);
 
       // Define a variable to store the value of log-probability for data.
@@ -179,7 +178,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
           const arma::vec tmp = backwardLog.col(t + 1) +
               logProbs.row(t + 1).t() - logScales[t + 1];
           arma::vec output;
-          math::LogSumExp(tmp, output);
+          LogSumExp(tmp, output);
 
           for (size_t j = 0; j < logTransition.n_cols; ++j)
           {
@@ -188,7 +187,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
             // until later.
             arma::vec tmp2 = output + forwardLog(j, t);
             arma::vec alias = newLogTransition.unsafe_col(j);
-            math::LogSumExp<arma::vec, true>(tmp2, alias);
+            LogSumExp<arma::vec, true>(tmp2, alias);
           }
         }
 
@@ -223,7 +222,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     // Now we normalize the transition matrix.
     for (size_t i = 0; i < logTransition.n_cols; i++)
     {
-      const double sum = math::AccuLog(logTransition.col(i));
+      const double sum = AccuLog(logTransition.col(i));
       if (std::isfinite(sum))
         logTransition.col(i) -= sum;
       else
@@ -445,7 +444,7 @@ void HMM<Distribution>::Generate(const size_t length,
   stateSequence[0] = startState;
 
   // Choose first emission state.
-  double randValue = math::Random();
+  double randValue = Random();
 
   // We just have to find where our random value sits in the probability
   // distribution of emissions for our starting state.
@@ -457,7 +456,7 @@ void HMM<Distribution>::Generate(const size_t length,
   for (size_t t = 1; t < length; t++)
   {
     // First choose the hidden state.
-    randValue = math::Random();
+    randValue = Random();
 
     // Now find where our random value sits in the probability distribution of
     // state changes.
@@ -726,7 +725,7 @@ arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
   arma::vec forwardLogProb = logInitial + emissionLogProb;
 
   // Normalize probability.
-  logScales = math::AccuLog(forwardLogProb);
+  logScales = AccuLog(forwardLogProb);
   if (std::isfinite(logScales))
     forwardLogProb -= logScales;
 
@@ -752,11 +751,11 @@ arma::vec HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
   arma::vec forwardLogProb;
   arma::mat tmp = logTransition + repmat(prevForwardLogProb.t(),
       logTransition.n_rows, 1);
-  math::LogSumExp(tmp, forwardLogProb);
+  LogSumExp(tmp, forwardLogProb);
   forwardLogProb += emissionLogProb;
 
   // Normalize probability.
-  logScales = math::AccuLog(forwardLogProb);
+  logScales = AccuLog(forwardLogProb);
   if (std::isfinite(logScales))
     forwardLogProb -= logScales;
 
@@ -821,7 +820,7 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
         repmat(backwardLogProb.col(t + 1), 1, logTransition.n_cols) +
         repmat(logProbs.row(t + 1).t(), 1, logTransition.n_cols);
     arma::vec alias = backwardLogProb.unsafe_col(t);
-    math::LogSumExpT<arma::mat, true>(tmp, alias);
+    LogSumExpT<arma::mat, true>(tmp, alias);
 
     // Normalize by the weights from the forward algorithm.
     if (std::isfinite(logScales[t + 1]))
@@ -888,7 +887,6 @@ void HMM<Distribution>::save(Archive& ar,
   ar(CEREAL_NVP(emission));
 }
 
-} // namespace hmm
 } // namespace mlpack
 
 #endif

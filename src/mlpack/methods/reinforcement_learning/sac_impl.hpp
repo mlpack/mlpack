@@ -18,7 +18,6 @@
 #include "sac.hpp"
 
 namespace mlpack {
-namespace rl {
 
 template <
   typename EnvironmentType,
@@ -364,6 +363,5 @@ double SAC<
   return totalReturn;
 }
 
-} // namespace rl
 } // namespace mlpack
 #endif

@@ -18,7 +18,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace tree {
 
 // Each of these overloads is kept as a separate function to keep the overhead
 // from the two std::vectors out, if possible.
@@ -1013,7 +1012,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
+UpdateBound(HollowBallBound<MetricType>& boundToUpdate)
 {
   if (!parent)
   {
@@ -1136,7 +1135,6 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

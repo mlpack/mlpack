@@ -2,7 +2,7 @@
  * @file tests/math_test.cpp
  * @author Ryan Curtin
  *
- * Tests for everything in the math:: namespace.
+ * Tests for math functions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,7 +14,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace math;
 
 /**
  * Verify that the empty constructor creates an empty range.

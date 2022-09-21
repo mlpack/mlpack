@@ -18,7 +18,6 @@
 #include "fastmks_rules.hpp"
 
 namespace mlpack {
-namespace fastmks {
 
 // No data; create a model on an empty dataset.
 template<typename KernelType,
@@ -311,7 +310,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(const MatType& referenceSet,
     delete this->referenceSet;
 
   this->referenceSet = &referenceSet;
-  this->metric = metric::IPMetric<KernelType>(kernel);
+  this->metric = IPMetric<KernelType>(kernel);
   this->setOwner = false;
 
   if (!naive)
@@ -360,7 +359,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
   if (setOwner)
     delete this->referenceSet;
 
-  this->metric = metric::IPMetric<KernelType>(kernel);
+  this->metric = IPMetric<KernelType>(kernel);
 
   if (!naive)
   {
@@ -392,7 +391,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
     delete this->referenceSet;
 
   this->referenceSet = &tree->Dataset();
-  this->metric = metric::IPMetric<KernelType>(tree->Metric().Kernel());
+  this->metric = IPMetric<KernelType>(tree->Metric().Kernel());
   this->setOwner = false;
 
   if (treeOwner && referenceTree)
@@ -676,13 +675,12 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
         delete referenceSet;
 
       referenceSet = &referenceTree->Dataset();
-      metric = metric::IPMetric<KernelType>(referenceTree->Metric().Kernel());
+      metric = IPMetric<KernelType>(referenceTree->Metric().Kernel());
       setOwner = false;
     }
   }
 }
 
-} // namespace fastmks
 } // namespace mlpack
 
 #endif

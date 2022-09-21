@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * This class implements the necessary methods for the SortPolicy template
@@ -199,7 +198,6 @@ class NearestNS
 // truncate the class name. For backward compatibility we setup an alias here.
 using NearestNeighborSort = NearestNS;
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation of templated functions.

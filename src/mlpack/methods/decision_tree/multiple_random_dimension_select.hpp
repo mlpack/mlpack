@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DECISION_TREE_MULTIPLE_RANDOM_DIMENSION_SPLIT_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This dimension selection policy allows the selection from a few random
@@ -53,7 +52,7 @@ class MultipleRandomDimensionSelect
       size_t value;
       while (!unique)
       {
-        value = math::RandInt(dimensions);
+        value = RandInt(dimensions);
 
         // Check if we already have the value.
         unique = true;
@@ -105,7 +104,6 @@ class MultipleRandomDimensionSelect
   size_t dimensions;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

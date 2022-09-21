@@ -18,7 +18,6 @@
 #include "regularized_svd_function.hpp"
 
 namespace mlpack {
-namespace svd {
 
 /**
  * Regularized SVD is a matrix factorization technique that seeks to reduce the
@@ -92,7 +91,6 @@ class RegularizedSVD
   double lambda;
 };
 
-} // namespace svd
 } // namespace mlpack
 
 // Include implementation.

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the negative log likelihood layer. The negative log
@@ -88,7 +87,6 @@ class NegativeLogLikelihoodType
 // Default typedef for typical `arma::mat` usage.
 typedef NegativeLogLikelihoodType<arma::mat> NegativeLogLikelihood;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

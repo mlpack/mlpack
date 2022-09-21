@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_SVD_IMPL_HPP
 
 namespace mlpack {
-namespace svd {
 
 template<typename OptimizerType>
 RegularizedSVD<OptimizerType>::RegularizedSVD(const size_t iterations,
@@ -57,7 +56,6 @@ void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
   v = parameters.submat(0, 0, rank - 1, numUsers - 1);
 }
 
-} // namespace svd
 } // namespace mlpack
 
 #endif

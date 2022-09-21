@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Declaration of the Layer Normalization class. The layer transforms
@@ -176,7 +175,6 @@ class LayerNormType : public Layer<InputType, OutputType>
 // Standard LayerNorm type
 typedef LayerNormType<arma::mat, arma::mat> LayerNorm;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include the implementation.

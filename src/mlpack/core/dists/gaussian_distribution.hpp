@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * A single multivariate Gaussian distribution.
@@ -191,7 +190,6 @@ class GaussianDistribution
   void FactorCovariance();
 };
 
-} // namespace distribution
 } // namespace mlpack
 
 // Include implementation.

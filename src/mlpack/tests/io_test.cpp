@@ -31,7 +31,6 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 
 using namespace mlpack;
 using namespace mlpack::util;
-using namespace mlpack::kernel;
 using namespace mlpack::data;
 using namespace mlpack::bindings::cli;
 using namespace std;

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 class GiniImpurity
 {
@@ -83,7 +82,6 @@ class GiniImpurity
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

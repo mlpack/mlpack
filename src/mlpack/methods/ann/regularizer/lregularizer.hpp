@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann {
 
 /**
  * The L_p regularizer for arbitrary integer p.
@@ -66,7 +65,6 @@ typedef LRegularizer<1> L1Regularizer;
  */
 typedef LRegularizer<2> L2Regularizer;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -191,7 +191,7 @@ TEST_CASE_METHOD(HMMViterbiTestFixture,
 
   for (size_t i = 1; i < 50; ++i)
   {
-    double randValue = mlpack::math::Random();
+    double randValue = Random();
 
     if (randValue <= transMat(0, states[i - 1]))
       states[i] = 0;

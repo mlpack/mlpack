@@ -19,7 +19,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Simple linear no bias module test.
@@ -52,8 +51,8 @@ TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElements = math::RandInt(2, 1000);
-    const size_t outputElements = math::RandInt(2, 1000);
+    const size_t inputElements = RandInt(2, 1000);
+    const size_t outputElements = RandInt(2, 1000);
 
     arma::mat input;
     input.set_size(inputElements, 1);

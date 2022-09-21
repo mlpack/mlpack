@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The standard information gain criterion, used for calculating gain in
@@ -209,7 +208,6 @@ class InformationGain
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

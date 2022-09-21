@@ -18,7 +18,6 @@
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Regularized SVD policy to act as a wrapper when
@@ -73,7 +72,7 @@ class RegSVDPolicy
              const bool /* mit */)
   {
     // Do singular value decomposition using the regularized SVD algorithm.
-    svd::RegularizedSVD<> regsvd(maxIterations);
+    RegularizedSVD<> regsvd(maxIterations);
     regsvd.Apply(data, rank, w, h);
   }
 
@@ -168,7 +167,6 @@ class RegSVDPolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

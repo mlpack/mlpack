@@ -18,7 +18,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * The X-tree paper says that a maximum allowable overlap of 20% works well.
@@ -70,7 +69,6 @@ class XTreeSplit
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation

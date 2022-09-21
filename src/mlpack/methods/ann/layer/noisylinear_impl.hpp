@@ -16,7 +16,6 @@
 #include "noisylinear.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 NoisyLinearType<MatType>::NoisyLinearType(const size_t outSize) :
@@ -179,7 +178,6 @@ void NoisyLinearType<MatType>::serialize(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

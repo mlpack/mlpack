@@ -16,7 +16,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 // If we have a dataset with an extreme outlier, then every point (except that
 // one) should end up with that point as the furthest neighbor candidate.

@@ -16,7 +16,6 @@
 #include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
-namespace matrix_completion {
 
 inline MatrixCompletion::MatrixCompletion(
     const size_t m,
@@ -126,7 +125,6 @@ inline size_t MatrixCompletion::DefaultRank(const size_t m,
   return ceil(r);
 }
 
-} // namespace matrix_completion
 } // namespace mlpack
 
 #endif

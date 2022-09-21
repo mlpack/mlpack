@@ -18,7 +18,6 @@
 #include <mlpack/core/math/random_basis.hpp>
 
 namespace mlpack {
-namespace range {
 
 /**
  * Initialize the RSModel with the given tree type and whether or not a random
@@ -111,59 +110,59 @@ inline void RSModel::InitializeModel(const bool naive,
   switch (treeType)
   {
     case KD_TREE:
-      rSearch = new LeafSizeRSWrapper<tree::KDTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<KDTree>(naive, singleMode);
       break;
 
     case COVER_TREE:
-      rSearch = new RSWrapper<tree::StandardCoverTree>(naive, singleMode);
+      rSearch = new RSWrapper<StandardCoverTree>(naive, singleMode);
       break;
 
     case R_TREE:
-      rSearch = new RSWrapper<tree::RTree>(naive, singleMode);
+      rSearch = new RSWrapper<RTree>(naive, singleMode);
       break;
 
     case R_STAR_TREE:
-      rSearch = new RSWrapper<tree::RStarTree>(naive, singleMode);
+      rSearch = new RSWrapper<RStarTree>(naive, singleMode);
       break;
 
     case BALL_TREE:
-      rSearch = new LeafSizeRSWrapper<tree::BallTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<BallTree>(naive, singleMode);
       break;
 
     case X_TREE:
-      rSearch = new RSWrapper<tree::XTree>(naive, singleMode);
+      rSearch = new RSWrapper<XTree>(naive, singleMode);
       break;
 
     case HILBERT_R_TREE:
-      rSearch = new RSWrapper<tree::HilbertRTree>(naive, singleMode);
+      rSearch = new RSWrapper<HilbertRTree>(naive, singleMode);
       break;
 
     case R_PLUS_TREE:
-      rSearch = new RSWrapper<tree::RPlusTree>(naive, singleMode);
+      rSearch = new RSWrapper<RPlusTree>(naive, singleMode);
       break;
 
     case R_PLUS_PLUS_TREE:
-      rSearch = new RSWrapper<tree::RPlusPlusTree>(naive, singleMode);
+      rSearch = new RSWrapper<RPlusPlusTree>(naive, singleMode);
       break;
 
     case VP_TREE:
-      rSearch = new LeafSizeRSWrapper<tree::VPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<VPTree>(naive, singleMode);
       break;
 
     case RP_TREE:
-      rSearch = new LeafSizeRSWrapper<tree::RPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<RPTree>(naive, singleMode);
       break;
 
     case MAX_RP_TREE:
-      rSearch = new LeafSizeRSWrapper<tree::MaxRPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<MaxRPTree>(naive, singleMode);
       break;
 
     case UB_TREE:
-      rSearch = new LeafSizeRSWrapper<tree::UBTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<UBTree>(naive, singleMode);
       break;
 
     case OCTREE:
-      rSearch = new LeafSizeRSWrapper<tree::Octree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<Octree>(naive, singleMode);
       break;
   }
 }
@@ -179,7 +178,7 @@ inline void RSModel::BuildModel(util::Timers& timers,
   {
     timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
-    math::RandomBasis(q, referenceSet.n_rows);
+    mlpack::RandomBasis(q, referenceSet.n_rows);
 
     // Do we need to modify the reference set?
     if (randomBasis)
@@ -203,7 +202,7 @@ inline void RSModel::BuildModel(util::Timers& timers,
 // Perform range search.
 inline void RSModel::Search(util::Timers& timers,
                             arma::mat&& querySet,
-                            const math::Range& range,
+                            const Range& range,
                             std::vector<std::vector<size_t>>& neighbors,
                             std::vector<std::vector<double>>& distances)
 {
@@ -230,7 +229,7 @@ inline void RSModel::Search(util::Timers& timers,
 
 // Perform range search (monochromatic case).
 inline void RSModel::Search(util::Timers& timers,
-                            const math::Range& range,
+                            const Range& range,
                             std::vector<std::vector<size_t>>& neighbors,
                             std::vector<std::vector<double>>& distances)
 {
@@ -310,7 +309,7 @@ template<template<typename TreeMetricType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Search(util::Timers& timers,
                                  arma::mat&& querySet,
-                                 const math::Range& range,
+                                 const Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances,
                                  const size_t /* leafSize */)
@@ -338,7 +337,7 @@ template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RSWrapper<TreeType>::Search(util::Timers& timers,
-                                 const math::Range& range,
+                                 const Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances)
 {
@@ -381,7 +380,7 @@ template<template<typename TreeMetricType,
 void LeafSizeRSWrapper<TreeType>::Search(
     util::Timers& timers,
     arma::mat&& querySet,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances,
     const size_t leafSize)
@@ -438,115 +437,114 @@ void RSModel::serialize(Archive& ar, const uint32_t /* version */)
   {
     case KD_TREE:
       {
-        LeafSizeRSWrapper<tree::KDTree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::KDTree>&>(*rSearch);
+        LeafSizeRSWrapper<KDTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<KDTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case COVER_TREE:
       {
-        RSWrapper<tree::StandardCoverTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::StandardCoverTree>&>(*rSearch);
+        RSWrapper<StandardCoverTree>& typedSearch =
+            dynamic_cast<RSWrapper<StandardCoverTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case R_TREE:
       {
-        RSWrapper<tree::RTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::RTree>&>(*rSearch);
+        RSWrapper<RTree>& typedSearch =
+            dynamic_cast<RSWrapper<RTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case R_STAR_TREE:
       {
-        RSWrapper<tree::RStarTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::RStarTree>&>(*rSearch);
+        RSWrapper<RStarTree>& typedSearch =
+            dynamic_cast<RSWrapper<RStarTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case BALL_TREE:
       {
-        LeafSizeRSWrapper<tree::BallTree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::BallTree>&>(*rSearch);
+        LeafSizeRSWrapper<BallTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<BallTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case X_TREE:
       {
-        RSWrapper<tree::XTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::XTree>&>(*rSearch);
+        RSWrapper<XTree>& typedSearch =
+            dynamic_cast<RSWrapper<XTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case HILBERT_R_TREE:
       {
-        RSWrapper<tree::HilbertRTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::HilbertRTree>&>(*rSearch);
+        RSWrapper<HilbertRTree>& typedSearch =
+            dynamic_cast<RSWrapper<HilbertRTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case R_PLUS_TREE:
       {
-        RSWrapper<tree::RPlusTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::RPlusTree>&>(*rSearch);
+        RSWrapper<RPlusTree>& typedSearch =
+            dynamic_cast<RSWrapper<RPlusTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case R_PLUS_PLUS_TREE:
       {
-        RSWrapper<tree::RPlusPlusTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::RPlusPlusTree>&>(*rSearch);
+        RSWrapper<RPlusPlusTree>& typedSearch =
+            dynamic_cast<RSWrapper<RPlusPlusTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case VP_TREE:
       {
-        LeafSizeRSWrapper<tree::VPTree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::VPTree>&>(*rSearch);
+        LeafSizeRSWrapper<VPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<VPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case RP_TREE:
       {
-        LeafSizeRSWrapper<tree::RPTree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::RPTree>&>(*rSearch);
+        LeafSizeRSWrapper<RPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<RPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case MAX_RP_TREE:
       {
-        LeafSizeRSWrapper<tree::MaxRPTree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::MaxRPTree>&>(*rSearch);
+        LeafSizeRSWrapper<MaxRPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<MaxRPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
-        LeafSizeRSWrapper<tree::UBTree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::UBTree>&>(*rSearch);
+        LeafSizeRSWrapper<UBTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<UBTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case OCTREE:
       {
-        LeafSizeRSWrapper<tree::Octree>& typedSearch =
-            dynamic_cast<LeafSizeRSWrapper<tree::Octree>&>(*rSearch);
+        LeafSizeRSWrapper<Octree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<Octree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
   }
 }
 
-} // namespace range
 } // namespace mlpack
 
 #endif

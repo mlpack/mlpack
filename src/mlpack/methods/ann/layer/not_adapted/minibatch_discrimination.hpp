@@ -17,7 +17,6 @@
 #include "layer_types.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the MiniBatchDiscrimination layer. MiniBatchDiscrimination
@@ -154,7 +153,6 @@ class MiniBatchDiscrimination : public Layer<InputType, OutputType>
   arma::Cube<typename InputType::elem_type> distances;
 }; // class MiniBatchDiscrimination
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

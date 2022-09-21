@@ -80,7 +80,7 @@ void SplitHelper(const InputType& input,
  * arma::mat testData;
  * arma::Row<size_t> trainLabel;
  * arma::Row<size_t> testLabel;
- * math::RandomSeed(100); // Set the seed if you like.
+ * RandomSeed(100); // Set the seed if you like.
  *
  * // Stratify the dataset into a training and test set, with 30% of the data
  * // being held out for the test set.
@@ -230,7 +230,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
  * arma::mat testData;
  * arma::Row<size_t> trainLabel;
  * arma::Row<size_t> testLabel;
- * math::RandomSeed(100); // Set the seed if you like.
+ * RandomSeed(100); // Set the seed if you like.
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
@@ -286,7 +286,7 @@ void Split(const arma::Mat<T>& input,
  * arma::mat input = loadData();
  * arma::mat trainData;
  * arma::mat testData;
- * math::RandomSeed(100); // Set the seed if you like.
+ * RandomSeed(100); // Set the seed if you like.
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
@@ -427,7 +427,7 @@ Split(const arma::Mat<T>& input,
  * arma::field<arma::mat> testData;
  * arma::field<arma::vec> trainLabel;
  * arma::field<arma::vec> testLabel;
- * math::RandomSeed(100); // Set the seed if you like.
+ * RandomSeed(100); // Set the seed if you like.
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
@@ -486,7 +486,7 @@ void Split(const FieldType& input,
  * arma::field<arma::mat> input = loadData();
  * arma::field<arma::mat> trainData;
  * arma::field<arma::mat> testData;
- * math::RandomSeed(100); // Set the seed if you like.
+ * RandomSeed(100); // Set the seed if you like.
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.

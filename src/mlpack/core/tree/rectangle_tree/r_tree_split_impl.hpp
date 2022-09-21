@@ -17,7 +17,6 @@
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
@@ -438,7 +437,7 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
       {
         // For each of the new rectangles, find the width in this dimension if
         // we add the rectangle at index to the new rectangle.
-        const math::RangeType<ElemType>& range =
+        const RangeType<ElemType>& range =
             oldTree->Child(index).Bound()[i];
         newVolOne *= treeOne->Bound()[i].Contains(range) ?
             treeOne->Bound()[i].Width() : (range.Contains(treeOne->Bound()[i]) ?
@@ -532,7 +531,6 @@ void RTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

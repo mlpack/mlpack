@@ -191,11 +191,11 @@ $ cat recommendations.csv
 The `--algorithm` (or `-a`) parameter controls the factorizer that is used.
 Several options are available:
 
- - `NMF`: non-negative matrix factorization; see `mlpack::amf::AMF`
+ - `NMF`: non-negative matrix factorization; see `AMF`
  - `SVDBatch`: SVD batch factorization
  - `SVDIncompleteIncremental`: incomplete incremental SVD
  - `SVDCompleteIncremental`: complete incremental SVD
- - `RegSVD`: regularized SVD; see `mlpack::svd::RegularizedSVD`
+ - `RegSVD`: regularized SVD; see `RegularizedSVD`
 
 The default factorizer is `NMF`.  The example below uses the `RegSVD`
 factorizer:
@@ -243,7 +243,7 @@ matrix.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -254,8 +254,8 @@ extern size_t rank;
 
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
-// is of type amf::NMFALSFactorizer.
-CF cf(data, amf::NMFALSFactorizer(), neighborhood, rank);
+// is of type NMFALSFactorizer.
+CF cf(data, NMFALSFactorizer(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -267,28 +267,27 @@ cf.GetRecommendations(5, recommendations);
 ### `CF` with other factorizers
 
 mlpack provides a number of existing factorizers which can be used in place of
-the default `mlpack::amf::NMFALSFactorizer` (which is non-negative matrix
-factorization with alternating least squares update rules).  These include:
+the default `NMFALSFactorizer` (which is non-negative matrix factorization with
+alternating least squares update rules).  These include:
 
- - `mlpack::amf::SVDBatchFactorizer`
- - `mlpack::amf::SVDCompleteIncrementalFactorizer`
- - `mlpack::amf::SVDIncompleteIncrementalFactorizer`
- - `mlpack::amf::NMFALSFactorizer`
- - `mlpack::svd::RegularizedSVD`
- - `mlpack::svd::QUIC_SVD`
+ - `SVDBatchFactorizer`
+ - `SVDCompleteIncrementalFactorizer`
+ - `SVDIncompleteIncrementalFactorizer`
+ - `NMFALSFactorizer`
+ - `RegularizedSVD`
+ - `QUIC_SVD`
 
-The `amf::AMF` class has many other possibilities than those listed here; it is
-a framework for alternating matrix factorization techniques.  See the
-`mlpack::amf::AMF` class documentation or [tutorial on AMF](amf.md) for more
-information.
+The `AMF` class has many other possibilities than those listed here; it is a
+framework for alternating matrix factorization techniques.  See the `AMF` class
+documentation or [tutorial on AMF](amf.md) for more information.
 
 The use of another factorizer is straightforward; the example from the previous
-section is adapted below to use `svd::RegularizedSVD`:
+section is adapted below to use `RegularizedSVD`:
 
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -298,7 +297,7 @@ extern size_t neighborhood;
 extern size_t rank;
 
 // Build the CF object and perform the decomposition.
-CF cf(data, svd::RegularizedSVD(), neighborhood, rank);
+CF cf(data, RegularizedSVD(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -319,7 +318,7 @@ The example below will obtain the predicted rating for item 50 by user 12.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -330,8 +329,8 @@ extern size_t rank;
 
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
-// is of type amf::NMFALSFactorizer.
-CF cf(data, amf::NMFALSFactorizer(), neighborhood, rank);
+// is of type NMFALSFactorizer.
+CF cf(data, NMFALSFactorizer(), neighborhood, rank);
 
 const double prediction = cf.Predict(12, 50); // User 12, item 50.
 ```
@@ -345,7 +344,7 @@ reconstructed data matrix with no missing values.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::cf;
+using namespace mlpack;
 
 // The coordinate list of ratings that we have.
 extern arma::mat data;
@@ -356,8 +355,8 @@ extern size_t rank;
 
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
-// is of type amf::NMFALSFactorizer.
-CF cf(data, amf::NMFALSFactorizer(), neighborhood, rank);
+// is of type NMFALSFactorizer.
+CF cf(data, NMFALSFactorizer(), neighborhood, rank);
 
 // References to W and H matrices.
 const arma::mat& W = cf.W();
@@ -426,13 +425,13 @@ items and number of columns equal to the `rank` parameter, and `H` should have
 number of rows equal to the `rank` parameter, and number of columns equal to
 the number of users.
 
-The `mlpack::amf::AMF` class can be used as a base for factorizers that
-alternate between updating `W` and updating `H`.  A useful reference is the [AMF
+The `AMF` class can be used as a base for factorizers that alternate between
+updating `W` and updating `H`.  A useful reference is the [AMF
 tutorial](amf.md).
 
 ## Further documentation
 
 Further documentation for the `CF` class may be found in the comments in the
 source code of the files in `src/mlpack/methods/cf/`.  In addition, more
-information on the \c AMF class of factorizers may be found in the sources for
-`mlpack::amf::AMF`, in `src/mlpack/methods/amf/`.
+information on the `AMF` class of factorizers may be found in the sources for
+`AMF`, in `src/mlpack/methods/amf/`.

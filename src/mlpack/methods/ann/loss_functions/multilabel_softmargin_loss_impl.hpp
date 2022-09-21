@@ -16,7 +16,6 @@
 #include "multilabel_softmargin_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
 MultiLabelSoftMarginLossType<MatType>::MultiLabelSoftMarginLossType(
@@ -78,7 +77,6 @@ void MultiLabelSoftMarginLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

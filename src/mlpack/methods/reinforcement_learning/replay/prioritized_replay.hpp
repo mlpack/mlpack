@@ -16,7 +16,6 @@
 #include "sumtree.hpp"
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of prioritized experience replay. Prioritized experience
@@ -367,7 +366,6 @@ class PrioritizedReplay
   arma::irowvec isTerminal;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

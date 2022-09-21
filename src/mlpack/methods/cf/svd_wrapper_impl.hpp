@@ -17,7 +17,6 @@
 #include "svd_wrapper.hpp"
 
 namespace mlpack {
-namespace cf {
 
 template<class Factorizer>
 double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
@@ -145,7 +144,6 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
 }
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

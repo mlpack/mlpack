@@ -20,7 +20,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The alpha - dropout layer is a regularizer that randomly with probability
@@ -146,7 +145,6 @@ class AlphaDropoutType : public Layer<MatType>
 
 typedef AlphaDropoutType<arma::mat> AlphaDropout;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

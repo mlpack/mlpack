@@ -17,7 +17,6 @@
 #include "normal_distribution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution()
@@ -72,7 +71,6 @@ void NormalDistribution<DataType>::serialize(Archive& ar,
   ar(CEREAL_NVP(sigma));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

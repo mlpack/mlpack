@@ -28,9 +28,7 @@ using std::vector;
 using std::pair;
 using std::make_pair;
 
-using namespace mlpack::ann::augmented;
-using namespace mlpack::ann::augmented::tasks;
-using namespace mlpack::ann::augmented::scorers;
+using namespace mlpack;
 
 using mlpack::data::Binarize;
 

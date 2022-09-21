@@ -16,7 +16,6 @@
 #include "minimal_coverage_sweep.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename SplitPolicy>
 template<typename TreeType>
@@ -26,7 +25,7 @@ SweepNonLeafNode(const size_t axis,
                  typename TreeType::ElemType& axisCut)
 {
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 
@@ -90,7 +89,7 @@ SweepLeafNode(const size_t axis,
               typename TreeType::ElemType& axisCut)
 {
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->Count());
 
@@ -192,7 +191,6 @@ CheckLeafSweep(const TreeType* node,
   return false;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_IMPL_HPP

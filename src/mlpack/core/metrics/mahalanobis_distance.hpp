@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace metric {
 
 /**
  * The Mahalanobis distance, which is essentially a stretched Euclidean
@@ -119,7 +118,6 @@ class MahalanobisDistance
   arma::mat covariance;
 };
 
-} // namespace metric
 } // namespace mlpack
 
 #include "mahalanobis_distance_impl.hpp"

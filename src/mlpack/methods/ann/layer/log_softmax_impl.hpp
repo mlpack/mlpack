@@ -16,7 +16,6 @@
 #include "log_softmax.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 LogSoftMaxType<MatType>::LogSoftMaxType() :
@@ -107,7 +106,6 @@ void LogSoftMaxType<MatType>::Backward(
   g = arma::exp(input) + gy;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

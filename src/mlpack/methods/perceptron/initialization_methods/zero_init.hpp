@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace perceptron {
 
 /**
  * This class is used to initialize the matrix weightVectors to zero.
@@ -35,7 +34,6 @@ class ZeroInitialization
   }
 }; // class ZeroInitialization
 
-} // namespace perceptron
 } // namespace mlpack
 
 #endif

@@ -29,7 +29,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The ELiSH function, defined by
@@ -108,7 +107,6 @@ class ElishFunction
   }
 }; // class ElishFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

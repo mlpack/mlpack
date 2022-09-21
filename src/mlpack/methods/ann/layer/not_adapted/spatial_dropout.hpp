@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // TODO: this could likely use inputDimensions to remove the `size` parameter!
 /**
@@ -129,7 +128,6 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
 // Standard SpatialDropout layer.
 typedef SpatialDropoutType<arma::mat, arma::mat> SpatialDropout;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

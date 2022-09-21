@@ -20,7 +20,6 @@
 #include "flexible_relu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 FlexibleReLUType<InputType, OutputType>::FlexibleReLUType(const double alpha) :
@@ -81,7 +80,6 @@ void FlexibleReLUType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(initialized));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * Create a random d-dimensional orthogonal basis, storing it in the given
@@ -26,7 +25,6 @@ namespace math {
  */
 inline void RandomBasis(arma::mat& basis, const size_t d);
 
-} // namespace math
 } // namespace mlpack
 
 //! Include the implementation file.

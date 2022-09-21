@@ -17,7 +17,6 @@
 #include <mlpack/core/math/quantile.hpp>
 
 namespace mlpack {
-namespace tree {
 
 // Predeclare classes for CosineNodeQueue typedef.
 class CompareCosineNode;
@@ -284,7 +283,6 @@ class CompareCosineNode
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

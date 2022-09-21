@@ -26,7 +26,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -94,7 +93,6 @@ class ReLU6
   OutputDataType delta;
 }; // class ReLU6
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

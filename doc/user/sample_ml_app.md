@@ -71,7 +71,6 @@ Also, we will use the following namespaces:
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::cv;
 ```
 
 ## Loading the dataset

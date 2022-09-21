@@ -16,7 +16,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ensemble;
 
 /**
  * Test that the initial prediction is calculated correctly for SSE loss.

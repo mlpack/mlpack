@@ -15,7 +15,6 @@
 #define MLPACK_CORE_TREE_STATISTIC_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * Empty statistic if you are not interested in storing statistics in your
@@ -45,7 +44,6 @@ class EmptyStatistic
   { }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_STATISTIC_HPP

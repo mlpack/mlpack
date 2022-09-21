@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * The Silhouette Score is a metric of performance for clustering
@@ -99,7 +98,6 @@ class SilhouetteScore
   static const bool NeedsMinimization = false;
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation.

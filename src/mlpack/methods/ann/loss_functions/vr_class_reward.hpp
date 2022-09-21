@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the variance reduced classification reinforcement layer.
@@ -115,7 +114,6 @@ class VRClassRewardType
 // Default typedef for typical `arma::mat` usage.
 typedef VRClassRewardType<arma::mat> VRClassReward;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

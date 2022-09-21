@@ -25,7 +25,6 @@
 #include "kde.hpp"
 
 namespace mlpack {
-namespace kde {
 
 /**
  * KernelNormalizer holds a set of methods to normalize estimations applying
@@ -213,10 +212,7 @@ class KDEWrapper : public KDEWrapperBase
   }
 
  protected:
-  typedef KDE<KernelType,
-              metric::EuclideanDistance,
-              arma::mat,
-              TreeType> KDEType;
+  typedef KDE<KernelType, EuclideanDistance, arma::mat, TreeType> KDEType;
 
   //! The instantiated KDE object that we are wrapping.
   KDEType kde;
@@ -465,7 +461,6 @@ class KDEModel
   void CleanMemory();
 };
 
-} // namespace kde
 } // namespace mlpack
 
 #include "kde_model_impl.hpp"

@@ -17,7 +17,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::amf;
 
 /**
  * Simple test -- make sure termination happens after the right number of
@@ -51,7 +50,7 @@ TEST_CASE("AMFMaxIterationTerminationTest", "[TerminationPolicyTest]")
   // Custom tighter tolerance.
   MaxIterationTermination mit(10); // Only 10 iterations.
   AMF<MaxIterationTermination,
-      RandomInitialization,
+      RandomAMFInitialization,
       NMFMultiplicativeDivergenceUpdate> nmf(mit);
   nmf.Apply(v, r, w, h);
 

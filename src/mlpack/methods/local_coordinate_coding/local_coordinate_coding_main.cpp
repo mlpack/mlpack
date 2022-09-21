@@ -21,9 +21,6 @@
 using namespace arma;
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::lcc;
-using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;
 
 // Program Name.
@@ -92,7 +89,7 @@ BINDING_SEE_ALSO("@sparse_coding", "#sparse_coding");
 BINDING_SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
         "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
         "coordinate-coding.pdf");
-BINDING_SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
+BINDING_SEE_ALSO("LocalCoordinateCoding C++ class documentation",
         "@src/mlpack/methods/local_coordinate_coding/local_coordinate_coding."
         "hpp");
 

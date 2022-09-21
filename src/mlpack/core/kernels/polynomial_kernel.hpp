@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The simple polynomial kernel.  For any two vectors @f$ x @f$, @f$ y @f$,
@@ -82,7 +81,6 @@ class PolynomialKernel
   double offset;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

@@ -20,7 +20,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Identity layer. 
@@ -90,7 +89,6 @@ class IdentityType : public Layer<MatType>
 
 typedef IdentityType<arma::mat> Identity;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -17,7 +17,6 @@
 #include "concatenate.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 ConcatenateType<MatType>::
@@ -122,7 +121,6 @@ void ConcatenateType<MatType>::serialize(
   ar(CEREAL_NVP(concat));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

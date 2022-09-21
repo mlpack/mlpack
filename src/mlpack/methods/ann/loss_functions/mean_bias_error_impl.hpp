@@ -17,7 +17,6 @@
 #include "mean_bias_error.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MeanBiasErrorType<MatType>::MeanBiasErrorType(const bool reduction) :
@@ -62,7 +61,6 @@ void MeanBiasErrorType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

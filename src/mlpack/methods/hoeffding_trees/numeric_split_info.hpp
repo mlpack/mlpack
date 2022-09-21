@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<typename ObservationType = double>
 class NumericSplitInfo
@@ -47,7 +46,6 @@ class NumericSplitInfo
   arma::Col<ObservationType> splitPoints;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

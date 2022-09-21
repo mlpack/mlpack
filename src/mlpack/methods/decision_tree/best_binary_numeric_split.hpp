@@ -18,7 +18,6 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
-namespace tree {
 
 // This gives us a HasBinaryGains<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a BinaryGains(...) function.
@@ -183,7 +182,6 @@ class BestBinaryNumericSplit
       const AuxiliarySplitInfo& /* aux */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

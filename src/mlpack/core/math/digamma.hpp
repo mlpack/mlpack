@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * This function evaluates the polynomial based on the
@@ -249,7 +248,6 @@ T Digamma(T x)
   return result;
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

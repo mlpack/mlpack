@@ -8,7 +8,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack.hpp>
 
 // #define CATCH_CONFIG_MAIN  // catch.hpp will define main()
 #define CATCH_CONFIG_RUNNER  // we will define main()
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
    * across many different runs.
    */
   // size_t seed = std::time(NULL);
-  // mlpack::math::RandomSeed(seed);
+  // mlpack::RandomSeed(seed);
 
   std::cout << "mlpack version: " << mlpack::util::GetVersion() << std::endl;
   std::cout << "armadillo version: " << arma::arma_version::as_string()

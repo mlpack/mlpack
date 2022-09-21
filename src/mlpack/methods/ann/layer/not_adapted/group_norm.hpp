@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Declaration of the Group Normalization class. The group transforms
@@ -198,7 +197,6 @@ class GroupNorm
   OutputDataType inputMean;
 }; // class GroupNorm
 
-} // namespace ann
 } // namespace mlpack
 
 // Include the implementation.

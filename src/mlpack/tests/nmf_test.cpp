@@ -17,7 +17,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::amf;
 
 /**
  * Check the if the product of the calculated factorization is close to the
@@ -80,7 +79,7 @@ TEST_CASE("NMFRandomDivTest", "[NMFTest]")
     // Custom tighter tolerance.
     SimpleResidueTermination srt(1e-8, 10000);
     AMF<SimpleResidueTermination,
-        RandomInitialization,
+        RandomAMFInitialization,
         NMFMultiplicativeDivergenceUpdate> nmf(srt);
     nmf.Apply(v, r, w, h);
 
@@ -271,7 +270,7 @@ TEST_CASE("NonNegNMFRandomDivTest", "[NMFTest]")
   // Custom tighter tolerance.
   SimpleResidueTermination srt(1e-8, 10000);
   AMF<SimpleResidueTermination,
-      RandomInitialization,
+      RandomAMFInitialization,
       NMFMultiplicativeDivergenceUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 

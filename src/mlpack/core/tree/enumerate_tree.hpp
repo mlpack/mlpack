@@ -14,8 +14,6 @@
 #define MLPACK_CORE_TREE_ENUMERATE_TREE_HPP
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
-namespace enumerate {
 
 // Actual implementation of the enumeration. The problem is the unified
 // detection if we're on the root, because Enter and Leave expect the
@@ -39,9 +37,6 @@ void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
     walker.Leave(tree, (const TreeType*)nullptr);
 }
 
-} // namespace enumerate
-
-
 /**
  * Traverses all nodes of the tree, including the inner ones. On each node
  * two methods of the `enumer` are called:
@@ -55,10 +50,9 @@ void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
 template <class TreeType, class Walker>
 inline void EnumerateTree(TreeType* tree, Walker& walker)
 {
-  enumerate::EnumerateTreeImpl(tree, walker, true);
+  EnumerateTreeImpl(tree, walker, true);
 }
 
-} // namespace tree
 } // namespace mlpack
 
 

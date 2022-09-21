@@ -27,7 +27,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The ISRLU activation function, defined by
@@ -128,7 +127,6 @@ class ISRLU
   double alpha;
 }; // class ISRLU
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

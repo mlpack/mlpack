@@ -16,7 +16,6 @@
 #include "nca.hpp"
 
 namespace mlpack {
-namespace nca {
 
 // Just set the internal matrix reference.
 template<typename MetricType, typename OptimizerType>
@@ -42,7 +41,6 @@ void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
   optimizer.Optimize(errorFunction, outputMatrix, callbacks...);
 }
 
-} // namespace nca
 } // namespace mlpack
 
 #endif

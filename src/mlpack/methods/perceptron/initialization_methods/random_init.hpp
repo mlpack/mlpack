@@ -15,16 +15,15 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace perceptron {
 
 /**
  * This class is used to initialize weights for the weightVectors matrix in a
  * random manner.
  */
-class RandomInitialization
+class RandomPerceptronInitialization
 {
  public:
-  RandomInitialization() { }
+  RandomPerceptronInitialization() { }
 
   inline static void Initialize(arma::mat& weights,
                                 arma::vec& biases,
@@ -34,9 +33,8 @@ class RandomInitialization
     weights.randu(numFeatures, numClasses);
     biases.randu(numClasses);
   }
-}; // class RandomInitialization
+}; // class RandomPerceptronInitialization
 
-} // namespace perceptron
 } // namespace mlpack
 
 #endif

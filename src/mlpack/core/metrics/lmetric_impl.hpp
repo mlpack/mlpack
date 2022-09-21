@@ -16,7 +16,6 @@
 #include "lmetric.hpp"
 
 namespace mlpack {
-namespace metric {
 
 // Unspecialized implementation.  This should almost never be used...
 template<int Power, bool TakeRoot>
@@ -106,7 +105,6 @@ typename VecTypeA::elem_type LMetric<INT_MAX, false>::Evaluate(
   return arma::as_scalar(arma::max(arma::abs(a - b)));
 }
 
-} // namespace metric
 } // namespace mlpack
 
 #endif

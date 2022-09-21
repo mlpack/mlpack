@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 /**
  * Matrix multiplication of slices of two cubes. This function expects
@@ -69,7 +68,6 @@ CubeType MultiplyCube2Mat(const CubeType& cubeA,
                           const bool aTranspose = false,
                           const bool bTranspose = false);
 
-} // namespace math
 } // namespace mlpack
 
 // Include implementation.

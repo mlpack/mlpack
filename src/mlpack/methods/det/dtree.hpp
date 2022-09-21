@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace det /** Density Estimation Trees */ {
 
 /**
  * A density estimation tree is similar to both a decision tree and a space
@@ -357,7 +356,6 @@ class DTree
                    const StatType& maxs);
 };
 
-} // namespace det
 } // namespace mlpack
 
 #include "dtree_impl.hpp"

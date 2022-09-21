@@ -20,8 +20,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::svm;
 using namespace mlpack::util;
 
 // Program Name.
@@ -107,9 +105,9 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
 BINDING_SEE_ALSO("LinearSVM on Wikipedia",
-        "https://en.wikipedia.org/wiki/Support-vector_machine");
-BINDING_SEE_ALSO("mlpack::svm::LinearSVM C++ class documentation",
-        "@src/mlpack/methods/linear_svm/linear_svm.hpp");
+    "https://en.wikipedia.org/wiki/Support-vector_machine");
+BINDING_SEE_ALSO("LinearSVM C++ class documentation",
+    "@src/mlpack/methods/linear_svm/linear_svm.hpp");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

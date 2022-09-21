@@ -216,7 +216,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNOutputDimensionTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check the neighbors matrix has 5 points for each input point.
@@ -245,7 +245,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNModelReuseTest",
   SetInputParam("query", queryData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
@@ -265,7 +265,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNModelReuseTest",
   SetInputParam("query", queryData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
@@ -288,7 +288,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentLeafSizes",
   SetInputParam("k", (int) 5);
   SetInputParam("leaf_size", (int) 1);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   RAModel* output_model;
@@ -304,7 +304,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentLeafSizes",
   SetInputParam("k", (int) 5);
   SetInputParam("leaf_size", (int) 10);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
@@ -327,7 +327,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTau",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   RAModel* output_model;
@@ -343,7 +343,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTau",
   SetInputParam("k", (int) 5);
   SetInputParam("tau", (double) 10);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
@@ -367,7 +367,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentAlpha",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   RAModel* output_model;
@@ -383,7 +383,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentAlpha",
   SetInputParam("k", (int) 5);
   SetInputParam("alpha", (double) 0.80);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
@@ -407,7 +407,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTreeType",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   RAModel* output_model;
@@ -423,7 +423,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTreeType",
   SetInputParam("k", (int) 5);
   SetInputParam("tree_type", (string) "ub");
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
@@ -448,7 +448,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSingleSampleLimit",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   RAModel* output_model;
@@ -464,7 +464,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSingleSampleLimit",
   SetInputParam("k", (int) 5);
   SetInputParam("single_sample_limit", (int)15);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
@@ -488,7 +488,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSampleAtLeaves",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   RAModel* output_model;
@@ -504,7 +504,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSampleAtLeaves",
   SetInputParam("k", (int) 5);
   SetInputParam("sample_at_leaves", (bool) true);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using

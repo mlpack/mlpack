@@ -21,7 +21,6 @@
 #include "ra_search.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * RAWrapperBase is a base wrapper class for holding all RASearch types
@@ -195,7 +194,7 @@ class RAWrapper : public RAWrapperBase
 
  protected:
   typedef RASearch<NearestNeighborSort,
-                   metric::EuclideanDistance,
+                   EuclideanDistance,
                    arma::mat,
                    TreeType> RAType;
 
@@ -424,7 +423,6 @@ class RAModel
   std::string TreeName() const;
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 #include "ra_model_impl.hpp"

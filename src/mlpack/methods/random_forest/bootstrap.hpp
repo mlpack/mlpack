@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_RANDOM_FOREST_BOOTSTRAP_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * Given a dataset, create another dataset via bootstrap sampling, with labels.
@@ -44,7 +43,6 @@ void Bootstrap(const MatType& dataset,
     bootstrapWeights = weights.cols(indices);
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

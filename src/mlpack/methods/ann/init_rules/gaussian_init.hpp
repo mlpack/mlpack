@@ -18,7 +18,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize weigth matrix with a gaussian.
@@ -53,7 +52,7 @@ class GaussianInitialization
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W.imbue( [&]() { return arma::as_scalar(mlpack::math::RandNormal(mean, variance)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
   /**
@@ -67,7 +66,7 @@ class GaussianInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W.imbue( [&]() { return arma::as_scalar(mlpack::math::RandNormal(mean, variance)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
   /**
@@ -114,7 +113,6 @@ class GaussianInitialization
   double variance;
 }; // class GaussianInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

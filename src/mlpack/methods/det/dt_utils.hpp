@@ -17,7 +17,6 @@
 #include "dtree.hpp"
 
 namespace mlpack {
-namespace det {
 
 /**
  * Print the membership of leaves of a density estimation tree given the labels
@@ -143,7 +142,6 @@ class PathCacher
   inline std::string   BuildString();
 };
 
-} // namespace det
 } // namespace mlpack
 
 #include "dt_utils_impl.hpp"

@@ -67,17 +67,16 @@ class ExampleKernel
 ```
 
 Then, this kernel may be easily used inside of mlpack algorithms.  For instance,
-the code below runs kernel PCA (`mlpack::kpca::KernelPCA`) on a random dataset
-using the `ExampleKernel`.  The results are saved to a file called
-`results.csv`.  (Note that this is simply an example to demonstrate usage, and
-this example kernel isn't actually likely to be useful in practice.)
+the code below runs kernel PCA (`KernelPCA`) on a random dataset using the
+`ExampleKernel`.  The results are saved to a file called `results.csv`.  (Note
+that this is simply an example to demonstrate usage, and this example kernel
+isn't actually likely to be useful in practice.)
 
 ```c++
 #include <mlpack.hpp>
 #include "example_kernel.hpp" // Contains the ExampleKernel class.
 
 using namespace mlpack;
-using namespace mlpack::kpca;
 using namespace arma;
 
 int main()
@@ -133,21 +132,21 @@ At this time, there is only one kernel trait that is used in mlpack code:
 mlpack comes with a number of pre-written kernels that satisfy the `KernelType`
 policy:
 
- - `mlpack::kernel::LinearKernel`
- - `mlpack::kernel::ExampleKernel` -- an example kernel with more documentation
- - `mlpack::kernel::GaussianKernel`
- - `mlpack::kernel::HyperbolicTangentKernel`
- - `mlpack::kernel::EpanechnikovKernel`
- - `mlpack::kernel::CosineDistance`
- - `mlpack::kernel::LaplacianKernel`
- - `mlpack::kernel::PolynomialKernel`
- - `mlpack::kernel::TriangularKernel`
- - `mlpack::kernel::SphericalKernel`
- - `mlpack::kernel::PSpectrumStringKernel` -- operates on strings, not vectors
+ - `LinearKernel`
+ - `ExampleKernel` -- an example kernel with more documentation
+ - `GaussianKernel`
+ - `HyperbolicTangentKernel`
+ - `EpanechnikovKernel`
+ - `CosineDistance`
+ - `LaplacianKernel`
+ - `PolynomialKernel`
+ - `TriangularKernel`
+ - `SphericalKernel`
+ - `PSpectrumStringKernel` -- operates on strings, not vectors
 
 These kernels (or a custom kernel) may be used in a variety of mlpack methods:
 
- - `mlpack::kpca::KernelPCA` - kernel principal components analysis
- - `mlpack::fastmks::FastMKS` - fast max-kernel search
- - `mlpack::kernel::NystroemMethod` - the Nystroem method for sampling
- - `mlpack::metric::IPMetric` - a metric built on a kernel
+ - `KernelPCA` - kernel principal components analysis
+ - `FastMKS` - fast max-kernel search
+ - `NystroemMethod` - the Nystroem method for sampling
+ - `IPMetric` - a metric built on a kernel

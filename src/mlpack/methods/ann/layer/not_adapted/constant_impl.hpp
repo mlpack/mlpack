@@ -17,7 +17,6 @@
 #include "constant.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 ConstantType<InputType, OutputType>::ConstantType() :
@@ -112,7 +111,6 @@ void ConstantType<InputType, OutputType>::serialize(
     outSize = constantOutput.n_elem;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -14,7 +14,6 @@
 #define MLPACK_CORE_MATH_MAKE_ALIAS_HPP
 
 namespace mlpack {
-namespace math {
 
 /**
  * Make an alias of a dense cube.  If strict is true, then the alias cannot be
@@ -124,7 +123,6 @@ void ClearAlias(arma::SpMat<ElemType>& /* mat */)
 }
 
 
-} // namespace math
 } // namespace mlpack
 
 #endif

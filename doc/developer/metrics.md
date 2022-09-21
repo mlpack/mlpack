@@ -57,18 +57,17 @@ class ExampleMetric
 
 Then, this metric can easily be used inside of other mlpack algorithms.  For
 example, the code below runs range search on a random dataset with the
-`ExampleKernel`, by instantiating a `mlpack::range::RangeSearch` object that
-uses the `ExampleKernel`.  Then, the number of results are printed.  The
-`RangeSearch` class takes three template parameters: `MetricType`, `MatType`,
-and `TreeType`.  (All three have defaults, so we will just leave `MatType` and
-`TreeType` to their defaults.)
+`ExampleKernel`, by instantiating a `RangeSearch` object that uses the
+`ExampleKernel`.  Then, the number of results are printed.  The `RangeSearch`
+class takes three template parameters: `MetricType`, `MatType`, and `TreeType`.
+(All three have defaults, so we will just leave `MatType` and `TreeType` to
+their defaults.)
 
 ```c++
 #include <mlpack.hpp>
 #include "example_metric.hpp" // A file that contains ExampleKernel.
 
 using namespace mlpack;
-using namespace mlpack::range;
 using namespace std;
 
 int main()
@@ -88,7 +87,7 @@ int main()
 
   // Find those points with distance (according to ExampleMetric) between 1 and
   // 2 from the query point.
-  rs.Search(query, math::Range(1.0, 2.0), neighbors, distances);
+  rs.Search(query, Range(1.0, 2.0), neighbors, distances);
 
   // Now, print the number of points inside the desired range.  We know that
   // neighbors and distances will have length 1, since there was only one query
@@ -101,9 +100,9 @@ int main()
 mlpack comes with a number of pre-written metrics that satisfy the `MetricType`
 policy:
 
- - `mlpack::metric::ManhattanDistance`
- - `mlpack::metric::EuclideanDistance`
- - `mlpack::metric::ChebyshevDistance`
- - `mlpack::metric::MahalanobisDistance`
- - `mlpack::metric::LMetric` (for arbitrary L-metrics)
- - `mlpack::metric::IPMetric` (requires a [KernelType](kerneltype.md) parameter)
+ - `ManhattanDistance`
+ - `EuclideanDistance`
+ - `ChebyshevDistance`
+ - `MahalanobisDistance`
+ - `LMetric` (for arbitrary L-metrics)
+ - `IPMetric` (requires a [KernelType](kerneltype.md) parameter)

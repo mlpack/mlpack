@@ -19,7 +19,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::tree;
 using namespace mlpack::data;
 using namespace mlpack::util;
 
@@ -94,11 +93,11 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("Decision stump", "#decision_stump");
 BINDING_SEE_ALSO("Random forest", "#random_forest");
 BINDING_SEE_ALSO("Decision trees on Wikipedia",
-        "https://en.wikipedia.org/wiki/Decision_tree_learning");
+    "https://en.wikipedia.org/wiki/Decision_tree_learning");
 BINDING_SEE_ALSO("Induction of Decision Trees (pdf)",
-        "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf");
-BINDING_SEE_ALSO("mlpack::tree::DecisionTree class documentation",
-        "@src/mlpack/methods/decision_tree/decision_tree.hpp");
+    "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf");
+BINDING_SEE_ALSO("DecisionTree class documentation",
+    "@src/mlpack/methods/decision_tree/decision_tree.hpp");
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",

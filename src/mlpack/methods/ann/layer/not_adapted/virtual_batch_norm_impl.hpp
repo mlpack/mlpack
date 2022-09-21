@@ -17,7 +17,6 @@
 #include "virtual_batch_norm.hpp"
 
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
 
 template<typename InputType, typename OutputType>
 VirtualBatchNormType<InputType, OutputType>::VirtualBatchNormType() :
@@ -146,7 +145,6 @@ void VirtualBatchNormType<InputType, OutputType>::serialize(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

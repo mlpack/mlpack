@@ -17,7 +17,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::neighbor;
 
 /**
  * Generates a point set of four clusters:

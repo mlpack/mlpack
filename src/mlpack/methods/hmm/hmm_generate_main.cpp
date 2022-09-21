@@ -24,11 +24,7 @@
 #include <mlpack/methods/gmm/gmm.hpp>
 
 using namespace mlpack;
-using namespace mlpack::hmm;
-using namespace mlpack::distribution;
 using namespace mlpack::util;
-using namespace mlpack::gmm;
-using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
@@ -69,9 +65,8 @@ BINDING_SEE_ALSO("@hmm_train", "#hmm_train");
 BINDING_SEE_ALSO("@hmm_loglik", "#hmm_loglik");
 BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
 BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Hidden_Markov_model");
-BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@src/mlpack/methods/hmm/hmm.hpp");
+    "https://en.wikipedia.org/wiki/Hidden_Markov_model");
+BINDING_SEE_ALSO("HMM class documentation", "@src/mlpack/methods/hmm/hmm.hpp");
 
 PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
     "m");

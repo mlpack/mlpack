@@ -20,7 +20,6 @@
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Batch SVD policy to act as a wrapper when accessing
@@ -65,20 +64,20 @@ class BatchSVDPolicy
   {
     if (mit)
     {
-      amf::MaxIterationTermination iter(maxIterations);
+      MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using the batch SVD algorithm.
-      amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
-          amf::SVDBatchLearning> svdbatch(iter);
+      AMF<MaxIterationTermination, RandomAMFInitialization, SVDBatchLearning>
+          svdbatch(iter);
 
       svdbatch.Apply(cleanedData, rank, w, h);
     }
     else
     {
-      amf::SimpleResidueTermination srt(minResidue, maxIterations);
+      SimpleResidueTermination srt(minResidue, maxIterations);
 
       // Do singular value decomposition using the batch SVD algorithm.
-      amf::SVDBatchFactorizer<> svdbatch(srt);
+      SVDBatchFactorizer<> svdbatch(srt);
 
       svdbatch.Apply(cleanedData, rank, w, h);
     }
@@ -168,7 +167,6 @@ class BatchSVDPolicy
   arma::mat h;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <sstream>
 
 namespace mlpack {
-namespace math {
 
 /**
  * Initialize the range to 0.
@@ -207,7 +206,6 @@ void RangeType<T>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(lo));
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

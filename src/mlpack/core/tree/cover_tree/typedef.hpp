@@ -15,7 +15,6 @@
 #include "cover_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The standard cover tree, as detailed in the original cover tree paper:
@@ -41,7 +40,6 @@ using StandardCoverTree = CoverTree<MetricType,
                                     MatType,
                                     FirstPointIsRoot>;
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

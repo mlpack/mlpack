@@ -17,7 +17,6 @@
 #include "../activation_functions/logistic_function.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Normal Distribution function.
@@ -136,7 +135,6 @@ class NormalDistribution
   DataType sigma;
 }; // class NormalDistribution
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

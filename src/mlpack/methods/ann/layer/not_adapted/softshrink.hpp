@@ -21,7 +21,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network. */ {
 
 /**
  * Soft Shrink operator is defined as,
@@ -104,7 +103,6 @@ class SoftShrinkType : public Layer<InputType, OutputType>
 // Standard SoftShrink layer.
 typedef SoftShrinkType<arma::mat, arma::mat> SoftShrink;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

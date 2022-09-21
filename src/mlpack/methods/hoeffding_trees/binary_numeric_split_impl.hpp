@@ -16,7 +16,6 @@
 #include "binary_numeric_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename FitnessFunction, typename ObservationType>
 BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
@@ -180,7 +179,6 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::serialize(
 }
 
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

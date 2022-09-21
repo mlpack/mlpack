@@ -21,7 +21,6 @@
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network.  */ {
 template<
   typename Model,
   typename InitializationRuleType,
@@ -526,6 +525,5 @@ serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 # endif

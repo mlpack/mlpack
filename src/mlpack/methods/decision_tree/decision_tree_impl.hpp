@@ -15,7 +15,6 @@
 #include "decision_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 //! Construct and train without weight.
 template<typename FitnessFunction,
@@ -1171,7 +1170,6 @@ void DecisionTree<FitnessFunction,
   majorityClass = (size_t) maxIndex;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

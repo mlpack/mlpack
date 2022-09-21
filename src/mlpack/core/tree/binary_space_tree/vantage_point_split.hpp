@@ -18,7 +18,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * The class splits a binary space partitioning tree node according to the
@@ -94,7 +93,7 @@ class VantagePointSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
         splitInfo);
   }
 
@@ -119,7 +118,7 @@ class VantagePointSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
         splitInfo, oldFromNew);
   }
 
@@ -166,7 +165,6 @@ class VantagePointSplit
                                  ElemType& mu);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -18,7 +18,6 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * @tparam PolicyType The type of the child policy.
@@ -71,10 +70,9 @@ class AggregatedPolicy
   std::vector<PolicyType> policies;
 
   //! Locally-stored sampler under the given distribution.
-  distribution::DiscreteDistribution sampler;
+  DiscreteDistribution sampler;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

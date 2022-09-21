@@ -95,12 +95,11 @@ BINDING_LONG_DESC(
 // See also...
 BINDING_SEE_ALSO("@lmnn", "#lmnn");
 BINDING_SEE_ALSO("Neighbourhood components analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis");
+    "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis");
 BINDING_SEE_ALSO("Neighbourhood components analysis (pdf)",
-        "http://papers.nips.cc/paper/2566-neighbourhood-components-"
-        "analysis.pdf");
-BINDING_SEE_ALSO("mlpack::nca::NCA C++ class documentation",
-        "@src/mlpack/methods/nca/nca.hpp");
+    "http://papers.nips.cc/paper/2566-neighbourhood-components-analysis.pdf");
+BINDING_SEE_ALSO("NCA C++ class documentation",
+    "@src/mlpack/methods/nca/nca.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
@@ -136,9 +135,6 @@ PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::nca;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 

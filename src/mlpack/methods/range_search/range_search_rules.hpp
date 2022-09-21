@@ -15,7 +15,6 @@
 #include <mlpack/core/tree/traversal_info.hpp>
 
 namespace mlpack {
-namespace range {
 
 /**
  * The RangeSearchRules class is a template helper class used by RangeSearch
@@ -43,7 +42,7 @@ class RangeSearchRules
    */
   RangeSearchRules(const arma::mat& referenceSet,
                    const arma::mat& querySet,
-                   const math::Range& range,
+                   const Range& range,
                    std::vector<std::vector<size_t> >& neighbors,
                    std::vector<std::vector<double> >& distances,
                    MetricType& metric,
@@ -107,7 +106,7 @@ class RangeSearchRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
@@ -129,7 +128,7 @@ class RangeSearchRules
   const arma::mat& querySet;
 
   //! The range of distances for which we are searching.
-  const math::Range& range;
+  const Range& range;
 
   //! The vector the resultant neighbor indices should be stored in.
   std::vector<std::vector<size_t> >& neighbors;
@@ -162,7 +161,6 @@ class RangeSearchRules
   size_t scores;
 };
 
-} // namespace range
 } // namespace mlpack
 
 // Include implementation.

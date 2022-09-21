@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The logistic function, defined by
@@ -108,7 +107,6 @@ class LogisticFunction
   }
 }; // class LogisticFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

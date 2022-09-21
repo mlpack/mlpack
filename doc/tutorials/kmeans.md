@@ -211,7 +211,7 @@ See [the matrices guide](../user/matrices.md) for more information.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering.
 extern arma::mat data;
@@ -237,7 +237,7 @@ of each cluster.  Another overload of `Cluster()` makes this easily possible:
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering.
 extern arma::mat data;
@@ -286,7 +286,7 @@ examples for either overload of `Cluster()`.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering on.
 extern arma::mat dataset;
@@ -306,7 +306,7 @@ k.Cluster(dataset, clusters, assignments, true);
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering on.
 extern arma::mat dataset;
@@ -352,7 +352,7 @@ to put the resulting centroids in.  Below is an example.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::kmeans;
+using namespace mlpack;
 
 // The dataset we are clustering on.
 extern arma::mat dataset;
@@ -403,7 +403,7 @@ arma::Row<size_t> assignments;
 arma::sp_mat sparseCentroids;
 
 // We must change the fifth (and last) template parameter.
-KMeans<metric::EuclideanDistance, SampleInitialization, MaxVarianceNewCluster,
+KMeans<EuclideanDistance, SampleInitialization, MaxVarianceNewCluster,
        NaiveKMeans, arma::sp_mat> k;
 k.Cluster(sparseDataset, clusters, assignments, sparseCentroids);
 ```
@@ -429,7 +429,7 @@ The class is defined like below:
 
 ```c++
 template<
-  typename DistanceMetric = mlpack::metric::SquaredEuclideanDistance,
+  typename DistanceMetric = SquaredEuclideanDistance,
   typename InitialPartitionPolicy = SampleInitialization,
   typename EmptyClusterPolicy = MaxVarianceNewCluster,
   template<class, class> class LloydStepType = NaiveKMeans,
@@ -445,9 +445,9 @@ how to modify them.
 
 Most machine learning algorithms in mlpack support modifying the distance
 metric, and `KMeans<>` is no exception.  Similar to `NeighborSearch` (see the
-section in the [NeighborSearch tutorial](neighbor_search.md)), any class in
-`mlpack::metric` can be given as an argument.  The `mlpack::metric::LMetric`
-class is a good example implementation.
+section in the [NeighborSearch tutorial](neighbor_search.md)), any of mlpack's
+metric classes (found in `mlpack/core/metrics/`) can be given as an argument.
+The `LMetric` class is a good example implementation.
 
 A class fulfilling the [MetricType policy](../developer/metrictype.md) must
 provide the following two functions:
@@ -463,24 +463,23 @@ double Evaluate(const VecType& a, const VecType& b);
 
 Most of the standard metrics that could be used are stateless and therefore the
 `Evaluate()` method is implemented statically.  However, there are metrics, such
-as the Mahalanobis distance (`mlpack::metric::MahalanobisDistance`), that store
-state.  To this end, an instantiated `MetricType` object is stored within the
-`KMeans` class.  The example below shows how to pass an instantiated
-`MahalanobisDistance` in the constructor.
+as the Mahalanobis distance (`MahalanobisDistance`), that store state.  To this
+end, an instantiated `MetricType` object is stored within the `KMeans` class.
+The example below shows how to pass an instantiated `MahalanobisDistance` in the
+constructor.
 
 ```c++
 // The initialized Mahalanobis distance.
-extern mlpack::metric::MahalanobisDistance distance;
+extern MahalanobisDistance distance;
 
 // We keep the default arguments for the maximum number of iterations, but pass
 // our instantiated metric.
-KMeans<mlpack::metric::MahalanobisDistance> k(1000, distance);
+KMeans<MahalanobisDistance> k(1000, distance);
 ```
 
 ***Note***: While the `MetricType` policy only requires two methods, one of
-which is an empty constructor, more can always be added.
-`mlpack::metric::MahalanobisDistance` also has constructors with parameters,
-because it is a stateful metric.
+which is an empty constructor, more can always be added.  `MahalanobisDistance`
+also has constructors with parameters, because it is a stateful metric.
 
 ### Changing the initial partitioning strategy used for k-means
 
@@ -489,9 +488,9 @@ literature.  Fortunately, the `KMeans<>` class makes it very easy to implement
 one of these methods and plug it in without needing to modify the existing
 algorithm code at all.
 
-By default, the `KMeans<>` class uses `mlpack::kmeans::SampleInitialization`,
-which randomly samples points as initial centroids.  However, writing a new
-policy is simple; it needs to only implement the following functions:
+By default, the `KMeans<>` class uses `SampleInitialization`, which randomly
+samples points as initial centroids.  However, writing a new policy is simple;
+it needs to only implement the following functions:
 
 ```c++
 // Empty constructor is required.
@@ -541,8 +540,7 @@ finding initial points detailed in "Refined initial points for k-means
 clustering" and other places in this document.  Another option is the
 `RandomPartition class`, which randomly assigns points to clusters, but this may
 not work very well for most settings.  See the documentation for
-`mlpack::kmeans::RefinedStart` and `mlpack::kmeans::RandomPartition` for more
-information.
+`RefinedStart` and `RandomPartition` for more information.
 
 If the `Cluster()` method returns point assignments instead of centroids, then
 valid initial assignments must be returned for every point in the dataset.
@@ -557,9 +555,9 @@ Sometimes, during clustering, a situation will arise where a cluster has no
 points in it.  The `KMeans` class allows easy customization of the action to be
 taken when this occurs.  By default, the point furthest from the centroid of the
 cluster with maximum variance is taken as the centroid of the empty cluster;
-this is implemented in the `mlpack::kmeans::MaxVarianceNewCluster` class.
-Another alternate choice is the `mlpack::kmeans::AllowEmptyClusters` class,
-which simply allows empty clusters to persist.
+this is implemented in the `MaxVarianceNewCluster` class.  Another alternate
+choice is the `AllowEmptyClusters` class, which simply allows empty clusters to
+persist.
 
 A custom policy can be written and it must implement the following methods:
 
@@ -587,7 +585,7 @@ compilation errors.
 
 Like the other template parameters to `KMeans`, `EmptyClusterPolicy`
 implementations that have state can be passed to the constructor of `KMeans` as
-a fifth argument.  See the `kmeans::KMeans` documentation for further details.
+a fifth argument.  See the `KMeans` documentation for further details.
 
 ### The `LloydStepType` template parameter
 
@@ -595,11 +593,11 @@ The internal algorithm used for a single step of the k-means algorithm can
 easily be changed; mlpack implements several existing classes that satisfy
 the `LloydStepType` policy:
 
- - `mlpack::kmeans::NaiveKMeans`
- - `mlpack::kmeans::ElkanKMeans`
- - `mlpack::kmeans::HamerlyKMeans`
- - `mlpack::kmeans::PellegMooreKMeans`
- - `mlpack::kmeans::DualTreeKMeans`
+ - `NaiveKMeans`
+ - `ElkanKMeans`
+ - `HamerlyKMeans`
+ - `PellegMooreKMeans`
+ - `DualTreeKMeans`
 
 Note that the `LloydStepType` policy is itself a template template parameter,
 and must accept two template parameters of its own:

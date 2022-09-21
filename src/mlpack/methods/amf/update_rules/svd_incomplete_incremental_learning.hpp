@@ -12,10 +12,7 @@
 #ifndef MLPACK_METHODS_AMF_SVD_INCOMPLETE_INCREMENTAL_LEARNING_HPP
 #define MLPACK_METHODS_AMF_SVD_INCOMPLETE_INCREMENTAL_LEARNING_HPP
 
-namespace mlpack
-{
-namespace amf
-{
+namespace mlpack {
 
 /**
  * This class computes SVD using incomplete incremental batch learning, as
@@ -205,7 +202,6 @@ inline void SVDIncompleteIncrementalLearning::HUpdate<arma::sp_mat>(
   currentUserIndex = currentUserIndex % V.n_cols;
 }
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

@@ -17,7 +17,6 @@
 #include "midpoint_split.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A binary space partitioning tree, such as a KD-tree or a ball tree.  Once the
@@ -48,7 +47,7 @@ template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          template<typename BoundMetricType, typename...> class BoundType =
-            bound::HRectBound,
+            HRectBound,
          template<typename SplitBoundType, typename SplitMatType>
             class SplitType = MidpointSplit>
 class BinarySpaceTree
@@ -462,7 +461,7 @@ class BinarySpaceTree
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const BinarySpaceTree& other) const
+  RangeType<ElemType> RangeDistance(const BinarySpaceTree& other) const
   {
     return bound.RangeDistance(other.Bound());
   }
@@ -487,7 +486,7 @@ class BinarySpaceTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::RangeType<ElemType>
+  RangeType<ElemType>
   RangeDistance(const VecType& point,
                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
@@ -544,7 +543,7 @@ class BinarySpaceTree
    *
    * @param boundToUpdate The bound to update.
    */
-  void UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate);
+  void UpdateBound(HollowBallBound<MetricType>& boundToUpdate);
 
  protected:
   /**
@@ -566,7 +565,6 @@ class BinarySpaceTree
   void serialize(Archive& ar, const uint32_t version);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

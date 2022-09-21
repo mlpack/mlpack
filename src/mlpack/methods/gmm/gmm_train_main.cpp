@@ -24,10 +24,7 @@
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::gmm;
 using namespace mlpack::util;
-using namespace mlpack::kmeans;
 using namespace std;
 
 // Program Name.
@@ -108,9 +105,8 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@gmm_generate", "#gmm_generate");
 BINDING_SEE_ALSO("@gmm_probability", "#gmm_probability");
 BINDING_SEE_ALSO("Gaussian Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
-BINDING_SEE_ALSO("mlpack::gmm::GMM class documentation",
-        "@src/mlpack/methods/gmm/gmm.hpp");
+    "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
+BINDING_SEE_ALSO("GMM class documentation", "@src/mlpack/methods/gmm/gmm.hpp");
 
 // Parameters for training.
 PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "
@@ -232,9 +228,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const int samplings = params.Get<int>("samplings");
     const double percentage = params.Get<double>("percentage");
 
-    typedef KMeans<metric::SquaredEuclideanDistance, RefinedStart> KMeansType;
+    typedef KMeans<SquaredEuclideanDistance, RefinedStart> KMeansType;
 
-    KMeansType k(kmeansMaxIterations, metric::SquaredEuclideanDistance(),
+    KMeansType k(kmeansMaxIterations, SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
 
     // Depending on the value of forcePositive and diagonalCovariance, we have
@@ -254,8 +250,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Compute the parameters of the model using the EM algorithm.
       timers.Start("em");
       EMFit<KMeansType, PositiveDefiniteConstraint,
-          distribution::DiagonalGaussianDistribution> em(maxIterations,
-          tolerance, k);
+          DiagonalGaussianDistribution> em(maxIterations, tolerance, k);
 
       likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
           em);
@@ -312,8 +307,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Compute the parameters of the model using the EM algorithm.
       timers.Start("em");
       EMFit<KMeans<>, PositiveDefiniteConstraint,
-          distribution::DiagonalGaussianDistribution> em(maxIterations,
-          tolerance, KMeans<>(kmeansMaxIterations));
+          DiagonalGaussianDistribution> em(maxIterations, tolerance,
+          KMeans<>(kmeansMaxIterations));
 
       likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
           em);

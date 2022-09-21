@@ -27,7 +27,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The rectifier function, defined by
@@ -109,7 +108,6 @@ class RectifierFunction
   }
 }; // class RectifierFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

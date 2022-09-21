@@ -14,10 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack
-{
-namespace amf
-{
+namespace mlpack {
 
 /**
  * This class implements validation termination policy based on RMSE index.
@@ -235,7 +232,6 @@ class ValidationRMSETermination
   double c_index;
 }; // class ValidationRMSETermination
 
-} // namespace amf
 } // namespace mlpack
 
 

@@ -18,7 +18,6 @@
 #include <mlpack/core/util/log.hpp>
 
 namespace mlpack {
-namespace tree {
 
 // Build the statistics, bottom-up.
 template<typename MetricType,
@@ -1356,7 +1355,7 @@ template<typename MetricType,
          template<typename> class AuxiliaryInformationType>
 bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
-    ShrinkBoundForBound(const bound::HRectBound<MetricType>& /* b */)
+    ShrinkBoundForBound(const HRectBound<MetricType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
   ElemType sum = 0;
@@ -1473,7 +1472,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

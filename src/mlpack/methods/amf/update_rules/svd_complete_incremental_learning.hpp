@@ -14,10 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack
-{
-namespace amf
-{
+namespace mlpack {
 
 /**
  * This class computes SVD using complete incremental batch learning, as
@@ -266,7 +263,6 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
   bool isStart;
 }; // class SVDCompleteIncrementalLearning
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the multiply constant layer. The multiply constant layer
@@ -96,7 +95,6 @@ class MultiplyConstantType : public Layer<InputType, OutputType>
 // Standard MultiplyConstant layer.
 typedef MultiplyConstantType<arma::mat, arma::mat> MultiplyConstant;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

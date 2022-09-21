@@ -16,13 +16,12 @@
 #include "range_search_rules.hpp"
 
 namespace mlpack {
-namespace range {
 
 template<typename MetricType, typename TreeType>
 RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
     const arma::mat& referenceSet,
     const arma::mat& querySet,
-    const math::Range& range,
+    const Range& range,
     std::vector<std::vector<size_t> >& neighbors,
     std::vector<std::vector<double> >& distances,
     MetricType& metric,
@@ -82,14 +81,14 @@ double RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
 {
   // We must get the minimum and maximum distances and store them in this
   // object.
-  math::Range distances;
+  Range distances;
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // In this situation, we calculate the base case.  So we should check to be
     // sure we haven't already done that.
     double baseCase;
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+    if (TreeTraits<TreeType>::HasSelfChildren &&
         (referenceNode.Parent() != NULL) &&
         (referenceNode.Point(0) == referenceNode.Parent()->Point(0)))
     {
@@ -151,8 +150,8 @@ template<typename MetricType, typename TreeType>
 double RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
                                                      TreeType& referenceNode)
 {
-  math::Range distances;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  Range distances;
+  if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // It is possible that the base case has already been calculated.
     double baseCase = 0.0;
@@ -229,7 +228,7 @@ void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
   // called, so if the base case has already been calculated, then we must avoid
   // adding that point to the results again.
   size_t baseCaseMod = 0;
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+  if (TreeTraits<TreeType>::FirstPointIsCentroid &&
       (queryIndex == lastQueryIndex) &&
       (referenceNode.Point(0) == lastReferenceIndex))
   {
@@ -259,7 +258,6 @@ void RangeSearchRules<MetricType, TreeType>::AddResult(const size_t queryIndex,
   }
 }
 
-} // namespace range
 } // namespace mlpack
 
 #endif

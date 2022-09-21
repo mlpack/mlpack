@@ -20,7 +20,6 @@
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network.  */ {
 template<
   typename Model,
   typename InitializationRuleType,
@@ -196,6 +195,5 @@ Gradient(const arma::mat& parameters,
   this->EvaluateWithGradient(parameters, i, gradient, batchSize);
 }
 
-} // namespace ann
 } // namespace mlpack
 # endif

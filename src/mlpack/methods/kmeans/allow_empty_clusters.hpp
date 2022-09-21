@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * Policy which allows K-Means to create empty clusters without any error being
@@ -64,7 +63,6 @@ class AllowEmptyClusters
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

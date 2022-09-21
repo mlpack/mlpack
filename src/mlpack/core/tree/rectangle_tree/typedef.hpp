@@ -16,7 +16,6 @@
 #include "rectangle_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * An implementation of the R tree that satisfies the TreeType policy API.
@@ -195,7 +194,6 @@ using RPlusPlusTree = RectangleTree<MetricType,
                                            MinimalSplitsNumberSweep>,
                             RPlusPlusTreeDescentHeuristic,
                             RPlusPlusTreeAuxiliaryInformation>;
-} // namespace tree
 } // namespace mlpack
 
 #endif

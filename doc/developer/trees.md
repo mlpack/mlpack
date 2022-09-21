@@ -296,10 +296,10 @@ class ExampleTree
 
   // Return the combined results of MinDistance() and MaxDistance().
   template<typename VecType>
-  math::Range RangeDistance(VecType& point);
+  Range RangeDistance(VecType& point);
 
   // Return the combined results of MinDistance() and MaxDistance().
-  math::Range RangeDistance(ExampleTree& otherNode);
+  Range RangeDistance(ExampleTree& otherNode);
 
   // //////////////////////////////////// //
   // // Serialization (loading/saving) // //
@@ -677,10 +677,10 @@ double MaxDistance(ExampleTree& otherNode);
 
 // Return the combined results of MinDistance() and MaxDistance().
 template<typename VecType>
-math::Range RangeDistance(VecType& point);
+Range RangeDistance(VecType& point);
 
 // Return the combined results of MinDistance() and MaxDistance().
-math::Range RangeDistance(ExampleTree& otherNode);
+Range RangeDistance(ExampleTree& otherNode);
 ```
 
 These six functions are almost without a doubt the most important functionality
@@ -765,9 +765,9 @@ Some tree-based algorithms can specialize if the tree fulfills certain
 conditions.  For instance, if the regions represented by two sibling nodes
 cannot overlap, an algorithm may be able to perform a simpler computation.
 Based on this reasoning, the `TreeTraits` trait class (much like the
-`mlpack::kernel::KernelTraits` class) exists in order to allow a tree to specify
-(via a `const static bool`) when these types of conditions are satisfied.
-***Note that a TreeTraits class is not required***, but may be helpful.
+`KernelTraits` class) exists in order to allow a tree to specify (via a `const
+static bool`) when these types of conditions are satisfied.  ***Note that a
+TreeTraits class is not required***, but may be helpful.
 
 The `TreeTraits` trait class is a template class that takes a `TreeType` as a
 parameter, and exposes `const static bool` values that depend on the tree.
@@ -799,10 +799,9 @@ class TreeTraits
 };
 ```
 
-An example specialization for the `mlpack::tree::KDTree` class is given below.
-Note that `mlpack::tree::KDTree` is itself a template class (like every class
-satisfying the `TreeType` policy), so we are specializing to a template
-parameter.
+An example specialization for the `:KDTree` class is given below.  Note that
+`KDTree` is itself a template class (like every class satisfying the `TreeType`
+policy), so we are specializing to a template parameter.
 
 ```c++
 template<typename MetricType,
@@ -830,25 +829,23 @@ class TreeTraits<KDTree<MetricType, StatisticType, MatType>>
 ```
 
 Currently, the traits available are each of the five detailed above.  For more
-information, see the `mlpack::tree::TreeTraits` source code for more
-documentation.
+information, see the `TreeTraits` source code for more documentation.
 
 ## A list of trees in mlpack and more information
 
 mlpack contains several ready-to-use implementations of trees that satisfy the
 TreeType policy API:
 
- - `mlpack::tree::KDTree`
- - `mlpack::tree::MeanSplitKDTree`
- - `mlpack::tree::BallTree`
- - `mlpack::tree::MeanSplitBallTree`
- - `mlpack::tree::RTree`
- - `mlpack::tree::RStarTree`
- - `mlpack::tree::StandardCoverTree`
+ - `KDTree`
+ - `MeanSplitKDTree`
+ - `BallTree`
+ - `MeanSplitBallTree`
+ - `RTree`
+ - `RStarTree`
+ - `StandardCoverTree`
 
 Often, these are template typedefs of more flexible tree classes:
 
- - `mlpack::tree::BinarySpaceTree` -- binary trees, such as the KD-tree and ball
-   tree
- - `mlpack::tree::RectangleTree` -- the R tree and variants
- - `mlpack::tree::CoverTree` -- the cover tree and variants
+ - `BinarySpaceTree` -- binary trees, such as the KD-tree and ball tree
+ - `RectangleTree` -- the R tree and variants
+ - `CoverTree` -- the cover tree and variants

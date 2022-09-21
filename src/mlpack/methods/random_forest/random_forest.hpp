@@ -16,7 +16,6 @@
 #include "bootstrap.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The RandomForest class provides an implementation of random forests,
@@ -441,7 +440,6 @@ using ExtraTrees = RandomForest<FitnessFunction,
                                 CategoricalSplitType,
                                 false>;
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -17,7 +17,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::amf;
 using namespace arma;
 
 /**
@@ -32,8 +31,9 @@ TEST_CASE("SVDIncompleteIncrementalConvergenceTest", "[SVDIncrementalTest]")
   IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> > iit;
 
   AMF<IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >,
-      RandomInitialization,
-      SVDIncompleteIncrementalLearning> amf(iit, RandomInitialization(), svd);
+      RandomAMFInitialization,
+      SVDIncompleteIncrementalLearning> amf(
+      iit, RandomAMFInitialization(), svd);
 
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);
@@ -54,9 +54,9 @@ TEST_CASE("SVDCompleteIncrementalConvergenceTest", "[SVDIncrementalTest]")
   CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> > iit;
 
   AMF<CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >,
-      RandomInitialization,
+      RandomAMFInitialization,
       SVDCompleteIncrementalLearning<sp_mat> > amf(iit,
-                                                   RandomInitialization(),
+                                                   RandomAMFInitialization(),
                                                    svd);
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);

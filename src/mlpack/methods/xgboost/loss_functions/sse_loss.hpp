@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ensemble {
 
 /**
  * The SSE (Sum of Squared Errors) loss is a loss function to measure the
@@ -114,12 +113,11 @@ class SSELoss
     {
       return sumGradients + alpha;
     }
-    
+
     return 0;
   }
 };
 
-} // namespace ensemble
 } // namespace mlpack
 
 #endif

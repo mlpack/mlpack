@@ -16,7 +16,6 @@
 #include "adaptive_mean_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType() :
@@ -30,7 +29,7 @@ AdaptiveMeanPoolingType<MatType>::AdaptiveMeanPoolingType(
     const size_t outputWidth,
     const size_t outputHeight) : 
     Layer<MatType>(),
-    poolingLayer(ann::MeanPoolingType<MatType>(1, 1)),
+    poolingLayer(MeanPoolingType<MatType>(1, 1)),
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
@@ -150,7 +149,6 @@ void AdaptiveMeanPoolingType<MatType>::serialize(
   ar(CEREAL_NVP(outputHeight));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

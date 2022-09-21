@@ -16,10 +16,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
-using namespace mlpack::bound;
 
 /**
  * Build a quad-tree (2-d octree) on 4 points, and guarantee four points are
@@ -191,7 +187,7 @@ void CheckFurthestDistances(TreeType& node)
   for (size_t i = 0; i < node.NumPoints(); ++i)
   {
     // Handle floating-point inaccuracies.
-    REQUIRE(metric::EuclideanDistance::Evaluate(
+    REQUIRE(EuclideanDistance::Evaluate(
         node.Dataset().col(node.Point(i)), center) <=
         node.FurthestPointDistance() * (1 + 1e-5));
   }
@@ -200,7 +196,7 @@ void CheckFurthestDistances(TreeType& node)
   for (size_t i = 0; i < node.NumDescendants(); ++i)
   {
     // Handle floating-point inaccuracies.
-    REQUIRE(metric::EuclideanDistance::Evaluate(
+    REQUIRE(EuclideanDistance::Evaluate(
         node.Dataset().col(node.Descendant(i)),
         center) <= node.FurthestDescendantDistance() * (1 + 1e-5));
   }

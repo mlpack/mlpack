@@ -20,7 +20,6 @@
 #include "batch_norm.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 BatchNormType<MatType>::BatchNormType() : 
@@ -394,7 +393,6 @@ void BatchNormType<MatType>::serialize(
   ar(CEREAL_NVP(higherDimension));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

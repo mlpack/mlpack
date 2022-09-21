@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This initialization rule for AMF simply takes in two initialization rules,
@@ -63,7 +62,6 @@ class MergeInitialization
   HInitializationRuleType hInitializationRule;
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

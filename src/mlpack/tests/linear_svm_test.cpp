@@ -15,8 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::svm;
-using namespace mlpack::distribution;
 
 /**
  * Callback test function, based on the EndOptimization callback function.
@@ -97,7 +95,7 @@ TEST_CASE("LinearSVMFunctionRandomBinaryEvaluate", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // Create a LinearSVMFunction, Regularization term ignored.
   LinearSVMFunction<arma::mat> svmf(data, labels, numClasses,
@@ -153,7 +151,7 @@ TEST_CASE("LinearSVMFunctionRandomEvaluate", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // Create a LinearSVMFunction, Regularization term ignored.
   LinearSVMFunction<arma::mat> svmf(data, labels, numClasses,
@@ -208,7 +206,7 @@ TEST_CASE("LinearSVMFunctionRegularizationEvaluate", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
   LinearSVMFunction<arma::mat> svmfNoReg(data, labels, numClasses, 0);
@@ -254,7 +252,7 @@ TEST_CASE("LinearSVMFunctionSeparableEvaluate", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   LinearSVMFunction<> svmf(data, labels, numClasses);
 
@@ -294,7 +292,7 @@ TEST_CASE("LinearSVMFunctionRegularizationSeparableEvaluate", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   LinearSVMFunction<> svmfNoReg(data, labels, numClasses, 0.0);
   LinearSVMFunction<> svmfSmallReg(data, labels, numClasses, 0.5);
@@ -348,7 +346,7 @@ TEST_CASE("LinearSVMFunctionGradient", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   // Create a LinearSVMFunction, Regularization term ignored.
   LinearSVMFunction<arma::mat> svmf(data, labels, numClasses,
@@ -421,7 +419,7 @@ TEST_CASE("LinearSVMFunctionSeparableGradient", "[LinearSVMTest]")
   // Create random class labels.
   arma::Row<size_t> labels(points);
   for (size_t i = 0; i < points; ++i)
-    labels(i) = math::RandInt(0, numClasses);
+    labels(i) = RandInt(0, numClasses);
 
   LinearSVMFunction<> svmfNoReg(data, labels, numClasses, 0.0);
   LinearSVMFunction<> svmfSmallReg(data, labels, numClasses, 0.5);
@@ -876,7 +874,7 @@ TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]")
   arma::mat denseDataset(dataset);
   arma::Row<size_t> labels(800);
   for (size_t i = 0; i < 800; ++i)
-    labels[i] = math::RandInt(0, 2);
+    labels[i] = RandInt(0, 2);
 
   LinearSVM<arma::mat> lr(denseDataset, labels, 2, 0.3, 1,
       false, ens::L_BFGS());

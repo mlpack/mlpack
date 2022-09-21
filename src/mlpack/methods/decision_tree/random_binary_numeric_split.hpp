@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The RandomBinaryNumericSplit is a splitting function for decision trees that
@@ -153,7 +152,6 @@ class RandomBinaryNumericSplit
       const AuxiliarySplitInfo& /* aux */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -16,7 +16,6 @@
 #include "dual_tree_traverser.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename RuleType>
@@ -160,7 +159,6 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

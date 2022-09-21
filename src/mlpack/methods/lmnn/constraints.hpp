@@ -16,7 +16,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 namespace mlpack {
-namespace lmnn {
+
 /**
  * Interface for generating distance based constraints on a given
  * dataset, provided corresponding true labels and a quantity parameter (k)
@@ -27,13 +27,12 @@ namespace lmnn {
  * data point) and Triplets() (Generates sets of {dataset, target neighbors,
  * impostors} tripltets.)
  */
-template<typename MetricType = metric::SquaredEuclideanDistance>
+template<typename MetricType = SquaredEuclideanDistance>
 class Constraints
 {
  public:
   //! Convenience typedef.
-  typedef neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType>
-      KNN;
+  typedef NeighborSearch<NearestNeighborSort, MetricType> KNN;
 
   /**
    * Constructor for creating a Constraints instance.
@@ -222,7 +221,6 @@ class Constraints
                              const arma::vec& norms);
 };
 
-} // namespace lmnn
 } // namespace mlpack
 
 // Include implementation.

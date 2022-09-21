@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize weight matrix with constant values.
@@ -111,7 +110,6 @@ class ConstInitialization
   double initVal;
 }; // class ConstInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

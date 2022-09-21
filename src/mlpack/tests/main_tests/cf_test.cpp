@@ -247,7 +247,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueTest",
   SetInputParam("max_iterations", int(1e4));
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   outputModel = params.Get<CFModel*>("output_model");
@@ -267,7 +267,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueTest",
   SetInputParam("max_iterations", int(1e4));
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   outputModel = params.Get<CFModel*>("output_model");
@@ -299,7 +299,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
   SetInputParam("min_residue", double(1e9));
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   outputModel = params.Get<CFModel*>("output_model");
@@ -318,7 +318,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
   SetInputParam("min_residue", double(1e9));
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   outputModel = params.Get<CFModel*>("output_model");
@@ -349,7 +349,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
   SetInputParam("iteration_only_termination", true);
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   outputModel =  params.Get<CFModel*>("output_model");
@@ -368,7 +368,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
   SetInputParam("iteration_only_termination", true);
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   outputModel = params.Get<CFModel*>("output_model");
@@ -401,7 +401,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodTest",
   SetInputParam("query", query);
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   const arma::Mat<size_t> output1 = params.Get<arma::Mat<size_t>>("output");
@@ -415,7 +415,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodTest",
   SetInputParam("query", std::move(query));
 
   // The execution of CF algorithm depends on initial random seed.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   const arma::Mat<size_t> output2 = params.Get<arma::Mat<size_t>>("output");

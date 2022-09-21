@@ -17,7 +17,6 @@
 #include "queue"
 
 namespace mlpack {
-namespace rl {
 
 template <
   typename WorkerType,
@@ -141,7 +140,6 @@ void AsyncLearning<
   this->learningNetwork = std::move(learningNetwork);
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

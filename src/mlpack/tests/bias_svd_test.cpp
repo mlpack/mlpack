@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::svd;
 
 TEST_CASE("BiasSVDFunctionRandomEvaluate", "[BiasSVDTest]")
 {

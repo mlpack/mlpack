@@ -32,7 +32,6 @@
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Multihead Attention allows the model to jointly attend to information from
@@ -265,7 +264,6 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
 typedef MultiheadAttentionType<arma::mat, arma::mat, NoRegularizer>
     MultiheadAttention;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

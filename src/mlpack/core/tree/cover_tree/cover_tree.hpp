@@ -19,7 +19,6 @@
 #include "first_point_is_root.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * A cover tree is a tree specifically designed to speed up nearest-neighbor
@@ -92,7 +91,7 @@ namespace tree {
  * @tparam MatType Type of matrix to build the tree on (generally mat or
  *      sp_mat).
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          typename RootPointPolicy = FirstPointIsRoot>
@@ -385,19 +384,19 @@ class CoverTree
   ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const CoverTree& other) const;
+  RangeType<ElemType> RangeDistance(const CoverTree& other) const;
 
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const CoverTree& other,
+  RangeType<ElemType> RangeDistance(const CoverTree& other,
                                           const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.
-  math::RangeType<ElemType> RangeDistance(const arma::vec& other) const;
+  RangeType<ElemType> RangeDistance(const arma::vec& other) const;
 
   //! Return the minimum and maximum distance to another point given that the
   //! point-to-point distance has already been calculated.
-  math::RangeType<ElemType> RangeDistance(const arma::vec& other,
+  RangeType<ElemType> RangeDistance(const arma::vec& other,
                                           const ElemType distance) const;
 
   //! Get the parent node.
@@ -575,7 +574,6 @@ class CoverTree
   size_t distanceComps;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -21,7 +21,6 @@
 #include "../binary_space_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType, typename TraversalInfoType>
 struct QueueFrame
@@ -104,7 +103,6 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

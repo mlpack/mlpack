@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_AMF_TERMINATION_POLICIES_MAX_ITERATION_TERMINATION_HPP
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This termination policy only terminates when the maximum number of iterations
@@ -79,7 +78,6 @@ class MaxIterationTermination
   size_t iteration;
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

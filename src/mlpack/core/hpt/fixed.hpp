@@ -17,7 +17,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace hpt {
 
 template<typename>
 struct PreFixedArg;
@@ -42,8 +41,8 @@ PreFixedArg<T> Fixed(T&& value)
  * A struct for storing information about a fixed argument. Objects of this type
  * are supposed to be passed into the CVFunction constructor.
  *
- * This struct is not meant to be used directly by users. Rather use the
- * mlpack::hpt::Fixed function.
+ * This struct is not meant to be used directly by users. Rather use the `Fixed`
+ * function.
  *
  * @tparam T The type of the fixed argument.
  * @tparam I The index of the fixed argument.
@@ -64,8 +63,8 @@ struct FixedArg
  * supposed to be converted into structs of the type FixedArg by adding
  * information about argument positions.
  *
- * This struct is not meant to be used directly by users. Rather use the
- * mlpack::hpt::Fixed function.
+ * This struct is not meant to be used directly by users. Rather use the `Fixed`
+ * function.
  */
 template<typename T>
 struct PreFixedArg
@@ -78,8 +77,8 @@ struct PreFixedArg
 /**
  * The specialization of the template for references.
  *
- * This struct is not meant to be used directly by users. Rather use the
- * mlpack::hpt::Fixed function.
+ * This struct is not meant to be used directly by users. Rather use the `Fixed`
+ * function.
  */
 template<typename T>
 struct PreFixedArg<T&>
@@ -105,7 +104,6 @@ class IsPreFixedArg
   static const bool value = Implementation<typename std::decay<T>::type>::value;
 };
 
-} // namespace hpt
 } // namespace mlpack
 
 #endif

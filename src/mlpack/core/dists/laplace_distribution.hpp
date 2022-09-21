@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * The multivariate Laplace distribution centered at 0 has pdf
@@ -188,7 +187,6 @@ class LaplaceDistribution
   double scale;
 };
 
-} // namespace distribution
 } // namespace mlpack
 
 // Include implementation.

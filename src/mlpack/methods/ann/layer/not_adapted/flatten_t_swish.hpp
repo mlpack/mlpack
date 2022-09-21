@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Flatten T Swish activation function, defined by
@@ -115,7 +114,6 @@ class FlattenTSwish
   double t;
 }; // class FlattenTSwish
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

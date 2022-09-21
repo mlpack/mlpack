@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the MeanPooling.
@@ -172,7 +171,6 @@ class MeanPoolingType : public Layer<MatType>
 // Standard MeanPooling layer.
 typedef MeanPoolingType<arma::mat> MeanPooling;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

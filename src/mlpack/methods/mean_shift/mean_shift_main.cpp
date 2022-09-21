@@ -19,8 +19,6 @@
 #include "mean_shift.hpp"
 
 using namespace mlpack;
-using namespace mlpack::meanshift;
-using namespace mlpack::kernel;
 using namespace mlpack::util;
 using namespace std;
 

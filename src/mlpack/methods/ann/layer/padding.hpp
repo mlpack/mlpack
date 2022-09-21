@@ -16,7 +16,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Padding module class. The Padding module applies
@@ -128,7 +127,6 @@ class PaddingType : public Layer<MatType>
 // Standard Padding layer.
 typedef PaddingType<arma::mat> Padding;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

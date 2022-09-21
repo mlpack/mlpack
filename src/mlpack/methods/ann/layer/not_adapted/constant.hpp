@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the constant layer. The constant layer outputs a given
@@ -106,7 +105,6 @@ class ConstantType : public Layer<InputType, OutputType>
 // Standard HardShrink layer.
 typedef ConstantType<arma::mat, arma::mat> Constant;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

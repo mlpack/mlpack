@@ -19,7 +19,6 @@
 #include "mean_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the AdaptiveMeanPooling layer.
@@ -131,7 +130,6 @@ class AdaptiveMeanPoolingType : public Layer<MatType>
 // Standard Adaptive mean pooling layer.
 typedef AdaptiveMeanPoolingType<arma::mat> AdaptiveMeanPooling;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -24,7 +24,6 @@
 #include <mlpack/core/util/log.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The p-spectrum string kernel.  Given a length p, the p-spectrum kernel finds
@@ -110,7 +109,6 @@ class PSpectrumStringKernel
   size_t p;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 // Include implementation of templated Evaluate().

@@ -15,14 +15,12 @@
 #include <mlpack/methods/neighbor_search/neighbor_search_stat.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
-class DualTreeKMeansStatistic : public
-    neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>
+class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
 {
  public:
   DualTreeKMeansStatistic() :
-      neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
+      NeighborSearchStat<NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
@@ -38,7 +36,7 @@ class DualTreeKMeansStatistic : public
 
   template<typename TreeType>
   DualTreeKMeansStatistic(TreeType& node) :
-      neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
+      NeighborSearchStat<NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
@@ -54,7 +52,7 @@ class DualTreeKMeansStatistic : public
     {
       // Correct handling of cover tree: don't double-count the point which
       // appears in the children.
-      if (tree::TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
+      if (TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
           node.NumChildren() > 0)
         continue;
       centroid += node.Dataset().col(node.Point(i));
@@ -117,7 +115,6 @@ class DualTreeKMeansStatistic : public
   std::vector<void*> trueChildren;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

@@ -114,7 +114,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -129,7 +129,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
   SetInputParam("k", (int) 6);
   SetInputParam("tables", (int) 40);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
@@ -151,7 +151,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -166,7 +166,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
   SetInputParam("k", (int) 6);
   SetInputParam("projections", (int) 30);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
@@ -188,7 +188,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -203,7 +203,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
   SetInputParam("k", (int) 6);
   SetInputParam("hash_width", (double) 0.5);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
@@ -265,7 +265,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -280,7 +280,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
   SetInputParam("k", (int) 6);
   SetInputParam("second_hash_size", (int) 5000);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
@@ -302,7 +302,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -317,7 +317,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
   SetInputParam("k", (int) 6);
   SetInputParam("bucket_size", (int) 1);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial outputs and final outputs using the two models are

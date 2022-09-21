@@ -16,8 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
-using namespace mlpack::distribution;
 
 /**
  * Test the LogisticRegressionFunction on a simple set of points.
@@ -64,7 +62,7 @@ TEST_CASE("LogisticRegressionFunctionRandomEvaluate",
   // Create random responses.
   arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
-    responses[i] = math::RandInt(0, 2);
+    responses[i] = RandInt(0, 2);
 
   LogisticRegressionFunction<> lrf(data, responses,
       0.0 /* no regularization */);
@@ -108,7 +106,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationEvaluate",
   // Create random responses.
   arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
-    responses[i] = math::RandInt(0, 2);
+    responses[i] = RandInt(0, 2);
 
   LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
   LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
@@ -258,7 +256,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationSeparableEvaluate",
   // Create random responses.
   arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
-    responses[i] = math::RandInt(0, 2);
+    responses[i] = RandInt(0, 2);
 
   LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
   LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
@@ -384,7 +382,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationGradient",
   // Create random responses.
   arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
-    responses[i] = math::RandInt(0, 2);
+    responses[i] = RandInt(0, 2);
 
   LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
   LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
@@ -448,7 +446,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationSeparableGradient",
   // Create random responses.
   arma::Row<size_t> responses(points);
   for (size_t i = 0; i < points; ++i)
-    responses[i] = math::RandInt(0, 2);
+    responses[i] = RandInt(0, 2);
 
   LogisticRegressionFunction<> lrfNoReg(data, responses, 0.0);
   LogisticRegressionFunction<> lrfSmallReg(data, responses, 0.5);
@@ -743,7 +741,7 @@ TEST_CASE("LogisticRegressionLBFGSTrainTest", "[LogisticRegressionTest]")
   dataset.randu();
   arma::Row<size_t> labels(800);
   for (size_t i = 0; i < 800; ++i)
-    labels[i] = math::RandInt(0, 2);
+    labels[i] = RandInt(0, 2);
 
   LogisticRegression<> lr(dataset, labels, 0.3);
   LogisticRegression<> lr2(dataset.n_rows, 0.3);
@@ -765,7 +763,7 @@ TEST_CASE("LogisticRegressionSGDTrainTest", "[LogisticRegressionTest]")
   dataset.randu();
   arma::Row<size_t> labels(800);
   for (size_t i = 0; i < 800; ++i)
-    labels[i] = math::RandInt(0, 2);
+    labels[i] = RandInt(0, 2);
 
   ens::SGD<> sgd;
   sgd.Shuffle() = false;
@@ -793,7 +791,7 @@ TEST_CASE("LogisticRegressionSparseLBFGSTest", "[LogisticRegressionTest]")
   arma::mat denseDataset(dataset);
   arma::Row<size_t> labels(800);
   for (size_t i = 0; i < 800; ++i)
-    labels[i] = math::RandInt(0, 2);
+    labels[i] = RandInt(0, 2);
 
   LogisticRegression<> lr(denseDataset, labels, 0.3);
   LogisticRegression<arma::sp_mat> lrSparse(dataset, labels, 0.3);
@@ -816,7 +814,7 @@ TEST_CASE("LogisticRegressionSparseSGDTest", "[LogisticRegressionTest]")
   arma::mat denseDataset(dataset);
   arma::Row<size_t> labels(800);
   for (size_t i = 0; i < 800; ++i)
-    labels[i] = math::RandInt(0, 2);
+    labels[i] = RandInt(0, 2);
 
   LogisticRegression<> lr(10, 0.3);
   ens::SGD<> sgd;
@@ -1041,7 +1039,7 @@ TEST_CASE("ConstructionThenTraining", "[LogisticRegressionTest]")
 
   arma::Row<size_t> myTargets("1 0 1 0");
 
-  regression::LogisticRegression<> lr;
+  LogisticRegression<> lr;
 
   // Make sure that training doesn't crash with invalid parameter sizes.
   REQUIRE_NOTHROW(lr.Train(myMatrix, myTargets));

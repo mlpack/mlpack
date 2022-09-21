@@ -28,16 +28,6 @@
 #include <mlpack/methods/bayesian_linear_regression.hpp>
 
 using namespace mlpack;
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
-using namespace mlpack::bound;
-using namespace mlpack::metric;
-using namespace mlpack::tree;
-using namespace mlpack::perceptron;
-using namespace mlpack::regression;
-using namespace mlpack::naive_bayes;
-using namespace mlpack::neighbor;
-using namespace mlpack::ann;
 
 using namespace arma;
 using namespace cereal;
@@ -615,7 +605,6 @@ TEST_CASE("LogisticRegressionTest", "[SerializationTest]")
 
 TEST_CASE("KNNTest", "[SerializationTest]")
 {
-  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
 
   KNN knn(dataset, DUAL_TREE_MODE);
@@ -641,8 +630,6 @@ TEST_CASE("KNNTest", "[SerializationTest]")
 
 TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
 {
-  using regression::SoftmaxRegression;
-
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
   arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 500; ++i)
@@ -662,8 +649,7 @@ TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
 
 TEST_CASE("DETTest", "[SerializationTest]")
 {
-  using det::DTree;
-  typedef DTree<arma::mat>   DTreeX;
+  typedef DTree<arma::mat> DTreeX;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);
@@ -956,8 +942,6 @@ TEST_CASE("NaiveBayesSerializationTest", "[SerializationTest]")
 
 TEST_CASE("RASearchTest", "[SerializationTest]")
 {
-  using neighbor::KRANN;
-  using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 200);
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
 
@@ -1073,8 +1057,6 @@ TEST_CASE("LSHTest", "[SerializationTest]")
 // Make sure serialization works for LARS.
 TEST_CASE("LARSTest", "[SerializationTest]")
 {
-  using namespace mlpack::regression;
-
   // Create a dataset.
   arma::mat X = arma::randn(75, 250);
   arma::vec beta = arma::randn(75, 1);
@@ -1113,17 +1095,15 @@ TEST_CASE("LARSTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   HoeffdingNumericSplit<GiniImpurity> split(3);
   // Train until it bins.
   for (size_t i = 0; i < 200; ++i)
-    split.Train(mlpack::math::Random(), mlpack::math::RandInt(3));
+    split.Train(Random(), RandInt(3));
 
   HoeffdingNumericSplit<GiniImpurity> xmlSplit(5);
   HoeffdingNumericSplit<GiniImpurity> jsonSplit(7);
   for (size_t i = 0; i < 200; ++i)
-    jsonSplit.Train(mlpack::math::Random() + 3, 0);
+    jsonSplit.Train(Random() + 3, 0);
   HoeffdingNumericSplit<GiniImpurity> binarySplit(2);
 
   SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
@@ -1170,7 +1150,7 @@ TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
   // Random checks.
   for (size_t i = 0; i < 200; ++i)
   {
-    const double random = mlpack::math::Random() * 1.5;
+    const double random = Random() * 1.5;
     REQUIRE(splitInfo.CalculateDirection(random) ==
                         xmlSplitInfo.CalculateDirection(random));
     REQUIRE(splitInfo.CalculateDirection(random) ==
@@ -1186,17 +1166,15 @@ TEST_CASE("HoeffdingNumericSplitTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingNumericSplitBeforeBinningTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   HoeffdingNumericSplit<GiniImpurity> split(3);
   // Train but not until it bins.
   for (size_t i = 0; i < 50; ++i)
-    split.Train(mlpack::math::Random(), mlpack::math::RandInt(3));
+    split.Train(Random(), RandInt(3));
 
   HoeffdingNumericSplit<GiniImpurity> xmlSplit(5);
   HoeffdingNumericSplit<GiniImpurity> jsonSplit(7);
   for (size_t i = 0; i < 200; ++i)
-    jsonSplit.Train(mlpack::math::Random() + 3, 0);
+    jsonSplit.Train(Random() + 3, 0);
   HoeffdingNumericSplit<GiniImpurity> binarySplit(2);
 
   SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
@@ -1231,17 +1209,15 @@ TEST_CASE("HoeffdingNumericSplitBeforeBinningTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingCategoricalSplitTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
   for (size_t i = 0; i < 50; ++i)
-    split.Train(mlpack::math::RandInt(10), mlpack::math::RandInt(3));
+    split.Train(RandInt(10), RandInt(3));
 
   HoeffdingCategoricalSplit<GiniImpurity> xmlSplit(3, 7);
   HoeffdingCategoricalSplit<GiniImpurity> binarySplit(4, 11);
   HoeffdingCategoricalSplit<GiniImpurity> jsonSplit(2, 2);
   for (size_t i = 0; i < 10; ++i)
-    jsonSplit.Train(mlpack::math::RandInt(2), mlpack::math::RandInt(2));
+    jsonSplit.Train(RandInt(2), RandInt(2));
 
   SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
@@ -1399,8 +1375,6 @@ TEST_CASE("HoeffdingTreeAfterSplitTest", "[SerializationTest]")
 
 TEST_CASE("EmptyHoeffdingTreeTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   data::DatasetInfo info(6);
   HoeffdingTree<> tree(info, 2);
   HoeffdingTree<> xmlTree(info, 3);
@@ -1421,16 +1395,14 @@ TEST_CASE("EmptyHoeffdingTreeTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingTreeTest", "[SerializationTest]")
 {
-  using namespace mlpack::tree;
-
   arma::mat dataset(2, 400);
   arma::Row<size_t> labels(400);
   for (size_t i = 0; i < 200; ++i)
   {
-    dataset(0, 2 * i) = mlpack::math::RandInt(4);
-    dataset(1, 2 * i) = mlpack::math::RandInt(2);
-    dataset(0, 2 * i + 1) = mlpack::math::RandInt(4);
-    dataset(1, 2 * i + 1) = mlpack::math::RandInt(2) + 2;
+    dataset(0, 2 * i) = RandInt(4);
+    dataset(1, 2 * i) = RandInt(2);
+    dataset(0, 2 * i + 1) = RandInt(4);
+    dataset(1, 2 * i + 1) = RandInt(2) + 2;
     labels[2 * i] = 0;
     labels[2 * i + 1] = 1;
   }
@@ -1576,8 +1548,6 @@ TEST_CASE("ssRBMTest", "[SerializationTest]")
 // Make sure serialization works for BayesianLinearRegression.
 TEST_CASE("BayesianLinearRegressionTest", "[SerializationTest]")
 {
-  using namespace mlpack::regression;
-
   // Create a dataset.
   arma::mat matX = arma::randn(75, 250);
   arma::vec omega = arma::randn(75, 1);

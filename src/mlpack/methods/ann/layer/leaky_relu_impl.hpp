@@ -18,7 +18,6 @@
 #include "leaky_relu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 LeakyReLUType<MatType>::LeakyReLUType(const double alpha) :
@@ -99,7 +98,6 @@ void LeakyReLUType<MatType>::serialize(
   ar(CEREAL_NVP(alpha));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

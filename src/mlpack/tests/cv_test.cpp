@@ -23,12 +23,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::cv;
-using namespace mlpack::naive_bayes;
-using namespace mlpack::perceptron;
-using namespace mlpack::regression;
-using namespace mlpack::tree;
 using namespace mlpack::data;
 
 /**
@@ -860,7 +854,7 @@ TEST_CASE("SilhouetteScoreTest", "[CVTest]")
         { 0, 1, 2, 0, 0 },
         { 1, 1, 3, 2, 0 } };
   arma::Row<size_t> labels = { 0, 1, 2, 0, 0 };
-  metric::EuclideanDistance metric;
+  EuclideanDistance metric;
   double silhouetteScore = SilhouetteScore::Overall(X, labels, metric);
   REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));
 }

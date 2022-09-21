@@ -16,9 +16,6 @@
 #include "score.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace scorers /* Scoring utilities for augmented */ {
 
 template<typename MatType>
 double SequencePrecision(arma::field<MatType> trueOutputs,
@@ -52,9 +49,6 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
   return score;
 }
 
-} // namespace scorers
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -23,10 +23,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::neighbor;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Convenience typedef.
@@ -69,9 +65,9 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@approx_kfn", "#approx_kfn");
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
-        "http://proceedings.mlr.press/v28/curtin13.pdf");
-BINDING_SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
-        "@src/mlpack/methods/neighbor_search/neighbor_search.hpp");
+    "http://proceedings.mlr.press/v28/curtin13.pdf");
+BINDING_SEE_ALSO("NeighborSearch C++ class documentation",
+    "@src/mlpack/methods/neighbor_search/neighbor_search.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

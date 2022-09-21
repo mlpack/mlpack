@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
 
 namespace mlpack {
-namespace metric {
 
 /**
  * The inner product metric, IPMetric, takes a given Mercer kernel (KernelType),
@@ -75,7 +74,6 @@ class IPMetric
   bool kernelOwner;
 };
 
-} // namespace metric
 } // namespace mlpack
 
 // Include implementation.

@@ -19,7 +19,6 @@
 #include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
-namespace gmm {
 
 //! Constructor.
 template<typename InitialClusteringType,
@@ -45,8 +44,7 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
-  if (std::is_same<Distribution,
-      distribution::DiagonalGaussianDistribution>::value)
+  if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
   {
     #ifdef _WIN32
       Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
@@ -58,7 +56,7 @@ Estimate(const arma::mat& observations,
     #endif
   }
   else if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value
-      && std::is_same<Distribution, distribution::GaussianDistribution>::value)
+      && std::is_same<Distribution, GaussianDistribution>::value)
   {
     // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
     // makes use of slower implementation.
@@ -102,7 +100,7 @@ Estimate(const arma::mat& observations,
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
-      const double probSum = mlpack::math::AccuLog(condLogProb.row(i));
+      const double probSum = AccuLog(condLogProb.row(i));
       if (probSum != -std::numeric_limits<double>::infinity())
         condLogProb.row(i) -= probSum;
     }
@@ -111,7 +109,7 @@ Estimate(const arma::mat& observations,
     arma::vec probRowSums(dists.size());
     for (size_t i = 0; i < dists.size(); ++i)
     {
-      probRowSums(i) = mlpack::math::AccuLog(condLogProb.col(i));
+      probRowSums(i) = AccuLog(condLogProb.col(i));
     }
 
     // Calculate the new value of the means using the updated conditional
@@ -131,8 +129,7 @@ Estimate(const arma::mat& observations,
 
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
-      if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
+      if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
         arma::vec covariance = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
@@ -207,7 +204,7 @@ Estimate(const arma::mat& observations,
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
-      const double probSum = mlpack::math::AccuLog(condLogProb.row(i));
+      const double probSum = AccuLog(condLogProb.row(i));
       if (probSum != -std::numeric_limits<double>::infinity())
         condLogProb.row(i) -= probSum;
     }
@@ -226,7 +223,7 @@ Estimate(const arma::mat& observations,
       // multiplied by the probability of the point being from this mixture
       // model.
       arma::vec tmpProb = condLogProb.col(i) + logProbabilities;
-      probRowSums[i] = mlpack::math::AccuLog(tmpProb);
+      probRowSums[i] = AccuLog(tmpProb);
 
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != -std::numeric_limits<double>::infinity())
@@ -243,8 +240,7 @@ Estimate(const arma::mat& observations,
 
       // If the distribution is DiagonalGaussianDistribution, calculate the
       // covariance only with diagonal components.
-      if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
+      if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
         arma::vec cov = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
@@ -269,7 +265,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = arma::exp(probRowSums - mlpack::math::AccuLog(logProbabilities));
+    weights = arma::exp(probRowSums - AccuLog(logProbabilities));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;
@@ -297,7 +293,7 @@ InitialClustering(const arma::mat& observations,
   // we can get faster performance by using diagonal elements when calculating
   // the covariance.
   const bool isDiagGaussDist = std::is_same<Distribution,
-      distribution::DiagonalGaussianDistribution>::value;
+      DiagonalGaussianDistribution>::value;
 
   std::vector<arma::vec> means(dists.size());
 
@@ -395,13 +391,13 @@ LogLikelihood(const arma::mat& observations,
   // Now sum over every point.
   for (size_t j = 0; j < observations.n_cols; ++j)
   {
-    if (mlpack::math::AccuLog(logLikelihoods.col(j)) ==
+    if (AccuLog(logLikelihoods.col(j)) ==
         -std::numeric_limits<double>::infinity())
     {
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
           << "outlier." << std::endl;
     }
-    logLikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
+    logLikelihood += AccuLog(logLikelihoods.col(j));
   }
 
   return logLikelihood;
@@ -441,8 +437,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
   // something that is reliably quicker than the Lloyd iteration k-means update,
   // then this code maybe should be revisited.
-  if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value ||
-      useInitialModel)
+  if (!std::is_same<InitialClusteringType, KMeans<>>::value || useInitialModel)
   {
     // Use clusterer to get initial values.
     if (!useInitialModel)
@@ -488,7 +483,6 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   }
 }
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif

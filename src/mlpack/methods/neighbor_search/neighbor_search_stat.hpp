@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * Extra data for each node in the tree.  For neighbor searches, each node only
@@ -101,7 +100,6 @@ class NeighborSearchStat
   }
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

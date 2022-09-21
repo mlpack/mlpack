@@ -16,8 +16,6 @@
 #include <vector>
 
 namespace mlpack {
-namespace det {
-namespace details {
 
 /**
  * This one sorts and scand the given per-dimension extract and puts all splits
@@ -144,8 +142,6 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
     lastVal = newVal;
   }
 }
-
-} // namespace details
 
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree() :
@@ -486,8 +482,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     // sparse matrices.
 
     std::vector<SplitItem> splitVec;
-    details::ExtractSplits<ElemType>(splitVec, data, dim, start, end,
-        minLeafSize);
+    ExtractSplits<ElemType>(splitVec, data, dim, start, end, minLeafSize);
 
     // Iterate on all the splits for this dimension
     for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
@@ -1036,5 +1031,4 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
   }
 }
 
-} // namespace det
 } // namespace mlpack

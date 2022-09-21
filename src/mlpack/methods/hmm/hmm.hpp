@@ -17,7 +17,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace hmm /** Hidden Markov Models. */ {
 
 /**
  * A class that represents a Hidden Markov Model with an arbitrary type of
@@ -49,7 +48,7 @@ namespace hmm /** Hidden Markov Models. */ {
  * };
  * @endcode
  *
- * See the mlpack::distribution::DiscreteDistribution class for an example.  One
+ * See the DiscreteDistribution class for an example.  One
  * would use the DiscreteDistribution class when the observations are
  * non-negative integers.  Other distributions could be Gaussians, a mixture of
  * Gaussians (GMM), or any other probability distribution implementing the
@@ -80,7 +79,7 @@ namespace hmm /** Hidden Markov Models. */ {
  *
  * @tparam Distribution Type of emission distribution for this HMM.
  */
-template<typename Distribution = distribution::DiscreteDistribution>
+template<typename Distribution = DiscreteDistribution>
 class HMM
 {
  public:
@@ -540,7 +539,6 @@ class HMM
   mutable bool recalculateTransition;
 };
 
-} // namespace hmm
 } // namespace mlpack
 
 // Include implementation.

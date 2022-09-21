@@ -27,8 +27,6 @@
 #include "dual_tree_kmeans.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::kmeans;
 using namespace mlpack::util;
 using namespace std;
 
@@ -112,17 +110,17 @@ BINDING_SEE_ALSO("K-Means tutorial", "@doc/tutorials/kmeans.md");
 BINDING_SEE_ALSO("@dbscan", "#dbscan");
 BINDING_SEE_ALSO("k-means++", "https://en.wikipedia.org/wiki/K-means%2B%2B");
 BINDING_SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
-        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf");
+    "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf");
 BINDING_SEE_ALSO("Making k-means even faster (pdf)",
-        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
-        "&rep=rep1&type=pdf");
+    "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554&rep=rep1"
+    "&type=pdf");
 BINDING_SEE_ALSO("Accelerating exact k-means algorithms with geometric"
-        " reasoning (pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon"
-        "/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf");
+    " reasoning (pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/"
+    "ftp/usr0/ftp/2000/CMU-CS-00-105.pdf");
 BINDING_SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large "
-        "k (pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf");
-BINDING_SEE_ALSO("mlpack::kmeans::KMeans class documentation",
-        "@src/mlpack/methods/kmeans/kmeans.hpp");
+    "k (pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf");
+BINDING_SEE_ALSO("KMeans class documentation",
+    "@src/mlpack/methods/kmeans/kmeans.hpp");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
@@ -352,10 +350,10 @@ void RunKMeans(util::Params& params,
   }
 
   timers.Start("clustering");
-  KMeans<metric::EuclideanDistance,
+  KMeans<EuclideanDistance,
          InitialPartitionPolicy,
          EmptyClusterPolicy,
-         LloydStepType> kmeans(maxIterations, metric::EuclideanDistance(), ipp);
+         LloydStepType> kmeans(maxIterations, EuclideanDistance(), ipp);
 
   if (params.Has("output") || params.Has("in_place"))
   {

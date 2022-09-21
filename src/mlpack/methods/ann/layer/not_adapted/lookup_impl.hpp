@@ -17,7 +17,6 @@
 #include "lookup.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputDataType>
 LookupType<InputType, OutputDataType>::LookupType(
@@ -94,7 +93,6 @@ void LookupType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(embeddingSize));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

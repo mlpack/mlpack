@@ -19,12 +19,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::regression;
-using namespace mlpack::lmnn;
-using namespace mlpack::metric;
-using namespace mlpack::nca;
-using namespace mlpack::distribution;
 
 /**
  * Test a FFN model with PrintLoss callback.
@@ -266,6 +260,6 @@ TEST_CASE("SparseAutoencodeCallbackTest", "[CallbackTest]")
 
   ens::L_BFGS optimizer(5, 100);
   ens::StoreBestCoordinates<arma::mat> cb;
-  mlpack::nn::SparseAutoencoder encoder2(data1, 5, 1, 0, 0, 0 , optimizer, cb);
+  SparseAutoencoder encoder2(data1, 5, 1, 0, 0, 0 , optimizer, cb);
   REQUIRE(cb.BestObjective() > 0);
 }

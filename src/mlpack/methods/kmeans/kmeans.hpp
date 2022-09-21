@@ -32,7 +32,6 @@
 #include "pelleg_moore_kmeans.hpp"
 
 namespace mlpack {
-namespace kmeans /** K-Means clustering. */ {
 
 /**
  * This class implements K-Means clustering, using a variety of possible
@@ -55,12 +54,12 @@ namespace kmeans /** K-Means clustering. */ {
  *
  * // Cluster using the Manhattan distance, 100 iterations maximum, saving only
  * // the centroids.
- * KMeans<metric::ManhattanDistance> k(100);
+ * KMeans<ManhattanDistance> k(100);
  * k.Cluster(data, 6, centroids); // 6 clusters.
  * @endcode
  *
- * @tparam MetricType The distance metric to use for this KMeans; see
- *     metric::LMetric for an example.
+ * @tparam MetricType The distance metric to use for this KMeans; see LMetric
+ *     for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
  *     default constructor and either 'void Cluster(const arma::mat&, const
  *     size_t, arma::Row<size_t>&)' or 'void Cluster(const arma::mat&, const
@@ -75,7 +74,7 @@ namespace kmeans /** K-Means clustering. */ {
  * @see RandomPartition, SampleInitialization, RefinedStart, AllowEmptyClusters,
  *      MaxVarianceNewCluster, NaiveKMeans, ElkanKMeans
  */
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename InitialPartitionPolicy = SampleInitialization,
          typename EmptyClusterPolicy = MaxVarianceNewCluster,
          template<class, class> class LloydStepType = NaiveKMeans,
@@ -201,7 +200,6 @@ class KMeans
   EmptyClusterPolicy emptyClusterAction;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

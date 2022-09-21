@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Declaration of the Batch Normalization layer class. The layer transforms
@@ -266,7 +265,6 @@ class BatchNormType : public Layer<MatType>
 // Standard Adaptive max pooling layer.
 typedef BatchNormType<arma::mat> BatchNorm;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include the implementation.

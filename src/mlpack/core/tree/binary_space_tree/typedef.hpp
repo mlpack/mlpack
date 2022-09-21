@@ -17,7 +17,6 @@
 #include "../binary_space_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The standard midpoint-split kd-tree.  This is not the original formulation by
@@ -59,7 +58,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using KDTree = BinarySpaceTree<MetricType,
                                StatisticType,
                                MatType,
-                               bound::HRectBound,
+                               HRectBound,
                                MidpointSplit>;
 
 /**
@@ -76,7 +75,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MeanSplitKDTree = BinarySpaceTree<MetricType,
                                         StatisticType,
                                         MatType,
-                                        bound::HRectBound,
+                                        HRectBound,
                                         MeanSplit>;
 
 /**
@@ -108,7 +107,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using BallTree = BinarySpaceTree<MetricType,
                                  StatisticType,
                                  MatType,
-                                 bound::BallBound,
+                                 BallBound,
                                  MidpointSplit>;
 
 /**
@@ -137,7 +136,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MeanSplitBallTree = BinarySpaceTree<MetricType,
                                           StatisticType,
                                           MatType,
-                                          bound::BallBound,
+                                          BallBound,
                                           MeanSplit>;
 
 /**
@@ -195,7 +194,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using VPTree = BinarySpaceTree<MetricType,
                                StatisticType,
                                MatType,
-                               bound::HollowBallBound,
+                               HollowBallBound,
                                VPTreeSplit>;
 
 /**
@@ -228,7 +227,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using MaxRPTree = BinarySpaceTree<MetricType,
                                   StatisticType,
                                   MatType,
-                                  bound::HRectBound,
+                                  HRectBound,
                                   RPTreeMaxSplit>;
 
 /**
@@ -262,7 +261,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using RPTree = BinarySpaceTree<MetricType,
                                   StatisticType,
                                   MatType,
-                                  bound::HRectBound,
+                                  HRectBound,
                                   RPTreeMeanSplit>;
 
 /**
@@ -297,10 +296,9 @@ template<typename MetricType, typename StatisticType, typename MatType>
 using UBTree = BinarySpaceTree<MetricType,
                                StatisticType,
                                MatType,
-                               bound::CellBound,
+                               CellBound,
                                UBTreeSplit>;
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

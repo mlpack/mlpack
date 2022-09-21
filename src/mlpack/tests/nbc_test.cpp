@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace naive_bayes;
 
 TEST_CASE("NaiveBayesClassifierTest", "[NBCTest]")
 {

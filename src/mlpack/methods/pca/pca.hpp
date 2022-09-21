@@ -21,7 +21,6 @@
 #include "decomposition_policies/decomposition_policies.hpp"
 
 namespace mlpack {
-namespace pca {
 
 /**
  * This class implements principal components analysis (PCA). This is a
@@ -150,7 +149,6 @@ class PCA
   DecompositionPolicy decomposition;
 }; // class PCA
 
-} // namespace pca
 } // namespace mlpack
 
 // Include implementation.

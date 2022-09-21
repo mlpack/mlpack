@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
 
 void GenerateProblem(
     arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)
@@ -442,9 +441,9 @@ TEST_CASE("LARSCopyConstructorTest", "[LARSTest]")
 
   // Check if the copy is accessible even after deleting the pointer to the
   // object.
-  mlpack::regression::LARS* glm1 = new mlpack::regression::LARS(false, .1, .1);
+  LARS* glm1 = new LARS(false, .1, .1);
   arma::rowvec predictions, predictionsFromCopiedModel;
-  std::vector<mlpack::regression::LARS> models;
+  std::vector<LARS> models;
   glm1->Train(features, targets);
   glm1->Predict(features, predictions);
   models.emplace_back(*glm1); // Call the copy constructor.
@@ -456,13 +455,13 @@ TEST_CASE("LARSCopyConstructorTest", "[LARSTest]")
   REQUIRE_NOTHROW(models[0].Train(features, targets));
 
   // Check if we can train the copied model.
-  mlpack::regression::LARS glm2(false, 0.1, 0.1);
+  LARS glm2(false, 0.1, 0.1);
   models.emplace_back(glm2); // Call the copy constructor.
   REQUIRE_NOTHROW(glm2.Train(features, targets));
   REQUIRE_NOTHROW(models[1].Train(features, targets));
 
   // Create a copy using assignment operator.
-  mlpack::regression::LARS glm3 = glm2;
+  LARS glm3 = glm2;
   models[1].Predict(features, predictions);
   glm3.Predict(features, predictionsFromCopiedModel);
   // The output of both models should be the same.

@@ -19,7 +19,6 @@
 #include <string>
 
 namespace mlpack {
-namespace tree {
 
 // Build the statistics, bottom-up.
 template<typename TreeType, typename StatisticType>
@@ -1047,7 +1046,7 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
-math::RangeType<typename
+RangeType<typename
     CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const CoverTree& other) const
@@ -1055,7 +1054,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   const ElemType distance = metric->Evaluate(dataset->col(point),
       other.Dataset().col(other.Point()));
 
-  math::RangeType<ElemType> result;
+  RangeType<ElemType> result;
   result.Lo() = std::max(distance - furthestDescendantDistance -
       other.FurthestDescendantDistance(), 0.0);
   result.Hi() = distance + furthestDescendantDistance +
@@ -1072,13 +1071,13 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
-math::RangeType<typename
+RangeType<typename
     CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const CoverTree& other,
                   const ElemType distance) const
 {
-  math::RangeType<ElemType> result;
+  RangeType<ElemType> result;
   result.Lo() = std::max(distance - furthestDescendantDistance -
       other.FurthestDescendantDistance(), 0.0);
   result.Hi() = distance + furthestDescendantDistance +
@@ -1094,14 +1093,14 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
-math::RangeType<typename
+RangeType<typename
     CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& other) const
 {
   const ElemType distance = metric->Evaluate(dataset->col(point), other);
 
-  return math::RangeType<ElemType>(
+  return RangeType<ElemType>(
       std::max(distance - furthestDescendantDistance, 0.0),
       distance + furthestDescendantDistance);
 }
@@ -1114,13 +1113,13 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
-math::RangeType<typename
+RangeType<typename
     CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::ElemType>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& /* other */,
                   const ElemType distance) const
 {
-  return math::RangeType<ElemType>(
+  return RangeType<ElemType>(
       std::max(distance - furthestDescendantDistance, 0.0),
       distance + furthestDescendantDistance);
 }
@@ -1800,7 +1799,6 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include "isrlu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 ISRLU<InputDataType, OutputDataType>::ISRLU(const double alpha) :
@@ -59,7 +58,6 @@ void ISRLU<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(alpha));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

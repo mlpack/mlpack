@@ -20,10 +20,6 @@
 #include "cf_model.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::cf;
-using namespace mlpack::amf;
-using namespace mlpack::svd;
 using namespace mlpack::util;
 using namespace std;
 
@@ -133,8 +129,7 @@ BINDING_SEE_ALSO("Matrix factorization on Wikipedia",
 BINDING_SEE_ALSO("Matrix factorization techniques for recommender systems"
         " (pdf)", "http://citeseerx.ist.psu.edu/viewdoc/download?doi="
         "10.1.1.441.3234&rep=rep1&type=pdf");
-BINDING_SEE_ALSO("mlpack::cf::CFType class documentation",
-        "@src/mlpack/methods/cf/cf.hpp");
+BINDING_SEE_ALSO("CFType class documentation", "@src/mlpack/methods/cf/cf.hpp");
 
 // Parameters for training a model.
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");

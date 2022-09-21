@@ -17,7 +17,6 @@
 #include <mlpack/core/math/random_basis.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 inline RAModel::RAModel(const TreeTypes treeType, const bool randomBasis) :
     treeType(treeType),
@@ -108,34 +107,34 @@ inline void RAModel::InitializeModel(const bool naive,
   switch (treeType)
   {
     case KD_TREE:
-      raSearch = new LeafSizeRAWrapper<tree::KDTree>(naive, singleMode);
+      raSearch = new LeafSizeRAWrapper<KDTree>(naive, singleMode);
       break;
     case COVER_TREE:
-      raSearch = new RAWrapper<tree::StandardCoverTree>(naive, singleMode);
+      raSearch = new RAWrapper<StandardCoverTree>(naive, singleMode);
       break;
     case R_TREE:
-      raSearch = new RAWrapper<tree::RTree>(naive, singleMode);
+      raSearch = new RAWrapper<RTree>(naive, singleMode);
       break;
     case R_STAR_TREE:
-      raSearch = new RAWrapper<tree::RStarTree>(naive, singleMode);
+      raSearch = new RAWrapper<RStarTree>(naive, singleMode);
       break;
     case X_TREE:
-      raSearch = new RAWrapper<tree::XTree>(naive, singleMode);
+      raSearch = new RAWrapper<XTree>(naive, singleMode);
       break;
     case HILBERT_R_TREE:
-      raSearch = new RAWrapper<tree::HilbertRTree>(naive, singleMode);
+      raSearch = new RAWrapper<HilbertRTree>(naive, singleMode);
       break;
     case R_PLUS_TREE:
-      raSearch = new RAWrapper<tree::RPlusTree>(naive, singleMode);
+      raSearch = new RAWrapper<RPlusTree>(naive, singleMode);
       break;
     case R_PLUS_PLUS_TREE:
-      raSearch = new RAWrapper<tree::RPlusPlusTree>(naive, singleMode);
+      raSearch = new RAWrapper<RPlusPlusTree>(naive, singleMode);
       break;
     case UB_TREE:
-      raSearch = new LeafSizeRAWrapper<tree::UBTree>(naive, singleMode);
+      raSearch = new LeafSizeRAWrapper<UBTree>(naive, singleMode);
       break;
     case OCTREE:
-      raSearch = new LeafSizeRAWrapper<tree::Octree>(naive, singleMode);
+      raSearch = new LeafSizeRAWrapper<Octree>(naive, singleMode);
       break;
   }
 }
@@ -151,7 +150,7 @@ inline void RAModel::BuildModel(util::Timers& timers,
   {
     timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
-    math::RandomBasis(q, referenceSet.n_rows);
+    mlpack::RandomBasis(q, referenceSet.n_rows);
 
     referenceSet = q * referenceSet;
     timers.Stop("computing_random_basis");
@@ -389,78 +388,77 @@ void RAModel::serialize(Archive& ar, const uint32_t /* version */)
   {
     case KD_TREE:
       {
-        LeafSizeRAWrapper<tree::KDTree>& typedSearch =
-            dynamic_cast<LeafSizeRAWrapper<tree::KDTree>&>(*raSearch);
+        LeafSizeRAWrapper<KDTree>& typedSearch =
+            dynamic_cast<LeafSizeRAWrapper<KDTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case COVER_TREE:
       {
-        RAWrapper<tree::StandardCoverTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::StandardCoverTree>&>(*raSearch);
+        RAWrapper<StandardCoverTree>& typedSearch =
+            dynamic_cast<RAWrapper<StandardCoverTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case R_TREE:
       {
-        RAWrapper<tree::RTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::RTree>&>(*raSearch);
+        RAWrapper<RTree>& typedSearch =
+            dynamic_cast<RAWrapper<RTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case R_STAR_TREE:
       {
-        RAWrapper<tree::RStarTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::RStarTree>&>(*raSearch);
+        RAWrapper<RStarTree>& typedSearch =
+            dynamic_cast<RAWrapper<RStarTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case X_TREE:
       {
-        RAWrapper<tree::XTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::XTree>&>(*raSearch);
+        RAWrapper<XTree>& typedSearch =
+            dynamic_cast<RAWrapper<XTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case HILBERT_R_TREE:
       {
-        RAWrapper<tree::HilbertRTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::HilbertRTree>&>(*raSearch);
+        RAWrapper<HilbertRTree>& typedSearch =
+            dynamic_cast<RAWrapper<HilbertRTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case R_PLUS_TREE:
       {
-        RAWrapper<tree::RPlusTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::RPlusTree>&>(*raSearch);
+        RAWrapper<RPlusTree>& typedSearch =
+            dynamic_cast<RAWrapper<RPlusTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case R_PLUS_PLUS_TREE:
       {
-        RAWrapper<tree::RPlusPlusTree>& typedSearch =
-            dynamic_cast<RAWrapper<tree::RPlusPlusTree>&>(*raSearch);
+        RAWrapper<RPlusPlusTree>& typedSearch =
+            dynamic_cast<RAWrapper<RPlusPlusTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
-        LeafSizeRAWrapper<tree::UBTree>& typedSearch =
-            dynamic_cast<LeafSizeRAWrapper<tree::UBTree>&>(*raSearch);
+        LeafSizeRAWrapper<UBTree>& typedSearch =
+            dynamic_cast<LeafSizeRAWrapper<UBTree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case OCTREE:
       {
-        LeafSizeRAWrapper<tree::Octree>& typedSearch =
-            dynamic_cast<LeafSizeRAWrapper<tree::Octree>&>(*raSearch);
+        LeafSizeRAWrapper<Octree>& typedSearch =
+            dynamic_cast<LeafSizeRAWrapper<Octree>&>(*raSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
   }
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

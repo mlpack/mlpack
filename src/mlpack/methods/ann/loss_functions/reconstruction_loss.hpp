@@ -16,7 +16,6 @@
 #include <mlpack/methods/ann/dists/bernoulli_distribution.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The reconstruction loss performance function measures the network's
@@ -90,7 +89,6 @@ class ReconstructionLossType
 // Default typedef for typical `arma::mat` usage.
 typedef ReconstructionLossType<arma::mat> ReconstructionLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

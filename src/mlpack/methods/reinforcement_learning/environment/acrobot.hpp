@@ -16,7 +16,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack{
-namespace rl{
 
 /**
  * Implementation of Acrobot game. Acrobot is a 2-link pendulum with only the
@@ -175,9 +174,9 @@ class Acrobot
     nextState.Theta2() = Wrap(currentNextState[1], -M_PI, M_PI);
 
     //! The value of angular velocity is bounded in min and max value.
-    nextState.AngularVelocity1() = math::ClampRange(currentNextState[2],
+    nextState.AngularVelocity1() = ClampRange(currentNextState[2],
         -maxVel1, maxVel1);
-    nextState.AngularVelocity2() = math::ClampRange(currentNextState[3],
+    nextState.AngularVelocity2() = ClampRange(currentNextState[3],
         -maxVel2, maxVel2);
 
     // Check if the episode has terminated.
@@ -322,7 +321,7 @@ class Acrobot
   double Torque(const Action& action) const
   {
     // Add noise to the Torque Torque is action number - 1. {0,1,2} -> {-1,0,1}.
-    return double(action.action - 1) + mlpack::math::Random(-0.1, 0.1);
+    return double(action.action - 1) + Random(-0.1, 0.1);
   }
 
   /**
@@ -395,7 +394,6 @@ class Acrobot
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

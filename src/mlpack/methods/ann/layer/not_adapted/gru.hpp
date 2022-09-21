@@ -37,7 +37,6 @@
 #include "sequential.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * An implementation of a gru network layer.
@@ -219,7 +218,6 @@ class GRU : public Layer<InputType, OutputType>
   OutputType outputParameter;
 }; // class GRU
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

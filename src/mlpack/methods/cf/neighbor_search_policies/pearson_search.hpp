@@ -16,17 +16,15 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Nearest neighbor search with pearson distance (or furthest neighbor search
  * with pearson correlation).
  * Note that, with normalized vectors, neighbor search with pearson distance is
- * equivalent to neighbor search with Euclidean distance. Therefore, instead
- * of performing neighbor search directly with pearson distance, we first
- * normalize all vectors, and then use neighbor::KNN (i.e. NeighborSearch with
- * Euclidean distance, KDTree). Pearson correlation are calculated from
- * Euclidean distance.
+ * equivalent to neighbor search with Euclidean distance. Therefore, instead of
+ * performing neighbor search directly with pearson distance, we first normalize
+ * all vectors, and then use KNN (i.e. NeighborSearch with Euclidean distance,
+ * KDTree). Pearson correlation are calculated from Euclidean distance.
  *
  * An example of how to use PearsonSearch in CF is shown below:
  *
@@ -46,11 +44,10 @@ class PearsonSearch
 {
  public:
   /**
-   * Constructor with reference set.
-   * In order to use neighbor::KNN(i.e. NeighborSearch with Euclidean distance,
-   * KDTree), we need to normalize all vectors in referenceSet. For each vector
-   * x, we first subtract mean(x) from each element in x. Then, we normalize
-   * the vector to unit length.
+   * Constructor with reference set.  In order to use KNN(i.e. NeighborSearch
+   * with Euclidean distance, KDTree), we need to normalize all vectors in
+   * referenceSet. For each vector x, we first subtract mean(x) from each
+   * element in x. Then, we normalize the vector to unit length.
    *
    * @param referenceSet Set of reference points.
    */
@@ -97,10 +94,9 @@ class PearsonSearch
 
  private:
   //! NeighborSearch object.
-  neighbor::KNN neighborSearch;
+  KNN neighborSearch;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

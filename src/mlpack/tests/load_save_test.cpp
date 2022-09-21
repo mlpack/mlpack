@@ -1223,7 +1223,7 @@ TEST_CASE("NormalizeLabelTest", "[LoadSaveTest]")
 {
   arma::rowvec randLabels(5000);
   for (size_t i = 0; i < 5000; ++i)
-    randLabels[i] = math::RandInt(-50, 50);
+    randLabels[i] = RandInt(-50, 50);
   randLabels[0] = 0.65; // Hey, doubles work too!
 
   arma::Row<size_t> newLabels;

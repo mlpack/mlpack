@@ -20,7 +20,6 @@
 #include "linear.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 DropConnectType<MatType>::DropConnectType() :
@@ -173,7 +172,6 @@ void DropConnectType<MatType>::serialize(
   ar(CEREAL_POINTER(baseLayer));
 }
 
-}  // namespace ann
 }  // namespace mlpack
 
 #endif

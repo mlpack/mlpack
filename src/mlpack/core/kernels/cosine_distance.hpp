@@ -17,7 +17,6 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The cosine distance (or cosine similarity).  It is defined by
@@ -58,7 +57,6 @@ class KernelTraits<CosineDistance>
   static const bool UsesSquaredDistance = false;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 // Include implementation.
