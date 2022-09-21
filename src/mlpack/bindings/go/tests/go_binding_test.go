@@ -554,7 +554,7 @@ func TestGonumMatrixWithInfo(t *testing.T) {
   })
 
   var oldX mat.Dense
-  oldX.Copy(x)
+  oldX.Copy(x.Data)
 
   param := mlpack.TestGoBindingOptions()
   param.MatrixAndInfoIn = x
@@ -571,9 +571,9 @@ func TestGonumMatrixWithInfo(t *testing.T) {
   }
   for i := 0; i < rows; i++ {
     for j := 0; j < cols; j++ {
-      if oldX.Data.At(i, j)*2 != MatrixAndInfoOut.At(i, j) {
+      if oldX.At(i, j)*2 != MatrixAndInfoOut.At(i, j) {
         val := MatrixAndInfoOut.At(i, j)
-        expected := oldX.Data.At(i, j)*2
+        expected := oldX.At(i, j)*2
         t.Errorf("Error. Value at [%v,%v] : %v. Expected value : %v",
                  i, j, val, expected)
       }
@@ -600,7 +600,7 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
   })
 
   var oldX mat.Dense
-  oldX.Copy(x)
+  oldX.Copy(x.Data)
 
   param := mlpack.TestGoBindingOptions()
   param.MatrixAndInfoIn = x
@@ -618,16 +618,16 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
   for i := 0; i < rows; i++ {
     for j := 0; j < cols; j++ {
       if j == 0 || j == 1 || j == 4 {
-        if oldX.Data.At(i, j) * 2 != MatrixAndInfoOut.At(i, j) {
+        if oldX.At(i, j) * 2 != MatrixAndInfoOut.At(i, j) {
           val := MatrixAndInfoOut.At(i, j)
-          expected := oldX.Data.At(i, j)*2
+          expected := oldX.At(i, j)*2
           t.Errorf("Error. Value at [%v,%v] : %v. Expected value : %v",
                    i, j, val, expected)
         }
       } else {
-        if oldX.Data.At(i, j) != MatrixAndInfoOut.At(i, j) {
+        if oldX.At(i, j) != MatrixAndInfoOut.At(i, j) {
           val := MatrixAndInfoOut.At(i, j)
-          expected := oldX.Data.At(i, j)
+          expected := oldX.At(i, j)
           t.Errorf("Error. Value at [%v,%v] : %v. Expected value: %v",
                    i, j, val, expected)
         }
