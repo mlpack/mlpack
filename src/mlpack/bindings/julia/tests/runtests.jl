@@ -181,6 +181,7 @@ end
 # Test a column vector input parameter.
 @testset "TestCol" begin
   x = rand(100)
+  oldX = copy(x)
 
   colOut, _, _, _, _, _, _, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -190,13 +191,14 @@ end
   @test typeof(colOut) == Array{Float64, 1}
 
   for i in 1:100
-    @test colOut[i] == 2 * x[i]
+    @test colOut[i] == 2 * oldX[i]
   end
 end
 
 # Test an unsigned column vector input parameter.
 @testset "TestUCol" begin
   x = convert(Array{Int, 1}, rand(1:500, 100))
+  oldX = copy(x)
 
   _, _, _, _, _, _, _, _, _, _, ucolOut, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -207,7 +209,7 @@ end
   for i in 1:100
     # Since we subtract one when we convert to C++, and then add one when we
     # convert back, we get a slightly different result here.
-    @test ucolOut[i] == 2 * x[i] - 1
+    @test ucolOut[i] == 2 * oldX[i] - 1
   end
 end
 
