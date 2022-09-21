@@ -17,7 +17,6 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 // Approximate Jacobian and supposedly-true Jacobian, then compare them
 // similarly to before.

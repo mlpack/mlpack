@@ -15,7 +15,6 @@
 #include "randomized_block_krylov_svd.hpp"
 
 namespace mlpack {
-namespace svd {
 
 inline RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(
     const arma::mat& data,
@@ -96,7 +95,6 @@ inline void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
   u = Q * u;
 }
 
-} // namespace svd
 } // namespace mlpack
 
 #endif

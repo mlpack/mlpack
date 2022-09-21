@@ -19,7 +19,6 @@
 #include <mlpack/core/math/shuffle_data.hpp>
 
 namespace mlpack {
-namespace nca {
 
 /**
  * The "softmax" stochastic neighbor assignment probability function.
@@ -41,7 +40,7 @@ namespace nca {
  * operate on one point in the dataset.  This is useful for optimizers like
  * stochastic gradient descent (see mlpack::optimization::SGD).
  */
-template<typename MetricType = metric::SquaredEuclideanDistance>
+template<typename MetricType = SquaredEuclideanDistance>
 class SoftmaxErrorFunction
 {
  public:
@@ -170,7 +169,6 @@ class SoftmaxErrorFunction
   void Precalculate(const arma::mat& coordinates);
 };
 
-} // namespace nca
 } // namespace mlpack
 
 // Include implementation.

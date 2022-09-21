@@ -14,10 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack
-{
-namespace cf
-{
+namespace mlpack {
 
 /**
  * This class acts as a dummy class for passing as template parameter. Passing
@@ -86,7 +83,6 @@ class SVDWrapper
 //! add simple typedefs
 typedef SVDWrapper<DummyClass> ArmaSVDFactorizer;
 
-} // namespace cf
 } // namespace mlpack
 
 //! include the implementation

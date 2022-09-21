@@ -22,7 +22,6 @@
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The KRANN class is the k-rank-approximate-nearest-neighbors method.  It
@@ -46,7 +45,6 @@ typedef RASearch<> KRANN;
  */
 typedef RASearch<FurthestNeighborSort> KRAFN;
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

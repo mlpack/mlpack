@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The mean squared error performance function measures the network's
@@ -81,7 +80,6 @@ class MeanSquaredErrorType
 // Default typedef for typical `arma::mat` usage.
 typedef MeanSquaredErrorType<arma::mat> MeanSquaredError;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

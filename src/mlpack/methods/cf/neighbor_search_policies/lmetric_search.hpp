@@ -17,7 +17,6 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Nearest neighbor search with L_p distance.
@@ -42,9 +41,8 @@ template<int TPower>
 class LMetricSearch
 {
  public:
-  using NeighborSearchType = neighbor::NeighborSearch<
-      neighbor::NearestNeighborSort,
-      metric::LMetric<TPower, true>>;
+  using NeighborSearchType = NeighborSearch<
+      NearestNeighborSort, LMetric<TPower, true>>;
 
   /**
    * @param referenceSet Set of reference points.
@@ -78,7 +76,6 @@ class LMetricSearch
 
 using EuclideanSearch = LMetricSearch<2>;
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

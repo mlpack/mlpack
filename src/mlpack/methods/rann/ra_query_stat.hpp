@@ -21,7 +21,6 @@
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * Extra data for each node in the tree.  For neighbor searches, each node only
@@ -75,7 +74,6 @@ class RAQueryStat
   size_t numSamplesMade;
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

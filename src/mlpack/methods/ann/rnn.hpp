@@ -17,7 +17,6 @@
 #include "ffn.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Definition of a standard recurrent neural network container.  A recurrent
@@ -379,7 +378,6 @@ class RNN
   arma::Cube<typename MatType::elem_type> responses;
 }; // class RNNType
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace hpt {
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -244,7 +243,6 @@ TupleType HyperParameterTuner<MLAlgorithm,
   return TupleType(args...);
 }
 
-} // namespace hpt
 } // namespace mlpack
 
 #endif

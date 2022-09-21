@@ -20,9 +20,6 @@
 #include "bound_traits.hpp"
 
 namespace mlpack {
-namespace bound {
-
-namespace meta /** Metaprogramming utilities. */ {
 
 //! Utility struct where Value is true if and only if the argument is of type
 //! LMetric.
@@ -34,12 +31,10 @@ struct IsLMetric
 
 //! Specialization for IsLMetric when the argument is of type LMetric.
 template<int Power, bool TakeRoot>
-struct IsLMetric<metric::LMetric<Power, TakeRoot>>
+struct IsLMetric<LMetric<Power, TakeRoot>>
 {
   static const bool Value = true;
 };
-
-} // namespace meta
 
 /**
  * Hyper-rectangle bound for an L-metric.  This should be used in conjunction
@@ -49,12 +44,12 @@ struct IsLMetric<metric::LMetric<Power, TakeRoot>>
  * @tparam MetricType Type of metric to use; must be of type LMetric.
  * @tparam ElemType Element type (double/float/int/etc.).
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename ElemType = double>
 class HRectBound
 {
   // It is required that HRectBound have an LMetric as the given MetricType.
-  static_assert(meta::IsLMetric<MetricType>::Value == true,
+  static_assert(IsLMetric<MetricType>::Value == true,
       "HRectBound can only be used with the LMetric<> metric type.");
 
  public:
@@ -97,9 +92,9 @@ class HRectBound
 
   //! Get the range for a particular dimension.  No bounds checking.  Be
   //! careful: this may make MinWidth() invalid.
-  math::RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
+  RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
-  const math::RangeType<ElemType>& operator[](const size_t i) const
+  const RangeType<ElemType>& operator[](const size_t i) const
   { return bounds[i]; }
 
   //! Get the minimum width of the bound.
@@ -166,7 +161,7 @@ class HRectBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const HRectBound& other) const;
+  RangeType<ElemType> RangeDistance(const HRectBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point distance.
@@ -175,7 +170,7 @@ class HRectBound
    *     requested.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
@@ -239,7 +234,7 @@ class HRectBound
   //! The dimensionality of the bound.
   size_t dim;
   //! The bounds for each dimension.
-  math::RangeType<ElemType>* bounds;
+  RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
   //! Instantiated metric (likely has size 0).
@@ -254,7 +249,6 @@ struct BoundTraits<HRectBound<MetricType, ElemType>>
   const static bool HasTightBounds = true;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "hrectbound_impl.hpp"

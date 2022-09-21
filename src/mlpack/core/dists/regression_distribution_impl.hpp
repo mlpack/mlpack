@@ -17,7 +17,6 @@
 #include "regression_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * Estimate parameters using provided observation weights.
@@ -26,7 +25,7 @@ namespace distribution /** Probability distributions. */ {
  */
 inline void RegressionDistribution::Train(const arma::mat& observations)
 {
-  regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
+  LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), 0, true);
   rf = lr;
   arma::rowvec fitted;
@@ -48,7 +47,7 @@ inline void RegressionDistribution::Train(const arma::mat& observations,
 inline void RegressionDistribution::Train(const arma::mat& observations,
                                           const arma::rowvec& weights)
 {
-  regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
+  LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), weights, 0, true);
   rf = lr;
   arma::rowvec fitted;
@@ -83,7 +82,6 @@ inline void RegressionDistribution::Predict(const arma::mat& points,
   rf.Predict(points, predictions);
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

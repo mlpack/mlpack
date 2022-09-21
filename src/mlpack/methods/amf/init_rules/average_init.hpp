@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This initialization rule initializes matrix W and H to root of the average of
@@ -122,7 +121,6 @@ class AverageInitialization
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

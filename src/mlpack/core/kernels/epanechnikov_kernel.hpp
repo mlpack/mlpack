@@ -16,7 +16,6 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The Epanechnikov kernel, defined as
@@ -113,7 +112,6 @@ class KernelTraits<EpanechnikovKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 // Include implementation.

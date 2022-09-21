@@ -133,12 +133,12 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@nca", "#nca");
 BINDING_SEE_ALSO("Large margin nearest neighbor on Wikipedia",
-        "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor");
+    "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor");
 BINDING_SEE_ALSO("Distance metric learning for large margin nearest neighbor "
-        "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-"
-        "metric-learning-for-large-margin-nearest-neighbor-classification.pdf");
-BINDING_SEE_ALSO("mlpack::lmnn::LMNN C++ class documentation",
-        "@src/mlpack/methods/lmnn/lmnn.hpp");
+    "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-metric-"
+    "learning-for-large-margin-nearest-neighbor-classification.pdf");
+BINDING_SEE_ALSO("LMNN C++ class documentation",
+    "@src/mlpack/methods/lmnn/lmnn.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
@@ -179,9 +179,6 @@ PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::lmnn;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
@@ -197,7 +194,7 @@ double KNNAccuracy(const arma::mat& dataset,
   arma::mat distances;
 
   // KNN instance.
-  neighbor::KNN knn;
+  KNN knn;
 
   knn.Train(dataset);
   knn.Search(k, neighbors, distances);

@@ -18,7 +18,6 @@
 class AdaBoost;
 
 namespace mlpack {
-namespace adaboost {
 
 /**
  * The model to save to disk.
@@ -38,9 +37,9 @@ class AdaBoostModel
   //! The type of weak learner.
   size_t weakLearnerType;
   //! Non-NULL if using decision stumps.
-  AdaBoost<tree::ID3DecisionStump>* dsBoost;
+  AdaBoost<ID3DecisionStump>* dsBoost;
   //! Non-NULL if using perceptrons.
-  AdaBoost<perceptron::Perceptron<>>* pBoost;
+  AdaBoost<Perceptron<>>* pBoost;
   //! Number of dimensions in training data.
   size_t dimensionality;
 
@@ -123,7 +122,6 @@ class AdaBoostModel
   }
 };
 
-} // namespace adaboost
 } // namespace mlpack
 
 // Include implementation.

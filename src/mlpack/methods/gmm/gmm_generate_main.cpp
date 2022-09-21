@@ -19,8 +19,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 // Program Name.
@@ -53,9 +51,8 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@gmm_train", "#gmm_train");
 BINDING_SEE_ALSO("@gmm_probability", "#gmm_probability");
 BINDING_SEE_ALSO("Gaussian Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
-BINDING_SEE_ALSO("mlpack::gmm::GMM class documentation",
-        "@src/mlpack/methods/gmm/gmm.hpp");
+    "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
+BINDING_SEE_ALSO("GMM class documentation", "@src/mlpack/methods/gmm/gmm.hpp");
 
 PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM model to generate samples "
     "from.", "m");

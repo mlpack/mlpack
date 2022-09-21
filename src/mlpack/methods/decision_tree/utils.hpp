@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_UTILS_HPP
 #define MLPACK_METHODS_DECISION_TREE_UTILS_HPP
 
+namespace mlpack {
+
 /**
  * Calculates the weighted sum and total weight of labels.
  */
@@ -131,5 +133,7 @@ inline void Sum(const VecType& values,
 
   mean = total[0];
 }
+
+} // namespace mlpack
 
 #endif

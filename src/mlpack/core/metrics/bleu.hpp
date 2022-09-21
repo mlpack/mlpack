@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace metric {
 
 /**
  * BLEU, or the Bilingual Evaluation Understudy, is an algorithm for evaluating
@@ -160,7 +159,6 @@ class BLEU
   PrecisionType precisions;
 };
 
-} // namespace metric
 } // namespace mlpack
 
 // Include implementation.

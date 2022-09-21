@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A Rectangle Tree has new points inserted at the bottom.  When these
@@ -80,7 +79,6 @@ class RTreeSplit
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation

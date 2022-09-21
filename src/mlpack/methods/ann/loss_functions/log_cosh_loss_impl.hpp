@@ -17,7 +17,6 @@
 #include "log_cosh_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 LogCoshLossType<MatType>::LogCoshLossType(
@@ -65,7 +64,6 @@ void LogCoshLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

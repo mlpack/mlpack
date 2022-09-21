@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Softmax layer. The softmax function takes as input a
@@ -83,7 +82,6 @@ class SoftmaxType : public Layer<MatType>
 // Convenience typedef.
 typedef SoftmaxType<arma::mat> Softmax;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

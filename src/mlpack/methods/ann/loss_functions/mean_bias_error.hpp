@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The mean bias error performance function measures the network's performance
@@ -83,7 +82,6 @@ class MeanBiasErrorType
 // Default typedef for typical `arma::mat` usage.
 typedef MeanBiasErrorType<arma::mat> MeanBiasError;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

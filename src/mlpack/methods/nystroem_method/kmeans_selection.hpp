@@ -17,7 +17,6 @@
 #include <mlpack/methods/kmeans/kmeans.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * Implementation of the kmeans sampling scheme.
@@ -25,7 +24,7 @@ namespace kernel {
  * @tparam ClusteringType Type of clustering.
  * @tparam maxIterations Maximum number of iterations allowed before giving up.
  */
-template<typename ClusteringType = kmeans::KMeans<>, size_t maxIterations = 5>
+template<typename ClusteringType = KMeans<>, size_t maxIterations = 5>
 class KMeansSelection
 {
  public:
@@ -50,7 +49,6 @@ class KMeansSelection
   }
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

@@ -17,7 +17,6 @@
 #include "weight_norm.hpp"
 
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
 
 template<typename InputType, typename OutputType>
 WeightNormType<InputType, OutputType>::
@@ -196,7 +195,6 @@ void WeightNormType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(layerWeightSize));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

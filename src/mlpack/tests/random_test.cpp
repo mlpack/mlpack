@@ -2,7 +2,7 @@
  * @file tests/random_test.cpp
  * @author Konstantin Sidorov
  *
- * Tests for generators of random numbers from math:: namespace.
+ * Tests for generators of random numbers.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace math;
 
 // Test for RandInt() sampler from discrete uniform distribution.
 TEST_CASE("DiscreteUniformRandomTest", "[RandomTest]")
@@ -77,7 +76,7 @@ TEST_CASE("WeightedRandomTest", "[RandomTest]")
   const size_t iterations = 50000;
   for (std::vector<double> weightSet : weights)
   {
-    mlpack::distribution::DiscreteDistribution d(1);
+    DiscreteDistribution d(1);
     d.Probabilities(0) =  arma::vec(weightSet);
     std::vector<int> count(weightSet.size(), 0);
     for (size_t iter = 0; iter < iterations; ++iter)

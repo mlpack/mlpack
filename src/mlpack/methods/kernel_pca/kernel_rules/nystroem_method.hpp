@@ -18,11 +18,10 @@
 #include <mlpack/methods/nystroem_method/nystroem_method.hpp>
 
 namespace mlpack {
-namespace kpca {
 
 template<
   typename KernelType,
-  typename PointSelectionPolicy = kernel::KMeansSelection<>
+  typename PointSelectionPolicy = KMeansSelection<>
 >
 class NystroemKernelRule
 {
@@ -45,13 +44,12 @@ class NystroemKernelRule
                                 KernelType kernel = KernelType())
   {
     arma::mat G, v;
-    kernel::NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel,
-        rank);
+    NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel, rank);
     nm.Apply(G);
     transformedData = G.t() * G;
 
     // Center the reconstructed approximation.
-    math::Center(transformedData, transformedData);
+    Center(transformedData, transformedData);
 
     // For PCA the data has to be centered, even if the data is centered. But
     // it is not guaranteed that the data, when mapped to the kernel space, is
@@ -82,7 +80,6 @@ class NystroemKernelRule
   }
 };
 
-} // namespace kpca
 } // namespace mlpack
 
 #endif

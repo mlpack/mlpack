@@ -16,7 +16,6 @@
 #include "concat_performance.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename OutputLayerType,
@@ -108,7 +107,6 @@ void ConcatPerformance<
   ar(CEREAL_NVP(outputLayer));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

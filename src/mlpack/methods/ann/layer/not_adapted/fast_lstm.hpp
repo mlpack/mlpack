@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * An implementation of a faster version of the Fast LSTM network layer.
@@ -308,7 +307,6 @@ class FastLSTMType : public Layer<InputType, OutputType>
 // Standard FastLSTM layer.
 typedef FastLSTMType<arma::mat, arma::mat> FastLSTM;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

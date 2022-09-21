@@ -20,7 +20,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The PReLU activation function, defined by (where alpha is trainable)
@@ -124,7 +123,6 @@ class PReLUType : public Layer<InputType, OutputType>
 // Standard PReLU layer.
 typedef PReLUType<arma::mat, arma::mat> PReLU;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

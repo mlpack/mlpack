@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/ballbound.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This is a specialization of the TreeTraits class to the BinarySpaceTree tree
@@ -184,8 +183,8 @@ template<typename MetricType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    bound::BallBound, SplitType>>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BallBound,
+    SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -209,7 +208,7 @@ template<typename MetricType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
 class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    bound::HollowBallBound, SplitType>>
+    HollowBallBound, SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -232,8 +231,8 @@ template<typename MetricType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    bound::CellBound, SplitType>>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, CellBound,
+    SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -245,7 +244,6 @@ class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
   static const bool UniqueNumDescendants = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

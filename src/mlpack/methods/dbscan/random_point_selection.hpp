@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace dbscan {
 
 /**
  * This class can be used to randomly select the next point to use for DBSCAN.
@@ -40,7 +39,7 @@ class RandomPointSelection
 
     // Count the unvisited points and generate nth index randomly.
     const size_t max = std::count(unvisited.begin(), unvisited.end(), true);
-    const size_t index = math::RandInt(max);
+    const size_t index = RandInt(max);
 
     // Select the index'th unvisited point.
     size_t found = 0;
@@ -63,7 +62,6 @@ class RandomPointSelection
   std::vector<bool> unvisited;
 };
 
-} // namespace dbscan
 } // namespace mlpack
 
 #endif

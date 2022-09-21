@@ -15,7 +15,6 @@
 #include "maximal_inputs.hpp"
 
 namespace mlpack {
-namespace nn {
 
 inline void MaximalInputs(const arma::mat& parameters, arma::mat& output)
 {
@@ -45,7 +44,6 @@ inline void NormalizeColByMax(const arma::mat &input,
   }
 }
 
-} // namespace nn
 } // namespace mlpack
 
 #endif

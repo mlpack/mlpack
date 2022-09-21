@@ -16,11 +16,10 @@
 #include "space_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType, typename MatType>
 bool SpaceSplit<MetricType, MatType>::GetProjVector(
-    const bound::HRectBound<MetricType>& bound,
+    const HRectBound<MetricType>& bound,
     const MatType& data,
     const arma::Col<size_t>& /* points */,
     AxisParallelProjVector& projVector,
@@ -102,7 +101,6 @@ bool SpaceSplit<MetricType, MatType>::GetProjVector(
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

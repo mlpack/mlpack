@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_HOEFFDING_TREES_INFORMATION_GAIN_HPP
 
 namespace mlpack {
-namespace tree {
 
 class HoeffdingInformationGain
 {
@@ -90,7 +89,6 @@ class HoeffdingInformationGain
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

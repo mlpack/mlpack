@@ -17,7 +17,6 @@
 #include "add.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 AddType<MatType>::AddType() : 
@@ -120,7 +119,6 @@ void AddType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(weights));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

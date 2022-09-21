@@ -19,7 +19,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /*
  * Perform test to check whether mean and variance remain nearly same

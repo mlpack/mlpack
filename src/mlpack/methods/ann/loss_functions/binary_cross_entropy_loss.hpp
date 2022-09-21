@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The binary-cross-entropy performance function measures the Binary Cross
@@ -100,7 +99,6 @@ typedef BCELossType<arma::mat> CrossEntropyError;
 template<typename MatType = arma::mat>
 using CrossEntropyErrorType = BCELossType<MatType>;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

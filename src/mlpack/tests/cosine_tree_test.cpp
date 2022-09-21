@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Constructs a cosine tree with epsilon = 1. Checks if the root node is split

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This normalization class performs a sequence of normalization methods on
@@ -203,7 +202,6 @@ class CombinedNormalization
   { }
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

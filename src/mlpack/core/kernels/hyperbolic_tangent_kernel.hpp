@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * Hyperbolic tangent kernel.  For any two vectors @f$ x @f$, @f$ y @f$ and a
@@ -85,7 +84,6 @@ class HyperbolicTangentKernel
   double offset;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

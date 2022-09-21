@@ -44,9 +44,6 @@
 using namespace mlpack;
 using namespace std;
 using namespace arma;
-using namespace mlpack::adaboost;
-using namespace mlpack::tree;
-using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.

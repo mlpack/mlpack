@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/bounds.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType, size_t MaxNumSamples>
 bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::
@@ -48,7 +47,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   arma::Col<ElemType> distances(MaxNumSamples);
 
   // Get no more than max(MaxNumSamples, count) vantage point candidates
-  math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
+  ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
       vantagePointCandidates);
 
   ElemType bestSpread = 0;
@@ -58,7 +57,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   for (size_t i = 0; i < vantagePointCandidates.n_elem; ++i)
   {
     // Get no more than min(MaxNumSamples, count) random samples
-    math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
+    ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
 
     // Calculate the second moment of the distance to the vantage point
     // candidate using these random samples.
@@ -82,7 +81,6 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   assert(bestSpread > 0);
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  // MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_IMPL_HPP

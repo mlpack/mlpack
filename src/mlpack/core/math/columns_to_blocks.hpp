@@ -16,12 +16,11 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math {
 
 /**
  * Transform the columns of the given matrix into a block format.  This could be
- * useful with the mlpack::nn::MaximalInputs() function, if your training
- * samples are images.  Roughly speaking, given a matrix
+ * useful with the MaximalInputs() function, if your training samples are
+ * images.  Roughly speaking, given a matrix
  *
  * [[A]
  *  [B]
@@ -48,7 +47,7 @@ namespace math {
  * @code
  * // We assume we have a sparse autoencoder 'encoder'.
  * arma::mat maximalInput; // Store the features learned by sparse autoencoder
- * mlpack::nn::MaximalInputs(encoder.Parameters(), maximalInput);
+ * MaximalInputs(encoder.Parameters(), maximalInput);
  *
  * arma::mat outputs;
  * const bool scale = true;
@@ -221,7 +220,6 @@ class ColumnsToBlocks
   size_t cols;
 };
 
-} // namespace math
 } // namespace mlpack
 
 // Include implementation.

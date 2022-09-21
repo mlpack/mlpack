@@ -15,7 +15,6 @@
 #include <mlpack/core/cv/metrics/facilities.hpp>
 
 namespace mlpack {
-namespace cv {
 
 template<typename DataType, typename Metric>
 double SilhouetteScore::Overall(const DataType& X,
@@ -105,7 +104,6 @@ inline double SilhouetteScore::MeanDistanceFromCluster(
   }
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

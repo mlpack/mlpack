@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_IMPL_HPP
 
 namespace mlpack {
-namespace tree {
 
 // Overload used for classification.
 template<typename FitnessFunction>
@@ -482,7 +481,6 @@ size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     return 1; // Go right.
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

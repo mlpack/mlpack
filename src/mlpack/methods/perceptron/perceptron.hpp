@@ -18,7 +18,6 @@
 #include "learning_policies/learning_policies.hpp"
 
 namespace mlpack {
-namespace perceptron {
 
 /**
  * This class implements a simple perceptron (i.e., a single layer neural
@@ -27,7 +26,7 @@ namespace perceptron {
  *
  * @tparam LearnPolicy Options of SimpleWeightUpdate and GradientDescent.
  * @tparam WeightInitializationPolicy Option of ZeroInitialization and
- *      RandomInitialization.
+ *      RandomPerceptronInitialization.
  */
 template<typename LearnPolicy = SimpleWeightUpdate,
          typename WeightInitializationPolicy = ZeroInitialization,
@@ -178,7 +177,6 @@ class Perceptron
   arma::vec biases;
 };
 
-} // namespace perceptron
 } // namespace mlpack
 
 #include "perceptron_impl.hpp"

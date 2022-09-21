@@ -16,7 +16,6 @@
 #include "inception_score.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
 
 template <typename ModelType>
 double InceptionScore(ModelType model,
@@ -53,7 +52,6 @@ double InceptionScore(ModelType model,
   return arma::mean(scores);
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

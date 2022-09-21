@@ -15,10 +15,8 @@
 
 #include "catch.hpp"
 
-using namespace mlpack::cv;
+using namespace mlpack;
 using namespace mlpack::data;
-using namespace mlpack::hpt;
-using namespace mlpack::regression;
 using namespace ens;
 
 /**

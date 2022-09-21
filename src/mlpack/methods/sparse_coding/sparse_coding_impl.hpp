@@ -17,7 +17,6 @@
 #include "sparse_coding.hpp"
 
 namespace mlpack {
-namespace sparse_coding {
 
 template<typename DictionaryInitializer>
 SparseCoding::SparseCoding(
@@ -71,7 +70,7 @@ inline void SparseCoding::Encode(const arma::mat& data,
       Log::Debug << "Optimization at point " << i << "." << std::endl;
 
     bool useCholesky = true;
-    regression::LARS lars(useCholesky, matGram, lambda1, lambda2);
+    LARS lars(useCholesky, matGram, lambda1, lambda2);
 
     // Create an alias of the code (using the same memory), and then LARS will
     // place the result directly into that; then we will not need to have an
@@ -126,7 +125,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   arma::mat matActiveZ;
   if (nInactiveAtoms > 0)
   {
-    math::RemoveRows(codes, inactiveAtoms, matActiveZ);
+    RemoveRows(codes, inactiveAtoms, matActiveZ);
   }
 
   if (nInactiveAtoms > 0)
@@ -243,9 +242,9 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
       if (inactiveAtoms[currentInactiveIndex] == i)
       {
         // This atom is inactive.  Reinitialize it randomly.
-        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)));
+        dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)) +
+                             data.col(RandInt(data.n_cols)));
 
         dictionary.col(i) /= arma::norm(dictionary.col(i), 2);
 
@@ -378,7 +377,6 @@ void SparseCoding::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(newtonTolerance));
 }
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 #endif

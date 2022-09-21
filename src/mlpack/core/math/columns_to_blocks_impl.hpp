@@ -15,7 +15,6 @@
 #include "columns_to_blocks.hpp"
 
 namespace mlpack {
-namespace math {
 
 inline ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
                                         const size_t cols,
@@ -99,7 +98,6 @@ inline void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
   }
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

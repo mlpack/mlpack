@@ -27,7 +27,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace regression {
 
 // beta is the estimator
 // yHat is the prediction from the current estimator
@@ -394,7 +393,6 @@ class LARS
   void CholeskyDelete(const size_t colToKill);
 };
 
-} // namespace regression
 } // namespace mlpack
 
 // Include implementation of serialize().

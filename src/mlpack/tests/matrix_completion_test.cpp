@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::matrix_completion;
 
 /**
  * A matrix completion test.

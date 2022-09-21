@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The max pooling rule for convolution neural networks. Take the maximum value
@@ -310,7 +309,6 @@ class MaxPoolingType : public Layer<MatType>
 // Standard MaxPooling layer.
 typedef MaxPoolingType<arma::mat> MaxPooling;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

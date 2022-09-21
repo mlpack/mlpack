@@ -19,8 +19,6 @@
 #include <mlpack/methods/amf/amf.hpp>
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::amf;
 using namespace mlpack::util;
 using namespace std;
 
@@ -73,14 +71,14 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@cf", "#cf");
 BINDING_SEE_ALSO("Alternating matrix factorization tutorial",
-        "@doc/tutorials/amf.md");
+    "@doc/tutorials/amf.md");
 BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
-        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
+    "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
 BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
-        "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
-        "factorization.pdf");
-BINDING_SEE_ALSO("mlpack::amf::AMF C++ class documentation",
-        "@src/mlpack/methods/amf/amf.hpp");
+    "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
+    "factorization.pdf");
+BINDING_SEE_ALSO("AMF C++ class documentation",
+    "@src/mlpack/methods/amf/amf.hpp");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");
@@ -168,29 +166,29 @@ void ApplyFactorization(util::Params& params,
   }
   else if (params.Has("initial_w"))
   {
-    // Merge GivenInitialization and RandomInitialization rules
+    // Merge GivenInitialization and RandomAMFInitialization rules
     // to initialize W with the given matrix, and H with random noise
     GivenInitialization ginit = GivenInitialization(initialW);
-    RandomInitialization rinit = RandomInitialization();
-    MergeInitialization<GivenInitialization, RandomInitialization> minit =
-        MergeInitialization<GivenInitialization, RandomInitialization>
+    RandomAMFInitialization rinit = RandomAMFInitialization();
+    MergeInitialization<GivenInitialization, RandomAMFInitialization> minit =
+        MergeInitialization<GivenInitialization, RandomAMFInitialization>
         (ginit, rinit);
     AMF<SimpleResidueTermination,
-        MergeInitialization<GivenInitialization, RandomInitialization>,
+        MergeInitialization<GivenInitialization, RandomAMFInitialization>,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }
   else if (params.Has("initial_h"))
   {
-    // Merge GivenInitialization and RandomInitialization rules
+    // Merge GivenInitialization and RandomAMFInitialization rules
     // to initialize H with the given matrix, and W with random noise
     GivenInitialization ginit = GivenInitialization(initialH, false);
-    RandomInitialization rinit = RandomInitialization();
-    MergeInitialization<RandomInitialization, GivenInitialization> minit =
-        MergeInitialization<RandomInitialization, GivenInitialization>
+    RandomAMFInitialization rinit = RandomAMFInitialization();
+    MergeInitialization<RandomAMFInitialization, GivenInitialization> minit =
+        MergeInitialization<RandomAMFInitialization, GivenInitialization>
         (rinit, ginit);
     AMF<SimpleResidueTermination,
-        MergeInitialization<RandomInitialization, GivenInitialization>,
+        MergeInitialization<RandomAMFInitialization, GivenInitialization>,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }
@@ -198,7 +196,7 @@ void ApplyFactorization(util::Params& params,
   {
     // Use random initialization
     AMF<SimpleResidueTermination,
-        RandomInitialization,
+        RandomAMFInitialization,
         UpdateRuleType> amf(srt);
     amf.Apply(V, r, W, H);
   }

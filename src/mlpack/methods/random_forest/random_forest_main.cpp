@@ -18,8 +18,6 @@
 #include <mlpack/methods/random_forest/random_forest.hpp>
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;
 
@@ -104,7 +102,7 @@ BINDING_SEE_ALSO("Random forest on Wikipedia",
         "https://en.wikipedia.org/wiki/Random_forest");
 BINDING_SEE_ALSO("Random forests (pdf)",
         "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf");
-BINDING_SEE_ALSO("mlpack::tree::RandomForest C++ class documentation",
+BINDING_SEE_ALSO("RandomForest C++ class documentation",
         "@src/mlpack/methods/random_forest/random_forest.cpp");
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");

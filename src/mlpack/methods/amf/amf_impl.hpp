@@ -12,7 +12,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 namespace mlpack {
-namespace amf {
 
 /**
  * Construct the AMF object.
@@ -75,5 +74,4 @@ Apply(const MatType& V,
   return residue;
 }
 
-} // namespace amf
 } // namespace mlpack

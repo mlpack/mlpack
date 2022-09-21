@@ -24,7 +24,6 @@
 #include "neighbor_search.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * NSWrapperBase is a base wrapper class for holding all NeighborSearch types
@@ -92,11 +91,11 @@ template<typename SortPolicy,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<metric::EuclideanDistance,
+             TreeType<EuclideanDistance,
                       NeighborSearchStat<SortPolicy>,
                       arma::mat>::template DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<metric::EuclideanDistance,
+             TreeType<EuclideanDistance,
                       NeighborSearchStat<SortPolicy>,
                       arma::mat>::template SingleTreeTraverser>
 class NSWrapper : public NSWrapperBase
@@ -166,7 +165,7 @@ class NSWrapper : public NSWrapperBase
  protected:
   // Convenience typedef for the neighbor search type held by this class.
   typedef NeighborSearch<SortPolicy,
-                         metric::EuclideanDistance,
+                         EuclideanDistance,
                          arma::mat,
                          TreeType,
                          DualTreeTraversalType,
@@ -186,11 +185,11 @@ template<typename SortPolicy,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<metric::EuclideanDistance,
+             TreeType<EuclideanDistance,
                       NeighborSearchStat<SortPolicy>,
                       arma::mat>::template DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<metric::EuclideanDistance,
+             TreeType<EuclideanDistance,
                       NeighborSearchStat<SortPolicy>,
                       arma::mat>::template SingleTreeTraverser>
 class LeafSizeNSWrapper :
@@ -261,13 +260,13 @@ template<typename SortPolicy>
 class SpillNSWrapper :
     public NSWrapper<
         SortPolicy,
-        tree::SPTree,
-        tree::SPTree<metric::EuclideanDistance,
-                     NeighborSearchStat<SortPolicy>,
-                     arma::mat>::template DefeatistDualTreeTraverser,
-        tree::SPTree<metric::EuclideanDistance,
-                     NeighborSearchStat<SortPolicy>,
-                     arma::mat>::template DefeatistSingleTreeTraverser>
+        SPTree,
+        SPTree<EuclideanDistance,
+               NeighborSearchStat<SortPolicy>,
+               arma::mat>::template DefeatistDualTreeTraverser,
+        SPTree<EuclideanDistance,
+               NeighborSearchStat<SortPolicy>,
+               arma::mat>::template DefeatistSingleTreeTraverser>
 {
  public:
   //! Construct the SpillNSWrapper.
@@ -275,13 +274,13 @@ class SpillNSWrapper :
                  const double epsilon) :
       NSWrapper<
           SortPolicy,
-          tree::SPTree,
-          tree::SPTree<metric::EuclideanDistance,
-                       NeighborSearchStat<SortPolicy>,
-                       arma::mat>::template DefeatistDualTreeTraverser,
-          tree::SPTree<metric::EuclideanDistance,
-                       NeighborSearchStat<SortPolicy>,
-                       arma::mat>::template DefeatistSingleTreeTraverser>(
+          SPTree,
+          SPTree<EuclideanDistance,
+                 NeighborSearchStat<SortPolicy>,
+                 arma::mat>::template DefeatistDualTreeTraverser,
+          SPTree<EuclideanDistance,
+                 NeighborSearchStat<SortPolicy>,
+                 arma::mat>::template DefeatistSingleTreeTraverser>(
           searchMode, epsilon)
   {
     // Nothing to do.
@@ -320,13 +319,13 @@ class SpillNSWrapper :
  protected:
   using NSWrapper<
       SortPolicy,
-      tree::SPTree,
-      tree::SPTree<metric::EuclideanDistance,
-                   NeighborSearchStat<SortPolicy>,
-                   arma::mat>::template DefeatistDualTreeTraverser,
-      tree::SPTree<metric::EuclideanDistance,
-                   NeighborSearchStat<SortPolicy>,
-                   arma::mat>::template DefeatistSingleTreeTraverser>::ns;
+      SPTree,
+      SPTree<EuclideanDistance,
+             NeighborSearchStat<SortPolicy>,
+             arma::mat>::template DefeatistDualTreeTraverser,
+      SPTree<EuclideanDistance,
+             NeighborSearchStat<SortPolicy>,
+             arma::mat>::template DefeatistSingleTreeTraverser>::ns;
 };
 
 /**
@@ -486,7 +485,6 @@ class NSModel
   std::string TreeName() const;
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

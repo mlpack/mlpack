@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Continuous Double Pole Cart Balancing task. This is an
@@ -363,7 +362,6 @@ class ContinuousDoublePoleCart
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

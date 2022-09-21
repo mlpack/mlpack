@@ -19,7 +19,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace pca {
 
 /**
  * Implementation of the exact SVD policy.
@@ -71,7 +70,6 @@ class ExactSVDPolicy
   }
 };
 
-} // namespace pca
 } // namespace mlpack
 
 #endif

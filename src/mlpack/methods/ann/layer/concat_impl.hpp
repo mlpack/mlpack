@@ -17,7 +17,6 @@
 #include "concat.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 ConcatType<MatType>::ConcatType(
@@ -337,7 +336,6 @@ void ConcatType<MatType>::serialize(
   ar(CEREAL_NVP(useAxis));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

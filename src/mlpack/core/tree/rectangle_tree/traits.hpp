@@ -15,7 +15,6 @@
 #include <mlpack/core/tree/tree_traits.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This is a specialization of the TreeType class to the RectangleTree tree
@@ -131,7 +130,6 @@ class TreeTraits<RectangleTree<MetricType,
   static const bool UniqueNumDescendants = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

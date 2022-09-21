@@ -17,7 +17,6 @@
 #include "poisson_nll_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 PoissonNLLLossType<MatType>::PoissonNLLLossType(
@@ -92,7 +91,6 @@ void PoissonNLLLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Multi Quadratic function, defined by
@@ -75,7 +74,6 @@ class MultiQuadFunction
   }
 }; // class MultiquadFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

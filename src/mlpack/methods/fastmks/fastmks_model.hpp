@@ -27,7 +27,6 @@
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 
 namespace mlpack {
-namespace fastmks {
 
 //! A utility struct to contain all the possible FastMKS models, for use by the
 //! mlpack_fastmks program.
@@ -139,19 +138,19 @@ class FastMKSModel
   int kernelType;
 
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::LinearKernel>* linear;
+  FastMKS<LinearKernel>* linear;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::PolynomialKernel>* polynomial;
+  FastMKS<PolynomialKernel>* polynomial;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::CosineDistance>* cosine;
+  FastMKS<CosineDistance>* cosine;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::GaussianKernel>* gaussian;
+  FastMKS<GaussianKernel>* gaussian;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::EpanechnikovKernel>* epan;
+  FastMKS<EpanechnikovKernel>* epan;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::TriangularKernel>* triangular;
+  FastMKS<TriangularKernel>* triangular;
   //! This will only be non-NULL if this is the type of kernel we are using.
-  FastMKS<kernel::HyperbolicTangentKernel>* hyptan;
+  FastMKS<HyperbolicTangentKernel>* hyptan;
 
   //! Build a query tree and execute the search.
   template<typename FastMKSType>
@@ -164,7 +163,6 @@ class FastMKSModel
               const double base);
 };
 
-} // namespace fastmks
 } // namespace mlpack
 
 #include "fastmks_model_impl.hpp"

@@ -21,8 +21,6 @@
 using namespace arma;
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::sparse_coding;
 using namespace mlpack::util;
 
 // Program Name.
@@ -85,15 +83,14 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@local_coordinate_coding", "#local_coordinate_coding");
 BINDING_SEE_ALSO("Sparse dictionary learning on Wikipedia",
-        "https://en.wikipedia.org/wiki/Sparse_dictionary_learning");
+    "https://en.wikipedia.org/wiki/Sparse_dictionary_learning");
 BINDING_SEE_ALSO("Efficient sparse coding algorithms (pdf)",
-        "http://papers.nips.cc/paper/2979-efficient-sparse-coding-"
-        "algorithms.pdf");
+    "http://papers.nips.cc/paper/2979-efficient-sparse-coding-algorithms.pdf");
 BINDING_SEE_ALSO("Regularization and variable selection via the elastic net",
-        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.124.4696&"
-        "rep=rep1&type=pdf");
-BINDING_SEE_ALSO("mlpack::sparse_coding::SparseCoding C++ class documentation",
-        "@src/mlpack/methods/sparse_coding/sparse_coding.hpp");
+    "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.124.4696&rep=rep1"
+    "&type=pdf");
+BINDING_SEE_ALSO("SparseCoding C++ class documentation",
+    "@src/mlpack/methods/sparse_coding/sparse_coding.hpp");
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

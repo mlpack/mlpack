@@ -20,7 +20,6 @@
 #include "alpha_dropout.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 AlphaDropoutType<MatType>::AlphaDropoutType(
@@ -135,7 +134,6 @@ void AlphaDropoutType<MatType>::serialize(
     mask.clear();
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

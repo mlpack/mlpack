@@ -18,8 +18,6 @@
 #include "test_function_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
-using namespace mlpack::distribution;
 
 /**
  * Creates dataset with 5 groups with all the points in same group have exactly
@@ -840,20 +838,20 @@ TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
   arma::rowvec randomResponses(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
-    randomNoise(0, i) = math::Random();
-    randomNoise(1, i) = math::Random(-1, 1);
-    randomNoise(2, i) = math::Random();
-    randomNoise(3, i) = math::RandInt(0, 2);
-    randomNoise(4, i) = math::RandInt(0, 5);
-    randomResponses[i] = math::Random(-10, 18);
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random(-1, 1);
+    randomNoise(2, i) = Random();
+    randomNoise(3, i) = RandInt(0, 2);
+    randomNoise(4, i) = RandInt(0, 5);
+    randomResponses[i] = Random(-10, 18);
   }
 
   // Generate weights.
   arma::rowvec weights(4000);
   for (size_t i = 0; i < 2000; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = 2000; i < 4000; ++i)
-    weights[i] = math::Random(0.0, 0.001);
+    weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
   arma::rowvec fullResponses = arma::join_rows(trainingResponses,
@@ -895,20 +893,20 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
   arma::rowvec randomResponses(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
-    randomNoise(0, i) = math::Random();
-    randomNoise(1, i) = math::Random(-1, 1);
-    randomNoise(2, i) = math::Random();
-    randomNoise(3, i) = math::RandInt(0, 2);
-    randomNoise(4, i) = math::RandInt(0, 5);
-    randomResponses[i] = math::Random(-10, 18);
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random(-1, 1);
+    randomNoise(2, i) = Random();
+    randomNoise(3, i) = RandInt(0, 2);
+    randomNoise(4, i) = RandInt(0, 5);
+    randomResponses[i] = Random(-10, 18);
   }
 
   // Generate weights.
   arma::rowvec weights(4000);
   for (size_t i = 0; i < 2000; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = 2000; i < 4000; ++i)
-    weights[i] = math::Random(0.0, 0.001);
+    weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
   arma::rowvec fullResponses = arma::join_rows(trainingResponses,
@@ -1024,7 +1022,7 @@ TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
   arma::mat noise(trainData.n_rows, 100, arma::fill::randu);
   arma::rowvec noiseResponses(100);
   for (size_t i = 0; i < noiseResponses.n_elem; ++i)
-    noiseResponses[i] = 15 + math::Random(0, 10); // Random response.
+    noiseResponses[i] = 15 + Random(0, 10); // Random response.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(trainData, noise);
@@ -1033,9 +1031,9 @@ TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
   // Now set weights.
   arma::rowvec weights(trainData.n_cols + 100);
   for (size_t i = 0; i < trainData.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = trainData.n_cols; i < trainData.n_cols + 100; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Now build the decision tree.
   DecisionTreeRegressor<> d(data, fullResponses, weights);
@@ -1069,7 +1067,7 @@ TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
   arma::mat noise(trainData.n_rows, 100, arma::fill::randu);
   arma::rowvec noiseResponses(100);
   for (size_t i = 0; i < noiseResponses.n_elem; ++i)
-    noiseResponses[i] = 15 + math::Random(0, 10); // Random response.
+    noiseResponses[i] = 15 + Random(0, 10); // Random response.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(trainData, noise);
@@ -1078,9 +1076,9 @@ TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
   // Now set weights.
   arma::rowvec weights(trainData.n_cols + 100);
   for (size_t i = 0; i < trainData.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = trainData.n_cols; i < trainData.n_cols + 100; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Now build the decision tree using MADGain.
   DecisionTreeRegressor<MADGain> d(data, fullResponses, weights);

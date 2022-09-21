@@ -18,7 +18,6 @@
 #include "logistic_regression.hpp"
 
 namespace mlpack {
-namespace regression {
 
 template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
@@ -177,7 +176,6 @@ void LogisticRegression<MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(lambda));
 }
 
-} // namespace regression
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP

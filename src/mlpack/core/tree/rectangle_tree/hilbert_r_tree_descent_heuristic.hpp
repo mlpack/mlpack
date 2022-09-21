@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This class chooses the best child of a node in a Hilbert R tree when
@@ -50,7 +49,6 @@ class HilbertRTreeDescentHeuristic
                                   const TreeType* insertedNode);
 };
 
-} //  namespace tree
 } //  namespace mlpack
 
 #include "hilbert_r_tree_descent_heuristic_impl.hpp"

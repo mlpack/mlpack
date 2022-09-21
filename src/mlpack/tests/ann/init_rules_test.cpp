@@ -15,7 +15,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Test the RandomInitialization class with a constant value.

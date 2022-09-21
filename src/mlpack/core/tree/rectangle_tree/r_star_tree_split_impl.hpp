@@ -18,7 +18,6 @@
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * Reinsert any points into the tree, if needed.  This returns the number of
@@ -85,7 +84,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   bestAxis = 0;
   bestIndex = 0;
@@ -274,7 +273,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   // Reinsertion isn't done for non-leaf nodes; the paper doesn't seem to make
   // it clear how to reinsert an entire node without reinserting each of the
@@ -486,7 +485,6 @@ void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

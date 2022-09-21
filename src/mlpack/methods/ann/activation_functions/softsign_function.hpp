@@ -28,7 +28,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The softsign function, defined by
@@ -128,7 +127,6 @@ class SoftsignFunction
   }
 }; // class SoftsignFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -236,7 +236,7 @@ the `RangeSearch` class are given below.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::range;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat data;
@@ -248,7 +248,7 @@ std::vector<std::vector<size_t> > resultingNeighbors;
 std::vector<std::vector<double> > resultingDistances;
 
 // The range we will use.
-math::Range r(0.0, 2.0); // [0.0, 2.0].
+Range r(0.0, 2.0); // [0.0, 2.0].
 
 a.Search(r, resultingNeighbors, resultingDistances);
 ```
@@ -261,7 +261,7 @@ The output of the search is stored in `resultingNeighbors` and
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::range;
+using namespace mlpack;
 
 // Our dataset matrices, which are column-major.
 extern arma::mat queryData, referenceData;
@@ -273,7 +273,7 @@ std::vector<std::vector<size_t> > resultingNeighbors;
 std::vector<std::vector<double> > resultingDistances;
 
 // The range we will use.
-math::Range r(3.0, 4.0); // [3.0, 4.0].
+Range r(3.0, 4.0); // [3.0, 4.0].
 
 a.Search(queryData, r, resultingNeighbors, resultingDistances);
 ```
@@ -285,7 +285,7 @@ This example uses the `O(n^2)` naive search (not the tree-based search).
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::range;
+using namespace mlpack;
 
 // Our dataset matrix, which is column-major.
 extern arma::mat dataset;
@@ -298,7 +298,7 @@ std::vector<std::vector<size_t> > resultingNeighbors;
 std::vector<std::vector<double> > resultingDistances;
 
 // The range we will use.  The upper bound is DBL_MAX.
-math::Range r(5.0, DBL_MAX); // [5.0, inf).
+Range r(5.0, DBL_MAX); // [5.0, inf).
 
 a.Search(r, resultingNeighbors, resultingDistances);
 ```
@@ -311,11 +311,11 @@ Similar to the [`NeighborSearch` class](neighbor_search.md), the `RangeSearch`
 class is very extensible, having the following template arguments:
 
 ```c++
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::KDTree>
+                  typename TreeMatType> class TreeType = KDTree>
 class RangeSearch;
 ```
 
@@ -325,8 +325,8 @@ arbitrary range searching object can be constructed.
 ### `MetricType` policy class
 
 The `MetricType` policy class allows the range search to take place in any
-arbitrary metric space.  The `mlpack::metric::LMetric` class is a good example
-implementation.  A `MetricType` class must provide the following functions:
+arbitrary metric space.  The `LMetric` class is a good example implementation.
+A `MetricType` class must provide the following functions:
 
 ```c++
 // Empty constructor is required.
@@ -339,9 +339,9 @@ double Evaluate(const VecType& a, const VecType& b);
 
 Internally, the `RangeSearch` class keeps an instantiated `MetricType` class
 (which can be given in the constructor).   This is useful for a metric like the
-Mahalanobis distance (`mlpack::metric::MahalanobisDistance`), which must store
-state (the covariance matrix).  Therefore, you can write a non-static
-`MetricType` class and use it seamlessly with `RangeSearch`.
+Mahalanobis distance (`MahalanobisDistance`), which must store state (the
+covariance matrix).  Therefore, you can write a non-static `MetricType` class
+and use it seamlessly with `RangeSearch`.
 
 See also the [documentation for the `MetricType`
 policy](../developer/metrics.md).
@@ -358,18 +358,13 @@ The `RangeSearch` class also allows a custom tree to be used.  The `TreeType`
 policy is also used elsewhere in mlpack and is documented more thoroughly
 [here](../developer/trees.md).
 
-Typical choices might include `mlpack::tree::KDTree` (the default),
-`mlpack::tree::BallTree`, `mlpack::tree::RTree`, `mlpack::tree::RStarTree`, or
-`mlpack::tree::StandardCoverTree`.  Below is an example that uses the
+Typical choices might include `KDTree` (the default), `BallTree`, `RTree`,
+`RStarTree`, or `StandardCoverTree`.  Below is an example that uses the
 `RangeSearch` class with an R-tree:
 
 ```c++
 // Construct a RangeSearch object with ball bounds.
-RangeSearch<
-    metric::EuclideanDistance,
-    arma::mat,
-    tree::RTree
-> rangeSearch(dataset);
+RangeSearch<EuclideanDistance, arma::mat, RTree> rangeSearch(dataset);
 ```
 
 For further information on trees, including how to write your own tree for use

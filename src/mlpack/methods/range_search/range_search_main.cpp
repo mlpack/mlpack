@@ -23,10 +23,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::range;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
@@ -77,11 +73,11 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("Range search tutorial", "@doc/tutorials/range_search.md");
 BINDING_SEE_ALSO("Range searching on Wikipedia",
-        "https://en.wikipedia.org/wiki/Range_searching");
+    "https://en.wikipedia.org/wiki/Range_searching");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
-        "http://proceedings.mlr.press/v28/curtin13.pdf");
-BINDING_SEE_ALSO("mlpack::range::RangeSearch C++ class documentation",
-        "@src/mlpack/methods/range_search/range_search.hpp");
+    "http://proceedings.mlr.press/v28/curtin13.pdf");
+BINDING_SEE_ALSO("RangeSearch C++ class documentation",
+    "@src/mlpack/methods/range_search/range_search.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -242,7 +238,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const double max = params.Has("max") ? params.Get<double>("max") :
         DBL_MAX;
 
-    math::Range r(min, max);
+    Range r(min, max);
 
     arma::mat queryData;
     if (params.Has("query"))

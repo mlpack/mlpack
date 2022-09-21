@@ -115,7 +115,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMLabelsRepresentationTest",
   SetInputParam("test", testData);
 
   // The first solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the output.
@@ -135,7 +135,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMLabelsRepresentationTest",
   SetInputParam("test", std::move(testData));
 
   // The second solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // get the output
@@ -470,7 +470,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffMaxIterationsTest",
   SetInputParam("max_iterations", int(1));
 
   // First solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -486,7 +486,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffMaxIterationsTest",
   SetInputParam("max_iterations", int(100));
 
   // Second solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -516,7 +516,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffLambdaTest",
   SetInputParam("lambda", double(0.001));
 
   // First solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -532,7 +532,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffLambdaTest",
   SetInputParam("lambda", double(1000));
 
   // Second solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -562,7 +562,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffDeltaTest",
   SetInputParam("delta", double(1.0));
 
   // First solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -578,7 +578,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffDeltaTest",
   SetInputParam("delta", double(1000));
 
   // Second solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -607,7 +607,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTest",
   SetInputParam("labels", trainLabels);
 
   // First solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -623,7 +623,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTest",
   SetInputParam("no_intercept", bool(true));
 
   // Second solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -658,7 +658,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -679,7 +679,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -739,7 +739,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -760,7 +760,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -796,7 +796,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -818,7 +818,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -854,7 +854,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -876,7 +876,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.
@@ -906,7 +906,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffOptimizerTest",
   SetInputParam("optimizer", std::string("lbfgs"));
 
   // First solution.
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after first training.
@@ -926,7 +926,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffOptimizerTest",
   omp_set_num_threads(1);
   #endif
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Get the parameters of the output model obtained after second training.

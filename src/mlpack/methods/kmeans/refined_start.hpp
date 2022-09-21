@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * A refined approach for choosing initial points for k-means clustering.  This
@@ -104,7 +103,6 @@ class RefinedStart
   double percentage;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

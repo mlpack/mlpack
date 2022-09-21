@@ -13,7 +13,6 @@
 #define MLPACK_CORE_CV_METRICS_ACCURACY_IMPL_HPP
 
 namespace mlpack {
-namespace cv {
 
 template<typename MLAlgorithm, typename DataType>
 double Accuracy::Evaluate(MLAlgorithm& model,
@@ -29,7 +28,6 @@ double Accuracy::Evaluate(MLAlgorithm& model,
   return (double) amountOfCorrectPredictions / labels.n_elem;
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

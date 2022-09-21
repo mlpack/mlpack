@@ -3,7 +3,8 @@
  * @author Ryan Curtin
  * @author Conrad Sanderson
  *
- * ColumnCovariance(X) is same as cov(trans(X)) but without the cost of computing trans(X)
+ * ColumnCovariance(X) is same as cov(trans(X)) but without the cost of
+ * computing trans(X).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,7 +17,6 @@
 #include "ccov.hpp"
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 template<typename eT>
 inline arma::Mat<eT> ColumnCovariance(const arma::Mat<eT>& x,
@@ -94,7 +94,6 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
   return out;
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif // MLPACK_CORE_MATH_CCOV_IMPL_HPP

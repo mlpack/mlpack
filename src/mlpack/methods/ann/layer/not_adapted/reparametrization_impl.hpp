@@ -17,7 +17,6 @@
 #include "reparametrization.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputType>
 ReparametrizationType<InputType, OutputType>::ReparametrizationType(
@@ -146,7 +145,6 @@ void ReparametrizationType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(beta));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

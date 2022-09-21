@@ -18,9 +18,7 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace ens;
-using namespace mlpack::rl;
 
 template<typename AgentType>
 bool testAgent(AgentType& agent,

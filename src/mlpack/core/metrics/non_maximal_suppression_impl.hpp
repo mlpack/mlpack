@@ -16,7 +16,6 @@
 #include "non_maximal_suppression.hpp"
 
 namespace mlpack {
-namespace metric {
 
 template<bool UseCoordinates>
 template<
@@ -133,6 +132,6 @@ void NMS<UseCoordinates>::serialize(
   // Nothing to do here.
 }
 
-} // namespace metric
 } // namespace mlpack
+
 #endif

@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_HPP
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * The rules class for the single-tree Pelleg-Moore kd-tree traversal for
@@ -101,7 +100,6 @@ class PellegMooreKMeansRules
   size_t distanceCalculations;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

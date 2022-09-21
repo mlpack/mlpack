@@ -12,7 +12,6 @@
 #include "random_basis.hpp"
 
 namespace mlpack {
-namespace math {
 
 inline void RandomBasis(arma::mat& basis, const size_t d)
 {
@@ -43,5 +42,4 @@ inline void RandomBasis(arma::mat& basis, const size_t d)
   }
 }
 
-} // namespace math
 } // namespace mlpack

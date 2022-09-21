@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_IMPL_HPP
 
 namespace mlpack {
-namespace svd {
 
 template<typename OptimizerType>
 BiasSVD<OptimizerType>::BiasSVD(const size_t iterations,
@@ -63,7 +62,6 @@ void BiasSVD<OptimizerType>::Apply(const arma::mat& data,
   q = parameters.row(rank).subvec(0, numUsers - 1).t();
 }
 
-} // namespace svd
 } // namespace mlpack
 
 #endif

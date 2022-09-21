@@ -15,7 +15,6 @@
 #include "sparse_autoencoder_function.hpp"
 
 namespace mlpack {
-namespace nn {
 
 inline SparseAutoencoderFunction::SparseAutoencoderFunction(
     const arma::mat& data,
@@ -213,7 +212,6 @@ inline void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   gradient.submat(l3, 0, l3, l2 - 1) = (arma::sum(delOut, 1) / data.n_cols).t();
 }
 
-} // namespace nn
 } // namespace mlpack
 
 #endif

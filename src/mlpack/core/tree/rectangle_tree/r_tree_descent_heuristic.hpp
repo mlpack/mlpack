@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * When descending a RectangleTree to insert a point, we need to have a way to
@@ -54,7 +53,6 @@ class RTreeDescentHeuristic
                                   const TreeType* insertedNode);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

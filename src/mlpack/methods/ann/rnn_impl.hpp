@@ -17,7 +17,6 @@
 #include "layer/recurrent_layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename OutputLayerType,
@@ -528,7 +527,7 @@ void RNN<
     MatType
 >::Shuffle()
 {
-  math::ShuffleData(predictors, responses, predictors, responses);
+  ShuffleData(predictors, responses, predictors, responses);
 }
 
 template<
@@ -614,7 +613,6 @@ void RNN<
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

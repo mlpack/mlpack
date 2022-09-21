@@ -14,29 +14,6 @@
 #include "kde_rules.hpp"
 
 namespace mlpack {
-namespace kde {
-
-//! Construct tree that rearranges the dataset.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
-}
-
-//! Construct tree that doesn't rearrange the dataset.
-template<typename TreeType, typename MatType>
-TreeType* BuildTree(
-    MatType&& dataset,
-    const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
-{
-  return new TreeType(std::forward<MatType>(dataset));
-}
 
 template<typename KernelType,
          typename MetricType,
@@ -390,7 +367,7 @@ void KDE<KernelType,
          SingleTreeTraversalType>::
 Evaluate(MatType querySet, arma::vec& estimations)
 {
-  if (mode == DUAL_TREE_MODE)
+  if (mode == KDE_DUAL_TREE_MODE)
   {
     std::vector<size_t> oldFromNewQueries;
     Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
@@ -406,7 +383,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
     }
     delete queryTree;
   }
-  else if (mode == SINGLE_TREE_MODE)
+  else if (mode == KDE_SINGLE_TREE_MODE)
   {
     // Get estimations vector ready.
     estimations.clear();
@@ -513,7 +490,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Check the mode is correct.
-  if (mode != DUAL_TREE_MODE)
+  if (mode != KDE_DUAL_TREE_MODE)
   {
     throw std::invalid_argument("cannot evaluate KDE model: cannot use "
                                 "a query tree when mode is different from "
@@ -521,7 +498,7 @@ Evaluate(Tree* queryTree,
   }
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
-  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)
   {
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
@@ -585,7 +562,7 @@ Evaluate(arma::vec& estimations)
   estimations.fill(arma::fill::zeros);
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
-  if (monteCarlo && std::is_same<KernelType, kernel::GaussianKernel>::value)
+  if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)
   {
     KDECleanRules<Tree> cleanRules;
     SingleTreeTraversalType<KDECleanRules<Tree>> cleanTraverser(cleanRules);
@@ -608,13 +585,13 @@ Evaluate(arma::vec& estimations)
                             monteCarlo,
                             true);
 
-  if (mode == DUAL_TREE_MODE)
+  if (mode == KDE_DUAL_TREE_MODE)
   {
     // Create traverser.
     DualTreeTraversalType<RuleType> traverser(rules);
     traverser.Traverse(*referenceTree, *referenceTree);
   }
-  else if (mode == SINGLE_TREE_MODE)
+  else if (mode == KDE_SINGLE_TREE_MODE)
   {
     SingleTreeTraversalType<RuleType> traverser(rules);
     for (size_t i = 0; i < referenceTree->Dataset().n_cols; ++i)
@@ -834,7 +811,7 @@ void KDE<KernelType,
 RearrangeEstimations(const std::vector<size_t>& oldFromNew,
                      arma::vec& estimations)
 {
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  if (TreeTraits<Tree>::RearrangesDataset)
   {
     const size_t nQueries = oldFromNew.size();
     arma::vec rearrangedEstimations(nQueries);
@@ -847,5 +824,4 @@ RearrangeEstimations(const std::vector<size_t>& oldFromNew,
   }
 }
 
-} // namespace kde
 } // namespace mlpack

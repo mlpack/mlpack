@@ -18,10 +18,7 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace ens;
-using namespace mlpack::rl;
-
 
 // Test checking that reward clipping works with vanilla update.
 TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")
@@ -31,7 +28,7 @@ TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")
 
   RewardClipping<Pendulum>::State state = rewardClipping.InitialSample();
   RewardClipping<Pendulum>::Action action;
-  action.action[0] = mlpack::math::Random(-1.0, 1.0);
+  action.action[0] = Random(-1.0, 1.0);
   double reward = rewardClipping.Sample(state, action);
 
   REQUIRE(reward <= 2.0);

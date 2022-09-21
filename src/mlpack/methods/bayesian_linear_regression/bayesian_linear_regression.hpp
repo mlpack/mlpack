@@ -18,7 +18,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace regression {
 
 /**
  * A Bayesian approach to the maximum likelihood estimation of the parameters
@@ -306,7 +305,7 @@ class BayesianLinearRegression
   void CenterScaleDataPred(const arma::mat& data,
                            arma::mat& dataProc) const;
 };
-} // namespace regression
+
 } // namespace mlpack
 
 // Include implementation of serialize.

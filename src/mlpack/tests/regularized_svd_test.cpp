@@ -15,7 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::svd;
 using namespace ens;
 
 TEST_CASE("RegularizedSVDFunctionRandomEvaluate", "[RegularizedSVDTest]")

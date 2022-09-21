@@ -16,7 +16,6 @@
 #include "margin_ranking_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
 MarginRankingLossType<MatType>::MarginRankingLossType(
@@ -80,7 +79,6 @@ void MarginRankingLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

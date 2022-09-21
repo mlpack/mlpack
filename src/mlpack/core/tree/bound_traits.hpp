@@ -13,7 +13,6 @@
 #define MLPACK_CORE_TREE_BOUND_TRAITS_HPP
 
 namespace mlpack {
-namespace bound {
 
 /**
  * A class to obtain compile-time traits about BoundType classes.  If you are
@@ -31,7 +30,6 @@ struct BoundTraits
   static const bool HasTightBounds = false;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #endif

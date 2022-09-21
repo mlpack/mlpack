@@ -18,7 +18,6 @@
 #include "dual_tree_traverser.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -352,7 +351,6 @@ DualTreeTraverser<RuleType>::Traverse(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP

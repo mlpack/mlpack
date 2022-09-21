@@ -17,7 +17,6 @@
 #include "diagonal_gmm.hpp"
 
 namespace mlpack {
-namespace gmm {
 
 //! Fit the DiagonalGMM to the given observations.
 template<typename FittingType>
@@ -44,7 +43,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
 
     // If each trial must start from the same initial location,
     // we must save it.
-    std::vector<distribution::DiagonalGaussianDistribution> distsOrig;
+    std::vector<DiagonalGaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -62,8 +61,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::DiagonalGaussianDistribution> distsTrial(
-        gaussians, distribution::DiagonalGaussianDistribution(dimensionality));
+    std::vector<DiagonalGaussianDistribution> distsTrial(
+        gaussians, DiagonalGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -114,7 +113,7 @@ inline DiagonalGMM::DiagonalGMM(
     gaussians(gaussians),
     dimensionality(dimensionality),
     dists(gaussians,
-    distribution::DiagonalGaussianDistribution(dimensionality)),
+    DiagonalGaussianDistribution(dimensionality)),
     weights(gaussians)
 {
   // Set equal weights. Technically this model is still valid, but only barely.
@@ -148,7 +147,7 @@ inline double DiagonalGMM::LogProbability(const arma::vec& observation) const
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; ++i)
   {
-    sum = math::LogAdd(sum, log(weights[i]) +
+    sum = LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
   }
   return sum;
@@ -182,7 +181,7 @@ inline void DiagonalGMM::LogProbability(const arma::mat& observation,
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);
-  math::LogSumExp(logProb, logProbs);
+  LogSumExp(logProb, logProbs);
 }
 
 /**
@@ -237,7 +236,7 @@ inline double DiagonalGMM::Probability(const arma::vec& observation,
 inline arma::vec DiagonalGMM::Random() const
 {
   // Determine which Gaussian it will be coming from.
-  double gaussRand = math::Random();
+  double gaussRand = mlpack::Random();
   size_t gaussian = 0;
 
   double sumProb = 0;
@@ -288,7 +287,7 @@ inline void DiagonalGMM::Classify(const arma::mat& observations,
  */
 inline double DiagonalGMM::LogLikelihood(
     const arma::mat& observations,
-    const std::vector<distribution::DiagonalGaussianDistribution>& dists,
+    const std::vector<DiagonalGaussianDistribution>& dists,
     const arma::vec& weights) const
 {
   double logLikelihood = 0;
@@ -343,7 +342,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::DiagonalGaussianDistribution> distsOrig;
+    std::vector<DiagonalGaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -362,8 +361,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::DiagonalGaussianDistribution> distsTrial(
-        gaussians, distribution::DiagonalGaussianDistribution(dimensionality));
+    std::vector<DiagonalGaussianDistribution> distsTrial( gaussians,
+        DiagonalGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -411,7 +410,6 @@ void DiagonalGMM::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(weights));
 }
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_GMM_DIAGONAL_GMM_IMPL_HPP

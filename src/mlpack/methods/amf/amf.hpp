@@ -25,7 +25,6 @@
 #include "termination_policies/termination_policies.hpp"
 
 namespace mlpack {
-namespace amf /** Alternating Matrix Factorization **/ {
 
 /**
  * This class implements AMF (alternating matrix factorization) on the given
@@ -130,9 +129,9 @@ class AMF
   UpdateRuleType update;
 }; // class AMF
 
-typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomAcolInitialization<>,
-                 amf::NMFALSUpdate> NMFALSFactorizer;
+typedef AMF<SimpleResidueTermination,
+            RandomAcolInitialization<>,
+            NMFALSUpdate> NMFALSFactorizer;
 
 //! Convenience typedefs.
 
@@ -144,10 +143,10 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDBatchLearning
  */
 template<typename MatType = arma::mat>
-using SVDBatchFactorizer = amf::AMF<
-    amf::SimpleResidueTermination,
-    amf::RandomAcolInitialization<>,
-    amf::SVDBatchLearning>;
+using SVDBatchFactorizer = AMF<
+    SimpleResidueTermination,
+    RandomAcolInitialization<>,
+    SVDBatchLearning>;
 
 /**
  * SVDIncompleteIncrementalFactorizer factorizes given matrix V into two
@@ -158,10 +157,10 @@ using SVDBatchFactorizer = amf::AMF<
  * @see SVDIncompleteIncrementalLearning
  */
 template<class MatType = arma::mat>
-using SVDIncompleteIncrementalFactorizer = amf::AMF<
-    amf::SimpleResidueTermination,
-    amf::RandomAcolInitialization<>,
-    amf::SVDIncompleteIncrementalLearning>;
+using SVDIncompleteIncrementalFactorizer = AMF<
+    SimpleResidueTermination,
+    RandomAcolInitialization<>,
+    SVDIncompleteIncrementalLearning>;
 /**
  * SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices
  * W and H by complete incremental gradient descent. SVD complete incremental
@@ -171,11 +170,11 @@ using SVDIncompleteIncrementalFactorizer = amf::AMF<
  * @see SVDCompleteIncrementalLearning
  */
 template<class MatType = arma::mat>
-using SVDCompleteIncrementalFactorizer = amf::AMF<
-    amf::SimpleResidueTermination,
-    amf::RandomAcolInitialization<>,
-    amf::SVDCompleteIncrementalLearning<MatType>>;
-} // namespace amf
+using SVDCompleteIncrementalFactorizer = AMF<
+    SimpleResidueTermination,
+    RandomAcolInitialization<>,
+    SVDCompleteIncrementalLearning<MatType>>;
+
 } // namespace mlpack
 
 // Include implementation.

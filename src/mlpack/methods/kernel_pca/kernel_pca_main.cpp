@@ -22,8 +22,6 @@
 #include "kernel_pca.hpp"
 
 using namespace mlpack;
-using namespace mlpack::kpca;
-using namespace mlpack::kernel;
 using namespace mlpack::util;
 using namespace std;
 using namespace arma;
@@ -97,11 +95,11 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Kernel principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis");
+    "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis");
 BINDING_SEE_ALSO("Kernel Principal Component Analysis (pdf)",
-        "http://pca.narod.ru/scholkopf_kernel.pdf");
-BINDING_SEE_ALSO("mlpack::kpca::KernelPCA class documentation",
-        "@src/mlpack/methods/kernel_pca/kernel_pca.hpp");
+    "http://pca.narod.ru/scholkopf_kernel.pdf");
+BINDING_SEE_ALSO("KernelPCA class documentation",
+    "@src/mlpack/methods/kernel_pca/kernel_pca.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");

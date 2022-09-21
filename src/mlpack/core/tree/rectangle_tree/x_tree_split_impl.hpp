@@ -17,7 +17,6 @@
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * We call GetPointSeeds to get the two points which will be the initial points
@@ -125,7 +124,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   // The X tree paper doesn't explain how to handle the split history when
   // reinserting nodes and reinserting nodes seems to hurt the performance, so
@@ -718,7 +717,6 @@ void XTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
   destTree->children[destTree->NumChildren()++] = srcNode;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

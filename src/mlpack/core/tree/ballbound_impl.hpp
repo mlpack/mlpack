@@ -19,7 +19,6 @@
 #include <string>
 
 namespace mlpack {
-namespace bound {
 
 //! Empty Constructor.
 template<typename MetricType, typename VecType>
@@ -126,13 +125,13 @@ BallBound<MetricType, VecType>::~BallBound()
 
 //! Get the range in a certain dimension.
 template<typename MetricType, typename VecType>
-math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
+RangeType<typename BallBound<MetricType, VecType>::ElemType>
 BallBound<MetricType, VecType>::operator[](const size_t i) const
 {
   if (radius < 0)
-    return math::Range();
+    return Range();
   else
-    return math::Range(center[i] - radius, center[i] + radius);
+    return Range(center[i] - radius, center[i] + radius);
 }
 
 /**
@@ -160,7 +159,7 @@ BallBound<MetricType, VecType>::MinDistance(
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
   else
-    return math::ClampNonNegative(metric->Evaluate(point, center) - radius);
+    return ClampNonNegative(metric->Evaluate(point, center) - radius);
 }
 
 /**
@@ -177,7 +176,7 @@ BallBound<MetricType, VecType>::MinDistance(const BallBound& other)
   {
     const ElemType delta = metric->Evaluate(center, other.center) - radius -
         other.radius;
-    return math::ClampNonNegative(delta);
+    return ClampNonNegative(delta);
   }
 }
 
@@ -218,35 +217,35 @@ BallBound<MetricType, VecType>::MaxDistance(const BallBound& other)
  */
 template<typename MetricType, typename VecType>
 template<typename OtherVecType>
-math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
+RangeType<typename BallBound<MetricType, VecType>::ElemType>
 BallBound<MetricType, VecType>::RangeDistance(
     const OtherVecType& point,
     typename std::enable_if_t<IsVector<OtherVecType>::value>* /* junk */) const
 {
   if (radius < 0)
-    return math::Range(std::numeric_limits<ElemType>::max(),
+    return Range(std::numeric_limits<ElemType>::max(),
                        std::numeric_limits<ElemType>::max());
   else
   {
     const ElemType dist = metric->Evaluate(center, point);
-    return math::Range(math::ClampNonNegative(dist - radius),
+    return Range(ClampNonNegative(dist - radius),
                                               dist + radius);
   }
 }
 
 template<typename MetricType, typename VecType>
-math::RangeType<typename BallBound<MetricType, VecType>::ElemType>
+RangeType<typename BallBound<MetricType, VecType>::ElemType>
 BallBound<MetricType, VecType>::RangeDistance(
     const BallBound& other) const
 {
   if (radius < 0)
-    return math::Range(std::numeric_limits<ElemType>::max(),
+    return Range(std::numeric_limits<ElemType>::max(),
                        std::numeric_limits<ElemType>::max());
   else
   {
     const ElemType dist = metric->Evaluate(center, other.center);
     const ElemType sumradius = radius + other.radius;
-    return math::Range(math::ClampNonNegative(dist - sumradius),
+    return Range(ClampNonNegative(dist - sumradius),
                                               dist + sumradius);
   }
 }
@@ -325,7 +324,6 @@ void BallBound<MetricType, VecType>::serialize(
   ar(CEREAL_NVP(ownsMetric));
 }
 
-} // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

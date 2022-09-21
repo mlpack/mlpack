@@ -19,7 +19,6 @@
 #include "rectangle_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -101,7 +100,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

@@ -20,7 +20,6 @@
 #include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of the Dueling Deep Q-Learning network.
@@ -44,12 +43,12 @@ namespace rl {
  * @tparam ValueNetworkType The type of network used for value network.
  */
 template <
-  typename OutputLayerType = ann::EmptyLoss,
-  typename InitType = ann::GaussianInitialization,
-  typename CompleteNetworkType = ann::FFN<OutputLayerType, InitType>,
-  typename FeatureNetworkType = ann::MultiLayer<arma::mat>,
-  typename AdvantageNetworkType = ann::MultiLayer<arma::mat>,
-  typename ValueNetworkType = ann::MultiLayer<arma::mat>
+  typename OutputLayerType = EmptyLoss,
+  typename InitType = GaussianInitialization,
+  typename CompleteNetworkType = FFN<OutputLayerType, InitType>,
+  typename FeatureNetworkType = MultiLayer<arma::mat>,
+  typename AdvantageNetworkType = MultiLayer<arma::mat>,
+  typename ValueNetworkType = MultiLayer<arma::mat>
 >
 class DuelingDQN
 {
@@ -59,10 +58,10 @@ class DuelingDQN
   {
     // TODO: this really ought to use a DAG network, but that's not implemented
     // yet.
-    featureNetwork = new ann::MultiLayer<arma::mat>();
-    valueNetwork = new ann::MultiLayer<arma::mat>();
-    advantageNetwork = new ann::MultiLayer<arma::mat>();
-    concat = new ann::Concat();
+    featureNetwork = new MultiLayer<arma::mat>();
+    valueNetwork = new MultiLayer<arma::mat>();
+    advantageNetwork = new MultiLayer<arma::mat>();
+    concat = new Concat();
 
     concat->Add(valueNetwork);
     concat->Add(advantageNetwork);
@@ -89,38 +88,38 @@ class DuelingDQN
       completeNetwork(outputLayer, init),
       isNoisy(isNoisy)
   {
-    featureNetwork = new ann::MultiLayer<arma::mat>();
-    featureNetwork->Add(new ann::Linear(h1));
-    featureNetwork->Add(new ann::ReLU());
+    featureNetwork = new MultiLayer<arma::mat>();
+    featureNetwork->Add(new Linear(h1));
+    featureNetwork->Add(new ReLU());
 
-    valueNetwork = new ann::MultiLayer<arma::mat>();
-    advantageNetwork = new ann::MultiLayer<arma::mat>();
+    valueNetwork = new MultiLayer<arma::mat>();
+    advantageNetwork = new MultiLayer<arma::mat>();
 
     if (isNoisy)
     {
       noisyLayerIndex.push_back(valueNetwork->Network().size());
-      valueNetwork->Add(new ann::NoisyLinear(h2));
-      advantageNetwork->Add(new ann::NoisyLinear(h2));
+      valueNetwork->Add(new NoisyLinear(h2));
+      advantageNetwork->Add(new NoisyLinear(h2));
 
-      valueNetwork->Add(new ann::ReLU());
-      advantageNetwork->Add(new ann::ReLU());
+      valueNetwork->Add(new ReLU());
+      advantageNetwork->Add(new ReLU());
 
       noisyLayerIndex.push_back(valueNetwork->Network().size());
-      valueNetwork->Add(new ann::NoisyLinear(1));
-      advantageNetwork->Add(new ann::NoisyLinear(outputDim));
+      valueNetwork->Add(new NoisyLinear(1));
+      advantageNetwork->Add(new NoisyLinear(outputDim));
     }
     else
     {
-      valueNetwork->Add(new ann::Linear(h2));
-      valueNetwork->Add(new ann::ReLU());
-      valueNetwork->Add(new ann::Linear(1));
+      valueNetwork->Add(new Linear(h2));
+      valueNetwork->Add(new ReLU());
+      valueNetwork->Add(new Linear(1));
 
-      advantageNetwork->Add(new ann::Linear(h2));
-      advantageNetwork->Add(new ann::ReLU());
-      advantageNetwork->Add(new ann::Linear(outputDim));
+      advantageNetwork->Add(new Linear(h2));
+      advantageNetwork->Add(new ReLU());
+      advantageNetwork->Add(new Linear(outputDim));
     }
 
-    concat = new ann::Concat();
+    concat = new Concat();
     concat->Add(valueNetwork);
     concat->Add(advantageNetwork);
 
@@ -145,7 +144,7 @@ class DuelingDQN
       valueNetwork(valueNetwork),
       isNoisy(isNoisy)
   {
-    concat = new ann::Concat();
+    concat = new Concat();
     concat->Add(valueNetwork);
     concat->Add(advantageNetwork);
     completeNetwork.Add(featureNetwork);
@@ -237,9 +236,9 @@ class DuelingDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      dynamic_cast<ann::NoisyLinear*>(
+      dynamic_cast<NoisyLinear*>(
           (valueNetwork->Network()[noisyLayerIndex[i]]))->ResetNoise();
-      dynamic_cast<ann::NoisyLinear*>(
+      dynamic_cast<NoisyLinear*>(
           (advantageNetwork->Network()[noisyLayerIndex[i]]))->ResetNoise();
     }
   }
@@ -254,7 +253,7 @@ class DuelingDQN
   CompleteNetworkType completeNetwork;
 
   //! Locally-stored concat network.
-  ann::Concat* concat;
+  Concat* concat;
 
   //! Locally-stored feature network.
   FeatureNetworkType* featureNetwork;
@@ -275,10 +274,9 @@ class DuelingDQN
   arma::mat actionValues;
 
   //! Locally-stored loss function.
-  ann::MeanSquaredError lossFunction;
+  MeanSquaredError lossFunction;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

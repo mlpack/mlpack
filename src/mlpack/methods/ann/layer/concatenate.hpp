@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Concatenate module class. The Concatenate module
@@ -99,7 +98,6 @@ class ConcatenateType : public Layer<MatType>
 // Standard Concatenate layer.
 typedef ConcatenateType<arma::mat> Concatenate;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

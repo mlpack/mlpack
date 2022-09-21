@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 /**
  * Computes the inverse erf function using the rational approximation from
@@ -117,7 +116,6 @@ inline double Quantile(double p, double mu = 0.0, double sigma = 1.0)
   return mu + sigma * std::sqrt(2.0) * ErfInverse(2 * p - 1);
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

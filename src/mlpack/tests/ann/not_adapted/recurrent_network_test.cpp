@@ -23,9 +23,7 @@
 #include "../serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace ens;
-using namespace mlpack::math;
 
 /**
  * Train the specified networks on the Derek D. Monner's distracted sequence

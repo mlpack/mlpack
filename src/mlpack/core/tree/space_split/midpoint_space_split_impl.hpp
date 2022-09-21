@@ -17,7 +17,6 @@
 #include "space_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType, typename MatType>
 template<typename HyperplaneType>
@@ -39,7 +38,6 @@ bool MidpointSpaceSplit<MetricType, MatType>::SplitSpace(
   return true;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

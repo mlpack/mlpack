@@ -13,7 +13,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Definition and implementation of the Channel Shuffle Layer.
@@ -146,7 +145,6 @@ class ChannelShuffle
   OutputDataType outputParameter;
 }; // class ChannelShuffle
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

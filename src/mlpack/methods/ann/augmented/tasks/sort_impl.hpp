@@ -15,9 +15,6 @@
 #include "sort.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 inline SortTask::SortTask(const size_t maxLength,
                           const size_t bitLen,
@@ -58,7 +55,7 @@ inline void SortTask::Generate(arma::field<arma::mat>& input,
     if (!fixedLength)
     {
       // Generate random uniform length from [2..maxLength].
-      size = mlpack::math::RandInt(2, maxLength+1);
+      size = RandInt(2, maxLength+1);
     }
     input(i) = arma::randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
     arma::mat itemAns(bitLen, size);
@@ -117,9 +114,6 @@ inline void SortTask::Generate(arma::mat& input,
   }
 }
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -18,7 +18,6 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * A wrapper struct for holding a Train form.
@@ -347,7 +346,6 @@ class MetaInfoExtractor
   static const bool TakesNumClasses = Selects<TF4, TF5>::value;
 };
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

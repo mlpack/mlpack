@@ -19,7 +19,6 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::cli;
-using namespace mlpack::kernel;
 
 // If multiple binding types are used in the same test file, we may get the
 // wrong function map.  These functions are utilities to ensure that for these
@@ -272,7 +271,7 @@ TEST_CASE("GetParamModelTest", "[CLIOptionTest]")
 
   // Create value.
   string filename = "kernel.bin";
-  kernel::GaussianKernel gk(5.0);
+  GaussianKernel gk(5.0);
   data::Save("kernel.bin", "model", gk);
 
   // Create tuple.
@@ -338,7 +337,7 @@ TEST_CASE("GetRawParamModelTest", "[CLIOptionTest]")
 
   // Create value.
   string filename = "kernel.bin";
-  kernel::GaussianKernel gk(5.0);
+  GaussianKernel gk(5.0);
 
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);

@@ -18,7 +18,6 @@
 #include "pelleg_moore_kmeans_rules.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename TreeType>
 PellegMooreKMeansRules<MetricType, TreeType>::PellegMooreKMeansRules(
@@ -177,7 +176,6 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Rescore(
   return oldScore;
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

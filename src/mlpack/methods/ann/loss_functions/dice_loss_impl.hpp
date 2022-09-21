@@ -16,7 +16,6 @@
 #include "dice_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 DiceLossType<MatType>::DiceLossType(const double smooth) : smooth(smooth)
@@ -56,7 +55,6 @@ void DiceLossType<MatType>::serialize(
   ar(CEREAL_NVP(smooth));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

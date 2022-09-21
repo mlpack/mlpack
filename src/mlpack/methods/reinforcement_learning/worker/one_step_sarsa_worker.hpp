@@ -17,7 +17,6 @@
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * One step Sarsa worker.
@@ -419,7 +418,6 @@ class OneStepSarsaWorker
   ActionType action;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

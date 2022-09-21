@@ -16,7 +16,6 @@
 #include "mean_squared_logarithmic_error.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MeanSquaredLogarithmicErrorType<MatType>::MeanSquaredLogarithmicErrorType(
@@ -63,7 +62,6 @@ void MeanSquaredLogarithmicErrorType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -39,7 +39,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Implementation of the HardTanH activation function test. The function is

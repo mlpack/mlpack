@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The mean absolute percentage error performance function measures the
@@ -81,7 +80,6 @@ class MeanAbsolutePercentageErrorType
 // Default typedef for typical `arma::mat` usage.
 typedef MeanAbsolutePercentageErrorType<arma::mat> MeanAbsolutePercentageError;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

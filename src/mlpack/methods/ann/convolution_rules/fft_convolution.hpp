@@ -17,7 +17,6 @@
 #include "border_modes.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Computes the two-dimensional convolution through fft. This class allows
@@ -211,7 +210,6 @@ class FFTConvolution
   }
 };  // class FFTConvolution
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

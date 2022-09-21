@@ -33,7 +33,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 template<typename MatType = arma::mat>
 class DrusillaSelect
@@ -121,7 +120,6 @@ class DrusillaSelect
   size_t m;
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

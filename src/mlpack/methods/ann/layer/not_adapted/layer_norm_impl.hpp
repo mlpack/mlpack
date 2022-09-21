@@ -17,7 +17,6 @@
 #include "layer_norm.hpp"
 
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
 
 
 template<typename InputType, typename OutputType>
@@ -132,7 +131,6 @@ void LayerNormType<InputType, OutputType>::serialize(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

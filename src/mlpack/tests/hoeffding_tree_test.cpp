@@ -22,9 +22,7 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::data;
-using namespace mlpack::tree;
 
 TEST_CASE("GiniImpurityPerfectSimpleTest", "[HoeffdingTreeTest]")
 {
@@ -252,7 +250,7 @@ TEST_CASE("HoeffdingCategoricalSplitMajorityClassTest", "[HoeffdingTreeTest]")
 
   for (size_t i = 0; i < 500; ++i)
   {
-    split.Train(mlpack::math::RandInt(0, 10), 1);
+    split.Train(RandInt(0, 10), 1);
     REQUIRE(split.MajorityClass() == 1);
   }
 }
@@ -266,11 +264,11 @@ TEST_CASE("HoeffdingCategoricalSplitHarderMajorityClassTest",
   // Ten categories, three classes.
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
 
-  split.Train(mlpack::math::RandInt(0, 10), 1);
+  split.Train(RandInt(0, 10), 1);
   for (size_t i = 0; i < 250; ++i)
   {
-    split.Train(mlpack::math::RandInt(0, 10), 1);
-    split.Train(mlpack::math::RandInt(0, 10), 2);
+    split.Train(RandInt(0, 10), 1);
+    split.Train(RandInt(0, 10), 2);
     REQUIRE(split.MajorityClass() == 1);
   }
 }
@@ -373,9 +371,9 @@ TEST_CASE("HoeffdingTreeNoSplitTest", "[HoeffdingTreeTest]")
   {
     // Create the test point.
     arma::Col<size_t> testPoint(3);
-    testPoint(0) = mlpack::math::RandInt(0, 4);
-    testPoint(1) = mlpack::math::RandInt(0, 3);
-    testPoint(2) = mlpack::math::RandInt(0, 2);
+    testPoint(0) = RandInt(0, 4);
+    testPoint(1) = RandInt(0, 3);
+    testPoint(2) = RandInt(0, 2);
     split.Train(testPoint, 0); // Always label 0.
 
     REQUIRE(split.SplitCheck() == 0);
@@ -458,12 +456,12 @@ TEST_CASE("HoeffdingTreeAlmostPerfectSplit", "[HoeffdingTreeTest]")
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
   {
-    if (mlpack::math::Random() <= 0.9)
+    if (Random() <= 0.9)
       split.Train(arma::Col<size_t>("0 0"), 0);
     else
       split.Train(arma::Col<size_t>("1 0"), 0);
 
-    if (mlpack::math::Random() <= 0.9)
+    if (Random() <= 0.9)
       split.Train(arma::Col<size_t>("1 1"), 1);
     else
       split.Train(arma::Col<size_t>("0 1"), 1);
@@ -532,19 +530,19 @@ TEST_CASE("HoeffdingTreeSimpleDatasetTest", "[HoeffdingTreeTest]")
   arma::Row<size_t> labels(9000);
   for (size_t i = 0; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::RandInt(7);
+    dataset(0, i) = RandInt(7);
     dataset(1, i) = 0;
-    dataset(2, i) = mlpack::math::RandInt(2);
+    dataset(2, i) = RandInt(2);
     labels(i) = 0;
 
-    dataset(0, i + 1) = mlpack::math::RandInt(7);
+    dataset(0, i + 1) = RandInt(7);
     dataset(1, i + 1) = 2;
-    dataset(2, i + 1) = mlpack::math::RandInt(2);
+    dataset(2, i + 1) = RandInt(2);
     labels(i + 1) = 1;
 
-    dataset(0, i + 2) = mlpack::math::RandInt(7);
+    dataset(0, i + 2) = RandInt(7);
     dataset(1, i + 2) = 1;
-    dataset(2, i + 2) = mlpack::math::RandInt(2);
+    dataset(2, i + 2) = RandInt(2);
     labels(i + 2) = 2;
   }
 
@@ -589,9 +587,9 @@ TEST_CASE("NumDescendantsTest1", "[HoeffdingTreeTest]")
   data::DatasetInfo info(3); // All features are numeric.
   for (size_t i = 0; i <500; i ++)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     labels[i] = 0;
   }
 
@@ -627,19 +625,19 @@ TEST_CASE("NumDescendantsTest2", "[HoeffdingTreeTest]")
   arma::Row<size_t> labels(9000);
   for (size_t i = 2; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::RandInt(7);
+    dataset(0, i) = RandInt(7);
     dataset(1, i) = 0;
-    dataset(2, i) = mlpack::math::RandInt(2);
+    dataset(2, i) = RandInt(2);
     labels(i) = 0;
 
-    dataset(0, i - 1) = mlpack::math::RandInt(7);
+    dataset(0, i - 1) = RandInt(7);
     dataset(1, i - 1) = 2;
-    dataset(2, i - 1) = mlpack::math::RandInt(2);
+    dataset(2, i - 1) = RandInt(2);
     labels(i - 1) = 1;
 
-    dataset(0, i - 2) = mlpack::math::RandInt(7);
+    dataset(0, i - 2) = RandInt(7);
     dataset(1, i - 2) = 1;
-    dataset(2, i - 2) = mlpack::math::RandInt(2);
+    dataset(2, i - 2) = RandInt(2);
     labels(i - 2) = 2;
   }
 
@@ -664,7 +662,7 @@ TEST_CASE("HoeffdingNumericSplitFitnessFunctionTest", "[HoeffdingTreeTest]")
   // the counting starts.
   for (size_t i = 0; i < 99; ++i)
   {
-    split.Train(mlpack::math::Random(), mlpack::math::RandInt(5));
+    split.Train(Random(), RandInt(5));
     double bestGain, secondBestGain;
     split.EvaluateFitnessFunction(bestGain, secondBestGain);
     REQUIRE(bestGain == Approx(0.0).margin(1e-10));
@@ -682,7 +680,7 @@ TEST_CASE("HoeffdingNumericSplitPreBinningMajorityClassTest",
 
   for (size_t i = 0; i < 100; ++i)
   {
-    split.Train(mlpack::math::Random(), 1);
+    split.Train(Random(), 1);
     REQUIRE(split.MajorityClass() == 1);
   }
 }
@@ -699,17 +697,17 @@ TEST_CASE("HoeffdingNumericSplitBimodalTest", "[HoeffdingTreeTest]")
 
   for (size_t i = 0; i < 100; ++i)
   {
-    split.Train(mlpack::math::Random() + 0.3, 0);
-    split.Train(-mlpack::math::Random() - 0.3, 1);
+    split.Train(Random() + 0.3, 0);
+    split.Train(-Random() - 0.3, 1);
   }
 
   // Push the majority class to 1.
-  split.Train(-mlpack::math::Random() - 0.3, 1);
+  split.Train(-Random() - 0.3, 1);
   REQUIRE(split.MajorityClass() == 1);
 
   // Push the majority class back to 0.
-  split.Train(mlpack::math::Random() + 0.3, 0);
-  split.Train(mlpack::math::Random() + 0.3, 0);
+  split.Train(Random() + 0.3, 0);
+  split.Train(Random() + 0.3, 0);
   REQUIRE(split.MajorityClass() == 0);
 
   // Now the binning should be complete, and so the impurity should be
@@ -729,8 +727,8 @@ TEST_CASE("HoeffdingNumericSplitBimodalTest", "[HoeffdingTreeTest]")
   // Now check the split info.
   for (size_t i = 0; i < 10; ++i)
   {
-    REQUIRE(info.CalculateDirection(mlpack::math::Random() + 0.3) !=
-            info.CalculateDirection(-mlpack::math::Random() - 0.3));
+    REQUIRE(info.CalculateDirection(Random() + 0.3) !=
+            info.CalculateDirection(-Random() - 0.3));
   }
 }
 
@@ -746,8 +744,8 @@ TEST_CASE("BinaryNumericSplitSimpleSplitTest", "[HoeffdingTreeTest]")
   // Feed it samples.
   for (size_t i = 0; i < 500; ++i)
   {
-    split.Train(mlpack::math::Random(), 0);
-    split.Train(mlpack::math::Random() + 1.0, 1);
+    split.Train(Random(), 0);
+    split.Train(Random() + 1.0, 1);
 
     // Now ensure the fitness function gives good gain.
     // The Gini impurity for the unsplit node is 2 * (0.5^2) = 0.5, and the Gini
@@ -784,10 +782,10 @@ TEST_CASE("BinaryNumericSplitSimpleFourClassSplitTest", "[HoeffdingTreeTest]")
   // Feed it samples.
   for (size_t i = 0; i < 250; ++i)
   {
-    split.Train(mlpack::math::Random(), 0);
-    split.Train(mlpack::math::Random() + 2.0, 1);
-    split.Train(mlpack::math::Random() - 1.0, 2);
-    split.Train(mlpack::math::Random() + 1.0, 3);
+    split.Train(Random(), 0);
+    split.Train(Random() + 2.0, 1);
+    split.Train(Random() - 1.0, 2);
+    split.Train(Random() + 1.0, 3);
 
     // The same as the previous test, but with four classes: 4 * (0.25 * 0.75) =
     // 0.75.  We can only split in one place, though, which will give one
@@ -820,19 +818,19 @@ TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
   data::DatasetInfo info(3); // All features are numeric.
   for (size_t i = 0; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     labels[i + 2] = 1;
   }
 
@@ -886,21 +884,21 @@ TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -994,8 +992,8 @@ TEST_CASE("BatchTrainingTest", "[HoeffdingTreeTest]")
   {
     // One circle every 20000 samples.  Plus some noise.
     const double magnitude = 2.0 + (double(i) / 20000.0) +
-        0.5 * mlpack::math::Random();
-    const double angle = (i % 20000) * (2 * M_PI) + mlpack::math::Random();
+        0.5 * Random();
+    const double angle = (i % 20000) * (2 * M_PI) + Random();
 
     const double x = magnitude * cos(angle);
     const double y = magnitude * sin(angle);
@@ -1072,21 +1070,21 @@ TEST_CASE("ConfidenceChangeTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -1129,21 +1127,21 @@ TEST_CASE("ParameterChangeTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -1182,21 +1180,21 @@ TEST_CASE("MultipleSerializationTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -1240,21 +1238,21 @@ TEST_CASE("HoeffdingTreeModelTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -1319,21 +1317,21 @@ TEST_CASE("HoeffdingTreeModelBatchTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -1395,21 +1393,21 @@ TEST_CASE("HoeffdingTreeModelSerializationTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
-    dataset(0, i) = mlpack::math::Random();
-    dataset(1, i) = mlpack::math::Random();
-    dataset(2, i) = mlpack::math::Random();
+    dataset(0, i) = Random();
+    dataset(1, i) = Random();
+    dataset(2, i) = Random();
     dataset(3, i) = 0.0;
     labels[i] = 0;
 
-    dataset(0, i + 1) = mlpack::math::Random();
-    dataset(1, i + 1) = mlpack::math::Random() - 1.0;
-    dataset(2, i + 1) = mlpack::math::Random() + 0.5;
+    dataset(0, i + 1) = Random();
+    dataset(1, i + 1) = Random() - 1.0;
+    dataset(2, i + 1) = Random() + 0.5;
     dataset(3, i + 1) = 0.0;
     labels[i + 1] = 2;
 
-    dataset(0, i + 2) = mlpack::math::Random();
-    dataset(1, i + 2) = mlpack::math::Random() + 1.0;
-    dataset(2, i + 2) = mlpack::math::Random() + 0.8;
+    dataset(0, i + 2) = Random();
+    dataset(1, i + 2) = Random() + 1.0;
+    dataset(2, i + 2) = Random() + 0.8;
     dataset(3, i + 2) = 0.0;
     labels[i + 2] = 1;
   }
@@ -1496,21 +1494,21 @@ TEST_CASE("HoeffdingTreeEmptyConstructorTrainTest", "[HoeffdingTreeTest]")
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
-    data2(0, i) = mlpack::math::Random();
-    data2(1, i) = mlpack::math::Random();
-    data2(2, i) = mlpack::math::Random();
+    data2(0, i) = Random();
+    data2(1, i) = Random();
+    data2(2, i) = Random();
     data2(3, i) = 0.0;
     labels2[i] = 0;
 
-    data2(0, i + 1) = mlpack::math::Random();
-    data2(1, i + 1) = mlpack::math::Random() - 1.0;
-    data2(2, i + 1) = mlpack::math::Random() + 0.5;
+    data2(0, i + 1) = Random();
+    data2(1, i + 1) = Random() - 1.0;
+    data2(2, i + 1) = Random() + 0.5;
     data2(3, i + 1) = 0.0;
     labels2[i + 1] = 2;
 
-    data2(0, i + 2) = mlpack::math::Random();
-    data2(1, i + 2) = mlpack::math::Random() + 1.0;
-    data2(2, i + 2) = mlpack::math::Random() + 0.8;
+    data2(0, i + 2) = Random();
+    data2(1, i + 2) = Random() + 1.0;
+    data2(2, i + 2) = Random() + 0.8;
     data2(3, i + 2) = 0.0;
     labels2[i + 2] = 1;
   }

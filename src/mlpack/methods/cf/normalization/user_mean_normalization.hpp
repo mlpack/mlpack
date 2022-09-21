@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * This normalization class performs user mean normalization on raw ratings.
@@ -169,7 +168,6 @@ class UserMeanNormalization
   arma::vec userMean;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

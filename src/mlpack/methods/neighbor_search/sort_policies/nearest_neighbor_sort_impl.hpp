@@ -14,7 +14,6 @@
 #define MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_IMPL_HPP
 
 namespace mlpack {
-namespace neighbor {
 
 template<typename TreeType>
 inline double NearestNS::BestNodeToNodeDistance(
@@ -65,7 +64,6 @@ inline double NearestNS::BestPointToNodeDistance(
   return referenceNode->MinDistance(point, pointToCenterDistance);
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

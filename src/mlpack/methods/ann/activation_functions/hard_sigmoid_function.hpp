@@ -16,7 +16,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The hard sigmoid function, defined by
@@ -95,7 +94,6 @@ class HardSigmoidFunction
   }
 }; // class HardSigmoidFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

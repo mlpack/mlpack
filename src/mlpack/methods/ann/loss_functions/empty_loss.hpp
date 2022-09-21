@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The empty loss does nothing, letting the user calculate the loss outside
@@ -64,7 +63,6 @@ class EmptyLossType
 // Default typedef for typical `arma::mat` usage.
 typedef EmptyLossType<arma::mat> EmptyLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -52,12 +52,12 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Independent component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Independent_component_analysis");
+    "https://en.wikipedia.org/wiki/Independent_component_analysis");
 BINDING_SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
-        "http://www.jmlr.org/papers/volume4/learned-miller03a/"
-        "learned-miller03a.pdf");
-BINDING_SEE_ALSO("mlpack::radical::Radical C++ class documentation",
-        "@src/mlpack/methods/radical/radical.hpp");
+    "http://www.jmlr.org/papers/volume4/learned-miller03a/"
+    "learned-miller03a.pdf");
+BINDING_SEE_ALSO("Radical C++ class documentation",
+    "@src/mlpack/methods/radical/radical.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 
@@ -77,8 +77,6 @@ PARAM_FLAG("objective", "If set, an estimate of the final objective function "
     "is printed.", "O");
 
 using namespace mlpack;
-using namespace mlpack::radical;
-using namespace mlpack::math;
 using namespace mlpack::util;
 using namespace std;
 using namespace arma;

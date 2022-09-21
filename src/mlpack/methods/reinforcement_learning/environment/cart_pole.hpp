@@ -18,7 +18,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Cart Pole task.
@@ -282,7 +281,6 @@ class CartPole
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

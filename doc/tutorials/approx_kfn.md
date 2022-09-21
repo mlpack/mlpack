@@ -610,7 +610,7 @@ point in the `queries` matrix.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -640,7 +640,7 @@ example.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -666,7 +666,7 @@ method.  The code below prints the fifth point of the candidate set.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -689,7 +689,7 @@ tables and 3 projections.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -711,7 +711,7 @@ input data, then searches for 3 approximate furthest neighbors.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::sp_mat dataset;
@@ -746,7 +746,7 @@ the `queries` matrix.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -776,7 +776,7 @@ example.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -803,7 +803,7 @@ point of the candidate set of the third table.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -826,7 +826,7 @@ and 25 projections.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -848,7 +848,7 @@ searches for 3 approximate furthest neighbors.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::sp_mat dataset;
@@ -887,7 +887,7 @@ neighbors.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference dataset.
 extern arma::mat dataset;
@@ -912,7 +912,7 @@ retraining on a new reference set.  The code below demonstrates this.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The original reference set we train on.
 extern arma::mat dataset;
@@ -935,7 +935,7 @@ dual-tree search).
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference set.
 extern arma::mat dataset;
@@ -962,7 +962,7 @@ neighbor search by using the `KFN` class in brute-force mode.
 ```c++
 #include <mlpack.hpp>
 
-using namespace mlpack::neighbor;
+using namespace mlpack;
 
 // The reference set.
 extern arma::mat dataset;

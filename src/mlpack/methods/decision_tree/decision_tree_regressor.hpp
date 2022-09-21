@@ -23,7 +23,6 @@
 #include "all_dimension_select.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This class implements a generic decision tree learner.  Its behavior can be
@@ -528,7 +527,6 @@ class DecisionTreeRegressor :
 };
 
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

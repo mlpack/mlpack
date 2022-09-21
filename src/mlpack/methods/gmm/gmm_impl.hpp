@@ -18,7 +18,6 @@
 #include "gmm.hpp"
 
 namespace mlpack {
-namespace gmm {
 
 /**
  * Create a GMM with the given number of Gaussians, each of which have the
@@ -30,7 +29,7 @@ namespace gmm {
 inline GMM::GMM(const size_t gaussians, const size_t dimensionality) :
     gaussians(gaussians),
     dimensionality(dimensionality),
-    dists(gaussians, distribution::GaussianDistribution(dimensionality)),
+    dists(gaussians, GaussianDistribution(dimensionality)),
     weights(gaussians)
 {
   // Set equal weights.  Technically this model is still valid, but only barely.
@@ -65,7 +64,7 @@ inline double GMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; ++i)
-    sum = math::LogAdd(sum, log(weights[i]) +
+    sum = LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
 
   return sum;
@@ -99,7 +98,7 @@ inline void GMM::LogProbability(const arma::mat& observation,
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);
-  math::LogSumExp(logProb, logProbs);
+  LogSumExp(logProb, logProbs);
 }
 
 /**
@@ -161,7 +160,7 @@ inline double GMM::Probability(const arma::vec& observation,
 inline arma::vec GMM::Random() const
 {
   // Determine which Gaussian it will be coming from.
-  double gaussRand = math::Random();
+  double gaussRand = mlpack::Random();
   size_t gaussian = 0;
 
   double sumProb = 0;
@@ -226,7 +225,7 @@ inline void GMM::Classify(const arma::mat& observations,
  */
 inline double GMM::LogLikelihood(
     const arma::mat& data,
-    const std::vector<distribution::GaussianDistribution>& distsL,
+    const std::vector<GaussianDistribution>& distsL,
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
@@ -242,7 +241,7 @@ inline double GMM::LogLikelihood(
 
   // Now sum over every point.
   for (size_t j = 0; j < data.n_cols; ++j)
-    loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
+    loglikelihood += AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }
 
@@ -271,7 +270,7 @@ double GMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::GaussianDistribution> distsOrig;
+    std::vector<GaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -289,8 +288,8 @@ double GMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<GaussianDistribution> distsTrial(gaussians,
+        GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -355,7 +354,7 @@ double GMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::GaussianDistribution> distsOrig;
+    std::vector<GaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -374,8 +373,8 @@ double GMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<GaussianDistribution> distsTrial(gaussians,
+        GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -433,7 +432,6 @@ void GMM::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(weights));
 }
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif

@@ -17,7 +17,6 @@
 #include <stack>
 
 namespace mlpack {
-namespace tree {
 
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
@@ -1068,7 +1067,6 @@ void HoeffdingTree<
   numericSplit = typename NumericSplitType<FitnessFunction>::SplitInfo();
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

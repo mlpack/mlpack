@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the NoisyLinear layer class. It represents a single
@@ -154,7 +153,6 @@ class NoisyLinearType : public Layer<MatType>
 // Standard noisy linear layer.
 typedef NoisyLinearType<arma::mat> NoisyLinear;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

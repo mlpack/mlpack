@@ -16,9 +16,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::rl;
-
 
 // Test async one step q-learning in Cart Pole.
 TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")

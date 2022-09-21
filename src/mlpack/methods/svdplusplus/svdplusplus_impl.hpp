@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_IMPL_HPP
 
 namespace mlpack {
-namespace svd {
 
 template<typename OptimizerType>
 SVDPlusPlus<OptimizerType>::SVDPlusPlus(const size_t iterations,
@@ -111,7 +110,6 @@ void SVDPlusPlus<OptimizerType>::CleanData(const arma::mat& implicitData,
   cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
 }
 
-} // namespace svd
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <cassert>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of random experience replay.
@@ -262,7 +261,6 @@ class RandomReplay
   arma::irowvec isTerminal;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

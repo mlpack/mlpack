@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Poisson negative log likelihood loss. This loss
@@ -140,7 +139,6 @@ class PoissonNLLLossType
 // Default typedef for typical `arma::mat` usage.
 typedef PoissonNLLLossType<arma::mat> PoissonNLLLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

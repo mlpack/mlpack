@@ -26,7 +26,6 @@
 #include "padding.hpp"
 
 namespace mlpack{
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Atrous Convolution class. The Atrous Convolution
@@ -388,7 +387,6 @@ class AtrousConvolution : public Layer<InputType, OutputType>
   PaddingType<InputType, OutputType> padding;
 }; // class AtrousConvolution
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -26,7 +26,7 @@ arma::mat CreateMaximalInput()
   input.submat(0, 0, 1, 3) = w1;
 
   arma::mat maximalInputs;
-  mlpack::nn::MaximalInputs(input, maximalInputs);
+  MaximalInputs(input, maximalInputs);
 
   return maximalInputs;
 }
@@ -45,7 +45,7 @@ void TestResults(const arma::mat&actualResult, const arma::mat& expectResult)
 TEST_CASE("ColumnToBlocksEvaluate", "[MaximalInputsTest]")
 {
   arma::mat output;
-  mlpack::math::ColumnsToBlocks ctb(1, 2);
+  ColumnsToBlocks ctb(1, 2);
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
@@ -60,7 +60,7 @@ TEST_CASE("ColumnToBlocksEvaluate", "[MaximalInputsTest]")
 TEST_CASE("ColumnToBlocksChangeBlockSize", "[MaximalInputsTest]")
 {
   arma::mat output;
-  mlpack::math::ColumnsToBlocks ctb(1, 2);
+  ColumnsToBlocks ctb(1, 2);
   ctb.BlockWidth(4);
   ctb.BlockHeight(1);
   ctb.BufValue(-3);

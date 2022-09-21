@@ -18,7 +18,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * The NeighborSearchRules class is a template helper class used by
@@ -150,7 +149,7 @@ class NeighborSearchRules
   size_t& Scores() { return scores; }
 
   //! Convenience typedef.
-  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
 
   //! Get the traversal info.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -231,7 +230,6 @@ class NeighborSearchRules
                       const double distance);
 };
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

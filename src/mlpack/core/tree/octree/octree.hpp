@@ -17,9 +17,8 @@
 #include "../statistic.hpp"
 
 namespace mlpack {
-namespace tree {
 
-template<typename MetricType = metric::EuclideanDistance,
+template<typename MetricType = EuclideanDistance,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat>
 class Octree
@@ -50,7 +49,7 @@ class Octree
   size_t count;
   //! The minimum bounding rectangle of the points held in the node (and its
   //! children).
-  bound::HRectBound<MetricType> bound;
+  HRectBound<MetricType> bound;
   //! The dataset.
   MatType* dataset;
   //! The parent (NULL if this node is the root).
@@ -258,9 +257,9 @@ class Octree
   Octree*& Parent() { return parent; }
 
   //! Return the bound object for this node.
-  const bound::HRectBound<MetricType>& Bound() const { return bound; }
+  const HRectBound<MetricType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  bound::HRectBound<MetricType>& Bound() { return bound; }
+  HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -375,7 +374,7 @@ class Octree
   //! Return the maximum distance to another node.
   ElemType MaxDistance(const Octree& other) const;
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const Octree& other) const;
+  RangeType<ElemType> RangeDistance(const Octree& other) const;
 
   //! Return the minimum distance to the given point.
   template<typename VecType>
@@ -389,7 +388,7 @@ class Octree
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
   //! Return the minimum and maximum distance to another node.
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& point,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
@@ -463,7 +462,6 @@ class Octree
   };
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

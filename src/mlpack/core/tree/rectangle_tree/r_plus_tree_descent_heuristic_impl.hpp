@@ -17,7 +17,6 @@
 #include "../hrectbound.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
@@ -39,7 +38,7 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
   // the resulting node do not overlap other nodes.
   for (bestIndex = 0; bestIndex < node->NumChildren(); bestIndex++)
   {
-    bound::HRectBound<metric::EuclideanDistance, ElemType> bound =
+    HRectBound<EuclideanDistance, ElemType> bound =
         node->Child(bestIndex).Bound();
     bound |= node->Dataset().col(point);
 
@@ -102,7 +101,6 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(
   return 0;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_DESCENT_HEURISTIC_IMPL_HPP

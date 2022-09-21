@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace svm {
 
 /**
  * The hinge loss function for the linear SVM objective function.
@@ -201,7 +200,6 @@ class LinearSVMFunction
   bool fitIntercept;
 };
 
-} // namespace svm
 } // namespace mlpack
 
 // Include implementation

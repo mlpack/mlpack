@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Triplet Margin Loss performance function measures the network's
@@ -92,7 +91,6 @@ class TripletMarginLossType
 // Default typedef for typical `arma::mat` usage.
 typedef TripletMarginLossType<arma::mat> TripletMarginLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation.

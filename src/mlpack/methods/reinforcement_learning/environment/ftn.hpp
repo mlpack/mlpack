@@ -17,7 +17,6 @@
 #include "ftn_param.hpp"
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Fruit Tree Navigation Task.
@@ -267,7 +266,6 @@ class FruitTreeNavigation
   FruitTree fruitTree;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

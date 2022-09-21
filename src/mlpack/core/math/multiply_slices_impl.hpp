@@ -16,7 +16,6 @@
 #include "multiply_slices.hpp"
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 template <typename CubeType>
 CubeType MultiplyCube2Cube(const CubeType& cubeA,
@@ -193,7 +192,6 @@ CubeType MultiplyCube2Mat(const CubeType& cubeA,
   return z;
 }
 
-} // namespace math
 } // namespace mlpack
 
 #endif

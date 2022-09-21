@@ -16,7 +16,6 @@
 #include "constraints.hpp"
 
 namespace mlpack {
-namespace lmnn {
 
 template<typename MetricType>
 Constraints<MetricType>::Constraints(
@@ -442,7 +441,6 @@ inline void Constraints<MetricType>::Precalculate(
   precalculated = true;
 }
 
-} // namespace lmnn
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * The RPlusTreeSplit class performs the split process of a node on overflow.
@@ -125,7 +124,6 @@ class RPlusTreeSplit
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation

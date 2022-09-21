@@ -20,7 +20,6 @@
 #include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Mountain Car task.
@@ -141,12 +140,12 @@ class MountainCar
     int direction = action.action - 1;
     nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = math::ClampRange(nextState.Velocity(),
+    nextState.Velocity() = ClampRange(nextState.Velocity(),
         velocityMin, velocityMax);
 
     // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = math::ClampRange(nextState.Position(),
+    nextState.Position() = ClampRange(nextState.Position(),
         positionMin, positionMax);
 
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
@@ -249,7 +248,6 @@ class MountainCar
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

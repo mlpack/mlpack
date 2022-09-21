@@ -36,14 +36,14 @@ TEST_CASE("RandomizedSVDReconstructionError", "[RandomizedSVDTest]")
 
   // Center the data into a temporary matrix.
   arma::mat centeredData;
-  math::Center(data, centeredData);
+  Center(data, centeredData);
 
   arma::mat U1, U2, V1, V2;
   arma::vec s1, s2, s3;
 
   arma::svd_econ(U1, s1, V1, centeredData);
 
-  svd::RandomizedSVD rSVD(0, 10);
+  RandomizedSVD rSVD(0, 10);
   rSVD.Apply(data, U2, s2, V2, 3);
 
   // Use the same amount of data for the compariosn (matrix rank).

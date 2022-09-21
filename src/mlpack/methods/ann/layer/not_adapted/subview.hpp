@@ -17,7 +17,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Implementation of the subview layer. The subview layer modifies the input to
@@ -190,7 +189,6 @@ class SubviewType : public Layer<InputType, OutputType>
 // Standard Subview layer.
 typedef SubviewType<arma::mat, arma::mat> Subview;
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

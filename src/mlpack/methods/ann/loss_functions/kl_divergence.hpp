@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Kullback–Leibler divergence is often used for continuous
@@ -94,7 +93,6 @@ class KLDivergenceType
 // Default typedef for typical `arma::mat` usage.
 typedef KLDivergenceType<arma::mat> KLDivergence;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation

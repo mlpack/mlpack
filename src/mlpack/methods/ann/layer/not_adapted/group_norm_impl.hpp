@@ -17,7 +17,6 @@
 #include "group_norm.hpp"
 
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
 
 
 template<typename InputDataType, typename OutputDataType>
@@ -190,7 +189,6 @@ void GroupNorm<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(beta));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

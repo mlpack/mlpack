@@ -21,8 +21,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::neighbor;
 using namespace mlpack::util;
 
 // Program Name.
@@ -70,11 +68,11 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("@krann", "#krann");
 BINDING_SEE_ALSO("Locality-sensitive hashing on Wikipedia",
-        "https://en.wikipedia.org/wiki/Locality-sensitive_hashing");
+    "https://en.wikipedia.org/wiki/Locality-sensitive_hashing");
 BINDING_SEE_ALSO("Locality-sensitive hashing scheme based on p-stable"
-        "  distributions(pdf)", "http://mlpack.org/papers/lsh.pdf");
-BINDING_SEE_ALSO("mlpack::neighbor::LSHSearch C++ class documentation",
-        "@src/mlpack/methods/lsh/lsh.hpp");
+    "  distributions(pdf)", "http://mlpack.org/papers/lsh.pdf");
+BINDING_SEE_ALSO("LSHSearch C++ class documentation",
+    "@src/mlpack/methods/lsh/lsh.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

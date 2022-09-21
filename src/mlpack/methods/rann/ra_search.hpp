@@ -33,7 +33,6 @@
 #include "ra_util.hpp"
 
 namespace mlpack {
-namespace neighbor {
 
 // Forward declaration.
 template<template<typename TreeMetricType,
@@ -66,11 +65,11 @@ class LeafSizeRAWrapper;
  * @tparam TreeType The tree type to use.
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = metric::EuclideanDistance,
+         typename MetricType = EuclideanDistance,
          typename MatType = arma::mat,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::KDTree>
+                  typename TreeMatType> class TreeType = KDTree>
 class RASearch
 {
  public:
@@ -396,7 +395,6 @@ class RASearch
   friend class LeafSizeRAWrapper<TreeType>;
 }; // class RASearch
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Huber loss is a loss function used in robust regression,
@@ -94,7 +93,6 @@ class HuberLossType
 // Default typedef for typical `arma::mat` usage.
 typedef HuberLossType<arma::mat> HuberLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

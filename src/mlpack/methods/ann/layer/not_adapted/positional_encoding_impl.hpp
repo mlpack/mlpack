@@ -17,7 +17,6 @@
 #include "positional_encoding.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 PositionalEncodingType<InputType, OutputType>::PositionalEncodingType() :
@@ -84,7 +83,6 @@ void PositionalEncodingType<InputType, OutputType>::serialize(
     InitPositionalEncoding();
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

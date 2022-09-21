@@ -17,7 +17,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -987,7 +986,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

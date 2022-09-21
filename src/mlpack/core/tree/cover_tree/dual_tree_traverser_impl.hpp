@@ -16,7 +16,6 @@
 #include <queue>
 
 namespace mlpack {
-namespace tree {
 
 template<
     typename MetricType,
@@ -354,7 +353,6 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

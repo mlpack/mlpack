@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace sparse_coding {
 
 /**
  * A DictionaryInitializer for SparseCoding which does not initialize anything;
@@ -40,7 +39,6 @@ class NothingInitializer
   }
 };
 
-} // namespace sparse_coding
 } // namespace mlpack
 
 #endif

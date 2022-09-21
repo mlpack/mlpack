@@ -16,7 +16,6 @@
 #include "laplace_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * Return the log probability of the given observation.
@@ -102,7 +101,6 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations,
   scale /= arma::accu(probabilities);
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

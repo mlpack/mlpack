@@ -27,7 +27,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Elliot function, defined by
@@ -87,7 +86,6 @@ class ElliotFunction
   }
 }; // class ElliotFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

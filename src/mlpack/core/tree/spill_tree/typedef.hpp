@@ -18,7 +18,6 @@
 #include "../space_split/midpoint_space_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The hybrid spill tree.  It is a variant of metric-trees in which the children
@@ -118,7 +117,6 @@ using NonOrtMeanSPTree = SpillTree<MetricType,
                                    Hyperplane,
                                    MeanSpaceSplit>;
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

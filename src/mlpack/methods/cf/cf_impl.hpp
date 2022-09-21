@@ -20,7 +20,6 @@
 #include "cf.hpp"
 
 namespace mlpack {
-namespace cf {
 
 // Default CF constructor.
 template<typename DecompositionPolicy,
@@ -434,7 +433,6 @@ serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(normalization));
 }
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

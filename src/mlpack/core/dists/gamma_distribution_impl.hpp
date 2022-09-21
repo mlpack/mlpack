@@ -16,7 +16,6 @@
 #include "gamma_distribution.hpp"
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 inline GammaDistribution::GammaDistribution(const size_t dimensionality)
 {
@@ -136,8 +135,8 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
       aOld = aEst;
 
       // Calculate new value for alpha.
-      double nominator = meanLogx - logMeanx + log(aEst) - math::Digamma(aEst);
-      double denominator = pow(aEst, 2) * (1 / aEst - math::Trigamma(aEst));
+      double nominator = meanLogx - logMeanx + log(aEst) - Digamma(aEst);
+      double denominator = pow(aEst, 2) * (1 / aEst - Trigamma(aEst));
 
       // Protect against division by 0.
       if (denominator == 0)
@@ -240,13 +239,12 @@ inline arma::vec GammaDistribution::Random() const
   {
     std::gamma_distribution<double> dist(alpha(d), beta(d));
     // Use the mlpack random object.
-    randVec(d) = dist(mlpack::math::RandGen());
+    randVec(d) = dist(RandGen());
   }
 
   return randVec;
 }
 
-} // namespace distribution
 } // namespace mlpack
 
 #endif

@@ -21,10 +21,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::fastmks;
-using namespace mlpack::kernel;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
@@ -71,12 +67,12 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
-        "@doc/tutorials/fastmks.md");
+    "@doc/tutorials/fastmks.md");
 BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
 BINDING_SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
-        "http://mlpack.org/papers/fmks.pdf");
-BINDING_SEE_ALSO("mlpack::fastmks::FastMKS class documentation",
-        "@src/mlpack/methods/fastmks/fastmks.hpp");
+    "http://mlpack.org/papers/fmks.pdf");
+BINDING_SEE_ALSO("FastMKS class documentation",
+    "@src/mlpack/methods/fastmks/fastmks.hpp");
 
 // Model-building parameters.
 PARAM_MATRIX_IN("reference", "The reference dataset.", "r");

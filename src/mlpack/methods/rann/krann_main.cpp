@@ -22,10 +22,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::neighbor;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
@@ -74,11 +70,11 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@knn", "#knn");
 BINDING_SEE_ALSO("@lsh", "#lsh");
 BINDING_SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning"
-        " and speed in high dimensions (pdf)", "https://papers.nips.cc/paper/"
-        "3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and"
-        "-speed-in-high-dimensions.pdf");
-BINDING_SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
-        "@src/mlpack/methods/rann/ra_search.hpp");
+    " and speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
+    "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-in-"
+    "high-dimensions.pdf");
+BINDING_SEE_ALSO("RASearch C++ class documentation",
+    "@src/mlpack/methods/rann/ra_search.hpp");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

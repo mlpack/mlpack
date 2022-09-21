@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace neighbor {
 
 /**
  * Assuming that the datasets have been mapped using the referenceMap and the
@@ -60,7 +59,6 @@ void Unmap(const arma::Mat<size_t>& neighbors,
            arma::mat& distancesOut,
            const bool squareRoot = false);
 
-} // namespace neighbor
 } // namespace mlpack
 
 // Include implementation.

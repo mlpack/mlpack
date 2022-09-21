@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace gmm {
 
 /**
  * Force a covariance matrix to be diagonal.
@@ -47,7 +46,6 @@ class DiagonalConstraint
   static void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace gmm
 } // namespace mlpack
 
 #endif

@@ -19,7 +19,6 @@
 #include "linear_regression.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
@@ -83,13 +82,12 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
-       "@doc/tutorials/linear_regression.md");
+    "@doc/tutorials/linear_regression.md");
 BINDING_SEE_ALSO("@lars", "#lars");
 BINDING_SEE_ALSO("Linear regression on Wikipedia",
-        "https://en.wikipedia.org/wiki/Linear_regression");
-BINDING_SEE_ALSO("mlpack::regression::LinearRegression C++ class "
-        "documentation",
-        "@src/mlpack/methods/linear_regression/linear_regression.hpp");
+    "https://en.wikipedia.org/wiki/Linear_regression");
+BINDING_SEE_ALSO("LinearRegression C++ class documentation",
+    "@src/mlpack/methods/linear_regression/linear_regression.hpp");
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");

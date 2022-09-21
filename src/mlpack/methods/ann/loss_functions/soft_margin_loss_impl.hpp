@@ -16,7 +16,6 @@
 #include "soft_margin_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
 SoftMarginLossType<MatType>::
@@ -62,7 +61,6 @@ void SoftMarginLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

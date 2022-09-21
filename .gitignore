@@ -1,4 +1,4 @@
-build*
+build*/
 xcode*
 .DS_Store
 .vscode
