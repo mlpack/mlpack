@@ -1,15 +1,15 @@
 package main
 
 import (
-	"mlpack.org/v1/mlpack"
-	"testing"
-	"os"
+  "mlpack.org/v1/mlpack"
+  "testing"
+  "os"
 
-	"gonum.org/v1/gonum/mat"
+  "gonum.org/v1/gonum/mat"
 )
 
 func TestRunBindingNoFlag(t *testing.T) {
-	t.Log("Test that if we forget the mandatory flag, we should get wrong",
+  t.Log("Test that if we forget the mandatory flag, we should get wrong",
         "results.")
   param := mlpack.TestGoBindingOptions()
   d := 4.0
@@ -30,7 +30,7 @@ func TestRunBindingNoFlag(t *testing.T) {
 }
 
 func TestRunBindingCorrectly(t *testing.T) {
-	t.Log("Test that when we run the binding correctly (with correct",
+  t.Log("Test that when we run the binding correctly (with correct",
         " input parameters), we get the expected output.")
   param := mlpack.TestGoBindingOptions()
   param.Flag1 = true
@@ -314,7 +314,7 @@ func TestGonumRow(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
   var oldX mat.Dense
-  oldX.copy(x)
+  oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
   param.RowIn = x
@@ -372,7 +372,7 @@ func TestGonumCol(t *testing.T) {
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
   var oldX mat.Dense
-  oldX.copy(x)
+  oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
   param.ColIn = x
@@ -554,7 +554,7 @@ func TestGonumMatrixWithInfo(t *testing.T) {
   })
 
   var oldX mat.Dense
-  oldX.copy(x)
+  oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
   param.MatrixAndInfoIn = x
@@ -600,7 +600,7 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
   })
 
   var oldX mat.Dense
-  oldX.copy(x)
+  oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
   param.MatrixAndInfoIn = x
