@@ -328,6 +328,10 @@ func TestGonumRow(t *testing.T) {
   if rows != 9 {
     t.Errorf("Error. Wrong shape.")
   }
+  oldRows, oldCols := oldX.Dims()
+  if oldRows != 9 {
+    t.Errorf("Error, oldX has shape %v, %v", oldRows, oldCols)
+  }
   for i := 0; i < rows; i++ {
     if RowOut.At(i, 0) != oldX.At(i, 0)*2 {
       val := RowOut.At(i, 0)
