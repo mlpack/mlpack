@@ -46,7 +46,7 @@ class AxisParallelProjVector
                  typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return point[dim];
-  };
+  }
 
   /**
    * Project the given hrect bound on the projection vector.
@@ -59,7 +59,7 @@ class AxisParallelProjVector
       const HRectBound<MetricType, ElemType>& bound) const
   {
     return bound[dim];
-  };
+  }
 
   /**
    * Project the given ball bound on the projection vector.
@@ -72,7 +72,7 @@ class AxisParallelProjVector
       const BallBound<MetricType, VecType>& bound) const
   {
     return bound[dim];
-  };
+  }
 
   /**
    * Serialization.
@@ -81,7 +81,7 @@ class AxisParallelProjVector
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(CEREAL_NVP(dim));
-  };
+  }
 };
 
 /**
@@ -120,7 +120,7 @@ class ProjVector
                  typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return arma::dot(point, projVect);
-  };
+  }
 
   /**
    * Project the given ball bound on the projection vector.
@@ -136,7 +136,7 @@ class ProjVector
     const double center = Project(bound.Center());
     const ElemType radius = bound.Radius();
     return RangeType<ElemType>(center - radius, center + radius);
-  };
+  }
 
   /**
    * Serialization.
@@ -145,7 +145,7 @@ class ProjVector
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(CEREAL_NVP(projVect));
-  };
+  }
 };
 
 } // namespace mlpack

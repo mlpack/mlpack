@@ -181,7 +181,7 @@ struct NAME                                                                    \
                                                                                \
   static const bool value =                                                    \
       WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
-};
+}
 
 /**
  * Constructs a template structure, which will define a boolean static

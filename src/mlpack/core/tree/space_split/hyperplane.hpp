@@ -73,7 +73,7 @@ class HyperplaneBase
     if (splitVal == DBL_MAX)
       return 0;
     return projVect.Project(point) - splitVal;
-  };
+  }
 
   /**
    * Determine if the given point is to the left of the hyperplane, this means
@@ -86,7 +86,7 @@ class HyperplaneBase
             typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return Project(point) <= 0;
-  };
+  }
 
   /**
    * Determine if the given point is to the right of the hyperplane, this means
@@ -99,7 +99,7 @@ class HyperplaneBase
             typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return Project(point) > 0;
-  };
+  }
 
   /**
    * Determine if the given bound is to the left of the hyperplane.
@@ -133,7 +133,7 @@ class HyperplaneBase
   {
     ar(CEREAL_NVP(projVect));
     ar(CEREAL_NVP(splitVal));
-  };
+  }
 };
 
 /**
