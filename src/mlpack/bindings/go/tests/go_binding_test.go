@@ -313,7 +313,7 @@ func TestGonumRow(t *testing.T) {
   x := mat.NewDense(9, 1,  []float64{
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
-  var oldX mat.Dense
+  oldX := mat.NewDense(9, 1, nil)
   oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
