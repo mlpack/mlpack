@@ -16,6 +16,7 @@ install(FILES
 install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/namespace_compat.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mlpack/")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/core" DESTINATION
