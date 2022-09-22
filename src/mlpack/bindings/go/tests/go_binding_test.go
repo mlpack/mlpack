@@ -371,7 +371,7 @@ func TestGonumCol(t *testing.T) {
   x := mat.NewDense(1, 9, []float64{
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
-  oldX := mat.NewDense(9, 1, nil)
+  oldX := mat.NewDense(1, 9, nil)
   oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
