@@ -328,10 +328,6 @@ func TestGonumRow(t *testing.T) {
   if rows != 9 {
     t.Errorf("Error. Wrong shape.")
   }
-  oldRows, oldCols := oldX.Dims()
-  if oldRows != 9 {
-    t.Errorf("Error, oldX has shape %v, %v", oldRows, oldCols)
-  }
   for i := 0; i < rows; i++ {
     if RowOut.At(i, 0) != oldX.At(i, 0)*2 {
       val := RowOut.At(i, 0)
@@ -375,7 +371,7 @@ func TestGonumCol(t *testing.T) {
   x := mat.NewDense(1, 9, []float64{
     1, 2, 3, 4, 5, 6, 7, 8, 9,
   })
-  var oldX mat.Dense
+  oldX := mat.NewDense(9, 1, nil)
   oldX.Copy(x)
 
   param := mlpack.TestGoBindingOptions()
@@ -557,7 +553,7 @@ func TestGonumMatrixWithInfo(t *testing.T) {
            11, 12, 13, 14, 15,
   })
 
-  var oldX mat.Dense
+  oldX := mat.NewDense(3, 5, nil)
   oldX.Copy(x.Data)
 
   param := mlpack.TestGoBindingOptions()
@@ -603,7 +599,7 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
        0.3,  0.0, 1, 1, 0.6,
   })
 
-  var oldX mat.Dense
+  oldX := mat.NewDense(6, 5, nil)
   oldX.Copy(x.Data)
 
   param := mlpack.TestGoBindingOptions()
