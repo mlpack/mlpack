@@ -17,15 +17,10 @@ namespace mlpack {
 template<typename T>
 class RangeType;
 
-//! 3.0.0 TODO: break reverse-compatibility by changing RangeType to Range.
 typedef RangeType<double> Range;
 
 /**
  * Simple real-valued range.  It contains an upper and lower bound.
- *
- * Note that until mlpack 3.0.0, this class is named RangeType<> and for the
- * specification where T is double, you can use Range.  As of mlpack 3.0.0, this
- * class will be renamed Range<>.
  *
  * @tparam T type of element held by this range.
  */
