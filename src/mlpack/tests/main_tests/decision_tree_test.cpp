@@ -140,9 +140,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
 
   SetInputParam("minimum_leaf_size", (int) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -171,9 +169,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
 
   SetInputParam("maximum_depth", (int) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -201,9 +197,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
 
   SetInputParam("minimum_gain_split", 1.5); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -358,9 +352,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeTrainingVerTest",
   // Input pre-trained model.
   SetInputParam("input_model", model);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

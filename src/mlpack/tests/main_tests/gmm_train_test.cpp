@@ -58,9 +58,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainValidGaussianTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", 0); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -93,9 +91,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainMaxIterationsTest",
   SetInputParam("trials", (int) 1);
   SetInputParam("max_iterations", (int)-1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Ensure that Trials must be greater than 0.
@@ -108,9 +104,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPositiveTrialsTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("trials", (int) 0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Checking that percentage is between 0 and 1.
@@ -122,14 +116,12 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
 
-  Log::Fatal.ignoreInput = true;
   SetInputParam("percentage", (double) 2.0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   SetInputParam("percentage", (double) -1.0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  Log::Fatal.ignoreInput = false;
 }
 
 // Samplings must be positive.
@@ -142,9 +134,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplings",
   SetInputParam("refined_start", true);
   SetInputParam("samplings", (int) 0); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Number of gaussians in the model trained from input model.

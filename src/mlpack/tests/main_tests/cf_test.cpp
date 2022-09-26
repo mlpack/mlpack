@@ -37,9 +37,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFRankBoundTest",
   SetInputParam("rank", int(-1));
   SetInputParam("training", std::move(dataset));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -55,9 +53,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueBoundTest",
   SetInputParam("min_residue", double(-1));
   SetInputParam("training", std::move(dataset));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -73,9 +69,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsBoundTest",
   SetInputParam("max_iterations", int(-1));
   SetInputParam("training", std::move(dataset));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -93,16 +87,12 @@ TEST_CASE_METHOD(CFTestFixture, "CFRecommendationsBoundTest",
   SetInputParam("training", std::move(dataset));
   SetInputParam("max_iterations", int(5));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // recommendations should not be negative.
   SetInputParam("recommendations", int(-1));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -119,23 +109,17 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodBoundTest",
   SetInputParam("neighborhood", int(0));
   SetInputParam("training", std::move(dataset));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // neighborhood should not be negative.
   SetInputParam("neighborhood", int(-1));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // neighborhood should not be larger than the number of users.
   SetInputParam("neighborhood", int(userNum + 1));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -153,9 +137,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFAlgorithmBoundTest",
   SetInputParam("algorithm", std::string("invalid_algorithm"));
   SetInputParam("training", std::move(dataset));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -460,9 +442,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFInterpolationAlgorithmBoundTest",
   SetInputParam("training", std::move(dataset));
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -547,9 +527,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborSearchAlgorithmBoundTest",
   SetInputParam("training", std::move(dataset));
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -637,9 +615,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNormalizationBoundTest",
   SetInputParam("training", std::move(dataset));
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

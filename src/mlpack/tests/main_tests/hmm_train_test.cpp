@@ -187,9 +187,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainStatesTest",
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Make sure that tolerance is non negative
@@ -207,9 +205,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainToleranceNonNegative",
   SetInputParam("type", std::move(hmmType));
   SetInputParam("tolerance", tol);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Make sure an error is thrown if type is something other than
@@ -226,9 +222,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainTypeTest",
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Make sure that the number of gaussians cannot be less than 0
@@ -246,9 +240,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainGaussianTest",
   SetInputParam("type", std::move(hmmType));
   SetInputParam("gaussians", gaussians);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Make sure that the number of Gaussians cannot be less than 0.
@@ -266,9 +258,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainDiagonalGaussianTest",
   SetInputParam("type", std::move(hmmType));
   SetInputParam("gaussians", gaussians);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Make sure that model reuse is possible and work properly
@@ -398,9 +388,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainBatchModeTest",
   SetInputParam("input_file", std::move(observationsFileName));
   SetInputParam("labels_file", std::move(labelsFileName));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
@@ -412,17 +400,13 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainBatchModeTest",
   observationsFileName = "corrupt-observations-1.txt";
   SetInputParam("input_file", std::move(observationsFileName));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Now a mismatch between #observation files and #label files
   observationsFileName = "corrupt-observations-2.txt";
   SetInputParam("input_file", std::move(observationsFileName));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainRetrainTest1",
@@ -492,9 +476,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainRetrainTest2",
 
   ResetSettings();
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Attempt to retrain but change the emission distribution type

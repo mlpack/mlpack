@@ -81,9 +81,7 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitWrongResponseSizeTest",
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -98,9 +96,7 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitNoResponses",
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   SetInputParam("training", std::move(trainX));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -114,9 +110,7 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitNoTrainingData",
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
   SetInputParam("training_responses", std::move(trainY));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -134,9 +128,7 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitNegRegularization",
   SetInputParam("training", std::move(trainX));
   SetInputParam("lambda", double(-1)); // negative regularization.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

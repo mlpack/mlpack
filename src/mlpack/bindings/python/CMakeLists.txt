@@ -27,6 +27,7 @@ macro (post_python_bindings)
             -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
             -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
             -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -D EXTRA_CXX_FLAGS="-DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN"
             -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
             -P "${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"

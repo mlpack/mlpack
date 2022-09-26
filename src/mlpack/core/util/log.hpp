@@ -34,7 +34,7 @@ namespace mlpack {
  * fatal output will terminate the program when a newline is encountered.  An
  * example is given below.
  *
- * @code
+ * ```c++
  * Log::Info << "Checking a condition." << std::endl;
  * if (!someCondition())
  *   Log::Warn << "someCondition() is not satisfied!" << std::endl;
@@ -44,11 +44,27 @@ namespace mlpack {
  *   Log::Fatal << "someImportantCondition() is not satisfied! Terminating.";
  *   Log::Fatal << std::endl;
  * }
- * @endcode
+ * ```
  *
  * Any messages sent to Log::Debug will not be shown when compiling in non-debug
- * mode.  Messages to Log::Info will only be shown when the --verbose flag is
- * given to the program (or rather, the IO class).
+ * mode.
+ *
+ * When using mlpack in C++, log output (except for `Log::Fatal`) is disabled by
+ * default.  To enable it, define any of the following macros before including
+ * mlpack:
+ *
+ * ```c++
+ * #define MLPACK_PRINT_DEBUG
+ * #define MLPACK_PRINT_INFO
+ * #define MLPACK_PRINT_WARN
+ * ```
+ *
+ * If you want to disable printing of `[FATAL]` messages, define this macro
+ * before including mlpack:
+ *
+ * ```c++
+ * #define MLPACK_SUPPRESS_FATAL
+ * ```
  *
  * @see PrefixedOutStream, NullOutStream, IO
  */
@@ -82,7 +98,7 @@ void Assert(bool condition,
   #define BASH_CLEAR ""
 #endif
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(MLPACK_PRINT_DEBUG)
 static util::PrefixedOutStream Debug =
     util::PrefixedOutStream(MLPACK_COUT_STREAM,
                             BASH_CYAN "[DEBUG] " BASH_CLEAR);
@@ -93,19 +109,31 @@ static util::NullOutStream Debug = util::NullOutStream();
 static util::PrefixedOutStream Info =
     util::PrefixedOutStream(MLPACK_COUT_STREAM,
                             BASH_GREEN "[INFO ] " BASH_CLEAR,
-                            true /* unless --verbose */,
+#ifdef MLPACK_PRINT_INFO
+                            false,
+#else
+                            true, /* unless --verbose */
+#endif
                             false);
 
 static util::PrefixedOutStream Warn =
     util::PrefixedOutStream(MLPACK_COUT_STREAM,
                             BASH_YELLOW "[WARN ] " BASH_CLEAR,
+#ifdef MLPACK_PRINT_WARN
                             false,
+#else
+                            true,
+#endif
                             false);
 
 static util::PrefixedOutStream Fatal =
     util::PrefixedOutStream(MLPACK_CERR_STREAM,
                             BASH_RED "[FATAL] " BASH_CLEAR,
+#ifdef MLPACK_SUPPRESS_FATAL
+                            true,
+#else
                             false,
+#endif
                             true /* fatal */);
 
 } // namespace Log

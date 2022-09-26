@@ -34,10 +34,8 @@ TEST_CASE_METHOD(GmmGenerateTestFixture, "GmmGenerateSamplesTest",
 
   SetInputParam("input_model", &gmm);
 
-  Log::Fatal.ignoreInput = true;
   SetInputParam("samples", 0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Avoid double free (the fixture will try to delete the input model).
   params.Get<GMM*>("input_model") = NULL;

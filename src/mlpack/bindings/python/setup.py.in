@@ -45,6 +45,10 @@ if os.getenv('NO_BUILD') == '1':
 else:
   cxx_flags = '${CMAKE_CXX_FLAGS}'.strip()
   cxx_flags = re.sub(' +', ' ', cxx_flags)
+  extra_cxx_flags = '${EXTRA_CXX_FLAGS}'.strip()
+  extra_cxx_flags = re.sub(' +', ' ', cxx_flags)
+  cxx_flags += ' '
+  cxx_flags += extra_cxx_flags
   extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX', '-std=c++14']
   if '${OpenMP_CXX_FLAGS}' != '':
     extra_args.append('${OpenMP_CXX_FLAGS}')

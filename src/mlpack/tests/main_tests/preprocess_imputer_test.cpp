@@ -151,7 +151,5 @@ TEST_CASE_METHOD(
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "notmean"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

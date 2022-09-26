@@ -30,10 +30,8 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(data::Load("invalidExtendion.p4ng", matrix, info,
       true),  std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -85,10 +83,8 @@ TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
 
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, false),
       std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

@@ -85,9 +85,7 @@ TEST_CASE_METHOD(
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -178,9 +176,7 @@ TEST_CASE_METHOD(
   SetInputParam("labels", std::move(labels));
   SetInputParam("max_iterations", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -207,9 +203,7 @@ TEST_CASE_METHOD(
   SetInputParam("labels", std::move(labels));
   SetInputParam("lambda", (double) -0.1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -237,9 +231,7 @@ TEST_CASE_METHOD(
   SetInputParam("labels", std::move(labels));
   SetInputParam("number_of_classes", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -272,9 +264,7 @@ TEST_CASE_METHOD(
   SetInputParam("input_model",
                 params.Get<SoftmaxRegression*>("output_model"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

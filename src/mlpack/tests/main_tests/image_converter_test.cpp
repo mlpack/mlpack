@@ -90,9 +90,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
   SetInputParam("width", 50);
   SetInputParam("dataset", testimage);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -112,9 +110,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
   SetInputParam("width", 50);
   SetInputParam("channels", 3);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -133,9 +129,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
   SetInputParam("width", -50);
   SetInputParam("channels", 3);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -154,9 +148,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest",
   SetInputParam("width", 50);
   SetInputParam("channels", -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -170,9 +162,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
   SetInputParam("width", 50);
   SetInputParam("channels", 50);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 #endif // HAS_STB.

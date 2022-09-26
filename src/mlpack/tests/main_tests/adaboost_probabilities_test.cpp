@@ -95,7 +95,5 @@ TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

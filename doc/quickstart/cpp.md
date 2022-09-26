@@ -74,6 +74,9 @@ With that in place, let's write a C++ program to split the data and perform the
 classification:
 
 ```c++
+// Define these to print extra informational output and warnings.
+#define MLPACK_PRINT_INFO
+#define MLPACK_PRINT_WARN
 #include <mlpack.hpp>
 
 using namespace arma;
@@ -167,6 +170,9 @@ gunzip ratings-only.csv.gz movies.csv.gz
 Next, we can use the following C++ code:
 
 ```cpp
+// Define these to print extra informational output and warnings.
+#define MLPACK_PRINT_INFO
+#define MLPACK_PRINT_WARN
 #include <mlpack.hpp>
 
 using namespace arma;

@@ -36,9 +36,7 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativeClustersTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", (int) -1); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 
@@ -56,9 +54,7 @@ TEST_CASE_METHOD(KmTestFixture, "AutoDetectClusterTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", (int) 0); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 
@@ -79,9 +75,7 @@ TEST_CASE_METHOD(KmTestFixture, "RefinedStartPercentageTest",
   SetInputParam("clusters", c);
   SetInputParam("percentage", std::move(P));     // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 
@@ -102,9 +96,7 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativePercentageTest",
   SetInputParam("clusters", c);
   SetInputParam("percentage", P);     // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 
@@ -267,9 +259,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
 
   SetInputParam("input", std::move(inputData));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

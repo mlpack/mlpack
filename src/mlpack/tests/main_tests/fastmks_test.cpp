@@ -45,9 +45,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSEqualDimensionTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 4);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -64,9 +62,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSInvalidKTest",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 51); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -80,9 +76,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSZeroKTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 0); // Invalid when reference is specified.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -102,9 +96,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSInvalidKQueryDataTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 51);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -129,9 +121,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSRefModelTest",
   // Input pre-trained model.
   SetInputParam("input_model", m);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -149,9 +139,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSInvalidKernelTest",
   SetInputParam("k", (int) 10);
   SetInputParam("kernel", std::move(kernelName)); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -372,9 +360,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSBaseTest",
   SetInputParam("k", (int) 10);
   SetInputParam("base", 0.0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

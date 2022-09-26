@@ -140,9 +140,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestNumOfTreesTest",
 
   SetInputParam("num_trees", (int) 0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -161,9 +159,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMinimumLeafSizeTest",
 
   SetInputParam("minimum_leaf_size", (int) 0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -182,9 +178,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
 
   SetInputParam("maximum_depth", (int) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -212,9 +206,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
   SetInputParam("input_model",
                 params.Get<RandomForestModel*>("output_model"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 template<typename TreeType>
@@ -469,9 +461,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
   // Setting warm_start flag.
   SetInputParam("warm_start", false);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

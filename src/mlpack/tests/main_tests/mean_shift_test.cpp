@@ -223,7 +223,5 @@ TEST_CASE_METHOD(
   // Input invalid max number of iterations.
   SetInputParam("max_iterations", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

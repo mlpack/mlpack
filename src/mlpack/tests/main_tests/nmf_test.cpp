@@ -122,17 +122,13 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFRankBoundTest",
   SetInputParam("input", std::move(v));
   SetInputParam("rank", r);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Rank should not be 0.
   r = 0;
   SetInputParam("rank", r);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -149,9 +145,7 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMaxIterartionBoundTest",
   SetInputParam("input", std::move(v));
   SetInputParam("rank", r);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -169,9 +163,7 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFUpdateRuleTest",
   SetInputParam("input", std::move(v));
   SetInputParam("rank", r);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

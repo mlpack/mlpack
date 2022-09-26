@@ -147,9 +147,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDENoInputData",
                 "[KDEMainTest][BindingTests]")
 {
   // No input data is not provided. Should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -268,9 +266,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidKernel",
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("linux"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -287,9 +283,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidTree",
   SetInputParam("query", query);
   SetInputParam("tree", std::string("olive"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -306,9 +300,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAlgorithm",
   SetInputParam("query", query);
   SetInputParam("algorithm", std::string("bogosort"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -327,9 +319,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainReferenceAndModel",
   SetInputParam("query", query);
   SetInputParam("input_model", model);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -345,7 +335,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAbsoluteError",
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid value.
   SetInputParam("abs_error", -0.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -353,7 +342,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAbsoluteError",
   // Valid value.
   SetInputParam("abs_error", 5.8);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -369,7 +357,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidRelativeError",
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("rel_error", -0.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -381,7 +368,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidRelativeError",
   // Valid value.
   SetInputParam("rel_error", 0.3);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -400,7 +386,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCProbability",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("mc_probability", -0.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -412,7 +397,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCProbability",
   // Valid value.
   SetInputParam("mc_probability", 0.3);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -431,7 +415,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCInitialSampleSize",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("initial_sample_size", -1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -443,7 +426,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCInitialSampleSize",
   // Valid value.
   SetInputParam("initial_sample_size", 20);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -462,7 +444,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCEntryCoef",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 1.
   SetInputParam("mc_entry_coef", 0.5);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -470,7 +451,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCEntryCoef",
   // Valid greater than 1.
   SetInputParam("mc_entry_coef", 1.1);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -489,7 +469,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCBreakCoef",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("mc_break_coef", -0.5);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -501,7 +480,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCBreakCoef",
   // Invalid greater than 1.
   SetInputParam("mc_break_coef", 1.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
