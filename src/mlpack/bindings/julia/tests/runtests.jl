@@ -216,6 +216,7 @@ end
 # Test a row vector input parameter.
 @testset "TestRow" begin
   x = rand(100)
+  oldX = copy(x)
 
   _, _, _, _, _, _, _, rowOut, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -224,7 +225,7 @@ end
   @test size(rowOut, 1) == 100
   @test typeof(rowOut) == Array{Float64, 1}
   for i in 1:100
-    @test rowOut[i] == 2 * x[i]
+    @test rowOut[i] == 2 * oldX[i]
   end
 end
 
@@ -250,7 +251,7 @@ end
   x = rand(Float64, (10, 100))
   # Dimension information.
   dims = [false, false, false, false, false, false, false, false, false, false]
-  z = x
+  z = copy(x)
 
   _, _, _, matrix_and_info_out, _, _, _,  _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -262,7 +263,7 @@ end
 
   for i in 1:100
     for j in 1:10
-      @test matrix_and_info_out[j, i] == 2.0 * z[j, i]
+      @test matrix_and_info_out[j, i] == 2.0 * x[j, i]
     end
   end
 end
@@ -272,7 +273,7 @@ end
   x = rand(Float64, (100, 10))
   # Dimension information.
   dims = [false, false, false, false, false, false, false, false, false, false]
-  z = x
+  z = copy(x)
 
   _, _, _, matrix_and_info_out, _, _, _,  _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -284,7 +285,7 @@ end
 
   for i in 1:100
     for j in 1:10
-      @test matrix_and_info_out[i, j] == 2.0 * z[i, j]
+      @test matrix_and_info_out[i, j] == 2.0 * x[i, j]
     end
   end
 end
@@ -298,7 +299,7 @@ end
                    rand(1:6, 100),
                    rand(100))')
   dims = [false, true, false, true, true, false]
-  z = x
+  z = copy(x)
 
   _, _, _, matrix_and_info_out, _, _, _,  _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -310,10 +311,10 @@ end
 
   for i in 1:100
     for j in [1, 3, 6]
-      @test matrix_and_info_out[j, i] == 2.0 * z[j, i]
+      @test matrix_and_info_out[j, i] == 2.0 * x[j, i]
     end
     for j in [2, 4, 5]
-      @test matrix_and_info_out[j, i] == z[j, i]
+      @test matrix_and_info_out[j, i] == x[j, i]
     end
   end
 end
@@ -327,7 +328,7 @@ end
            rand(1:6, 100),
            rand(100))
   dims = [false, true, false, true, true, false]
-  z = x
+  z = copy(x)
 
   _, _, _, matrix_and_info_out, _, _, _,  _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -339,10 +340,10 @@ end
 
   for i in 1:100
     for j in [1, 3, 6]
-      @test matrix_and_info_out[i, j] == 2.0 * z[i, j]
+      @test matrix_and_info_out[i, j] == 2.0 * x[i, j]
     end
     for j in [2, 4, 5]
-      @test matrix_and_info_out[i, j] == z[i, j]
+      @test matrix_and_info_out[i, j] == x[i, j]
     end
   end
 end

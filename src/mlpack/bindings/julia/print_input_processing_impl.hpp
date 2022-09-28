@@ -104,7 +104,8 @@ void PrintInputProcessing(
 
   // Now print the SetParam call.
   std::cout << indent << "SetParam" << uChar << matTypeModifier << "(p, \""
-      << d.name << "\", " << juliaName << extra << ")" << std::endl;
+      << d.name << "\", " << juliaName << extra << ", juliaOwnedMemory)"
+      << std::endl;
 
   if (!d.required)
   {
@@ -180,8 +181,8 @@ void PrintInputProcessing(
     //
     // SetParam(p, "<param_name>", convert(<type>, <paramName>))
     std::cout << "  SetParam(p, \"" << d.name << "\", convert("
-        << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
-        << std::endl;
+        << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows, "
+        << "juliaOwnedMemory)" << std::endl;
   }
   else
   {
@@ -192,8 +193,8 @@ void PrintInputProcessing(
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     std::cout << "    SetParam(p, \"" << d.name << "\", convert("
-        << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
-        << std::endl;
+        << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows, "
+        << "juliaOwnedMemory)" << std::endl;
     std::cout << "  end" << std::endl;
   }
 }

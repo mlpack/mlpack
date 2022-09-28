@@ -257,6 +257,12 @@ void PrintJL(const string& bindingName,
   cout << "  t = Timers()" << endl;
   cout << endl;
 
+  // Create a set where we will store the pointers associated with all memory
+  // that Julia owns.  This is to prevent situations where we end up wrapping a
+  // result object and telling Julia to own that too---in that case, the GC will
+  // free the object twice!
+  cout << "  juliaOwnedMemory = Set{Ptr{Nothing}}()" << endl;
+
   // Handle each input argument's processing before calling mlpackMain().
   cout << "  # Process each input argument before calling mlpackMain()."
       << endl;
