@@ -90,7 +90,7 @@ void PrintOutputProcessing(
   }
 
   std::cout << "GetParam" << uChar << matTypeSuffix << "(p, \"" << d.name
-      << "\"" << extra << ")";
+      << "\"" << extra << ", juliaOwnedMemory)";
 }
 
 /**
@@ -120,7 +120,7 @@ void PrintOutputProcessing(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << "GetParamMatWithInfo(p, \"" << d.name << "\")";
+  std::cout << "GetParamMatWithInfo(p, \"" << d.name << "\", juliaOwnedMemory)";
 }
 
 } // namespace julia

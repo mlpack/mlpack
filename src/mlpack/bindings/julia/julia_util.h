@@ -84,7 +84,7 @@ void SetParamVectorStrStr(void* params,
  */
 void SetParamVectorInt(void* params,
                        const char* paramName,
-                       int* ints,
+                       long long* ints,
                        const size_t length);
 
 /**
@@ -99,10 +99,13 @@ void SetParamMat(void* params,
 
 /**
  * Call params.SetParam<arma::Mat<size_t>>().
+ *
+ * Note that we will have to allocate memory, since we must convert to a size_t
+ * matrix, and we also subtract by one (since Julia uses 1-indexed labels).
  */
 void SetParamUMat(void* params,
                   const char* paramName,
-                  size_t* memptr,
+                  long long* memptr,
                   const size_t rows,
                   const size_t cols,
                   const bool pointsAsRows);
@@ -117,10 +120,13 @@ void SetParamRow(void* params,
 
 /**
  * Call params.SetParam<arma::Row<size_t>>().
+ *
+ * Note that we will have to allocate memory, since we must convert to a size_t
+ * vector, and we also subtract by one (since Julia uses 1-indexed labels).
  */
 void SetParamURow(void* params,
                   const char* paramName,
-                  size_t* memptr,
+                  long long* memptr,
                   const size_t cols);
 
 /**
@@ -133,10 +139,13 @@ void SetParamCol(void* params,
 
 /**
  * Call params.SetParam<arma::Col<size_t>>().
+ *
+ * Note that we will have to allocate memory, since we must convert to a size_t
+ * vector, and we also subtract by one (since Julia uses 1-indexed labels).
  */
 void SetParamUCol(void* params,
                   const char* paramName,
-                  size_t* memptr,
+                  long long* memptr,
                   const size_t rows);
 
 /**
@@ -193,7 +202,7 @@ size_t GetParamVectorIntLen(void* params, const char* paramName);
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-int* GetParamVectorIntPtr(void* params, const char* paramName);
+long long* GetParamVectorIntPtr(void* params, const char* paramName);
 
 /**
  * Get the number of rows in a matrix parameter.

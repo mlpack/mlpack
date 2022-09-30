@@ -103,7 +103,9 @@ end
 function SetParamMat(params::Ptr{Nothing},
                      paramName::String,
                      paramValue,
-                     pointsAsRows::Bool)
+                     pointsAsRows::Bool,
+                     juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramMat = to_matrix(paramValue, Float64)
   ccall((:SetParamMat, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Float64},
       Csize_t, Csize_t, Bool), params, paramName, Base.pointer(paramMat),
@@ -113,7 +115,9 @@ end
 function SetParamUMat(params::Ptr{Nothing},
                       paramName::String,
                       paramValue,
-                      pointsAsRows::Bool)
+                      pointsAsRows::Bool,
+                      juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramMat = to_matrix(paramValue, Int)
 
   # Sanity check.
@@ -122,10 +126,11 @@ function SetParamUMat(params::Ptr{Nothing},
         "Must be 1 or greater."))
   end
 
-  m = convert(Array{Csize_t, 2}, paramMat .- 1)
-  ccall((:SetParamUMat, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Csize_t},
-      Csize_t, Csize_t, Bool), params, paramName, Base.pointer(m),
-      size(paramValue, 1), size(paramValue, 2), pointsAsRows)
+  # Conversion (and subtracting 1 from the labels) happens in :SetParamUMat.
+  ccall((:SetParamUMat, library), Nothing, (Ptr{Nothing}, Cstring,
+      Ptr{Clonglong}, Csize_t, Csize_t, Bool), params, paramName,
+      Base.pointer(paramMat), size(paramValue, 1), size(paramValue, 2),
+      pointsAsRows)
 end
 
 function SetParam(params::Ptr{Nothing},
@@ -146,16 +151,18 @@ end
 function SetParam(params::Ptr{Nothing},
                   paramName::String,
                   vector::Vector{Int})
-  cint_vec = convert(Vector{Cint}, vector)
+  cintVec = convert(Vector{Clonglong}, vector)
   ccall((:SetParamVectorInt, library), Nothing, (Ptr{Nothing}, Cstring,
-      Ptr{Cint}, Csize_t), params, paramName, Base.pointer(cint_vec),
-      size(cint_vec, 1))
+      Ptr{Clonglong}, Csize_t), params, paramName, Base.pointer(cintVec),
+      size(cintVec, 1))
 end
 
 function SetParam(params::Ptr{Nothing},
                   paramName::String,
                   matWithInfo::Tuple{Array{Bool, 1}, Array{Float64, 2}},
-                  pointsAsRows::Bool)
+                  pointsAsRows::Bool,
+                  juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(matWithInfo[2])))
   ccall((:SetParamMatWithInfo, library), Nothing, (Ptr{Nothing}, Cstring,
       Ptr{Bool}, Ptr{Float64}, Int, Int, Bool), params, paramName,
       Base.pointer(matWithInfo[1]), Base.pointer(matWithInfo[2]),
@@ -164,7 +171,9 @@ end
 
 function SetParamRow(params::Ptr{Nothing},
                      paramName::String,
-                    paramValue)
+                     paramValue,
+                     juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Float64)
   ccall((:SetParamRow, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Float64},
       Csize_t), params, paramName, Base.pointer(paramVec), size(paramVec, 1))
@@ -172,7 +181,9 @@ end
 
 function SetParamCol(params::Ptr{Nothing},
                      paramName::String,
-                     paramValue)
+                     paramValue,
+                     juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Float64)
   ccall((:SetParamCol, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Float64},
       Csize_t), params, paramName, Base.pointer(paramVec), size(paramVec, 1))
@@ -180,7 +191,9 @@ end
 
 function SetParamURow(params::Ptr{Nothing},
                       paramName::String,
-                      paramValue)
+                      paramValue,
+                      juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Int)
 
   # Sanity check.
@@ -188,15 +201,18 @@ function SetParamURow(params::Ptr{Nothing},
     throw(DomainError("Input $(paramName) cannot have 0 or negative values!  " *
         "Must be 1 or greater."))
   end
-  m = convert(Array{Csize_t, 1}, paramVec .- 1)
 
-  ccall((:SetParamURow, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Csize_t},
-      Csize_t), params, paramName, Base.pointer(m), size(paramValue, 1))
+  # Conversion (and subtracting 1 from the labels) happens in :SetParamURow.
+  ccall((:SetParamURow, library), Nothing, (Ptr{Nothing}, Cstring,
+      Ptr{Clonglong}, Csize_t), params, paramName, Base.pointer(paramVec),
+      size(paramValue, 1))
 end
 
 function SetParamUCol(params::Ptr{Nothing},
                       paramName::String,
-                      paramValue)
+                      paramValue,
+                      juliaOwnedMemory::Set{Ptr{Nothing}})
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Int)
 
   # Sanity check.
@@ -204,10 +220,11 @@ function SetParamUCol(params::Ptr{Nothing},
     throw(DomainError("Input $(paramName) cannot have 0 or negative values!  " *
         "Must be 1 or greater."))
   end
-  m = convert(Array{Csize_t, 1}, paramValue .- 1)
 
-  ccall((:SetParamUCol, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Csize_t},
-      Csize_t), params, paramName, Base.pointer(m), size(paramValue, 1))
+  # Conversion (and subtracting 1 from the labels) happens in :SetParamUCol.
+  ccall((:SetParamUCol, library), Nothing, (Ptr{Nothing}, Cstring,
+      Ptr{Clonglong}, Csize_t), params, paramName, Base.pointer(paramVec),
+      size(paramValue, 1))
 end
 
 function GetParamBool(params::Ptr{Nothing}, paramName::String)
@@ -238,6 +255,10 @@ function GetParamVectorStr(params::Ptr{Nothing}, paramName::String)
   size = ccall((:GetParamVectorStrLen, library), Csize_t, (Ptr{Nothing},
       Cstring,), params, paramName)
   out = Array{String, 1}()
+  if size == 0
+    return out
+  end
+
   for i = 1:size
     s = ccall((:GetParamVectorStrStr, library), Cstring, (Ptr{Nothing}, Cstring,
         Csize_t), params, paramName, i .- 1)
@@ -249,22 +270,28 @@ end
 
 function GetParamVectorInt(params::Ptr{Nothing}, paramName::String)
   local size::Csize_t
-  local ptr::Ptr{Cint}
+  local ptr::Ptr{Clonglong}
 
   # Get the size of the vector, then the pointer to it.  We will own the
   # pointer.
   size = ccall((:GetParamVectorIntLen, library), Csize_t, (Ptr{Nothing},
       Cstring,), params, paramName)
-  ptr = ccall((:GetParamVectorIntPtr, library), Ptr{Cint}, (Ptr{Nothing},
+  # Shortcut: if the vector is empty, no need to allocate.
+  if size == 0
+    return Int[]
+  end
+
+  ptr = ccall((:GetParamVectorIntPtr, library), Ptr{Clonglong}, (Ptr{Nothing},
       Cstring,), params, paramName)
 
-  return convert(Array{Int, 1}, Base.unsafe_wrap(Array{Cint, 1}, ptr, (size),
-      own=true))
+  return convert(Array{Int, 1}, Base.unsafe_wrap(Array{Clonglong, 1}, ptr,
+      (size), own=true))
 end
 
 function GetParamMat(params::Ptr{Nothing},
                      paramName::String,
-                     pointsAsRows::Bool)
+                     pointsAsRows::Bool,
+                     juliaOwnedMemory::Set{Ptr{Nothing}})
   # Can we return different return types?  For now let's restrict to a matrix to
   # make it easy...
   local ptr::Ptr{Float64}
@@ -275,22 +302,32 @@ function GetParamMat(params::Ptr{Nothing},
       params, paramName)
   cols = ccall((:GetParamMatCols, library), Csize_t, (Ptr{Nothing}, Cstring,),
       params, paramName)
+  # Shortcut: if the matrix is empty, return an empty matrix.
+  if rows == 0 && cols == 0
+    return Array{Float64, 2}(undef, 0, 0)
+  end
+
   ptr = ccall((:GetParamMat, library), Ptr{Float64}, (Ptr{Nothing}, Cstring,),
       params, paramName)
 
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptr) in juliaOwnedMemory)
+
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
-    m = Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols), own=true)
+    m = Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols), own=own)
     return m'
   else
     # Here no transpose is necessary.
-    return Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols), own=true)
+    return Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols), own=own)
   end
 end
 
 function GetParamUMat(params::Ptr{Nothing},
                       paramName::String,
-                      pointsAsRows::Bool)
+                      pointsAsRows::Bool,
+                      juliaOwnedMemory::Set{Ptr{Nothing}})
   # Can we return different return types?  For now let's restrict to a matrix to
   # make it easy...
   local ptr::Ptr{Csize_t}
@@ -301,73 +338,127 @@ function GetParamUMat(params::Ptr{Nothing},
       params, paramName)
   cols = ccall((:GetParamUMatCols, library), Csize_t, (Ptr{Nothing}, Cstring,),
       params, paramName)
+  # Shortcut: if the matrix is empty, return an empty matrix.
+  if rows == 0 && cols == 0
+    return Array{Int, 2}(undef, 0, 0)
+  end
+
   ptr = ccall((:GetParamUMat, library), Ptr{Csize_t}, (Ptr{Nothing}, Cstring,),
       params, paramName)
 
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptr) in juliaOwnedMemory)
+
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
-    m = Base.unsafe_wrap(Array{Csize_t, 2}, ptr, (rows, cols), own=true)
+    m = Base.unsafe_wrap(Array{Csize_t, 2}, ptr, (rows, cols), own=own)
     return convert(Array{Int, 2}, m' .+ 1)  # Add 1 because these are indexes.
   else
     # Here no transpose is necessary.
-    m = Base.unsafe_wrap(Array{Csize_t, 2}, ptr, (rows, cols), own=true)
+    m = Base.unsafe_wrap(Array{Csize_t, 2}, ptr, (rows, cols), own=own)
     return convert(Array{Int, 2}, m .+ 1)
   end
 end
 
-function GetParamCol(params::Ptr{Nothing}, paramName::String)
+function GetParamCol(params::Ptr{Nothing},
+                     paramName::String,
+                     juliaOwnedMemory::Set{Ptr{Nothing}})
   local ptr::Ptr{Float64}
   local rows::Csize_t
 
   rows = ccall((:GetParamColRows, library), Csize_t, (Ptr{Nothing}, Cstring,),
       params, paramName)
+  # Shortcut: if the vector is empty, return an empty matrix.
+  if rows == 0
+    return Array{Float64, 1}()
+  end
+
   ptr = ccall((:GetParamCol, library), Ptr{Float64}, (Ptr{Nothing}, Cstring,),
       params, paramName)
 
-  return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=true)
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptr) in juliaOwnedMemory)
+
+  return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=own)
 end
 
-function GetParamRow(params::Ptr{Nothing}, paramName::String)
+function GetParamRow(params::Ptr{Nothing},
+                     paramName::String,
+                     juliaOwnedMemory::Set{Ptr{Nothing}})
   local ptr::Ptr{Float64}
   local cols::Csize_t
 
   cols = ccall((:GetParamRowCols, library), Csize_t, (Ptr{Nothing}, Cstring,),
       params, paramName)
+  # Shortcut: if the vector is empty, return an empty matrix.
+  if cols == 0
+    return Array{Float64, 1}(undef, 0)
+  end
+
   ptr = ccall((:GetParamRow, library), Ptr{Float64}, (Ptr{Nothing}, Cstring,),
       params, paramName)
 
-  return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=true)
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptr) in juliaOwnedMemory)
+
+  return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=own)
 end
 
-function GetParamUCol(params::Ptr{Nothing}, paramName::String)
+function GetParamUCol(params::Ptr{Nothing},
+                      paramName::String,
+                      juliaOwnedMemory::Set{Ptr{Nothing}})
   local ptr::Ptr{Csize_t}
   local rows::Csize_t
 
   rows = ccall((:GetParamUColRows, library), Csize_t, (Ptr{Nothing}, Cstring,),
       params, paramName)
+  # Shortcut: if the vector is empty, return an empty matrix.
+  if rows == 0
+    return Array{Int, 1}()
+  end
+
   ptr = ccall((:GetParamUCol, library), Ptr{Csize_t}, (Ptr{Nothing}, Cstring,),
       params, paramName)
 
-  m = Base.unsafe_wrap(Array{Csize_t, 1}, ptr, rows, own=true)
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptr) in juliaOwnedMemory)
+
+  m = Base.unsafe_wrap(Array{Csize_t, 1}, ptr, rows, own=own)
   return convert(Array{Int, 1}, m .+ 1)
 end
 
-function GetParamURow(params::Ptr{Nothing}, paramName::String)
+function GetParamURow(params::Ptr{Nothing},
+                      paramName::String,
+                      juliaOwnedMemory::Set{Ptr{Nothing}})
   local ptr::Ptr{Csize_t}
   local cols::Csize_t
 
   cols = ccall((:GetParamURowCols, library), Csize_t, (Ptr{Nothing}, Cstring,),
       params, paramName)
+  # Shortcut: if the vector is empty, return an empty matrix.
+  if cols == 0
+    return Array{Int, 1}(undef, 0)
+  end
+
   ptr = ccall((:GetParamURow, library), Ptr{Csize_t}, (Ptr{Nothing}, Cstring,),
       params, paramName)
 
-  m = Base.unsafe_wrap(Array{Csize_t, 1}, ptr, cols, own=true)
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptr) in juliaOwnedMemory)
+
+  m = Base.unsafe_wrap(Array{Csize_t, 1}, ptr, cols, own=own)
   return convert(Array{Int, 1}, m .+ 1)
 end
 
 function GetParamMatWithInfo(params::Ptr{Nothing},
                              paramName::String,
-                             pointsAsRows::Bool)
+                             pointsAsRows::Bool,
+                             juliaOwnedMemory::Set{Ptr{Nothing}})
   local ptrBool::Ptr{Bool}
   local ptrData::Ptr{Float64}
   local rows::Csize_t
@@ -377,20 +468,29 @@ function GetParamMatWithInfo(params::Ptr{Nothing},
       Cstring,), params, paramName)
   cols = ccall((:GetParamMatWithInfoCols, library), Csize_t, (Ptr{Nothing},
       Cstring,), params, paramName)
+  # Shortcut: if the vector is empty, return an empty matrix.
+  if rows == 0 && cols == 0
+    return (Array{Bool, 1}(undef, 0), Array{Float64, 2}(undef, 0, 0))
+  end
+
   ptrBool = ccall((:GetParamMatWithInfoBoolPtr, library), Ptr{Bool},
       (Ptr{Nothing}, Cstring,), params, paramName)
   ptrMem = ccall((:GetParamMatWithInfoPtr, library), Ptr{Float64},
       (Ptr{Nothing}, Cstring,), params, paramName)
 
+  # Determine whether we should tell Julia to free this memory.  If the memory
+  # originally came from Julia, then we won't own the wrapped object.
+  own = !(convert(Ptr{Nothing}, ptrMem) in juliaOwnedMemory)
+
   types = Base.unsafe_wrap(Array{Bool, 1}, ptrBool, (rows), own=true)
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
-    m = Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols), own=true)
+    m = Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols), own=own)
     return (types, m')
   else
     # Here no transpose is necessary.
     return (types, Base.unsafe_wrap(Array{Float64, 2}, ptr, (rows, cols),
-        own=true))
+        own=own))
   end
 end
 
