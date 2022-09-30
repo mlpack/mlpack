@@ -34,7 +34,7 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  DatasetInfo info;
+  DatasetMapper<mlpack::data::MissingPolicy> info;
   if (!data::Load("preprocess_imputer_test.csv", inputData, info))
       FAIL("Cannot load preprocess_imputer_test.csv");
 
@@ -99,7 +99,7 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  DatasetInfo info;
+  DatasetMapper<mlpack::data::MissingPolicy> info;
   if (!data::Load("preprocess_imputer_test.csv", inputData, info))
       FAIL("Cannot load preprocess_imputer_test.csv!");
 
@@ -140,7 +140,7 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  DatasetInfo info;
+  DatasetMapper<mlpack::data::MissingPolicy> info;
   if (!data::Load("preprocess_imputer_test.csv", inputData, info))
       FAIL("Cannot load preprocess_imputer_test.csv");
 
