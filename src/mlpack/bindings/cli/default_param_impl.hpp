@@ -109,6 +109,19 @@ std::string DefaultParamImpl(
   // The filename will always be empty.
   return "''";
 }
+    
+    
+template<typename T>
+std::string DefaultParamImpl(
+    util::ParamData& /* data */,
+    const typename std::enable_if<
+        arma::is_arma_type<T>::value ||
+        std::is_same<T, std::tuple<mlpack::data::DatasetMapper<mlpack::data::MissingPolicy>,
+                                   arma::mat>>::value>::type* /* junk */)
+{
+  // The filename will always be empty.
+  return "''";
+}
 
 /**
  * Return the default value of a model option (an empty filename).
