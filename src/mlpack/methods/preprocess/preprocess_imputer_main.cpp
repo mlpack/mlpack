@@ -70,7 +70,7 @@ using namespace data;
 typedef tuple<mlpack::data::DatasetMapper<mlpack::data::MissingPolicy>, arma::mat> TupleTypeImputer;
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  //DatasetInfo info = std::move(std::get<0>(params.Get<TupleType>("input")));
+  DatasetMapper<mlpack::data::MissingPolicy> info = std::move(std::get<0>(params.Get<TupleTypeImputer>("input")));
   arma::mat input = std::move(std::get<1>(params.Get<TupleTypeImputer>("input")));
   arma::mat output;
   const string missingValue = params.Get<string>("missing_value");
