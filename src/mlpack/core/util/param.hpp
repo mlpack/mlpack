@@ -1046,6 +1046,11 @@
         "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
         TUPLE_TYPE())
 
+#define TUPLE_TYPE_IMPUTER std::tuple<mlpack::data::DatasetMapper<mlpack::data::MissingPolicy>, arma::mat>
+#define PARAM_MATRIX_AND_INFOFORIMPUTER_IN(ID, DESC, ALIAS) \
+  PARAM(TUPLE_TYPE_IMPUTER, ID, DESC, ALIAS, \
+    "std::tuple<mlpack::data::DatasetMapper<mlpack::data::MissingPolicy>, arma::mat>", false, true, true, \
+    TUPLE_TYPE_IMPUTER())
 /**
  * Define an input model.  From the command line, the user can specify the file
  * that holds the model, using the name of the model parameter with "_file"
