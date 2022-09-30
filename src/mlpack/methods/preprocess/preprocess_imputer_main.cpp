@@ -51,7 +51,7 @@ BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
 BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.
-PARAM_MATRIX_AND_INFO_IN("input", "Matrix containing data.", "i");
+PARAM_MATRIX_AND_INFOFORIMPUTER_IN("input", "Matrix containing data.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save imputed data to.", "o");
 PARAM_STRING_IN_REQ("missing_value", "User defined missing value.", "m");
 PARAM_STRING_IN_REQ("strategy", "imputation strategy to be applied. Strategies "
@@ -67,11 +67,11 @@ using namespace arma;
 using namespace std;
 using namespace data;
 
-typedef tuple<DatasetInfo, arma::mat> TupleType;
+typedef tuple<mlpack::data::DatasetMapper<mlpack::data::MissingPolicy>, arma::mat> TupleTypeImputer;
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   //DatasetInfo info = std::move(std::get<0>(params.Get<TupleType>("input")));
-  arma::mat input = std::move(std::get<1>(params.Get<TupleType>("input")));
+  arma::mat input = std::move(std::get<1>(params.Get<TupleTypeImputer>("input")));
   arma::mat output;
   const string missingValue = params.Get<string>("missing_value");
   const double customValue = params.Get<double>("custom_value");
@@ -106,7 +106,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   MissingPolicy policy(missingSet);
   using MapperType = DatasetMapper<MissingPolicy>;
   DatasetMapper<MissingPolicy> info(policy);
-  info = std::move(std::get<0>(params.Get<TupleType>("input")));
+  info = std::move(std::get<0>(params.Get<TupleTypeImputer>("input")));
 
 
   // print how many mapping exist in each dimensions
