@@ -16,7 +16,7 @@
 
 #include "catch.hpp"
 
-using namespace mlpack::regression;
+using namespace mlpack;
 using namespace mlpack::data;
 
 void GenerateProblem(arma::mat& matX,

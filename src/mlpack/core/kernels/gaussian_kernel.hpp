@@ -19,7 +19,6 @@
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
 namespace mlpack {
-namespace kernel {
 
 /**
  * The standard Gaussian kernel.  Given two vectors @f$ x @f$, @f$ y @f$, and a
@@ -65,7 +64,7 @@ class GaussianKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(gamma * metric::SquaredEuclideanDistance::Evaluate(a, b));
+    return exp(gamma * SquaredEuclideanDistance::Evaluate(a, b));
   }
 
   /**
@@ -126,7 +125,7 @@ class GaussianKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
-    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) /
+    return Evaluate(sqrt(SquaredEuclideanDistance::Evaluate(a, b) /
         2.0)) / (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
   }
 
@@ -173,7 +172,6 @@ class KernelTraits<GaussianKernel>
   static const bool UsesSquaredDistance = true;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 #endif

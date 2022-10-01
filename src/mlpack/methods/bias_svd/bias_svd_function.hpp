@@ -18,7 +18,6 @@
 #include <ensmallen.hpp>
 
 namespace mlpack {
-namespace svd {
 
 /**
  * This class contains methods which are used to calculate the cost of
@@ -136,12 +135,7 @@ class BiasSVDFunction
   size_t numItems;
 };
 
-} // namespace svd
 } // namespace mlpack
-
-/**
- * @cond NO_DOXYGEN
- */
 
 namespace ens {
 
@@ -154,20 +148,16 @@ namespace ens {
   template <>
   template <>
   inline double StandardSGD::Optimize(
-      mlpack::svd::BiasSVDFunction<arma::mat>& function,
+      mlpack::BiasSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
   template <>
   template <>
   inline double ParallelSGD<ExponentialBackoff>::Optimize(
-      mlpack::svd::BiasSVDFunction<arma::mat>& function,
+      mlpack::BiasSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
 } // namespace ens
-
-/**
- * @endcond
- */
 
 #include "bias_svd_function_impl.hpp"
 

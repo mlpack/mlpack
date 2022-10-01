@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Inverse Quadratic function, defined by
@@ -75,7 +74,6 @@ class InvQuadFunction
   }
 }; // class InvQuadFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

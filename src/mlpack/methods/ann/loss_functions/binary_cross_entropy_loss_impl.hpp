@@ -16,7 +16,6 @@
 #include "binary_cross_entropy_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 BCELossType<MatType>::BCELossType(
@@ -63,7 +62,6 @@ void BCELossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

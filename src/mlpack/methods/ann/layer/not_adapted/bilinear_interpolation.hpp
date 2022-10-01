@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Definition and Implementation of the Bilinear Interpolation Layer.
@@ -117,7 +116,6 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
 // Standard BilinearInterpolation layer.
 typedef BilinearInterpolationType<arma::mat, arma::mat> BilinearInterpolation;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

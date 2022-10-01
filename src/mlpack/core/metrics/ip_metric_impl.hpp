@@ -19,7 +19,6 @@
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 namespace mlpack {
-namespace metric {
 
 // Constructor with no instantiated kernel.
 template<typename KernelType>
@@ -103,14 +102,13 @@ void IPMetric<KernelType>::serialize(Archive& ar,
 // the Euclidean distance.
 template<>
 template<typename Vec1Type, typename Vec2Type>
-inline typename Vec1Type::elem_type IPMetric<kernel::LinearKernel>::Evaluate(
+inline typename Vec1Type::elem_type IPMetric<LinearKernel>::Evaluate(
     const Vec1Type& a,
     const Vec2Type& b)
 {
-  return metric::LMetric<2, true>::Evaluate(a, b);
+  return LMetric<2, true>::Evaluate(a, b);
 }
 
-} // namespace metric
 } // namespace mlpack
 
 #endif

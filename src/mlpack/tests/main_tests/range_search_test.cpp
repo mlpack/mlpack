@@ -29,9 +29,7 @@ BINDING_TEST_FIXTURE(RangeSearchTestFixture);
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchNoReference",
                  "[RangeSearchMainTest][BindingTests]")
 {
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -42,9 +40,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchWrongParameter",
 {
   string wrongString = "abc";
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(SetInputParam("RST", wrongString), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -80,9 +76,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -109,9 +103,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("tree_type", wrongTreeType);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -145,9 +137,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
   SetInputParam("input_model", move(params.Get<RSModel*>("output_model")));
   SetInputParam("query", move(queryData));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());

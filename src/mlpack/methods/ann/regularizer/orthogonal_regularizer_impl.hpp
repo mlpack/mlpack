@@ -16,7 +16,6 @@
 #include "orthogonal_regularizer.hpp"
 
 namespace mlpack {
-namespace ann {
 
 inline OrthogonalRegularizer::OrthogonalRegularizer(double factor) :
     factor(factor)
@@ -60,7 +59,6 @@ void OrthogonalRegularizer::serialize(
   ar(CEREAL_NVP(factor));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -15,7 +15,6 @@
 #include "mahalanobis_distance.hpp"
 
 namespace mlpack {
-namespace metric {
 
 /**
  * Specialization for non-rooted case.
@@ -56,7 +55,6 @@ void MahalanobisDistance<TakeRoot>::serialize(Archive& ar,
   ar(CEREAL_NVP(covariance));
 }
 
-} // namespace metric
 } // namespace mlpack
 
 #endif

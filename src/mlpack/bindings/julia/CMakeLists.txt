@@ -1,6 +1,6 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_julia_binding name)
+  macro (add_julia_binding directory name)
     # Do nothing.
   endmacro ()
 
@@ -54,6 +54,8 @@ if (BUILD_JULIA_BINDINGS)
     julia_util.h
     julia_util.cpp)
   target_link_libraries(mlpack_julia_util ${MLPACK_LIBRARIES})
+  target_compile_definitions(mlpack_julia_util PUBLIC
+      -DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN)
   set_target_properties(mlpack_julia_util PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
   add_dependencies(julia mlpack_julia_util)
@@ -151,7 +153,7 @@ endif ()
 include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendType.cmake")
 include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendSerialization.cmake")
 
-macro (add_julia_binding name)
+macro (add_julia_binding directory name)
 if (BUILD_JULIA_BINDINGS)
   # We have to take multiple steps.
 
@@ -161,7 +163,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
-          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DJULIA_H_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
           -DJULIA_H_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
@@ -177,17 +179,19 @@ if (BUILD_JULIA_BINDINGS)
   append_type(
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
       "${name}"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+      "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp")
   append_serialization(
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
       "${name}"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+      "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp")
 
   # 3. Build libmlpack_julia_${name}.so.
   add_library(mlpack_julia_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp)
   target_link_libraries(mlpack_julia_${name} mlpack_julia_util)
+  target_compile_definitions(mlpack_julia_${name} PUBLIC
+      -DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN)
   set_target_properties(mlpack_julia_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
 
@@ -197,7 +201,7 @@ if (BUILD_JULIA_BINDINGS)
           -DNAME=${name}
           -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
-          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
           -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in

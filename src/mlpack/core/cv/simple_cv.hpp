@@ -16,7 +16,6 @@
 #include <mlpack/core/cv/cv_base.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * SimpleCV splits data into two sets - training and validation sets - and then
@@ -303,7 +302,6 @@ class SimpleCV
   double TrainAndEvaluate(const MLAlgorithmArgs&... args);
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation

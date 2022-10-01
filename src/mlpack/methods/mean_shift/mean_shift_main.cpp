@@ -19,8 +19,6 @@
 #include "mean_shift.hpp"
 
 using namespace mlpack;
-using namespace mlpack::meanshift;
-using namespace mlpack::kernel;
 using namespace mlpack::util;
 using namespace std;
 
@@ -67,7 +65,7 @@ BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
         "&rep=rep1&type=pdf");
 BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
-        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html");
+        "@src/mlpack/methods/mean_shift/mean_shift.hpp");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

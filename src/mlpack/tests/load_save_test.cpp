@@ -643,7 +643,6 @@ TEST_CASE("LoadMatinVec", "[LoadSaveTest]")
   /**
    * Log::Fatal will be called when the matrix is not of the right size.
    */
-  Log::Fatal.ignoreInput = true;
   arma::vec coltest;
   REQUIRE_THROWS_AS(data::Load("test_file.csv", coltest, true),
       std::runtime_error);
@@ -651,7 +650,6 @@ TEST_CASE("LoadMatinVec", "[LoadSaveTest]")
   arma::rowvec rowtest;
   REQUIRE_THROWS_AS(data::Load("test_file.csv", rowtest, true),
       std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   remove("test_file.csv");
 }
@@ -1225,7 +1223,7 @@ TEST_CASE("NormalizeLabelTest", "[LoadSaveTest]")
 {
   arma::rowvec randLabels(5000);
   for (size_t i = 0; i < 5000; ++i)
-    randLabels[i] = math::RandInt(-50, 50);
+    randLabels[i] = RandInt(-50, 50);
   randLabels[0] = 0.65; // Hey, doubles work too!
 
   arma::Row<size_t> newLabels;
@@ -2249,10 +2247,8 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest]")
   arma::mat dataset;
   DatasetInfo info;
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(data::LoadARFF("nonexistentfile.arff", dataset, info),
       std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -2301,10 +2297,8 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest]")
 
   // Make sure to parse with fatal errors (that's what the `true` parameter
   // means).
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(data::Load("test.arff", dataset, info, true),
       std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   remove("test.arff");
 }

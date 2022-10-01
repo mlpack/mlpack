@@ -82,7 +82,7 @@ void PrintParamDefn(
   //   buf_len = UInt[0]
   //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
   //       Vector{UInt8}, (Ptr{Nothing}, Ptr{UInt8}), model.ptr,
-  //       Base.pointer(buf_len))
+  //       pointer(buf_len))
   //   buf = Base.unsafe_wrap(buf_ptr, buf_len[1]; own=true)
   //   write(stream, buf_len[1])
   //   write(stream, buf)
@@ -91,8 +91,9 @@ void PrintParamDefn(
   // function deserialize<Type>(stream::IO)::<Type>
   //   buf_len = read(stream, UInt)
   //   buffer = read(stream, buf_len)
-  //   <Type>(ccall((:Deserialize<Type>Ptr, <programName>Library),
-  //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
+  //   GC.@preserve buffer <Type>(ccall((:Deserialize<Type>Ptr,
+  //       <programName>Library), Ptr{Nothing}, (Vector{UInt8}, UInt), buffer,
+  //       length(buffer)))
   // end
 
   std::string type = util::StripType(d.cppType);
@@ -142,7 +143,7 @@ void PrintParamDefn(
   std::cout << "  buf_len = UInt[0]" << std::endl;
   std::cout << "  buf_ptr = ccall((:Serialize" << type << "Ptr, " << programName
       << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ptr{UInt}), model.ptr, "
-      << "Base.pointer(buf_len))" << std::endl;
+      << "pointer(buf_len))" << std::endl;
   std::cout << "  buf = Base.unsafe_wrap(Vector{UInt8}, buf_ptr, buf_len[1]; "
       << "own=true)" << std::endl;
   std::cout << "  write(stream, buf_len[1])" << std::endl;
@@ -155,9 +156,9 @@ void PrintParamDefn(
       << std::endl;
   std::cout << "  buf_len = read(stream, UInt)" << std::endl;
   std::cout << "  buffer = read(stream, buf_len)" << std::endl;
-  std::cout << "  " << type << "(ccall((:Deserialize" << type << "Ptr, "
-      << programName << "Library), Ptr{Nothing}, (Ptr{UInt8}, UInt), "
-      << "Base.pointer(buffer), length(buffer)))" << std::endl;
+  std::cout << "  GC.@preserve buffer " << type << "(ccall((:Deserialize"
+      << type << "Ptr, " << programName << "Library), Ptr{Nothing}, "
+      << "(Ptr{UInt8}, UInt), pointer(buffer), length(buffer)))" << std::endl;
   std::cout << "end" << std::endl;
 }
 

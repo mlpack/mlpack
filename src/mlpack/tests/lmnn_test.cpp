@@ -20,8 +20,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::metric;
-using namespace mlpack::lmnn;
 using namespace ens;
 
 //
@@ -396,7 +394,7 @@ double KnnAccuracy(const arma::mat& dataset,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  neighbor::KNN knn;
+  KNN knn;
 
   knn.Train(dataset);
   knn.Search(k, neighbors, distances);

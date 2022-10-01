@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The identity function, defined by
@@ -88,7 +87,6 @@ class IdentityFunction
   }
 }; // class IdentityFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

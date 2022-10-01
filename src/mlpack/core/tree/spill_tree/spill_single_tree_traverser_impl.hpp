@@ -19,7 +19,6 @@
 #include "spill_single_tree_traverser.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -130,7 +129,6 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

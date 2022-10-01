@@ -16,9 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::hmm;
-using namespace mlpack::distribution;
-using namespace mlpack::gmm;
 
 /**
  * We will use the simple case proposed by Russell and Norvig in Artificial
@@ -253,7 +250,7 @@ TEST_CASE("SimpleBaumWelchDiscreteHMM_2", "[HMMTest]")
     for (size_t obs = 0; obs < obsLen; obs++)
     {
       // See if state changed.
-      double r = math::Random();
+      double r = Random();
 
       if (r <= 0.5)
       {
@@ -267,7 +264,7 @@ TEST_CASE("SimpleBaumWelchDiscreteHMM_2", "[HMMTest]")
       }
 
       // Now set the observation.
-      r = math::Random();
+      r = Random();
 
       switch (state)
       {
@@ -347,7 +344,7 @@ TEST_CASE("DiscreteHMMLabeledTrainTest", "[HMMTest]")
     states[n].set_size(obsLen);
 
     // Random starting state.
-    states[n][0] = math::RandInt(3);
+    states[n][0] = RandInt(3);
 
     // Random starting observation.
     observations[n].col(0) = emission[states[n][0]].Random();
@@ -356,7 +353,7 @@ TEST_CASE("DiscreteHMMLabeledTrainTest", "[HMMTest]")
     for (size_t t = 1; t < obsLen; t++)
     {
       // Choose random number for state transition.
-      double state = math::Random();
+      double state = Random();
 
       // Decide next state.
       double sumProb = 0;
@@ -480,7 +477,7 @@ TEST_CASE("DiscreteHMMGenerateTest", "[HMMTest]")
   for (int i = 0; i < numSeq; ++i)
   {
     // Random starting state.
-    size_t startState = math::RandInt(4);
+    size_t startState = RandInt(4);
 
     hmm.Generate(numObs, sequences[i], states[i], startState);
   }
@@ -560,7 +557,7 @@ TEST_CASE("GaussianHMMSimpleTest", "[HMMTest]")
   observations.col(0) = g1.Random();
   for (size_t i = 1; i < 1000; ++i)
   {
-    double randValue = math::Random();
+    double randValue = Random();
 
     if (randValue > 0.75) // Then we change state.
       classes[i] = (classes[i - 1] + 1) % 2;
@@ -629,7 +626,7 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
     for (size_t t = 1; t < 1000; t++)
     {
       // Choose the state.
-      double randValue = math::Random();
+      double randValue = Random();
       double probSum = 0;
       for (size_t state = 0; state < 3; state++)
       {
@@ -1157,7 +1154,7 @@ TEST_CASE("GMMHMMPredictTest", "[HMMTest]")
 
     for (size_t i = 1; i < 1000; ++i)
     {
-      double randValue = math::Random();
+      double randValue = Random();
 
       if (randValue <= trans(0, states[i - 1]))
         states[i] = 0;
@@ -1557,7 +1554,7 @@ TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
 
     for (size_t i = 1; i < 1000; ++i)
     {
-      double randValue = math::Random();
+      double randValue = Random();
 
       if (randValue <= transProb(0, states[i - 1]))
         states[i] = 0;
@@ -1661,7 +1658,7 @@ TEST_CASE("DiagonalGMMHMMOneGaussianOneStateTrainingTest", "[HMMTest]")
   // Generate the ground truth values.
   arma::vec actualMean = arma::mean(observations[0], 1);
   arma::vec actualCovar = arma::diagvec(
-      mlpack::math::ColumnCovariance(observations[0],
+      ColumnCovariance(observations[0],
       1 /* biased estimator */));
 
   // Check the model to see that it is correct.
@@ -1699,7 +1696,7 @@ TEST_CASE("DiagonalGMMHMMOneGaussianUnlabeledTrainingTest", "[HMMTest]")
 
     for (size_t i = 1; i < 500; ++i)
     {
-      double randValue = math::Random();
+      double randValue = Random();
 
       if (randValue <= transProbs(0, states[obs][i - 1]))
         states[obs][i] = 0;
@@ -1777,7 +1774,7 @@ TEST_CASE("DiagonalGMMHMMOneGaussianLabeledTrainingTest", "[HMMTest]")
 
     for (size_t i = 1; i < 5000; ++i)
     {
-      double randValue = math::Random();
+      double randValue = Random();
       double probSum = 0;
       for (size_t state = 0; state < 3; state++)
       {
@@ -1862,7 +1859,7 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest", "[HMMTest]")
 
     for (size_t i = 1; i < 1000; ++i)
     {
-      double randValue = math::Random();
+      double randValue = Random();
 
       if (randValue <= transProbs(0, states[obs][i - 1]))
         states[obs][i] = 0;
@@ -1967,7 +1964,7 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest", "[HMMTest]")
 
     for (size_t i = 1; i < 2500; ++i)
     {
-      double randValue = math::Random();
+      double randValue = Random();
 
       if (randValue <= transProbs(0, states[obs][i - 1]))
         states[obs][i] = 0;

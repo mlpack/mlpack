@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_RL_TRAINING_CONFIG_HPP
 
 namespace mlpack {
-namespace rl {
 
 class TrainingConfig
 {
@@ -244,7 +243,6 @@ class TrainingConfig
   double rho;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

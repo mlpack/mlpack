@@ -27,7 +27,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 /**
  * The Hard Swish function, defined by
  *
@@ -74,7 +73,8 @@ class HardSwishFunction
   {
     y.set_size(size(x));
 
-    for (size_t i = 0; i < x.n_elem; i++)
+    #pragma omp for
+    for (size_t i = 0; i < (size_t) x.n_elem; i++)
       y(i) = Fn(x(i));
   }
 
@@ -105,12 +105,12 @@ class HardSwishFunction
   {
     x.set_size(size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    #pragma omp for
+    for (size_t i = 0; i < (size_t) y.n_elem; i++)
       x(i) = Deriv(y(i));
   }
 }; // class HardSwishFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

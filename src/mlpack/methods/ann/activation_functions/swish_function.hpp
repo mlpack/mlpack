@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The swish function, defined by
@@ -94,7 +93,6 @@ class SwishFunction
   }
 }; // class SwishFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

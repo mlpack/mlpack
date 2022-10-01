@@ -15,11 +15,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
-using namespace mlpack::bound;
-using namespace mlpack::neighbor;
 
 TEST_CASE("AddressTest", "[UBTreeTest]")
 {
@@ -37,8 +32,8 @@ TEST_CASE("AddressTest", "[UBTreeTest]")
   // Ensure that this is one-to-one transform.
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    addr::PointToAddress(address, dataset.col(i));
-    addr::AddressToPoint(point, address);
+    PointToAddress(address, dataset.col(i));
+    AddressToPoint(point, address);
 
     for (size_t k = 0; k < dataset.n_rows; ++k)
       REQUIRE(dataset(k, i) == Approx(point[k]).epsilon(1e-15));
@@ -67,25 +62,23 @@ void CheckSplit(const TreeType& tree)
   // Find the highest address of the left node.
   for (size_t i = 0; i < tree.Left()->NumDescendants(); ++i)
   {
-    addr::PointToAddress(address,
-        tree.Dataset().col(tree.Left()->Descendant(i)));
+    PointToAddress(address, tree.Dataset().col(tree.Left()->Descendant(i)));
 
-    if (addr::CompareAddresses(address, hi) > 0)
+    if (CompareAddresses(address, hi) > 0)
       hi = address;
   }
 
   // Find the lowest address of the right node.
   for (size_t i = 0; i < tree.Right()->NumDescendants(); ++i)
   {
-    addr::PointToAddress(address,
-        tree.Dataset().col(tree.Right()->Descendant(i)));
+    PointToAddress(address, tree.Dataset().col(tree.Right()->Descendant(i)));
 
-    if (addr::CompareAddresses(address, lo) < 0)
+    if (CompareAddresses(address, lo) < 0)
       lo = address;
   }
 
   // Addresses in the left node should be less than addresses in the right node.
-  REQUIRE(addr::CompareAddresses(hi, lo) <= 0);
+  REQUIRE(CompareAddresses(hi, lo) <= 0);
 
   CheckSplit(*tree.Left());
   CheckSplit(*tree.Right());
@@ -191,7 +184,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       REQUIRE(maxDist <= tree.Bound().MaxDistance(point) *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
-      math::RangeType<ElemType> r = tree.Bound().RangeDistance(point);
+      RangeType<ElemType> r = tree.Bound().RangeDistance(point);
 
       REQUIRE(r.Lo() <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
@@ -229,7 +222,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       REQUIRE(maxDist <= tree.Bound().MaxDistance(node->Bound()) *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
-      math::RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
+      RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
 
       REQUIRE(r.Lo() <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
@@ -309,8 +302,8 @@ TEST_CASE("SingleUBTreeTraverserTest", "[UBTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNS, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, SINGLE_TREE_MODE);
+  NeighborSearch<NearestNS, LMetric<2, true>, arma::mat, UBTree> knn1(dataset,
+      SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -336,8 +329,8 @@ TEST_CASE("DualUBTreeTraverserTest", "[UBTreeTest]")
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNS, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, DUAL_TREE_MODE);
+  NeighborSearch<NearestNS, LMetric<2, true>, arma::mat, UBTree> knn1(dataset,
+      DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

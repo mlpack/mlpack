@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::radical;
 using namespace std;
 using namespace arma;
 

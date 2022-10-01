@@ -17,7 +17,6 @@
 #include "atrous_convolution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename ForwardConvolutionRule,
@@ -467,7 +466,6 @@ void AtrousConvolution<
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -19,7 +19,6 @@
 #include "bias_svd_function.hpp"
 
 namespace mlpack {
-namespace svd {
 
 /**
  * Bias SVD is an improvement on Regularized SVD which is a matrix
@@ -93,7 +92,6 @@ class BiasSVD
   double lambda;
 };
 
-} // namespace svd
 } // namespace mlpack
 
 // Include implementation.

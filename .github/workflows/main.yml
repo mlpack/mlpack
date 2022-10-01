@@ -8,6 +8,8 @@ on:
       - master
   release:
     types: [published, created, edited]
+permissions:
+  contents: read
 name: mlpack.mlpack
 
 jobs:

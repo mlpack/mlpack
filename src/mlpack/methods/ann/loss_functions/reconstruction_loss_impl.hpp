@@ -16,7 +16,6 @@
 #include "reconstruction_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename DistType>
 ReconstructionLossType<MatType, DistType>::ReconstructionLossType(
@@ -62,7 +61,6 @@ void ReconstructionLossType<MatType, DistType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

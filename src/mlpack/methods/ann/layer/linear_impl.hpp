@@ -17,7 +17,6 @@
 #include "linear.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename RegularizerType>
 LinearType<MatType, RegularizerType>::LinearType() :
@@ -107,7 +106,10 @@ void LinearType<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
   output = weight * input;
-  output.each_col() += bias;
+
+  #pragma omp for
+  for (size_t c = 0; c < (size_t) output.n_cols; ++c)
+    output.col(c) += bias;
 }
 
 template<typename MatType, typename RegularizerType>
@@ -156,7 +158,6 @@ void LinearType<MatType, RegularizerType>::serialize(
   ar(CEREAL_NVP(regularizer));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

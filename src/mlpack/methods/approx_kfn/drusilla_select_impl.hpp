@@ -22,7 +22,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace neighbor {
 
 // Constructor.
 template<typename MatType>
@@ -182,9 +181,9 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
   // We'll use the NeighborSearchRules class to perform our brute-force search.
   // Note that we aren't using trees for our search, so we can use 'int' as a
   // TreeType.
-  metric::EuclideanDistance metric;
-  NeighborSearchRules<FurthestNeighborSort, metric::EuclideanDistance,
-      tree::KDTree<metric::EuclideanDistance, tree::EmptyStatistic, MatType>>
+  EuclideanDistance metric;
+  NeighborSearchRules<FurthestNeighborSort, EuclideanDistance,
+      KDTree<EuclideanDistance, EmptyStatistic, MatType>>
       rules(candidateSet, querySet, k, metric, 0, false);
 
   for (size_t q = 0; q < querySet.n_cols; ++q)
@@ -210,7 +209,6 @@ void DrusillaSelect<MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(m));
 }
 
-} // namespace neighbor
 } // namespace mlpack
 
 #endif

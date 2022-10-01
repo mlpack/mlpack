@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_KMEANS_ELKAN_KMEANS_HPP
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename MatType>
 class ElkanKMeans
@@ -61,7 +60,6 @@ class ElkanKMeans
   size_t distanceCalculations;
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

@@ -17,7 +17,6 @@
 #include "layer_types.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the concat performance class. The class works as a
@@ -89,7 +88,6 @@ class ConcatPerformance : public Layer<InputType, OutputType>
   OutputLayerType outputLayer;
 }; // class ConcatPerformance
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

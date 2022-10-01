@@ -29,7 +29,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The ELU activation function, defined by
@@ -200,7 +199,6 @@ typedef ELUType<arma::mat> ELU;
 // SELU layer.
 typedef ELUType<arma::mat> SELU;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

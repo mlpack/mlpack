@@ -45,9 +45,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNEqualDimensionTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 10);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -64,7 +62,6 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKTest",
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 101);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   CleanMemory();
@@ -74,7 +71,6 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKTest",
   SetInputParam("k", (int) -1); // Invalid.
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -95,9 +91,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKQueryDataTest",
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 101);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -113,9 +107,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNLeafSizeTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -137,9 +129,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNRefModelTest",
   SetInputParam("input_model",
       std::move(params.Get<KNNModel*>("output_model")));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -156,9 +146,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidTreeTypeTest",
   SetInputParam("k", (int) 10);
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -175,9 +163,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidAlgoTest",
   SetInputParam("k", (int) 10);
   SetInputParam("algorithm", (string) "triple_tree"); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -194,9 +180,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidEpsilonTest",
   SetInputParam("k", (int) 10);
   SetInputParam("epsilon", (double) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -213,9 +197,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidTauTest",
   SetInputParam("k", (int) 10);
   SetInputParam("tau", (double) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*
@@ -234,7 +216,6 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidRhoTest",
   SetInputParam("reference", referenceData);
   SetInputParam("rho", (double) -1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   // Reset passed parameters.
@@ -245,7 +226,6 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidRhoTest",
   SetInputParam("rho", (double) 1.5); // Invalid.
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -515,9 +495,7 @@ TEST_CASE_METHOD(KNNTestFixture, "KNNTrueNeighborDistanceTest",
   SetInputParam("epsilon", (double) 0.5);
   SetInputParam("k", (int) 10);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /*

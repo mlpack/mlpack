@@ -16,7 +16,6 @@
 #include "linear_svm.hpp"
 
 namespace mlpack {
-namespace svm {
 
 template <typename MatType>
 template <typename OptimizerType, typename... CallbackTypes>
@@ -212,7 +211,6 @@ double LinearSVM<MatType>::ComputeAccuracy(
   return (double) count / labels.n_elem;
 }
 
-} // namespace svm
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_IMPL_HPP

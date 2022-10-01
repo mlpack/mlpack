@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::regression;
 
 /**
  * Creates two 10x3 random matrices and one 10x1 "results" matrix.
@@ -48,8 +47,8 @@ TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]")
   for (size_t elem = 0; elem < points.n_elem; elem++)
   {
     // Max added noise is 0.02.
-    points[elem] += math::Random() / 50.0;
-    predictors[elem] += math::Random() / 50.0;
+    points[elem] += Random() / 50.0;
+    predictors[elem] += Random() / 50.0;
   }
 
   // Generate responses.
@@ -158,8 +157,8 @@ TEST_CASE("RidgeRegressionTestCase", "[LinearRegressionTest]")
   for (size_t elem = 0; elem < points.n_elem; elem++)
   {
     // Max added noise is 0.02.
-    points[elem] += math::Random() / 50.0;
-    predictors[elem] += math::Random() / 50.0;
+    points[elem] += Random() / 50.0;
+    predictors[elem] += Random() / 50.0;
   }
 
   // Generate responses.
@@ -251,8 +250,8 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
   for (size_t elem = 0; elem < points.n_elem; elem++)
   {
     // Max added noise is 0.02.
-    points[elem] += math::Random() / 50.0;
-    predictors[elem] += math::Random() / 50.0;
+    points[elem] += Random() / 50.0;
+    predictors[elem] += Random() / 50.0;
   }
 
   // Generate responses.

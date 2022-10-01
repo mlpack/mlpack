@@ -16,7 +16,6 @@
 #include "mean_squared_error.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MeanSquaredErrorType<MatType>::MeanSquaredErrorType(const bool reduction) :
@@ -60,7 +59,6 @@ void MeanSquaredErrorType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -20,7 +20,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /**Artificial Neural Network*/ {
 
 /**
  * The FlexibleReLU activation function, defined by
@@ -141,7 +140,6 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
 // Standard flexible ReLU layer.
 typedef FlexibleReLUType<arma::mat, arma::mat> FlexibleReLU;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation

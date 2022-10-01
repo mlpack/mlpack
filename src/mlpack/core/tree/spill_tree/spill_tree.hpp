@@ -16,7 +16,6 @@
 #include "../statistic.hpp"
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * A hybrid spill tree is a variant of binary space trees in which the children
@@ -399,7 +398,7 @@ class SpillTree
   }
 
   //! Return the minimum and maximum distance to another node.
-  math::RangeType<ElemType> RangeDistance(const SpillTree& other) const
+  RangeType<ElemType> RangeDistance(const SpillTree& other) const
   {
     return bound.RangeDistance(other.Bound());
   }
@@ -424,7 +423,7 @@ class SpillTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::RangeType<ElemType>
+  RangeType<ElemType>
   RangeDistance(const VecType& point,
                 typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
@@ -486,7 +485,6 @@ class SpillTree
   void serialize(Archive& ar, const uint32_t version);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

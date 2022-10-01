@@ -16,7 +16,6 @@
 #include "hamerly_kmeans.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename MatType>
 HamerlyKMeans<MetricType, MatType>::HamerlyKMeans(const MatType& dataset,
@@ -172,7 +171,6 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   return std::sqrt(centroidMovement);
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

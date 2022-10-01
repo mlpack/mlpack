@@ -229,9 +229,7 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
   SetInputParam("model", h);
   SetInputParam("length", length);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 TEST_CASE_METHOD(HMMGenerateTestFixture,
@@ -257,7 +255,5 @@ TEST_CASE_METHOD(HMMGenerateTestFixture,
   SetInputParam("length", length);
   SetInputParam("start_state", startState);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

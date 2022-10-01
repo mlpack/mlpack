@@ -16,7 +16,6 @@
 #include "spatial_dropout.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 SpatialDropoutType<InputType, OutputType>::SpatialDropoutType() :
@@ -74,7 +73,7 @@ void SpatialDropoutType<InputType, OutputType>::Forward(
     OutputType probabilities(1, size);
     OutputType maskRow(1, size);
     probabilities.fill(ratio);
-    ann::BernoulliDistribution<> bernoulli_dist(probabilities, false);
+    BernoulliDistribution<> bernoulli_dist(probabilities, false);
     maskRow = bernoulli_dist.Sample();
     mask = arma::repmat(maskRow, inputSize, 1);
 
@@ -118,7 +117,6 @@ void SpatialDropoutType<InputType, OutputType>::serialize(
     scale = 1.0 / (1.0 - ratio);
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -20,7 +20,6 @@
 #include "training_config.hpp"
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Wrapper of various asynchronous learning algorithms,
@@ -231,7 +230,6 @@ using NStepQLearning = AsyncLearning<NStepQLearningWorker<EnvironmentType,
     NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
     UpdaterType, PolicyType>;
 
-} // namespace rl
 } // namespace mlpack
 
 // Include implementation

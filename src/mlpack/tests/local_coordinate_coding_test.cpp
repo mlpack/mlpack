@@ -17,8 +17,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::regression;
-using namespace mlpack::lcc;
 
 void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
 {

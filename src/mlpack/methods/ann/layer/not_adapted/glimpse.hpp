@@ -34,7 +34,6 @@
 #include <algorithm>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 
 /*
@@ -410,7 +409,6 @@ class GlimpseType : public Layer<InputType, OutputType>
 // Standard Glimpse layer.
 typedef GlimpseType<arma::mat, arma::mat> Glimpse;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

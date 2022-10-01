@@ -18,7 +18,6 @@
 
 
 namespace mlpack {
-namespace ann {
 
 template<
   typename InitializationRuleType,
@@ -162,7 +161,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
   {
     for (size_t i = 0; i < visibleSize; ++i)
     {
-      output(i) = math::RandNormal(visibleMean(i), 1.0 / visiblePenalty(0));
+      output(i) = RandNormal(visibleMean(i), 1.0 / visiblePenalty(0));
     }
     if (arma::norm(output, 2) < radius)
     {
@@ -258,7 +257,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleSpike(
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    spike(i) = math::RandBernoulli(spikeMean(i));
+    spike(i) = RandBernoulli(spikeMean(i));
   }
 }
 
@@ -296,12 +295,11 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
   {
     for (size_t j = 0; j < poolSize; ++j)
     {
-      slab(j, i) = math::RandNormal(slabMean(j, i), 1.0 / slabPenalty);
+      slab(j, i) = RandNormal(slabMean(j, i), 1.0 / slabPenalty);
     }
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

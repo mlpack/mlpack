@@ -1,5 +1,5 @@
 # Add the Go binding test.
-add_go_binding(test_go_binding)
+add_go_binding("" test_go_binding)
 
 if (BUILD_GO_BINDINGS)
 add_test(NAME go_binding_test

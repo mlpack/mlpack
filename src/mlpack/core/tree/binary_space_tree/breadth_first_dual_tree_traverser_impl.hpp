@@ -18,7 +18,6 @@
 #include "breadth_first_dual_tree_traverser.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -204,7 +203,6 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
     Traverse(*queryNode.Right(), rightChildQueue);
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_BF_DUAL_TREE_TRAVERSER_IMPL_HPP

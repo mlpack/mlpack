@@ -1,7 +1,7 @@
 macro (not_found_return message)
   message(STATUS "${message}")
   if (NOT BUILD_GO_SHLIB)
-    macro (add_go_binding name)
+    macro (add_go_binding directory name)
       # Do nothing.
     endmacro ()
 
@@ -81,32 +81,6 @@ endif()
 
 if (BUILD_GO_SHLIB)
 
-  # Nothing in this directory will be compiled into mlpack.
-  set(BINDING_SOURCES
-    get_type.hpp
-    get_param.hpp
-    get_printable_param.hpp
-    go_option.hpp
-    mlpack/arma_util.h
-    mlpack/arma_util.hpp
-    mlpack/io_util.h
-    mlpack/io_util.hpp
-    mlpack_main.hpp
-    print_class_defn.hpp
-    print_defn_input.hpp
-    print_defn_output.hpp
-    print_doc.hpp
-    print_doc_functions.hpp
-    print_doc_functions_impl.hpp
-    print_go.hpp
-    print_go.cpp
-    print_input_processing.hpp
-    print_method_config.hpp
-    print_method_init.hpp
-    print_output_processing.hpp
-    strip_type.hpp
-  )
-
   # These are all the files we need to compile Go bindings for mlpack that are
   # not a part of mlpack itself.
   set(CGO_SOURCES
@@ -167,7 +141,10 @@ if (BUILD_GO_SHLIB)
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/arma_util.cpp
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/io_util.cpp)
   target_link_libraries(mlpack_go_util ${MLPACK_LIBRARIES})
-  target_compile_definitions(mlpack_go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
+  target_compile_definitions(mlpack_go_util PUBLIC
+      -DBINDING_TYPE=BINDING_TYPE_GO
+      -DMLPACK_PRINT_INFO
+      -DMLPACK_PRINT_WARN)
   set_target_properties(mlpack_go_util PROPERTIES
      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/)
 
@@ -192,11 +169,11 @@ define_property(GLOBAL PROPERTY GO_MODELS
 set_property(GLOBAL PROPERTY GO_MODELS "")
 
 # Add a macro to build a go binding.
-macro (add_go_binding name)
+macro (add_go_binding directory name)
 if (BUILD_GO_BINDINGS)
 
   # Include all .h that define model to models.go.
-  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp" MAIN_FILE)
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp" MAIN_FILE)
   if (MAIN_FILE MATCHES "PARAM_MODEL")
     file(APPEND
         "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
@@ -204,14 +181,15 @@ if (BUILD_GO_BINDINGS)
   endif()
 
   # Append content to the list.
-  set_property(GLOBAL APPEND PROPERTY GO_MODELS ${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp)
+  set_property(GLOBAL APPEND PROPERTY GO_MODELS
+      ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp)
 
   # Create ${name}.h.
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
-          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in
           -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
@@ -224,7 +202,7 @@ if (BUILD_GO_BINDINGS)
      COMMAND ${CMAKE_COMMAND}
          -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
          -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
-         -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+         -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
          -DPROGRAM_NAME=${name}
          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
@@ -253,7 +231,7 @@ if(BUILD_GO_SHLIB)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
-          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in
           -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
@@ -265,6 +243,8 @@ if(BUILD_GO_SHLIB)
   add_library(mlpack_go_${name} SHARED
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp)
   target_link_libraries(mlpack_go_${name} mlpack_go_util)
+  target_compile_definitions(mlpack_go_${name} PUBLIC
+      -DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN)
   set_target_properties(mlpack_go_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/")
 

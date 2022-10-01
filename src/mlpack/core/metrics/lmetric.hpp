@@ -18,7 +18,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace metric {
 
 /**
  * The L_p metric for arbitrary integer p, with an option to take the root.
@@ -117,7 +116,6 @@ typedef LMetric<2, true> EuclideanDistance;
 typedef LMetric<INT_MAX, false> ChebyshevDistance;
 
 
-} // namespace metric
 } // namespace mlpack
 
 // Include implementation.

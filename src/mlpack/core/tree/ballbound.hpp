@@ -17,7 +17,6 @@
 #include "bound_traits.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Ball bound encloses a set of points at a specific distance (radius) from a
@@ -27,7 +26,7 @@ namespace bound {
  * @tparam MetricType metric type used in the distance measure.
  * @tparam VecType Type of vector (arma::vec or arma::sp_vec or similar).
  */
-template<typename MetricType = metric::LMetric<2, true>,
+template<typename MetricType = LMetric<2, true>,
          typename VecType = arma::vec>
 class BallBound
 {
@@ -107,7 +106,7 @@ class BallBound
   ElemType MinWidth() const { return radius * 2.0; }
 
   //! Get the range in a certain dimension.
-  math::RangeType<ElemType> operator[](const size_t i) const;
+  RangeType<ElemType> operator[](const size_t i) const;
 
   /**
    * Determines if a point is within this bound.
@@ -164,7 +163,7 @@ class BallBound
    *     requested.
    */
   template<typename OtherVecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const OtherVecType& other,
       typename std::enable_if_t<IsVector<OtherVecType>::value>* = 0) const;
 
@@ -176,7 +175,7 @@ class BallBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const BallBound& other) const;
+  RangeType<ElemType> RangeDistance(const BallBound& other) const;
 
   /**
    * Expand the bound to include the given node.
@@ -217,7 +216,6 @@ struct BoundTraits<BallBound<MetricType, VecType>>
   const static bool HasTightBounds = false;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "ballbound_impl.hpp"

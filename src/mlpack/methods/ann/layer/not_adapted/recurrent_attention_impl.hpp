@@ -16,7 +16,6 @@
 #include "recurrent_attention.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 RecurrentAttention<InputType, OutputType>::RecurrentAttention() :
@@ -231,7 +230,6 @@ void RecurrentAttention<InputType, OutputType>::serialize(
   // TODO: lots of clearing?
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

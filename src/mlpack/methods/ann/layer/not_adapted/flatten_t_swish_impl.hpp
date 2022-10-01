@@ -20,7 +20,6 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 FlattenTSwish<InputDataType, OutputDataType>::FlattenTSwish(
@@ -76,7 +75,6 @@ void FlattenTSwish<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(t));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

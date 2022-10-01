@@ -23,7 +23,6 @@
 #include "range_search.hpp"
 
 namespace mlpack {
-namespace range {
 
 /**
  * RSWrapperBase is a base wrapper class for holding all RangeSearch types
@@ -67,7 +66,7 @@ class RSWrapperBase
   //! set).
   virtual void Search(util::Timers& timers,
                       arma::mat&& querySet,
-                      const math::Range& range,
+                      const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances,
                       const size_t leafSize) = 0;
@@ -75,7 +74,7 @@ class RSWrapperBase
   //! Perform monochromatic range search (i.e. a search with the reference set
   //! as the query set).
   virtual void Search(util::Timers& timers,
-                      const math::Range& range,
+                      const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances) = 0;
 };
@@ -126,7 +125,7 @@ class RSWrapper : public RSWrapperBase
   //! set).  This ignores the leaf size.
   virtual void Search(util::Timers& timers,
                       arma::mat&& querySet,
-                      const math::Range& range,
+                      const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances,
                       const size_t /* leafSize */);
@@ -134,7 +133,7 @@ class RSWrapper : public RSWrapperBase
   //! Perform monochromatic range search (i.e. a search with the reference set
   //! as the query set).
   virtual void Search(util::Timers& timers,
-                      const math::Range& range,
+                      const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances);
 
@@ -146,7 +145,7 @@ class RSWrapper : public RSWrapperBase
   }
 
  protected:
-  typedef RangeSearch<metric::EuclideanDistance, arma::mat, TreeType> RSType;
+  typedef RangeSearch<EuclideanDistance, arma::mat, TreeType> RSType;
 
   //! The instantiated RangeSearch object that we are wrapping.
   RSType rs;
@@ -189,7 +188,7 @@ class LeafSizeRSWrapper : public RSWrapper<TreeType>
   //! overload takes the leaf size into account when building the query tree.
   virtual void Search(util::Timers& timers,
                       arma::mat&& querySet,
-                      const math::Range& range,
+                      const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances,
                       const size_t leafSize);
@@ -340,7 +339,7 @@ class RSModel
    */
   void Search(util::Timers& timers,
               arma::mat&& querySet,
-              const math::Range& range,
+              const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
@@ -354,7 +353,7 @@ class RSModel
    * @param distances Output: distances of neighbors.
    */
   void Search(util::Timers& timers,
-              const math::Range& range,
+              const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
@@ -388,7 +387,6 @@ class RSModel
   void CleanMemory();
 };
 
-} // namespace range
 } // namespace mlpack
 
 // Include implementation (of serialize() and templated wrapper classes).

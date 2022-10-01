@@ -17,8 +17,6 @@
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::pca;
-using namespace mlpack::distribution;
 
 /*
  * Compare the output of the our PCA implementation with Armadillo's using the
@@ -197,7 +195,7 @@ TEST_CASE("ArmaComparisonRandomizedBlockKrylovPCATest", "[PCATest]")
  */
 TEST_CASE("ArmaComparisonRandomizedPCATest", "[PCATest]")
 {
-  ArmaComparisonPCA<RandomizedSVDPolicy>();
+  ArmaComparisonPCA<RandomizedSVDPCAPolicy>();
 }
 
 /**
@@ -226,7 +224,7 @@ TEST_CASE("RandomizedBlockKrylovPCADimensionalityReductionTest", "[PCATest]")
  */
 TEST_CASE("RandomizedPCADimensionalityReductionTest", "[PCATest]")
 {
-  PCADimensionalityReduction<RandomizedSVDPolicy>();
+  PCADimensionalityReduction<RandomizedSVDPCAPolicy>();
 }
 
 /**

@@ -11,16 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
-#include <mlpack/methods/ann/init_rules/const_init.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann.hpp>
 
 #include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
@@ -28,7 +19,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Simple test for Identity layer.

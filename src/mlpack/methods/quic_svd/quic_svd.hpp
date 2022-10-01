@@ -15,7 +15,6 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace svd {
 
 /**
  * QUIC-SVD is a matrix factorization technique, which operates in a subspace
@@ -90,7 +89,6 @@ class QUIC_SVD
   arma::mat basis;
 };
 
-} // namespace svd
 } // namespace mlpack
 
 // Include implementation.

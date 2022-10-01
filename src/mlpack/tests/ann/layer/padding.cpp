@@ -11,10 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann.hpp>
 
 #include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
@@ -22,7 +19,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Simple padding layer test.
@@ -43,7 +39,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   output.randu();
   module.Forward(input, output);
   REQUIRE(arma::accu(input) == Approx(arma::accu(output)));
-  REQUIRE(output.n_rows == (9 * 8)); // 2x5 --> 9x8
+  REQUIRE(output.n_rows == (5 * 12)); // 2x5 --> 5x12
 
   // Test the Backward function.
   delta.set_size(input.n_rows, input.n_cols);

@@ -25,7 +25,6 @@
 #include "diagonal_constraint.hpp"
 
 namespace mlpack {
-namespace gmm /** Gaussian Mixture Models. */ {
 
 /**
  * A Diagonal Gaussian Mixture Model. 
@@ -43,13 +42,13 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * @code
  * void Estimate(
  *     const arma::mat& observations,
- *     std::vector<distribution::DiagonalGaussianDistribution>& dists,
+ *     std::vector<DiagonalGaussianDistribution>& dists,
  *     arma::vec& weights);
  *
  * void Estimate(
  *     const arma::mat& observations,
  *     const arma::vec& probabilities,
- *     std::vector<distribution::DiagonalGaussianDistribution>& dists,
+ *     std::vector<DiagonalGaussianDistribution>& dists,
  *     arma::vec& weights);
  * @endcode
  *
@@ -81,7 +80,7 @@ class DiagonalGMM
   size_t dimensionality;
 
   //! Vector of Gaussians.
-  std::vector<distribution::DiagonalGaussianDistribution> dists;
+  std::vector<DiagonalGaussianDistribution> dists;
 
   //! Vector of a priori weights for each Gaussian.
   arma::vec weights;
@@ -116,8 +115,8 @@ class DiagonalGMM
    * @param dists Distributions of the model.
    * @param weights Weights of the model.
    */
-  DiagonalGMM(const std::vector<distribution::DiagonalGaussianDistribution>&
-      dists, const arma::vec& weights) :
+  DiagonalGMM(const std::vector<DiagonalGaussianDistribution>& dists,
+              const arma::vec& weights) :
       gaussians(dists.size()),
       dimensionality((!dists.empty()) ? dists[0].Mean().n_elem : 0),
       dists(dists),
@@ -139,7 +138,7 @@ class DiagonalGMM
    *
    * @param i Index of component.
    */
-  const distribution::DiagonalGaussianDistribution& Component(size_t i) const
+  const DiagonalGaussianDistribution& Component(size_t i) const
   {
     return dists[i];
   }
@@ -149,7 +148,7 @@ class DiagonalGMM
    *
    * @param i Index of component.
    */
-  distribution::DiagonalGaussianDistribution& Component(size_t i)
+  DiagonalGaussianDistribution& Component(size_t i)
   {
     return dists[i];
   }
@@ -240,8 +239,8 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<kmeans::KMeans<>, DiagonalConstraint,
-      distribution::DiagonalGaussianDistribution>>
+  template<typename FittingType = EMFit<KMeans<>, DiagonalConstraint,
+      DiagonalGaussianDistribution>>
   double Train(const arma::mat& observations,
                const size_t trials = 1,
                const bool useExistingModel = false,
@@ -272,8 +271,8 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<kmeans::KMeans<>, DiagonalConstraint,
-      distribution::DiagonalGaussianDistribution>>
+  template<typename FittingType = EMFit<KMeans<>, DiagonalConstraint,
+      DiagonalGaussianDistribution>>
   double Train(const arma::mat& observations,
                const arma::vec& probabilities,
                const size_t trials = 1,
@@ -318,11 +317,10 @@ class DiagonalGMM
    */
   double LogLikelihood(
       const arma::mat& observations,
-      const std::vector<distribution::DiagonalGaussianDistribution>& dists,
+      const std::vector<DiagonalGaussianDistribution>& dists,
       const arma::vec& weights) const;
 };
 
-} // namespace gmm
 } // namespace mlpack
 
 // Include implementation.

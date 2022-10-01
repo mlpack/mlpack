@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/bounds.hpp>
 
 namespace mlpack {
-namespace tree {
 
 template<typename BoundType, typename MatType>
 bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
@@ -151,7 +150,7 @@ void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     addresses[i].first.zeros(data.n_rows);
-    bound::addr::PointToAddress(addresses[i].first, data.col(i));
+    PointToAddress(addresses[i].first, data.col(i));
     addresses[i].second = i;
   }
 }
@@ -235,7 +234,6 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
   return begin + count / 2;
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

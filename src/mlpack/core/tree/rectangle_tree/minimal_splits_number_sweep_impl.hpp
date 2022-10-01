@@ -16,7 +16,6 @@
 #include "minimal_splits_number_sweep.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename SplitPolicy>
 template<typename TreeType>
@@ -110,7 +109,6 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepLeafNode(
 }
 
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_SPLITS_NUMBER_SWEEP_IMPL_HPP

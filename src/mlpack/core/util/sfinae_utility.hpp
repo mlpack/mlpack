@@ -19,7 +19,6 @@
 #include <cstring>
 
 namespace mlpack {
-namespace sfinae {
 
 /*
  * MethodFormDetector is a tool that helps to find out whether a given class has
@@ -102,7 +101,6 @@ struct MethodFormDetector<Class, MethodForm, 7>
 //! Utility struct for checking signatures.
 template<typename U, U> struct SigCheck : std::true_type {};
 
-} // namespace sfinae
 } // namespace mlpack
 
 
@@ -134,7 +132,7 @@ struct NAME                                                                    \
 <                                                                              \
   T,                                                                           \
   sig,                                                                         \
-  std::integral_constant<bool, mlpack::sfinae::SigCheck<sig, &T::FUNC>::value> \
+  std::integral_constant<bool, mlpack::SigCheck<sig, &T::FUNC>::value> \
 > : std::true_type {};
 
 /**
@@ -148,7 +146,7 @@ struct NAME                                                                    \
 {                                                                              \
   /* Making a short alias for MethodFormDetector */                            \
   template<typename C, template<typename...> class MethodForm, int N>          \
-  using MFD = mlpack::sfinae::MethodFormDetector<C, MethodForm, N>;            \
+  using MFD = mlpack::MethodFormDetector<C, MethodForm, N>;                    \
                                                                                \
   template<size_t N>                                                           \
   struct WithNAdditionalArgs                                                   \
@@ -183,7 +181,7 @@ struct NAME                                                                    \
                                                                                \
   static const bool value =                                                    \
       WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
-};
+}
 
 /**
  * Constructs a template structure, which will define a boolean static

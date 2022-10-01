@@ -18,7 +18,6 @@
 #include "max_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the AdaptiveMaxPooling layer. 
@@ -130,7 +129,6 @@ class AdaptiveMaxPoolingType : public Layer<MatType>
 // Standard Adaptive max pooling layer.
 typedef AdaptiveMaxPoolingType<arma::mat> AdaptiveMaxPooling;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

@@ -32,7 +32,6 @@
 #include "random_init.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the weight matrix with the Nguyen-Widrow
@@ -153,8 +152,6 @@ class InitTraits<NguyenWidrowInitialization>
   static const bool UseLayer = false;
 };
 
-
-} // namespace ann
 } // namespace mlpack
 
 #endif

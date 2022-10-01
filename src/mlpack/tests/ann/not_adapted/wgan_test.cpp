@@ -25,9 +25,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::math;
-using namespace mlpack::regression;
 using namespace std::placeholders;
 
 /*
@@ -119,7 +116,7 @@ TEST_CASE("WGANMNISTTest", "[WGANNetworkTest]")
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
-      return math::RandNormal(0, 1);};
+      return RandNormal(0, 1);};
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
       std::function<double()>, WGAN> wgan(generator, discriminator, gaussian,
       noiseFunction, noiseDim, batchSize, generatorUpdateStep,
@@ -148,7 +145,7 @@ TEST_CASE("WGANMNISTTest", "[WGANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -281,7 +278,7 @@ TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
-      return math::RandNormal(0, 1);};
+      return RandNormal(0, 1);};
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
       std::function<double()>, WGANGP> wganGP(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
@@ -310,7 +307,7 @@ TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 

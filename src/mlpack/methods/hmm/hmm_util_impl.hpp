@@ -19,7 +19,6 @@
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 namespace mlpack {
-namespace hmm {
 
 // Forward declarations of utility functions.
 
@@ -82,22 +81,22 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
   {
     case HMMType::DiscreteHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<distribution::DiscreteDistribution>>(ar, x);
+          HMM<DiscreteDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<distribution::GaussianDistribution>>(ar, x);
+          HMM<GaussianDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianMixtureModelHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<gmm::GMM>>(ar, x);
+          HMM<GMM>>(ar, x);
       break;
 
     case HMMType::DiagonalGaussianMixtureModelHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<gmm::DiagonalGMM>>(ar, x);
+          HMM<DiagonalGMM>>(ar, x);
 
     default:
       Log::Fatal << "Unknown HMM type '" << (unsigned int) type << "'!"
@@ -162,30 +161,29 @@ template<typename HMMType>
 char GetHMMType() { return char(-1); }
 
 template<>
-char GetHMMType<HMM<distribution::DiscreteDistribution>>()
+char GetHMMType<HMM<DiscreteDistribution>>()
 {
   return HMMType::DiscreteHMM;
 }
 
 template<>
-char GetHMMType<HMM<distribution::GaussianDistribution>>()
+char GetHMMType<HMM<GaussianDistribution>>()
 {
   return HMMType::GaussianHMM;
 }
 
 template<>
-char GetHMMType<HMM<gmm::GMM>>()
+char GetHMMType<HMM<GMM>>()
 {
   return HMMType::GaussianMixtureModelHMM;
 }
 
 template<>
-char GetHMMType<HMM<gmm::DiagonalGMM>>()
+char GetHMMType<HMM<DiagonalGMM>>()
 {
   return HMMType::DiagonalGaussianMixtureModelHMM;
 }
 
-} // namespace hmm
 } // namespace mlpack
 
 #endif

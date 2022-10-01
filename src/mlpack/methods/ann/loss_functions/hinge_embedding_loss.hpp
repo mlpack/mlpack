@@ -18,7 +18,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Hinge Embedding loss function is often used to compute the loss
@@ -84,7 +83,6 @@ class HingeEmbeddingLossType
 // Default typedef for typical `arma::mat` usage.
 typedef HingeEmbeddingLossType<arma::mat> HingeEmbeddingLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation

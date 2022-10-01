@@ -19,7 +19,6 @@
 #include "gaussian_init.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the weight matrix with the Glorot
@@ -203,7 +202,6 @@ using XavierInitialization = GlorotInitializationType<true>;
  */
 using GlorotInitialization = GlorotInitializationType<false>;
 // Uses normal distribution
-} // namespace ann
 } // namespace mlpack
 
 #endif

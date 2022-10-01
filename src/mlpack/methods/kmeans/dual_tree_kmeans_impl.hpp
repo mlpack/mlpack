@@ -21,28 +21,27 @@
 #include "dual_tree_kmeans_rules.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 //! Call the tree constructor that does mapping.
 template<typename TreeType, typename MatType>
-TreeType* BuildTree(
+TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
     const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
-  // of two.
+  // of one.
   return new TreeType(std::forward<MatType>(dataset), oldFromNew, 1);
 }
 
 //! Call the tree constructor that does not do mapping.
 template<typename TreeType, typename MatType>
-TreeType* BuildTree(
+TreeType* BuildForcedLeafSizeTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+        !TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -102,20 +101,20 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // Build a tree on the centroids.  This will make a copy if necessary, which
   // is unfortunate, but I don't see a reasonable way around it.
   std::vector<size_t> oldFromNewCentroids;
-  Tree* centroidTree = BuildTree<Tree>(centroids, oldFromNewCentroids);
+  Tree* centroidTree = BuildForcedLeafSizeTree<Tree>(centroids,
+      oldFromNewCentroids);
 
   // Find the nearest neighbors of each of the clusters.  We have to make our
   // own TreeType, which is a little bit abuse, but we know for sure the
   // TreeStatType we have will work.
-  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
-      NNSTreeType> nns(std::move(*centroidTree));
+  NeighborSearch<NearestNeighborSort, MetricType, MatType, NNSTreeType>
+      nns(std::move(*centroidTree));
 
   // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
     // If the tree maps points, we need an intermediate result matrix.
-    arma::mat* interclusterDistancesTemp =
-        (tree::TreeTraits<Tree>::RearrangesDataset) ?
+    arma::mat* interclusterDistancesTemp = TreeTraits<Tree>::RearrangesDataset ?
         new arma::mat(1, centroids.n_elem) : &interclusterDistances;
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
@@ -123,7 +122,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     distanceCalculations += nns.BaseCases() + nns.Scores();
 
     // We need to do the unmapping ourselves, if the tree does mapping.
-    if (tree::TreeTraits<Tree>::RearrangesDataset)
+    if (TreeTraits<Tree>::RearrangesDataset)
     {
       for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
         interclusterDistances[oldFromNewCentroids[i]] =
@@ -342,7 +341,7 @@ visited[node.Descendant(i)] << ".\n";
   }
 
   bool allPointsPruned = true;
-  if (tree::TreeTraits<Tree>::HasSelfChildren && node.NumChildren() > 0)
+  if (TreeTraits<Tree>::HasSelfChildren && node.NumChildren() > 0)
   {
     // If this tree type has self-children, then we have already adjusted the
     // point bounds at a lower level, and we can determine if all of our points
@@ -404,7 +403,7 @@ visited[node.Descendant(i)] << ".\n";
           // lower level, though.  If that's the case, then we shouldn't
           // invalidate the bounds we've got -- it will happen at the lower
           // level.
-          if (!tree::TreeTraits<Tree>::HasSelfChildren ||
+          if (!TreeTraits<Tree>::HasSelfChildren ||
               node.NumChildren() == 0)
           {
             upperBounds[index] = DBL_MAX;
@@ -624,7 +623,7 @@ template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
                const typename std::enable_if_t<
-                   !tree::TreeTraits<TreeType>::BinaryTree>*)
+                   !TreeTraits<TreeType>::BinaryTree>*)
 {
   // We're going to assume we have a Children() function open to us.  If we
   // don't, then this won't work, I guess...
@@ -636,7 +635,7 @@ template<typename TreeType>
 void HideChild(TreeType& node,
                const size_t child,
                const typename std::enable_if_t<
-                   tree::TreeTraits<TreeType>::BinaryTree>*)
+                   TreeTraits<TreeType>::BinaryTree>*)
 {
   // If we're hiding the left child, then take the right child as the new left
   // child.
@@ -655,7 +654,7 @@ void HideChild(TreeType& node,
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
                      const typename std::enable_if_t<
-                         !tree::TreeTraits<TreeType>::BinaryTree>*)
+                         !TreeTraits<TreeType>::BinaryTree>*)
 {
   node.Children().clear();
   node.Children().resize(node.Stat().NumTrueChildren());
@@ -667,7 +666,7 @@ void RestoreChildren(TreeType& node,
 template<typename TreeType>
 void RestoreChildren(TreeType& node,
                      const typename std::enable_if_t<
-                         tree::TreeTraits<TreeType>::BinaryTree>*)
+                         TreeTraits<TreeType>::BinaryTree>*)
 {
   if (node.Stat().NumTrueChildren() > 0)
   {
@@ -676,7 +675,6 @@ void RestoreChildren(TreeType& node,
   }
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

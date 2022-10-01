@@ -37,13 +37,10 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianRTreeResultsMain",
   double kernelBandwidth = 1.5;
   double relError = 0.05;
 
-  kernel::GaussianKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<kernel::GaussianKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::RTree>
-      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  GaussianKernel kernel(kernelBandwidth);
+  EuclideanDistance metric;
+  KDE<GaussianKernel, EuclideanDistance, arma::mat, RTree> kde(
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   // Normalize estimations.
@@ -80,13 +77,10 @@ TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
   double kernelBandwidth = 3.0;
   double relError = 0.06;
 
-  kernel::TriangularKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<kernel::TriangularKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::BallTree>
-      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  TriangularKernel kernel(kernelBandwidth);
+  EuclideanDistance metric;
+  KDE<TriangularKernel, EuclideanDistance, arma::mat, BallTree> kde(
+      relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
 
@@ -120,13 +114,10 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
   double kernelBandwidth = 2.3;
   double relError = 0.05;
 
-  kernel::EpanechnikovKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<kernel::EpanechnikovKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::StandardCoverTree>
-    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+  EpanechnikovKernel kernel(kernelBandwidth);
+  EuclideanDistance metric;
+  KDE<EpanechnikovKernel, EuclideanDistance, arma::mat, StandardCoverTree>
+      kde(relError, 0.0, kernel, KDEMode::KDE_DUAL_TREE_MODE, metric);
   kde.Train(reference);
   // Perform monochromatic KDE.
   kde.Evaluate(kdeEstimations);
@@ -156,9 +147,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDENoInputData",
                 "[KDEMainTest][BindingTests]")
 {
   // No input data is not provided. Should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -237,13 +226,10 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianSingleKDTreeResultsMain",
   double kernelBandwidth = 3.0;
   double relError = 0.06;
 
-  kernel::GaussianKernel kernel(kernelBandwidth);
-  metric::EuclideanDistance metric;
-  KDE<kernel::GaussianKernel,
-      metric::EuclideanDistance,
-      arma::mat,
-      tree::BallTree>
-      kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
+  GaussianKernel kernel(kernelBandwidth);
+  EuclideanDistance metric;
+  KDE<GaussianKernel, EuclideanDistance, arma::mat, BallTree> kde(
+      relError, 0.0, kernel, KDEMode::KDE_SINGLE_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   kdeEstimations /= kernel.Normalizer(reference.n_rows);
@@ -280,9 +266,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidKernel",
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("linux"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -299,9 +283,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidTree",
   SetInputParam("query", query);
   SetInputParam("tree", std::string("olive"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -318,9 +300,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAlgorithm",
   SetInputParam("query", query);
   SetInputParam("algorithm", std::string("bogosort"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -339,9 +319,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainReferenceAndModel",
   SetInputParam("query", query);
   SetInputParam("input_model", model);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -357,7 +335,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAbsoluteError",
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid value.
   SetInputParam("abs_error", -0.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -365,7 +342,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidAbsoluteError",
   // Valid value.
   SetInputParam("abs_error", 5.8);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -381,7 +357,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidRelativeError",
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("rel_error", -0.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -393,7 +368,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidRelativeError",
   // Valid value.
   SetInputParam("rel_error", 0.3);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -412,7 +386,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCProbability",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("mc_probability", -0.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -424,7 +397,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCProbability",
   // Valid value.
   SetInputParam("mc_probability", 0.3);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -443,7 +415,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCInitialSampleSize",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("initial_sample_size", -1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -455,7 +426,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCInitialSampleSize",
   // Valid value.
   SetInputParam("initial_sample_size", 20);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -474,7 +444,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCEntryCoef",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 1.
   SetInputParam("mc_entry_coef", 0.5);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -482,7 +451,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCEntryCoef",
   // Valid greater than 1.
   SetInputParam("mc_entry_coef", 1.1);
   REQUIRE_NOTHROW(RUN_BINDING());
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -501,7 +469,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCBreakCoef",
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("monte_carlo", true);
 
-  Log::Fatal.ignoreInput = true;
   // Invalid under 0.
   SetInputParam("mc_break_coef", -0.5);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -513,7 +480,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainInvalidMCBreakCoef",
   // Invalid greater than 1.
   SetInputParam("mc_break_coef", 1.1);
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

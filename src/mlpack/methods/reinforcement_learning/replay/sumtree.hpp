@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of SumTree.
@@ -186,7 +185,6 @@ class SumTree
   std::vector<T> element;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

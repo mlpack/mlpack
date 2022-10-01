@@ -18,7 +18,6 @@
 #include "leaky_relu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 LeakyReLUType<MatType>::LeakyReLUType(const double alpha) :
@@ -74,19 +73,18 @@ LeakyReLUType<MatType>::operator=(LeakyReLUType&& other)
 template<typename MatType>
 void LeakyReLUType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  output = arma::max(input, alpha * input);
+  #pragma omp for
+  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
+    output(i) = std::max(input(i), alpha * input(i));
 }
 
 template<typename MatType>
 void LeakyReLUType<MatType>::Backward(
     const MatType& input, const MatType& gy, MatType& g)
 {
-  MatType derivative;
-  derivative.set_size(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; ++i)
-    derivative(i) = (input(i) >= 0) ? 1 : alpha;
-
-  g = gy % derivative;
+  #pragma omp for
+  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
+    g(i) = gy(i) * ((input(i) >= 0) ? 1 : alpha);
 }
 
 template<typename MatType>
@@ -100,7 +98,6 @@ void LeakyReLUType<MatType>::serialize(
   ar(CEREAL_NVP(alpha));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

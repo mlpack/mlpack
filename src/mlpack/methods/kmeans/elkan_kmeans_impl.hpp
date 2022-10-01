@@ -16,7 +16,6 @@
 #include "elkan_kmeans.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 template<typename MetricType, typename MatType>
 ElkanKMeans<MetricType, MatType>::ElkanKMeans(const MatType& dataset,
@@ -183,7 +182,6 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   return std::sqrt(cNorm);
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

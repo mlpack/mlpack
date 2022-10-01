@@ -18,7 +18,6 @@ n.
 #include "utils.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The MAD (Mean absolute deviation) gain, is a measure of set purity based on
@@ -124,7 +123,6 @@ class MADGain
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

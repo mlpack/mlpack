@@ -18,12 +18,11 @@
 #include <mlpack/methods/randomized_svd/randomized_svd.hpp>
 
 namespace mlpack {
-namespace pca {
 
 /**
  * Implementation of the randomized SVD policy.
  */
-class RandomizedSVDPolicy
+class RandomizedSVDPCAPolicy
 {
  public:
   /**
@@ -35,8 +34,8 @@ class RandomizedSVDPolicy
    * @param maxIterations Number of iterations for the power method
    *        (Default: 2).
    */
-  RandomizedSVDPolicy(const size_t iteratedPower = 0,
-                      const size_t maxIterations = 2) :
+  RandomizedSVDPCAPolicy(const size_t iteratedPower = 0,
+                         const size_t maxIterations = 2) :
       iteratedPower(iteratedPower),
       maxIterations(maxIterations)
   {
@@ -65,7 +64,7 @@ class RandomizedSVDPolicy
     arma::mat v;
 
     // Do singular value decomposition using the randomized SVD algorithm.
-    svd::RandomizedSVD rsvd(iteratedPower, maxIterations);
+    RandomizedSVD rsvd(iteratedPower, maxIterations);
     rsvd.Apply(data, eigvec, eigVal, v, rank);
 
     // Now we must square the singular values to get the eigenvalues.
@@ -95,7 +94,6 @@ class RandomizedSVDPolicy
   size_t maxIterations;
 };
 
-} // namespace pca
 } // namespace mlpack
 
 #endif

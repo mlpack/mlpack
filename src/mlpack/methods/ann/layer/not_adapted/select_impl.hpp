@@ -16,7 +16,6 @@
 #include "constant.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 SelectType<InputType, OutputType>::SelectType(
@@ -70,7 +69,6 @@ void SelectType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(elements));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

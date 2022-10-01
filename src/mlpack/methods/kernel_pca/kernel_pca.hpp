@@ -20,7 +20,6 @@
 #include "kernel_rules/nystroem_method.hpp"
 
 namespace mlpack {
-namespace kpca {
 
 /**
  * This class performs kernel principal components analysis (Kernel PCA), for a
@@ -126,7 +125,6 @@ class KernelPCA
   bool centerTransformedData;
 }; // class KernelPCA
 
-} // namespace kpca
 } // namespace mlpack
 
 // Include implementation.

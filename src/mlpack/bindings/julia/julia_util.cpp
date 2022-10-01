@@ -128,7 +128,7 @@ void SetParamVectorStrStr(void* params,
  */
 void SetParamVectorInt(void* params,
                        const char* paramName,
-                       int* ints,
+                       long long* ints,
                        const size_t length)
 {
   util::Params* p = (util::Params*) params;
@@ -138,7 +138,7 @@ void SetParamVectorInt(void* params,
   std::vector<int> vec;
   vec.resize(length);
   for (size_t i = 0; i < length; ++i)
-    vec[i] = ints[i];
+    vec[i] = int(ints[i]);
 
   p->Get<std::vector<int>>(paramName) = std::move(vec);
   p->SetPassed(paramName);
@@ -157,17 +157,20 @@ void SetParamMat(void* params,
   util::Params* p = (util::Params*) params;
 
   // Create the matrix as an alias.
-  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
+  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, false);
   p->Get<arma::mat>(paramName) = pointsAsRows ? m.t() : std::move(m);
   p->SetPassed(paramName);
 }
 
 /**
  * Call params.SetParam<arma::Mat<size_t>>().
+ *
+ * Note that we will have to allocate memory, since we must convert to a size_t
+ * matrix, and we also subtract by one (since Julia uses 1-indexed labels).
  */
 void SetParamUMat(void* params,
                   const char* paramName,
-                  size_t* memptr,
+                  long long* memptr,
                   const size_t rows,
                   const size_t cols,
                   const bool pointsAsRows)
@@ -175,10 +178,11 @@ void SetParamUMat(void* params,
   util::Params* p = (util::Params*) params;
 
   // Create the matrix as an alias.
-  arma::Mat<size_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
+  arma::Mat<long long> m(memptr, arma::uword(rows), arma::uword(cols), true,
       true);
-  p->Get<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
-      std::move(m);
+  arma::Mat<size_t> convM = arma::conv_to<arma::Mat<size_t>>::from(m - 1);
+  p->Get<arma::Mat<size_t>>(paramName) = pointsAsRows ? convM.t() :
+      std::move(convM);
   p->SetPassed(paramName);
 }
 
@@ -191,7 +195,7 @@ void SetParamRow(void* params,
                  const size_t cols)
 {
   util::Params* p = (util::Params*) params;
-  arma::rowvec m(memptr, arma::uword(cols), false, true);
+  arma::rowvec m(memptr, arma::uword(cols), false, false);
   p->Get<arma::rowvec>(paramName) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -201,12 +205,13 @@ void SetParamRow(void* params,
  */
 void SetParamURow(void* params,
                   const char* paramName,
-                  size_t* memptr,
+                  long long* memptr,
                   const size_t cols)
 {
   util::Params* p = (util::Params*) params;
-  arma::Row<size_t> m(memptr, arma::uword(cols), false, true);
-  p->Get<arma::Row<size_t>>(paramName) = std::move(m);
+  arma::Row<long long> m(memptr, arma::uword(cols), false, true);
+  arma::Row<size_t> convM = arma::conv_to<arma::Row<size_t>>::from(m - 1);
+  p->Get<arma::Row<size_t>>(paramName) = std::move(convM);
   p->SetPassed(paramName);
 }
 
@@ -219,7 +224,7 @@ void SetParamCol(void* params,
                  const size_t rows)
 {
   util::Params* p = (util::Params*) params;
-  arma::vec m(memptr, arma::uword(rows), false, true);
+  arma::vec m(memptr, arma::uword(rows), false, false);
   p->Get<arma::vec>(paramName) = std::move(m);
   p->SetPassed(paramName);
 }
@@ -229,12 +234,13 @@ void SetParamCol(void* params,
  */
 void SetParamUCol(void* params,
                   const char* paramName,
-                  size_t* memptr,
+                  long long* memptr,
                   const size_t rows)
 {
   util::Params* p = (util::Params*) params;
-  arma::Col<size_t> m(memptr, arma::uword(rows), false, true);
-  p->Get<arma::Col<size_t>>(paramName) = std::move(m);
+  arma::Col<long long> m(memptr, arma::uword(rows), false, true);
+  arma::Col<size_t> convM = arma::conv_to<arma::Col<size_t>>::from(m - 1);
+  p->Get<arma::Col<size_t>>(paramName) = std::move(convM);
   p->SetPassed(paramName);
 }
 
@@ -260,7 +266,7 @@ void SetParamMatWithInfo(void* params,
       hasCategoricals = true;
   }
 
-  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
+  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, false);
 
   // Do we need to find how many categories we have?
   if (hasCategoricals)
@@ -365,14 +371,17 @@ size_t GetParamVectorIntLen(void* params, const char* paramName)
  * The vector will be created in-place and it is expected that the calling
  * function will take ownership.
  */
-int* GetParamVectorIntPtr(void* params, const char* paramName)
+long long* GetParamVectorIntPtr(void* params, const char* paramName)
 {
   util::Params* p = (util::Params*) params;
   const size_t size = p->Get<std::vector<int>>(paramName).size();
-  int* ints = new int[size];
+  if (size == 0)
+    return NULL;
+
+  long long* ints = new long long[size];
 
   for (size_t i = 0; i < size; ++i)
-    ints[i] = p->Get<std::vector<int>>(paramName)[i];
+    ints[i] = (long long)(p->Get<std::vector<int>>(paramName)[i]);
 
   return ints;
 }

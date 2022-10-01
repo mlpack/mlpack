@@ -16,7 +16,6 @@
 #include <mlpack/core/cv/metrics/average_strategy.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
  * Recall is a metric of performance for classification algorithms that for
@@ -104,7 +103,6 @@ class Recall
                         const arma::Row<size_t>& labels);
 };
 
-} // namespace cv
 } // namespace mlpack
 
 // Include implementation.

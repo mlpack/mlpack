@@ -18,7 +18,6 @@
 #include "mean_pooling.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MeanPoolingType<MatType>::MeanPoolingType() :
@@ -146,7 +145,8 @@ void MeanPoolingType<MatType>::Backward(
 
   // Initialize the gradient with zero.
   gTemp.zeros();
-  for (size_t s = 0; s < mappedError.n_slices; s++)
+  #pragma omp parallel for
+  for (size_t s = 0; s < (size_t) mappedError.n_slices; s++)
   {
     // Computing gradient of each slice.
     Unpooling(mappedError.slice(s), gTemp.slice(s));
@@ -204,7 +204,8 @@ void MeanPoolingType<MatType>::PoolingOperation(
     arma::Cube<typename MatType::elem_type>& output)
 {
   // Iterate over all slices individually.
-  for (size_t s = 0; s < input.n_slices; ++s)
+  #pragma omp parallel for
+  for (size_t s = 0; s < (size_t) input.n_slices; ++s)
   {
     for (size_t j = 0, colidx = 0; j < output.n_cols;
         ++j, colidx += strideHeight)
@@ -387,7 +388,6 @@ void MeanPoolingType<MatType>::Unpooling(
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

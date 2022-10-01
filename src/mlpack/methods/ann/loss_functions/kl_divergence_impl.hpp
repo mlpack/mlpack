@@ -17,7 +17,6 @@
 #include "kl_divergence.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 KLDivergenceType<MatType>::KLDivergenceType(const bool reduction) :
@@ -61,7 +60,6 @@ void KLDivergenceType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

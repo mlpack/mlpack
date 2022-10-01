@@ -20,7 +20,6 @@
 #include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * Implementation of Pendulum task. The inverted pendulum swingup problem is a
@@ -154,7 +153,7 @@ class Pendulum
     const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
-    double torque = math::ClampRange(action.action[0], -maxTorque, maxTorque);
+    double torque = ClampRange(action.action[0], -maxTorque, maxTorque);
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *
@@ -165,7 +164,7 @@ class Pendulum
         length) * std::sin(theta + M_PI) + 3.0 / (mass * std::pow(length, 2)) *
         torque) * dt;
     nextState.Theta() = theta + newAngularVelocity * dt;
-    nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
+    nextState.AngularVelocity() = ClampRange(newAngularVelocity,
         -maxAngularVelocity, maxAngularVelocity);
 
     nextState.SetState();
@@ -197,8 +196,8 @@ class Pendulum
   State InitialSample()
   {
     State state;
-    state.Theta() = math::Random(-M_PI, M_PI);
-    state.AngularVelocity() = math::Random(-1.0, 1.0);
+    state.Theta() = Random(-M_PI, M_PI);
+    state.AngularVelocity() = Random(-1.0, 1.0);
     stepsPerformed = 0;
     state.SetState();
     return state;
@@ -263,7 +262,6 @@ class Pendulum
   size_t stepsPerformed;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

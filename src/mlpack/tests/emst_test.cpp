@@ -14,10 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::emst;
-using namespace mlpack::tree;
-using namespace mlpack::bound;
-using namespace mlpack::metric;
 
 /**
  * Simple emst test with small, synthetic dataset.  This is an

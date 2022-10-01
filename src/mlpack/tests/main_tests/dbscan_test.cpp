@@ -60,9 +60,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANEpsilonTest",
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) -0.5);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -78,9 +76,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANMinSizeTest",
   SetInputParam("input", inputData);
   SetInputParam("min_size", (int) -1);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -190,9 +186,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANTreeTypeTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("tree_type", std::string("binary"));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

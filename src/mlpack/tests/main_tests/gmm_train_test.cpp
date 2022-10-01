@@ -58,9 +58,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainValidGaussianTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", 0); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -93,9 +91,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainMaxIterationsTest",
   SetInputParam("trials", (int) 1);
   SetInputParam("max_iterations", (int)-1); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Ensure that Trials must be greater than 0.
@@ -108,9 +104,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPositiveTrialsTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("trials", (int) 0); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Checking that percentage is between 0 and 1.
@@ -122,14 +116,12 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
 
-  Log::Fatal.ignoreInput = true;
   SetInputParam("percentage", (double) 2.0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
   SetInputParam("percentage", (double) -1.0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
-  Log::Fatal.ignoreInput = false;
 }
 
 // Samplings must be positive.
@@ -142,9 +134,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplings",
   SetInputParam("refined_start", true);
   SetInputParam("samplings", (int) 0); // Invalid
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 // Number of gaussians in the model trained from input model.
@@ -209,7 +199,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
   if (!data::Load("data_3d_mixed.txt", inputData))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
-  math::FixedRandomSeed();
+  FixedRandomSeed();
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
@@ -227,7 +217,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("noise", (double) 100.0);
 
-  math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -251,7 +241,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainTrialsTest",
   bool success = false;
   for (size_t trial = 0; trial < 10; ++trial)
   {
-    math::CustomRandomSeed(trial);
+    CustomRandomSeed(trial);
 
     SetInputParam("input", inputData);
     SetInputParam("gaussians", (int) 5);
@@ -273,7 +263,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainTrialsTest",
     SetInputParam("max_iterations", (int) 1);
     SetInputParam("kmeans_max_iterations", (int) 1);
 
-    math::CustomRandomSeed(trial);
+    CustomRandomSeed(trial);
 
     RUN_BINDING();
 
@@ -298,7 +288,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffMaxIterationsTest",
 {
   arma::mat inputData(5, 150, arma::fill::randu);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 3);
@@ -320,7 +310,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffMaxIterationsTest",
   SetInputParam("max_iterations", (int) 1000);
   SetInputParam("kmeans_max_iterations", (int) 1);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -344,7 +334,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
   bool success = false;
   for (size_t trial = 0; trial < 10; ++trial)
   {
-    math::CustomRandomSeed(trial);
+    CustomRandomSeed(trial);
 
     SetInputParam("input", inputData);
     SetInputParam("gaussians", (int) 3);
@@ -366,7 +356,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
     SetInputParam("max_iterations", (int) 1);
     SetInputParam("kmeans_max_iterations", (int) 1000);
 
-    math::CustomRandomSeed(trial);
+    CustomRandomSeed(trial);
 
     RUN_BINDING();
 
@@ -404,7 +394,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
   SetInputParam("percentage", (double) 0.01);
   SetInputParam("samplings", (int) 1000);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -420,7 +410,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
   SetInputParam("percentage", (double) 0.45);
   SetInputParam("samplings", (int) 1000);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -445,7 +435,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
   SetInputParam("trials", (int) 2);
   SetInputParam("samplings", (int) 10);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -461,7 +451,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
   SetInputParam("trials", (int) 2);
   SetInputParam("samplings", (int) 5000);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -484,7 +474,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("tolerance", (double) 1e-8);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -498,7 +488,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
   SetInputParam("gaussians", (int) 2);
   SetInputParam("tolerance", (double) 10);
 
-  mlpack::math::FixedRandomSeed();
+  FixedRandomSeed();
 
   RUN_BINDING();
 

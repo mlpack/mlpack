@@ -19,7 +19,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Soft Margin Loss function.
@@ -88,7 +87,6 @@ class SoftMarginLossType
 // Default typedef for typical `arma::mat` usage.
 typedef SoftMarginLossType<arma::mat> SoftMarginLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // include implementation.

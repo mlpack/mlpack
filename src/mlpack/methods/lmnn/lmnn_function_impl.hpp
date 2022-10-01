@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace lmnn {
 
 template<typename MetricType>
 LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
@@ -26,8 +25,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
                                        double regularization,
                                        size_t range,
                                        MetricType metric) :
-    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
-    labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
+    dataset(MakeAlias(const_cast<arma::mat&>(dataset), false)),
+    labels(MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
     k(k),
     metric(metric),
     regularization(regularization),
@@ -106,8 +105,8 @@ void LMNNFunction<MetricType>::Shuffle()
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       dataset.n_cols - 1, dataset.n_cols));
 
-  math::ClearAlias(dataset);
-  math::ClearAlias(labels);
+  ClearAlias(dataset);
+  ClearAlias(labels);
 
   dataset = newDataset.cols(ordering);
   labels = newLabels.cols(ordering);
@@ -1031,7 +1030,6 @@ inline void LMNNFunction<MetricType>::Precalculate()
   }
 }
 
-} // namespace lmnn
 } // namespace mlpack
 
 #endif

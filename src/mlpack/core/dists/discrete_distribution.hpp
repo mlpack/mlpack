@@ -19,7 +19,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace distribution /** Probability distributions. */ {
 
 /**
  * A discrete distribution where the only observations are discrete
@@ -249,7 +248,6 @@ class DiscreteDistribution
   std::vector<arma::vec> probabilities;
 };
 
-} // namespace distribution
 } // namespace mlpack
 
 // Include implementation.

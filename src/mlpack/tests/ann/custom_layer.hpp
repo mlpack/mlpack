@@ -17,7 +17,6 @@
 #include <mlpack/methods/ann/ann.hpp>
 
 namespace mlpack {
-namespace ann {
 
 /**
  * Standard Sigmoid layer.
@@ -28,7 +27,6 @@ template <
 >
 using CustomLayer = BaseLayer<ActivationFunction, MatType>;
 
-} // namespace ann
 } // namespace mlpack
 
 #endif // MLPACK_TESTS_CUSTOM_LAYER_HPP

@@ -16,7 +16,6 @@
 #include "hard_tanh.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 HardTanHType<InputType, OutputType>::HardTanHType(
@@ -65,7 +64,6 @@ void HardTanHType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(minValue));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

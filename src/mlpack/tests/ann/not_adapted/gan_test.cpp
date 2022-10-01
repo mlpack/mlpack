@@ -25,9 +25,6 @@
 #include "serialization.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
-using namespace mlpack::math;
-using namespace mlpack::regression;
 using namespace std::placeholders;
 
 /*
@@ -74,8 +71,8 @@ TEST_CASE("GANTest", "[GANNetworkTest]")
 
   // Create GAN.
   GaussianInitialization gaussian(0, 0.1);
-  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
-      math::RandNormal(0, 1) * 0.01;};
+  std::function<double ()> noiseFunction = [](){ return Random(-8, 8) +
+      RandNormal(0, 1) * 0.01;};
   GAN<FFN<SigmoidCrossEntropyError<> >,
       GaussianInitialization,
       std::function<double()> >
@@ -106,7 +103,7 @@ TEST_CASE("GANTest", "[GANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -206,7 +203,7 @@ TEST_CASE("GANMNISTTest", "[GANNetworkTest]")
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
-      return math::RandNormal(0, 1);};
+      return RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()> > gan(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
@@ -235,7 +232,7 @@ TEST_CASE("GANMNISTTest", "[GANNetworkTest]")
 
     generatedData.submat(0, i * dim, dim - 1, i * dim + dim - 1) = samples;
 
-    samples = trainData.col(math::RandInt(0, trainData.n_cols));
+    samples = trainData.col(RandInt(0, trainData.n_cols));
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -327,8 +324,8 @@ TEST_CASE("GANMemorySharingTest", "[GANNetworkTest]")
   GaussianInitialization gaussian(0, 0.1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
-  std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
-      math::RandNormal(0, 1) * 0.01;};
+  std::function<double ()> noiseFunction = [](){ return Random(-8, 8) +
+      RandNormal(0, 1) * 0.01;};
   GAN<FFN<SigmoidCrossEntropyError<> >,
       GaussianInitialization,
       std::function<double()> >

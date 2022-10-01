@@ -24,21 +24,21 @@ inline void MockCategoricalData(arma::mat& d,
   // We'll build a spiral dataset plus two noisy categorical features.  We need
   // to build the distributions for the categorical features (they'll be
   // discrete distributions).
-  mlpack::distribution::DiscreteDistribution c1[5];
+  mlpack::DiscreteDistribution c1[5];
   // The distribution will be automatically normalized.
   for (size_t i = 0; i < 5; ++i)
   {
     std::vector<arma::vec> probs;
     probs.push_back(arma::vec(4, arma::fill::randu));
-    c1[i] = mlpack::distribution::DiscreteDistribution(probs);
+    c1[i] = mlpack::DiscreteDistribution(probs);
   }
 
-  mlpack::distribution::DiscreteDistribution c2[5];
+  mlpack::DiscreteDistribution c2[5];
   for (size_t i = 0; i < 5; ++i)
   {
     std::vector<arma::vec> probs;
     probs.push_back(arma::vec(2, arma::fill::randu));
-    c2[i] = mlpack::distribution::DiscreteDistribution(probs);
+    c2[i] = mlpack::DiscreteDistribution(probs);
   }
 
   arma::mat spiralDataset(4, 4000);
@@ -46,9 +46,8 @@ inline void MockCategoricalData(arma::mat& d,
   for (size_t i = 0; i < 4000; ++i)
   {
     // One circle every 2000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 200.0) +
-        0.5 * mlpack::math::Random();
-    const double angle = (i % 200) * (2 * M_PI) + mlpack::math::Random();
+    const double magnitude = 2.0 + (double(i) / 200.0) + 0.5 * mlpack::Random();
+    const double angle = (i % 200) * (2 * M_PI) + mlpack::Random();
 
     const double x = magnitude * cos(angle);
     const double y = magnitude * sin(angle);
@@ -127,14 +126,14 @@ inline void MockCategoricalData(arma::mat& d,
   for (size_t i = 0; i < 4000; ++i)
   {
     // Random numeric features.
-    d(0, i) = mlpack::math::Random();
-    d(1, i) = mlpack::math::Random(-1, 1);
-    d(2, i) = mlpack::math::Random();
+    d(0, i) = mlpack::Random();
+    d(1, i) = mlpack::Random(-1, 1);
+    d(2, i) = mlpack::Random();
 
     // Binary feature.
-    d(3, i) = mlpack::math::RandInt(0, 2);
+    d(3, i) = mlpack::RandInt(0, 2);
     // 5-category categorical feature.
-    d(4, i) = mlpack::math::RandInt(0, 5);
+    d(4, i) = mlpack::RandInt(0, 5);
 
     // Mappings from categorical features to regression value.
     std::map<int, double> f;
@@ -149,7 +148,7 @@ inline void MockCategoricalData(arma::mat& d,
     g[4] = 4.0;
 
     // Random noise in range [-0.5, 0.5).
-    const double noise = mlpack::math::Random() - 0.5;
+    const double noise = mlpack::Random() - 0.5;
 
     // y = x1 + x2 + 3 * x3 + f(x4) + g(x5) + noise
     l[i] = d(0, i) + d(1, i) + 3 * d(2, i) + f[(int) d(3, i)] +

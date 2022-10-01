@@ -16,7 +16,6 @@
 #include "l1_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 L1LossType<MatType>::L1LossType(const bool reduction):
@@ -60,7 +59,6 @@ void L1LossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

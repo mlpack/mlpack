@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace regression {
 
 class SoftmaxRegressionFunction
 {
@@ -203,7 +202,6 @@ class SoftmaxRegressionFunction
   bool fitIntercept;
 };
 
-} // namespace regression
 } // namespace mlpack
 
 // Include implementation.

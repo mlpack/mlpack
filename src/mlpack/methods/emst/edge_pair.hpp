@@ -19,7 +19,6 @@
 #include "union_find.hpp"
 
 namespace mlpack {
-namespace emst {
 
 /**
  * An edge pair is simply two indices and a distance.  It is used as the
@@ -65,7 +64,6 @@ class EdgePair
   double& Distance() { return distance; }
 }; // class EdgePair
 
-} // namespace emst
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_EMST_EDGE_PAIR_HPP

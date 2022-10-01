@@ -18,7 +18,6 @@
 #include "../hrectbound.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 class RPlusPlusTreeAuxiliaryInformation
@@ -27,7 +26,7 @@ class RPlusPlusTreeAuxiliaryInformation
   //! The element type held by the tree.
   typedef typename TreeType::ElemType ElemType;
   //! The bound type held by the auxiliary information.
-  typedef bound::HRectBound<metric::EuclideanDistance, ElemType> BoundType;
+  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
 
   //! Construct the auxiliary information object.
   RPlusPlusTreeAuxiliaryInformation();
@@ -160,7 +159,6 @@ class RPlusPlusTreeAuxiliaryInformation
   void serialize(Archive &, const uint32_t /* version */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #include "r_plus_plus_tree_auxiliary_information_impl.hpp"

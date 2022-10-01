@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/tree_traits.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The specialization of the TreeTraits class for the CoverTree tree type.  It
@@ -70,7 +69,6 @@ class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
   static const bool UniqueNumDescendants = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

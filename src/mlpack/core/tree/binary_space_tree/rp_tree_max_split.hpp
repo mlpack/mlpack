@@ -17,7 +17,6 @@
 #include <mlpack/core/tree/perform_split.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * This class splits a node by a random hyperplane. In order to choose the
@@ -77,7 +76,7 @@ class RPTreeMaxSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
         splitInfo);
   }
 
@@ -102,7 +101,7 @@ class RPTreeMaxSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
+    return mlpack::PerformSplit<MatType, RPTreeMaxSplit>(data, begin, count,
         splitInfo, oldFromNew);
   }
 
@@ -137,7 +136,6 @@ class RPTreeMaxSplit
                           ElemType& splitVal);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

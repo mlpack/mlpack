@@ -101,7 +101,6 @@ PARAM_FLAG("no_shuffle", "Avoid shuffling the data before splitting.", "S");
 PARAM_FLAG("stratify_data", "Stratify the data according to labels", "z")
 
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::data;
 using namespace mlpack::util;
 using namespace arma;

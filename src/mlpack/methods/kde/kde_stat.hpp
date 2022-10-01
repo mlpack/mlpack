@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kde {
 
 /**
  * Extra data for each node in the tree for the task of kernel density
@@ -89,7 +88,6 @@ class KDEStat
   double accumError;
 };
 
-} // namespace kde
 } // namespace mlpack
 
 #endif

@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace math /** Miscellaneous math routines. */ {
 
 template<typename eT>
 inline
@@ -30,7 +29,6 @@ arma::Mat< std::complex<T> >
 ColumnCovariance(const arma::Mat< std::complex<T> >& A,
      const size_t norm_type = 0);
 
-} // namespace math
 } // namespace mlpack
 
 // Include implementation

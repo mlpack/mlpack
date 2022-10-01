@@ -37,7 +37,6 @@
 #include <iostream>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the weight matrix with the method proposed
@@ -162,7 +161,6 @@ class InitTraits<KathirvalavakumarSubavathiInitialization>
 };
 
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

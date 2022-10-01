@@ -38,7 +38,6 @@
 #include "normalization/z_score_normalization.hpp"
 
 namespace mlpack {
-namespace cf {
 
 inline CFModel::CFModel() :
     decompositionType(NMF),
@@ -559,7 +558,6 @@ void CFModel::serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

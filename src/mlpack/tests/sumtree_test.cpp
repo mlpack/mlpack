@@ -17,7 +17,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::rl;
 
 /**
  * Test that we set the element.

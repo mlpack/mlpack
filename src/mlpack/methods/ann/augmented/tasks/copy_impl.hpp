@@ -16,9 +16,6 @@
 #include "copy.hpp"
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
-namespace augmented /* Augmented neural network */ {
-namespace tasks /* Task utilities for augmented */ {
 
 inline CopyTask::CopyTask(const size_t maxLength,
                           const size_t nRepeats,
@@ -61,7 +58,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
     {
       arma::vec weights(maxLength - 1);
 
-      mlpack::distribution::DiscreteDistribution d(1);
+      DiscreteDistribution d(1);
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
       d.Probabilities(0) =
@@ -105,9 +102,6 @@ inline void CopyTask::Generate(arma::mat& input,
   }
 }
 
-} // namespace tasks
-} // namespace augmented
-} // namespace ann
 } // namespace mlpack
 
 #endif

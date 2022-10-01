@@ -16,7 +16,6 @@
 #include "hilbert_r_tree_descent_heuristic.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename TreeType>
 size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
@@ -48,7 +47,6 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
   return bestIndex;
 }
 
-} //  namespace tree
 } //  namespace mlpack
 
 #endif // MLPACK_CORE_TREE_RECTANGLE_TREE_HR_TREE_DESCENT_HEURISTIC_IMPL_HPP

@@ -19,7 +19,6 @@
 #include "init_rules_traits.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the network with the given initialization
@@ -65,7 +64,7 @@ class NetworkInitialization
     }
 
     // Initialize the network layer by layer or the complete network.
-    if (ann::InitTraits<InitializationRuleType>::UseLayer)
+    if (InitTraits<InitializationRuleType>::UseLayer)
     {
       for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
       {
@@ -92,7 +91,6 @@ class NetworkInitialization
   InitializationRuleType initializeRule;
 }; // class NetworkInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

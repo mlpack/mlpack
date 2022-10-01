@@ -11,16 +11,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann.hpp>
 
 #include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Simple dropout module test.

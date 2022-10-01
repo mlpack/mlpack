@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Cosine Embedding Loss function is used for measuring whether two inputs are
@@ -109,7 +108,6 @@ class CosineEmbeddingLossType
 // Default typedef for typical `arma::mat` usage.
 typedef CosineEmbeddingLossType<arma::mat> CosineEmbeddingLoss;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

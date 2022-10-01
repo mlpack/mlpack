@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace kmeans {
 
 /**
  * When an empty cluster is detected, this class takes the point furthest from
@@ -74,7 +73,6 @@ class MaxVarianceNewCluster
                     MetricType& metric);
 };
 
-} // namespace kmeans
 } // namespace mlpack
 
 // Include implementation.

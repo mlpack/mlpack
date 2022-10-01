@@ -17,7 +17,6 @@
 #include <ensmallen.hpp>
 
 namespace mlpack {
-namespace svd {
 
 /**
  * The data is stored in a matrix of type MatType, so that this class can be
@@ -130,12 +129,7 @@ class RegularizedSVDFunction
   size_t numItems;
 };
 
-} // namespace svd
 } // namespace mlpack
-
-/**
- * @cond NO_DOXYGEN
- */
 
 namespace ens {
 
@@ -148,20 +142,16 @@ namespace ens {
   template <>
   template <>
   inline double StandardSGD::Optimize(
-      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+      mlpack::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
   template <>
   template <>
   inline double ParallelSGD<ExponentialBackoff>::Optimize(
-      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+      mlpack::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
 } // namespace ens
-
-/**
- * @endcond
- */
 
 #include "regularized_svd_function_impl.hpp"
 

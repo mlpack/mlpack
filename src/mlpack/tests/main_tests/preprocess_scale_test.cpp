@@ -230,9 +230,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidScalerTest",
   SetInputParam("min_value", 4);
   SetInputParam("max_value", 2);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

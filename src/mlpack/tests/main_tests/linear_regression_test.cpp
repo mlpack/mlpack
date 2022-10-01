@@ -149,9 +149,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongResponseSizeTest",
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -172,9 +170,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest1t",
   SetInputParam("training_responses", std::move(trainY));
   SetInputParam("test", std::move(testX));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -203,9 +199,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -246,9 +240,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRNoResponses",
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   SetInputParam("training", std::move(trainX));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -262,7 +254,5 @@ TEST_CASE_METHOD(LRTestFixture, "LRNoTrainingData",
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
   SetInputParam("training_responses", std::move(trainY));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

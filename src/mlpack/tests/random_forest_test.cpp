@@ -18,7 +18,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::tree;
 
 /**
  * Make sure bootstrap sampling produces numbers in the dataset.
@@ -170,7 +169,7 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
   arma::Row<size_t> noiseLabels(1000);
   for (size_t i = 0; i < noiseLabels.n_elem; ++i)
-    noiseLabels[i] = math::RandInt(3); // Random label.
+    noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(dataset, noise);
@@ -179,9 +178,9 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
   for (size_t i = 0; i < dataset.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Train decision tree and random forest.
   RandomForest<> rf(dataset, labels, 3, weights, 20, 1);
@@ -267,19 +266,19 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest]")
   arma::Row<size_t> randomLabels(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
-    randomNoise(0, i) = math::Random();
-    randomNoise(1, i) = math::Random();
-    randomNoise(2, i) = math::RandInt(4);
-    randomNoise(3, i) = math::RandInt(2);
-    randomLabels[i] = math::RandInt(5);
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random();
+    randomNoise(2, i) = RandInt(4);
+    randomNoise(3, i) = RandInt(2);
+    randomLabels[i] = RandInt(5);
   }
 
   // Generate weights.
   arma::rowvec weights(4000);
   for (size_t i = 0; i < 2000; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = 2000; i < 4000; ++i)
-    weights[i] = math::Random(0.0, 0.001);
+    weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
@@ -394,7 +393,7 @@ TEST_CASE("RandomForestNumericTrainReturnEntropy", "[RandomForestTest]")
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
   arma::Row<size_t> noiseLabels(1000);
   for (size_t i = 0; i < noiseLabels.n_elem; ++i)
-    noiseLabels[i] = math::RandInt(3); // Random label.
+    noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(dataset, noise);
@@ -403,9 +402,9 @@ TEST_CASE("RandomForestNumericTrainReturnEntropy", "[RandomForestTest]")
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
   for (size_t i = 0; i < dataset.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Test random forest on unweighted numeric dataset.
   RandomForest<GiniGain, RandomDimensionSelect> rf;
@@ -436,19 +435,19 @@ TEST_CASE("RandomForestCategoricalTrainReturnEntropy", "[RandomForestTest]")
   arma::Row<size_t> randomLabels(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
-    randomNoise(0, i) = math::Random();
-    randomNoise(1, i) = math::Random();
-    randomNoise(2, i) = math::RandInt(4);
-    randomNoise(3, i) = math::RandInt(2);
-    randomLabels[i] = math::RandInt(5);
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random();
+    randomNoise(2, i) = RandInt(4);
+    randomNoise(3, i) = RandInt(2);
+    randomLabels[i] = RandInt(5);
   }
 
   // Generate weights.
   arma::rowvec weights(6000);
   for (size_t i = 0; i < 4000; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = 4000; i < 6000; ++i)
-    weights[i] = math::Random(0.0, 0.001);
+    weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(d, randomNoise);
   arma::Row<size_t> fullLabels = arma::join_rows(l, randomLabels);
@@ -575,7 +574,7 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
   arma::Row<size_t> noiseLabels(1000);
   for (size_t i = 0; i < noiseLabels.n_elem; ++i)
-    noiseLabels[i] = math::RandInt(3); // Random label.
+    noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
   arma::mat data = arma::join_rows(dataset, noise);
@@ -584,9 +583,9 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
   for (size_t i = 0; i < dataset.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
+    weights[i] = Random(0.9, 1.0);
   for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+    weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Train extra tree.
   ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);

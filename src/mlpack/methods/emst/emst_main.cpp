@@ -73,13 +73,13 @@ BINDING_EXAMPLE(
     "the third column corresponds to the distance between the two points.");
 
 // See also...
-BINDING_SEE_ALSO("EMST Tutorial", "@doxygen/emst_tutorial.html");
+BINDING_SEE_ALSO("EMST Tutorial", "@doc/tutorials/emst.md");
 BINDING_SEE_ALSO("Minimum spanning tree on Wikipedia",
         "https://en.wikipedia.org/wiki/Minimum_spanning_tree");
 BINDING_SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,"
         " and Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf");
-BINDING_SEE_ALSO("mlpack::emst::DualTreeBoruvka class documentation",
-        "@doxygen/classmlpack_1_1emst_1_1DualTreeBoruvka.html");
+BINDING_SEE_ALSO("DualTreeBoruvka class documentation",
+        "@src/mlpack/methods/emst/dtb.hpp");
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");
@@ -89,9 +89,6 @@ PARAM_INT_IN("leaf_size", "Leaf size in the kd-tree.  One-element leaves give "
     "requirements.", "l", 1);
 
 using namespace mlpack;
-using namespace mlpack::emst;
-using namespace mlpack::tree;
-using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
@@ -131,7 +128,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     std::vector<size_t> oldFromNew;
     KDTree<EuclideanDistance, DTBStat, arma::mat> tree(dataPoints, oldFromNew,
         leafSize);
-    metric::LMetric<2, true> metric;
+    LMetric<2, true> metric;
     timers.Stop("tree_building");
 
     DualTreeBoruvka<> dtb(&tree, metric);

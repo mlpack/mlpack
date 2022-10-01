@@ -14,7 +14,6 @@
 #define MLPACK_CORE_CV_METRICS_ROCAUCSCORE_IMPL_HPP
 
 namespace mlpack {
-namespace cv {
 
 template<size_t PositiveClass>
 double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
@@ -85,7 +84,6 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   return auc(0, 0);
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

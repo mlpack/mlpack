@@ -10,17 +10,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#define MLPACK_ENABLE_ANN_SERIALIZATION
 #include <mlpack/core.hpp>
-
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
-#include <mlpack/methods/ann/init_rules/const_init.hpp>
-#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann.hpp>
 
 #include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
@@ -28,7 +20,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Tests the BatchNorm Layer, compares the layers parameters with
@@ -37,10 +28,10 @@ using namespace mlpack::ann;
  */
 TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 {
-  arma::mat input, output;
-  input << 5.1 << 3.5 << 1.4 << arma::endr
-        << 4.9 << 3.0 << 1.4 << arma::endr
-        << 4.7 << 3.2 << 1.3 << arma::endr;
+  arma::mat output;
+  arma::mat input = { { 5.1, 3.5, 1.4 },
+                      { 4.9, 3.0, 1.4 },
+                      { 4.7, 3.2, 1.3 } };
 
   input = input.t();
 

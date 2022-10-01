@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace rl {
 
 /**
  * To use the dummy environment, one may start by specifying the state and
@@ -198,7 +197,6 @@ class ContinuousActionEnv
   static constexpr size_t rewardSize = RewardSize;
 };
 
-} // namespace rl
 } // namespace mlpack
 
 #endif

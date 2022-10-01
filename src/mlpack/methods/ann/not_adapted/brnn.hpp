@@ -29,7 +29,6 @@
 #include <ensmallen.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of a standard bidirectional recurrent neural network container.
@@ -414,7 +413,6 @@ class BRNN
   RNN<OutputLayerType, InitializationRuleType, CustomLayers...> backwardRNN;
 }; // class BRNN
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

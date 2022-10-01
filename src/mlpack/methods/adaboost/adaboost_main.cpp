@@ -44,9 +44,6 @@
 using namespace mlpack;
 using namespace std;
 using namespace arma;
-using namespace mlpack::adaboost;
-using namespace mlpack::tree;
-using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.
@@ -122,7 +119,7 @@ BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
 BINDING_SEE_ALSO("Perceptron", "#perceptron");
 BINDING_SEE_ALSO("Decision Stump", "#decision_stump");
 BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
-        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html");
+        "@src/mlpack/methods/adaboost/adaboost.hpp");
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");

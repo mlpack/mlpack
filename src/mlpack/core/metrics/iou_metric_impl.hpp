@@ -16,7 +16,6 @@
 #include "iou_metric.hpp"
 
 namespace mlpack {
-namespace metric {
 
 template<bool UseCoordinates>
 template <typename VecTypeA, typename VecTypeB>
@@ -73,6 +72,5 @@ void IoU<UseCoordinates>::serialize(
   // Nothing to do here.
 }
 
-} // namespace metric
 } // namespace mlpack
 #endif

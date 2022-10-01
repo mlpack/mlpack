@@ -18,7 +18,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Sequential class. The sequential class works as a
@@ -141,7 +140,6 @@ typedef SequentialType<arma::mat, arma::mat, false> Sequential;
 // Standard Residual layer.
 typedef SequentialType<arma::mat, arma::mat, true> Residual;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

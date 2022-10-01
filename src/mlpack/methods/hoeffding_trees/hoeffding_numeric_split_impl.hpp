@@ -15,7 +15,6 @@
 #include "hoeffding_numeric_split.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename FitnessFunction, typename ObservationType>
 HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
@@ -236,7 +235,6 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

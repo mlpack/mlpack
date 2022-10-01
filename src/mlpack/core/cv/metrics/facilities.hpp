@@ -17,7 +17,6 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace cv {
 
 /**
   * Pairwise distance of the given data.
@@ -42,7 +41,6 @@ DataType PairwiseDistances(const DataType& data,
   return distances;
 }
 
-} // namespace cv
 } // namespace mlpack
 
 #endif

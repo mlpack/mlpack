@@ -17,7 +17,6 @@
 #include "bound_traits.hpp"
 
 namespace mlpack {
-namespace bound {
 
 /**
  * Hollow ball bound encloses a set of points at a specific distance (radius)
@@ -28,7 +27,7 @@ namespace bound {
  * @tparam TMetricType metric type used in the distance measure.
  * @tparam ElemType Type of element (float or double or similar).
  */
-template<typename TMetricType = metric::LMetric<2, true>,
+template<typename TMetricType = LMetric<2, true>,
          typename ElemType = double>
 class HollowBallBound
 {
@@ -38,7 +37,7 @@ class HollowBallBound
 
  private:
   //! The inner and the outer radii of the bound.
-  math::RangeType<ElemType> radii;
+  RangeType<ElemType> radii;
   //! The center of the ball bound.
   arma::Col<ElemType> center;
   //! The center of the hollow.
@@ -122,7 +121,7 @@ class HollowBallBound
   ElemType MinWidth() const { return radii.Hi() * 2.0; }
 
   //! Get the range in a certain dimension.
-  math::RangeType<ElemType> operator[](const size_t i) const;
+  RangeType<ElemType> operator[](const size_t i) const;
 
   /**
    * Determines if a point is within this bound.
@@ -188,7 +187,7 @@ class HollowBallBound
    *     requested.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
+  RangeType<ElemType> RangeDistance(
       const VecType& other,
       typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
@@ -200,7 +199,7 @@ class HollowBallBound
    * @param other Bound to which the minimum and maximum distances are
    *     requested.
    */
-  math::RangeType<ElemType> RangeDistance(const HollowBallBound& other) const;
+  RangeType<ElemType> RangeDistance(const HollowBallBound& other) const;
 
   /**
    * Expand the bound to include the given point.  The centroid will not be
@@ -246,7 +245,6 @@ struct BoundTraits<HollowBallBound<MetricType, ElemType>>
   const static bool HasTightBounds = false;
 };
 
-} // namespace bound
 } // namespace mlpack
 
 #include "hollow_ball_bound_impl.hpp"

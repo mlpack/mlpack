@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace tree /** Trees and tree-building procedures. */ {
 
 /**
  * The DiscreteHilbertValue class stores Hilbert values for all of the points in
@@ -291,7 +290,6 @@ class DiscreteHilbertValue
   void serialize(Archive& ar, const uint32_t /* version */);
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

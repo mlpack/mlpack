@@ -62,9 +62,7 @@ TEST_CASE_METHOD(
   SetInputParam("threshold", (double) 0.5);
   SetInputParam("dimension", (int) -2); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -80,9 +78,7 @@ TEST_CASE_METHOD(
   SetInputParam("threshold", (double) 0.5);
   SetInputParam("dimension", (int) 6); // Invalid.
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

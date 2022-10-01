@@ -18,7 +18,6 @@
 #include "refined_start.hpp"
 
 namespace mlpack {
-namespace kmeans {
 
 //! Partition the given dataset according to Bradley and Fayyad's algorithm.
 template<typename MatType>
@@ -40,7 +39,7 @@ void RefinedStart::Cluster(const MatType& data,
     while (curSample < numPoints)
     {
       // Pick a random point in [0, numPoints).
-      size_t sample = (size_t) math::RandInt(data.n_cols);
+      size_t sample = (size_t) RandInt(data.n_cols);
 
       if (!pointsUsed[sample])
       {
@@ -93,7 +92,7 @@ void RefinedStart::Cluster(const MatType& data,
       // a lot of refactoring and redesign to make this more general... we would
       // probably need to have KMeans take a template template parameter for the
       // initial partition policy.  It's not clear how to best do this.
-      const double distance = metric::EuclideanDistance::Evaluate(data.col(i),
+      const double distance = EuclideanDistance::Evaluate(data.col(i),
           centroids.col(j));
 
       if (distance < minDistance)
@@ -108,7 +107,6 @@ void RefinedStart::Cluster(const MatType& data,
   }
 }
 
-} // namespace kmeans
 } // namespace mlpack
 
 #endif

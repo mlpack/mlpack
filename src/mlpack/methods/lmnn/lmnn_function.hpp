@@ -19,7 +19,6 @@
 #include "constraints.hpp"
 
 namespace mlpack {
-namespace lmnn {
 
 /**
  * The Large Margin Nearest Neighbors function.
@@ -42,7 +41,7 @@ namespace lmnn {
  * operate on one point in the dataset.  This is useful for optimizers like
  * stochastic gradient descent (see ens::SGD).
  */
-template<typename MetricType = metric::SquaredEuclideanDistance>
+template<typename MetricType = SquaredEuclideanDistance>
 class LMNNFunction
 {
  public:
@@ -253,7 +252,6 @@ class LMNNFunction
                         const size_t batchSize);
 };
 
-} // namespace lmnn
 } // namespace mlpack
 
 #include "lmnn_function_impl.hpp"

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * The multiplicative distance update rules for matrices W and H. This follows
@@ -101,7 +100,6 @@ class NMFMultiplicativeDistanceUpdate
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

@@ -14,7 +14,6 @@
 #include "radial_basis_function.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType, typename Activation>
 RBFType<MatType, Activation>::RBFType() :
@@ -159,7 +158,6 @@ void RBFType<MatType, Activation>::serialize(
   ar(CEREAL_NVP(betas));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

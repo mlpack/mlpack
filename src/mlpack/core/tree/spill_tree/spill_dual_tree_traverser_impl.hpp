@@ -19,7 +19,6 @@
 #include "spill_dual_tree_traverser.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -427,7 +426,6 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
   }
 }
 
-} // namespace tree
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_IMPL_HPP

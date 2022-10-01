@@ -106,9 +106,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCALabelSizeTest",
   SetInputParam("labels", std::move(labels));
 
   // Check that an error is thrown.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The gaussian function, defined by
@@ -76,7 +75,6 @@ class GaussianFunction
   }
 }; // class GaussianFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

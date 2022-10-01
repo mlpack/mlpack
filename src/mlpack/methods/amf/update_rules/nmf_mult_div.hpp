@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This follows a method described in the paper 'Algorithms for Non-negative
@@ -154,7 +153,6 @@ class NMFMultiplicativeDivergenceUpdate
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

@@ -226,9 +226,7 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCTrainingVerTest",
   SetInputParam("input_model",
                 std::move(params.Get<NBCModel*>("output_model")));
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

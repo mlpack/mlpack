@@ -38,9 +38,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   SetInputParam("labels", std::move(trainY));
 
   // Training data is not provided. Should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -58,9 +56,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
   // Labels to the training data is not provided. It should throw
   // a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -115,9 +111,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   SetInputParam("labels", std::move(trainY));
 
   // Labels with incorrect size. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -238,9 +232,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData",
   SetInputParam("test", std::move(testX));
 
   // Dimensionality of test data is wrong. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -277,9 +269,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData2",
   SetInputParam("test", std::move(testX));
 
   // Test data dimensionality is wrong. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -303,9 +293,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
   // Training data contains more than two classes. It should throw
   // a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -329,9 +317,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
   SetInputParam("max_iterations", int(-1));
 
   // Maximum iterations is negative. It should a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -355,9 +341,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeStepSizeTest",
   SetInputParam("step_size", double(-0.01));
 
   // Step size for optimizer is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -380,9 +364,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeToleranceTest",
   SetInputParam("tolerance", double(-0.01));
 
   // Tolerance is negative. It should throw a runtime error.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**

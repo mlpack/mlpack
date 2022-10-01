@@ -17,7 +17,6 @@
 #include "utils.hpp"
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The MSE (Mean squared error) gain, is a measure of set purity based on the
@@ -284,7 +283,6 @@ class MSEGain
   double totalSumSquares;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

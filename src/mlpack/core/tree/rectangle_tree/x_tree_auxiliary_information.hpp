@@ -14,7 +14,6 @@
 #define MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_AUXILIARY_INFORMATION_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The XTreeAuxiliaryInformation class provides information specific to X trees
@@ -231,7 +230,6 @@ class XTreeAuxiliaryInformation
   }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_AUXILIARY_INFORMATION_HPP

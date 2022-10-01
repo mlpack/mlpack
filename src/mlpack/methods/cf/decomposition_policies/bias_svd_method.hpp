@@ -18,7 +18,6 @@
 #include <mlpack/methods/bias_svd/bias_svd.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * Implementation of the Bias SVD policy to act as a wrapper when
@@ -78,7 +77,7 @@ class BiasSVDPolicy
              const bool /* mit */)
   {
     // Perform decomposition using the bias SVD algorithm.
-    svd::BiasSVD<> biassvd(maxIterations, alpha, lambda);
+    BiasSVD<> biassvd(maxIterations, alpha, lambda);
     biassvd.Apply(data, rank, w, h, p, q);
   }
 
@@ -192,7 +191,6 @@ class BiasSVDPolicy
   arma::vec q;
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

@@ -16,7 +16,6 @@
 #include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
-namespace amf {
 
 /**
  * This class initializes the W matrix of the AMF algorithm by averaging p
@@ -72,7 +71,7 @@ class RandomAcolInitialization
       for (size_t randCol = 0; randCol < columnsToAverage; randCol++)
       {
         // .col() does not work in this case, as of Armadillo 3.920.
-        W.unsafe_col(col) += V.col(math::RandInt(0, m));
+        W.unsafe_col(col) += V.col(RandInt(0, m));
       }
     }
 
@@ -88,7 +87,6 @@ class RandomAcolInitialization
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
-} // namespace amf
 } // namespace mlpack
 
 #endif

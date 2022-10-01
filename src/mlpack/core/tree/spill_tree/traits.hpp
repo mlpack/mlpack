@@ -16,7 +16,6 @@
 #include <mlpack/core/tree/tree_traits.hpp>
 
 namespace mlpack {
-namespace tree {
 
 /**
  * This is a specialization of the TreeType class to the SpillTree tree type.
@@ -67,7 +66,6 @@ class TreeTraits<SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
   static const bool UniqueNumDescendants = false;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

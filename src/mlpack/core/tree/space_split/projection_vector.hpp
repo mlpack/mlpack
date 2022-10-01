@@ -14,8 +14,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include "../bounds.hpp"
+
 namespace mlpack {
-namespace tree {
 
 /**
  * AxisParallelProjVector defines an axis-parallel projection vector.
@@ -46,7 +46,7 @@ class AxisParallelProjVector
                  typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return point[dim];
-  };
+  }
 
   /**
    * Project the given hrect bound on the projection vector.
@@ -55,11 +55,11 @@ class AxisParallelProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename ElemType>
-  math::RangeType<ElemType> Project(
-      const bound::HRectBound<MetricType, ElemType>& bound) const
+  RangeType<ElemType> Project(
+      const HRectBound<MetricType, ElemType>& bound) const
   {
     return bound[dim];
-  };
+  }
 
   /**
    * Project the given ball bound on the projection vector.
@@ -68,11 +68,11 @@ class AxisParallelProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename VecType>
-  math::RangeType<typename VecType::elem_type> Project(
-      const bound::BallBound<MetricType, VecType>& bound) const
+  RangeType<typename VecType::elem_type> Project(
+      const BallBound<MetricType, VecType>& bound) const
   {
     return bound[dim];
-  };
+  }
 
   /**
    * Serialization.
@@ -81,7 +81,7 @@ class AxisParallelProjVector
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(CEREAL_NVP(dim));
-  };
+  }
 };
 
 /**
@@ -120,7 +120,7 @@ class ProjVector
                  typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return arma::dot(point, projVect);
-  };
+  }
 
   /**
    * Project the given ball bound on the projection vector.
@@ -129,14 +129,14 @@ class ProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename VecType>
-  math::RangeType<typename VecType::elem_type> Project(
-      const bound::BallBound<MetricType, VecType>& bound) const
+  RangeType<typename VecType::elem_type> Project(
+      const BallBound<MetricType, VecType>& bound) const
   {
     typedef typename VecType::elem_type ElemType;
     const double center = Project(bound.Center());
     const ElemType radius = bound.Radius();
-    return math::RangeType<ElemType>(center - radius, center + radius);
-  };
+    return RangeType<ElemType>(center - radius, center + radius);
+  }
 
   /**
    * Serialization.
@@ -145,10 +145,9 @@ class ProjVector
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(CEREAL_NVP(projVect));
-  };
+  }
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

@@ -33,7 +33,6 @@
 #include "random_init.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the weight matrix with the oivs method. The
@@ -153,7 +152,6 @@ class OivsInitialization
 }; // class OivsInitialization
 
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

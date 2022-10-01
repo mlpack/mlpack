@@ -16,7 +16,6 @@
 #include "huber_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 HuberLossType<MatType>::HuberLossType(
@@ -79,7 +78,6 @@ void HuberLossType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -33,7 +33,7 @@ void mlpackToArmaMat(void* params,
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
-  arma::mat m(mat, row, col, false, true);
+  arma::mat m(mat, row, col, false, false);
 
   // Set input parameter with corresponding matrix in IO.
   SetParam(p, identifier, m);
@@ -51,7 +51,7 @@ void mlpackToArmaUmat(void* params,
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
-  arma::mat m(mat, row, col, false, true);
+  arma::mat m(mat, row, col, false, false);
 
   arma::Mat<size_t> matr = arma::conv_to<arma::Mat<size_t>>::from(m);
 
@@ -70,7 +70,7 @@ void mlpackToArmaRow(void* params,
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
-  arma::rowvec m(rowvec, elem, false, true);
+  arma::rowvec m(rowvec, elem, false, false);
 
   // Set input parameter with corresponding row in IO.
   SetParam(p, identifier, m);
@@ -87,7 +87,7 @@ void mlpackToArmaUrow(void* params,
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
-  arma::rowvec m(rowvec, elem, false, true);
+  arma::rowvec m(rowvec, elem, false, false);
 
   arma::Row<size_t> matr = arma::conv_to<arma::Row<size_t>>::from(m);
 
@@ -106,7 +106,7 @@ void mlpackToArmaCol(void* params,
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
-  arma::colvec m(colvec, elem, false, true);
+  arma::colvec m(colvec, elem, false, false);
 
   // Set input parameter with corresponding column in IO.
   SetParam(p, identifier, m);
@@ -123,7 +123,7 @@ void mlpackToArmaUcol(void* params,
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
-  arma::colvec m(colvec, elem, false, true);
+  arma::colvec m(colvec, elem, false, false);
 
   arma::Col<size_t> matr = arma::conv_to<arma::Col<size_t>>::from(m);
 
@@ -337,7 +337,7 @@ void mlpackToArmaMatWithInfo(void* params,
       hasCategoricals = true;
   }
 
-  arma::mat m(memptr, rows, cols, false, true);
+  arma::mat m(memptr, rows, cols, false, false);
 
   // Do we need to find how many categories we have?
   if (hasCategoricals)

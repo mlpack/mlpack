@@ -18,7 +18,6 @@
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 SigmoidCrossEntropyErrorType<MatType>::SigmoidCrossEntropyErrorType(
@@ -71,7 +70,6 @@ void SigmoidCrossEntropyErrorType<MatType>::serialize(
   ar(CEREAL_NVP(reduction));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -283,9 +283,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNNumTargetsTest",
   SetInputParam("k", (int) 5);
 
   // Check that an error is thrown.
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -698,9 +696,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("k", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -712,9 +708,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("range", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -726,9 +720,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("batch_size", (int) 0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -740,9 +732,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("regularization", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -754,9 +744,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("step_size", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -768,9 +756,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("max_iterations", (int) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -782,9 +768,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("passes", (int) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -796,9 +780,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", labels);
   SetInputParam("rank", (int) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 
   // Reset settings.
   ResetSettings();
@@ -810,7 +792,5 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNBoundsTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("tolerance", (double) -1.0);
 
-  Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
 }

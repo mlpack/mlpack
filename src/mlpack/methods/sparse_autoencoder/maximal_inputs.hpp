@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace nn {
 
 /**
  * Given a parameters matrix from an autoencoder, maximize the hidden units of
@@ -47,7 +46,7 @@ namespace nn {
  * SparseAutoencoder<L_BFGS> encoder(data, vSize, hSize);
  *
  * arma::mat maximalInput; // Store the features learned by sparse autoencoder
- * mlpack::nn::MaximalInputs(encoder.Parameters(), maximalInput);
+ * MaximalInputs(encoder.Parameters(), maximalInput);
  *
  * arma::mat outputs;
  * const bool scale = true;
@@ -90,7 +89,6 @@ void MaximalInputs(const arma::mat& parameters, arma::mat& output);
  */
 void NormalizeColByMax(const arma::mat& input, arma::mat& output);
 
-} // namespace nn
 } // namespace mlpack
 
 // Include implementation.

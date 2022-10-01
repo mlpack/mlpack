@@ -22,7 +22,6 @@
 #include "random_selection.hpp"
 
 namespace mlpack {
-namespace kernel {
 
 template<
   typename KernelType,
@@ -80,7 +79,6 @@ class NystroemMethod
   const size_t rank;
 };
 
-} // namespace kernel
 } // namespace mlpack
 
 // Include implementation.

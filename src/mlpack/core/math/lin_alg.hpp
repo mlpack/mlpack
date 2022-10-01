@@ -20,7 +20,6 @@
  * Linear algebra utility functions, generally performed on matrices or vectors.
  */
 namespace mlpack {
-namespace math {
 
 /**
  * Auxiliary function to raise vector elements to a specific power.  The sign
@@ -132,7 +131,6 @@ T Sign(const T x)
     return (T(0) < x) - (x < T(0));
 }
 
-} // namespace math
 } // namespace mlpack
 
 // Partially include implementation

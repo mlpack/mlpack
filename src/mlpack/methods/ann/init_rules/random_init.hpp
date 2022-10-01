@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize randomly the weight matrix.
@@ -130,7 +129,6 @@ class RandomInitialization
   double upperBound;
 }; // class RandomInitialization
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

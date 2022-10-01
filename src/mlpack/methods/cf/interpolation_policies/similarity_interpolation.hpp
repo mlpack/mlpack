@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace cf {
 
 /**
  * With SimilarityInterpolation, interpolation weights are based on
@@ -96,7 +95,6 @@ class SimilarityInterpolation
   }
 };
 
-} // namespace cf
 } // namespace mlpack
 
 #endif

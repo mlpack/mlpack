@@ -178,8 +178,10 @@
  * - A direct URL, starting with http:// or https://.
  * - A page anchor for documentation, referencing another binding by its CMake
  *      binding name, i.e. "#knn".
- * - A link to a Doxygen page, using the mangled Doxygen name after a
- *      '\@doxygen/', i.e., "@doxygen/mlpack1_1_adaboost1_1_AdaBoost".
+ * - A link to a source file, using the source path after '@src', i.e.,
+ *     "@src/mlpack/core/util/param.hpp"
+ * - A link to a documentation file, using the path after '@doc', i.e.,
+ *     "@doc/user/matrices.md"
  */
 #ifdef __COUNTER__
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \

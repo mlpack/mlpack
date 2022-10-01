@@ -1,9 +1,9 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_python_binding name)
+  macro (add_python_binding directory name)
     # Do nothing.
   endmacro ()
-  macro (add_python_wrapper group_name)
+  macro (add_python_wrapper directory group_name)
     # Do nothing.
   endmacro ()
 
@@ -27,6 +27,7 @@ macro (post_python_bindings)
             -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
             -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
             -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -D EXTRA_CXX_FLAGS="-DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN"
             -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
             -P "${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
@@ -89,45 +90,6 @@ endif()
 set(BUILDING_PYTHON_BINDINGS ON PARENT_SCOPE)
 
 # Nothing in this directory will be compiled into mlpack.
-set(BINDING_SOURCES
-  default_param.hpp
-  default_param_impl.hpp
-  generate_pyx.hpp
-  generate_pyx.cpp
-  generate_py_wrapper.hpp
-  generate_py_wrapper.cpp
-  get_arma_type.hpp
-  get_cython_type.hpp
-  get_numpy_type.hpp
-  get_numpy_type_char.hpp
-  get_param.hpp
-  get_printable_param.hpp
-  get_python_type.hpp
-  import_decl.hpp
-  is_serializable.hpp
-  mlpack_main.hpp
-  print_class_defn.hpp
-  print_defn.hpp
-  print_doc.hpp
-  print_doc_functions.hpp
-  print_doc_functions_impl.hpp
-  print_input_processing.hpp
-  print_output_processing.hpp
-  print_pyx.hpp
-  print_pyx.cpp
-  print_wrapper_py.hpp
-  print_wrapper_py.cpp
-  print_type_doc.hpp
-  print_type_doc_impl.hpp
-  py_option.hpp
-  strip_type.hpp
-  wrapper_functions.hpp
-  wrapper_functions_impl.hpp
-  mlpack/arma_util.hpp
-  setup.cfg
-  copy_artifacts.py
-)
-
 # These are all the files we need to compile Cython bindings for mlpack that are
 # not a part of mlpack itself.
 set(CYTHON_SOURCES
@@ -262,7 +224,7 @@ if (WIN32)
 endif ()
 
 # Add a macro to build a python binding.
-macro (add_python_binding name)
+macro (add_python_binding directory name)
   if (BUILD_PYTHON_BINDINGS)
     set (MLPACK_PYXS ${MLPACK_PYXS} "${name}.pyx")
     set (MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)
@@ -270,7 +232,7 @@ macro (add_python_binding name)
         COMMAND ${CMAKE_COMMAND}
             -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
             -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
-            -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+            -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
             -DPROGRAM_NAME=${name}
             -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
         DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
@@ -313,10 +275,10 @@ endmacro()
 
 # this macro creates .so files for all methods in the given group.
 # if using add_python_wrapper(), then must group bindings using group_bindings()
-macro (add_python_wrapper group_name)
+macro (add_python_wrapper directory group_name)
 
   foreach (method ${${group_name}_VALID_METHODS})
-    add_python_binding("${group_name}_${method}")
+    add_python_binding(${directory} "${group_name}_${method}")
   endforeach()
 
   if(EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)

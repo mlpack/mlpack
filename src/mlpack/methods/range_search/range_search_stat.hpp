@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace range {
 
 /**
  * Statistic class for RangeSearch, to be set to the StatisticType of the tree
@@ -56,7 +55,6 @@ class RangeSearchStat
   double lastDistance;
 };
 
-} // namespace range
 } // namespace mlpack
 
 #endif

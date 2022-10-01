@@ -16,7 +16,6 @@
 #include "mean_absolute_percentage_error.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename MatType>
 MeanAbsolutePercentageErrorType<MatType>::MeanAbsolutePercentageErrorType()
@@ -44,7 +43,6 @@ void MeanAbsolutePercentageErrorType<MatType>::Backward(
       target) * (100 / target.n_cols);
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

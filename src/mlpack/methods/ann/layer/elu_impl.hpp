@@ -22,7 +22,6 @@
 #include "elu.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for SELU activation function.  The values of
 // alpha and lambda are constant for normalized inputs.
@@ -132,7 +131,6 @@ void ELUType<MatType>::serialize(
   ar(CEREAL_NVP(lambda));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

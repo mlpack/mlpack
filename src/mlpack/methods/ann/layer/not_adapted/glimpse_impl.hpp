@@ -18,7 +18,6 @@
 #include "glimpse.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputType>
 GlimpseType<InputType, OutputType>::GlimpseType(
@@ -233,7 +232,6 @@ void GlimpseType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(location));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

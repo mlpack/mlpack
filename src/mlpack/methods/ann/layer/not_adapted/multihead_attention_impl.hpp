@@ -19,7 +19,6 @@
 #include <mlpack/core/math/multiply_slices.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputType, typename RegularizerType>
 MultiheadAttentionType<InputType, OutputType, RegularizerType>::
@@ -142,7 +141,7 @@ Forward(const InputType& input, OutputType& output)
 
   // Calculate the scores i.e. perform the matrix multiplication operation
   // on qProj and kProj. Here score = qProj . kProj'
-  scores = math::MultiplyCube2Cube(qProj, kProj, false, true);
+  scores = MultiplyCube2Cube(qProj, kProj, false, true);
 
   // Apply the attention mask if provided. The attention mask is used to black-
   // out future sequences and generally used in Encoder-Decoder attention.
@@ -175,7 +174,7 @@ Forward(const InputType& input, OutputType& output)
   // Calculate the attention output i.e. matrix multiplication of softmax
   // output and vProj.
   // The shape of attnOutput : (tgtSeqLen, headDim, numHeads * batchSize).
-  attnOut = math::MultiplyCube2Cube(scores, vProj, false, false);
+  attnOut = MultiplyCube2Cube(scores, vProj, false, false);
 
   // Now we will concatenate output of all the heads i.e. we will reshape
   // attnOut to (tgtSeqLen, embedDim, batchSize).
@@ -215,7 +214,7 @@ Backward(const InputType& /* input */,
   // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of outWt : (embedDim, embedDim).
   // The shape of the result : (tgtSeqLen, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Mat(gyTemp, outWt, true, true);
+  gyTemp = MultiplyCube2Mat(gyTemp, outWt, true, true);
 
   // Now since the shape of gyTemp is (tgtSeqLen, embedDim, batchSize). We will
   // split it into n heads.
@@ -226,7 +225,7 @@ Backward(const InputType& /* input */,
   // Shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // Shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The shape of tmp : (srcSeqLen, headDim, numHeads * batchSize).
-  CubeType tmp = math::MultiplyCube2Cube(scores, gyTemp, true, false);
+  CubeType tmp = MultiplyCube2Cube(scores, gyTemp, true, false);
 
   // Concatenate results of all the attention heads.
   tmp.reshape(srcSeqLen, embedDim, batchSize);
@@ -240,7 +239,7 @@ Backward(const InputType& /* input */,
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).
   // So the new shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
-  gyTemp = math::MultiplyCube2Cube(gyTemp, vProj, false, true);
+  gyTemp = MultiplyCube2Cube(gyTemp, vProj, false, true);
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
@@ -252,7 +251,7 @@ Backward(const InputType& /* input */,
   // The shape of qProj : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The new shape of tmp : (srcSeqLen, headDim, numHeads * batchSize).
-  tmp = math::MultiplyCube2Cube(gyTemp, qProj, true, false);
+  tmp = MultiplyCube2Cube(gyTemp, qProj, true, false);
 
   // Concatenate results of all the attention heads.
   tmp.reshape(srcSeqLen, embedDim, batchSize);
@@ -267,7 +266,7 @@ Backward(const InputType& /* input */,
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The shape of gyTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The new shape of tmp : (tgtSeqLen, headDim, numHeads * batchSize).
-  tmp = math::MultiplyCube2Cube(gyTemp, kProj) / std::sqrt(headDim);
+  tmp = MultiplyCube2Cube(gyTemp, kProj) / std::sqrt(headDim);
 
   // Concatenate results of all the attention heads.
   tmp.reshape(tgtSeqLen, embedDim, batchSize);
@@ -322,7 +321,7 @@ Gradient(const InputType& input,
   // The shape of attnOut : (tgtSeqLen, embedDim, batchSize).
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (embedDim, embedDim, batchSize).
-  CubeType gyTemp = math::MultiplyCube2Cube(attnOut, errorTemp, true, true);
+  CubeType gyTemp = MultiplyCube2Cube(attnOut, errorTemp, true, true);
 
   // Gradient wrt. outWt, i.e. dL/d(outWt). We will take sum of gyTemp along
   // the slices and vectorise the output.
@@ -333,7 +332,7 @@ Gradient(const InputType& input,
   // The shape of outWt : (embedDim, embedDim).
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Mat(errorTemp, outWt, true, true);
+  gyTemp = MultiplyCube2Mat(errorTemp, outWt, true, true);
 
   // Now we will split it into n heads i.e. reshape it into a cube of shape
   // (tgtSeqLen, headDim, numHeads * batchSize).
@@ -342,7 +341,7 @@ Gradient(const InputType& input,
   // Shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // Shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The new shape of errorTemp : (srcSeqLen, headDim, numHeads * batchSize).
-  errorTemp = math::MultiplyCube2Cube(scores, gyTemp, true, false);
+  errorTemp = MultiplyCube2Cube(scores, gyTemp, true, false);
 
   // Now we will concatenate the propagated errors from all heads i.e. we
   // will reshape errorTemp to (srcSeqLen, embedDim, batchSize).
@@ -356,7 +355,7 @@ Gradient(const InputType& input,
   // Shape of v : (srcSeqLen, embedDim, batchSize).
   // Shape of errorTemp : (srcSeqLen, embedDim, bathSize).
   // The new shape of errorTemp : (embedDim, embedDim, batchSize).
-  errorTemp = math::MultiplyCube2Cube(errorTemp, v, true, true);
+  errorTemp = MultiplyCube2Cube(errorTemp, v, true, true);
 
   // Gradient wrt. valueWt, i.e. dL/d(valueWt). We will take summation over all
   // batches of errorTemp.
@@ -366,7 +365,7 @@ Gradient(const InputType& input,
   // Now, the shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The new shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
-  errorTemp = math::MultiplyCube2Cube(gyTemp, vProj, false, true);
+  errorTemp = MultiplyCube2Cube(gyTemp, vProj, false, true);
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
@@ -379,7 +378,7 @@ Gradient(const InputType& input,
   // The shape of qProj : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The shape of gyTemp : (srcSeqLen, headDim, numHeads * batchSize).
-  gyTemp = math::MultiplyCube2Cube(errorTemp, qProj, true, false);
+  gyTemp = MultiplyCube2Cube(errorTemp, qProj, true, false);
 
   // We will now conctenate the propagated errors from all heads.
   // The new shape of gyTemp : (srcSeqLen, embedDim, batchSize).
@@ -393,7 +392,7 @@ Gradient(const InputType& input,
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of gyTemp : (srcSeqLen, embedDim, batchSize).
   // The shape of dkeyWt : (embedDim, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Cube(gyTemp, k, true, true);
+  gyTemp = MultiplyCube2Cube(gyTemp, k, true, true);
 
   // Gradient wrt. keyWt, i.e. dL/d(keyWt). We will take summation over all the
   // batches of dkeyWt.
@@ -402,7 +401,7 @@ Gradient(const InputType& input,
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
-  gyTemp = math::MultiplyCube2Cube(errorTemp, kProj, false, false);
+  gyTemp = MultiplyCube2Cube(errorTemp, kProj, false, false);
 
   // Now, we will concatenate propagated error of all heads.
   gyTemp.reshape(tgtSeqLen, embedDim, batchSize);
@@ -416,7 +415,7 @@ Gradient(const InputType& input,
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (embedDim, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Cube(gyTemp, q, true, true);
+  gyTemp = MultiplyCube2Cube(gyTemp, q, true, true);
 
   // Gradient wrt. queryWt, i.e. dL/d(queryBias). We will take summation over
   // all the batches of gyTemp.
@@ -462,7 +461,6 @@ serialize(Archive& ar, const uint32_t /* version */)
   }
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

@@ -29,7 +29,6 @@
 #include "adaboost.hpp"
 
 namespace mlpack {
-namespace adaboost {
 
 /**
  * Constructor. Currently runs the AdaBoost.MH algorithm.
@@ -256,14 +255,12 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
       probabilities(tempPredictedLabels(j), j) += alpha[i];
   }
 
-  arma::colvec pRow;
   arma::uword maxIndex = 0;
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
     probabilities.col(i) /= arma::accu(probabilities.col(i));
-    pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    probabilities.col(i).max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
 }
@@ -289,7 +286,6 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(wl));
 }
 
-} // namespace adaboost
 } // namespace mlpack
 
 #endif

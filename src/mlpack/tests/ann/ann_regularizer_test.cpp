@@ -17,7 +17,6 @@
 #include "ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 TEST_CASE("GradientL1RegularizerTest", "[ANNRegularizerTest]")
 {

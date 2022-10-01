@@ -213,6 +213,15 @@ else()
   )
 endif()
 
+# If the user asked for running test cases with verbose output, turn that on.
+if (TEST_VERBOSE)
+  target_compile_definitions(mlpack_test PUBLIC
+      -DMLPACK_PRINT_DEBUG -DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN)
+else()
+  # Otherwise, suppress all [FATAL] output.
+  target_compile_definitions(mlpack_test PUBLIC -DMLPACK_SUPPRESS_FATAL)
+endif()
+
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
 cotire(mlpack_test)
 

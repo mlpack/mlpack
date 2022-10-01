@@ -16,7 +16,6 @@
 #include "bicubic_interpolation.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
@@ -221,7 +220,6 @@ void BicubicInterpolation<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(alpha));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

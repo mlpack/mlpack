@@ -149,6 +149,7 @@ Copyright:
   Copyright 2021, Shubham Agrawal <shubham.agra1206@gmail.com>
   Copyright 2022, Sri Madhan M <srimadhan11@gmail.com>
   Copyright 2022, Zhuojin Liu <zhuojinliu.cs@gmail.com>
+  Copyright 2022, Richèl Bilderbeek <richel@richelbilderbeek.nl>
 
 License: BSD-3-clause
   All rights reserved.

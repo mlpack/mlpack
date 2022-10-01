@@ -19,7 +19,6 @@
 #include "binary_space_tree.hpp"
 
 namespace mlpack {
-namespace tree {
 
 template<typename MetricType,
          typename StatisticType,
@@ -59,7 +58,6 @@ class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
   size_t numPrunes;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 // Include implementation.

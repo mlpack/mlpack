@@ -17,7 +17,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 
 /**
  * Simple bernoulli distribution module test.
@@ -40,7 +39,7 @@ TEST_CASE("JacobianBernoulliDistributionTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat param;
     param.randn(targetElements, 1);
@@ -82,7 +81,7 @@ TEST_CASE("JacobianBernoulliDistributionLogisticTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat param;
     param.randn(targetElements, 1);
@@ -128,7 +127,7 @@ TEST_CASE("NormalDistributionTest", "[ANNDistTest]")
   arma::vec mu = {1.1, 1.2, 1.5, 1.7};
   arma::vec sigma = {0.1, 0.11, 0.5, 0.23};
 
-  ann::NormalDistribution<> normalDist(mu, sigma);
+  NormalDistribution<> normalDist(mu, sigma);
 
   arma::vec x = {1.05, 1.1, 1.7, 2.5};
 
@@ -162,7 +161,7 @@ TEST_CASE("JacobianNormalDistributionMeanTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; i++)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat mu;
     mu.randn(targetElements, 1);
@@ -228,7 +227,7 @@ TEST_CASE("JacobianNormalDistributionStandardDeviationTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; i++)
   {
-    const size_t targetElements = math::RandInt(2, 1000);
+    const size_t targetElements = RandInt(2, 1000);
 
     arma::mat mu;
     mu.randn(targetElements, 1);

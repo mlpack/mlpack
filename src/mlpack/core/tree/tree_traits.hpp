@@ -15,7 +15,6 @@
 #define MLPACK_CORE_TREE_TREE_TRAITS_HPP
 
 namespace mlpack {
-namespace tree {
 
 /**
  * The TreeTraits class provides compile-time information on the characteristics
@@ -116,7 +115,6 @@ class TreeTraits
   static const bool UniqueNumDescendants = true;
 };
 
-} // namespace tree
 } // namespace mlpack
 
 #endif

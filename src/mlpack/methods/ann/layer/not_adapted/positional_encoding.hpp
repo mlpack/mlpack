@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Positional Encoding injects some information about the relative or absolute
@@ -110,7 +109,6 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
 // Standard PositionalEncoding layer.
 typedef PositionalEncodingType<arma::mat, arma::mat> PositionalEncoding;
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

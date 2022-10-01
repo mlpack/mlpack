@@ -18,9 +18,7 @@
 #include "custom_layer.hpp"
 
 using namespace mlpack;
-using namespace mlpack::ann;
 using namespace ens;
-using namespace mlpack::math;
 
 /**
  * Generate a random Reber grammar.

@@ -19,7 +19,6 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The LeakyReLU activation function, defined by
@@ -105,7 +104,6 @@ class LeakyReLUType : public Layer<MatType>
 typedef LeakyReLUType<arma::mat> LeakyReLU;
 
 
-} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

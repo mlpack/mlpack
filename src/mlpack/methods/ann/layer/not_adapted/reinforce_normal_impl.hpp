@@ -17,7 +17,6 @@
 #include "reinforce_normal.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 ReinforceNormalType<InputDataType, OutputDataType>::ReinforceNormalType(
@@ -68,7 +67,6 @@ void ReinforceNormalType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(stdev));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

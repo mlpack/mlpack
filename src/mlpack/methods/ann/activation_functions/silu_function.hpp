@@ -30,7 +30,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network */ {
 
 /**
  * The SILU function, defined by
@@ -92,7 +91,6 @@ class SILUFunction
   }
 }; // class SILUFunction
 
-} // namespace ann
 } // namespace mlpack
 
 #endif

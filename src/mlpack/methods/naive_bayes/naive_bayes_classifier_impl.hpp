@@ -23,7 +23,6 @@
 #include "naive_bayes_classifier.hpp"
 
 namespace mlpack {
-namespace naive_bayes {
 
 template<typename ModelMatType>
 template<typename MatType>
@@ -219,8 +218,8 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   // Loop over every class.
   for (size_t i = 0; i < means.n_cols; ++i)
   {
-    // This is an adaptation of gmm::phi() for the case where the covariance is
-    // a diagonal matrix.
+    // This is an adaptation of phi() for the case where the covariance is a
+    // diagonal matrix.
     ModelMatType diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
@@ -358,7 +357,6 @@ void NaiveBayesClassifier<ModelMatType>::serialize(
   ar(CEREAL_NVP(probabilities));
 }
 
-} // namespace naive_bayes
 } // namespace mlpack
 
 #endif

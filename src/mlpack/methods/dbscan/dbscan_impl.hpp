@@ -15,7 +15,6 @@
 #include "dbscan.hpp"
 
 namespace mlpack {
-namespace dbscan {
 
 /**
  * Construct the DBSCAN object with the given parameters.
@@ -101,7 +100,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     arma::Row<size_t>& assignments)
 {
   // Initialize the UnionFind object.
-  emst::UnionFind uf(data.n_cols);
+  UnionFind uf(data.n_cols);
   rangeSearch.Train(data);
 
   if (batchMode)
@@ -150,7 +149,7 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
-    emst::UnionFind& uf)
+    UnionFind& uf)
 {
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
@@ -161,7 +160,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(i), math::Range(0.0, epsilon), neighbors,
+    rangeSearch.Search(data.col(i), Range(0.0, epsilon), neighbors,
         distances);
 
     // Union to all neighbors.
@@ -179,14 +178,14 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
-    emst::UnionFind& uf)
+    UnionFind& uf)
 {
   // For each point, find the points in epsilon-nighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(data, math::Range(0.0, epsilon), neighbors, distances);
+  rangeSearch.Search(data, Range(0.0, epsilon), neighbors, distances);
   Log::Info << "Range search complete." << std::endl;
 
   // Now loop over all points.
@@ -199,7 +198,6 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   }
 }
 
-} // namespace dbscan
 } // namespace mlpack
 
 #endif

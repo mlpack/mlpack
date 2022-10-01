@@ -17,7 +17,6 @@
 #include "triplet_margin_loss.hpp"
 
 namespace mlpack {
-namespace ann /** Artifical Neural Network. */ {
 
 template<typename MatType>
 TripletMarginLossType<MatType>::TripletMarginLossType(const double margin) :
@@ -61,7 +60,6 @@ void TripletMarginLossType<MatType>::serialize(
   ar(CEREAL_NVP(margin));
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif
