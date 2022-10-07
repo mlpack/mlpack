@@ -42,7 +42,7 @@ class MaxPoolingRule
   std::tuple<size_t, typename MatType::elem_type> PoolingWithIndex(
       const MatType& input)
   {
-    const size_t index = arma::index_max(arma::vectorise(input));
+    const size_t index = input.index_max();
     const typename MatType::elem_type maxVal = input[index];
 
     return std::tuple<size_t, typename MatType::elem_type>(index, maxVal);
