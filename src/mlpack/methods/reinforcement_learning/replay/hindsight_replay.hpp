@@ -148,9 +148,9 @@ class HindsightReplay
 
   /**
    * Sample goal according to goal strategy
-   * 
+   * @param discount The discount parameter.
    */
-  void StoreHERTransitions()
+  void StoreHERTransitions(const double& discount)
   { 
     std::vector<Transition> baseTransitions = episodeTransitions;
 
@@ -173,8 +173,8 @@ class HindsightReplay
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
                               baseTransitions[transitionIndex].action, 
                               baseTransitions[transitionIndex].reward, 
-                              baseTrasnitions[transitionIndex].nextState, 
-                              baseTrasnitions[transitionIndex].isEnd,
+                              baseTransitions[transitionIndex].nextState, 
+                              baseTransitions[transitionIndex].isEnd,
                               desiredGoals[goalIndex]});
 
         // Single step transition is not ready.
@@ -189,15 +189,18 @@ class HindsightReplay
         assert(nStepBuffer.size() == nSteps);
 
         // Make a n-step transition.
-        GetNStepInfo(reward, nextState, isEnd, discount);
+        GetNStepInfo(baseTransitions[transitionIndex].reward, 
+                    baseTransitions[transitionIndex].nextState, 
+                    baseTransitions[transitionIndex].isEnd, 
+                    discount);
 
-        state = nStepBuffer.front().state;
-        action = nStepBuffer.front().action;
+        StateType state = nStepBuffer.front().state;
+        ActionType action = nStepBuffer.front().action;
         states.col(position) = state.Encode();
         actions[position] = action;
-        rewards(position) = reward;
-        nextStates.col(position) = nextState.Encode();
-        isTerminal(position) = isEnd;
+        rewards(position) = baseTransitions[transitionIndex].reward;
+        nextStates.col(position) = baseTransitions[transitionIndex].nextState.Encode();
+        isTerminal(position) = baseTransitions[transitionIndex].isEnd;
 
 
         position++;
@@ -226,7 +229,8 @@ class HindsightReplay
              double reward,
              StateType nextState,
              bool isEnd,
-             const double& discount)
+             const double& discount,
+             StateType goal)
   { 
     episodeTransitions.push_back({state, action, reward, nextState, isEnd, goal});
     nStepBuffer.push_back({state, action, reward, nextState, isEnd, goal});
