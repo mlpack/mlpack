@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_PRIORITIZED_REPLAY_HPP
-#define MLPACK_METHODS_RL_PRIORITIZED_REPLAY_HPP
+#ifndef MLPACK_METHODS_RL_HINDSIGHT_REPLAY_HPP
+#define MLPACK_METHODS_RL_HINDSIGHT_REPLAY_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -72,7 +72,7 @@ class HindsightReplay
       position(0),
       full(false),
       herRatio(1),
-      goalSelectionStrategy(FUTURE),
+      goalSelectionStrategy(goalStrategy::FUTURE),
       nSteps(0)
   { /* Nothing to do here. */ }
 

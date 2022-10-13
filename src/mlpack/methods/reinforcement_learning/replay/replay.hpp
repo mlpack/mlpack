@@ -15,5 +15,6 @@
 #include "random_replay.hpp"
 #include "prioritized_replay.hpp"
 #include "sumtree.hpp"
+#include "hindsight_replay.hpp"
 
 #endif
