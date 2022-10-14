@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\mlpack\armadillo-8.500.1\include;C:\mlpack\mlpack-3.4.2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\mlpack\armadillo-8.500.1\include;C:\mlpack\mlpack-4.0.0\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,7 +112,7 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "C:\mlpack\mlpack-3.4.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+      <Command>xcopy /y "C:\mlpack\mlpack-4.0.0\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 xcopy /y "$(ProjectDir)..\..\..\..\src\mlpack\tests\data\german.csv" "$(ProjectDir)data\german.csv*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
