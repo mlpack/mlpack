@@ -120,13 +120,14 @@ class HindsightReplay
       desiredGoal = episodeTransitions[episodeTransitions.size() -1].nextState;
     }
     else if (goalSelectionStrategy == goalStrategy::FUTURE)
-    {
-       
-      desiredGoal = episodeTransitions[arma::randi(distr_param(transitionIndex+1, episodeTransitions.size() -1))];
+    {  
+      desiredGoal = episodeTransitions[arma::randi(
+        distr_param(transitionIndex+1, episodeTransitions.size() -1))];
     }
     else if (goalSelectionStrategy == goalStrategy::EPISODE)
     {
-      desiredGoal = episodeTransitions[arma::randi(distr_param(0, episodeTransitions.size() -1))];
+      desiredGoal = episodeTransitions[arma::randi(
+        distr_param(0, episodeTransitions.size() -1))];
     }
     // need all the transitions for random
   }
@@ -140,7 +141,8 @@ class HindsightReplay
   void SampleGoals(std::vector<StateType> desiredGoals, int transitionIndex)
   { 
     StateType desiredGoal;
-    for (int goalIndex = 0; goalIndex < herRatio; goalIndex++ ){
+    for (size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
+    {
       SampleGoal(desiredGoal);
       desiredGoals.push_back(desiredGoal);
     }
@@ -155,20 +157,21 @@ class HindsightReplay
     std::vector<Transition> baseTransitions = episodeTransitions;
 
     // cannot create a future hindsight goal in the last transition of episode
-    if ( goalSelectionStrategy == goalStrategy::FUTURE )
+    if (goalSelectionStrategy == goalStrategy::FUTURE)
     {
       baseTransitions.pop_back();
     }
 
     std::vector<StateType> desiredGoals;
 
-    for( int transitionIndex = 0; transitionIndex < baseTransitions.size(); transitionIndex++ )
+    for(size_t transitionIndex = 0; transitionIndex < baseTransitions.size();
+        ++transitionIndex)
     { 
       desiredGoals.clear();
 
       SampleGoals(desiredGoals, transitionIndex);
 
-      for(int goalIndex = 0; goalIndex < herRatio; goalIndex++ )
+      for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
       {
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
                               baseTransitions[transitionIndex].action, 
@@ -201,7 +204,6 @@ class HindsightReplay
         rewards(position) = baseTransitions[transitionIndex].reward;
         nextStates.col(position) = baseTransitions[transitionIndex].nextState.Encode();
         isTerminal(position) = baseTransitions[transitionIndex].isEnd;
-
 
         position++;
         if (position == capacity)
@@ -256,7 +258,6 @@ class HindsightReplay
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
-
 
     position++;
     if (position == capacity)
@@ -324,7 +325,6 @@ class HindsightReplay
     isTerminal = this->isTerminal.elem(sampledIndices).t();
   }
 
-
   /**
    * Get the number of transitions in the memory.
    *
@@ -389,14 +389,16 @@ class HindsightReplay
   arma::irowvec isTerminal;
 
   //! Locally-stored encoded goal states.
-  arma::mat goals ;
+  arma::mat goals;
 
+  //! Locally-stored transitions of episode
   std::vector<Transition> episodeTransitions;
 
+  //! Ratio of HER transitions per Normal transitions
   size_t herRatio;
 
+  //! goal selection startegy for HER
   goalStrategy goalSelectionStrategy;
-
 };
 
 } // namespace mlpack
