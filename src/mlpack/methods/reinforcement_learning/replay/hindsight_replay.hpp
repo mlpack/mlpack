@@ -204,7 +204,6 @@ class HindsightReplay
         rewards(position) = baseTransitions[transitionIndex].reward;
         nextStates.col(position) = baseTransitions[transitionIndex].nextState.Encode();
         isTerminal(position) = baseTransitions[transitionIndex].isEnd;
-
         position++;
         if (position == capacity)
         {
@@ -258,7 +257,6 @@ class HindsightReplay
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
-
     position++;
     if (position == capacity)
     {
