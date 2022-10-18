@@ -354,6 +354,8 @@ double QLearning<
   // Get the initial state from environment.
   state = environment.InitialSample();
 
+  StateType goal = environment.GoalSample();
+
   // Track the return of this episode.
   double totalReturn = 0.0;
 
@@ -371,16 +373,23 @@ double QLearning<
 
     // Store the transition for replay.
     replayMethod.Store(state, action, reward, nextState,
-        environment.IsTerminal(nextState), config.Discount());
+        environment.IsTerminal(nextState), config.Discount(), state);
     // Update current state.
     state = nextState;
 
     if (deterministic || totalSteps < config.ExplorationSteps())
       continue;
     if (config.IsCategorical())
+    {
+      replayMethod.StoreHERTransitions(config.Discount());
       TrainCategoricalAgent();
+    } 
     else
+    {
+      replayMethod.StoreHERTransitions(config.Discount());
       TrainAgent();
+    }
+      
   }
   return totalReturn;
 }

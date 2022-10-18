@@ -51,8 +51,8 @@ class HindsightReplay
     ActionType action;
     double reward;
     StateType nextState;
-    StateType goal;
     bool isEnd;
+    StateType goal;
   };
 
   enum goalStrategy
@@ -122,12 +122,12 @@ class HindsightReplay
     else if (goalSelectionStrategy == goalStrategy::FUTURE)
     {  
       desiredGoal = episodeTransitions[arma::randi(
-        distr_param(transitionIndex+1, episodeTransitions.size() -1))];
+        arma::distr_param(transitionIndex+1, episodeTransitions.size() -1))].nextState;
     }
     else if (goalSelectionStrategy == goalStrategy::EPISODE)
     {
       desiredGoal = episodeTransitions[arma::randi(
-        distr_param(0, episodeTransitions.size() -1))];
+        arma::distr_param(0, episodeTransitions.size() -1))].nextState;
     }
     // need all the transitions for random
   }
@@ -143,7 +143,7 @@ class HindsightReplay
     StateType desiredGoal;
     for (size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
     {
-      SampleGoal(desiredGoal);
+      SampleGoal(desiredGoal, transitionIndex);
       desiredGoals.push_back(desiredGoal);
     }
   }

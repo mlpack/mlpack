@@ -89,7 +89,7 @@ class BitFlipping
       length(length),
       stepsPerformed(0)
   { 
-    goal = arma::randi<arma::colvec>(length, arma::distr_param(0, 1));
+    
   }
 
   /**
@@ -175,6 +175,17 @@ class BitFlipping
       return true;
     }
     return false;
+  }
+
+  /**
+   * Initial goal representation for thr environment
+   *
+   * @return Initial goal for each episode.
+   */
+  State GoalSample()
+  {
+    goal = arma::randi<arma::colvec>(length, arma::distr_param(0, 1));
+    return State(goal);
   }
 
   //! Get the number of steps performed.

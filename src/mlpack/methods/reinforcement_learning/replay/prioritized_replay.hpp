@@ -117,13 +117,15 @@ class PrioritizedReplay
    * @param nextState Given next state.
    * @param isEnd Whether next state is terminal state.
    * @param discount The discount parameter.
+   * @param goal goal of the given experience.
    */
   void Store(StateType state,
              ActionType action,
              double reward,
              StateType nextState,
              bool isEnd,
-             const double& discount)
+             const double& discount,
+             StateType goal)
   {
     nStepBuffer.push_back({state, action, reward, nextState, isEnd});
 
@@ -301,6 +303,15 @@ class PrioritizedReplay
 
     // Update the gradient
     gradients = arma::mean(weights) * gradients;
+  }
+
+  /**
+   * Sample goal according to goal strategy
+   * @param discount The discount parameter.
+   */
+  void StoreHERTransitions(const double& discount)
+  {
+    /* Do nothing for prioritized replay. */
   }
 
   //! Get the number of steps for n-step agent.

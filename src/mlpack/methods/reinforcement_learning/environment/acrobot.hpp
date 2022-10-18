@@ -342,6 +342,17 @@ class Acrobot
     return nextState;
   };
 
+  /**
+   * Initial goal representation for thr environment
+   *
+   * @return Initial goal for each episode.
+   */
+  State GoalSample()
+  { 
+    // Initilizing goal with dummy value as initial state.
+    return InitialSample();
+  }
+
   //! Get the number of steps performed.
   size_t StepsPerformed() const { return stepsPerformed; }
 

@@ -225,7 +225,7 @@ TEST_CASE("RandomReplayTest", "[RLComponentsTest]")
   MountainCar::State nextState;
   double reward = env.Sample(state, action, nextState);
   replay.Store(state, action, reward, nextState, env.IsTerminal(nextState),
-      0.9);
+      0.9, state);
   arma::mat sampledState;
   std::vector<MountainCar::Action> sampledAction;
   arma::rowvec sampledReward;
@@ -246,7 +246,7 @@ TEST_CASE("RandomReplayTest", "[RLComponentsTest]")
 
   //! Overwrite the memory with a nonsense record
   for (size_t i = 0; i < 5; ++i)
-    replay.Store(nextState, action, reward, state, true, 0.9);
+    replay.Store(nextState, action, reward, state, true, 0.9, state);
 
   REQUIRE(3 == replay.Size());
 

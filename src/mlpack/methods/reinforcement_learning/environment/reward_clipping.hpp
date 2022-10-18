@@ -108,6 +108,16 @@ class RewardClipping
     return Sample(state, action, nextState);
   }
 
+  /**
+   * The GoalSample method is called by the environment to initialize the
+   * starting state. Returns whatever Initial Sample is returned by the
+   * environment.
+   */
+  State GoalSample()
+  {
+    return environment.GoalSample();
+  }
+
   //! Get the environment.
   EnvironmentType& Environment() const { return environment; }
   //! Modify the environment.

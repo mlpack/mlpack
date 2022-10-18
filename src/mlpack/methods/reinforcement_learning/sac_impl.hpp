@@ -326,6 +326,8 @@ double SAC<
 {
   // Get the initial state from environment.
   state = environment.InitialSample();
+  
+  StateType goal = environment.GoalSample();
 
   // Track the steps in this episode.
   size_t steps = 0;
@@ -350,7 +352,7 @@ double SAC<
 
     // Store the transition for replay.
     replayMethod.Store(state, action, reward, nextState,
-        environment.IsTerminal(nextState), config.Discount());
+        environment.IsTerminal(nextState), config.Discount(), goal);
 
     // Update current state.
     state = nextState;

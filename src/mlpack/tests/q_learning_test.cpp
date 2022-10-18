@@ -559,9 +559,36 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   // Test to check if the action dimension given by the agent is correct.
   REQUIRE(agent.Action().action.size() == 4);
 
-  replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
+  replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99, agent.State());
   agent.TotalSteps()++;
   agent.Update();
   // If the agent is able to reach till this point of the test, it is assured
   // that the agent can handle multiple actions in continuous space.
+}
+
+TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
+{
+  // Set up the network.
+  SimpleDQN<> network(128, 128, 2);
+
+  // Set up the policy.
+  GreedyPolicy<BitFlipping> policy(1.0, 1000, 0.1, 0.99);
+  /**
+   * For N-step learning, we need to specify n as the last parameter in
+   * the replay method. Here we use n = 3.
+   */
+  HindsightReplay<BitFlipping> replayMethod(10, 1000);
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.ExplorationSteps() = 50;
+  config.StepLimit() = 200;
+
+  // Set up DQN agent.
+  QLearning<BitFlipping, decltype(network), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(config, network, policy, replayMethod);
+
+  bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  REQUIRE(converged);
 }
