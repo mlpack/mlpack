@@ -15,7 +15,6 @@
 #include "generate_markdown.${BINDING}.hpp"
 #include "binding_info.hpp"
 #include "print_docs.hpp"
-#include "get_binding_name.hpp"
 
 ${INCLUDE_MAIN_FILES}
 
