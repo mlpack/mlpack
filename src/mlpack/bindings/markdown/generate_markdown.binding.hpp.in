@@ -15,7 +15,6 @@
 #define MLPACK_BINDINGS_MARKDOWN_GENERATE_MARKDOWN_${BINDING}_HPP
 
 #include "print_docs.hpp"
-#include "get_binding_name.hpp"
 
 using namespace std;
 
