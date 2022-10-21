@@ -12,7 +12,8 @@ and library files into C:\mlpack\.
 
  * Armadillo: https://mlpack.org/files/armadillo-11.4.1.tar.gz
    Download the .tar.gz, and extract it into C:\mlpack\armadillo-11.4.1\; note
-   that you may need to use a program such as 7Zip ( ) to unpack this archive.
+   that you may need to use a program such as 7Zip (https://www.7-zip.org/) to
+   unpack this archive.
 
  * Cereal: https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.zip
    Download the .zip, and extract it into C:\mlpack\cereal-1.3.2\
