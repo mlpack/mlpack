@@ -113,7 +113,7 @@ class HindsightReplay
    * 
    * @param transitionIndex index of current transition
    */
-  void SampleGoal(StateType& desiredGoal, int& transitionIndex)
+  void SampleGoal(StateType& desiredGoal, int transitionIndex)
   {
     if (goalSelectionStrategy == goalStrategy::FINAL)
     {
@@ -137,7 +137,7 @@ class HindsightReplay
    * @param desiredGoals desired goals as per goal strategy
    * @param  transitionIndex index of current transition
    */
-  void SampleGoals(std::vector<StateType>& desiredGoals, int& transitionIndex)
+  void SampleGoals(std::vector<StateType>& desiredGoals, int transitionIndex)
   { 
     StateType desiredGoal;
     for (size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
