@@ -89,8 +89,8 @@ class HindsightReplay
    */
   HindsightReplay(const size_t batchSize,
                     const size_t capacity,
-                    const size_t herRatio = 4,
-                    goalStrategy strategy = goalStrategy::FUTURE,
+                    const size_t herRatio = 2,
+                    goalStrategy strategy = goalStrategy::FINAL,
                     const size_t nSteps = 1,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
@@ -104,7 +104,7 @@ class HindsightReplay
       actions(capacity),
       rewards(capacity),
       nextStates(dimension, capacity),
-      goals(dimension, capacity * (herRatio+1)),
+      goals(dimension, capacity),
       isTerminal(capacity)
   { /* Nothing to do here. */ }
 
@@ -113,7 +113,7 @@ class HindsightReplay
    * 
    * @param transitionIndex index of current transition
    */
-  void SampleGoal(StateType desiredGoal, int transitionIndex)
+  void SampleGoal(StateType& desiredGoal, int transitionIndex)
   {
     if (goalSelectionStrategy == goalStrategy::FINAL)
     {
@@ -138,12 +138,14 @@ class HindsightReplay
    * @param desiredGoals desired goals as per goal strategy
    * @param  transitionIndex index of current transition
    */
-  void SampleGoals(std::vector<StateType> desiredGoals, int transitionIndex)
+  void SampleGoals(std::vector<StateType>& desiredGoals, int transitionIndex)
   { 
     StateType desiredGoal;
+    // std::cout<<"her Ratio "<<herRatio<<std::endl;
     for (size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
     {
       SampleGoal(desiredGoal, transitionIndex);
+
       desiredGoals.push_back(desiredGoal);
     }
   }
@@ -164,15 +166,29 @@ class HindsightReplay
 
     std::vector<StateType> desiredGoals;
 
+    // std::cout<<"successfully got here"<<std::endl;
+
     for(size_t transitionIndex = 0; transitionIndex < baseTransitions.size();
         ++transitionIndex)
     { 
+      // std::cout<<"Transition Index "<<transitionIndex<<std::endl;
       desiredGoals.clear();
 
       SampleGoals(desiredGoals, transitionIndex);
 
+      for (int i=0; i<desiredGoals.size();i++){
+        // std::cout<<"desired goals "<<desiredGoals[i].Encode()<<std::endl;
+      }
+      
+      // std::cout<<"sucessfully sampled goals"<<std::endl;
+
+      nStepBuffer.clear();
       for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
-      {
+      { 
+        // std::cout<<"goalindex "<<goalIndex<<std::endl;
+        // std::cout<<"state "<<baseTransitions[transitionIndex].state.Encode()<<std::endl;
+        // std::cout<<"goal "<<desiredGoals[goalIndex].Encode()<<std::endl;
+
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
                               baseTransitions[transitionIndex].action, 
                               baseTransitions[transitionIndex].reward, 
@@ -180,6 +196,7 @@ class HindsightReplay
                               baseTransitions[transitionIndex].isEnd,
                               desiredGoals[goalIndex]});
 
+        // std::cout<<" sucessfully stored in nstep buffer"<<std::endl;
         // Single step transition is not ready.
         if (nStepBuffer.size() < nSteps)
           return;
@@ -188,6 +205,7 @@ class HindsightReplay
         if (nStepBuffer.size() > nSteps)
           nStepBuffer.pop_front();
 
+        // std::cout<<"assertion passed"<<std::endl;
         // Before moving ahead, lets confirm if our fixed size buffer works.
         assert(nStepBuffer.size() == nSteps);
 
@@ -196,6 +214,8 @@ class HindsightReplay
                     baseTransitions[transitionIndex].nextState, 
                     baseTransitions[transitionIndex].isEnd, 
                     discount);
+
+        // std::cout<<"successfull n step transition"<<std::endl;
 
         StateType state = nStepBuffer.front().state;
         ActionType action = nStepBuffer.front().action;

@@ -55,7 +55,7 @@ class BitFlipping
     const arma::colvec& Encode() const { return data; }
 
     //! Dimension of the encoded state.
-    static constexpr size_t dimension = 1;
+    static constexpr size_t dimension = 2;
 
    private:
     //! Locally-stored n bit integer.
@@ -84,7 +84,7 @@ class BitFlipping
    * @param length Length of the binary vector for state and goal
    */
   BitFlipping(const size_t maxSteps = 200,
-              const size_t length = 10) :
+              const size_t length = 2) :
       maxSteps(maxSteps),
       length(length),
       stepsPerformed(0)
@@ -103,7 +103,8 @@ class BitFlipping
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState)
+                State& nextState,
+                const State& transitionGoal)
   {
     // Update the number of steps performed.
     stepsPerformed++;
@@ -120,7 +121,7 @@ class BitFlipping
     if (done)
       return 1.0;
 
-    if ( sum(nextState.Data()) == sum(goal))
+    if (!done && sum(nextState.Data()) == sum(transitionGoal.Data()))
     {
       return 1.0;
     }
@@ -136,10 +137,10 @@ class BitFlipping
    * @param action The current action.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state, const Action& action)
+  double Sample(const State& state, const Action& action, const State& transitionGoal)
   {
     State nextState;
-    return Sample(state, action, nextState);
+    return Sample(state, action, nextState, transitionGoal);
   }
 
   /**

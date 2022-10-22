@@ -356,6 +356,8 @@ double QLearning<
 
   StateType goal = environment.GoalSample();
 
+  // std::cout<<" successfuly got the state and goal"<<std::endl;
+
   // Track the return of this episode.
   double totalReturn = 0.0;
 
@@ -364,16 +366,22 @@ double QLearning<
   {
     SelectAction();
 
+    // std::cout<<" successfuly selected next action"<<std::endl;
+
     // Interact with the environment to advance to next state.
     StateType nextState;
-    double reward = environment.Sample(state, action, nextState);
+    double reward = environment.Sample(state, action, nextState, goal);
+
+    // std::cout<<" successfuly got reward"<<std::endl;
 
     totalReturn += reward;
     totalSteps++;
 
     // Store the transition for replay.
     replayMethod.Store(state, action, reward, nextState,
-        environment.IsTerminal(nextState), config.Discount(), state);
+        environment.IsTerminal(nextState), config.Discount(), goal);
+
+    // std::cout<<" successfuly stored reply transition"<<std::endl;
     // Update current state.
     state = nextState;
 
@@ -386,7 +394,9 @@ double QLearning<
     } 
     else
     {
+      // std::cout<<" successfuly got into train loop"<<std::endl;
       replayMethod.StoreHERTransitions(config.Discount());
+      // std::cout<<" successfuly stored her transitions"<<std::endl;
       TrainAgent();
     }
       

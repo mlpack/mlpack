@@ -66,7 +66,7 @@ TEST_CASE("SimpleContinuousMountainCarTest", "[RLComponentsTest]")
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
   action.action[0] = Random(-1.0, 1.0);
-  double reward = task.Sample(state, action);
+  double reward = task.Sample(state, action, state);
   // Maximum reward possible is 100.
   REQUIRE(reward <= 100.0);
   REQUIRE(!task.IsTerminal(state));
@@ -93,7 +93,7 @@ TEST_CASE("SimpleAcrobotTest", "[RLComponentsTest]")
   Acrobot::State state = task.InitialSample();
   Acrobot::Action action;
   action.action = Acrobot::Action::actions::negativeTorque;
-  double reward = task.Sample(state, action);
+  double reward = task.Sample(state, action, state);
 
   REQUIRE(reward == -1.0);
   REQUIRE(!task.IsTerminal(state));
@@ -120,7 +120,7 @@ TEST_CASE("SimpleMountainCarTest", "[RLComponentsTest]")
   MountainCar::State state = task.InitialSample();
   MountainCar::Action action;
   action.action = MountainCar::Action::actions::backward;
-  double reward = task.Sample(state, action);
+  double reward = task.Sample(state, action, state);
 
   REQUIRE(reward == -1.0);
   REQUIRE(!task.IsTerminal(state));
@@ -147,7 +147,7 @@ TEST_CASE("SimpleCartPoleTest", "[RLComponentsTest]")
   CartPole::State state = task.InitialSample();
   CartPole::Action action;
   action.action = CartPole::Action::actions::backward;
-  double reward = task.Sample(state, action);
+  double reward = task.Sample(state, action, state);
 
   REQUIRE(reward == 1.0);
   REQUIRE(!task.IsTerminal(state));
@@ -173,7 +173,7 @@ TEST_CASE("DoublePoleCartTest", "[RLComponentsTest]")
   DoublePoleCart::State state = task.InitialSample();
   DoublePoleCart::Action action;
   action.action = DoublePoleCart::Action::actions::backward;
-  double reward = task.Sample(state, action);
+  double reward = task.Sample(state, action, state);
 
   REQUIRE(reward == 1.0);
   REQUIRE(!task.IsTerminal(state));
@@ -198,7 +198,7 @@ TEST_CASE("ContinuousDoublePoleCartTest", "[RLComponentsTest]")
   ContinuousDoublePoleCart::State state = task.InitialSample();
   ContinuousDoublePoleCart::Action action;
   action.action[0] = Random(-1.0, 1.0);
-  double reward = task.Sample(state, action);
+  double reward = task.Sample(state, action, state);
 
   REQUIRE(reward == 1.0);
   REQUIRE(!task.IsTerminal(state));

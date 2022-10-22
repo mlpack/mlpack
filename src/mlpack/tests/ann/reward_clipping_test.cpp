@@ -29,7 +29,7 @@ TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")
   RewardClipping<Pendulum>::State state = rewardClipping.InitialSample();
   RewardClipping<Pendulum>::Action action;
   action.action[0] = Random(-1.0, 1.0);
-  double reward = rewardClipping.Sample(state, action);
+  double reward = rewardClipping.Sample(state, action, state);
 
   REQUIRE(reward <= 2.0);
   REQUIRE(reward >= -2.0);

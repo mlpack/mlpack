@@ -158,7 +158,8 @@ class Acrobot
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState)
+                State& nextState,
+                const State& transitionGoal)
   {
     // Update the number of steps performed.
     stepsPerformed++;
@@ -200,10 +201,10 @@ class Acrobot
    * @param action The action taken.
    * @return nextState The next state.
    */
-  double Sample(const State& state, const Action& action)
+  double Sample(const State& state, const Action& action, const State& transitionGoal)
   {
     State nextState;
-    return Sample(state, action, nextState);
+    return Sample(state, action, nextState, transitionGoal);
   }
 
   /**
