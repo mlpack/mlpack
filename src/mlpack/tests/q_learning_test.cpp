@@ -577,7 +577,7 @@ TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
    * For N-step learning, we need to specify n as the last parameter in
    * the replay method. Here we use n = 3.
    */
-  RandomReplay<BitFlipping> replayMethod(32, 1000);
+  HindsightReplay<BitFlipping> replayMethod(2, 4000);
 
   // Setting all training hyperparameters.
   TrainingConfig config;
