@@ -28,6 +28,8 @@ dependencies in Release Mode).
 ```
  - C:\mlpack\armadillo-9.800.3\include
  - C:\mlpack\mlpack-3.4.2\src
+ - C:\mlpack\ensmallen-2.19.0\include
+ - C:\mlpack\cereal-3.1.2\include
 ```
 - Under Build Events > Post-Build Event > Command Line add:
 ```
@@ -37,6 +39,9 @@ dependencies in Release Mode).
 *Note*: recent versions of Visual Studio set "Conformance Mode" enabled by
 default. This causes some issues with the Armadillo library. If you encounter
 this issue, disable "Conformance Mode" under C/C++ > Language.
+
+*Note*: you may need to change the paths of the include directories or libraries
+above, given how you installed the dependencies.
 
 ## The App's Goal
 
