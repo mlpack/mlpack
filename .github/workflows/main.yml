@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+      - main
   pull_request:
     branches:
       - master
+      - main
   release:
     types: [published, created, edited]
 permissions:
@@ -16,13 +18,13 @@ jobs:
   jobR:
     name: mlpack R tarball
     if: ${{ github.repository == 'mlpack/mlpack' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
 
     steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3
 
         - name: Extract mlpack version
           id: mlpack_version
@@ -33,9 +35,11 @@ jobs:
             MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
             echo ::set-output name=mlpack_r_package::$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)
 
-        - uses: r-lib/actions/setup-r@master
-          with:
-            r-version: release
+        # Setup Pandoc 
+        - uses: r-lib/actions/setup-pandoc@v2
+
+        # Setup R actions
+        - uses: r-lib/actions/setup-r@v2
 
         - name: Query dependencies
           run: |
@@ -44,7 +48,7 @@ jobs:
 
         - name: Cache R packages
           if: runner.os != 'Windows' && runner.os != 'macOS'
-          uses: actions/cache@v1
+          uses: actions/cache@v3
           with:
             path: ${{ env.R_LIBS_USER }}
             key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
@@ -54,13 +58,6 @@ jobs:
           run: |
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libcereal-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
-
-        - name: Install R-bindings dependencies
-          run: |
-            remotes::install_deps(dependencies = TRUE)
-            remotes::install_cran("roxygen2")
-            remotes::install_cran("pkgbuild")
-          shell: Rscript {0}
 
         - name: CMake
           run: |
@@ -76,7 +73,7 @@ jobs:
             cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
 
         - name: Upload R packages
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v3
           with:
               name: mlpack_r_tarball
               path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
@@ -92,10 +89,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {os: windows-latest, r: '4.0', name: 'Windows R'}
-        - {os: macos-10.15, r: 'release', name: 'macOS R'}
-        - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest", name: 'Linux R'}
-
+        - {os: windows-latest, r: 'release', name: 'Windows R'}
+        - {os: macOS-latest, r: 'release', name: 'macOS R'}
+        - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release', name: 'Linux R'}
 
     env:
       MAKEFLAGS: "-j 2"
@@ -103,20 +99,22 @@ jobs:
       R_CHECK_ARGS: "--no-build-vignettes"
       _R_CHECK_FORCE_SUGGESTS: 0
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
 
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: mlpack_r_tarball
 
-      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-
-      - uses: r-lib/actions/setup-pandoc@master
-
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+          
       - name: Query dependencies
         run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
 
@@ -134,21 +132,9 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev
 
-      - name: Install dependencies
-        run: |
-          install.packages('remotes')
-          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-        shell: Rscript {0}
+      - name: Query dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
 
-      - name: Check
-        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@master
+      - uses: r-lib/actions/check-r-package@v2
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: |
-            check/mlpack.Rcheck/00check.log
-            check/mlpack.Rcheck/00install.out
+          upload-snapshots: true
