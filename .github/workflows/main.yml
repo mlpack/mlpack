@@ -146,6 +146,14 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      - uses: r-lib/actions/check-r-package@v2
+      - name: Check
+        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@v3
         with:
-          upload-snapshots: true
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: |
+            check/mlpack.Rcheck/00check.log
+            check/mlpack.Rcheck/00install.out
