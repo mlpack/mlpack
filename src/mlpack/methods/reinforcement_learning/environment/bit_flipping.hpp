@@ -109,6 +109,7 @@ class BitFlipping
     // Update the number of steps performed.
     stepsPerformed++;
 
+    // Modify state according to action
     arma::colvec modifiedState = state.Data();
     modifiedState(action.action) = 1 - modifiedState(action.action);
     nextState.Data()= modifiedState;
@@ -121,6 +122,7 @@ class BitFlipping
     if (done)
       return 1.0;
 
+    // Reward agent if it reaches the goal of transition and is not done
     if (!done && sum(nextState.Data()) == sum(transitionGoal.Data()))
     {
       return 1.0;
@@ -144,7 +146,7 @@ class BitFlipping
   }
 
   /**
-   * Initial state representation is randomly generated within [-0.05, 0.05].
+   * Initial state representation is randomly generated binary vector
    *
    * @return Initial state for each episode.
    */

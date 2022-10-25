@@ -117,15 +117,18 @@ class HindsightReplay
   {
     if (goalSelectionStrategy == goalStrategy::FINAL)
     {
+      // Sample goal as the final state of the epsiode
       desiredGoal = episodeTransitions[episodeTransitions.size() -1].nextState;
     }
     else if (goalSelectionStrategy == goalStrategy::FUTURE)
-    {  
+    {
+      // Sample goal as random state from that transition to end of epsiode
       desiredGoal = episodeTransitions[arma::randi(
         arma::distr_param(transitionIndex+1, episodeTransitions.size() -1))].nextState;
     }
     else if (goalSelectionStrategy == goalStrategy::EPISODE)
     {
+      // Sample goal as random state from the whole epsiode
       desiredGoal = episodeTransitions[arma::randi(
         arma::distr_param(0, episodeTransitions.size() -1))].nextState;
     }
@@ -140,6 +143,8 @@ class HindsightReplay
   void SampleGoals(std::vector<StateType>& desiredGoals, int transitionIndex)
   { 
     StateType desiredGoal;
+
+    // Store HER transitions based on strategy for each transition in epsiode
     for (size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
     {
       SampleGoal(desiredGoal, transitionIndex);
@@ -169,10 +174,12 @@ class HindsightReplay
     { 
       desiredGoals.clear();
 
+      // Sample goals for particular transition
       SampleGoals(desiredGoals, transitionIndex);
 
       for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
       { 
+        // store transition in nStepBuffer
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
                               baseTransitions[transitionIndex].action, 
                               baseTransitions[transitionIndex].reward, 
@@ -233,7 +240,9 @@ class HindsightReplay
              const double& discount,
              StateType goal)
   { 
+    // Store all the transitions of episode in a vector
     episodeTransitions.push_back({state, action, reward, nextState, isEnd, goal});
+    
     nStepBuffer.push_back({state, action, reward, nextState, isEnd, goal});
 
     // Single step transition is not ready.
