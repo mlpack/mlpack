@@ -46,6 +46,18 @@ jobs:
             cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
             Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
+        - name: Install Build Dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libcereal-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
+
+        - name: Install R-bindings dependencies
+          run: |
+            remotes::install_deps(dependencies = TRUE)
+            remotes::install_cran("roxygen2")
+            remotes::install_cran("pkgbuild")
+          shell: Rscript {0}
+
         - name: Cache R packages
           if: runner.os != 'Windows' && runner.os != 'macOS'
           uses: actions/cache@v3
@@ -53,11 +65,6 @@ jobs:
             path: ${{ env.R_LIBS_USER }}
             key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
             restore-keys: ${{ runner.os }}-r-release-
-
-        - name: Install Build Dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libcereal-dev libensmallen-dev libhdf5-dev libarmadillo-dev libcurl4-openssl-dev
 
         - name: CMake
           run: |
