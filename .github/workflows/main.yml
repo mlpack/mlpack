@@ -46,6 +46,14 @@ jobs:
             cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
             Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
+        - name: Cache R packages
+          if: runner.os != 'Windows' && runner.os != 'macOS'
+          uses: actions/cache@v3
+          with:
+            path: ${{ env.R_LIBS_USER }}
+            key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
+            restore-keys: ${{ runner.os }}-r-release-
+
         - name: Install Build Dependencies
           run: |
             sudo apt-get update
@@ -57,14 +65,6 @@ jobs:
             remotes::install_cran("roxygen2")
             remotes::install_cran("pkgbuild")
           shell: Rscript {0}
-
-        - name: Cache R packages
-          if: runner.os != 'Windows' && runner.os != 'macOS'
-          uses: actions/cache@v3
-          with:
-            path: ${{ env.R_LIBS_USER }}
-            key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
-            restore-keys: ${{ runner.os }}-r-release-
 
         - name: CMake
           run: |
@@ -139,9 +139,14 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev
 
-      - name: Query dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Install dependencies
+        run: |
+          install.packages('remotes')
+          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+          working-directory: ${{ needs.jobR.outputs.r_bindings }}
