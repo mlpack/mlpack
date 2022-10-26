@@ -129,6 +129,14 @@ cmake ../
 sudo make install
 ```
 
+Note: Since CMake v3.14.0 the `cmake` command can create the build folder itself.
+The above commands can be rewritten as follows:
+
+```sh
+cmake -S . -B build
+sudo cmake --build build --target install
+```
+
 You can add a few arguments to the `cmake` command to control the behavior of
 the configuration and build process.  Simply add these to the `cmake` command.
 Some options are given below:
