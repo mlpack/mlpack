@@ -179,10 +179,14 @@ class HindsightReplay
 
       for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
       { 
+        // Get reward for that particular HER transition
+        double reward = environment.GetHERReward(baseTransitions[transitionIndex].nextState,
+                                            desiredGoals[goalIndex]);
+
         // store transition in nStepBuffer
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
                               baseTransitions[transitionIndex].action, 
-                              baseTransitions[transitionIndex].reward, 
+                              reward,
                               baseTransitions[transitionIndex].nextState, 
                               baseTransitions[transitionIndex].isEnd,
                               desiredGoals[goalIndex]});
@@ -242,7 +246,7 @@ class HindsightReplay
   { 
     // Store all the transitions of episode in a vector
     episodeTransitions.push_back({state, action, reward, nextState, isEnd, goal});
-    
+
     nStepBuffer.push_back({state, action, reward, nextState, isEnd, goal});
 
     // Single step transition is not ready.
@@ -406,6 +410,9 @@ class HindsightReplay
 
   //! goal selection startegy for HER
   goalStrategy goalSelectionStrategy;
+
+  //! Locally-stored reinforcement learning task.
+  EnvironmentType environment;
 };
 
 } // namespace mlpack

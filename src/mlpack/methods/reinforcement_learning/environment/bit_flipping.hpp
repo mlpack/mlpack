@@ -114,7 +114,6 @@ class BitFlipping
     modifiedState(action.action) = 1 - modifiedState(action.action);
     nextState.Data()= modifiedState;
 
-
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
 
@@ -158,6 +157,25 @@ class BitFlipping
   }
 
   /**
+   * Get reward for particular goal
+   *
+   * @param nextState The next state.
+   * @param transitionGoal Transition's goal.
+   * @return Initial state for each episode.
+   */
+  double GetHERReward(const State& nextState,
+                    const State& transitionGoal)
+  {
+    // Reward agent if it reaches the goal of transition and is not done
+    if (sum(nextState.Data()) == sum(transitionGoal.Data()))
+    {
+      return 1.0;
+    }
+
+    return 0.0;
+  }
+
+  /**
    * This function checks if the cart has reached the terminal state.
    *
    * @param state The desired state.
@@ -166,6 +184,7 @@ class BitFlipping
   bool IsTerminal(const State& state) const
   { 
     arma::colvec currentState = state.Data();
+
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
