@@ -7,7 +7,6 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <h5 align="center">
   <a href="https://mlpack.org">Home</a> |
   <a href="https://www.mlpack.org/docs.html">Documentation</a> |
-  <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">Doxygen</a> |
   <a href="https://www.mlpack.org/community.html">Community</a> |
   <a href="https://www.mlpack.org/questions.html">Help</a> |
   <a href="https://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
@@ -47,7 +46,7 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack documentation](https://www.mlpack.org/docs.html)
  - [Examples repository](https://github.com/mlpack/examples/)
- - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
+ - [Tutorials](doc/tutorials/README.md)
  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
