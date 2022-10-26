@@ -354,8 +354,12 @@ double QLearning<
   // Get the initial state from environment.
   state = environment.InitialSample();
 
+  std::cout<<"initial state "<<state.Encode()<<std::endl;
+
   // Get the final goal from environment
   StateType goal = environment.GoalSample();
+
+  std::cout<<"initial goal "<<goal.Encode()<<std::endl;
 
 
   // Track the return of this episode.
@@ -366,9 +370,13 @@ double QLearning<
   {
     SelectAction();
 
+    std::cout<<"action "<<action.action<<std::endl;
+
     // Interact with the environment to advance to next state.
     StateType nextState;
     double reward = environment.Sample(state, action, nextState, goal);
+
+  std::cout<<"next state "<<nextState.Encode()<<std::endl;
 
     totalReturn += reward;
     totalSteps++;
@@ -389,7 +397,10 @@ double QLearning<
     } 
     else
     {
+  std::cout<<"reached training loop "<<std::endl;
+
       replayMethod.StoreHERTransitions(config.Discount());
+  std::cout<<"stored her transitions "<<std::endl;   
       TrainAgent();
     }
       

@@ -91,7 +91,7 @@ class HindsightReplay
                     const size_t capacity,
                     const size_t herRatio = 2,
                     goalStrategy strategy = goalStrategy::FINAL,
-                    const size_t nSteps = 1,
+                    const size_t nSteps = 3,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
@@ -174,14 +174,20 @@ class HindsightReplay
     { 
       desiredGoals.clear();
 
+      std::cout<<"HER Transition Transition Index :"<<transitionIndex<<std::endl;
       // Sample goals for particular transition
       SampleGoals(desiredGoals, transitionIndex);
 
       for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
       { 
+      std::cout<<"FOR goal index :"<<goalIndex<<std::endl; 
         // Get reward for that particular HER transition
+      std::cout<<"HER State :"<<baseTransitions[transitionIndex].nextState.Encode()<<std::endl;
+      std::cout<<"HER Goal :"<<desiredGoals[goalIndex].Encode()<<std::endl;
         double reward = environment.GetHERReward(baseTransitions[transitionIndex].nextState,
                                             desiredGoals[goalIndex]);
+      
+      std::cout<<"HER Reward :"<<reward<<std::endl;
 
         // store transition in nStepBuffer
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
