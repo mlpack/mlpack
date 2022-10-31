@@ -55,7 +55,7 @@ class BitFlipping
     const arma::colvec& Encode() const { return data; }
 
     //! Dimension of the encoded state.
-    static constexpr size_t dimension = 4;
+    static constexpr size_t dimension = 2;
 
    private:
     //! Locally-stored n bit integer.
@@ -84,7 +84,7 @@ class BitFlipping
    * @param length Length of the binary vector for state and goal
    */
   BitFlipping(const size_t maxSteps = 200,
-              const size_t length = 4) :
+              const size_t length = 2) :
       maxSteps(maxSteps),
       length(length),
       stepsPerformed(0)
@@ -167,7 +167,7 @@ class BitFlipping
                     const State& transitionGoal)
   {
     // Reward agent if it reaches the goal of transition and is not done
-    if (sum(nextState.Data()) == sum(transitionGoal.Data()))
+    if (sum(nextState.Data() == transitionGoal.Data()) == nextState.Data().n_elem)
     {
       return 1.0;
     }
@@ -191,7 +191,7 @@ class BitFlipping
           "being taken.";
       return true;
     }
-    else if (sum(currentState - goal) == 0)
+    else if (sum(currentState == goal) == goal.n_elem)
     {
       Log::Info << "Episode terminated as agent has reached desired goal.";
       return true;
