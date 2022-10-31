@@ -236,14 +236,18 @@ class Pendulum
   }
 
   /**
-   * Initial goal representation for thr environment
+   * Initial goal representation for the environment
    *
    * @return Initial goal for each episode.
    */
   State GoalSample()
   { 
     // Initilizing goal with dummy value as initial state.
-    return InitialSample();
+    State state;
+    state.Theta() = Random(-M_PI, M_PI);
+    state.AngularVelocity() = Random(-1.0, 1.0);
+    state.SetState();
+    return state;
   }
 
   //! Get the number of steps performed.

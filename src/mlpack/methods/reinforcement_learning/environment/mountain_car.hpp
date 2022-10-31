@@ -223,7 +223,10 @@ class MountainCar
   State GoalSample()
   { 
     // Initilizing goal with dummy value as initial state.
-    return InitialSample();
+    State state;
+    state.Velocity() = 0.0;
+    state.Position() = arma::as_scalar(arma::randu(1)) * 0.2 - 0.6;
+    return state;
   }
 
   //! Get the number of steps performed.

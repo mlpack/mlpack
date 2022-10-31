@@ -351,7 +351,7 @@ class Acrobot
   State GoalSample()
   { 
     // Initilizing goal with dummy value as initial state.
-    return InitialSample();
+    return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
   }
 
   //! Get the number of steps performed.

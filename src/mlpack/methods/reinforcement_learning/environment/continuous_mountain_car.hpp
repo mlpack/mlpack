@@ -220,8 +220,10 @@ class ContinuousMountainCar
    */
   State GoalSample()
   { 
-    // Initilizing goal with dummy value as initial state.
-    return InitialSample();
+    State state;
+    state.Velocity() = 0.0;
+    state.Position() = Random(-0.6, -0.4);
+    return state;
   }
 
   //! Get the number of steps performed.

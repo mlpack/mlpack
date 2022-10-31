@@ -328,7 +328,7 @@ class DoublePoleCart
   State GoalSample()
   { 
     // Initilizing goal with dummy value as initial state.
-    return InitialSample();
+    return State((arma::randu<arma::vec>(6) - 0.5) / 10.0);
   }
 
   //! Get the number of steps performed.
