@@ -45,16 +45,9 @@ void PrintHeaders(const string& bindingName,
 
     // Get the name of the binding in the target language, and convert it to
     // lowercase (since the anchor link will be in lowercase).
-    const string langBindingName = 
+    const string langBindingName =
         addWrapperDocs[i] ? GetWrapperName(bindingName) :
             GetBindingName(bindingName);
-
-    string anchorName = GetBindingName(bindingName);
-    transform(anchorName.begin(), anchorName.end(), anchorName.begin(),
-        [](unsigned char c) { return tolower(c); });
-    // Strip '()' from the end if needed.
-    if (anchorName.substr(anchorName.size() - 2, 2) == "()")
-      anchorName = anchorName.substr(0, anchorName.size() - 2);
 
     cout << " - [" << langBindingName << "](#" << languages[i]
         << "_";
@@ -62,7 +55,7 @@ void PrintHeaders(const string& bindingName,
     if (addWrapperDocs[i])
       cout << GetWrapperLink(bindingName);
     else
-      cout << anchorName;
+      cout << bindingName;
 
     cout << "){: .language-link #" << languages[i] << " }"
         << endl;
