@@ -138,8 +138,7 @@ class Pendulum
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState,
-                const State& transitionGoal)
+                State& nextState)
   {
     // Update the number of steps performed.
     stepsPerformed++;
@@ -182,10 +181,22 @@ class Pendulum
    * @param action The current action.
    * @return reward, The reward.
    */
-  double Sample(const State& state, const Action& action, const State& transitionGoal)
+  double Sample(const State& state, const Action& action)
   {
     State nextState;
-    return Sample(state, action, nextState, transitionGoal);
+    return Sample(state, action, nextState);
+  }
+
+  /**
+   * Dynamics of Pendulum. Get reward based on current state and current action
+   *
+   * @param state The current state.
+   * @param action The current action.
+   * @return reward, The reward.
+   */
+  double Sample(const State& state, const Action& action,State& nextState, const State& transitionGoal)
+  {
+    return Sample(state, action, nextState);
   }
 
   /**

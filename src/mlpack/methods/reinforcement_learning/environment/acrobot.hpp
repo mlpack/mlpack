@@ -158,8 +158,7 @@ class Acrobot
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState,
-                const State& transitionGoal)
+                State& nextState)
   {
     // Update the number of steps performed.
     stepsPerformed++;
@@ -204,7 +203,21 @@ class Acrobot
   double Sample(const State& state, const Action& action, const State& transitionGoal)
   {
     State nextState;
-    return Sample(state, action, nextState, transitionGoal);
+    return Sample(state, action, nextState);
+  }
+
+  /**
+   * Dynamics of the Acrobot System. To get reward and next state based on
+   * current state and current action. This function calls the Sample function
+   * to estimate the next state return reward for taking a particular action.
+   *
+   * @param state The current State.
+   * @param action The action taken.
+   * @return nextState The next state.
+   */
+  double Sample(const State& state, const Action& action, State& nextState, const State& transitionGoal)
+  {
+    return Sample(state, action, nextState);
   }
 
   /**
