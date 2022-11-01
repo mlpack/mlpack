@@ -40,10 +40,8 @@ void PrintDoc(util::ParamData& d,
   const size_t indent = *((size_t*) input);
   std::ostringstream oss;
   oss << " - ";
-  if (d.name == "lambda") // Don't print Python keywords.
-    oss << d.name << "_ (";
-  else
-    oss << d.name << " (";
+  oss << GetValidName(d.name);
+  oss << " (";
   oss << GetPrintableType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 
