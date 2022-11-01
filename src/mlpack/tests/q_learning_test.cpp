@@ -577,7 +577,7 @@ TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
    * For N-step learning, we need to specify n as the last parameter in
    * the replay method. Here we use n = 3.
    */
-  HindsightReplay<BitFlipping> replayMethod(2, 4000);
+  HindsightReplay<BitFlipping> replayMethod(32, 10000);
 
   // Setting all training hyperparameters.
   TrainingConfig config;
@@ -589,6 +589,6 @@ TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
       decltype(replayMethod)>
       agent(config, network, policy, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  bool converged = testAgent<decltype(agent)>(agent, 20, 1000);
   REQUIRE(converged);
 }

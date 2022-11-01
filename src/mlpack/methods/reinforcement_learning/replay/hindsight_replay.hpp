@@ -89,23 +89,23 @@ class HindsightReplay
    */
   HindsightReplay(const size_t batchSize,
                     const size_t capacity,
-                    const size_t herRatio = 2,
-                    goalStrategy strategy = goalStrategy::FINAL,
-                    const size_t nSteps = 3,
+                    const size_t herRatio = 4,
+                    goalStrategy strategy = goalStrategy::FUTURE,
+                    const size_t nSteps = 1,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
-      capacity(capacity),
+      capacity((herRatio+1)*capacity),
       position(0),
       full(false),
       herRatio(herRatio),
       goalSelectionStrategy(strategy),
       nSteps(nSteps),
-      states(dimension, capacity),
-      actions(capacity),
-      rewards(capacity),
-      nextStates(dimension, capacity),
-      goals(dimension, capacity),
-      isTerminal(capacity)
+      states(dimension, (herRatio+1)*capacity),
+      actions((herRatio+1)*capacity),
+      rewards((herRatio+1)*capacity),
+      nextStates(dimension, (herRatio+1)*capacity),
+      goals(dimension, (herRatio+1)*capacity),
+      isTerminal((herRatio+1)*capacity)
   { /* Nothing to do here. */ }
 
   /**
@@ -123,8 +123,9 @@ class HindsightReplay
     else if (goalSelectionStrategy == goalStrategy::FUTURE)
     {
       // Sample goal as random state from that transition to end of epsiode
-      desiredGoal = episodeTransitions[arma::randi(
-        arma::distr_param(transitionIndex+1, episodeTransitions.size() -1))].nextState;
+      size_t index = arma::randi(
+        arma::distr_param(transitionIndex+1, episodeTransitions.size() -1));
+      desiredGoal = episodeTransitions[index].nextState;
     }
     else if (goalSelectionStrategy == goalStrategy::EPISODE)
     {
@@ -174,20 +175,14 @@ class HindsightReplay
     { 
       desiredGoals.clear();
 
-      // std::cout<<"HER Transition Transition Index :"<<transitionIndex<<std::endl;
       // Sample goals for particular transition
       SampleGoals(desiredGoals, transitionIndex);
 
       for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
       { 
-      // std::cout<<"FOR goal index :"<<goalIndex<<std::endl; 
         // Get reward for that particular HER transition
-      // std::cout<<"HER State :"<<baseTransitions[transitionIndex].nextState.Encode()<<std::endl;
-      // std::cout<<"HER Goal :"<<desiredGoals[goalIndex].Encode()<<std::endl;
         double reward = environment.GetHERReward(baseTransitions[transitionIndex].nextState,
                                             desiredGoals[goalIndex]);
-      
-      // std::cout<<"HER Reward :"<<reward<<std::endl;
 
         // store transition in nStepBuffer
         nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
@@ -209,7 +204,7 @@ class HindsightReplay
         assert(nStepBuffer.size() == nSteps);
 
         // Make a n-step transition.
-        GetNStepInfo(baseTransitions[transitionIndex].reward, 
+        GetNStepInfo(reward, 
                     baseTransitions[transitionIndex].nextState, 
                     baseTransitions[transitionIndex].isEnd, 
                     discount);
@@ -218,9 +213,9 @@ class HindsightReplay
         ActionType action = nStepBuffer.front().action;
         states.col(position) = state.Encode();
         actions[position] = action;
-        rewards(position) = baseTransitions[transitionIndex].reward;
+        rewards(position) = reward;
         nextStates.col(position) = baseTransitions[transitionIndex].nextState.Encode();
-        isTerminal(position) = baseTransitions[transitionIndex].isEnd;
+        isTerminal(position) = false;
         position++;
         if (position == capacity)
         {

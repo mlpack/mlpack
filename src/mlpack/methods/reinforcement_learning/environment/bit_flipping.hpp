@@ -3,7 +3,8 @@
  * @author Eshaan Agarwal
  *
  * This file is an implementation of Bit Flipping toy task:
- * https://www.gymlibrary.ml/environments/classic_control/cart_pole
+ * https://github.com/NervanaSystems/gym-bit-flip/blob/master/gym_bit_flip/bit_flip.py
+ * https://github.com/ceteke/her/blob/master/env.py
  *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -42,24 +43,24 @@ class BitFlipping
      *
      * @param data Data 
      */
-    State(const arma::colvec& data) : data(data)
+    State(const arma::vec& data) : data(data)
     { /* Nothing to do here */ }
 
     //! Modify the internal representation of the state.
-    arma::colvec& Data() { return data; }
+    arma::vec& Data() { return data; }
 
     //! Get the internal representation of the state.
-    arma::colvec Data() const { return data; }
+    arma::vec Data() const { return data; }
 
     //! Encode the state to a column vector.
-    const arma::colvec& Encode() const { return data; }
+    const arma::vec& Encode() const { return data; }
 
     //! Dimension of the encoded state.
-    static constexpr size_t dimension = 2;
+    static constexpr size_t dimension = 10;
 
    private:
     //! Locally-stored n bit integer.
-    arma::colvec data;
+    arma::vec data;
   };
 
   /**
@@ -84,7 +85,7 @@ class BitFlipping
    * @param length Length of the binary vector for state and goal
    */
   BitFlipping(const size_t maxSteps = 200,
-              const size_t length = 2) :
+              const size_t length = 10) :
       maxSteps(maxSteps),
       length(length),
       stepsPerformed(0)
@@ -109,20 +110,19 @@ class BitFlipping
     // Update the number of steps performed.
     stepsPerformed++;
 
-    // Modify state according to action
-    arma::colvec modifiedState = state.Data();
-    modifiedState(action.action) = 1 - modifiedState(action.action);
-    nextState.Data()= modifiedState;
+    // // Modify state according to action
+    nextState.Data()= state.Data();
+    nextState.Data()(action.action) = 1 - state.Data()(action.action);
 
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
 
     // Do not reward agent if it failed.
-    if (done)
+    if (done && arma::approx_equal(state.Data(), goal, "absdiff", 1e-5))
       return 1.0;
 
     // Reward agent if it reaches the goal of transition and is not done
-    if (!done && sum(nextState.Data()) == sum(transitionGoal.Data()))
+    if (!done && arma::approx_equal(nextState.Data(), transitionGoal.Data(), "absdiff", 1e-5))
     {
       return 1.0;
     }
@@ -152,7 +152,7 @@ class BitFlipping
   State InitialSample()
   {
     stepsPerformed = 0;
-    initialState = arma::randi<arma::colvec>(length, arma::distr_param(0, 1));
+    initialState = arma::randi<arma::vec>(length, arma::distr_param(0, 1));
     return State(initialState);
   }
 
@@ -167,7 +167,7 @@ class BitFlipping
                     const State& transitionGoal)
   {
     // Reward agent if it reaches the goal of transition and is not done
-    if (sum(nextState.Data() == transitionGoal.Data()) == nextState.Data().n_elem)
+    if (arma::approx_equal(nextState.Data(), transitionGoal.Data(), "absdiff", 1e-5))
     {
       return 1.0;
     }
@@ -183,15 +183,13 @@ class BitFlipping
    */
   bool IsTerminal(const State& state) const
   { 
-    arma::colvec currentState = state.Data();
-
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
           "being taken.";
       return true;
     }
-    else if (sum(currentState == goal) == goal.n_elem)
+    else if (arma::approx_equal(state.Data(), goal, "absdiff", 1e-5))
     {
       Log::Info << "Episode terminated as agent has reached desired goal.";
       return true;
@@ -209,7 +207,7 @@ class BitFlipping
     // goal = arma::randi<arma::colvec>(length, arma::distr_param(0, 1));
     do
     {
-      goal = arma::randi<arma::colvec>(length, arma::distr_param(0, 1));
+      goal = arma::randi<arma::vec>(length, arma::distr_param(0, 1));
     }
     while (sum(initialState - goal) == 0);
     return State(goal);
@@ -229,9 +227,9 @@ class BitFlipping
   size_t& Length() { return length; }
 
   //! Get the goal for the episode
-  arma::colvec Goal() const { return goal; }
+  arma::vec Goal() const { return goal; }
   //! Set the goal for the episode
-  arma::colvec& Goal() { return goal; }
+  arma::vec& Goal() { return goal; }
 
  private:
   //! Locally-stored maximum number of steps.
@@ -244,10 +242,10 @@ class BitFlipping
   size_t stepsPerformed;
 
   //! Locally stored goal for the epsiode
-  arma::colvec goal;
+  arma::vec goal;
 
   //! Locally stored initialState for the epsiode
-  arma::colvec initialState;
+  arma::vec initialState;
 
   //! Locally stored size of binary vector
   size_t length;
