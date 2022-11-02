@@ -24,5 +24,6 @@
 #include "pendulum.hpp"
 #include "reward_clipping.hpp"
 #include "bit_flipping.hpp"
+#include "maze.hpp"
 
 #endif
