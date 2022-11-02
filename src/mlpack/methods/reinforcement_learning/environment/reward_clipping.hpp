@@ -103,7 +103,8 @@ class RewardClipping
    * @param action The current action.
    * @return clippedReward, Reward clipped between [minReward, maxReward].
    */
-  double Sample(const State& state, const Action& action, const State& transitionGoal)
+  double Sample(const State& state, const Action& action,
+                 const State& transitionGoal)
   {
     State nextState;
     return Sample(state, action, nextState, transitionGoal);

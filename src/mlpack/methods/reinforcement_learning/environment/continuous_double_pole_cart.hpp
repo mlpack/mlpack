@@ -282,7 +282,8 @@ class ContinuousDoublePoleCart
    * @param action The current action.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state, const Action& action, State& nextState, const State& transitionGoal)
+  double Sample(const State& state, const Action& action, State& nextState,
+                 const State& transitionGoal)
   {
     return Sample(state, action, nextState);
   }
