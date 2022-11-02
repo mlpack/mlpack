@@ -567,53 +567,53 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   // that the agent can handle multiple actions in continuous space.
 }
 
-TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
-{
-  bool converged = false;
-  for (size_t trial = 0; trial < 5; ++trial)
-  {
-    Log::Debug << "Trial number: " << trial << std::endl;
-    // Set up the network.
-    // SimpleDQN<> network(256, 64, 2);
+// TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
+// {
+//   bool converged = false;
+//   for (size_t trial = 0; trial < 5; ++trial)
+//   {
+//     Log::Debug << "Trial number: " << trial << std::endl;
+//     // Set up the network.
+//     // SimpleDQN<> network(256, 64, 2);
 
-    // Set up the module. Note that we use a custom network here.
-    FFN<MeanSquaredError, GaussianInitialization> module(
-        MeanSquaredError(), GaussianInitialization(0, 0.001));
-    module.Add<Linear>(256);
-    module.Add<ReLU>();
-    module.Add<Linear>(64);
-    module.Add<ReLU>();
-    module.Add<Linear>(64);
-    module.Add<ReLU>();
-    module.Add<Linear>(2);
+//     // Set up the module. Note that we use a custom network here.
+//     FFN<MeanSquaredError, GaussianInitialization> module(
+//         MeanSquaredError(), GaussianInitialization(0, 0.001));
+//     module.Add<Linear>(256);
+//     module.Add<ReLU>();
+//     module.Add<Linear>(64);
+//     module.Add<ReLU>();
+//     module.Add<Linear>(64);
+//     module.Add<ReLU>();
+//     module.Add<Linear>(2);
 
-    // Adding the module to the SimpleDQN network containing required functions.
-    SimpleDQN<> network(module);
+//     // Adding the module to the SimpleDQN network containing required functions.
+//     SimpleDQN<> network(module);
 
-    // Set up the policy.
-    GreedyPolicy<BitFlipping> policy(1.0, 1000, 0.1, 0.99);
-    /**
-     * For N-step learning, we need to specify n as the last parameter in
-     * the replay method. Here we use n = 3.
-     */
-    HindsightReplay<BitFlipping> replayMethod(32, 10000);
+//     // Set up the policy.
+//     GreedyPolicy<BitFlipping> policy(1.0, 1000, 0.1, 0.99);
+//     /**
+//      * For N-step learning, we need to specify n as the last parameter in
+//      * the replay method. Here we use n = 3.
+//      */
+//     HindsightReplay<BitFlipping> replayMethod(32, 10000);
 
-    // Setting all training hyperparameters.
-    TrainingConfig config;
-    config.ExplorationSteps() = 50;
-    config.StepLimit() = 200;
+//     // Setting all training hyperparameters.
+//     TrainingConfig config;
+//     config.ExplorationSteps() = 50;
+//     config.StepLimit() = 200;
 
-    // Set up DQN agent.
-    QLearning<BitFlipping, decltype(network), AdamUpdate, decltype(policy),
-        decltype(replayMethod)>
-        agent(config, network, policy, replayMethod);
+//     // Set up DQN agent.
+//     QLearning<BitFlipping, decltype(network), AdamUpdate, decltype(policy),
+//         decltype(replayMethod)>
+//         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, 1100, 1000);
-    if (converged)
-      break;
-  }
-  REQUIRE(converged);
-}
+//     converged = testAgent<decltype(agent)>(agent, 1100, 1000);
+//     if (converged)
+//       break;
+//   }
+//   REQUIRE(converged);
+// }
 
 TEST_CASE("MazeWithNStepHindsightDQN", "[QLearningTest]")
 {
