@@ -56,7 +56,7 @@ class BitFlipping
     const arma::vec& Encode() const { return data; }
 
     //! Dimension of the encoded state.
-    static constexpr size_t dimension = 10;
+    static constexpr size_t dimension = 2;
 
    private:
     //! Locally-stored n bit integer.
@@ -85,7 +85,7 @@ class BitFlipping
    * @param length Length of the binary vector for state and goal
    */
   BitFlipping(const size_t maxSteps = 200,
-              const size_t length = 10) :
+              const size_t length = 2) :
       maxSteps(maxSteps),
       length(length),
       stepsPerformed(0)
@@ -204,12 +204,7 @@ class BitFlipping
    */
   State GoalSample()
   {
-    // goal = arma::randi<arma::colvec>(length, arma::distr_param(0, 1));
-    do
-    {
-      goal = arma::randi<arma::vec>(length, arma::distr_param(0, 1));
-    }
-    while (sum(initialState - goal) == 0);
+    goal = arma::ones(length);
     return State(goal);
   }
 

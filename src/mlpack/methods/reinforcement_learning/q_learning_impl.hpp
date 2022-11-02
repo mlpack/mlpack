@@ -382,17 +382,16 @@ double QLearning<
 
     if (deterministic || totalSteps < config.ExplorationSteps())
       continue;
-    
     if(environment.IsTerminal(state))
     {
-      replayMethod.StoreHERTransitions(config.Discount());  
+      replayMethod.StoreHERTransitions(config.Discount());
     }
     if (config.IsCategorical())
     {
       TrainCategoricalAgent();
     } 
     else
-    { 
+    {
       TrainAgent();
     }
       

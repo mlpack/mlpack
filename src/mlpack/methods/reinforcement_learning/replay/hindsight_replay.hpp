@@ -204,9 +204,9 @@ class HindsightReplay
         assert(nStepBuffer.size() == nSteps);
 
         // Make a n-step transition.
-        GetNStepInfo(reward, 
+        GetNStepInfo(reward,
                     baseTransitions[transitionIndex].nextState, 
-                    baseTransitions[transitionIndex].isEnd, 
+                    baseTransitions[transitionIndex].isEnd,
                     discount);
 
         StateType state = nStepBuffer.front().state;
