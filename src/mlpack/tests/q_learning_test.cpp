@@ -574,7 +574,21 @@ TEST_CASE("BitFlippingWithNStepHindsightDQN", "[QLearningTest]")
   {
     Log::Debug << "Trial number: " << trial << std::endl;
     // Set up the network.
-    SimpleDQN<> network(256, 256, 2);
+    // SimpleDQN<> network(256, 64, 2);
+
+    // Set up the module. Note that we use a custom network here.
+    FFN<MeanSquaredError, GaussianInitialization> module(
+        MeanSquaredError(), GaussianInitialization(0, 0.001));
+    module.Add<Linear>(256);
+    module.Add<ReLU>();
+    module.Add<Linear>(64);
+    module.Add<ReLU>();
+    module.Add<Linear>(64);
+    module.Add<ReLU>();
+    module.Add<Linear>(2);
+
+    // Adding the module to the SimpleDQN network containing required functions.
+    SimpleDQN<> network(module);
 
     // Set up the policy.
     GreedyPolicy<BitFlipping> policy(1.0, 1000, 0.1, 0.99);
@@ -608,7 +622,7 @@ TEST_CASE("MazeWithNStepHindsightDQN", "[QLearningTest]")
   {
     Log::Debug << "Trial number: " << trial << std::endl;
     // Set up the network.
-    SimpleDQN<> network(256, 256, 2);
+    SimpleDQN<> network(256, 256, 4);
 
     // Set up the policy.
     GreedyPolicy<Maze> policy(1.0, 1000, 0.1, 0.99);
@@ -620,15 +634,15 @@ TEST_CASE("MazeWithNStepHindsightDQN", "[QLearningTest]")
 
     // Setting all training hyperparameters.
     TrainingConfig config;
-    config.ExplorationSteps() = 50;
-    config.StepLimit() = 200;
+    config.ExplorationSteps() = 25;
+    config.StepLimit() = 120;
 
     // Set up DQN agent.
     QLearning<Maze, decltype(network), AdamUpdate, decltype(policy),
         decltype(replayMethod)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, 1100, 1000);
+    converged = testAgent<decltype(agent)>(agent, 0.95, 1000);
     if (converged)
       break;
   }

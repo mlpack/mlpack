@@ -101,7 +101,7 @@ class Maze
    *    terminates. If the value is 0, there is no limit.
    * @param length Length of the binary vector for state and goal
    */
-  Maze(const size_t maxSteps = 200) :
+  Maze(const size_t maxSteps = 100) :
       maxSteps(maxSteps),
       stepsPerformed(0)
   { 
@@ -165,7 +165,7 @@ class Maze
     // dont move to that position if invalid
     bool invalid = false;
 
-    if(currentNextState(0)>= maze.n_rows || currentNextState()>= maze.n_cols || maze(currentNextState(0),currentNextState(1))==-1 ){
+    if(currentNextState(0)>= maze.n_rows || currentNextState(1)>= maze.n_cols || currentNextState(0) < 0 || currentNextState(1) < 0 || maze(currentNextState(0),currentNextState(1))==-1 ){
         invalid = true;
         nextState.Row() = currentState[0];
         nextState.Column() = currentState[1];
@@ -177,12 +177,9 @@ class Maze
     // Do not reward agent if it failed.
     if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return 0.0;
-
-    // Reward agent if it reaches the goal of transition and is not done
-    if (!done && maze(nextState.Column(),nextState.Row())==0 && nextState.Row()== transitionGoal.Row() && nextState.Column()== transitionGoal.Column() )
-    {
+    
+    if (done && maze(nextState.Row(),nextState.Column())==1 && nextState.Row()== goal(0) && nextState.Column()== goal(1) )
       return 1.0;
-    }
 
     double reward = 0.0;
     if(invalid)
@@ -215,10 +212,10 @@ class Maze
   State InitialSample()
   {
     stepsPerformed = 0;
-    maze = { { 0, -1, 0 ,1 },
-             { 0, -1, 0, 0 },
+    maze = { { 0, 0, 0 ,-1 },
+             { -1, -1, 0, -1 },
              { 0, 0, 0, 0 }, 
-             { -1, -1, 0, -1 }};
+             { 1, 0, 0, -1 }};
     
     // for(size_t row=0 ; row < maze.n_rows ; ++row)
     // {
@@ -230,15 +227,15 @@ class Maze
     //     }
     // }
     startingPoints.push_back(arma::vec({0,0}));
-    startingPoints.push_back(arma::vec({2,0}));
     startingPoints.push_back(arma::vec({0,1}));
-    startingPoints.push_back(arma::vec({2,1}));
-    startingPoints.push_back(arma::vec({3,1}));
     startingPoints.push_back(arma::vec({0,2}));
     startingPoints.push_back(arma::vec({1,2}));
+    startingPoints.push_back(arma::vec({2,0}));
+    startingPoints.push_back(arma::vec({2,1}));
     startingPoints.push_back(arma::vec({2,2}));
-    startingPoints.push_back(arma::vec({3,2}));
     startingPoints.push_back(arma::vec({2,3}));
+    startingPoints.push_back(arma::vec({3,1}));
+    startingPoints.push_back(arma::vec({3,2}));
     size_t index = arma::randi(arma::distr_param(0, startingPoints.size() -1));
     initialState = arma::vec({startingPoints[index][0],startingPoints[index][1]});
     return State(initialState);
