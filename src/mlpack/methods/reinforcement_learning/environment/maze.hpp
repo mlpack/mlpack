@@ -3,8 +3,7 @@
  * @author Eshaan Agarwal
  *
  * This file is an implementation of Goal based Maze task:
- * https://github.com/NervanaSystems/gym-bit-flip/blob/master/gym_bit_flip/bit_flip.py
- * https://github.com/ceteke/her/blob/master/env.py
+ * 
  *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -20,13 +19,13 @@
 namespace mlpack {
 
 /**
- * Implementation of Cart Pole task.
+ * Implementation of Maze task.
  */
 class Maze
 {
  public:
   /**
-   * Implementation of the state of Bit Flipping. Each state is a 
+   * Implementation of the state of Maze.
    * Each State is a tuple {(row, column)} in n * n maze matrix
    */
   class State
@@ -69,12 +68,12 @@ class Maze
     static constexpr size_t dimension = 2;
 
    private:
-    //! Locally-stored {(row, column)}r.
+    //! Locally-stored {(row, column)}.
     arma::vec data;
   };
 
   /**
-   * Implementation of action of Cart Pole.
+   * Implementation of action of Maze.
    */
   class Action
   {
@@ -99,36 +98,22 @@ class Maze
    *
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
-   * @param length Length of the binary vector for state and goal
    */
   Maze(const size_t maxSteps = 100) :
       maxSteps(maxSteps),
       stepsPerformed(0)
   { 
-    maze = { { 0, -1, 0 ,1 },
-             { 0, -1, 0, 0 },
+    maze = { { 0, 0, 0 ,-1 },
+             { -1, -1, 0, -1 },
              { 0, 0, 0, 0 }, 
-             { -1, -1, 0, -1 },};
+             { 1, 0, 0, -1 }};
     
-    // for(size_t row=0 ; row < maze.n_rows ; ++row)
-    // {
-    //     for(size_t column = 0; column < maze.n_cols; ++column)
-    //     {
-    //         if(maze(row,column)==0){
-    //             startingPoints.push_back(arma::vec({row,column}));
-    //         }
-    //     }
-    // }
-    startingPoints.push_back(arma::vec({0,0}));
-    startingPoints.push_back(arma::vec({2,0}));
-    startingPoints.push_back(arma::vec({0,1}));
-    startingPoints.push_back(arma::vec({2,1}));
-    startingPoints.push_back(arma::vec({3,1}));
-    startingPoints.push_back(arma::vec({0,2}));
-    startingPoints.push_back(arma::vec({1,2}));
-    startingPoints.push_back(arma::vec({2,2}));
-    startingPoints.push_back(arma::vec({3,2}));
-    startingPoints.push_back(arma::vec({2,3}));
+    directions = std::unordered_map<Action::actions, arma::vec>({
+            { Action::actions::left,  arma::vec({0, -1}) },
+            { Action::actions::right,  arma::vec({0, 1}) },
+            { Action::actions::up,  arma::vec({-1, 0}) },
+            { Action::actions::down,  arma::vec({1, 0}) }
+        });
 
   }
 
@@ -139,6 +124,7 @@ class Maze
    * @param state The current state.
    * @param action The current action.
    * @param nextState The next state.
+   * @param transitionGoal The goal for transition
    * @return reward, it's always 1.0.
    */
   double Sample(const State& state,
@@ -151,12 +137,7 @@ class Maze
 
     // Make a vector to estimate nextstate.
     arma::vec currentState {state.Row(), state.Column()};
-    arma::vec direction = std::unordered_map<Action::actions, arma::vec>({
-            { Action::actions::left,  arma::vec({0, -1}) },
-            { Action::actions::right,  arma::vec({0, 1}) },
-            { Action::actions::up,  arma::vec({-1, 0}) },
-            { Action::actions::down,  arma::vec({1, 0}) }
-        })[action.action];
+    arma::vec direction = directions[action.action];
 
     arma::vec currentNextState = currentState + direction;
     nextState.Row() = currentNextState[0];
@@ -165,7 +146,9 @@ class Maze
     // dont move to that position if invalid
     bool invalid = false;
 
-    if(currentNextState(0)>= maze.n_rows || currentNextState(1)>= maze.n_cols || currentNextState(0) < 0 || currentNextState(1) < 0 || maze(currentNextState(0),currentNextState(1))==-1 ){
+    if(currentNextState(0)>= maze.n_rows || currentNextState(1)>= maze.n_cols
+        || currentNextState(0) < 0 || currentNextState(1) < 0 || 
+        maze(currentNextState(0),currentNextState(1))==-1 ){
         invalid = true;
         nextState.Row() = currentState[0];
         nextState.Column() = currentState[1];
@@ -178,16 +161,11 @@ class Maze
     if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return 0.0;
     
-    if (done && maze(nextState.Row(),nextState.Column())==1 && nextState.Row()== goal(0) && nextState.Column()== goal(1) )
+    if (done && maze(nextState.Row(),nextState.Column()) == 1 && 
+        nextState.Row() == goal(0) && nextState.Column() == goal(1) )
       return 1.0;
 
-    double reward = 0.0;
-    if(invalid)
-    {
-        reward= -1.0;
-    }
-
-    return reward;
+    return 0.0;
   }
 
   /**
@@ -196,46 +174,28 @@ class Maze
    *
    * @param state The current state.
    * @param action The current action.
+   * @param transitionGoal The transition goal.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state, const Action& action, const State& transitionGoal)
+  double Sample(const State& state, const Action& action,
+                 const State& transitionGoal)
   {
     State nextState;
     return Sample(state, action, nextState, transitionGoal);
   }
 
   /**
-   * Initial state representation is randomly generated binary vector
+   * Initial state (row,column) for agent in maze
    *
    * @return Initial state for each episode.
    */
   State InitialSample()
   {
     stepsPerformed = 0;
-    maze = { { 0, 0, 0 ,-1 },
-             { -1, -1, 0, -1 },
-             { 0, 0, 0, 0 }, 
-             { 1, 0, 0, -1 }};
-    
-    // for(size_t row=0 ; row < maze.n_rows ; ++row)
-    // {
-    //     for(size_t column = 0; column < maze.n_cols; ++column)
-    //     {
-    //         if(maze(row,column)==0){
-    //             startingPoints.push_back(arma::vec({row,column}));
-    //         }
-    //     }
-    // }
-    startingPoints.push_back(arma::vec({0,0}));
-    startingPoints.push_back(arma::vec({0,1}));
-    startingPoints.push_back(arma::vec({0,2}));
-    startingPoints.push_back(arma::vec({1,2}));
-    startingPoints.push_back(arma::vec({2,0}));
-    startingPoints.push_back(arma::vec({2,1}));
-    startingPoints.push_back(arma::vec({2,2}));
-    startingPoints.push_back(arma::vec({2,3}));
-    startingPoints.push_back(arma::vec({3,1}));
-    startingPoints.push_back(arma::vec({3,2}));
+    startingPoints = {arma::vec({0,0}), arma::vec({0,1}), arma::vec({0,2}),
+                       arma::vec({1,2}), arma::vec({2,0}), arma::vec({2,1}),
+                        arma::vec({2,2}), arma::vec({2,3}), arma::vec({3,1}),
+                         arma::vec({3,2})};
     size_t index = arma::randi(arma::distr_param(0, startingPoints.size() -1));
     initialState = arma::vec({startingPoints[index][0],startingPoints[index][1]});
     return State(initialState);
@@ -251,7 +211,9 @@ class Maze
   double GetHERReward(const State& nextState,
                     const State& transitionGoal)
   {
-    if (maze(nextState.Row(),nextState.Column())==0 && nextState.Row()== transitionGoal.Row() && nextState.Column()== transitionGoal.Column() )
+    if (maze(nextState.Row(),nextState.Column()) == 0 && 
+         nextState.Row() == transitionGoal.Row() && 
+         nextState.Column() == transitionGoal.Column() )
     {
       return 1.0;
     }
@@ -273,7 +235,7 @@ class Maze
           "being taken.";
       return true;
     }
-    else if (maze(state.Row(),state.Column())==1)
+    else if (maze(state.Row(),state.Column()) == 1)
     {
       Log::Info << "Episode terminated as agent has reached desired goal.";
       return true;
@@ -306,6 +268,15 @@ class Maze
   arma::vec& Goal() { return goal; }
 
  private:
+  //! 4*4 Maze generated 
+  arma::mat maze;
+
+  //! Starting points from where agent can start
+  std::vector<arma::vec> startingPoints;
+
+  //! allowed directions and associated moves
+  std::unordered_map<Action::actions, arma::vec> directions;
+
   //! Locally-stored maximum number of steps.
   size_t maxSteps;
 
@@ -321,9 +292,6 @@ class Maze
   //! Locally stored initialState for the epsiode
   arma::vec initialState;
 
-  arma::mat maze;
-
-  std::vector<arma::vec> startingPoints;
 };
 
 } // namespace mlpack

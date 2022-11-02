@@ -26,8 +26,8 @@ class BitFlipping
 {
  public:
   /**
-   * Implementation of the state of Bit Flipping. Each state is a 
-   * (position, velocity, angle, angular velocity).
+   * Implementation of the state of Bit Flipping. 
+   * Each state is a n length binary vector
    */
   class State
   {
@@ -64,7 +64,7 @@ class BitFlipping
   };
 
   /**
-   * Implementation of action of Cart Pole.
+   * Implementation of action of Bit Flipping.
    */
   class Action
   {
@@ -100,6 +100,7 @@ class BitFlipping
    * @param state The current state.
    * @param action The current action.
    * @param nextState The next state.
+   * @param transitionGoal The transition goal.
    * @return reward, it's always 1.0.
    */
   double Sample(const State& state,
@@ -122,7 +123,8 @@ class BitFlipping
       return 1.0;
 
     // Reward agent if it reaches the goal of transition and is not done
-    if (!done && arma::approx_equal(nextState.Data(), transitionGoal.Data(), "absdiff", 1e-5))
+    if (!done && arma::approx_equal(nextState.Data(), transitionGoal.Data(),
+         "absdiff", 1e-5))
     {
       return 1.0;
     }
@@ -136,9 +138,11 @@ class BitFlipping
    *
    * @param state The current state.
    * @param action The current action.
+   * @param transitionGoal The transition goal.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state, const Action& action, const State& transitionGoal)
+  double Sample(const State& state, const Action& action,
+                 const State& transitionGoal)
   {
     State nextState;
     return Sample(state, action, nextState, transitionGoal);
@@ -167,7 +171,8 @@ class BitFlipping
                     const State& transitionGoal)
   {
     // Reward agent if it reaches the goal of transition and is not done
-    if (arma::approx_equal(nextState.Data(), transitionGoal.Data(), "absdiff", 1e-5))
+    if (arma::approx_equal(nextState.Data(), transitionGoal.Data(), 
+        "absdiff", 1e-5))
     {
       return 1.0;
     }

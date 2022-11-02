@@ -621,16 +621,22 @@ TEST_CASE("MazeWithNStepHindsightDQN", "[QLearningTest]")
   for (size_t trial = 0; trial < 5; ++trial)
   {
     Log::Debug << "Trial number: " << trial << std::endl;
+
+    Maze env;
     // Set up the network.
     SimpleDQN<> network(256, 256, 4);
 
     // Set up the policy.
-    GreedyPolicy<Maze> policy(1.0, 1000, 0.1, 0.99);
+    GreedyPolicy<decltype(env)> policy(1.0, 1000, 0.1, 0.99);
     /**
      * For N-step learning, we need to specify n as the last parameter in
      * the replay method. Here we use n = 3.
      */
-    HindsightReplay<Maze> replayMethod(32, 10000);
+    HindsightReplay<decltype(env)> replayMethod(32, 10000);
+    // RandomReplay<Maze> replayMethod(32, 10000);
+
+    // Set up update rule.
+    AdamUpdate update;
 
     // Setting all training hyperparameters.
     TrainingConfig config;
@@ -638,11 +644,11 @@ TEST_CASE("MazeWithNStepHindsightDQN", "[QLearningTest]")
     config.StepLimit() = 120;
 
     // Set up DQN agent.
-    QLearning<Maze, decltype(network), AdamUpdate, decltype(policy),
+    QLearning<decltype(env), decltype(network), AdamUpdate, decltype(policy),
         decltype(replayMethod)>
-        agent(config, network, policy, replayMethod);
+        agent(config, network, policy, replayMethod, std::move(update), std::move(env));
 
-    converged = testAgent<decltype(agent)>(agent, 0.95, 1000);
+    converged = testAgent<decltype(agent)>(agent, 0.99, 1000);
     if (converged)
       break;
   }
