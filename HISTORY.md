@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Bugfix: catch all exceptions when running bindings from Julia, instead of
+    crashing (#3304).
 
 ### mlpack 4.0.0
 ###### 2022-10-23
