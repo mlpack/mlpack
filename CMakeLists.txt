@@ -190,7 +190,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         "${MACOSX_VERSION_RAW}")
 
     string(REGEX REPLACE
-        "([0-9]+)\\.([0-9]+)(\\.([0-9]+).*)*" "\\2"
+        "([0-9]+)(\\.([0-9]+).*)*" "\\3"
         MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
 
