@@ -7,7 +7,6 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <h5 align="center">
   <a href="https://mlpack.org">Home</a> |
   <a href="https://www.mlpack.org/docs.html">Documentation</a> |
-  <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">Doxygen</a> |
   <a href="https://www.mlpack.org/community.html">Community</a> |
   <a href="https://www.mlpack.org/questions.html">Help</a> |
   <a href="https://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
@@ -47,7 +46,7 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
  - [mlpack homepage](https://www.mlpack.org/)
  - [mlpack documentation](https://www.mlpack.org/docs.html)
  - [Examples repository](https://github.com/mlpack/examples/)
- - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
+ - [Tutorials](doc/tutorials/README.md)
  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
@@ -127,6 +126,14 @@ in the standard CMake way:
 mkdir build && cd build/
 cmake ../
 sudo make install
+```
+
+Note: Since CMake v3.14.0 the `cmake` command can create the build folder itself.
+The above commands can be rewritten as follows:
+
+```sh
+cmake -S . -B build
+sudo cmake --build build --target install
 ```
 
 You can add a few arguments to the `cmake` command to control the behavior of
