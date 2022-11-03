@@ -266,17 +266,16 @@ void SetParamMatWithInfo(void* params,
       hasCategoricals = true;
   }
 
-  arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, false);
+  arma::mat alias(memptr, arma::uword(rows), arma::uword(cols), false, false);
+  arma::mat m = pointsAreRows ? alias.t() : alias;
+  std::cout << "matrix size: " << m.n_rows << " x " << m.n_cols << "; input "
+      << "size " << rows << " x " << cols << " with pointsAreRows " << pointsAreRows << "\n";
 
   // Do we need to find how many categories we have?
   if (hasCategoricals)
   {
     // Compute the maximum in each dimension.
-    arma::vec maxs;
-    if (pointsAreRows)
-      maxs = arma::max(m, 0).t();
-    else
-      maxs = arma::max(m, 1);
+    const arma::vec maxs = arma::max(m, 1);
 
     for (size_t i = 0; i < d.Dimensionality(); ++i)
     {
@@ -289,6 +288,11 @@ void SetParamMatWithInfo(void* params,
           oss << j;
           d.MapString<double>(oss.str(), i);
         }
+
+        // In Julia we specify the categorical value from 1 to the number of
+        // categories, but in C++ we expect 0 to the number of categories minus
+        // one.  (Just like the labels.)
+        m.row(i) -= 1.0;
       }
     }
   }
