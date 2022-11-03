@@ -268,8 +268,6 @@ void SetParamMatWithInfo(void* params,
 
   arma::mat alias(memptr, arma::uword(rows), arma::uword(cols), false, false);
   arma::mat m = pointsAreRows ? alias.t() : alias;
-  std::cout << "matrix size: " << m.n_rows << " x " << m.n_cols << "; input "
-      << "size " << rows << " x " << cols << " with pointsAreRows " << pointsAreRows << "\n";
 
   // Do we need to find how many categories we have?
   if (hasCategoricals)
@@ -300,7 +298,7 @@ void SetParamMatWithInfo(void* params,
   std::get<0>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(p->Get<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = pointsAreRows ? m.t() : std::move(m);
+      paramName)) = std::move(m);
   p->SetPassed(paramName);
 }
 
@@ -687,8 +685,19 @@ double* GetParamMatWithInfoPtr(void* params, const char* paramName)
 
   // Are we using preallocated memory?  If so we have to handle this more
   // carefully.
+  data::DatasetInfo& di = std::get<0>(
+      p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
   arma::mat& m = std::get<1>(
       p->Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+
+  // Add 1 to any categorical columns, to map them back to the 1-indexed values
+  // expected in Julia.
+  for (size_t d = 0; d < di.Dimensionality(); ++d)
+  {
+    if (di.Type(d) == data::Datatype::categorical)
+      m.row(d) += 1.0;
+  }
+
   if (m.n_elem <= arma::arma_config::mat_prealloc)
   {
     double* newMem = new double[m.n_elem];
