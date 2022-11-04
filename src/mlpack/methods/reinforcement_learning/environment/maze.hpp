@@ -95,7 +95,8 @@ class Maze
 
   /**
    * Construct a maze instance using the given constants.
-   *
+   * @param rows number of rows in maze.
+   * @param columns number of columns in maze.
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
@@ -119,6 +120,8 @@ class Maze
   /**
    * Generate Maze using Random Iterative DFS Algorithm with 
    * 0.4 * rows * column steps
+   * @param rows number of rows in maze.
+   * @param columns number of columns in maze.
    * 
    */
   void MazeGeneration(const size_t rows, const size_t columns)
@@ -129,8 +132,7 @@ class Maze
 
     std::vector<arma::ivec> moves = {arma::ivec({0, -1}), arma::ivec({0, 1}), arma::ivec({-1, 0}), arma::ivec({1, 0}) };
 
-    const size_t maxNumberOfMazeSteps = 2* std::sqrt(rows * columns);
-
+    const size_t maxNumberOfMazeSteps = 2 * std::sqrt(rows * columns);
 
     std::stack<arma::ivec> cellsInPath;
 
@@ -149,25 +151,28 @@ class Maze
 
         ++numberOfMazeSteps;
 
+        // Break for Max number of maze steps.
         if(numberOfMazeSteps > maxNumberOfMazeSteps)
           break;
  
-        // we will reach here if the popped vertex `v` is not discovered yet;
-        // print `v` and process its undiscovered adjacent nodes into the stack
+        // Mark the particular row and column as visited.
         visited(lastCell(0),lastCell(1)) = 1;
 
+        // If visitable nodes are present from that node.
         bool visitableNodes = false;
 
-        // do for every edge (v, u)
-        // we are using reverse iterator (Why?)
+        // Randomly choose a direction and check if the adjacent node in 
+        // that direction is visited or not.
         for (size_t counter = 0; counter < 10 ; ++counter)
         {    
             size_t index = arma::randi(arma::distr_param(0, 3));
             arma::ivec nextCell = arma::ivec({lastCell(0) + moves[index](0), {lastCell(1) + moves[index](1)}});
-
+            
+            // Check if particular row and column index are out of bounds of maze.
             bool outOfBounds = nextCell(0)>= maze.n_rows || nextCell(1)>= maze.n_cols
         || nextCell(0) < 0 || nextCell(1) < 0 ;
-            if (!outOfBounds && !visited(nextCell(0),nextCell(1))) {
+            if (!outOfBounds && !visited(nextCell(0),nextCell(1))) 
+            {
                 cellsInPath.push(lastCell);
                 cellsInPath.push(nextCell);
                 break;
@@ -175,21 +180,23 @@ class Maze
         }
     }
 
-    // Pop a vertex from the stack
+    // Pop last ({row,column}) from the stack
       arma::ivec goalCell = cellsInPath.top();
       cellsInPath.pop();
 
+    // Set the ({row,column}) asa goal cell
       maze(goalCell(0),goalCell(1)) = 1;
 
+    // Set all other cells in stack to 0 
     while (!cellsInPath.empty())
     {
-      // Pop a vertex from the stack
         arma::ivec lastCell = cellsInPath.top();
         cellsInPath.pop();
       
         maze(lastCell(0),lastCell(1)) = 0;
     }
 
+    // Randomly set other cells to -1(wall) or 0(path)
     for (size_t row = 0; row < rows; ++row)
     {
       for (size_t col = 0; col < columns; ++col)
@@ -201,8 +208,10 @@ class Maze
       }
     }
 
+    // Store goal cell
     goal = arma::vec({double(goalCell(0)),double(goalCell(1))});
 
+    // Store all the path cells as potential starting points
     for (size_t row = 0; row < rows; ++row)
     {
       for (size_t col = 0; col < columns; ++col)
