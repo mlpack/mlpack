@@ -35,6 +35,11 @@ else:
 # Windows and Linux linking behavior.
 libraries = '${MLPACK_LIBRARIES}'.split(' ')
 
+# Workaround: if we receive "m" as a library, what was actually meant was -lm.
+for i in range(len(libraries)):
+  if libraries[i] == 'm':
+    libraries[i] = '-lm'
+
 # Potentially faulty assumption: we can always link against libraries directly
 # by just specifying the full path to them on the command line.
 extra_link_args += libraries
