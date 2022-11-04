@@ -90,6 +90,7 @@ class HindsightReplay
   HindsightReplay(const size_t batchSize,
                     const size_t capacity,
                     const size_t herRatio = 4,
+                    EnvironmentType environment = EnvironmentType(),
                     goalStrategy strategy = goalStrategy::FUTURE,
                     const size_t nSteps = 1,
                     const size_t dimension = StateType::dimension) :
@@ -105,7 +106,8 @@ class HindsightReplay
       rewards((herRatio+1)*capacity),
       nextStates(dimension, (herRatio+1)*capacity),
       goals(dimension, (herRatio+1)*capacity),
-      isTerminal((herRatio+1)*capacity)
+      isTerminal((herRatio+1)*capacity),
+      environment(environment)
   { /* Nothing to do here. */ }
 
   /**

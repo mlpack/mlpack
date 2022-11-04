@@ -50,13 +50,15 @@ QLearning<
   // To copy over the network structure.
   targetNetwork = learningNetwork;
 
+  const size_t params = EnvironmentType::State::dimension;
+
   // Set up q-learning network.
-  if (learningNetwork.Parameters().n_elem != environment.InitialSample().Encode().n_elem)
-    learningNetwork.Reset(environment.InitialSample().Encode().n_elem);
+  if (learningNetwork.Parameters().n_elem != params)
+    learningNetwork.Reset(params);
 
   // Initialize the target network with the parameters of learning network.
   targetNetwork.Parameters() = learningNetwork.Parameters();
-  targetNetwork.Reset(environment.InitialSample().Encode().n_elem);
+  targetNetwork.Reset(params);
 
   #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
