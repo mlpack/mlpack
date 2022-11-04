@@ -99,14 +99,13 @@ class Maze
    * @param maxSteps The number of steps after which the episode
    *    terminates. If the value is 0, there is no limit.
    */
-  Maze(const size_t maxSteps = 100) :
+  Maze(const size_t rows = 4,
+        const size_t columns = 4,
+        const size_t maxSteps = 200) :
       maxSteps(maxSteps),
       stepsPerformed(0)
   { 
-    maze = { { 0, 0, 0 ,-1 },
-             { -1, -1, 0, -1 },
-             { 0, 0, 0, 0 }, 
-             { 1, 0, 0, -1 }};
+    MazeGeneration(rows, columns);
     
     directions = std::unordered_map<Action::actions, arma::vec>({
             { Action::actions::left,  arma::vec({0, -1}) },
@@ -114,6 +113,106 @@ class Maze
             { Action::actions::up,  arma::vec({-1, 0}) },
             { Action::actions::down,  arma::vec({1, 0}) }
         });
+
+  }
+
+  /**
+   * Generate Maze using Random Iterative DFS Algorithm with 
+   * 0.4 * rows * column steps
+   * 
+   */
+  void MazeGeneration(const size_t rows, const size_t columns)
+  {
+    maze = arma::mat(rows,columns);
+    arma::umat visited;
+    visited.zeros(rows, columns);
+
+    std::vector<arma::ivec> moves = {arma::ivec({0, -1}), arma::ivec({0, 1}), arma::ivec({-1, 0}), arma::ivec({1, 0}) };
+
+    const size_t maxNumberOfMazeSteps = 2* std::sqrt(rows * columns);
+
+
+    std::stack<arma::ivec> cellsInPath;
+
+    arma::ivec startingPoint = {arma::randi(arma::distr_param(0, rows-1)), arma::randi(arma::distr_param(0, columns-1))};
+
+    cellsInPath.push(startingPoint);
+
+    size_t numberOfMazeSteps = 0;
+ 
+    // loop till stack is empty
+    while (!cellsInPath.empty())
+    {
+        // Pop a vertex from the stack
+        arma::ivec lastCell = cellsInPath.top();
+        cellsInPath.pop();
+
+        ++numberOfMazeSteps;
+
+        if(numberOfMazeSteps > maxNumberOfMazeSteps)
+          break;
+ 
+        // we will reach here if the popped vertex `v` is not discovered yet;
+        // print `v` and process its undiscovered adjacent nodes into the stack
+        visited(lastCell(0),lastCell(1)) = 1;
+
+        bool visitableNodes = false;
+
+        // do for every edge (v, u)
+        // we are using reverse iterator (Why?)
+        for (size_t counter = 0; counter < 10 ; ++counter)
+        {    
+            size_t index = arma::randi(arma::distr_param(0, 3));
+            arma::ivec nextCell = arma::ivec({lastCell(0) + moves[index](0), {lastCell(1) + moves[index](1)}});
+
+            bool outOfBounds = nextCell(0)>= maze.n_rows || nextCell(1)>= maze.n_cols
+        || nextCell(0) < 0 || nextCell(1) < 0 ;
+            if (!outOfBounds && !visited(nextCell(0),nextCell(1))) {
+                cellsInPath.push(lastCell);
+                cellsInPath.push(nextCell);
+                break;
+            }
+        }
+    }
+
+    // Pop a vertex from the stack
+      arma::ivec goalCell = cellsInPath.top();
+      cellsInPath.pop();
+
+      maze(goalCell(0),goalCell(1)) = 1;
+
+    while (!cellsInPath.empty())
+    {
+      // Pop a vertex from the stack
+        arma::ivec lastCell = cellsInPath.top();
+        cellsInPath.pop();
+      
+        maze(lastCell(0),lastCell(1)) = 0;
+    }
+
+    for (size_t row = 0; row < rows; ++row)
+    {
+      for (size_t col = 0; col < columns; ++col)
+      {
+          if(maze(row,col) !=0 && maze(row,col) !=1 )
+          {
+            maze(row,col) = arma::randi(arma::distr_param(-1, 0));
+          }
+      }
+    }
+
+    goal = arma::vec({double(goalCell(0)),double(goalCell(1))});
+
+    for (size_t row = 0; row < rows; ++row)
+    {
+      for (size_t col = 0; col < columns; ++col)
+      {
+          if(maze(row,col) == 0)
+          {
+            startingPoints.push_back(arma::vec({double(row),double(col)}));
+          }
+      }
+    }
 
   }
 
@@ -192,10 +291,6 @@ class Maze
   State InitialSample()
   {
     stepsPerformed = 0;
-    startingPoints = {arma::vec({0,0}), arma::vec({0,1}), arma::vec({0,2}),
-                       arma::vec({1,2}), arma::vec({2,0}), arma::vec({2,1}),
-                        arma::vec({2,2}), arma::vec({2,3}), arma::vec({3,1}),
-                         arma::vec({3,2})};
     size_t index = arma::randi(arma::distr_param(0, startingPoints.size() -1));
     initialState = arma::vec({startingPoints[index][0],startingPoints[index][1]});
     return State(initialState);
@@ -250,7 +345,6 @@ class Maze
    */
   State GoalSample()
   {
-    goal = arma::vec({3,0});
     return State(goal);
   }
 
@@ -267,8 +361,13 @@ class Maze
   //! Set the goal for the episode
   arma::vec& Goal() { return goal; }
 
+  //! Get the maze for the episode
+  arma::mat MazeMatrix() const { return maze; }
+  //! Set the maze for the episode
+  arma::mat& MazeMatrix() { return maze; }
+
  private:
-  //! 4*4 Maze generated 
+  //! n*m algirthm based generated maze.
   arma::mat maze;
 
   //! Starting points from where agent can start
@@ -291,7 +390,6 @@ class Maze
 
   //! Locally stored initialState for the epsiode
   arma::vec initialState;
-
 };
 
 } // namespace mlpack
