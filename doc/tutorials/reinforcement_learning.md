@@ -379,6 +379,156 @@ int main()
   }
 }
 ```
+## Hindsight Experience Replay - Learnning from your failure
+Often real-life situations are challenging and have sparse binary rewards i.e. either we win or lose the game. Having no intermediate rewards during the episodes makes learning extremely difficult in most cases, as the agent might never actually win, and therefore have no feedback on how to improve its performance.
+
+A traditional approach to tackle the above problem has been to augment the reward using domain knowledge, in what is known as Reward Engineering but this has many drawbacks including compromise in performance relative to the true objective.
+
+Often many real-world problems are not like that, we have multiple goals / tasks instead of a global task. These are multi-goal learning problems.
+
+Hindsight Experience Replay (HER) (Andrychowicz et al., 2018) introduces us with an idea of a replay buffer poilcy that will help the agent explore better and also learn intermediate goals that build up to the actual desired goal. It does this by caching imagined transitions trajectories where in alternative reality our agent has reached the goal successfully and got the positive reward for doing so. 
+
+By introducing the imagined trajectories to our replay buffer, we ensure that no matter how bad our policy is, it will always have some positive rewards to learn from. This method is motivated by the human ability to learn useful hings from failed attempts.
+
+Now let's take a look at an example of using `HER` in Deep Q Network in `Maze` environment. The code has been broken into chunks for easy understanding.
+
+```c++
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann.hpp>
+#include <mlpack/methods/reinforcement_learning.hpp>
+
+using namespace mlpack;
+using namespace ens;
+
+```
+First we include all the necessary headers of our toy example and declare namespaces for convenience.
+
+```c++
+int main(){
+  // Set up the network.
+  SimpleDQN<> network(128, 128, 4);
+
+  // Set up the policy.
+  GreedyPolicy<decltype(env)> policy(1.0, 1000, 0.1, 0.99);
+```
+The first step is setting our Q-learning agent's network. For this demonstration, we use `SimpleDQN` class which creates a simple feed forward network with 2 hidden layers. Along with that we set the policy.
+
+Now let's talk about the environment to test HER. Since HER deals with multi-goal cases, it requires a goal base environment. A good example for our demonstration is a Maze.
+
+#### Maze Environment - 
+In this environment we have a random generated row * columns maze where each cell can have values 
+- `1` - `Goal` 
+- `0` - `Path` 
+- `-1` - `Wall`
+
+Agent is expected to move through path(0) cells to reach to goal cell(1). For maze generation we have used a Step based Random DFS Walk and filled other cells randomly with -1 or 0.
+
+A sample  4*4 Maze Environment Generated can look like this
+
+```
+                                -1 0  0  1
+                                0 -1  0  0
+                                0 -1  0 -1
+                                0  0  0 -1
+```
+Here the cell with 1 is the goal cell. Similarly 0's are the valid path cells and -1 are the wall cells.
+
+Our Maze environment has following parameters -
+- `rows`: It signifies the number of rows in generated maze.
+- `columns`: It signifies the number of rows in generated    maze.
+- `maxSteps`: Max number of steps after which the episode terminates.
+- `ratioForRandomWalk`: Ratio of Steps for Random DFS Walk in maze generation. `maxNumberOfMazeSteps` = `ratioForRandomWalk * sqrt(rows * colummns)`. Here `maxNumberOfMazeSteps` denotes the steps made by Random DFS Walk.
+
+Code for setting up the environment looks like this - 
+
+```c++
+  size_t rows = 4;
+  size_t columns = 4;
+
+  // Set up maze environment.
+  Maze env(rows ,columns, 3 * rows * columns, 4 * sqrt(rows * columns));
+```
+
+#### HER -
+Hindsight Experince Replay had following unique parameters other than normal replay parameters -
+- `strategy` goal selection strategy for HER - Default is `FUTURE`
+- `noOfHERTransitions` Number of HER Transitions per regular transitions (data coming from normal experience replay in replay buffer). Default - `4`
+
+ ##### Goal Strategy -  
+ It is the tsrtaegy which is used to select the goal for our imaginary HER transitions.
+- `FINAL` : replay whole trajectory with final state as targeted goal.
+- `FUTURE` : replay with k random states which come from the same episode as the transition being replayed and were observed after it.
+- `EPISODE` — replay with k random states coming from the same episode as the transition being replayed.
+
+Now its time to set up our Hindsight Replay Buffer. We do this using the following line of code shown below.
+
+```c++
+  HindsightReplay<decltype(env)> replayMethod(32, 10000, 4, env);
+```
+Here we used `32` as the batch size, `10000` as the capacity and `4` as the number of HER Transitions per regular transitions.
+
+Let's quickly go through the rest of the code needed to code your first RL agent with HER.
+
+We setup the training parameters and DQN Agent using all the HER, Maze environment. From there we create the training loop. 
+You can find code as below :
+
+```c++
+  // Set up update rule.
+  AdamUpdate update;
+
+  // Setting all training hyperparameters.
+  TrainingConfig config;
+  config.ExplorationSteps() = 10 * std::sqrt(rows * columns);
+  config.StepLimit() = 1.5 * rows * columns;
+
+  // Set up DQN agent.
+  QLearning<decltype(env), decltype(network), AdamUpdate, decltype(policy),
+      decltype(replayMethod)>
+      agent(config, network, policy, replayMethod, std::move(update),
+      std::move(env));
+
+  arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
+  bool converged = false;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    episodes += 1;
+    returnList.push_back(episodeReturn);
+
+    if (returnList.size() > 50)
+      returnList.erase(returnList.begin());
+
+    double averageReturn = std::accumulate(returnList.begin(),
+        returnList.end(), 0.0) / returnList.size();
+
+    std::cout<< "Average return in last " << returnList.size()
+        << " consecutive episodes: " << averageReturn
+        << " Episode return: " << episodeReturn << std::endl;
+
+    if (averageReturn > 0.9 &&
+        returnList.size() >= 50)
+    {
+      converged = true;
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 10; ++i)
+        testReturn(agent.Episode());
+
+      std::cout << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      std::cout << "Average Total Return" << totalAverageReturn << std::endl;
+      break;
+    }
+  }
+  if (converged)
+    std::cout << "Hooray! Q-Learning agent with HER successfully trained on Maze environment" << std::endl;
+
+  return 0;
+}
+
+```
+Congrats ! You are succesfully made a cool RL agent that can solve mazes for fun.
 
 ## Further Documentation
 
