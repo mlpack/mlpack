@@ -3,8 +3,11 @@
  * @author Eshaan Agarwal
  *
  * This file is an implementation of Goal based Maze task:
- * 
- *
+ * In this task agent will given a random generated n*m maze where each cell
+ * can have value 1- Goal . 0 - Path, -1 - Wall.
+ * Agent is expected to move through 0(path) cells to reach to 1(goal cell).
+ * For maze generation we have used a Step based Random DFS Walk and filled 
+ * other cells randomly with -1 or 0.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -26,7 +29,7 @@ class Maze
  public:
   /**
    * Implementation of the state of Maze.
-   * Each State is a tuple {(row, column)} in n * n maze matrix
+   * Each State is a tuple {(row, column)} in n * n maze matrix.
    */
   class State
   {
@@ -97,116 +100,116 @@ class Maze
    * Construct a maze instance using the given constants.
    * @param rows number of rows in maze.
    * @param columns number of columns in maze.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
+   * @param maxSteps The number of steps after which the episode terminates.
+   * If the value is 0, there is no limit.
+   * @param ratioForRandomWalk ratio of Steps for Random DFS Walk in 
+   * maze generation.
    */
   Maze(const size_t rows = 4,
-        const size_t columns = 4,
-        const size_t maxSteps = 200) :
+       const size_t columns = 4,
+       const size_t maxSteps = 200,
+       const double ratioForRandomWalk = 3) :
       maxSteps(maxSteps),
       stepsPerformed(0)
   { 
-    MazeGeneration(rows, columns);
+    MazeGeneration(rows, columns, ratioForRandomWalk);
     
     directions = std::unordered_map<Action::actions, arma::vec>({
-            { Action::actions::left,  arma::vec({0, -1}) },
-            { Action::actions::right,  arma::vec({0, 1}) },
-            { Action::actions::up,  arma::vec({-1, 0}) },
-            { Action::actions::down,  arma::vec({1, 0}) }
+            { Action::actions::left, arma::vec({0, -1}) },
+            { Action::actions::right, arma::vec({0, 1}) },
+            { Action::actions::up, arma::vec({-1, 0}) },
+            { Action::actions::down, arma::vec({1, 0}) }
         });
-
   }
 
   /**
    * Generate Maze using Random Iterative DFS Algorithm with 
-   * 0.4 * rows * column steps
+   * 0.4 * rows * column steps.
    * @param rows number of rows in maze.
    * @param columns number of columns in maze.
-   * 
+   * @param ratioForRandomWalk ratio of Steps for Random DFS Walk in 
+   *        maze generation.
    */
-  void MazeGeneration(const size_t rows, const size_t columns)
+  void MazeGeneration(const size_t rows, const size_t columns,
+                      const double ratioForRandomWalk = 3)
   {
     maze = arma::mat(rows,columns);
-    arma::umat visited;
-    visited.zeros(rows, columns);
+    arma::umat visited(rows, columns, arma::fill::zeros);
 
-    std::vector<arma::ivec> moves = {arma::ivec({0, -1}), arma::ivec({0, 1}), arma::ivec({-1, 0}), arma::ivec({1, 0}) };
+    std::vector<arma::ivec> moves = {arma::ivec({0, -1}), arma::ivec({0, 1}),
+                                     arma::ivec({-1, 0}), arma::ivec({1, 0})};
 
-    const size_t maxNumberOfMazeSteps = 2 * std::sqrt(rows * columns);
+    const size_t maxNumberOfMazeSteps = ratioForRandomWalk * 
+                                        std::sqrt(rows * columns);
 
     std::stack<arma::ivec> cellsInPath;
 
-    arma::ivec startingPoint = {arma::randi(arma::distr_param(0, rows-1)), arma::randi(arma::distr_param(0, columns-1))};
+    arma::ivec startingPoint = {arma::randi(arma::distr_param(0, rows-1)),
+                                arma::randi(arma::distr_param(0, columns-1))};
 
     cellsInPath.push(startingPoint);
 
     size_t numberOfMazeSteps = 0;
  
-    // loop till stack is empty
+    // Loop till stack is empty.
     while (!cellsInPath.empty())
     {
-        // Pop a vertex from the stack
-        arma::ivec lastCell = cellsInPath.top();
-        cellsInPath.pop();
+      // Pop a vertex from the stack.
+      arma::ivec lastCell = cellsInPath.top();
+      cellsInPath.pop();
 
-        ++numberOfMazeSteps;
+      ++numberOfMazeSteps;
 
-        // Break for Max number of maze steps.
-        if(numberOfMazeSteps > maxNumberOfMazeSteps)
-          break;
- 
-        // Mark the particular row and column as visited.
-        visited(lastCell(0),lastCell(1)) = 1;
+      // Break for Max number of maze steps.
+      if(numberOfMazeSteps > maxNumberOfMazeSteps)
+        break;
 
-        // If visitable nodes are present from that node.
-        bool visitableNodes = false;
+      // Mark the particular row and column as visited.
+      visited(lastCell(0),lastCell(1)) = 1;
 
-        // Randomly choose a direction and check if the adjacent node in 
-        // that direction is visited or not.
-        for (size_t counter = 0; counter < 10 ; ++counter)
-        {    
-            size_t index = arma::randi(arma::distr_param(0, 3));
-            arma::ivec nextCell = arma::ivec({lastCell(0) + moves[index](0), {lastCell(1) + moves[index](1)}});
-            
-            // Check if particular row and column index are out of bounds of maze.
-            bool outOfBounds = nextCell(0)>= maze.n_rows || nextCell(1)>= maze.n_cols
-        || nextCell(0) < 0 || nextCell(1) < 0 ;
-            if (!outOfBounds && !visited(nextCell(0),nextCell(1))) 
-            {
-                cellsInPath.push(lastCell);
-                cellsInPath.push(nextCell);
-                break;
-            }
+      // If visitable nodes are present from that node.
+      bool visitableNodes = false;
+
+      // Randomly choose a direction and check if the adjacent node in
+      // that direction is visited or not.
+      for (size_t counter = 0; counter < 10 ; ++counter)
+      {
+        const size_t index = arma::randi(arma::distr_param(0, 3));
+        arma::ivec nextCell = arma::ivec({lastCell(0) + moves[index](0),
+                                          {lastCell(1) + moves[index](1)}});
+
+        // Check if particular row and column index are out of bounds of maze or visited.
+        if (!CheckBoundsofMaze(nextCell(0),nextCell(1)) &&
+            !visited(nextCell(0),nextCell(1)))
+        {
+            cellsInPath.push(lastCell);
+            cellsInPath.push(nextCell);
+            break;
         }
+      }
     }
 
     // Pop last ({row,column}) from the stack
-      arma::ivec goalCell = cellsInPath.top();
-      cellsInPath.pop();
+    arma::ivec goalCell = cellsInPath.top();
+    cellsInPath.pop();
 
     // Set the ({row,column}) asa goal cell
-      maze(goalCell(0),goalCell(1)) = 1;
+    maze(goalCell(0),goalCell(1)) = 1;
 
     // Set all other cells in stack to 0 
     while (!cellsInPath.empty())
     {
-        arma::ivec lastCell = cellsInPath.top();
-        cellsInPath.pop();
+      arma::ivec lastCell = cellsInPath.top();
+      cellsInPath.pop();
       
-        maze(lastCell(0),lastCell(1)) = 0;
+      maze(lastCell(0),lastCell(1)) = 0;
     }
 
-    // Randomly set other cells to -1(wall) or 0(path)
-    for (size_t row = 0; row < rows; ++row)
-    {
-      for (size_t col = 0; col < columns; ++col)
-      {
-          if(maze(row,col) !=0 && maze(row,col) !=1 )
-          {
-            maze(row,col) = arma::randi(arma::distr_param(-1, 0));
-          }
-      }
-    }
+    // Randomly set other cells to -1(wall) or 0(path).
+    maze.for_each([] (double& cell) {
+    if (cell != 0 && cell != 1)
+      {cell = arma::randi(arma::distr_param(-1, 0));}
+    });
 
     // Store goal cell
     goal = arma::vec({double(goalCell(0)),double(goalCell(1))});
@@ -216,13 +219,28 @@ class Maze
     {
       for (size_t col = 0; col < columns; ++col)
       {
-          if(maze(row,col) == 0)
-          {
-            startingPoints.push_back(arma::vec({double(row),double(col)}));
-          }
+        if(maze(row,col) == 0)
+        {
+          startingPoints.push_back(arma::vec({double(row),double(col)}));
+        }
       }
     }
 
+    maze.print();
+  }
+
+  /**
+   * Check bounds of current row and column index
+   *
+   * @param state The current state.
+   * @param action The current action.
+   * @param nextState The next state.
+   * @param transitionGoal The goal for transition.
+   * @return reward, it's always 1.0.
+   */
+  bool CheckBoundsofMaze(double row, double column)
+  {
+    return row >= maze.n_rows || column>= maze.n_cols || row < 0 || column < 0;
   }
 
   /**
@@ -232,7 +250,7 @@ class Maze
    * @param state The current state.
    * @param action The current action.
    * @param nextState The next state.
-   * @param transitionGoal The goal for transition
+   * @param transitionGoal The goal for transition.
    * @return reward, it's always 1.0.
    */
   double Sample(const State& state,
@@ -244,22 +262,21 @@ class Maze
     stepsPerformed++;
 
     // Make a vector to estimate nextstate.
-    arma::vec currentState {state.Row(), state.Column()};
+    arma::vec currentState (state.Data());
     arma::vec direction = directions[action.action];
 
     arma::vec currentNextState = currentState + direction;
-    nextState.Row() = currentNextState[0];
-    nextState.Column() = currentNextState[1];
+    nextState.Data() = currentState + direction;
 
     // dont move to that position if invalid
     bool invalid = false;
 
-    if(currentNextState(0)>= maze.n_rows || currentNextState(1)>= maze.n_cols
-        || currentNextState(0) < 0 || currentNextState(1) < 0 || 
+    // Check if particular row and column index are out
+    // of bounds of maze or a wall.
+    if(CheckBoundsofMaze(currentNextState(0),currentNextState(1)) || 
         maze(currentNextState(0),currentNextState(1))==-1 ){
         invalid = true;
-        nextState.Row() = currentState[0];
-        nextState.Column() = currentState[1];
+        nextState.Data() = currentState;
     }   
 
     // Check if the episode has terminated.
@@ -270,7 +287,8 @@ class Maze
       return 0.0;
     
     if (done && maze(nextState.Row(),nextState.Column()) == 1 && 
-        nextState.Row() == goal(0) && nextState.Column() == goal(1) )
+        arma::approx_equal(nextState.Data(), transitionGoal.Data(), 
+        "absdiff", 1e-5))
       return 1.0;
 
     return 0.0;
@@ -301,7 +319,7 @@ class Maze
   {
     stepsPerformed = 0;
     size_t index = arma::randi(arma::distr_param(0, startingPoints.size() -1));
-    initialState = arma::vec({startingPoints[index][0],startingPoints[index][1]});
+    initialState = arma::vec(startingPoints[index]);
     return State(initialState);
   }
 
@@ -315,9 +333,8 @@ class Maze
   double GetHERReward(const State& nextState,
                     const State& transitionGoal)
   {
-    if (maze(nextState.Row(),nextState.Column()) == 0 && 
-         nextState.Row() == transitionGoal.Row() && 
-         nextState.Column() == transitionGoal.Column() )
+    if (arma::approx_equal(nextState.Data(), transitionGoal.Data(), 
+        "absdiff", 1e-5) )
     {
       return 1.0;
     }
@@ -335,8 +352,8 @@ class Maze
   { 
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps " << maxSteps <<
+          " being taken.";
       return true;
     }
     else if (maze(state.Row(),state.Column()) == 1)
@@ -376,7 +393,7 @@ class Maze
   arma::mat& MazeMatrix() { return maze; }
 
  private:
-  //! n*m algirthm based generated maze.
+  //! Random DFS Walk based generated maze matrix which as the environment.
   arma::mat maze;
 
   //! Starting points from where agent can start

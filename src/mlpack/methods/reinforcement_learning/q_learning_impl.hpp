@@ -389,14 +389,9 @@ double QLearning<
       replayMethod.StoreHERTransitions(config.Discount());
     }
     if (config.IsCategorical())
-    {
-      TrainCategoricalAgent();
-    } 
+      TrainCategoricalAgent(); 
     else
-    {
-      TrainAgent();
-    }
-      
+      TrainAgent(); 
   }
   return totalReturn;
 }

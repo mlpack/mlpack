@@ -82,6 +82,7 @@ class RewardClipping
    * @param state The current state.
    * @param action The current action.
    * @param nextState The next state.
+   * @param transitionGoal The goal for transition.
    * @return clippedReward, Reward clipped between [minReward, maxReward].
    */
   double Sample(const State& state,
@@ -101,10 +102,11 @@ class RewardClipping
    *
    * @param state The current state.
    * @param action The current action.
+   * @param transitionGoal The goal for transition.
    * @return clippedReward, Reward clipped between [minReward, maxReward].
    */
   double Sample(const State& state, const Action& action,
-                 const State& transitionGoal)
+                const State& transitionGoal)
   {
     State nextState;
     return Sample(state, action, nextState, transitionGoal);
@@ -112,7 +114,7 @@ class RewardClipping
 
   /**
    * The GoalSample method is called by the environment to initialize the
-   * starting state. Returns whatever Initial Sample is returned by the
+   * goal state. Returns whatever Goal Sample is returned by the
    * environment.
    */
   State GoalSample()

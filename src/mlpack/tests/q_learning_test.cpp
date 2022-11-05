@@ -605,7 +605,7 @@ TEST_CASE("MazeWithNStepHindsightDQN", "[QLearningTest]")
         agent(config, network, policy, replayMethod, std::move(update),
         std::move(env));
 
-    converged = testAgent<decltype(agent)>(agent, 0.7, 500);
+    converged = testAgent<decltype(agent)>(agent, 0.7, 600);
     if (converged)
       break;
   }

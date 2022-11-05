@@ -198,6 +198,7 @@ class Acrobot
    *
    * @param state The current State.
    * @param action The action taken.
+   * @param transitionGoal The goal for transition.
    * @return nextState The next state.
    */
   double Sample(const State& state, const Action& action,
@@ -214,6 +215,7 @@ class Acrobot
    *
    * @param state The current State.
    * @param action The action taken.
+   * @param transitionGoal The goal for transition.
    * @return nextState The next state.
    */
   double Sample(const State& state, const Action& action, State& nextState,

@@ -59,7 +59,6 @@ class HindsightReplay
   {
     FINAL,
     FUTURE,
-    RANDOM,
     EPISODE,
   };
 
@@ -69,9 +68,9 @@ class HindsightReplay
   HindsightReplay():
       batchSize(0),
       capacity(0),
-      position(0),
+      positionIdx(0),
       full(false),
-      herRatio(1),
+      noOfHERTransitions(1),
       goalSelectionStrategy(goalStrategy::FUTURE),
       nSteps(0)
   { /* Nothing to do here. */ }
@@ -81,32 +80,32 @@ class HindsightReplay
    *
    * @param batchSize Number of examples returned at each sample.
    * @param capacity Total memory size in terms of number of examples.
-   * @param herRatio ratio of HER  to data coming from normal 
-   * experience replay in replay buffer
+   * @param noOfHERTransitions Number of HER Transitions per regular transitions
+   * (data coming from normal experience replay in replay buffer)
    * @param nSteps Number of steps to look in the future.
    * @param dimension The dimension of an encoded state.
-   * @param strategy goal selection startegy for HER
+   * @param strategy goal selection strategy for HER
    */
   HindsightReplay(const size_t batchSize,
                     const size_t capacity,
-                    const size_t herRatio = 4,
+                    const size_t noOfHERTransitions = 4,
                     EnvironmentType environment = EnvironmentType(),
                     goalStrategy strategy = goalStrategy::FUTURE,
                     const size_t nSteps = 1,
                     const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
-      capacity((herRatio+1)*capacity),
-      position(0),
+      capacity((noOfHERTransitions+1)*capacity),
+      positionIdx(0),
       full(false),
-      herRatio(herRatio),
+      noOfHERTransitions(noOfHERTransitions),
       goalSelectionStrategy(strategy),
       nSteps(nSteps),
-      states(dimension, (herRatio+1)*capacity),
-      actions((herRatio+1)*capacity),
-      rewards((herRatio+1)*capacity),
-      nextStates(dimension, (herRatio+1)*capacity),
-      goals(dimension, (herRatio+1)*capacity),
-      isTerminal((herRatio+1)*capacity),
+      states(dimension, (noOfHERTransitions+1)*capacity),
+      actions((noOfHERTransitions+1)*capacity),
+      rewards((noOfHERTransitions+1)*capacity),
+      nextStates(dimension, (noOfHERTransitions+1)*capacity),
+      goals(dimension, (noOfHERTransitions+1)*capacity),
+      isTerminal((noOfHERTransitions+1)*capacity),
       environment(environment)
   { /* Nothing to do here. */ }
 
@@ -115,26 +114,35 @@ class HindsightReplay
    * 
    * @param transitionIndex index of current transition
    */
-  void SampleGoal(StateType& desiredGoal, int transitionIndex)
-  {
-    if (goalSelectionStrategy == goalStrategy::FINAL)
+  StateType SampleGoal(const int transitionIndex)
+  { 
+    StateType desiredGoal;
+    switch (goalSelectionStrategy)
     {
-      // Sample goal as the final state of the epsiode
-      desiredGoal = episodeTransitions[episodeTransitions.size() -1].nextState;
-    }
-    else if (goalSelectionStrategy == goalStrategy::FUTURE)
-    {
-      // Sample goal as random state from that transition to end of epsiode
-      size_t index = arma::randi(
-        arma::distr_param(transitionIndex+1, episodeTransitions.size() -1));
-      desiredGoal = episodeTransitions[index].nextState;
-    }
-    else if (goalSelectionStrategy == goalStrategy::EPISODE)
-    {
-      // Sample goal as random state from the whole epsiode
-      desiredGoal = episodeTransitions[arma::randi(
+      case goalStrategy::FINAL :
+      {
+        // Sample goal as the final state of the epsiode
+        desiredGoal = episodeTransitions.back().nextState;
+        break;
+      }
+      case goalStrategy::FUTURE :
+      {
+        // Sample goal as random state from that transition to end of epsiode
+        // size_t index = arma::randi(
+        // arma::distr_param(transitionIndex+1, episodeTransitions.size() -1));
+        desiredGoal = episodeTransitions[arma::randi(
+        arma::distr_param(transitionIndex+1, episodeTransitions.size() -1))].nextState;
+        break;
+      }
+      case goalStrategy::EPISODE :
+      {
+        // Sample goal as random state from the whole epsiode
+        desiredGoal = episodeTransitions[arma::randi(
         arma::distr_param(0, episodeTransitions.size() -1))].nextState;
+        break;
+      }
     }
+    return desiredGoal;
   }
 
   /**
@@ -143,17 +151,17 @@ class HindsightReplay
    * @param desiredGoals desired goals as per goal strategy
    * @param  transitionIndex index of current transition
    */
-  void SampleGoals(std::vector<StateType>& desiredGoals, int transitionIndex)
+  std::vector<StateType> SampleGoals(int transitionIndex)
   { 
-    StateType desiredGoal;
-
+    std::vector<StateType> desiredGoals(noOfHERTransitions);
     // Store HER transitions based on strategy for each transition in epsiode
-    for (size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
+    for (size_t goalIndex = 0; goalIndex < noOfHERTransitions; ++goalIndex)
     {
-      SampleGoal(desiredGoal, transitionIndex);
-
-      desiredGoals.push_back(desiredGoal);
+      StateType desiredGoal = SampleGoal(transitionIndex);
+      desiredGoals[goalIndex] = desiredGoal;
     }
+
+    return desiredGoals;
   }
 
   /**
@@ -170,27 +178,23 @@ class HindsightReplay
       baseTransitions.pop_back();
     }
 
-    std::vector<StateType> desiredGoals;
-
     for(size_t transitionIndex = 0; transitionIndex < baseTransitions.size();
         ++transitionIndex)
     { 
-      desiredGoals.clear();
-
       // Sample goals for particular transition
-      SampleGoals(desiredGoals, transitionIndex);
+      std::vector<StateType> desiredGoals = SampleGoals(transitionIndex);
 
-      for(size_t goalIndex = 0; goalIndex < herRatio; ++goalIndex)
+      for(size_t goalIndex = 0; goalIndex < noOfHERTransitions; ++goalIndex)
       { 
         // Get reward for that particular HER transition
         double reward = environment.GetHERReward(baseTransitions[transitionIndex].nextState,
                                             desiredGoals[goalIndex]);
 
         // store transition in nStepBuffer
-        nStepBuffer.push_back({baseTransitions[transitionIndex].state, 
-                              baseTransitions[transitionIndex].action, 
+        nStepBuffer.push_back({baseTransitions[transitionIndex].state,
+                              baseTransitions[transitionIndex].action,
                               reward,
-                              baseTransitions[transitionIndex].nextState, 
+                              baseTransitions[transitionIndex].nextState,
                               baseTransitions[transitionIndex].isEnd,
                               desiredGoals[goalIndex]});
 
@@ -207,22 +211,22 @@ class HindsightReplay
 
         // Make a n-step transition.
         GetNStepInfo(reward,
-                    baseTransitions[transitionIndex].nextState, 
+                    baseTransitions[transitionIndex].nextState,
                     baseTransitions[transitionIndex].isEnd,
                     discount);
 
         StateType state = nStepBuffer.front().state;
         ActionType action = nStepBuffer.front().action;
-        states.col(position) = state.Encode();
-        actions[position] = action;
-        rewards(position) = reward;
-        nextStates.col(position) = baseTransitions[transitionIndex].nextState.Encode();
-        isTerminal(position) = false;
-        position++;
-        if (position == capacity)
+        states.col(positionIdx) = state.Encode();
+        actions[positionIdx] = action;
+        rewards(positionIdx) = reward;
+        nextStates.col(positionIdx) = baseTransitions[transitionIndex].nextState.Encode();
+        isTerminal(positionIdx) = false;
+        positionIdx++;
+        if (positionIdx == capacity)
         {
           full = true;
-          position = 0;
+          positionIdx = 0;
         }
       }
     }
@@ -268,16 +272,16 @@ class HindsightReplay
 
     state = nStepBuffer.front().state;
     action = nStepBuffer.front().action;
-    states.col(position) = state.Encode();
-    actions[position] = action;
-    rewards(position) = reward;
-    nextStates.col(position) = nextState.Encode();
-    isTerminal(position) = isEnd;
-    position++;
-    if (position == capacity)
+    states.col(positionIdx) = state.Encode();
+    actions[positionIdx] = action;
+    rewards(positionIdx) = reward;
+    nextStates.col(positionIdx) = nextState.Encode();
+    isTerminal(positionIdx) = isEnd;
+    positionIdx++;
+    if (positionIdx == capacity)
     {
       full = true;
-      position = 0;
+      positionIdx = 0;
     }
   }
 
@@ -327,7 +331,7 @@ class HindsightReplay
               arma::mat& sampledNextStates,
               arma::irowvec& isTerminal)
   {
-    size_t upperBound = full ? capacity : position;
+    size_t upperBound = full ? capacity : positionIdx;
     arma::uvec sampledIndices = arma::randi<arma::uvec>(
         batchSize, arma::distr_param(0, upperBound - 1));
 
@@ -346,7 +350,7 @@ class HindsightReplay
    */
   const size_t& Size()
   {
-    return full ? capacity : position;
+    return full ? capacity : positionIdx;
   }
 
   /**
@@ -376,7 +380,7 @@ class HindsightReplay
   size_t capacity;
 
   //! Indicate the position to store new transition.
-  size_t position;
+  size_t positionIdx;
 
   //! Locally-stored indicator that whether the memory is full or not.
   bool full;
@@ -408,8 +412,9 @@ class HindsightReplay
   //! Locally-stored transitions of episode
   std::vector<Transition> episodeTransitions;
 
-  //! Ratio of HER transitions per Normal transitions
-  size_t herRatio;
+  //! Number of HER transitions per Normal transitions
+  //! (data coming from normal experience replay in replay buffer)
+  size_t noOfHERTransitions;
 
   //! goal selection startegy for HER
   goalStrategy goalSelectionStrategy;
