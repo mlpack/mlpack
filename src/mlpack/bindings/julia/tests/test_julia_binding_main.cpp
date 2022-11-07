@@ -191,11 +191,15 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
         {
           if (ceil(m(i, c)) != m(i, c))
             throw std::invalid_argument("non-integer value in categorical!");
-          else if (m(i, c) <= 0)
-            throw std::invalid_argument("negative/zero value in categorical!");
-          else if (size_t(m(i, c)) > di.NumMappings(i))
+          else if (m(i, c) < 0)
+            throw std::invalid_argument("negative value in categorical!");
+          else if (size_t(m(i, c)) >= di.NumMappings(i))
             throw std::invalid_argument("value outside number of categories!");
         }
+
+        // Since this goes back to Julia as a regular matrix, we have to
+        // manually convert the categorical features to be one-indexed.
+        m.row(i) += 1.0;
       }
     }
 

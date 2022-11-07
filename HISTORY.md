@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix mapping of categorical data for Julia bindings (#3305).
 
 ### mlpack 4.0.0
 ###### 2022-10-23
