@@ -33,11 +33,14 @@ inline std::string GetClassName(const std::string& groupName)
 
 inline std::string GetValidName(const std::string& paramName)
 {
-  std::string correctParamName = paramName;
+  std::string correctParamName;
 
-  if(paramName == "lambda") correctParamName = "lambda_";
-  else if(paramName == "input") correctParamName = "input_";
-  else correctParamName = paramName;
+  if (paramName == "lambda")
+    correctParamName = "lambda_";
+  else if (paramName == "input")
+    correctParamName = "input_";
+  else
+    correctParamName = paramName;
 
   return correctParamName;
 }
