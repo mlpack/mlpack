@@ -1,5 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix mapping of categorical data for Julia bindings (#3305).
+
+### mlpack 4.0.0
+###### 2022-10-23
   * Bump C++ standard requirement to C++14 (#3233).
 
   * Fix `Perceptron` to work with cross-validation framework (#3190).

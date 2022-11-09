@@ -185,12 +185,12 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     exec_program(/usr/bin/sw_vers ARGS
         -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
     string(REGEX REPLACE
-        "([0-9]+)(?:\\.([0-9]+).*)*" "\\1"
+        "([0-9]+)(\\.([0-9]+).*)*" "\\1"
         MACOSX_MAJOR_VERSION
         "${MACOSX_VERSION_RAW}")
 
     string(REGEX REPLACE
-        "([0-9]+)(?:\\.([0-9]+).*)*" "\\2"
+        "([0-9]+)(\\.([0-9]+).*)*" "\\3"
         MACOSX_MINOR_VERSION
         "${MACOSX_VERSION_RAW}")
 

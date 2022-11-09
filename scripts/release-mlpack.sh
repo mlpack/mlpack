@@ -25,7 +25,8 @@ output=$(
     done |\
         grep -v ': 1' |\
         grep -v 'arma_extend' |\
-        grep -v 'boost_backport' |\
+        grep -v 'core/cereal' |\
+        grep -v 'std_backport' |\
         grep -v 'arma_config.hpp' |\
         grep -v 'gitversion.hpp' |\
         grep -v 'CLI11.hpp' |\
@@ -94,7 +95,7 @@ fi
 
 # Check git remotes: we need to make sure we have a fork to push to.
 github_user=$1;
-remote_name`git remote -v |\
+remote_name=`git remote -v |\
             grep "$github_user/mlpack (push)" |\
             head -1 |\
             awk -F' ' '{ print $1 }'`;
@@ -115,23 +116,17 @@ MINOR="$3";
 PATCH="$4";
 
 # Update version.
-sed --in-place -E 's/PROJECT_NUMBER([ \t]*)= .*$/PROJECT_NUMBER\1= '$MAJOR'.'$MINOR'.'$PATCH'/' \
-    Doxyfile;
 sed --in-place 's/MLPACK_VERSION_MAJOR [0-9]*$/MLPACK_VERSION_MAJOR '$MAJOR'/' \
     src/mlpack/core/util/version.hpp;
 sed --in-place 's/MLPACK_VERSION_MINOR [0-9]*$/MLPACK_VERSION_MINOR '$MINOR'/' \
     src/mlpack/core/util/version.hpp;
 sed --in-place 's/MLPACK_VERSION_PATCH [0-9]*$/MLPACK_VERSION_PATCH '$PATCH'/' \
     src/mlpack/core/util/version.hpp;
-sed --in-place 's/  VERSION [0-9]*\.[0-9]*/  VERSION '$MAJOR'.'$MINOR'/' \
-    src/mlpack/CMakeLists.txt;
 
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
-    doc/guide/build.hpp;
+    doc/user/sample_ml_app.md;
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
-    doc/guide/python_quickstart.hpp;
-sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
-    doc/guide/sample_ml_app.hpp;
+    doc/examples/sample-ml-app/README.txt;
 sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' \
     doc/examples/sample-ml-app/sample-ml-app/sample-ml-app.vcxproj;
 
@@ -161,9 +156,8 @@ rm -rf /tmp/ensmallen;
 # Make these changes on a release branch.
 git checkout -b release-$MAJOR.$MINOR.$PATCH;
 
-git add Doxyfile src/mlpack/core/util/version.hpp src/mlpack/CMakeLists.txt \
-    doc/guide/build.hpp doc/guide/python_quickstart.hpp \
-    doc/guide/sample_ml_app.hpp \
+git add src/mlpack/core/util/version.hpp \
+    doc/user/sample_ml_app.md \
     doc/examples/sample-ml-app/sample-ml-app/sample-ml-app.vcxproj \
     CMakeLists.txt \
     README.md \
