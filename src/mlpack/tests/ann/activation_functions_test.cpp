@@ -269,7 +269,7 @@ TEST_CASE("SELUFunctionNormalizedTest", "[ActivationFunctionsTest]")
 {
   arma::mat input = arma::randn<arma::mat>(1000, 1);
   arma::mat output(arma::size(input));
-  
+
   SELU selu;
   selu.Forward(input, output);
 
@@ -288,7 +288,7 @@ TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
   const arma::colvec input("5.96402758 0.9966824 0.99975321 1 \
                             7.76159416 -0.76159416 0.96402758 8");
   arma::mat output(arma::size(input));
-  
+
   SELU selu;
   selu.Forward(input, output);
 
@@ -315,7 +315,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
 
   selu.Forward(input, activations);
   selu.Backward(activations, error, derivatives);
-  
+
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda())) <= 10e-4);
 
@@ -785,4 +785,25 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<SILUFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<SILUFunction>(desiredActivation, desiredDerivate);
+}
+
+/**
+ * Basic test of the GCU(Growing Cosine Unit) Function
+ */
+TEST_CASE("GCUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2 2 4.5 -5.7 -1 1 0 10");
+
+  // Hand-calculated values.
+  arma::colvec desiredActivation(
+      "0.83229367 -0.83229367 -0.9485811 -4.75786287 -0.54030231 \
+        0.54030231 0.0 -8.39071529");
+
+  // Hand-calculated values.
+  arma::colvec desiredDerivate(
+      "0.05771907 0.05771907 -0.18797022 4.79840261 0.57962427 \
+        0.57962427 1.0 -7.72217352");
+
+  CheckActivationCorrect<GCUFunction>(activationData, desiredActivation);
+  CheckDerivativeCorrect<GCUFunction>(desiredActivation, desiredDerivate);
 }
