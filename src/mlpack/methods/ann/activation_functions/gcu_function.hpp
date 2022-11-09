@@ -58,7 +58,7 @@ class GCUFunction
    */
   static double Deriv(const double y)
   {
-    return std::cos(x) - x * std::sin(x);
+    return std::cos(y) - y * std::sin(y);
   }
 
   /**
@@ -70,7 +70,7 @@ class GCUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = arma::cos(x) - x * arma::sin(x);
+    x = arma::cos(y) - y * arma::sin(y);
   }
 }; // class GCUFunction
 
