@@ -47,7 +47,7 @@ class GCUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x * arma::cos(x);
+    y = x % arma::cos(x);
   }
 
   /**
@@ -70,7 +70,7 @@ class GCUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = arma::cos(y) - y * arma::sin(y);
+    x = arma::cos(y) - y % arma::sin(y);
   }
 }; // class GCUFunction
 
