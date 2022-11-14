@@ -310,10 +310,8 @@ inline std::string ProgramCall(util::Params& params,
       first = false;
 
     // Print the input option.
-    if (it->second.name != "lambda") // Don't print Python keywords.
-      oss << it->second.name << "=";
-    else
-      oss << it->second.name << "_=";
+    const std::string correctName = GetValidName(it->second.name);
+    oss << correctName << "=";
 
     std::string value;
     params.functionMap[it->second.tname]["DefaultParam"](
@@ -375,11 +373,9 @@ inline std::string ParamString(const std::string& paramName)
 {
   // For a Python binding we don't need to know the type.
 
-  // Make sure that we don't print reserved keywords.
-  if (paramName == "lambda")
-    return "'" + paramName + "_'";
-  else
-    return "'" + paramName + "'";
+  // Make sure that we don't print reserved keywords or builtin functions.
+  const std::string correctName = GetValidName(paramName);
+  return "'" + correctName + "'";
 }
 
 /**
@@ -390,10 +386,7 @@ template<typename T>
 inline std::string ParamString(const std::string& paramName, const T& value)
 {
   std::ostringstream oss;
-  if (paramName == "lambda") // Don't print reserved keywords.
-    oss << paramName << "_=" << value;
-  else
-    oss << paramName << "=" << value;
+  oss << GetValidName(paramName) << "=" << value;
   return oss.str();
 }
 
@@ -485,10 +478,7 @@ inline std::string CreateObject(const std::string& bindingName,
       first = false;
 
     // Print the input option.
-    if (it->second.name != "lambda") // Don't print Python keywords.
-      createObj += it->second.name + "=";
-    else
-      createObj += it->second.name + "_=";
+    createObj += GetValidName(it->second.name) + "=";
 
     std::string value;
     params.functionMap[it->second.tname]["DefaultParam"](
