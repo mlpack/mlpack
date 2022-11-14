@@ -125,8 +125,8 @@ if (DEBUG)
   set(DISABLE_CFLAGS "NDEBUG;MLPACK_HAS_BFD_DL" PARENT_SCOPE)
 endif ()
 
-add_custom_target(python ALL DEPENDS mlpack)
-add_custom_target(python_copy ALL DEPENDS mlpack)
+add_custom_target(python ALL DEPENDS python_copy)
+add_custom_target(python_copy ALL)
 # The python_configure target is added later; this is a dummy target.
 add_custom_target(python_configured ALL)
 
