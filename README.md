@@ -372,6 +372,7 @@ codebase.  It is easy to build and run the tests with CMake and CTest, as below:
 mkdir build && cd build/
 cmake -DBUILD_TESTS=ON ../
 make
+make mlpack_test
 ctest .
 ```
 
