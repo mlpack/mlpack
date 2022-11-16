@@ -2,6 +2,10 @@
 ###### ????-??-??
   * Fix mapping of categorical data for Julia bindings (#3305).
 
+  * Set `BUILD_TESTS` to `OFF` by default.  If you want to build tests, like
+    `mlpack_test`, manually set `BUILD_TESTS` to `ON` in your CMake
+    configuration step (#3316).
+
 ### mlpack 4.0.0
 ###### 2022-10-23
   * Bump C++ standard requirement to C++14 (#3233).
