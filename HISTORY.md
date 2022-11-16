@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Fix mapping of categorical data for Julia bindings (#3305).
 
+  * README fix: `make mlpack_test` is required before running tests (#3315).
+
 ### mlpack 4.0.0
 ###### 2022-10-23
   * Bump C++ standard requirement to C++14 (#3233).
