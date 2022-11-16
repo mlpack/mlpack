@@ -6,6 +6,11 @@ add_subdirectory(methods)
 # If necessary, configure the tests.
 if (BUILD_TESTS)
   add_subdirectory(tests)
+else ()
+  # Add convenience target to tell the user they need BUILD_TESTS if they try to
+  # build mlpack_test.
+  add_custom_target(mlpack_test
+      ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/CMake/TestError.cmake)
 endif ()
 
 # At install time, we simply install the src/ directory to include/ (though we
