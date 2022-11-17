@@ -45,7 +45,7 @@ steps:
   displayName: 'CMake'
 
 # Build mlpack
-- script: cd build && make -j2
+- script: cd build && make -j2 && make -j2 mlpack_test
   displayName: 'Build'
 
 # Run tests via ctest.
