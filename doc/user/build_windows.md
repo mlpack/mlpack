@@ -36,6 +36,9 @@ an existing one). The library is immediately ready to be included
 (via preprocessor directives) and used in your project without additional
 configuration.
 
+Note that when building mlpack, the `/std:c++17` and `/Zc:__cplusplus` options
+are required for Visual Studio.
+
 ## Build Environment
 
 This tutorial has been designed and tested using:

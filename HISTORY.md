@@ -8,6 +8,9 @@
   * Optimize and strip compiled Python bindings when possible, resulting in
     significant size minimization (#3310).
 
+  * The `/std:c++17` and `/Zc:__cplusplus` options are now required when using
+    Visual Studio (#3318).  Documentation and compile-time checks added.
+
 ### mlpack 4.0.0
 ###### 2022-10-23
   * Bump C++ standard requirement to C++14 (#3233).
