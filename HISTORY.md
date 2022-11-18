@@ -2,6 +2,12 @@
 ###### ????-??-??
   * Fix mapping of categorical data for Julia bindings (#3305).
 
+  * Various Python configuration fixes for Windows and OS X (#3312, #3313,
+    #3311, #3309, #3308, #3297, #3302).
+
+  * Optimize and strip compiled Python bindings when possible, resulting in
+    significant size minimization (#3310).
+
   * The `/std:c++17` and `/Zc:__cplusplus` options are now required when using
     Visual Studio (#3318).  Documentation and compile-time checks added.
 
