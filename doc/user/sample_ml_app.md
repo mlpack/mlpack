@@ -43,6 +43,11 @@ this issue, disable "Conformance Mode" under C/C++ > Language.
 *Note*: you may need to change the paths of the include directories or libraries
 above, given how you installed the dependencies.
 
+*Note*: mlpack requires that the `/std:c++17` and `/Zc:__cplusplus` options be
+set for the Visual Studio compiler.  This is done by default in the provided
+example, but for your own projects, make sure that these options are set,
+otherwise compilation will fail.
+
 ## The App's Goal
 
 This app aims to exercise an end-to-end machine learning workflow. We will
