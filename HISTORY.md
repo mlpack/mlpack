@@ -2,6 +2,15 @@
 ###### ????-??-??
   * Fix mapping of categorical data for Julia bindings (#3305).
 
+  * Various Python configuration fixes for Windows and OS X (#3312, #3313,
+    #3311, #3309, #3308, #3297, #3302).
+
+  * Optimize and strip compiled Python bindings when possible, resulting in
+    significant size minimization (#3310).
+
+  * The `/std:c++17` and `/Zc:__cplusplus` options are now required when using
+    Visual Studio (#3318).  Documentation and compile-time checks added.
+    
   * Set `BUILD_TESTS` to `OFF` by default.  If you want to build tests, like
     `mlpack_test`, manually set `BUILD_TESTS` to `ON` in your CMake
     configuration step (#3316).

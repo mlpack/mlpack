@@ -140,7 +140,11 @@ if (BUILD_GO_SHLIB)
   add_library(mlpack_go_util SHARED
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/arma_util.cpp
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/io_util.cpp)
-  target_link_libraries(mlpack_go_util ${MLPACK_LIBRARIES})
+  if (BUILD_SHARED_LIBS)
+    target_link_libraries(mlpack_go_util ${MLPACK_LIBRARIES})
+  else ()
+    target_link_libraries(mlpack_go_util -static ${MLPACK_LIBRARIES})
+  endif ()
   target_compile_definitions(mlpack_go_util PUBLIC
       -DBINDING_TYPE=BINDING_TYPE_GO
       -DMLPACK_PRINT_INFO
@@ -213,7 +217,11 @@ if (BUILD_GO_BINDINGS)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_go.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/print_go.cpp)
-  target_link_libraries(generate_go_${name} ${MLPACK_LIBRARIES})
+  if (BUILD_SHARED_LIBS)
+    target_link_libraries(generate_go_${name} ${MLPACK_LIBRARIES})
+  else ()
+    target_link_libraries(generate_go_${name} -static ${MLPACK_LIBRARIES})
+  endif ()
   set_target_properties(generate_go_${name} PROPERTIES COMPILE_FLAGS
       -DBINDING_TYPE=BINDING_TYPE_GO)
   add_custom_command(TARGET generate_go_${name} POST_BUILD
@@ -242,7 +250,11 @@ if(BUILD_GO_SHLIB)
   # Build libmlpack_go_${name}.so.
   add_library(mlpack_go_${name} SHARED
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp)
-  target_link_libraries(mlpack_go_${name} mlpack_go_util)
+  if (BUILD_SHARED_LIBS)
+    target_link_libraries(mlpack_go_${name} mlpack_go_util)
+  else ()
+    target_link_libraries(mlpack_go_${name} -static mlpack_go_util)
+  endif ()
   target_compile_definitions(mlpack_go_${name} PUBLIC
       -DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN)
   set_target_properties(mlpack_go_${name} PROPERTIES

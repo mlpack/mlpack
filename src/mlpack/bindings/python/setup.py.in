@@ -35,6 +35,11 @@ else:
 # Windows and Linux linking behavior.
 libraries = '${MLPACK_LIBRARIES}'.split(' ')
 
+# Workaround: if we receive "m" as a library, what was actually meant was -lm.
+for i in range(len(libraries)):
+  if libraries[i] == 'm':
+    libraries[i] = '-lm'
+
 # Potentially faulty assumption: we can always link against libraries directly
 # by just specifying the full path to them on the command line.
 extra_link_args += libraries
@@ -49,15 +54,28 @@ else:
   extra_cxx_flags = re.sub(' +', ' ', cxx_flags)
   cxx_flags += ' '
   cxx_flags += extra_cxx_flags
-  extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX', '-std=c++14']
+
+  extra_args = []
+  if platform.system() == 'Windows':
+    # Argument specification is different on MSVC, and also use C++17.
+    extra_args.extend(['/DBINDING_TYPE=BINDING_TYPE_PYX', '/std:c++17', '/MD',
+        '/O2', '/Ob2', '/DNDEBUG'])
+  elif platform.system() == 'Darwin':
+    extra_args.append('-DBINDING_TYPE=BINDING_TYPE_PYX')
+    extra_args.append('-std=c++17')
+    # On OS X and Linux, we try to reduce the size of the generated libraries
+    # by removing debugging symbols and stripping.
+    extra_args.append('-g0')
+  else:
+    extra_args.append('-DBINDING_TYPE=BINDING_TYPE_PYX')
+    extra_args.append('-std=c++17')
+    extra_args.append('-g0')
+    extra_link_args.append('-Wl,--strip-all')
+
   if '${OpenMP_CXX_FLAGS}' != '':
     extra_args.append('${OpenMP_CXX_FLAGS}')
   if cxx_flags:
     extra_args.extend(cxx_flags.split(' '))
-
-  # Extra options for MSVC compiler.
-  if platform.system() == 'Windows':
-    extra_args.extend(['/MD', '/O2', '/Ob2', '/DNDEBUG'])
 
   # This is used for parallel builds; CMake will set PYX_TO_BUILD accordingly.
   if module is not None:
