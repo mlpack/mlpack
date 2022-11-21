@@ -2,7 +2,6 @@ include(CTest)
 
 # mlpack test executable.
 add_executable(mlpack_test
-  EXCLUDE_FROM_ALL
   ${MLPACK_TEST_SRCS}
 
   # Tests for neural network code (and reinforcement learning code).
