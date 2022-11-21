@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * Fix mapping of categorical data for Julia bindings (#3305).
+  
+  * Bugfix: catch all exceptions when running bindings from Julia, instead of
+    crashing (#3304).
 
   * Various Python configuration fixes for Windows and OS X (#3312, #3313,
     #3311, #3309, #3308, #3297, #3302).

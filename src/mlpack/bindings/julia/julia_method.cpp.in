@@ -22,7 +22,7 @@ bool BINDING_FUNCTION(void* params, void* timers)
     BINDING_FUNCTION(*p, *t);
     return true;
   }
-  catch (std::runtime_error& e)
+  catch (std::exception& e)
   {
     std::cout << e.what() << std::endl;
     return false;
