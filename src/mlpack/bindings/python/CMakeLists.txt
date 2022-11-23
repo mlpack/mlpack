@@ -149,6 +149,10 @@ add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/copy_artifacts.py
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/setup_readme.md
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
 if (BUILD_TESTS)
   foreach(test_file ${TEST_SOURCES})
