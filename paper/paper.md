@@ -39,7 +39,7 @@ authors:
    orcid: 0000-0002-3683-3931
    affiliation: 9
  - name: Aakash Kaushik
-   orcid: 0000-0003-1079-8838
+   orcid: 0000-0003-1079-8338
    affiliation: 1
  - name: Sangyeon Kim
    orcid: 0000-0003-0717-0240
