@@ -4,6 +4,16 @@
  *
  * Definition and implementation of the Growing Cosine Unit function.
  *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @misc{
+ *   authors = {Mathew Mithra Noel, Arunkumar L, Advait Trivedi, Praneet Dutta},
+ *   title = {Growing Cosine Unit: A Novel Oscillatory Activation Function That Can Speedup Training and Reduce Parameters in Convolutional Neural Networks},
+ *   year = {2021}
+ * }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
