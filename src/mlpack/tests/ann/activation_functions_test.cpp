@@ -788,7 +788,8 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
- * Basic test of the GCU(Growing Cosine Unit) Function
+ * Basic test of the GCU (Growing Cosine Unit) function.
+
  */
 TEST_CASE("GCUFunctionTest", "[ActivationFunctionsTest]")
 {
