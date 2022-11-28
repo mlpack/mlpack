@@ -15,7 +15,7 @@ add_all_bindings(bayesian_linear_regression bayesian_linear_regression
     "regression")
 add_all_bindings(cf cf "misc. / other")
 add_all_bindings(dbscan dbscan "clustering")
-add_all_bindings(decision_tree decision_tree "clustering")
+add_all_bindings(decision_tree decision_tree "classification")
 add_all_bindings(det det "misc. / other")
 add_all_bindings(emst emst "geometry")
 add_all_bindings(fastmks fastmks "geometry")
