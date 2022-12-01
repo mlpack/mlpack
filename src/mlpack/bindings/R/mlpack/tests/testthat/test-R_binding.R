@@ -113,6 +113,17 @@ test_that("TestUMatrix", {
   }
 })
 
+# Test a transposed matrix.
+test_that("TestTransMatrix", {
+  x <- matrix(rexp(500, rate = .1), ncol = 5)
+
+  output <- test_r_binding(4.0, 12, "hello",
+                           tmatrix_in=x,
+                           matrix_in=x)
+  # If the binding succeeds, the output double will be 10.
+  expect_true(output$double_out == 10.0)
+})
+
 # Test a column vector input parameter.
 test_that("TestCol", {
   x <- matrix(rexp(100, rate = .1), nrow = 1)

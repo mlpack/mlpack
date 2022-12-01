@@ -112,10 +112,11 @@ void SetParamVecInt(SEXP params,
 // [[Rcpp::export]]
 void SetParamMat(SEXP params,
                  const std::string& paramName,
-                 const arma::mat& paramValue)
+                 const arma::mat& paramValue,
+                 bool transpose)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
-  p.Get<arma::mat>(paramName) = paramValue.t();
+  p.Get<arma::mat>(paramName) = (transpose ? paramValue.t() : paramValue);
   p.SetPassed(paramName);
 }
 
