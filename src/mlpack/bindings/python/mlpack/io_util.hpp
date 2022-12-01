@@ -19,20 +19,47 @@
 namespace mlpack {
 namespace util {
 
+// Utility functions to correctly handle transposed Armadillo matrices.
+template<typename T>
+inline void TransposeIfNeeded(
+    const std::string& identifier,
+    T& value,
+    bool transpose)
+{
+  // No transpose needed for non-matrices.
+  return;
+}
+
+inline void TransposeIfNeeded(
+    const std::string& identifier,
+    arma::mat& value,
+    bool transpose)
+{
+  if (transpose)
+  {
+    arma::inplace_trans(value);
+  }
+}
+
 /**
  * Set the parameter to the given value.
  *
  * This function exists to work around Cython's lack of support for lvalue
  * references.
  *
+ * @param params Parameters object to use.
  * @param identifier Name of parameter.
  * @param value Value to set parameter to.
+ * @param transpose If true, and if T is a matrix type, the matrix will be
+ *     transposed in-place.
  */
 template<typename T>
 inline void SetParam(util::Params& params,
                      const std::string& identifier,
-                     T& value)
+                     T& value,
+                     bool transpose = false)
 {
+  TransposeIfNeeded(identifier, value, transpose);
   params.Get<T>(identifier) = std::move(value);
 }
 

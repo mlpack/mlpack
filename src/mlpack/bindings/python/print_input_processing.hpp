@@ -271,13 +271,18 @@ void PrintInputProcessing(
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
    *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
    *       param_name_tuple[1])
-   *   SetParam[mat](p, \<const string\> 'param_name', dereference(param_name_mat))
+   *   SetParam[mat](p, \<const string\> 'param_name', dereference(param_name_mat), True)
    *   p.SetPassed(\<const string\> 'param_name')
    *
+   * The value of the final boolean passed to SetParam is determined by whether
+   * the matrix is transposed or not.  That boolean is omitted if the parameter
+   * is a row or column.
    */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
   std::string name = GetValidName(d.name);
+  std::string transStr =
+      (d.noTranspose ? std::string("True") : std::string("False"));
 
   if (!d.required)
   {
@@ -299,7 +304,7 @@ void PrintInputProcessing(
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference("
-          << name << "_mat))"<< std::endl;
+          << name << "_mat))" << std::endl;
       std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
       std::cout << prefix << "  del " << name << "_mat" << std::endl;
@@ -319,7 +324,7 @@ void PrintInputProcessing(
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference("
-          << name << "_mat))"<< std::endl;
+          << name << "_mat), " << transStr << ")" << std::endl;
       std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
       std::cout << prefix << "  del " << name << "_mat" << std::endl;
@@ -343,7 +348,7 @@ void PrintInputProcessing(
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference("
-          << name << "_mat))"<< std::endl;
+          << name << "_mat))" << std::endl;
       std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
           << std::endl;
       std::cout << prefix << "del " << name << "_mat" << std::endl;
@@ -362,7 +367,7 @@ void PrintInputProcessing(
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
           << "](p, <const string> '" << d.name << "', dereference(" << name
-          << "_mat))" << std::endl;
+          << "_mat), " << transStr << ")" << std::endl;
       std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
           << std::endl;
       std::cout << prefix << "del " << name << "_mat" << std::endl;
