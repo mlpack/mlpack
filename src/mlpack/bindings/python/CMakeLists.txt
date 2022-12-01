@@ -335,12 +335,14 @@ endmacro ()
 
 # Add a test.
 if (BUILD_PYTHON_BINDINGS)
-  add_test(NAME python_bindings_test
-      COMMAND ${PYTHON_EXECUTABLE}
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py test
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
-  set_tests_properties(python_bindings_test
-      PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")
+  if (BUILD_TESTS)
+    add_test(NAME python_bindings_test
+        COMMAND ${PYTHON_EXECUTABLE}
+            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py test
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+    set_tests_properties(python_bindings_test
+        PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")
+  endif ()
 endif ()
 
 if (BUILD_TESTS)
