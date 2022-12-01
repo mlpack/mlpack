@@ -99,7 +99,12 @@ void PrintInputProcessing(
   else
   {
     matTypeModifier = "Mat";
-    extra = ", points_are_rows";
+
+    // Determine whether we need to transpose the matrix.
+    std::string transStr =
+        (d.noTranspose ? std::string("true") : std::string("false"));
+
+    extra = ", points_are_rows, " + transStr;
   }
 
   // Now print the SetParam call.
