@@ -195,10 +195,10 @@ int main()
 
   // Initialize the network.
   FFN<> model;
-  model.Add<Linear<> >(trainData.n_rows, 8);
-  model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(8, 3);
-  model.Add<LogSoftMax<> >();
+  model.Add<Linear>(8);
+  model.Add<Sigmoid>();
+  model.Add<Linear>(3);
+  model.Add<LogSoftMax>();
 
   // Train the model.
   model.Train(trainData, trainLabels);
@@ -308,17 +308,11 @@ void RNNModel()
    *            .     .
    *            .......
    */
-  Add<> add(4);
-  Linear<> lookup(1, 4);
-  SigmoidLayer<> sigmoidLayer;
-  Linear<> linear(4, 4);
-  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
-
   RNN<> model(rho);
-  model.Add<IdentityLayer<> >();
-  model.Add(recurrent);
-  model.Add<Linear<> >(4, 10);
-  model.Add<LogSoftMax<> >();
+  model.Add<Linear>(4);
+  model.Add<Sigmoid>();
+  model.Add<Linear>(10);
+  model.Add<LogSoftMax>();
 
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   model.Train(input, labels, opt);
@@ -574,9 +568,9 @@ arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
 
 // Initialize the network.
 FFN<> model;
-model.Add<Linear<> >(trainData.n_rows, 3);
-model.Add<SigmoidLayer<> >();
-model.Add<LogSoftMax<> >();
+model.Add<Linear>(3);
+model.Add<Sigmoid>();
+model.Add<LogSoftMax>();
 
 // Train the model.
 model.Train(trainData, trainLabels);
