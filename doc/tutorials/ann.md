@@ -104,7 +104,7 @@ the [matrices guide](../user/matrices.md) for more information.
 The code below builds a simple feed-forward network with the default options,
 then queries for the assignments for every point in the `queries` matrix.
 
-![Example feedforward network diagram](ann.svg)
+![Example feedforward network diagram](res/ann.svg)
 
 *Note*: the number of inputs in the above graph doesn't match with the real
 number of features in the thyroid dataset and are just used as an abstract
