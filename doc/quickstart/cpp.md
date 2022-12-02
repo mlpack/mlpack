@@ -276,7 +276,5 @@ other functionality is available.
 Some of this functionality is demonstrated in the
 [examples repository](https://github.com/mlpack/examples).
 
-A full list of all classes and functions that mlpack implements can be found in
-the
-[Doxygen documentation](https://www.mlpack.org/doc/stable/doxygen/index.html),
-or simply by browsing the well-commented source code.
+A full list of all classes and functions that mlpack implements can be found by
+browsing the well-commented source code.
