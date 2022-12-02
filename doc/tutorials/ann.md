@@ -183,59 +183,74 @@ dataset. Subsequently, we find the classification error by comparing it
 with `testLabels`.
 
 In the next example, we create simple noisy sine sequences, which are trained
-later on, using the `RNN` class in the `RNNModel()` method.
+later on, using the `RNN` class.
 
 ```c++
-void GenerateNoisySines(arma::mat& data,
-                        arma::mat& labels,
-                        const size_t points,
-                        const size_t sequences,
-                        const double noise = 0.3)
+#include <mlpack.hpp>
+
+using namespace ens;
+using namespace mlpack;
+
+/**
+ * Generates noisy sine wave and outputs the data and the labels that
+ * can be used directly for training and testing with RNN.
+ */
+void GenerateNoisySines(arma::cube& data,
+                        arma::cube& labels,
+                        size_t rho,
+                        const size_t dataPoints = 100,
+                        const double noisePercent = 0.2)
 {
-  arma::colvec x =  arma::linspace<arma::Col<double>>(0,
-      points - 1, points) / points * 20.0;
-  arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
-  arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
+  size_t points = dataPoints;
+  size_t r = dataPoints % rho;
 
-  data = arma::zeros(points, sequences * 2);
-  labels = arma::zeros(2, sequences * 2);
+  if (r == 0)
+    points += 1;
+  else
+    points += rho - r + 1;
 
-  for (size_t seq = 0; seq < sequences; seq++)
+  arma::colvec x(points);
+  int i = 0;
+  double interval = 0.6 / points;
+
+  x.for_each([&i, noisePercent, interval]
+    (arma::colvec::elem_type& val) {
+    double t = interval * (++i);
+    val = ::sin(2 * M_PI * 10 * t) + (noisePercent * Random(0.0, 0.1));
+  });
+
+  arma::colvec y = x;
+  y = arma::normalise(x);
+
+  // Now break this into columns of rho size slices.
+  size_t numColumns = y.n_elem / rho;
+  data = arma::cube(1, numColumns, rho);
+  labels = arma::cube(1, numColumns, 1);
+
+  for (size_t i = 0; i < numColumns; ++i)
   {
-    data.col(seq) = arma::randu(points) * noise + y1 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
-    labels(0, seq) = 1;
-
-    data.col(sequences + seq) = arma::randu(points) * noise + y2 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
-    labels(1, sequences + seq) = 1;
+    data.tube(0, i) = y.rows(i * rho, i * rho + rho - 1);
+    labels.subcube(0, i, 0, 0, i, 0) =
+        y.rows(i * rho + rho, i * rho + rho);
   }
 }
 
-void RNNModel()
+int main()
 {
   const size_t rho = 10;
 
   // Generate 12 (2 * 6) noisy sines. A single sine contains rho
   // points/features.
-  arma::mat input, labelsTemp;
-  GenerateNoisySines(input, labelsTemp, rho, 6);
-
-  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
-  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
-  {
-    const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
-    labels.col(i).fill(value);
-  }
+  arma::cube input, labels;
+  GenerateNoisySines(input, labels, rho);
 
   /**
-   * Construct a network with 1 input unit, 4 hidden units and 10 output
-   * units. The hidden layer is connected to itself. The network structure
+   * Construct a network with 1 input unit, 4 LSTM units and 1 output
+   * unit. The hidden layer is connected to itself. The network structure
    * looks like:
    *
    *  Input         Hidden        Output
-   * Layer(1)      Layer(4)      Layer(10)
+   * Layer(1)      LSTM(4)       Layer(1)
    * +-----+       +-----+       +-----+
    * |     |       |     |       |     |
    * |     +------>|     +------>|     |
@@ -244,15 +259,25 @@ void RNNModel()
    *            .     .
    *            .     .
    *            .......
+   *
+   * We use MeanSquaredError for the loss type, since we are predicting a
+   * continuous value.
    */
-  RNN<> model(rho);
-  model.Add<Linear>(4);
-  model.Add<Sigmoid>();
-  model.Add<Linear>(10);
-  model.Add<LogSoftMax>();
+  RNN<MeanSquaredError> model(rho, true /* only one response per sequence */);
+  model.Add<LSTM>(4);
+  model.Add<LinearNoBias>(1);
 
-  StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
+  StandardSGD opt(0.1, 1, 10 * input.n_cols /* 10 epochs */, -100);
   model.Train(input, labels, opt);
+
+  // Now compute the MSE on the training set.
+  arma::cube predictions;
+  model.Predict(input, predictions);
+  const double mse = arma::accu(arma::square(
+      arma::vectorise(labels) -
+      arma::vectorise(predictions.slice(predictions.n_slices - 1)))) /
+      input.n_cols;
+  std::cout << "MSE on training set is " << mse << "." << std::endl;
 }
 ```
 
