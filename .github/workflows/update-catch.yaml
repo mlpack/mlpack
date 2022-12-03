@@ -9,6 +9,7 @@ on:
     - cron:  '0 10 1/16 * *'
   permissions:
     contents: read
+
 jobs:
   updateCatch:
     permissions:
