@@ -13,7 +13,7 @@ mlpack currently implements two easy-to-use forms of neural networks:
 ## Model API
 
 There are two main neural network classes that are meant to be used as container
-for neural network layers that \b mlpack implements; each class is suited to a
+for neural network layers that mlpack implements; each class is suited to a
 different setting:
 
 - `FFN`: the Feed Forward Network model provides a means to plug layers
@@ -82,7 +82,7 @@ class FNN;
 
 Internally, the `FFN` and `RNN` class keeps an instantiated `OutputLayerType`
 class (which can be given in the constructor). This is useful for using
-different loss functions like the Negative-Log-Likelihood function or the \c
+different loss functions like the Negative-Log-Likelihood function or the
 VRClassReward function, which takes an optional score parameter. Therefore, you
 can write a non-static `OutputLayerType` class and use it seamlessly in
 combination with the `FNN` and `RNN` class. The same applies to the
