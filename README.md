@@ -66,7 +66,7 @@ variety of other needs.
 </div>
 <br>
 
-## 0. Contents and Quick Links
+## 0. Contents
 
  1. [Citation details](#1-citation-details)
  2. [Dependencies](#2-dependencies)
