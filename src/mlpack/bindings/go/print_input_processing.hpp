@@ -149,12 +149,26 @@ void PrintInputProcessing(
    *
    *  // Detect if the parameter was passed; set if so.
    *  if param.Name != nil {
-   *     gonumToArma<type>(params, "paramName", param.Name)
+   *     gonumToArma<type>(params, "paramName", param.Name, false)
    *     setPassed(params, "paramName")
    *  }
+   *
+   * where the boolean parameter indicates if the matrix needs to be transposed,
+   * and is only included for arma::mat type parameters.
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
             << std::endl;
+
+  // Add extra transpose option, but only for arma::mat types.
+  std::string transStrExtra = "";
+  if (d.cppType == "arma::mat")
+  {
+    if (d.noTranspose)
+      transStrExtra = ", true";
+    else
+      transStrExtra = ", false";
+  }
+
   if (!d.required)
   {
     std::cout << prefix << "if param." << goParamName
@@ -163,7 +177,7 @@ void PrintInputProcessing(
     // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArma" << GetType<T>(d)
               << "(params, \"" << d.name << "\", param." << goParamName
-              << ")" << std::endl;
+              << transStrExtra << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
     std::cout << prefix << prefix << "setPassed(params, \"" << d.name << "\")"
@@ -176,7 +190,7 @@ void PrintInputProcessing(
     // Print function call to set the given parameter into the io.
     std::cout << prefix << "gonumToArma" << GetType<T>(d)
               << "(params, \"" << d.name << "\", " << goParamName
-              << ")" << std::endl;
+              << transStrExtra << ")" << std::endl;
 
     // Print function call to set the given parameter as passed.
     std::cout << prefix << "setPassed(params, \"" << d.name << "\")"

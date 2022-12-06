@@ -41,6 +41,7 @@ PARAM_FLAG("flag1", "Input flag, must be specified.", "f");
 PARAM_FLAG("flag2", "Input flag, must not be specified.", "F");
 PARAM_MATRIX_IN("matrix_in", "Input matrix.", "m");
 PARAM_UMATRIX_IN("umatrix_in", "Input unsigned matrix.", "u");
+PARAM_TMATRIX_IN("tmatrix_in", "Input (transposed) matrix.", "");
 PARAM_COL_IN("col_in", "Input column.", "c");
 PARAM_UCOL_IN("ucol_in", "Input unsigned column.", "");
 PARAM_ROW_IN("row_in", "Input row.", "");
@@ -90,6 +91,30 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
     if (d == 4.0)
       params.Get<double>("double_out") = 5.0;
+  }
+
+  // If a transposed matrix is specified, check that it is the same as the (now
+  // required) matrix_in parameter.  If the test passes, set `double_out` to 10.
+  if (params.Has("tmatrix_in"))
+  {
+    if (!params.Has("matrix_in"))
+    {
+      throw std::runtime_error("If tmatrix_in is specified, matrix_in must also"
+          " be specified!");
+    }
+
+    arma::mat tmat = params.Get<arma::mat>("tmatrix_in");
+    arma::mat mat = params.Get<arma::mat>("matrix_in");
+
+    if (!arma::approx_equal(tmat.t(), mat, "reldiff", 0.001))
+    {
+      throw std::runtime_error("Transposed tmatrix_in and matrix_in are not "
+          "equal!");
+    }
+    else
+    {
+      params.Get<double>("double_out") = 10.0;
+    }
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and

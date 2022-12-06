@@ -85,9 +85,9 @@ def to_matrix_with_info(x, dtype, copy=False):
   if isinstance(x, np.ndarray):
     # It is already an ndarray, so the vector of info is all 0s (all numeric).
     if len(x.shape) < 2:
-      d = np.zeros(1, dtype=np.bool)
+      d = np.zeros(1, dtype=bool)
     else:
-      d = np.zeros([x.shape[1]], dtype=np.bool)
+      d = np.zeros([x.shape[1]], dtype=bool)
 
     # Copy the matrix if needed.
     if copy:
@@ -108,9 +108,9 @@ def to_matrix_with_info(x, dtype, copy=False):
         # We can just return the matrix as-is; it's all numeric.
         t = to_matrix(x, dtype=dtype, copy=copy)
         if len(x.shape) < 2:
-          d = np.zeros(1, dtype=np.bool)
+          d = np.zeros(1, dtype=bool)
         else:
-          d = np.zeros([x.shape[1]], dtype=np.bool)
+          d = np.zeros([x.shape[1]], dtype=bool)
         return (t[0], t[1], d)
 
     if np.dtype(str) in dtype_array or np.dtype(unicode) in dtype_array:
@@ -123,7 +123,7 @@ def to_matrix_with_info(x, dtype, copy=False):
     # so go ahead and copy the dataframe and we'll work with y to make
     # modifications.
     y = x
-    d = np.zeros([x.shape[1]], dtype=np.bool)
+    d = np.zeros([x.shape[1]], dtype=bool)
 
     # Convert any 'object', 'str', or 'unicode' types to categorical.
     convertColumns = x.select_dtypes(['object'])
@@ -164,12 +164,12 @@ def to_matrix_with_info(x, dtype, copy=False):
 
     # Since we don't have a great way to check if these are using the same
     # memory location, we will probe manually (ugh).
-    oldval = x[0]
-    x[0] *= 2
+    oldval = x[0][0]
+    x[0][0] *= 2
     alias = False
-    if out[0] == x[0]:
+    if out.flat[0] == x[0][0]:
       alias = True
-      x[0] = oldval
+    x[0][0] = oldval
 
     return (out, not alias, d)
 

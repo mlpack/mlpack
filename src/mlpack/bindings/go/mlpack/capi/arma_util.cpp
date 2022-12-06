@@ -28,12 +28,17 @@ void mlpackToArmaMat(void* params,
                      const char* identifier,
                      double* mat,
                      const size_t row,
-                     const size_t col)
+                     const size_t col,
+                     bool transpose)
 {
   util::Params& p = *((util::Params*) params);
 
   // Advanced constructor.
   arma::mat m(mat, row, col, false, false);
+
+  // Transpose if necessary.
+  if (transpose)
+    arma::inplace_trans(m);
 
   // Set input parameter with corresponding matrix in IO.
   SetParam(p, identifier, m);

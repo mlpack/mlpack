@@ -91,7 +91,7 @@ func (m *mlpackArma) allocArmaPtrMatWithInfo(p *params,
 }
 
 // Passes a Gonum matrix to C by using the underlying data from the Gonum matrix.
-func gonumToArmaMat(p *params, identifier string, m *mat.Dense) {
+func gonumToArmaMat(p *params, identifier string, m *mat.Dense, trans bool) {
   // Get the number of elements in the Armadillo column.
   r, c := m.Dims()
   blas64General := m.RawMatrix()
@@ -100,7 +100,7 @@ func gonumToArmaMat(p *params, identifier string, m *mat.Dense) {
   // Pass pointer of the underlying matrix to mlpack.
   ptr := unsafe.Pointer(&data[0])
   C.mlpackToArmaMat(p.mem, C.CString(identifier), (*C.double)(ptr),
-      C.size_t(c), C.size_t(r))
+      C.size_t(c), C.size_t(r), C.bool(trans))
 }
 
 // Passes a Gonum matrix to C by using the underlying data from the Gonum matrix.
