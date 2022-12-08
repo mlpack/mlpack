@@ -14,6 +14,9 @@ authors:
  - name: Marcus Edel
    orcid: 0000-0001-5445-7303
    affiliation: 2
+ - name: Omar Shrit
+   orcid: 0000-0002-8621-3052
+   affiliation: 1
  - name: Shubham Agrawal
    orcid: 0000-0001-8713-4682
    affiliation: 1
@@ -53,9 +56,6 @@ authors:
  - name: Nippun Sharma
    orcid: 0000-0003-0365-2613
    affiliation: 8
- - name: Omar Shrit
-   orcid: 0000-0002-8621-3052
-   affiliation: 1
  - name: Yashwant Singh Parihar
    orcid: 0000-0003-3492-0377
    affiliation: 12
