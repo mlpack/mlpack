@@ -54,7 +54,7 @@ dataset = df.drop('label', 1)
 
 # Split the dataset using mlpack.  The output comes back as a dictionary,
 # which we'll unpack for clarity of code.
-output = mlpack.preprocess_split(input=dataset,
+output = mlpack.preprocess_split(input_=dataset,
                                  input_labels=labels,
                                  test_ratio=0.3)
 training_set = output['training']
@@ -110,7 +110,7 @@ ratings = pd.read_csv('http://www.mlpack.org/datasets/ml-20m/ratings-only.csv.gz
 movies = pd.read_csv('http://www.mlpack.org/datasets/ml-20m/movies.csv.gz')
 
 # Hold out 10% of the dataset into a test set so we can evaluate performance.
-output = mlpack.preprocess_split(input=ratings, test_ratio=0.1, verbose=True)
+output = mlpack.preprocess_split(input_=ratings, test_ratio=0.1, verbose=True)
 ratings_train = output['training']
 ratings_test = output['test']
 
