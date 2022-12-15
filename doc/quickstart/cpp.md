@@ -105,7 +105,7 @@ int main()
       testLabels, 0.3);
 
   // Create the RandomForest object and train it on the training data.
-  RandomForest r(trainDataset,
+  RandomForest<> r(trainDataset,
                  trainLabels,
                  7 /* number of classes */,
                  10 /* number of trees */,
