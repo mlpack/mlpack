@@ -102,61 +102,23 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   // Initialize the UnionFind object.
   UnionFind uf(data.n_cols);
   rangeSearch.Train(data);
-  std::vector<std::vector<size_t>> neighbors;
-  if (batchMode){
-    BatchCluster(data, uf, neighbors);
-    }
+
+  if (batchMode)
+    BatchCluster(data, uf);
   else
     PointwiseCluster(data, uf);
 
-  // Now set assignments of core points.
+  // Now set assignments.
   assignments.set_size(data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
     assignments[i] = uf.Find(i);
 
-  // Get a count of all clusters of core points.
+  // Get a count of all clusters.
   const size_t numClusters = arma::max(assignments) + 1;
   arma::Col<size_t> counts(numClusters, arma::fill::zeros);
   for (size_t i = 0; i < assignments.n_elem; ++i)
     counts[assignments[i]]++;
-    
-  /**
-  * Performs addition of border points to clusters
-  * Also updating the list of counts and assign
-  */
-  if (batchMode){
-    for(size_t i=0; i < data.n_cols;++i){
-      if(counts[i]<minPoints && assignments[i]==i){
-        for(size_t j=0;j<neighbors[i].size();j++){
-          if (counts[assignments[neighbors[i][j]]]>=minPoints){
-	    uf.Union(i, neighbors[i][j]);
-	    assignments[i]=assignments[neighbors[i][j]];
-	    counts[assignments[neighbors[i][j]]]++;
-	    counts[i]--;
-	    break;
-	  }
-        }
-      }
-    }
-  }
-  else{
-    for(size_t i=0; i < data.n_cols;++i){
-      if(counts[i]<minPoints && assignments[i]==i){
-        std::vector<std::vector<double>> distances;
-        rangeSearch.Search(data.col(i), Range(0.0, epsilon),
-          neighbors, distances);
-        for(size_t j=0;j<neighbors[0].size();j++){
-	  if (counts[assignments[neighbors[0][j]]]>=minPoints){
-	    uf.Union(i, neighbors[0][j]);
-	    assignments[i]=assignments[neighbors[0][j]];
-	    counts[assignments[neighbors[0][j]]]++;
-	    counts[i]--;
-	    break;
-	  }
-	}
-      }
-    }
-  }
+
   // Now assign clusters to new indices.
   size_t currentCluster = 0;
   arma::Col<size_t> newAssignments(numClusters);
@@ -191,9 +153,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
 {
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
-  // marking core points in order to cluster them
-  arma::Row<size_t> core(data.n_cols);
-  core.fill(0);
+
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     if (i % 10000 == 0 && i > 0)
@@ -202,12 +162,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     // Do the range search for only this point.
     rangeSearch.Search(data.col(i), Range(0.0, epsilon), neighbors,
         distances);
-    if(neighbors[0].size()>=minPoints) core[i]=1;
-    else continue;
-    // Union to all core points with their neighbor core points
+
+    // Union to all neighbors.
     for (size_t j = 0; j < neighbors[0].size(); ++j)
-      if(core[neighbors[0][j]])
-        uf.Union(i, neighbors[0][j]);
+      uf.Union(i, neighbors[0][j]);
   }
 }
 
@@ -220,10 +178,10 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
-    UnionFind& uf,
-    std::vector<std::vector<size_t>>& neighbors)
+    UnionFind& uf)
 {
   // For each point, find the points in epsilon-nighborhood and their distances.
+  std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
@@ -236,9 +194,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     // Get the next index.
     const size_t index = pointSelector.Select(i, data);
     for (size_t j = 0; j < neighbors[index].size(); ++j)
-      // Clustering all core points
-      if(neighbors[index].size()>=minPoints && neighbors[neighbors[index][j]].size()>=minPoints)
-        uf.Union(index, neighbors[index][j]);
+      uf.Union(index, neighbors[index][j]);
   }
 }
 

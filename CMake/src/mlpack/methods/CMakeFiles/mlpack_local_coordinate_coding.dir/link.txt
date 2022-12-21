@@ -1,1 +1,0 @@
-/usr/bin/c++   -Wall -Wextra -ftemplate-depth=1000 -Wno-unused-function -O3 -fopenmp   CMakeFiles/mlpack_local_coordinate_coding.dir/local_coordinate_coding/local_coordinate_coding_main.cpp.o  -o ../../../bin/mlpack_local_coordinate_coding  -lpthread /usr/lib/libarmadillo.so /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so 
