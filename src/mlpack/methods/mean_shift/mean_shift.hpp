@@ -88,7 +88,6 @@ class MeanShift
                bool useSeeds = true);
 
   //! Get the maximum number of iterations.
-  size_t MaxIterations() const { return maxIterations; }
   //! Set the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
