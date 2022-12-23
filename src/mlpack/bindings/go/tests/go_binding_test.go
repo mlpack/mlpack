@@ -196,6 +196,31 @@ func TestGonumUMatrix(t *testing.T) {
     }
   }
 }
+
+func TestGonumTransMatrix(t *testing.T) {
+  t.Log("Test transposed matrix input.")
+  x := mat.NewDense(3, 5, []float64{
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15,
+  })
+  x2 := mat.NewDense(3, 5, []float64{
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15,
+  })
+
+  param := mlpack.TestGoBindingOptions()
+  param.MatrixIn = x
+  param.TmatrixIn = x2
+  d := 4.0
+  i := 12
+  s := "hello"
+  // The binding simply needs to run successfully (without exception) to
+  // succeed.
+  mlpack.TestGoBinding(d, i, s, param)
+}
+
 func TestGonumTransposeRow(t *testing.T) {
   t.Log("Test a column vector input parameter.")
   x := mat.NewDense(1, 9, []float64{

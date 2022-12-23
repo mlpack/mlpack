@@ -36,7 +36,7 @@
 // This define makes the R RNG have precedent over the C++11-based
 // RNG provided by Armadillo.
 #if !defined(ARMA_RNG_ALT)
-  #define ARMA_RNG_ALT         RcppArmadillo/Alt_R_RNG.h
+  #define ARMA_RNG_ALT         RcppArmadillo/rng/Alt_R_RNG.h
 #endif
 
 // To suppress warnings related to core/util/arma_util.hpp.

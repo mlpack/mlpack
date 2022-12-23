@@ -178,6 +178,32 @@ end
   end
 end
 
+# Test a transposed input matrix.
+@testset "TestTransMatrix" begin
+  x = rand(5, 100)
+  y = copy(x)
+
+  # If the binding does not throw an exception, then it succeeded.
+  _, _, _, _, matOut, _, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         tmatrix_in=y,
+                         matrix_in=x,
+                         points_are_rows=true)
+end
+
+# Test a transposed input matrix, when in column-major mode.
+@testset "TestTransMatrixColMajor" begin
+  x = rand(100, 5)
+  y = copy(x)
+
+  # If the binding does not throw an exception, then it succeeded.
+  _, _, _, _, matOut, _, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         tmatrix_in=y,
+                         matrix_in=x,
+                         points_are_rows=false)
+end
+
 # Test a column vector input parameter.
 @testset "TestCol" begin
   x = rand(100)

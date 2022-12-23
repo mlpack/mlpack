@@ -1,7 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * Fix mapping of categorical data for Julia bindings (#3305).
-  
+
   * Bugfix: catch all exceptions when running bindings from Julia, instead of
     crashing (#3304).
 
@@ -13,10 +13,13 @@
 
   * The `/std:c++17` and `/Zc:__cplusplus` options are now required when using
     Visual Studio (#3318).  Documentation and compile-time checks added.
-    
+
   * Set `BUILD_TESTS` to `OFF` by default.  If you want to build tests, like
     `mlpack_test`, manually set `BUILD_TESTS` to `ON` in your CMake
     configuration step (#3316).
+
+  * Fix handling of transposed matrix parameters in Python, Julia, R, and Go
+    bindings (#3327).
 
   * Comment out definition of ARMA_NO DEBUG. This allows various Armadillo
     run-time checks such as non-conforming matrices and out-of-bounds

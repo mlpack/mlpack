@@ -13,7 +13,7 @@ mlpack currently implements two easy-to-use forms of neural networks:
 ## Model API
 
 There are two main neural network classes that are meant to be used as container
-for neural network layers that \b mlpack implements; each class is suited to a
+for neural network layers that mlpack implements; each class is suited to a
 different setting:
 
 - `FFN`: the Feed Forward Network model provides a means to plug layers
@@ -82,7 +82,7 @@ class FNN;
 
 Internally, the `FFN` and `RNN` class keeps an instantiated `OutputLayerType`
 class (which can be given in the constructor). This is useful for using
-different loss functions like the Negative-Log-Likelihood function or the \c
+different loss functions like the Negative-Log-Likelihood function or the
 VRClassReward function, which takes an optional score parameter. Therefore, you
 can write a non-static `OutputLayerType` class and use it seamlessly in
 combination with the `FNN` and `RNN` class. The same applies to the
@@ -104,70 +104,7 @@ the [matrices guide](../user/matrices.md) for more information.
 The code below builds a simple feed-forward network with the default options,
 then queries for the assignments for every point in the `queries` matrix.
 
-TODO: move to separate rendered image
-\dot
-digraph G {
-  fontname = "Hilda 10"
-  rankdir=LR
-  splines=line
-  nodesep=.08;
-  ranksep=1;
-  edge [color=black, arrowsize=.5];
-  node [fixedsize=true,label="",style=filled,color=none,fillcolor=gray,shape=circle]
-
-  subgraph cluster_0 {
-    color=none;
-    node [style=filled, color=white, penwidth=15,fillcolor=black shape=circle];
-    l10  l11  l12  l13  l14  l15  ;
-    label = Input;
-  }
-
-  subgraph cluster_1 {
-    color=none;
-    node [style=filled, color=white, penwidth=15,fillcolor=gray shape=circle];
-    l20  l21  l22  l23  l24  l25  l26  l27  ;
-    label = Linear;
-  }
-
-  subgraph cluster_2 {
-    color=none;
-    node [style=filled, color=white, penwidth=15,fillcolor=gray shape=circle];
-    l30  l31  l32  l33  l34  l35  l36  l37  ;
-    label = Linear;
-  }
-
-  subgraph cluster_3 {
-    color=none;
-    node [style=filled, color=white, penwidth=15,fillcolor=black shape=circle];
-    l40  l41  l42  ;
-    label = LogSoftMax;
-  }
-
-  l10 -> l20   l10 -> l21   l10 -> l22   l10 -> l23   l10 -> l24   l10 -> l25
-  l10 -> l26   l10 -> l27   l11 -> l20   l11 -> l21   l11 -> l22   l11 -> l23
-  l11 -> l24   l11 -> l25   l11 -> l26   l11 -> l27   l12 -> l20   l12 -> l21
-  l12 -> l22   l12 -> l23   l12 -> l24   l12 -> l25   l12 -> l26   l12 -> l27
-  l13 -> l20   l13 -> l21   l13 -> l22   l13 -> l23   l13 -> l24   l13 -> l25
-  l13 -> l26   l13 -> l27   l14 -> l20   l14 -> l21   l14 -> l22   l14 -> l23
-  l14 -> l24   l14 -> l25   l14 -> l26   l14 -> l27   l15 -> l20   l15 -> l21
-  l15 -> l22   l15 -> l23   l15 -> l24   l15 -> l25   l15 -> l26   l15 -> l27
-  l20 -> l30   l20 -> l31   l20 -> l32   l20 -> l33   l20 -> l34   l20 -> l35
-  l20 -> l36   l20 -> l37   l21 -> l30   l21 -> l31   l21 -> l32   l21 -> l33
-  l21 -> l34   l21 -> l35   l21 -> l36   l21 -> l37   l22 -> l30   l22 -> l31
-  l22 -> l32   l22 -> l33   l22 -> l34   l22 -> l35   l22 -> l36   l22 -> l37
-  l23 -> l30   l23 -> l31   l23 -> l32   l23 -> l33   l23 -> l34   l23 -> l35
-  l23 -> l36   l23 -> l37   l24 -> l30   l24 -> l31   l24 -> l32   l24 -> l33
-  l24 -> l34   l24 -> l35   l24 -> l36   l24 -> l37   l25 -> l30   l25 -> l31
-  l25 -> l32   l25 -> l33   l25 -> l34   l25 -> l35   l25 -> l36   l25 -> l37
-  l26 -> l30   l26 -> l31   l26 -> l32   l26 -> l33   l26 -> l34   l26 -> l35
-  l26 -> l36   l26 -> l37   l27 -> l30   l27 -> l31   l27 -> l32   l27 -> l33
-  l27 -> l34   l27 -> l35   l27 -> l36   l27 -> l37   l30 -> l40   l30 -> l41
-  l30 -> l42   l31 -> l40   l31 -> l41   l31 -> l42   l32 -> l40   l32 -> l41
-  l32 -> l42   l33 -> l40   l33 -> l41   l33 -> l42   l34 -> l40   l34 -> l41
-  l34 -> l42   l35 -> l40   l35 -> l41   l35 -> l42   l36 -> l40   l36 -> l41
-  l36 -> l42   l37 -> l40   l37 -> l41   l37 -> l42
-}
-\enddot
+![Example feedforward network diagram](res/ann.svg)
 
 *Note*: the number of inputs in the above graph doesn't match with the real
 number of features in the thyroid dataset and are just used as an abstract
@@ -195,10 +132,10 @@ int main()
 
   // Initialize the network.
   FFN<> model;
-  model.Add<Linear<> >(trainData.n_rows, 8);
-  model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(8, 3);
-  model.Add<LogSoftMax<> >();
+  model.Add<Linear>(8);
+  model.Add<Sigmoid>();
+  model.Add<Linear>(3);
+  model.Add<LogSoftMax>();
 
   // Train the model.
   model.Train(trainData, trainLabels);
@@ -246,59 +183,74 @@ dataset. Subsequently, we find the classification error by comparing it
 with `testLabels`.
 
 In the next example, we create simple noisy sine sequences, which are trained
-later on, using the `RNN` class in the `RNNModel()` method.
+later on, using the `RNN` class.
 
 ```c++
-void GenerateNoisySines(arma::mat& data,
-                        arma::mat& labels,
-                        const size_t points,
-                        const size_t sequences,
-                        const double noise = 0.3)
+#include <mlpack.hpp>
+
+using namespace ens;
+using namespace mlpack;
+
+/**
+ * Generates noisy sine wave and outputs the data and the labels that
+ * can be used directly for training and testing with RNN.
+ */
+void GenerateNoisySines(arma::cube& data,
+                        arma::cube& labels,
+                        size_t rho,
+                        const size_t dataPoints = 100,
+                        const double noisePercent = 0.2)
 {
-  arma::colvec x =  arma::linspace<arma::Col<double>>(0,
-      points - 1, points) / points * 20.0;
-  arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
-  arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
+  size_t points = dataPoints;
+  size_t r = dataPoints % rho;
 
-  data = arma::zeros(points, sequences * 2);
-  labels = arma::zeros(2, sequences * 2);
+  if (r == 0)
+    points += 1;
+  else
+    points += rho - r + 1;
 
-  for (size_t seq = 0; seq < sequences; seq++)
+  arma::colvec x(points);
+  int i = 0;
+  double interval = 0.6 / points;
+
+  x.for_each([&i, noisePercent, interval]
+    (arma::colvec::elem_type& val) {
+    double t = interval * (++i);
+    val = ::sin(2 * M_PI * 10 * t) + (noisePercent * Random(0.0, 0.1));
+  });
+
+  arma::colvec y = x;
+  y = arma::normalise(x);
+
+  // Now break this into columns of rho size slices.
+  size_t numColumns = y.n_elem / rho;
+  data = arma::cube(1, numColumns, rho);
+  labels = arma::cube(1, numColumns, 1);
+
+  for (size_t i = 0; i < numColumns; ++i)
   {
-    data.col(seq) = arma::randu(points) * noise + y1 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
-    labels(0, seq) = 1;
-
-    data.col(sequences + seq) = arma::randu(points) * noise + y2 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
-    labels(1, sequences + seq) = 1;
+    data.tube(0, i) = y.rows(i * rho, i * rho + rho - 1);
+    labels.subcube(0, i, 0, 0, i, 0) =
+        y.rows(i * rho + rho, i * rho + rho);
   }
 }
 
-void RNNModel()
+int main()
 {
   const size_t rho = 10;
 
   // Generate 12 (2 * 6) noisy sines. A single sine contains rho
   // points/features.
-  arma::mat input, labelsTemp;
-  GenerateNoisySines(input, labelsTemp, rho, 6);
-
-  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
-  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
-  {
-    const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
-    labels.col(i).fill(value);
-  }
+  arma::cube input, labels;
+  GenerateNoisySines(input, labels, rho);
 
   /**
-   * Construct a network with 1 input unit, 4 hidden units and 10 output
-   * units. The hidden layer is connected to itself. The network structure
+   * Construct a network with 1 input unit, 4 LSTM units and 1 output
+   * unit. The hidden layer is connected to itself. The network structure
    * looks like:
    *
    *  Input         Hidden        Output
-   * Layer(1)      Layer(4)      Layer(10)
+   * Layer(1)      LSTM(4)       Layer(1)
    * +-----+       +-----+       +-----+
    * |     |       |     |       |     |
    * |     +------>|     +------>|     |
@@ -307,21 +259,25 @@ void RNNModel()
    *            .     .
    *            .     .
    *            .......
+   *
+   * We use MeanSquaredError for the loss type, since we are predicting a
+   * continuous value.
    */
-  Add<> add(4);
-  Linear<> lookup(1, 4);
-  SigmoidLayer<> sigmoidLayer;
-  Linear<> linear(4, 4);
-  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
+  RNN<MeanSquaredError> model(rho, true /* only one response per sequence */);
+  model.Add<LSTM>(4);
+  model.Add<LinearNoBias>(1);
 
-  RNN<> model(rho);
-  model.Add<IdentityLayer<> >();
-  model.Add(recurrent);
-  model.Add<Linear<> >(4, 10);
-  model.Add<LogSoftMax<> >();
-
-  StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
+  StandardSGD opt(0.1, 1, 10 * input.n_cols /* 10 epochs */, -100);
   model.Train(input, labels, opt);
+
+  // Now compute the MSE on the training set.
+  arma::cube predictions;
+  model.Predict(input, predictions);
+  const double mse = arma::accu(arma::square(
+      arma::vectorise(labels) -
+      arma::vectorise(predictions.slice(predictions.n_slices - 1)))) /
+      input.n_cols;
+  std::cout << "MSE on training set is " << mse << "." << std::endl;
 }
 ```
 
@@ -574,9 +530,9 @@ arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
 
 // Initialize the network.
 FFN<> model;
-model.Add<Linear<> >(trainData.n_rows, 3);
-model.Add<SigmoidLayer<> >();
-model.Add<LogSoftMax<> >();
+model.Add<Linear>(3);
+model.Add<Sigmoid>();
+model.Add<LogSoftMax>();
 
 // Train the model.
 model.Train(trainData, trainLabels);

@@ -28,7 +28,8 @@ void mlpackToArmaMat(void* params,
                      const char* identifier,
                      double* mat,
                      const size_t row,
-                     const size_t col);
+                     const size_t col,
+                     bool transpose);
 
 /**
  * Pass Gonum Dense pointer and wrap an Armadillo mat around it.

@@ -557,6 +557,35 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['umatrix_out'][2, 2], 26)
     self.assertEqual(output['umatrix_out'][2, 3], 14)
 
+  def testTransMatrix(self):
+    """
+    Test that we can correctly pass a matrix in that's specified with the
+    PARAM_TMATRIX_IN() macro, and it is correctly transposed.
+    """
+    x = np.random.rand(20, 10)
+    test_python_binding(string_in='hello',
+                        int_in=12,
+                        double_in=4.0,
+                        mat_req_in=[[1.0]],
+                        col_req_in=[1.0],
+                        matrix_in=x,
+                        tmatrix_in=x)
+
+  def testTransMatrixForceCopy(self):
+    """
+    The same test as above, but we force copies.
+    """
+    x = np.random.rand(20, 10)
+    xt = copy.deepcopy(np.transpose(x))
+    test_python_binding(string_in='hello',
+                        int_in=12,
+                        double_in=4.0,
+                        mat_req_in=[[1.0]],
+                        col_req_in=[1.0],
+                        matrix_in=x,
+                        tmatrix_in=x,
+                        copy_all_inputs=True)
+
   def testCol(self):
     """
     Test a column vector input parameter.

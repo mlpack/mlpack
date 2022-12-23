@@ -74,6 +74,15 @@ void PrintInputProcessing(
     util::ParamData& d,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
+  std::string extraTransStr = "";
+  if (d.cppType == "arma::mat")
+  {
+    if (d.noTranspose)
+      extraTransStr = ", FALSE";
+    else
+      extraTransStr = ", TRUE";
+  }
+
   if (!d.required)
   {
     /**
@@ -82,11 +91,21 @@ void PrintInputProcessing(
      *     if (!identical(<param_name>, NA)) {
      *        SetParam<type>(p, "<param_name>", to_matrix(<param_name>))
      *     }
+     *
+     * and if the parameter is an arma::mat, we will get code like
+     *
+     *     if (!identical(<param_name>, NA)) {
+     *        SetParam<type>(p, "<param_name>", to_matrix(<param_name>), TRUE)
+     *     }
+     *
+     * where the final boolean specifies whether the matrix should be
+     * transposed.
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name << ", NA)) {"
         << std::endl;
     MLPACK_COUT_STREAM << "    SetParam" << GetType<T>(d) << "(p, \""
-        << d.name << "\", to_matrix(" << d.name << "))" << std::endl;
+        << d.name << "\", to_matrix(" << d.name << ")" << extraTransStr << ")"
+        << std::endl;
     MLPACK_COUT_STREAM << "  }" << std::endl; // Closing brace.
   }
   else
@@ -95,9 +114,17 @@ void PrintInputProcessing(
      * This gives us code like:
      *
      *     SetParam<type>(p, "<param_name>", to_matrix(<param_name>))
+     *
+     * and if the parameter is an arma::mat, we will get code like
+     *
+     *     SetParam<type>(p, "<param_name>", to_matrix(<param_name>), TRUE)
+     *
+     * where the final boolean specifies whether the matrix should be
+     * transposed.
      */
     MLPACK_COUT_STREAM << "  SetParam" << GetType<T>(d) << "(p, \""
-        << d.name << "\", to_matrix(" << d.name << "))" << std::endl;
+        << d.name << "\", to_matrix(" << d.name << ")" << extraTransStr << ")"
+        << std::endl;
   }
   MLPACK_COUT_STREAM << std::endl; // Extra line is to clear up the code a bit.
 }

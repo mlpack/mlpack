@@ -164,7 +164,7 @@ BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
         "&rep=rep1&type=pdf");
 BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
-        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html");
+        "@src/mlpack/methods/mean_shift/mean_shift.hpp");
 
 // Define parameters for the executable.
 

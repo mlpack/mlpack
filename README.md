@@ -66,12 +66,12 @@ variety of other needs.
 </div>
 <br>
 
-## 0. Contents and Quick Links
+## 0. Contents
 
  1. [Citation details](#1-citation-details)
  2. [Dependencies](#2-dependencies)
- 3. [Installing and using mlpack in C++](#4-installing-and-using-mlpack-in-c++)
- 4. [Building mlpack bindings to other languages](#5-building-mlpack-bindings-to-other-languages)
+ 3. [Installing and using mlpack in C++](#3-installing-and-using-mlpack-in-c)
+ 4. [Building mlpack bindings to other languages](#4-building-mlpack-bindings-to-other-languages)
      1. [Command-line programs](#4i-command-line-programs)
      2. [Python bindings](#4ii-python-bindings)
      3. [R bindings](#4iii-r-bindings)

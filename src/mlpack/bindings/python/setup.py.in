@@ -12,6 +12,7 @@ import sys
 import numpy as np
 import re
 import platform
+from pathlib import Path
 
 # Process input argument --module={name} first if needed.
 module = None
@@ -118,13 +119,8 @@ else:
 setup(name='mlpack',
       version='${PACKAGE_VERSION}',
       description='a flexible, fast machine learning library',
-      long_description='mlpack is a fast, flexible machine learning ' + \
-          'library, written in C++, that aims to provide fast, extensible ' + \
-          'implementations of cutting-edge machine learning algorithms. ' + \
-          'mlpack provides these algorithms as simple command-line ' + \
-          'programs, Python bindings, and C++ classes which can then be ' + \
-          'integrated into larger-scale machine learning solutions.',
-      long_description_content_type='text/plain',
+      long_description=Path('setup_readme.md').read_text(encoding='utf-8'),
+      long_description_content_type='text/markdown',
       url='http://www.mlpack.org/',
       author='mlpack developers',
       author_email='mlpack@lists.mlpack.org',
@@ -139,7 +135,7 @@ setup(name='mlpack',
           'Topic :: Software Development :: Libraries :: Application Frameworks'],
       keywords='machine learning, data mining, deep learning, optimization',
       project_urls={
-          'Documentation': 'http://www.mlpack.org/docs/mlpack-${PACKAGE_VERSION}/python.html',
+          'Documentation': 'http://www.mlpack.org/doc/mlpack-${PACKAGE_VERSION}/python.html',
           'Source': 'https://github.com/mlpack/mlpack/',
           'Tracker': 'https://github.com/mlpack/mlpack/issues'},
       install_requires=['cython>=0.24', 'numpy', 'pandas'],

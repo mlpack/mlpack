@@ -46,6 +46,7 @@ PARAM_FLAG("flag2", "Input flag, must not be specified.", "F");
 PARAM_MATRIX_IN("matrix_in", "Input matrix.", "m");
 PARAM_MATRIX_IN("smatrix_in", "Input matrix.", "");
 PARAM_UMATRIX_IN("umatrix_in", "Input unsigned matrix.", "u");
+PARAM_TMATRIX_IN("tmatrix_in", "Input transposed matrix.", "");
 PARAM_COL_IN("col_in", "Input column.", "c");
 PARAM_UCOL_IN("ucol_in", "Input unsigned column.", "");
 PARAM_ROW_IN("row_in", "Input row.", "");
@@ -112,6 +113,27 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timer */)
   {
     throw std::invalid_argument("col_req_in must have '1.0' as its only "
         "single element!");
+  }
+
+  // If a transposed input matrix is given, an input matrix should also be
+  // given, and one should be the transpose of the other.
+  if (params.Has("tmatrix_in"))
+  {
+    if (!params.Has("matrix_in"))
+    {
+      throw std::runtime_error("If tmatrix_in is specified, matrix_in must be "
+          "specified!");
+    }
+
+    arma::mat tmat = params.Get<arma::mat>("tmatrix_in");
+    std::cerr << "tmat has size " << tmat.n_rows << " x " << tmat.n_cols << "\n";
+    arma::mat mat = params.Get<arma::mat>("matrix_in");
+    std::cerr << "mat has size " << mat.n_rows << " x " << mat.n_cols << "\n";
+
+    if (!arma::approx_equal(tmat.t(), mat, "reldiff", 0.001))
+    {
+      throw std::runtime_error("tmatrix_in transposed not equal to matrix_in!");
+    }
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and

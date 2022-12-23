@@ -25,6 +25,7 @@ cdef extern from "<mlpack/core/util/io.hpp>" namespace "mlpack" nogil:
 cdef extern from "<mlpack/bindings/python/mlpack/io_util.hpp>" \
     namespace "mlpack::util" nogil:
   void SetParam[T](Params, string, T&) nogil except +
+  void SetParam[T](Params, string, T&, bool) nogil except +
   void SetParamPtr[T](Params, string, T*, bool) nogil except +
   void SetParamWithInfo[T](Params, string, T&, const bool*) nogil except +
   (T*) GetParamPtr[T](Params, string) nogil except +
