@@ -21,6 +21,11 @@
   * Fix handling of transposed matrix parameters in Python, Julia, R, and Go
     bindings (#3327).
 
+  * Comment out definition of ARMA_NO DEBUG. This allows various Armadillo
+    run-time checks such as non-conforming matrices and out-of-bounds
+    element access. In turn this helps tracking down bugs and incorrect
+    usage (#3322).
+
 ### mlpack 4.0.0
 ###### 2022-10-23
   * Bump C++ standard requirement to C++14 (#3233).
