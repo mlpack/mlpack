@@ -31,13 +31,6 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */,
     const bool splitIfBetterGain)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, labels, "RandomBinaryNumericSplit()",
-  	"labels");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "RandomBinaryNumericSplit()",
-  	"weights");
-  	
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
   // Forcing a minimum leaf size of 1 (empty children don't make sense).
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
@@ -158,13 +151,6 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     FitnessFunction& fitnessFunction,
     const bool splitIfBetterGain)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, responses, "RandomBinaryNumericSplit()",
-  	"responses");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "RandomBinaryNumericSplit()",
-  	"weights");
-  	
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
   // Forcing a minimum leaf size of 1 (empty children don't make sense).
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);

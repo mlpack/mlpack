@@ -30,13 +30,6 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, labels, "AllCategoricalSplit()",
-  	"labels");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "AllCategoricalSplit()",
-  	"weights");
-  	
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);
@@ -134,13 +127,6 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, responses, "AllCategoricalSplit()",
-  	"responses");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "AllCategoricalSplit()",
-  	"weights");
-  	
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);

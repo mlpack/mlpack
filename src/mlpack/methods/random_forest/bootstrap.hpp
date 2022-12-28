@@ -29,15 +29,10 @@ void Bootstrap(const MatType& dataset,
                LabelsType& bootstrapLabels,
                WeightsType& bootstrapWeights)
 {
-  // Sanity check on data.
-  util::CheckSameSizes(dataset, labels, "Bootstrap()", "labels");
   bootstrapDataset.set_size(dataset.n_rows, dataset.n_cols);
   bootstrapLabels.set_size(labels.n_elem);
-  if (UseWeights){
-    // Sanity check on data.
-    util::CheckSameSizes(dataset, weights, "Bootstrap()", "weights");
+  if (UseWeights)
     bootstrapWeights.set_size(weights.n_elem);
-  }
 
   // Random sampling with replacement.
   arma::uvec indices = arma::randi<arma::uvec>(dataset.n_cols,

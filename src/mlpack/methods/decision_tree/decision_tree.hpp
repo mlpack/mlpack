@@ -42,8 +42,7 @@ template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename DimensionSelectionType = AllDimensionSelect,
-         bool NoRecursion = false,
-         typename MatType = arma::mat>
+         bool NoRecursion = false>
 class DecisionTree :
     public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
     public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
@@ -73,7 +72,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename LabelsType>
+  template<typename MatType, typename LabelsType>
   DecisionTree(MatType data,
                const data::DatasetInfo& datasetInfo,
                LabelsType labels,
@@ -100,7 +99,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename LabelsType>
+  template<typename MatType, typename LabelsType>
   DecisionTree(MatType data,
                LabelsType labels,
                const size_t numClasses,
@@ -129,7 +128,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename LabelsType, typename WeightsType>
+  template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(
       MatType data,
       const data::DatasetInfo& datasetInfo,
@@ -162,7 +161,7 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    */
-  template<typename LabelsType, typename WeightsType>
+  template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(
       const DecisionTree& other,
       MatType data,
@@ -192,7 +191,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename LabelsType, typename WeightsType>
+  template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(
       MatType data,
       LabelsType labels,
@@ -223,7 +222,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename LabelsType, typename WeightsType>
+  template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(
       const DecisionTree& other,
       MatType data,
@@ -299,7 +298,7 @@ class DecisionTree :
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename LabelsType>
+  template<typename MatType, typename LabelsType>
   double Train(MatType data,
                const data::DatasetInfo& datasetInfo,
                LabelsType labels,
@@ -327,7 +326,7 @@ class DecisionTree :
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename LabelsType>
+  template<typename MatType, typename LabelsType>
   double Train(MatType data,
                LabelsType labels,
                const size_t numClasses,
@@ -358,7 +357,7 @@ class DecisionTree :
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename LabelsType, typename WeightsType>
+  template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
                const data::DatasetInfo& datasetInfo,
                LabelsType labels,
@@ -391,7 +390,7 @@ class DecisionTree :
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename LabelsType, typename WeightsType>
+  template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
                LabelsType labels,
                const size_t numClasses,
@@ -434,6 +433,7 @@ class DecisionTree :
    * @param data Set of points to classify.
    * @param predictions This will be filled with predictions for each point.
    */
+  template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions) const;
 
@@ -447,6 +447,7 @@ class DecisionTree :
    * @param probabilities This will be filled with class probabilities for each
    *      point.
    */
+  template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions,
                 arma::mat& probabilities) const;
@@ -469,9 +470,6 @@ class DecisionTree :
   //! trained tree).
   size_t SplitDimension() const { return splitDimension; }
 
-  //! Return the reference dataset.
-  MatType& DataSet() { return dataset; }
-
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
@@ -492,9 +490,7 @@ class DecisionTree :
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
   size_t splitDimension;
-  //! The reference dataset
-  MatType dataset;
-  
+
   union
   {
     //! Stores the type of dimension on which the split is done for internal
@@ -545,7 +541,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights>
+  template<bool UseWeights, typename MatType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
@@ -574,7 +570,7 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights>
+  template<bool UseWeights, typename MatType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,

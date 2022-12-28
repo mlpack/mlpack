@@ -28,13 +28,6 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, labels, "BestBinaryNumericSplit()",
-  	"labels");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "BestBinaryNumericSplit()",
-  	"weights");
-  	
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
     return DBL_MAX;
@@ -209,13 +202,6 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, responses, "BestBinaryNumericSplit()",
-  	"responses");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "BestBinaryNumericSplit()",
-  	"weights");
-  	
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
 
@@ -355,13 +341,6 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
-  // Sanity check on data.
-  util::CheckSameElemSizes(data, responses, "BestBinaryNumericSplit()",
-  	"responses");
-  if(UseWeights)
-  util::CheckSameElemSizes(data, weights, "BestBinaryNumericSplit()",
-  	"weights");
-  	
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
 

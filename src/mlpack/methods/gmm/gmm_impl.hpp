@@ -60,10 +60,6 @@ inline GMM& GMM::operator=(const GMM& other)
  */
 inline double GMM::LogProbability(const arma::vec& observation) const
 {
-  // Sanity check on data.
-  util::CheckSameDimensionality(observation, dimensionality, "GMM::LogProbability()", 
-  	"observation");
-  	
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
@@ -83,10 +79,6 @@ inline double GMM::LogProbability(const arma::vec& observation) const
 inline void GMM::LogProbability(const arma::mat& observation,
                                 arma::vec& logProbs) const
 {
-  // Sanity check on data.
-  util::CheckSameDimensionality(observation, dimensionality, "GMM::LogProbability()", 
-  	"observation");
-  	
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   logProbs.set_size(observation.n_cols);
@@ -201,10 +193,6 @@ inline arma::vec GMM::Random() const
 inline void GMM::Classify(const arma::mat& observations,
                           arma::Row<size_t>& labels) const
 {
-  // Sanity check on data.
-  util::CheckSameDimensionality(observations, dimensionality, "GMM::Classify()", 
-  	"observations");
-  	
   // This is not the best way to do this!
 
   // We should not have to fill this with values, because each one should be
@@ -240,14 +228,6 @@ inline double GMM::LogLikelihood(
     const std::vector<GaussianDistribution>& distsL,
     const arma::vec& weightsL) const
 {
-  // Sanity check on data.
-  util::CheckSameDimensionality(data, dimensionality, "GMM::LogLikelihood()", 
-  	"data");
-  util::CheckSameSizes(weightsL, gaussians, "GMM::LogLikelihood()", 
-  	"weightsL");
-  util::CheckSameVecElemSizes(distsL, weightsL, "GMM::LogLikelihood()", 
-  	"distsL");
-  	
   double loglikelihood = 0;
   arma::vec logPhis;
   arma::mat logLikelihoods(gaussians, data.n_cols);
@@ -274,10 +254,6 @@ double GMM::Train(const arma::mat& observations,
                   const bool useExistingModel,
                   FittingType fitter)
 {
-  // Sanity check on data.
-  util::CheckSameDimensionality(observations, dimensionality, "GMM::Train()", 
-  	"observations");
-  	
   double bestLikelihood; // This will be reported later.
 
   // We don't need to store temporary models if we are only doing one trial.
@@ -361,12 +337,6 @@ double GMM::Train(const arma::mat& observations,
                   const bool useExistingModel,
                   FittingType fitter)
 {
-  // Sanity check on data.
-  util::CheckSameDimensionality(observations, dimensionality, "GMM::Train()", 
-  	"observations");
-  util::CheckSameSizes(observations, probabilities, "GMM::Train()", 
-  	"probabilities", false, true);
-  	
   double bestLikelihood; // This will be reported later.
 
   // We don't need to store temporary models if we are only doing one trial.
