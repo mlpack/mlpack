@@ -150,8 +150,7 @@ class DBSCAN
    * @param uf UnionFind structure that will be modified.
    */
   template<typename MatType>
-  void BatchCluster(const MatType& data, UnionFind& uf,
-  std::vector<std::vector<size_t>>& neighbors);
+  void BatchCluster(const MatType& data, UnionFind& uf);
 };
 
 } // namespace mlpack
