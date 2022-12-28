@@ -38,7 +38,8 @@ template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         bool UseBootstrap = true>
+         bool UseBootstrap = true,
+    	 typename MatType = arma::mat>
 class RandomForest
 {
  public:
@@ -68,7 +69,6 @@ class RandomForest
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
   RandomForest(const MatType& dataset,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
@@ -97,7 +97,6 @@ class RandomForest
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
@@ -124,7 +123,6 @@ class RandomForest
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
   RandomForest(const MatType& dataset,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
@@ -155,7 +153,6 @@ class RandomForest
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
   RandomForest(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
@@ -187,7 +184,6 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
@@ -221,7 +217,6 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
@@ -254,7 +249,6 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
@@ -289,7 +283,6 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
@@ -333,7 +326,6 @@ class RandomForest
    * @param data Dataset to be classified.
    * @param predictions Output predictions for each point in the dataset.
    */
-  template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions) const;
 
@@ -346,7 +338,6 @@ class RandomForest
    * @param predictions Output predictions for each point in the dataset.
    * @param probabilities Output matrix of class probabilities for each point.
    */
-  template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& predictions,
                 arma::mat& probabilities) const;
@@ -358,7 +349,10 @@ class RandomForest
 
   //! Get the number of trees in the forest.
   size_t NumTrees() const { return trees.size(); }
-
+  
+  //! Return the reference dataset.
+  const MatType& DataSet() const { return dataset; }
+  
   /**
    * Serialize the random forest.
    */
@@ -388,7 +382,7 @@ class RandomForest
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<bool UseWeights, bool UseDatasetInfo, typename MatType>
+  template<bool UseWeights, bool UseDatasetInfo>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
@@ -406,6 +400,9 @@ class RandomForest
 
   //! The average gain of the forest.
   double avgGain;
+  
+  //! The reference dataset 
+  MatType dataset;
 };
 
 /**

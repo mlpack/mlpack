@@ -65,6 +65,14 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                                                   const size_t begin,
                                                   const size_t batchSize)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(dataset, labels, "SoftmaxErrorFunction::Evaluate()",
+  	"labels");
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Evaluate()",
+  	"coordinates", true, false);
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Evaluate()",
+  	"coordinates", true, true);
+  	
   // Unfortunately each evaluation will take O(N) time because it requires a
   // scan over all points in the dataset.  Our objective is to compute p_i.
   double denominator = 0;
@@ -111,6 +119,12 @@ template<typename MetricType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 arma::mat& gradient)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Gradient()",
+  	"coordinates", true, false);
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Gradient()",
+  	"coordinates", true, true);
+  	
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
 
@@ -162,6 +176,18 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 GradType& gradient,
                                                 const size_t batchSize)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(dataset, labels, "SoftmaxErrorFunction::Gradient()",
+  	"labels");
+  util::CheckSameSizes(dataset, gradient, "SoftmaxErrorFunction::Gradient()",
+  	"gradient", true, false);
+  util::CheckSameSizes(dataset, gradient, "SoftmaxErrorFunction::Gradient()",
+  	"gradient", true, true);
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Gradient()",
+  	"coordinates", true, false);
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Gradient()",
+  	"coordinates", true, true);
+  	
   // The gradient involves two matrix terms which are eventually combined into
   // one.
   GradType firstTerm, secondTerm;
@@ -240,6 +266,14 @@ template<typename MetricType>
 void SoftmaxErrorFunction<MetricType>::Precalculate(
     const arma::mat& coordinates)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(dataset, labels, "SoftmaxErrorFunction::Precalculate()",
+  	"labels");
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Precalculate()",
+  	"coordinates", true, false);
+  util::CheckSameSizes(dataset, coordinates, "SoftmaxErrorFunction::Precalculate()",
+  	"coordinates", true, true);
+  	
   // Ensure it is the right size.
   if (lastCoordinates.n_rows != coordinates.n_rows ||
       lastCoordinates.n_cols != coordinates.n_cols)

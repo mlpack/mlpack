@@ -35,7 +35,8 @@ template<typename FitnessFunction = MSEGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename DimensionSelectionType = AllDimensionSelect,
-         bool NoRecursion = false>
+         bool NoRecursion = false,
+         typename MatType = arma::mat>
 class DecisionTreeRegressor :
     public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
     public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
@@ -69,7 +70,7 @@ class DecisionTreeRegressor :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename ResponsesType>
   DecisionTreeRegressor(MatType data,
                         const data::DatasetInfo& datasetInfo,
                         ResponsesType responses,
@@ -94,7 +95,7 @@ class DecisionTreeRegressor :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename ResponsesType>
   DecisionTreeRegressor(MatType data,
                         ResponsesType responses,
                         const size_t minimumLeafSize = 10,
@@ -121,7 +122,7 @@ class DecisionTreeRegressor :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType, typename WeightsType>
+  template<typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       MatType data,
       const data::DatasetInfo& datasetInfo,
@@ -151,7 +152,7 @@ class DecisionTreeRegressor :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType, typename WeightsType>
+  template<typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       MatType data,
       ResponsesType responses,
@@ -181,7 +182,7 @@ class DecisionTreeRegressor :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    */
-  template<typename MatType, typename ResponsesType, typename WeightsType>
+  template<typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       const DecisionTreeRegressor& other,
       MatType data,
@@ -210,7 +211,7 @@ class DecisionTreeRegressor :
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename ResponsesType, typename WeightsType>
+  template<typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       const DecisionTreeRegressor& other,
       MatType data,
@@ -278,7 +279,7 @@ class DecisionTreeRegressor :
    *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename ResponsesType>
   double Train(MatType data,
                const data::DatasetInfo& datasetInfo,
                ResponsesType responses,
@@ -307,7 +308,7 @@ class DecisionTreeRegressor :
    *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename ResponsesType>
+  template<typename ResponsesType>
   double Train(MatType data,
                ResponsesType responses,
                const size_t minimumLeafSize = 10,
@@ -339,7 +340,7 @@ class DecisionTreeRegressor :
    *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename ResponsesType, typename WeightsType>
+  template<typename ResponsesType, typename WeightsType>
   double Train(MatType data,
                const data::DatasetInfo& datasetInfo,
                ResponsesType responses,
@@ -373,7 +374,7 @@ class DecisionTreeRegressor :
    *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename ResponsesType, typename WeightsType>
+  template<typename ResponsesType, typename WeightsType>
   double Train(MatType data,
                ResponsesType responses,
                WeightsType weights,
@@ -402,7 +403,6 @@ class DecisionTreeRegressor :
    * @param data Set of points to predict.
    * @param predictions This will be filled with predictions for each point.
    */
-  template<typename MatType>
   void Predict(const MatType& data,
                 arma::Row<double>& predictions) const;
 
@@ -430,6 +430,9 @@ class DecisionTreeRegressor :
   //! trained tree).
   size_t SplitDimension() const { return splitDimension; }
 
+  //! Return the reference dataset.
+  MatType& DataSet() { return dataset; }
+
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
@@ -448,6 +451,8 @@ class DecisionTreeRegressor :
   //! The type of the dimension that we have split on (only meaningful if this
   //! is a non-leaf in a trained tree).
   size_t dimensionType;
+  //! The reference dataset
+  MatType dataset;
 
   union
   {
@@ -483,7 +488,7 @@ class DecisionTreeRegressor :
    *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType, typename ResponsesType>
+  template<bool UseWeights, typename ResponsesType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
@@ -513,7 +518,7 @@ class DecisionTreeRegressor :
    *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType, typename ResponsesType>
+  template<bool UseWeights, typename ResponsesType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,

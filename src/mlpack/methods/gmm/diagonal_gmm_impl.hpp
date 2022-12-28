@@ -25,6 +25,10 @@ double DiagonalGMM::Train(const arma::mat& observations,
                           const bool useExistingModel,
                           FittingType fitter)
 {
+  // Sanity check on data.
+  util::CheckSameDimensionality(observations, dimensionality, "DiagonalGMM::Train()", 
+  	"observations");
+  	
   double bestLikelihood; // This will be reported later.
 
   // We don't need to store temporary models if we are only doing one trial.
@@ -142,6 +146,10 @@ inline DiagonalGMM& DiagonalGMM::operator=(const DiagonalGMM& other)
  */
 inline double DiagonalGMM::LogProbability(const arma::vec& observation) const
 {
+  // Sanity check on data.
+  util::CheckSameDimensionality(observation, dimensionality,
+  	"DiagonalGMM::LogProbability()", "observations");
+  	
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
@@ -162,6 +170,10 @@ inline double DiagonalGMM::LogProbability(const arma::vec& observation) const
 inline void DiagonalGMM::LogProbability(const arma::mat& observation,
                                         arma::vec& logProbs) const
 {
+  // Sanity check on data.
+  util::CheckSameDimensionality(observation, dimensionality, 
+  	"DiagonalGMM::LogProbability()", "observations");
+  	
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   logProbs.set_size(observation.n_cols);
@@ -261,8 +273,11 @@ inline arma::vec DiagonalGMM::Random() const
 inline void DiagonalGMM::Classify(const arma::mat& observations,
                                   arma::Row<size_t>& labels) const
 {
+  // Sanity check on data.
+  util::CheckSameDimensionality(observations, dimensionality, 
+  	"DiagonalGMM::Classify()", "observations");
+  	
   // This is not the best way to do this!
-
   // We should not have to fill this with values, because each one should be
   // overwritten.
   labels.set_size(observations.n_cols);
@@ -290,6 +305,10 @@ inline double DiagonalGMM::LogLikelihood(
     const std::vector<DiagonalGaussianDistribution>& dists,
     const arma::vec& weights) const
 {
+  // Sanity check on data.
+  util::CheckSameDimensionality(observations, dimensionality, 
+  	"DiagonalGMM::Classify()", "observations");
+  	
   double logLikelihood = 0;
   arma::vec phis;
   arma::mat likelihoods(gaussians, observations.n_cols);
@@ -323,6 +342,10 @@ double DiagonalGMM::Train(const arma::mat& observations,
                           const bool useExistingModel,
                           FittingType fitter)
 {
+  // Sanity check on data.
+  util::CheckSameDimensionality(observations, dimensionality, 
+  	"DiagonalGMM::Classify()", "observations");
+  	
   double bestLikelihood; // This will be reported later.
 
   // We don't need to store temporary models if we are only doing one trial.

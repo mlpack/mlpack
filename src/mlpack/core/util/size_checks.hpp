@@ -53,6 +53,62 @@ inline void CheckSameSizes(const DataType& data,
 }
 
 /**
+ * Check for if the given data points & labels have same size
+ * or same number of elements
+ *
+ * @param Vec data data.
+ * @param labels Labels.
+ * @param callerDescription A description of the caller that can be used for
+ *     error generation.
+ * @param addInfo Name to use for labels for precise error generation. Default
+ *     is "labels"; for example, "weights" could also be used.
+ *     before size-check. Default is false.
+ */
+template<typename DataType, typename LabelsType>
+inline void CheckSameElemSizes(const DataType& data,
+                           const LabelsType& label,
+                           const std::string& callerDescription,
+                           const std::string& addInfo = "labels")
+{ 
+  if (data.n_elem != label.n_elem )
+  {
+    std::ostringstream oss;
+    oss << callerDescription << ": number of points (" << data.n_elem << ") "
+        << "does not match number of " << addInfo << " (" << label.n_elem
+        << ")!" << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+/**
+ * Check for if the given data points & labels have same size
+ * or same number of elements
+ *
+ * @param std Vector data data.
+ * @param labels Labels.
+ * @param callerDescription A description of the caller that can be used for
+ *     error generation.
+ * @param addInfo Name to use for labels for precise error generation. Default
+ *     is "labels"; for example, "weights" could also be used.
+ *     before size-check. Default is false.
+ */
+template<typename DataType, typename LabelsType>
+inline void CheckSameVecElemSizes(const DataType& data,
+                           const LabelsType& label,
+                           const std::string& callerDescription,
+                           const std::string& addInfo = "labels")
+{ 
+  if (data.size() != label.n_elem )
+  {
+    std::ostringstream oss;
+    oss << callerDescription << ": number of points (" << data.size() << ") "
+        << "does not match number of " << addInfo << " (" << label.n_elem
+        << ")!" << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+}
+
+/**
  * An overload of CheckSameSizes() where the size to be checked is known
  * previously. The second parameter is of type unsigned int.
  */
@@ -71,7 +127,6 @@ inline void CheckSameSizes(const DataType& data,
     throw std::invalid_argument(oss.str());
   }
 }
-
 
 /**
  * Check for if the given dataset dimension matches with the model's.

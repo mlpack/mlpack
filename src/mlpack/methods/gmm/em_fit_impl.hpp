@@ -44,6 +44,8 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
+  // Sanity check on data.
+  util::CheckSameVecElemSizes(dists, weights, "EMFit::Estimate()", "weights");
   if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
   {
     #ifdef _WIN32
@@ -173,6 +175,11 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(observations, probabilities, "EMFit::Estimate()"
+  	, "probabilities", false, true);
+  util::CheckSameVecElemSizes(dists, weights, "EMFit::Estimate()", "weights");
+  	
   if (!useInitialModel)
     InitialClustering(observations, dists, weights);
 
@@ -283,6 +290,9 @@ InitialClustering(const arma::mat& observations,
                   std::vector<Distribution>& dists,
                   arma::vec& weights)
 {
+  // Sanity check on data.
+  util::CheckSameVecElemSizes(dists, weights, "EMFit::InitialClustering()", "weights");
+  
   // Assignments from clustering.
   arma::Row<size_t> assignments;
 
@@ -377,6 +387,9 @@ LogLikelihood(const arma::mat& observations,
               const std::vector<Distribution>& dists,
               const arma::vec& weights) const
 {
+  // Sanity check on data.
+  util::CheckSameVecElemSizes(dists, weights, "EMFit::LogLikelihood()", "weights");
+  
   double logLikelihood = 0;
 
   arma::vec logPhis;
@@ -425,6 +438,8 @@ ArmadilloGMMWrapper(const arma::mat& observations,
                     arma::vec& weights,
                     const bool useInitialModel)
 {
+  // Sanity check on data.
+  util::CheckSameVecElemSizes(dists, weights, "EMFit::ArmadilloGMMWrapper()", "weights");
   arma::gmm_diag g;
 
   // Warn the user that tolerance isn't used for convergence here if they've
