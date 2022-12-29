@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix DBSCAN handling of non-core points (#3346).
 
 ### mlpack 4.0.1
 ###### 2022-12-23
