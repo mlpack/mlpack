@@ -137,7 +137,7 @@ jobs:
         if: runner.os != 'Windows' && runner.os != 'macOS'
         run: |
             sudo apt-get update
-            sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev
+            sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev libcereal-dev
 
       - name: Install dependencies
         run: |
