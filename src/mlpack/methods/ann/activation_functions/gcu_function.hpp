@@ -9,7 +9,9 @@
  * @code
  * @misc{
  *   authors = {Mathew Mithra Noel, Arunkumar L, Advait Trivedi, Praneet Dutta},
- *   title = {Growing Cosine Unit: A Novel Oscillatory Activation Function That Can Speedup Training and Reduce Parameters in Convolutional Neural Networks},
+ *   title = {Growing Cosine Unit: A Novel Oscillatory Activation Function 
+*    That Can Speedup Training and Reduce Parameters 
+*    in Convolutional Neural Networks},
  *   year = {2021}
  * }
  * @endcode
