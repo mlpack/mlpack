@@ -1005,8 +1005,30 @@ double DecisionTreeRegressor<FitnessFunction,
     // Return cached prediction.
     return prediction;
   }
-  children[CalculateDirection(point)]->DataSet()=dataset;
-  return children[CalculateDirection(point)]->Predict(point);
+  return children[CalculateDirection(point)]->PostPredict(point);
+}
+
+//! Return the prediction.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion,
+         typename MatType>
+template<typename VecType>
+double DecisionTreeRegressor<FitnessFunction,
+                             NumericSplitType,
+                             CategoricalSplitType,
+                             DimensionSelectionType,
+                             NoRecursion,
+                             MatType>::PostPredict(const VecType& point) const
+{
+  if (children.size() == 0)
+  {
+    // Return cached prediction.
+    return prediction;
+  }
+  return children[CalculateDirection(point)]->PostPredict(point);
 }
 
 //! Return the predictions for a set of points.
@@ -1037,7 +1059,7 @@ void DecisionTreeRegressor<FitnessFunction,
 
   // Loop over each point.
   for (size_t i = 0; i < data.n_cols; ++i)
-    predictions[i] = Predict(data.col(i));
+    predictions[i] = PostPredict(data.col(i));
 }
 
 template<typename FitnessFunction,

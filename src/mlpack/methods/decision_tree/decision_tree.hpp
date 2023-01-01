@@ -407,6 +407,7 @@ class DecisionTree :
   /**
    * Classify the given point, using the entire tree.  The predicted label is
    * returned.
+   * Perform Sanity Check
    *
    * @param point Point to classify.
    */
@@ -416,6 +417,7 @@ class DecisionTree :
   /**
    * Classify the given point and also return estimates of the probability for
    * each class in the given vector.
+   * Perform Sanity Check
    *
    * @param point Point to classify.
    * @param prediction This will be set to the predicted class of the point.
@@ -585,6 +587,30 @@ class DecisionTree :
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
+            
+  /**
+   * PostClassify the given point once sanity check is performed,
+   * using the entire tree.  The predicted label is
+   * returned.
+   *
+   * @param point Point to classify.
+   */
+  template<typename VecType>
+  size_t PostClassify(const VecType& point) const;
+                  
+  /**
+   * PostClassify the given point once sanity check is performed and also return 
+   * estimates of the probability for each class in the given vector.
+   *
+   * @param point Point to classify.
+   * @param prediction This will be set to the predicted class of the point.
+   * @param probabilities This will be filled with class probabilities for the
+   *      point.
+   */
+  template<typename VecType>
+  void PostClassify(const VecType& point,
+                size_t& prediction,
+                arma::vec& probabilities) const;
 };
 
 /**

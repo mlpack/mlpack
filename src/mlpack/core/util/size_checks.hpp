@@ -66,9 +66,9 @@ inline void CheckSameSizes(const DataType& data,
  */
 template<typename DataType, typename LabelsType>
 inline void CheckSameElemSizes(const DataType& data,
-                           const LabelsType& label,
-                           const std::string& callerDescription,
-                           const std::string& addInfo = "labels")
+                               const LabelsType& label,
+                               const std::string& callerDescription,
+                               const std::string& addInfo = "labels")
 { 
   if (data.n_elem != label.n_elem )
   {
@@ -94,9 +94,9 @@ inline void CheckSameElemSizes(const DataType& data,
  */
 template<typename DataType, typename LabelsType>
 inline void CheckSameVecElemSizes(const DataType& data,
-                           const LabelsType& label,
-                           const std::string& callerDescription,
-                           const std::string& addInfo = "labels")
+                                  const LabelsType& label,
+                                  const std::string& callerDescription,
+                                  const std::string& addInfo = "labels")
 { 
   if (data.size() != label.n_elem )
   {

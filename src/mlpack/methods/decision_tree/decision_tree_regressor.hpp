@@ -390,6 +390,7 @@ class DecisionTreeRegressor :
   /**
    * Make prediction for the given point, using the entire tree.  The predicted
    * label is returned.
+   * Perform Sanity Check
    *
    * @param point Point to predict.
    */
@@ -529,6 +530,15 @@ class DecisionTreeRegressor :
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector,
                FitnessFunction fitnessFunction = FitnessFunction());
+
+  /**
+   * Make postprediction for the given point once sanity check is performed, 
+   * using the entire tree. The predicted label is returned.
+   *
+   * @param point Point to predict.
+   */
+  template<typename VecType>
+  double PostPredict(const VecType& point) const;
 };
 
 

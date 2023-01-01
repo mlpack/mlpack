@@ -1016,8 +1016,29 @@ size_t DecisionTree<FitnessFunction,
     // Return cached max of probabilities.
     return majorityClass;
   }
-  children[CalculateDirection(point)]->DataSet()=dataset;
-  return children[CalculateDirection(point)]->Classify(point);
+  return children[CalculateDirection(point)]->PostClassify(point);
+}
+
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion,
+         typename MatType>
+template<typename VecType>
+size_t DecisionTree<FitnessFunction,
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    NoRecursion,
+                    MatType>::PostClassify(const VecType& point) const
+{
+  if (children.size() == 0)
+  {
+    // Return cached max of probabilities.
+    return majorityClass;
+  }
+  return children[CalculateDirection(point)]->PostClassify(point);
 }
 
 //! Return class probabilities for a given point.
@@ -1046,8 +1067,34 @@ void DecisionTree<FitnessFunction,
     probabilities = classProbabilities;
     return;
   }
-  children[CalculateDirection(point)]->DataSet()=dataset;
-  children[CalculateDirection(point)]->Classify(point, prediction,
+  children[CalculateDirection(point)]->PostClassify(point, prediction,
+      probabilities);
+}
+
+//! Return class probabilities for a given point.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion,
+         typename MatType>
+template<typename VecType>
+void DecisionTree<FitnessFunction,
+                  NumericSplitType,
+                  CategoricalSplitType,
+                  DimensionSelectionType,
+                  NoRecursion,
+                  MatType>::PostClassify(const VecType& point,
+                                         size_t& prediction,
+                                         arma::vec& probabilities) const
+{
+  if (children.size() == 0)
+  {
+    prediction = majorityClass;
+    probabilities = classProbabilities;
+    return;
+  }
+  children[CalculateDirection(point)]->PostClassify(point, prediction,
       probabilities);
 }
 
@@ -1078,7 +1125,7 @@ void DecisionTree<FitnessFunction,
 
   // Loop over each point.
   for (size_t i = 0; i < data.n_cols; ++i)
-    predictions[i] = Classify(data.col(i));
+    predictions[i] = PostClassify(data.col(i));
 }
 
 //! Return the class probabilities for a set of points.
@@ -1118,7 +1165,7 @@ void DecisionTree<FitnessFunction,
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     arma::vec v = probabilities.unsafe_col(i); // Alias of column.
-    Classify(data.col(i), predictions[i], v);
+    PostClassify(data.col(i), predictions[i], v);
   }
 }
 
