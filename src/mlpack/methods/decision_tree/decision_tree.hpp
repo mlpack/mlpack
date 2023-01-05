@@ -173,6 +173,7 @@ class DecisionTree :
       const double minimumGainSplit = 1e-7,
       const std::enable_if_t<arma::is_arma_type<
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
+
   /**
    * Construct the decision tree on the given data and labels with weights,
    * assuming that the data is all of the numeric type. Setting minimumLeafSize
