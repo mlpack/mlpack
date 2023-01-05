@@ -121,7 +121,7 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-          
+
       - name: Query dependencies
         run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
 
@@ -138,6 +138,10 @@ jobs:
         run: |
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libcurl4-openssl-dev libcereal-dev
+
+      - name: Install check dependencies
+        if: runner.os == 'macOS'
+        run: brew install cereal
 
       - name: Install dependencies
         run: |
