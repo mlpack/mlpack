@@ -51,6 +51,42 @@ void TestNetwork(ModelType& model,
   REQUIRE(classificationError <= classificationErrorThreshold);
 }
 
+/**
+ * Train and evaluate a model with the specified structure using SGD and Signum function.
+ */
+template<typename MatType = arma::mat, typename ModelType>
+void TestNetworkSignumSGD(ModelType& model,
+                 MatType& trainData,
+                 MatType& trainLabels,
+                 MatType& testData,
+                 MatType& testLabels,
+                 const size_t maxEpochs,
+                 const double classificationErrorThreshold)
+{
+  ens::StandardSGD opt(0.1, 1, maxEpochs);
+  model.Train(trainData, trainLabels, opt);
+
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
+
+    // Signum function to map values to either 1 or -1
+    if (prediction(i) > 0)                
+      prediction(i) = 1;
+    else
+      prediction(i) = -1;
+  }
+  size_t correct = arma::accu(prediction == testLabels);
+
+  double classificationError = 1 - double(correct) / testData.n_cols;
+  REQUIRE(classificationError <= classificationErrorThreshold);
+}
+
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
@@ -979,4 +1015,27 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
 
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
+}
+
+/**
+ * Test that the GCU activation function solves
+ * the XOR problem.
+ */
+TEST_CASE("GCUActivationFunction", "[FeedForwardNetworkTest]")
+{
+  arma::mat xorData;
+  xorData << -1 << -1 << arma::endr << 1 << -1 << arma::endr << -1 << 1
+  << arma::endr << 1 << 1;
+
+  arma::mat xorLabels;
+  xorLabels << -1 << arma::endr << 1 << arma::endr << 1 << arma::endr << -1;
+
+  // A single neuron network with GCU activation function.
+  FFN<NegativeLogLikelihood> model;
+  model.Add<Linear>(1);
+  model.Add<GCU>();
+  model.Add<LogSoftMax>();
+
+  TestNetworkSignumSGD<> (model, xorData, xorLabels, xorData, xorLabels, 50, 0);
+
 }

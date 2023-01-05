@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/gcu_function.hpp>
 #include "layer.hpp"
 
 namespace mlpack {
@@ -55,6 +56,7 @@ namespace mlpack {
  *  - HardSwish
  *  - TanhExp
  *  - SILU
+ *  - GCU
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  */
@@ -240,6 +242,14 @@ typedef BaseLayer<SILUFunction, arma::mat> SILU;
 
 template<typename MatType = arma::mat>
 using SILUType = BaseLayer<SILUFunction, MatType>;
+
+/**
+ * Standard GCU-Layer using the GCU activation function.
+ */
+typedef BaseLayer<GCUFunction, arma::mat> GCU;
+
+template<typename MatType = arma::mat>
+using GCUType = BaseLayer<GCUFunction, MatType>;
 
 } // namespace mlpack
 
