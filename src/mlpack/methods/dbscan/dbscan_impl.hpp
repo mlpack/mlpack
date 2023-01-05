@@ -100,8 +100,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     arma::Row<size_t>& assignments)
 {
   // Initialize the UnionFind object.
-  // The last element represents noise.
-  UnionFind uf(data.n_cols + 1);
+  UnionFind uf(data.n_cols);
   rangeSearch.Train(data);
 
   if (batchMode)
