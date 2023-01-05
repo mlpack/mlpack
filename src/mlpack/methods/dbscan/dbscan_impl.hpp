@@ -186,12 +186,9 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
 
     // Union to all neighbors if the point is not noise.
     //
-    // Note that the +1 is needed because our range search will return the point
-    // itself as within the range.
-    //
     // If the point is noise, we leave its label as undefined (i.e. we do no
     // unioning).
-    if (neighbors[0].size() >= minPoints + 1)
+    if (neighbors[0].size() >= minPoints)
     {
       for (size_t j = 0; j < neighbors[0].size(); ++j)
       {
@@ -253,8 +250,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     // Get the next index.
     const size_t index = pointSelector.Select(i, data);
     // Monochromatic dual-tree range search does not return the point as its own
-    // neighbor, so we do not need to add 1 to `minPoints`.
-    if (neighbors[index].size() >= minPoints)
+    // neighbor, so we are looking for `minPoints - 1` instead.
+    if (neighbors[index].size() >= minPoints - 1)
     {
       for (size_t j = 0; j < neighbors[index].size(); ++j)
       {
@@ -263,7 +260,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
           // This unions unlabeled points.
           uf.Union(index, neighbors[index][j]);
         }
-        else if (neighbors[neighbors[index][j]].size() >= minPoints)
+        else if (neighbors[neighbors[index][j]].size() >= (minPoints - 1))
         {
           // This unions core points of other clusters.
           uf.Union(index, neighbors[index][j]);
