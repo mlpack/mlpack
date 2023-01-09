@@ -235,7 +235,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   std::vector<std::vector<double>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(data, Range(0.0, epsilon), neighbors, distances);
+  rangeSearch.Search(Range(0.0, epsilon), neighbors, distances);
   Log::Info << "Range search complete." << std::endl;
 
   // See the description of the algorithm in `PointwiseCluster()`.  The strategy
