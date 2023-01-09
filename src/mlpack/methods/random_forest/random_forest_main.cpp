@@ -285,11 +285,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     arma::mat testData = std::move(params.Get<arma::mat>("test"));
     timers.Start("rf_prediction");
-    // if (testData.n_rows != data.n_rows)
-    // {
-    //   Log::Fatal << "The number of labels (" << labels.rows << ") must "
-    //       << "match the number of points (" << data.n_rows << ")!" << endl;
-    // }
 
     // Get predictions and probabilities.
     arma::Row<size_t> predictions;
