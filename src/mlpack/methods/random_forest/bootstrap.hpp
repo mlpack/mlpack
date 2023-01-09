@@ -29,6 +29,11 @@ void Bootstrap(const MatType& dataset,
                LabelsType& bootstrapLabels,
                WeightsType& bootstrapWeights)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(dataset, labels, "Bootstrap()", "labels");
+  if (UseWeights)
+    util::CheckSameSizes(dataset, weights, "Bootstrap()", "weights");
+    
   bootstrapDataset.set_size(dataset.n_rows, dataset.n_cols);
   bootstrapLabels.set_size(labels.n_elem);
   if (UseWeights)

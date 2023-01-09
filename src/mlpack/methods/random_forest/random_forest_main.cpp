@@ -233,6 +233,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::mat data = std::move(params.Get<arma::mat>("training"));
     arma::Row<size_t> labels =
         std::move(params.Get<arma::Row<size_t>>("labels"));
+    if (labels.n_elem != data.n_cols)
+    {
+      Log::Fatal << "The number of labels (" << labels.n_elem << ") must "
+          << "match the number of points (" << data.n_cols << ")!" << endl;
+    }
 
     // Make sure the subspace dimensionality is valid.
     RequireParamValue<int>(params, "subspace_dim",
@@ -280,6 +285,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     arma::mat testData = std::move(params.Get<arma::mat>("test"));
     timers.Start("rf_prediction");
+    // if (testData.n_rows != data.n_rows)
+    // {
+    //   Log::Fatal << "The number of labels (" << labels.rows << ") must "
+    //       << "match the number of points (" << data.n_rows << ")!" << endl;
+    // }
 
     // Get predictions and probabilities.
     arma::Row<size_t> predictions;
@@ -291,6 +301,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     {
       arma::Row<size_t> testLabels =
           std::move(params.Get<arma::Row<size_t>>("test_labels"));
+      if (testLabels.n_elem != testData.n_cols)
+      {
+          Log::Fatal << "The number of testlabels (" << testLabels.n_elem << ") must "
+          << "match the number of testpoints (" << testData.n_cols << ")!" << endl;
+      }
 
       const size_t correct = arma::accu(predictions == testLabels);
 
