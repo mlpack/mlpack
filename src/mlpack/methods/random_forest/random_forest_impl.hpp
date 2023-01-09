@@ -494,6 +494,11 @@ double RandomForest<
          DimensionSelectionType& dimensionSelector,
          const bool warmStart)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(dataset, labels, "RandomForest::Train()", "labels");
+  if (UseWeights)
+    util::CheckSameSizes(dataset, weights, "RandomForest::Train()", "weights");
+
   // Reset the forest if we are not doing a warm-start.
   if (!warmStart)
     trees.clear();
