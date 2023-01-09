@@ -172,7 +172,7 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
     noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
-  arma::mat data = arma::join_rows(dataset, noise);
+  arma::mat fullData = arma::join_rows(dataset, noise);
   arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
 
   // Now set weights.
@@ -183,8 +183,8 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
     weights[i] = Random(0.0, 0.01); // Low weights for false points.
 
   // Train decision tree and random forest.
-  RandomForest<> rf(dataset, labels, 3, weights, 20, 1);
-  DecisionTree<> dt(dataset, labels, 3, weights, 5);
+  RandomForest<> rf(fullData, fullLabels, 3, weights, 20, 1);
+  DecisionTree<> dt(fullData, fullLabels, 3, weights, 5);
 
   // Get performance statistics on test data.
   arma::mat testDataset;
