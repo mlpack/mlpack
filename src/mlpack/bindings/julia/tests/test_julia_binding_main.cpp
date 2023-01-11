@@ -119,11 +119,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   // the 3rd row will be multiplied by two.
   if (params.Has("matrix_in"))
   {
-    arma::mat out = move(params.Get<arma::mat>("matrix_in"));
+    arma::mat out = std::move(params.Get<arma::mat>("matrix_in"));
     out.shed_row(4);
     out.row(2) *= 2.0;
 
-    params.Get<arma::mat>("matrix_out") = move(out);
+    params.Get<arma::mat>("matrix_out") = std::move(out);
   }
 
   // Input matrices should be at least 5 rows; the 5th row will be dropped and
@@ -131,70 +131,70 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   if (params.Has("umatrix_in"))
   {
     arma::Mat<size_t> out =
-        move(params.Get<arma::Mat<size_t>>("umatrix_in"));
+        std::move(params.Get<arma::Mat<size_t>>("umatrix_in"));
     out.shed_row(4);
     out.row(2) *= 2;
 
-    params.Get<arma::Mat<size_t>>("umatrix_out") = move(out);
+    params.Get<arma::Mat<size_t>>("umatrix_out") = std::move(out);
   }
 
   // An input column or row should have all elements multiplied by two.
   if (params.Has("col_in"))
   {
-    arma::vec out = move(params.Get<arma::vec>("col_in"));
+    arma::vec out = std::move(params.Get<arma::vec>("col_in"));
     out *= 2.0;
 
-    params.Get<arma::vec>("col_out") = move(out);
+    params.Get<arma::vec>("col_out") = std::move(out);
   }
 
   if (params.Has("ucol_in"))
   {
     arma::Col<size_t> out =
-        move(params.Get<arma::Col<size_t>>("ucol_in"));
+        std::move(params.Get<arma::Col<size_t>>("ucol_in"));
     out *= 2;
 
-    params.Get<arma::Col<size_t>>("ucol_out") = move(out);
+    params.Get<arma::Col<size_t>>("ucol_out") = std::move(out);
   }
 
   if (params.Has("row_in"))
   {
-    arma::rowvec out = move(params.Get<arma::rowvec>("row_in"));
+    arma::rowvec out = std::move(params.Get<arma::rowvec>("row_in"));
     out *= 2.0;
 
-    params.Get<arma::rowvec>("row_out") = move(out);
+    params.Get<arma::rowvec>("row_out") = std::move(out);
   }
 
   if (params.Has("urow_in"))
   {
     arma::Row<size_t> out =
-        move(params.Get<arma::Row<size_t>>("urow_in"));
+        std::move(params.Get<arma::Row<size_t>>("urow_in"));
     out *= 2;
 
-    params.Get<arma::Row<size_t>>("urow_out") = move(out);
+    params.Get<arma::Row<size_t>>("urow_out") = std::move(out);
   }
 
   // Vector arguments should have the last element removed.
   if (params.Has("vector_in"))
   {
-    vector<int> out = move(params.Get<vector<int>>("vector_in"));
+    vector<int> out = std::move(params.Get<vector<int>>("vector_in"));
     out.pop_back();
 
-    params.Get<vector<int>>("vector_out") = move(out);
+    params.Get<vector<int>>("vector_out") = std::move(out);
   }
 
   if (params.Has("str_vector_in"))
   {
-    vector<string> out = move(params.Get<vector<string>>("str_vector_in"));
+    vector<string> out = std::move(params.Get<vector<string>>("str_vector_in"));
     out.pop_back();
 
-    params.Get<vector<string>>("str_vector_out") = move(out);
+    params.Get<vector<string>>("str_vector_out") = std::move(out);
   }
 
   // All numeric elements should be multiplied by 3.
   if (params.Has("matrix_and_info_in"))
   {
     typedef tuple<data::DatasetInfo, arma::mat> TupleType;
-    TupleType tuple = move(params.Get<TupleType>("matrix_and_info_in"));
+    TupleType tuple = std::move(params.Get<TupleType>("matrix_and_info_in"));
 
     const data::DatasetInfo& di = std::get<0>(tuple);
     arma::mat& m = std::get<1>(tuple);
@@ -224,7 +224,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       }
     }
 
-    params.Get<arma::mat>("matrix_and_info_out") = move(m);
+    params.Get<arma::mat>("matrix_and_info_out") = std::move(m);
   }
 
   // If we got a request to build a model, then build it.

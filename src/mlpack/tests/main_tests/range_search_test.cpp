@@ -57,7 +57,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
   if (!data::Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
-  SetInputParam("reference", move(inputData));
+  SetInputParam("reference", std::move(inputData));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -96,7 +96,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
   if (!data::Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
-  SetInputParam("reference", move(inputData));
+  SetInputParam("reference", std::move(inputData));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -125,7 +125,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
   if (!data::Load("iris_test.csv", queryData))
     FAIL("Unable to load dataset iris_test.csv!");
 
-  SetInputParam("reference", move(inputData));
+  SetInputParam("reference", std::move(inputData));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -134,8 +134,8 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
 
   RUN_BINDING();
 
-  SetInputParam("input_model", move(params.Get<RSModel*>("output_model")));
-  SetInputParam("query", move(queryData));
+  SetInputParam("input_model", std::move(params.Get<RSModel*>("output_model")));
+  SetInputParam("query", std::move(queryData));
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 
@@ -174,7 +174,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchTest",
   vector<vector<size_t>> neighbors;
   vector<vector<double>> distances;
 
-  SetInputParam("reference", move(x));
+  SetInputParam("reference", std::move(x));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -219,7 +219,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSeachTestwithQuery",
   double minVal = 0, maxVal = 5;
 
   SetInputParam("query", queryData);
-  SetInputParam("reference", move(x));
+  SetInputParam("reference", std::move(x));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -256,7 +256,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
   if (!data::Load("iris_test.csv", queryData))
     FAIL("Unable to load dataset iris_test.csv!");
 
-  SetInputParam("reference", move(inputData));
+  SetInputParam("reference", std::move(inputData));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -275,7 +275,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
   ResetSettings();
 
   SetInputParam("input_model", outputModel);
-  SetInputParam("query", move(queryData));
+  SetInputParam("query", std::move(queryData));
 
   RUN_BINDING();
 
@@ -455,7 +455,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
 
   RUN_BINDING();
 
-  RSModel* outputModel = move(params.Get<RSModel*>("output_model"));
+  RSModel* outputModel = std::move(params.Get<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -504,7 +504,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel = move(params.Get<RSModel*>("output_model"));
+  RSModel* outputModel = std::move(params.Get<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -559,7 +559,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel = move(params.Get<RSModel*>("output_model"));
+  RSModel* outputModel = std::move(params.Get<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);

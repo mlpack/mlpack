@@ -86,7 +86,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
 
   // Test for folds.
 
-  SetInputParam("training", move(trainingData));
+  SetInputParam("training", std::move(trainingData));
   SetInputParam("folds", (int) -1);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);

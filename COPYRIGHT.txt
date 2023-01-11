@@ -150,6 +150,7 @@ Copyright:
   Copyright 2022, Sri Madhan M <srimadhan11@gmail.com>
   Copyright 2022, Zhuojin Liu <zhuojinliu.cs@gmail.com>
   Copyright 2022, Richèl Bilderbeek <richel@richelbilderbeek.nl>
+  Copyright 2022, Chetan Pandey <chetanpandey1266@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
