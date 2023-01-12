@@ -19,8 +19,7 @@ namespace data {
 
 /**
  * A safe function to get negative or positive infinity, which avoids unary
- * minus on an unsigned type.  This works around a Visual Studio bug.
- * (TODO: add a link?)
+ * minus on an unsigned type.  This works around a Visual Studio warning.
  */
 template<typename eT>
 inline eT SafeNegInf(
