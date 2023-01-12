@@ -99,12 +99,14 @@ if(NOT _ARMA_USE_WRAPPER OR MSVC)
     # https://gitlab.kitware.com/cmake/cmake/-/issues/23693 for more
     # information.  When that issue is fixed, we may be able to remove this
     # section.
-    if (NOT BUILD_SHARED_LIBS AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    if (NOT BUILD_SHARED_LIBS AND
+        ${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND
+        NOT CMAKE_CROSSCOMPILING)
       string(TOLOWER "${LAPACK_LIBRARIES}" _lower_lapack_libs)
       string(FIND "${_lower_lapack_libs}" "openblas" _openblas_found_index)
       if (${_openblas_found_index} GREATER_EQUAL 0)
-	message(STATUS "Using static OpenBLAS on Linux; adding -lgfortran and -lquadmath...")
-	set(LAPACK_LIBRARIES "${LAPACK_LIBRARIES};gfortran;quadmath")
+        message(STATUS "Using static OpenBLAS on Linux; adding -lgfortran and -lquadmath...")
+        set(LAPACK_LIBRARIES "${LAPACK_LIBRARIES};gfortran;quadmath")
       endif ()
     endif ()
 
