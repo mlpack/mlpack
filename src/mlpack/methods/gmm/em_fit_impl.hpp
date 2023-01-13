@@ -44,6 +44,10 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(weights, dists.size(), "EMFit::Estimate()",
+  		"weights", true);
+
   if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
   {
     #ifdef _WIN32
@@ -173,6 +177,12 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
+  // Sanity check on data.
+  util::CheckSameSizes(observations, probabilities, "EMFit::Estimate()",
+  		"probabilities", false, true);
+  util::CheckSameSizes(weights, dists.size(), "EMFit::Estimate()",
+  		"weights", true);
+  	
   if (!useInitialModel)
     InitialClustering(observations, dists, weights);
 

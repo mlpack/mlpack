@@ -60,12 +60,15 @@ template<typename DataType>
 inline void CheckSameSizes(const DataType& data,
                            const size_t& size,
                            const std::string& callerDescription,
-                           const std::string& addInfo = "labels")
+                           const std::string& addInfo = "labels",
+                           const bool& isDataTranspose = false)
 {
-  if (data.n_cols != size)
+  const size_t dataPoints = (isDataTranspose == true) ? data.n_rows : data.n_cols;
+  
+  if (dataPoints != size)
   {
     std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
+    oss << callerDescription << ": number of points (" << dataPoints << ") "
         << "does not match number of " << addInfo << " (" << size << ")!"
         << std::endl;
     throw std::invalid_argument(oss.str());

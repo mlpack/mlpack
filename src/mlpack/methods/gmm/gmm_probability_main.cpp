@@ -71,6 +71,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   GMM* gmm = params.Get<GMM*>("input_model");
 
   arma::mat dataset = std::move(params.Get<arma::mat>("input"));
+  if (gmm->Dimensionality() != dataset.n_rows)
+      Log::Fatal << "Given input data (with " << PRINT_PARAM_STRING("input")
+          << ") has dimensionality " << dataset.n_rows << ", but the initial"
+          << " model (given with " << PRINT_PARAM_STRING("input_model")
+          << " has dimensionality " << gmm->Dimensionality() << "!" << endl;
 
   // Now calculate the probabilities.
   arma::rowvec probabilities(dataset.n_cols);
