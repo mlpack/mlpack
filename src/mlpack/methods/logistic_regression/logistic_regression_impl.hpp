@@ -18,6 +18,12 @@
 #include "logistic_regression.hpp"
 
 namespace mlpack {
+  
+  //Check size of train set data and target value
+  util::CheckSameSizes(predictors, responses, "LogisticRegression::Train()");
+  //Check dimension of test example as the same of trained model feature size.
+  util::CheckSameDimensionality(points, parameters, 
+        "LogisticRegression::Predict()", "points");
 
 template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
