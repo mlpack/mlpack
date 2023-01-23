@@ -67,7 +67,7 @@ jobs:
             # These directives cause warnings on CRAN:
             # https://github.com/USCiLab/cereal/blob/master/include/cereal/external/base64.hpp#L28-L31
             # The command below comments them out.
-            sed -i 's|#pragma|// #pragma|' cereal-1.3.2/external/base64.hpp
+            sed -i 's|#pragma|// #pragma|' cereal-1.3.2/include/cereal/external/base64.hpp
 
         - name: Install R-bindings dependencies
           run: |
