@@ -133,6 +133,18 @@ deployment, making mlpack suitable for a wide range of deployment environments.
 A more complete set of motivations can be found in the mlpack vision document
 [@mlpack2021vision].
 
+mlpack is a general-purpose machine learning library, targeting both academic
+and commercial use; for instance, data scientists who need efficiency and
+ease of deployment, or, e.g., by researchers who need flexibility and
+extensibility.  While there are other machine learning libraries intended to be
+used from C++, many, such as FAISS [@johnson2019billion] and FLANN
+[@muja2009fast], these are limited to a few specific algorithms, instead of a
+full range of machine learning algorithms, like mlpack provides.  dlib-ml
+[@dlib09], on the other hand, does provide a complete toolkit of machine
+learning algorithms, but its extensibility is somewhat limited as it does not
+use policy-based design [@alexandrescu2001modern] to provide arbitrary
+user-defined behavior.
+
 # Functionality
 
 The library contains a wide variety of machine learning algorithms,
