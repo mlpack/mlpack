@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Bugfix for non-square convolution kernels (#3376).
 
 ### mlpack 4.0.1
 ###### 2022-12-23
