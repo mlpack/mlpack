@@ -143,6 +143,7 @@ Copyright:
   Copyright 2020, Gaurav Ghati <gauravghatii@gmail.com>
   Copyright 2020, Anmolpreet Singh <anmol323c@gmail.com>
   Copyright 2020, Anjishnu Mukherjee <amukher6@gmu.edu>
+  Copyright 2020-2023, Omar Shrit <omar@shrit.me>
   Copyright 2021, Tru Hoang <trugiahoang@gmail.com>
   Copyright 2021, Mark Fischinger <markfischinger@gmail.com>
   Copyright 2021, Muhammad Fawwaz Mayda <maydafawwaz@gmail.com>
