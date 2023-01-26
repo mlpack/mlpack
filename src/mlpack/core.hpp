@@ -61,9 +61,4 @@
   #include <omp.h>
 #endif
 
-// Use Armadillo's C++ version detection.
-#ifdef ARMA_USE_CXX11
-  #define MLPACK_USE_CX11
-#endif
-
 #endif
