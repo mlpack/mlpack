@@ -216,6 +216,6 @@ Optimization" section for more details.
 
 ## Further documentation
 
-For more information on the `HyperParameterTuner` class, see the source code fro
+For more information on the `HyperParameterTuner` class, see the source code of 
 the `HyperParameterTuner` class (it is very well commented!), and the
 [cross-validation tutorial](cv.md).
