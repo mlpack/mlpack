@@ -202,3 +202,23 @@ TEST_CASE("GradientGroupedConvolutionLayerTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) < 1e-1);
 }
+
+// Make a simple grouped convolutional layer with non-square filters, and make
+// sure the forward and backward and gradient passes all return a result.  (This
+// checks that we don't have any shape errors.)
+TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
+{
+  GroupedConvolution module1(1, 5, 3, 1);
+  module1.InputDimensions() = std::vector<size_t>({ 7, 7 });
+  module1.ComputeOutputDimensions();
+  arma::mat weights1(module1.WeightSize(), 1);
+  module1.SetWeights(weights1.memptr());
+
+  arma::mat data(49, 10, arma::fill::randu);
+  arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);
+  REQUIRE_NOTHROW(module1.Forward(data, forwardResult));
+  arma::mat backwardResult(49, 10);
+  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, backwardResult));
+  arma::mat gradientResult(module1.WeightSize(), 1);
+  REQUIRE_NOTHROW(module1.Gradient(data, backwardResult, gradientResult));
+}

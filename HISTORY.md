@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Bugfix for non-square convolution kernels (#3376).
+
+  * Fix a few missing includes in `<mlpack.hpp>` (#3374).
 
 ### mlpack 4.0.1
 ###### 2022-12-23

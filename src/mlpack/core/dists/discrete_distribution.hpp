@@ -30,10 +30,6 @@ namespace mlpack {
  * observation is passed (i.e. observation > numObservations), a crash will
  * probably occur.
  *
- * This distribution only supports one-dimensional observations, so when
- * passing an arma::vec as an observation, it should only have one dimension
- * (vec.n_rows == 1).  Any additional dimensions will simply be ignored.
- *
  * @note
  * This class, like every other class in mlpack, uses arma::vec to represent
  * observations.  While a discrete distribution only has positive integers
