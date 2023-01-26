@@ -402,8 +402,8 @@ void GroupedConvolutionType<
       (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
 
   // To perform the backward pass, we need to rotate all the filters.
-  arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_cols,
-      weight.n_rows, weight.n_slices);
+  arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_rows,
+      weight.n_cols, weight.n_slices);
 
   #pragma omp parallel for
   for (size_t map = 0; map < ((maps * inMaps) / groups); ++map)
