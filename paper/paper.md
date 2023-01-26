@@ -138,13 +138,12 @@ and commercial use; for instance, data scientists who need efficiency and
 ease of deployment, or, e.g., by researchers who need flexibility and
 extensibility.  While there are other machine learning libraries intended to be
 used from C++, many, such as FAISS [@johnson2019billion] and FLANN
-[@muja2009fast], these are limited to a few specific algorithms, instead of a
-full range of machine learning algorithms, like mlpack provides.  dlib-ml
-[@dlib09], on the other hand, does provide a broad toolkit of machine
-learning algorithms, but its extensibility is somewhat limited as it does not
-use policy-based design [@alexandrescu2001modern] to provide arbitrary
-user-defined behavior, and the range of machine learning algorithms provided is
-smaller than mlpack's.
+[@muja2009fast], are limited to a few specific algorithms, instead of a full
+range of machine learning algorithms, like mlpack provides.  dlib-ml [@dlib09],
+on the other hand, does provide a broad toolkit of machine learning algorithms,
+but its extensibility is somewhat limited as it does not use policy-based design
+[@alexandrescu2001modern] to provide arbitrary user-defined behavior, and the
+range of machine learning algorithms provided is smaller than mlpack's.
 
 # Functionality
 
