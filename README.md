@@ -105,7 +105,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 **mlpack** requires the following additional dependencies:
  - C++14 compiler
- - [Armadillo](https://arma.sourceforge.net/docs.html)      &nbsp;&emsp;>= 9.800
+ - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 9.800
  - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
  - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
 
