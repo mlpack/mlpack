@@ -175,7 +175,7 @@ See the [C++ quickstart](doc/quickstart/cpp.md) and the
 [examples](https://github.com/mlpack/examples) repository for some examples of
 mlpack applications in C++, with corresponding `Makefile`s.
 
-### 3.2. Improving compile time
+### 3.2. Reducing compile time
 
 mlpack is a template-heavy library, and if care is not used, compilation time of
 a project can be increased greatly.  Fortunately, there are a number of ways to
