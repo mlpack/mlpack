@@ -119,7 +119,7 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 *See also the [C++ quickstart](doc/quickstart/cpp.md).*
 
 Since mlpack is a header-only library, installing just the headers for use in a
-C++ application is trivial. However, should an error occurs due to uninstalled dependencies, take a look at [Section 3.1](#31-additional-build-options) for this particular error and more.
+C++ application is trivial. 
 
 From the root of the sources, configure and install
 in the standard CMake way:
@@ -130,7 +130,13 @@ cmake ..
 sudo make install
 ```
 
-Note: Since CMake v3.14.0 the `cmake` command can create the build folder itself.
+If the `cmake ..` command fails due to unavailable dependencies, consider either using the
+`-DDOWNLOAD_DEPENDENCIES=ON` option as detailed in
+[the following subsection](#31-additional-build-options), or ensure that mlpack's dependencies
+are installed, e.g. using the system package manager.  For example, on Debian and Ubuntu,
+all relevant dependencies can be installed with `sudo apt-get install libarmadillo-dev libensmallen-dev libcereal-dev g++ cmake`.
+
+Alternatively, CMake v3.14.0 the `cmake` command can create the build folder itself.
 The above commands can be rewritten as follows:
 
 ```sh
