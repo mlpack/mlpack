@@ -114,7 +114,7 @@ that allow prototyping to be seamlessly performed in environments other than C++
 # Statement of Need
 
 The use of machine learning has become ubiquitous in almost every scientific
-discipline and countless commercial applications [@jordan2015machine] [@carleo2019machine].
+discipline and countless commercial applications [@jordan2015machine; @carleo2019machine].
 There is one important commonality to virtually all of these applications:
 machine learning is often computationally intensive, due to the
 large number of parameters and large amounts of training data.
@@ -123,7 +123,7 @@ language, which allows for efficient close-to-the-metal implementations [@curtin
 
 But speed is not everything: development and deployment of applications that use
 machine learning can also be significantly hampered if the overall process is
-too difficult or unwieldy [@paleyes2020challenges] [@lavin2022technology].
+too difficult or unwieldy [@paleyes2020challenges; @lavin2022technology].
 Furthermore, deployment environments often have computational or engineering
 constraints that make a full-stack Python solution infeasible [@fischer2020ai].
 As such, it is important that lightweight and easy-to-deploy machine learning
@@ -156,7 +156,7 @@ deep neural networks, which has implementations of numerous layer types,
 activation functions, and reinforcement learning applications.
 Details of the available functionality are provided in the online
 [mlpack documentation](https://www.mlpack.org/docs.html). The efficiency of these
-implementations has been shown in various works [@curtin2013mlpack] [@fang2016m3]
+implementations has been shown in various works [@curtin2013mlpack; @fang2016m3]
 using mlpack's benchmarking system [@edel2014automatic].
 
 The algorithms are available via automatically-generated bindings to Python,
@@ -211,7 +211,7 @@ and these can easily be run on BinderHub.
 
 *New bindings and enhanced availability.*
 Support for the Julia [@bezanson2017julia], Go [@pike2012go], and R languages
-[@rcore2022] [@parihar2022rmlpack] has been added via mlpack's automatic binding
+[@rcore2022; @parihar2022rmlpack] has been added via mlpack's automatic binding
 system.  These bindings can be used by installing mlpack from the language's
 package manager (`Pkg.jl`, `go get`, `install.packages('mlpack')`).
 Furthermore, since mlpack's reduced dependency footprint has significantly
