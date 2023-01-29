@@ -136,7 +136,7 @@ If the `cmake ..` command fails due to unavailable dependencies, consider either
 are installed, e.g. using the system package manager.  For example, on Debian and Ubuntu,
 all relevant dependencies can be installed with `sudo apt-get install libarmadillo-dev libensmallen-dev libcereal-dev g++ cmake`.
 
-Alternatively, CMake v3.14.0 the `cmake` command can create the build folder itself.
+Alternatively, since CMake v3.14.0 the `cmake` command can create the build folder itself.
 The above commands can be rewritten as follows:
 
 ```sh
