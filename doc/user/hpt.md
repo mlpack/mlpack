@@ -179,7 +179,7 @@ HyperParameterTuner<LinearRegression, MSE, SimpleCV> hpt(0.2, dataset,
 ```
 
 Next, we must set up the hyperparameters to be optimized.  If we are doing a
-grid search with the \c ens::GridSearch optimizer (the
+grid search with the ens::GridSearch optimizer (the
 default), then we only need to pass a `std::vector` (for non-numeric
 hyperparameters) or an `arma::vec` (for numeric hyperparameters) containing all
 of the possible choices that we wish to search over.
