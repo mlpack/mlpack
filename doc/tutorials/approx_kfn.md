@@ -114,8 +114,8 @@ search:
 
 These two programs allow a large number of algorithms to be used to find
 approximate furthest neighbors.  Note that the `mlpack_kfn` program is also
-documented in the [KNN tutorial](knn.md) page, as it shares options with the
-`mlpack_knn` program.
+documented in the [KNN tutorial](neighbor_search.md) page, as it shares options 
+with the `mlpack_knn` program.
 
 Below are several examples of how the `mlpack_approx_kfn` and `mlpack_kfn`
 programs might be used.  The first examples focus on the `mlpack_approx_kfn`
@@ -869,7 +869,7 @@ qdafn.Search(querySet, 3, neighbors, distances);
 The extensive `NeighborSearch` class also provides a way to search for
 approximate furthest neighbors using a different, tree-based technique.  For
 full documentation on this class, see the [NeighborSearch
-tutorial](nstutorial.md).  The `KFN` class is a convenient typedef of the
+tutorial](neighbor_search.md).  The `KFN` class is a convenient typedef of the
 `NeighborSearch` class that can be used to perform the furthest neighbors task
 with `kd`-trees.
 
@@ -982,6 +982,6 @@ kfn.Search(querySet, 2, neighbors, distances);
 ## Further documentation
 
 For further documentation on the approximate furthest neighbor facilities
-offered by mlpack, see also [the NeighborSearch tutorial](nstutorial.md).  Also,
+offered by mlpack, see also [the NeighborSearch tutorial](neighbor_search.md).  Also,
 each class (`QDAFN`, `DrusillaSelect`, `NeighborSelect`) are well-documented,
 and more details can be found in the source code documentation.
