@@ -390,7 +390,7 @@ the number of users, and each nonzero element in the matrix corresponds to a
 non-missing rating.
 
 The method that the factorizer implements is specified via the
-FactorizerTraits class, which is a template metaprogramming traits class:
+`FactorizerTraits` class, which is a template metaprogramming traits class:
 
 ```c++
 template<typename FactorizerType>
