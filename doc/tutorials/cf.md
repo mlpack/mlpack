@@ -389,7 +389,7 @@ number of rows equal to the number of items and the number of columns equal to
 the number of users, and each nonzero element in the matrix corresponds to a
 non-missing rating.
 
-The method that the factorizer implements is specified via the \c
+The method that the factorizer implements is specified via the
 FactorizerTraits class, which is a template metaprogramming traits class:
 
 ```c++
