@@ -424,7 +424,7 @@ This constructor should be called with `(*this)` after the node is constructed
 The last template parameter is the `MatType` parameter.  This is generally
 `arma::mat` or `arma::sp_mat`, but could be any Armadillo type, including
 matrices that hold data points of different precisions (such as `float` or even
-`int`).  It generally suffices to write MatType assuming that `arma::mat`
+`int`).  It generally suffices to write `MatType` assuming that `arma::mat`
 will be used, since the vast majority of the time this will be what is used.
 
 ### Constructors and destructors
