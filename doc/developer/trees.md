@@ -86,7 +86,7 @@ restatement of the fourth part of the definition).
 
 Most everything in mlpack is decomposed into a series of configurable template
 parameters, and trees are no exception.  In order to ease usage of high-level
-mlpack algorithms, each TreeType itself must be a template class taking three
+mlpack algorithms, each `TreeType` itself must be a template class taking three
 parameters:
 
  - `MetricType` -- the underlying metric that the tree will be built on (see
