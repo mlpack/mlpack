@@ -137,7 +137,8 @@ int main()
   NMFALSFactorizer nmf;
   mat W, H;
   mat V = randu<mat>(100, 100);
-  double residue = nmf.Apply(V, W, H);
+  size_t r = 90;
+  double residue = nmf.Apply(V, r, W, H);
 }
 ```
 
@@ -169,11 +170,12 @@ using namespace mlpack;
 
 int main()
 {
-  sp_mat V = randu<sp_mat>(100,100);
+  sp_mat V = sprandu<sp_mat>(100,100,0.1);
+  size_t r = 90;
   mat W, H;
 
   SVDBatchFactorizer<sp_mat> svd;
-  double residue = svd.Apply(V, W, H);
+  double residue = svd.Apply(V, r, W, H);
 }
 ```
 
