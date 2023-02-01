@@ -682,7 +682,7 @@ std::cout << ds.CandidateSet().col(4).t();
 
 It is possible to retrain a `DrusillaSelect` model with new parameters or with a
 new reference set.  This is functionally equivalent to creating a new model.
-The example code below creates a first \c DrusillaSelect model using 3 tables
+The example code below creates a first DrusillaSelect model using 3 tables
 and 10 projections, and then retrains this with the same reference set using 10
 tables and 3 projections.
 
