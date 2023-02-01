@@ -103,11 +103,11 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 ## 2. Dependencies
 
-mlpack requires a C++14 compiler and has the following additional dependencies:
-
- - Armadillo      >= 9.800
- - ensmallen      >= 2.10.0
- - cereal         >= 1.1.2
+**mlpack** requires the following additional dependencies:
+ - C++14 compiler
+ - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 9.800
+ - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
+ - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
 
 If the STB library headers are available, image loading support will be
 available.
@@ -119,31 +119,41 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 *See also the [C++ quickstart](doc/quickstart/cpp.md).*
 
 Since mlpack is a header-only library, installing just the headers for use in a
-C++ application is trivial.  From the root of the sources, configure and install
+C++ application is trivial. 
+
+From the root of the sources, configure and install
 in the standard CMake way:
 
 ```sh
 mkdir build && cd build/
-cmake ../
+cmake ..
 sudo make install
 ```
 
-Note: Since CMake v3.14.0 the `cmake` command can create the build folder itself.
-The above commands can be rewritten as follows:
+If the `cmake ..` command fails due to unavailable dependencies, consider either using the
+`-DDOWNLOAD_DEPENDENCIES=ON` option as detailed in
+[the following subsection](#31-additional-build-options), or ensure that mlpack's dependencies
+are installed, e.g. using the system package manager.  For example, on Debian and Ubuntu,
+all relevant dependencies can be installed with `sudo apt-get install libarmadillo-dev libensmallen-dev libcereal-dev g++ cmake`.
+
+Alternatively, since CMake v3.14.0 the `cmake` command can create the build folder itself,
+the above commands can be rewritten as follows:
 
 ```sh
 cmake -S . -B build
 sudo cmake --build build --target install
 ```
 
+### 3.1. Additional build options
+
 You can add a few arguments to the `cmake` command to control the behavior of
 the configuration and build process.  Simply add these to the `cmake` command.
 Some options are given below:
 
- - `-DCMAKE_INSTALL_PREFIX=/install/root/` will set the root of the install
-   directory to `/install/root` when `make install` is run.
  - `-DDOWNLOAD_DEPENDENCIES=ON` will automatically download mlpack's
    dependencies (ensmallen, Armadillo, and cereal).
+ - `-DCMAKE_INSTALL_PREFIX=/install/root/` will set the root of the install
+   directory to `/install/root` when `make install` is run.
  - `-DDEBUG=ON` will enable debugging symbols in any compiled bindings or tests.
 
 There are also options to enable building bindings to each language that mlpack
@@ -171,7 +181,7 @@ See the [C++ quickstart](doc/quickstart/cpp.md) and the
 [examples](https://github.com/mlpack/examples) repository for some examples of
 mlpack applications in C++, with corresponding `Makefile`s.
 
-### 3.1. Including mlpack and improving compile time
+### 3.2. Reducing compile time
 
 mlpack is a template-heavy library, and if care is not used, compilation time of
 a project can be increased greatly.  Fortunately, there are a number of ways to
