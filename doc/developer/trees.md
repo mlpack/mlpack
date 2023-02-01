@@ -90,7 +90,7 @@ mlpack algorithms, each \c TreeType itself must be a template class taking three
 parameters:
 
  - `MetricType` -- the underlying metric that the tree will be built on (see
-[the MetricType policy documentation](metrictype.md))
+[the MetricType policy documentation](metrics.md))
  - `StatisticType` -- holds any auxiliary information that individual
 algorithms may need
  - `MatType` -- the type of the matrix used to represent the data
