@@ -96,7 +96,7 @@ citation below (given in BibTeX format):
                      Conrad Sanderson},
         journal   = {Journal of Open Source Software},
         volume    = {8},
-        issue     = {82},
+        number    = {82},
         pages     = {5026},
         year      = {2023},
         doi       = {10.21105/joss.05026},
