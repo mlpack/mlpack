@@ -3,8 +3,8 @@
 Range search is a simple machine learning task which aims to find all the
 neighbors of a point that fall into a certain range of distances.  In this
 setting, we have a *query* and a *reference* dataset.  Given a certain range,
-for each point in the *query* dataset, we wish to know all points in the \b
-reference dataset which have distances within that given range to the given
+for each point in the *query* dataset, we wish to know all points in the
+*reference* dataset which have distances within that given range to the given
 query point.
 
 Alternately, if the query and reference datasets are the same, the problem can

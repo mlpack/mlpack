@@ -70,7 +70,7 @@ SoftmaxRegression(const arma::mat& data,
 ```
 
 which has the parameter `lambda` after three conventional arguments (`data`,
-\c labels and \c numClasses). We can skip passing `fitIntercept` and
+`labels` and `numClasses`). We can skip passing `fitIntercept` and
 `optimizer` since there are the default values.  (Technically, we don't even
 need to pass `lambda` since there is a default value.)
 

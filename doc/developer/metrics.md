@@ -35,7 +35,7 @@ Note that for metrics that do not hold any state, the `Evaluate()` method can
 be marked as `static`.
 
 Overall, the `MetricType` template policy is quite simple (much like the
-[KernelType policy](kerneltype.md)).  Below is an example metric class, which
+[KernelType policy](kernels.md)).  Below is an example metric class, which
 implements the L2 distance:
 
 ```c++
@@ -105,4 +105,4 @@ policy:
  - `ChebyshevDistance`
  - `MahalanobisDistance`
  - `LMetric` (for arbitrary L-metrics)
- - `IPMetric` (requires a [KernelType](kerneltype.md) parameter)
+ - `IPMetric` (requires a [KernelType](kernels.md) parameter)
