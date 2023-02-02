@@ -85,18 +85,22 @@ variety of other needs.
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BibTeX format):
 
-    @article{mlpack2018,
-        title     = {mlpack 3: a fast, flexible machine learning library},
-        author    = {Curtin, Ryan R. and Edel, Marcus and Lozhnikov, Mikhail and
-                     Mentekidis, Yannis and Ghaisas, Sumedh and Zhang,
-                     Shangtong},
+    @article{mlpack2023,
+        title     = {mlpack 4: a fast, header-only C++ machine learning library},
+        author    = {Ryan R. Curtin and Marcus Edel and Omar Shrit and 
+                     Shubham Agrawal and Suryoday Basak and James J. Balamuta and 
+                     Ryan Birmingham and Kartik Dutt and Dirk Eddelbuettel and 
+                     Rishabh Garg and Shikhar Jaiswal and Aakash Kaushik and 
+                     Sangyeon Kim and Anjishnu Mukherjee and Nanubala Gnana Sai and 
+                     Nippun Sharma and Yashwant Singh Parihar and Roshan Swain and 
+                     Conrad Sanderson},
         journal   = {Journal of Open Source Software},
-        volume    = {3},
-        issue     = {26},
-        pages     = {726},
-        year      = {2018},
-        doi       = {10.21105/joss.00726},
-        url       = {https://doi.org/10.21105/joss.00726}
+        volume    = {8},
+        number    = {82},
+        pages     = {5026},
+        year      = {2023},
+        doi       = {10.21105/joss.05026},
+        url       = {https://doi.org/10.21105/joss.05026}
     }
 
 Citations are beneficial for the growth and improvement of mlpack.
