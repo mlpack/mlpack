@@ -254,7 +254,7 @@ links above for further documentation.
 In order to write a new binding, then, you simply must define `BINDING_NAME`,
 then write `BINDING_USER_NAME()`, `BINDING_SHORT_DESC()`, `BINDING_LONG_DESC()`,
 `BINDING_EXAMPLE()` and `BINDING_SEE_ALSO()` definitions of the program with
-some docuentation, define the input and output parameters as `PARAM` macros, and
+some documentation, define the input and output parameters as `PARAM` macros, and
 then write a `BINDING_FUNCTION()` function that actually performs the
 functionality of the binding.
 
@@ -695,7 +695,7 @@ There are numerous different macros that can be used:
  - `PARAM_TMATRIX_OUT()` - transposed double-valued matrix (`arma::mat`) output
        parameter
  - `PARAM_MATRIX_AND_INFO_IN()` - matrix with categoricals input parameter
-       (`std::tuple<data::DatasetInfo, arma::mat`)
+       (`std::tuple<data::DatasetInfo, arma::mat>`)
  - `PARAM_COL_IN()` - double-valued column vector (`arma::vec`) input parameter
  - `PARAM_COL_OUT()` - double-valued column vector (`arma::vec`) output
        parameter
@@ -1322,7 +1322,7 @@ If this is the route that is desired, a large amount of CMake boilerplate may be
 necessary.  The Python CMake configuration can be referred to as an example, but
 probably a large amount of adaptation to other languages will be necessary.
 
-Lastly, when adding a new language, be sure to make sure it works with the
+Lastly, when adding a new language, make sure it works with the
 Markdown documentation generator.  In order to make this happen, you will need
 to modify all of the `add_markdown_docs()` calls in
 `src/mlpack/methods/CMakeLists.txt` to contain the name of the language you have
