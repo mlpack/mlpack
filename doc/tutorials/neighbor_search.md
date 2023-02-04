@@ -363,7 +363,7 @@ covariance matrix).  Therefore, you can write a non-static MetricType class and
 use it seamlessly with `NeighborSearch`.
 
 For more information on the `MetricType` policy, see the [documentation for
-`MetricType`s](../developer/metrics.md).
+`MetricType`](../developer/metrics.md).
 
 ### `MatType` policy class
 
