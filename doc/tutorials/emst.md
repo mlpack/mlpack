@@ -18,7 +18,7 @@ via templates.  For more details, see the following paper:
 
 ```
 @inproceedings{march2010fast,
-  title={Fast {E}uclidean minimum spanning tree: algorithm, analysis, and
+  title={Fast Euclidean minimum spanning tree: algorithm, analysis, and
 applications},
   author={March, William B. and Ram, Parikshit and Gray, Alexander G.},
   booktitle={Proceedings of the 16th ACM SIGKDD International Conference on
