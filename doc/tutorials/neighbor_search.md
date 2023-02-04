@@ -418,7 +418,7 @@ The `RuleType` class provides the following functions for use in the traverser:
 // Evaluate the base case between two points.
 double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-// Score the two nodes to see if they can be pruned, returning DBL_MAX
+// Score the two nodes to see if they can be pruned, returning DBL_MAX if so.
 double Score(TreeType& queryNode, TreeType& referenceNode);
 ```
 
