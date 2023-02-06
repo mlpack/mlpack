@@ -268,7 +268,7 @@ documentation](../user/matrices.md) for more information.
 Given only a reference dataset, the following code will run FastMKS with k set
 to 5.
 
-```c++
+```
 #include <mlpack.hpp>
 
 using namespace mlpack::fastmks;
