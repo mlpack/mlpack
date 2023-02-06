@@ -68,7 +68,7 @@ class Example
 {
  public:
   /**
-   * Construct a Example object.  When constructed, it will register itself
+   * Construct an Example object.  When constructed, it will register itself
    * with IO for the given `bindingName`.
    *
    * @param bindingName Name of the binding.
