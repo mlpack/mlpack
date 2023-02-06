@@ -255,7 +255,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CF cf(data, NMFALSFactorizer(), neighborhood, rank);
+CFType cf(data, NMFPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -276,6 +276,9 @@ alternating least squares update rules).  These include:
  - `NMFALSFactorizer`
  - `RegularizedSVD`
  - `QUIC_SVD`
+ - `BiasSVD`
+ - `SVDPlusPlus`
+ - `RandomizedSVD`
 
 The `AMF` class has many other possibilities than those listed here; it is a
 framework for alternating matrix factorization techniques.  See the `AMF` class
@@ -297,7 +300,7 @@ extern size_t neighborhood;
 extern size_t rank;
 
 // Build the CF object and perform the decomposition.
-CF cf(data, RegularizedSVD(), neighborhood, rank);
+CFType cf(data, RegSVDPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -330,7 +333,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CF cf(data, NMFALSFactorizer(), neighborhood, rank);
+CFType cf(data, NMFPolicy(), neighborhood, rank);
 
 const double prediction = cf.Predict(12, 50); // User 12, item 50.
 ```
@@ -356,7 +359,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CF cf(data, NMFALSFactorizer(), neighborhood, rank);
+CFType cf(data, NMFPolicy(), neighborhood, rank);
 
 // References to W and H matrices.
 const arma::mat& W = cf.W();
