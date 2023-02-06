@@ -43,7 +43,7 @@ function.
 using namespace mlpack;
 
 arma::mat data;
-data::DatasetMapper info;
+data::DatasetInfo info;
 data::Load("dataset.csv", data, info);
 ```
 
@@ -155,8 +155,8 @@ std::cout << info.UnmapString(1, 2) << "\n";
 This will print:
 
 ```
-T
-F
+True
+False
 ```
 
 ### `UnmapValue()`
@@ -168,8 +168,8 @@ The `UnmapValue()` function has the signature `UnmapValue(const std::string
   - `dimension` is the dimension in which you want to find the mapped value
 
 ```c++
-std::cout << info.UnmapValue("T", 2) << "\n";
-std::cout << info.UnmapValue("F", 2) << "\n";
+std::cout << info.UnmapValue("True", 2) << "\n";
+std::cout << info.UnmapValue("False", 2) << "\n";
 ```
 
 will produce:
