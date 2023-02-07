@@ -279,7 +279,7 @@ add_all_bindings(program_dir program_name "category")
 In this example, this will also add a Markdown binding, which will generate
 documentation that is typically used to build the website.  The `category`
 parameter should be one of the categories in
-`src/mlpack/bindings/markdown/MarkdownCategories.cmake`.
+`src/mlpack/bindings/Categories.cmake`.
 
 ## How to write mlpack bindings
 
