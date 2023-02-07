@@ -445,11 +445,12 @@ how to modify them.
 
 Most machine learning algorithms in mlpack support modifying the distance
 metric, and `KMeans<>` is no exception.  Similar to `NeighborSearch` (see the
-section in the [NeighborSearch tutorial](neighbor_search.md)), any of mlpack's
+"MetricType policy class" section in the
+[NeighborSearch tutorial](neighbor_search.md)), any of mlpack's
 metric classes (found in `mlpack/core/metrics/`) can be given as an argument.
 The `LMetric` class is a good example implementation.
 
-A class fulfilling the [MetricType policy](../developer/metrictype.md) must
+A class fulfilling the [MetricType policy](../developer/metrics.md) must
 provide the following two functions:
 
 ```c++

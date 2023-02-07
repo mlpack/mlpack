@@ -143,13 +143,13 @@ can't pass mlpack's `FFN` network directly. Instead, we have to wrap it into
 int main()
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> network(MeanSquaredError<>(),
+  FFN<MeanSquaredError, GaussianInitialization> network(MeanSquaredError(),
       GaussianInitialization(0, 0.001));
-  network.Add<Linear<>>(4, 128);
-  network.Add<ReLULayer<>>();
-  network.Add<Linear<>>(128, 128);
-  network.Add<ReLULayer<>>();
-  network.Add<Linear<>>(128, 2);
+  network.Add<Linear>(128);
+  network.Add<ReLU>();
+  network.Add<Linear>(128);
+  network.Add<ReLU>();
+  network.Add<Linear>(2);
 
   SimpleDQN<> model(network);
 
@@ -159,7 +159,7 @@ The next step would be to setup the other components of the Q-learning agent,
 namely its policy, replay method and hyperparameters.
 
 ```c++
- // Set up the policy and replay method.
+  // Set up the policy and replay method.
   GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
   RandomReplay<CartPole> replayMethod(10, 10000);
 
@@ -314,6 +314,7 @@ auto measure = [&returns, &position, &episode](double episodeReturn)
   std::cout << "Episode No.: " << episode
       << "; Episode Return: " << episodeReturn
       << "; Average Return: " << arma::mean(returns) << std::endl;
+  return false;
 };
 ```
 
@@ -328,17 +329,16 @@ Here is the full code to try this right away:
 #include <mlpack.hpp>
 
 using namespace mlpack;
-using namespace mlpack::rl;
 
 int main()
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(), GaussianInitialization(0, 0.001));
-  model.Add<Linear<>>(4, 128);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 128);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 2);
+  FFN<MeanSquaredError, GaussianInitialization> model(MeanSquaredError(), GaussianInitialization(0, 0.001));
+  model.Add<Linear>(128);
+  model.Add<ReLU>();
+  model.Add<Linear>(128);
+  model.Add<ReLU>();
+  model.Add<Linear>(2);
 
   AggregatedPolicy<GreedyPolicy<CartPole>> policy({GreedyPolicy<CartPole>(0.7, 5000, 0.1),
                                                    GreedyPolicy<CartPole>(0.7, 5000, 0.01),
@@ -371,6 +371,7 @@ int main()
     std::cout << "Episode No.: " << episode
         << "; Episode Return: " << episodeReturn
         << "; Average Return: " << arma::mean(returns) << std::endl;
+    return false;
   };
 
   for (int i = 0; i < 100; i++)

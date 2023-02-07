@@ -177,8 +177,8 @@ matrix = matrix.t(); // We must transpose after load!
 The transposition after loading is necessary if the coordinate list is in
 row-major format (that is, if each row in the matrix represents a point and each
 column represents a feature).  Be sure that the matrix you use with mlpack
-methods has points as columns and features as rows!  See \ref matrices for more
-information.
+methods has points as columns and features as rows!  See [matrices](matrices.md)
+for more information.
 
 ## Categorical features and command line programs
 

@@ -2,7 +2,7 @@
 
 Image datasets are becoming increasingly popular in deep learning.
 
-mlpack's image saving/loading functionality is based on [stb/](https://github.com/nothings/stb).
+mlpack's image saving/loading functionality is based on [stb](https://github.com/nothings/stb).
 
 ## Model API
 
