@@ -283,6 +283,8 @@ class CFType
   };
 }; // class CFType
 
+typedef CFType<> CF;
+
 } // namespace mlpack
 
 // Include implementation of templated functions.
