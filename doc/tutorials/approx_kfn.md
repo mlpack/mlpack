@@ -80,7 +80,7 @@ In order to solve this problem, mlpack provides a number of interfaces.
 
  - two simple command-line executables to calculate approximate furthest
    neighbors
- - a simple C++ class for QDAFN"
+ - a simple C++ class for QDAFN
  - a simple C++ class for DrusillaSelect
  - a simple C++ class for tree-based and brute-force search
 

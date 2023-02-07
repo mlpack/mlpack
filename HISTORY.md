@@ -4,6 +4,8 @@
 
   * Fix a few missing includes in `<mlpack.hpp>` (#3374).
 
+  * Fix DBSCAN handling of non-core points (#3346).
+
 ### mlpack 4.0.1
 ###### 2022-12-23
   * Fix mapping of categorical data for Julia bindings (#3305).
