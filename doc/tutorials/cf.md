@@ -255,7 +255,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CFType cf(data, NMFPolicy(), neighborhood, rank);
+CF cf(data, NMFPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -300,7 +300,7 @@ extern size_t neighborhood;
 extern size_t rank;
 
 // Build the CF object and perform the decomposition.
-CFType cf(data, RegSVDPolicy(), neighborhood, rank);
+CF cf(data, RegSVDPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -333,7 +333,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CFType cf(data, NMFPolicy(), neighborhood, rank);
+CF cf(data, NMFPolicy(), neighborhood, rank);
 
 const double prediction = cf.Predict(12, 50); // User 12, item 50.
 ```
@@ -359,7 +359,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CFType cf(data, NMFPolicy(), neighborhood, rank);
+CF cf(data, NMFPolicy(), neighborhood, rank);
 
 // References to W and H matrices.
 const arma::mat& W = cf.W();
