@@ -42,27 +42,13 @@
  * should be present per binding.  BINDING_NAME should be set before calling
  * this.
  *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
- *
  * @param NAME User-friendly name.
  */
-#ifdef __COUNTER__
-  #define BINDING_USER_NAME(NAME) static \
-      mlpack::util::BindingName \
-      JOIN(io_bindingusername_dummy_object, __COUNTER__) = \
-      mlpack::util::BindingName( \
-          STRINGIFY(BINDING_NAME), NAME);
-#else
-  #define BINDING_USER_NAME(NAME) static \
-      mlpack::util::BindingName \
-      JOIN(JOIN(io_bindingusername_dummy_object, __LINE__), opt) = \
-      mlpack::util::BindingName( \
-          STRINGIFY(BINDING_NAME), NAME);
-#endif
+#define BINDING_USER_NAME(NAME) static \
+    mlpack::util::BindingName \
+    JOIN(io_bindingusername_dummy_object, __COUNTER__) = \
+    mlpack::util::BindingName( \
+        STRINGIFY(BINDING_NAME), NAME);
 
 /**
  * Specify the short description of a binding.  Only one instance of this macro
@@ -73,19 +59,11 @@
  *     describe what the program implements and does, and a quick overview of
  *     how it can be used and what it should be used for.
  */
-#ifdef __COUNTER__
-  #define BINDING_SHORT_DESC(SHORT_DESC) static \
-      mlpack::util::ShortDescription \
-      JOIN(io_programshort_desc_dummy_object, __COUNTER__) = \
-      mlpack::util::ShortDescription( \
-          STRINGIFY(BINDING_NAME), SHORT_DESC);
-#else
-  #define BINDING_SHORT_DESC(SHORT_DESC) static \
-      mlpack::util::ShortDescription \
-      JOIN(JOIN(io_programshort_desc_dummy_object, __LINE__), opt) = \
-      mlpack::util::ShortDescription( \
-          STRINGIFY(BINDING_NAME), SHORT_DESC);
-#endif
+#define BINDING_SHORT_DESC(SHORT_DESC) static \
+    mlpack::util::ShortDescription \
+    JOIN(io_programshort_desc_dummy_object, __COUNTER__) = \
+    mlpack::util::ShortDescription( \
+        STRINGIFY(BINDING_NAME), SHORT_DESC);
 
 /**
  * Specify the long description of a binding.  Only one instance of this macro
@@ -101,19 +79,11 @@
  *     also use printing macros like PRINT_PARAM_STRING(), PRINT_DATASET(),
  *     and others.
  */
-#ifdef __COUNTER__
-  #define BINDING_LONG_DESC(LONG_DESC) static \
-      mlpack::util::LongDescription \
-      JOIN(io_programlong_desc_dummy_object, __COUNTER__) = \
-      mlpack::util::LongDescription( \
-          STRINGIFY(BINDING_NAME), []() { return std::string(LONG_DESC); });
-#else
-  #define BINDING_LONG_DESC(LONG_DESC) static \
-      mlpack::util::LongDescription \
-      JOIN(JOIN(io_programlong_desc_dummy_object, __LINE__), opt) = \
-      mlpack::util::LongDescription( \
-          STRINGIFY(BINDING_NAME), []() { return std::string(LONG_DESC); });
-#endif
+#define BINDING_LONG_DESC(LONG_DESC) static \
+    mlpack::util::LongDescription \
+    JOIN(io_programlong_desc_dummy_object, __COUNTER__) = \
+    mlpack::util::LongDescription( \
+        STRINGIFY(BINDING_NAME), []() { return std::string(LONG_DESC); });
 
 /**
  * Specify the example of a binding.  Mutiple instance of this macro can be
@@ -126,19 +96,11 @@
  *     also use printing macros like PRINT_CALL(), PRINT_DATASET(),
  *     and others.
  */
-#ifdef __COUNTER__
-  #define BINDING_EXAMPLE(EXAMPLE) static \
-      mlpack::util::Example \
-      JOIN(io_programexample_dummy_object_, __COUNTER__) = \
-      mlpack::util::Example( \
-          STRINGIFY(BINDING_NAME), []() { return(std::string(EXAMPLE)); });
-#else
-  #define BINDING_EXAMPLE(EXAMPLE) static \
-      mlpack::util::Example \
-      JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
-      mlpack::util::Example( \
-          STRINGIFY(BINDING_NAME), []() { return(std::string(EXAMPLE)); });
-#endif
+#define BINDING_EXAMPLE(EXAMPLE) static \
+    mlpack::util::Example \
+    JOIN(io_programexample_dummy_object_, __COUNTER__) = \
+    mlpack::util::Example( \
+        STRINGIFY(BINDING_NAME), []() { return(std::string(EXAMPLE)); });
 
 /**
  * Specify the see-also of a binding.  Mutiple instance of this macro can be
@@ -159,17 +121,10 @@
  * - A link to a documentation file, using the path after '@doc', i.e.,
  *     "@doc/user/matrices.md"
  */
-#ifdef __COUNTER__
-  #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
-      mlpack::util::SeeAlso \
-      JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
-      mlpack::util::SeeAlso(STRINGIFY(BINDING_NAME), DESCRIPTION, LINK);
-#else
-  #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
-      mlpack::util::SeeAlso \
-      JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
-      mlpack::util::SeeAlso(STRINGIFY(BINDING_NAME), DESCRIPTION, LINK);
-#endif
+#define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
+    mlpack::util::SeeAlso \
+    JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
+    mlpack::util::SeeAlso(STRINGIFY(BINDING_NAME), DESCRIPTION, LINK);
 
 /**
  * Define a flag parameter.
@@ -179,17 +134,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_FLAG(ID, DESC, ALIAS) \
     PARAM_IN(bool, ID, DESC, ALIAS, false, false);
@@ -960,10 +904,7 @@
 
 /**
  * Define the PARAM(), PARAM_MODEL() macro. Don't use this function;
- * use the other ones above that call it.  Note that we are using the __LINE__
- * macro for naming these actual parameters when __COUNTER__ does not exist,
- * which is a bit of an ugly hack... but this is the preprocessor, after all.
- * We don't have much choice other than ugliness.
+ * use the other ones above that call it.
  *
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
@@ -974,44 +915,22 @@
  * @param DEF Default value of the parameter.
  * @param REQ Whether or not parameter is required (boolean value).
  */
-#ifdef __COUNTER__
-  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
-      static mlpack::util::Option<T> \
-      JOIN(io_option_dummy_object_in_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
+#define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
+    static mlpack::util::Option<T> \
+    JOIN(io_option_dummy_object_in_, __COUNTER__) \
+    (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
 
-  #define PARAM_GLOBAL(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
-      static mlpack::util::Option<T> \
-      JOIN(io_option_global_dummy_object_in_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
+#define PARAM_GLOBAL(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
+    static mlpack::util::Option<T> \
+    JOIN(io_option_global_dummy_object_in_, __COUNTER__) \
+    (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
 
-  // There are no uses of required models, so that is not an option to this
-  // macro (it would be easy to add).
-  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
-      static mlpack::util::Option<TYPE*> \
-      JOIN(io_option_dummy_model_, __COUNTER__) \
-      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
-      STRINGIFY(BINDING_NAME));
-#else
-  // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
-  // don't think we can absolutely guarantee success, but it should be "good
-  // enough".  We use the __LINE__ macro and the type of the parameter to try
-  // and get a good guess at something unique.
-  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
-      static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
-
-  #define PARAM_GLOBAL(T, ID, DESC,  ALIAS, NAME, REQ, IN, TRANS, DEF) \
-      static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_global_dummy_object_in_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
-
-  #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
-      static mlpack::util::Option<TYPE*> \
-      JOIN(JOIN(io_option_dummy_object_model_, __LINE__), opt) \
-      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
-      STRINGIFY(BINDING_NAME));
-#endif
+// There are no uses of required models, so that is not an option to this
+// macro (it would be easy to add).
+#define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
+    static mlpack::util::Option<TYPE*> \
+    JOIN(io_option_dummy_model_, __COUNTER__) \
+    (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
+    STRINGIFY(BINDING_NAME));
 
 #endif
