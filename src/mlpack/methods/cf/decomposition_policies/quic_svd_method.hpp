@@ -74,12 +74,12 @@ class QuicSVDPolicy
     QUIC_SVD quicsvd;
     quicsvd.Apply(data, w, h, sigma);
 
-   if (data.n_cols < data.n_rows)
-  {
-    arma::mat tempMat = w;
-    w = h;
-    h = tempMat;
-  }
+    if (data.n_cols < data.n_rows)
+    {
+      arma::mat tempMat = w;
+      w = h;
+      h = tempMat;
+    }
 
     // Take transpose of the matrix h as required by CF class.
     h = arma::trans(h);
