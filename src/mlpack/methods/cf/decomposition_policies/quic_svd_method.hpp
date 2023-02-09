@@ -20,7 +20,7 @@
 namespace mlpack {
 
 /**
- * Implementation of the Quic SVD policy to act as a wrapper when
+ * Implementation of the QUIC-SVD policy to act as a wrapper when
  * accessing Quic SVD from within CFType.
  *
  * An example of how to use QuicSVDPolicy in CF is shown below:
