@@ -275,7 +275,7 @@ alternating least squares update rules).  These include:
  - `SVDIncompletePolicy`
  - `NMFPolicy`
  - `RegSVDPolicy`
- - `QUIC_SVDPolicy`
+ - `QuicSVDPolicy`
  - `BiasSVDPolicy`
  - `SVDPlusPlusPolicy`
  - `RandomizedSVDPolicy`
