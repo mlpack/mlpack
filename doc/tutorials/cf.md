@@ -270,15 +270,15 @@ mlpack provides a number of existing factorizers which can be used in place of
 the default `NMFALSFactorizer` (which is non-negative matrix factorization with
 alternating least squares update rules).  These include:
 
- - `SVDBatchFactorizer`
- - `SVDCompleteIncrementalFactorizer`
- - `SVDIncompleteIncrementalFactorizer`
- - `NMFALSFactorizer`
- - `RegularizedSVD`
- - `QUIC_SVD`
- - `BiasSVD`
- - `SVDPlusPlus`
- - `RandomizedSVD`
+ - `BatchSVDPolicy`
+ - `SVDCompletePolicy`
+ - `SVDIncompletePolicy`
+ - `NMFPolicy`
+ - `RegSVDPolicy`
+ - `QUIC_SVDPolicy`
+ - `BiasSVDPolicy`
+ - `SVDPlusPlusPolicy`
+ - `RandomizedSVDPolicy`
 
 The `AMF` class has many other possibilities than those listed here; it is a
 framework for alternating matrix factorization techniques.  See the `AMF` class
