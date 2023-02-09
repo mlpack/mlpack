@@ -46,7 +46,7 @@ namespace mlpack {
  * QuicSVD qSVD();
  * 
  * arma::mat u, v, sigma; // Matrices for the factors. data = u * sigma * v.t()
- * 
+ *
  * // Use the Apply() method to get a factorization.
  * qSVD.Apply(data, u, v, sigma, epsilon, delta);
  * @endcode
