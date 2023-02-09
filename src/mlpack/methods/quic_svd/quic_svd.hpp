@@ -72,7 +72,7 @@ class QUIC_SVD
            const double delta = 0.1);
 
  /**
-   * Create object for the randomized SVD method.
+   * Create object for the QUIC-SVD method.
    *
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
