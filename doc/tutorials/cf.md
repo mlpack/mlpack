@@ -300,7 +300,7 @@ extern size_t neighborhood;
 extern size_t rank;
 
 // Build the CF object and perform the decomposition.
-CF cf(data, RegSVDPolicy(), neighborhood, rank);
+CFType cf(data, RegSVDPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
