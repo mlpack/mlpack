@@ -6,6 +6,8 @@
 
   * Fix DBSCAN handling of non-core points (#3346).
 
+  * Avoid deprecation warnings in Armadillo 11.4.4+ (#3405).
+
 ### mlpack 4.0.1
 ###### 2022-12-23
   * Fix mapping of categorical data for Julia bindings (#3305).
