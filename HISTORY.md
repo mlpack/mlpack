@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+  * Update outdated codes in cf.md and datasetmapper.md (#3398).
+
   * Bugfix for non-square convolution kernels (#3376).
 
   * Fix a few missing includes in `<mlpack.hpp>` (#3374).
