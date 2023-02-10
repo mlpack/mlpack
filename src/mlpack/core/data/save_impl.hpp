@@ -101,10 +101,10 @@ bool Save(const std::string& filename,
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == FileType::HDF5Binary) ?
-        tmp.quiet_save(filename, ToArmaFileType(saveType)) :
-        tmp.quiet_save(stream, ToArmaFileType(saveType));
+        tmp.save(filename, ToArmaFileType(saveType)) :
+        tmp.save(stream, ToArmaFileType(saveType));
 #else
-    const bool success = tmp.quiet_save(stream, ToArmaFileType(saveType));
+    const bool success = tmp.save(stream, ToArmaFileType(saveType));
 #endif
     if (!success)
     {
@@ -122,10 +122,10 @@ bool Save(const std::string& filename,
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == FileType::HDF5Binary) ?
-        matrix.quiet_save(filename, ToArmaFileType(saveType)) :
-        matrix.quiet_save(stream, ToArmaFileType(saveType));
+        matrix.save(filename, ToArmaFileType(saveType)) :
+        matrix.save(stream, ToArmaFileType(saveType));
 #else
-    const bool success = matrix.quiet_save(stream, ToArmaFileType(saveType));
+    const bool success = matrix.save(stream, ToArmaFileType(saveType));
 #endif
     if (!success)
     {
@@ -236,7 +236,7 @@ bool Save(const std::string& filename,
     tmp = trans(matrix);
   }
 
-  const bool success = tmp.quiet_save(stream, ToArmaFileType(saveType));
+  const bool success = tmp.save(stream, ToArmaFileType(saveType));
   if (!success)
   {
     Timer::Stop("saving_data");
