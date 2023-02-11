@@ -39,7 +39,7 @@ class LinearRegression
                    const bool intercept = true);
 
   /**
-   * Creates the model with weighted learning.
+   * Creates the model with already given weights.
    *
    * @param predictors X, matrix of data points.
    * @param responses y, the measured data for each point in X.
