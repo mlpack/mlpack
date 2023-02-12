@@ -438,8 +438,8 @@ void PrintWrapperPY(const std::string& category,
     cout << endl;
     indent -= 2;
   }
-}
+} // PrintWrapperPY
 
-} // python
-} // bindings
-} // mlpack
+} // namespace python
+} // namespace bindings
+} // namespace mlpack
