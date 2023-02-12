@@ -5,9 +5,7 @@
 
   * Add QUIC_SVD method in CF (#3404).
 
-  * Fix code in tutorials (#3401).
-
-  * Update outdated code in tutorials (#3398).
+  * Update outdated code in tutorials (#3398, #3401).
 
   * Bugfix for non-square convolution kernels (#3376).
 
