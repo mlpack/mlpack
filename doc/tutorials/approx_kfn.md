@@ -812,7 +812,7 @@ extern arma::mat dataset;
 QDAFN<> qdafn(dataset, 10, 5);
 
 // Print the fifth point of the candidate set.
-std::cout << ds.CandidateSet(2).col(4).t();
+std::cout << qdafn.CandidateSet(2).col(4).t();
 ```
 
 ### Retraining on a new reference set
@@ -896,7 +896,7 @@ extern arma::mat querySet;
 
 // Construct the object, performing the default dual-tree search with
 // approximation level epsilon = 0.05.
-KFN kfn(dataset, KFN::DUAL_TREE_MODE, 0.05);
+KFN kfn(dataset, DUAL_TREE_MODE, 0.05);
 
 // Search for approximate furthest neighbors.
 arma::Mat<size_t> neighbors;
