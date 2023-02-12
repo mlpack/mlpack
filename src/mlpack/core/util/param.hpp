@@ -42,12 +42,6 @@
  * should be present per binding.  BINDING_NAME should be set before calling
  * this.
  *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
- *
  * @param NAME User-friendly name.
  */
 #ifdef __COUNTER__
@@ -179,17 +173,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_FLAG(ID, DESC, ALIAS) \
     PARAM_IN(bool, ID, DESC, ALIAS, false, false);
