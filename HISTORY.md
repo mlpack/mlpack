@@ -1,8 +1,5 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-
-  * Fix code in tutorials (#3401).
-
   * Bugfix for non-square convolution kernels (#3376).
 
   * Fix a few missing includes in `<mlpack.hpp>` (#3374).
