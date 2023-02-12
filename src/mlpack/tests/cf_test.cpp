@@ -568,6 +568,15 @@ TEST_CASE("CFGetRecommendationsAllUsersSVDPPTest", "[CFTest]")
 }
 
 /**
+ * Make sure that correct number of recommendations are generated when query
+ * set for Quic SVD method.
+ */
+TEST_CASE("CFGetRecommendationsAllUsersQSVDTest", "[CFTest]")
+{
+  GetRecommendationsAllUsers<QuicSVDPolicy>();
+}
+
+/**
  * Make sure that the recommendations are generated for queried users only
  * for randomized SVD.
  */
@@ -637,6 +646,15 @@ TEST_CASE("CFGetRecommendationsQueriedUserBiasSVDTest", "[CFTest]")
 TEST_CASE("CFGetRecommendationsQueriedUserSVDPPTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<SVDPlusPlusPolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for Quic SVD method.
+ */
+TEST_CASE("CFGetRecommendationsQueriedUserQSVDTest", "[CFTest]")
+{
+  GetRecommendationsQueriedUser<QuicSVDPolicy>();
 }
 
 /**
@@ -775,6 +793,15 @@ TEST_CASE("CFPredictSVDPPTest", "[CFTest]")
   CFPredict<SVDPlusPlusPolicy>();
 }
 
+/**
+ * Make sure that Predict() is returning reasonable results for Quic SVD
+ * method.
+ */
+TEST_CASE("CFPredictQSVDTest", "[CFTest]")
+{
+  CFPredict<QuicSVDPolicy>();
+}
+
 // Compare batch Predict() and individual Predict() for randomized SVD.
 TEST_CASE("CFBatchPredictRandSVDTest", "[CFTest]")
 {
@@ -825,6 +852,13 @@ TEST_CASE("CFBatchPredictBiasSVDTest", "[CFTest]")
 TEST_CASE("CFBatchPredictSVDPPTest", "[CFTest]")
 {
   BatchPredict<SVDPlusPlusPolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for
+// Quic SVD method.
+TEST_CASE("CFBatchPredictQSVDTest", "[CFTest]")
+{
+  BatchPredict<QuicSVDPolicy>();
 }
 
 /**
@@ -908,6 +942,16 @@ TEST_CASE("TrainSVDPPTest", "[CFTest]")
 }
 
 /**
+ * Make sure we can train an already-trained model and it works okay for
+ * Quic SVD method.
+ */
+TEST_CASE("TrainQSVDTest", "[CFTest]")
+{
+  QuicSVDPolicy decomposition;
+  TrainWithCoordinateList(decomposition);
+}
+
+/**
  * Make sure we can train a model after using the empty constructor when
  * using randomized SVD.
  */
@@ -962,6 +1006,15 @@ TEST_CASE("EmptyConstructorTrainSVDIncompleteTest", "[CFTest]")
 }
 
 /**
+ * Make sure we can train a model after using the empty constructor when
+ * using Quic SVD method.
+ */
+TEST_CASE("EmptyConstructorTrainQSVDTest", "[CFTest]")
+{
+  EmptyConstructorTrain<QuicSVDPolicy>();
+}
+
+/**
  * Ensure we can load and save the CF model using randomized SVD policy.
  */
 TEST_CASE("SerializationRandSVDTest", "[CFTest]")
@@ -999,6 +1052,14 @@ TEST_CASE("SerializationSVDCompleteTest", "[CFTest]")
 TEST_CASE("SerializationSVDIncompleteTest", "[CFTest]")
 {
   Serialization<SVDIncompletePolicy>();
+}
+
+/**
+ * Ensure we can load and save the CF model using Quic SVD Incremental.
+//  */
+TEST_CASE("SerializationQSVDTest", "[CFTest]")
+{
+  Serialization<QuicSVDPolicy>();
 }
 
 /**

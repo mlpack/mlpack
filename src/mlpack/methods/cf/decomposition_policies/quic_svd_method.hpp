@@ -52,17 +52,17 @@ class QuicSVDPolicy
    * Apply Collaborative Filtering to the provided data set using the
    * quic SVD.
    *
-   * @param data Data matrix: dense matrix (coordinate lists)
+   * @param * (data) Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
-   * @param * (cleanedData) item user table in form of sparse matrix.
+   * @param cleanedData item user table in form of sparse matrix.
    * @param * (rank) Rank parameter for matrix factorization.
    * @param * (maxIterations) Maximum number of iterations.
    * @param * (minResidue) Residue required to terminate.
    * @param * (mit) Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
-  void Apply(const MatType& data,
-             const arma::sp_mat& /* cleanedData */,
+  void Apply(const MatType& /* data */,
+             const arma::sp_mat& cleanedData,
              const size_t /* rank */,
              const size_t /* maxIterations */,
              const double /* minResidue */,
@@ -70,16 +70,11 @@ class QuicSVDPolicy
   {
     arma::mat sigma;
 
+    arma::mat data(cleanedData);
+
     // Do singular value decomposition using the quic SVD algorithm.
     QUIC_SVD quicsvd;
     quicsvd.Apply(data, w, h, sigma);
-
-    if (data.n_cols < data.n_rows)
-    {
-      arma::mat tempMat = w;
-      w = h;
-      h = tempMat;
-    }
 
     // Take transpose of the matrix h as required by CF class.
     h = arma::trans(h);
