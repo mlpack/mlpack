@@ -79,15 +79,20 @@ inline bool Params::Has(const std::string& key) const
 template<typename T>
 T& Params::Get(const std::string& identifier)
 {
-  // TODO: can we remove the alias support here?
-  // Only use the alias if the parameter does not exist as given.
-  std::string key = (parameters.count(identifier) == 0 &&
-      identifier.length() == 1 && aliases.count(identifier[0])) ?
-      aliases[identifier[0]] : identifier;
+  std::string key = identifier;
 
-  if (parameters.count(key) == 0)
-    Log::Fatal << "Parameter '" << key << "' does not exist in this program!"
-        << std::endl;
+  if (!parameters.count(key))
+  {
+    
+    if (key.length() == 1 && aliases.count(key[0]))
+      key = aliases.at(key[0]);
+
+    if (!parameters.count(key))
+    {
+      Log::Fatal << "Parameter '" << identifier << "' does not exist in this "
+          << "program." << std::endl;
+    }
+  }
 
   ParamData& d = parameters[key];
 
@@ -121,15 +126,20 @@ T& Params::Get(const std::string& identifier)
 template<typename T>
 std::string Params::GetPrintable(const std::string& identifier)
 {
-  // TODO: can we remove the alias support here?
-  // Only use the alias if the parameter does not exist as given.
-  std::string key = ((parameters.count(identifier) == 0) &&
-      (identifier.length() == 1) && (aliases.count(identifier[0]) > 0)) ?
-      aliases[identifier[0]] : identifier;
+  std::string key = identifier;
 
-  if (parameters.count(key) == 0)
-    Log::Fatal << "Parameter '" << key << "' does not exist in this program!"
-        << std::endl;
+  if (!parameters.count(key))
+  {
+    
+    if (key.length() == 1 && aliases.count(key[0]))
+      key = aliases.at(key[0]);
+
+    if (!parameters.count(key))
+    {
+      Log::Fatal << "Parameter '" << identifier << "' does not exist in this "
+          << "program." << std::endl;
+    }
+  }
 
   ParamData& d = parameters[key];
 
@@ -167,15 +177,20 @@ std::string Params::GetPrintable(const std::string& identifier)
 template<typename T>
 T& Params::GetRaw(const std::string& identifier)
 {
-  // TODO: can we remove the alias support here?
-  // Only use the alias if the parameter does not exist as given.
-  std::string key = (parameters.count(identifier) == 0 &&
-      identifier.length() == 1 && aliases.count(identifier[0])) ?
-      aliases[identifier[0]] : identifier;
+  std::string key = identifier;
 
-  if (parameters.count(key) == 0)
-    Log::Fatal << "Parameter '" << key << "' does not exist in this program!"
-        << std::endl;
+  if (!parameters.count(key))
+  {
+    
+    if (key.length() == 1 && aliases.count(key[0]))
+      key = aliases.at(key[0]);
+
+    if (!parameters.count(key))
+    {
+      Log::Fatal << "Parameter '" << identifier << "' does not exist in this "
+          << "program." << std::endl;
+    }
+  }
 
   ParamData& d = parameters[key];
 
