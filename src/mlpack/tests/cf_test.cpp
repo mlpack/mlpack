@@ -1055,8 +1055,8 @@ TEST_CASE("SerializationSVDIncompleteTest", "[CFTest]")
 }
 
 /**
- * Ensure we can load and save the CF model using Quic SVD Incremental.
-//  */
+ * Ensure we can load and save the CF model using Quic SVD Policy.
+ */
 TEST_CASE("SerializationQSVDTest", "[CFTest]")
 {
   Serialization<QuicSVDPolicy>();
