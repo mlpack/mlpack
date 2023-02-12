@@ -70,6 +70,7 @@ class QuicSVDPolicy
   {
     arma::mat sigma;
 
+    // Preprocessed data converted to mat format
     arma::mat data(cleanedData);
 
     // Do singular value decomposition using the quic SVD algorithm.
