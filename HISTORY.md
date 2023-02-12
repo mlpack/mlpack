@@ -1,9 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
-  * Add Block Krylov SVD method in CF (#3413).
-
-  * Add QUIC_SVD method in CF (#3404).
+  * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy` (#3413, #3404).
 
   * Update outdated code in tutorials (#3398, #3401).
 
