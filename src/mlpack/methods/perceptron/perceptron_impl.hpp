@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_PERCEPTRON_PERCEPTRON_IMPL_HPP
 
 #include "perceptron.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 
@@ -134,6 +135,9 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::vec tempLabelMat;
   arma::uword maxIndex = 0;
   predictedLabels.set_size(test.n_cols);
+  
+  size_t dimension = weights.n_rows;
+  util::CheckSameDimensionality(test,dimension,"Dimension Mismatch");
 
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; ++i)
@@ -164,6 +168,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     const size_t numClasses,
     const arma::rowvec& instanceWeights)
 {
+  util::CheckSameSizes(data,labels,"Size Mismatch");
   // Do we need to resize the weights?
   if (weights.n_elem != numClasses)
   {
