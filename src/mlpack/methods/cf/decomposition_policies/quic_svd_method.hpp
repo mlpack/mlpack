@@ -23,7 +23,7 @@ namespace mlpack {
  * Implementation of the QUIC-SVD policy to act as a wrapper when
  * accessing Quic SVD from within CFType.
  *
- * An example of how to use QuicSVDPolicy in CF is shown below:
+ * An example of how to use QUIC_SVDPolicy in CF is shown below:
  *
  * @code
  * extern arma::mat data; // data is a (user, item, rating) table.
@@ -31,19 +31,19 @@ namespace mlpack {
  * extern arma::Col<size_t> users;
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
- * CFType<QuicSVDPolicy> cf(data);
+ * CFType<QUIC_SVDPolicy> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
  * @endcode
  */
-class QuicSVDPolicy
+class QUIC_SVDPolicy
 {
  public:
   /**
    * Use quic SVD method to perform collaborative filtering
    */
-  QuicSVDPolicy()
+  QUIC_SVDPolicy()
   {
     /* Nothing to do here */
   }
@@ -76,6 +76,9 @@ class QuicSVDPolicy
     // Do singular value decomposition using the quic SVD algorithm.
     QUIC_SVD quicsvd;
     quicsvd.Apply(data, w, h, sigma);
+
+    // Sigma matrix is multiplied to w.
+    w = w * sigma;
 
     // Take transpose of the matrix h as required by CF class.
     h = arma::trans(h);

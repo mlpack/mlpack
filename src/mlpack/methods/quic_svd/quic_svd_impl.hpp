@@ -82,6 +82,9 @@ inline void QUIC_SVD::ExtractSVD(const arma::mat& dataset,
   arma::vec sigmaBar;
   arma::svd(uBar, sigmaBar, vBar, projectedMatSquared);
 
+  // vBar was tarnsposed of vBar
+  vBar = arma::trans(vBar);
+
   // Calculate the approximate SVD of the original matrix, using the SVD of the
   // squared projected matrix.
   v = basis * vBar;

@@ -43,7 +43,7 @@ namespace mlpack {
  * const double delta = 0.1 // Lower error bound for Monte Carlo estimate.
  *
  * // Make a QuicSVD object.
- * QuicSVD qSVD();
+ * QUIC_SVD qSVD();
  * 
  * arma::mat u, v, sigma; // Matrices for the factors. data = u * sigma * v.t()
  *
