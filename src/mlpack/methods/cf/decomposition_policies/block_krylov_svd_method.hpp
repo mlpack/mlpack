@@ -75,7 +75,7 @@ class BlockKrylovSVDPolicy
 
     // Do singular value decomposition using the block krylov SVD algorithm.
     RandomizedBlockKrylovSVD blockkrylovsvd;
-    blockkylovsvd.Apply(data, w, sigma, h, rank);
+    blockkrylovsvd.Apply(data, w, sigma, h, rank);
 
     // Take transpose of the matrix h as required by CF class.
     h = arma::trans(h);
