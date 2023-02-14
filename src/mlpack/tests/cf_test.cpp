@@ -523,8 +523,8 @@ TEMPLATE_TEST_CASE("CFGetRecommendationsQueriedUsersTest", "[CFTest]",
  * for all methods except SVDPlusPlus method.
  */
 TEMPLATE_TEST_CASE("RecommendationAccuracyTest", "[CFTest]",
-  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy)
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy)
 {
   RecommendationAccuracy<TestType>();
 }
