@@ -579,7 +579,7 @@ TEMPLATE_TEST_CASE("TrainTest_1", "[CFTest]",
  * some methods
  */
 TEMPLATE_TEST_CASE("TrainTest_2", "[CFTest]",
-  RegSVDPolicy, BiasSVDPolicy, SVDPlusPlusPolicy)
+    RegSVDPolicy, BiasSVDPolicy, SVDPlusPlusPolicy)
 {
   TestType decomposition;
   TrainWithCoordinateList(decomposition);
