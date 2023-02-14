@@ -59,7 +59,7 @@ inline void QUIC_SVD::Apply(
 
   // Use the ExtractSVD algorithm mentioned in the paper to extract the SVD of
   // the original dataset in the obtained subspace.
-  ExtractSVD(dataset,u, v, sigma);
+  ExtractSVD(dataset, u, v, sigma);
 }
 
 inline void QUIC_SVD::ExtractSVD(const arma::mat& dataset,
