@@ -20,8 +20,8 @@
 namespace mlpack {
 
 /**
- * Implementation of the BLOCK-KRYLOV-SVD policy to act as a wrapper when
- * accessing BLOCK KRYLOV SVD from within CFType.
+ * Implementation of the Block Krylov SVD policy to act as a wrapper when
+ * using Block Krylov SVD for the decomposition type of CF.
  *
  * An example of how to use BlockKrylovSVDPolicy in CF is shown below:
  *
