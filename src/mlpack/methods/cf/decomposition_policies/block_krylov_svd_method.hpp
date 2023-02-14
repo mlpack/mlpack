@@ -41,7 +41,7 @@ class BlockKrylovSVDPolicy
 {
  public:
   /**
-   * Use block krylov SVD method to perform collaborative filtering
+   * Create block krylov SVD object to use for collaborative filtering.
    */
   BlockKrylovSVDPolicy()
   {
