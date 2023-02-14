@@ -644,8 +644,8 @@ TEST_CASE("CFPredictNoNormalization", "[CFTest]")
  * for all types of Normalization except default.
  */
 TEMPLATE_TEST_CASE("RecommendationAccuracyNormalizationTest", "[CFTest]",
-  OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
-  ZScoreNormalization)
+    OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
+    ZScoreNormalization)
 {
   RecommendationAccuracy<NMFPolicy, TestType>();
 }
