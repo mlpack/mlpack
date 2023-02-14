@@ -499,9 +499,9 @@ void Serialization()
  * set for all methods.
  */
 TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
-  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-  QUIC_SVDPolicy)
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+    QUIC_SVDPolicy)
 {
   GetRecommendationsAllUsers<TestType>();
 }
