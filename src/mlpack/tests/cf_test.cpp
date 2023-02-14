@@ -555,9 +555,9 @@ TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
  * Compare batch Predict() and individual Predict() for all methods.
  */
 TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest]",
-  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-  QUIC_SVDPolicy)
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+    QUIC_SVDPolicy)
 {
   BatchPredict<TestType>();
 }
