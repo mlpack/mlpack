@@ -701,7 +701,7 @@ TEMPLATE_TEST_CASE("CFPredictSearch", "[CFTest]",
  * some Interpolations.
  */
 TEMPLATE_TEST_CASE("CFPredictAverageInterpolation", "[CFTest]",
-  AverageInterpolation, SimilarityInterpolation)
+    AverageInterpolation, SimilarityInterpolation)
 {
   CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch,
     TestType>(2.0);
