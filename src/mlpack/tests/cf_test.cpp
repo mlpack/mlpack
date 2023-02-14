@@ -544,9 +544,9 @@ TEMPLATE_TEST_CASE("RecommendationAccuracyTest", "[CFTest]",
  * Make sure that Predict() is returning reasonable results for all methods.
  */
 TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
-  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-  QUIC_SVDPolicy)
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+    QUIC_SVDPolicy)
 {
   CFPredict<TestType>();
 }
