@@ -567,8 +567,8 @@ TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest]",
  * some methods
  */
 TEMPLATE_TEST_CASE("TrainTest_1", "[CFTest]",
-  RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
-  SVDIncompletePolicy, QUIC_SVDPolicy)
+    RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
+    SVDIncompletePolicy, QUIC_SVDPolicy)
 {
   TestType decomposition;
   Train(decomposition);
