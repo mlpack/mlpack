@@ -611,8 +611,8 @@ TEMPLATE_TEST_CASE("SerializationTest", "[CFTest]",
  * all types of Normalization except default.
  */
 TEMPLATE_TEST_CASE("CFPredictNormalization", "[CFTest]",
-  OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
-  ZScoreNormalization)
+    OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
+    ZScoreNormalization)
 {
   CFPredict<NMFPolicy, TestType>(2.0);
 }
