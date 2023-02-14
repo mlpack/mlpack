@@ -691,7 +691,7 @@ TEST_CASE("SerializationCombinedNormalizationTest", "[CFTest]")
  * except default.
  */
 TEMPLATE_TEST_CASE("CFPredictSearch", "[CFTest]",
-  EuclideanSearch, CosineSearch, PearsonSearch)
+    EuclideanSearch, CosineSearch, PearsonSearch)
 {
   CFPredict<NMFPolicy, OverallMeanNormalization, TestType>(2.0);
 }
