@@ -668,8 +668,8 @@ TEST_CASE("RecommendationAccuracyCombinedNormalizationTest", "[CFTest]")
  * except default.
  */
 TEMPLATE_TEST_CASE("SerializationNormalizationTest", "[CFTest]",
-  OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
-  ZScoreNormalization)
+    OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
+    ZScoreNormalization)
 {
   Serialization<NMFPolicy, TestType>();
 }
