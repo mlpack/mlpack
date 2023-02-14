@@ -600,8 +600,8 @@ TEMPLATE_TEST_CASE("EmptyConstructorTrainTest", "[CFTest]",
  * Ensure we can load and save the CF model using any of the method.
  */
 TEMPLATE_TEST_CASE("SerializationTest", "[CFTest]",
-  RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
-  SVDIncompletePolicy, QUIC_SVDPolicy)
+    RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
+    SVDIncompletePolicy, QUIC_SVDPolicy)
 {
   Serialization<TestType>();
 }
