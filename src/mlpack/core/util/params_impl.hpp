@@ -45,7 +45,7 @@ inline Params::Params()
 /**
  * Return `true` if the specified parameter was given.
  *
- * @param identifier The name of the parameter in question.
+ * @param key The name of the parameter in question.
  */
 inline bool Params::Has(const std::string& key) const
 {
