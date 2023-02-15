@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if test `uname` = "SunOS" ;
-then
-sed '1 s/$/ -ftrack-macro-expansion=0 -pipe --param ggc-min-expand=10 --param ggc-min-heapsize=8192/' ./src/Makevars > ./src/Makevars.tmp && cat ./src/Makevars.tmp > ./src/Makevars && rm ./src/Makevars.tmp
-fi
-
-exit 0
