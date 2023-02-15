@@ -103,7 +103,7 @@ bool Load(const std::vector<std::string>& files,
 ```c++
 data::ImageInfo info;
 std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
-data::load(files, matrix, info, false, true);
+data::Load(files, matrix, info, false, true);
 ```
 
 ## Saving
