@@ -37,7 +37,7 @@ namespace mlpack {
  * arma::Row<size_t> labels; // Labels associated with the data.
  * const size_t inputSize = 1000; // Size of input feature vector.
  * const size_t numClasses = 10; // Number of classes.
- * const double lambda = 0.0001; // L2-Regularization parameter.
+ * const double lambdas = 0.0001; // L2-Regularization parameter.
  *
  * const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
  * const size_t numIterations = 100; // Maximum number of iterations.
@@ -59,7 +59,7 @@ class SoftmaxRegression
  public:
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * value of lambdas is 0.0001.  Be sure to use Train() before calling
    * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
@@ -71,7 +71,7 @@ class SoftmaxRegression
                     const bool fitIntercept = false);
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
-   * This will train the model. Optionally, the parameter 'lambda' can be
+   * This will train the model. Optionally, the parameter 'lambdas' can be
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
@@ -80,19 +80,19 @@ class SoftmaxRegression
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
-   * @param lambda L2-regularization constant.
+   * @param lambdas L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
   template<typename OptimizerType = ens::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
-                    const double lambda = 0.0001,
+                    const double lambdas = 0.0001,
                     const bool fitIntercept = false,
                     OptimizerType optimizer = OptimizerType());
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
-   * This will train the model. Optionally, the parameter 'lambda' can be
+   * This will train the model. Optionally, the parameter 'lambdas' can be
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
@@ -101,7 +101,7 @@ class SoftmaxRegression
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
-   * @param lambda L2-regularization constant.
+   * @param lambdas L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    * @param optimizer Desired optimizer.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
@@ -111,7 +111,7 @@ class SoftmaxRegression
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
-                    const double lambda,
+                    const double lambdas,
                     const bool fitIntercept,
                     OptimizerType optimizer,
                     CallbackTypes&&... callbacks);
@@ -209,9 +209,9 @@ class SoftmaxRegression
   size_t NumClasses() const { return numClasses; }
 
   //! Sets the regularization parameter.
-  double& Lambda() { return lambda; }
+  double& Lambda() { return lambdas; }
   //! Gets the regularization parameter.
-  double Lambda() const { return lambda; }
+  double Lambda() const { return lambdas; }
 
   //! Gets the intercept term flag.  We can't change this after training.
   bool FitIntercept() const { return fitIntercept; }
@@ -234,7 +234,7 @@ class SoftmaxRegression
   {
     ar(CEREAL_NVP(parameters));
     ar(CEREAL_NVP(numClasses));
-    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(lambdas));
     ar(CEREAL_NVP(fitIntercept));
   }
 
@@ -244,7 +244,7 @@ class SoftmaxRegression
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.
-  double lambda;
+  double lambdas;
   //! Intercept term flag.
   bool fitIntercept;
 };
