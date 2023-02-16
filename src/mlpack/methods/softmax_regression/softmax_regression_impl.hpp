@@ -22,11 +22,11 @@ SoftmaxRegression::SoftmaxRegression(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double lambda,
+    const double lambdas,
     const bool fitIntercept,
     OptimizerType optimizer) :
     numClasses(numClasses),
-    lambda(lambda),
+    lambdas(lambdas),
     fitIntercept(fitIntercept)
 {
   Train(data, labels, numClasses, optimizer);
@@ -37,12 +37,12 @@ SoftmaxRegression::SoftmaxRegression(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double lambda,
+    const double lambdas,
     const bool fitIntercept,
     OptimizerType optimizer,
     CallbackTypes&&... callbacks) :
     numClasses(numClasses),
-    lambda(lambda),
+    lambdas(lambdas),
     fitIntercept(fitIntercept)
 {
   Train(data, labels, numClasses, optimizer, callbacks...);
@@ -53,7 +53,7 @@ inline SoftmaxRegression::SoftmaxRegression(
     const size_t numClasses,
     const bool fitIntercept) :
     numClasses(numClasses),
-    lambda(0.0001),
+    lambdas(0.0001),
     fitIntercept(fitIntercept)
 {
   SoftmaxRegressionFunction::InitializeWeights(
@@ -183,7 +183,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 const size_t numClasses,
                                 OptimizerType optimizer)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambdas,
                                       fitIntercept);
   if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
@@ -204,7 +204,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 OptimizerType optimizer,
                                 CallbackTypes&&... callbacks)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambdas,
                                       fitIntercept);
   if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
