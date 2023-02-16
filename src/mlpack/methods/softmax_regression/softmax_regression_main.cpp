@@ -46,7 +46,7 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("number_of_classes") + " parameter, and the maximum " +
     "number of iterations of the L-BFGS optimizer can be specified with the " +
     PRINT_PARAM_STRING("max_iterations") + " parameter.  The L2 regularization "
-    "constant can be specified with the " + PRINT_PARAM_STRING("lambda") +
+    "constant can be specified with the " + PRINT_PARAM_STRING("lambdas") +
     " parameter and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
     "\n\n"
@@ -121,7 +121,7 @@ PARAM_INT_IN("number_of_classes", "Number of classes for classification; if "
     "unspecified (or 0), the number of classes found in the labels will be "
     "used.", "c", 0);
 
-PARAM_DOUBLE_IN("lambda", "L2-regularization constant", "r", 0.0001);
+PARAM_DOUBLE_IN("lambdas", "L2-regularization constant", "r", 0.0001);
 
 PARAM_FLAG("no_intercept", "Do not add the intercept term to the model.", "N");
 
@@ -156,13 +156,13 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "training", false }}, "labels");
   ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
   ReportIgnoredParam(params, {{ "training", false }}, "number_of_classes");
-  ReportIgnoredParam(params, {{ "training", false }}, "lambda");
+  ReportIgnoredParam(params, {{ "training", false }}, "lambdas");
   ReportIgnoredParam(params, {{ "training", false }}, "no_intercept");
 
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
       true, "maximum number of iterations must be greater than or equal to 0");
-  RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0.0; },
-      true, "lambda penalty parameter must be greater than or equal to 0");
+  RequireParamValue<double>(params, "lambdas", [](double x) { return x >= 0.0; },
+      true, "lambdas penalty parameter must be greater than or equal to 0");
   RequireParamValue<int>(params, "number_of_classes",
       [](int x) { return x >= 0; }, true, "number of classes must be greater "
       "than or equal to 0 (equal to 0 in case of unspecified.)");
@@ -303,7 +303,7 @@ Model* TrainSoftmax(util::Params& params,
     ens::L_BFGS optimizer(numBasis, maxIterations);
     timers.Start("softmax_regression_optimization");
     sm = new Model(trainData, trainLabels, numClasses,
-        params.Get<double>("lambda"), intercept, std::move(optimizer));
+        params.Get<double>("lambdas"), intercept, std::move(optimizer));
     timers.Stop("softmax_regression_optimization");
   }
   return sm;
