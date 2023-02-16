@@ -20,11 +20,11 @@ inline SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double lambda,
+    const double lambdas,
     const bool fitIntercept) :
     data(MakeAlias(const_cast<arma::mat&>(data), false)),
     numClasses(numClasses),
-    lambda(lambda),
+    lambdas(lambdas),
     fitIntercept(fitIntercept)
 {
   // Initialize the parameters to suitable values.
@@ -209,7 +209,7 @@ inline double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters)
 
   logLikelihood = arma::accu(groundTruth % arma::log(probabilities)) /
                   data.n_cols;
-  weightDecay = 0.5 * lambda * arma::accu(parameters % parameters);
+  weightDecay = 0.5 * lambdas * arma::accu(parameters % parameters);
 
   // The cost is the sum of the negative log likelihood and the regularization
   // terms.
@@ -233,7 +233,7 @@ inline double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
 
   logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1) %
       arma::log(probabilities)) / batchSize;
-  weightDecay = 0.5 * lambda * arma::accu(parameters * parameters);
+  weightDecay = 0.5 * lambdas * arma::accu(parameters * parameters);
 
   return -logLikelihood + weightDecay;
 }
@@ -262,15 +262,15 @@ inline void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
     arma::mat inner = probabilities - groundTruth;
     gradient.col(0) =
       inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
-      lambda * parameters.col(0);
+      lambdas * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
       inner * data.t() / data.n_cols +
-      lambda * parameters.cols(1, parameters.n_cols - 1);
+      lambdas * parameters.cols(1, parameters.n_cols - 1);
   }
   else
   {
     gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
-               lambda * parameters;
+               lambdas * parameters;
   }
 }
 
@@ -291,16 +291,16 @@ inline void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
         batchSize - 1);
     gradient.col(0) =
         inner * arma::ones<arma::mat>(batchSize, 1) / batchSize +
-        lambda * parameters.col(0);
+        lambdas * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.cols(start, start + batchSize - 1).t() / batchSize +
-        lambda * parameters.cols(1, parameters.n_cols - 1);
+        lambdas * parameters.cols(1, parameters.n_cols - 1);
   }
   else
   {
     gradient = (probabilities - groundTruth.cols(start, start + batchSize - 1))
         * data.cols(start, start + batchSize - 1).t() / batchSize
-        + lambda * parameters;
+        + lambdas * parameters;
   }
 }
 
@@ -322,17 +322,17 @@ inline void SoftmaxRegressionFunction::PartialGradient(const arma::mat& paramete
     {
       gradient.col(j) =
           inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
-          lambda * parameters.col(0);
+          lambdas * parameters.col(0);
     }
     else
     {
-      gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+      gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambdas *
           parameters.col(j);
     }
   }
   else
   {
-    gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
+    gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambdas *
         parameters.col(j);
   }
 }
