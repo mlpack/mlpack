@@ -28,13 +28,13 @@ class SoftmaxRegressionFunction
    * @param data Input training data, each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
-   * @param lambda L2-regularization constant.
+   * @param lambdas L2-regularization constant.
    * @param fitIntercept Intercept term flag.
    */
   SoftmaxRegressionFunction(const arma::mat& data,
                             const arma::Row<size_t>& labels,
                             const size_t numClasses,
-                            const double lambda = 0.0001,
+                            const double lambdas = 0.0001,
                             const bool fitIntercept = false);
 
   //! Initializes the parameters of the model to suitable values.
@@ -180,9 +180,9 @@ class SoftmaxRegressionFunction
   size_t NumFunctions() const { return data.n_cols; }
 
   //! Sets the regularization parameter.
-  double& Lambda() { return lambda; }
+  double& Lambda() { return lambdas; }
   //! Gets the regularization parameter.
-  double Lambda() const { return lambda; }
+  double Lambda() const { return lambdas; }
 
   //! Gets the intercept flag.
   bool FitIntercept() const { return fitIntercept; }
@@ -197,7 +197,7 @@ class SoftmaxRegressionFunction
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.
-  double lambda;
+  double lambdas;
   //! Intercept term flag.
   bool fitIntercept;
 };
