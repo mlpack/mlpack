@@ -174,7 +174,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
   const size_t points = 1000;
   const size_t inputSize = 3;
   const size_t numClasses = 2;
-  const double lambda = 0.5;
+  const double lambdas = 0.5;
 
   // Generate two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -195,7 +195,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambdas);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -267,7 +267,7 @@ TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
   const size_t points = 5000;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
-  const double lambda = 0.5;
+  const double lambdas = 0.5;
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
@@ -307,7 +307,7 @@ TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambdas);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -416,7 +416,7 @@ TEST_CASE("SoftmaxRegressionClassifySinglePointTest",
   const size_t points = 5000;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
-  const double lambda = 0.5;
+  const double lambdas = 0.5;
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
@@ -456,7 +456,7 @@ TEST_CASE("SoftmaxRegressionClassifySinglePointTest",
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambdas);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
@@ -499,7 +499,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
   const size_t points = 5000;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
-  const double lambda = 0.5;
+  const double lambdas = 0.5;
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
@@ -539,7 +539,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambdas);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
@@ -587,7 +587,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
   const size_t points = 5000;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
-  const double lambda = 0.5;
+  const double lambdas = 0.5;
 
   // Generate five-Gaussian dataset.
   arma::mat identity = arma::eye<arma::mat>(5, 5);
@@ -627,7 +627,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression sr(data, labels, numClasses, lambdas);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
