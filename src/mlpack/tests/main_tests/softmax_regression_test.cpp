@@ -180,7 +180,7 @@ TEST_CASE_METHOD(
 }
 
 /**
- * Ensure that lambda is always non-negative.
+ * Ensure that lambdas is always non-negative.
  */
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
@@ -201,7 +201,7 @@ TEST_CASE_METHOD(
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("lambda", (double) -0.1);
+  SetInputParam("lambdas", (double) -0.1);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
@@ -269,14 +269,14 @@ TEST_CASE_METHOD(
 
 /**
  * Check that output object parameters are
- * different for different lambda values.
+ * different for different lambdas values.
  */
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionDiffLambdaTest",
     "[SoftmaxRegressionMainTest][BindingsTests]")
 {
-  // Train SR for lambda 0.1.
+  // Train SR for lambdas 0.1.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
@@ -299,7 +299,7 @@ TEST_CASE_METHOD(
   // Input training data.
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
-  SetInputParam("lambda", (double) 0.1);
+  SetInputParam("lambdas", (double) 0.1);
 
   // Input test data.
   SetInputParam("test", testData);
@@ -319,7 +319,7 @@ TEST_CASE_METHOD(
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("lambda", (double) 0.9);
+  SetInputParam("lambdas", (double) 0.9);
   SetInputParam("test", std::move(testData));
 
   RUN_BINDING();
@@ -342,7 +342,7 @@ TEST_CASE_METHOD(
     "SoftmaxRegressionDiffMaxItrTest",
     "[SoftmaxRegressionMainTest][BindingsTests]")
 {
-  // Train SR for lambda 0.1.
+  // Train SR for lambdas 0.1.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
