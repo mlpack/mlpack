@@ -21,5 +21,6 @@
 #include "svd_incomplete_method.hpp"
 #include "svdplusplus_method.hpp"
 #include "quic_svd_method.hpp"
+#include "block_krylov_svd_method.hpp"
 
 #endif

@@ -279,6 +279,7 @@ alternating least squares update rules).  These include:
  - `BiasSVDPolicy`
  - `SVDPlusPlusPolicy`
  - `RandomizedSVDPolicy`
+ - `BlockKrylovSVDPolicy`
 
 The `AMF` class has many other possibilities than those listed here; it is a
 framework for alternating matrix factorization techniques.  See the `AMF` class

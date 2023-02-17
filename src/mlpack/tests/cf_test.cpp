@@ -501,7 +501,7 @@ void Serialization()
 TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
     SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-    QUIC_SVDPolicy)
+    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
   GetRecommendationsAllUsers<TestType>();
 }
@@ -513,7 +513,7 @@ TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
 TEMPLATE_TEST_CASE("CFGetRecommendationsQueriedUsersTest", "[CFTest]",
   RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
   SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-  QUIC_SVDPolicy)
+  QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
   GetRecommendationsQueriedUser<TestType>();
 }
@@ -524,7 +524,8 @@ TEMPLATE_TEST_CASE("CFGetRecommendationsQueriedUsersTest", "[CFTest]",
  */
 TEMPLATE_TEST_CASE("RecommendationAccuracyTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy)
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    BlockKrylovSVDPolicy)
 {
   RecommendationAccuracy<TestType>();
 }
@@ -546,7 +547,7 @@ TEMPLATE_TEST_CASE("RecommendationAccuracyTest", "[CFTest]",
 TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
     SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-    QUIC_SVDPolicy)
+    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
   CFPredict<TestType>();
 }
@@ -557,7 +558,7 @@ TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
 TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest]",
     RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
     SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
-    QUIC_SVDPolicy)
+    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
   BatchPredict<TestType>();
 }
@@ -568,7 +569,7 @@ TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest]",
  */
 TEMPLATE_TEST_CASE("TrainTest_1", "[CFTest]",
     RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
-    SVDIncompletePolicy, QUIC_SVDPolicy)
+    SVDIncompletePolicy, QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
   TestType decomposition;
   Train(decomposition);
@@ -591,7 +592,8 @@ TEMPLATE_TEST_CASE("TrainTest_2", "[CFTest]",
  */
 TEMPLATE_TEST_CASE("EmptyConstructorTrainTest", "[CFTest]",
   RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
-  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy)
+  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+  BlockKrylovSVDPolicy)
 {
   EmptyConstructorTrain<TestType>();
 }
@@ -601,7 +603,7 @@ TEMPLATE_TEST_CASE("EmptyConstructorTrainTest", "[CFTest]",
  */
 TEMPLATE_TEST_CASE("SerializationTest", "[CFTest]",
     RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
-    SVDIncompletePolicy, QUIC_SVDPolicy)
+    SVDIncompletePolicy, QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
   Serialization<TestType>();
 }

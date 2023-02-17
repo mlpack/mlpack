@@ -170,7 +170,9 @@ class CFModel
     SVD_COMPLETE,
     SVD_INCOMPLETE,
     BIAS_SVD,
-    SVD_PLUS_PLUS
+    SVD_PLUS_PLUS,
+    QUIC_SVD,
+    BLOCK_KRYLOV_SVD
   };
 
   enum NormalizationTypes
