@@ -74,7 +74,7 @@ BINDING_LONG_DESC(
     " - 'SVDPP' -- SVD++ using a SGD optimizer\n"
     " - 'RandSVD' -- RandomizedSVD learning\n"
     " - 'QSVD' -- QuicSVD learning\n"
-    " - 'BKSVD' -- Block Krylov SVD\n"
+    " - 'BKSVD' -- Block Krylov SVD learning\n"
     "\n\n"
     "The following neighbor search algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
