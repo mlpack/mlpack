@@ -339,7 +339,7 @@ file.
 The class provides one method that performs computation:
 
 ```c++
-void Predict(const arma::mat& points, arma::vec& predictions);
+void Predict(const arma::mat& points, arma::rowvec& predictions);
 ```
 
 Once you have generated or loaded a model, you can call this method and pass it
@@ -355,7 +355,7 @@ corresponding to each row of the points matrix.
 using namespace mlpack;
 
 arma::mat data; // The dataset itself.
-arma::vec responses; // The responses, one row for each row in data.
+arma::rowvec responses; // The responses, one row for each row in data.
 
 // Regress.
 LinearRegression lr(data, responses);
@@ -400,11 +400,11 @@ LinearRegression lr();
 // The dataset we want to predict on; each row is a data point.
 arma::mat points;
 // This will store the predictions; one row for each point.
-arma::vec predictions;
+arma::rowvec predictions;
 
 lr.Predict(points, predictions); // Predict.
 
-// Now, the vector 'predictions' will contain the predicted values.
+// Now, the row vector 'predictions' will contain the predicted values.
 ```
 
 ### Setting lambda for ridge regression
@@ -419,7 +419,7 @@ used to set a value of lambda:
 using namespace mlpack;
 
 arma::mat data; // The dataset itself.
-arma::vec responses; // The responses, one row for each row in data.
+arma::rowvec responses; // The responses, one row for each row in data.
 
 // Regress, with a lambda of 0.5.
 LinearRegression lr(data, responses, 0.5);

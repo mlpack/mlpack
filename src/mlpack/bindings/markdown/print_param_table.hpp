@@ -19,15 +19,15 @@
  * Print a table in markdown format that contains
  * a list of parameters.
  * 
- * @param bindingName parameters corresponding to bindingName.
- * @param language parameters for a particular language.
+ * @param bindingName Parameters corresponding to bindingName.
+ * @param language Parameters for a particular language.
  * @param params Params object.
- * @param headers which headers to print (eg: Name, Default, etc.).
- * @param paramsSet to prevent printing a parameter more than once.
- * @param onlyHyperParams print only hyper-parameters.
- * @param onlyMatrixParams print only matrix-parameters.
- * @param onlyInputParams print only input-parameters.
- * @param onlyOutputParams print only output-parameters.
+ * @param headers Which headers to print (eg: Name, Default, etc.).
+ * @param paramsSet To prevent printing a parameter more than once.
+ * @param onlyHyperParams If true, print only hyper-parameters.
+ * @param onlyMatrixParams If true, print only matrix-parameters.
+ * @param onlyInputParams If true, print only input-parameters.
+ * @param onlyOutputParams If true, print only output-parameters.
  */
 void PrintParamTable(const std::string& bindingName,
                      const std::string& language,
