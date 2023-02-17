@@ -1,5 +1,5 @@
 /**
- * @file methods/cf/decomposition_policies/decomposition_policies.hpp
+ * @file #include "decomposition_policies/decomposition_policies.hpp"
  * @author Ryan Curtin
  *
  * Convenience include for all decomposition policies implemented for CF.
