@@ -224,7 +224,8 @@ void TestClassifyAcc(util::Params& params,
   {
     arma::Row<size_t> testLabels =
       std::move(params.Get<arma::Row<size_t>>("test_labels"));
-
+      
+    // check same size for testData and testLabels.
     util::CheckSameSizes(testData,testLabels,"SoftmaxRegression::ComputeAccuracy()");
 
     vector<size_t> bingoLabels(numClasses, 0);
