@@ -138,7 +138,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   
   // Input data dimension should match with test data dimension.
   size_t dimension = weights.n_rows;
-  util::CheckSameDimensionality(test,dimension,"Dimension Mismatch");
+  util::CheckSameDimensionality(test,dimension,"Perceptron::Classify()");
 
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; ++i)
@@ -170,7 +170,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     const arma::rowvec& instanceWeights)
 {
   // Training data and labels should have same size.
-  util::CheckSameSizes(data,labels,"Size Mismatch");
+  util::CheckSameSizes(data,labels,"Perceptron::Train()");
   // Do we need to resize the weights?
   if (weights.n_elem != numClasses)
   {
