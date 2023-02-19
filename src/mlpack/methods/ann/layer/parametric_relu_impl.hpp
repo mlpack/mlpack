@@ -22,31 +22,28 @@ namespace mlpack {
 
 template<typename MatType>
 PReLUType<MatType>::PReLUType(const double userAlpha) :
-    Layer<MatType>(),
-    userAlpha(userAlpha)
+    Layer<MatType>()
 {
-  alpha.set_size(WeightSize(), 1);
+  alpha.set_size(1, 1);
   alpha(0) = userAlpha;
 }
 
 template<typename MatType>
 PReLUType<MatType>::PReLUType(
     const PReLUType& other) :
-    Layer<MatType>(other),
-    userAlpha(other.userAlpha)
+    Layer<MatType>(other)
 {
-  alpha.set_size(WeightSize(), 1);
-  alpha(0) = userAlpha;
+  userAlpha = other.userAlpha;
+  alpha = other.alpha;
 }
 
 template<typename MatType>
 PReLUType<MatType>::PReLUType(
     PReLUType&& other) :
-    Layer<MatType>(std::move(other)),
-    userAlpha(std::move(other.userAlpha))
+    Layer<MatType>(std::move(other))
 {
-  alpha.set_size(WeightSize(), 1);
-  alpha(0) = userAlpha;
+  userAlpha = std::move(other.userAlpha);
+  alpha = std::move(other.alpha);
 }
 
 template<typename MatType>
@@ -86,7 +83,6 @@ void PReLUType<MatType>::SetWeights(
   //! Set value of alpha to the one given by user.
   // TODO: this doesn't even make any sense.  is it trainable or not?
   // why is there userAlpha?  is that for initialization only?
-  alpha(0) = userAlpha;
 }
 
 template<typename MatType>
@@ -95,9 +91,12 @@ void PReLUType<MatType>::Forward(
 {
   // TODO: use transform()?
   output = input;
-  #pragma omp for
-  for (size_t i = 0; i < input.n_elem; ++i)
-    output(i) *= (input(i) >= 0) ? 1 : alpha(0);
+  if (this->training)
+  {
+    #pragma omp for
+    for (size_t i = 0; i < input.n_elem; ++i)
+      output(i) *= (input(i) >= 0) ? 1 : alpha(0);
+  }
 }
 
 template<typename MatType>
@@ -120,7 +119,7 @@ void PReLUType<MatType>::Gradient(
     MatType& gradient)
 {
   MatType zeros = arma::zeros<MatType>(input.n_rows, input.n_cols);
-  gradient.set_size(WeightSize(), 1);
+  gradient.set_size(1, 1);
   gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
 }
 
@@ -132,6 +131,7 @@ void PReLUType<MatType>::serialize(
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
+  ar(CEREAL_NVP(userAlpha));
   ar(CEREAL_NVP(alpha));
 }
 
