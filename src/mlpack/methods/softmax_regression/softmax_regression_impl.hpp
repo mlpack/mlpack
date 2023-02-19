@@ -162,6 +162,8 @@ inline double SoftmaxRegression::ComputeAccuracy(
     const arma::mat& testData,
     const arma::Row<size_t>& labels) const
 {
+  //Check same size for the testData and labels provided.
+  util::CheckSameSizes(testData,labels,"SoftmaxRegression::ComputeAccuracy()");
   arma::Row<size_t> predictions;
 
   // Get predictions for the provided data.
@@ -183,6 +185,8 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 const size_t numClasses,
                                 OptimizerType optimizer)
 {
+  // Check same size for data and labels.
+  util::CheckSameSizes(data,labels,"SoftmaxRegression::Train()");
   SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
                                       fitIntercept);
   if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
@@ -204,6 +208,8 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 OptimizerType optimizer,
                                 CallbackTypes&&... callbacks)
 {
+  // check same size for data and labels.
+  util::CheckSameSizes(data,labels,"SoftmaxRegression::Train()");
   SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
                                       fitIntercept);
   if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
