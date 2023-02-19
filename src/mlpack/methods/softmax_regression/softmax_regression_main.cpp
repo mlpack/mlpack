@@ -225,13 +225,7 @@ void TestClassifyAcc(util::Params& params,
     arma::Row<size_t> testLabels =
       std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
-    if (testData.n_cols != testLabels.n_elem)
-    {
-      Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
-          << " has " << testData.n_cols << " points, but labels in "
-          << PRINT_PARAM_STRING("test_labels") << " have " << testLabels.n_elem
-          << " labels!" << endl;
-    }
+    util::CheckSameSizes(testData,testLabels,"SoftmaxRegression::ComputeAccuracy()");
 
     vector<size_t> bingoLabels(numClasses, 0);
     vector<size_t> labelSize(numClasses, 0);
@@ -289,10 +283,9 @@ Model* TrainSoftmax(util::Params& params,
     arma::mat trainData = std::move(params.Get<arma::mat>("training"));
     arma::Row<size_t> trainLabels =
         std::move(params.Get<arma::Row<size_t>>("labels"));
-
-    if (trainData.n_cols != trainLabels.n_elem)
-      Log::Fatal << "Samples of input_data should same as the size of "
-          << "input_label." << endl;
+    
+     // check same size for trainData and trainLabels.
+    util::CheckSameSizes(trainData,trainLabels,"SoftmaxRegression::Train()");
 
     const size_t numClasses = CalculateNumberOfClasses(
         (size_t) params.Get<int>("number_of_classes"), trainLabels);
