@@ -27,6 +27,7 @@
 #define MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
 
 #include "adaboost.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 
@@ -70,6 +71,11 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     const size_t iterations,
     const double tolerance)
 {
+  // Size of data and labels should be same.
+  util::CheckSameSizes(data,labels,"AdaBoost::Train()");
+  
+  // save the dimensionality for future use.
+  dimensionality = data.n_rows;
   // Clear information from previous runs.
   wl.clear();
   alpha.clear();
@@ -242,6 +248,9 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
     arma::Row<size_t>& predictedLabels,
     arma::mat& probabilities)
 {
+  // Dimension of test data and model should be same
+  util::CheckSameDimensionality(test,dimensionality,"AdaBoost::Classify()");
+    
   arma::Row<size_t> tempPredictedLabels(test.n_cols);
 
   probabilities.zeros(numClasses, test.n_cols);
