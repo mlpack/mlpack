@@ -567,6 +567,104 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
 }
 
 /**
+ * Check that the RandomCategoricalSplit will split when the split is obviously
+ * better.
+ */
+TEST_CASE("RandomCategoricalSplitSimpleSplitTest", "[DecisionTreeTest]")
+{
+  arma::vec values("0 0 0 1 1 1 2 2 2 3 3 3");
+  arma::Row<size_t> labels("0 0 0 2 2 2 1 1 1 2 2 2");
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  arma::vec classProbabilities;
+  RandomCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
+  const double gain = RandomCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities,
+      aux);
+  const double weightedGain =
+      RandomCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 4,
+      labels, 3, weights, 3, 1e-7, classProbabilities, aux);
+
+  // Make sure that a split was made.
+  REQUIRE(gain > bestGain);
+
+  // Since the split is perfect, make sure the new gain is 0.
+  REQUIRE(gain == Approx(0.0).margin(1e-7));
+
+  REQUIRE(gain == weightedGain);
+
+  // Make sure the class probabilities now hold the number of children.
+  REQUIRE(classProbabilities.n_elem == 1);
+  REQUIRE((size_t) classProbabilities[0] <= 4);
+}
+
+/**
+ * Make sure that RandomCategoricalSplit respects the minimum number of samples
+ * required to split.
+ */
+TEST_CASE("RandomCategoricalSplitMinSamplesTest", "[DecisionTreeTest]")
+{
+  arma::vec values("0 0 0 1 1 1 2 2 2 3 3 3");
+  arma::Row<size_t> labels("0 0 0 2 2 2 1 1 1 2 2 2");
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  arma::vec classProbabilities;
+  RandomCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
+  const double gain = RandomCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, 4, labels, 3, weights, 4, 1e-7,
+      classProbabilities, aux);
+
+  // Make sure it's not split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(classProbabilities.n_elem == 0);
+}
+
+/**
+ * Check that no split is made when it doesn't get us anything.
+ */
+TEST_CASE("RandomCategoricalSplitNoGainTest", "[DecisionTreeTest]")
+{
+  arma::vec values(300);
+  arma::Row<size_t> labels(300);
+  arma::rowvec weights = arma::ones<arma::rowvec>(300);
+
+  for (size_t i = 0; i < 300; i += 3)
+  {
+    values[i] = int(i / 3) % 10;
+    labels[i] = 0;
+    values[i + 1] = int(i / 3) % 10;
+    labels[i + 1] = 1;
+    values[i + 2] = int(i / 3) % 10;
+    labels[i + 2] = 2;
+  }
+
+  arma::vec classProbabilities;
+  RandomCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
+  const double gain = RandomCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, 10, labels, 3, weights, 10, 1e-7,
+      classProbabilities, aux);
+  const double weightedGain =
+      RandomCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
+      labels, 3, weights, 10, 1e-7, classProbabilities, aux);
+
+  // Make sure that there was no split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(classProbabilities.n_elem == 0);
+}
+
+/**
  * A basic construction of the decision tree---ensure that we can create the
  * tree and that it split at least once.
  */
