@@ -183,7 +183,8 @@ class AdaBoost
   size_t numClasses;
   // The tolerance for change in rt and when to stop.
   double tolerance;
-
+  // Number of feature vector input data have.
+  size_t dimensionality;
   //! The vector of weak learners.
   std::vector<WeakLearnerType> wl;
   //! The weights corresponding to each weak learner.
