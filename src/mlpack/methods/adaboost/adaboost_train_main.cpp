@@ -147,11 +147,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     trainingData.shed_row(trainingData.n_rows - 1);
   }
 
-  if(labelsIn.n_cols != trainingData.n_cols)
-  {
-    Log::Fatal << "Number of samples in training data is not "
-        << "equal to the number of samples in labels." << endl;
-  }
+  // check same size for trainingData and labelsIn 
+  util::CheckSameSizes(trainingData,labelsIn,"Adaboost::Train()");
 
   // Helpers for normalizing the labels.
   Row<size_t> labels;
