@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+  * Fix PReLU ann layer (#3420).
+
   * Update outdated code in tutorials (#3398).
 
   * Bugfix for non-square convolution kernels (#3376).
