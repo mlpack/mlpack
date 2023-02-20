@@ -39,6 +39,7 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
