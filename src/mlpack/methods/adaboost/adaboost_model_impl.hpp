@@ -14,6 +14,7 @@
 
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 
@@ -120,6 +121,9 @@ inline void AdaBoostModel::Train(const arma::mat& data,
                                  const size_t iterations,
                                  const double tolerance)
 {
+  // size of data and labels should be same
+  util::CheckSameSizes(data,labels,"AdaBoost::Train()");
+   
   dimensionality = data.n_rows;
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
   {
@@ -142,6 +146,9 @@ inline void AdaBoostModel::Classify(const arma::mat& testData,
                                     arma::Row<size_t>& predictions,
                                     arma::mat& probabilities)
 {
+  // dimensionality of testData and model should be same
+  util::CheckSameDimensionality(testData,dimensionality,"AdaBoost::Classify()");
+    
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
     dsBoost->Classify(testData, predictions, probabilities);
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
@@ -152,6 +159,9 @@ inline void AdaBoostModel::Classify(const arma::mat& testData,
 inline void AdaBoostModel::Classify(const arma::mat& testData,
                                     arma::Row<size_t>& predictions)
 {
+  // dimensionality of testData and model should be same
+  util::CheckSameDimensionality(testData,dimensionality,"AdaBoost::Classify()");
+  
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
     dsBoost->Classify(testData, predictions);
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
