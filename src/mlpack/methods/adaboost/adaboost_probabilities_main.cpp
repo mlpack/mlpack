@@ -73,10 +73,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   mat testingData = std::move(params.Get<arma::mat>("test"));
 
-  if (testingData.n_rows != m->Dimensionality())
-    Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
-        << "must be the same as the model dimensionality ("
-        << m->Dimensionality() << ")!" << endl;
+  // checking testingData has same dimensions as model or not.
+  util::CheckSameDimensionality(testingData,m->Dimensionality(),"Adaboost::Classify()");
 
   Row<size_t> predictedLabels(testingData.n_cols);
   mat probabilities;
