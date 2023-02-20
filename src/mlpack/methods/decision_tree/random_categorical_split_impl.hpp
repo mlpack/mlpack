@@ -33,22 +33,51 @@ double RandomCategoricalSplit<FitnessFunction>::SplitIfBetter(
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
 
   // Count the number of elements in each potential child.
+  arma::vec categories(numCategories);
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+  size_t j = 0;
   for (size_t i = 0; i < data.n_elem; ++i)
+  {
+    if(!counts[(size_t) data[i]])
+      categories[j++]  = ((size_t) data[i]);
     counts[(size_t) data[i]]++;
+  }
+
+  arma::vec newCategories = arma::shuffle(categories);
+  size_t randomPivot = Random(1, j);
+
+  double totalCounts = 0;
+  for (size_t i = 0; i < numCategories; ++i)
+  {
+    if(i >= randomPivot) counts[newCategories[i]] = 0;
+    else
+    {
+      totalCounts += counts[newCategories[i]];
+      // If each child will have the minimum number of points in it, we can split.
+      // Otherwise we can't.
+      if (counts[newCategories[i]] < minimumLeafSize)
+        return DBL_MAX;
+    }
+  }
   
+  // If we are using weighted training, split the weights for each child too.
+  arma::vec childWeightSums;
+  double sumWeight = 0.0;
+  if (UseWeights)
+    childWeightSums.zeros(numCategories);
+
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
   std::vector<arma::Row<size_t>> childLabels(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
 
-  for (size_t i = 0; i < numCategories; ++i)
+  for (size_t i = 0; i < randomPivot; ++i)
   {
     // Labels and weights should have same length.
-    childLabels[i].zeros(counts[i]);
+    childLabels[newCategories[i]].zeros(counts[newCategories[i]]);
     if (UseWeights)
-      childWeights[i].zeros(counts[i]);
+      childWeights[newCategories[i]].zeros(counts[newCategories[i]]);
   }
 
   // Extract labels for each child.
@@ -56,58 +85,26 @@ double RandomCategoricalSplit<FitnessFunction>::SplitIfBetter(
   {
     const size_t category = (size_t)data[i];
 
+    if(!counts[category]) continue;
+
     if (UseWeights)
+    {
       childWeights[category][childPositions[category]] = weights[i];
+      childWeightSums[category] += weights[i];
+      sumWeight += weights[i];
+    }
     childLabels[category][childPositions[category]++] = labels[i];
   }
 
-  // Shuffling the childs
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-    numCategories - 1, numCategories));
-
-  // Picking two random Pivot to make 2 subsets and take their union
-  size_t randomPivot1 = Random(1, numCategories - 1);
-  size_t randomPivot2 = Random(randomPivot1, numCategories - 1);
-
-  // Making new Variables containing childs of union of the subsets
-  arma::Col<size_t> newCounts(randomPivot1 + numCategories - randomPivot2);
-  std::vector<arma::Row<size_t>> 
-    newLabels(randomPivot1 + numCategories - randomPivot2);
-  std::vector<arma::Row<double>> 
-    newWeights(randomPivot1 + numCategories - randomPivot2);
-  arma::vec newWeightSums(randomPivot1 + numCategories - randomPivot2);
-
-  double sumWeight = 0.0;
-  size_t totalCounts = 0;
-  for (size_t i = 0, j = 0; i < numCategories; ++i){
-    if(i < randomPivot1 || i >= randomPivot2)
-    {
-      if (UseWeights)
-      {
-        newWeights[j] = childWeights[ordering[i]];
-        newWeightSums[j] = accu(childWeights[ordering[i]]);
-        sumWeight += newWeightSums[j];
-      }
-      newCounts[j] = counts[ordering[i]];
-      totalCounts += counts[ordering[i]];
-      newLabels[j++] = childLabels[ordering[i]];
-    }
-  }
-
-  // If each child will have the minimum number of points in it, we can split.
-  // Otherwise we can't.
-  if (arma::min(newCounts) < minimumLeafSize)
-    return DBL_MAX;
-
   double overallGain = 0.0;
-  for (size_t i = 0; i < newCounts.n_elem; ++i)
+  for (size_t i = 0; i < randomPivot; ++i)
   {
     // Calculate the gain of this child.
     const double childPct = UseWeights ?
-        double(newWeightSums[i]) / sumWeight :
-        double(newCounts[i]) / double(totalCounts);
+        double(childWeightSums[newCategories[i]]) / sumWeight :
+        double(counts[newCategories[i]]) / double(totalCounts);
     const double childGain = FitnessFunction::template Evaluate<UseWeights>(
-        newLabels[i], numClasses, newWeights[i]);
+        childLabels[newCategories[i]], numClasses, childWeights[newCategories[i]]);
 
     overallGain += childPct * childGain;
   }
@@ -116,7 +113,7 @@ double RandomCategoricalSplit<FitnessFunction>::SplitIfBetter(
   {
     // This is better, so store it in splitInfo and return.
     splitInfo.set_size(1);
-    splitInfo[0] = randomPivot1 + numCategories - randomPivot2;
+    splitInfo[0] = randomPivot;
     return overallGain;
   }
 
@@ -143,81 +140,78 @@ double RandomCategoricalSplit<FitnessFunction>::SplitIfBetter(
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
 
   // Count the number of elements in each potential child.
+  arma::vec categories(numCategories);
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+  size_t j = 0;
   for (size_t i = 0; i < data.n_elem; ++i)
+  {
+    if(!counts[(size_t) data[i]])
+      categories[j++]  = ((size_t) data[i]);
     counts[(size_t) data[i]]++;
+  }
+
+  arma::vec newCategories = arma::shuffle(categories);
+  size_t randomPivot = Random(1, j);
+
+  double totalCounts = 0;
+  for (size_t i = 0; i < numCategories; ++i)
+  {
+    if(i >= randomPivot) counts[newCategories[i]] = 0;
+    else
+    {
+      totalCounts += counts[newCategories[i]];
+      // If each child will have the minimum number of points in it, we can split.
+      // Otherwise we can't.
+      if (counts[newCategories[i]] < minimumLeafSize)
+        return DBL_MAX;
+    }
+  }
   
+  // If we are using weighted training, split the weights for each child too.
+  arma::vec childWeightSums;
+  double sumWeight = 0.0;
+  if (UseWeights)
+    childWeightSums.zeros(numCategories);
+
   // Calculate the gain of the split.  First we have to calculate the responses
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
   std::vector<arma::Row<size_t>> childResponses(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
 
-  for (size_t i = 0; i < numCategories; ++i)
+  for (size_t i = 0; i < randomPivot; ++i)
   {
-    // Responses and weights should have same length.
-    childResponses[i].zeros(counts[i]);
+    // Labels and weights should have same length.
+    childResponses[i].zeros(counts[newCategories[i]]);
     if (UseWeights)
-      childWeights[i].zeros(counts[i]);
+      childWeights[i].zeros(counts[newCategories[i]]);
   }
 
-  // Extract responses for each child.
+  // Extract labels for each child.
   for (size_t i = 0; i < data.n_elem; ++i)
   {
     const size_t category = (size_t)data[i];
 
+    if(!counts[category]) continue;
+
     if (UseWeights)
+    {
       childWeights[category][childPositions[category]] = weights[i];
+      childWeightSums[category] += weights[i];
+      sumWeight += weights[i];
+    }
     childResponses[category][childPositions[category]++] = responses[i];
   }
 
-  // Shuffling the childs
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-    numCategories - 1, numCategories));
-
-  // Picking two random Pivot to make 2 subsets and take their union
-  size_t randomPivot1 = Random(1, numCategories - 1);
-  size_t randomPivot2 = Random(randomPivot1,numCategories - 1);
-
-  // Making new Variables containing childs of union of the subsets
-  arma::Col<size_t> newCounts(randomPivot1 + numCategories - randomPivot2);
-  std::vector<arma::Row<size_t>> 
-    newResponses(randomPivot1 + numCategories - randomPivot2);
-  std::vector<arma::Row<double>> 
-    newWeights(randomPivot1 + numCategories - randomPivot2);
-  arma::vec newWeightSums(randomPivot1 + numCategories - randomPivot2);
-
-  double sumWeight = 0.0;
-  size_t totalCounts = 0;
-  for (size_t i = 0, j = 0; i < numCategories; ++i){
-    if(i < randomPivot1 || i >= randomPivot2)
-    {
-      if (UseWeights)
-      {
-        newWeights[j] = childWeights[ordering[i]];
-        newWeightSums[j] = accu(childWeights[ordering[i]]);
-        sumWeight += newWeightSums[j];
-      }
-      newCounts[j] = counts[ordering[i]];
-      totalCounts += counts[ordering[i]];
-      newResponses[j++] = childResponses[ordering[i]];
-    }
-  }
-
-  // If each child will have the minimum number of points in it, we can split.
-  // Otherwise we can't.
-  if (arma::min(newCounts) < minimumLeafSize)
-    return DBL_MAX;
-
   double overallGain = 0.0;
-  for (size_t i = 0; i < newCounts.n_elem; ++i)
+  for (size_t i = 0; i < randomPivot; ++i)
   {
     // Calculate the gain of this child.
     const double childPct = UseWeights ?
-        double(newWeightSums[i]) / sumWeight :
-        double(newCounts[i]) / double(totalCounts);
-    const double childGain = FitnessFunction::template Evaluate<UseWeights>(
-        newResponses[i], newWeights[i]);
+        double(childWeightSums[newCategories[i]]) / sumWeight :
+        double(counts[newCategories[i]]) / double(totalCounts);
+    const double childGain = fitnessFunction.template Evaluate<UseWeights>(
+        childResponses[newCategories[i]], childWeights[newCategories[i]]);
 
     overallGain += childPct * childGain;
   }
@@ -225,7 +219,7 @@ double RandomCategoricalSplit<FitnessFunction>::SplitIfBetter(
   if (overallGain > bestGain + minimumGainSplit + epsilon)
   {
     // This is better, so store it in splitInfo and return.
-    splitInfo = randomPivot1 + numCategories - randomPivot2;
+    splitInfo = randomPivot;
     return overallGain;
   }
 
