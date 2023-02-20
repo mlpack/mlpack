@@ -37,7 +37,7 @@
 #define BINDING_NAME adaboost_classify
 
 #include <mlpack/core/util/mlpack_main.hpp>
-
+#include <mlpack/core/util/size_checks.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
@@ -72,11 +72,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   AdaBoostModel* m = params.Get<AdaBoostModel*>("input_model");
 
   mat testingData = std::move(params.Get<arma::mat>("test"));
-
-  if (testingData.n_rows != m->Dimensionality())
-    Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
-        << "must be the same as the model dimensionality ("
-        << m->Dimensionality() << ")!" << endl;
+  // checking same dimensionality as that of input model.
+  util::CheckSameDimensionality(testingData,m->Dimensionality(),"Adaboost::Classify()");
 
   Row<size_t> predictedLabels(testingData.n_cols);
 
