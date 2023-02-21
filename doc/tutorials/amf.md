@@ -1,7 +1,7 @@
 # Alternating Matrix Factorization tutorial
 
 Alternating matrix factorization decomposes a matrix `V` in the form `V ~ WH`
-where `W` is called the basis matrix and `H` is called the encoding matrix.. `V`
+where `W` is called the basis matrix and `H` is called the encoding matrix. `V`
 is taken to be of size `n x m` and the obtained `W` is `n x r` and `H` is `r x
 m`. The size `r` is called the *rank* of the factorization. Factorization is
 done by alternately calculating `W` and `H` respectively while holding the other

@@ -72,6 +72,9 @@ BINDING_LONG_DESC(
     " - 'SVDCompleteIncremental' -- SVD complete incremental learning\n"
     " - 'BiasSVD' -- Bias SVD using a SGD optimizer\n"
     " - 'SVDPP' -- SVD++ using a SGD optimizer\n"
+    " - 'RandSVD' -- RandomizedSVD learning\n"
+    " - 'QSVD' -- QuicSVD learning\n"
+    " - 'BKSVD' -- Block Krylov SVD learning\n"
     "\n\n"
     "The following neighbor search algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
@@ -196,7 +199,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   RequireParamInSet<string>(params, "algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
-      "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
+      "RandSVD", "BiasSVD", "SVDPP", "QSVD", "BKSVD" }, true, "unknown algorithm");
 
   ReportIgnoredParam(params, {{ "iteration_only_termination", true }},
       "min_residue");
@@ -281,6 +284,18 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       ReportIgnoredParam(params, "min_residue", "SVD++ terminates only "
           "when max_iterations is reached");
       cf->DecompositionType() = CFModel::SVD_PLUS_PLUS;
+    }
+    else if (algo == "QSVD")
+    {
+      ReportIgnoredParam(params, "min_residue", "QSVD terminates only "
+          "when max_iterations is reached");
+      cf->DecompositionType() = CFModel::QUIC_SVD;
+    }
+    else if (algo == "BKSVD")
+    {
+      ReportIgnoredParam(params, "min_residue", "BKSVD terminates only "
+          "when max_iterations is reached");
+      cf->DecompositionType() = CFModel::BLOCK_KRYLOV_SVD;
     }
 
     // Perform the factorization and do whatever the user wanted.

@@ -21,7 +21,7 @@
 namespace mlpack {
 
 /**
- * SVD++ is a matrix decomposition tenique used in collaborative filtering.
+ * SVD++ is a matrix decomposition technique used in collaborative filtering.
  * SVD++ is similar to BiasSVD, but it is a more expressive model because
  * SVD++ also models implicit feedback. SVD++ outputs user/item latent
  * vectors, user/item bias, and item vectors with regard to implicit feedback.

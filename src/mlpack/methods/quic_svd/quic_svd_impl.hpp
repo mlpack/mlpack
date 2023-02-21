@@ -23,8 +23,25 @@ inline QUIC_SVD::QUIC_SVD(
     arma::mat& v,
     arma::mat& sigma,
     const double epsilon,
-    const double delta) :
-    dataset(dataset)
+    const double delta)
+{
+  Apply(dataset, u, v, sigma, epsilon, delta);
+}
+
+inline QUIC_SVD::QUIC_SVD(
+    const double epsilon,
+    const double delta)
+{
+  /* Nothing to do here */
+}
+
+inline void QUIC_SVD::Apply(
+    const arma::mat& dataset,
+    arma::mat& u,
+    arma::mat& v,
+    arma::mat& sigma,
+    const double epsilon,
+    const double delta)
 {
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.
@@ -42,10 +59,11 @@ inline QUIC_SVD::QUIC_SVD(
 
   // Use the ExtractSVD algorithm mentioned in the paper to extract the SVD of
   // the original dataset in the obtained subspace.
-  ExtractSVD(u, v, sigma);
+  ExtractSVD(dataset, u, v, sigma);
 }
 
-inline void QUIC_SVD::ExtractSVD(arma::mat& u,
+inline void QUIC_SVD::ExtractSVD(const arma::mat& dataset,
+                                 arma::mat& u,
                                  arma::mat& v,
                                  arma::mat& sigma)
 {

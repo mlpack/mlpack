@@ -289,11 +289,6 @@ if (BUILD_R_BINDINGS)
        DESTINATION
        "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
 
-  file(COPY
-       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/configure"
-       DESTINATION
-       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
-
   # Do the actual build.
   add_custom_target(r_build ALL)
 

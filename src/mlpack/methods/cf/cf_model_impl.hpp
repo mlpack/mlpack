@@ -14,29 +14,6 @@
 
 #include "cf_model.hpp"
 
-#include "interpolation_policies/average_interpolation.hpp"
-#include "interpolation_policies/regression_interpolation.hpp"
-#include "interpolation_policies/similarity_interpolation.hpp"
-
-#include "neighbor_search_policies/cosine_search.hpp"
-#include "neighbor_search_policies/lmetric_search.hpp"
-#include "neighbor_search_policies/pearson_search.hpp"
-
-#include "decomposition_policies/batch_svd_method.hpp"
-#include "decomposition_policies/bias_svd_method.hpp"
-#include "decomposition_policies/nmf_method.hpp"
-#include "decomposition_policies/randomized_svd_method.hpp"
-#include "decomposition_policies/regularized_svd_method.hpp"
-#include "decomposition_policies/svd_complete_method.hpp"
-#include "decomposition_policies/svd_incomplete_method.hpp"
-#include "decomposition_policies/svdplusplus_method.hpp"
-
-#include "normalization/no_normalization.hpp"
-#include "normalization/overall_mean_normalization.hpp"
-#include "normalization/user_mean_normalization.hpp"
-#include "normalization/item_mean_normalization.hpp"
-#include "normalization/z_score_normalization.hpp"
-
 namespace mlpack {
 
 inline CFModel::CFModel() :
@@ -361,6 +338,12 @@ inline CFWrapperBase* InitializeModel(
 
     case CFModel::SVD_PLUS_PLUS:
       return InitializeModelHelper<SVDPlusPlusPolicy>(normalizationType);
+
+    case CFModel::QUIC_SVD:
+      return InitializeModelHelper<QUIC_SVDPolicy>(normalizationType);
+
+    case CFModel::BLOCK_KRYLOV_SVD:
+      return InitializeModelHelper<BlockKrylovSVDPolicy>(normalizationType);
   }
 
   // This shouldn't ever happen.
@@ -473,6 +456,16 @@ inline void CFModel::Train(
       cf = TrainHelper(SVDPlusPlusPolicy(), normalizationType, data,
           numUsersForSimilarity, rank, maxIterations, minResidue, mit);
       break;
+
+    case QUIC_SVD:
+      cf = TrainHelper(QUIC_SVDPolicy(), normalizationType, data,
+          numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+      break;
+
+    case BLOCK_KRYLOV_SVD:
+      cf = TrainHelper(BlockKrylovSVDPolicy(), normalizationType, data,
+          numUsersForSimilarity, rank, maxIterations, minResidue, mit);
+      break;
   }
 }
 
@@ -554,6 +547,14 @@ void CFModel::serialize(Archive& ar, const uint32_t /* version */)
 
     case SVD_PLUS_PLUS:
       SerializeHelper<SVDPlusPlusPolicy>(ar, cf, normalizationType);
+      break;
+
+    case QUIC_SVD:
+      SerializeHelper<QUIC_SVDPolicy>(ar, cf, normalizationType);
+      break;
+    
+    case BLOCK_KRYLOV_SVD:
+      SerializeHelper<BlockKrylovSVDPolicy>(ar, cf, normalizationType);
       break;
   }
 }
