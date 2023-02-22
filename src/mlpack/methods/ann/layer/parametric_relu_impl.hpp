@@ -86,6 +86,18 @@ void PReLUType<MatType>::SetWeights(
 }
 
 template<typename MatType>
+void PReLUType<MatType>::CustomInitialize(
+    MatType& W,
+    const size_t elements)
+{
+  if (elements != 1) {
+    throw std::invalid_argument("PReLUType::CustomInitialize(): wrong "
+        "elements size!"); 
+  }
+  MakeAlias(alpha, W.memptr(), 1, 1);
+}
+
+template<typename MatType>
 void PReLUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {

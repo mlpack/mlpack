@@ -71,6 +71,16 @@ class PReLUType : public Layer<MatType>
   void SetWeights(typename MatType::elem_type* weightsPtr);
 
   /**
+   * Initialize the weight matrix of the layer.
+   *
+   * @param W Weight matrix to initialize.
+   * @param elements Number of elements.
+   */
+  void CustomInitialize(
+      MatType& W,
+      const size_t elements);
+
+  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
