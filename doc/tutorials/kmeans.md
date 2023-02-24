@@ -259,6 +259,47 @@ rows equal to the dimensionality of the dataset.  Each column represents the
 centroid of the according cluster---`centroids.col(0)` represents the centroid
 of the first cluster.
 
+### Assignment of clusters to new datapoint
+
+Often there is a need to label new datapoints based on previously trained dataset.
+In mlpack, we can do this using `Assign()` functionality. Here is an example for 
+using the function:
+
+```c++
+#include <mlpack.hpp>
+
+using namespace mlpack;
+
+// The dataset we are clustering.
+extern arma::mat data;
+
+// The assignments will be stored in this vector.
+arma::Row<size_t> assignments;
+// The centroids will be stored in this matrix.
+arma::mat centroids;
+
+// Initialize with the default arguments.
+KMeans<> k;
+// Train the model
+k.Cluster(data, centroids, assignments);
+
+// Points for which cluster assignment will be done.
+extern arma::mat points;
+
+// The assignments for new data point will be stored in this vector.
+arma::Row<size_t> newAssignments;
+k.Assign(points, centroids, newAssignments);
+```
+
+From the above example, it is clear that it takes `centroids` as one of the 
+argument. Hence training should be done by passing `centroids` as one of 
+the argument(so that centroids get stored in it) and later can be passed 
+in `Assign()` function. If one wants more control on searching the centroid 
+neighbors of new datapoint, it can be done using `NeighborSearch` class instead.
+
+For more information on the `NeighborSearch`, see the documentation for
+[`NeighborSearch`](/neighbor_search.md).
+
 ### Limiting the maximum number of iterations
 
 The first argument to the constructor allows specification of the maximum number

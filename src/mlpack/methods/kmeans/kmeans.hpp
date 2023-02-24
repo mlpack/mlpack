@@ -164,6 +164,11 @@ class KMeans
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false);
 
+  //! Assign cluster to new datapoint.
+  void Assign(const MatType& data,
+  	      const arma::mat& centroids,
+  	      arma::Row<size_t>& assignments);
+
   //! Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }
   //! Set the maximum number of iterations.

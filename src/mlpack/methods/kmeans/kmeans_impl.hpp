@@ -327,6 +327,34 @@ Cluster(const MatType& data,
   }
 }
 
+/**
+ * Performs cluster assignment of new datapoint by passing already 
+ * computed centroids. The function uses KNN for searching the nearest
+ * centroid.
+ */
+template<typename MetricType,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy,
+         template<class, class> class LloydStepType,
+         typename MatType>
+void KMeans<
+    MetricType,
+    InitialPartitionPolicy,
+    EmptyClusterPolicy,
+    LloydStepType,
+    MatType>::
+Assign(const MatType& data,
+  	      const arma::mat& centroids,
+  	      arma::Row<size_t>& assignments)
+{
+  assignments.set_size(data.n_cols);
+  // using KNN class for getting the nearest centroid.
+  KNN a(centroids);
+  arma::mat resultingDistances;
+
+  a.Search(data, 1, assignments, resultingDistances);
+}
+
 template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
