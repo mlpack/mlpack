@@ -113,7 +113,8 @@ PARAM_INT_IN("new_dimensionality", "If not 0, reduce the dimensionality of "
 PARAM_FLAG("center", "If set, the transformed data will be centered about the "
     "origin.", "c");
 
-PARAM_FLAG("nystroem_method", "If set, the Nystroem method will be used.", "n");
+PARAM_FLAG("nystroem_method", "If set, the Nystroem method will be used else "
+           "Naive will be used.", "n");
 
 PARAM_STRING_IN("sampling", "Sampling scheme to use for the Nystroem method: "
     "'kmeans', 'random', 'ordered'", "s", "kmeans");
