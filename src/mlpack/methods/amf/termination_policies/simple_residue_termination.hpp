@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef _MLPACK_METHODS_AMF_SIMPLERESIDUETERMINATION_HPP_INCLUDED
-#define _MLPACK_METHODS_AMF_SIMPLERESIDUETERMINATION_HPP_INCLUDED
+#ifndef _MLPACK_METHODS_AMF_SIMPLE_RESIDUE_TERMINATION_HPP_INCLUDED
+#define _MLPACK_METHODS_AMF_SIMPLE_RESIDUE_TERMINATION_HPP_INCLUDED
 
 #include <mlpack/prereqs.hpp>
 
