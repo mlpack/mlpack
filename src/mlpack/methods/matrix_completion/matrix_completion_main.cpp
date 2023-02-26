@@ -48,24 +48,22 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to run Matrix Completion on the indices matrix " + 
-    PRINT_DATASET("indices") + " with values vector " + PRINT_DATASET("values")
-    + ", the following command could be used: "
+    "For example, to run Matrix Completion on the indices matrix with values "
+    "vector, the following command could be used: "
     "\n\n" +
     PRINT_CALL("matrix_completion", "rows", "columns", "indices", "values"));
 
-PARAM_INT_IN_REQ("rows", "Size of the neighborhood of similar users to "
-    "consider for each query user.", "r");
-PARAM_INT_IN_REQ("columns", "Rank of decomposed matrices (if 0, a heuristic is used to"
-    " estimate the rank).", "c");
-PARAM_UMATRIX_IN_REQ("indices", "Input dataset to run NCA on.", "i");
-PARAM_COL_IN_REQ("values", "Labels for input dataset.", "v");
+PARAM_INT_IN_REQ("rows", "Number of rows of original matrix.", "r");
+PARAM_INT_IN_REQ("columns", "Number of columns of original matrix.", "c");
+PARAM_UMATRIX_IN_REQ("indices", "Matrix containing the indices of the known "
+    "entries.", "i");
+PARAM_COL_IN_REQ("values", "Vector containing the values of the known entries.",
+    "v");
 
-PARAM_INT_IN("rank", "Size of the neighborhood of similar users to "
-    "consider for each query user.", "k", 1);
-PARAM_MATRIX_IN("initial", "Input dataset to run NCA on.", "e");
+PARAM_INT_IN("rank", "Maximum rank of solution.", "k", 1);
+PARAM_MATRIX_IN("initial", "Starting point for the SDP optimization.", "e");
 
-PARAM_MATRIX_OUT("recover", "Matrix to output distances into.", "o");
+PARAM_MATRIX_OUT("recover", "Completed matrix.", "o");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
