@@ -38,7 +38,7 @@ namespace mlpack {
  *
  * @code
  * size_t m, n;         // size of unknown matrix
- * arma::umat indices;  // contains the known indices [2 x n_entries]
+ * arma::Mat<size_t> indices;  // contains the known indices [2 x n_entries]
  * arma::vec values;    // contains the known values [n_entries]
  * arma::mat recovered; // will contain the completed matrix
  *
@@ -65,7 +65,7 @@ class MatrixCompletion
    */
   MatrixCompletion(const size_t m,
                    const size_t n,
-                   const arma::umat& indices,
+                   const arma::Mat<size_t>& indices,
                    const arma::vec& values,
                    const size_t r);
 
@@ -83,7 +83,7 @@ class MatrixCompletion
    */
   MatrixCompletion(const size_t m,
                    const size_t n,
-                   const arma::umat& indices,
+                   const arma::Mat<size_t>& indices,
                    const arma::vec& values,
                    const arma::mat& initialPoint);
 
@@ -99,7 +99,7 @@ class MatrixCompletion
    */
   MatrixCompletion(const size_t m,
                    const size_t n,
-                   const arma::umat& indices,
+                   const arma::Mat<size_t>& indices,
                    const arma::vec& values);
 
   /**
@@ -123,7 +123,7 @@ class MatrixCompletion
   //! Number of columns in original matrix.
   size_t n;
   //! Matrix containing the indices of the known entries (has two rows).
-  arma::umat indices;
+  arma::Mat<size_t> indices;
   //! Vector containing the values of the known entries.
   arma::mat values;
 

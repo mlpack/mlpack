@@ -173,58 +173,22 @@ void PCAVarianceRetained()
 }
 
 /**
- * Compare the output of our exact PCA implementation with Armadillo's.
+ * Compare the output of all types of  PCA implementation with Armadillo's.
  */
-TEST_CASE("ArmaComparisonExactPCATest", "[PCATest]")
+TEMPLATE_TEST_CASE("ArmaComparisonPCATest", "[PCATest]", ExactSVDPolicy, 
+    RandomizedSVDPCAPolicy, QUICSVDPolicy, RandomizedBlockKrylovSVDPolicy)
 {
-  ArmaComparisonPCA<ExactSVDPolicy>();
+  ArmaComparisonPCA<TestType>();
 }
 
 /**
- * Compare the output of our randomized block krylov PCA implementation with
- * Armadillo's.
+ * Test that dimensionality reduction with all types of  PCA implementation
+ * works the same way MATLAB does.
  */
-TEST_CASE("ArmaComparisonRandomizedBlockKrylovPCATest", "[PCATest]")
+TEMPLATE_TEST_CASE("PCADimensionalityReductionTest", "[PCATest]", ExactSVDPolicy, 
+    RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy)
 {
-  RandomizedBlockKrylovSVDPolicy decomposition(5);
-  ArmaComparisonPCA<RandomizedBlockKrylovSVDPolicy>(false, decomposition);
-}
-
-/**
- * Compare the output of our randomized-SVD PCA implementation with Armadillo's.
- */
-TEST_CASE("ArmaComparisonRandomizedPCATest", "[PCATest]")
-{
-  ArmaComparisonPCA<RandomizedSVDPCAPolicy>();
-}
-
-/**
- * Test that dimensionality reduction with exact-svd PCA works the same way
- * MATLAB does (which should be correct!).
- */
-TEST_CASE("ExactPCADimensionalityReductionTest", "[PCATest]")
-{
-  PCADimensionalityReduction<ExactSVDPolicy>();
-}
-
-/**
- * Test that dimensionality reduction with randomized block krylov PCA works the
- * same way MATLAB does (which should be correct!).
- */
-TEST_CASE("RandomizedBlockKrylovPCADimensionalityReductionTest", "[PCATest]")
-{
-  RandomizedBlockKrylovSVDPolicy decomposition(5);
-  PCADimensionalityReduction<RandomizedBlockKrylovSVDPolicy>(false,
-      decomposition);
-}
-
-/**
- * Test that dimensionality reduction with randomized-svd PCA works the same way
- * MATLAB does (which should be correct!).
- */
-TEST_CASE("RandomizedPCADimensionalityReductionTest", "[PCATest]")
-{
-  PCADimensionalityReduction<RandomizedSVDPCAPolicy>();
+  PCADimensionalityReduction<TestType>();
 }
 
 /**

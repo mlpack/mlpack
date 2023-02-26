@@ -1,4 +1,4 @@
-# Utility macro to add bindings for all languages.
+﻿# Utility macro to add bindings for all languages.
 macro(add_all_bindings directory name type)
   add_category(${name} ${type})
   add_cli_executable(${directory} ${name})
@@ -37,6 +37,7 @@ add_all_bindings(local_coordinate_coding local_coordinate_coding
     "transformations")
 add_all_bindings(logistic_regression logistic_regression "classification")
 add_all_bindings(lsh lsh "geometry")
+add_all_bindings(matrix_completion matrix_completion "preprocessing")
 add_all_bindings(mean_shift mean_shift "clustering")
 add_all_bindings(naive_bayes nbc "classification")
 add_all_bindings(nca nca "transformations")

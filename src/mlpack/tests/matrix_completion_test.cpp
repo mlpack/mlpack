@@ -31,7 +31,7 @@ using namespace mlpack;
 TEST_CASE("UniformMatrixCompletionSDP", "[MatrixCompletionTest]")
 {
   arma::mat Xorig, values;
-  arma::umat indices;
+  arma::Mat<size_t> indices;
 
   if (!data::Load("completion_X.csv", Xorig, false, false))
     FAIL("Cannot load dataset completion_X.csv");

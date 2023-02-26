@@ -20,7 +20,7 @@ namespace mlpack {
 inline MatrixCompletion::MatrixCompletion(
     const size_t m,
     const size_t n,
-    const arma::umat& indices,
+    const arma::Mat<size_t>& indices,
     const arma::vec& values,
     const size_t r) :
     m(m),
@@ -36,7 +36,7 @@ inline MatrixCompletion::MatrixCompletion(
 inline MatrixCompletion::MatrixCompletion(
     const size_t m,
     const size_t n,
-    const arma::umat& indices,
+    const arma::Mat<size_t>& indices,
     const arma::vec& values,
     const arma::mat& initialPoint) :
     m(m),
@@ -52,7 +52,7 @@ inline MatrixCompletion::MatrixCompletion(
 inline MatrixCompletion::MatrixCompletion(
     const size_t m,
     const size_t n,
-    const arma::umat& indices,
+    const arma::Mat<size_t>& indices,
     const arma::vec& values) :
     m(m),
     n(n),
