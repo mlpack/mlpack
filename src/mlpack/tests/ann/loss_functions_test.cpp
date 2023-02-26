@@ -1251,3 +1251,24 @@ TEST_CASE("NegativeLogLikelihoodLossTest", "[LossFunctionsTest]")
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
 }
+
+/**
+ * Jacobian negative log likelihood module test.
+ */
+TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[LossFunctionsTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    NegativeLogLikelihood module;
+    const size_t inputElements = RandInt(5, 100);
+    arma::mat input;
+    RandomInitialization init(0, 1);
+    init.Initialize(input, inputElements, 1);
+
+    arma::mat target(1, 1);
+    target(0) = RandInt(0, inputElements - 2);
+
+    double error = JacobianPerformanceTest(module, input, target);
+    REQUIRE(error <= 1e-5);
+  }
+}
