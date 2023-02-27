@@ -90,7 +90,7 @@ class ContinuousDoublePoleCart
    */
   struct Action
   {
-    double action[1];
+    double action=0.0;;
     // Storing degree of freedom
     const int size = 1;
   };
@@ -191,7 +191,7 @@ class ContinuousDoublePoleCart
             const Action& action,
             arma::vec& dydx)
   {
-    double totalForce = action.action[0];
+    double totalForce = action.action;
     double totalMass = massCart;
     double omega1 = state.AngularVelocity(1);
     double omega2 = state.AngularVelocity(2);
