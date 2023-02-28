@@ -31,7 +31,7 @@ TEST_CASE("SimplePendulumTest", "[RLComponentsTest]")
 
   Pendulum::State state = task.InitialSample();
   Pendulum::Action action;
-  action.action = Random(-2.0, 2.0);
+  action.action[0] = Random(-2.0, 2.0);
   double reward, minReward = 0.0;
 
   REQUIRE(!task.IsTerminal(state));
