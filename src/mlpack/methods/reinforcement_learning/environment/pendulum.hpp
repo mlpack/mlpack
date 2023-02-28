@@ -99,7 +99,7 @@ class Pendulum
      */
     Action() : action(1)
     { /* Nothing to do here */ }
-    double action=0.0;
+    std::vector<double> action;
     // Storing degree of freedom.
     static const size_t size = 1;
   };
