@@ -99,7 +99,7 @@ class Pendulum
      */
     Action() : action(1)
     { /* Nothing to do here */ }
-    std::vector<double> action;
+    double action=0.0;
     // Storing degree of freedom.
     static const size_t size = 1;
   };
@@ -153,7 +153,7 @@ class Pendulum
     const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
-    double torque = ClampRange(action.action[0], -maxTorque, maxTorque);
+    double torque = ClampRange(action.action, -maxTorque, maxTorque);
 
     // Calculate costs of taking this action in the current state.
     double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *
