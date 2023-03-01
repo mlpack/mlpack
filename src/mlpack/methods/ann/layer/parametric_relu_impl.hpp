@@ -22,28 +22,28 @@ namespace mlpack {
 
 template<typename MatType>
 PReLUType<MatType>::PReLUType(const double userAlpha) :
-    Layer<MatType>()
+    Layer<MatType>(),
+    userAlpha(userAlpha)
 {
-  alpha.set_size(1, 1);
-  alpha(0) = userAlpha;
+  // Nothing to do here.
 }
 
 template<typename MatType>
 PReLUType<MatType>::PReLUType(
     const PReLUType& other) :
-    Layer<MatType>(other)
+    Layer<MatType>(other),
+    userAlpha(other.userAlpha)
 {
-  userAlpha = other.userAlpha;
-  alpha = other.alpha;
+  // Nothing to do here.
 }
 
 template<typename MatType>
 PReLUType<MatType>::PReLUType(
     PReLUType&& other) :
-    Layer<MatType>(std::move(other))
+    Layer<MatType>(std::move(other)),
+    userAlpha(std::move(other.userAlpha))
 {
-  userAlpha = std::move(other.userAlpha);
-  alpha = std::move(other.alpha);
+  // Nothing to do here.
 }
 
 template<typename MatType>
@@ -54,7 +54,6 @@ PReLUType<MatType>::operator=(const PReLUType& other)
   {
     Layer<MatType>::operator=(other);
     userAlpha = other.userAlpha;
-    alpha = other.alpha;
   }
 
   return *this;
@@ -68,7 +67,6 @@ PReLUType<MatType>::operator=(PReLUType&& other)
   {
     Layer<MatType>::operator=(std::move(other));
     userAlpha = std::move(other.userAlpha);
-    alpha = std::move(other.alpha);
   }
 
   return *this;
@@ -78,11 +76,7 @@ template<typename MatType>
 void PReLUType<MatType>::SetWeights(
     typename MatType::elem_type* weightsPtr)
 {
-  alpha = arma::mat(weightsPtr, 1, 1, false, false);
-
-  //! Set value of alpha to the one given by user.
-  // TODO: this doesn't even make any sense.  is it trainable or not?
-  // why is there userAlpha?  is that for initialization only?
+  MakeAlias(alpha, weightsPtr, 1, 1);
 }
 
 template<typename MatType>
@@ -94,14 +88,14 @@ void PReLUType<MatType>::CustomInitialize(
     throw std::invalid_argument("PReLUType::CustomInitialize(): wrong "
         "elements size!"); 
   }
-  MakeAlias(alpha, W.memptr(), 1, 1);
+
+  W(0) = userAlpha;
 }
 
 template<typename MatType>
 void PReLUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  // TODO: use transform()?
   output = input;
   if (this->training)
   {
@@ -144,7 +138,6 @@ void PReLUType<MatType>::serialize(
   ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(userAlpha));
-  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace mlpack

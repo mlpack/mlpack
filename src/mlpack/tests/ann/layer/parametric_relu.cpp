@@ -28,9 +28,13 @@ TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
                     {-2.2, -1.5, 0.8},
                     {5.5, -4.7, 2.1},
                     {0.2, 0.1, -0.5}};
-  PReLU model(0.01);
+  PReLU module(0.01);
+  module.Training() = true;
+  arma::mat moduleParams(module.WeightSize(), 1);
+  module.CustomInitialize(moduleParams, module.WeightSize());
+  module.SetWeights((double*) moduleParams.memptr());
   arma::mat predOutput;
-  model.Forward(input, predOutput);
+  module.Forward(input, predOutput);
   arma::mat actualOutput = {{0.5, 1.2, 3.1},
                            {-0.022, -0.015, 0.8},
                            {5.5, -0.047, 2.1},
@@ -48,13 +52,16 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
                     {-2.2, -1.5, 0.8},
                     {5.5, -4.7, 2.1},
                     {0.2, 0.1, -0.5}};
-  PReLU model(0.01);
+  PReLU module(0.01);
+  arma::mat moduleParams(module.WeightSize(), 1);
+  module.CustomInitialize(moduleParams, module.WeightSize());
+  module.SetWeights((double*) moduleParams.memptr());
   arma::mat gy = {{0.2, -0.5, 0.8},
                  {1.5, -0.6, 0.1},
                  {-0.3, 0.2, -0.5},
                  {0.1, -0.1, 0.3}};
   arma::mat predG;
-  model.Backward(input, gy, predG);
+  module.Backward(input, gy, predG);
   arma::mat actualG = {{0.2, -0.5, 0.8},
                       {0.015, -0.006, 0.1},
                       {-0.3, 0.002, -0.5},
@@ -73,13 +80,16 @@ TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
                     {-2.2, -1.5, 0.8},
                     {5.5, -4.7, 2.1},
                     {0.2, 0.1, -0.5}};
-  PReLU model(0.01);
+  PReLU module(0.01);
+  arma::mat moduleParams(module.WeightSize(), 1);
+  module.CustomInitialize(moduleParams, module.WeightSize());
+  module.SetWeights((double*) moduleParams.memptr());
   arma::mat error = {{0.2, -0.5,  0.8},
                     {-0.015, -0.006, 0.001},
                     {-0.3,  0.002, -0.005},
                     {0.1, -0.1, 0.0035}};
   arma::mat predGradient;
-  model.Gradient(input, error, predGradient);
+  module.Gradient(input, error, predGradient);
 
   REQUIRE(0.0103 - arma::accu(predGradient) ==
       Approx(0.0).margin(1e-4));
