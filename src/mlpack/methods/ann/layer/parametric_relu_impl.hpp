@@ -84,7 +84,8 @@ void PReLUType<MatType>::CustomInitialize(
     MatType& W,
     const size_t elements)
 {
-  if (elements != 1) {
+  if (elements != 1)
+  {
     throw std::invalid_argument("PReLUType::CustomInitialize(): wrong "
         "elements size!"); 
   }
