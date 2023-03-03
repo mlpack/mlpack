@@ -34,3 +34,4 @@
 #include "layer/mean_pooling.cpp"
 #include "layer/padding.cpp"
 #include "layer/softmax.cpp"
+#include "layer/softmin.cpp"
