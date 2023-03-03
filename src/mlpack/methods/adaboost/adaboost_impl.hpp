@@ -94,10 +94,16 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
       predictedLabels.n_cols);
 
   // Load the initial weights into a 2-D matrix.
-  const double initWeight = 1.0 / double(data.n_cols * numClasses);
+  //D(l)(k) is 1/2n where l is the label of the kth data point
+  //For all l other than that is 1/2n(k-1)
+  const double initWeightnotlabel = 1.0 / double(2*data.n_cols * (numClasses-1));
+  const double initWeightlabel = 1.0 / double(2*data.n_cols)
   arma::mat D(numClasses, data.n_cols);
-  D.fill(initWeight);
-
+  D.fill(initWeightnotlabel);
+  for(size_t i=0;i<D.n_cols;++i)
+  {
+  D.col(i)(labels(i)) = initWeight2;
+  }    
   // Weights are stored in this row vector.
   arma::rowvec weights(predictedLabels.n_cols);
 
