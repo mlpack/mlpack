@@ -98,11 +98,11 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   //For all l other than that is 1/2n(k-1)
   const double initWeightnotlabel = 1.0 / double(2 * data.n_cols * (numClasses - 1));
   const double initWeightlabel = 1.0 / double(2 * data.n_cols);
-  arma::mat D(numClasses, data.n_cols);
+  arma::mat D(numClasses, data.n_cols, arma::fill::none);
   D.fill(initWeightnotlabel);
   for (size_t i = 0;i < D.n_cols;++i)
   {
-      D.col(i)(labels(i)) = initWeightlabel;
+     D(labels(i), i) = initWeightlabel;
   }
 
   // Weights are stored in this row vector.
