@@ -28,11 +28,8 @@ namespace mlpack {
  * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template<
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
->
-class JoinType : public Layer<InputType, OutputType>
+template<typename MatType>
+class JoinType : public Layer<MatType>
 {
  public:
   //! Create the JoinType object.
@@ -41,6 +38,18 @@ class JoinType : public Layer<InputType, OutputType>
   //! Clone the JoinType object. This handles polymorphism correctly.
   JoinType* Clone() const { return new JoinType(*this); }
 
+  //! Copy the other Join layer.
+  JoinType(const JoinType& other);
+
+  //! Take ownership of the members of the other Join layer.
+  JoinType(JoinType&& other);
+
+  //! Copy the other Join layer (but not weights).
+  JoinType& operator=(const JoinType& other);
+
+  //! Take ownership of the members of the other Join layer.
+  JoinType& operator=(JoinType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -48,7 +57,7 @@ class JoinType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -59,19 +68,9 @@ class JoinType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
-
-  // This layer simply flattens its input into a vector.
-  const std::vector<size_t> OutputDimensions() const
-  {
-    // TODO: it's not clear what to do here
-    std::vector<size_t> result(inputDimensions.size(), 0);
-    result[0] = std::accumulate(inputDimensions.begin(), inputDimensions.end(),
-        0);
-    return result;
-  }
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Serialize the layer.
@@ -88,7 +87,7 @@ class JoinType : public Layer<InputType, OutputType>
 }; // class JoinType
 
 //Standard Join layer.
-typedef JoinType<arma::mat, arma::mat> Join;
+typedef JoinType<arma::mat> Join;
 
 } // namespace mlpack
 
