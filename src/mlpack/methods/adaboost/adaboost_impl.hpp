@@ -68,7 +68,8 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     const size_t numClasses,
     const WeakLearnerType& other,
     const size_t iterations,
-    const double tolerance)
+    const double tolerance,
+    const double learning_rate)
 {
   // Clear information from previous runs.
   wl.clear();
@@ -175,7 +176,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
 
     // Our goal is to find alphat which mizimizes or approximately minimizes the
     // value of Z as a function of alpha.
-    alphat = 0.5 * log((1 + rt) / (1 - rt));
+    alphat = learning_rate * log((1 + rt) / (1 - rt));
 
     alpha.push_back(alphat);
     wl.push_back(w);
