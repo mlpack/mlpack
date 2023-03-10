@@ -44,8 +44,8 @@ namespace mlpack {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class SoftShrinkType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class SoftShrinkType : public Layer<MatType>
 {
  public:
   /**
@@ -64,6 +64,18 @@ class SoftShrinkType : public Layer<InputType, OutputType>
   //! Clone the SoftShrinkType object. This handles polymorphism correctly.
   SoftShrinkType* Clone() const { return new SoftShrinkType(*this); }
 
+    //! Virtual destructor.
+  virtual ~SoftShrinkType() { }
+
+  //! Copy the given SoftShrinkType.
+  SoftShrinkType(const SoftShrinkType& other);
+  //! Take ownership of the given SoftShrinkType.
+  SoftShrinkType(SoftShrinkType&& other);
+  //! Copy the given SoftShrinkType.
+  SoftShrinkType& operator=(const SoftShrinkType& other);
+  //! Take ownership of the given SoftShrinkType.
+  SoftShrinkType& operator=(SoftShrinkType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -71,7 +83,7 @@ class SoftShrinkType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the Soft Shrink function.
    * @param output Resulting output activation
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -82,7 +94,7 @@ class SoftShrinkType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get the hyperparameter lambda.
   double const& Lambda() const { return lambda; }
@@ -101,7 +113,7 @@ class SoftShrinkType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard SoftShrink layer.
-typedef SoftShrinkType<arma::mat, arma::mat> SoftShrink;
+typedef SoftShrinkType<arma::mat> SoftShrink;
 
 } // namespace mlpack
 
