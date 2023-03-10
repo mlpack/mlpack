@@ -45,8 +45,8 @@ namespace mlpack {
  *     to also be in this type. The type also allows the computation and weight
  *     type to differ from the input type (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class HardShrinkType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class HardShrinkType : public Layer<MatType>
 {
  public:
   /**
@@ -61,6 +61,15 @@ class HardShrinkType : public Layer<InputType, OutputType>
   //! Clone the HardShrinkType object. This handles polymorphism correctly.
   HardShrinkType* Clone() const { return new HardShrinkType(*this); }
 
+  //! Copy the given HardShrinkType.
+  HardShrinkType(const HardShrinkType& other);
+  //! Take ownership of the given HardShrinkType.
+  HardShrinkType(HardShrinkType&& other);
+  //! Copy the given HardShrinkType.
+  HardShrinkType& operator=(const HardShrinkType& other);
+  //! Take ownership of the given HardShrinkType.
+  HardShrinkType& operator=(HardShrinkType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -68,7 +77,7 @@ class HardShrinkType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the Hard Shrink function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -79,7 +88,7 @@ class HardShrinkType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get the hyperparameter lambda.
   double const& Lambda() const { return lambda; }
@@ -98,7 +107,7 @@ class HardShrinkType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard HardShrink layer.
-typedef HardShrinkType<arma::mat, arma::mat> HardShrink;
+typedef HardShrinkType<arma::mat> HardShrink;
 
 } // namespace mlpack
 
