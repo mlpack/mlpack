@@ -28,30 +28,70 @@
 
 namespace mlpack {
 
-template<typename InputDataType, typename OutputDataType>
-ReLU6<InputDataType, OutputDataType>::ReLU6()
+template<typename MatType>
+ReLU6Type<MatType>::ReLU6Type() :
+    Layer<MatType>()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename OutputType>
-void ReLU6<InputDataType, OutputDataType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+ReLU6Type<MatType>::ReLU6Type(
+    const ReLU6Type& other) :
+    Layer<MatType>(other)
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+ReLU6Type<MatType>::ReLU6Type(
+    ReLU6Type&& other) :
+    Layer<MatType>(std::move(other))
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+ReLU6Type<MatType>&
+ReLU6Type<MatType>::operator=(const ReLU6Type& other)
+{
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(other);
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+ReLU6Type<MatType>&
+ReLU6Type<MatType>::operator=(ReLU6Type&& other)
+{
+  if (&other != this)
+  {
+    Layer<MatType>::operator=(std::move(other));
+  }
+
+  return *this;
+}
+
+template<typename MatType>
+void ReLU6Type<MatType>::Forward(
+    const MatType& input, MatType& output)
 { 
-  OutputType outputTemp(arma::size(input));
+  MatType outputTemp(arma::size(input));
   outputTemp.fill(6.0);
-  output = arma::zeros<OutputType>(arma::size(input));
+  output = arma::zeros<MatType>(arma::size(input));
   output = arma::min(arma::max(output, input), outputTemp);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void ReLU6<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+template<typename MatType>
+void ReLU6Type<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
-  DataType derivative(arma::size(gy));
+  MatType derivative(arma::size(gy));
   derivative.fill(0.0);
+  #pragma omp for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < 6 && input(i) > 0)
@@ -61,9 +101,9 @@ void ReLU6<InputDataType, OutputDataType>::Backward(
   g = gy % derivative;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename MatType>
 template<typename Archive>
-void ReLU6<InputDataType, OutputDataType>::serialize(
+void ReLU6Type<MatType>::serialize(
     Archive& /* ar */,
     const uint32_t /* version */)
 {
