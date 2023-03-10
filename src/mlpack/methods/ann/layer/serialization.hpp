@@ -55,7 +55,6 @@
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::IdentityType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::JoinType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LeakyReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LinearType<__VA_ARGS__>); \
