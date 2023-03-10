@@ -147,7 +147,8 @@ class AdaBoost
                const size_t numClasses,
                const WeakLearnerType& learner,
                const size_t iterations = 100,
-               const double tolerance = 1e-6);
+               const double tolerance = 1e-6,
+               const double learning_rate=0.5);
 
   /**
    * Classify the given test points.
