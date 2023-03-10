@@ -65,6 +65,7 @@
     CEREAL_REGISTER_TYPE(mlpack::MeanPoolingType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::NoisyLinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::PaddingType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::PReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::RBFType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::SoftmaxType<__VA_ARGS__>); \
 

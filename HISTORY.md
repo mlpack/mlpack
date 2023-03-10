@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+  * Adapt PReLU layer for new neural network API (#3420).
+
   * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy` (#3413, #3404).
 
   * Update outdated code in tutorials (#3398, #3401).
