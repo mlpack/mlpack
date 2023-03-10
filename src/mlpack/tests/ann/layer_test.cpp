@@ -28,7 +28,6 @@
 #include "layer/grouped_convolution.cpp"
 #include "layer/hardshrink.cpp"
 #include "layer/identity.cpp"
-#include "layer/join.cpp"
 #include "layer/linear3d.cpp"
 #include "layer/linear_no_bias.cpp"
 #include "layer/log_softmax.cpp"
@@ -36,4 +35,3 @@
 #include "layer/mean_pooling.cpp"
 #include "layer/padding.cpp"
 #include "layer/softmax.cpp"
-#include "layer/softshrink.cpp"
