@@ -35,3 +35,4 @@
 #include "layer/padding.cpp"
 #include "layer/parametric_relu.cpp"
 #include "layer/softmax.cpp"
+#include "layer/softmin.cpp"
