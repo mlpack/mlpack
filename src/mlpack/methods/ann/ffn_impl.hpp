@@ -380,7 +380,7 @@ void FFN<
     // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
     // more information.
     #ifndef MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
-      static_assert(false, "Cannot serialize a neural network unless "
+      throw std::runtime_error("Cannot serialize a neural network unless "
           "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
           "build options\" section of the README for more information.");
     #endif
