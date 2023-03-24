@@ -438,8 +438,12 @@ More documentation is available for both users and developers.
 To learn about the development goals of mlpack in the short- and medium-term
 future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
+<a href="https://github.com/mlpack/github-readme-stats"><img align="center" src="https://github-readme-stats.vercel.app/api?username=mlpack&show_icons=true&include_all_commits=true&theme=buefy&hide_border=true" alt="mlpack's github stats" /></a> 
+
 If you have problems, find a bug, or need help, you can try visiting
 the [mlpack help](https://www.mlpack.org/questions.html) page, or [mlpack on
 Github](https://www.github.com/mlpack/mlpack/).  Alternately, mlpack help can be
 found on Matrix at `#mlpack`; see also the
 [community](https://www.mlpack.org/community.html) page.
+
+
