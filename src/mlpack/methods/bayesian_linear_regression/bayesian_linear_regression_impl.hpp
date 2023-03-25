@@ -34,11 +34,14 @@ inline BayesianLinearRegression::BayesianLinearRegression(
 inline double BayesianLinearRegression::Train(const arma::mat& data,
                                               const arma::rowvec& responses)
 {
+  /*The checks for same size*/
+  util::CheckSameSizes(data, responses, "BayesianLinearRegression::Train()");
+  
   arma::mat phi;
   arma::rowvec t;
   arma::colvec eigVal;
   arma::mat eigVec;
-
+   
   // Preprocess the data. Center and scale.
   responsesOffset = CenterScaleData(data, responses, phi, t);
 
@@ -111,7 +114,10 @@ inline void BayesianLinearRegression::Predict(const arma::mat& points,
 inline double BayesianLinearRegression::RMSE(
     const arma::mat& data,
     const arma::rowvec& responses) const
-{
+{ 
+  /*size checks*/
+  util::CheckSameSizes(data, responses, "BayesianLinearRegression::RMSE()");
+  
   arma::rowvec predictions;
   Predict(data, predictions);
   return sqrt(mean(square(responses - predictions)));
