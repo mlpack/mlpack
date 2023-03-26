@@ -14,6 +14,8 @@
 
 #include "bayesian_linear_regression.hpp"
 
+#include <mlpack/core/util/size_checks.hpp>
+
 namespace mlpack {
 
 inline BayesianLinearRegression::BayesianLinearRegression(
