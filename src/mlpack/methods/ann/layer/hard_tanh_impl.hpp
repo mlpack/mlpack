@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/hard_tanh_impl.hpp
  * @author Dhawal Arora
+ * @author Vaibhav Pathak
  *
  * Implementation and implementation of the HardTanH layer.
  *
@@ -17,8 +18,8 @@
 
 namespace mlpack {
 
-template<typename InputType, typename OutputType>
-HardTanHType<InputType, OutputType>::HardTanHType(
+template<typename MatType>
+HardTanHType<MatType>::HardTanHType(
     const double maxValue,
     const double minValue) :
     maxValue(maxValue),
@@ -27,38 +28,40 @@ HardTanHType<InputType, OutputType>::HardTanHType(
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-void HardTanHType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void HardTanHType<MatType>::Forward(
+    const MatType& input, MatType& output)
 {
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (output(i) > maxValue ? maxValue :
-        (output(i) < minValue ? minValue : output(i)));
+    output(i) = (input(i) > maxValue ? maxValue :
+        (input(i) < minValue ? minValue : input(i)));
   }
 }
 
-template<typename InputType, typename OutputType>
-void HardTanHType<InputType, OutputType>::Backward(
-    const InputType& input, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void HardTanHType<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
   g = gy;
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    if (input(i) < minValue || input(i) > maxValue)
+	// input should not have any values greater than maxValue
+	// and lesser than minValue
+    if (input(i) <= minValue || input(i) >= maxValue)
     {
       g(i) = 0;
     }
   }
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void HardTanHType<InputType, OutputType>::serialize(
+void HardTanHType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(maxValue));
   ar(CEREAL_NVP(minValue));
