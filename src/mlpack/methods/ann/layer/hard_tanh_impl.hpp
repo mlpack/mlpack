@@ -22,12 +22,56 @@ template<typename MatType>
 HardTanHType<MatType>::HardTanHType(
     const double maxValue,
     const double minValue) :
+	Layer<MatType>(),
     maxValue(maxValue),
     minValue(minValue)
 {
   // Nothing to do here.
 }
 
+template<typename MatType>
+HardTanHType<MatType>::HardTanHType(const HardTanHType& layer) :
+	Layer<MatType>(layer),
+	maxValue(layer.maxValue),
+	minValue(layer.minValue)
+{
+	// Nothing to do here.
+}
+
+template<typename MatType>
+HardTanHType<MatType>::HardTanHType(HardTanHType&& layer) :
+	Layer<MatType>(std::move(layer)),
+	maxValue(std::move(layer.maxValue)),
+	minValue(std::move(layer.minValue))
+{
+	// Nothing to do here.
+}
+
+template<typename MatType>
+HardTanHType<MatType>& HardTanHType<MatType>::operator=(const HardTanHType& layer)
+{
+	if(&layer != this)
+	{
+		Layer<MatType>::operator=(layer);
+		maxValue = layer.maxValue;
+		minValue = layer.minValue;
+	}
+
+	return *this;
+} 
+
+template<typename MatType>
+HardTanHType<MatType>& HardTanHType<MatType>::operator=(HardTanHType&& layer)
+{
+	if(&layer != this)
+	{
+		Layer<MatType>::operator=(std::move(layer));
+		maxValue = std::move(layer.maxValue);
+		minValue = std::move(layer.minValue);
+	}	
+
+	return *this;
+}
 template<typename MatType>
 void HardTanHType<MatType>::Forward(
     const MatType& input, MatType& output)

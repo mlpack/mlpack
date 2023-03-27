@@ -58,6 +58,20 @@ class HardTanHType : public Layer<MatType>
    * @param minValue Range of the linear region minimum value.
    */
   HardTanHType(const double maxValue = 1, const double minValue = -1);
+  
+  virtual ~HardTanHType() { }
+
+  //! Copy the other HardTanH layer
+  HardTanHType(const HardTanHType& layer);
+
+  //! Take ownership of the members of the other HardTanH Layer
+  HardTanHType(HardTanHType&& layer);
+
+  //! Copy the other HardTanH layer
+  HardTanHType& operator=(const HardTanHType& layer);
+
+  //! Take ownership of the members of the other HardTanH Layer
+  HardTanHType& operator=(HardTanHType&& layer);
 
   //! Clone the HardTanHType object. This handles polymorphism correctly.
   HardTanHType* Clone() const { return new HardTanHType(*this); }
