@@ -27,7 +27,7 @@ TEST_CASE("ISRLUFORWARDTest", "[ANNLayerTest]")
                     {-2.2, -1.5, 0.8},
                     {5.5, -4.7, 2.1},
                     {0.2, 0.1, -0.5}};
-  ISRLU module;
+  ISRLU<arma::mat> module;
   arma::mat predOutput(input.n_rows,input.n_cols);
   module.Forward(input, predOutput);
   arma::mat actualOutput = {{0.5000   ,1.2000   ,3.1000},
@@ -47,7 +47,7 @@ TEST_CASE("ISRLUBACKWARDTest", "[ANNLayerTest]")
                     {-2.2, -1.5, 0.8},
                     {5.5, -4.7, 2.1},
                     {0.2, 0.1, -0.5}};
-  ISRLU module;
+  ISRLU<arma::mat> module;
   arma::mat gy = {{0.2, -0.5, 0.8},
                  {1.5, -0.6, 0.1},
                  {-0.3, 0.2, -0.5},
