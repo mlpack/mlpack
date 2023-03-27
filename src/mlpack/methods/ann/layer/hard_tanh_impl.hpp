@@ -107,7 +107,7 @@ void HardTanHType<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(maxValue));
   ar(CEREAL_NVP(minValue));
