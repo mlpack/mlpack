@@ -68,8 +68,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     const size_t numClasses,
     const WeakLearnerType& other,
     const size_t iterations,
-    const double tolerance,
-    const double learning_rate)
+    const double tolerance)
 {
   // Clear information from previous runs.
   wl.clear();
@@ -95,16 +94,9 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
       predictedLabels.n_cols);
 
   // Load the initial weights into a 2-D matrix.
-  //D(l)(k) is 1/2n where l is the label of the kth data point
-  //For all l other than that is 1/2n(k-1)
-  const double initWeightnotlabel = 1.0 / double(2 * data.n_cols * (numClasses - 1));
-  const double initWeightlabel = 1.0 / double(2 * data.n_cols);
-  arma::mat D(numClasses, data.n_cols, arma::fill::none);
-  D.fill(initWeightnotlabel);
-  for (size_t i = 0;i < D.n_cols;++i)
-  {
-     D(labels(i), i) = initWeightlabel;
-  }
+  const double initWeight = 1.0 / double(data.n_cols * numClasses);
+  arma::mat D(numClasses, data.n_cols);
+  D.fill(initWeight);
 
   // Weights are stored in this row vector.
   arma::rowvec weights(predictedLabels.n_cols);
@@ -176,7 +168,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
 
     // Our goal is to find alphat which mizimizes or approximately minimizes the
     // value of Z as a function of alpha.
-    alphat = learning_rate * log((1 + rt) / (1 - rt));
+    alphat = 0.5 * log((1 + rt) / (1 - rt));
 
     alpha.push_back(alphat);
     wl.push_back(w);
