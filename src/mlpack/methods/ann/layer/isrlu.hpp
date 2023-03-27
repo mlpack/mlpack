@@ -25,6 +25,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ISRLU_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 
 namespace mlpack {
 
@@ -47,16 +48,11 @@ namespace mlpack {
  * @f}
  *
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ @tparam MatType Matrix representation to accept as input
+ * (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class ISRLU
+template <typename MatType= arma::mat>
+class ISRLU : public Layer<MatType>
 {
  public:
   /**
@@ -67,6 +63,20 @@ class ISRLU
    */
   ISRLU(const double alpha = 1.0);
 
+
+  //!Clone the ISRLU object.This handles polymorphism correctly
+  ISRLU* Clone() const { return new ISRLU(*this); }
+
+  virtual ~ISRLU() {}
+  //! Copy the given ISRLU.
+  ISRLU(const ISRLU& other);
+  //! Take ownership of the given ISRLU.
+  ISRLU(ISRLU&& other);
+  //! Copy the given ISRLU.
+  ISRLU& operator=(const ISRLU& other);
+  //! Take ownership of the given ISRLU.
+  ISRLU& operator=(ISRLU&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -74,8 +84,8 @@ class ISRLU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output);
+
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -86,18 +96,8 @@ class ISRLU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
@@ -114,14 +114,9 @@ class ISRLU
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
 
   //! Locally stored first derivative of the activation function.
-  arma::mat derivative;
+  MatType derivative;
 
   //! ISRLU Hyperparameter (alpha > 0).
   double alpha;
