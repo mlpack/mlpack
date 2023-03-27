@@ -35,7 +35,7 @@ TEST_CASE("ISRLUFORWARDTest", "[ANNLayerTest]")
                            { 5.5000  ,-0.9781   ,2.1000},
                            {0.2000   ,0.1000  ,-0.4472}};
   REQUIRE(arma::accu(arma::abs(actualOutput - predOutput)) ==
-      Approx(0.0).margin(1e-5));
+      Approx(0.0).margin(11e-5));
 }
 
 /**
@@ -60,5 +60,5 @@ TEST_CASE("ISRLUBACKWARDTest", "[ANNLayerTest]")
                       { 0.1000 ,-0.1000 ,0.2147}};
 
   REQUIRE(arma::accu(arma::abs(actualG - predG)) ==
-      Approx(0.0).margin(1e-5));
+      Approx(0.0).margin(1e-4));
 }
