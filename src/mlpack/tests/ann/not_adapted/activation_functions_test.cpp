@@ -41,53 +41,6 @@
 using namespace mlpack;
 
 /**
- * Implementation of the HardTanH activation function test. The function is
- * implemented as a HardTanH Layer in hard_tanh.hpp
- *
- * @param input Input data used for evaluating the HardTanH activation function.
- * @param target Target data used to evaluate the HardTanH activation.
- *
-void CheckHardTanHActivationCorrect(const arma::colvec input,
-                                    const arma::colvec target)
-{
-  HardTanH<> htf;
-
-  // Test the activation function using the entire vector as input.
-  arma::colvec activations;
-  htf.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; ++i)
-  {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
-  }
-}*/
-
-/**
- * Implementation of the HardTanH activation function derivative test. The
- * derivative is implemented as HardTanH Layer in hard_tanh.hpp
- *
- * @param input Input data used for evaluating the HardTanH activation
- * function.
- * @param target Target data used to evaluate the HardTanH activation.
- *
-void CheckHardTanHDerivativeCorrect(const arma::colvec input,
-                                    const arma::colvec target)
-{
-  HardTanH<> htf;
-
-  // Test the calculation of the derivatives using the entire vector as input.
-  arma::colvec derivatives;
-
-  // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  htf.Backward(input, error, derivatives);
-
-  for (size_t i = 0; i < derivatives.n_elem; ++i)
-  {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
-  }
-}*/
-
-/**
  * Implementation of the Hard Shrink activation function test. The function is
  * implemented as Hard Shrink layer in the file hardshrink.hpp
  *
