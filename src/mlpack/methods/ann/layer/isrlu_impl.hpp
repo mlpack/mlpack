@@ -14,6 +14,7 @@
 
 // In case it hasn't yet been included.
 #include "isrlu.hpp"
+#include <omp.h>
 
 namespace mlpack {
     template<typename MatType>
@@ -75,6 +76,8 @@ void ISRLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
     output.ones(arma::size(input));
+  
+  #pragma omp parallel for  
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : input(i) *
@@ -88,6 +91,8 @@ void ISRLU<MatType>::Backward(
     const MatType& input, const MatType& gy, MatType& g)
 {
   derivative.set_size(arma::size(input));
+  
+  #pragma omp parallel for  
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     derivative(i) = (input(i) >= 0) ? 1 :
