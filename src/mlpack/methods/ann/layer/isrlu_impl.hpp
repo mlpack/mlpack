@@ -14,7 +14,7 @@
 
 // In case it hasn't yet been included.
 #include "isrlu.hpp"
-#include <omp.h>
+
 
 namespace mlpack {
     template<typename MatType>
@@ -56,7 +56,7 @@ namespace mlpack {
         if (&other != this)
         {
             Layer<MatType>::operator=(std::move(other));
-            alpha = other.alpha;
+            alpha = std::move(other.alpha);
         }
 
         return *this;
@@ -77,7 +77,7 @@ void ISRLU<MatType>::Forward(
 {
     output.ones(arma::size(input));
   
-  #pragma omp parallel for  
+  #pragma omp  for  
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : input(i) *
@@ -92,7 +92,7 @@ void ISRLU<MatType>::Backward(
 {
   derivative.set_size(arma::size(input));
   
-  #pragma omp parallel for  
+  #pragma omp for  
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     derivative(i) = (input(i) >= 0) ? 1 :
@@ -107,6 +107,7 @@ void ISRLU<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<MatType>>(this));
   ar(CEREAL_NVP(alpha));
 }
 
