@@ -252,7 +252,7 @@ build in parallel; e.g., `make -j4` will use 4 cores to build.
 
 mlpack's Python bindings are available on
 [PyPI](https://pypi.org/project/mlpack) and
-[conda-forge](https://conda-forge.org/packages/mlpack), and can be installed
+[conda-forge](https://anaconda.org/conda-forge/mlpack), and can be installed
 with either `pip install mlpack` or `conda install -c conda-forge mlpack`.
 These sources are recommended, as building the Python bindings by hand can be
 complex.
