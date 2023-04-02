@@ -22,55 +22,55 @@ template<typename MatType>
 HardTanHType<MatType>::HardTanHType(
     const double maxValue,
     const double minValue) :
-	Layer<MatType>(),
-    maxValue(maxValue),
-    minValue(minValue)
+  Layer<MatType>(),
+  maxValue(maxValue),
+  minValue(minValue)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
 HardTanHType<MatType>::HardTanHType(const HardTanHType& layer) :
-	Layer<MatType>(layer),
-	maxValue(layer.maxValue),
-	minValue(layer.minValue)
+  Layer<MatType>(layer),
+  maxValue(layer.maxValue),
+  minValue(layer.minValue)
 {
-	// Nothing to do here.
+  // Nothing to do here.
 }
 
 template<typename MatType>
 HardTanHType<MatType>::HardTanHType(HardTanHType&& layer) :
-	Layer<MatType>(std::move(layer)),
-	maxValue(std::move(layer.maxValue)),
-	minValue(std::move(layer.minValue))
+  Layer<MatType>(std::move(layer)),
+  maxValue(std::move(layer.maxValue)),
+  minValue(std::move(layer.minValue))
 {
-	// Nothing to do here.
+  // Nothing to do here.
 }
 
 template<typename MatType>
 HardTanHType<MatType>& HardTanHType<MatType>::operator=(const HardTanHType& layer)
 {
-	if(&layer != this)
-	{
-		Layer<MatType>::operator=(layer);
-		maxValue = layer.maxValue;
-		minValue = layer.minValue;
-	}
+  if(&layer != this)
+  {
+    Layer<MatType>::operator=(layer);
+    maxValue = layer.maxValue;
+    minValue = layer.minValue;
+  }
 
-	return *this;
+  return *this;
 } 
 
 template<typename MatType>
 HardTanHType<MatType>& HardTanHType<MatType>::operator=(HardTanHType&& layer)
 {
-	if(&layer != this)
-	{
-		Layer<MatType>::operator=(std::move(layer));
-		maxValue = std::move(layer.maxValue);
-		minValue = std::move(layer.minValue);
-	}	
+  if(&layer != this)
+  {
+    Layer<MatType>::operator=(std::move(layer));
+    maxValue = std::move(layer.maxValue);
+    minValue = std::move(layer.minValue);
+  }
 
-	return *this;
+  return *this;
 }
 template<typename MatType>
 void HardTanHType<MatType>::Forward(
@@ -92,8 +92,8 @@ void HardTanHType<MatType>::Backward(
   #pragma omp parallel for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-	// input should not have any values greater than maxValue
-	// and lesser than minValue
+    // input should not have any values greater than maxValue
+    // and lesser than minValue
     if (input(i) <= minValue || input(i) >= maxValue)
     {
       g(i) = 0;
