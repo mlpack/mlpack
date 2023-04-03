@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+  * Adapt HardTanH layer (#3454).
+
   * Adapt Softmin layer for new neural network API (#3437).
 
   * Adapt PReLU layer for new neural network API (#3420).
