@@ -257,6 +257,9 @@ manually specified.  Choices that mlpack provides include:
  - `HyperbolicTangentKernel`
  - `LaplacianKernel`
  - `PSpectrumStringKernel`
+ - `CauchyKernal`
+ - `ExampleKernal`
+ - `SphericalKernal`
 
 The following examples use kernels from that list.  Writing your own kernel is
 detailed in the next section.  Remember that when you are using the C++

@@ -58,7 +58,7 @@ TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest]")
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  REQUIRE(testTrans.quiet_save("test_file.csv", arma::arma_binary) == true);
+  REQUIRE(testTrans.save("test_file.csv", arma::arma_binary) == true);
 
   // Now reload through our interface.
   REQUIRE(data::Load("test_file.csv", test) == false);
@@ -79,7 +79,7 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  REQUIRE(testTrans.quiet_save("test_file.csv", arma::arma_binary) == true);
+  REQUIRE(testTrans.save("test_file.csv", arma::arma_binary) == true);
 
   // Now reload through our interface.
   REQUIRE(
@@ -924,7 +924,7 @@ TEST_CASE("LoadArmaBinaryTest", "[LoadSaveTest]")
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  REQUIRE(testTrans.quiet_save("test_file.bin", arma::arma_binary)
+  REQUIRE(testTrans.save("test_file.bin", arma::arma_binary)
       == true);
 
   // Now reload through our interface.
@@ -1001,7 +1001,7 @@ TEST_CASE("LoadRawBinaryTest", "[LoadSaveTest]")
                    "7 8;";
 
   arma::mat testTrans = trans(test);
-  REQUIRE(testTrans.quiet_save("test_file.bin", arma::raw_binary)
+  REQUIRE(testTrans.save("test_file.bin", arma::raw_binary)
       == true);
 
   // Now reload through our interface.
@@ -1028,7 +1028,7 @@ TEST_CASE("LoadPGMBinaryTest", "[LoadSaveTest]")
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  REQUIRE(testTrans.quiet_save("test_file.pgm", arma::pgm_binary)
+  REQUIRE(testTrans.save("test_file.pgm", arma::pgm_binary)
       == true);
 
   // Now reload through our interface.
@@ -1080,13 +1080,13 @@ TEST_CASE("LoadHDF5Test", "[LoadSaveTest]")
                    "3 7;"
                    "4 8;";
   arma::mat testTrans = trans(test);
-  REQUIRE(testTrans.quiet_save("test_file.h5", arma::hdf5_binary)
+  REQUIRE(testTrans.save("test_file.h5", arma::hdf5_binary)
       == true);
-  REQUIRE(testTrans.quiet_save("test_file.hdf5", arma::hdf5_binary)
+  REQUIRE(testTrans.save("test_file.hdf5", arma::hdf5_binary)
       == true);
-  REQUIRE(testTrans.quiet_save("test_file.hdf", arma::hdf5_binary)
+  REQUIRE(testTrans.save("test_file.hdf", arma::hdf5_binary)
       == true);
-  REQUIRE(testTrans.quiet_save("test_file.he5", arma::hdf5_binary)
+  REQUIRE(testTrans.save("test_file.he5", arma::hdf5_binary)
       == true);
 
   // Now reload through our interface.

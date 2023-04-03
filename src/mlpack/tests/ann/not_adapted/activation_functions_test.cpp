@@ -88,79 +88,6 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 }*/
 
 /**
- * Implementation of the PReLU activation function test. The function
- * is implemented as PReLU layer in the file parametric_relu.hpp.
- *
- * @param input Input data used for evaluating the PReLU activation
- *   function.
- * @param target Target data used to evaluate the PReLU activation.
- *
-void CheckPReLUActivationCorrect(const arma::colvec input,
-                                 const arma::colvec target)
-{
-  PReLU<> prelu;
-
-  // Test the activation function using the entire vector as input.
-  arma::colvec activations;
-  prelu.Forward(input, activations);
-  for (size_t i = 0; i < activations.n_elem; ++i)
-  {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
-  }
-}*/
-
-/**
- * Implementation of the PReLU activation function derivative test.
- * The function is implemented as PReLU layer in the file
- * parametric_relu.hpp
- *
- * @param input Input data used for evaluating the PReLU activation
- *   function.
- * @param target Target data used to evaluate the PReLU activation.
- *
-void CheckPReLUDerivativeCorrect(const arma::colvec input,
-                                 const arma::colvec target)
-{
-  PReLU<> prelu;
-
-  // Test the calculation of the derivatives using the entire vector as input.
-  arma::colvec derivatives;
-
-  // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  prelu.Backward(input, error, derivatives);
-  for (size_t i = 0; i < derivatives.n_elem; ++i)
-  {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
-  }
-}*/
-
-/**
- * Implementation of the PReLU activation function gradient test.
- * The function is implemented as PReLU layer in the file
- * parametric_relu.hpp
- *
- * @param input Input data used for evaluating the PReLU activation
- *   function.
- * @param target Target data used to evaluate the PReLU gradient.
- *
-void CheckPReLUGradientCorrect(const arma::colvec input,
-                               const arma::colvec target)
-{
-  PReLU<> prelu;
-
-  // Test the calculation of the derivatives using the entire vector as input.
-  arma::colvec gradient;
-
-  // This error vector will be set to 1 to get the gradient.
-  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  prelu.Gradient(input, error, gradient);
-  REQUIRE(gradient.n_rows == 1);
-  REQUIRE(gradient.n_cols == 1);
-  REQUIRE(gradient(0) == Approx(target(0)).epsilon(1e-5));
-}*/
-
-/**
  * Implementation of the Hard Shrink activation function test. The function is
  * implemented as Hard Shrink layer in the file hardshrink.hpp
  *
@@ -458,23 +385,6 @@ TEST_CASE("HardTanHFunctionTest", "[ActivationFunctionsTest]")
 
   CheckHardTanHActivationCorrect(activationData, desiredActivations);
   CheckHardTanHDerivativeCorrect(activationData, desiredDerivatives);
-}*/
-
-/**
- * Basic test of the PReLU function.
- *
-TEST_CASE("PReLUFunctionTest", "[ActivationFunctionsTest]")
-{
-  const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 \
-                                         1 -0.03 2 0");
-
-  const arma::colvec desiredDerivatives("0.03 1 1 0.03 \
-                                         1 0.03 1 1");
-  const arma::colvec desiredGradient("-103.2");
-
-  CheckPReLUActivationCorrect(activationData, desiredActivations);
-  CheckPReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
-  CheckPReLUGradientCorrect(activationData, desiredGradient);
 }*/
 
 /**

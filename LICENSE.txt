@@ -3,7 +3,7 @@ can redistribute the library and/or modify it under the terms of the 3-clause
 BSD license.  The text of the 3-clause BSD license is contained below.
 
 ----
-Copyright (c) 2007-2022, mlpack contributors (see COPYRIGHT.txt)
+Copyright (c) 2007-2023, mlpack contributors (see COPYRIGHT.txt)
 All rights reserved.
 
 Redistribution and use of mlpack in source and binary forms, with or without
