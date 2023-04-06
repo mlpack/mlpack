@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/hard_tanh.hpp
  * @author Dhawal Arora
+ * @author Vaibhav Pathak
  *
  * Definition and implementation of the HardTanH layer.
  *
@@ -14,7 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 
@@ -38,10 +39,13 @@ namespace mlpack {
  * \right.
  * @f}
  *
- * @tparam MatType Matrix representation to accept as input
- * (Default: arma::mat).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *    cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *    to also be in this type. The type also allows the computation and weight
+ *    type to differ from the input type (Default: arma::mat).
  */
-template <typename MatType =arma::mat>
+template <typename MatType = arma::mat>
 class HardTanHType : public Layer<MatType>
 {
  public:
@@ -54,23 +58,24 @@ class HardTanHType : public Layer<MatType>
    * @param minValue Range of the linear region minimum value.
    */
   HardTanHType(const double maxValue = 1, const double minValue = -1);
+  
+  virtual ~HardTanHType() { }
+
+  //! Copy the other HardTanH layer
+  HardTanHType(const HardTanHType& layer);
+
+  //! Take ownership of the members of the other HardTanH Layer
+  HardTanHType(HardTanHType&& layer);
+
+  //! Copy the other HardTanH layer
+  HardTanHType& operator=(const HardTanHType& layer);
+
+  //! Take ownership of the members of the other HardTanH Layer
+  HardTanHType& operator=(HardTanHType&& layer);
 
   //! Clone the HardTanHType object. This handles polymorphism correctly.
   HardTanHType* Clone() const { return new HardTanHType(*this); }
 
-  virtual ~HardTanHType() {}
-  //! Copy the given HardTanHType.
-  HardTanHType(const HardTanHType& other);
-  //! Take ownership of the given HardTanHType.
-  HardTanHType(HardTanHType&& other);
-  //! Copy the given HardTanHType.
-  HardTanHType& operator=(const HardTanHType& other);
-  //! Take ownership of the given HardTanHType.
-  HardTanHType& operator=(HardTanHType&& other);
-
-  
-  
-  
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

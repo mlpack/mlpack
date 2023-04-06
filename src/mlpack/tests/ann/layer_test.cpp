@@ -27,7 +27,6 @@
 #include "layer/dropout.cpp"
 #include "layer/grouped_convolution.cpp"
 #include "layer/hard_tanh.cpp"
-#include "layer/isrlu.cpp"
 #include "layer/identity.cpp"
 #include "layer/linear3d.cpp"
 #include "layer/linear_no_bias.cpp"
@@ -37,3 +36,4 @@
 #include "layer/padding.cpp"
 #include "layer/parametric_relu.cpp"
 #include "layer/softmax.cpp"
+#include "layer/softmin.cpp"

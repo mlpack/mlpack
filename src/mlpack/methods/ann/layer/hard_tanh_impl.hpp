@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/hard_tanh_impl.hpp
  * @author Dhawal Arora
+ * @author Vaibhav Pathak
  *
  * Implementation and implementation of the HardTanH layer.
  *
@@ -15,56 +16,7 @@
 // In case it hasn't yet been included.
 #include "hard_tanh.hpp"
 
-
 namespace mlpack {
-
-template<typename MatType>
-HardTanHType<MatType>::HardTanHType(
-    const HardTanHType& other) :
-    Layer<MatType>(other),
-    maxValue(other.maxValue),
-    minValue(other.minValue)
-{
-  // Nothing to do here.
-}
-
-template<typename MatType>
-HardTanHType<MatType>::HardTanHType(
-     HardTanHType&& other):
-    Layer<MatType>(std::move(other)),
-    maxValue(std::move(other.maxValue)),
-    minValue(std::move(other.minValue))
-{
-    // Nothing to do here.
-}
-
-template<typename MatType>
-HardTanHType<MatType>&
-HardTanHType<MatType>::operator=(const HardTanHType& other)
-{
-    if (&other != this)
-    {
-        Layer<MatType>::operator=(other);
-        maxValue = other.maxValue;
-        minValue = other.minValue;
-    }
-
-    return *this;
-}
-
-template<typename MatType>
-HardTanHType<MatType>&
-HardTanHType<MatType>::operator=(HardTanHType&& other)
-{
-    if (&other != this)
-    {
-        Layer<MatType>::operator=(std::move(other));
-        maxValue = other.maxValue;
-        minValue = other.minValue;
-    }
-
-    return *this;
-}
 
 template<typename MatType>
 HardTanHType<MatType>::HardTanHType(
@@ -78,10 +30,53 @@ HardTanHType<MatType>::HardTanHType(
 }
 
 template<typename MatType>
+HardTanHType<MatType>::HardTanHType(const HardTanHType& layer) :
+    Layer<MatType>(layer),
+    maxValue(layer.maxValue),
+    minValue(layer.minValue)
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+HardTanHType<MatType>::HardTanHType(HardTanHType&& layer) :
+    Layer<MatType>(std::move(layer)),
+    maxValue(std::move(layer.maxValue)),
+    minValue(std::move(layer.minValue))
+{
+  // Nothing to do here.
+}
+
+template<typename MatType>
+HardTanHType<MatType>& HardTanHType<MatType>::operator=(const HardTanHType& layer)
+{
+  if (&layer != this)
+  {
+    Layer<MatType>::operator=(layer);
+    maxValue = layer.maxValue;
+    minValue = layer.minValue;
+  }
+
+  return *this;
+} 
+
+template<typename MatType>
+HardTanHType<MatType>& HardTanHType<MatType>::operator=(HardTanHType&& layer)
+{
+  if (&layer != this)
+  {
+    Layer<MatType>::operator=(std::move(layer));
+    maxValue = std::move(layer.maxValue);
+    minValue = std::move(layer.minValue);
+  }
+
+  return *this;
+}
+template<typename MatType>
 void HardTanHType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  #pragma omp  for
+  #pragma omp parallel for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) > maxValue ? maxValue :
@@ -94,11 +89,13 @@ void HardTanHType<MatType>::Backward(
     const MatType& input, const MatType& gy, MatType& g)
 {
   g = gy;
-  
-  #pragma omp for
+
+  #pragma omp parallel for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    if (input(i) < minValue || input(i) > maxValue)
+    // input should not have any values greater than maxValue
+    // and lesser than minValue
+    if (input(i) <= minValue || input(i) >= maxValue)
     {
       g(i) = 0;
     }

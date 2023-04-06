@@ -1,6 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+  * Adapt HardTanH layer (#3454).
+
+  * Adapt Softmin layer for new neural network API (#3437).
+
   * Adapt PReLU layer for new neural network API (#3420).
 
   * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy` (#3413, #3404).

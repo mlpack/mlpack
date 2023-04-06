@@ -24,14 +24,11 @@ namespace mlpack {
  * a vector of K real numbers, rescaling them so that the elements of the
  * K-dimensional output vector lie in the range [0, 1] and sum to 1.
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
- *     cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
- *     to also be in this type. The type also allows the computation and weight
- *     type to differ from the input type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class SoftminType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class SoftminType : public Layer<MatType>
 {
  public:
   //! Create the Softmin object.
@@ -40,6 +37,18 @@ class SoftminType : public Layer<InputType, OutputType>
   //! Clone the SoftminType object. This handles polymorphism correctly.
   SoftminType* Clone() const { return new SoftminType(*this); }
 
+   //! Virtual destructor.
+  virtual ~SoftminType() { }
+
+  //! Copy the given SoftminType.
+  SoftminType(const SoftminType& other);
+  //! Take ownership of the given SoftminType.
+  SoftminType(SoftminType&& other);
+  //! Copy the given SoftminType.
+  SoftminType& operator=(const SoftminType& other);
+  //! Take ownership of the given SoftminType.
+  SoftminType& operator=(SoftminType&& other);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -47,7 +56,7 @@ class SoftminType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -58,7 +67,7 @@ class SoftminType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Serialize the layer.
   template<typename Archive>
@@ -68,7 +77,7 @@ class SoftminType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard Softmin layer using no regularization.
-typedef SoftminType<arma::mat, arma::mat> Softmin;
+typedef SoftminType<arma::mat> Softmin;
 
 
 } // namespace mlpack
