@@ -28,6 +28,7 @@
 #include "layer/grouped_convolution.cpp"
 #include "layer/hard_tanh.cpp"
 #include "layer/identity.cpp"
+#include "layer/isrlu.cpp"
 #include "layer/linear3d.cpp"
 #include "layer/linear_no_bias.cpp"
 #include "layer/log_softmax.cpp"

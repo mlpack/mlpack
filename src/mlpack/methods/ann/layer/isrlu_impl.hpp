@@ -75,7 +75,7 @@ template<typename MatType>
 void ISRLU<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-    output.ones(arma::size(input));
+  output.ones(arma::size(input));
   
   #pragma omp  for  
   for (size_t i = 0; i < input.n_elem; ++i)
