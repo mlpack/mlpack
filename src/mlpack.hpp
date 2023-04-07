@@ -75,6 +75,7 @@
 #include "mlpack/methods/sparse_autoencoder.hpp"
 #include "mlpack/methods/sparse_coding.hpp"
 #include "mlpack/methods/svdplusplus.hpp"
+#include "mlpack/methods/time_series_models.hpp"
 
 // Include reverse compatibility.
 #include "mlpack/namespace_compat.hpp"

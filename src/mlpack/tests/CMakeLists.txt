@@ -1,4 +1,4 @@
-include(CTest)
+﻿include(CTest)
 
 # mlpack test executable.
 add_executable(mlpack_test
@@ -103,6 +103,7 @@ add_executable(mlpack_test
   one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  persistence_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   qdafn_test.cpp
@@ -192,6 +193,7 @@ add_executable(mlpack_test
   main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
+  main_tests/persistence_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp

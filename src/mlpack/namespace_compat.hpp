@@ -51,6 +51,7 @@ namespace neighbor { using namespace mlpack; }
 namespace nn { using namespace mlpack; }
 namespace pca { using namespace mlpack; }
 namespace perceptron { using namespace mlpack; }
+namespace persistence { using namespace mlpack; }
 namespace radical { using namespace mlpack; }
 namespace range { using namespace mlpack; }
 namespace regression { using namespace mlpack; }
