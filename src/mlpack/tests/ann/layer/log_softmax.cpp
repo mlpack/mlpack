@@ -38,7 +38,11 @@ TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
   error = arma::zeros(input.n_rows, input.n_cols);
   // Assume LogSoftmax layer is always associated with NLL output layer.
   error(1, 0) = -1;
-  module.Backward(input, error, delta);
-  REQUIRE(arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)) ==
+  module.Backward(output, error, delta);
+  CHECK(arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)) ==
       Approx(0.0).margin(1e-3));
+
+  arma::mat input2(10,1);
+  double error_jacb = JacobianTest(module, input2);
+  CHECK(error_jacb <= 1e-5);
 }
