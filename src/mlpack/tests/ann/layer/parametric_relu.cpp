@@ -94,6 +94,11 @@ TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
       Approx(0.0).margin(1e-4));
 }
 
+double ComputeMSRE(arma::mat input, arma::mat target)
+{
+  return std::pow(arma::accu(arma::pow(input - target, 2)) / target.n_cols, 0.5);
+}
+
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
 {
   arma::mat data;
