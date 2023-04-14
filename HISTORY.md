@@ -7,7 +7,8 @@
 
   * Adapt PReLU layer for new neural network API (#3420).
 
-  * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy` (#3413, #3404).
+  * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy`
+    (#3413, #3404).
 
   * Update outdated code in tutorials (#3398, #3401).
 
@@ -18,6 +19,9 @@
   * Fix DBSCAN handling of non-core points (#3346).
 
   * Avoid deprecation warnings in Armadillo 11.4.4+ (#3405).
+
+  * Issue runtime error when serialization of neural networks is attempted but
+    `MLPACK_ENABLE_ANN_SERIALIZATION` is not defined (#3451).
 
 ### mlpack 4.0.1
 ###### 2022-12-23
