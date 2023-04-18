@@ -298,7 +298,7 @@ in `Assign()` function. If one wants more control on searching the centroid
 neighbors of new datapoint, it can be done using `NeighborSearch` class instead.
 
 For more information on the `NeighborSearch`, see the documentation for
-[`NeighborSearch`](/neighbor_search.md).
+[`NeighborSearch`](neighbor_search.md).
 
 ### Limiting the maximum number of iterations
 
