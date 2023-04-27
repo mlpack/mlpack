@@ -117,7 +117,7 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
   model.Add<Linear>(1);
     
   int epochs = 50;
-  ens::RMSProp optimizer(0.01, 32, 0.99, 1e-8, epochs*trainData.n_cols);
+  ens::RMSProp optimizer(0.01, 32, 0.99, 1e-8, epochs * trainData.n_cols);
   model.Train(trainData, trainLabels, optimizer);
 
   arma::mat predictions;
@@ -126,7 +126,7 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
   model.Predict(testData, predictions);
   double msreTest = ComputeMSRE(predictions, testLabels);
 
-  double relativeMSRE = std::abs((msreTest-msreTrain)/msreTrain);
+  double relativeMSRE = std::abs((msreTest - msreTrain) / msreTrain);
 
   REQUIRE(relativeMSRE <= 0.25);
 }

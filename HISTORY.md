@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+  * Fix PReLU, add integration test to it (#3473)
+
   * Adapt HardTanH layer (#3454).
 
   * Adapt Softmin layer for new neural network API (#3437).
