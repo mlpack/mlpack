@@ -374,34 +374,46 @@ void FFN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  // Serialize the output layer and initialization rule.
-  ar(CEREAL_NVP(outputLayer));
-  ar(CEREAL_NVP(initializeRule));
+  #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
+    // better ensure that every layer you are serializing has had
+    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+    // more information.
+    #ifndef MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
+      throw std::runtime_error("Cannot serialize a neural network unless "
+          "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+          "build options\" section of the README for more information.");
+    #endif
+  #else
+    // Serialize the output layer and initialization rule.
+    ar(CEREAL_NVP(outputLayer));
+    ar(CEREAL_NVP(initializeRule));
 
-  // Serialize the network itself.
-  ar(CEREAL_NVP(network));
-  ar(CEREAL_NVP(parameters));
+    // Serialize the network itself.
+    ar(CEREAL_NVP(network));
+    ar(CEREAL_NVP(parameters));
 
-  // Serialize the expected input size.
-  ar(CEREAL_NVP(inputDimensions));
+    // Serialize the expected input size.
+    ar(CEREAL_NVP(inputDimensions));
 
-  // If we are loading, we need to initialize the weights.
-  if (cereal::is_loading<Archive>())
-  {
-    // We can clear these members, since it's not possible to serialize in the
-    // middle of training and resume.
-    predictors.clear();
-    responses.clear();
+    // If we are loading, we need to initialize the weights.
+    if (cereal::is_loading<Archive>())
+    {
+      // We can clear these members, since it's not possible to serialize in the
+      // middle of training and resume.
+      predictors.clear();
+      responses.clear();
 
-    networkOutput.clear();
-    networkDelta.clear();
+      networkOutput.clear();
+      networkDelta.clear();
 
-    layerMemoryIsSet = false;
-    inputDimensionsAreSet = false;
+      layerMemoryIsSet = false;
+      inputDimensionsAreSet = false;
 
-    // The weights in `parameters` will be correctly set for each layer in the
-    // first call to Forward().
-  }
+      // The weights in `parameters` will be correctly set for each layer in the
+      // first call to Forward().
+    }
+  #endif
 }
 
 template<typename OutputLayerType,

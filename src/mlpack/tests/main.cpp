@@ -8,6 +8,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+  #define MLPACK_ENABLE_ANN_SERIALIZATION
+#endif
 #include <mlpack.hpp>
 
 // #define CATCH_CONFIG_MAIN  // catch.hpp will define main()
