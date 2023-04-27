@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+### mlpack 4.1.0
+###### 2023-04-26
+
   * Adapt HardTanH layer (#3454).
 
   * Adapt Softmin layer for new neural network API (#3437).
