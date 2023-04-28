@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/ann.hpp>
 
 #include "../catch.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
 
@@ -74,6 +75,10 @@ void CheckDerivativeCorrect(const arma::colvec input,
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
+
+  arma::mat inputTemp(input.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<ActivationFunction>(inputTemp);
+  REQUIRE(maxRelativeError <= 1e-3);
 }
 
 /**
