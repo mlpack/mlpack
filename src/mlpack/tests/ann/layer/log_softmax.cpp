@@ -41,3 +41,24 @@ TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
   REQUIRE(arma::accu(arma::abs(arma::mat("0.5790; -0.8435; -0.0233; 0.0798; 0.2079") - delta)) ==
       Approx(0.0).margin(1e-3));
 }
+
+/**
+ * JacobianTest for LogSoftMax layer
+ */
+TEST_CASE("JacobianLogSoftMaxLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t elems = arma::randi(arma::distr_param(2, 1000));
+
+    arma::mat input(elems, 1);
+
+    LogSoftMax module;
+    module.InputDimensions() = { elems };
+    module.ComputeOutputDimensions();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
