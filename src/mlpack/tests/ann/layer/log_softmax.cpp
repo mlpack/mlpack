@@ -29,16 +29,36 @@ TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
   LogSoftMax module;
 
   // Test the Forward function.
-  input = arma::mat("0.5; 0.5");
+  input = arma::mat("-0.6871; 0.7898; 0.2011; 0.0949; -0.0550");
   module.Forward(input, output);
-  REQUIRE(arma::accu(arma::abs(arma::mat("-0.6931; -0.6931") - output)) ==
+  REQUIRE(arma::accu(arma::abs(arma::mat("-2.4746; -0.9977; -1.5864; -1.6926; -1.8425") - output)) ==
       Approx(0.0).margin(1e-3));
 
   // Test the Backward function.
-  error = arma::zeros(input.n_rows, input.n_cols);
+  error = arma::ones(input.n_rows, input.n_cols);
   // Assume LogSoftmax layer is always associated with NLL output layer.
-  error(1, 0) = -1;
-  module.Backward(input, error, delta);
-  REQUIRE(arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)) ==
+  module.Backward(output, error, delta);
+  REQUIRE(arma::accu(arma::abs(arma::mat("0.5790; -0.8435; -0.0233; 0.0798; 0.2079") - delta)) ==
       Approx(0.0).margin(1e-3));
 }
+
+/**
+ * JacobianTest for LogSoftMax layer
+ */
+TEST_CASE("JacobianLogSoftMaxLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t elems = arma::randi(arma::distr_param(2, 1000));
+
+    arma::mat input(elems, 1);
+
+    LogSoftMax module;
+    module.InputDimensions() = { elems };
+    module.ComputeOutputDimensions();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
