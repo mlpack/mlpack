@@ -1,8 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-
   * Fix PReLU, add integration test to it (#3473).
-  
+
+  * Fix bug in LogSoftMax derivative (#3469).
+
 ### mlpack 4.1.0
 ###### 2023-04-26
 
