@@ -104,6 +104,16 @@ class GaussianInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
+ 
+  /**
+   * Serialize the initialization.
+   */
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(mean));
+    ar(CEREAL_NVP(variance));
+  }
 
  private:
   //! Mean of the gaussian.
