@@ -4,6 +4,8 @@
 
   * Fix bug in LogSoftMax derivative (#3469).
 
+  * Add `serialize` method to `GaussianInitialization`, `KathirvalavakumarSubavathiInitialization`, `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, and `OrthogonalInitialization` (#3483).
+
 ### mlpack 4.1.0
 ###### 2023-04-26
 
