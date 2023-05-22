@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/ftswish_function.hpp>
 #include "layer.hpp"
 
 namespace mlpack {
@@ -240,6 +241,14 @@ typedef BaseLayer<SILUFunction, arma::mat> SILU;
 
 template<typename MatType = arma::mat>
 using SILUType = BaseLayer<SILUFunction, MatType>;
+
+/**
+ * Standard FTSwish-Layer using the FTSwish activation function.
+ */
+typedef BaseLayer<FTSwishFunction, arma::mat> FTSwish;
+
+template<typename MatType = arma::mat>
+using FTSwishType = BaseLayer<FTSwishFunction, MatType>;
 
 } // namespace mlpack
 

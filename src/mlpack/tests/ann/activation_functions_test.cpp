@@ -48,6 +48,28 @@ void CheckActivationCorrect(const arma::colvec input,
   }
 }
 
+template<class ActivationFunction>
+void CheckActivationCorrect(const arma::colvec& input,
+                            const arma::colvec& target,
+                            double T)
+{
+  // Test the activation function using a single value as input.
+  for (size_t i = 0; i < target.n_elem; ++i)
+  {
+    REQUIRE(ActivationFunction::Fn(input.at(i), T) ==
+        Approx(target.at(i)).epsilon(1e-5));
+  }
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  ActivationFunction::Fn(input, T, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+
 /**
  * Implementation of the activation function derivative test.
  *
@@ -785,4 +807,25 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<SILUFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<SILUFunction>(desiredActivation, desiredDerivate);
+}
+
+/**
+ * Basic test of the FTSwish Function
+ */
+TEST_CASE("FTSwishFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Randomly generated data.
+  const arma::colvec activationData("1.234 -0.567 2.345 -3.456 0.123");
+
+  // Hand-calculated values.
+  const double T = 0.5;
+  const arma::colvec desiredActivations("1.45575508976 0.5 \
+                                         2.63989687197 0.5 0.56527748873");
+
+  // Hand-calculated values.
+  const arma::colvec desiredDerivatives("1.03412556462 0.7399611873 \
+                                         1.09752632229 0.7399611873 0.7682779885");
+
+  CheckActivationCorrect<FTSwishFunction>(activationData, desiredActivations, T);
+  CheckDerivativeCorrect<FTSwishFunction>(desiredActivations, desiredDerivatives);
 }

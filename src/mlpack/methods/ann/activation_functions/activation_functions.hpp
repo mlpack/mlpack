@@ -35,5 +35,6 @@
 #include "swish_function.hpp"
 #include "tanh_exponential_function.hpp"
 #include "tanh_function.hpp"
+#include "ftswish_function.hpp"
 
 #endif
