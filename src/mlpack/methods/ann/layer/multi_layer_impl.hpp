@@ -182,10 +182,10 @@ void MultiLayer<MatType>::Backward(
     // Initialize memory for the backward pass (if needed).
     InitializeBackwardPassMemory(input.n_cols);
 
-    network.back()->Backward(input, gy, layerDeltas.back());
+    network.back()->Backward(layerOutputs[network.size() - 2], gy, layerDeltas.back());
     for (size_t i = network.size() - 2; i > 0; --i)
-      network[i]->Backward(layerOutputs[i], layerDeltas[i + 1], layerDeltas[i]);
-    network[0]->Backward(layerOutputs[0], layerDeltas[1], g);
+      network[i]->Backward(layerOutputs[i-1], layerDeltas[i + 1], layerDeltas[i]);
+    network[0]->Backward(input, layerDeltas[1], g);
   }
   else if (network.size() == 1)
   {
