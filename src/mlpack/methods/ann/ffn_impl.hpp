@@ -494,23 +494,23 @@ typename MatType::elem_type FFN<
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
 
-  network.Forward(predictors.cols(begin, begin + batchSize - 1), networkOutput);
+  network.Forward(MatType(predictors.cols(begin, begin + batchSize - 1), true), networkOutput);
 
   const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
-      responses.cols(begin, begin + batchSize - 1)) + network.Loss();
+      MatType(responses.cols(begin, begin + batchSize - 1), true)) + network.Loss();
 
   // Now perform the backward pass.
   outputLayer.Backward(networkOutput,
-      responses.cols(begin, begin + batchSize - 1), error);
+      MatType(responses.cols(begin, begin + batchSize - 1), true), error);
 
   // The delta should have the same size as the input.
   networkDelta.set_size(predictors.n_rows, batchSize);
-  network.Backward(networkOutput, error, networkDelta);
+  network.Backward(MatType(predictors.cols(begin, begin + batchSize - 1), true), error, networkDelta);
 
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(predictors.cols(begin, begin + batchSize - 1), error,
+  network.Gradient(MatType(predictors.cols(begin, begin + batchSize - 1), true), error,
       gradient);
 
   return obj;
