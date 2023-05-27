@@ -91,10 +91,11 @@ void FTSwishType<MatType>::Backward(
   {
     if (input(i) >= 0)
     {
-      const double f_x = input(i) / (1 + std::exp(-input(i)));
-      const double sigmoid_x = 1 / (1 + std::exp(-input(i)));
-     
-      g(i) = gy(i) * (sigmoid_x * (1 - f_x) + f_x);
+      const double fX = input(i) / (1 + std::exp(-input(i)));
+      const double sigmoidX = 1 / (1 + std::exp(-input(i)));
+
+      g(i) = gy(i) * (sigmoidX * (1 - fX) + fX);
+
     }
     else
     {

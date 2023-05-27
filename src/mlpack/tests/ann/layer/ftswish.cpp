@@ -1,5 +1,5 @@
 /*
- * @file tests/ann/layer/hard_tanh.cpp
+ * @file tests/ann/layer/ftswish.cpp
  * @author Mayank Raj
  *
  * Tests the FTSwish layer.
