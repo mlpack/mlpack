@@ -98,12 +98,9 @@ void PReLUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   output = input;
-  if (this->training)
-  {
-    #pragma omp for
-    for (size_t i = 0; i < input.n_elem; ++i)
-      output(i) *= (input(i) >= 0) ? 1 : alpha(0);
-  }
+  #pragma omp for
+  for (size_t i = 0; i < input.n_elem; ++i)
+    output(i) *= (input(i) >= 0) ? 1 : alpha(0);
 }
 
 template<typename MatType>

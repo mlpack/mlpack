@@ -21,7 +21,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.0.1.tar.gz">current stable version (4.0.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.1.0.tar.gz">current stable version (4.1.0)</a>
   </em>
 </p>
 
@@ -180,6 +180,8 @@ g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
 
 Note that if you want to serialize (save or load) neural networks, you should
 add `#define MLPACK_ENABLE_ANN_SERIALIZATION` before including `<mlpack.hpp>`.
+If you don't define `MLPACK_ENABLE_ANN_SERIALIZATION` and your code serializes a
+neural network, a compilation error will occur.
 
 See the [C++ quickstart](doc/quickstart/cpp.md) and the
 [examples](https://github.com/mlpack/examples) repository for some examples of
@@ -198,7 +200,8 @@ reduce compilation time:
  * Only use the `MLPACK_ENABLE_ANN_SERIALIZATION` definition if you are
    serializing neural networks in your code.  When this define is enabled,
    compilation time will increase significantly, as the compiler must generate
-   code for every possible type of layer.
+   code for every possible type of layer.  (The large amount of extra
+   compilation overhead is why this is not enabled by default.)
 
  * If you are using mlpack in multiple .cpp files, consider using [`extern
    templates`](https://isocpp.org/wiki/faq/cpp11-language-templates) so that the
@@ -252,7 +255,7 @@ build in parallel; e.g., `make -j4` will use 4 cores to build.
 
 mlpack's Python bindings are available on
 [PyPI](https://pypi.org/project/mlpack) and
-[conda-forge](https://conda-forge.org/packages/mlpack), and can be installed
+[conda-forge](https://anaconda.org/conda-forge/mlpack), and can be installed
 with either `pip install mlpack` or `conda install -c conda-forge mlpack`.
 These sources are recommended, as building the Python bindings by hand can be
 complex.

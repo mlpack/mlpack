@@ -71,7 +71,7 @@ class NetworkInitialization
         // Initialize the layer with the specified parameter/weight
         // initialization rule.
         const size_t weight = network[i]->WeightSize();
-        arma::Mat<eT> tmp = arma::mat(parameters.memptr() + offset,
+        arma::Mat<eT> tmp = arma::Mat<eT>(parameters.memptr() + offset,
             weight, 1, false, false);
         initializeRule.Initialize(tmp, tmp.n_elem, 1);
 

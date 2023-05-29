@@ -261,5 +261,5 @@ If you are facing issues during the build process of mlpack, you may take a look
 at other third-party tutorials for Windows, but they may be out of date:
 
  * [Github wiki Windows Build page](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
- * [Keon's tutorial for mlpack 2.0.3](http://keon.io/mlpack-on-windows)
+ * [Keon's tutorial for mlpack 2.0.3](https://keon.github.io/mlpack-on-windows/)
  * [Kirizaki's tutorial for mlpack 2](https://overdosedblog.wordpress.com/2016/08/15/once_again/)

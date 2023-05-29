@@ -1,5 +1,13 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix PReLU, add integration test to it (#3473).
+
+  * Fix bug in LogSoftMax derivative (#3469).
+
+  * Add `serialize` method to `GaussianInitialization`, `KathirvalavakumarSubavathiInitialization`, `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, and `OrthogonalInitialization` (#3483).
+
+### mlpack 4.1.0
+###### 2023-04-26
 
   * Adapt HardTanH layer (#3454).
 
@@ -7,7 +15,8 @@
 
   * Adapt PReLU layer for new neural network API (#3420).
 
-  * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy` (#3413, #3404).
+  * Add CF decomposition methods: `QUIC_SVDPolicy` and `BlockKrylovSVDPolicy`
+    (#3413, #3404).
 
   * Update outdated code in tutorials (#3398, #3401).
 
@@ -18,6 +27,9 @@
   * Fix DBSCAN handling of non-core points (#3346).
 
   * Avoid deprecation warnings in Armadillo 11.4.4+ (#3405).
+
+  * Issue runtime error when serialization of neural networks is attempted but
+    `MLPACK_ENABLE_ANN_SERIALIZATION` is not defined (#3451).
 
 ### mlpack 4.0.1
 ###### 2022-12-23
