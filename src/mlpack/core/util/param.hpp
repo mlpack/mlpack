@@ -330,7 +330,7 @@
 
 /**
  * Define a matrix output parameter.  When the program terminates, the matrix
- * will be saved to whatever it was set to by IO::GetParam<arma::mat>(ID)
+ * will be saved to whatever it was set to by params.Get<arma::mat>(ID)
  * during the program.  From the command-line, the user may specify the file in
  * which to save the output matrix using a string option that is the name of the
  * matrix parameter with "_file" appended.  So, for instance, if the name of the
@@ -400,7 +400,7 @@
  * Define a transposed matrix output parameter.  This is useful when data is
  * stored in a row-major form instead of the usual column-major form.  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * IO::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * params.Get<arma::mat>(ID) during the program.  From the command-line, the
  * user may specify the file in which to save the output matrix using a string
  * option that is the name of the matrix parameter with "_file" appended.  So,
  * for instance, if the name of the output matrix parameter was "mat", the user
@@ -467,7 +467,7 @@
 /**
  * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * IO::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
+ * params.Get<arma::Mat<size_t>>(ID) during the program.  From the
  * command-line, the user may specify the file in which to save the output
  * matrix using a string option that is the name of the matrix parameter with
  * "_file" appended.  So, for instance, if the name of the output matrix
@@ -746,9 +746,9 @@
  *
  * @code
  * DatasetInfo d = std::move(
- *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
@@ -761,6 +761,38 @@
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
     PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
         "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
+        TUPLE_TYPE())
+
+/**
+ * Define a required input DatasetInfo/matrix parameter.  From the command line,
+ * the user can specify the file that holds the matrix, using the name of the
+ * matrix parameter with "_file" appended (and the same alias).  So for
+ * instance, if the name of the matrix parameter was "matrix", the user could
+ * specify that the "matrix" matrix was held in file.csv by giving the parameter
+ *
+ * @code
+ * --matrix_file file.csv
+ * @endcode
+ *
+ * Then the DatasetInfo and matrix type could be accessed with
+ *
+ * @code
+ * DatasetInfo d = std::move(
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ * arma::mat m = std::move(
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
+ * @param ALIAS One-character string representing the alias of the parameter.
+ */
+#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
+#define PARAM_MATRIX_AND_INFO_IN_REQ(ID, DESC, ALIAS) \
+    PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
+        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", true, true, true, \
         TUPLE_TYPE())
 
 /**
@@ -836,9 +868,7 @@
  * --model_file model.bin
  * @endcode
  *
- * The model will be saved at the termination of the program.  If you use a
- * parameter of this type, you must call IO::Destroy() at the end of your
- * program.
+ * The model will be saved at the termination of the program.
  *
  * @param TYPE Type of the model to be saved.
  * @param ID Name of the parameter.
