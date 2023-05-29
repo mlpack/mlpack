@@ -126,4 +126,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     if (params.Has("output"))
       params.Get<arma::mat>("output") = std::move(output);
   }
+  else if (params.Has("output"))
+  {
+    params.Get<arma::mat>("output") = data; // Copy input to output.
+  }
 }
