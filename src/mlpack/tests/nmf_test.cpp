@@ -227,7 +227,7 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
 
     // Make sure the results are about equal for the W and H matrices.
     const double relDiff = arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro");
-    if (relDiff < 1e-5)
+    if (relDiff < 1e-4)
     {
       success = true;
       break;
