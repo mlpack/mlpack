@@ -78,11 +78,8 @@ ReLU6Type<MatType>::operator=(ReLU6Type&& other)
 template<typename MatType>
 void ReLU6Type<MatType>::Forward(
     const MatType& input, MatType& output)
-{ 
-  MatType outputTemp(arma::size(input));
-  outputTemp.fill(6.0);
-  output = arma::zeros<MatType>(arma::size(input));
-  output = arma::min(arma::max(output, input), outputTemp);
+{
+  output = arma::min(arma::max(input, 0.0), 6.0);
 }
 
 template<typename MatType>
