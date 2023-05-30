@@ -86,16 +86,14 @@ template<typename MatType>
 void ReLU6Type<MatType>::Backward(
     const MatType& input, const MatType& gy, MatType& g)
 {
-  MatType derivative(arma::size(gy));
-  derivative.fill(0.0);
   #pragma omp for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < 6 && input(i) > 0)
-      derivative(i) = 1.0;
+      g(i) = gy(i);
+    else
+      g(i) = 0.0;
   }
-
-  g = gy % derivative;
 }
 
 template<typename MatType>
