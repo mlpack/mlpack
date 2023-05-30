@@ -89,6 +89,26 @@ void CReLUType<MatType>::Backward(
 }
 
 template<typename MatType>
+void CReLUType<MatType>::ComputeOutputDimensions()
+{
+  // The CReLU gives twice as many outputs as inputs.
+  // We treat this as flattening the input, and then doubling the number of
+  // dimensions.
+  this->outputDimensions.clear();
+  if (this->inputDimensions.size() == 0)
+    return;
+
+  size_t totalDimensions = 1;
+  for (size_t i = 0; i < this->inputDimensions.size(); ++i)
+    totalDimensions *= this->inputDimensions[i];
+
+  // Now double the number of dimensions.
+  totalDimensions *= 2;
+
+  this->outputDimensions.push_back(totalDimensions);
+}
+
+template<typename MatType>
 template<typename Archive>
 void CReLUType<MatType>::serialize(
     Archive& ar,

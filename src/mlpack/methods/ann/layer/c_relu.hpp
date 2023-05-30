@@ -86,6 +86,9 @@ class CReLUType : public Layer<MatType>
    */
   void Backward(const MatType& input, const MatType& gy, MatType& g);
 
+  //! Compute the output dimensions of the layer using `InputDimensions()`.
+  void ComputeOutputDimensions();
+
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
