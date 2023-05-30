@@ -209,7 +209,7 @@ void RNN<
     InitializationRuleType,
     MatType
 >::Predict(
-    arma::Cube<typename MatType::elem_type> predictors,
+    const arma::Cube<typename MatType::elem_type>& predictors,
     arma::Cube<typename MatType::elem_type>& results,
     const size_t batchSize)
 {
