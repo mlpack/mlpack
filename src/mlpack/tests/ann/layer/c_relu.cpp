@@ -39,7 +39,7 @@ TEST_CASE("CReLUFunctionTest", "[ANNLayerTest]")
   // Test the activation function using the entire vector as input.
   arma::colvec activations(2 * activationData.n_elem);
   crelu.Forward(activationData, activations);
-  arma::colvec derivatives;
+  arma::colvec derivatives(activationData.n_elem);
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
   crelu.Backward(desiredActivations, error, derivatives);

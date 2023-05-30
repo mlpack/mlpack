@@ -33,9 +33,13 @@ void CheckReLU6Correct(const arma::colvec input,
 {
   // Initialize ReLU6 object.
   ReLU6 relu6;
+  relu6.InputDimensions() = { input.n_rows };
+  relu6.ComputeOutputDimensions();
 
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives, activations;
+  activations.set_size(relu6.OutputDimensions()[0]);
+  derivatives.set_size(input.n_rows);
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
