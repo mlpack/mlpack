@@ -220,6 +220,14 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
       // Reconstruct matrices.
       vp = w * h; // In general vp won't be sparse.
       dvp = dw * dh;
+      w.print("w");
+      h.print("h");
+      v.print("v");
+      vp.print("vp");
+      dw.print("dw");
+      dh.print("dh");
+      dv.print("dv");
+      dvp.print("dvp");
 
       denseResidue = arma::norm(v - vp, "fro");
       sparseResidue = arma::norm(dv - dvp, "fro");
