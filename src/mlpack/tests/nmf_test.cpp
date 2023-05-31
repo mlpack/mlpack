@@ -223,6 +223,8 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
 
       denseResidue = arma::norm(v - vp, "fro");
       sparseResidue = arma::norm(dv - dvp, "fro");
+      std::cout << "sparse residue " << sparseResidue << std::endl;
+      std::cout << "dense residue " << denseResidue << std::endl;
     }
 
     // Make sure the results are about equal for the W and H matrices.
