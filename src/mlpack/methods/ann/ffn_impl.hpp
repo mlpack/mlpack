@@ -207,8 +207,8 @@ void FFN<
         size_t(predictors.n_cols) - i);
 
     const MatType predictorAlias(
-        (typename MatType::elem_type*) predictors.colptr(i), predictors.n_rows,
-        effectiveBatchSize, false, true);
+        const_cast<typename MatType::elem_type*>(predictors.colptr(i)),
+        predictors.n_rows, effectiveBatchSize, false, true);
     MatType resultAlias(results.colptr(i), results.n_rows,
         effectiveBatchSize, false, true);
 
