@@ -375,9 +375,9 @@ inline double LARS::Train(const arma::mat& matX,
         const double dirCorr = dot(dataRef.col(ind), yHatDirection);
         const double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
         const double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
-        if ((val1 > 0.0) && (val1 < gamma))
+        if ((val1 >= 0.0) && (val1 < gamma))
           gamma = val1;
-        if ((val2 > 0.0) && (val2 < gamma))
+        if ((val2 >= 0.0) && (val2 < gamma))
           gamma = val2;
         // Handle edge case where the largest actually is equal to 0.
         if (std::max(val1, val2) == 0.0)
