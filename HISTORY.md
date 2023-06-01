@@ -6,6 +6,8 @@
 
   * Add `serialize` method to `GaussianInitialization`, `KathirvalavakumarSubavathiInitialization`, `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, and `OrthogonalInitialization` (#3483).
 
+  * Install mlpack and cereal headers as part of R package (#3488).
+
   * Add intercept and normalization support to LARS (#3493).
 
   * Allow adding two features simultaneously to LARS models (#3493).
