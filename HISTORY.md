@@ -6,6 +6,10 @@
 
   * Add `serialize` method to `GaussianInitialization`, `KathirvalavakumarSubavathiInitialization`, `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, and `OrthogonalInitialization` (#3483).
 
+  * Add intercept and normalization support to LARS (#3493).
+
+  * Allow adding two features simultaneously to LARS models (#3493).
+
 ### mlpack 4.1.0
 ###### 2023-04-26
 
