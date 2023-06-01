@@ -724,7 +724,10 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
   {
     arma::mat X = std::move(F(0, i));
     arma::rowvec y = std::move(F(1, i));
-    const double y_mean = arma::mean(y);
+    const arma::rowvec xMean = arma::mean(X, 0);
+    arma::rowvec xStds = arma::stddev(X, 0, 0);
+    xStds.replace(0.0, 1.0);
+    const double yMean = arma::mean(y);
 
     lars.FitIntercept(false);
     lars.NormalizeData(false);
@@ -737,8 +740,34 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
     lars.Train(X, y, beta, false);
 
     // Now mean-center data before the check.
-    X.each_row() -= arma::mean(X, 0);
-    y -= y_mean;
+    X.each_row() -= xMean;
+    y -= yMean;
+
+    CheckKKT(beta, X, y, 1.0);
+
+    X.each_row() += xMean;
+    y += yMean;
+
+    // Now try when we normalize the data.
+    lars.FitIntercept(false);
+    lars.NormalizeData(true);
+    lars.Train(X, y, beta, false);
+
+    X.each_row() /= xStds;
+    beta %= xStds.t();
+
+    CheckKKT(beta, X, y, 1.0);
+
+    X.each_row() %= xStds;
+
+    lars.FitIntercept(true);
+    lars.NormalizeData(true);
+    lars.Train(X, y, beta, false);
+
+    X.each_row() -= xMean;
+    X.each_row() /= xStds;
+    beta %= xStds.t();
+    y -= yMean;
 
     CheckKKT(beta, X, y, 1.0);
   }
