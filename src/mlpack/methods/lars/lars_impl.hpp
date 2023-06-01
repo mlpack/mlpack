@@ -21,14 +21,18 @@ inline LARS::LARS(
     const bool useCholesky,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
     matGram(&matGramInternal),
     useCholesky(useCholesky),
     lasso((lambda1 != 0)),
     lambda1(lambda1),
     elasticNet((lambda1 != 0) && (lambda2 != 0)),
     lambda2(lambda2),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    fitIntercept(fitIntercept),
+    normalizeData(normalizeData)
 { /* Nothing left to do. */ }
 
 inline LARS::LARS(
@@ -36,14 +40,18 @@ inline LARS::LARS(
     const arma::mat& gramMatrix,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
     matGram(&gramMatrix),
     useCholesky(useCholesky),
     lasso((lambda1 != 0)),
     lambda1(lambda1),
     elasticNet((lambda1 != 0) && (lambda2 != 0)),
     lambda2(lambda2),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    fitIntercept(fitIntercept),
+    normalizeData(normalizeData)
 { /* Nothing left to do */ }
 
 inline LARS::LARS(
@@ -53,8 +61,10 @@ inline LARS::LARS(
     const bool useCholesky,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
-    LARS(useCholesky, lambda1, lambda2, tolerance)
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
+    LARS(useCholesky, lambda1, lambda2, tolerance, fitIntercept, normalizeData)
 {
   Train(data, responses, transposeData);
 }
@@ -67,8 +77,11 @@ inline LARS::LARS(
     const arma::mat& gramMatrix,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
-    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance)
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
+    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance, fitIntercept,
+        normalizeData)
 {
   Train(data, responses, transposeData);
 }
@@ -85,8 +98,11 @@ inline LARS::LARS(const LARS& other) :
     elasticNet(other.elasticNet),
     lambda2(other.lambda2),
     tolerance(other.tolerance),
+    fitIntercept(other.fitIntercept),
+    normalizeData(other.normalizeData),
     betaPath(other.betaPath),
     lambdaPath(other.lambdaPath),
+    interceptPath(other.interceptPath),
     activeSet(other.activeSet),
     isActive(other.isActive),
     ignoreSet(other.ignoreSet),
@@ -107,8 +123,11 @@ inline LARS::LARS(LARS&& other) :
     elasticNet(other.elasticNet),
     lambda2(other.lambda2),
     tolerance(other.tolerance),
+    fitIntercept(other.fitIntercept),
+    normalizeData(other.normalizeData),
     betaPath(std::move(other.betaPath)),
     lambdaPath(std::move(other.lambdaPath)),
+    interceptPath(std::move(other.interceptPath)),
     activeSet(std::move(other.activeSet)),
     isActive(std::move(other.isActive)),
     ignoreSet(std::move(other.ignoreSet)),
@@ -133,8 +152,11 @@ inline LARS& LARS::operator=(const LARS& other)
   elasticNet = other.elasticNet;
   lambda2 = other.lambda2;
   tolerance = other.tolerance;
+  fitIntercept = other.fitIntercept;
+  normalizeData = other.normalizeData;
   betaPath = other.betaPath;
   lambdaPath = other.lambdaPath;
+  interceptPath = other.interceptPath;
   activeSet = other.activeSet;
   isActive = other.isActive;
   ignoreSet = other.ignoreSet;
@@ -158,8 +180,11 @@ inline LARS& LARS::operator=(LARS&& other)
   elasticNet = other.elasticNet;
   lambda2 = other.lambda2;
   tolerance = other.tolerance;
+  fitIntercept = other.fitIntercept;
+  normalizeData = other.normalizeData;
   betaPath = std::move(other.betaPath);
   lambdaPath = std::move(other.lambdaPath);
+  interceptPath = std::move(other.interceptPath);
   activeSet = std::move(other.activeSet);
   isActive = std::move(other.isActive);
   ignoreSet = std::move(other.ignoreSet);
@@ -187,13 +212,78 @@ inline double LARS::Train(const arma::mat& matX,
 
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
-  // dataRef is row-major.
-  const arma::mat& dataRef = (transposeData ? dataTrans : matX);
+  // This vector may hold zero-centered responses, if necessary.
+  arma::rowvec yCentered;
+
+  // dataRef is row-major.  We can reuse the given matX, but only if we don't
+  // need to do any transformations to it.
+  const arma::mat& dataRef =
+      (transposeData || fitIntercept || normalizeData) ? dataTrans : matX;
+  const arma::rowvec& yRef =
+      (fitIntercept) ? yCentered : y;
+
+  arma::vec offsetX; // used only if fitting an intercept
+  double offsetY = 0.0; // used only if fitting an intercept
+  arma::vec stdX; // used only if normalizing
+
   if (transposeData)
-    dataTrans = trans(matX);
+  {
+    if (fitIntercept)
+    {
+      offsetX = arma::mean(matX, 1);
+      dataTrans = (matX.each_col() - offsetX).t();
+    }
+
+    if (normalizeData)
+    {
+      stdX = arma::stddev(matX, 0, 1);
+      stdX.replace(0.0, 1.0); // Make sure we don't divide by 0!
+
+      // Check if we have already done the transposition.
+      if (!fitIntercept)
+        dataTrans = (matX.each_col() / stdX).t();
+      else
+        dataTrans.each_row() /= stdX.t();
+    }
+
+    // Make sure we convert the data to row-major format, even if no
+    // transformations were needed.
+    if (!fitIntercept && !normalizeData)
+      dataTrans = matX.t();
+  }
+  else
+  {
+    // We don't need to transpose the data---it's already in row-major form.
+    if (fitIntercept)
+    {
+      offsetX = arma::mean(matX, 0).t();
+      dataTrans = (matX.each_row() - offsetX.t());
+    }
+
+    if (normalizeData)
+    {
+      stdX = arma::stddev(matX, 0, 0).t();
+      stdX.replace(0.0, 1.0); // Make sure we don't divide by 0!
+
+      // Check if we have already populated `dataTrans`.
+      if (!fitIntercept)
+        dataTrans = (matX.each_row() / stdX.t());
+      else
+        dataTrans.each_row() /= stdX.t();
+    }
+
+    // If we are not fitting an intercept and we are not normalizing the data,
+    // dataTrans already points to matX so we don't need to do anything.
+  }
+
+  if (fitIntercept)
+  {
+    offsetY = arma::mean(y);
+    yCentered = y - offsetY;
+  }
 
   // Compute X' * y.
-  arma::vec vecXTy = trans(y * dataRef);
+  arma::vec vecXTy = trans(yRef * dataRef);
 
   // Set up active set variables.  In the beginning, the active set has size 0
   // (all dimensions are inactive).
@@ -460,6 +550,31 @@ inline double LARS::Train(const arma::mat& matX,
     }
   }
 
+  // Perform un-scaling of learned beta, if needed, to account for
+  // normalization.
+  if (normalizeData)
+  {
+    for (size_t i = 0; i < betaPath.size(); ++i)
+    {
+      betaPath[i] /= stdX;
+    }
+  }
+
+  // Set the intercept values.  This is needed (for paranoia reasons) even if an
+  // intercept isn't fit, in case a user changes `fitIntercept` after training.
+  // If an intercept wasn't fit, we set them all to zero.
+  if (fitIntercept)
+  {
+    interceptPath.clear();
+    for (size_t i = 0; i < betaPath.size(); ++i)
+      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[i]));
+  }
+  else
+  {
+    interceptPath.clear();
+    interceptPath.resize(betaPath.size(), 0.0);
+  }
+
   // Unfortunate copy...
   beta = betaPath.back();
 
@@ -479,8 +594,12 @@ inline void LARS::Predict(const arma::mat& points,
                           const bool rowMajor) const
 {
   // We really only need to store beta internally...
-  if (rowMajor)
+  if (rowMajor && !fitIntercept)
     predictions = trans(points * betaPath.back());
+  else if (rowMajor)
+    predictions = trans(points * betaPath.back()) + interceptPath.back();
+  else if (fitIntercept)
+    predictions = betaPath.back().t() * points + interceptPath.back();
   else
     predictions = betaPath.back().t() * points;
 }
@@ -515,7 +634,7 @@ inline void LARS::ComputeYHatDirection(const arma::mat& matX,
 
 inline void LARS::InterpolateBeta()
 {
-  int pathLength = betaPath.size();
+  const size_t pathLength = betaPath.size();
 
   // interpolate beta and stop
   double ultimateLambda = lambdaPath[pathLength - 1];
@@ -683,8 +802,11 @@ void LARS::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(elasticNet));
   ar(CEREAL_NVP(lambda2));
   ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(fitIntercept));
+  ar(CEREAL_NVP(normalizeData));
   ar(CEREAL_NVP(betaPath));
   ar(CEREAL_NVP(lambdaPath));
+  ar(CEREAL_NVP(interceptPath));
   ar(CEREAL_NVP(activeSet));
   ar(CEREAL_NVP(isActive));
   ar(CEREAL_NVP(ignoreSet));

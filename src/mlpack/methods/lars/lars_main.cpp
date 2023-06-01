@@ -122,12 +122,17 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
     0);
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
+PARAM_FLAG("no_intercept", "Do not fit an intercept in the model.", "n");
+PARAM_FLAG("no_normalize", "Do not normalize data to unit variance before "
+    "modeling.", "N");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   double lambda1 = params.Get<double>("lambda1");
   double lambda2 = params.Get<double>("lambda2");
   bool useCholesky = params.Has("use_cholesky");
+  bool noIntercept = params.Has("no_intercept");
+  bool noNormalize = params.Has("no_normalize");
 
   // Check parameters -- make sure everything given makes sense.
   RequireOnlyOnePassed(params, { "input", "input_model" }, true);
@@ -137,6 +142,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "specified, responses must also be specified");
   }
   ReportIgnoredParam(params, {{ "input", false }}, "responses");
+  ReportIgnoredParam(params, {{ "input", false }}, "no_intercept");
+  ReportIgnoredParam(params, {{ "input", false }}, "no_normalize");
 
   RequireAtLeastOnePassed(params, { "output_predictions", "output_model" },
       false, "no results will be saved");
@@ -147,6 +154,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     // Initialize the object.
     lars = new LARS(useCholesky, lambda1, lambda2);
+    lars->FitIntercept(!noIntercept);
+    lars->NormalizeData(!noNormalize);
 
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
