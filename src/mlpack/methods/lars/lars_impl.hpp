@@ -319,6 +319,7 @@ inline double LARS::Train(const arma::mat& matX,
   if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
+    interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[0]));
     return maxCorr;
   }
 
