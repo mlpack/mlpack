@@ -39,14 +39,12 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
- *     cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
- *     to also be in this type. The type also allows the computation and weight
- *     type to differ from the input type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and allows the
+ *         computation and weight type to differ from the input type
+ *         (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class CReLUType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class CReLUType : public Layer<MatType>
 {
  public:
   //! Create the CReLU object.
@@ -54,6 +52,18 @@ class CReLUType : public Layer<InputType, OutputType>
 
   //! Clone the CReLUType object. This handles polymorphism correctly.
   CReLUType* Clone() const { return new CReLUType(*this); }
+
+  // Virtual destructor.
+  virtual ~CReLUType() { }
+
+  //! Copy the given CReLUType.
+  CReLUType(const CReLUType& other);
+  //! Take ownership of the given CReLUType.
+  CReLUType(CReLUType&& other);
+  //! Copy the given CReLUType.
+  CReLUType& operator=(const CReLUType& other);
+  //! Take ownership of the given CReLUType.
+  CReLUType& operator=(CReLUType&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -63,7 +73,7 @@ class CReLUType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -74,7 +84,10 @@ class CReLUType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
+
+  //! Compute the output dimensions of the layer using `InputDimensions()`.
+  void ComputeOutputDimensions();
 
   //! Serialize the layer.
   template<typename Archive>
@@ -84,7 +97,7 @@ class CReLUType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard CReLU layer.
-typedef CReLUType<arma::mat, arma::mat> CReLU;
+typedef CReLUType<arma::mat> CReLU;
 
 } // namespace mlpack
 
