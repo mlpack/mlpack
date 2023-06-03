@@ -194,7 +194,7 @@ void FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Predict(MatType predictors, MatType& results, const size_t batchSize)
+>::Predict(const MatType& predictors, MatType& results, const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
   CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
@@ -206,8 +206,9 @@ void FFN<
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols) - i);
 
-    MatType predictorAlias(predictors.colptr(i), predictors.n_rows,
-        effectiveBatchSize, false, true);
+    const MatType predictorAlias(
+        const_cast<typename MatType::elem_type*>(predictors.colptr(i)),
+        predictors.n_rows, effectiveBatchSize, false, true);
     MatType resultAlias(results.colptr(i), results.n_rows,
         effectiveBatchSize, false, true);
 

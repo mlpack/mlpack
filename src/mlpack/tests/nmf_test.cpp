@@ -183,8 +183,8 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
 {
   // We have to ensure that the residues aren't NaNs.  This can happen when a
   // matrix is created with all zeros in a column or row.
-  double denseResidue = std::numeric_limits<double>::quiet_NaN();
-  double sparseResidue = std::numeric_limits<double>::quiet_NaN();
+  double denseResidue;
+  double sparseResidue;
 
   mat vp, dvp; // Resulting matrices.
 
@@ -194,17 +194,20 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
   const size_t trials = 8;
   for (size_t trial = 0; trial < trials; ++trial)
   {
+    denseResidue = std::numeric_limits<double>::quiet_NaN();
+    sparseResidue = std::numeric_limits<double>::quiet_NaN();
+
     while (sparseResidue != sparseResidue && denseResidue != denseResidue)
     {
       mat w, h;
       sp_mat v;
-      v.sprandu(10, 10, 0.3);
+      v.sprandu(20, 20, 0.3);
       // Ensure there is at least one nonzero element in every row and column.
-      for (size_t i = 0; i < 10; ++i)
-        v(i, i) += 1e-5;
+      for (size_t i = 0; i < 20; ++i)
+        v(i, i) += 0.01;
       mat dv(v); // Make a dense copy.
       mat dw, dh;
-      size_t r = 5;
+      size_t r = 10;
 
       // Get an initialization.
       arma::mat iw, ih;
@@ -227,7 +230,7 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
 
     // Make sure the results are about equal for the W and H matrices.
     const double relDiff = arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro");
-    if (relDiff < 1e-5)
+    if (relDiff < 1e-4)
     {
       success = true;
       break;

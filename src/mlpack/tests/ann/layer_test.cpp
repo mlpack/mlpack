@@ -40,3 +40,4 @@
 #include "layer/relu6.cpp"
 #include "layer/softmax.cpp"
 #include "layer/softmin.cpp"
+#include "layer/ftswish.cpp"
