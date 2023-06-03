@@ -29,7 +29,6 @@ TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
                     {5.5, -4.7, 2.1},
                     {0.2, 0.1, -0.5}};
   PReLU module(0.01);
-  module.Training() = true;
   arma::mat moduleParams(module.WeightSize(), 1);
   module.CustomInitialize(moduleParams, module.WeightSize());
   module.SetWeights((double*) moduleParams.memptr());
@@ -94,3 +93,41 @@ TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
   REQUIRE(0.0103 - arma::accu(predGradient) ==
       Approx(0.0).margin(1e-4));
 }
+
+double ComputeMSRE(arma::mat input, arma::mat target)
+{
+  return std::pow(arma::accu(arma::pow(input - target, 2)) / target.n_cols, 0.5);
+}
+
+TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
+{
+  arma::mat data;
+  data::Load("boston_housing_price.csv", data);
+  arma::mat labels;
+  data::Load("boston_housing_price_responses.csv", labels);
+
+  arma::mat trainData, testData, trainLabels, testLabels;
+  data::Split(data, labels, trainData, testData, trainLabels, testLabels, 0.2);
+
+  FFN<L1Loss> model;
+  model.Add<Linear>(10);
+  model.Add<PReLU>(0.01);
+  model.Add<Linear>(3);
+  model.Add<PReLU>(0.01);
+  model.Add<Linear>(1);
+    
+  int epochs = 50;
+  ens::RMSProp optimizer(0.01, 32, 0.99, 1e-8, epochs * trainData.n_cols);
+  model.Train(trainData, trainLabels, optimizer);
+
+  arma::mat predictions;
+  model.Predict(trainData, predictions);
+  double msreTrain = ComputeMSRE(predictions, trainLabels);
+  model.Predict(testData, predictions);
+  double msreTest = ComputeMSRE(predictions, testLabels);
+
+  double relativeMSRE = std::abs((msreTest - msreTrain) / msreTrain);
+
+  REQUIRE(relativeMSRE <= 0.25);
+}
+
