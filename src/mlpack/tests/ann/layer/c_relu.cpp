@@ -26,19 +26,20 @@ using namespace mlpack;
 TEST_CASE("CReLUFunctionTest", "[ANNLayerTest]")
 {
   const arma::colvec desiredActivations("0 3 0 6 24 \
-                                         2 0 0 0 0 0 \
-                                         100.2 0 1 0 0");
+                                         2 0 0 0 0");
 
-  const arma::colvec desiredDerivatives("0 0 0 0 \
-                                         0 0 0 0");
-                                         
+  const arma::colvec desiredDerivatives("0 0 0 0 0");
+
   const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
 
   CReLU crelu;
+  crelu.InputDimensions() = { activationData.n_elem };
+  crelu.ComputeOutputDimensions();
+
   // Test the activation function using the entire vector as input.
-  arma::colvec activations;
+  arma::colvec activations(2 * activationData.n_elem);
   crelu.Forward(activationData, activations);
-  arma::colvec derivatives;
+  arma::colvec derivatives(activationData.n_elem);
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
   crelu.Backward(desiredActivations, error, derivatives);

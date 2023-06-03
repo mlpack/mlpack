@@ -79,7 +79,7 @@ template<typename MatType>
 void ReLU6Type<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::min(arma::max(input, 0.0), 6.0);
+  output = arma::clamp(input, 0.0, 6.0);
 }
 
 template<typename MatType>
