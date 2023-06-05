@@ -184,8 +184,7 @@ TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
 
     arma::vec errCorr = (X * X.t()) * betaOpt - X * y.t();
 
-    // #373: this test fails on i386 only sometimes.
-//    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
+    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
 }
 

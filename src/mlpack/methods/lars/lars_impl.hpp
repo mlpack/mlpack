@@ -415,7 +415,16 @@ inline double LARS::Train(const arma::mat& matX,
         Deactivate(activeSet.size() - 1);
         Ignore(changeInd);
         CholeskyDelete(matUtriCholFactor.n_rows - 1);
-        continue;
+
+        // Note that although we are now ignoring this variable, we may still
+        // need to take a step with the previous beta direction towards the next
+        // variable we will add.
+        s = s.subvec(0, activeSet.size() - 1); // Drop last element.
+        unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
+            solve(trimatl(trans(matUtriCholFactor)), s));
+
+        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        betaDirection = normalization * unnormalizedBetaDirection;
       }
     }
     else
@@ -445,7 +454,18 @@ inline double LARS::Train(const arma::mat& matX,
         Log::Warn << "Encountered singularity when adding variable "
             << changeInd << " to active set; permanently removing."
             << std::endl;
-        continue;
+
+        // Note that although we are now ignoring this variable, we may still
+        // need to take a step with the previous beta direction towards the next
+        // variable we will add.
+        s = s.subvec(0, activeSet.size() - 1); // Drop last element.
+        matS = s * arma::ones<arma::mat>(1, activeSet.size());
+        // This worked last iteration, so there can't be a singularity.
+        solve(unnormalizedBetaDirection,
+            matGramActive % trans(matS) % matS,
+            arma::ones<arma::mat>(activeSet.size(), 1));
+        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        betaDirection = normalization * unnormalizedBetaDirection % s;
       }
     }
 
