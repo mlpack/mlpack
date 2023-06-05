@@ -349,25 +349,22 @@ inline double LARS::Train(const arma::mat& matX,
       }
     }
 
-    if (!lassocond)
+    // Add the variable to the active set and update the Gram matrix as
+    // necessary.
+    if (useCholesky)
     {
-      if (useCholesky)
-      {
-        // vec newGramCol = vec(activeSet.size());
-        // for (size_t i = 0; i < activeSet.size(); ++i)
-        // {
-        //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
-        // }
-        // This is equivalent to the above 5 lines.
-        arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
-            arma::conv_to<arma::uvec>::from(activeSet));
+      // vec newGramCol = vec(activeSet.size());
+      // for (size_t i = 0; i < activeSet.size(); ++i)
+      // {
+      //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
+      // }
+      // This is equivalent to the above 5 lines.
+      arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
+          arma::conv_to<arma::uvec>::from(activeSet));
 
-        CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
-      }
-
-      // Add variable to active set.
-      Activate(changeInd);
+      CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
     }
+    Activate(changeInd);
 
     // Compute signs of correlations.
     arma::vec s = arma::vec(activeSet.size());
