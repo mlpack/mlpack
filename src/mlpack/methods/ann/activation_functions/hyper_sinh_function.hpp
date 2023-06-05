@@ -91,22 +91,22 @@ class HyperSinhFunction
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-template<typename InputVecType, typename OutputVecType>
-static void Deriv(const InputVecType& y, OutputVecType& x)
-{
-  x.set_size(y.size());
-  for(size_t i = 0; i < y.n_elem; ++i)
+  template<typename InputVecType, typename OutputVecType>
+  static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    if (y(i) > 0)
+    x.set_size(y.size());
+    for(size_t i = 0; i < y.n_elem; ++i)
     {
-      x(i) = std::cosh(y(i)) / 3;
-    }
-    else
-    {
-      x(i) = (3.0 / 4.0) * std::pow(y(i), 2);
+      if (y(i) > 0)
+      {
+        x(i) = std::cosh(y(i)) / 3;
+      }
+      else
+      {
+        x(i) = (3.0 / 4.0) * std::pow(y(i), 2);
+      }
     }
   }
-}
 }; // class HyperSinhFunction
 } // namespace mlpack
 
