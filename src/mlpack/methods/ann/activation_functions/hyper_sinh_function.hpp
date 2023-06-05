@@ -44,7 +44,7 @@ class HyperSinhFunction
     if (x > 0)
       return (std::sinh(x) / 3.0);
     else
-      return (std::pow(x, 3.0   ) / 4.0);
+      return (std::pow(x, 3.0) / 4.0);
   }
 
   /**
@@ -56,9 +56,18 @@ class HyperSinhFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = ((x > 0) % (arma::sinh(x) / 3))
-        + ((x <= 0) % (arma::pow(x, 3) / 4));
-
+    y.set_size(x.size());
+    for(size_t i = 0; i < x.n_elem; ++i)
+    {
+      if (x(i) > 0)
+      {
+        y(i) = std::sinh(x(i)) / 3;
+      }
+      else
+      {
+        y(i) = std::pow(x(i), 3) / 4;
+      }
+    }
   }
 
 
@@ -82,14 +91,23 @@ class HyperSinhFunction
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+template<typename InputVecType, typename OutputVecType>
+static void Deriv(const InputVecType& y, OutputVecType& x)
+{
+  x.set_size(y.size());
+  for(size_t i = 0; i < y.n_elem; ++i)
   {
-    x = ((y > 0) % (arma::cosh(y) / 3))
-        + ((y <= 0) % ((3.0 / 4.0) * arma::pow(y, 2)));
+    if (y(i) > 0)
+    {
+      x(i) = std::cosh(y(i)) / 3;
+    }
+    else
+    {
+      x(i) = (3.0 / 4.0) * std::pow(y(i), 2);
+    }
   }
+}
 }; // class HyperSinhFunction
-
 } // namespace mlpack
 
 #endif
