@@ -115,6 +115,11 @@ class LARS
    * Set the parameters to LARS, and pass in a precalculated Gram matrix.  Both
    * lambda1 and lambda2 default to 0.
    *
+   * Note that the precalculated Gram matrix must match the settings of
+   * `fitIntercept` and `normalizeData` (which both default to `true`): so, this
+   * means that by default, the Gram matrix should be computed on mean-centered
+   * data whose features are normalized to have unit variance.
+   *
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *    solving linear system (as opposed to using the full Gram matrix).
    * @param gramMatrix Gram matrix.
@@ -168,6 +173,11 @@ class LARS
   /**
    * Set the parameters to LARS, pass in a precalculated Gram matrix, and run
    * training. Both lambda1 and lambda2 are set by default to 0.
+   *
+   * Note that the precalculated Gram matrix must match the settings of
+   * `fitIntercept` and `normalizeData` (which both default to `true`): so, this
+   * means that by default, the Gram matrix should be computed on mean-centered
+   * data whose features are normalized to have unit variance.
    *
    * @param data Input data.
    * @param responses A vector of targets.
