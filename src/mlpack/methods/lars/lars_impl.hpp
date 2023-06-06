@@ -368,6 +368,11 @@ inline double LARS::Train(const arma::mat& matX,
       }
     }
 
+    // If the maximum correlation is sufficiently small, don't add this
+    // variable; terminate early.
+    if (maxCorr < tolerance)
+      break;
+
     if ((matGram != &matGramInternal) && ((maxActiveCorr - minActiveCorr) >
         100 * std::numeric_limits<double>::epsilon()))
     {
