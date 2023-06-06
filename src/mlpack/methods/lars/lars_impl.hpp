@@ -303,6 +303,7 @@ inline double LARS::Train(const arma::mat& matX,
   arma::vec corr = vecXTy;
   double maxCorr = 0;
   size_t changeInd = 0;
+  size_t lassocondInd = dataRef.n_cols;
   for (size_t i = 0; i < vecXTy.n_elem; ++i)
   {
     if (fabs(corr(i)) > maxCorr)
@@ -384,20 +385,23 @@ inline double LARS::Train(const arma::mat& matX,
 
     // Add the variable to the active set and update the Gram matrix as
     // necessary.
-    if (useCholesky)
+    if (!lassocond)
     {
-      // vec newGramCol = vec(activeSet.size());
-      // for (size_t i = 0; i < activeSet.size(); ++i)
-      // {
-      //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
-      // }
-      // This is equivalent to the above 5 lines.
-      arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
-          arma::conv_to<arma::uvec>::from(activeSet));
+      if (useCholesky)
+      {
+        // vec newGramCol = vec(activeSet.size());
+        // for (size_t i = 0; i < activeSet.size(); ++i)
+        // {
+        //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
+        // }
+        // This is equivalent to the above 5 lines.
+        arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
+            arma::conv_to<arma::uvec>::from(activeSet));
 
-      CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
+        CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
+      }
+      Activate(changeInd);
     }
-    Activate(changeInd);
 
     // Compute signs of correlations.
     arma::vec s = arma::vec(activeSet.size());
@@ -516,10 +520,24 @@ inline double LARS::Train(const arma::mat& matX,
         const double dirCorr = dot(dataRef.col(ind), yHatDirection);
         const double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
         const double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
-        if ((val1 >= 0.0) && (val1 < gamma))
-          gamma = val1;
-        if ((val2 >= 0.0) && (val2 < gamma))
-          gamma = val2;
+
+        // If we kicked out a feature due to the LASSO modification last
+        // iteration, then we do not allow relaxation of the step size to 0 for
+        // that feature in this iteration.
+        if (lassocond && (ind == lassocondInd))
+        {
+          if ((val1 > 0.0) && (val1 < gamma))
+            gamma = val1;
+          if ((val2 > 0.0) && (val2 < gamma))
+            gamma = val2;
+        }
+        else
+        {
+          if ((val1 >= 0.0) && (val1 < gamma))
+            gamma = val1;
+          if ((val2 >= 0.0) && (val2 < gamma))
+            gamma = val2;
+        }
       }
     }
 
@@ -527,6 +545,7 @@ inline double LARS::Train(const arma::mat& matX,
     if (lasso)
     {
       lassocond = false;
+      lassocondInd = dataRef.n_cols;
       double lassoboundOnGamma = DBL_MAX;
       size_t activeIndToKickOut = -1;
 
@@ -545,6 +564,7 @@ inline double LARS::Train(const arma::mat& matX,
         gamma = lassoboundOnGamma;
         lassocond = true;
         changeInd = activeIndToKickOut;
+        lassocondInd = activeSet[changeInd];
       }
     }
 
@@ -561,7 +581,9 @@ inline double LARS::Train(const arma::mat& matX,
     if (lassocond)
     {
       if (beta(activeSet[changeInd]) != 0)
+      {
         beta(activeSet[changeInd]) = 0;
+      }
     }
 
     betaPath.push_back(beta);
