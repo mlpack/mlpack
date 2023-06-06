@@ -340,6 +340,8 @@ inline double LARS::Train(const arma::mat& matX,
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
+    double maxActiveCorr = 0;
+    double minActiveCorr = DBL_MAX;
     for (size_t i = 0; i < dataRef.n_cols; ++i)
     {
       if ((!isActive[i]) && (!isIgnored[i]) && (fabs(corr(i)) > maxCorr))
@@ -347,6 +349,37 @@ inline double LARS::Train(const arma::mat& matX,
         maxCorr = fabs(corr(i));
         changeInd = i;
       }
+      else if (isActive[i] && (matGram != &matGramInternal))
+      {
+        // Here we will do a sanity check: if the correlation of any dimension
+        // is not the maximum correlation, then the user has probably passed a
+        // Gram matrix whose properties do not match the value of fitIntercept
+        // and normalizeData.
+        if (fabs(corr(i)) > maxActiveCorr)
+          maxActiveCorr = fabs(corr(i));
+        if (fabs(corr(i)) < minActiveCorr)
+          minActiveCorr = fabs(corr(i));
+      }
+    }
+
+    if ((matGram != &matGramInternal) && ((maxActiveCorr - minActiveCorr) >
+        100 * std::numeric_limits<double>::epsilon()))
+    {
+      // Construct the error message to match the user's settings.
+      std::ostringstream oss;
+      oss << "LARS::Train(): correlation conditions violated; check that your "
+          << "given Gram matrix is properly computed on ";
+      if (fitIntercept)
+        oss << "mean-centered ";
+      else
+        oss << "non-mean-centered ";
+      if (normalizeData)
+        oss << "unit-variance (normalized) ";
+      else
+        oss << "non-normalized ";
+      oss << "data!";
+      oss << std::endl;
+      throw std::runtime_error(oss.str());
     }
 
     // Add the variable to the active set and update the Gram matrix as
