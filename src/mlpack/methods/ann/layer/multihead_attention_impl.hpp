@@ -20,29 +20,29 @@
 
 namespace mlpack {
 
-template <typename InputType, typename OutputType, typename RegularizerType>
-MultiheadAttentionType<InputType, OutputType, RegularizerType>::
+template <typename MatType, typename RegularizerType>
+MultiheadAttentionType<MatType, RegularizerType>::
 MultiheadAttentionType() :
     tgtSeqLen(0),
     srcSeqLen(0),
     embedDim(0),
     numHeads(0),
     headDim(0),
-    attnMask(InputType()),
-    keyPaddingMask(InputType())
+    attnMask(MatType()),
+    keyPaddingMask(MatType())
 {
   // Nothing to do here.
 }
 
-template <typename InputType, typename OutputType, typename RegularizerType>
-MultiheadAttentionType<InputType, OutputType, RegularizerType>::
+template <typename MatType, typename RegularizerType>
+MultiheadAttentionType<MatType, RegularizerType>::
 MultiheadAttentionType(
     const size_t tgtSeqLen,
     const size_t srcSeqLen,
     const size_t embedDim,
     const size_t numHeads,
-    const InputType& attnMask,
-    const InputType& keyPaddingMask) :
+    const MatType& attnMask,
+    const MatType& keyPaddingMask) :
     tgtSeqLen(tgtSeqLen),
     srcSeqLen(srcSeqLen),
     embedDim(embedDim),
@@ -59,36 +59,36 @@ MultiheadAttentionType(
   headDim = embedDim / numHeads;
 }
 
-template <typename InputType, typename OutputType, typename RegularizerType>
-void MultiheadAttentionType<InputType, OutputType, RegularizerType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+template <typename MatType, typename RegularizerType>
+void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
+    typename MatType::elem_type* weightsPtr)
 {
-  weights = OutputType(weightsPtr, 1, (4 * embedDim + 4) * embedDim, false,
+  weights = MatType(weightsPtr, 1, (4 * embedDim + 4) * embedDim, false,
       true);
 
-  queryWt = OutputType(weightsPtr, embedDim, embedDim, false, true);
-  keyWt = OutputType(weightsPtr + embedDim * embedDim, embedDim, embedDim,
+  queryWt = MatType(weightsPtr, embedDim, embedDim, false, true);
+  keyWt = MatType(weightsPtr + embedDim * embedDim, embedDim, embedDim,
       false, true);
-  valueWt = OutputType(weightsPtr + 2 * embedDim * embedDim, embedDim, embedDim,
+  valueWt = MatType(weightsPtr + 2 * embedDim * embedDim, embedDim, embedDim,
       false, true);
-  outWt = OutputType(weightsPtr + 3 * embedDim * embedDim, embedDim, embedDim,
+  outWt = MatType(weightsPtr + 3 * embedDim * embedDim, embedDim, embedDim,
       false, true);
 
-  qBias = OutputType(weightsPtr + 4 * embedDim * embedDim, embedDim, 1, false,
+  qBias = MatType(weightsPtr + 4 * embedDim * embedDim, embedDim, 1, false,
       true);
-  kBias = OutputType(weightsPtr + (4 * embedDim + 1) * embedDim, embedDim, 1,
+  kBias = MatType(weightsPtr + (4 * embedDim + 1) * embedDim, embedDim, 1,
       false, true);
-  vBias = OutputType(weightsPtr + (4 * embedDim + 2) * embedDim, embedDim, 1,
+  vBias = MatType(weightsPtr + (4 * embedDim + 2) * embedDim, embedDim, 1,
       false, true);
-  outBias = OutputType(weightsPtr + (4 * embedDim + 3) * embedDim, 1, embedDim,
+  outBias = MatType(weightsPtr + (4 * embedDim + 3) * embedDim, 1, embedDim,
       false, true);
 }
 
-template <typename InputType, typename OutputType, typename RegularizerType>
-void MultiheadAttentionType<InputType, OutputType, RegularizerType>::
-Forward(const InputType& input, OutputType& output)
+template <typename MatType, typename RegularizerType>
+void MultiheadAttentionType<MatType, RegularizerType>::
+Forward(const MatType& input, MatType& output)
 {
-  typedef typename arma::Cube<typename InputType::elem_type> CubeType;
+  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
 
   if (input.n_rows != embedDim * (tgtSeqLen + 2 * srcSeqLen))
   {
@@ -104,12 +104,12 @@ Forward(const InputType& input, OutputType& output)
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of v : (embedDim, srcSeqLen, batchSize).
-  const CubeType q(const_cast<InputType&>(input).memptr(),
+  const CubeType q(const_cast<MatType&>(input).memptr(),
       embedDim, tgtSeqLen, batchSize, false, false);
-  const CubeType k(const_cast<InputType&>(input).memptr() +
+  const CubeType k(const_cast<MatType&>(input).memptr() +
       embedDim * tgtSeqLen * batchSize,
       embedDim, srcSeqLen, batchSize, false, false);
-  const CubeType v(const_cast<InputType&>(input).memptr() +
+  const CubeType v(const_cast<MatType&>(input).memptr() +
       embedDim * (tgtSeqLen + srcSeqLen) * batchSize,
       embedDim, srcSeqLen, batchSize, false, false);
 
@@ -167,8 +167,8 @@ Forward(const InputType& input, OutputType& output)
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
-    softmax.Forward(scores.slice(i), softmax.OutputParameter());
-    scores.slice(i) = softmax.OutputParameter();
+    softmax.Forward(scores.slice(i), softmaxOutput);
+    scores.slice(i) = softmaxOutput;
   }
 
   // Calculate the attention output i.e. matrix multiplication of softmax
@@ -188,13 +188,13 @@ Forward(const InputType& input, OutputType& output)
   }
 }
 
-template <typename InputType, typename OutputType, typename RegularizerType>
-void MultiheadAttentionType<InputType, OutputType, RegularizerType>::
-Backward(const InputType& /* input */,
-         const OutputType& gy,
-         OutputType& g)
+template <typename MatType, typename RegularizerType>
+void MultiheadAttentionType<MatType, RegularizerType>::
+Backward(const MatType& /* input */,
+         const MatType& gy,
+         MatType& g)
 {
-  typedef typename arma::Cube<typename OutputType::elem_type> CubeType;
+  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
 
   if (gy.n_rows != tgtSeqLen * embedDim)
   {
@@ -208,7 +208,7 @@ Backward(const InputType& /* input */,
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // We need not split it into n heads now because this is the part when
   // output were concatenated from n heads.
-  CubeType gyTemp(const_cast<OutputType&>(gy).memptr(), embedDim,
+  CubeType gyTemp(const_cast<MatType&>(gy).memptr(), embedDim,
       tgtSeqLen, batchSize, true, false);
 
   // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
@@ -278,13 +278,13 @@ Backward(const InputType& /* input */,
   }
 }
 
-template <typename InputType, typename OutputType, typename RegularizerType>
-void MultiheadAttentionType<InputType, OutputType, RegularizerType>::
-Gradient(const InputType& input,
-         const OutputType& error,
-         OutputType& gradient)
+template <typename MatType, typename RegularizerType>
+void MultiheadAttentionType<MatType, RegularizerType>::
+Gradient(const MatType& input,
+         const MatType& error,
+         MatType& gradient)
 {
-  typedef typename arma::Cube<typename InputType::elem_type> CubeType;
+  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
 
   if (input.n_rows != embedDim * (tgtSeqLen + 2 * srcSeqLen))
   {
@@ -302,16 +302,16 @@ Gradient(const InputType& input,
   // The shape of gradient : (4 * embedDim * embedDim + 4 * embedDim, 1).
   gradient.set_size(arma::size(weights));
 
-  const CubeType q(const_cast<InputType&>(input).memptr(),
+  const CubeType q(const_cast<MatType&>(input).memptr(),
       embedDim, tgtSeqLen, batchSize, false, false);
-  const CubeType k(const_cast<InputType&>(input).memptr() + q.n_elem,
+  const CubeType k(const_cast<MatType&>(input).memptr() + q.n_elem,
       embedDim, srcSeqLen, batchSize, false, false);
-  const CubeType v(const_cast<InputType&>(input).memptr() + q.n_elem + k.n_elem,
+  const CubeType v(const_cast<MatType&>(input).memptr() + q.n_elem + k.n_elem,
       embedDim, srcSeqLen, batchSize, false, false);
 
   // Reshape the propagated error into a cube.
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
-  CubeType errorTemp(const_cast<OutputType&>(error).memptr(), embedDim,
+  CubeType errorTemp(const_cast<MatType&>(error).memptr(), embedDim,
       tgtSeqLen, batchSize, true, false);
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
@@ -425,12 +425,12 @@ Gradient(const InputType& input,
   regularizer.Evaluate(weights, gradient);
 }
 
-template <typename InputType, typename OutputType, typename RegularizerType>
+template <typename MatType, typename RegularizerType>
 template <typename Archive>
-void MultiheadAttentionType<InputType, OutputType, RegularizerType>::
+void MultiheadAttentionType<MatType, RegularizerType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(tgtSeqLen));
   ar(CEREAL_NVP(srcSeqLen));
