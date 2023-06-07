@@ -72,7 +72,7 @@ class LayerNormType : public Layer<MatType>
   LayerNormType(const double eps);
 
   //! Clone the LayerNormType object. This handles polymorphism correctly.
-  LayerNormType* Clone() const { return new LayerNormType(*this); }
+  LayerNormType* Clone() const override { return new LayerNormType(*this); }
 
     /**
    * Forward pass of Layer Normalization. Transforms the input data
@@ -82,7 +82,7 @@ class LayerNormType : public Layer<MatType>
    * @param input Input data for the layer.
    * @param output Resulting output activations.
    */
-  void Forward(const MatType& input, MatType& output);
+  void Forward(const MatType& input, MatType& output) override;
 
   /**
    * Backward pass through the layer.
@@ -93,7 +93,7 @@ class LayerNormType : public Layer<MatType>
    */
   void Backward(const MatType& input,
                 const MatType& gy,
-                MatType& g);
+                MatType& g) override;
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -104,12 +104,12 @@ class LayerNormType : public Layer<MatType>
    */
   void Gradient(const MatType& input,
                 const MatType& error,
-                MatType& gradient);
+                MatType& gradient) override;
 
   //! Get the parameters.
-  MatType const& Parameters() const { return weights; }
+  MatType const& Parameters() const override { return weights; }
   //! Modify the parameters.
-  MatType& Parameters() { return weights; }
+  MatType& Parameters() override { return weights; }
 
   //! Get the mean across single training data.
   MatType Mean() { return mean; }

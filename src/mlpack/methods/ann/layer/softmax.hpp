@@ -77,6 +77,8 @@ class SoftmaxType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  // save off the output from the forward pass so we can use it in the backwrd pass
+  arma::mat _output;
 }; // class SoftmaxType
 
 // Convenience typedef.

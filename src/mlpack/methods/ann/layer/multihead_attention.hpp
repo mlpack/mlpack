@@ -94,7 +94,7 @@ class MultiheadAttentionType : public Layer<MatType>
   /**
    * Reset the layer parameters.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr) override;
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

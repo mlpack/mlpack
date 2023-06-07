@@ -79,7 +79,9 @@ class LogSoftMaxType : public Layer<MatType>
     // Nothing to do.
   }
 
- private:
+private:
+  // save off the output from the forward pass so we can use it in the backwrd pass
+  arma::mat _output;
 }; // class LogSoftmaxType
 
 // Convenience typedefs.
