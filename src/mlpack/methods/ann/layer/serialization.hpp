@@ -58,6 +58,7 @@
         __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::IdentityType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LeakyReLUType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LayerNormType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::LinearNoBiasType<__VA_ARGS__>); \
