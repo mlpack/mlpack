@@ -19,44 +19,51 @@
 namespace mlpack {
 
 
-template<typename InputType, typename OutputType>
-LayerNormType<InputType, OutputType>::LayerNormType() :
-    size(0),
-    eps(1e-8),
-    loading(false)
+template<typename MatType>
+LayerNormType<MatType>::LayerNormType() :
+    eps(1e-8)
 {
   // Nothing to do here.
 }
 
-template <typename InputType, typename OutputType>
-LayerNormType<InputType, OutputType>::LayerNormType(
-    const size_t size, const double eps) :
-    size(size),
-    eps(eps),
-    loading(false)
+template <typename MatType>
+LayerNormType<MatType>::LayerNormType(const double eps) :
+    eps(eps)
 {
-  weights.set_size(size + size, 1);
 }
 
-template<typename InputType, typename OutputType>
-void LayerNormType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+template<typename MatType>
+void LayerNormType<MatType>::SetWeights(
+    typename MatType::elem_type* weightsPtr)
 {
-  gamma = OutputType(weightsPtr, size, 1, false, false);
-  beta = OutputType(weightsPtr + gamma.n_elem, size, 1, false, false);
+  MakeAlias(weights, weightsPtr, 2 * size, 1);
+  MakeAlias(gamma, weightsPtr, size, 1);
+  MakeAlias(beta, weightsPtr + gamma.n_elem, size, 1);
+}
 
-  if (!loading)
-  {
-    gamma.fill(1.0);
-    beta.fill(0.0);
+template<typename MatType>
+void LayerNormType<MatType>::CustomInitialize(
+      MatType& W,
+      const size_t elements)
+{
+  if (elements != 2 * size) {
+    throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
+                                "elements size!");
   }
+  MatType gammaTemp;
+  MatType betaTemp;
+  // Gamma acts as the scaling parameters for the normalized output.
+  MakeAlias(gammaTemp, W.memptr(), size, 1);
+  // Beta acts as the shifting parameters for the normalized output.
+  MakeAlias(betaTemp, W.memptr() + gammaTemp.n_elem, size, 1);
 
-  loading = false;
+  gammaTemp.fill(1.0);
+  betaTemp.fill(0.0);
 }
 
-template<typename InputType, typename OutputType>
-void LayerNormType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType>
+void LayerNormType<MatType>::Forward(
+    const MatType& input, MatType& output)
 {
   mean = arma::mean(input, 0);
   variance = arma::var(input, 1, 0);
@@ -74,17 +81,17 @@ void LayerNormType<InputType, OutputType>::Forward(
   output.each_col() += beta;
 }
 
-template<typename InputType, typename OutputType>
-void LayerNormType<InputType, OutputType>::Backward(
-    const InputType& input, const OutputType& gy, OutputType& g)
+template<typename MatType>
+void LayerNormType<MatType>::Backward(
+    const MatType& input, const MatType& gy, MatType& g)
 {
-  const OutputType stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
 
   // dl / dxhat.
-  const OutputType norm = gy.each_col() % gamma;
+  const MatType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const OutputType var = arma::sum(norm % inputMean, 0) %
+  const MatType var = arma::sum(norm % inputMean, 0) %
       arma::pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
@@ -97,11 +104,11 @@ void LayerNormType<InputType, OutputType>::Backward(
   g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / input.n_rows;
 }
 
-template<typename InputType, typename OutputType>
-void LayerNormType<InputType, OutputType>::Gradient(
-    const InputType& /* input */,
-    const OutputType& error,
-    OutputType& gradient)
+template<typename MatType>
+void LayerNormType<MatType>::Gradient(
+    const MatType& /* input */,
+    const MatType& error,
+    MatType& gradient)
 {
   gradient.set_size(size + size, 1);
 
@@ -113,22 +120,15 @@ void LayerNormType<InputType, OutputType>::Gradient(
       arma::sum(error, 1);
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType>
 template<typename Archive>
-void LayerNormType<InputType, OutputType>::serialize(
+void LayerNormType<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(eps));
-
-  // Ensure that we don't set the values of the weights if we have already
-  // learned them.
-  if (cereal::is_loading<Archive>())
-  {
-    loading = true;
-  }
 }
 
 } // namespace mlpack
