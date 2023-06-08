@@ -565,3 +565,50 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   // If the agent is able to reach till this point of the test, it is assured
   // that the agent can handle multiple actions in continuous space.
 }
+
+//! Test DDPG on Pendulum task.
+TEST_CASE("PendulumWithDDPG", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 8; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.001;
+    config.TargetNetworkSyncInterval() = 1;
+    config.UpdateInterval() = 3;
+
+    // Set up Actor network.
+    FFN<EmptyLoss, GaussianInitialization>
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear(128));
+    policyNetwork.Add(new ReLU());
+    policyNetwork.Add(new Linear(128));
+    policyNetwork.Add(new ReLU());
+    policyNetwork.Add(new Linear(1));
+    policyNetwork.Add(new TanH());
+
+    // Set up Critic network.
+    FFN<EmptyLoss, GaussianInitialization>
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear(128));
+    qNetwork.Add(new ReLU());
+    qNetwork.Add(new Linear(128));
+    qNetwork.Add(new ReLU());
+    qNetwork.Add(new Linear(1));
+
+    // Set up Deep Deterministic Policy Gradient agent.
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent(config, qNetwork, policyNetwork, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
