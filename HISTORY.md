@@ -7,7 +7,7 @@
   * Fix bug in LogSoftMax derivative (#3469).
 
   * Add `serialize` method to `GaussianInitialization`, 
-    `LecunNormalInitialization`
+    `LecunNormalInitialization`,
     `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, 
     and `OrthogonalInitialization` (#3483).
 
