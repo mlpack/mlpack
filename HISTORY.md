@@ -10,6 +10,8 @@
     `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, 
     and `OrthogonalInitialization` (#3483).
 
+  * Allow categorical features to `preprocess_one_hot_encode` (#3487).
+
   * Install mlpack and cereal headers as part of R package (#3488).
 
 ### mlpack 4.1.0
