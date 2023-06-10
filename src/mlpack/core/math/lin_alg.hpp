@@ -128,7 +128,7 @@ inline void SymKronId(const arma::mat& A, arma::mat& op);
 template <typename T>
 T Sign(const T x)
 {
-    return (T(0) < x) - (x < T(0));
+  return (T(0) < x) - (x < T(0));
 }
 
 } // namespace mlpack

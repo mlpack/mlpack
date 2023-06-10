@@ -13,6 +13,10 @@
 
   * Install mlpack and cereal headers as part of R package (#3488).
 
+  * Add intercept and normalization support to LARS (#3493).
+
+  * Allow adding two features simultaneously to LARS models (#3493).
+
 ### mlpack 4.1.0
 ###### 2023-04-26
 

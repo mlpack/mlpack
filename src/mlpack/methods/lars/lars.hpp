@@ -97,15 +97,28 @@ class LARS
    * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
    *     is less than this.
+   * @param intercept If true, fit an intercept in the model.
+   * @param normalize If true, normalize all features to have unit variance for
+   *     training.
+   * @param fitIntercept If true, fit an intercept in the model.
+   * @param normalizeData If true, normalize all features to have unit variance
+   * for training.
    */
   LARS(const bool useCholesky = false,
        const double lambda1 = 0.0,
        const double lambda2 = 0.0,
-       const double tolerance = 1e-16);
+       const double tolerance = 1e-16,
+       const bool fitIntercept = true,
+       const bool normalizeData = true);
 
   /**
    * Set the parameters to LARS, and pass in a precalculated Gram matrix.  Both
    * lambda1 and lambda2 default to 0.
+   *
+   * Note that the precalculated Gram matrix must match the settings of
+   * `fitIntercept` and `normalizeData` (which both default to `true`): so, this
+   * means that by default, the Gram matrix should be computed on mean-centered
+   * data whose features are normalized to have unit variance.
    *
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *    solving linear system (as opposed to using the full Gram matrix).
@@ -114,12 +127,20 @@ class LARS
    * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
    *     is less than this.
+   * @param intercept If true, fit an intercept in the model.
+   * @param normalize If true, normalize all features to have unit variance for
+   *     training.
+   * @param fitIntercept If true, fit an intercept in the model.
+   * @param normalizeData If true, normalize all features to have unit variance
+   * for training.
    */
   LARS(const bool useCholesky,
        const arma::mat& gramMatrix,
        const double lambda1 = 0.0,
        const double lambda2 = 0.0,
-       const double tolerance = 1e-16);
+       const double tolerance = 1e-16,
+       const bool fitIntercept = true,
+       const bool normalizeData = true);
 
   /**
    * Set the parameters to LARS and run training. Both lambda1 and lambda2
@@ -135,6 +156,9 @@ class LARS
    * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
    *     is less than this.
+   * @param fitIntercept If true, fit an intercept in the model.
+   * @param normalizeData If true, normalize all features to have unit variance
+   * for training.
    */
   LARS(const arma::mat& data,
        const arma::rowvec& responses,
@@ -142,11 +166,18 @@ class LARS
        const bool useCholesky = false,
        const double lambda1 = 0.0,
        const double lambda2 = 0.0,
-       const double tolerance = 1e-16);
+       const double tolerance = 1e-16,
+       const bool fitIntercept = true,
+       const bool normalizeData = true);
 
   /**
    * Set the parameters to LARS, pass in a precalculated Gram matrix, and run
    * training. Both lambda1 and lambda2 are set by default to 0.
+   *
+   * Note that the precalculated Gram matrix must match the settings of
+   * `fitIntercept` and `normalizeData` (which both default to `true`): so, this
+   * means that by default, the Gram matrix should be computed on mean-centered
+   * data whose features are normalized to have unit variance.
    *
    * @param data Input data.
    * @param responses A vector of targets.
@@ -159,6 +190,9 @@ class LARS
    * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
    *     is less than this.
+   * @param fitIntercept If true, fit an intercept in the model.
+   * @param normalizeData If true, normalize all features to have unit variance
+   * for training.
    */
   LARS(const arma::mat& data,
        const arma::rowvec& responses,
@@ -167,7 +201,9 @@ class LARS
        const arma::mat& gramMatrix,
        const double lambda1 = 0.0,
        const double lambda2 = 0.0,
-       const double tolerance = 1e-16);
+       const double tolerance = 1e-16,
+       const bool fitIntercept = true,
+       const bool normalizeData = true);
 
   /**
    * Construct the LARS object by copying the given LARS object.
@@ -268,6 +304,48 @@ class LARS
   //! Modify the tolerance for maximum correlation during training.
   double& Tolerance() { return tolerance; }
 
+  //! Get whether or not to fit an intercept.
+  bool FitIntercept() const { return fitIntercept; }
+  //! Modify whether or not to fit an intercept.
+  void FitIntercept(const bool newFitIntercept)
+  {
+    // If we are storing a Gram matrix internally, but now will be normalizing
+    // data, then the Gram matrix we have computed is incorrect and needs to be
+    // recomputed.
+    if (fitIntercept != newFitIntercept)
+    {
+      if (matGram != &matGramInternal)
+      {
+        throw std::invalid_argument("LARS::FitIntercept(): cannot change value "
+            "when an external Gram matrix was specified!");
+      }
+
+      fitIntercept = newFitIntercept;
+      matGramInternal.clear();
+    }
+  }
+
+  //! Get whether or not to normalize data during training.
+  bool NormalizeData() const { return normalizeData; }
+  //! Modify whether or not to normalize data during training.
+  void NormalizeData(const bool newNormalizeData)
+  {
+    // If we are storing a Gram matrix internally, but now will be normalizing
+    // data, then the Gram matrix we have computed is incorrect and needs to be
+    // recomputed.
+    if (normalizeData != newNormalizeData)
+    {
+      if (matGram != &matGramInternal)
+      {
+        throw std::invalid_argument("LARS::NormalizeData(): cannot change value "
+            "when an external Gram matrix was specified!");
+      }
+
+      normalizeData = newNormalizeData;
+      matGramInternal.clear();
+    }
+  }
+
   //! Access the set of active dimensions.
   const std::vector<size_t>& ActiveSet() const { return activeSet; }
 
@@ -281,6 +359,12 @@ class LARS
   //! Access the set of values for lambda1 after each iteration; the solution is
   //! the last element.
   const std::vector<double>& LambdaPath() const { return lambdaPath; }
+
+  //! Return the intercept (if fitted, otherwise 0).
+  double Intercept() const { return interceptPath.back(); }
+
+  //! Return the intercept path (the intercept for every model).
+  const std::vector<double>& InterceptPath() const { return interceptPath; }
 
   //! Access the upper triangular cholesky factor.
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
@@ -333,11 +417,21 @@ class LARS
   //! Tolerance for main loop.
   double tolerance;
 
+  //! Whether or not to fit an intercept.
+  bool fitIntercept;
+
+  //! Whether or not to normalize data during training (i.e. make each feature
+  //! have unit variance for training).
+  bool normalizeData;
+
   //! Solution path.
   std::vector<arma::vec> betaPath;
 
   //! Value of lambda_1 for each solution in solution path.
   std::vector<double> lambdaPath;
+
+  //! Intercept (only if fitIntercept is true).
+  std::vector<double> interceptPath;
 
   //! Active set of dimensions.
   std::vector<size_t> activeSet;
