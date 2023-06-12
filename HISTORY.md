@@ -1,12 +1,14 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3445).
+
   * Fix PReLU, add integration test to it (#3473).
 
   * Fix bug in LogSoftMax derivative (#3469).
 
-  * Add `serialize` method to `GaussianInitialization`,
-    `KathirvalavakumarSubavathiInitialization`,
-    `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`,
+  * Add `serialize` method to `GaussianInitialization`, 
+    `LecunNormalInitialization`,
+    `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, 
     and `OrthogonalInitialization` (#3483).
 
   * Allow categorical features to `preprocess_one_hot_encode` (#3487).
@@ -19,7 +21,6 @@
 
 ### mlpack 4.1.0
 ###### 2023-04-26
-
   * Adapt HardTanH layer (#3454).
 
   * Adapt Softmin layer for new neural network API (#3437).
