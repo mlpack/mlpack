@@ -1,6 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3437).
+  * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3445).
 
   * Fix PReLU, add integration test to it (#3473).
 
