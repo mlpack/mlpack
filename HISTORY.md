@@ -6,9 +6,9 @@
 
   * Add `serialize` method to `GaussianInitialization`, `KathirvalavakumarSubavathiInitialization`, `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, and `OrthogonalInitialization` (#3483).
 
-  * Adapt FTSwish Activation Function (#3485)
+  * Adapt FTSwish activation function (#3485).
 
-  * Adapt Hyper-Sinh activation Function (#3491)
+  * Adapt Hyper-Sinh activation function (#3491).
 
 ### mlpack 4.1.0
 ###### 2023-04-26
