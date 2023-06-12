@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
+  
   * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3445).
 
   * Fix PReLU, add integration test to it (#3473).
