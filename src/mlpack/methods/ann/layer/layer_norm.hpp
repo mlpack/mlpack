@@ -54,8 +54,6 @@ namespace mlpack {
  *
  * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam MatType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
  */
 template <
   typename MatType = arma::mat
@@ -76,12 +74,7 @@ class LayerNormType : public Layer<MatType>
   //! Clone the LayerNormType object. This handles polymorphism correctly.
   LayerNormType* Clone() const { return new LayerNormType(*this); }
 
-  /**
-   * Reset the layer parameters.
-   */
-  void Reset();
-
-  /**
+    /**
    * Forward pass of Layer Normalization. Transforms the input data
    * into zero mean and unit variance, scales the data by a factor gamma and
    * shifts it by beta.
@@ -138,8 +131,10 @@ class LayerNormType : public Layer<MatType>
     // as the input.
     this->outputDimensions = this->inputDimensions;
     size = this->inputDimensions[0];
-    for (size_t i=1; i<this->inputDimensions.size(); i++) size += this->inputDimensions[i];
+    for (size_t i=1; i<this->inputDimensions.size(); i++) size *= this->inputDimensions[i];
   }
+
+  void SetWeights(typename MatType::elem_type* /* weightsPtr */) override;
 
   void CustomInitialize(
       MatType& /* W */,
