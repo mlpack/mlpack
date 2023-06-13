@@ -74,13 +74,15 @@ class MultiheadAttentionType : public Layer<MatType>
    * @param numHeads Number of parallel attention heads.
    * @param attnMask Two dimensional Attention Mask.
    * @param keyPaddingMask Key Padding Mask.
+   * @param selfAttention Use self-attention; source key, query, and value all come from the same inputs
    */
   MultiheadAttentionType(const size_t tgtSeqLen,
                          const size_t srcSeqLen,
                          const size_t embedDim,
                          const size_t numHeads,
                          const MatType& attnmask = MatType(),
-                         const MatType& keyPaddingMask = MatType());
+                         const MatType& keyPaddingMask = MatType(),
+                         const bool selfAttention = false);
 
   //! Clone the MultiheadAttentionType object. This handles polymorphism
   //! correctly.
@@ -165,15 +167,16 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Modify the Key Padding Mask.
   MatType& KeyPaddingMask() { return keyPaddingMask; }
 
-  const std::vector<size_t> OutputDimensions() const
+  bool SelfAttention() const { return selfAttention; }
+  bool& SelfAttention() { return selfAttention; }
+
+  void ComputeOutputDimensions() override
   {
     // This returns the output as a 2-dimensional (embedDim * tgtSeqLen)
     // matrix.
-    std::vector<size_t> outputDimensions(this->inputDimensions.size(), 1);
-    outputDimensions[0] = embedDim;
-    outputDimensions[1] = tgtSeqLen;
-
-    return outputDimensions;
+    this->outputDimensions = std::vector<size_t>(2, 1);
+    this->outputDimensions[0] = embedDim;
+    this->outputDimensions[1] = tgtSeqLen;
   }
 
   size_t InputShape() const
@@ -205,6 +208,8 @@ class MultiheadAttentionType : public Layer<MatType>
 
   //! Key Padding Mask.
   MatType keyPaddingMask;
+
+  bool selfAttention;
 
   //! Locally-stored weight matrix associated with query.
   MatType queryWt;

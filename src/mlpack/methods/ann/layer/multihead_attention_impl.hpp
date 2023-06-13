@@ -29,7 +29,8 @@ MultiheadAttentionType() :
     numHeads(0),
     headDim(0),
     attnMask(MatType()),
-    keyPaddingMask(MatType())
+    keyPaddingMask(MatType()),
+    selfAttention(false)
 {
   // Nothing to do here.
 }
@@ -42,13 +43,15 @@ MultiheadAttentionType(
     const size_t embedDim,
     const size_t numHeads,
     const MatType& attnMask,
-    const MatType& keyPaddingMask) :
+    const MatType& keyPaddingMask,
+    const bool selfAttention) :
     tgtSeqLen(tgtSeqLen),
     srcSeqLen(srcSeqLen),
     embedDim(embedDim),
     numHeads(numHeads),
     attnMask(attnMask),
-    keyPaddingMask(keyPaddingMask)
+    keyPaddingMask(keyPaddingMask),
+    selfAttention(selfAttention)
 {
   if (embedDim % numHeads != 0)
   {
@@ -63,7 +66,7 @@ template <typename MatType, typename RegularizerType>
 void MultiheadAttentionType<MatType, RegularizerType>::SetWeights(
     typename MatType::elem_type* weightsPtr)
 {
-  weights = MatType(weightsPtr, 1, (4 * embedDim + 4) * embedDim, false,
+  weights = MatType(weightsPtr, (4 * embedDim + 4) * embedDim, 1, false,
       true);
 
   queryWt = MatType(weightsPtr, embedDim, embedDim, false, true);
@@ -90,9 +93,13 @@ Forward(const MatType& input, MatType& output)
 {
   typedef typename arma::Cube<typename MatType::elem_type> CubeType;
 
-  if (input.n_rows != embedDim * (tgtSeqLen + 2 * srcSeqLen))
+  if (input.n_rows != embedDim * (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
   {
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
+  }
+
+  if (selfAttention && tgtSeqLen != srcSeqLen) {
+      Log::Fatal << "tgtSeqLen and srcSeqLen must match when using self-attention" << std::endl;
   }
 
   const size_t batchSize = input.n_cols;
@@ -107,10 +114,10 @@ Forward(const MatType& input, MatType& output)
   const CubeType q(const_cast<MatType&>(input).memptr(),
       embedDim, tgtSeqLen, batchSize, false, false);
   const CubeType k(const_cast<MatType&>(input).memptr() +
-      embedDim * tgtSeqLen * batchSize,
+      (selfAttention ? 0 : embedDim * tgtSeqLen * batchSize),
       embedDim, srcSeqLen, batchSize, false, false);
   const CubeType v(const_cast<MatType&>(input).memptr() +
-      embedDim * (tgtSeqLen + srcSeqLen) * batchSize,
+      (selfAttention ? 0 : embedDim * (tgtSeqLen + srcSeqLen) * batchSize),
       embedDim, srcSeqLen, batchSize, false, false);
 
   // qProj, kProj, and vProj are the linearly projected query, key and value
@@ -202,7 +209,7 @@ Backward(const MatType& /* input */,
   }
 
   const size_t batchSize = gy.n_cols;
-  g.set_size(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
+  g.set_size(selfAttention ? (embedDim * srcSeqLen) : embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
 
   // Reshape the propagated gradient into a cube.
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
@@ -232,8 +239,14 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i)
-        = arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+      if (selfAttention) {
+          g.submat(0, i, g.n_rows - 1, i)
+                  = arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+      }
+      else {
+          g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i)
+                  = arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+      }
   }
 
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
@@ -258,8 +271,15 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    g.submat(tgtSeqLen * embedDim, i, (tgtSeqLen + srcSeqLen) * embedDim - 1, i)
-        = arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+      if (selfAttention) {
+          // sum the query, key, and value deltas
+          g.submat(0, i, g.n_rows - 1, i)
+                  += arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+      }
+      else {
+          g.submat(tgtSeqLen * embedDim, i, (tgtSeqLen + srcSeqLen) * embedDim - 1, i)
+                  = arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+      }
   }
 
   // Obtain backpropagated error of the query.
@@ -273,8 +293,15 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    g.submat(0, i, tgtSeqLen * embedDim - 1, i)
-        = arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+      if (selfAttention) {
+          // sum the query, key, and value deltas
+          g.submat(0, i, g.n_rows - 1, i)
+                  += arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+      }
+      else {
+          g.submat(0, i, tgtSeqLen * embedDim - 1, i)
+                  = arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+      }
   }
 }
 
@@ -286,12 +313,17 @@ Gradient(const MatType& input,
 {
   typedef typename arma::Cube<typename MatType::elem_type> CubeType;
 
-  if (input.n_rows != embedDim * (tgtSeqLen + 2 * srcSeqLen))
+  if (input.n_rows != embedDim * (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
   {
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
   }
 
-  if (error.n_rows != tgtSeqLen * embedDim)
+  if (selfAttention && tgtSeqLen != srcSeqLen)
+  {
+    Log::Fatal << "Incorrect input dimensions for selfAttention!" << std::endl;
+  }
+
+    if (error.n_rows != tgtSeqLen * embedDim)
   {
     Log::Fatal << "Backpropagated error has incorrect dimensions." << std::endl;
   }
@@ -304,9 +336,9 @@ Gradient(const MatType& input,
 
   const CubeType q(const_cast<MatType&>(input).memptr(),
       embedDim, tgtSeqLen, batchSize, false, false);
-  const CubeType k(const_cast<MatType&>(input).memptr() + q.n_elem,
+  const CubeType k(const_cast<MatType&>(input).memptr() + (selfAttention ? 0 : q.n_elem),
       embedDim, srcSeqLen, batchSize, false, false);
-  const CubeType v(const_cast<MatType&>(input).memptr() + q.n_elem + k.n_elem,
+  const CubeType v(const_cast<MatType&>(input).memptr() + (selfAttention ? 0 : (q.n_elem + k.n_elem)),
       embedDim, srcSeqLen, batchSize, false, false);
 
   // Reshape the propagated error into a cube.
