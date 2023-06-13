@@ -44,7 +44,8 @@ namespace mlpack {
  * @endcode
  *
  * @tparam EnvironmentType The environment of the reinforcement learning task.
- * @tparam NetworkType The network to compute action value.
+ * @tparam QNetworkType The network used to estimate the critic's Q-values.
+ * @tparam PolicyNetworkType The network to compute action value.
  * @tparam UpdaterType How to apply gradients when training.
  * @tparam ReplayType Experience replay method.
  */
