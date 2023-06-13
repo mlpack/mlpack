@@ -19,6 +19,10 @@
 
   * Allow adding two features simultaneously to LARS models (#3493).
 
+  * Adapt FTSwish activation function (#3485).
+
+  * Adapt Hyper-Sinh activation function (#3491).
+
 ### mlpack 4.1.0
 ###### 2023-04-26
   * Adapt HardTanH layer (#3454).
