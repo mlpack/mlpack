@@ -588,16 +588,12 @@ TEST_CASE("PendulumWithDDPG", "[QLearningTest]")
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
     policyNetwork.Add(new Linear(128));
     policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
     policyNetwork.Add(new Linear(1));
     policyNetwork.Add(new TanH());
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
     qNetwork.Add(new Linear(128));
     qNetwork.Add(new ReLU());
     qNetwork.Add(new Linear(1));
@@ -620,15 +616,11 @@ TEST_CASE("DDPGForMultipleActions", "[QLearningTest]")
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
   policyNetwork.Add(new Linear(128));
   policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
   policyNetwork.Add(new Linear(4));
   policyNetwork.Add(new TanH());
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
   qNetwork.Add(new Linear(128));
   qNetwork.Add(new ReLU());
   qNetwork.Add(new Linear(1));
