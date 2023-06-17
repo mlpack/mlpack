@@ -488,9 +488,9 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
     std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
-    std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-    std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
-        << d.name << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
+    std::cout << prefix << "if " << name << " is not None:" << std::endl;
+    std::cout << prefix << "  " << name << "_tuple = to_matrix_with_info("
+        << name << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
         << std::endl;
     std::cout << prefix << "  if len(" << name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
@@ -501,8 +501,8 @@ void PrintInputProcessing(
     std::cout << prefix << "  " << name << "_dims = " << name
         << "_tuple[2]" << std::endl;
     std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](p, <const "
-        << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
-        << "<const cbool*> PyArray_DATA(" << d.name << "_dims))" << std::endl;
+        << "string> '" << d.name << "', dereference(" << name << "_mat), "
+        << "<const cbool*> PyArray_DATA(" << name << "_dims))" << std::endl;
     std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "  del " << name << "_mat" << std::endl;
@@ -511,7 +511,7 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "cdef extern from \"numpy/arrayobject.h\":" << std::endl;
     std::cout << prefix << "  void* PyArray_DATA(np.ndarray arr)" << std::endl;
-    std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
+    std::cout << prefix << name << "_tuple = to_matrix_with_info(" << name
         << ", dtype=np.double, copy=p.Has('copy_all_inputs'))"
         << std::endl;
     std::cout << prefix << "if len(" << name << "_tuple[0].shape"
@@ -523,8 +523,8 @@ void PrintInputProcessing(
     std::cout << prefix << name << "_dims = " << name << "_tuple[2]"
         << std::endl;
     std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](p, <const "
-        << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
-        << "<const cbool*> PyArray_DATA(" << d.name << "_dims))" << std::endl;
+        << "string> '" << d.name << "', dereference(" << name << "_mat), "
+        << "<const cbool*> PyArray_DATA(" << name << "_dims))" << std::endl;
     std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
     std::cout << prefix << "del " << name << "_mat" << std::endl;

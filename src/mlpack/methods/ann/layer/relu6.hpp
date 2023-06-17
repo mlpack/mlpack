@@ -28,21 +28,34 @@
 namespace mlpack {
 
 /**
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and allows the
+ *         computation and weight type to differ from the input type
+ *         (Default: arma::mat).
  */
-template<typename InputDataType = arma::mat,
-         typename OutputDataType = arma::mat>
-class ReLU6
+template<typename MatType = arma::mat>
+class ReLU6Type : public Layer<MatType>
 {
  public:
 
  /**
-  * Create the ReLU6 object.
+  * Create the ReLU6Type object.
   */
-  ReLU6();
+  ReLU6Type();
+
+  //! Clone the ReLU6Type object. This handles polymorphism correctly.
+  ReLU6Type* Clone() const { return new ReLU6Type(*this); }
+
+  // Virtual destructor.
+  virtual ~ReLU6Type() { }
+
+  //! Copy the given ReLU6Type.
+  ReLU6Type(const ReLU6Type& other);
+  //! Take ownership of the given ReLU6Type.
+  ReLU6Type(ReLU6Type&& other);
+  //! Copy the given ReLU6Type.
+  ReLU6Type& operator=(const ReLU6Type& other);
+  //! Take ownership of the given ReLU6Type.
+  ReLU6Type& operator=(ReLU6Type&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -51,8 +64,7 @@ class ReLU6
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -63,18 +75,7 @@ class ReLU6
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   //! Get size of weights.
   size_t WeightSize() const { return 0; }
@@ -84,14 +85,12 @@ class ReLU6
    */
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
-
- private:
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
 }; // class ReLU6
+
+// Convenience typedefs.
+
+// Standard ReLU6 layer.
+typedef ReLU6Type<arma::mat> ReLU6;
 
 } // namespace mlpack
 

@@ -25,12 +25,14 @@
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
+#include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/concat.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
+#include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/identity.hpp>
@@ -46,9 +48,12 @@
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
+#include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
 #include <mlpack/methods/ann/layer/star_relu.hpp>
+#include <mlpack/methods/ann/layer/ftswish.hpp>
+
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>

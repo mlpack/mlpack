@@ -139,6 +139,10 @@ class FFN
    * `InputDimensions()`, then the existing parameters will be used as a
    * starting point.  (If you want to reinitialize, first call `Reset()`.)
    *
+   * Note that due to shuffling, training will make a copy of the data, unless
+   * you use `std::move()` to pass the `predictors` and `responses` (that is,
+   * `Train(std::move(predictors), std::move(responses))`).
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
@@ -169,6 +173,10 @@ class FFN
    * `InputDimensions()`, then the existing parameters will be used as a
    * starting point.  (If you want to reinitialize, first call `Reset()`.)
    *
+   * Note that due to shuffling, training will make a copy of the data, unless
+   * you use `std::move()` to pass the `predictors` and `responses` (that is,
+   * `Train(std::move(predictors), std::move(responses))`).
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @tparam CallbackTypes Types of Callback Functions.
@@ -191,7 +199,7 @@ class FFN
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(MatType predictors,
+  void Predict(const MatType& predictors,
                MatType& results,
                const size_t batchSize = 128);
 
