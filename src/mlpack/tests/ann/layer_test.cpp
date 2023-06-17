@@ -37,3 +37,4 @@
 #include "layer/parametric_relu.cpp"
 #include "layer/softmax.cpp"
 #include "layer/softmin.cpp"
+#include "layer/star_relu.cpp"

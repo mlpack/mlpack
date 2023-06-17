@@ -48,7 +48,7 @@
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
-
+#include <mlpack/methods/ann/layer/star_relu.hpp>
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
