@@ -651,3 +651,26 @@ TEST_CASE("DDPGForMultipleActions", "[QLearningTest]")
   // If the agent is able to reach this point of the test, it is assured
   // that the agent can handle multiple actions in continuous space.
 }
+
+//! Test Ornstein-Uhlenbeck noise class.
+TEST_CASE("OUNoiseTest", "[QLearningTest]")
+{
+  // Set up the OUNoise parameters.
+  int size = 3;
+  double mu = 0.0;
+  double theta = 0.15;
+  double sigma = 0.2;
+
+  // Create an instance of the OUNoise class.
+  OUNoise ouNoise(size, mu, theta, sigma);
+
+  // Test the reset function.
+  ouNoise.reset();
+  arma::colvec state = ouNoise.sample();
+  REQUIRE(state.n_elem == size);
+
+  // Verify that the sample is not equal to the reset state.
+  arma::colvec sample = ouNoise.sample();
+  bool isNotEqual = arma::any(sample != state);
+  REQUIRE(isNotEqual);
+}
