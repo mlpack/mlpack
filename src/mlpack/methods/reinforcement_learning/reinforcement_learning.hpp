@@ -22,5 +22,6 @@
 #include "async_learning.hpp"
 #include "q_learning.hpp"
 #include "sac.hpp"
+#include "ddpg.hpp"
 
 #endif
