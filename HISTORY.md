@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Reinforcement Learning: Ornstein-Uhlenbeck noise (#3499).
+  
   * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
   
 ### mlpack 4.2.0
