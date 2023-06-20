@@ -786,3 +786,23 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<SILUFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<SILUFunction>(desiredActivation, desiredDerivate);
 }
+
+/**
+ * Basic test of the Hyper-Sinh Function
+ */
+TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2.1 3.2 0.3 0 -1.7 2.8 0.11 -1.2 -0.4");
+
+  // Hand-calculated values.
+  arma::colvec desiredActivation(
+      "-2.31525 4.08196 0.101507 0 -1.22825 2.73064 0.0367407 \
+      -0.432 -0.016");
+
+  // Hand-calculated values.
+  arma::colvec desiredDerivate(
+      "4.02029 9.87973 0.335052 0 1.13145 2.56798 0.333558 0.139968 0.000192");
+
+  CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
+  CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
+}

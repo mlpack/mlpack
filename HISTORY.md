@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
   
+### mlpack 4.2.0
+###### 2023-06-14
   * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3445).
 
   * Fix PReLU, add integration test to it (#3473).
@@ -20,6 +22,10 @@
   * Add intercept and normalization support to LARS (#3493).
 
   * Allow adding two features simultaneously to LARS models (#3493).
+
+  * Adapt FTSwish activation function (#3485).
+
+  * Adapt Hyper-Sinh activation function (#3491).
 
 ### mlpack 4.1.0
 ###### 2023-04-26

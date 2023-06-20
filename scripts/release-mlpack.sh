@@ -158,6 +158,7 @@ git checkout -b release-$MAJOR.$MINOR.$PATCH;
 
 git add src/mlpack/core/util/version.hpp \
     doc/user/sample_ml_app.md \
+    doc/examples/sample-ml-app/README.txt \
     doc/examples/sample-ml-app/sample-ml-app/sample-ml-app.vcxproj \
     CMakeLists.txt \
     README.md \

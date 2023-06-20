@@ -21,7 +21,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.1.0.tar.gz">current stable version (4.1.0)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.2.0.tar.gz">current stable version (4.2.0)</a>
   </em>
 </p>
 
