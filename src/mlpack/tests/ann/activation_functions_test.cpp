@@ -806,3 +806,25 @@ TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
 }
+
+/**
+ * Basic test of the Bipolar Sigmoid Function
+ */
+TEST_CASE("BipolaSigmoidFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-1.0 0 1.2 2.1 2.8 1.0 -1.1 -2.0 -3.1");
+
+  // Hand-calculated values.
+  arma::colvec desiredActivation(
+      "-0.4621 0.0 0.5370 0.7818 0.8854 0.4621 -0.5005 \
+      -0.7616 -0.9138");
+
+  // Hand-calculated values.
+  arma::colvec desiredDerivate(
+      "0.3932 0.5000 0.3558 0.1944 0.1081 0.3932 0.3747 0.2100 0.0825");
+
+  CheckActivationCorrect<BipolarSigmoidFunction>(activationData
+                                                ,desiredActivation);
+  CheckDerivativeCorrect<BipolarSigmoidFunction>(desiredActivation
+                                                ,desiredDerivate);
+}

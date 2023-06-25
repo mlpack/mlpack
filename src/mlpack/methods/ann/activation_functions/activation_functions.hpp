@@ -36,5 +36,6 @@
 #include "tanh_exponential_function.hpp"
 #include "tanh_function.hpp"
 #include "hyper_sinh_function.hpp"
+#include "bipolar_sigmoid_function.hpp"
 
 #endif
