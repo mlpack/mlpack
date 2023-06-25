@@ -59,7 +59,7 @@ class BipolarSigmoidFunction
    */
   static double Deriv(const double y)
   {
-    return 1.0 - std::pow(y,2) / 2.0;
+    return (1.0 - std::pow(y,2)) / 2.0;
   }
 
   /**
