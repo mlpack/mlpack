@@ -816,12 +816,13 @@ TEST_CASE("BipolaSigmoidFunctionTest", "[ActivationFunctionsTest]")
 
   // Hand-calculated values.
   arma::colvec desiredActivation(
-      "-0.462117 0.0 0.537049 0.781806 0.88535 0.462117 -0.50052 \
-      -0.761594 -0.913785");
+      "-0.4621171572 0.0 0.5370495669 0.7818063576 0.8853516482 \
+      0.462117157 -0.50052021119 -0.7615941559 -0.9137854901");
 
   // Hand-calculated values.
   arma::colvec desiredDerivate(
-      "0.393223 0.50000 0.355788 0.194389 0.108076 0.3932238 0.374739 0.209987 0.082498");
+      "0.3932238665 0.5 0.3557888813 0.1943894096 0.1080762295 \
+      0.3932238666 0.3747397590 0.2099871708 0.0824980390");
 
   CheckActivationCorrect<BipolarSigmoidFunction>(activationData
                                                 ,desiredActivation);
