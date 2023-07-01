@@ -598,9 +598,19 @@ TEST_CASE("PendulumWithDDPG", "[QLearningTest]")
     qNetwork.Add(new ReLU());
     qNetwork.Add(new Linear(1));
 
+    // Set up the OUNoise parameters.
+    int size = 1; 
+    double mu = 0.0;
+    double theta = 1.0; 
+    double sigma = 0.1;  
+
+    // Create an instance of the OUNoise class.
+    OUNoise ouNoise(size, mu, theta, sigma);
+
     // Set up Deep Deterministic Policy Gradient agent.
-    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
-        agent(config, qNetwork, policyNetwork, replayMethod);
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+        OUNoise, AdamUpdate>
+        agent(config, qNetwork, policyNetwork, ouNoise, replayMethod);
 
     converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
     if (converged)
@@ -633,10 +643,19 @@ TEST_CASE("DDPGForMultipleActions", "[QLearningTest]")
   config.TargetNetworkSyncInterval() = 1;
   config.UpdateInterval() = 3;
 
+  // Set up the OUNoise parameters.
+  int size = 4;
+  double mu = 0.0;
+  double theta = 1.0;  
+  double sigma = 0.1; 
+
+  // Create an instance of the OUNoise class.
+  OUNoise ouNoise(size, mu, theta, sigma);
+
   // Set up the DDPG agent.
   DDPG<ContinuousActionEnv<3, 4>, decltype(qNetwork), decltype(policyNetwork),
-      AdamUpdate>
-      agent(config, qNetwork, policyNetwork, replayMethod);
+      OUNoise, AdamUpdate>
+      agent(config, qNetwork, policyNetwork, ouNoise, replayMethod);
 
   agent.State().Data() = arma::randu<arma::colvec>
       (ContinuousActionEnv<3, 4>::State::dimension, 1);
@@ -650,4 +669,27 @@ TEST_CASE("DDPGForMultipleActions", "[QLearningTest]")
   agent.Update();
   // If the agent is able to reach this point of the test, it is assured
   // that the agent can handle multiple actions in continuous space.
+}
+
+//! Test Ornstein-Uhlenbeck noise class.
+TEST_CASE("OUNoiseTest", "[QLearningTest]")
+{
+  // Set up the OUNoise parameters.
+  int size = 3;
+  double mu = 0.0;
+  double theta = 0.15;
+  double sigma = 0.2;
+
+  // Create an instance of the OUNoise class.
+  OUNoise ouNoise(size, mu, theta, sigma);
+
+  // Test the reset function.
+  ouNoise.reset();
+  arma::colvec state = ouNoise.sample();
+  REQUIRE(state.n_elem == size);
+
+  // Verify that the sample is not equal to the reset state.
+  arma::colvec sample = ouNoise.sample();
+  bool isNotEqual = arma::any(sample != state);
+  REQUIRE(isNotEqual);
 }

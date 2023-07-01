@@ -23,6 +23,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType
 >
@@ -30,11 +31,13 @@ DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
+  NoiseType, 
   UpdaterType,
   ReplayType
 >::DDPG(TrainingConfig& config,
        QNetworkType& learningQNetwork,
        PolicyNetworkType& policyNetwork,
+       NoiseType& noise,
        ReplayType& replayMethod,
        UpdaterType qNetworkUpdater,
        UpdaterType policyNetworkUpdater,
@@ -42,6 +45,7 @@ DDPG<
   config(config),
   learningQNetwork(learningQNetwork),
   policyNetwork(policyNetwork),
+  noise(noise),
   replayMethod(replayMethod),
   qNetworkUpdater(std::move(qNetworkUpdater)),
   #if ENS_VERSION_MAJOR >= 2
@@ -55,6 +59,9 @@ DDPG<
   totalSteps(0),
   deterministic(false)
 {
+  // Reset the noise instance.
+  noise.reset();
+
   // Set up q-learning and policy networks.
   targetPNetwork = policyNetwork;
   targetQNetwork = learningQNetwork;
@@ -106,6 +113,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType
 >
@@ -113,6 +121,7 @@ DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
+  NoiseType,
   UpdaterType,
   ReplayType
 >::~DDPG()
@@ -127,6 +136,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType
 >
@@ -134,6 +144,7 @@ void DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
+  NoiseType,
   UpdaterType,
   ReplayType
 >::SoftUpdate(double rho)
@@ -148,6 +159,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType
 >
@@ -155,6 +167,7 @@ void DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
+  NoiseType,
   UpdaterType,
   ReplayType
 >::Update()
@@ -255,6 +268,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType
 >
@@ -262,6 +276,7 @@ void DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
+  NoiseType,
   UpdaterType,
   ReplayType
 >::SelectAction()
@@ -272,9 +287,9 @@ void DDPG<
 
   if (!deterministic)
   {
-    arma::colvec noise = arma::randn<arma::colvec>(outputAction.n_rows) * 0.1;
-    noise = arma::clamp(noise, -0.25, 0.25);
-    outputAction = outputAction + noise;
+    arma::colvec sample = noise.sample() * 0.1;
+    sample = arma::clamp(sample, -0.25, 0.25);
+    outputAction = outputAction + sample;
   }
   action.action = arma::conv_to<std::vector<double>>::from(outputAction);
 }
@@ -283,6 +298,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType
 >
@@ -290,6 +306,7 @@ double DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
+  NoiseType,
   UpdaterType,
   ReplayType
 >::Episode()

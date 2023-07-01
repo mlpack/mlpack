@@ -46,6 +46,7 @@ namespace mlpack {
  * @tparam EnvironmentType The environment of the reinforcement learning task.
  * @tparam QNetworkType The network used to estimate the critic's Q-values.
  * @tparam PolicyNetworkType The network to compute action value.
+ * @tparam NoiseType The noise to add for exploration.
  * @tparam UpdaterType How to apply gradients when training.
  * @tparam ReplayType Experience replay method.
  */
@@ -53,6 +54,7 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
+  typename NoiseType,
   typename UpdaterType,
   typename ReplayType = RandomReplay<EnvironmentType>
 >
@@ -75,6 +77,7 @@ class DDPG
    * @param config Hyper-parameters for training.
    * @param learningQNetwork The network to compute action value.
    * @param policyNetwork The network to produce an action given a state.
+   * @param noise The noise instance for exploration.
    * @param replayMethod Experience replay method.
    * @param qNetworkUpdater How to apply gradients to Q network when training.
    * @param policyNetworkUpdater How to apply gradients to policy network
@@ -84,6 +87,7 @@ class DDPG
   DDPG(TrainingConfig& config,
       QNetworkType& learningQNetwork,
       PolicyNetworkType& policyNetwork,
+      NoiseType& noise,
       ReplayType& replayMethod,
       UpdaterType qNetworkUpdater = UpdaterType(),
       UpdaterType policyNetworkUpdater = UpdaterType(),
@@ -149,6 +153,9 @@ class DDPG
 
   //! Locally-stored policy network.
   PolicyNetworkType& policyNetwork;
+
+  //! Locally-stored noise instance.
+  NoiseType& noise;
 
   //! Locally-stored target policy network.
   PolicyNetworkType targetPNetwork;
