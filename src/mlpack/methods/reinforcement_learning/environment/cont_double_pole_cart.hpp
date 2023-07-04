@@ -1,5 +1,5 @@
 /**
- * @file methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp
+ * @file methods/reinforcement_learning/environment/cont_double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
  * This file is an implementation of Continuous Double Pole Cart Balancing
@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_DOUBLE_POLE_CART_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_DOUBLE_POLE_CART_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONT_DOUBLE_POLE_CART_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_CONT_DOUBLE_POLE_CART_HPP
 
 #include <mlpack/prereqs.hpp>
 
