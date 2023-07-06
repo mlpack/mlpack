@@ -13,6 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 
+#include "./ann_test_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
@@ -343,7 +344,7 @@ TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
   CheckDerivativeCorrect<TanhFunction>(desiredActivations, desiredDerivatives);
   CheckInverseCorrect<TanhFunction>(desiredActivations);
   
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<TanhFunction>(inputTemp,-2,2);
   REQUIRE(maxRelativeError <= 1e-3);
 }
@@ -384,7 +385,7 @@ TEST_CASE("SoftsignFunctionTest", "[ActivationFunctionsTest]")
                                            desiredDerivatives);
   CheckInverseCorrect<SoftsignFunction>(desiredActivations);
 
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<SoftsignFunction>(inputTemp,-1,1);
   REQUIRE(maxRelativeError <= 1e-3);
 }
@@ -414,7 +415,7 @@ TEST_CASE("RectifierFunctionTest", "[ActivationFunctionsTest]")
   CheckDerivativeCorrect<RectifierFunction>(desiredActivations,
                                             desiredDerivatives);
 
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<RectifierFunction>(inputTemp,-4,4);
   REQUIRE(maxRelativeError <= 1e-3);  
 }
@@ -505,7 +506,7 @@ TEST_CASE("HardSigmoidFunctionTest", "[ActivationFunctionsTest]")
   CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
                                               desiredDerivatives);
 
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<HardSigmoidFunction>(inputTemp,-4,4);
   REQUIRE(maxRelativeError <= 1e-3);  
 }
@@ -595,7 +596,7 @@ TEST_CASE("ElliotFunctionTest", "[ActivationFunctionsTest]")
                                                 ,desiredActivation);
   CheckDerivativeCorrect<ElliotFunction>(desiredActivation
                                                 ,desiredDerivate);
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(activationData.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<ElliotFunction>(inputTemp);
   REQUIRE(maxRelativeError <= 1e-3);
 }
@@ -814,7 +815,7 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
 {
-  arma::colvec input("-1.0 0 1.2 1.5 1.8 1.0 -1.1 -1.6 -1.8");
+  arma::colvec activationData("-1.0 0 1.2 1.5 1.8 1.0 -1.1 -1.6 -1.8");
 
   //Hand calculated values
 	arma::colvec desiredActivation(
@@ -830,7 +831,7 @@ TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
 
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(activationData.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<HyperSinhFunction>(inputTemp);
   REQUIRE(maxRelativeError <= 1e-3);
 }
@@ -857,7 +858,7 @@ TEST_CASE("BipolaSigmoidFunctionTest", "[ActivationFunctionsTest]")
   CheckDerivativeCorrect<BipolarSigmoidFunction>(desiredActivation
                                                 ,desiredDerivate);
 
-  arma::mat inputTemp(input.n_elem, 1);
+  arma::mat inputTemp(activationData.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<BipolarSigmoidFunction>(inputTemp,-2,2);
   REQUIRE(maxRelativeError <= 1e-3);
 }
