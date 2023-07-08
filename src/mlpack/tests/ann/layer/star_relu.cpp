@@ -62,3 +62,20 @@ TEST_CASE("StarReLUTest", "[ANNLayerTest]")
   // Test the Backward function.
   REQUIRE(arma::approx_equal(g, delta, "absdiff", 1e-5));
 }
+
+/**
+ * JacobianTest for starRelu layer
+ */
+TEST_CASE("JacobianStarReluLayerTest", "[ANNLayerTest]")
+{
+    const size_t elems = arma::randi(arma::distr_param(2, 1000));
+
+    arma::mat input(elems, 1);
+
+    StarReLU module;
+    module.InputDimensions() = { elems };
+    module.ComputeOutputDimensions();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+}
