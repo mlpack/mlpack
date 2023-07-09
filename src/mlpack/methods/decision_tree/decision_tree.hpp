@@ -470,6 +470,11 @@ class DecisionTree :
   //! trained tree).
   size_t SplitDimension() const { return splitDimension; }
 
+  //! Get the class probabilities, if this is a leaf node in the trained tree.
+  //! Note that if this is not a leaf, then this may contain arbitrary
+  //! information used by the split in the tree!
+  const arma::vec& ClassProbabilities() const { return classProbabilities; }
+
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
