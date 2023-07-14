@@ -264,6 +264,7 @@ With that in mind, if you would still like to manually build the mlpack Python
 bindings, first make sure that the following Python packages are installed:
 
  - setuptools
+ - wheel
  - cython >= 0.24
  - numpy
  - pandas >= 0.15.0
