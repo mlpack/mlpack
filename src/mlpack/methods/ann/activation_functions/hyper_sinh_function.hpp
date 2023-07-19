@@ -80,7 +80,7 @@ class HyperSinhFunction
   static double Deriv(const double y)
   {
     if (y > 0)
-      return (std::pow((1.0 / 9.0) + (y * y),0.5));
+      return (std::pow((1.0 / 9.0) + (y * y), 0.5));
     else
       return (3.0  * std::pow(std::pow(y, 2) / 4, 1.0 / 3.0));
   }
@@ -100,11 +100,11 @@ class HyperSinhFunction
     {
       if (y(i) > 0)
       {
-        x(i) = (std::pow((1.0 / 9.0) + (y(i) * y(i)),0.5));
+        x(i) = (std::pow((1.0 / 9.0) + (y(i) * y(i)), 0.5));
       }
       else
       {
-        x(i) = (3.0  * std::pow(std::pow(y(i), 2) / 4, 1.0 / 3.0));
+        x(i) = (3.0 * std::pow(std::pow(y(i), 2) / 4, 1.0 / 3.0));
       }
     }
   }

@@ -2,7 +2,7 @@
  * @file methods/ann/activation_functions/bipolar_sigmoid_function.hpp
  * @author Satyam Shukla
  *
- * Definition and implementation of the bipolar sigmoid  function.
+ * Definition and implementation of the bipolar sigmoid function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -36,7 +36,7 @@ class BipolarSigmoidFunction
    */
   static double Fn(const double x)
   {
-    return (1 - std::exp(-x))/(1 + std::exp(-x));
+    return (1 - std::exp(-x)) / (1 + std::exp(-x));
   }
 
   /**
@@ -48,7 +48,7 @@ class BipolarSigmoidFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = (1 - arma::exp(-x))/(1 + arma::exp(-x));
+    y = (1 - arma::exp(-x)) / (1 + arma::exp(-x));
   }
 
   /**
@@ -59,7 +59,7 @@ class BipolarSigmoidFunction
    */
   static double Deriv(const double y)
   {
-    return (1.0 - std::pow(y,2)) / 2.0;
+    return (1.0 - std::pow(y,2 )) / 2.0;
   }
 
   /**
@@ -71,7 +71,7 @@ class BipolarSigmoidFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x =  (1.0 - arma::pow(y,2)) / 2.0;
+    x =  (1.0 - arma::pow(y, 2)) / 2.0;
   }
 }; // class BipolarSigmoidFunction
 
