@@ -1,17 +1,17 @@
 /**
- * @file methods/reinforcement_learning/ddpg.hpp
+ * @file methods/reinforcement_learning/td3.hpp
  * @author Tarek Elsayed
  *
- * This file is the definition of DDPG class, which implements the
- * Deep Deterministic Policy Gradient algorithm.
+ * This file is the definition of TD3 class, which implements the
+ * Twin Delayed Deep Deterministic Policy Gradient algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_DDPG_HPP
-#define MLPACK_METHODS_RL_DDPG_HPP
+#ifndef MLPACK_METHODS_RL_TD3_HPP
+#define MLPACK_METHODS_RL_TD3_HPP
 
 #include <mlpack/core.hpp>
 #include <ensmallen.hpp>
@@ -23,30 +23,25 @@
 namespace mlpack {
 
 /**
- * Implementation of Deep Deterministic Policy Gradient, a model-free 
- * off-policy actor-critic based deep reinforcement learning algorithm.
+ * Implementation of Twin Delayed Deep Deterministic policy gradient, 
+ * a model-free off-policy actor-critic based algorithm.
  *
  * For more details, see the following:
  * @code
- * @misc{Lillicrap et al, 2015,
- *  author    = {Timothy P. Lillicrap,
- *               Jonathan J. Hunt,
- *               Alexander Pritzel,
- *               Nicolas Heess,
- *               Tom Erez,
- *               Yuval Tassa,
- *               David Silver,
- *               Daan Wierstra},
- *  title     = {Continuous control with deep reinforcement learning},
- *  year      = {2015},
- *  url       = {https://arxiv.org/abs/1509.02971}
+ * @misc{Fujimoto et al, 2018,
+ *  author    = {Scott Fujimoto,
+ *               Herke van Hoof,
+ *               David Meger},
+ *  title     = {Addressing Function Approximation Error in 
+ *               Actor-Critic Methods},
+ *  year      = {2018},
+ *  url       = {https://arxiv.org/abs/1802.09477}
  * }
  * @endcode
  *
  * @tparam EnvironmentType The environment of the reinforcement learning task.
  * @tparam QNetworkType The network used to estimate the critic's Q-values.
  * @tparam PolicyNetworkType The network to compute action value.
- * @tparam NoiseType The noise to add for exploration.
  * @tparam UpdaterType How to apply gradients when training.
  * @tparam ReplayType Experience replay method.
  */
@@ -54,11 +49,10 @@ template <
   typename EnvironmentType,
   typename QNetworkType,
   typename PolicyNetworkType,
-  typename NoiseType,
   typename UpdaterType,
   typename ReplayType = RandomReplay<EnvironmentType>
 >
-class DDPG
+class TD3
 {
  public:
   //! Convenient typedef for state.
@@ -68,7 +62,7 @@ class DDPG
   using ActionType = typename EnvironmentType::Action;
 
   /**
-   * Create the DDPG object with given settings.
+   * Create the TD3 object with given settings.
    *
    * If you want to pass in a parameter and discard the original parameter
    * object, you can directly pass the parameter, as the constructor takes
@@ -77,17 +71,15 @@ class DDPG
    * @param config Hyper-parameters for training.
    * @param learningQNetwork The network to compute action value.
    * @param policyNetwork The network to produce an action given a state.
-   * @param noise The noise instance for exploration.
    * @param replayMethod Experience replay method.
    * @param qNetworkUpdater How to apply gradients to Q network when training.
    * @param policyNetworkUpdater How to apply gradients to policy network
    *        when training.
    * @param environment Reinforcement learning task.
    */
-  DDPG(TrainingConfig& config,
+  TD3(TrainingConfig& config,
       QNetworkType& learningQNetwork,
       PolicyNetworkType& policyNetwork,
-      NoiseType& noise,
       ReplayType& replayMethod,
       UpdaterType qNetworkUpdater = UpdaterType(),
       UpdaterType policyNetworkUpdater = UpdaterType(),
@@ -96,7 +88,7 @@ class DDPG
   /**
     * Clean memory.
     */
-  ~DDPG();
+  ~TD3();
 
   /**
    * Softly update the target networks` parameters from the learning networks`
@@ -145,17 +137,16 @@ class DDPG
   //! Locally-stored hyper-parameters.
   TrainingConfig& config;
 
-  //! Locally-stored learning Q network.
-  QNetworkType& learningQNetwork;
+  //! Locally-stored learning Q1 and Q2 network.
+  QNetworkType& learningQ1Network;
+  QNetworkType learningQ2Network;
 
-  //! Locally-stored target Q network.
-  QNetworkType targetQNetwork;
+  //! Locally-stored target Q1 and Q2 network.
+  QNetworkType targetQ1Network;
+  QNetworkType targetQ2Network;
 
   //! Locally-stored policy network.
   PolicyNetworkType& policyNetwork;
-
-  //! Locally-stored noise instance.
-  NoiseType& noise;
 
   //! Locally-stored target policy network.
   PolicyNetworkType targetPNetwork;
@@ -199,5 +190,5 @@ class DDPG
 } // namespace mlpack
 
 // Include implementation
-#include "ddpg_impl.hpp"
+#include "td3_impl.hpp"
 #endif

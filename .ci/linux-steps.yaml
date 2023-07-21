@@ -27,7 +27,7 @@ steps:
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
       $PYBIN -m pip install --upgrade pip
-      $PYBIN -m pip install --upgrade --ignore-installed setuptools cython pandas
+      $PYBIN -m pip install --upgrade --ignore-installed setuptools cython pandas wheel
     fi
 
     if [ "a$(julia.version)" != "a" ]; then

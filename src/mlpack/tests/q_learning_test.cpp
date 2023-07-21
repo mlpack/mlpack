@@ -598,9 +598,19 @@ TEST_CASE("PendulumWithDDPG", "[QLearningTest]")
     qNetwork.Add(new ReLU());
     qNetwork.Add(new Linear(1));
 
+    // Set up the OUNoise parameters.
+    int size = 1; 
+    double mu = 0.0;
+    double theta = 1.0; 
+    double sigma = 0.1;  
+
+    // Create an instance of the OUNoise class.
+    OUNoise ouNoise(size, mu, theta, sigma);
+
     // Set up Deep Deterministic Policy Gradient agent.
-    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
-        agent(config, qNetwork, policyNetwork, replayMethod);
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+        OUNoise, AdamUpdate>
+        agent(config, qNetwork, policyNetwork, ouNoise, replayMethod);
 
     converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
     if (converged)
@@ -633,8 +643,126 @@ TEST_CASE("DDPGForMultipleActions", "[QLearningTest]")
   config.TargetNetworkSyncInterval() = 1;
   config.UpdateInterval() = 3;
 
+  // Set up the OUNoise parameters.
+  int size = 4;
+  double mu = 0.0;
+  double theta = 1.0;  
+  double sigma = 0.1; 
+
+  // Create an instance of the OUNoise class.
+  OUNoise ouNoise(size, mu, theta, sigma);
+
   // Set up the DDPG agent.
   DDPG<ContinuousActionEnv<3, 4>, decltype(qNetwork), decltype(policyNetwork),
+      OUNoise, AdamUpdate>
+      agent(config, qNetwork, policyNetwork, ouNoise, replayMethod);
+
+  agent.State().Data() = arma::randu<arma::colvec>
+      (ContinuousActionEnv<3, 4>::State::dimension, 1);
+  agent.SelectAction();
+
+  // Test to check if the action dimension given by the agent is correct.
+  REQUIRE(agent.Action().action.size() == 4);
+
+  replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
+  agent.TotalSteps()++;
+  agent.Update();
+  // If the agent is able to reach this point of the test, it is assured
+  // that the agent can handle multiple actions in continuous space.
+}
+
+//! Test Ornstein-Uhlenbeck noise class.
+TEST_CASE("OUNoiseTest", "[QLearningTest]")
+{
+  // Set up the OUNoise parameters.
+  int size = 3;
+  double mu = 0.0;
+  double theta = 0.15;
+  double sigma = 0.2;
+
+  // Create an instance of the OUNoise class.
+  OUNoise ouNoise(size, mu, theta, sigma);
+
+  // Test the reset function.
+  ouNoise.reset();
+  arma::colvec state = ouNoise.sample();
+  REQUIRE(state.n_elem == size);
+
+  // Verify that the sample is not equal to the reset state.
+  arma::colvec sample = ouNoise.sample();
+  bool isNotEqual = arma::any(sample != state);
+  REQUIRE(isNotEqual);
+}
+
+//! Test TD3 on Pendulum task.
+TEST_CASE("PendulumWithTD3", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 8; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.001;
+    config.TargetNetworkSyncInterval() = 2;
+    config.UpdateInterval() = 3;
+
+    // Set up Actor network.
+    FFN<EmptyLoss, GaussianInitialization>
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear(128));
+    policyNetwork.Add(new ReLU());
+    policyNetwork.Add(new Linear(1));
+    policyNetwork.Add(new TanH());
+
+    // Set up Critic network.
+    FFN<EmptyLoss, GaussianInitialization>
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear(128));
+    qNetwork.Add(new ReLU());
+    qNetwork.Add(new Linear(1));
+
+    // Set up Twin Delayed Deep Deterministic policy gradient agent.
+    TD3<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
+        agent(config, qNetwork, policyNetwork, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! A test to ensure TD3 works with multiple actions in action space.
+TEST_CASE("TD3ForMultipleActions", "[QLearningTest]")
+{
+  FFN<EmptyLoss, GaussianInitialization>
+      policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+  policyNetwork.Add(new Linear(128));
+  policyNetwork.Add(new ReLU());
+  policyNetwork.Add(new Linear(4));
+  policyNetwork.Add(new TanH());
+
+  FFN<EmptyLoss, GaussianInitialization>
+      qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+  qNetwork.Add(new Linear(128));
+  qNetwork.Add(new ReLU());
+  qNetwork.Add(new Linear(1));
+
+  // Set up the replay method.
+  RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);
+
+  TrainingConfig config;
+  config.StepSize() = 0.001;
+  config.TargetNetworkSyncInterval() = 2;
+  config.UpdateInterval() = 3;
+
+  // Set up the TD3 agent.
+  TD3<ContinuousActionEnv<3, 4>, decltype(qNetwork), decltype(policyNetwork),
       AdamUpdate>
       agent(config, qNetwork, policyNetwork, replayMethod);
 

@@ -1,8 +1,18 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Reinforcement Learning: Twin Delayed Deep Deterministic 
+    Policy Gradient (#3512).
+
+  * Reinforcement Learning: Ornstein-Uhlenbeck noise (#3499).
+
   * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
-  * Bipolar sigmoid activation function added and invertible functions fixed (#3506).
+
+  * Add `ClassProbabilities()` member to `DecisionTree` so that the internal
+    details of trees can be more easily inspected (#3511).
   
+  * Bipolar sigmoid activation function added and invertible functions 
+    fixed (#3506).
+
 ### mlpack 4.2.0
 ###### 2023-06-14
   * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3445).
