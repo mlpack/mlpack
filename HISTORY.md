@@ -1,6 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
+  * Bipolar sigmoid activation function added and invertible functions fixed (#3506).
   
 ### mlpack 4.2.0
 ###### 2023-06-14
