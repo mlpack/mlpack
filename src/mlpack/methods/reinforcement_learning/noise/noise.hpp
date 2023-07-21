@@ -13,5 +13,6 @@
 #define MLPACK_METHODS_REINFORCEMENT_LEARNING_NOISE_NOISE_HPP
 
 #include "ornstein_uhlenbeck.hpp"
+#include "gaussian.hpp"
 
 #endif
