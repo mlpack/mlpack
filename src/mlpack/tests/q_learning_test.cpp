@@ -619,6 +619,58 @@ TEST_CASE("PendulumWithDDPG", "[QLearningTest]")
   REQUIRE(converged);
 }
 
+//! Test DDPG on Pendulum task with Gaussian noise.
+TEST_CASE("PendulumWithGaussianDDPG", "[QLearningTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 8; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.StepSize() = 0.001;
+    config.TargetNetworkSyncInterval() = 1;
+    config.UpdateInterval() = 3;
+
+    // Set up Actor network.
+    FFN<EmptyLoss, GaussianInitialization>
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    policyNetwork.Add(new Linear(128));
+    policyNetwork.Add(new ReLU());
+    policyNetwork.Add(new Linear(1));
+    policyNetwork.Add(new TanH());
+
+    // Set up Critic network.
+    FFN<EmptyLoss, GaussianInitialization>
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
+    qNetwork.Add(new Linear(128));
+    qNetwork.Add(new ReLU());
+    qNetwork.Add(new Linear(1));
+
+    // Set up the GaussianNoise parameters.
+    int size = 1; 
+    double mu = 0.0; 
+    double sigma = 0.1; 
+
+    // Create an instance of the GaussianNoise class.
+    GaussianNoise gaussianNoise(size, mu, sigma);
+
+    // Set up Deep Deterministic Policy Gradient agent.
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+        GaussianNoise, AdamUpdate>
+        agent(config, qNetwork, policyNetwork, gaussianNoise, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
 //! A test to ensure DDPG works with multiple actions in action space.
 TEST_CASE("DDPGForMultipleActions", "[QLearningTest]")
 {
@@ -692,6 +744,32 @@ TEST_CASE("OUNoiseTest", "[QLearningTest]")
   arma::colvec sample = ouNoise.sample();
   bool isNotEqual = arma::any(sample != state);
   REQUIRE(isNotEqual);
+}
+
+//! Test Gaussian noise class.
+TEST_CASE("GaussianNoiseTest", "[QLearningTest]")
+{
+  // Set up the GaussianNoise parameters.
+  int size = 5; 
+  double mu = 0.0; 
+  double sigma = 0.1; 
+
+  // Create an instance of the GaussianNoise class.
+  GaussianNoise gaussianNoise(size, mu, sigma);
+
+  // Test the sample function.
+  arma::colvec noise = gaussianNoise.sample();
+  REQUIRE(noise.n_elem == size);
+
+  // Verify that the noise vector has values drawn from a 
+  // Gaussian distribution with the specified mean and standard deviation.
+  double mean = arma::mean(noise);
+  double stdDev = arma::stddev(noise);
+
+  double meanErr = mean - mu;
+  double stdDevErr = stdDev - sigma;
+  REQUIRE(meanErr <= 1e-5);
+  REQUIRE(stdDevErr <= 1e-5);
 }
 
 //! Test TD3 on Pendulum task.
