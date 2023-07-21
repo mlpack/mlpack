@@ -22,7 +22,8 @@
 #include "training_config.hpp"
 #include "async_learning.hpp"
 #include "q_learning.hpp"
-#include "sac.hpp"
 #include "ddpg.hpp"
+#include "td3.hpp"
+#include "sac.hpp"
 
 #endif

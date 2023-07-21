@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Reinforcement Learning: Twin Delayed Deep Deterministic 
+    Policy Gradient (#3512).
+
   * Reinforcement Learning: Ornstein-Uhlenbeck noise (#3499).
 
   * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
