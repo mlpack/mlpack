@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Reinforcement Learning: Gaussian noise (#3515).
+
   * Reinforcement Learning: Twin Delayed Deep Deterministic 
     Policy Gradient (#3512).
 
