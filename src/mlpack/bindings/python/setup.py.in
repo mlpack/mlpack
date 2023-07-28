@@ -86,7 +86,8 @@ else:
                   language='c++',
                   include_dirs=[ \
                       np.get_include(), \
-                      '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/',
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/mlpack/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
                                                      .replace('\;', ' ')
                                                      .split(';'),
@@ -104,7 +105,8 @@ else:
                   language='c++',
                   include_dirs=[ \
                       np.get_include(), \
-                      '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/',
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/mlpack/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.replace(' ', ';')
                                                      .replace('\;', ' ')
                                                      .split(';'),
