@@ -24,9 +24,9 @@ class GaussianNoise
    * @param mu The mean of the noise.
    * @param sigma The standard deviation of the noise.
    */
-  GaussianNoise(int size,
-          double mu = 0.0,
-          double sigma = 1.0) :
+  GaussianNoise(const int size,
+                const double mu = 0.0,
+                const double sigma = 1.0) :
       size(size),
       mu(mu),
       sigma(sigma)
@@ -49,14 +49,14 @@ class GaussianNoise
   }
 
  private:
- //! Locally-stored number of elements.
-  double size;
+  //! Locally-stored number of elements.
+  const double size;
 
   //! Locally-stored mean of the noise process.
-  double mu;
+  const double mu;
 
   //! Locally-stored standard deviation of the noise.
-  double sigma;
+  const double sigma;
 };
 
 } // namespace mlpack
