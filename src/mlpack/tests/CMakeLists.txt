@@ -103,6 +103,7 @@ add_executable(mlpack_test
   one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  policy_gradient_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   qdafn_test.cpp
@@ -135,6 +136,7 @@ add_executable(mlpack_test
   termination_policy_test.cpp
   test_catch_tools.hpp
   test_function_tools.hpp
+  test_reinforcement_learning_agent.hpp
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
