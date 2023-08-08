@@ -15,7 +15,7 @@ http://www.opensource.org/licenses/BSD-3-Clause for more information.
 cimport cython
 from libcpp.string cimport string
 from libcpp cimport bool
-from params cimport Params
+from .params cimport Params
 
 cdef extern from "<mlpack/core/util/io.hpp>" namespace "mlpack" nogil:
   cdef cppclass IO:

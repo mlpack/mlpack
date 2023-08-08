@@ -3,8 +3,8 @@
  * @author Ryan Curtin
  *
  * Return "mat", "col", or "row" depending on the type of the given Armadillo
- * object.  This is so that the correct overload of arma_numpy.numpy_to_<type>()
- * can be called.
+ * object.  This is so that the correct overload of numpy_to_<type>() can be
+ * called.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
