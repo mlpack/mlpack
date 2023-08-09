@@ -514,7 +514,8 @@ double RandomForest<
     // So we hide it behind an (undocumented except for here) ifndef so that
     // this support can be disabled if desired...
     #if (ARMA_VERSION_MAJOR < 12) || \
-        ((ARMA_VERSION_MAJOR == 12) && (ARMA_VERSION_MINOR < 6))
+        ((ARMA_VERSION_MAJOR == 12) && (ARMA_VERSION_MINOR < 6) && \
+         (ARMA_VERSION_PATCH < 2))
       #ifndef MLPACK_DONT_OVERWRITE_ARMA_RNG_SEEDS
       // Note that each thread has its own differently-seeded RNG, so this will
       // result in a different seed for each thread's Armadillo RNG.
