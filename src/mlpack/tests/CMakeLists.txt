@@ -120,7 +120,7 @@ add_executable(mlpack_test
   size_checks_test.cpp
   serialization.cpp
   serialization.hpp
-  #serialization_test.cpp
+  serialization_test.cpp
   sfinae_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
