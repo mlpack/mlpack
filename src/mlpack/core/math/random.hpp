@@ -16,15 +16,27 @@
 
 namespace mlpack {
 
-/**
- * MLPACK_EXPORT is required for global variables; it exports the symbols
- * correctly on Windows.
- */
+// Because we have multiple RNGs for mlpack (one for each thread, as they are
+// marked thread_local), we must ensure that the default seeds and user-set
+// seeds do not cause each thread's RNG to have the exact same output.
+// Therefore, we assign a different offset for each thread, and add this offset
+// whenever we set a seed with RandGen() or RandomSeed().
+inline size_t RandGenSeedOffset()
+{
+  // The use of `seedCounter` ensures that each individual RNG gets its own
+  // separate seed.  Otherwise, in OpenMP-enabled loops that use random numbers,
+  // it is possible that each individual thread could generate the same sequence
+  // of random numbers.
+  static std::atomic<size_t> seedCounter(0);
+  static thread_local size_t threadSeed = (seedCounter++);
+  return threadSeed;
+}
 
 //! Global random object.
 inline std::mt19937& RandGen()
 {
-  static thread_local std::mt19937 randGen;
+  static thread_local std::mt19937 randGen(std::mt19937::default_seed +
+      RandGenSeedOffset());
   return randGen;
 }
 
@@ -52,14 +64,14 @@ inline std::normal_distribution<>& RandNormalDist()
 inline void RandomSeed(const size_t seed)
 {
   #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
-    RandGen().seed((uint32_t) seed);
+    RandGen().seed((uint32_t) (seed + RandGenSeedOffset()));
     #if (BINDING_TYPE == BINDING_TYPE_R)
       // To suppress Found 'srand', possibly from 'srand' (C).
       (void) seed;
     #else
       srand((unsigned int) seed);
     #endif
-    arma::arma_rng::set_seed(seed);
+    arma::arma_rng::set_seed(seed + RandGenSeedOffset());
   #else
     (void) seed;
   #endif
@@ -68,24 +80,24 @@ inline void RandomSeed(const size_t seed)
 /**
  * Set the random seed to a fixed number.
  * This function is used in binding tests to set a fixed random seed before
- * calling mlpack(). In this way we can test whether a certain parameter makes
- * a difference to execution of CLI binding.
+ * calling the binding. In this way we can test whether a certain parameter
+ * makes a difference to execution of CLI binding.
  * Refer to pull request #1306 for discussion on this function.
  */
 #if (BINDING_TYPE == BINDING_TYPE_TEST)
 inline void FixedRandomSeed()
 {
   const static size_t seed = rand();
-  RandGen().seed((uint32_t) seed);
+  RandGen().seed((uint32_t) seed + RandGenSeedOffset());
   srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  arma::arma_rng::set_seed(seed + RandGenSeedOffset());
 }
 
 inline void CustomRandomSeed(const size_t seed)
 {
-  RandGen().seed((uint32_t) seed);
+  RandGen().seed((uint32_t) seed + RandGenSeedOffset());
   srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  arma::arma_rng::set_seed(seed + RandGenSeedOffset());
 }
 #endif
 
