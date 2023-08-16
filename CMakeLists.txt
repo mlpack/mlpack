@@ -242,7 +242,6 @@ if (DEBUG)
       set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
           ${LIBDL_LIBRARIES})
       set(BFD_DL_AVAILABLE "YES")
-      add_definitions(-DMLPACK_HAS_BFD_DL)
     else()
       message(WARNING "No libBFD and/or libDL has been found!")
     endif()
@@ -321,7 +320,6 @@ else()
 endif()
 
 if (STB_IMAGE_FOUND)
-  add_definitions(-DMLPACK_HAS_STB)
   set(STB_AVAILABLE "1")
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
