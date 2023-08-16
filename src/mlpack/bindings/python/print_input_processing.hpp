@@ -269,7 +269,7 @@ void PrintInputProcessing(
    *   if param_name_tuple[0].shape[0] == 1 or
    *       param_name_tuple[0].shape[1] == 1:
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
-   *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
+   *   param_name_mat = numpy_to_mat_s(param_name_tuple[0],
    *       param_name_tuple[1])
    *   SetParam[mat](p, \<const string\> 'param_name', dereference(param_name_mat), True)
    *   p.SetPassed(\<const string\> 'param_name')
@@ -299,7 +299,7 @@ void PrintInputProcessing(
           << std::endl;
       std::cout << prefix << "      " << name << "_tuple[0].shape = ("
           << d.name << "_tuple[0].size,)" << std::endl;
-      std::cout << prefix << "  " << name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  " << name << "_mat = numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
@@ -319,7 +319,7 @@ void PrintInputProcessing(
           << ") < 2:" << std::endl;
       std::cout << prefix << "    " << name << "_tuple[0].shape = (" << name
           << "_tuple[0].shape[0], 1)" << std::endl;
-      std::cout << prefix << "  " << name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  " << name << "_mat = numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
@@ -343,7 +343,7 @@ void PrintInputProcessing(
           << name << "_tuple[0].shape[1] == 1:" << std::endl;
       std::cout << prefix << "    " << name << "_tuple[0].shape = ("
           << name << "_tuple[0].size,)" << std::endl;
-      std::cout << prefix << name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << name << "_mat = numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
@@ -362,7 +362,7 @@ void PrintInputProcessing(
           << std::endl;
       std::cout << prefix << "  " << name << "_tuple[0].shape = (" << name
           << "_tuple[0].shape[0], 1)" << std::endl;
-      std::cout << prefix << name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << name << "_mat = numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << name
           << "_tuple[0], " << name << "_tuple[1])" << std::endl;
       std::cout << prefix << "SetParam[" << GetCythonType<T>(d)
@@ -475,7 +475,7 @@ void PrintInputProcessing(
    *   param_name_tuple = to_matrix_with_info(param_name)
    *   if len(param_name_tuple[0].shape) < 2:
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
-   *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
+   *   param_name_mat = numpy_to_matrix_d(param_name_tuple[0])
    *   SetParamWithInfo[mat](p, \<const string\> 'param_name',
    *       dereference(param_name_mat), 
    *       \<const cbool*\> PyArray_DATA(param_name_dims))
@@ -496,11 +496,11 @@ void PrintInputProcessing(
         << ") < 2:" << std::endl;
     std::cout << prefix << "    " << name << "_tuple[0].shape = (" << name
         << "_tuple[0].shape[0], 1)" << std::endl;
-    std::cout << prefix << "  " << name << "_mat = arma_numpy.numpy_to_mat_d("
+    std::cout << prefix << "  " << name << "_mat = numpy_to_mat_d("
         << name << "_tuple[0], " << name << "_tuple[1])" << std::endl;
     std::cout << prefix << "  " << name << "_dims = " << name
         << "_tuple[2]" << std::endl;
-    std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](p, <const "
+    std::cout << prefix << "  SetParamWithInfo[Mat[double]](p, <const "
         << "string> '" << d.name << "', dereference(" << name << "_mat), "
         << "<const cbool*> PyArray_DATA(" << name << "_dims))" << std::endl;
     std::cout << prefix << "  p.SetPassed(<const string> '" << d.name
@@ -518,11 +518,11 @@ void PrintInputProcessing(
         << ") < 2:" << std::endl;
     std::cout << prefix << "  " << name << "_tuple[0].shape = (" << name
         << "_tuple[0].shape[0], 1)" << std::endl;
-    std::cout << prefix << name << "_mat = arma_numpy.numpy_to_mat_d("
+    std::cout << prefix << name << "_mat = numpy_to_mat_d("
         << name << "_tuple[0], " << name << "_tuple[1])" << std::endl;
     std::cout << prefix << name << "_dims = " << name << "_tuple[2]"
         << std::endl;
-    std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](p, <const "
+    std::cout << prefix << "SetParamWithInfo[Mat[double]](p, <const "
         << "string> '" << d.name << "', dereference(" << name << "_mat), "
         << "<const cbool*> PyArray_DATA(" << name << "_dims))" << std::endl;
     std::cout << prefix << "p.SetPassed(<const string> '" << d.name << "')"

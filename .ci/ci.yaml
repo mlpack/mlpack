@@ -41,18 +41,18 @@ jobs:
     matrix:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
-        python.version: '3.7'
+        python.version: '3.8'
       Python:
         binding: 'python'
-        python.version: '3.7'
+        python.version: '3.8'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=ON -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
       Julia:
-        python.version: '3.7'
+        python.version: '3.8'
         julia.version: '1.6.3'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_JULIA_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
       Go:
         binding: 'go'
-        python.version: '3.7'
+        python.version: '3.8'
         go.version: '1.11.0'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON -DBUILD_R_BINDINGS=OFF'
 
