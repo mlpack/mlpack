@@ -15,7 +15,7 @@
 
 #include "image_info.hpp"
 
-#ifdef HAS_STB
+#ifdef MLPACK_HAS_STB
 
 // The definition of STB_IMAGE_IMPLEMENTATION means that the implementation will
 // be included here directly.
@@ -23,7 +23,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#endif // HAS_STB
+#endif // MLPACK_HAS_STB
 
 namespace mlpack {
 namespace data {

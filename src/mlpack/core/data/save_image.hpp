@@ -14,13 +14,13 @@
 
 #include "image_info.hpp"
 
-#ifdef HAS_STB
+#ifdef MLPACK_HAS_STB
 
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-#endif // HAS_STB
+#endif // MLPACK_HAS_STB
 
 namespace mlpack {
 namespace data {

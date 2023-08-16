@@ -319,7 +319,7 @@ else()
 endif()
 
 if (STB_IMAGE_FOUND)
-  add_definitions(-DHAS_STB)
+  add_definitions(-DMLPACK_HAS_STB)
   set(STB_AVAILABLE "1")
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
