@@ -21,7 +21,11 @@
 // be included here directly.
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#ifdef MLPACK_HAS_STB_DIR
+  #include <stb/stb_image.h>
+#else
+  #include <stb_image.h>
+#endif
 
 #endif // MLPACK_HAS_STB
 

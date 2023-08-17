@@ -34,6 +34,16 @@
 #endif
 
 //
+// If STB support is available but the STB headers do not live in an stb/
+// directory, then MLPACK_HAS_NO_STB_DIR should be defined.
+//
+#ifdef MLPACK_HAS_STB
+#ifndef MLPACK_HAS_NO_STB_DIR
+// #define MLPACK_HAS_NO_STB_DIR
+#endif
+#endif
+
+//
 // If the version of mlpack is built from a git repository and is not an
 // official release, then MLPACK_GIT_VERSION will be defined.  This causes
 // mlpack::util::GetVersion() to return the git revision instead of the version
@@ -66,6 +76,12 @@
 #ifdef MLPACK_DISABLE_STB
   #ifdef MLPACK_HAS_STB
     #undef MLPACK_HAS_STB
+  #endif
+#endif
+
+#ifdef MLPACK_DISABLE_NO_STB_DIR
+  #ifdef MLPACK_HAS_NO_STB_DIR
+    #undef MLPACK_HAS_NO_STB_DIR
   #endif
 #endif
 

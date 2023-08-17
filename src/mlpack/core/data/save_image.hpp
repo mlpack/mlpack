@@ -18,7 +18,11 @@
 
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
+#ifdef MLPACK_HAS_STB_DIR
+  #include <stb/stb_image_write.h>
+#else
+  #include <stb_image_write.h>
+#endif
 
 #endif // MLPACK_HAS_STB
 
