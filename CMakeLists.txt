@@ -473,18 +473,24 @@ endif ()
 # Modify config.hpp as necessary.
 file(READ ${CMAKE_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
 if (BFD_DL_AVAILABLE)
-  string(REPLACE "// #define MLPACK_HAS_BFD_DL" "#define MLPACK_HAS_BFD_DL"
-      CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
+      "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
 if (STB_AVAILABLE)
-  string(REPLACE "// #define MLPACK_HAS_STB" "#define MLPACK_HAS_STB"
-      CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
+      "#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
+    string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
+        "#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  endif ()
 endif ()
 if (USING_GIT)
-  string(REPLACE "// #define MLPACK_GIT_VERSION" "#define MLPACK_GIT_VERSION"
-      CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
+      "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif ()
-file(WRITE ${CMAKE_SOURCE_DIR}/src/mlpack/config.hpp "${CONFIG_CONTENTS}")
+file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
+include_directories(${CMAKE_BINARY_DIR}/include/)
+add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
 
 # Finally, add any cross-compilation support libraries (they may need to come
 # last).  If we are not cross-compiling, no changes will happen here.
