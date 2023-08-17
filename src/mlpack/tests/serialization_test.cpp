@@ -14,7 +14,6 @@
 #include "catch.hpp"
 #include "serialization.hpp"
 
-#include <mlpack/methods/ann.hpp>
 #include <mlpack/methods/hoeffding_trees.hpp>
 #include <mlpack/methods/perceptron.hpp>
 #include <mlpack/methods/logistic_regression.hpp>
