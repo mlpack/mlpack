@@ -21,7 +21,7 @@
 using namespace mlpack;
 
 /**
- * Simple test case for the staReLU layer.
+ * Simple test case for the StaReLU layer.
  */
 TEST_CASE("StarReLUTest", "[ANNLayerTest]")
 {

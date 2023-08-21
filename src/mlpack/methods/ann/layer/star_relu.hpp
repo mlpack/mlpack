@@ -2,8 +2,18 @@
  * @file methods/ann/layer/star_relu.hpp
  * @author Mayank Raj
  *
- * Definition of StarReLU layer introduced by Yu et al.
+ * Definition of StarReLU layer introduced byWeihao Yu, Chenyang Si, Pan Zhou,
+ * Mi Luo, Yichen Zhou, Jiashi Feng, Shuicheng Yan, Xinchao Wang.
+ * For more information, see the following paper.
  *
+ * @code
+ * @misc{
+ *   author = {Weihao Yu, Chenyang Si, Pan Zhou, Mi Luo, Yichen Zhou,
+ * Jiashi Feng, Shuicheng Yan, Xinchao Wang},
+ *   title = {MetaFormer Baselines for Vision},
+ *   year = {2022}
+ * }
+ * @endcode
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
