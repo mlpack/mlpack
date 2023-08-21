@@ -21,14 +21,18 @@ inline LARS::LARS(
     const bool useCholesky,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
     matGram(&matGramInternal),
     useCholesky(useCholesky),
     lasso((lambda1 != 0)),
     lambda1(lambda1),
     elasticNet((lambda1 != 0) && (lambda2 != 0)),
     lambda2(lambda2),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    fitIntercept(fitIntercept),
+    normalizeData(normalizeData)
 { /* Nothing left to do. */ }
 
 inline LARS::LARS(
@@ -36,14 +40,18 @@ inline LARS::LARS(
     const arma::mat& gramMatrix,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
     matGram(&gramMatrix),
     useCholesky(useCholesky),
     lasso((lambda1 != 0)),
     lambda1(lambda1),
     elasticNet((lambda1 != 0) && (lambda2 != 0)),
     lambda2(lambda2),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    fitIntercept(fitIntercept),
+    normalizeData(normalizeData)
 { /* Nothing left to do */ }
 
 inline LARS::LARS(
@@ -53,8 +61,10 @@ inline LARS::LARS(
     const bool useCholesky,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
-    LARS(useCholesky, lambda1, lambda2, tolerance)
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
+    LARS(useCholesky, lambda1, lambda2, tolerance, fitIntercept, normalizeData)
 {
   Train(data, responses, transposeData);
 }
@@ -67,8 +77,11 @@ inline LARS::LARS(
     const arma::mat& gramMatrix,
     const double lambda1,
     const double lambda2,
-    const double tolerance) :
-    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance)
+    const double tolerance,
+    const bool fitIntercept,
+    const bool normalizeData) :
+    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance, fitIntercept,
+        normalizeData)
 {
   Train(data, responses, transposeData);
 }
@@ -85,8 +98,11 @@ inline LARS::LARS(const LARS& other) :
     elasticNet(other.elasticNet),
     lambda2(other.lambda2),
     tolerance(other.tolerance),
+    fitIntercept(other.fitIntercept),
+    normalizeData(other.normalizeData),
     betaPath(other.betaPath),
     lambdaPath(other.lambdaPath),
+    interceptPath(other.interceptPath),
     activeSet(other.activeSet),
     isActive(other.isActive),
     ignoreSet(other.ignoreSet),
@@ -107,8 +123,11 @@ inline LARS::LARS(LARS&& other) :
     elasticNet(other.elasticNet),
     lambda2(other.lambda2),
     tolerance(other.tolerance),
+    fitIntercept(other.fitIntercept),
+    normalizeData(other.normalizeData),
     betaPath(std::move(other.betaPath)),
     lambdaPath(std::move(other.lambdaPath)),
+    interceptPath(std::move(other.interceptPath)),
     activeSet(std::move(other.activeSet)),
     isActive(std::move(other.isActive)),
     ignoreSet(std::move(other.ignoreSet)),
@@ -133,8 +152,11 @@ inline LARS& LARS::operator=(const LARS& other)
   elasticNet = other.elasticNet;
   lambda2 = other.lambda2;
   tolerance = other.tolerance;
+  fitIntercept = other.fitIntercept;
+  normalizeData = other.normalizeData;
   betaPath = other.betaPath;
   lambdaPath = other.lambdaPath;
+  interceptPath = other.interceptPath;
   activeSet = other.activeSet;
   isActive = other.isActive;
   ignoreSet = other.ignoreSet;
@@ -158,8 +180,11 @@ inline LARS& LARS::operator=(LARS&& other)
   elasticNet = other.elasticNet;
   lambda2 = other.lambda2;
   tolerance = other.tolerance;
+  fitIntercept = other.fitIntercept;
+  normalizeData = other.normalizeData;
   betaPath = std::move(other.betaPath);
   lambdaPath = std::move(other.lambdaPath);
+  interceptPath = std::move(other.interceptPath);
   activeSet = std::move(other.activeSet);
   isActive = std::move(other.isActive);
   ignoreSet = std::move(other.ignoreSet);
@@ -187,13 +212,78 @@ inline double LARS::Train(const arma::mat& matX,
 
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
-  // dataRef is row-major.
-  const arma::mat& dataRef = (transposeData ? dataTrans : matX);
+  // This vector may hold zero-centered responses, if necessary.
+  arma::rowvec yCentered;
+
+  // dataRef is row-major.  We can reuse the given matX, but only if we don't
+  // need to do any transformations to it.
+  const arma::mat& dataRef =
+      (transposeData || fitIntercept || normalizeData) ? dataTrans : matX;
+  const arma::rowvec& yRef =
+      (fitIntercept) ? yCentered : y;
+
+  arma::vec offsetX; // used only if fitting an intercept
+  double offsetY = 0.0; // used only if fitting an intercept
+  arma::vec stdX; // used only if normalizing
+
   if (transposeData)
-    dataTrans = trans(matX);
+  {
+    if (fitIntercept)
+    {
+      offsetX = arma::mean(matX, 1);
+      dataTrans = (matX.each_col() - offsetX).t();
+    }
+
+    if (normalizeData)
+    {
+      stdX = arma::stddev(matX, 0, 1);
+      stdX.replace(0.0, 1.0); // Make sure we don't divide by 0!
+
+      // Check if we have already done the transposition.
+      if (!fitIntercept)
+        dataTrans = (matX.each_col() / stdX).t();
+      else
+        dataTrans.each_row() /= stdX.t();
+    }
+
+    // Make sure we convert the data to row-major format, even if no
+    // transformations were needed.
+    if (!fitIntercept && !normalizeData)
+      dataTrans = matX.t();
+  }
+  else
+  {
+    // We don't need to transpose the data---it's already in row-major form.
+    if (fitIntercept)
+    {
+      offsetX = arma::mean(matX, 0).t();
+      dataTrans = (matX.each_row() - offsetX.t());
+    }
+
+    if (normalizeData)
+    {
+      stdX = arma::stddev(matX, 0, 0).t();
+      stdX.replace(0.0, 1.0); // Make sure we don't divide by 0!
+
+      // Check if we have already populated `dataTrans`.
+      if (!fitIntercept)
+        dataTrans = (matX.each_row() / stdX.t());
+      else
+        dataTrans.each_row() /= stdX.t();
+    }
+
+    // If we are not fitting an intercept and we are not normalizing the data,
+    // dataTrans already points to matX so we don't need to do anything.
+  }
+
+  if (fitIntercept)
+  {
+    offsetY = arma::mean(y);
+    yCentered = y - offsetY;
+  }
 
   // Compute X' * y.
-  arma::vec vecXTy = trans(y * dataRef);
+  arma::vec vecXTy = trans(yRef * dataRef);
 
   // Set up active set variables.  In the beginning, the active set has size 0
   // (all dimensions are inactive).
@@ -213,6 +303,7 @@ inline double LARS::Train(const arma::mat& matX,
   arma::vec corr = vecXTy;
   double maxCorr = 0;
   size_t changeInd = 0;
+  size_t lassocondInd = dataRef.n_cols;
   for (size_t i = 0; i < vecXTy.n_elem; ++i)
   {
     if (fabs(corr(i)) > maxCorr)
@@ -229,6 +320,12 @@ inline double LARS::Train(const arma::mat& matX,
   if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
+
+    if (fitIntercept)
+      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[0]));
+    else
+      interceptPath.push_back(0.0);
+
     return maxCorr;
   }
 
@@ -249,6 +346,8 @@ inline double LARS::Train(const arma::mat& matX,
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
+    double maxActiveCorr = 0;
+    double minActiveCorr = DBL_MAX;
     for (size_t i = 0; i < dataRef.n_cols; ++i)
     {
       if ((!isActive[i]) && (!isIgnored[i]) && (fabs(corr(i)) > maxCorr))
@@ -256,8 +355,46 @@ inline double LARS::Train(const arma::mat& matX,
         maxCorr = fabs(corr(i));
         changeInd = i;
       }
+      else if (isActive[i] && (matGram != &matGramInternal))
+      {
+        // Here we will do a sanity check: if the correlation of any dimension
+        // is not the maximum correlation, then the user has probably passed a
+        // Gram matrix whose properties do not match the value of fitIntercept
+        // and normalizeData.
+        if (fabs(corr(i)) > maxActiveCorr)
+          maxActiveCorr = fabs(corr(i));
+        if (fabs(corr(i)) < minActiveCorr)
+          minActiveCorr = fabs(corr(i));
+      }
     }
 
+    // If the maximum correlation is sufficiently small, don't add this
+    // variable; terminate early.
+    if (maxCorr < tolerance)
+      break;
+
+    if ((matGram != &matGramInternal) && ((maxActiveCorr - minActiveCorr) >
+        100 * std::numeric_limits<double>::epsilon()))
+    {
+      // Construct the error message to match the user's settings.
+      std::ostringstream oss;
+      oss << "LARS::Train(): correlation conditions violated; check that your "
+          << "given Gram matrix is properly computed on ";
+      if (fitIntercept)
+        oss << "mean-centered ";
+      else
+        oss << "non-mean-centered ";
+      if (normalizeData)
+        oss << "unit-variance (normalized) ";
+      else
+        oss << "non-normalized ";
+      oss << "data!";
+      oss << std::endl;
+      throw std::runtime_error(oss.str());
+    }
+
+    // Add the variable to the active set and update the Gram matrix as
+    // necessary.
     if (!lassocond)
     {
       if (useCholesky)
@@ -273,8 +410,6 @@ inline double LARS::Train(const arma::mat& matX,
 
         CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
       }
-
-      // Add variable to active set.
       Activate(changeInd);
     }
 
@@ -324,7 +459,16 @@ inline double LARS::Train(const arma::mat& matX,
         Deactivate(activeSet.size() - 1);
         Ignore(changeInd);
         CholeskyDelete(matUtriCholFactor.n_rows - 1);
-        continue;
+
+        // Note that although we are now ignoring this variable, we may still
+        // need to take a step with the previous beta direction towards the next
+        // variable we will add.
+        s = s.subvec(0, activeSet.size() - 1); // Drop last element.
+        unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
+            solve(trimatl(trans(matUtriCholFactor)), s));
+
+        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        betaDirection = normalization * unnormalizedBetaDirection;
       }
     }
     else
@@ -354,7 +498,18 @@ inline double LARS::Train(const arma::mat& matX,
         Log::Warn << "Encountered singularity when adding variable "
             << changeInd << " to active set; permanently removing."
             << std::endl;
-        continue;
+
+        // Note that although we are now ignoring this variable, we may still
+        // need to take a step with the previous beta direction towards the next
+        // variable we will add.
+        s = s.subvec(0, activeSet.size() - 1); // Drop last element.
+        matS = s * arma::ones<arma::mat>(1, activeSet.size());
+        // This worked last iteration, so there can't be a singularity.
+        solve(unnormalizedBetaDirection,
+            matGramActive % trans(matS) % matS,
+            arma::ones<arma::mat>(activeSet.size(), 1));
+        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        betaDirection = normalization * unnormalizedBetaDirection % s;
       }
     }
 
@@ -375,13 +530,24 @@ inline double LARS::Train(const arma::mat& matX,
         const double dirCorr = dot(dataRef.col(ind), yHatDirection);
         const double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
         const double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
-        if ((val1 > 0.0) && (val1 < gamma))
-          gamma = val1;
-        if ((val2 > 0.0) && (val2 < gamma))
-          gamma = val2;
-        // Handle edge case where the largest actually is equal to 0.
-        if (std::max(val1, val2) == 0.0)
-          gamma = 0.0;
+
+        // If we kicked out a feature due to the LASSO modification last
+        // iteration, then we do not allow relaxation of the step size to 0 for
+        // that feature in this iteration.
+        if (lassocond && (ind == lassocondInd))
+        {
+          if ((val1 > 0.0) && (val1 < gamma))
+            gamma = val1;
+          if ((val2 > 0.0) && (val2 < gamma))
+            gamma = val2;
+        }
+        else
+        {
+          if ((val1 >= 0.0) && (val1 < gamma))
+            gamma = val1;
+          if ((val2 >= 0.0) && (val2 < gamma))
+            gamma = val2;
+        }
       }
     }
 
@@ -389,6 +555,7 @@ inline double LARS::Train(const arma::mat& matX,
     if (lasso)
     {
       lassocond = false;
+      lassocondInd = dataRef.n_cols;
       double lassoboundOnGamma = DBL_MAX;
       size_t activeIndToKickOut = -1;
 
@@ -407,6 +574,7 @@ inline double LARS::Train(const arma::mat& matX,
         gamma = lassoboundOnGamma;
         lassocond = true;
         changeInd = activeIndToKickOut;
+        lassocondInd = activeSet[changeInd];
       }
     }
 
@@ -423,7 +591,9 @@ inline double LARS::Train(const arma::mat& matX,
     if (lassocond)
     {
       if (beta(activeSet[changeInd]) != 0)
+      {
         beta(activeSet[changeInd]) = 0;
+      }
     }
 
     betaPath.push_back(beta);
@@ -460,6 +630,31 @@ inline double LARS::Train(const arma::mat& matX,
     }
   }
 
+  // Perform un-scaling of learned beta, if needed, to account for
+  // normalization.
+  if (normalizeData)
+  {
+    for (size_t i = 0; i < betaPath.size(); ++i)
+    {
+      betaPath[i] /= stdX;
+    }
+  }
+
+  // Set the intercept values.  This is needed (for paranoia reasons) even if an
+  // intercept isn't fit, in case a user changes `fitIntercept` after training.
+  // If an intercept wasn't fit, we set them all to zero.
+  if (fitIntercept)
+  {
+    interceptPath.clear();
+    for (size_t i = 0; i < betaPath.size(); ++i)
+      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[i]));
+  }
+  else
+  {
+    interceptPath.clear();
+    interceptPath.resize(betaPath.size(), 0.0);
+  }
+
   // Unfortunate copy...
   beta = betaPath.back();
 
@@ -479,8 +674,12 @@ inline void LARS::Predict(const arma::mat& points,
                           const bool rowMajor) const
 {
   // We really only need to store beta internally...
-  if (rowMajor)
+  if (rowMajor && !fitIntercept)
     predictions = trans(points * betaPath.back());
+  else if (rowMajor)
+    predictions = trans(points * betaPath.back()) + interceptPath.back();
+  else if (fitIntercept)
+    predictions = betaPath.back().t() * points + interceptPath.back();
   else
     predictions = betaPath.back().t() * points;
 }
@@ -515,7 +714,7 @@ inline void LARS::ComputeYHatDirection(const arma::mat& matX,
 
 inline void LARS::InterpolateBeta()
 {
-  int pathLength = betaPath.size();
+  const size_t pathLength = betaPath.size();
 
   // interpolate beta and stop
   double ultimateLambda = lambdaPath[pathLength - 1];
@@ -683,8 +882,11 @@ void LARS::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(elasticNet));
   ar(CEREAL_NVP(lambda2));
   ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(fitIntercept));
+  ar(CEREAL_NVP(normalizeData));
   ar(CEREAL_NVP(betaPath));
   ar(CEREAL_NVP(lambdaPath));
+  ar(CEREAL_NVP(interceptPath));
   ar(CEREAL_NVP(activeSet));
   ar(CEREAL_NVP(isActive));
   ar(CEREAL_NVP(ignoreSet));

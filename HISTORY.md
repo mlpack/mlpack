@@ -1,14 +1,44 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Reinforcement Learning: Gaussian noise (#3515).
+
+  * Reinforcement Learning: Twin Delayed Deep Deterministic 
+    Policy Gradient (#3512).
+
+  * Reinforcement Learning: Ornstein-Uhlenbeck noise (#3499).
+
+  * Reinforcement Learning: Deep Deterministic Policy Gradient (#3494).
+
+  * Add `ClassProbabilities()` member to `DecisionTree` so that the internal
+    details of trees can be more easily inspected (#3511).
+
+### mlpack 4.2.0
+###### 2023-06-14
+  * Adapt C_ReLU, ReLU6, FlexibleReLU layer for new neural network API (#3445).
+
   * Fix PReLU, add integration test to it (#3473).
 
   * Fix bug in LogSoftMax derivative (#3469).
 
-  * Add `serialize` method to `GaussianInitialization`, `KathirvalavakumarSubavathiInitialization`, `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, and `OrthogonalInitialization` (#3483).
+  * Add `serialize` method to `GaussianInitialization`, 
+    `LecunNormalInitialization`,
+    `KathirvalavakumarSubavathiInitialization`, `NguyenWidrowInitialization`, 
+    and `OrthogonalInitialization` (#3483).
+
+  * Allow categorical features to `preprocess_one_hot_encode` (#3487).
+
+  * Install mlpack and cereal headers as part of R package (#3488).
+
+  * Add intercept and normalization support to LARS (#3493).
+
+  * Allow adding two features simultaneously to LARS models (#3493).
+
+  * Adapt FTSwish activation function (#3485).
+
+  * Adapt Hyper-Sinh activation function (#3491).
 
 ### mlpack 4.1.0
 ###### 2023-04-26
-
   * Adapt HardTanH layer (#3454).
 
   * Adapt Softmin layer for new neural network API (#3437).

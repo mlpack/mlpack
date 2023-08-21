@@ -23,7 +23,7 @@ import numpy
 
 numpy.import_array()
 
-cimport arma
+from .arma cimport Mat, Row, Col
 from libcpp cimport bool
 
 import platform
@@ -39,15 +39,15 @@ cdef extern from "numpy/arrayobject.h":
 cdef extern from "<mlpack/bindings/python/mlpack/arma_util.hpp>":
   void SetMemState[T](T& m, int state)
   size_t GetMemState[T](T& m)
-  double* GetMemory(arma.Mat[double]& m)
-  double* GetMemory(arma.Col[double]& m)
-  double* GetMemory(arma.Row[double]& m)
-  size_t* GetMemory(arma.Mat[size_t]& m)
-  size_t* GetMemory(arma.Col[size_t]& m)
-  size_t* GetMemory(arma.Row[size_t]& m)
+  double* GetMemory(Mat[double]& m)
+  double* GetMemory(Col[double]& m)
+  double* GetMemory(Row[double]& m)
+  size_t* GetMemory(Mat[size_t]& m)
+  size_t* GetMemory(Col[size_t]& m)
+  size_t* GetMemory(Row[size_t]& m)
 
-cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
-                                      bool takeOwnership) except +:
+cdef Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
+                                 bool takeOwnership) except +:
   """
   Convert a numpy ndarray to a matrix.  The memory will still be owned by numpy.
   """
@@ -58,18 +58,18 @@ cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Mat[double]* m = new arma.Mat[double](<double*> PyArray_DATA(X),
+  cdef Mat[double]* m = new Mat[double](<double*> PyArray_DATA(X),
       PyArray_SHAPE(X)[1], PyArray_SHAPE(X)[0], isWin, False)
 
   # Take ownership of the memory, if we need to and we are not on Windows.
   if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
-    SetMemState[arma.Mat[double]](m[0], 0)
+    SetMemState[Mat[double]](m[0], 0)
 
   return m
 
-cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
-                                      bool takeOwnership) except +:
+cdef Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
+                                 bool takeOwnership) except +:
   """
   Convert a numpy ndarray to a matrix.  The memory will still be owned by numpy.
   """
@@ -81,17 +81,17 @@ cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Mat[size_t]* m = new arma.Mat[size_t](<size_t*> PyArray_DATA(X),
+  cdef Mat[size_t]* m = new Mat[size_t](<size_t*> PyArray_DATA(X),
       PyArray_SHAPE(X)[1], PyArray_SHAPE(X)[0], isWin, False)
 
   # Take ownership of the memory, if we need to.
   if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
-    SetMemState[arma.Mat[size_t]](m[0], 0)
+    SetMemState[Mat[size_t]](m[0], 0)
 
   return m
 
-cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X) \
+cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(Mat[double]& X) \
     except +:
   """
   Convert an Armadillo object to a numpy ndarray.
@@ -106,13 +106,13 @@ cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X) \
     output = output.copy(order="C")
 
   # Transfer memory ownership, if needed.
-  if GetMemState[arma.Mat[double]](X) == 0 and not isWin:
-    SetMemState[arma.Mat[double]](X, 1)
+  if GetMemState[Mat[double]](X) == 0 and not isWin:
+    SetMemState[Mat[double]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_ARRAY_OWNDATA)
 
   return output
 
-cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X) \
+cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(Mat[size_t]& X) \
     except +:
   """
   Convert an Armadillo object to a numpy ndarray.
@@ -127,14 +127,14 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X) \
     output = output.copy(order="C")
 
   # Transfer memory ownership, if needed.
-  if GetMemState[arma.Mat[size_t]](X) == 0 and not isWin:
-    SetMemState[arma.Mat[size_t]](X, 1)
+  if GetMemState[Mat[size_t]](X) == 0 and not isWin:
+    SetMemState[Mat[size_t]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_ARRAY_OWNDATA)
 
   return output
 
-cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
-                                      bool takeOwnership) except +:
+cdef Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
+                                 bool takeOwnership) except +:
   """
   Convert a numpy one-dimensional ndarray to a row.  The memory will still be
   owned by numpy.
@@ -147,18 +147,18 @@ cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Row[double]* m = new arma.Row[double](<double*> PyArray_DATA(X),
+  cdef Row[double]* m = new Row[double](<double*> PyArray_DATA(X),
     PyArray_SHAPE(X)[0], isWin, False)
 
   # Transfer memory ownership, if needed.
   if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
-    SetMemState[arma.Row[double]](m[0], 0)
+    SetMemState[Row[double]](m[0], 0)
 
   return m
 
-cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
-                                      bool takeOwnership) except +:
+cdef Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
+                                 bool takeOwnership) except +:
   """
   Convert a numpy one-dimensional ndarray to a row.  The memory will still be
   owned by numpy.
@@ -171,17 +171,17 @@ cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Row[size_t]* m = new arma.Row[size_t](<size_t*> PyArray_DATA(X),
+  cdef Row[size_t]* m = new Row[size_t](<size_t*> PyArray_DATA(X),
       PyArray_SHAPE(X)[0], isWin, False)
 
   # Transfer memory ownership, if needed.
   if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
-    SetMemState[arma.Row[size_t]](m[0], 0)
+    SetMemState[Row[size_t]](m[0], 0)
 
   return m
 
-cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X) \
+cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(Row[double]& X) \
     except +:
   """
   Convert an Armadillo row vector to a one-dimensional numpy ndarray.
@@ -194,13 +194,13 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X) \
     output = output.copy(order="C")
 
   # Transfer memory ownership, if needed.
-  if GetMemState[arma.Row[double]](X) == 0 and not isWin:
-    SetMemState[arma.Row[double]](X, 1)
+  if GetMemState[Row[double]](X) == 0 and not isWin:
+    SetMemState[Row[double]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_ARRAY_OWNDATA)
 
   return output
 
-cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X) \
+cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(Row[size_t]& X) \
     except +:
   """
   Convert an Armadillo row vector to a one-dimensional numpy ndarray.
@@ -214,13 +214,37 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X) \
     output = output.copy(order="C")
 
   # Transfer memory ownership, if needed.
-  if GetMemState[arma.Row[size_t]](X) == 0 and not isWin:
-    SetMemState[arma.Row[size_t]](X, 1)
+  if GetMemState[Row[size_t]](X) == 0 and not isWin:
+    SetMemState[Row[size_t]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_ARRAY_OWNDATA)
 
   return output
 
-cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
+cdef Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
+                                 bool takeOwnership) except +:
+  """
+  Convert a numpy one-dimensional ndarray to a column vector.  The memory will
+  still be owned by numpy.
+  """
+  cdef int flags = PyArray_FLAGS(X)
+  if not (flags & numpy.NPY_ARRAY_C_CONTIGUOUS) or \
+    (not (flags & numpy.NPY_ARRAY_OWNDATA) and not isWin):
+    # If needed, make a copy where we own the memory, except on Windows where
+    # we never copy.
+    X = X.copy(order="C")
+    takeOwnership = True
+
+  cdef Col[double]* m = new Col[double](<double*> PyArray_DATA(X),
+      PyArray_SHAPE(X)[0], isWin, False)
+
+  # Transfer memory ownership, if needed.
+  if takeOwnership and not isWin:
+    PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
+    SetMemState[Col[double]](m[0], 0)
+
+  return m
+
+cdef Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
                                       bool takeOwnership) except +:
   """
   Convert a numpy one-dimensional ndarray to a column vector.  The memory will
@@ -234,41 +258,17 @@ cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
     X = X.copy(order="C")
     takeOwnership = True
 
-  cdef arma.Col[double]* m = new arma.Col[double](<double*> PyArray_DATA(X),
+  cdef Col[size_t]* m = new Col[size_t](<size_t*> PyArray_DATA(X), 
       PyArray_SHAPE(X)[0], isWin, False)
 
   # Transfer memory ownership, if needed.
   if takeOwnership and not isWin:
     PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
-    SetMemState[arma.Col[double]](m[0], 0)
+    SetMemState[Col[size_t]](m[0], 0)
 
   return m
 
-cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
-                                      bool takeOwnership) except +:
-  """
-  Convert a numpy one-dimensional ndarray to a column vector.  The memory will
-  still be owned by numpy.
-  """
-  cdef int flags = PyArray_FLAGS(X)
-  if not (flags & numpy.NPY_ARRAY_C_CONTIGUOUS) or \
-    (not (flags & numpy.NPY_ARRAY_OWNDATA) and not isWin):
-    # If needed, make a copy where we own the memory, except on Windows where
-    # we never copy.
-    X = X.copy(order="C")
-    takeOwnership = True
-
-  cdef arma.Col[size_t]* m = new arma.Col[size_t](<size_t*> PyArray_DATA(X), 
-      PyArray_SHAPE(X)[0], isWin, False)
-
-  # Transfer memory ownership, if needed.
-  if takeOwnership and not isWin:
-    PyArray_CLEARFLAGS(X, numpy.NPY_ARRAY_OWNDATA)
-    SetMemState[arma.Col[size_t]](m[0], 0)
-
-  return m
-
-cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X) \
+cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(Col[double]& X) \
     except +:
   """
   Convert an Armadillo column vector to a one-dimensional numpy ndarray.
@@ -281,13 +281,13 @@ cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X) \
     output = output.copy(order="C")
 
   # Transfer memory ownership, if needed.
-  if GetMemState[arma.Col[double]](X) == 0 and not isWin:
-    SetMemState[arma.Col[double]](X, 1)
+  if GetMemState[Col[double]](X) == 0 and not isWin:
+    SetMemState[Col[double]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_ARRAY_OWNDATA)
 
   return output
 
-cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X) \
+cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(Col[size_t]& X) \
     except +:
   """
   Convert an Armadillo column vector to a one-dimensional numpy ndarray.
@@ -300,8 +300,8 @@ cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X) \
     output = output.copy(order="C")
 
   # Transfer memory ownership, if needed.
-  if GetMemState[arma.Col[size_t]](X) == 0 and not isWin:
-    SetMemState[arma.Col[size_t]](X, 1)
+  if GetMemState[Col[size_t]](X) == 0 and not isWin:
+    SetMemState[Col[size_t]](X, 1)
     PyArray_ENABLEFLAGS(output, numpy.NPY_ARRAY_OWNDATA)
 
   return output

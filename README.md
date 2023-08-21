@@ -21,7 +21,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.1.0.tar.gz">current stable version (4.1.0)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.2.0.tar.gz">current stable version (4.2.0)</a>
   </em>
 </p>
 
@@ -155,7 +155,9 @@ the configuration and build process.  Simply add these to the `cmake` command.
 Some options are given below:
 
  - `-DDOWNLOAD_DEPENDENCIES=ON` will automatically download mlpack's
-   dependencies (ensmallen, Armadillo, and cereal).
+   dependencies (ensmallen, Armadillo, and cereal).  Installing Armadillo this
+   way is not recommended and it is better to use your system package manager
+   when possible (see [below](#31a-linking-with-autodownloaded-armadillo)).
  - `-DCMAKE_INSTALL_PREFIX=/install/root/` will set the root of the install
    directory to `/install/root` when `make install` is run.
  - `-DDEBUG=ON` will enable debugging symbols in any compiled bindings or tests.
@@ -186,6 +188,35 @@ neural network, a compilation error will occur.
 See the [C++ quickstart](doc/quickstart/cpp.md) and the
 [examples](https://github.com/mlpack/examples) repository for some examples of
 mlpack applications in C++, with corresponding `Makefile`s.
+
+#### 3.1.a. Linking with autodownloaded Armadillo
+
+When the autodownloader is used to download Armadillo
+(`-DDOWNLOAD_DEPENDENCIES=ON`), the Armadillo runtime library is not built and
+Armadillo must be used in header-only mode.  The autodownloader also does not
+download dependencies of Armadillo such as OpenBLAS.  For this reason, it is
+recommended to instead install Armadillo using your system package manager,
+which will also install the dependencies of Armadillo.  For example, on Ubuntu
+and Debian systems, Armadillo can be installed with
+
+```sh
+sudo apt-get install libarmadillo-dev
+```
+
+and other package managers such as `dnf` and `brew` and `pacman` also have
+Armadillo packages available.
+
+If the autodownloader is used to provide Armadillo, mlpack programs cannot be
+linked with `-larmadillo`.  Instead, you must link directly with the
+dependencies of Armadillo.  For example, on a system that has OpenBLAS
+available, compilation can be done like this:
+
+```sh
+g++ -O3 -std=c++14 -o my_program my_program.cpp -lopenblas -fopenmp
+```
+
+See [the Armadillo documentation](https://arma.sourceforge.net/faq.html#linking)
+for more information on linking Armadillo programs.
 
 ### 3.2. Reducing compile time
 
@@ -264,6 +295,7 @@ With that in mind, if you would still like to manually build the mlpack Python
 bindings, first make sure that the following Python packages are installed:
 
  - setuptools
+ - wheel
  - cython >= 0.24
  - numpy
  - pandas >= 0.15.0

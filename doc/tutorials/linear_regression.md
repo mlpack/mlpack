@@ -388,6 +388,11 @@ LinearRegression lr;
 data::Load(filename, "lr_model", lr);
 ```
 
+Here, `"lr_model"` is the name given to the model.  The
+`mlpack_linear_regression` command-line program uses the default name `"model"`,
+so if you want to load a model in C++ that was created by the command-line
+program, be sure to use the name `"model"` when loading.
+
 ### Prediction
 
 Once you have generated or loaded a model using one of the aforementioned
