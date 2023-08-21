@@ -9,7 +9,7 @@
  * @code
  * @misc{
  *   author = {Weihao Yu, Chenyang Si, Pan Zhou, Mi Luo, Yichen Zhou,
- * Jiashi Feng, Shuicheng Yan, Xinchao Wang},
+ *   Jiashi Feng, Shuicheng Yan, Xinchao Wang},
  *   title = {MetaFormer Baselines for Vision},
  *   year = {2022}
  * }
