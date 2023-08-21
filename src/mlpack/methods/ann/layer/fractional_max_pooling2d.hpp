@@ -48,6 +48,13 @@ class FractionalMaxPooling2DType : public Layer<MatType>
   //! Take ownership of the given FractionalMaxPooling2D.
   FractionalMaxPooling2DType& operator=(FractionalMaxPooling2DType&& other);
 
+    //! Clone the AdaptiveMaxPoolingType object.
+    //! This handles polymorphism correctly.
+    FractionalMaxPooling2DType* Clone() const
+    {
+      return new FractionalMaxPooling2DType(*this);
+    }
+
   void Forward(const MatType& input, MatType& output);
 
   void Backward(const MatType& input,

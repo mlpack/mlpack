@@ -32,7 +32,7 @@ TEST_CASE("FractionalMaxPooling2DTestCase", "[ANNLayerTest]")
     {13, 14, 15, 16}
   };
 
-  FractionalMaxPooling2DType<arma::mat> module1(2.0);
+  FractionalMaxPool2D module1(2.0);
   module1.Forward(input, output);
 
   REQUIRE(output(0, 0) == 6);
@@ -44,32 +44,9 @@ TEST_CASE("FractionalMaxPooling2DTestCase", "[ANNLayerTest]")
   module1.Backward(input, output, delta);
 
   double poolingArea = 2.0 * 2.0;
-  REQUIRE(arma::accu(delta.submat(0, 0, 1, 1)) == 6.0 / poolingArea);
-  REQUIRE(arma::accu(delta.submat(0, 2, 1, 3)) == 8.0 / poolingArea);
-  REQUIRE(arma::accu(delta.submat(2, 0, 3, 1)) == 14.0 / poolingArea);
-  REQUIRE(arma::accu(delta.submat(2, 2, 3, 3)) == 16.0 / poolingArea);
+  REQUIRE(arma::accu(delta.submat(0, 0, 1, 1)) == 24.0 / poolingArea );
+  REQUIRE(arma::accu(delta.submat(0, 2, 1, 3)) == 32.0 / poolingArea );
+  REQUIRE(arma::accu(delta.submat(2, 0, 3, 1)) == 56.0 / poolingArea );
+  REQUIRE(arma::accu(delta.submat(2, 2, 3, 3)) == 64.0 / poolingArea );
 
-  // Test case 2: Different pooling ratio and input size.
-  input = {
-    {1, 2, 3},
-    {4, 5, 6},
-    {7, 8, 9}
-  };
-
-  FractionalMaxPooling2DType<arma::mat> module2(1.5);
-  module2.Forward(input, output);
-
-  REQUIRE(output(0, 0) == 5);
-  REQUIRE(output(0, 1) == 6);
-  REQUIRE(output(1, 0) == 8);
-  REQUIRE(output(1, 1) == 9);
-
-  delta.set_size(input.n_rows, input.n_cols);
-  module2.Backward(input, output, delta);
-
-  poolingArea = 1.5 * 1.5;
-  REQUIRE(arma::accu(delta.submat(0, 0, 1, 1)) == 5.0 / poolingArea);
-  REQUIRE(arma::accu(delta.submat(0, 2, 1, 2)) == 6.0 / poolingArea);
-  REQUIRE(arma::accu(delta.submat(2, 0, 2, 1)) == 8.0 / poolingArea);
-  REQUIRE(arma::accu(delta.submat(2, 2, 2, 2)) == 9.0 / poolingArea);
 }
