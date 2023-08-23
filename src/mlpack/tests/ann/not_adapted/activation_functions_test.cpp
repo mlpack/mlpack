@@ -36,6 +36,7 @@
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hyper_sinh_function.hpp>
+#include <mlpack/methods/ann/activation_functions/shifted_softplus.hpp>
 
 #include "../catch.hpp"
 

@@ -806,3 +806,21 @@ TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
 }
+/**
+ * Basic test of the Shifted-Softplus Function
+ */
+TEST_CASE("ShiftedSoftplusTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2.1 3.2 0.3 0 -1.7 2.8 0.11 -1.2 -0.4");
+
+  // Hand-calculated values.
+  arma::colvec desiredActivation(
+      "-0.326028 2.10575 0.580977 0 -0.147346 1.91845 0.600334 -0.151768 0.182337");
+
+  // Hand-calculated values.
+  arma::colvec desiredDerivate(
+      "-0.56975 0.883633 0.67473 0.666667 -0.542556 0.846194 0.677356 -0.546823 0.570116");
+
+  CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
+  CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
+}
