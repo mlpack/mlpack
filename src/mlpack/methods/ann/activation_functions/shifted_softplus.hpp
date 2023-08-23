@@ -62,7 +62,7 @@ class ShiftedSoftplusFunction
      */
     static double Deriv(const double y)
     {
-      (0.5 * std::exp(y)) / (0.5 * std::exp(y) + 0.5);
+      return (0.5 * std::exp(y)) / (0.5 * std::exp(y) + 0.5);
     }
 
     /**
