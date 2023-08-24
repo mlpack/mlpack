@@ -814,11 +814,11 @@ TEST_CASE("ShiftedSoftplusTest", "[ActivationFunctionsTest]")
   const arma::colvec activationData("-2.1 3.2 0.3 0 -1.7 2.8 0.11 -1.2 -0.4");
 
   // Hand-calculated values.
-  arma::colvec desiredActivation(
+  const arma::colvec desiredActivation(
       "-0.577628 2.54681 0.161208 0 -0.525361 2.16589 0.0565117 -0.429865 -0.180132");
 
   // Hand-calculated values.
-  arma::colvec desiredDerivate(
+  const arma::colvec desiredDerivate(
       "0.359479 0.927359 0.540215 0.5 0.371599 0.897144 0.514124 0.394159 0.455088");
 
   CheckActivationCorrect<ShiftedSoftplusFunction>(activationData, desiredActivation);
