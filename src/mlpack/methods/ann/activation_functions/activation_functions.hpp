@@ -37,5 +37,6 @@
 #include "tanh_function.hpp"
 #include "hyper_sinh_function.hpp"
 #include "shifted_softplus.hpp"
+#include "bipolar_sigmoid_function.hpp"
 
 #endif

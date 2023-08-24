@@ -37,6 +37,7 @@
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hyper_sinh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/shifted_softplus.hpp>
+#include <mlpack/methods/ann/activation_functions/bipolar_sigmoid_function.hpp>
 
 #include "../catch.hpp"
 
