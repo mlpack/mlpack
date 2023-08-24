@@ -64,7 +64,7 @@ TEST_CASE("StarReLUTest", "[ANNLayerTest]")
 }
 
 /**
- * JacobianTest for starRelu layer
+ * JacobianTest for StarRelu layer
  */
 TEST_CASE("JacobianStarReluLayerTest", "[ANNLayerTest]")
 {

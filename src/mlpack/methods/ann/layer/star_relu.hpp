@@ -2,7 +2,7 @@
  * @file methods/ann/layer/star_relu.hpp
  * @author Mayank Raj
  *
- * Definition of StarReLU layer introduced byWeihao Yu, Chenyang Si, Pan Zhou,
+ * Definition of StarReLU layer introduced by Weihao Yu, Chenyang Si, Pan Zhou,
  * Mi Luo, Yichen Zhou, Jiashi Feng, Shuicheng Yan, Xinchao Wang.
  * For more information, see the following paper.
  *
