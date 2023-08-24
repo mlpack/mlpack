@@ -2,8 +2,19 @@
  * @file methods/ann/activation_functions/shifted_softplus.hpp
  * @author Mayank Raj
  *
- * Definition and implementation of the Shifted-Softplus function.
+ * Definition and implementation of the Shifted-Softplus functionKristof T. Schütt,
+ * Pieter-Jan Kindermans, Huziel E. Sauceda, Stefan Chmiela, Alexandre Tkatchenko, Klaus-Robert Müller.
+ * For more information, see the following paper.
  *
+ * @code
+ * @misc{
+ *   author = {Kristof T. Schütt, Pieter-Jan Kindermans, Huziel E. Sauceda,
+ *   Stefan Chmiela, Alexandre Tkatchenko, Klaus-Robert Müller},
+ *   title = {SchNet: A continuous-filter convolutional neural network for
+ *   modeling quantum interactions},
+ *   year = {2017}
+ * }
+ * @endcode
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -35,7 +46,7 @@ class ShiftedSoftplusFunction
    */
   static double Fn(const double x)
   {
-      return std::log(0.5 * std::exp(x) + 0.5);
+    return std::log(0.5 * std::exp(x) + 0.5);
   }
 
   /**
@@ -50,7 +61,7 @@ class ShiftedSoftplusFunction
     y.set_size(x.size());
     for(size_t i = 0; i < x.n_elem; ++i)
     {
-        y(i) = std::log(0.5 * std::exp(x(i)) + 0.5);
+      y(i) = std::log(0.5 * std::exp(x(i)) + 0.5);
     }
   }
 
@@ -77,7 +88,7 @@ class ShiftedSoftplusFunction
       x.set_size(y.size());
       for(size_t i = 0; i < y.n_elem; ++i)
       {
-          x(i) = (0.5 * std::exp(y(i))) / (0.5 * std::exp(y(i)) + 0.5);
+        x(i) = (0.5 * std::exp(y(i))) / (0.5 * std::exp(y(i)) + 0.5);
       }
     }
   }; // class ShiftedSoftplusFunction
