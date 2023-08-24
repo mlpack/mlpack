@@ -70,7 +70,7 @@ class ElliotFunction
    */
   static double Deriv(const double y)
   {
-    return 1.0 / std::pow(1.0 + std::abs(y), 2);
+    return std::pow(1.0 - std::abs(y), 2);
   }
 
   /**
@@ -82,7 +82,7 @@ class ElliotFunction
   template <typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType &y, OutputVecType &x)
   {
-    x = 1.0 / arma::pow(1.0 + arma::abs(y), 2);
+    x = arma::pow(1.0 - arma::abs(y), 2);
   }
 }; // class ElliotFunction
 

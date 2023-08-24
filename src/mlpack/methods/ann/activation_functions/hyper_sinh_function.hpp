@@ -80,9 +80,9 @@ class HyperSinhFunction
   static double Deriv(const double y)
   {
     if (y > 0)
-      return (std::cosh(y) / 3);
+      return (std::pow((1.0 / 9.0) + (y * y), 0.5));
     else
-      return ((3.0 / 4.0) * std::pow(y, 2));
+      return (3.0  * std::pow(std::pow(y, 2) / 4, 1.0 / 3.0));
   }
 
   /**
@@ -95,15 +95,16 @@ class HyperSinhFunction
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
     x.set_size(y.size());
+    #pragma omp for
     for(size_t i = 0; i < y.n_elem; ++i)
     {
       if (y(i) > 0)
       {
-        x(i) = std::cosh(y(i)) / 3;
+        x(i) = (std::pow((1.0 / 9.0) + (y(i) * y(i)), 0.5));
       }
       else
       {
-        x(i) = (3.0 / 4.0) * std::pow(y(i), 2);
+        x(i) = (3.0 * std::pow(std::pow(y(i), 2) / 4, 1.0 / 3.0));
       }
     }
   }
