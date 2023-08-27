@@ -602,26 +602,6 @@ TEST_CASE("ElliotFunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
- * Basic test of the EliSH function.
- */
-TEST_CASE("ElishFunctionTest", "[ActivationFunctionsTest]")
-{
-  // Manually-calculated using python-numpy module.
-  const arma::colvec desiredActivations("-0.10307056 3.0746696 4.4505587 \
-                                         -3.0457406e-44 0.731058578 \
-                                         -0.1700034 1.76159415 0.0 ");
-
-  const arma::colvec desiredDerivatives("0.4033889 1.0856292 \
-                                         1.03921798 0.5 0.83540389 \
-                                         0.34725726 1.07378804 0.5");
-
-  CheckActivationCorrect<ElishFunction>(activationData,
-                                        desiredActivations);
-  CheckDerivativeCorrect<ElishFunction>(desiredActivations,
-                                        desiredDerivatives);
-}
-
-/**
  * Basic test of the inverse quadratic function.
  */
 TEST_CASE("InverseQuadraticFunctionTest", "[ActivationFunctionsTest]")

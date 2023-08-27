@@ -25,7 +25,6 @@
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
-#include <mlpack/methods/ann/activation_functions/elish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
@@ -51,7 +50,6 @@ namespace mlpack {
  *  - Mish
  *  - LiSHT
  *  - GELU
- *  - ELiSH
  *  - Elliot
  *  - Gaussian
  *  - HardSwish
@@ -202,14 +200,6 @@ typedef BaseLayer<ElliotFunction, arma::mat> Elliot;
 
 template<typename MatType = arma::mat>
 using ElliotType = BaseLayer<ElliotFunction, MatType>;
-
-/**
- * Standard ELiSH-Layer using the ELiSH activation function.
- */
-typedef BaseLayer<ElishFunction, arma::mat> Elish;
-
-template<typename MatType = arma::mat>
-using ElishType = BaseLayer<ElishFunction, MatType>;
 
 /**
  * Standard Gaussian-Layer using the Gaussian activation function.

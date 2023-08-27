@@ -52,6 +52,7 @@
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
+#include <mlpack/methods/ann/layer/elish_function.hpp>
 
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
