@@ -436,6 +436,12 @@ macro (post_r_setup)
     )
   endforeach()
 
+  # Copy configured config.hpp.
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy
+      "${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp"
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/config.hpp")
+
   foreach(r_src_file ${R_SRC_FILES})
     if ("${r_src_file}" MATCHES "methods/" OR
         "${r_src_file}" MATCHES "core/" OR
