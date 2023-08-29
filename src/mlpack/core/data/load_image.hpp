@@ -11,7 +11,7 @@
  */
 
 #ifndef MLPACK_CORE_DATA_LOAD_IMAGE_HPP
-#define MLPACK_CORE_DATA_LOAD_IMAGE_HPP 
+#define MLPACK_CORE_DATA_LOAD_IMAGE_HPP
 
 #include "image_info.hpp"
 
@@ -21,10 +21,22 @@
 // be included here directly.
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
-#ifdef MLPACK_HAS_STB_DIR
-  #include <stb/stb_image.h>
+
+#if defined __has_include
+  #if __has_include("stb_image.h")
+    #include "stb_image.h"
+  #elif __has_include("stb/stb_image.h")
+    #include "stb/stb_image.h"
+  #else
+    #undef MLPACK_HAS_STB
+    #pragma message("Warning: STB disabled; stb_image.h header not found")
+  #endif
 #else
-  #include <stb_image.h>
+  #ifdef MLPACK_HAS_STB_DIR
+    #include "stb/stb_image.h"
+  #else
+    #include "stb_image.h"
+  #endif
 #endif
 
 #endif // MLPACK_HAS_STB

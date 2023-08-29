@@ -37,6 +37,9 @@
 // If STB support is available but the STB headers do not live in an stb/
 // directory, then MLPACK_HAS_NO_STB_DIR should be defined.
 //
+// Note that this is ignored in newer compilers where __has_include is available
+// (C++17 and newer compilers support it).
+//
 #ifdef MLPACK_HAS_STB
 #ifndef MLPACK_HAS_NO_STB_DIR
 // #define MLPACK_HAS_NO_STB_DIR
