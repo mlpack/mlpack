@@ -74,21 +74,15 @@
 // is useful if you cannot or do not want to modify config.hpp.)
 //
 #ifdef MLPACK_DISABLE_STB
-  #ifdef MLPACK_HAS_STB
-    #undef MLPACK_HAS_STB
-  #endif
+  #undef MLPACK_HAS_STB
 #endif
 
 #ifdef MLPACK_DISABLE_NO_STB_DIR
-  #ifdef MLPACK_HAS_NO_STB_DIR
-    #undef MLPACK_HAS_NO_STB_DIR
-  #endif
+  #undef MLPACK_HAS_NO_STB_DIR
 #endif
 
 #ifdef MLPACK_DISABLE_BFD_DL
-  #ifdef MLPACK_HAS_BFD_DL
-    #undef MLPACK_HAS_BFD_DL
-  #endif
+  #undef MLPACK_HAS_BFD_DL
 #endif
 
 #endif
