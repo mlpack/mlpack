@@ -66,31 +66,31 @@ class ShiftedSoftplusFunction
   }
 
   /**
-     * Computes the first derivative of the Shifted-Softplus function.
-     *
-     * @param y Input activation.
-     * @return f'(x)
-     */
-    static double Deriv(const double y)
-    {
-      return (0.5 * std::exp(y)) / (0.5 * std::exp(y) + 0.5);
-    }
+   * Computes the first derivative of the Shifted-Softplus function.
+   *
+   * @param y Input activation.
+   * @return f'(x)
+   */
+  static double Deriv(const double y)
+  {
+    return (0.5 * std::exp(y)) / (0.5 * std::exp(y) + 0.5);
+   }
 
-    /**
-     * Computes the first derivatives of the Shifted-Softplus function.
-     *
-     * @param y Input activations.
-     * @param x The resulting derivatives.
-     */
-    template<typename InputVecType, typename OutputVecType>
-    static void Deriv(const InputVecType& y, OutputVecType& x)
+  /**
+   * Computes the first derivatives of the Shifted-Softplus function.
+   *
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+  template<typename InputVecType, typename OutputVecType>
+  static void Deriv(const InputVecType& y, OutputVecType& x)
+  {
+    x.set_size(y.size());
+    for(size_t i = 0; i < y.n_elem; ++i)
     {
-      x.set_size(y.size());
-      for(size_t i = 0; i < y.n_elem; ++i)
-      {
-        x(i) = (0.5 * std::exp(y(i))) / (0.5 * std::exp(y(i)) + 0.5);
-      }
-    }
+      x(i) = (0.5 * std::exp(y(i))) / (0.5 * std::exp(y(i)) + 0.5);
+     }
+  }
   }; // class ShiftedSoftplusFunction
   } // namespace mlpack
 
