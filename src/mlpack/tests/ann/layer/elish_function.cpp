@@ -55,7 +55,7 @@ TEST_CASE("ElishTest", "[ANNLayerTest]")
     layer -> Backward(output, gy, g);
 
     // Test the Backward function.
-    REQUIRE(arma::approx_equal(g, delta, "absdiff", 1e-5));
+    REQUIRE(arma::approx_equal(g, desiredDerivatives, "absdiff", 1e-5));
 }
 
 TEST_CASE("JacobianElishTest", "[ANNLayerTest]")
