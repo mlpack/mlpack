@@ -13,7 +13,6 @@
 #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ACTIVATION_FUNCTIONS_HPP
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ACTIVATION_FUNCTIONS_HPP
 
-#include "elish_function.hpp"
 #include "elliot_function.hpp"
 #include "gaussian_function.hpp"
 #include "gelu_function.hpp"
