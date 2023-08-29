@@ -73,6 +73,32 @@
 #endif
 
 //
+// Perform autodetection of STB if possible.
+//
+#ifndef MLPACK_HAS_STB
+  #if defined __has_include
+    #if __has_include("stb_image.h")
+      #define MLPACK_HAS_STB_IMAGE
+    #elif __has_include("stb/stb_image.h")
+      #define MLPACK_HAS_STB_IMAGE
+    #endif
+
+    #if __has_include("stb_image_write.h")
+      #define MLPACK_HAS_STB_IMAGE_WRITE
+    #elif __has_include("stb/stb_image_write.h")
+      #define MLPACK_HAS_STB_IMAGE_WRITE
+    #endif
+
+    #if defined(MLPACK_HAS_STB_IMAGE) && defined(MLPACK_HAS_STB_IMAGE_WRITE)
+      #define MLPACK_HAS_STB
+    #endif
+
+    #undef MLPACK_HAS_STB_IMAGE
+    #undef MLPACK_HAS_STB_IMAGE_WRITE
+  #endif
+#endif
+
+//
 // These macros can be defined to disable support that is defined above.  (This
 // is useful if you cannot or do not want to modify config.hpp.)
 //
