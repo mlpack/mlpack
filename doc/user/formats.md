@@ -301,7 +301,8 @@ mlpack's image saving/loading functionality is based on
 
 ### Image Utilities API
 
-mlpack's image utilities support loading and saving of images.
+mlpack's image utilities support loading and saving of images, if STB is
+available on the system.
 
 There is support for the following filetypes: `jpg`, `png`, `tga`, `bmp`, `psd`,
 `gif`, `hdr`, `pic`, `pnm` for loading, and `jpg`, `png`, `tga`, `bmp`, `hdr`
