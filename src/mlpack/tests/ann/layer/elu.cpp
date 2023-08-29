@@ -1,8 +1,8 @@
 /**
- * @file tests/ann/layer/elish_function.cpp
+ * @file tests/ann/layer/elu.cpp
  * @author Satyam Shukla
  *
- * Tests the elish layer.
+ * Tests the ELU layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,23 +20,23 @@
 using namespace mlpack;
 
 /**
- * Simple test case for the Elish layer.
+ * Simple test case for the ELU layer.
  */
-TEST_CASE("ElishTest", "[ANNLayerTest]")
+TEST_CASE("ELUTest", "[ANNLayerTest]")
 {
 
-    // Create the Elish layer.
-    ElishType<arma::colvec>* layer = new ElishType<arma::colvec>;
+    // Create the ELU layer.
+    ELUType<arma::colvec>* layer = new ELUType<arma::colvec>;
 
     // Input and output matrices.
     const arma::colvec input("-2 3.2 4.5 -100.2 1 -1 2 0");
-    const arma::colvec desiredActivations("-0.10307056 3.0746696 4.4505587 \
-                                         -3.0457406e-44 0.731058578 \
-                                         -0.1700034 1.76159415 0.0 ");
+    const arma::colvec desiredActivations("-1.5201665 3.3622432 4.7281544 \
+                                         -1.7580993 1.050701 -1.1113307 \
+                                         2.101402 0");
 
-    const arma::colvec desiredDerivatives("-0.074651888 1.0812559 1.0379111 \
-                                          0 0.92767051 -0.025344425 1.0907842 \
-                                          0.5 ");
+    const arma::colvec desiredDerivatives("0.23793287 1.050701 1.050701 0 \
+                                         1.050701 0.6467686 1.050701 \
+                                         1.7580993 ");
     arma::colvec output;
 
     // Forward pass.
@@ -58,13 +58,14 @@ TEST_CASE("ElishTest", "[ANNLayerTest]")
     REQUIRE(arma::approx_equal(g, delta, "absdiff", 1e-5));
 }
 
-TEST_CASE("JacobianElishTest", "[ANNLayerTest]")
+TEST_CASE("JacobianELUTest", "[ANNLayerTest]")
 {
     const size_t elems = arma::randi(arma::distr_param(2, 1000));
+    const int alpha = arma::randi<int>(arma::distr_param(1, 3));
 
     arma::mat input(elems, 1);
 
-    Elish module;
+    ELU module(alpha);
     module.InputDimensions() = { elems };
     module.ComputeOutputDimensions();
     module.Training() = true;

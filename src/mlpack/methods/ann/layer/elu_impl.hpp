@@ -96,6 +96,9 @@ template<typename MatType>
 void ELUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
+  output.set_size(arma::size(input));
+
+  #pragma omp for
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < DBL_MAX)
@@ -104,7 +107,8 @@ void ELUType<MatType>::Forward(
           (std::exp(input(i)) - 1);
     }
   }
-
+  
+  #pragma omp for
   if (this->training)
   {
     derivative.set_size(arma::size(input));
