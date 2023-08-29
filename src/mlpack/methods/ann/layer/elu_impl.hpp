@@ -108,10 +108,11 @@ void ELUType<MatType>::Forward(
     }
   }
   
-  #pragma omp for
   if (this->training)
   {
     derivative.set_size(arma::size(input));
+    
+    #pragma omp for
     for (size_t i = 0; i < input.n_elem; ++i)
       derivative(i) = (input(i) > 0) ? lambda : output(i) + lambda * alpha;
   }
