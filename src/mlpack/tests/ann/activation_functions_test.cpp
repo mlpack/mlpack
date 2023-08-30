@@ -875,8 +875,11 @@ TEST_CASE("ShiftedSoftplusTest", "[ActivationFunctionsTest]")
 
   // Hand-calculated values.
   const arma::colvec desiredDerivate(
-      "0.359479 0.927359 0.540215 0.5 0.371599 0.897144 0.514124 0.394159 0.455088");
+      "0.109097 0.960834 0.574442 0.5 0.154465 0.942676 0.527472 0.231475 0.401312");
 
   CheckActivationCorrect<ShiftedSoftplusFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<ShiftedSoftplusFunction>(desiredActivation, desiredDerivate);
+    arma::mat inputTemp(activationData.n_elem, 1);
+    double maxRelativeError = ActivationJacobianTest<ShiftedSoftplusFunction>(inputTemp);
+    REQUIRE(maxRelativeError <= 1e-3);
 }

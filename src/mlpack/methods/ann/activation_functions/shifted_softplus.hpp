@@ -73,7 +73,7 @@ class ShiftedSoftplusFunction
    */
   static double Deriv(const double y)
   {
-    return (0.5 * std::exp(y)) / (0.5 * std::exp(y) + 0.5);
+    return 1 - 0.5 / std::exp(y);
    }
 
   /**
@@ -88,7 +88,7 @@ class ShiftedSoftplusFunction
     x.set_size(y.size());
     for(size_t i = 0; i < y.n_elem; ++i)
     {
-      x(i) = (0.5 * std::exp(y(i))) / (0.5 * std::exp(y(i)) + 0.5);
+      x(i) = Deriv(y(i));
      }
   }
   }; // class ShiftedSoftplusFunction
