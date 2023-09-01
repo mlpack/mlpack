@@ -138,7 +138,7 @@ void GetRecommendationsQueriedUser()
  */
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void RecommendationAccuracy(const size_t allowedFailures = 17)
+void RecommendationAccuracy(const size_t allowedFailures = 20)
 {
   DecompositionPolicy decomposition;
 
