@@ -20,10 +20,15 @@ install(FILES
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
+    # Note: config.hpp does not get installed from the source directory!
+    # The configured version gets installed.
     "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/namespace_compat.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mlpack/")
+install(FILES "${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/mlpack"
+    RENAME "config.hpp")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/core" DESTINATION
     "${CMAKE_INSTALL_INCLUDEDIR}/mlpack")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/methods" DESTINATION
