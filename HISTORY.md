@@ -1,5 +1,5 @@
-### mlpack ?.?.?
-###### ????-??-??
+### mlpack 4.2.1
+###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
 
   * Reinforcement Learning: Twin Delayed Deep Deterministic
