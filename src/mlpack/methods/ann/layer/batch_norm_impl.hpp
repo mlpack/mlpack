@@ -216,26 +216,26 @@ void BatchNormType<MatType>::Forward(
     // Calculate mean and variance over all channels.
     MatType mean = arma::sum(arma::sum(inputTemp, 2), 0) / m;
     variance = arma::sum(arma::sum(arma::pow(
-        inputTemp.each_slice() - arma::repmat(mean,
+        inputTemp.each_slice() - arma::repmat<MatType>(mean,
         inputSize, 1), 2), 2), 0) / m;
 
-    outputTemp.each_slice() -= arma::repmat(mean, inputSize, 1);
+    outputTemp.each_slice() -= arma::repmat<MatType>(mean, inputSize, 1);
 
     // Used in backward propagation.
     inputMean.set_size(arma::size(inputTemp));
     inputMean = outputTemp;
 
     // Normalize output.
-    outputTemp.each_slice() /= arma::sqrt(arma::repmat(variance,
+    outputTemp.each_slice() /= arma::sqrt(arma::repmat<MatType>(variance,
         inputSize, 1) + eps);
 
     // Re-used in backward propagation.
     normalized.set_size(arma::size(inputTemp));
     normalized = outputTemp;
 
-    outputTemp.each_slice() %= arma::repmat(gamma.t(),
+    outputTemp.each_slice() %= arma::repmat<MatType>(gamma.t(),
         inputSize, 1);
-    outputTemp.each_slice() += arma::repmat(beta.t(),
+    outputTemp.each_slice() += arma::repmat<MatType>(beta.t(),
         inputSize, 1);
 
     count += 1;
@@ -260,13 +260,13 @@ void BatchNormType<MatType>::Forward(
         const_cast<MatType&>(output).memptr(), inputSize, size,
         batchSize * higherDimension, false, false);
 
-    outputTemp.each_slice() -= arma::repmat(runningMean.t(),
+    outputTemp.each_slice() -= arma::repmat<MatType>(runningMean.t(),
         inputSize, 1);
-    outputTemp.each_slice() /= arma::sqrt(arma::repmat(runningVariance.t(),
+    outputTemp.each_slice() /= arma::sqrt(arma::repmat<MatType>(runningVariance.t(),
         inputSize, 1) + eps);
-    outputTemp.each_slice() %= arma::repmat(gamma.t(),
+    outputTemp.each_slice() %= arma::repmat<MatType>(gamma.t(),
         inputSize, 1);
-    outputTemp.each_slice() += arma::repmat(beta.t(),
+    outputTemp.each_slice() += arma::repmat<MatType>(beta.t(),
         inputSize, 1);
   }
 }
@@ -277,7 +277,7 @@ void BatchNormType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
 
   const size_t batchSize = input.n_cols;
   const size_t inputSize = inputDimension;
@@ -292,7 +292,7 @@ void BatchNormType<MatType>::Backward(
 
   // Step 1: dl / dxhat.
   arma::Cube<typename MatType::elem_type> norm =
-      gyTemp.each_slice() % arma::repmat(gamma.t(), inputSize, 1);
+      gyTemp.each_slice() % arma::repmat<MatType>(gamma.t(), inputSize, 1);
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   MatType temp = arma::sum(arma::sum(norm % inputMean, 2), 0);
@@ -300,17 +300,17 @@ void BatchNormType<MatType>::Backward(
 
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
-  gTemp = (norm.each_slice() % arma::repmat(stdInv,
+  gTemp = (norm.each_slice() % arma::repmat<MatType>(stdInv,
       inputSize, 1)) +
-      ((inputMean.each_slice() % arma::repmat(vars, inputSize, 1) * 2.0) / m);
+      ((inputMean.each_slice() % arma::repmat<MatType>(vars, inputSize, 1) * 2.0) / m);
 
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
   // sum (-2 * (x - mu)) / m.
   MatType normTemp = arma::sum(arma::sum((norm.each_slice() %
-      arma::repmat(-stdInv, inputSize, 1)) + 
-      (inputMean.each_slice() % arma::repmat(vars, inputSize, 1) * (-2.0) / m),
+      arma::repmat<MatType>(-stdInv, inputSize, 1)) + 
+      (inputMean.each_slice() % arma::repmat<MatType>(vars, inputSize, 1) * (-2.0) / m),
       2), 0) / m;
-  gTemp.each_slice() += arma::repmat(normTemp, inputSize, 1);
+  gTemp.each_slice() += arma::repmat<MatType>(normTemp, inputSize, 1);
 }
 
 template<typename MatType>
