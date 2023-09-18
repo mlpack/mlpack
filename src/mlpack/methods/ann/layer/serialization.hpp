@@ -76,5 +76,6 @@
     CEREAL_REGISTER_TYPE(mlpack::FTSwishType<__VA_ARGS__>); \
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
+CEREAL_REGISTER_MLPACK_LAYERS(arma::fmat);
 
 #endif

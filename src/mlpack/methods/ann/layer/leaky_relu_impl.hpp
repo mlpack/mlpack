@@ -20,7 +20,7 @@
 namespace mlpack {
 
 template<typename MatType>
-LeakyReLUType<MatType>::LeakyReLUType(const double alpha) :
+LeakyReLUType<MatType>::LeakyReLUType(const typename MatType::elem_type alpha) :
     Layer<MatType>(),
     alpha(alpha)
 {

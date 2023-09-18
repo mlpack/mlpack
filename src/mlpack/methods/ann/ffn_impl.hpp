@@ -468,7 +468,7 @@ typename MatType::elem_type FFN<
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
   for (size_t i = 1; i < predictors.n_cols; ++i)
   {
-    arma::mat tmpGradient(gradient.n_rows, gradient.n_cols);
+    MatType tmpGradient(gradient.n_rows, gradient.n_cols);
     res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
     gradient += tmpGradient;
   }
