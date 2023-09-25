@@ -13,6 +13,8 @@ tree.Train(data, labels, 3); // [Step 2](#training): train model.
 tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
 ```
 
+
+
 ### Constructors
 
 Construct a `DecisionTree` object using one of the constructors below.
@@ -21,8 +23,8 @@ Construct a `DecisionTree` object using one of the constructors below.
 
  * `DecisionTree(numClasses)`
    - Initialize tree without training.
-   - You will need to call `Train()` later to train the tree before calling
-     `Classify()`.
+   - You will need to call [`Train()`](#training) later to train the tree before
+     calling [`Classify()`](#classify).
 
 
  * `DecisionTree(data, labels, numClasses)`
@@ -65,8 +67,9 @@ Construct a `DecisionTree` object using one of the constructors below.
 
 ### Training
 
-If training is not done as part of the constructor call, it can be done with the
-`Train()` member function, which has several overloads.
+If training is not done as part of the constructor call, it can be done with one
+of the versions of the `Train()` member function.  For an instance of
+`DecisionTree` named `tree`, the following functions for training are available:
 
  * `tree.Train(data, labels, numClasses)`
  * `tree.Train(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
@@ -90,28 +93,48 @@ If training is not done as part of the constructor call, it can be done with the
 
 Types of each argument are the same as in the table for constructors above.
 
+TODO: what about incremental training?
+
 ### Classification
 
 Once a `DecisionTree` is trained, the `Classify()` member function can be used
 to make class predictions for new data.
 
- * `size_t class = tree.Classify(`_`point`_`)` (classify a single point)
- * `tree.Classify(`_`point`_`, `_`prediction`_`, `_`probabilities`_`)` (classify a single point and compute class probabilities)
+ * `size_t class = tree.Classify(point)`
+    - Classify a single point, returning the predicted class.
 
-| **type** | **name** | **description** |
+ * `tree.Classify(point, prediction, probabilities_vec)`
+    - Classify a single point and compute class probabilities.
+    - The predicted class is stored in `prediction`.
+    - The class probabilities are stored in `probabilities`, which is set to
+      length `num_classes`.
+    - The probability of class `i` can be accessed with `probabilities_vec[i]`.
+
+ * `tree.Classify(data, predictions)`
+    - Classify a set of points.
+    - The predicted classes of each point is stored in `predictions`, which is
+      set to length `data.n_cols`.
+    - The prediction for data point `i` can be accessed with `predictions[i]`.
+
+ * `tree.Classify(data, predictions, probabilities)`
+    - Classify a set of points and compute class probabilities for each point.
+    - The predicted classes of each point is stored in `predictions`, which is
+      set to length `data.n_cols`.
+    - The prediction for data point `i` can be accessed with `predictions[i]`.
+    - The class probabilities for each point are stored in `probabilities`,
+      which is set to size `num_classes` by `data.n_cols`.
+    - The probability of class `j` for data point `i` can be accessed with
+      `probabilities(j, i)`.
+
+| **name** | **type** | **name** | **description** |
 |----------|----------|-----------------|
-| [`arma::vec`](../matrices.md) | **`point`** | Single point for classification. |
-| `size_t&` | **`prediction`** | `size_t` to store class prediction into. |
-| [`arma::vec&`](../matrices.md) | **`probabilities`** | `arma::vec&` to store class probabilities into. |
-
- * `tree.Classify(`_`data`_`, `_`predictions`_`)` (classify a set of points)
- * `tree.Classify(`_`data`_`, `_`predictions`_`, `_`probabilities`_`)` (classify a set of points and compute class probabilities for each point)
-
-| **type** | **name** | **description** |
+| `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
+| `prediction` | `size_t&` | `size_t` to store class prediction into. |
+| `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
 |----------|----------|-----------------|
-| [`arma::mat`](../matrices.md) | **`data`** | Set of [column-major](../matrices.md) points for classification. |
-| [`arma::Row<size_t>&`](../matrices.md) | **`predictions`** | Vector of `size_t`s to store class prediction into. |
-| [`arma::mat&`](../matrices.md) | **`probabilities`** | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
+| `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
+| `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
 
 ### Simple examples
 
