@@ -6,6 +6,12 @@ feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
 ```c++
+arma::mat data, test_data;
+arma::Row<size_t> labels;
+data::Load(data, "my_data.csv", true);
+data::Load(test_data, "my_test_data.csv", true);
+data::Load(labels, "my_labels.csv", true);
+
 DecisionTree tree(3); // [Step 1](#constructors): construct object.
 tree.Train(data, labels, 3); // [Step 2](#training): train model.
 tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
