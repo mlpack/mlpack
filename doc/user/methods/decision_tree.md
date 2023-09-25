@@ -6,7 +6,7 @@ feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
 ```c++
-DecisionTree tree(3); // [Step 1](#constructors): construct object.
+DecisionTree tree(3); // <a href="#constructors">Step 1</a>: construct object.
 tree.Train(data, labels, 3); // [Step 2](#training): train model.
 tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
 ```
