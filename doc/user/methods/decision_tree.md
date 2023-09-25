@@ -24,28 +24,25 @@ DecisionTree tree(data, labels, 3);
    - You will need to call `Train()` later to train the tree before calling
      `Classify()`.
 
- * `DecisionTree(data, labels, numClasses)`
-   - Train on numerical-only data.
-   - Uses default hyperparameter values (see below).
 
+ * `DecisionTree(data, labels, numClasses)`
  * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data with hyperparameters.
+   - Train on numerical-only data.
+   - If hyperparameters are not specified, default values are used.
+
 
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
-   - Train on mixed categorical data.
-   - Uses default hyperparameter values (see below).
-
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data with hyperparameters.
+   - Train on mixed categorical data.
+   - If hyperparameters are not specified, default values are used.
 
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
-   - Train on weighted mixed categorical data.
-   - Uses default hyperparameter values (see below).
-
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted mixed categorical data with hyperparameters.
 
 <!-- TODO: weighted numerical-only constructors -->
+
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on weighted mixed categorical data.
+   - If hyperparameters are not specified, default values are used.
 
 *Parameters*:
 
