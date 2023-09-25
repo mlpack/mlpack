@@ -6,7 +6,7 @@ feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
 <pre>
-DecisionTree tree(3); <span class="#pl-c">// <a href="#constructors">Step 1</a>: construct object.</span>
+DecisionTree tree(3); <span class="pl-c">// <a href="#constructors">Step 1</a>: construct object.</span>
 tree.Train(data, labels, 3); // <a href="#training">Step 2</a>: train model.
 tree.Classify(test_data, test_predictions); // <a href="#classification">Step 3</a>: use model to classify points.
 </pre>
