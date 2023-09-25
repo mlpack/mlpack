@@ -71,18 +71,29 @@ DecisionTree tree(data, labels, 3);
 If training is not done as part of the constructor call, it can be done with the
 `Train()` member function, which has several overloads.
 
- * `tree.Train(`_`data`_`, `_`labels`_`, `_`numClasses`_`)` (train on numerical-only data)
- * `tree.Train(`_`data`_`, `_`labels`_`, `_`numClasses`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on numerical-only data with hyperparameters)
+ * `tree.Train(data, labels, numClasses)`
+   - Train on numerical-only data.
 
- * `tree.Train(`_`data`_`, `_`labels`_`, `_`numClasses`_`, `_`weights`_`)` (train on weighted numerical-only data)
- * `tree.Train(`_`data`_`, `_`labels`_`, `_`numClasses`_`, `_`weights`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on weighted numerical-only data with hyperparameters)
+ * `tree.Train(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on numerical-only data with hyperparameters.
 
- * `tree.Train(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`)` (train on mixed categorical data)
- * `tree.Train(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on mixed categorical data with hyperparameters)
+ * `tree.Train(data, labels, numClasses, weights)`
+   - Train on weighted numerical-only data.
 
- * `tree.Train(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`, `_`weights`_`)` (train on weighted mixed categorical data)
- * `tree.Train(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`,
-   `_`weights`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on weighted mixed categorical data with hyperparameters)
+ * `tree.Train(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on weighted numerical-only data with hyperparameters.
+
+ * `tree.Train(data, datasetInfo, labels, numClasses)`
+   - Train on mixed categorical data.
+
+ * `tree.Train(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on mixed categorical data with hyperparameters.
+
+ * `tree.Train(data, datasetInfo, labels, numClasses, weights)`
+   - Train on weighted mixed categorical data.
+
+ * `tree.Train(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on weighted mixed categorical data with hyperparameters.
 
 Types of each argument are the same as in the table for constructors above.
 
