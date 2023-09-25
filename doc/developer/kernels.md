@@ -16,7 +16,7 @@ including
 
 mlpack implements a number of kernel methods and, accordingly, each of these
 methods allows arbitrary kernels to be used via the `KernelType` template
-parameter.  Like the [MetricType policy](metrictype.md), the requirements are
+parameter.  Like the [MetricType policy](metrics.md), the requirements are
 quite simple: a class implementing the `KernelType` policy must have
 
  - an `Evaluate()` function
@@ -42,7 +42,7 @@ Note that for kernels that do not hold any state, the `Evaluate()` method can be
 marked as `static`.
 
 Overall, the `KernelType` template policy is quite simple (much like the
-[MetricType policy](metrictype.md)).  Below is an example kernel class, which
+[MetricType policy](metrics.md)).  Below is an example kernel class, which
 outputs `1` if the vectors are close and `0` otherwise.
 
 ```c++

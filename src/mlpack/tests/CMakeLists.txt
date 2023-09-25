@@ -103,6 +103,7 @@ add_executable(mlpack_test
   one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  policy_gradient_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   qdafn_test.cpp
@@ -135,6 +136,7 @@ add_executable(mlpack_test
   termination_policy_test.cpp
   test_catch_tools.hpp
   test_function_tools.hpp
+  test_reinforcement_learning_agent.hpp
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
@@ -221,7 +223,14 @@ else()
   target_compile_definitions(mlpack_test PUBLIC -DMLPACK_SUPPRESS_FATAL)
 endif()
 
-set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
+# This has to be added here so that cotire picks it up (even though it is in
+# individual tests).
+target_compile_definitions(mlpack_test PUBLIC -DMLPACK_ENABLE_ANN_SERIALIZATION)
+set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT
+    "../core.hpp")
+# TODO: use the source below, but this requires the DET test to be refactored
+# and cleaned up.
+#    "../../mlpack.hpp")
 cotire(mlpack_test)
 
 # Copy test data into right place.

@@ -302,3 +302,36 @@ TEST_CASE("RandomPointSelectionTest", "[DBSCANTest]")
   // The number of assignments returned should be the same as points.
   REQUIRE(assignments.n_elem == points.n_cols);
 }
+
+/**
+ * Check that noise points do not accidentally connect clusters.
+ * See issue #3339.  (Thanks @iad-ABDUL-RAOUF!)
+ */
+TEST_CASE("NoiseConnectionTest", "[DBSCANTest]")
+{
+  arma::mat dataset({
+      // cluster 1           cluster 2            noise
+      { 0.0, 0.5,  0.5, 1.0, 3.0, 3.5,  3.5, 4.0, 2.0 },
+      { 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, -0.5, 0.0, 0.0 }});
+
+  // Now perform clustering.
+  const double epsilon = 1.1;
+  size_t minPts = 4;
+
+  DBSCAN<> dbscan(epsilon, minPts, false);
+
+  arma::Row<size_t> labels;
+  arma::mat centroids;
+
+  size_t numClusters = dbscan.Cluster(dataset, labels, centroids);
+
+  // The noisy element should not link the two clusters together, since it has
+  // less than minPts neighbors.
+  REQUIRE(numClusters == 2);
+
+  // Now make sure the same is true with batch clustering.
+  dbscan = DBSCAN<>(epsilon, minPts, true);
+  numClusters = dbscan.Cluster(dataset, labels, centroids);
+
+  REQUIRE(numClusters == 2);
+}

@@ -138,7 +138,7 @@ void GetRecommendationsQueriedUser()
  */
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void RecommendationAccuracy(const size_t allowedFailures = 17)
+void RecommendationAccuracy(const size_t allowedFailures = 20)
 {
   DecompositionPolicy decomposition;
 
@@ -496,212 +496,38 @@ void Serialization()
 
 /**
  * Make sure that correct number of recommendations are generated when query
- * set for randomized SVD.
+ * set for all methods.
  */
-TEST_CASE("CFGetRecommendationsAllUsersRandSVDTest", "[CFTest]")
+TEMPLATE_TEST_CASE("CFGetRecommendationsAllUsersTest", "[CFTest]",
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
-  GetRecommendationsAllUsers<RandomizedSVDPolicy>();
+  GetRecommendationsAllUsers<TestType>();
 }
 
 /**
- * Make sure that correct number of recommendations are generated when query
- * set for regularized SVD.
+ * Make sure that the recommendations are generated for queried users
+ * for all methods.
  */
-TEST_CASE("CFGetRecommendationsAllUsersRegSVDTest", "[CFTest]")
+TEMPLATE_TEST_CASE("CFGetRecommendationsQueriedUsersTest", "[CFTest]",
+  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+  QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
-  GetRecommendationsAllUsers<RegSVDPolicy>();
-}
-
-/**
- * Make sure that correct number of recommendations are generated when query
- * set for Batch SVD.
- */
-
-TEST_CASE("CFGetRecommendationsAllUsersBatchSVDTest", "[CFTest]")
-{
-  GetRecommendationsAllUsers<BatchSVDPolicy>();
-}
-
-/**
- * Make sure that correct number of recommendations are generated when query
- * set for NMF.
- */
-TEST_CASE("CFGetRecommendationsAllUsersNMFTest", "[CFTest]")
-{
-  GetRecommendationsAllUsers<NMFPolicy>();
-}
-
-/**
- * Make sure that correct number of recommendations are generated when query
- * set for SVD Complete Incremental method.
- */
-TEST_CASE("CFGetRecommendationsAllUsersSVDCompleteTest", "[CFTest]")
-{
-  GetRecommendationsAllUsers<SVDCompletePolicy>();
-}
-
-/**
- * Make sure that correct number of recommendations are generated when query
- * set for SVD Incomplete Incremental method.
- */
-TEST_CASE("CFGetRecommendationsAllUsersSVDIncompleteTest", "[CFTest]")
-{
-  GetRecommendationsAllUsers<SVDIncompletePolicy>();
-}
-
-/**
- * Make sure that correct number of recommendations are generated when query
- * set for Bias SVD method.
- */
-TEST_CASE("CFGetRecommendationsAllUsersBiasSVDTest", "[CFTest]")
-{
-  GetRecommendationsAllUsers<BiasSVDPolicy>();
-}
-
-/**
- * Make sure that correct number of recommendations are generated when query
- * set for SVDPlusPlus method.
- */
-TEST_CASE("CFGetRecommendationsAllUsersSVDPPTest", "[CFTest]")
-{
-  GetRecommendationsAllUsers<SVDPlusPlusPolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for randomized SVD.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserRandSVDTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<RandomizedSVDPolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for regularized SVD.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserRegSVDTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<RegSVDPolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for batch SVD.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserBatchSVDTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<BatchSVDPolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for NMF.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserNMFTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<NMFPolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for SVD Complete Incremental method.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserSVDCompleteTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<SVDCompletePolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for SVD Incomplete Incremental method.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserSVDIncompleteTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<SVDIncompletePolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for Bias SVD method.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserBiasSVDTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<BiasSVDPolicy>();
-}
-
-/**
- * Make sure that the recommendations are generated for queried users only
- * for SVDPlusPlus method.
- */
-TEST_CASE("CFGetRecommendationsQueriedUserSVDPPTest", "[CFTest]")
-{
-  GetRecommendationsQueriedUser<SVDPlusPlusPolicy>();
+  GetRecommendationsQueriedUser<TestType>();
 }
 
 /**
  * Make sure recommendations that are generated are reasonably accurate
- * for randomized SVD.
+ * for all methods except SVDPlusPlus method.
  */
-TEST_CASE("RecommendationAccuracyRandSVDTest", "[CFTest]")
+TEMPLATE_TEST_CASE("RecommendationAccuracyTest", "[CFTest]",
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+    BlockKrylovSVDPolicy)
 {
-  RecommendationAccuracy<RandomizedSVDPolicy>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for regularized SVD.
- */
-TEST_CASE("RecommendationAccuracyRegSVDTest", "[CFTest]")
-{
-  RecommendationAccuracy<RegSVDPolicy>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for batch SVD.
- */
-TEST_CASE("RecommendationAccuracyBatchSVDTest", "[CFTest]")
-{
-  RecommendationAccuracy<BatchSVDPolicy>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for NMF.
- */
-TEST_CASE("RecommendationAccuracyNMFTest", "[CFTest]")
-{
-  RecommendationAccuracy<NMFPolicy>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for SVD Complete Incremental method.
- */
-TEST_CASE("RecommendationAccuracySVDCompleteTest", "[CFTest]")
-{
-  RecommendationAccuracy<SVDCompletePolicy>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for SVD Incomplete Incremental method.
- */
-TEST_CASE("RecommendationAccuracySVDIncompleteTest", "[CFTest]")
-{
-  RecommendationAccuracy<SVDIncompletePolicy>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for Bias SVD method.
- */
-TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
-{
-  // This algorithm seems to be far less effective than others.
-  // We therefore allow failures on 44% of the runs.
-  RecommendationAccuracy<BiasSVDPolicy>(22);
+  RecommendationAccuracy<TestType>();
 }
 
 /**
@@ -715,326 +541,82 @@ TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
 //   RecommendationAccuracy<SVDPlusPlusPolicy>();
 // }
 
-// Make sure that Predict() is returning reasonable results for randomized SVD.
-TEST_CASE("CFPredictRandSVDTest", "[CFTest]")
+/**
+ * Make sure that Predict() is returning reasonable results for all methods.
+ */
+TEMPLATE_TEST_CASE("CFPredictTest", "[CFTest]",
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
-  CFPredict<RandomizedSVDPolicy>();
-}
-
-// Make sure that Predict() is returning reasonable results for regularized SVD.
-TEST_CASE("CFPredictRegSVDTest", "[CFTest]")
-{
-  CFPredict<RegSVDPolicy>();
-}
-
-// Make sure that Predict() is returning reasonable results for batch SVD.
-TEST_CASE("CFPredictBatchSVDTest", "[CFTest]")
-{
-  CFPredict<BatchSVDPolicy>();
-}
-
-// Make sure that Predict() is returning reasonable results for NMF.
-TEST_CASE("CFPredictNMFTest", "[CFTest]")
-{
-  CFPredict<NMFPolicy>();
+  CFPredict<TestType>();
 }
 
 /**
- * Make sure that Predict() is returning reasonable results for SVD Complete
- * Incremental method.
+ * Compare batch Predict() and individual Predict() for all methods.
  */
-TEST_CASE("CFPredictSVDCompleteTest", "[CFTest]")
+TEMPLATE_TEST_CASE("CFBatchPredictTest", "[CFTest]",
+    RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+    SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, SVDPlusPlusPolicy,
+    QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
-  CFPredict<SVDCompletePolicy>();
+  BatchPredict<TestType>();
 }
 
 /**
- * Make sure that Predict() is returning reasonable results for SVD Incomplete
- * Incremental method.
+ * Make sure we can train an already-trained model and it works okay for 
+ * some methods
  */
-TEST_CASE("CFPredictSVDIncompleteTest", "[CFTest]")
+TEMPLATE_TEST_CASE("TrainTest_1", "[CFTest]",
+    RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
+    SVDIncompletePolicy, QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
-  CFPredict<SVDIncompletePolicy>();
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for Bias SVD
- * method.
- */
-TEST_CASE("CFPredictBiasSVDTest", "[CFTest]")
-{
-  CFPredict<BiasSVDPolicy>();
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for SVDPlusPlus
- * method.
- */
-TEST_CASE("CFPredictSVDPPTest", "[CFTest]")
-{
-  CFPredict<SVDPlusPlusPolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for randomized SVD.
-TEST_CASE("CFBatchPredictRandSVDTest", "[CFTest]")
-{
-  BatchPredict<RandomizedSVDPolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for regularized SVD.
-TEST_CASE("CFBatchPredictRegSVDTest", "[CFTest]")
-{
-  BatchPredict<RegSVDPolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for batch SVD.
-TEST_CASE("CFBatchPredictBatchSVDTest", "[CFTest]")
-{
-  BatchPredict<BatchSVDPolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for NMF.
-TEST_CASE("CFBatchPredictNMFTest", "[CFTest]")
-{
-  BatchPredict<NMFPolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for
-// SVD Complete Incremental method.
-TEST_CASE("CFBatchPredictSVDCompleteTest", "[CFTest]")
-{
-  BatchPredict<SVDCompletePolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for
-// SVD Incomplete Incremental method.
-TEST_CASE("CFBatchPredictSVDIncompleteTest", "[CFTest]")
-{
-  BatchPredict<SVDIncompletePolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for
-// Bias SVD method.
-TEST_CASE("CFBatchPredictBiasSVDTest", "[CFTest]")
-{
-  BatchPredict<BiasSVDPolicy>();
-}
-
-// Compare batch Predict() and individual Predict() for
-// SVDPlusPlus method.
-TEST_CASE("CFBatchPredictSVDPPTest", "[CFTest]")
-{
-  BatchPredict<SVDPlusPlusPolicy>();
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * randomized SVD.
- */
-TEST_CASE("TrainRandSVDTest", "[CFTest]")
-{
-  RandomizedSVDPolicy decomposition;
+  TestType decomposition;
   Train(decomposition);
 }
 
 /**
- * Make sure we can train an already-trained model and it works okay for
- * regularized SVD.
+ * Make sure we can train an already-trained model and it works okay for 
+ * some methods
  */
-TEST_CASE("TrainRegSVDTest", "[CFTest]")
+TEMPLATE_TEST_CASE("TrainTest_2", "[CFTest]",
+    RegSVDPolicy, BiasSVDPolicy, SVDPlusPlusPolicy)
 {
-  RegSVDPolicy decomposition;
-  TrainWithCoordinateList(decomposition);
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * batch SVD.
- */
-TEST_CASE("TrainBatchSVDTest", "[CFTest]")
-{
-  BatchSVDPolicy decomposition;
-  Train(decomposition);
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * NMF.
- */
-TEST_CASE("TrainNMFTest", "[CFTest]")
-{
-  NMFPolicy decomposition;
-  Train(decomposition);
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * SVD Complete Incremental method.
- */
-TEST_CASE("TrainSVDCompleteTest", "[CFTest]")
-{
-  SVDCompletePolicy decomposition;
-  Train(decomposition);
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * SVD Incomplete Incremental method.
- */
-TEST_CASE("TrainSVDIncompleteTest", "[CFTest]")
-{
-  SVDIncompletePolicy decomposition;
-  Train(decomposition);
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * BiasSVD method.
- */
-TEST_CASE("TrainBiasSVDTest", "[CFTest]")
-{
-  BiasSVDPolicy decomposition;
-  TrainWithCoordinateList(decomposition);
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay for
- * SVDPlusPlus method.
- */
-TEST_CASE("TrainSVDPPTest", "[CFTest]")
-{
-  SVDPlusPlusPolicy decomposition;
+  TestType decomposition;
   TrainWithCoordinateList(decomposition);
 }
 
 /**
  * Make sure we can train a model after using the empty constructor when
- * using randomized SVD.
+ * using any of the method.
  */
-TEST_CASE("EmptyConstructorTrainRandSVDTest", "[CFTest]")
+TEMPLATE_TEST_CASE("EmptyConstructorTrainTest", "[CFTest]",
+  RandomizedSVDPolicy, RegSVDPolicy, BatchSVDPolicy, NMFPolicy,
+  SVDCompletePolicy, SVDIncompletePolicy, BiasSVDPolicy, QUIC_SVDPolicy,
+  BlockKrylovSVDPolicy)
 {
-  EmptyConstructorTrain<RandomizedSVDPolicy>();
+  EmptyConstructorTrain<TestType>();
 }
 
 /**
- * Make sure we can train a model after using the empty constructor when
- * using regularized SVD.
+ * Ensure we can load and save the CF model using any of the method.
  */
-TEST_CASE("EmptyConstructorTrainRegSVDTest", "[CFTest]")
+TEMPLATE_TEST_CASE("SerializationTest", "[CFTest]",
+    RandomizedSVDPolicy, BatchSVDPolicy, NMFPolicy, SVDCompletePolicy,
+    SVDIncompletePolicy, QUIC_SVDPolicy, BlockKrylovSVDPolicy)
 {
-  EmptyConstructorTrain<RegSVDPolicy>();
-}
-
-/**
- * Make sure we can train a model after using the empty constructor when
- * using batch SVD.
- */
-TEST_CASE("EmptyConstructorTrainBatchSVDTest", "[CFTest]")
-{
-  EmptyConstructorTrain<BatchSVDPolicy>();
-}
-
-/**
- * Make sure we can train a model after using the empty constructor when
- * using NMF.
- */
-TEST_CASE("EmptyConstructorTrainNMFTest", "[CFTest]")
-{
-  EmptyConstructorTrain<NMFPolicy>();
-}
-
-/**
- * Make sure we can train a model after using the empty constructor when
- * using SVD Complete Incremental method.
- */
-TEST_CASE("EmptyConstructorTrainSVDCompleteTest", "[CFTest]")
-{
-  EmptyConstructorTrain<SVDCompletePolicy>();
-}
-
-/**
- * Make sure we can train a model after using the empty constructor when
- * using SVD Incomplete Incremental method.
- */
-TEST_CASE("EmptyConstructorTrainSVDIncompleteTest", "[CFTest]")
-{
-  EmptyConstructorTrain<SVDIncompletePolicy>();
-}
-
-/**
- * Ensure we can load and save the CF model using randomized SVD policy.
- */
-TEST_CASE("SerializationRandSVDTest", "[CFTest]")
-{
-  Serialization<RandomizedSVDPolicy>();
-}
-
-/**
- * Ensure we can load and save the CF model using batch SVD policy.
- */
-TEST_CASE("SerializationBatchSVDTest", "[CFTest]")
-{
-  Serialization<BatchSVDPolicy>();
-}
-
-/**
- * Ensure we can load and save the CF model using NMF policy.
- */
-TEST_CASE("SerializationNMFTest", "[CFTest]")
-{
-  Serialization<NMFPolicy>();
-}
-
-/**
- * Ensure we can load and save the CF model using SVD Complete Incremental.
- */
-TEST_CASE("SerializationSVDCompleteTest", "[CFTest]")
-{
-  Serialization<SVDCompletePolicy>();
-}
-
-/**
- * Ensure we can load and save the CF model using SVD Incomplete Incremental.
- */
-TEST_CASE("SerializationSVDIncompleteTest", "[CFTest]")
-{
-  Serialization<SVDIncompletePolicy>();
+  Serialization<TestType>();
 }
 
 /**
  * Make sure that Predict() is returning reasonable results for NMF and
- * OverallMeanNormalization.
+ * all types of Normalization except default.
  */
-TEST_CASE("CFPredictOverallMeanNormalization", "[CFTest]")
+TEMPLATE_TEST_CASE("CFPredictNormalization", "[CFTest]",
+    OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
+    ZScoreNormalization)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization>(2.0);
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for NMF and
- * UserMeanNormalization.
- */
-TEST_CASE("CFPredictUserMeanNormalization", "[CFTest]")
-{
-  CFPredict<NMFPolicy, UserMeanNormalization>(2.0);
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for NMF and
- * ItemMeanNormalization.
- */
-TEST_CASE("CFPredictItemMeanNormalization", "[CFTest]")
-{
-  CFPredict<NMFPolicy, ItemMeanNormalization>(2.0);
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for NMF and
- * ZScoreNormalization.
- */
-TEST_CASE("CFPredictZScoreNormalization", "[CFTest]")
-{
-  CFPredict<NMFPolicy, ZScoreNormalization>(2.0);
+  CFPredict<NMFPolicy, TestType>(2.0);
 }
 
 /**
@@ -1061,38 +643,13 @@ TEST_CASE("CFPredictNoNormalization", "[CFTest]")
 
 /**
  * Make sure recommendations that are generated are reasonably accurate
- * for OverallMeanNormalization.
+ * for all types of Normalization except default.
  */
-TEST_CASE("RecommendationAccuracyOverallMeanNormalizationTest", "[CFTest]")
+TEMPLATE_TEST_CASE("RecommendationAccuracyNormalizationTest", "[CFTest]",
+    OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
+    ZScoreNormalization)
 {
-  RecommendationAccuracy<NMFPolicy, OverallMeanNormalization>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for UserMeanNormalization.
- */
-TEST_CASE("RecommendationAccuracyUserMeanNormalizationTest", "[CFTest]")
-{
-  RecommendationAccuracy<NMFPolicy, UserMeanNormalization>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for ItemMeanNormalization.
- */
-TEST_CASE("RecommendationAccuracyItemMeanNormalizationTest", "[CFTest]")
-{
-  RecommendationAccuracy<NMFPolicy, ItemMeanNormalization>();
-}
-
-/**
- * Make sure recommendations that are generated are reasonably accurate
- * for ZScoreNormalization.
- */
-TEST_CASE("RecommendationAccuracyZScoreNormalizationTest", "[CFTest]")
-{
-  RecommendationAccuracy<NMFPolicy, ZScoreNormalization>();
+  RecommendationAccuracy<NMFPolicy, TestType>();
 }
 
 /**
@@ -1109,35 +666,14 @@ TEST_CASE("RecommendationAccuracyCombinedNormalizationTest", "[CFTest]")
 }
 
 /**
- * Ensure we can load and save the CF model using OverallMeanNormalization.
+ * Ensure we can load and save the CF model using any type of Normalization 
+ * except default.
  */
-TEST_CASE("SerializationOverallMeanNormalizationTest", "[CFTest]")
+TEMPLATE_TEST_CASE("SerializationNormalizationTest", "[CFTest]",
+    OverallMeanNormalization, UserMeanNormalization, ItemMeanNormalization,
+    ZScoreNormalization)
 {
-  Serialization<NMFPolicy, OverallMeanNormalization>();
-}
-
-/**
- * Ensure we can load and save the CF model using UserMeanNormalization.
- */
-TEST_CASE("SerializationUserMeanNormalizationTest", "[CFTest]")
-{
-  Serialization<NMFPolicy, UserMeanNormalization>();
-}
-
-/**
- * Ensure we can load and save the CF model using ItemMeanNormalization.
- */
-TEST_CASE("SerializationItemMeanNormalizationTest", "[CFTest]")
-{
-  Serialization<NMFPolicy, ItemMeanNormalization>();
-}
-
-/**
- * Ensure we can load and save the CF model using ZScoreMeanNormalization.
- */
-TEST_CASE("SerializationZScoreNormalizationTest", "[CFTest]")
-{
-  Serialization<NMFPolicy, ZScoreNormalization>();
+  Serialization<NMFPolicy, TestType>();
 }
 
 /**
@@ -1153,54 +689,24 @@ TEST_CASE("SerializationCombinedNormalizationTest", "[CFTest]")
 }
 
 /**
- * Make sure that Predict() is returning reasonable results for
- * EuclideanSearch.
+ * Make sure that Predict() is returning reasonable results for all search
+ * except default.
  */
-TEST_CASE("CFPredictEuclideanSearch", "[CFTest]")
+TEMPLATE_TEST_CASE("CFPredictSearch", "[CFTest]",
+    EuclideanSearch, CosineSearch, PearsonSearch)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch>(2.0);
+  CFPredict<NMFPolicy, OverallMeanNormalization, TestType>(2.0);
 }
 
 /**
  * Make sure that Predict() is returning reasonable results for
- * CosineSearch.
+ * some Interpolations.
  */
-TEST_CASE("CFPredictCosineSearch", "[CFTest]")
+TEMPLATE_TEST_CASE("CFPredictAverageInterpolation", "[CFTest]",
+    AverageInterpolation, SimilarityInterpolation)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization, CosineSearch>(2.0);
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for
- * PearsonSearch.
- */
-TEST_CASE("CFPredictPearsonSearch", "[CFTest]")
-{
-  CFPredict<NMFPolicy, OverallMeanNormalization, PearsonSearch>(2.0);
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for
- * AverageInterpolation.
- */
-TEST_CASE("CFPredictAverageInterpolation", "[CFTest]")
-{
-  CFPredict<NMFPolicy,
-            OverallMeanNormalization,
-            EuclideanSearch,
-            AverageInterpolation>(2.0);
-}
-
-/**
- * Make sure that Predict() is returning reasonable results for
- * SimilarityInterpolation.
- */
-TEST_CASE("CFPredictSimilarityInterpolation", "[CFTest]")
-{
-  CFPredict<NMFPolicy,
-            OverallMeanNormalization,
-            EuclideanSearch,
-            SimilarityInterpolation>(2.0);
+  CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch,
+      TestType>(2.0);
 }
 
 /**

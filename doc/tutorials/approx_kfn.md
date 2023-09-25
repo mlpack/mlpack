@@ -80,7 +80,7 @@ In order to solve this problem, mlpack provides a number of interfaces.
 
  - two simple command-line executables to calculate approximate furthest
    neighbors
- - a simple C++ class for QDAFN"
+ - a simple C++ class for QDAFN
  - a simple C++ class for DrusillaSelect
  - a simple C++ class for tree-based and brute-force search
 
@@ -114,8 +114,8 @@ search:
 
 These two programs allow a large number of algorithms to be used to find
 approximate furthest neighbors.  Note that the `mlpack_kfn` program is also
-documented in the [KNN tutorial](knn.md) page, as it shares options with the
-`mlpack_knn` program.
+documented in the [KNN tutorial](neighbor_search.md) page, as it shares options 
+with the `mlpack_knn` program.
 
 Below are several examples of how the `mlpack_approx_kfn` and `mlpack_kfn`
 programs might be used.  The first examples focus on the `mlpack_approx_kfn`
@@ -682,7 +682,7 @@ std::cout << ds.CandidateSet().col(4).t();
 
 It is possible to retrain a `DrusillaSelect` model with new parameters or with a
 new reference set.  This is functionally equivalent to creating a new model.
-The example code below creates a first \c DrusillaSelect model using 3 tables
+The example code below creates a first `DrusillaSelect` model using 3 tables
 and 10 projections, and then retrains this with the same reference set using 10
 tables and 3 projections.
 
@@ -812,7 +812,7 @@ extern arma::mat dataset;
 QDAFN<> qdafn(dataset, 10, 5);
 
 // Print the fifth point of the candidate set.
-std::cout << ds.CandidateSet(2).col(4).t();
+std::cout << qdafn.CandidateSet(2).col(4).t();
 ```
 
 ### Retraining on a new reference set
@@ -869,7 +869,7 @@ qdafn.Search(querySet, 3, neighbors, distances);
 The extensive `NeighborSearch` class also provides a way to search for
 approximate furthest neighbors using a different, tree-based technique.  For
 full documentation on this class, see the [NeighborSearch
-tutorial](nstutorial.md).  The `KFN` class is a convenient typedef of the
+tutorial](neighbor_search.md).  The `KFN` class is a convenient typedef of the
 `NeighborSearch` class that can be used to perform the furthest neighbors task
 with `kd`-trees.
 
@@ -896,7 +896,7 @@ extern arma::mat querySet;
 
 // Construct the object, performing the default dual-tree search with
 // approximation level epsilon = 0.05.
-KFN kfn(dataset, KFN::DUAL_TREE_MODE, 0.05);
+KFN kfn(dataset, DUAL_TREE_MODE, 0.05);
 
 // Search for approximate furthest neighbors.
 arma::Mat<size_t> neighbors;
@@ -982,6 +982,6 @@ kfn.Search(querySet, 2, neighbors, distances);
 ## Further documentation
 
 For further documentation on the approximate furthest neighbor facilities
-offered by mlpack, see also [the NeighborSearch tutorial](nstutorial.md).  Also,
+offered by mlpack, see also [the NeighborSearch tutorial](neighbor_search.md).  Also,
 each class (`QDAFN`, `DrusillaSelect`, `NeighborSelect`) are well-documented,
 and more details can be found in the source code documentation.

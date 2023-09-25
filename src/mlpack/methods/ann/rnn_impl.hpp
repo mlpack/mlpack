@@ -209,7 +209,7 @@ void RNN<
     InitializationRuleType,
     MatType
 >::Predict(
-    arma::Cube<typename MatType::elem_type> predictors,
+    const arma::Cube<typename MatType::elem_type>& predictors,
     arma::Cube<typename MatType::elem_type>& results,
     const size_t batchSize)
 {
@@ -290,17 +290,29 @@ void RNN<
 >::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(bpttSteps));
-  ar(CEREAL_NVP(single));
-  ar(CEREAL_NVP(network));
+  #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
+    // better ensure that every layer you are serializing has had
+    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+    // more information.
+    #ifndef MLPACK_IGNORE_ANN_SERIALIZATION_WARNING
+      throw std::runtime_error("Cannot serialize a neural network unless "
+          "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+          "build options\" section of the README for more information.");
+    #endif
+  #else
+    ar(CEREAL_NVP(bpttSteps));
+    ar(CEREAL_NVP(single));
+    ar(CEREAL_NVP(network));
 
-  if (Archive::is_loading::value)
-  {
-    // We can clear these members, since it's not possible to serialize in the
-    // middle of training and resume.
-    predictors.clear();
-    responses.clear();
-  }
+    if (Archive::is_loading::value)
+    {
+      // We can clear these members, since it's not possible to serialize in the
+      // middle of training and resume.
+      predictors.clear();
+      responses.clear();
+    }
+  #endif
 }
 
 template<

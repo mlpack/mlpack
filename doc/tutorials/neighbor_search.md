@@ -363,7 +363,7 @@ covariance matrix).  Therefore, you can write a non-static MetricType class and
 use it seamlessly with `NeighborSearch`.
 
 For more information on the `MetricType` policy, see the [documentation for
-`MetricType`s](../developer/metrics.md).
+`MetricType`](../developer/metrics.md).
 
 ### `MatType` policy class
 
@@ -418,8 +418,7 @@ The `RuleType` class provides the following functions for use in the traverser:
 // Evaluate the base case between two points.
 double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-// Score the two nodes to see if they can be pruned, returning DBL_MAX if they
-// can be pruned.
+// Score the two nodes to see if they can be pruned, returning DBL_MAX if so.
 double Score(TreeType& queryNode, TreeType& referenceNode);
 ```
 

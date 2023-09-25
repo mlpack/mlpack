@@ -1100,8 +1100,8 @@ TEST_CASE("MatrixAndDatasetInfoTest", "[IOTest]")
       "MatrixAndDatasetInfoTest");
 
   // Get the dataset and info.
-  DatasetInfo info = move(get<0>(p.Get<TupleType>("dataset")));
-  arma::mat dataset = move(get<1>(p.Get<TupleType>("dataset")));
+  DatasetInfo info = std::move(get<0>(p.Get<TupleType>("dataset")));
+  arma::mat dataset = std::move(get<1>(p.Get<TupleType>("dataset")));
 
   REQUIRE(info.Dimensionality() == 3);
 

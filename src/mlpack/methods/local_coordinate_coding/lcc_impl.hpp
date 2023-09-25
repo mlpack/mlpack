@@ -140,7 +140,9 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
     arma::mat dictGramTD = diagmat(invW) * dictGram * diagmat(invW);
 
     bool useCholesky = false;
-    LARS lars(useCholesky, dictGramTD, 0.5 * lambda);
+    // Normalization and fitting and intercept are disabled.
+    LARS lars(useCholesky, dictGramTD, 0.5 * lambda, 0,
+        1e-16 /* default tolerance */, false, false);
 
     // Run LARS for this point, by making an alias of the point and passing
     // that.

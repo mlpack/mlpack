@@ -86,11 +86,11 @@ restatement of the fourth part of the definition).
 
 Most everything in mlpack is decomposed into a series of configurable template
 parameters, and trees are no exception.  In order to ease usage of high-level
-mlpack algorithms, each \c TreeType itself must be a template class taking three
+mlpack algorithms, each `TreeType` itself must be a template class taking three
 parameters:
 
  - `MetricType` -- the underlying metric that the tree will be built on (see
-[the MetricType policy documentation](metrictype.md))
+[the MetricType policy documentation](metrics.md))
  - `StatisticType` -- holds any auxiliary information that individual
 algorithms may need
  - `MatType` -- the type of the matrix used to represent the data
@@ -424,7 +424,7 @@ This constructor should be called with `(*this)` after the node is constructed
 The last template parameter is the `MatType` parameter.  This is generally
 `arma::mat` or `arma::sp_mat`, but could be any Armadillo type, including
 matrices that hold data points of different precisions (such as `float` or even
-`int`).  It generally suffices to write \c MatType assuming that `arma::mat`
+`int`).  It generally suffices to write `MatType` assuming that `arma::mat`
 will be used, since the vast majority of the time this will be what is used.
 
 ### Constructors and destructors

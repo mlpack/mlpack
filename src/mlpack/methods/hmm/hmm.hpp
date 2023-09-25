@@ -88,7 +88,10 @@ class HMM
    * the given default distribution for emissions.  The dimensionality of the
    * observations is taken from the emissions variable, so it is important that
    * the given default emission distribution is set with the correct
-   * dimensionality.  Alternately, set the dimensionality with Dimensionality().
+   * dimensionality.  Alternately, set the dimensionality with Dimensionality(),
+   * and then use Emission() to access and set the dimensionality of each
+   * individual distribution correctly.
+   *
    * Optionally, the tolerance for convergence of the Baum-Welch algorithm can
    * be set.
    *

@@ -156,8 +156,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     // Initialize the object.
     bayesLinReg = new BayesianLinearRegression(center, scale);
 
-    // Load covariates.  We can avoid LARS transposing our data by choosing to
-    // not transpose this data (that's why we used PARAM_TMATRIX_IN).
+    // Load covariates.
     mat matX = std::move(params.Get<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it

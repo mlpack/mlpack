@@ -64,7 +64,7 @@ void PrintWrapperPY(const std::string& category,
   }
 
   // Import different mlpack programs that are to be wrapped.
-  for(int i=0; i<methods.size(); i++)
+  for(size_t i = 0; i < methods.size(); i++)
   {
     cout << "from mlpack." << groupName << "_" << methods[i] << " ";
     cout << "import " << groupName << "_" << methods[i] << endl;
@@ -438,8 +438,8 @@ void PrintWrapperPY(const std::string& category,
     cout << endl;
     indent -= 2;
   }
-}
+} // PrintWrapperPY
 
-} // python
-} // bindings
-} // mlpack
+} // namespace python
+} // namespace bindings
+} // namespace mlpack

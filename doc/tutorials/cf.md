@@ -255,7 +255,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CF cf(data, NMFALSFactorizer(), neighborhood, rank);
+CF cf(data, NMFPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -270,12 +270,16 @@ mlpack provides a number of existing factorizers which can be used in place of
 the default `NMFALSFactorizer` (which is non-negative matrix factorization with
 alternating least squares update rules).  These include:
 
- - `SVDBatchFactorizer`
- - `SVDCompleteIncrementalFactorizer`
- - `SVDIncompleteIncrementalFactorizer`
- - `NMFALSFactorizer`
- - `RegularizedSVD`
- - `QUIC_SVD`
+ - `BatchSVDPolicy`
+ - `SVDCompletePolicy`
+ - `SVDIncompletePolicy`
+ - `NMFPolicy`
+ - `RegSVDPolicy`
+ - `QuicSVDPolicy`
+ - `BiasSVDPolicy`
+ - `SVDPlusPlusPolicy`
+ - `RandomizedSVDPolicy`
+ - `BlockKrylovSVDPolicy`
 
 The `AMF` class has many other possibilities than those listed here; it is a
 framework for alternating matrix factorization techniques.  See the `AMF` class
@@ -297,7 +301,7 @@ extern size_t neighborhood;
 extern size_t rank;
 
 // Build the CF object and perform the decomposition.
-CF cf(data, RegularizedSVD(), neighborhood, rank);
+CFType cf(data, RegSVDPolicy(), neighborhood, rank);
 
 // Store the results in this object.
 arma::Mat<size_t> recommendations;
@@ -330,7 +334,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CF cf(data, NMFALSFactorizer(), neighborhood, rank);
+CF cf(data, NMFPolicy(), neighborhood, rank);
 
 const double prediction = cf.Predict(12, 50); // User 12, item 50.
 ```
@@ -356,7 +360,7 @@ extern size_t rank;
 // Build the CF object and perform the decomposition.
 // The constructor takes a default-constructed factorizer, which, by default,
 // is of type NMFALSFactorizer.
-CF cf(data, NMFALSFactorizer(), neighborhood, rank);
+CF cf(data, NMFPolicy(), neighborhood, rank);
 
 // References to W and H matrices.
 const arma::mat& W = cf.W();
@@ -389,8 +393,8 @@ number of rows equal to the number of items and the number of columns equal to
 the number of users, and each nonzero element in the matrix corresponds to a
 non-missing rating.
 
-The method that the factorizer implements is specified via the \c
-FactorizerTraits class, which is a template metaprogramming traits class:
+The method that the factorizer implements is specified via the
+`FactorizerTraits` class, which is a template metaprogramming traits class:
 
 ```c++
 template<typename FactorizerType>

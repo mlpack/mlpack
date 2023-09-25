@@ -83,6 +83,11 @@ if (BUILD_R_BINDINGS)
       "\\1" MLPACK_VERSION_PATCH "${VERSION_HPP_CONTENTS}")
   set(PACKAGE_VERSION
       "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
+  if (USING_GIT)
+    set(PACKAGE_DOC_VERSION "git")
+  else ()
+    set(PACKAGE_DOC_VERSION "${PACKAGE_VERSION}")
+  endif ()
 
   string(TIMESTAMP PACKAGE_DATE "%Y-%m-%d")
 
@@ -285,9 +290,9 @@ if (BUILD_R_BINDINGS)
        "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
 
   file(COPY
-       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/configure"
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/CITATION"
        DESTINATION
-       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
+       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst")
 
   # Do the actual build.
   add_custom_target(r_build ALL)
@@ -413,7 +418,7 @@ macro (post_r_setup)
   # First we have to create that directory though.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E
-      make_directory ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/mlpack
+      make_directory ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
   )
 
   # Then copy each of the header and source files over to that directory.
@@ -427,9 +432,15 @@ macro (post_r_setup)
     execute_process(
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${mlpack_sources}
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/mlpack
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
     )
   endforeach()
+
+  # Copy configured config.hpp.
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy
+      "${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp"
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/config.hpp")
 
   foreach(r_src_file ${R_SRC_FILES})
     if ("${r_src_file}" MATCHES "methods/" OR
@@ -438,7 +449,7 @@ macro (post_r_setup)
       execute_process(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
           ${CMAKE_CURRENT_SOURCE_DIR}/${r_src_file}
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/mlpack/${r_src_file}
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/${r_src_file}
       )
 
       # Collect path of all source files and append to ${R_SRC}.
@@ -455,19 +466,19 @@ macro (post_r_setup)
     execute_process(
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CEREAL_INCLUDE_DIR}/${rcereal_src_file}
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${rcereal_src_file}
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/${rcereal_src_file}
     )
   endforeach()
 
   # Resolve gcc Warnings.
-  file(READ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/cereal/external/base64.hpp CEREAL_BASE64)
+  file(READ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp CEREAL_BASE64)
   string(REGEX REPLACE
       "\n#ifdef __GNUC__\n#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored \"-Wconversion\"\n#endif\n"
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
   string(REGEX REPLACE
       "#ifdef __GNUC__\n#pragma GCC diagnostic pop\n#endif"
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
-  file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/cereal/external/base64.hpp "${CEREAL_BASE64}")
+  file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/cereal/external/base64.hpp "${CEREAL_BASE64}")
 
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(

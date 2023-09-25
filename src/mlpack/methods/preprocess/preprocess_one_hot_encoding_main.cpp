@@ -28,6 +28,11 @@ BINDING_LONG_DESC(
     "encoding of the respective features at those indices. Indices represent "
     "the IDs of the dimensions to be one-hot encoded."
     "\n\n"
+    "If no dimensions are specified with " + PRINT_PARAM_STRING("dimensions") +
+    ", then all categorical-type dimensions will be one-hot encoded. "
+    "Otherwise, only the dimensions given in " +
+    PRINT_PARAM_STRING("dimensions") + " will be one-hot encoded."
+    "\n\n"
     "The output matrix with encoded features may be saved with the " +
     PRINT_PARAM_STRING("output") + " parameters.");
 
@@ -48,12 +53,13 @@ BINDING_SEE_ALSO("One-hot encoding on Wikipedia",
         "https://en.m.wikipedia.org/wiki/One-hot");
 
 // Define parameters for data.
-PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
+PARAM_MATRIX_AND_INFO_IN_REQ("input", "Matrix containing data.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save one-hot encoded features "
     "data to.", "o");
 
-PARAM_VECTOR_IN_REQ(int, "dimensions", "Index of dimensions that"
-    "need to be one-hot encoded.", "d");
+PARAM_VECTOR_IN(int, "dimensions", "Index of dimensions that need to be one-hot"
+    " encoded (if unspecified, all categorical dimensions are one-hot "
+    "encoded).", "d");
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -63,29 +69,65 @@ using namespace std;
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Load the data.
-  const arma::mat& data = params.Get<arma::mat>("input");
-  vector<int>& indices = params.Get<vector<int> >("dimensions");
-  vector<size_t> copyIndices(indices.size());
-  RequireParamValue<std::vector<int>>(params, "dimensions",
-      [data](std::vector<int> x)
-      {
-        for (int dim : x)
-        {
-          if (dim < 0 || (size_t)dim > data.n_rows)
-          {
-            return false;
-          }
-        }
-        return true;
-      }, true, "dimensions must be greater than 0 and less than the number of "
-      "dimensions");
+  const std::tuple<data::DatasetInfo, arma::mat>& t =
+      params.Get<std::tuple<data::DatasetInfo, arma::mat>>("input");
 
-  for (size_t i = 0; i < indices.size(); ++i)
+  const data::DatasetInfo& info = std::get<0>(t);
+  const arma::mat& data = std::get<1>(t);
+
+  vector<int>& indices = params.Get<vector<int>>("dimensions");
+  if (!params.Has("dimensions"))
   {
-    copyIndices[i] = (size_t)indices[i];
+    // If the user did not specify any dimensions to convert, we pick all the
+    // categorical dimensions by default.
+    for (size_t d = 0; d < info.Dimensionality(); ++d)
+      if (info.Type(d) == data::Datatype::categorical)
+        indices.push_back(d);
+
+    // Print which dimensions we selected to one-hot encode.
+    if (indices.size() > 0)
+    {
+      Log::Info << "One-hot encoding categorical dimensions: [";
+      for (size_t i = 0; i < indices.size() - 1; ++i)
+        Log::Info << indices[i] << ", ";
+      Log::Info << indices[indices.size() - 1] << "]." << std::endl;
+    }
   }
-  arma::mat output;
-  data::OneHotEncoding(data, (arma::Col<size_t>)(copyIndices), output);
-  if (params.Has("output"))
-    params.Get<arma::mat>("output") = std::move(output);
+  else
+  {
+    // If the user did specify dimensions, let's make sure they are reasonable.
+    RequireParamValue<std::vector<int>>(params, "dimensions",
+        [data](std::vector<int> x)
+        {
+          for (int dim : x)
+          {
+            if (dim < 0 || (size_t) dim > data.n_rows)
+            {
+              return false;
+            }
+          }
+          return true;
+        }, true, "dimensions must be greater than 0 and less than the number of"
+        " dimensions");
+  }
+
+  // Note that it's possible that zero dimensions are selected for one-hot
+  // encoding.
+  if (indices.size() > 0)
+  {
+    vector<size_t> copyIndices(indices.size());
+    for (size_t i = 0; i < indices.size(); ++i)
+    {
+      copyIndices[i] = (size_t)indices[i];
+    }
+
+    arma::mat output;
+    data::OneHotEncoding(data, (arma::Col<size_t>)(copyIndices), output);
+    if (params.Has("output"))
+      params.Get<arma::mat>("output") = std::move(output);
+  }
+  else if (params.Has("output"))
+  {
+    params.Get<arma::mat>("output") = data; // Copy input to output.
+  }
 }

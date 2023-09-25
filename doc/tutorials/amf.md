@@ -1,7 +1,7 @@
 # Alternating Matrix Factorization tutorial
 
 Alternating matrix factorization decomposes a matrix `V` in the form `V ~ WH`
-where `W` is called the basis matrix and `H` is called the encoding matrix.. `V`
+where `W` is called the basis matrix and `H` is called the encoding matrix. `V`
 is taken to be of size `n x m` and the obtained `W` is `n x r` and `H` is `r x
 m`. The size `r` is called the *rank* of the factorization. Factorization is
 done by alternately calculating `W` and `H` respectively while holding the other
@@ -137,7 +137,8 @@ int main()
   NMFALSFactorizer nmf;
   mat W, H;
   mat V = randu<mat>(100, 100);
-  double residue = nmf.Apply(V, W, H);
+  size_t r = 10;
+  double residue = nmf.Apply(V, r, W, H);
 }
 ```
 
@@ -169,11 +170,12 @@ using namespace mlpack;
 
 int main()
 {
-  sp_mat V = randu<sp_mat>(100,100);
+  sp_mat V = sprandu<sp_mat>(100,100,0.1);
+  size_t r = 10;
   mat W, H;
 
   SVDBatchFactorizer<sp_mat> svd;
-  double residue = svd.Apply(V, W, H);
+  double residue = svd.Apply(V, r, W, H);
 }
 ```
 

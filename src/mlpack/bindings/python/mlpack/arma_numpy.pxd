@@ -18,55 +18,55 @@ import numpy
 
 numpy.import_array()
 
-cimport arma
+from .arma cimport Mat, Row, Col
 from libcpp cimport bool
 
 """
 Convert a numpy ndarray to a matrix.
 """
-cdef arma.Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
-                                      bool takeOwnership) except +
-cdef arma.Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
-                                      bool takeOwnership) except +
+cdef Mat[double]* numpy_to_mat_d(numpy.ndarray[numpy.double_t, ndim=2] X, \
+                                 bool takeOwnership) except +
+cdef Mat[size_t]* numpy_to_mat_s(numpy.ndarray[numpy.npy_intp, ndim=2] X, \
+                                 bool takeOwnership) except +
 
 """
 Convert an Armadillo object to a numpy ndarray of the given type.
 """
-cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(arma.Mat[double]& X) \
+cdef numpy.ndarray[numpy.double_t, ndim=2] mat_to_numpy_d(Mat[double]& X) \
     except +
-cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(arma.Mat[size_t]& X) \
+cdef numpy.ndarray[numpy.npy_intp, ndim=2] mat_to_numpy_s(Mat[size_t]& X) \
     except +
 
 """
 Convert a numpy one-dimensional ndarray to a row of the given type.
 """
-cdef arma.Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
-                                      bool takeOwnership) except +
-cdef arma.Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
-                                      bool takeOwnership) except +
+cdef Row[double]* numpy_to_row_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
+                                 bool takeOwnership) except +
+cdef Row[size_t]* numpy_to_row_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
+                                 bool takeOwnership) except +
 
 """
 Convert an Armadillo row vector to a one-dimensional numpy ndarray of the
 given type.
 """
-cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(arma.Row[double]& X) \
+cdef numpy.ndarray[numpy.double_t, ndim=1] row_to_numpy_d(Row[double]& X) \
     except +
-cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(arma.Row[size_t]& X) \
+cdef numpy.ndarray[numpy.npy_intp, ndim=1] row_to_numpy_s(Row[size_t]& X) \
     except +
 
 """
 Convert a numpy one-dimensional ndarray to a column vector of the given type.
 """
-cdef arma.Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
-                                      bool takeOwnership) except +
-cdef arma.Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
-                                      bool takeOwnership) except +
+cdef Col[double]* numpy_to_col_d(numpy.ndarray[numpy.double_t, ndim=1] X, \
+                                 bool takeOwnership) except +
+cdef Col[size_t]* numpy_to_col_s(numpy.ndarray[numpy.npy_intp, ndim=1] X, \
+                                 bool takeOwnership) except +
 
 """
 Convert an Armadillo column vector to a one-dimensional numpy ndarray of the
 given type.
 """
-cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(arma.Col[double]& X) \
+cdef numpy.ndarray[numpy.double_t, ndim=1] col_to_numpy_d(Col[double]& X) \
     except +
-cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(arma.Col[size_t]& X) \
+cdef numpy.ndarray[numpy.npy_intp, ndim=1] col_to_numpy_s(Col[size_t]& X) \
     except +

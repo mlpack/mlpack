@@ -5,8 +5,8 @@ Date: @PACKAGE_DATE@
 Authors@R: @AUTHORS_R@
 Description: A fast, flexible machine learning library, written in C++, that
              aims to provide fast, extensible implementations of cutting-edge
-             machine learning algorithms.  See also Curtin et al. (2018)
-             <doi:10.21105/joss.00726>.
+             machine learning algorithms.  See also Curtin et al. (2023)
+             <doi:10.21105/joss.05026>.
 SystemRequirements: A C++14 compiler. Version 5 or later of GCC will be fine.
 License: BSD_3_clause + file LICENSE
 Depends: R (>= 4.0.0)
@@ -15,7 +15,7 @@ LinkingTo: Rcpp,
            RcppArmadillo (>= @RcppArmadillo_Version@),
            RcppEnsmallen (>= @RcppEnsmallen_Version@)
 Suggests: testthat (>= 2.1.0)
-URL: https://www.mlpack.org/doc/mlpack-@PACKAGE_VERSION@/r_documentation.html,
+URL: https://www.mlpack.org/doc/mlpack-@PACKAGE_DOC_VERSION@/r_documentation.html,
      https://github.com/mlpack/mlpack
 BugReports: https://github.com/mlpack/mlpack/issues
 RoxygenNote: 7.1.0

@@ -257,6 +257,9 @@ manually specified.  Choices that mlpack provides include:
  - `HyperbolicTangentKernel`
  - `LaplacianKernel`
  - `PSpectrumStringKernel`
+ - `CauchyKernal`
+ - `ExampleKernal`
+ - `SphericalKernal`
 
 The following examples use kernels from that list.  Writing your own kernel is
 detailed in the next section.  Remember that when you are using the C++
@@ -293,7 +296,7 @@ f.Search(5, indices, products);
 In this setting we have both a query and reference dataset.  We search for 10
 maximum kernels.
 
-```
+```c++
 #include <mlpack.hpp>
 
 using namespace mlpack::fastmks;

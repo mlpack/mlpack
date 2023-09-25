@@ -14,8 +14,31 @@
 
 #include "load_csv.hpp"
 
-namespace mlpack{
-namespace data{
+namespace mlpack {
+namespace data {
+
+/**
+ * A safe function to get negative or positive infinity, which avoids unary
+ * minus on an unsigned type.  This works around a Visual Studio warning.
+ */
+template<typename eT>
+inline eT SafeNegInf(
+    const bool neg,
+    const typename std::enable_if<std::is_unsigned<eT>::value>::type* = 0)
+{
+  // For an unsigned type, we cannot return negative infinity, so instead return
+  // 0.
+  return neg ? 0 : std::numeric_limits<eT>::infinity();
+}
+
+template<typename eT>
+inline eT SafeNegInf(
+    const bool neg,
+    const typename std::enable_if<!std::is_unsigned<eT>::value>::type* = 0)
+{
+  return neg ? -(std::numeric_limits<eT>::infinity()) :
+      std::numeric_limits<eT>::infinity();
+}
 
 template<typename eT>
 bool LoadCSV::ConvertToken(eT& val,
@@ -49,8 +72,7 @@ bool LoadCSV::ConvertToken(eT& val,
         ((sigB == 'n') || (sigB == 'N')) &&
         ((sigC == 'f') || (sigC == 'F')))
     {
-      val = neg ? -(std::numeric_limits<eT>
-                    ::infinity()) : std::numeric_limits<eT>::infinity();
+      val = SafeNegInf<eT>(neg);
       return true;
     }
     else if (((sigA == 'n') || (sigA == 'N')) &&

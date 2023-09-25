@@ -70,7 +70,9 @@ inline void SparseCoding::Encode(const arma::mat& data,
       Log::Debug << "Optimization at point " << i << "." << std::endl;
 
     bool useCholesky = true;
-    LARS lars(useCholesky, matGram, lambda1, lambda2);
+    // Intercept fitting and data normalization is disabled.
+    LARS lars(useCholesky, matGram, lambda1, lambda2,
+        1e-16 /* default tolerance */, false, false);
 
     // Create an alias of the code (using the same memory), and then LARS will
     // place the result directly into that; then we will not need to have an

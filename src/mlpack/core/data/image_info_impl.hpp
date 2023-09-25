@@ -30,7 +30,7 @@ inline const std::vector<std::string> SaveFileTypes()
 }
 }
 
-#ifdef HAS_STB // Compile this only if stb is present.
+#ifdef MLPACK_HAS_STB // Compile this only if stb is present.
 
 // In case it hasn't been included yet.
 #include "image_info.hpp"
@@ -65,7 +65,7 @@ inline bool ImageFormatSupported(const std::string& fileName, const bool save)
 } // namespace data
 } // namespace mlpack
 
-#endif // HAS_STB.
+#endif // MLPACK_HAS_STB.
 
 namespace mlpack {
 namespace data {

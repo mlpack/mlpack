@@ -19,9 +19,9 @@
 namespace mlpack {
 namespace data {
 
-ScalingModel::ScalingModel(const int minvalue,
-                           const int maxvalue,
-                           double epsilonvalue) :
+inline ScalingModel::ScalingModel(const int minvalue,
+                                  const int maxvalue,
+                                  double epsilonvalue) :
     scalerType(0),
     minmaxscale(NULL),
     maxabsscale(NULL),
@@ -37,7 +37,7 @@ ScalingModel::ScalingModel(const int minvalue,
 }
 
 //! Copy constructor.
-ScalingModel::ScalingModel(const ScalingModel& other) :
+inline ScalingModel::ScalingModel(const ScalingModel& other) :
     scalerType(other.scalerType),
     minmaxscale(other.minmaxscale == NULL ? NULL :
         new data::MinMaxScaler(*other.minmaxscale)),
@@ -59,7 +59,7 @@ ScalingModel::ScalingModel(const ScalingModel& other) :
 }
 
 //! Move constructor.
-ScalingModel::ScalingModel(ScalingModel&& other) :
+inline ScalingModel::ScalingModel(ScalingModel&& other) :
     scalerType(other.scalerType),
     minmaxscale(other.minmaxscale),
     maxabsscale(other.maxabsscale),
@@ -84,7 +84,7 @@ ScalingModel::ScalingModel(ScalingModel&& other) :
 }
 
 //! Copy assignment operator.
-ScalingModel& ScalingModel::operator=(const ScalingModel& other)
+inline ScalingModel& ScalingModel::operator=(const ScalingModel& other)
 {
   if (this == &other)
   {
@@ -124,7 +124,7 @@ ScalingModel& ScalingModel::operator=(const ScalingModel& other)
 }
 
 //! Move assignment operator.
-ScalingModel& ScalingModel::operator=(ScalingModel&& other)
+inline ScalingModel& ScalingModel::operator=(ScalingModel&& other)
 {
   if (this != &other)
   {
@@ -153,7 +153,7 @@ ScalingModel& ScalingModel::operator=(ScalingModel&& other)
   return *this;
 }
 
-ScalingModel::~ScalingModel()
+inline ScalingModel::~ScalingModel()
 {
   delete minmaxscale;
   delete maxabsscale;

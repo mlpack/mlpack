@@ -141,6 +141,12 @@ class LecunNormalInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
+
+  /**
+   * Serialize the initialization.  (Nothing to serialize for this one.)
+   */
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 }; // class LecunNormalInitialization
 
 } // namespace mlpack

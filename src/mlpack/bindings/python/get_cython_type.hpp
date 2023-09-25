@@ -102,7 +102,7 @@ inline std::string GetCythonType(
   else if (T::is_col)
     type = "Col";
 
-  return "arma." + type + "[" + GetCythonType<typename T::elem_type>(d) + "]";
+  return type + "[" + GetCythonType<typename T::elem_type>(d) + "]";
 }
 
 template<typename T>

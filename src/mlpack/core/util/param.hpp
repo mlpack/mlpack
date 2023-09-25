@@ -42,12 +42,6 @@
  * should be present per binding.  BINDING_NAME should be set before calling
  * this.
  *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
- *
  * @param NAME User-friendly name.
  */
 #ifdef __COUNTER__
@@ -68,12 +62,6 @@
  * Specify the short description of a binding.  Only one instance of this macro
  * should be present in your program!  Therefore, use it in the main.cpp
  * (or corresponding binding) in your program.
- *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
  *
  * @param SHORT_DESC Short two-sentence description of the program; it should
  *     describe what the program implements and does, and a quick overview of
@@ -100,12 +88,6 @@
  * If you wish to "revamp" some bindings, then use the BINDING_LONG_DESC()
  * of the method that you pass first into the group_bindings() macro. For all other
  * methods, it is fine if you keep the BINDING_LONG_DESC() empty.
- * 
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
  *
  * @param LONG_DESC Long string describing what the program does. Newlines
  *     should not be used here; this is taken care of by IO (however, you
@@ -132,12 +114,6 @@
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding binding) in your program.
  *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
- *
  * @param EXAMPLE Long string describing a simple usage example.. Newlines
  *     should not be used here; this is taken care of by IO (however, you
  *     can explicitly specify newlines to denote new paragraphs).  You can
@@ -162,12 +138,6 @@
  * Specify the see-also of a binding.  Mutiple instance of this macro can be
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding binding) in your program.
- *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
  *
  * Provide a link for a binding's "see also" documentation section, which is
  * primarily (but not necessarily exclusively) used by the Markdown bindings
@@ -203,17 +173,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_FLAG(ID, DESC, ALIAS) \
     PARAM_IN(bool, ID, DESC, ALIAS, false, false);
@@ -230,18 +189,6 @@
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
-// Use a forward declaration of the class.
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_IN(ID, DESC, ALIAS, DEF) \
     PARAM_IN(int, ID, DESC, ALIAS, DEF, false)
@@ -262,17 +209,6 @@
  * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_OUT(ID, DESC) \
     PARAM_OUT(int, ID, DESC, "", 0, false)
@@ -289,17 +225,6 @@
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_IN(ID, DESC, ALIAS, DEF) \
     PARAM_IN(double, ID, DESC, ALIAS, DEF, false)
@@ -320,17 +245,6 @@
  * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_OUT(ID, DESC) \
     PARAM_OUT(double, ID, DESC, "", 0.0, false)
@@ -349,17 +263,6 @@
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_STRING_IN(ID, DESC, ALIAS, DEF) \
     PARAM_IN(std::string, ID, DESC, ALIAS, DEF, false)
@@ -381,17 +284,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_STRING_OUT(ID, DESC, ALIAS) \
     PARAM_OUT(std::string, ID, DESC, ALIAS, "", false)
@@ -412,14 +304,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_MATRIX_IN(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, false, true, true)
@@ -440,21 +324,13 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, true, true, true)
 
 /**
  * Define a matrix output parameter.  When the program terminates, the matrix
- * will be saved to whatever it was set to by IO::GetParam<arma::mat>(ID)
+ * will be saved to whatever it was set to by params.Get<arma::mat>(ID)
  * during the program.  From the command-line, the user may specify the file in
  * which to save the output matrix using a string option that is the name of the
  * matrix parameter with "_file" appended.  So, for instance, if the name of the
@@ -473,14 +349,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_MATRIX_OUT(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, false, true, false)
@@ -502,14 +370,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_TMATRIX_IN(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, false, false, true)
@@ -532,14 +392,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_TMATRIX_IN_REQ(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, true, false, true)
@@ -548,7 +400,7 @@
  * Define a transposed matrix output parameter.  This is useful when data is
  * stored in a row-major form instead of the usual column-major form.  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * IO::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * params.Get<arma::mat>(ID) during the program.  From the command-line, the
  * user may specify the file in which to save the output matrix using a string
  * option that is the name of the matrix parameter with "_file" appended.  So,
  * for instance, if the name of the output matrix parameter was "mat", the user
@@ -567,14 +419,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_TMATRIX_OUT(ID, DESC, ALIAS) \
     PARAM_MATRIX(ID, DESC, ALIAS, false, false, false)
@@ -595,14 +439,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UMATRIX_IN(ID, DESC, ALIAS) \
     PARAM_UMATRIX(ID, DESC, ALIAS, false, true, true)
@@ -624,14 +460,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UMATRIX_IN_REQ(ID, DESC, ALIAS) \
     PARAM_UMATRIX(ID, DESC, ALIAS, true, true, true)
@@ -639,7 +467,7 @@
 /**
  * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * IO::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
+ * params.Get<arma::Mat<size_t>>(ID) during the program.  From the
  * command-line, the user may specify the file in which to save the output
  * matrix using a string option that is the name of the matrix parameter with
  * "_file" appended.  So, for instance, if the name of the output matrix
@@ -658,14 +486,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UMATRIX_OUT(ID, DESC, ALIAS) \
     PARAM_UMATRIX(ID, DESC, ALIAS, false, true, false)
@@ -687,14 +507,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_IN(ID, DESC, ALIAS) \
     PARAM_COL(ID, DESC, ALIAS, false, true, true)
@@ -715,14 +527,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_IN_REQ(ID, DESC, ALIAS) \
     PARAM_COL(ID, DESC, ALIAS, true, true, true)
@@ -743,14 +547,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_ROW_IN(ID, DESC, ALIAS) \
     PARAM_ROW(ID, DESC, ALIAS, false, true, true)
@@ -771,14 +567,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UCOL_IN(ID, DESC, ALIAS) \
     PARAM_UCOL(ID, DESC, ALIAS, false, true, true)
@@ -800,14 +588,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UROW_IN(ID, DESC, ALIAS) \
     PARAM_UROW(ID, DESC, ALIAS, false, true, true)
@@ -833,14 +613,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_OUT(ID, DESC, ALIAS) \
     PARAM_COL(ID, DESC, ALIAS, false, true, false)
@@ -866,14 +638,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_ROW_OUT(ID, DESC, ALIAS) \
     PARAM_ROW(ID, DESC, ALIAS, false, true, false)
@@ -899,14 +663,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UCOL_OUT(ID, DESC, ALIAS) \
     PARAM_UCOL(ID, DESC, ALIAS, false, true, false)
@@ -932,14 +688,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UROW_OUT(ID, DESC, ALIAS) \
     PARAM_UROW(ID, DESC, ALIAS, false, true, false)
@@ -956,17 +704,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_VECTOR_IN(T, ID, DESC, ALIAS) \
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
@@ -990,17 +727,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_VECTOR_OUT(T, ID, DESC, ALIAS) \
     PARAM_OUT(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
@@ -1020,9 +746,9 @@
  *
  * @code
  * DatasetInfo d = std::move(
- *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
@@ -1030,22 +756,43 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
     PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
         "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
+        TUPLE_TYPE())
+
+/**
+ * Define a required input DatasetInfo/matrix parameter.  From the command line,
+ * the user can specify the file that holds the matrix, using the name of the
+ * matrix parameter with "_file" appended (and the same alias).  So for
+ * instance, if the name of the matrix parameter was "matrix", the user could
+ * specify that the "matrix" matrix was held in file.csv by giving the parameter
+ *
+ * @code
+ * --matrix_file file.csv
+ * @endcode
+ *
+ * Then the DatasetInfo and matrix type could be accessed with
+ *
+ * @code
+ * DatasetInfo d = std::move(
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ * arma::mat m = std::move(
+ *     params.Get<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
+ * @param ALIAS One-character string representing the alias of the parameter.
+ */
+#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
+#define PARAM_MATRIX_AND_INFO_IN_REQ(ID, DESC, ALIAS) \
+    PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
+        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", true, true, true, \
         TUPLE_TYPE())
 
 /**
@@ -1121,9 +868,7 @@
  * --model_file model.bin
  * @endcode
  *
- * The model will be saved at the termination of the program.  If you use a
- * parameter of this type, you must call IO::Destroy() at the end of your
- * program.
+ * The model will be saved at the termination of the program.
  *
  * @param TYPE Type of the model to be saved.
  * @param ID Name of the parameter.
@@ -1145,17 +890,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_IN_REQ(ID, DESC, ALIAS) \
     PARAM_IN(int, ID, DESC, ALIAS, 0, true)
@@ -1170,17 +904,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_IN_REQ(ID, DESC, ALIAS) \
     PARAM_IN(double, ID, DESC, ALIAS, 0.0, true)
@@ -1195,17 +918,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_STRING_IN_REQ(ID, DESC, ALIAS) \
     PARAM_IN(std::string, ID, DESC, ALIAS, "", true)
@@ -1222,17 +934,6 @@
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
- *
- * @see mlpack::IO, BINDING_USER_NAME(), BINDING_SHORT_DESC(),
- *    BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO().
- *
- * @bug
- * The __COUNTER__ variable is used in most cases to guarantee a unique global
- * identifier for options declared using the PARAM_*() macros. However, not all
- * compilers have this support--most notably, gcc < 4.3. In that case, the
- * __LINE__ macro is used as an attempt to get a unique global identifier, but
- * collisions are still possible, and they produce bizarre error messages.  See
- * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_VECTOR_IN_REQ(T, ID, DESC, ALIAS) \
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);

@@ -30,6 +30,8 @@
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hyper_sinh_function.hpp>
+#include <mlpack/methods/ann/activation_functions/bipolar_sigmoid_function.hpp>
 #include "layer.hpp"
 
 namespace mlpack {
@@ -240,6 +242,22 @@ typedef BaseLayer<SILUFunction, arma::mat> SILU;
 
 template<typename MatType = arma::mat>
 using SILUType = BaseLayer<SILUFunction, MatType>;
+
+/**
+ * Standard Hyper Sinh layer.
+ */
+typedef BaseLayer<HyperSinhFunction, arma::mat> HyperSinh;
+
+template<typename MatType = arma::mat>
+using HyperSinhType = BaseLayer<HyperSinhFunction, MatType>;
+
+/**
+ * Standard Bipolar Sigmoid layer.
+ */
+typedef BaseLayer<BipolarSigmoidFunction, arma::mat> BipolarSigmoid;
+
+template<typename MatType = arma::mat>
+using BipolarSigmoidType = BaseLayer<BipolarSigmoidFunction, MatType>;
 
 } // namespace mlpack
 

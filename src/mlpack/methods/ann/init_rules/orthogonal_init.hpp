@@ -101,6 +101,15 @@ class OrthogonalInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
+ 
+  /**
+   * Serialize the initialization.
+   */
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(gain));
+  }
 
  private:
   //! The number used as gain.
