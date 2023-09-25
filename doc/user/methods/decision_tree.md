@@ -11,15 +11,26 @@ constructor parameters that can be used to control the behavior of the tree.
 
 *Forms*:
 
-| **signature** | **description** |
-|---------------|-----------------|
-| `DecisionTree(numClasses)` | Initialize tree without training. |
-| `DecisionTree(data, labels, numClasses)` | Train on numerical-only data. |
-| <code>DecisionTree(data, labels, numClasses,<br>            minimumLeafSize, minimumGainSplit, maximumDepth)</code> | Train on numerical-only data with hyperparameters. |
-| `DecisionTree(data, datasetInfo, labels, numClasses)` | Train on mixed categorical data. |
-| `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)` | Train on mixed categorical data with hyperparameters. |
-| `DecisionTree(data, datasetInfo, labels, numClasses, weights)` | Train on weighted mixed categorical data. |
-| `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)` | Train on weighted mixed categorical data with hyperparameters. |
+ * `DecisionTree(numClasses)`
+   -  Initialize tree without training.
+
+ * `DecisionTree(data, labels, numClasses)`
+   - Train on numerical-only data.
+
+ * `DecisionTree(data, labels, numClasses,<br>minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on numerical-only data with hyperparameters.
+
+ * `DecisionTree(data, datasetInfo, labels, numClasses)`
+   - Train on mixed categorical data.
+
+ * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on mixed categorical data with hyperparameters.
+
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
+   - Train on weighted mixed categorical data.
+
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on weighted mixed categorical data with hyperparameters.
 
 <!-- TODO: weighted numerical-only constructors -->
 
