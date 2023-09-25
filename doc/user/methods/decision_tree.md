@@ -5,17 +5,15 @@ numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
-
+```c++
+DecisionTree tree(3); // [Step 1](#constructors): construct object.
+tree.Train(data, labels, 3); // [Step 2](#training): train model.
+tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
+```
 
 ### Constructors
 
-Construct a `DecisionTree` object using one of the constructors below, like
-this:
-
-```c++
-// Create a decision tree for numerical data with three classes.
-DecisionTree tree(data, labels, 3);
-```
+Construct a `DecisionTree` object using one of the constructors below.
 
 *Forms*:
 
@@ -69,28 +67,24 @@ If training is not done as part of the constructor call, it can be done with the
 `Train()` member function, which has several overloads.
 
  * `tree.Train(data, labels, numClasses)`
-   - Train on numerical-only data.
-
  * `tree.Train(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data with hyperparameters.
+   - Train on numerical-only data.
+   - If hyperparameters are not specified, default values are used.
 
  * `tree.Train(data, labels, numClasses, weights)`
-   - Train on weighted numerical-only data.
-
  * `tree.Train(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted numerical-only data with hyperparameters.
+   - Train on weighted numerical-only data.
+   - If hyperparameters are not specified, default values are used.
 
  * `tree.Train(data, datasetInfo, labels, numClasses)`
-   - Train on mixed categorical data.
-
  * `tree.Train(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data with hyperparameters.
+   - Train on mixed categorical data.
+   - If hyperparameters are not specified, default values are used.
 
  * `tree.Train(data, datasetInfo, labels, numClasses, weights)`
-   - Train on weighted mixed categorical data.
-
  * `tree.Train(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted mixed categorical data with hyperparameters.
+   - Train on weighted mixed categorical data.
+   - If hyperparameters are not specified, default values are used.
 
 Types of each argument are the same as in the table for constructors above.
 
