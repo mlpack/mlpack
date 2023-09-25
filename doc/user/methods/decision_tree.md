@@ -126,7 +126,7 @@ to make class predictions for new data.
     - The probability of class `j` for data point `i` can be accessed with
       `probabilities(j, i)`.
 
-| **name** | **type** | **name** | **description** |
+| **name** | **type** | **description** |
 |----------|----------|-----------------|
 | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | `prediction` | `size_t&` | `size_t` to store class prediction into. |
