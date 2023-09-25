@@ -15,13 +15,13 @@ tree.Classify(test_data, test_predictions); // [Step 3](#classification): use mo
 
 *Quick links:*
 
- * [#constructors](Constructors)
- * [#training](`Train()`: train model).
- * [#classification](`Classify()`: classify with a trained model).
- * [#other_functionality](Other functionality) for loading, saving, and
+ * [Constructors](#constructors): create `DecisionTree` objects.
+ * [`Train()`](#training): train model.
+ * [`Classify()`](#classification): classify with a trained model).
+ * [Other functionality](#other_functionality) for loading, saving, and
    inspecting.
- * [#template_parameters](Template parameters) for custom behavior.
- * [#examples](Examples) of simple usage and links to detailed example projects.
+ * [Template parameters](#template_parameters) for custom behavior.
+ * [Examples](#examples) of simple usage and links to detailed example projects.
 
 *See also*:
 
