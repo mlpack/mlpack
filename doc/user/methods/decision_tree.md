@@ -5,11 +5,11 @@ numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
-```c++
+<pre>
 DecisionTree tree(3); // <a href="#constructors">Step 1</a>: construct object.
 tree.Train(data, labels, 3); // [Step 2](#training): train model.
 tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
-```
+</pre>
 
 ### Constructors
 
