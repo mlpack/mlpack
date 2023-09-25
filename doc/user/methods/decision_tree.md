@@ -32,8 +32,7 @@ constructor parameters that can be used to control the behavior of the tree.
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | [`arma::mat`](../matrices.md) | **`data`** | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | **`datasetInfo`** |
-Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | **`datasetInfo`** | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | [`arma::Row<size_t>`]('../matrices.md') | **`labels`** | Training labels, between `0` and `numClasses - 1` (inclusive). | _(N/A)_ |
 | [`arma::rowvec`]('../matrices.md') | **`weights`** | Weights for each training point. | _(N/A)_ |
 | `size_t` | **`numClasses`** | Number of classes in the dataset. | _(N/A)_ |
