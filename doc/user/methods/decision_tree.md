@@ -90,6 +90,11 @@ Construct a `DecisionTree` object using one of the constructors below.
 | `minimumGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
 | `maximumDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
 
+***Note:*** different types can be used for `data` and `weights` (e.g.,
+`arma::fmat`, `arma::sp_mat`).  However, the element type of `data` and
+`weights` must match; for example, if `data` has type `arma::fmat`, then
+`weights` must have type `arma::frowvec`.
+
 ### Training
 
 If training is not done as part of the constructor call, it can be done with one
@@ -161,6 +166,10 @@ to make class predictions for new data.
 | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
 | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
+
+***Note:*** different types can be used for `data` and `point` (e.g.
+`arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
+that is used should be the same type that was used for training.
 
 ### Other functionality
 
