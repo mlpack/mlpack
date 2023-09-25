@@ -25,6 +25,7 @@ tree.Classify(test_data, test_predictions); // [Step 3](#classification): use mo
 
 *See also*:
 
+ * [`DecisionTreeRegressor`](#decision_tree_regressor) <!-- TODO: fix link! -->
  * [Random forests](#random_forests) <!-- TODO: fix link! -->
  * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
@@ -270,6 +271,31 @@ See also the following fully-working examples:
 
 ### Advanced Functionality: Template Parameters
 
+`DecisionTree`'s constructors, `Train()`, and `Classify()` functions support
+any data type, so long as it supports the Armadillo matrix API.  So, learning
+can be done on single-precision floating-point data:
+
+```c++
+// 1000 random points in 10 dimensions.
+arma::fmat dataset(10, 1000);
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+// Train in the constructor.
+DecisionTree<> tree(data, labels, 5);
+
+// Create test data (500 points).
+arma::fmat testDataset(10, 500);
+arma::Row<size_t> predictions;
+tree.Classify(testDataset, predictions);
+// Now `predictions` holds predictions for the test dataset.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions == 2) << " test points classified as class "
+    << "2." << std::endl;
+```
+
 The `DecisionTree<>` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
@@ -284,15 +310,227 @@ DecisionTree<FitnessFunction,
 
  * `FitnessFunction`
     - Specifies the fitness function to use when learning a decision tree.
-    - The `GiniGain` and `InformationGain` classes are available for drop-in
-      usage.
+    - The `GiniGain` _(default)_ and `InformationGain` classes are available for
+      drop-in usage.
     - A custom class must implement three functions:
-        * `double Range(const size_t numClasses)`: return the range (difference
-          between maximum and minimum gain values).
-        * `double Evaluate(RowType labels, size_t numClasses, WeightVecType
-          weights)`: compute the gain for the given vector of labels with
-          associated instance weights.
-        * `double EvaluatePtr(CountType* counts, size_t numClasses, CountType
-          totalCount)`: compute the gain for the counted set of labels where
-          `counts[i]` contains the number of points with label `i`, with total
-          set size `totalCount`.
+
+```c++
+// You can use this as a starting point for implementation.
+class CustomFitnessFunction
+{
+  // Return the range (difference between maximum and minimum gain values).
+  double Range(const size_t numClasses);
+
+  // Compute the gain for the given vector of labels, where `labels[i]` has an
+  // associated instance weight `weights[i]`.
+  //
+  // `RowType` and `WeightVecType` will be vector types following the Armadillo
+  // API.  If `UseWeights` is `false`, then the `weights` vector should be
+  // ignored (e.g. the labels are not weighted).
+  template<bool UseWeights, typename RowType, typename WeightVecType>
+  double Evaluate(const RowType& labels,
+                  const size_t numClasses,
+                  const WeightVecType& weights);
+
+  // Compute the gain for the given counted set of labels, where `counts[i]`
+  // contains the number of points with label `i`.  There are `totalCount`
+  // labels total, and `counts` has length `numClasses`.
+  //
+  // `UseWeights` is ignored, and `CountType` will be an integral type (e.g.
+  // `size_t`).
+  template<bool UseWeights, typename CountType>
+  double EvaluatePtr(const CountType* counts,
+                     const size_t numClasses,
+                     const CountType totalCount);
+};
+```
+
+ * `NumericSplitType`
+    - Specifies the strategy to be used during training when splitting a numeric
+      feature.
+    - The `BestBinaryNumericSplit` _(default)_ class is available for drop-in
+      usage and finds the best binary (two-way) split among all possible binary
+      splits.
+    - The `RandomBinaryNumericSplit` class is available for drop-in usage and
+      will select a split randomly between the minimum and maximum values of a
+      dimension.  It is very efficient but does not yield splits that maximize
+      the gain.  (Used by the `ExtraTrees` variant of
+      [`RandomForest`](#random_forest).) <!-- TODO: fix link! -->
+    - A custom class must implement three functions and have an internal
+      structure `AuxiliarySplitInfo` that is used at classification time.
+
+```c++
+class CustomNumericSplit
+{
+ public:
+  // If a split with better resulting gain than `bestGain` is found, then
+  // information about the new, better split should be stored in `splitInfo` and
+  // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
+  // gains that the children will have (call this `sumChildrenGains`) is
+  // sufficiently better than the gain of the unsplit node (call this
+  // `unsplitGain`):
+  //
+  //    split if `sumChildrenGains - unsplitGain > bestGain`, and
+  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
+  //             each child will have at least `minimumLeafSize` points
+  //
+  // The new best split value should be returned (or anything greater than or
+  // equal to `bestGain` if no better split is found).
+  //
+  // If a new best split is found, then `splitInfo` and `aux` should be
+  // populated with the information that will be needed for
+  // `CalculateDirection()` to successfully choose the child for a given point.
+  // `splitInfo` should be set to a vector of length 1.  The format of `aux` is
+  // arbitrary and is detailed more below.
+  //
+  // If `UseWeights` is false, the vector `weights` should be ignored.
+  // Otherwise, they are instance weighs for each value in `data` (one dimension
+  // of the input data).
+  template<bool UseWeights, typename VecType, typename WeightVecType>
+  double SplitIfBetter(const double bestGain,
+                       const VecType& data,
+                       const arma::Row<size_t>& labels,
+                       const size_t numClasses,
+                       const WeightVecType& weights,
+                       const size_t minimumLeafSize,
+                       const double minimumGainSplit,
+                       arma::vec& splitInfo,
+                       AuxiliarySplitInfo& aux);
+
+  // Return the number of children for a given split (stored as the single
+  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
+  size_t NumChildren(const double& splitInfo,
+                     const AuxiliarySplitInfo& aux);
+
+  // Given a point with value `point`, and split information `splitInfo` and
+  // `aux`, return the index of the child that corresponds to the point.  So,
+  // e.g., if the split type was a binary split on the value `splitInfo`, you
+  // might return `0` if `point < splitInfo`, and `1` otherwise.
+  template<typename ElemType>
+  static size_t CalculateDirection(
+      const ElemType& point,
+      const double& splitInfo,
+      const AuxiliarySplitInfo& /* aux */);
+
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+};
+```
+
+ * `CategoricalSplitType`
+    - Specifies the strategy to be used during training when splitting a
+      categorical feature.
+    - The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
+      splits all categories into their own node.
+    - A custom class must implement three functions and have an internal
+      structure `AuxiliarySplitInfo` that is used at classification time:
+
+```c++
+class CustomCategoricalSplit
+{
+ public:
+  // If a split with better resulting gain than `bestGain` is found, then
+  // information about the new, better split should be stored in `splitInfo` and
+  // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
+  // gains that the children will have (call this `sumChildrenGains`) is
+  // sufficiently better than the gain of the unsplit node (call this
+  // `unsplitGain`):
+  //
+  //    split if `sumChildrenGains - unsplitGain > bestGain`, and
+  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
+  //             each child will have at least `minimumLeafSize` points
+  //
+  // The new best split value should be returned (or anything greater than or
+  // equal to `bestGain` if no better split is found).
+  //
+  // If a new best split is found, then `splitInfo` and `aux` should be
+  // populated with the information that will be needed for
+  // `CalculateDirection()` to successfully choose the child for a given point.
+  // `splitInfo` should be set to a vector of length 1.  The format of `aux` is
+  // arbitrary and is detailed more below.
+  //
+  // If `UseWeights` is false, the vector `weights` should be ignored.
+  // Otherwise, they are instance weighs for each value in `data` (one
+  // categorical dimension of the input data, which takes values between `0` and
+  // `numCategories - 1`).
+  template<bool UseWeights, typename VecType, typename LabelsType,
+           typename WeightVecType>
+  static double SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const size_t numCategories,
+      const LabelsType& labels,
+      const size_t numClasses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      arma::vec& splitInfo,
+      AuxiliarySplitInfo& aux);
+
+  // Return the number of children for a given split (stored as the single
+  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
+  size_t NumChildren(const double& splitInfo,
+                     const AuxiliarySplitInfo& aux);
+
+  // Given a point with (categorical) value `point`, and split information
+  // `splitInfo` and `aux`, return the index of the child that corresponds to
+  // the point.  So, e.g., for `AllCategoricalSplit`, which splits a categorical
+  // dimension into one child for each category, this simply returns `point`.
+  template<typename ElemType>
+  static size_t CalculateDirection(
+      const ElemType& point,
+      const double& splitInfo,
+      const AuxiliarySplitInfo& /* aux */);
+
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+};
+```
+
+ * `DimensionSelectionType`
+   - When splitting a decision tree, `DimensionSelectionType` proposes possible
+     dimensions to try splitting on.
+   - `AllDimensionSplit` _(default)_ is available for drop-in usage and proposes
+     all dimensions for splits.
+   - `MultipleRandomDimensionSelect`, constructed as
+     `MultipleRandomDimensionSplit(n)`, selects `n` different random dimensions as
+     candidates at each decision tree node.
+   - A custom class must implement three simple functions:
+
+```c++
+class CustomDimensionSelect
+{
+ public:
+  // Get the first dimension to try.
+  // This should return a value between `0` and `data.n_rows`.
+  size_t Begin();
+
+  // Get the next dimension to try.  Note that internal state can be used to
+  // track which candidate dimension is currently being looked at.
+  // This should return a value between `0` and `data.n_rows`.
+  size_t Next();
+
+  // Get a value indicating that all dimensions have been tried.
+  size_t End() const;
+
+  // The usage pattern of `DimensionSelectionType` by `DecisionTree` is as
+  // follows, assuming that `dim` is an instantiated `DimensionSelectionType`
+  // object:
+  //
+  // for (size_t dim = dim.Begin(); dim != dim.End(); dim = dim.Next())
+  // {
+  //   // ... try to split on dimension `dim` ...
+  // }
+};
+```
+
+ * `NoRecursion`
+    - A `bool` value that indicates whether a decision tree should be
+      constructed recursively.
+    - If `true` _(default)_, a full decision tree will be built.
+    - If `false`, only the root node will be split (producing a decision
+      stump).
