@@ -55,7 +55,7 @@ DecisionTree tree(data, labels, 3);
     * update matrices.md to include a section on labels and NormalizeLabels()
     * add a bit about instance weights in matrices.md
  -->
-| **name** | **type** | **name** | **description** | **default** |
+| **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
 | `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
