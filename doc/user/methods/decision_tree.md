@@ -5,6 +5,8 @@ numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
+
+
 ### Constructors
 
  * `DecisionTree(`_`numClasses`_`)` (initialize without training)
@@ -21,18 +23,18 @@ constructor parameters that can be used to control the behavior of the tree.
  * `DecisionTree(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`,    `_`weights`_`)` (train on weighted mixed categorical data)
  * `DecisionTree(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`, `_`weights`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on weighted mixed categorical data with hyperparameters)
 
+<!-- TODOs for table below:
+    * better link for column-major matrices
+    * better link for working with categorical data in straightforward terms
+    * update matrices.md to include a section on labels and NormalizeLabels()
+    * add a bit about instance weights in matrices.md
+ -->
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | [`arma::mat`](../matrices.md) | **`data`** | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-<!-- TODO: the linked tutorial is inappropriate, and we need a simpler
-DatasetInfo tutorial that discusses how to load and work with categorical data
-in very straightforward terms -->
 | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | **`datasetInfo`** |
 Dataset information, specifying type information for each dimension. | _(N/A)_ |
-<!-- TODO: update matrices.md to include a section on labels, and how to use
-`NormalizeLabels()` to map to [0, numClasses - 1]. -->
 | [`arma::Row<size_t>`]('../matrices.md') | **`labels`** | Training labels, between `0` and `numClasses - 1` (inclusive). | _(N/A)_ |
-<!-- TODO: include a bit about instance weights in matrices.md -->
 | [`arma::rowvec`]('../matrices.md') | **`weights`** | Weights for each training point. | _(N/A)_ |
 | `size_t` | **`numClasses`** | Number of classes in the dataset. | _(N/A)_ |
 | `size_t` | **`minimumLeafSize`** | Minimum number of points in each leaf node. | `10` |
@@ -107,7 +109,7 @@ categorical example -- TODO
 ### Other functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
- * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) and
+ * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) an
    [`data::Load()`](../formats.md).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
