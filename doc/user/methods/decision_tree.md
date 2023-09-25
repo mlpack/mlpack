@@ -15,7 +15,7 @@ constructor parameters that can be used to control the behavior of the tree.
 |---------------|-----------------|
 | `DecisionTree(numClasses)` | Initialize tree without training. |
 | `DecisionTree(data, labels, numClasses)` | Train on numerical-only data. |
-| `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)` | Train on numerical-only data with hyperparameters. |
+| `DecisionTree(data, labels, numClasses, minimumLeafSize,`<br>`           minimumGainSplit, maximumDepth)` | Train on numerical-only data with hyperparameters. |
 | `DecisionTree(data, datasetInfo, labels, numClasses)` | Train on mixed categorical data. |
 | `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)` | Train on mixed categorical data with hyperparameters. |
 | `DecisionTree(data, datasetInfo, labels, numClasses, weights)` | Train on weighted mixed categorical data. |
