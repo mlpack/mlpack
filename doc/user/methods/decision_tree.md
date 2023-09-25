@@ -9,19 +9,21 @@ constructor parameters that can be used to control the behavior of the tree.
 
 ### Constructors
 
- * `DecisionTree(`_`numClasses`_`)` (initialize without training)
+*Forms*:
 
- * `DecisionTree(`_`data`_`, `_`labels`_`, `_`numClasses`_`)` (train on
-   numerical-only data)
- * `DecisionTree(`_`data`_`, `_`labels`_`, `_`numClasses`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on numerical-only data with hyperparameters)
+| **signature** | **description** |
+|---------------|-----------------|
+| `DecisionTree(numClasses)` | Initialize tree without training. |
+| `DecisionTree(data, labels, numClasses)` | Train on numerical-only data. |
+| `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)` | Train on numerical-only data with hyperparameters. |
+| `DecisionTree(data, datasetInfo, labels, numClasses)` | Train on mixed categorical data. |
+| `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth) | Train on mixed categorical data with hyperparameters. |
+| `DecisionTree(data, datasetInfo, labels, numClasses, weights)` | Train on weighted mixed categorical data. |
+| `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)` | Train on weighted mixed categorical data with hyperparameters. |
 
 <!-- TODO: weighted numerical-only constructors -->
 
- * `DecisionTree(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`)` (train on mixed categorical data)
- * `DecisionTree(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on mixed categorical data with hyperparameters)
-
- * `DecisionTree(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`,    `_`weights`_`)` (train on weighted mixed categorical data)
- * `DecisionTree(`_`data`_`, `_`datasetInfo`_`, `_`labels`_`, `_`numClasses`_`, `_`weights`_`, `_`minimumLeafSize`_`, `_`minimumGainSplit`_`, `_`maximumDepth`_`)` (train on weighted mixed categorical data with hyperparameters)
+*Parameters*:
 
 <!-- TODOs for table below:
     * better link for column-major matrices
