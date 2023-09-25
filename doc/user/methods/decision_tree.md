@@ -5,7 +5,7 @@ numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
-*Example excerpt*:
+*Basic usage excerpt:*
 
 ```c++
 DecisionTree tree(3); // [Step 1](#constructors): construct object.
@@ -13,7 +13,19 @@ tree.Train(data, labels, 3); // [Step 2](#training): train model.
 tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
 ```
 
+*Quick links:*
 
+ * [#constructors](Constructors)
+ * [#training](`Train()`: train model).
+ * [#classification](`Classify()`: classify with a trained model).
+ * [#other_functionality](Other functionality) for loading, saving, and
+   inspecting.
+ * [#template_parameters](Template parameters) for custom behavior.
+ * [#examples](Examples) of simple usage and links to detailed example projects.
+
+*See also*:
+
+ * todo
 
 ### Constructors
 
@@ -21,6 +33,7 @@ Construct a `DecisionTree` object using one of the constructors below.
 
 *Forms*:
 
+ * `DecisionTree()`
  * `DecisionTree(numClasses)`
    - Initialize tree without training.
    - You will need to call [`Train()`](#training) later to train the tree before
@@ -31,12 +44,16 @@ Construct a `DecisionTree` object using one of the constructors below.
  * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical-only data.
    - If hyperparameters are not specified, default values are used.
+   - `labels` should be a vector of length `data.n_cols`, containing values from
+     `0` to `numClasses - 1` (inclusive).
 
 
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on mixed categorical data.
    - If hyperparameters are not specified, default values are used.
+   - `labels` should be a vector of length `data.n_cols`, containing values from
+     `0` to `numClasses - 1` (inclusive).
 
 
 <!-- TODO: weighted numerical-only constructors -->
@@ -45,6 +62,10 @@ Construct a `DecisionTree` object using one of the constructors below.
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on weighted mixed categorical data.
    - If hyperparameters are not specified, default values are used.
+   - `labels` should be a vector of length `data.n_cols`, containing values from
+     `0` to `numClasses - 1` (inclusive).
+   - `weights` should be a vector of length `data.n_cols`, containing instance
+     weights for each point in `data`.
 
 *Parameters*:
 
@@ -58,8 +79,8 @@ Construct a `DecisionTree` object using one of the constructors below.
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
 | `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive). | _(N/A)_ |
-| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `minimumLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
 | `minimumGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
@@ -93,7 +114,8 @@ of the versions of the `Train()` member function.  For an instance of
 
 Types of each argument are the same as in the table for constructors above.
 
-TODO: what about incremental training?
+***Note***: training is not incremental.  A second call to `Train()` will
+retrain the decision tree from scratch.
 
 ### Classification
 
@@ -136,28 +158,6 @@ to make class predictions for new data.
 | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
 | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
 
-### Simple examples
-
-Train a decision tree on random numeric data:
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(1000, 10);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-DecisionTree<> tree(data, labels, 5);
-```
-
-Train a decision tree on random mixed categorical data:
-
-```c++
-categorical example -- TODO
-```
-
-<!-- TODO: link to relevant examples in the examples repository -->
-
 ### Other functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
@@ -180,10 +180,91 @@ For complete functionality, the [source
 code](/src/mlpack/methods/decision_tree/decision_tree.hpp) can be consulted.
 Each method is fully documented.
 
+### Simple examples
+
+Train a decision tree on random numeric data and predict labels on a test set:
+
+```c++
+// 1000 random points in 10 dimensions.
+arma::mat dataset(10, 1000);
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+// Train in the constructor.
+DecisionTree<> tree(data, labels, 5);
+
+// Create test data (500 points).
+arma::mat testDataset(10, 500);
+arma::Row<size_t> predictions;
+tree.Classify(testDataset, predictions);
+// Now `predictions` holds predictions for the test dataset.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions == 2) << " test points classified as class "
+    << "2." << std::endl;
+```
+
+Train a decision tree on random mixed categorical data:
+
+```c++
+// Load a categorical dataset.
+arma::mat dataset;
+data::DatasetInfo info;
+// See https://datasets.mlpack.org/iris.arff.
+data::Load("iris.arff", dataset, info, true);
+
+arma::Row<size_t> labels;
+// See https://datasets.mlpack.org/iris_labels.csv.
+data::Load("iris_labels.csv", labels, true);
+
+// Create the tree.
+DecisionTree<> tree;
+// Train on the given dataset, specifying a minimum leaf size of 1.
+tree.Train(dataset, info, labels, 3 /* classes */, 1 /* minimum leaf size */);
+
+// Load categorical test data.
+arma::mat testDataset;
+// See https://datasets.mlpack.org/iris_test.arff.
+data::Load("iris_test.arff", testDataset, info, true);
+
+// Predict class of first test point.
+const size_t firstPrediction = tree.Classify(testDataset.col(0));
+std::cout << "Predicted class of first test point is " << firstPrediction << "."
+    << std::endl;
+
+// Predict class and probabilities of second test point.
+size_t secondPrediction;
+arma::vec secondProbabilities;
+tree.Classify(testDataset.col(1), secondPrediction, secondProbabilities);
+std::cout << "Class probabilities of second test point: " <<
+    secondProbabilities.t();
+```
+
+Load a tree and print some information about it.
+
+```c++
+DecisionTree tree;
+// This call assumes a tree called "tree" has already been saved to `tree.bin`
+// with data::Save().
+data::Load("tree.bin", "tree", tree, true);
+
+if (tree.NumChildren() > 0)
+{
+  std::cout << "The split dimension of the root node of the tree in `tree.bin` "
+      << "is dimension " << tree.SplitDimension() << "." << std::endl;
+}
+else
+{
+  std::cout << "The tree in `tree.bin` is a leaf (it has no children)."
+      << std::endl;
+}
+```
+
+See also the following fully-working examples:
+
+ - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/loan_default_prediction_with_decision_tree/loan-default-prediction-with-decision-tree-cpp.ipynb)
+
 ### Advanced Functionality: Template Parameters
 
 The `DecisionTree<>` class also supports several template parameters.
-
-<!-- TODO: this section -->
-
-### See Also
