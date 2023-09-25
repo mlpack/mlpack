@@ -25,7 +25,10 @@ tree.Classify(test_data, test_predictions); // [Step 3](#classification): use mo
 
 *See also*:
 
- * todo
+ * [Random forests](#random_forests) <!-- TODO: fix link! -->
+ * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
+ * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
+ * [Decision tree learning on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
 
 ### Constructors
 
@@ -267,4 +270,29 @@ See also the following fully-working examples:
 
 ### Advanced Functionality: Template Parameters
 
-The `DecisionTree<>` class also supports several template parameters.
+The `DecisionTree<>` class also supports several template parameters, which can
+be used for custom behavior during learning.  The full signature of the class is
+as follows:
+
+```c++
+DecisionTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             DimensionSelectionType,
+             NoRecursion>
+```
+
+ * `FitnessFunction`
+    - Specifies the fitness function to use when learning a decision tree.
+    - The `GiniGain` and `InformationGain` classes are available for drop-in
+      usage.
+    - A custom class must implement three functions:
+        * `double Range(const size_t numClasses)`: return the range (difference
+          between maximum and minimum gain values).
+        * `double Evaluate(RowType labels, size_t numClasses, WeightVecType
+          weights)`: compute the gain for the given vector of labels with
+          associated instance weights.
+        * `double EvaluatePtr(CountType* counts, size_t numClasses, CountType
+          totalCount)`: compute the gain for the counted set of labels where
+          `counts[i]` contains the number of points with label `i`, with total
+          set size `totalCount`.
