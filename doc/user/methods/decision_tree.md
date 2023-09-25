@@ -9,25 +9,38 @@ constructor parameters that can be used to control the behavior of the tree.
 
 ### Constructors
 
+Construct a `DecisionTree` object using one of the constructors below, like
+this:
+
+```c++
+// Create a decision tree for numerical data with three classes.
+DecisionTree tree(data, labels, 3);
+```
+
 *Forms*:
 
  * `DecisionTree(numClasses)`
-   -  Initialize tree without training.
+   - Initialize tree without training.
+   - You will need to call `Train()` later to train the tree before calling
+     `Classify()`.
 
  * `DecisionTree(data, labels, numClasses)`
    - Train on numerical-only data.
+   - Uses default hyperparameter values (see below).
 
- * `DecisionTree(data, labels, numClasses,<br>minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on numerical-only data with hyperparameters.
 
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
    - Train on mixed categorical data.
+   - Uses default hyperparameter values (see below).
 
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on mixed categorical data with hyperparameters.
 
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
    - Train on weighted mixed categorical data.
+   - Uses default hyperparameter values (see below).
 
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on weighted mixed categorical data with hyperparameters.
@@ -42,16 +55,16 @@ constructor parameters that can be used to control the behavior of the tree.
     * update matrices.md to include a section on labels and NormalizeLabels()
     * add a bit about instance weights in matrices.md
  -->
-| **type** | **name** | **description** | **default** |
+| **name** | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| [`arma::mat`](../matrices.md) | **`data`** | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | **`datasetInfo`** | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| [`arma::Row<size_t>`]('../matrices.md') | **`labels`** | Training labels, between `0` and `numClasses - 1` (inclusive). | _(N/A)_ |
-| [`arma::rowvec`]('../matrices.md') | **`weights`** | Weights for each training point. | _(N/A)_ |
-| `size_t` | **`numClasses`** | Number of classes in the dataset. | _(N/A)_ |
-| `size_t` | **`minimumLeafSize`** | Minimum number of points in each leaf node. | `10` |
-| `double` | **`minimumGainSplit`** | Minimum gain for a node to split. | `1e-7` |
-| `size_t` | **`maximumDepth`** | Maximum depth for the tree. (0 means no limit.) | `0` |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive). | _(N/A)_ |
+| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point. | _(N/A)_ |
+| `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
+| `minimumLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
+| `minimumGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
+| `maximumDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
 
 ### Training
 
