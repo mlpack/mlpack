@@ -131,7 +131,7 @@ to make class predictions for new data.
 | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
-|----------|----------|-----------------|
+| | | |
 | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
 | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
