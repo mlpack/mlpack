@@ -5,25 +5,25 @@ numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
-*Basic usage excerpt:*
+#### Basic usage excerpt:
 
 ```c++
-DecisionTree tree(3); // [Step 1](#constructors): construct object.
-tree.Train(data, labels, 3); // [Step 2](#training): train model.
-tree.Classify(test_data, test_predictions); // [Step 3](#classification): use model to classify points.
+DecisionTree tree(3);                       // Step 1: construct object.
+tree.Train(data, labels, 3);                // Step 2: train model.
+tree.Classify(test_data, test_predictions); // Step 3: use model to classify.
 ```
 
-*Quick links:*
+#### Quick links:
 
  * [Constructors](#constructors): create `DecisionTree` objects.
  * [`Train()`](#training): train model.
- * [`Classify()`](#classification): classify with a trained model).
+ * [`Classify()`](#classification): classify with a trained model.
  * [Other functionality](#other_functionality) for loading, saving, and
    inspecting.
  * [Template parameters](#template_parameters) for custom behavior.
  * [Examples](#examples) of simple usage and links to detailed example projects.
 
-*See also*:
+#### See also:
 
  * [`DecisionTreeRegressor`](#decision_tree_regressor) <!-- TODO: fix link! -->
  * [Random forests](#random_forests) <!-- TODO: fix link! -->
@@ -35,7 +35,7 @@ tree.Classify(test_data, test_predictions); // [Step 3](#classification): use mo
 
 Construct a `DecisionTree` object using one of the constructors below.
 
-*Forms*:
+#### Forms:
 
  * `DecisionTree()`
  * `DecisionTree(numClasses)`
@@ -43,6 +43,7 @@ Construct a `DecisionTree` object using one of the constructors below.
    - You will need to call [`Train()`](#training) later to train the tree before
      calling [`Classify()`](#classify).
 
+---
 
  * `DecisionTree(data, labels, numClasses)`
  * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
@@ -51,6 +52,7 @@ Construct a `DecisionTree` object using one of the constructors below.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
 
+---
 
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
@@ -59,8 +61,7 @@ Construct a `DecisionTree` object using one of the constructors below.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
 
-
-<!-- TODO: weighted numerical-only constructors -->
+---
 
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
@@ -71,7 +72,11 @@ Construct a `DecisionTree` object using one of the constructors below.
    - `weights` should be a vector of length `data.n_cols`, containing instance
      weights for each point in `data`.
 
-*Parameters*:
+---
+
+<!-- TODO: weighted numerical-only constructors -->
+
+#### Parameters:
 
 <!-- TODOs for table below:
     * better link for column-major matrices
@@ -79,6 +84,7 @@ Construct a `DecisionTree` object using one of the constructors below.
     * update matrices.md to include a section on labels and NormalizeLabels()
     * add a bit about instance weights in matrices.md
  -->
+
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
@@ -106,20 +112,28 @@ of the versions of the `Train()` member function.  For an instance of
    - Train on numerical-only data.
    - If hyperparameters are not specified, default values are used.
 
+---
+
  * `tree.Train(data, labels, numClasses, weights)`
  * `tree.Train(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on weighted numerical-only data.
    - If hyperparameters are not specified, default values are used.
+
+---
 
  * `tree.Train(data, datasetInfo, labels, numClasses)`
  * `tree.Train(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on mixed categorical data.
    - If hyperparameters are not specified, default values are used.
 
+---
+
  * `tree.Train(data, datasetInfo, labels, numClasses, weights)`
  * `tree.Train(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on weighted mixed categorical data.
    - If hyperparameters are not specified, default values are used.
+
+---
 
 Types of each argument are the same as in the table for constructors above.
 
@@ -131,8 +145,12 @@ retrain the decision tree from scratch.
 Once a `DecisionTree` is trained, the `Classify()` member function can be used
 to make class predictions for new data.
 
- * `size_t class = tree.Classify(point)`
+#### Forms:
+
+ * `size_t class = tree.Classify(point)`{:.c++}
     - Classify a single point, returning the predicted class.
+
+---
 
  * `tree.Classify(point, prediction, probabilities_vec)`
     - Classify a single point and compute class probabilities.
@@ -141,11 +159,15 @@ to make class predictions for new data.
       length `num_classes`.
     - The probability of class `i` can be accessed with `probabilities_vec[i]`.
 
+---
+
  * `tree.Classify(data, predictions)`
     - Classify a set of points.
     - The predicted classes of each point is stored in `predictions`, which is
       set to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
+
+---
 
  * `tree.Classify(data, predictions, probabilities)`
     - Classify a set of points and compute class probabilities for each point.
@@ -157,12 +179,16 @@ to make class predictions for new data.
     - The probability of class `j` for data point `i` can be accessed with
       `probabilities(j, i)`.
 
+---
+
+#### Parameters:
+
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
 | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
-| | | |
+||||
 | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
 | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
@@ -174,7 +200,8 @@ that is used should be the same type that was used for training.
 ### Other functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
- * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) an
+
+ * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) and
    [`data::Load()`](../formats.md).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
@@ -218,6 +245,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
     << "2." << std::endl;
 ```
 
+---
+
 Train a decision tree on random mixed categorical data:
 
 ```c++
@@ -254,6 +283,8 @@ std::cout << "Class probabilities of second test point: " <<
     secondProbabilities.t();
 ```
 
+---
+
 Load a tree and print some information about it.
 
 ```c++
@@ -274,11 +305,15 @@ else
 }
 ```
 
+---
+
 See also the following fully-working examples:
 
  - [Loan default prediction with `DecisionTree`](https://github.com/mlpack/examples/blob/master/loan_default_prediction_with_decision_tree/loan-default-prediction-with-decision-tree-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
+
+#### Using different element types.
 
 `DecisionTree`'s constructors, `Train()`, and `Classify()` functions support
 any data type, so long as it supports the Armadillo matrix API.  So, learning
@@ -305,6 +340,10 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
     << "2." << std::endl;
 ```
 
+---
+
+#### Fully custom behavior.
+
 The `DecisionTree<>` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
@@ -317,11 +356,27 @@ DecisionTree<FitnessFunction,
              NoRecursion>
 ```
 
- * `FitnessFunction`
-    - Specifies the fitness function to use when learning a decision tree.
-    - The `GiniGain` _(default)_ and `InformationGain` classes are available for
-      drop-in usage.
-    - A custom class must implement three functions:
+ * `FitnessFunction`: the measure of goodness to use when deciding on tree
+   splits
+ * `NumericSplitType`: the strategy used for finding splits on numeric data
+   dimensions
+ * `CategoricalSplitType`: the strategy used for finding splits on categorical
+   data dimensions
+ * `DimensionSelectionType`: the strategy used for proposing dimensions to
+   attempt to split on
+ * `NoRecursion`: a boolean indicating whether or not to build a tree or a stump
+   (one level tree)
+
+Below, details are given for the requirements of each of these template types.
+
+---
+
+#### `FitnessFunction`
+
+ * Specifies the fitness function to use when learning a decision tree.
+ * The `GiniGain` _(default)_ and `InformationGain` classes are available for
+   drop-in usage.
+ * A custom class must implement three functions:
 
 ```c++
 // You can use this as a starting point for implementation.
@@ -353,6 +408,8 @@ class CustomFitnessFunction
                      const CountType totalCount);
 };
 ```
+
+---
 
  * `NumericSplitType`
     - Specifies the strategy to be used during training when splitting a numeric
@@ -428,13 +485,16 @@ class CustomNumericSplit
 };
 ```
 
- * `CategoricalSplitType`
-    - Specifies the strategy to be used during training when splitting a
-      categorical feature.
-    - The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
-      splits all categories into their own node.
-    - A custom class must implement three functions and have an internal
-      structure `AuxiliarySplitInfo` that is used at classification time:
+---
+
+#### `CategoricalSplitType`
+
+ * Specifies the strategy to be used during training when splitting a
+    categorical feature.
+ * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
+   splits all categories into their own node.
+ * A custom class must implement three functions and have an internal
+   structure `AuxiliarySplitInfo` that is used at classification time:
 
 ```c++
 class CustomCategoricalSplit
@@ -500,15 +560,18 @@ class CustomCategoricalSplit
 };
 ```
 
- * `DimensionSelectionType`
-   - When splitting a decision tree, `DimensionSelectionType` proposes possible
-     dimensions to try splitting on.
-   - `AllDimensionSplit` _(default)_ is available for drop-in usage and proposes
-     all dimensions for splits.
-   - `MultipleRandomDimensionSelect`, constructed as
-     `MultipleRandomDimensionSplit(n)`, selects `n` different random dimensions as
-     candidates at each decision tree node.
-   - A custom class must implement three simple functions:
+---
+
+#### `DimensionSelectionType`
+
+ * When splitting a decision tree, `DimensionSelectionType` proposes possible
+   dimensions to try splitting on.
+ * `AllDimensionSplit` _(default)_ is available for drop-in usage and proposes
+   all dimensions for splits.
+ * `MultipleRandomDimensionSelect`, constructed as
+   `MultipleRandomDimensionSplit(n)`, selects `n` different random dimensions as
+   candidates at each decision tree node.
+ * A custom class must implement three simple functions:
 
 ```c++
 class CustomDimensionSelect
@@ -537,9 +600,12 @@ class CustomDimensionSelect
 };
 ```
 
- * `NoRecursion`
-    - A `bool` value that indicates whether a decision tree should be
-      constructed recursively.
-    - If `true` _(default)_, a full decision tree will be built.
-    - If `false`, only the root node will be split (producing a decision
-      stump).
+---
+
+#### `NoRecursion`
+
+ * A `bool` value that indicates whether a decision tree should be
+   constructed recursively.
+ * If `true` _(default)_, a full decision tree will be built.
+ * If `false`, only the root node will be split (producing a decision
+   stump).
