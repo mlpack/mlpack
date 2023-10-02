@@ -5,7 +5,7 @@ numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
 constructor parameters that can be used to control the behavior of the tree.
 
-#### Basic usage excerpt:
+#### Basic usage example excerpt:
 
 ```c++
 DecisionTree tree(3);                       // Step 1: construct object.
@@ -18,10 +18,10 @@ tree.Classify(test_data, test_predictions); // Step 3: use model to classify.
  * [Constructors](#constructors): create `DecisionTree` objects.
  * [`Train()`](#training): train model.
  * [`Classify()`](#classification): classify with a trained model.
- * [Other functionality](#other_functionality) for loading, saving, and
+ * [Other functionality](#other-functionality) for loading, saving, and
    inspecting.
- * [Template parameters](#template_parameters) for custom behavior.
- * [Examples](#examples) of simple usage and links to detailed example projects.
+ * [Examples](#simple-examples) of simple usage and links to detailed example projects.
+ * [Template parameters](#advanced-functionality-template-parameters) for custom behavior.
 
 #### See also:
 
@@ -33,7 +33,9 @@ tree.Classify(test_data, test_predictions); // Step 3: use model to classify.
 
 ### Constructors
 
-Construct a `DecisionTree` object using one of the constructors below.
+Construct a `DecisionTree` object using one of the constructors below.  Defaults
+and types are detailed in the [Constructor Parameters](#constructor-parameters)
+section below.
 
 #### Forms:
 
@@ -41,7 +43,7 @@ Construct a `DecisionTree` object using one of the constructors below.
  * `DecisionTree(numClasses)`
    - Initialize tree without training.
    - You will need to call [`Train()`](#training) later to train the tree before
-     calling [`Classify()`](#classify).
+     calling [`Classify()`](#classification).
 
 ---
 
@@ -76,7 +78,7 @@ Construct a `DecisionTree` object using one of the constructors below.
 
 <!-- TODO: weighted numerical-only constructors -->
 
-#### Parameters:
+#### Constructor Parameters:
 
 <!-- TODOs for table below:
     * better link for column-major matrices
@@ -135,7 +137,8 @@ of the versions of the `Train()` member function.  For an instance of
 
 ---
 
-Types of each argument are the same as in the table for constructors above.
+Types of each argument are the same as in the table for constructors
+[above](#constructor-parameters).
 
 ***Note***: training is not incremental.  A second call to `Train()` will
 retrain the decision tree from scratch.
@@ -143,25 +146,30 @@ retrain the decision tree from scratch.
 ### Classification
 
 Once a `DecisionTree` is trained, the `Classify()` member function can be used
-to make class predictions for new data.
+to make class predictions for new data.  Defaults and types are detailed in the
+[Classification Parameters](#classification-parameters) section below.
+
 
 #### Forms:
 
- * `size_t class = tree.Classify(point)`{:.c++}
+ * `size_t predictedClass = tree.Classify(point)`
+    - ***(Single-point)***
     - Classify a single point, returning the predicted class.
 
 ---
 
  * `tree.Classify(point, prediction, probabilities_vec)`
+    - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
-    - The class probabilities are stored in `probabilities`, which is set to
+    - The class probabilities are stored in `probabilities_vec`, which is set to
       length `num_classes`.
     - The probability of class `i` can be accessed with `probabilities_vec[i]`.
 
 ---
 
  * `tree.Classify(data, predictions)`
+    - ***(Multi-point)***
     - Classify a set of points.
     - The predicted classes of each point is stored in `predictions`, which is
       set to length `data.n_cols`.
@@ -170,6 +178,7 @@ to make class predictions for new data.
 ---
 
  * `tree.Classify(data, predictions, probabilities)`
+    - ***(Multi-point)***
     - Classify a set of points and compute class probabilities for each point.
     - The predicted classes of each point is stored in `predictions`, which is
       set to length `data.n_cols`.
@@ -181,17 +190,17 @@ to make class predictions for new data.
 
 ---
 
-#### Parameters:
+#### Classification Parameters:
 
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
-| `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
+| **usage** | **name** | **type** | **description** |
+|-----------|----------|----------|-----------------|
+| _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
+| _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
+| _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
 ||||
-| `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
-| `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
-| `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
+| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
 
 ***Note:*** different types can be used for `data` and `point` (e.g.
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
