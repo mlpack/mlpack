@@ -15,7 +15,7 @@
 #include "env_type.hpp"
 #include "acrobot.hpp"
 #include "cart_pole.hpp"
-#include "continuous_double_pole_cart.hpp"
+#include "cont_double_pole_cart.hpp"
 #include "continuous_mountain_car.hpp"
 #include "double_pole_cart.hpp"
 #include "ftn.hpp"

@@ -14,13 +14,29 @@
 
 #include "image_info.hpp"
 
-#ifdef HAS_STB
+#ifdef MLPACK_HAS_STB
 
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
 
-#endif // HAS_STB
+#if defined __has_include
+  #if __has_include("stb_image_write.h")
+    #include "stb_image_write.h"
+  #elif __has_include("stb/stb_image_write.h")
+    #include "stb/stb_image_write.h"
+  #else
+    #undef MLPACK_HAS_STB
+    #pragma message("Warning: STB disabled; stb_image_write.h header not found")
+  #endif
+#else
+  #ifdef MLPACK_HAS_STB_DIR
+    #include "stb/stb_image_write.h"
+  #else
+    #include "stb_image_write.h"
+  #endif
+#endif
+
+#endif // MLPACK_HAS_STB
 
 namespace mlpack {
 namespace data {

@@ -90,7 +90,7 @@ bool Load(const std::vector<std::string>& files,
   return true;
 }
 
-#ifdef HAS_STB
+#ifdef MLPACK_HAS_STB
 
 inline bool LoadImage(const std::string& filename,
                       arma::Mat<unsigned char>& matrix,
@@ -165,7 +165,7 @@ inline bool LoadImage(const std::string& filename,
   return true;
 }
 
-#else // HAS_STB
+#else // MLPACK_HAS_STB
 
 inline bool LoadImage(const std::string& /* filename */,
                       arma::Mat<unsigned char>& /* matrix */,

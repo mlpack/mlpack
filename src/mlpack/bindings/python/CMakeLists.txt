@@ -70,18 +70,22 @@ find_python_module(pandas 0.15.0)
 if (NOT PY_PANDAS)
   set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - pandas")
 endif ()
+find_python_module(wheel)
+if (NOT PY_WHEEL)
+  set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - wheel")
+endif ()
 
 ## We need to check here if Python and other dependencies is even available, as
 ## it is require to build python-bindings.
 if (FORCE_BUILD_PYTHON_BINDINGS)
   if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
-      OR NOT PY_PANDAS)
+      OR NOT PY_PANDAS OR NOT PY_WHEEL)
     unset(BUILD_PYTHON_BINDINGS CACHE)
     message(FATAL_ERROR "\nCould not Build Python Bindings; the following modules are not available: ${PY_NOT_FOUND_MSG}")
   endif()
 else()
   if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
-      OR NOT PY_PANDAS)
+      OR NOT PY_PANDAS OR NOT PY_WHEEL)
     unset(BUILD_PYTHON_BINDINGS CACHE)
     not_found_return("Not building Python bindings; the following modules are not available: ${PY_NOT_FOUND_MSG}")
   endif()
@@ -203,6 +207,9 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE}
     "${PYTHON_INSTALL_PREFIX}"
     OUTPUT_VARIABLE CMAKE_PYTHON_PATH)
 string(STRIP "${CMAKE_PYTHON_PATH}" CMAKE_PYTHON_PATH)
+if (DEFINED ENV{PYTHONPATH})
+  string(APPEND CMAKE_PYTHON_PATH : $ENV{PYTHONPATH})
+endif ()
 install(CODE "set(ENV{PYTHONPATH} ${CMAKE_PYTHON_PATH})")
 install(CODE "set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")")
 install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")

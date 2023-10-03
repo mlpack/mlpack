@@ -43,16 +43,18 @@
   #define M_PI 3.141592653589793238462643383279
 #endif
 
-// MLPACK_COUT_STREAM is used to change the default stream for printing
-// purpose.
-#if !defined(MLPACK_COUT_STREAM)
- #define MLPACK_COUT_STREAM std::cout
-#endif
-
-// MLPACK_CERR_STREAM is used to change the stream for printing warnings
-// and errors.
-#if !defined(MLPACK_CERR_STREAM)
- #define MLPACK_CERR_STREAM std::cerr
+// Include mlpack configuration.
+#ifdef MLPACK_CUSTOM_CONFIG_FILE
+  // During the build process, CMake will generate a custom configuration file
+  // specific to the system.  When CMake is used to build mlpack, that custom
+  // file is used via the MLPACK_CUSTOM_CONFIG_FILE macro.  When mlpack is
+  // installed by CMake, the custom configuration file is installed as
+  // config.hpp, and MLPACK_CUSTOM_CONFIG_FILE is not set after installation.
+  #undef MLPACK_WRAP_INCLUDE
+  #define MLPACK_WRAP_INCLUDE(x) <x>
+  #include MLPACK_WRAP_INCLUDE(MLPACK_CUSTOM_CONFIG_FILE)
+#else
+  #include "config.hpp"
 #endif
 
 // Give ourselves a nice way to force functions to be inline if we need.

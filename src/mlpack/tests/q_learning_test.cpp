@@ -16,60 +16,10 @@
 #include <mlpack/methods/reinforcement_learning.hpp>
 
 #include "catch.hpp"
+#include "test_reinforcement_learning_agent.hpp"
 
 using namespace mlpack;
 using namespace ens;
-
-template<typename AgentType>
-bool testAgent(AgentType& agent,
-               const double rewardThreshold,
-               const size_t noOfEpisodes,
-               const size_t consecutiveEpisodesTest = 50)
-{
-  bool converged = false;
-  std::vector<double> returnList;
-  size_t episodes = 0;
-  while (true)
-  {
-    double episodeReturn = agent.Episode();
-    episodes += 1;
-    returnList.push_back(episodeReturn);
-
-    if (returnList.size() > consecutiveEpisodesTest)
-      returnList.erase(returnList.begin());
-
-    double averageReturn = std::accumulate(returnList.begin(),
-        returnList.end(), 0.0) / returnList.size();
-
-    Log::Debug << "Average return in last " << returnList.size()
-        << " consecutive episodes: " << averageReturn
-        << " Episode return: " << episodeReturn << std::endl;
-
-    // For the speed of the test case, a high criterion should not be set
-    // for the rewardThreshold.
-    if (averageReturn > rewardThreshold &&
-        returnList.size() >= consecutiveEpisodesTest)
-    {
-      converged = true;
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 10; ++i)
-        testReturn(agent.Episode());
-
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
-    }
-
-    if (episodes > noOfEpisodes)
-    {
-      Log::Debug << "Agent failed." << std::endl;
-      break;
-    }
-  }
-
-  return converged;
-}
 
 //! Test DQN in Cart Pole task.
 TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
@@ -480,88 +430,4 @@ TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest]")
       break;
   }
   REQUIRE(converged);
-}
-
-//! Test SAC on Pendulum task.
-TEST_CASE("PendulumWithSAC", "[QLearningTest]")
-{
-  // It isn't guaranteed that the network will converge in the specified number
-  // of iterations using random weights.
-  bool converged = false;
-  for (size_t trial = 0; trial < 8; ++trial)
-  {
-    Log::Debug << "Trial number: " << trial << std::endl;
-    // Set up the replay method.
-    RandomReplay<Pendulum> replayMethod(32, 10000);
-
-    TrainingConfig config;
-    config.StepSize() = 0.001;
-    config.TargetNetworkSyncInterval() = 1;
-    config.UpdateInterval() = 3;
-
-    FFN<EmptyLoss, GaussianInitialization>
-        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
-
-    FFN<EmptyLoss, GaussianInitialization>
-        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
-
-    // Set up Soft actor-critic agent.
-    SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
-        agent(config, qNetwork, policyNetwork, replayMethod);
-
-    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
-    if (converged)
-      break;
-  }
-  REQUIRE(converged);
-}
-
-//! A test to ensure SAC works with multiple actions in action space.
-TEST_CASE("SACForMultipleActions", "[QLearningTest]")
-{
-  FFN<EmptyLoss, GaussianInitialization>
-      policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
-
-  FFN<EmptyLoss, GaussianInitialization>
-      qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
-
-  // Set up the replay method.
-  RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);
-
-  TrainingConfig config;
-  config.StepSize() = 0.001;
-  config.TargetNetworkSyncInterval() = 1;
-  config.UpdateInterval() = 3;
-
-  // Set up Soft actor-critic agent.
-  SAC<ContinuousActionEnv<3, 4>, decltype(qNetwork), decltype(policyNetwork),
-      AdamUpdate>
-      agent(config, qNetwork, policyNetwork, replayMethod);
-
-  agent.State().Data() = arma::randu<arma::colvec>
-      (ContinuousActionEnv<3, 4>::State::dimension, 1);
-  agent.SelectAction();
-
-  // Test to check if the action dimension given by the agent is correct.
-  REQUIRE(agent.Action().action.size() == 4);
-
-  replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
-  agent.TotalSteps()++;
-  agent.Update();
-  // If the agent is able to reach till this point of the test, it is assured
-  // that the agent can handle multiple actions in continuous space.
 }

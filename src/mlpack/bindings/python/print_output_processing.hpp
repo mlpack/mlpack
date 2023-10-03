@@ -97,28 +97,26 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = arma_numpy.mat_to_numpy_X(p.Get[mat]("name"))
+     * result = mat_to_numpy_X(p.Get[mat]("name"))
      *
      * where X indicates the type to convert to.
      */
-    std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
-        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(p.Get["
-        << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
+    std::cout << prefix << "result = " << GetArmaType<T>() << "_to_numpy_"
+        << GetNumpyTypeChar<T>() << "(p.Get[" << GetCythonType<T>(d) << "](\""
+        << d.name << "\"))" << std::endl;
   }
   else
   {
     /**
      * This gives us code like:
      *
-     * result['param_name'] =
-     *     arma_numpy.mat_to_numpy_X(p.Get[mat]('name')
+     * result['param_name'] = mat_to_numpy_X(p.Get[mat]('name')
      *
      * where X indicates the type to convert to.
      */
-    std::cout << prefix << "result['" << d.name
-        << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(p.Get[" << GetCythonType<T>(d)
-        << "]('" << d.name << "'))" << std::endl;
+    std::cout << prefix << "result['" << d.name << "'] = " << GetArmaType<T>()
+        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(p.Get["
+        << GetCythonType<T>(d) << "]('" << d.name << "'))" << std::endl;
   }
 }
 
@@ -143,11 +141,11 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat](p, 'name'))
+     * result = mat_to_numpy_X(GetParamWithInfo[mat](p, 'name'))
      */
-    std::cout << prefix << "result = arma_numpy.mat_to_numpy_"
+    std::cout << prefix << "result = mat_to_numpy_"
         << GetNumpyTypeChar<arma::mat>()
-        << "(GetParamWithInfo[arma.Mat[double]](p, '" << d.name << "'))"
+        << "(GetParamWithInfo[Mat[double]](p, '" << d.name << "'))"
         << std::endl;
   }
   else
@@ -155,12 +153,11 @@ void PrintOutputProcessing(
     /**
      * This gives us code like:
      *
-     * result['param_name'] =
-     *     arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat](p, 'name'))
+     * result['param_name'] = mat_to_numpy_X(GetParamWithInfo[mat](p, 'name'))
      */
     std::cout << prefix << "result['" << d.name
-        << "'] = arma_numpy.mat_to_numpy_" << GetNumpyTypeChar<arma::mat>()
-        << "(GetParamWithInfo[arma.Mat[double]](p, '" << d.name << "'))"
+        << "'] = mat_to_numpy_" << GetNumpyTypeChar<arma::mat>()
+        << "(GetParamWithInfo[Mat[double]](p, '" << d.name << "'))"
         << std::endl;
   }
 }

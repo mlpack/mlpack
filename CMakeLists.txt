@@ -222,6 +222,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
+set (BFD_DL_AVAILABLE "NO")
 if (DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
@@ -240,7 +241,7 @@ if (DEBUG)
           ${LIBDL_INCLUDE_DIRS})
       set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
           ${LIBDL_LIBRARIES})
-      add_definitions(-DMLPACK_HAS_BFD_DL)
+      set(BFD_DL_AVAILABLE "YES")
     else()
       message(WARNING "No libBFD and/or libDL has been found!")
     endif()
@@ -319,7 +320,6 @@ else()
 endif()
 
 if (STB_IMAGE_FOUND)
-  add_definitions(-DHAS_STB)
   set(STB_AVAILABLE "1")
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
@@ -469,6 +469,28 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
         DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
+
+# Modify config.hpp as necessary.
+file(READ ${CMAKE_SOURCE_DIR}/src/mlpack/config.hpp CONFIG_CONTENTS)
+if (BFD_DL_AVAILABLE)
+  string(REGEX REPLACE "// #define MLPACK_HAS_BFD_DL\n"
+      "#define MLPACK_HAS_BFD_DL\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif ()
+if (STB_AVAILABLE)
+  string(REGEX REPLACE "// #define MLPACK_HAS_STB\n"
+      "#define MLPACK_HAS_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  if (NOT STB_INCLUDE_NEEDS_STB_SUFFIX)
+    string(REGEX REPLACE "// #define MLPACK_HAS_NO_STB_DIR\n"
+        "#define MLPACK_HAS_NO_STB_DIR\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+  endif ()
+endif ()
+if (USING_GIT)
+  string(REGEX REPLACE "// #define MLPACK_GIT_VERSION\n"
+      "#define MLPACK_GIT_VERSION\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif ()
+file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
+include_directories(${CMAKE_BINARY_DIR}/include/)
+add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
 
 # Finally, add any cross-compilation support libraries (they may need to come
 # last).  If we are not cross-compiling, no changes will happen here.

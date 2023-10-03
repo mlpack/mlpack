@@ -21,7 +21,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.0.1.tar.gz">current stable version (4.0.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.2.1.tar.gz">current stable version (4.2.1)</a>
   </em>
 </p>
 
@@ -123,7 +123,7 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 *See also the [C++ quickstart](doc/quickstart/cpp.md).*
 
 Since mlpack is a header-only library, installing just the headers for use in a
-C++ application is trivial. 
+C++ application is trivial.
 
 From the root of the sources, configure and install
 in the standard CMake way:
@@ -135,18 +135,23 @@ sudo make install
 ```
 
 If the `cmake ..` command fails due to unavailable dependencies, consider either using the
-`-DDOWNLOAD_DEPENDENCIES=ON` option as detailed in
-[the following subsection](#31-additional-build-options), or ensure that mlpack's dependencies
-are installed, e.g. using the system package manager.  For example, on Debian and Ubuntu,
-all relevant dependencies can be installed with `sudo apt-get install libarmadillo-dev libensmallen-dev libcereal-dev g++ cmake`.
+`-DDOWNLOAD_DEPENDENCIES=ON` option as detailed in [the following
+subsection](#31-additional-build-options), or ensure that mlpack's dependencies
+are installed, e.g. using the system package manager.  For example, on Debian
+and Ubuntu, all relevant dependencies can be installed with `sudo apt-get
+install libarmadillo-dev libensmallen-dev libcereal-dev libstb-dev g++ cmake`.
 
-Alternatively, since CMake v3.14.0 the `cmake` command can create the build folder itself,
-the above commands can be rewritten as follows:
+Alternatively, since CMake v3.14.0 the `cmake` command can create the build
+folder itself, and so the above commands can be rewritten as follows:
 
 ```sh
 cmake -S . -B build
 sudo cmake --build build --target install
 ```
+
+During configuration, CMake adjusts the file `mlpack/config.hpp` using the
+details of the local system.  This file can be modified by hand as necessary
+before or after installation.
 
 ### 3.1. Additional build options
 
@@ -155,7 +160,9 @@ the configuration and build process.  Simply add these to the `cmake` command.
 Some options are given below:
 
  - `-DDOWNLOAD_DEPENDENCIES=ON` will automatically download mlpack's
-   dependencies (ensmallen, Armadillo, and cereal).
+   dependencies (ensmallen, Armadillo, and cereal).  Installing Armadillo this
+   way is not recommended and it is better to use your system package manager
+   when possible (see [below](#31a-linking-with-autodownloaded-armadillo)).
  - `-DCMAKE_INSTALL_PREFIX=/install/root/` will set the root of the install
    directory to `/install/root` when `make install` is run.
  - `-DDEBUG=ON` will enable debugging symbols in any compiled bindings or tests.
@@ -180,10 +187,41 @@ g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
 
 Note that if you want to serialize (save or load) neural networks, you should
 add `#define MLPACK_ENABLE_ANN_SERIALIZATION` before including `<mlpack.hpp>`.
+If you don't define `MLPACK_ENABLE_ANN_SERIALIZATION` and your code serializes a
+neural network, a compilation error will occur.
 
 See the [C++ quickstart](doc/quickstart/cpp.md) and the
 [examples](https://github.com/mlpack/examples) repository for some examples of
 mlpack applications in C++, with corresponding `Makefile`s.
+
+#### 3.1.a. Linking with autodownloaded Armadillo
+
+When the autodownloader is used to download Armadillo
+(`-DDOWNLOAD_DEPENDENCIES=ON`), the Armadillo runtime library is not built and
+Armadillo must be used in header-only mode.  The autodownloader also does not
+download dependencies of Armadillo such as OpenBLAS.  For this reason, it is
+recommended to instead install Armadillo using your system package manager,
+which will also install the dependencies of Armadillo.  For example, on Ubuntu
+and Debian systems, Armadillo can be installed with
+
+```sh
+sudo apt-get install libarmadillo-dev
+```
+
+and other package managers such as `dnf` and `brew` and `pacman` also have
+Armadillo packages available.
+
+If the autodownloader is used to provide Armadillo, mlpack programs cannot be
+linked with `-larmadillo`.  Instead, you must link directly with the
+dependencies of Armadillo.  For example, on a system that has OpenBLAS
+available, compilation can be done like this:
+
+```sh
+g++ -O3 -std=c++14 -o my_program my_program.cpp -lopenblas -fopenmp
+```
+
+See [the Armadillo documentation](https://arma.sourceforge.net/faq.html#linking)
+for more information on linking Armadillo programs.
 
 ### 3.2. Reducing compile time
 
@@ -198,7 +236,8 @@ reduce compilation time:
  * Only use the `MLPACK_ENABLE_ANN_SERIALIZATION` definition if you are
    serializing neural networks in your code.  When this define is enabled,
    compilation time will increase significantly, as the compiler must generate
-   code for every possible type of layer.
+   code for every possible type of layer.  (The large amount of extra
+   compilation overhead is why this is not enabled by default.)
 
  * If you are using mlpack in multiple .cpp files, consider using [`extern
    templates`](https://isocpp.org/wiki/faq/cpp11-language-templates) so that the
@@ -252,7 +291,7 @@ build in parallel; e.g., `make -j4` will use 4 cores to build.
 
 mlpack's Python bindings are available on
 [PyPI](https://pypi.org/project/mlpack) and
-[conda-forge](https://conda-forge.org/packages/mlpack), and can be installed
+[conda-forge](https://anaconda.org/conda-forge/mlpack), and can be installed
 with either `pip install mlpack` or `conda install -c conda-forge mlpack`.
 These sources are recommended, as building the Python bindings by hand can be
 complex.
@@ -261,6 +300,7 @@ With that in mind, if you would still like to manually build the mlpack Python
 bindings, first make sure that the following Python packages are installed:
 
  - setuptools
+ - wheel
  - cython >= 0.24
  - numpy
  - pandas >= 0.15.0

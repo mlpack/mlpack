@@ -194,7 +194,7 @@ void FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::Predict(MatType predictors, MatType& results, const size_t batchSize)
+>::Predict(const MatType& predictors, MatType& results, const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
   CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
@@ -206,8 +206,9 @@ void FFN<
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols) - i);
 
-    MatType predictorAlias(predictors.colptr(i), predictors.n_rows,
-        effectiveBatchSize, false, true);
+    const MatType predictorAlias(
+        const_cast<typename MatType::elem_type*>(predictors.colptr(i)),
+        predictors.n_rows, effectiveBatchSize, false, true);
     MatType resultAlias(results.colptr(i), results.n_rows,
         effectiveBatchSize, false, true);
 
@@ -374,34 +375,46 @@ void FFN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  // Serialize the output layer and initialization rule.
-  ar(CEREAL_NVP(outputLayer));
-  ar(CEREAL_NVP(initializeRule));
+  #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
+    // better ensure that every layer you are serializing has had
+    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+    // more information.
+    #ifndef MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
+      throw std::runtime_error("Cannot serialize a neural network unless "
+          "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
+          "build options\" section of the README for more information.");
+    #endif
+  #else
+    // Serialize the output layer and initialization rule.
+    ar(CEREAL_NVP(outputLayer));
+    ar(CEREAL_NVP(initializeRule));
 
-  // Serialize the network itself.
-  ar(CEREAL_NVP(network));
-  ar(CEREAL_NVP(parameters));
+    // Serialize the network itself.
+    ar(CEREAL_NVP(network));
+    ar(CEREAL_NVP(parameters));
 
-  // Serialize the expected input size.
-  ar(CEREAL_NVP(inputDimensions));
+    // Serialize the expected input size.
+    ar(CEREAL_NVP(inputDimensions));
 
-  // If we are loading, we need to initialize the weights.
-  if (cereal::is_loading<Archive>())
-  {
-    // We can clear these members, since it's not possible to serialize in the
-    // middle of training and resume.
-    predictors.clear();
-    responses.clear();
+    // If we are loading, we need to initialize the weights.
+    if (cereal::is_loading<Archive>())
+    {
+      // We can clear these members, since it's not possible to serialize in the
+      // middle of training and resume.
+      predictors.clear();
+      responses.clear();
 
-    networkOutput.clear();
-    networkDelta.clear();
+      networkOutput.clear();
+      networkDelta.clear();
 
-    layerMemoryIsSet = false;
-    inputDimensionsAreSet = false;
+      layerMemoryIsSet = false;
+      inputDimensionsAreSet = false;
 
-    // The weights in `parameters` will be correctly set for each layer in the
-    // first call to Forward().
-  }
+      // The weights in `parameters` will be correctly set for each layer in the
+      // first call to Forward().
+    }
+  #endif
 }
 
 template<typename OutputLayerType,
@@ -455,7 +468,7 @@ typename MatType::elem_type FFN<
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
   for (size_t i = 1; i < predictors.n_cols; ++i)
   {
-    arma::mat tmpGradient(gradient.n_rows, gradient.n_cols);
+    MatType tmpGradient(gradient.n_rows, gradient.n_cols);
     res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
     gradient += tmpGradient;
   }

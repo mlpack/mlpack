@@ -301,7 +301,8 @@ mlpack's image saving/loading functionality is based on
 
 ### Image Utilities API
 
-mlpack's image utilities support loading and saving of images.
+mlpack's image utilities support loading and saving of images, if STB is
+available on the system.
 
 There is support for the following filetypes: `jpg`, `png`, `tga`, `bmp`, `psd`,
 `gif`, `hdr`, `pic`, `pnm` for loading, and `jpg`, `png`, `tga`, `bmp`, `hdr`
@@ -484,8 +485,9 @@ is in the `Range` class.  A more complex example is found in the
 Using the `mlpack::data::Load()` and `mlpack::data::Save()` classes is easy if
 the type being saved has a `serialize()` method implemented: simply call either
 function with a filename, a name for the object to save, and the object itself.
-The example below, for instance, creates an `Range` object and saves it as
-`range.txt`.  Then, that range is loaded from file into another `Range` object.
+The example below, for instance, creates an `Range` object and saves it
+with the name `"range"` as `range.txt`.  Then, that range is loaded from file
+into another `Range` object.
 
 ```c++
 // Create range and save it.
@@ -502,6 +504,10 @@ instance, a `LogisticRegression` object and attempt to load it as an `Range`
 object, the load will fail and an exception will be thrown.  (When the object is
 saved as binary (.bin), it is possible that the load will not fail, but instead
 load with mangled data, which is perhaps even worse!)
+
+Note that all models saved by command-line bindings are given the name
+`"model"` by default.  Use, e.g., `mlpack::data::Load("model.bin", "model", m)`
+to load a model saved by a command-line binding.
 
 ## Final Notes
 

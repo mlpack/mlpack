@@ -75,7 +75,7 @@ bool Save(const std::vector<std::string>& files,
   return status;
 }
 
-#ifdef HAS_STB
+#ifdef MLPACK_HAS_STB
 
 inline bool SaveImage(const std::string& filename,
                       arma::Mat<unsigned char>& image,
@@ -166,7 +166,7 @@ inline bool SaveImage(const std::string& filename,
   return status;
 }
 
-#else // HAS_STB
+#else // MLPACK_HAS_STB
 
 inline bool SaveImage(const std::string& /* filename */,
                       arma::Mat<unsigned char>& /* image */,

@@ -12,8 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_FLEXIBLERELU_HPP
-#define MLPACK_METHODS_ANN_LAYER_FLEXIBLERELU_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_FLEXIBLE_RELU_HPP
+#define MLPACK_METHODS_ANN_LAYER_FLEXIBLE_RELU_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -47,14 +47,12 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam InputType The type of the layer's inputs. The layer automatically
- *     cast inputs to this type (Default: arma::mat).
- * @tparam OutputType The type of the computation which also causes the output
- *     to also be in this type. The type also allows the computation and weight
- *     type to differ from the input type (Default: arma::mat).
+ * @tparam MatType Matrix representation to accept as input and allows the
+ *         computation and weight type to differ from the input type
+ *         (Default: arma::mat).
  */
-template<typename InputType = arma::mat, typename OutputType = arma::mat>
-class FlexibleReLUType : public Layer<InputType, OutputType>
+template<typename MatType = arma::mat>
+class FlexibleReLUType : public Layer<MatType>
 {
  public:
   /**
@@ -69,11 +67,33 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
   //! Clone the FlexibleReLUType object. This handles polymorphism correctly.
   FlexibleReLUType* Clone() const { return new FlexibleReLUType(*this); }
 
+  // Virtual destructor.
+  virtual ~FlexibleReLUType() { }
+
+  //! Copy the given FlexibleReLUType.
+  FlexibleReLUType(const FlexibleReLUType& other);
+  //! Take ownership of the given FlexibleReLUType.
+  FlexibleReLUType(FlexibleReLUType&& other);
+  //! Copy the given FlexibleReLUType.
+  FlexibleReLUType& operator=(const FlexibleReLUType& other);
+  //! Take ownership of the given FlexibleReLUType.
+  FlexibleReLUType& operator=(FlexibleReLUType&& other);
+
   /**
    * Reset the layer parameter (alpha). The method is called to
    * assign the allocated memory to the learnable layer parameter.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename MatType::elem_type* weightsPtr);
+
+  /**
+   * Initialize the weight matrix of the layer.
+   *
+   * @param W Weight matrix to initialize.
+   * @param elements Number of elements.
+   */
+  void CustomInitialize(
+      MatType& W,
+      const size_t elements);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -82,7 +102,7 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -93,7 +113,7 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
+  void Backward(const MatType& input, const MatType& gy, MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -102,21 +122,22 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return alpha; }
+  MatType const& Parameters() const { return alpha; }
   //! Modify the parameters.
-  OutputType& Parameters() { return alpha; }
+  MatType& Parameters() { return alpha; }
 
   //! Get the parameter controlling the range of the ReLU function.
   const double& Alpha() const { return alpha; }
   //! Modify the parameter controlling the range of the ReLU function.
   double& Alpha() { return alpha; }
 
-  const size_t WeightSize() const { return 1; }
+  //! Get size of weights.
+  size_t WeightSize() const { return 1; }
 
   /**
    * Serialize the layer.
@@ -126,19 +147,16 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
 
  private:
   //! Parameter object.
-  OutputType alpha;
+  MatType alpha;
 
   //! Parameter controlling the range of the ReLU function.
   double userAlpha;
-
-  //! Whether or not a forward pass has ever been performed.
-  bool initialized;
 }; // class FlexibleReLUType
 
 // Convenience typedefs.
 
 // Standard flexible ReLU layer.
-typedef FlexibleReLUType<arma::mat, arma::mat> FlexibleReLU;
+typedef FlexibleReLUType<arma::mat> FlexibleReLU;
 
 } // namespace mlpack
 

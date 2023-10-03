@@ -13,6 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ann.hpp>
 
+#include "./ann_test_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
@@ -342,6 +343,10 @@ TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<TanhFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<TanhFunction>(desiredActivations, desiredDerivatives);
   CheckInverseCorrect<TanhFunction>(desiredActivations);
+  
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<TanhFunction>(inputTemp,-2,2);
+  REQUIRE(maxRelativeError <= 1e-3);
 }
 
 /**
@@ -379,6 +384,10 @@ TEST_CASE("SoftsignFunctionTest", "[ActivationFunctionsTest]")
   CheckDerivativeCorrect<SoftsignFunction>(desiredActivations,
                                            desiredDerivatives);
   CheckInverseCorrect<SoftsignFunction>(desiredActivations);
+
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<SoftsignFunction>(inputTemp,-1,1);
+  REQUIRE(maxRelativeError <= 1e-3);
 }
 
 /**
@@ -405,6 +414,10 @@ TEST_CASE("RectifierFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<RectifierFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<RectifierFunction>(desiredActivations,
                                             desiredDerivatives);
+
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<RectifierFunction>(inputTemp,-4,4);
+  REQUIRE(maxRelativeError <= 1e-3);  
 }
 
 /**
@@ -492,6 +505,10 @@ TEST_CASE("HardSigmoidFunctionTest", "[ActivationFunctionsTest]")
                                               desiredActivations);
   CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
                                               desiredDerivatives);
+
+  arma::mat inputTemp(desiredActivations.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<HardSigmoidFunction>(inputTemp,-4,4);
+  REQUIRE(maxRelativeError <= 1e-3);  
 }
 
 /**
@@ -563,19 +580,25 @@ TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("ElliotFunctionTest", "[ActivationFunctionsTest]")
 {
-  // Calculated using PyTorch tensor.
-  const arma::colvec desiredActivations("-0.66666667 0.76190476 0.81818182 \
-                                         -0.99011858 0.5 -0.5 \
-                                          0.66666667 0.0 ");
+  const arma::colvec activationData("-1.0 0 1.2 2.1 2.8 1.0 -1.1 -2.0 -3.1");
 
-  const arma::colvec desiredDerivatives("0.36 0.32213294 0.3025 \
-                                         0.25248879 0.44444444 \
-                                         0.44444444 0.36 1.0 ");
+  // Hand-calculated values.
+  arma::colvec desiredActivation(
+      "-0.5 0.0 0.5454545454545454 0.6774193548387097 0.7368421052631579 \
+      0.5 -0.5238095238095238 -0.6666666666666666, -0.7560975609756099");
 
-  CheckActivationCorrect<ElliotFunction>(activationData,
-                                         desiredActivations);
-  CheckDerivativeCorrect<ElliotFunction>(desiredActivations,
-                                         desiredDerivatives);
+  // Hand-calculated values.
+  arma::colvec desiredDerivate(
+      "0.25 1.0 0.20661157024793392 0.10405827263267425 0.06925207756232689 \
+      0.25 0.22675736961451246 0.11111111111111113 0.05948839976204635");
+
+  CheckActivationCorrect<ElliotFunction>(activationData
+                                                ,desiredActivation);
+  CheckDerivativeCorrect<ElliotFunction>(desiredActivation
+                                                ,desiredDerivate);
+  arma::mat inputTemp(activationData.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<ElliotFunction>(inputTemp);
+  REQUIRE(maxRelativeError <= 1e-3);
 }
 
 /**
@@ -785,4 +808,57 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<SILUFunction>(activationData, desiredActivation);
   CheckDerivativeCorrect<SILUFunction>(desiredActivation, desiredDerivate);
+}
+
+/**
+ * Basic test of the Hyper-Sinh Function
+ */
+TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
+{
+  arma::colvec activationData("-1.0 0 1.2 1.5 1.8 1.0 -1.1 -1.6 -1.8");
+
+  //Hand calculated values
+	arma::colvec desiredActivation(
+		"-0.25 0.0 0.5031537851373908 0.7097598183649391 0.9807247626985599 \
+		0.3917337312146005 -0.3327500000000001 -1.0240000000000002 \
+		-1.4580000000000002");
+
+	// Hand-calculated values.
+	arma::colvec desiredDerivate(
+		"0.75 0.0 0.6035518557747915 0.7841365384144158 1.0358243921057555 \
+		0.5143602116050813 0.9075000000000002 1.9200000000000004 2.43");
+  
+  CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
+  CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
+
+  arma::mat inputTemp(activationData.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<HyperSinhFunction>(inputTemp);
+  REQUIRE(maxRelativeError <= 1e-3);
+}
+
+/**
+ * Basic test of the Bipolar Sigmoid Function
+ */
+TEST_CASE("BipolaSigmoidFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-1.0 0 1.2 2.1 2.8 1.0 -1.1 -2.0 -3.1");
+
+  // Hand-calculated values.
+  arma::colvec desiredActivation(
+      "-0.4621171572 0.0 0.5370495669 0.7818063576 0.8853516482 \
+      0.462117157 -0.50052021119 -0.7615941559 -0.9137854901");
+
+  // Hand-calculated values.
+  arma::colvec desiredDerivate(
+      "0.3932238665 0.5 0.3557888813 0.1943894096 0.1080762295 \
+      0.3932238666 0.3747397590 0.2099871708 0.0824980390");
+
+  CheckActivationCorrect<BipolarSigmoidFunction>(activationData
+                                                ,desiredActivation);
+  CheckDerivativeCorrect<BipolarSigmoidFunction>(desiredActivation
+                                                ,desiredDerivate);
+
+  arma::mat inputTemp(activationData.n_elem, 1);
+  double maxRelativeError = ActivationJacobianTest<BipolarSigmoidFunction>(inputTemp,-2,2);
+  REQUIRE(maxRelativeError <= 1e-3);
 }

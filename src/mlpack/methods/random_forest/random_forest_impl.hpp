@@ -507,6 +507,24 @@ double RandomForest<
   #pragma omp parallel for reduction( + : totalGain)
   for (size_t i = 0; i < numTrees; ++i)
   {
+    // NOTE: this is a hacky workaround for older versions of Armadillo that did
+    // not (by default) set a different seed for each RNG.  We simply manually
+    // set the RNG seed for each individual thread.  However, if users have
+    // specifically set the RNG seed for Armadillo, this could break their code.
+    // So we hide it behind an (undocumented except for here) ifndef so that
+    // this support can be disabled if desired...
+    #undef MLPACK_ARMA_VERSION
+    #define MLPACK_ARMA_VERSION (ARMA_VERSION_MAJOR * 100000 + \
+                                 ARMA_VERSION_MINOR *    100 + \
+                                 ARMA_VERSION_PATCH)
+    #if (MLPACK_ARMA_VERSION < 1200602) // 12.6.2
+      #ifndef MLPACK_DONT_OVERWRITE_ARMA_RNG_SEEDS
+      // Note that each thread has its own differently-seeded RNG, so this will
+      // result in a different seed for each thread's Armadillo RNG.
+      arma::arma_rng::set_seed(RandGen()());
+      #endif
+    #endif
+
     MatType bootstrapDataset;
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;

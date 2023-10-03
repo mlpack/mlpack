@@ -41,39 +41,39 @@ jobs:
     matrix:
       Plain:
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
-        python.version: '3.7'
+        python.version: '3.8'
       Python:
         binding: 'python'
-        python.version: '3.7'
+        python.version: '3.8'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=ON -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
       Julia:
-        python.version: '3.7'
+        python.version: '3.8'
         julia.version: '1.6.3'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_JULIA_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
       Go:
         binding: 'go'
-        python.version: '3.7'
+        python.version: '3.8'
         go.version: '1.11.0'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON -DBUILD_R_BINDINGS=OFF'
 
   steps:
   - template: macos-steps.yaml
 
-- job: WindowsVS16
+- job: WindowsVS17
   timeoutInMinutes: 360
-  displayName: Windows VS16
+  displayName: Windows VS17
   pool:
-    vmImage: windows-2019
+    vmImage: windows-2022
   strategy:
     matrix:
       Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_TESTS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF -DCOTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES=100000'
         python.version: '2.7'
-        CMakeGenerator: '-G "Visual Studio 16 2019"'
-        MSBuildVersion: '16.0'
-        ArchiveNoLibs: 'mlpack-windows-vs16-no-libs.zip'
-        ArchiveLibs: 'mlpack-windows-vs16.zip'
-        ArchiveTests: 'mlpack_test-vs16.xml'
+        CMakeGenerator: '-G "Visual Studio 17 2022"'
+        MSBuildVersion: '17.0'
+        ArchiveNoLibs: 'mlpack-windows-vs17-no-libs.zip'
+        ArchiveLibs: 'mlpack-windows-vs17.zip'
+        ArchiveTests: 'mlpack_test-vs17.xml'
 
   steps:
   - template: windows-steps.yaml

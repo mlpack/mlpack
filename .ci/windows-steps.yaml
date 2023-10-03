@@ -160,7 +160,7 @@ steps:
 
     # Build the MSI installer.
     cd dist\win-installer\mlpack-win-installer
-    & 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe' `
+    & 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe' `
         -t:rebuild `
         -p:Configuration=Release `
         -p:TreatWarningsAsErrors=True `
