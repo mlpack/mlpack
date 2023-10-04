@@ -589,6 +589,10 @@ class CustomCategoricalSplit
  * `MultipleRandomDimensionSelect`, constructed as
    `MultipleRandomDimensionSplit(n)`, selects `n` different random dimensions as
    candidates at each decision tree node.
+ * Each `DecisionTree` [constructor](#constructors) optionally accepts an
+   instantiated `DimensionSelectionType` object as a last parameter (after
+   `maximumDepth`), in case some internal state in the dimension selection
+   mechanism is required.
  * A custom class must implement three simple functions:
 
 ```c++
