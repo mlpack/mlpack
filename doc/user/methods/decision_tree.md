@@ -3,7 +3,11 @@
 The `DecisionTree` class implements a decision tree classifier that supports
 numerical and categorical features, by default using Gini gain to choose which
 feature to split on.  The class offers several template parameters and several
-constructor parameters that can be used to control the behavior of the tree.
+runtime options that can be used to control the behavior of the tree.
+
+Decision trees are useful for classifying points with _discrete labels_ (i.e.
+`0`, `1`, `2`).  For predicting _continuous values_ (regression), see
+[`DecisionTreeRegressor`](#decision_tree_regressor). <!-- TODO: fix link -->
 
 #### Basic usage example excerpt:
 
@@ -20,8 +24,10 @@ tree.Classify(test_data, test_predictions); // Step 3: use model to classify.
  * [`Classify()`](#classification): classify with a trained model.
  * [Other functionality](#other-functionality) for loading, saving, and
    inspecting.
- * [Examples](#simple-examples) of simple usage and links to detailed example projects.
- * [Template parameters](#advanced-functionality-template-parameters) for custom behavior.
+ * [Examples](#simple-examples) of simple usage and links to detailed example
+   projects.
+ * [Template parameters](#advanced-functionality-template-parameters) for custom
+   behavior.
 
 #### See also:
 
@@ -51,7 +57,7 @@ section below.
  * `DecisionTree(data, labels, numClasses, weights)`
  * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
  * `DecisionTree(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data, optionally with instance weights.
+   - Train on numerical-only data (optionally with instance weights).
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -64,7 +70,7 @@ section below.
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data.
+   - Train on mixed categorical data (optionally with instance weights).
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -120,6 +126,9 @@ of the versions of the `Train()` member function.  For an instance of
      `0` to `numClasses - 1` (inclusive).
    - If specified, `weights` should be a vector of length `data.n_cols`,
      containing instance weights for each point in `data`.
+   - Returns a `double` with the final gain of the tree (the Gini gain, unless a
+     different [`FitnessFunction` template parameter](#fully-custom-behavior) is
+     specified.
 
 ---
 
@@ -133,6 +142,9 @@ of the versions of the `Train()` member function.  For an instance of
      `0` to `numClasses - 1` (inclusive).
    - If specified, `weights` should be a vector of length `data.n_cols`,
      containing instance weights for each point in `data`.
+   - Returns a `double` with the final gain of the tree (the Gini gain, unless a
+     different [`FitnessFunction` template parameter](#fully-custom-behavior) is
+     specified.
 
 ---
 
@@ -261,22 +273,22 @@ Train a decision tree on random mixed categorical data:
 // Load a categorical dataset.
 arma::mat dataset;
 data::DatasetInfo info;
-// See https://datasets.mlpack.org/iris.arff.
-data::Load("iris.arff", dataset, info, true);
+// See https://datasets.mlpack.org/covertype.train.arff.
+data::Load("covertype.train.arff", dataset, info, true);
 
 arma::Row<size_t> labels;
-// See https://datasets.mlpack.org/iris_labels.csv.
-data::Load("iris_labels.csv", labels, true);
+// See https://datasets.mlpack.org/covertype.train.labels.csv.
+data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the tree.
 DecisionTree<> tree;
-// Train on the given dataset, specifying a minimum leaf size of 1.
-tree.Train(dataset, info, labels, 3 /* classes */, 1 /* minimum leaf size */);
+// Train on the given dataset, specifying a minimum leaf size of 5.
+tree.Train(dataset, info, labels, 7 /* classes */, 5 /* minimum leaf size */);
 
 // Load categorical test data.
 arma::mat testDataset;
-// See https://datasets.mlpack.org/iris_test.arff.
-data::Load("iris_test.arff", testDataset, info, true);
+// See https://datasets.mlpack.org/covertype.test.arff.
+data::Load("covertype.test.arff", testDataset, info, true);
 
 // Predict class of first test point.
 const size_t firstPrediction = tree.Classify(testDataset.col(0));
@@ -296,9 +308,9 @@ std::cout << "Class probabilities of second test point: " <<
 Load a tree and print some information about it.
 
 ```c++
-DecisionTree tree;
+DecisionTree<> tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
-// with data::Save().
+// with `data::Save()`.
 data::Load("tree.bin", "tree", tree, true);
 
 if (tree.NumChildren() > 0)
@@ -324,8 +336,8 @@ See also the following fully-working examples:
 #### Using different element types.
 
 `DecisionTree`'s constructors, `Train()`, and `Classify()` functions support
-any data type, so long as it supports the Armadillo matrix API.  So, learning
-can be done on single-precision floating-point data:
+any data type, so long as it supports the Armadillo matrix API.  So, for
+instance, learning can be done on single-precision floating-point data:
 
 ```c++
 // 1000 random points in 10 dimensions.
