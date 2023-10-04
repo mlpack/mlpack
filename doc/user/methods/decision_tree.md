@@ -56,6 +56,17 @@ section below.
 
 ---
 
+ * `DecisionTree(data, labels, numClasses, weights)`
+ * `DecisionTree(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on weighted numerical-only data.
+   - If hyperparameters are not specified, default values are used.
+   - `labels` should be a vector of length `data.n_cols`, containing values form
+     `0` to `numClasses - 1` (inclusive).
+   - `weights` should be a vector of length `data.n_cols`, containing instance
+      weights for each point in `data`.
+
+---
+
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on mixed categorical data.
@@ -75,8 +86,6 @@ section below.
      weights for each point in `data`.
 
 ---
-
-<!-- TODO: weighted numerical-only constructors -->
 
 #### Constructor Parameters:
 
