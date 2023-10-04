@@ -404,7 +404,7 @@ class DecisionTreeRegressor :
    */
   template<typename MatType>
   void Predict(const MatType& data,
-                arma::Row<double>& predictions) const;
+               arma::Row<double>& predictions) const;
 
   /**
    * Serialize the tree.
