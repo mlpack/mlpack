@@ -48,42 +48,28 @@ section below.
 ---
 
  * `DecisionTree(data, labels, numClasses)`
+ * `DecisionTree(data, labels, numClasses, weights)`
  * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data.
+ * `DecisionTree(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
+   - Train on numerical-only data, optionally with instance weights.
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
-
----
-
- * `DecisionTree(data, labels, numClasses, weights)`
- * `DecisionTree(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted numerical-only data.
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values form
-     `0` to `numClasses - 1` (inclusive).
-   - `weights` should be a vector of length `data.n_cols`, containing instance
-      weights for each point in `data`.
+   - If specified, `weights` should be a vector of length `data.n_cols`,
+     containing instance weights for each point in `data`.
 
 ---
 
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
    - Train on mixed categorical data.
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
-
----
-
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted mixed categorical data.
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - `weights` should be a vector of length `data.n_cols`, containing instance
-     weights for each point in `data`.
+   - If specified, `weights` should be a vector of length `data.n_cols`,
+     containing instance weights for each point in `data`.
 
 ---
 
@@ -107,6 +93,12 @@ section below.
 | `minimumGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
 | `maximumDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
 
+ * Setting `minimumLeafSize` too small (e.g. `1`) may cause the tree to overfit
+   to its training data, and may create a very large tree.  However, setting it
+   too large may cause the tree to be very small and underfit.
+ * `minimumGainSplit` has similar behavior: if it is too small, the tree may
+   overfit; if too large, it may underfit.
+
 ***Note:*** different types can be used for `data` and `weights` (e.g.,
 `arma::fmat`, `arma::sp_mat`).  However, the element type of `data` and
 `weights` must match; for example, if `data` has type `arma::fmat`, then
@@ -119,30 +111,28 @@ of the versions of the `Train()` member function.  For an instance of
 `DecisionTree` named `tree`, the following functions for training are available:
 
  * `tree.Train(data, labels, numClasses)`
- * `tree.Train(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data.
-   - If hyperparameters are not specified, default values are used.
-
----
-
  * `tree.Train(data, labels, numClasses, weights)`
+ * `tree.Train(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
  * `tree.Train(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted numerical-only data.
+   - Train on numerical-only data (optionally with instance weights).
    - If hyperparameters are not specified, default values are used.
+   - `labels` should be a vector of length `data.n_cols`, containing values from
+     `0` to `numClasses - 1` (inclusive).
+   - If specified, `weights` should be a vector of length `data.n_cols`,
+     containing instance weights for each point in `data`.
 
 ---
 
  * `tree.Train(data, datasetInfo, labels, numClasses)`
- * `tree.Train(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data.
-   - If hyperparameters are not specified, default values are used.
-
----
-
  * `tree.Train(data, datasetInfo, labels, numClasses, weights)`
+ * `tree.Train(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
  * `tree.Train(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on weighted mixed categorical data.
+   - Train on mixed categorical data (optionally with instance weights).
    - If hyperparameters are not specified, default values are used.
+   - `labels` should be a vector of length `data.n_cols`, containing values from
+     `0` to `numClasses - 1` (inclusive).
+   - If specified, `weights` should be a vector of length `data.n_cols`,
+     containing instance weights for each point in `data`.
 
 ---
 
