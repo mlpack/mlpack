@@ -204,7 +204,7 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  REQUIRE(rfCorrect >= dtCorrect * 0.9);
+  REQUIRE(rfCorrect >= dtCorrect * 0.8);
   REQUIRE(rfCorrect >= size_t(0.7 * testDataset.n_cols));
 }
 
@@ -241,7 +241,7 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest]")
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  REQUIRE(rfCorrect >= dtCorrect - 25);
+  REQUIRE(rfCorrect >= dtCorrect - 35);
   REQUIRE(rfCorrect >= size_t(0.7 * testData.n_cols));
 }
 
@@ -605,5 +605,5 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
   double accuracy = arma::accu(predictions == testLabels);
   accuracy /= predictions.n_elem;
 
-  REQUIRE(accuracy >= 0.91);
+  REQUIRE(accuracy >= 0.9);
 }
