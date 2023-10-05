@@ -17,7 +17,6 @@
 #include "gaussian_function.hpp"
 #include "gelu_function.hpp"
 #include "hard_sigmoid_function.hpp"
-#include "hard_swish_function.hpp"
 #include "identity_function.hpp"
 #include "inverse_quadratic_function.hpp"
 #include "lisht_function.hpp"

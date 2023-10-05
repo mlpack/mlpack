@@ -26,7 +26,6 @@
 #include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
-#include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hyper_sinh_function.hpp>
@@ -52,7 +51,6 @@ namespace mlpack {
  *  - GELU
  *  - Elliot
  *  - Gaussian
- *  - HardSwish
  *  - TanhExp
  *  - SILU
  *
@@ -208,14 +206,6 @@ typedef BaseLayer<GaussianFunction, arma::mat> Gaussian;
 
 template<typename MatType = arma::mat>
 using GaussianType = BaseLayer<GaussianFunction, MatType>;
-
-/**
- * Standard HardSwish-Layer using the HardSwish activation function.
- */
-typedef BaseLayer<HardSwishFunction, arma::mat> HardSwish;
-
-template <typename MatType = arma::mat>
-using HardSwishType = BaseLayer<HardSwishFunction, MatType>;
 
 /**
  * Standard TanhExp-Layer using the TanhExp activation function.

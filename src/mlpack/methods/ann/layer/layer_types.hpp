@@ -32,9 +32,12 @@
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
+#include <mlpack/methods/ann/layer/elish_function.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
+#include <mlpack/methods/ann/layer/ftswish.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
+#include <mlpack/methods/ann/layer/hard_swish.hpp>
 #include <mlpack/methods/ann/layer/identity.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/linear.hpp>
@@ -51,8 +54,6 @@
 #include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
-#include <mlpack/methods/ann/layer/ftswish.hpp>
-#include <mlpack/methods/ann/layer/elish_function.hpp>
 
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>

@@ -74,6 +74,7 @@
     CEREAL_REGISTER_TYPE(mlpack::SoftminType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::HardTanHType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FTSwishType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::HardSwishType<__VA_ARGS__>); \
 
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
 
