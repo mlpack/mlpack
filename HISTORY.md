@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix include ordering issue for `LinearRegression` (#3541).
 
 ### mlpack 4.2.1
 ###### 2023-09-05
