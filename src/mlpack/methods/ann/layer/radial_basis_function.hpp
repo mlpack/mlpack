@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_RADIAL_BASIS_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/gaussian.hpp>
+#include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 
 #include "layer.hpp"
 
@@ -43,7 +43,7 @@ namespace mlpack {
 
 template <
     typename MatType = arma::mat,
-    typename Activation = Gaussian
+    typename Activation = GaussianFunction
 >
 class RBFType : public Layer<MatType>
 {

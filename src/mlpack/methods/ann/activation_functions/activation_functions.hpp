@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_ACTIVATION_FUNCTIONS_HPP
 
 #include "elliot_function.hpp"
+#include "gaussian_function.hpp"
 #include "hard_sigmoid_function.hpp"
 #include "identity_function.hpp"
 #include "inverse_quadratic_function.hpp"
