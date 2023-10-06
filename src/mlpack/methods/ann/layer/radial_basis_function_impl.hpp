@@ -123,7 +123,7 @@ void RBFType<MatType, Activation>::Forward(
     distances.col(i) = arma::pow(arma::sum(
         arma::pow((temp), 2), 0), 0.5).t();
   }
-  Activation::Fn(distances * std::pow(betas, 0.5), output);
+  Activation::Forward(distances * std::pow(betas, 0.5), output);
 }
 
 

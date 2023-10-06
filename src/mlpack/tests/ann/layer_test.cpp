@@ -29,6 +29,7 @@
 #include "layer/elish_function.cpp"
 #include "layer/elu.cpp"
 #include "layer/flexible_relu.cpp"
+#include "layer/gaussian.cpp"
 #include "layer/grouped_convolution.cpp"
 #include "layer/hard_tanh.cpp"
 #include "layer/hard_swish.cpp"

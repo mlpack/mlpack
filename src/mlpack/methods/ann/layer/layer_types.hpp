@@ -35,6 +35,7 @@
 #include <mlpack/methods/ann/layer/elish_function.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
+#include <mlpack/methods/ann/layer/gaussian.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
 #include <mlpack/methods/ann/layer/gelu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>

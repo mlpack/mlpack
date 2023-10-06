@@ -24,7 +24,6 @@
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
-#include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 #include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hyper_sinh_function.hpp>
@@ -48,7 +47,6 @@ namespace mlpack {
  *  - Mish
  *  - LiSHT
  *  - Elliot
- *  - Gaussian
  *  - TanhExp
  *  - SILU
  *
@@ -188,14 +186,6 @@ typedef BaseLayer<ElliotFunction, arma::mat> Elliot;
 
 template<typename MatType = arma::mat>
 using ElliotType = BaseLayer<ElliotFunction, MatType>;
-
-/**
- * Standard Gaussian-Layer using the Gaussian activation function.
- */
-typedef BaseLayer<GaussianFunction, arma::mat> Gaussian;
-
-template<typename MatType = arma::mat>
-using GaussianType = BaseLayer<GaussianFunction, MatType>;
 
 /**
  * Standard TanhExp-Layer using the TanhExp activation function.

@@ -682,30 +682,6 @@ TEST_CASE("Poisson1FunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
- * Basic test of the Gaussian activation function.
- */
-TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
-{
-  const arma::colvec desiredActivations("0.018315639 0.000035713 \
-                                         1.6052280551856116e-09 \
-                                         0 0.367879441 0.367879441 \
-                                         0.018315639 1");
-
-  const arma::colvec desiredDerivatives("-0.036618991635992616 \
-                                         -0.0000714259999 \
-                                         -0.0000000032104561 \
-                                         0 -0.6426287436 \
-                                         -0.642628743680 \
-                                         -0.03661899163 \
-                                         -0.73575888234");
-
-  CheckActivationCorrect<GaussianFunction>(activationData,
-                                           desiredActivations);
-  CheckDerivativeCorrect<GaussianFunction>(desiredActivations,
-                                           desiredDerivatives);
-}
-
-/**
  * Basic test of the TanhExp function.
  */
 TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
