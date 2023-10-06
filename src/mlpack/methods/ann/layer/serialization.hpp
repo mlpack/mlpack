@@ -31,8 +31,7 @@
     CEREAL_REGISTER_TYPE(mlpack::HardSigmoidType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::SwishType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::MishType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::LiSHTType<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::GELUType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::LiSHTType<__VA_ARGS__>); 
     CEREAL_REGISTER_TYPE(mlpack::ElliotType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ElishType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::GaussianType<__VA_ARGS__>); \
