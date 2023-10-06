@@ -556,26 +556,6 @@ TEST_CASE("LiSHTFunctionTest", "[ActivationFunctionsTest]")
 }
 
 /**
- * Basic test of the GELU function.
- */
-TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
-{
-  // Calculated using torch.nn.gelu().
-  const arma::colvec desiredActivations("-0.0454023 3.1981304 \
-                                         4.5 -0.0 0.84119199 \
-                                         -0.158808 1.954597694 0.0");
-
-  const arma::colvec desiredDerivatives("0.4637992 1.0065302 \
-                                         1.0000293 0.5 1.03513446 \
-                                         0.37435387 1.090984 0.5");
-
-  CheckActivationCorrect<GELUFunction>(activationData,
-                                       desiredActivations);
-  CheckDerivativeCorrect<GELUFunction>(desiredActivations,
-                                       desiredDerivatives);
-}
-
-/**
  * Basic test of the Elliot function.
  */
 TEST_CASE("ElliotFunctionTest", "[ActivationFunctionsTest]")

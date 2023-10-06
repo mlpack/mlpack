@@ -36,6 +36,7 @@
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
+#include <mlpack/methods/ann/layer/gelu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/hard_swish.hpp>
 #include <mlpack/methods/ann/layer/identity.hpp>

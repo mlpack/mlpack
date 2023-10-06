@@ -23,7 +23,6 @@
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/mish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lisht_function.hpp>
-#include <mlpack/methods/ann/activation_functions/gelu_function.hpp>
 #include <mlpack/methods/ann/activation_functions/elliot_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
@@ -48,7 +47,6 @@ namespace mlpack {
  *  - Swish
  *  - Mish
  *  - LiSHT
- *  - GELU
  *  - Elliot
  *  - Gaussian
  *  - TanhExp
@@ -182,14 +180,6 @@ typedef BaseLayer<LiSHTFunction, arma::mat> LiSHT;
 
 template<typename MatType = arma::mat>
 using LiSHTType = BaseLayer<LiSHTFunction, MatType>;
-
-/**
- * Standard GELU-Layer using the GELU activation function.
- */
-typedef BaseLayer<GELUFunction, arma::mat> GELU;
-
-template<typename MatType = arma::mat>
-using GELUType = BaseLayer<GELUFunction, MatType>;
 
 /**
  * Standard Elliot-Layer using the Elliot activation function.
