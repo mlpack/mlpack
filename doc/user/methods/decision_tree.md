@@ -246,7 +246,7 @@ Train a decision tree on random numeric data and predict labels on a test set:
 
 ```c++
 // 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000);
+arma::mat dataset(10, 1000, arma::fill::randu);
 // Random labels for each point, totaling 5 classes.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -255,7 +255,7 @@ arma::Row<size_t> labels =
 DecisionTree<> tree(data, labels, 5);
 
 // Create test data (500 points).
-arma::mat testDataset(10, 500);
+arma::mat testDataset(10, 500, arma::fill::randu);
 arma::Row<size_t> predictions;
 tree.Classify(testDataset, predictions);
 // Now `predictions` holds predictions for the test dataset.
@@ -267,7 +267,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
-Train a decision tree on random mixed categorical data:
+Train a decision tree on mixed categorical data:
 
 ```c++
 // Load a categorical dataset.
@@ -341,7 +341,7 @@ instance, learning can be done on single-precision floating-point data:
 
 ```c++
 // 1000 random points in 10 dimensions.
-arma::fmat dataset(10, 1000);
+arma::fmat dataset(10, 1000, arma::fill::randu);
 // Random labels for each point, totaling 5 classes.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -350,7 +350,7 @@ arma::Row<size_t> labels =
 DecisionTree<> tree(data, labels, 5);
 
 // Create test data (500 points).
-arma::fmat testDataset(10, 500);
+arma::fmat testDataset(10, 500, arma::fill::randu);
 arma::Row<size_t> predictions;
 tree.Classify(testDataset, predictions);
 // Now `predictions` holds predictions for the test dataset.
@@ -431,21 +431,24 @@ class CustomFitnessFunction
 
 ---
 
- * `NumericSplitType`
-    - Specifies the strategy to be used during training when splitting a numeric
-      feature.
-    - The `BestBinaryNumericSplit` _(default)_ class is available for drop-in
-      usage and finds the best binary (two-way) split among all possible binary
-      splits.
-    - The `RandomBinaryNumericSplit` class is available for drop-in usage and
-      will select a split randomly between the minimum and maximum values of a
-      dimension.  It is very efficient but does not yield splits that maximize
-      the gain.  (Used by the `ExtraTrees` variant of
-      [`RandomForest`](#random_forest).) <!-- TODO: fix link! -->
-    - A custom class must implement three functions and have an internal
-      structure `AuxiliarySplitInfo` that is used at classification time.
+#### `NumericSplitType`
+
+ * Specifies the strategy to be used during training when splitting a numeric
+   feature.
+ * The `BestBinaryNumericSplit` _(default)_ class is available for drop-in
+   usage and finds the best binary (two-way) split among all possible binary
+   splits.
+ * The `RandomBinaryNumericSplit` class is available for drop-in usage and
+   will select a split randomly between the minimum and maximum values of a
+   dimension.  It is very efficient but does not yield splits that maximize
+   the gain.  (Used by the `ExtraTrees` variant of
+   [`RandomForest`](#random_forest).) <!-- TODO: fix link! -->
+ * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+   template parameter, implement three functions, and have an internal
+   structure `AuxiliarySplitInfo` that is used at classification time:
 
 ```c++
+template<typename FitnessFunction>
 class CustomNumericSplit
 {
  public:
@@ -513,10 +516,12 @@ class CustomNumericSplit
     categorical feature.
  * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
    splits all categories into their own node.
- * A custom class must implement three functions and have an internal
-   structure `AuxiliarySplitInfo` that is used at classification time:
+ * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+   template parameter, implement three functions, and have an internal structure
+   `AuxiliarySplitInfo` that is used at classification time:
 
 ```c++
+template<typename FitnessFunction>
 class CustomCategoricalSplit
 {
  public:
@@ -588,11 +593,16 @@ class CustomCategoricalSplit
    dimensions to try splitting on.
  * `AllDimensionSplit` _(default)_ is available for drop-in usage and proposes
    all dimensions for splits.
- * `MultipleRandomDimensionSelect`, constructed as
-   `MultipleRandomDimensionSplit(n)`, selects `n` different random dimensions as
-   candidates at each decision tree node.
- * Each `DecisionTree` [constructor](#constructors) optionally accepts an
-   instantiated `DimensionSelectionType` object as a last parameter (after
+ * `MultipleRandomDimensionSelect` proposes a different random subset of
+   dimensions at each decision tree node.
+    - By default each random subset is of size `sqrt(d)` where `d` is the number
+      of dimensions in the data.
+    - If constructed as `MultipleRandomDimensionSelect(n)` and passed to the
+      constructor of `DecisionTree<>` or the `Train()` function, each random
+      subset will be of size `n`.
+ * Each `DecisionTree` [constructor](#constructors) and each version of the
+   [`Train()`](#training) function optionally accept an instantiated
+   `DimensionSelectionType` object as the very last parameter (after
    `maximumDepth`), in case some internal state in the dimension selection
    mechanism is required.
  * A custom class must implement three simple functions:
