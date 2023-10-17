@@ -23,7 +23,7 @@
     mlpack that are required at compile time.  STB detection is now done in this
     file with the `MLPACK_HAS_STB` macro (#3519).
 
-  * Fix CRAN package alias for R bindings (#3536).
+  * Fix CRAN package alias for R bindings (#3543).
 
 ### mlpack 4.2.0
 ###### 2023-06-14
