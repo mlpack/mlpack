@@ -943,11 +943,12 @@ template<typename FitnessFunction,
          typename DimensionSelectionType,
          bool NoRecursion>
 template<typename VecType>
-double DecisionTreeRegressor<FitnessFunction,
-                             NumericSplitType,
-                             CategoricalSplitType,
-                             DimensionSelectionType,
-                             NoRecursion>::Predict(const VecType& point) const
+typename VecType::elem_type
+DecisionTreeRegressor<FitnessFunction,
+                      NumericSplitType,
+                      CategoricalSplitType,
+                      DimensionSelectionType,
+                      NoRecursion>::Predict(const VecType& point) const
 {
   if (children.size() == 0)
   {
@@ -955,7 +956,8 @@ double DecisionTreeRegressor<FitnessFunction,
     return prediction;
   }
 
-  return children[CalculateDirection(point)]->Predict(point);
+  typedef typename VecType::elem_type ElemType;
+  return (ElemType) children[CalculateDirection(point)]->Predict(point);
 }
 
 //! Return the predictions for a set of points.
@@ -964,25 +966,28 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
          bool NoRecursion>
-template<typename MatType>
+template<typename MatType, typename PredVecType>
 void DecisionTreeRegressor<FitnessFunction,
                            NumericSplitType,
                            CategoricalSplitType,
                            DimensionSelectionType,
                            NoRecursion
->::Predict(const MatType& data, arma::Row<double>& predictions) const
+>::Predict(const MatType& data,
+           PredVecType& predictions) const
 {
+  typedef typename PredVecType::elem_type ElemType;
+
   predictions.set_size(data.n_cols);
   // If the tree's root is leaf.
   if (children.size() == 0)
   {
-    predictions.fill(prediction);
+    predictions.fill((ElemType) prediction);
     return;
   }
 
   // Loop over each point.
   for (size_t i = 0; i < data.n_cols; ++i)
-    predictions[i] = Predict(data.col(i));
+    predictions[i] = (ElemType) Predict(data.col(i));
 }
 
 template<typename FitnessFunction,
