@@ -45,8 +45,8 @@ rf.Classify(test_data, test_predictions); // Step 3: use model to classify.
 
 ### Variants
 
-mlpack provides a few variants of the random forest classifier, because the
-`RandomForest` class allows [fully custom behavior](#fully-custom-behavior).  In
+mlpack provides a few variants of the random forest classifier, using the
+[fully custom behavior](#fully-custom-behavior) of the `RandomForest` class.  In
 the documentation below, the following types can be used as drop-in
 replacements:
 
@@ -78,7 +78,7 @@ section below.
 #### Forms:
 
  * `RandomForest()`
-   - Initialize the random forest without training.
+   - **Initialize the random forest without training.**
    - You will need to call [`Train()`](#training) later to train the tree
      before calling [`Classify()`](#classification).
 
@@ -86,9 +86,9 @@ section below.
 
  * `RandomForest(data, labels, numClasses)`
  * `RandomForest(data, labels, numClasses, weights)`
- * `RandomForest(data, labels, numClasses, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `RandomForest(data, labels, numClasses, weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data (optionally with instance weights).
+ * `RandomForest(data, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
+ * `RandomForest(data, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on numerical-only data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -99,9 +99,9 @@ section below.
 
  * `RandomForest(data, datasetInfo, labels, numClasses)`
  * `RandomForest(data, datasetInfo, labels, numClasses, weights)`
- * `RandomForest(data, datasetInfo, labels, numClasses, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `RandomForest(data, datasetInfo, labels, numClasses, weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data (optionally with instance weights).
+ * `RandomForest(data, datasetInfo, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
+ * `RandomForest(data, datasetInfo, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on mixed categorical data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -128,20 +128,21 @@ section below.
 | `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numTrees` | `size_t` | Number of trees to train in the random forest. | `20`
 |
-| `minimumLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
-| `minimumGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
-| `maximumDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
+| `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
+| `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
+| `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
 
- * If OpenMP is enabled, one thread will be used to train each of the `numTrees`
-   trees in the random forest.  The computational effort involved with training
-   a random forest increases linearly with the number of trees.
- * The default `minimumLeafSize` is `1`, unlike `DecisionTree`.  This is because
+ * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
+   each of the `numTrees` trees in the random forest.  The computational effort
+   involved with training a random forest increases linearly with the number of
+   trees.
+ * The default `minLeafSize` is `1`, unlike `DecisionTree`.  This is because
    random forests are less susceptible to overfitting due to their ensembled
    nature.
- * Note that the default `minimumLeafSize` of `1` will make large decision
-   trees, and so if a smaller-sized model is desired, this value should be
-   increased (at the potential cost of accuracy).
- * `minimumGainSplit` can also be increased if a smaller tree is desired.
+ * Note that the default `minLeafSize` of `1` will make large decision trees,
+   and so if a smaller-sized model is desired, this value should be increased
+   (at the potential cost of accuracy).
+ * `minGainSplit` can also be increased if a smaller-sized model is desired.
 
 ***Note:*** different types can be used for `data` and `weights` (e.g.,
 `arma::fmat`, `arma::sp_mat`).  However, the element type of `data` and
@@ -156,11 +157,11 @@ of the versions of the `Train()` member function.  For an instance of
 
  * `rf.Train(data, labels, numClasses)`
  * `rf.Train(data, labels, numClasses, weights)`
- * `rf.Train(data, labels, numClasses, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `rf.Train(data, labels, numClasses, weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `rf.Train(data, labels, numClasses, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart)`
- * `rf.Train(data, labels, numClasses, weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart)`
-   - Train on numerical-only data (optionally with instance weights).
+ * `rf.Train(data, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
+ * `rf.Train(data, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
+ * `rf.Train(data, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
+ * `rf.Train(data, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
+   - **Train on numerical-only data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -172,17 +173,17 @@ of the versions of the `Train()` member function.  For an instance of
      specified.
    - If the optional `warmStart` parameter is set to `true`, then the `Train()`
      call will simply add `numTrees` new trees to the existing random forest.
-     Otherwise, an new random forest will be trained.
+     Otherwise, a new random forest will be trained.
 
 ---
 
  * `rf.Train(data, datasetInfo, labels, numClasses)`
  * `rf.Train(data, datasetInfo, labels, numClasses, weights)`
- * `rf.Train(data, datasetInfo, labels, numClasses, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `rf.Train(data, datasetInfo, labels, numClasses, weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `rf.Train(data, datasetInfo, labels, numClasses, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart)`
- * `rf.Train(data, datasetInfo, labels, numClasses, weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, warmStart)`
-   - Train on mixed categorical data (optionally with instance weights).
+ * `rf.Train(data, datasetInfo, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
+ * `rf.Train(data, datasetInfo, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
+ * `rf.Train(data, datasetInfo, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
+ * `rf.Train(data, datasetInfo, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
+   - **Train on mixed categorical data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -194,7 +195,7 @@ of the versions of the `Train()` member function.  For an instance of
      specified.
    - If the optional `warmStart` parameter is set to `true`, then the `Train()`
      call will simply add `numTrees` new trees to the existing random forest.
-     Otherwise, an new random forest will be trained.
+     Otherwise, a new random forest will be trained.
 
 ---
 
@@ -296,7 +297,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor, using 10 trees in the forest.
-RandomForest<> rf(data, labels, 5, 10);
+RandomForest<> rf(dataset, labels, 5, 10);
 
 // Create test data (500 points).
 arma::mat testDataset(10, 500, arma::fill::randu);
@@ -371,8 +372,6 @@ data::Load("rf.bin", "rf", rf, true);
 
 std::cout << "The random forest in 'rf.bin' contains " << rf.NumTrees()
     << " trees." << std::endl;
-std::cout << "It was trained on data with " << rf.NumClasses() << " classes."
-    << std::endl;
 if (rf.NumTrees() > 0)
 {
   std::cout << "The first tree's root node has " << rf.Tree(0).NumChildren()
@@ -439,7 +438,7 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using 10 trees in the forest.
 // Note that `ExtraTrees` has exactly the same API as `RandomForest`.
-ExtraTrees<> rf(data, labels, 5, 10);
+ExtraTrees<> rf(dataset, labels, 5, 10);
 
 // Create a single test point.
 arma::vec testPoint(10, arma::fill::randu);
@@ -475,7 +474,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-RandomForest<> tree(data, labels, 5);
+RandomForest<> rf(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
@@ -579,7 +578,7 @@ class CustomFitnessFunction
  * Each `RandomForest` [constructor](#constructors) and each version of
    the [`Train()`](#training) function optionally accept an instantiated
    `DimensionSelectionType` object as the very last parameter (after
-   `maximumDepth` in the constructor, or `warmStart` in `Train()`), in case some
+   `maxDepth` in the constructor, or `warmStart` in `Train()`), in case some
    internal state in the dimension selection mechanism is required.
  * A custom class must implement three simple functions:
 
@@ -640,8 +639,8 @@ class CustomNumericSplit
   // `unsplitGain`):
   //
   //    split if `sumChildrenGains - unsplitGain > bestGain`, and
-  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
-  //             each child will have at least `minimumLeafSize` points
+  //             `sumChildrenGains - unsplitGain > minGainSplit`, and
+  //             each child will have at least `minLeafSize` points
   //
   // The new best split value should be returned (or anything greater than or
   // equal to `bestGain` if no better split is found).
@@ -661,8 +660,8 @@ class CustomNumericSplit
                        const arma::Row<size_t>& labels,
                        const size_t numClasses,
                        const WeightVecType& weights,
-                       const size_t minimumLeafSize,
-                       const double minimumGainSplit,
+                       const size_t minLeafSize,
+                       const double minGainSplit,
                        arma::vec& splitInfo,
                        AuxiliarySplitInfo& aux);
 
@@ -713,8 +712,8 @@ class CustomCategoricalSplit
   // `unsplitGain`):
   //
   //    split if `sumChildrenGains - unsplitGain > bestGain`, and
-  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
-  //             each child will have at least `minimumLeafSize` points
+  //             `sumChildrenGains - unsplitGain > minGainSplit`, and
+  //             each child will have at least `minLeafSize` points
   //
   // The new best split value should be returned (or anything greater than or
   // equal to `bestGain` if no better split is found).
@@ -738,8 +737,8 @@ class CustomCategoricalSplit
       const LabelsType& labels,
       const size_t numClasses,
       const WeightVecType& weights,
-      const size_t minimumLeafSize,
-      const double minimumGainSplit,
+      const size_t minLeafSize,
+      const double minGainSplit,
       arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 

@@ -48,7 +48,7 @@ Parameters](#constructor-parameters) section below.
 #### Forms:
 
  * `DecisionTreeRegressor()`
-   - Initialize tree without training.
+   - **Initialize tree without training.**
    - You will need to call [`Train()`](#training) later to train the tree before
      calling [`Predict()`](#prediction).
 
@@ -56,9 +56,9 @@ Parameters](#constructor-parameters) section below.
 
  * `DecisionTreeRegressor(data, responses)`
  * `DecisionTreeRegressor(data, responses, weights)`
- * `DecisionTreeRegressor(data, responses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `DecisionTreeRegressor(data, responses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data (optionally with instance weights).
+ * `DecisionTreeRegressor(data, responses,          minLeafSize, minGainSplit, maxDepth)`
+ * `DecisionTreeRegressor(data, responses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on numerical-only data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `responses` should be a vector of length `data.n_cols`, containing
      continuous real values corresponding to the response for each data point.
@@ -69,9 +69,9 @@ Parameters](#constructor-parameters) section below.
 
  * `DecisionTreeRegressor(data, datasetInfo, responses)`
  * `DecisionTreeRegressor(data, datasetInfo, responses, weights)`
- * `DecisionTreeRegressor(data, datasetInfo, responses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `DecisionTreeRegressor(data, datasetInfo, responses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data (optionally with instance weights).
+ * `DecisionTreeRegressor(data, datasetInfo, responses,          minLeafSize, minGainSplit, maxDepth)`
+ * `DecisionTreeRegressor(data, datasetInfo, responses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on mixed categorical data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `responses` should be a vector of length `data.n_cols`, containing
      continuous real values corresponding to the response for each data point.
@@ -96,14 +96,14 @@ Parameters](#constructor-parameters) section below.
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `minimumLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
-| `minimumGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
-| `maximumDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
+| `minLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
+| `minGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
+| `maxDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
 
- * Setting `minimumLeafSize` too small (e.g. `1`) may cause the tree to overfit
-   to its training data, and may create a very large tree.  However, setting it
-   too large may cause the tree to be very small and underfit.
- * `minimumGainSplit` has similar behavior: if it is too small, the tree may
+ * Setting `minLeafSize` too small (e.g. `1`) may cause the tree to overfit to
+   its training data, and may create a very large tree.  However, setting it too
+   large may cause the tree to be very small and underfit.
+ * `minGainSplit` has similar behavior: if it is too small, the tree may
    overfit; if too large, it may underfit.
 
 ***Note:*** different types can be used for `data`, `responses`, and `weights`
@@ -119,9 +119,9 @@ one of the versions of the `Train()` member function.  For an instance of
 
  * `tree.Train(data, responses)`
  * `tree.Train(data, responses, weights)`
- * `tree.Train(data, responses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `tree.Train(data, responses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data (optionally with instance weights).
+ * `tree.Train(data, responses,          minLeafSize, minGainSplit, maxDepth)`
+ * `tree.Train(data, responses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on numerical-only data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `responses` should be a vector of length `data.n_cols`, containing
      continuous real values corresponding to the response for each data point.
@@ -135,9 +135,9 @@ one of the versions of the `Train()` member function.  For an instance of
 
  * `tree.Train(data, datasetInfo, responses)`
  * `tree.Train(data, datasetInfo, responses, weights)`
- * `tree.Train(data, datasetInfo, responses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `tree.Train(data, datasetInfo, responses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data (optionally with instance weights).
+ * `tree.Train(data, datasetInfo, responses,          minLeafSize, minGainSplit, maxDepth)`
+ * `tree.Train(data, datasetInfo, responses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on mixed categorical data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `responses` should be a vector of length `data.n_cols`, containing
      continuous real values corresponding to the response for each data point.
@@ -226,7 +226,7 @@ arma::mat dataset(10, 1000, arma::fill::randu);
 arma::rowvec responses = arma::randn<arma::rowvec>(1000);
 
 // Train in the constructor.
-DecisionTreeRegressor<> tree(data, responses);
+DecisionTreeRegressor<> tree(dataset, responses);
 
 // Create test data (500 points).
 arma::mat testDataset(10, 500, arma::fill::randu);
@@ -235,8 +235,8 @@ tree.Predict(testDataset, predictions);
 // Now `predictions` holds predictions for the test dataset.
 
 // Print some information about the test predictions.
-std::cout << arma::accu(predictions > 3) << " test points predicted to have "
-    << "responses greater than 3." << std::endl;
+std::cout << arma::accu(predictions > 0.7) << " test points predicted to have"
+    << " responses greater than 0.7." << std::endl;
 std::cout << arma::accu(predictions < 0) << " test points predicted to have "
     << "negative responses." << std::endl;
 ```
@@ -291,7 +291,7 @@ std::cout << "Average error on test set: " << testAverageError << "."
 Load a tree and print some information about it.
 
 ```c++
-DecisionTreeRegression<> tree;
+DecisionTreeRegressor<> tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
 data::Load("tree.bin", "tree", tree, true);
@@ -326,12 +326,12 @@ arma::fmat dataset(10, 1000, arma::fill::randu);
 arma::frowvec responses = arma::randn<arma::frowvec>(1000);
 
 // Train in the constructor.
-DecisionTreeRegressor<> tree(data, responses, 5);
+DecisionTreeRegressor<> tree(dataset, responses, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
 arma::frowvec predictions;
-tree.Classify(testDataset, predictions);
+tree.Predict(testDataset, predictions);
 // Now `predictions` holds predictions for the test dataset.
 
 // Print some information about the test predictions.
@@ -446,8 +446,8 @@ class CustomNumericSplit
   // `unsplitGain`):
   //
   //    split if `sumChildrenGains - unsplitGain > bestGain`, and
-  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
-  //             each child will have at least `minimumLeafSize` points
+  //             `sumChildrenGains - unsplitGain > minGainSplit`, and
+  //             each child will have at least `minLeafSize` points
   //
   // The new best split value should be returned (or anything greater than or
   // equal to `bestGain` if no better split is found).
@@ -467,8 +467,8 @@ class CustomNumericSplit
                        const VecType& data,
                        const ResponsesType& responses,
                        const WeightVecType& weights,
-                       const size_t minimumLeafSize,
-                       const double minimumGainSplit,
+                       const size_t minLeafSize,
+                       const double minGainSplit,
                        arma::vec& splitInfo,
                        AuxiliarySplitInfo& aux,
                        FitnessFunction& function);
@@ -522,8 +522,8 @@ class CustomCategoricalSplit
   // `unsplitGain`):
   //
   //    split if `sumChildrenGains - unsplitGain > bestGain`, and
-  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
-  //             each child will have at least `minimumLeafSize` points
+  //             `sumChildrenGains - unsplitGain > minGainSplit`, and
+  //             each child will have at least `minLeafSize` points
   //
   // The new best split value should be returned (or anything greater than or
   // equal to `bestGain` if no better split is found).
@@ -546,8 +546,8 @@ class CustomCategoricalSplit
       const size_t numCategories,
       const ResponsesType& labels,
       const WeightVecType& weights,
-      const size_t minimumLeafSize,
-      const double minimumGainSplit,
+      const size_t minLeafSize,
+      const double minGainSplit,
       arma::vec& splitInfo,
       AuxiliarySplitInfo& aux,
       FitnessFunction& fitnessFunction);
@@ -595,8 +595,8 @@ class CustomCategoricalSplit
  * Each `DecisionTreeRegressor` [constructor](#constructors) and each version of
    the [`Train()`](#training) function optionally accept an instantiated
    `DimensionSelectionType` object as the very last parameter (after
-   `maximumDepth`), in case some internal state in the dimension selection
-   mechanism is required.
+   `maxDepth`), in case some internal state in the dimension selection mechanism
+   is required.
  * A custom class must implement three simple functions:
 
 ```c++

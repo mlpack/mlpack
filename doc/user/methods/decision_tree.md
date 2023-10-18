@@ -47,7 +47,7 @@ section below.
 
  * `DecisionTree()`
  * `DecisionTree(numClasses)`
-   - Initialize tree without training.
+   - **Initialize tree without training.**
    - You will need to call [`Train()`](#training) later to train the tree before
      calling [`Classify()`](#classification).
 
@@ -55,9 +55,9 @@ section below.
 
  * `DecisionTree(data, labels, numClasses)`
  * `DecisionTree(data, labels, numClasses, weights)`
- * `DecisionTree(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `DecisionTree(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data (optionally with instance weights).
+ * `DecisionTree(data, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
+ * `DecisionTree(data, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on numerical-only data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -68,9 +68,9 @@ section below.
 
  * `DecisionTree(data, datasetInfo, labels, numClasses)`
  * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
- * `DecisionTree(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data (optionally with instance weights).
+ * `DecisionTree(data, datasetInfo, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
+ * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on mixed categorical data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -95,14 +95,14 @@ section below.
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `minimumLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
-| `minimumGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
-| `maximumDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
+| `minLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
+| `minGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
+| `maxDepth` | `size_t` | Maximum depth for the tree. (0 means no limit.) | `0` |
 
- * Setting `minimumLeafSize` too small (e.g. `1`) may cause the tree to overfit
-   to its training data, and may create a very large tree.  However, setting it
-   too large may cause the tree to be very small and underfit.
- * `minimumGainSplit` has similar behavior: if it is too small, the tree may
+ * Setting `minLeafSize` too small (e.g. `1`) may cause the tree to overfit to
+   its training data, and may create a very large tree.  However, setting it too
+   large may cause the tree to be very small and underfit.
+ * `minGainSplit` has similar behavior: if it is too small, the tree may
    overfit; if too large, it may underfit.
 
 ***Note:*** different types can be used for `data` and `weights` (e.g.,
@@ -118,9 +118,9 @@ of the versions of the `Train()` member function.  For an instance of
 
  * `tree.Train(data, labels, numClasses)`
  * `tree.Train(data, labels, numClasses, weights)`
- * `tree.Train(data, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `tree.Train(data, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on numerical-only data (optionally with instance weights).
+ * `tree.Train(data, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
+ * `tree.Train(data, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on numerical-only data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -134,9 +134,9 @@ of the versions of the `Train()` member function.  For an instance of
 
  * `tree.Train(data, datasetInfo, labels, numClasses)`
  * `tree.Train(data, datasetInfo, labels, numClasses, weights)`
- * `tree.Train(data, datasetInfo, labels, numClasses, minimumLeafSize, minimumGainSplit, maximumDepth)`
- * `tree.Train(data, datasetInfo, labels, numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth)`
-   - Train on mixed categorical data (optionally with instance weights).
+ * `tree.Train(data, datasetInfo, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
+ * `tree.Train(data, datasetInfo, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
+   - **Train on mixed categorical data (optionally with instance weights).**
    - If hyperparameters are not specified, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
@@ -252,7 +252,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-DecisionTree<> tree(data, labels, 5);
+DecisionTree<> tree(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::mat testDataset(10, 500, arma::fill::randu);
@@ -347,7 +347,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-DecisionTree<> tree(data, labels, 5);
+DecisionTree<> tree(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
@@ -460,8 +460,8 @@ class CustomNumericSplit
   // `unsplitGain`):
   //
   //    split if `sumChildrenGains - unsplitGain > bestGain`, and
-  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
-  //             each child will have at least `minimumLeafSize` points
+  //             `sumChildrenGains - unsplitGain > minGainSplit`, and
+  //             each child will have at least `minLeafSize` points
   //
   // The new best split value should be returned (or anything greater than or
   // equal to `bestGain` if no better split is found).
@@ -481,8 +481,8 @@ class CustomNumericSplit
                        const arma::Row<size_t>& labels,
                        const size_t numClasses,
                        const WeightVecType& weights,
-                       const size_t minimumLeafSize,
-                       const double minimumGainSplit,
+                       const size_t minLeafSize,
+                       const double minGainSplit,
                        arma::vec& splitInfo,
                        AuxiliarySplitInfo& aux);
 
@@ -533,8 +533,8 @@ class CustomCategoricalSplit
   // `unsplitGain`):
   //
   //    split if `sumChildrenGains - unsplitGain > bestGain`, and
-  //             `sumChildrenGains - unsplitGain > minimumGainSplit`, and
-  //             each child will have at least `minimumLeafSize` points
+  //             `sumChildrenGains - unsplitGain > minGainSplit`, and
+  //             each child will have at least `minLeafSize` points
   //
   // The new best split value should be returned (or anything greater than or
   // equal to `bestGain` if no better split is found).
@@ -558,8 +558,8 @@ class CustomCategoricalSplit
       const LabelsType& labels,
       const size_t numClasses,
       const WeightVecType& weights,
-      const size_t minimumLeafSize,
-      const double minimumGainSplit,
+      const size_t minLeafSize,
+      const double minGainSplit,
       arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 
@@ -603,8 +603,8 @@ class CustomCategoricalSplit
  * Each `DecisionTree` [constructor](#constructors) and each version of the
    [`Train()`](#training) function optionally accept an instantiated
    `DimensionSelectionType` object as the very last parameter (after
-   `maximumDepth`), in case some internal state in the dimension selection
-   mechanism is required.
+   `maxDepth`), in case some internal state in the dimension selection mechanism
+   is required.
  * A custom class must implement three simple functions:
 
 ```c++
