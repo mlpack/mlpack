@@ -12,7 +12,7 @@ Decision trees are useful for classifying points with _discrete labels_ (i.e.
 #### Basic usage example excerpt:
 
 ```c++
-DecisionTree tree(3);                       // Step 1: construct object.
+DecisionTree tree;                          // Step 1: construct object.
 tree.Train(data, labels, 3);                // Step 2: train model.
 tree.Classify(test_data, test_predictions); // Step 3: use model to classify.
 ```
