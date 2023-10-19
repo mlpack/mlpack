@@ -13,9 +13,9 @@ _continuous values_ (`0.3`, `1.2`, etc.).  For predicting _discrete labels_
 #### Basic usage example excerpt:
 
 ```c++
-DecisionTreeRegressor tree;                // Step 1: construct object.
-tree.Train(data, responses, 3);            // Step 2: train model.
-tree.Predict(test_data, test_predictions); // Step 3: predict values with model.
+DecisionTreeRegressor tree;              // Step 1: construct object.
+tree.Train(data, responses, 3);          // Step 2: train model.
+tree.Predict(testData, testPredictions); // Step 3: predict values with model.
 ```
 
 #### Quick links:

@@ -16,9 +16,9 @@ values_).
 #### Basic usage example excerpt:
 
 ```c++
-RandomForest rf;                          // Step 1: construct object.
-rf.Train(data, labels, 3);                // Step 2: train model.
-rf.Classify(test_data, test_predictions); // Step 3: use model to classify.
+RandomForest rf;                        // Step 1: construct object.
+rf.Train(data, labels, 3);              // Step 2: train model.
+rf.Classify(testData, testPredictions); // Step 3: use model to classify.
 ```
 
 #### Quick links:
