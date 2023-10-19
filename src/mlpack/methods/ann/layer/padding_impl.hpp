@@ -35,7 +35,7 @@ PaddingType<MatType>::PaddingType(
 }
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(const PaddingType<MatType>& other) :
+PaddingType<MatType>::PaddingType(const PaddingType& other) :
     Layer<MatType>(other),
     padWLeft(other.padWLeft),
     padWRight(other.padWRight),
@@ -47,7 +47,7 @@ PaddingType<MatType>::PaddingType(const PaddingType<MatType>& other) :
 }
 
 template<typename MatType>
-PaddingType<MatType>::PaddingType(PaddingType<MatType>&& other) :
+PaddingType<MatType>::PaddingType(PaddingType&& other) :
     Layer<MatType>(std::move(other)),
     padWLeft(std::move(other.padWLeft)),
     padWRight(std::move(other.padWRight)),
@@ -60,7 +60,7 @@ PaddingType<MatType>::PaddingType(PaddingType<MatType>&& other) :
 
 template<typename MatType>
 PaddingType<MatType>&
-PaddingType<MatType>::operator=(const PaddingType<MatType>& other)
+PaddingType<MatType>::operator=(const PaddingType& other)
 {
   if (this != &other)
   {
@@ -77,7 +77,7 @@ PaddingType<MatType>::operator=(const PaddingType<MatType>& other)
 
 template<typename MatType>
 PaddingType<MatType>&
-PaddingType<MatType>::operator=(PaddingType<MatType>&& other)
+PaddingType<MatType>::operator=(PaddingType&& other)
 {
   if (this != &other)
   {
