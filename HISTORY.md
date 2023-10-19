@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Fix include ordering issue for `LinearRegression` (#3541).
 
+  * Fix L1 regularization in case where weight is zero (#3545)
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
