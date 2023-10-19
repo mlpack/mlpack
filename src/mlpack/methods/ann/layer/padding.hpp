@@ -42,19 +42,19 @@ class PaddingType : public Layer<MatType>
               const size_t padHBottom = 0);
 
   //! Clone the PaddingType object. This handles polymorphism correctly.
-  PaddingType<MatType>* Clone() const { return new PaddingType<MatType>(*this); }
+  PaddingType* Clone() const { return new PaddingType(*this); }
 
   //! Virtual destructor.
   virtual ~PaddingType() { }
 
   //! Copy the given PaddingType.
-  PaddingType(const PaddingType<MatType>& other);
+  PaddingType(const PaddingType& other);
   //! Take ownership of the given PaddingType.
-  PaddingType(PaddingType<MatType>&& other);
+  PaddingType(PaddingType&& other);
   //! Copy the given PaddingType.
-  PaddingType& operator=(const PaddingType<MatType>& other);
+  PaddingType& operator=(const PaddingType& other);
   //! Take ownership of the given PaddingType.
-  PaddingType& operator=(PaddingType<MatType>&& other);
+  PaddingType& operator=(PaddingType&& other);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
