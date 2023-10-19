@@ -494,24 +494,26 @@ typename MatType::elem_type FFN<
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
 
-  network.Forward(MatType(predictors.cols(begin, begin + batchSize - 1), true), networkOutput);
+  // alias the batches so we don't copy memory
+  MatType predictors_batch, responses_batch;
+  MakeAlias(predictors_batch, predictors.colptr(begin), predictors.n_rows, batchSize);
+  MakeAlias(responses_batch, responses.colptr(begin), responses.n_rows, batchSize);
 
-  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
-      MatType(responses.cols(begin, begin + batchSize - 1), true)) + network.Loss();
+  network.Forward(predictors_batch, networkOutput);
+
+  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput, responses_batch) + network.Loss();
 
   // Now perform the backward pass.
-  outputLayer.Backward(networkOutput,
-      MatType(responses.cols(begin, begin + batchSize - 1), true), error);
+  outputLayer.Backward(networkOutput, responses_batch, error);
 
   // The delta should have the same size as the input.
   networkDelta.set_size(predictors.n_rows, batchSize);
-  network.Backward(MatType(predictors.cols(begin, begin + batchSize - 1), true), error, networkDelta);
+  network.Backward(predictors_batch, error, networkDelta);
 
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(MatType(predictors.cols(begin, begin + batchSize - 1), true), error,
-      gradient);
+  network.Gradient(predictors_batch, error, gradient);
 
   return obj;
 }
