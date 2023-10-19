@@ -233,8 +233,8 @@ to make class predictions for new data.  Defaults and types are detailed in the
  * `rf.Classify(data, predictions)`
     - ***(Multi-point)***
     - Classify a set of points.
-    - The predicted classes of each point is stored in `predictions`, which is
-      set to length `data.n_cols`.
+    - The predicted class of each point is stored in `predictions`, which is set
+      to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
 
 ---
@@ -242,8 +242,8 @@ to make class predictions for new data.  Defaults and types are detailed in the
  * `rf.Classify(data, predictions, probabilities)`
     - ***(Multi-point)***
     - Classify a set of points and compute class probabilities for each point.
-    - The predicted classes of each point is stored in `predictions`, which is
-      set to length `data.n_cols`.
+    - The predicted class of each point is stored in `predictions`, which is set
+      to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
     - The class probabilities for each point are stored in `probabilities`,
       which is set to size `numClasses` by `data.n_cols`.
