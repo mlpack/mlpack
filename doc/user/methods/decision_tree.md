@@ -160,7 +160,6 @@ Once a `DecisionTree` is trained, the `Classify()` member function can be used
 to make class predictions for new data.  Defaults and types are detailed in the
 [Classification Parameters](#classification-parameters) section below.
 
-
 #### Forms:
 
  * `size_t predictedClass = tree.Classify(point)`
@@ -174,7 +173,7 @@ to make class predictions for new data.  Defaults and types are detailed in the
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
     - The class probabilities are stored in `probabilities_vec`, which is set to
-      length `num_classes`.
+      length `numClasses`.
     - The probability of class `i` can be accessed with `probabilities_vec[i]`.
 
 ---
@@ -195,7 +194,7 @@ to make class predictions for new data.  Defaults and types are detailed in the
       set to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
     - The class probabilities for each point are stored in `probabilities`,
-      which is set to size `num_classes` by `data.n_cols`.
+      which is set to size `numClasses` by `data.n_cols`.
     - The probability of class `j` for data point `i` can be accessed with
       `probabilities(j, i)`.
 
