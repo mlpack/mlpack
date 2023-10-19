@@ -217,7 +217,7 @@ to make class predictions for new data.  Defaults and types are detailed in the
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
 that is used should be the same type that was used for training.
 
-### Other functionality
+### Other Functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
 
@@ -240,7 +240,7 @@ For complete functionality, the [source
 code](/src/mlpack/methods/decision_tree/decision_tree.hpp) can be consulted.
 Each method is fully documented.
 
-### Simple examples
+### Simple Examples
 
 Train a decision tree on random numeric data and predict labels on a test set:
 
