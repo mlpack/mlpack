@@ -71,7 +71,7 @@ class LayerNormType : public Layer<MatType>
    *
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  LayerNormType(const double eps = 1e-8);
+  LayerNormType(const double eps);
 
   //! Clone the LayerNormType object. This handles polymorphism correctly.
   LayerNormType* Clone() const { return new LayerNormType(*this); }
