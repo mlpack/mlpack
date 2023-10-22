@@ -75,7 +75,8 @@ void LeakyReLUType<MatType>::Forward(const MatType& input, MatType& output)
 {
   #pragma omp for
   for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-    output(i) = std::max(input(i), alpha * input(i));
+    output(i) = std::max(input(i), (typename MatType::elem_type) alpha *
+        input(i));
 }
 
 template<typename MatType>
