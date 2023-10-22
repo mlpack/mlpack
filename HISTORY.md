@@ -17,13 +17,15 @@
 
   * Add `ClassProbabilities()` member to `DecisionTree` so that the internal
     details of trees can be more easily inspected (#3511).
-  
+
   * Bipolar sigmoid activation function added and invertible functions 
     fixed (#3506).
 
   * Add auto-configured `mlpack/config.hpp` to contain configuration details of
     mlpack that are required at compile time.  STB detection is now done in this
     file with the `MLPACK_HAS_STB` macro (#3519).
+
+  * Fix CRAN package alias for R bindings (#3543).
 
 ### mlpack 4.2.0
 ###### 2023-06-14
