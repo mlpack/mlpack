@@ -68,13 +68,14 @@ template<typename MatType>
 void CReLUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
+  typename MatType::elem_type zero = 0.0;
   #pragma omp for
   for (size_t i = 0; i < (size_t) input.n_cols; ++i)
   {
     for (size_t j = 0; j < (size_t) input.n_rows; ++j)
     {
-      output(j, i) = std::max(input(j, i), 0.0);
-      output(j + input.n_rows, i) = std::max(-input(j, i), 0.0);
+      output(j, i) = std::max(input(j, i), zero);
+      output(j + input.n_rows, i) = std::max(-input(j, i), zero);
     }
   }
 }
