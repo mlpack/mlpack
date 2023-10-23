@@ -71,7 +71,7 @@ void SoftmaxType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void SoftmaxType<MatType>::Backward(
-    const MatType& input,
+    const MatType& /* input */,
     const MatType& gy,
     MatType& g)
 {
