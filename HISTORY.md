@@ -4,6 +4,8 @@
 
   * Fix L1 regularization in case where weight is zero (#3545).
 
+  * Use HTTPS for all auto-downloaded dependencies (#3550).
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
