@@ -6,6 +6,8 @@
 
   * Use HTTPS for all auto-downloaded dependencies (#3550).
 
+  * Feat: Add "print_training_accuracy" in logistic_regression_main.md ([#3552](https://github.com/mlpack/mlpack/issues/3552))
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
