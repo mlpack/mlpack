@@ -83,7 +83,10 @@ void LayerNormType<MatType>::Forward(
 
 template<typename MatType>
 void LayerNormType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
 

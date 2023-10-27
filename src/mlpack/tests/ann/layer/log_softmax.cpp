@@ -37,7 +37,7 @@ TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
   // Test the Backward function.
   error = arma::ones(input.n_rows, input.n_cols);
   // Assume LogSoftmax layer is always associated with NLL output layer.
-  module.Backward(output, error, delta);
+  module.Backward(input, output, error, delta);
   REQUIRE(arma::accu(arma::abs(arma::mat("0.5790; -0.8435; -0.0233; 0.0798; 0.2079") - delta)) ==
       Approx(0.0).margin(1e-3));
 }

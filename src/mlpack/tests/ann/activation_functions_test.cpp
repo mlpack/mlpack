@@ -147,7 +147,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  lrf.Backward(input, error, derivatives);
+  lrf.Backward(input, {}, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -201,7 +201,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   module.Forward(input, activations);
-  module.Backward(activations, error, derivatives);
+  module.Backward(input, activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -255,7 +255,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   module.Forward(input, activations);
-  module.Backward(activations, error, derivatives);
+  module.Backward(input, activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -315,7 +315,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
   selu.ComputeOutputDimensions();
 
   selu.Forward(input, activations);
-  selu.Backward(activations, error, derivatives);
+  selu.Backward(input, activations, error, derivatives);
   
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda())) <= 10e-4);
@@ -323,7 +323,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
   input.fill(-1);
 
   selu.Forward(input, activations);
-  selu.Backward(activations, error, derivatives);
+  selu.Backward(input, activations, error, derivatives);
 
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda() * selu.Alpha() - arma::mean(activations))) <= 10e-4);

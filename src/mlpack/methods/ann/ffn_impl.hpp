@@ -336,7 +336,7 @@ typename MatType::elem_type FFN<
   outputLayer.Backward(networkOutput, targets, error);
 
   // Perform the backward pass.
-  network.Backward(networkOutput, error, networkDelta);
+  network.Backward(inputs, networkOutput, error, networkDelta);
 
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.
@@ -510,7 +510,7 @@ typename MatType::elem_type FFN<
 
   // The delta should have the same size as the input.
   networkDelta.set_size(predictors.n_rows, batchSize);
-  network.Backward(predictors_batch, error, networkDelta);
+  network.Backward(predictors_batch, networkOutput, error, networkDelta);
 
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.

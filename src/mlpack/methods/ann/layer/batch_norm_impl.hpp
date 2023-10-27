@@ -274,6 +274,7 @@ void BatchNormType<MatType>::Forward(
 template<typename MatType>
 void BatchNormType<MatType>::Backward(
     const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {

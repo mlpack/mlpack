@@ -55,7 +55,7 @@ TEST_CASE("FTSwishTest", "[ANNLayerTest]")
   gy.fill(1);
   g.set_size(3,3);
   // Backward pass.
-  layer.Backward(output, gy, g);
+  layer.Backward(input, output, gy, g);
 
   //Test the Backward function
   REQUIRE(abs(arma::accu(g - delta)) <= 0.0001);

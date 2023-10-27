@@ -60,11 +60,13 @@ class AddType : public Layer<MatType>
   /**
    * Backward pass: send weights backwards (the bias does not affect anything).
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x)
+   * @param output The propagated input data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   void Backward(const MatType& /* input */,
+                const MatType& output,
                 const MatType& gy,
                 MatType& g);
 

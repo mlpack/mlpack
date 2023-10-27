@@ -198,6 +198,7 @@ Forward(const MatType& input, MatType& output)
 template <typename MatType, typename RegularizerType>
 void MultiheadAttentionType<MatType, RegularizerType>::
 Backward(const MatType& /* input */,
+         const MatType& /* output */,
          const MatType& gy,
          MatType& g)
 {
@@ -257,7 +258,7 @@ Backward(const MatType& /* input */,
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
     // We will perform backpropagation of softmax over each slice of gyTemp.
-    softmax.Backward(scores.slice(i), gyTemp.slice(i), gyTemp.slice(i));
+    softmax.Backward({} /* unused */, scores.slice(i), gyTemp.slice(i), gyTemp.slice(i));
   }
 
   // Obtain backpropagated error of key.
@@ -404,7 +405,7 @@ Gradient(const MatType& input,
     // The shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
     // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
     // The new shape of errorTemp remain same.
-    softmax.Backward(scores.slice(i), errorTemp.slice(i), errorTemp.slice(i));
+    softmax.Backward({} /* unused */, scores.slice(i), errorTemp.slice(i), errorTemp.slice(i));
   }
 
   // The shape of qProj : (tgtSeqLen, headDim, numHeads * batchSize).

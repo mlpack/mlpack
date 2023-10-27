@@ -60,7 +60,7 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
                  {-0.3, 0.2, -0.5},
                  {0.1, -0.1, 0.3}};
   arma::mat predG;
-  module.Backward(input, gy, predG);
+  module.Backward(input, {} /* unused */, gy, predG);
   arma::mat actualG = {{0.2, -0.5, 0.8},
                       {0.015, -0.006, 0.1},
                       {-0.3, 0.002, -0.5},

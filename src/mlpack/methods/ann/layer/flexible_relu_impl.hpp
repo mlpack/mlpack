@@ -103,7 +103,10 @@ void FlexibleReLUType<MatType>::Forward(
 
 template<typename MatType>
 void FlexibleReLUType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   // Compute the first derivative of FlexibleReLU function.
   g = gy % arma::clamp(arma::sign(input), 0.0, 1.0);

@@ -98,7 +98,10 @@ void AddMergeType<MatType>::Forward(
 
 template<typename MatType>
 void AddMergeType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& output,
+    const MatType& gy,
+    MatType& g)
 {
   if (this->network.size() > 1)
   {
@@ -109,13 +112,13 @@ void AddMergeType<MatType>::Backward(
     g.zeros();
     for (size_t i = 0; i < this->network.size(); i++) 
     {
-      this->network[i]->Backward(input, gy, tempDelta);
+      this->network[i]->Backward(input, output, gy, tempDelta);
       g += tempDelta;
     }
   }
   else if (this->network.size() == 1)
   {
-    this->network[0]->Backward(input, gy, g);
+    this->network[0]->Backward(input, output, gy, g);
   }
   else
   {

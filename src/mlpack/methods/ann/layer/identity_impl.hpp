@@ -74,6 +74,7 @@ void IdentityType<MatType>::Forward(
 template<typename MatType>
 void IdentityType<MatType>::Backward(
   const MatType& /* input */,
+  const MatType& /* output */,
   const MatType& gy,
   MatType& g)
 {
