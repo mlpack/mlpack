@@ -23,7 +23,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("L2-regularized Logistic Regression and Prediction");
+BINDING_USER_NAME("L2-regularized  Logistic Regression and Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -101,7 +101,7 @@ BINDING_EXAMPLE(
     PRINT_MODEL("lr_model") + "', the following command may be used:"
     "\n\n" +
     PRINT_CALL("logistic_regression", "training", "data", "labels", "labels",
-        "lambda", 0.1, "output_model", "lr_model") +
+        "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy", true) +
     "\n\n"
     "Then, to use that model to predict classes for the dataset '" +
     PRINT_DATASET("test") + "', storing the output predictions in '" +
@@ -153,6 +153,9 @@ PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
+PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
+    "on the training set will be predicted (verbose must also be specified).",
+    "a");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -181,6 +184,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
   ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
+
+  ReportIgnoredParam(params, {{ "training", false }}, "print_training_accuracy");
+  
+  RequireAtLeastOnePassed(params, { "test", "output_model", "print_training_accuracy" }, false, "the trained logistic regression model will not be used or saved");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
@@ -324,6 +331,22 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       timers.Start("logistic_regression_optimization");
       model->Train(regressors, responses, lbfgsOpt);
       timers.Stop("logistic_regression_optimization");
+    }
+  }
+
+  // Did we want training accuracy?
+    if (params.Has("print_training_accuracy"))
+    {
+      timers.Start("lr_prediction");
+      arma::Row<size_t> predictions;
+      model->Classify(regressors, predictions);
+
+      const size_t correct = arma::accu(predictions == responses);
+
+      Log::Info << correct << " of " << responses.n_elem << " correct on training"
+          << " set (" << (double(correct) / double(responses.n_elem) * 100) << ")."
+          << endl;
+      timers.Stop("lr_prediction");
     }
   }
 
