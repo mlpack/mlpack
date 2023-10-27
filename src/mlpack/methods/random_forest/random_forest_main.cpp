@@ -24,14 +24,14 @@ using namespace std;
 // Program Name.
 BINDING_USER_NAME("Random forests");
 
-// Short description.
+// Short description
 BINDING_SHORT_DESC(
     "An implementation of the standard random forest algorithm by Leo Breiman "
     "for classification.  Given labeled data, a random forest can be trained "
     "and saved for future use; or, a pre-trained random forest can be used for "
     "classification.");
 
-// Long description.
+// Long description
 BINDING_LONG_DESC(
     "This program is an implementation of the standard random forest "
     "classification algorithm by Leo Breiman.  A random forest can be "

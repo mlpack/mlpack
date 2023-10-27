@@ -23,7 +23,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("L2-regularized  Logistic Regression and Prediction");
+BINDING_USER_NAME("L2-regularized Logistic Regression and Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
