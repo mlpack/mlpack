@@ -88,7 +88,7 @@
   #define MLPACK_ANY_CAST std::any_cast
   #define MLPACK_STRING_VIEW std::string_view
 #elif defined(_MSC_VER)
-  #error "When using Visual Studio, mlpack should be compiled with /Zc:__cplusplus and /std:c++17 or newer."
+  #error "When using Visual Studio, mlpack should be compiled with /std:c++17 or newer."
 #else
   // Backport std::any from C+17 to C++11 to replace boost::any.
   // Use mnmlstc backport implementation only if compiler does not
