@@ -6,6 +6,8 @@
 
   * Use HTTPS for all auto-downloaded dependencies (#3550).
 
+  * More robust detection of C++17 mode in the MSVC "compiler" (#3555).
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
