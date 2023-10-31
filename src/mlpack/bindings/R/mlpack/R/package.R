@@ -8,6 +8,7 @@
 #'
 #' @docType package
 #' @name mlpack
+#' @aliases mlpack-package
 #' @author mlpack Team
 #' @importFrom Rcpp evalCpp
 #' @useDynLib mlpack

@@ -68,23 +68,36 @@
   #define mlpack_force_inline __forceinline
 #endif
 
-// Backport std::any from C+17 to C++11 to replace boost::any.
-// Use mnmlstc backport implementation only if compiler does not
-// support C++17.
-#if __cplusplus < 201703L && !defined(_MSC_VER)
-  #include <mlpack/core/std_backport/any.hpp>
-  #include <mlpack/core/std_backport/string_view.hpp>
-  #define MLPACK_ANY core::v2::any
-  #define MLPACK_ANY_CAST core::v2::any_cast
-  #define MLPACK_STRING_VIEW core::v2::string_view
-#elif __cplusplus < 201703L && defined(_MSC_VER)
-  #error "When using Visual Studio, mlpack should be compiled with /Zc:__cplusplus and /std:c++17 or newer."
-#else
+// detect C++17 mode
+#if (__cplusplus >= 201703L)
+  #undef  MLPACK_HAVE_CXX17
+  #define MLPACK_HAVE_CXX17
+#endif
+
+#if defined(_MSVC_LANG)
+  #if (_MSVC_LANG >= 201703L)
+    #undef  MLPACK_HAVE_CXX17
+    #define MLPACK_HAVE_CXX17
+  #endif
+#endif
+
+#if defined(MLPACK_HAVE_CXX17)
   #include <any>
   #include <string_view>
   #define MLPACK_ANY std::any
   #define MLPACK_ANY_CAST std::any_cast
   #define MLPACK_STRING_VIEW std::string_view
+#elif defined(_MSC_VER)
+  #error "When using Visual Studio, mlpack should be compiled with /std:c++17 or newer."
+#else
+  // Backport std::any from C+17 to C++11 to replace boost::any.
+  // Use mnmlstc backport implementation only if compiler does not
+  // support C++17.
+  #include <mlpack/core/std_backport/any.hpp>
+  #include <mlpack/core/std_backport/string_view.hpp>
+  #define MLPACK_ANY core::v2::any
+  #define MLPACK_ANY_CAST core::v2::any_cast
+  #define MLPACK_STRING_VIEW core::v2::string_view
 #endif
 
 // Now include Armadillo through the special mlpack extensions.
