@@ -352,7 +352,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     timers.Stop("lr_prediction");
   }
   
-
   if (params.Has("test"))
   {
     const arma::mat& testSet = params.Get<arma::mat>("test");
