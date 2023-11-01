@@ -449,10 +449,10 @@ typename MatType::elem_type FFN<
   // Set networkOutput to the right size if needed, then perform the forward
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
-  MatType predictors_batch, responses_batch;
-  MakeAlias(predictors_batch, predictors.colptr(begin), predictors.n_rows, batchSize);
-  MakeAlias(responses_batch, responses.colptr(begin), responses.n_rows, batchSize);
-  network.Forward(predictors_batch, networkOutput);
+  MatType predictorsBatch, responses_batch;
+  MakeAlias(predictorsBatch, predictors.colptr(begin), predictors.n_rows, batchSize);
+  MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows, batchSize);
+  network.Forward(predictorsBatch, networkOutput);
 
   return outputLayer.Forward(networkOutput, responses_batch) + network.Loss();
 }
