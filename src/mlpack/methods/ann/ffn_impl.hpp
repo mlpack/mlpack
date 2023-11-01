@@ -509,7 +509,7 @@ typename MatType::elem_type FFN<
       responsesBatch) + network.Loss();
 
   // Now perform the backward pass.
-  outputLayer.Backward(networkOutput, responses_batch, error);
+  outputLayer.Backward(networkOutput, responsesBatch, error);
 
   // The delta should have the same size as the input.
   networkDelta.set_size(predictors.n_rows, batchSize);
