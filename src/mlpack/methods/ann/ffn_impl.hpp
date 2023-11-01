@@ -503,9 +503,10 @@ typename MatType::elem_type FFN<
   MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows,
       batchSize);
 
-  network.Forward(predictors_batch, networkOutput);
+  network.Forward(predictorsBatch, networkOutput);
 
-  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput, responses_batch) + network.Loss();
+  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
+      responsesBatch) + network.Loss();
 
   // Now perform the backward pass.
   outputLayer.Backward(networkOutput, responses_batch, error);
