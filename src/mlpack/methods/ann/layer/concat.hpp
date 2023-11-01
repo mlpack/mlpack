@@ -84,8 +84,8 @@ class ConcatType : public MultiLayer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
-                const MatType& output,
+  void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 
