@@ -496,10 +496,12 @@ typename MatType::elem_type FFN<
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
 
-  // alias the batches so we don't copy memory
-  MatType predictors_batch, responses_batch;
-  MakeAlias(predictors_batch, predictors.colptr(begin), predictors.n_rows, batchSize);
-  MakeAlias(responses_batch, responses.colptr(begin), responses.n_rows, batchSize);
+  // Alias the batches so we don't copy memory.
+  MatType predictorsBatch, responsesBatch;
+  MakeAlias(predictorsBatch, predictors.colptr(begin), predictors.n_rows,
+      batchSize);
+  MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows,
+      batchSize);
 
   network.Forward(predictors_batch, networkOutput);
 
