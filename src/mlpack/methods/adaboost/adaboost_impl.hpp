@@ -35,7 +35,7 @@ namespace mlpack {
  *
  * @param data Input data
  * @param labels Corresponding labels
- * @param iterations Number of boosting rounds
+ * @param maxIterations Number of boosting rounds
  * @param tol Tolerance for termination of Adaboost.MH.
  * @param other Weak Learner, which has been initialized already.
  */
@@ -45,10 +45,10 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const WeakLearnerType& other,
-    const size_t iterations,
+    const size_t maxIterations,
     const double tol)
 {
-  Train(data, labels, numClasses, other, iterations, tol);
+  Train(data, labels, numClasses, other, maxIterations, tol);
 }
 
 // Empty constructor.
@@ -67,7 +67,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const WeakLearnerType& other,
-    const size_t iterations,
+    const size_t maxIterations,
     const double tolerance)
 {
   // Clear information from previous runs.
@@ -105,7 +105,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
   // Now, start the boosting rounds.
-  for (size_t i = 0; i < iterations; ++i)
+  for (size_t i = 0; i < maxIterations; ++i)
   {
     // Initialized to zero in every round.  rt is used for calculation of
     // alphat; it is the weighted error.

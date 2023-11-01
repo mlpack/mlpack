@@ -89,7 +89,7 @@ class AdaBoost
    * @param data Input data.
    * @param labels Corresponding labels.
    * @param numClasses The number of classes.
-   * @param iterations Number of boosting rounds.
+   * @param maxIterations Number of boosting rounds.
    * @param tolerance The tolerance for change in values of rt.
    * @param other Weak learner that has already been initialized.
    */
@@ -97,7 +97,7 @@ class AdaBoost
            const arma::Row<size_t>& labels,
            const size_t numClasses,
            const WeakLearnerType& other,
-           const size_t iterations = 100,
+           const size_t maxIterations = 100,
            const double tolerance = 1e-6);
 
   /**
@@ -138,7 +138,7 @@ class AdaBoost
    * @param labels Labels for each point in the dataset.
    * @param numClasses The number of classes.
    * @param learner Learner to use for training.
-   * @param iterations Number of boosting rounds.
+   * @param maxIterations Number of boosting rounds.
    * @param tolerance The tolerance for change in values of rt.
    * @return The upper bound for training error.
    */
@@ -146,7 +146,7 @@ class AdaBoost
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                const WeakLearnerType& learner,
-               const size_t iterations = 100,
+               const size_t maxIterations = 100,
                const double tolerance = 1e-6);
 
   /**

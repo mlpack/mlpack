@@ -128,7 +128,8 @@ named `ab`, the following functions for training are available:
  * `ab.Train(data, labels, numClasses)`
  * `ab.Train(data, labels, numClasses, maxIterations, tolerance)`
    - **Train model using default weak learner parameters.**
-   - If hyperparameters are not specified, default values are used.
+   - If hyperparameters are not specified here, and have not been otherwise set,
+     default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
 
@@ -141,7 +142,8 @@ named `ab`, the following functions for training are available:
      settings in `weakLearner` are used for training each AdaBoost weak learner
      (see the [simple examples](#simple-examples)). <!-- TODO: link to specific
 example -->
-   - If hyperparameters are not specified, default values are used.
+   - If hyperparameters for AdaBoost are not specified, and have not been
+     otherwise set, default values are used.
    - `labels` should be a vector of length `data.n_cols`, containing values from
      `0` to `numClasses - 1` (inclusive).
 
@@ -234,6 +236,10 @@ the [Classification Parameters](#classification-parameters) section below.
 
  * `ab.WeakLearner(i)` will return the `i`th weak learner.
 
+For complete functionality, the [source
+code](/src/mlpack/methods/adaboost/adaboost.hpp) can be consulted.  Each method
+is fully documented.
+
 ### Simple Examples
 
 Train an AdaBoost model on random data and predict labels on a random test set.
@@ -269,7 +275,7 @@ arma::mat dataset;
 data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris_labels.csv", dataset, true);
+data::Load("iris.labels.csv", dataset, true);
 
 // Create a weak learner with the desired hyperparameters.
 Perceptron<> p;
@@ -371,6 +377,7 @@ AdaBoost<WeakLearnerType, MatType>
    supporting instance weights can also be used.
 
 ```c++
+// You can use this as a starting point for implementation.
 class CustomWeakLearner
 {
  public:
@@ -413,7 +420,8 @@ class CustomWeakLearner
  * Specifies the matrix type to use for data when learning a model (or
    predicting with one).
  * By default, `MatType` is `arma::mat` (dense 64-bit precision matrix).
- * `arma::fmat` or `arma::sp_mat` could also be used.
+ * Any matrix type implementing the Armadillo API will work; so, for instance,
+   `arma::fmat` or `arma::sp_mat` can also be used.
 
 ### Advanced Functionality Examples
 
