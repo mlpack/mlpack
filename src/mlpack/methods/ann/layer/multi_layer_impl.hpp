@@ -187,7 +187,8 @@ void MultiLayer<MatType>::Backward(
 
     network.back()->Backward(layerOutputs[network.size() - 2], output, gy, layerDeltas.back());
     for (size_t i = network.size() - 2; i > 0; --i)
-      network[i]->Backward(layerOutputs[i-1], layerOutputs[i], layerDeltas[i + 1], layerDeltas[i]);
+      network[i]->Backward(layerOutputs[i - 1], layerOutputs[i],
+          layerDeltas[i + 1], layerDeltas[i]);
     network[0]->Backward(input, layerOutputs[0], layerDeltas[1], g);
   }
   else if (network.size() == 1)
