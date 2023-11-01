@@ -454,7 +454,7 @@ typename MatType::elem_type FFN<
   MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows, batchSize);
   network.Forward(predictorsBatch, networkOutput);
 
-  return outputLayer.Forward(networkOutput, responses_batch) + network.Loss();
+  return outputLayer.Forward(networkOutput, responsesBatch) + network.Loss();
 }
 
 template<typename OutputLayerType,
