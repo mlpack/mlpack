@@ -274,15 +274,18 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-      if (selfAttention) {
-          // sum the query, key, and value deltas
-          g.submat(0, i, g.n_rows - 1, i)
-                  += arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
-      }
-      else {
-          g.submat(tgtSeqLen * embedDim, i, (tgtSeqLen + srcSeqLen) * embedDim - 1, i)
-                  = arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
-      }
+    if (selfAttention)
+    {
+      // Sum the query, key, and value deltas.
+      g.submat(0, i, g.n_rows - 1, i) +=
+          arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+    }
+    else
+    {
+      g.submat(tgtSeqLen * embedDim, i,
+               (tgtSeqLen + srcSeqLen) * embedDim - 1, i) =
+          arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+    }
   }
 
   // Obtain backpropagated error of the query.
