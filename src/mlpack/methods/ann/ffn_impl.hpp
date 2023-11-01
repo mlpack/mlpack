@@ -518,7 +518,7 @@ typename MatType::elem_type FFN<
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(predictors_batch, error, gradient);
+  network.Gradient(predictorsBatch, error, gradient);
 
   return obj;
 }
