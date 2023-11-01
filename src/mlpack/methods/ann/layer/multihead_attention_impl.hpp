@@ -240,14 +240,16 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-      if (selfAttention) {
-          g.submat(0, i, g.n_rows - 1, i)
-                  = arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
-      }
-      else {
-          g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i)
-                  = arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
-      }
+    if (selfAttention)
+    {
+      g.submat(0, i, g.n_rows - 1, i) =
+          arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+    }
+    else
+    {
+      g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i) =
+          arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+    }
   }
 
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
