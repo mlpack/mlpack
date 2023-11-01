@@ -46,7 +46,8 @@ void LayerNormType<MatType>::CustomInitialize(
       MatType& W,
       const size_t elements)
 {
-  if (elements != 2 * size) {
+  if (elements != 2 * size)
+  {
     throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
                                 "elements size!");
   }
