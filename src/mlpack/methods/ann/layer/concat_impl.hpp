@@ -239,7 +239,7 @@ void ConcatType<MatType>::Backward(
   delta.reshape(delta.n_elem / gy.n_cols, gy.n_cols);
 
   this->network[index]->Backward(
-          index == 0 ? input : this->layerOutputs[index-1],
+          input,
           this->layerOutputs[index],
           delta,
           g);
