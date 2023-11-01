@@ -185,7 +185,7 @@ void ConcatType<MatType>::Backward(
     // Reshape so that the batch size is the number of columns.
     delta.reshape(delta.n_elem / gy.n_cols, gy.n_cols);
     this->network[i]->Backward(
-        i == 0 ? input : this->layerOutputs[i-1],
+        input,
         this->layerOutputs[i],
         delta,
         this->layerDeltas[i]);
