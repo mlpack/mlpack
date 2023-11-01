@@ -299,15 +299,17 @@ Backward(const MatType& /* input */,
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-      if (selfAttention) {
-          // sum the query, key, and value deltas
-          g.submat(0, i, g.n_rows - 1, i)
-                  += arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
-      }
-      else {
-          g.submat(0, i, tgtSeqLen * embedDim - 1, i)
-                  = arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
-      }
+    if (selfAttention)
+    {
+      // Sum the query, key, and value deltas.
+      g.submat(0, i, g.n_rows - 1, i) +=
+          arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+    }
+    else
+    {
+      g.submat(0, i, tgtSeqLen * embedDim - 1, i) =
+          arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+    }
   }
 }
 
