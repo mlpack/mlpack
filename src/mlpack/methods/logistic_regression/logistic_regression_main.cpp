@@ -101,7 +101,8 @@ BINDING_EXAMPLE(
     PRINT_MODEL("lr_model") + "', the following command may be used:"
     "\n\n" +
     PRINT_CALL("logistic_regression", "training", "data", "labels", "labels",
-        "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy", true) +
+        "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy",
+        true) +
     "\n\n"
     "Then, to use that model to predict classes for the dataset '" +
     PRINT_DATASET("test") + "', storing the output predictions in '" +
