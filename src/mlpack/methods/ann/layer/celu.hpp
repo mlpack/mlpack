@@ -106,8 +106,8 @@ class CELUType : public Layer<MatType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input,
-                const MatType& output,
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 
