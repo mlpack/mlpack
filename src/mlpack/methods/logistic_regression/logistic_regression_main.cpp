@@ -187,7 +187,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   ReportIgnoredParam(params, {{ "training", false }}, "print_training_accuracy");
   
-  RequireAtLeastOnePassed(params, { "test", "output_model", "print_training_accuracy" }, false, "the trained logistic regression model will not be used or saved");
+  RequireAtLeastOnePassed(params,
+      { "test", "output_model", "print_training_accuracy" }, false,
+      "the trained logistic regression model will not be used or saved");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
