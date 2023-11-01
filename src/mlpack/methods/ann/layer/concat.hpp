@@ -99,8 +99,8 @@ class ConcatType : public MultiLayer<MatType>
    * @param g The calculated gradient.
    * @param index The index of the layer to run.
    */
-  void Backward(const MatType& /* input */,
-                const MatType& output,
+  void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g,
                 const size_t index);
