@@ -153,7 +153,7 @@ class LayerNormType : public Layer<MatType>
   //! Locally-stored epsilon value.
   double eps;
 
-  // cached size for the normalization
+  // Cached size for the normalization.
   size_t size;
 
   //! Locally-stored scale parameter.
