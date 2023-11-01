@@ -74,7 +74,7 @@ class LayerNormType : public Layer<MatType>
   //! Clone the LayerNormType object. This handles polymorphism correctly.
   LayerNormType* Clone() const override { return new LayerNormType(*this); }
 
-    /**
+  /**
    * Forward pass of Layer Normalization. Transforms the input data
    * into zero mean and unit variance, scales the data by a factor gamma and
    * shifts it by beta.
