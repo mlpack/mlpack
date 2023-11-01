@@ -80,7 +80,7 @@ class NoisyLinearType : public Layer<MatType>
    * @param g The calculated gradient.
    */
   void Backward(const MatType& /* input */,
-                const MatType& output,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 
