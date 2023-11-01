@@ -133,7 +133,8 @@ class LayerNormType : public Layer<MatType>
     // as the input.
     this->outputDimensions = this->inputDimensions;
     size = this->inputDimensions[0];
-    for (size_t i=1; i<this->inputDimensions.size(); i++) size *= this->inputDimensions[i];
+    for (size_t i = 1; i < this->inputDimensions.size(); i++)
+      size *= this->inputDimensions[i];
   }
 
   void SetWeights(typename MatType::elem_type* /* weightsPtr */) override;
