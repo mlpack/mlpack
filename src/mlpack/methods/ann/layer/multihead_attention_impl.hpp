@@ -421,7 +421,8 @@ Gradient(const MatType& input,
     // The shape of scores : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
     // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
     // The new shape of errorTemp remain same.
-    softmax.Backward({} /* unused */, scores.slice(i), errorTemp.slice(i), errorTemp.slice(i));
+    softmax.Backward({} /* unused */, scores.slice(i), errorTemp.slice(i),
+        errorTemp.slice(i));
   }
 
   // The shape of qProj : (tgtSeqLen, headDim, numHeads * batchSize).
