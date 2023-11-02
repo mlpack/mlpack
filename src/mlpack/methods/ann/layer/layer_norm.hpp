@@ -61,15 +61,12 @@ template <
 class LayerNormType : public Layer<MatType>
 {
  public:
-  //! Create the LayerNormType object.
-  LayerNormType();
-
   /**
    * Create the LayerNorm object for a specified number of input units.
    *
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  LayerNormType(const double eps);
+  LayerNormType(const double eps = 1e-8);
 
   //! Clone the LayerNormType object. This handles polymorphism correctly.
   LayerNormType* Clone() const override { return new LayerNormType(*this); }

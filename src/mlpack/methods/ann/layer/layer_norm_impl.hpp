@@ -19,13 +19,6 @@
 namespace mlpack {
 
 
-template<typename MatType>
-LayerNormType<MatType>::LayerNormType() :
-    eps(1e-8)
-{
-  // Nothing to do here.
-}
-
 template <typename MatType>
 LayerNormType<MatType>::LayerNormType(const double eps) :
     eps(eps)
