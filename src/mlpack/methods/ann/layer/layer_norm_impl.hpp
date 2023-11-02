@@ -48,7 +48,7 @@ void LayerNormType<MatType>::CustomInitialize(
 {
   if (elements != 2 * size)
   {
-    throw std::invalid_argument("BatchNormType::CustomInitialize(): wrong "
+    throw std::invalid_argument("LayerNormType::CustomInitialize(): wrong "
                                 "elements size!");
   }
   MatType gammaTemp;
