@@ -84,7 +84,7 @@ void LayerNormType<MatType>::Forward(
 
 template<typename MatType>
 void LayerNormType<MatType>::Backward(
-    const MatType& input,
+    const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
@@ -101,11 +101,11 @@ void LayerNormType<MatType>::Backward(
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
   g = (norm.each_row() % stdInv) + (inputMean.each_row() %
-      var * 2 / input.n_rows);
+      var * 2 / gy.n_rows);
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / input.n_rows;
+  g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / gy.n_rows;
 }
 
 template<typename MatType>
