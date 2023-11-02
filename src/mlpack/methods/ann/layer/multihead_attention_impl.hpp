@@ -338,7 +338,7 @@ Gradient(const MatType& input,
         << "self-attention!" << std::endl;
   }
 
-    if (error.n_rows != tgtSeqLen * embedDim)
+  if (error.n_rows != tgtSeqLen * embedDim)
   {
     Log::Fatal << "Backpropagated error has incorrect dimensions." << std::endl;
   }
