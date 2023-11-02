@@ -217,6 +217,8 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Key Padding Mask.
   MatType keyPaddingMask;
 
+  // Whether or not self-attention is used (source key, value, and query all
+  // come from the same input).
   bool selfAttention;
 
   //! Locally-stored weight matrix associated with query.
