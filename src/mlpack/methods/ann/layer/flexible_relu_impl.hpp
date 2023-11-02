@@ -98,7 +98,7 @@ template<typename MatType>
 void FlexibleReLUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::clamp(input, 0.0, DBL_MAX) + alpha(0);
+  output = arma::clamp(input, 0.0, std::numeric_limits<typename MatType::elem_type>::max()) + alpha(0);
 }
 
 template<typename MatType>
@@ -109,7 +109,7 @@ void FlexibleReLUType<MatType>::Backward(
     MatType& g)
 {
   // Compute the first derivative of FlexibleReLU function.
-  g = gy % arma::clamp(arma::sign(input), 0.0, 1.0);
+  g = gy % (input > 0);
 }
 
 template<typename MatType>
