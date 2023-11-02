@@ -82,15 +82,12 @@ void CReLUType<MatType>::Forward(
 
 template<typename MatType>
 void CReLUType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& output,
+    const MatType& input,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  // I believe this needs to be > 0.0, not >= 0.0
-  MatType temp = gy % (output >= 0.0);
-  g = temp.rows(0, (output.n_rows / 2 - 1)) - temp.rows(output.n_rows / 2,
-      (output.n_rows - 1));
+  g = gy.rows(0, input.n_rows-1) % (input >= 0) - gy.rows(input.n_rows, input.n_rows * 2 - 1) % (input < 0);
 }
 
 template<typename MatType>
