@@ -351,8 +351,9 @@ Gradient(const MatType& input,
 
   const CubeType q(const_cast<MatType&>(input).memptr(),
       embedDim, tgtSeqLen, batchSize, false, false);
-  const CubeType k(const_cast<MatType&>(input).memptr() + (selfAttention ? 0 : q.n_elem),
-      embedDim, srcSeqLen, batchSize, false, false);
+  const CubeType k(const_cast<MatType&>(input).memptr() +
+      (selfAttention ? 0 : q.n_elem), embedDim, srcSeqLen, batchSize, false,
+      false);
   const CubeType v(const_cast<MatType&>(input).memptr() + (selfAttention ? 0 : (q.n_elem + k.n_elem)),
       embedDim, srcSeqLen, batchSize, false, false);
 
