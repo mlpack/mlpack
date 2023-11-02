@@ -178,11 +178,9 @@ Forward(const MatType& input, MatType& output)
     }
   }
 
-  arma::mat scoresSlice;
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
-    MakeAlias(scoresSlice, scores.slice_memptr(i), scores.n_rows, scores.n_cols);
-    softmax.Forward(scoresSlice, scoresSlice);
+    softmax.Forward(scores.slice(i), scores.slice(i));
   }
 
   // Calculate the attention output i.e. matrix multiplication of softmax
