@@ -213,7 +213,8 @@ Backward(const MatType& /* input */,
   }
 
   const size_t batchSize = gy.n_cols;
-  g.set_size(selfAttention ? (embedDim * srcSeqLen) : embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
+  g.set_size(selfAttention ? (embedDim * srcSeqLen) :
+      embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
 
   // Reshape the propagated gradient into a cube.
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
