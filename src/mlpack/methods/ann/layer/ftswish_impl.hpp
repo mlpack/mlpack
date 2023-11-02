@@ -84,18 +84,18 @@ void FTSwishType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void FTSwishType<MatType>::Backward(
-    const MatType& /* input */,
-    const MatType& output,
+    const MatType& input,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
   #pragma omp for
-  for (size_t i = 0; i < (size_t) output.n_elem; ++i)
+  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
   {
-    if (output(i) >= 0)
+    if (input(i) >= 0)
     {
-      const double fX = output(i) / (1 + std::exp(-output(i)));
-      const double sigmoidX = 1 / (1 + std::exp(-output(i)));
+      const double fX = input(i) / (1 + std::exp(-input(i)));
+      const double sigmoidX = 1 / (1 + std::exp(-input(i)));
 
       g(i) = gy(i) * (sigmoidX * (1 - fX) + fX);
 
