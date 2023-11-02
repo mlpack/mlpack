@@ -151,8 +151,8 @@ class Layer
    * downstream gradients (g). We assume that the upstream gradient (gy) has
    * already been computed and is passed to the layer.
    *
-   * @param * (input) The input data (x)
-   * @param * (output) The propagated input data (f(x)) resulting from Forward()
+   * @param * (input) The input data (x) given to the forward pass.
+   * @param * (output) The propagated data (f(x)) resulting from Forward()
    * @param * (gy) The backpropagated error.
    * @param * (g) The calculated gradient.
    */

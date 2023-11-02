@@ -98,8 +98,8 @@ class MultiLayer : public Layer<MatType>
    * This function is expected to be called for the same input data as
    * `Forward()` was just called for.
    *
-   * @param input The input data (x)
-   * @param output The propagated input data (f(x)) resulting from Forward()
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy Propagated error from next layer.
    * @param g Matrix to store propagated error in for previous layer.
    */
