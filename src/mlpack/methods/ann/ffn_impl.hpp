@@ -449,7 +449,7 @@ typename MatType::elem_type FFN<
   // Set networkOutput to the right size if needed, then perform the forward
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
-  MatType predictorsBatch, responses_batch;
+  MatType predictorsBatch, responsesBatch;
   MakeAlias(predictorsBatch, predictors.colptr(begin), predictors.n_rows, batchSize);
   MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows, batchSize);
   network.Forward(predictorsBatch, networkOutput);
@@ -513,7 +513,7 @@ typename MatType::elem_type FFN<
 
   // The delta should have the same size as the input.
   networkDelta.set_size(predictors.n_rows, batchSize);
-  network.Backward(predictors_batch, networkOutput, error, networkDelta);
+  network.Backward(predictorsBatch, networkOutput, error, networkDelta);
 
   // Now compute the gradients.
   // The gradient should have the same size as the parameters.

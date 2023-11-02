@@ -147,7 +147,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  arma::colvec output;
+  arma::colvec output(input.n_elem);
   lrf.Forward(input, output);
   lrf.Backward(input, output, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
