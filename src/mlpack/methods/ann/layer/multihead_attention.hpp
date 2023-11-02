@@ -74,7 +74,8 @@ class MultiheadAttentionType : public Layer<MatType>
    * @param numHeads Number of parallel attention heads.
    * @param attnMask Two dimensional Attention Mask.
    * @param keyPaddingMask Key Padding Mask.
-   * @param selfAttention Use self-attention; source key, query, and value all come from the same inputs
+   * @param selfAttention Use self-attention; source key, query, and value all
+   *     come from the same inputs
    */
   MultiheadAttentionType(const size_t tgtSeqLen,
                          const size_t srcSeqLen,
