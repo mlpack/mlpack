@@ -98,8 +98,11 @@ Forward(const MatType& input, MatType& output)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
   }
 
-  if (selfAttention && tgtSeqLen != srcSeqLen) {
-      Log::Fatal << "tgtSeqLen and srcSeqLen must match when using self-attention" << std::endl;
+  if (selfAttention && tgtSeqLen != srcSeqLen)
+  {
+    Log::Fatal << "Target sequence length (" << tgtSeqLen << ") and source "
+        << "sequence length (" << srcSeqLen << ") must match when using "
+        << "self-attention!" << std::endl;
   }
 
   const size_t batchSize = input.n_cols;
