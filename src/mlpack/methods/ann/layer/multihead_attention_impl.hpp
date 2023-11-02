@@ -333,7 +333,9 @@ Gradient(const MatType& input,
 
   if (selfAttention && tgtSeqLen != srcSeqLen)
   {
-    Log::Fatal << "Incorrect input dimensions for selfAttention!" << std::endl;
+    Log::Fatal << "Target sequence length (" << tgtSeqLen << ") and source "
+        << "sequence length (" << srcSeqLen << ") must match when using "
+        << "self-attention!" << std::endl;
   }
 
     if (error.n_rows != tgtSeqLen * embedDim)
