@@ -354,8 +354,9 @@ Gradient(const MatType& input,
   const CubeType k(const_cast<MatType&>(input).memptr() +
       (selfAttention ? 0 : q.n_elem), embedDim, srcSeqLen, batchSize, false,
       false);
-  const CubeType v(const_cast<MatType&>(input).memptr() + (selfAttention ? 0 : (q.n_elem + k.n_elem)),
-      embedDim, srcSeqLen, batchSize, false, false);
+  const CubeType v(const_cast<MatType&>(input).memptr() +
+      (selfAttention ? 0 : (q.n_elem + k.n_elem)), embedDim, srcSeqLen,
+      batchSize, false, false);
 
   // Reshape the propagated error into a cube.
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
