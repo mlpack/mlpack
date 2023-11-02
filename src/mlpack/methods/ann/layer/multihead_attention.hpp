@@ -1,4 +1,3 @@
-// Temporarily drop.
 /**
  * @file methods/ann/layer/multihead_attention.hpp
  * @author Mrityunjay Tripathi
@@ -48,6 +47,9 @@ namespace mlpack {
  * of shape `(embedDim * tgtSeqLen, batchSize)`. The embeddings are stored
  * consequently.
  *
+ * srcSeqLen is inferred from dim 0 of the previous layer.
+ * embedDim is inferred from
+ *
  * @tparam MatType Type of the input/output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam RegularizerType Type of the regularizer to be used.
@@ -64,25 +66,19 @@ class MultiheadAttentionType : public Layer<MatType>
    */
   MultiheadAttentionType();
 
-  // TODO: does srcSeqLen need to be given?
   /**
    * Create the MultiheadAttention object using the specified modules.
+   * The attnMask and keyPaddingMask arguments are defined as a mask
+   * where 1 passes values and 0 masks them, unlike the original
+   * paper which uses 0 to pass values and -inf to mask them.
    *
    * @param tgtSeqLen Target sequence length.
-   * @param srcSeqLen Source sequence length.
-   * @param embedDim Total dimension of the model.
    * @param numHeads Number of parallel attention heads.
-   * @param attnMask Two dimensional Attention Mask.
-   * @param keyPaddingMask Key Padding Mask.
    * @param selfAttention Use self-attention; source key, query, and value all
    *     come from the same inputs
    */
   MultiheadAttentionType(const size_t tgtSeqLen,
-                         const size_t srcSeqLen,
-                         const size_t embedDim,
                          const size_t numHeads,
-                         const MatType& attnmask = MatType(),
-                         const MatType& keyPaddingMask = MatType(),
                          const bool selfAttention = false);
 
   //! Clone the MultiheadAttentionType object. This handles polymorphism
@@ -161,26 +157,36 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Modify the number of attention heads.
   size_t& NumHeads() { return numHeads; }
 
-  //! Get the two dimensional Attention Mask.
+  //! Get the two dimensional Attention Mask.  Contains values 0 or 1.
   MatType const& AttentionMask() const { return attnMask; }
-  //! Modify the two dimensional Attention Mask.
+  //! Modify the two dimensional Attention Mask.  Should take values 0 or 1.
   MatType& AttentionMask() { return attnMask; }
 
-  //! Get Key Padding Mask.
+  //! Get Key Padding Mask.  Contains values 0 or 1.
   MatType const& KeyPaddingMask() const { return keyPaddingMask; }
-  //! Modify the Key Padding Mask.
+  //! Modify the Key Padding Mask.  Should take values 0 or 1.
   MatType& KeyPaddingMask() { return keyPaddingMask; }
 
-  // Get whether or not self-attention is used (source key, value, and query all
-  // come from the same input).
+  //! Get whether or not self-attention is used (source key, value, and query all
+  //! come from the same input).
   bool SelfAttention() const { return selfAttention; }
-  // Modify whether or not self-attention is used (source key, value, and query
-  // all come from the same input).
+  //! Modify whether or not self-attention is used (source key, value, and query
+  //! all come from the same input).
   bool& SelfAttention() { return selfAttention; }
 
   void ComputeOutputDimensions() override
   {
-    // This returns the output as a 2-dimensional (embedDim * tgtSeqLen)
+    embedDim = this->inputDimensions[0];
+    srcSeqLen = this->inputDimensions[1];
+    if (embedDim % numHeads != 0)
+    {
+      Log::Fatal << "Embedding dimension must be divisible by number of \
+        attention heads." << std::endl;
+    }
+
+    headDim = embedDim / numHeads;
+
+      // This returns the output as a 2-dimensional (embedDim * tgtSeqLen)
     // matrix.
     this->outputDimensions = std::vector<size_t>(2, 1);
     this->outputDimensions[0] = embedDim;
@@ -217,8 +223,8 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Key Padding Mask.
   MatType keyPaddingMask;
 
-  // Whether or not self-attention is used (source key, value, and query all
-  // come from the same input).
+  //! Whether or not self-attention is used (source key, value, and query all
+  //! come from the same input).
   bool selfAttention;
 
   //! Locally-stored weight matrix associated with query.
@@ -265,9 +271,6 @@ class MultiheadAttentionType : public Layer<MatType>
 
   //! Softmax layer to represent the probabilities of next sequence.
   SoftmaxType<MatType> softmax;
-
-  // temporary storage for softmax output
-  MatType softmaxOutput;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;

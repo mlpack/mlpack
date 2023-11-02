@@ -39,27 +39,14 @@ template <typename MatType, typename RegularizerType>
 MultiheadAttentionType<MatType, RegularizerType>::
 MultiheadAttentionType(
     const size_t tgtSeqLen,
-    const size_t srcSeqLen,
-    const size_t embedDim,
     const size_t numHeads,
-    const MatType& attnMask,
-    const MatType& keyPaddingMask,
     const bool selfAttention) :
     tgtSeqLen(tgtSeqLen),
-    srcSeqLen(srcSeqLen),
-    embedDim(embedDim),
+    srcSeqLen(0),
+    embedDim(0),
     numHeads(numHeads),
-    attnMask(attnMask),
-    keyPaddingMask(keyPaddingMask),
     selfAttention(selfAttention)
 {
-  if (embedDim % numHeads != 0)
-  {
-    Log::Fatal << "Embedding dimension must be divisible by number of \
-        attention heads." << std::endl;
-  }
-
-  headDim = embedDim / numHeads;
 }
 
 template <typename MatType, typename RegularizerType>
@@ -175,10 +162,11 @@ Forward(const MatType& input, MatType& output)
     scores.each_slice() += arma::repmat(keyPaddingMask, tgtSeqLen, 1);
   }
 
+  arma::mat scoresSlice;
   for (size_t i = 0; i < numHeads * batchSize; ++i)
   {
-    softmax.Forward(scores.slice(i), softmaxOutput);
-    scores.slice(i) = softmaxOutput;
+    MakeAlias(scoresSlice, scores.slice_memptr(i), scores.n_rows, scores.n_cols);
+    softmax.Forward(scoresSlice, scoresSlice);
   }
 
   // Calculate the attention output i.e. matrix multiplication of softmax
@@ -487,6 +475,7 @@ serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(embedDim));
   ar(CEREAL_NVP(numHeads));
   ar(CEREAL_NVP(headDim));
+  ar(CEREAL_NVP(selfAttention));
   ar(CEREAL_NVP(softmax));
   ar(CEREAL_NVP(regularizer));
 
