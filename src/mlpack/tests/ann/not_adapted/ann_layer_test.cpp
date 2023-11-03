@@ -2739,7 +2739,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
 /**
  * Tests the LayerNorm layer.
- *
+ */
 TEST_CASE("LayerNormTest", "[ANNLayerTest]")
 {
   arma::mat input, output;
@@ -2770,11 +2770,10 @@ TEST_CASE("LayerNormTest", "[ANNLayerTest]")
 
   CheckMatrices(output, result, 1e-1);
 }
-*/
 
 /**
  * LayerNorm layer numerical gradient test.
- *
+ */
 TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
@@ -2813,12 +2812,11 @@ TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 1e-4);
 }
-*/
 
 /**
  * Test that the functions that can access the parameters of the
  * Layer Norm layer work.
- *
+ */
 TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : size, eps.
@@ -2828,7 +2826,6 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer.InSize() == 5);
   REQUIRE(layer.Epsilon() == 1e-3);
 }
-*/
 
 // /**
 //  * Test if the AddMerge layer is able to forward the
@@ -4075,7 +4072,7 @@ TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
 
 /**
  * Simple Multihead Attention test.
- *
+ */
 TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
 {
   size_t tLen = 5;
@@ -4127,11 +4124,10 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
   REQUIRE(gradient.n_rows == module.Parameters().n_rows);
   REQUIRE(gradient.n_cols == module.Parameters().n_cols);
 }
-*/
 
 /**
  * Jacobian MultiheadAttention module test.
- *
+ */
 TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
 {
   // Check when query = key = value.
@@ -4193,11 +4189,11 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     REQUIRE(error <= 1e-5);
   }
 }
-*/
+
 
 /**
  * Numerical gradient test for MultiheadAttention layer.
- *
+ */
 TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 {
   struct GradientFunction
@@ -4272,7 +4268,6 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 
   REQUIRE(CheckGradient(function) <= 3e-06);
 }
-*/
 
 /**
  * Simple tests for instance normalization layer.
