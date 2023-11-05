@@ -163,16 +163,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Info << "Test data contains "
         << get<1>(value).n_cols << " points." << endl;
 
-    if (params.Has("training"))
-      params.Get<arma::mat>("training") = std::move(get<0>(value));
-    if (params.Has("test"))
-      params.Get<arma::mat>("test") = std::move(get<1>(value));
-    if (params.Has("training_labels"))
-      params.Get<arma::Mat<size_t>>("training_labels") =
-          std::move(get<2>(value));
-    if (params.Has("test_labels"))
-      params.Get<arma::Mat<size_t>>("test_labels") =
-          std::move(get<3>(value));
+    return std::move(get<0>(value)), std::move(get<1>(value)),
+           std::move(get<2>(value)), std::move(get<3>(value));
   }
   else // We have no labels, so just split the dataset.
   {
@@ -185,9 +177,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
         << endl;
 
-    if (params.Has("training"))
-      params.Get<arma::mat>("training") = std::move(get<0>(value));
-    if (params.Has("test"))
-      params.Get<arma::mat>("test") = std::move(get<1>(value));
+    return std::move(get<0>(value)), std::move(get<1>(value));
   }
 }
