@@ -190,6 +190,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 
   // Train the model.
   const double out = optimizer.Optimize(regressor, parameters);
+  this->numClasses = numClasses;
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
             << "trained model is " << out << "." << std::endl;
@@ -211,6 +212,7 @@ double SoftmaxRegression::Train(const arma::mat& data,
 
   // Train the model.
   const double out = optimizer.Optimize(regressor, parameters, callbacks...);
+  this->numClasses = numClasses;
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
             << "trained model is " << out << "." << std::endl;

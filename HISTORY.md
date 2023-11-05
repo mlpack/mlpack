@@ -8,6 +8,9 @@
 
   * More robust detection of C++17 mode in the MSVC "compiler" (#3555).
 
+  * Fix setting number of classes correctly in `SoftmaxRegression::Train()`
+    (#3553).
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
