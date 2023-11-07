@@ -9,13 +9,28 @@ Decision trees are useful for classifying points with _discrete labels_ (i.e.
 `0`, `1`, `2`).  For predicting _continuous values_ (regression), see
 [`DecisionTreeRegressor`](#decision_tree_regressor). <!-- TODO: fix link -->
 
-#### Basic usage example excerpt:
+#### Simple usage example:
 
 ```c++
-DecisionTree tree;                        // Step 1: construct object.
-tree.Train(data, labels, 3);              // Step 2: train model.
-tree.Classify(testData, testPredictions); // Step 3: use model to classify.
+// Train a decision tree on random numeric data and predict labels on test data:
+
+// All data and labels are uniform random; 10 dimensional data, 5 classes.
+// Replace with a data::Load() call or similar for a real application.
+arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+
+DecisionTree<> tree;                     // Step 1: create model.
+tree.Train(dataset, labels, 5);          // Step 2: train model.
+arma::Row<size_t> predictions;
+tree.Classify(testDataset, predictions); // Step 3: classify points.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions == 2) << " test points classified as class "
+    << "2." << std::endl;
 ```
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick links:
 
@@ -39,43 +54,22 @@ tree.Classify(testData, testPredictions); // Step 3: use model to classify.
 
 ### Constructors
 
-Construct a `DecisionTree` object using one of the constructors below.  Defaults
-and types are detailed in the [Constructor Parameters](#constructor-parameters)
-section below.
-
-#### Forms:
-
- * `DecisionTree()`
- * `DecisionTree(numClasses)`
-   - **Initialize tree without training.**
+ * `tree = DecisionTree()`
+   - Initialize tree without training.
    - You will need to call [`Train()`](#training) later to train the tree before
      calling [`Classify()`](#classification).
 
 ---
 
- * `DecisionTree(data, labels, numClasses)`
- * `DecisionTree(data, labels, numClasses, weights)`
- * `DecisionTree(data, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
- * `DecisionTree(data, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on numerical-only data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `tree = DecisionTree(data, labels, numClasses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree = DecisionTree(data, labels, numClasses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on numerical-only data (optionally with instance weights).
 
 ---
 
- * `DecisionTree(data, datasetInfo, labels, numClasses)`
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights)`
- * `DecisionTree(data, datasetInfo, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
- * `DecisionTree(data, datasetInfo, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on mixed categorical data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `tree = DecisionTree(data, datasetInfo, labels, numClasses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree = DecisionTree(data, datasetInfo, labels, numClasses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on mixed categorical data (optionally with instance weights).
 
 ---
 
@@ -116,43 +110,32 @@ If training is not done as part of the constructor call, it can be done with one
 of the versions of the `Train()` member function.  For an instance of
 `DecisionTree` named `tree`, the following functions for training are available:
 
- * `tree.Train(data, labels, numClasses)`
- * `tree.Train(data, labels, numClasses, weights)`
- * `tree.Train(data, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
- * `tree.Train(data, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on numerical-only data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `tree.Train(data, labels, numClasses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree.Train(data, labels, numClasses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on numerical-only data (optionally with instance weights).
    - Returns a `double` with the final gain of the tree (the Gini gain, unless a
      different [`FitnessFunction` template parameter](#fully-custom-behavior) is
      specified.
 
 ---
 
- * `tree.Train(data, datasetInfo, labels, numClasses)`
- * `tree.Train(data, datasetInfo, labels, numClasses, weights)`
- * `tree.Train(data, datasetInfo, labels, numClasses,          minLeafSize, minGainSplit, maxDepth)`
- * `tree.Train(data, datasetInfo, labels, numClasses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on mixed categorical data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
-   - Returns a `double` with the final gain of the tree (the Gini gain, unless a
-     different [`FitnessFunction` template parameter](#fully-custom-behavior) is
-     specified.
+ * `tree.Train(data, datasetInfo, labels, numClasses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree.Train(data, datasetInfo, labels, numClasses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on mixed categorical data (optionally with instance weights).
 
 ---
 
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
-***Note***: training is not incremental.  A second call to `Train()` will
-retrain the decision tree from scratch.
+***Notes***:
+
+ * Training is not incremental.  A second call to `Train()` will retrain the
+   decision tree from scratch.
+
+ * `Train()` returns a `double` with the final gain of the tree (the Gini gain,
+   unless a different
+   [`FitnessFunction` template parameter](#fully-custom-behavior) is specified.
 
 ### Classification
 
@@ -172,8 +155,6 @@ to make class predictions for new data.  Defaults and types are detailed in the
     - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
-    - The class probabilities are stored in `probabilities_vec`, which is set to
-      length `numClasses`.
     - The probability of class `i` can be accessed with `probabilities_vec[i]`.
 
 ---
@@ -181,8 +162,6 @@ to make class predictions for new data.  Defaults and types are detailed in the
  * `tree.Classify(data, predictions)`
     - ***(Multi-point)***
     - Classify a set of points.
-    - The predicted class of each point is stored in `predictions`, which is set
-      to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
 
 ---
@@ -190,11 +169,7 @@ to make class predictions for new data.  Defaults and types are detailed in the
  * `tree.Classify(data, predictions, probabilities)`
     - ***(Multi-point)***
     - Classify a set of points and compute class probabilities for each point.
-    - The predicted class of each point is stored in `predictions`, which is set
-      to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
-    - The class probabilities for each point are stored in `probabilities`,
-      which is set to size `numClasses` by `data.n_cols`.
     - The probability of class `j` for data point `i` can be accessed with
       `probabilities(j, i)`.
 
@@ -206,11 +181,11 @@ to make class predictions for new data.  Defaults and types are detailed in the
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
+| _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
-| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
-| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
+| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
+| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes, number of columns will be equal to `data.n_cols`). |
 
 ***Note:*** different types can be used for `data` and `point` (e.g.
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
@@ -241,28 +216,8 @@ Each method is fully documented.
 
 ### Simple Examples
 
-Train a decision tree on random numeric data and predict labels on a test set:
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000, arma::fill::randu);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-// Train in the constructor.
-DecisionTree<> tree(dataset, labels, 5);
-
-// Create test data (500 points).
-arma::mat testDataset(10, 500, arma::fill::randu);
-arma::Row<size_t> predictions;
-tree.Classify(testDataset, predictions);
-// Now `predictions` holds predictions for the test dataset.
-
-// Print some information about the test predictions.
-std::cout << arma::accu(predictions == 2) << " test points classified as class "
-    << "2." << std::endl;
-```
+See also the [simple usage example](#simple-usage-example) for a trivial use of
+`DecisionTree`.
 
 ---
 

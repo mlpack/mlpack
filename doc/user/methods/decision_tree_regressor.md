@@ -10,13 +10,32 @@ The `DecisionTreeRegressor` class is useful for regressions; i.e., predicting
 _continuous values_ (`0.3`, `1.2`, etc.).  For predicting _discrete labels_
 (classification), see [`DecisionTree`](#decision_tree). <!-- TODO: fix link -->
 
-#### Basic usage example excerpt:
+#### Simple usage example:
+
+Train a decision tree regressor on random numeric data and make predictions on a
+test set:
 
 ```c++
-DecisionTreeRegressor tree;              // Step 1: construct object.
-tree.Train(data, responses, 3);          // Step 2: train model.
-tree.Predict(testData, testPredictions); // Step 3: predict values with model.
+// Train a decision tree regressor on random numeric data and make predictions.
+
+// All data and responses are uniform random; this uses 10 dimensional data.
+// Replace with a data::Load() call or similar for a real application.
+arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
+arma::rowvec responses = arma::randn<arma::rowvec>(1000);
+arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+
+DecisionTreeRegressor<> tree;           // Step 1: create tree.
+tree.Train(dataset, responses);         // Step 2: train model.
+arma::rowvec predictions;
+tree.Predict(testDataset, predictions); // Step 3: use model to predict.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions > 0.7) << " test points predicted to have"
+    << " responses greater than 0.7." << std::endl;
+std::cout << arma::accu(predictions < 0) << " test points predicted to have "
+    << "negative responses." << std::endl;
 ```
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick links:
 
@@ -47,36 +66,22 @@ Parameters](#constructor-parameters) section below.
 
 #### Forms:
 
- * `DecisionTreeRegressor()`
-   - **Initialize tree without training.**
+ * `tree = DecisionTreeRegressor()`
+   - Initialize tree without training.
    - You will need to call [`Train()`](#training) later to train the tree before
      calling [`Predict()`](#prediction).
 
 ---
 
- * `DecisionTreeRegressor(data, responses)`
- * `DecisionTreeRegressor(data, responses, weights)`
- * `DecisionTreeRegressor(data, responses,          minLeafSize, minGainSplit, maxDepth)`
- * `DecisionTreeRegressor(data, responses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on numerical-only data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `responses` should be a vector of length `data.n_cols`, containing
-     continuous real values corresponding to the response for each data point.
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `tree = DecisionTreeRegressor(data, responses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree = DecisionTreeRegressor(data, responses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on numerical-only data (optionally with instance weights).
 
 ---
 
- * `DecisionTreeRegressor(data, datasetInfo, responses)`
- * `DecisionTreeRegressor(data, datasetInfo, responses, weights)`
- * `DecisionTreeRegressor(data, datasetInfo, responses,          minLeafSize, minGainSplit, maxDepth)`
- * `DecisionTreeRegressor(data, datasetInfo, responses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on mixed categorical data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `responses` should be a vector of length `data.n_cols`, containing
-     continuous real values corresponding to the response for each data point.
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `tree = DecisionTreeRegressor(data, datasetInfo, responses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree = DecisionTreeRegressor(data, datasetInfo, responses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on mixed categorical data (optionally with instance weights).
 
 ---
 
@@ -114,22 +119,11 @@ Parameters](#constructor-parameters) section below.
 ### Training
 
 If training is not done as a part of the constructor call, it can be done with
-one of the versions of the `Train()` member function.  For an instance of
-`DecisionTree` named `tree`, the following functions for training are available:
+one of the following versions of the `Train()` member function:
 
- * `tree.Train(data, responses)`
- * `tree.Train(data, responses, weights)`
- * `tree.Train(data, responses,          minLeafSize, minGainSplit, maxDepth)`
- * `tree.Train(data, responses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on numerical-only data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `responses` should be a vector of length `data.n_cols`, containing
-     continuous real values corresponding to the response for each data point.
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
-   - Returns a `double` with the final gain of the tree (the Gini gain, unless a
-     different [`FitnessFunction` template parameter](#fully-custom-behavior) is
-     specified.
+ * `tree.Train(data, responses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+ * `tree.Train(data, responses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
+   - Train on numerical-only data (optionally with instance weights).
 
 ---
 
@@ -137,23 +131,21 @@ one of the versions of the `Train()` member function.  For an instance of
  * `tree.Train(data, datasetInfo, responses, weights)`
  * `tree.Train(data, datasetInfo, responses,          minLeafSize, minGainSplit, maxDepth)`
  * `tree.Train(data, datasetInfo, responses, weights, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on mixed categorical data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `responses` should be a vector of length `data.n_cols`, containing
-     continuous real values corresponding to the response for each data point.
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
-   - Returns a `double` with the final gain of the tree (the Gini gain, unless a
-     different [`FitnessFunction` template parameter](#fully-custom-behavior) is
-     specified.
+   - Train on mixed categorical data (optionally with instance weights).
 
 ---
 
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
-***Note***: training is not incremental.  A second call to `Train()` will
-retrain the decision tree from scratch.
+***Notes***:
+
+ * Training is not incremental.  A second call to `Train()` will retrain the
+   decision tree from scratch.
+
+ * `Train()` returns a `double` with the final gain of the tree (the Gini gain,
+   unless a different
+   [`FitnessFunction` template parameter](#fully-custom-behavior) is specified.
 
 ### Prediction
 
@@ -216,30 +208,8 @@ consulted.  Each method is fully documented.
 
 ### Simple Examples
 
-Train a decision tree regressor on random numeric data and make predictions on a
-test set:
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000, arma::fill::randu);
-// Random responses, normally distributed, for each point.
-arma::rowvec responses = arma::randn<arma::rowvec>(1000);
-
-// Train in the constructor.
-DecisionTreeRegressor<> tree(dataset, responses);
-
-// Create test data (500 points).
-arma::mat testDataset(10, 500, arma::fill::randu);
-arma::rowvec predictions;
-tree.Predict(testDataset, predictions);
-// Now `predictions` holds predictions for the test dataset.
-
-// Print some information about the test predictions.
-std::cout << arma::accu(predictions > 0.7) << " test points predicted to have"
-    << " responses greater than 0.7." << std::endl;
-std::cout << arma::accu(predictions < 0) << " test points predicted to have "
-    << "negative responses." << std::endl;
-```
+See also the [simple usage example](#simple-usage-example) for a trivial use of
+`DecisionTreeRegressor`.
 
 ---
 
