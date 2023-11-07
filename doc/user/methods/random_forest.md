@@ -2,28 +2,48 @@
 
 The `RandomForest` class implements a parallelized random forest classifier that
 supports numerical and categorical features, by default using Gini gain to
-choose which feature to split on in each tree.  The class offers several
-template parameters and several runtime options that can be used to control the
-behavior of the forest.
+choose which feature to split on in each tree.
 
-<!-- TODO: fix link! -->
-Random forests are a collection of decision trees that give
-better performance than a single decision tree.  They are useful for classifying
-points with _discrete labels_ (i.e.  `0`, `1`, `2`).  This implementation of the
+Random forests are a collection of decision trees that give better performance
+than a single decision tree.  They are useful for classifying points with
+_discrete labels_ (i.e.  `0`, `1`, `2`).  This implementation of the
 `RandomForest` class is not for regression (i.e. predicting _continuous
 values_).
 
-#### Basic usage example excerpt:
+mlpack's `RandomForest` class offers configurability via template parameters and
+runtime parameters.  This is used to provide the additional API-compatible
+`ExtraTrees` class.  To use `ExtraTrees`, simply replace `RandomForest` with
+`ExtraTrees` in any of the documentation below.  ([More
+information...](#fully-custom-behavior))
+
+<!-- TODO: fix link! -->
+
+#### Simple usage example:
 
 ```c++
-RandomForest rf;                        // Step 1: construct object.
-rf.Train(data, labels, 3);              // Step 2: train model.
-rf.Classify(testData, testPredictions); // Step 3: use model to classify.
+// Train a random forest on random numeric data and predict labels on test data:
+
+// All data and labels are uniform random; 10 dimensional data, 5 classes.
+// Replace with a data::Load() call or similar for a real application.
+arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+
+RandomForest<> rf;                  // Step 1: create model.
+rf.Train(dataset, labels, 5, 10);   // Step 2: train model.
+arma::Row<size_t> predictions;
+rf.Classify(testData, predictions); // Step 3: classify points.
+// You can also use `ExtraTrees<>` instead of `RandomForest<>`!
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions == 3) << " test points classified as class "
+    << "3." << std::endl;
 ```
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick links:
 
- * [Variants](#variants): alternate behavior of the `RandomForest` class
  * [Constructors](#constructors): create `RandomForest` objects.
  * [`Train()`](#training): train model.
  * [`Classify()`](#classification): classify with a trained model.
@@ -43,70 +63,24 @@ rf.Classify(testData, testPredictions); // Step 3: use model to classify.
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Leo Breiman's Random Forests page](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm)
 
-### Variants
-
-mlpack provides a few variants of the random forest classifier, using the
-[fully custom behavior](#fully-custom-behavior) of the `RandomForest` class.  In
-the documentation below, the following types can be used as drop-in
-replacements:
-
- * `RandomForest`
-    - This is an implementation of Breiman's seminal random forest algorithm
-      ([website](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm),
-      [paper pdf](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)).
-    - The [`DecisionTree`](#decision_tree) class is used for each individual
-      decision tree.
-    - When training each individual decision tree, bootstrapping is used to
-      compute the samples given to each tree for training.
-
- * `ExtraTrees`
-    - This is an implementation of the Extremely Randomized Trees algorithm
-      ([paper pdf](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=336a165c17c9c56160d332b9f4a2b403fccbdbfb)).
-    - When training an `ExtraTrees` model, each individual decision tree chooses
-      splits for numeric data randomly.
-    - Training an `ExtraTrees` model is generally much faster than
-      `RandomForest`, but the accuracy of the `ExtraTrees` model will be lower.
-    - To use `ExtraTrees`, simply replace `RandomForest` with `ExtraTrees` in
-      the documentation below.
-
 ### Constructors
 
-Construct a `RandomForest` object using one of the constructors below.  Defaults
-and types are detailed in the [Constructor Parameters](#constructor-parameters)
-section below.
-
-#### Forms:
-
- * `RandomForest()`
-   - **Initialize the random forest without training.**
+ * `rf = RandomForest()`
+   - Initialize the random forest without training.
    - You will need to call [`Train()`](#training) later to train the tree
      before calling [`Classify()`](#classification).
 
 ---
 
- * `RandomForest(data, labels, numClasses)`
- * `RandomForest(data, labels, numClasses, weights)`
- * `RandomForest(data, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
- * `RandomForest(data, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on numerical-only data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `rf = RandomForest(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
+ * `rf = RandomForest(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
+   - Train on numerical-only data (optionally with instance weights).
 
 ---
 
- * `RandomForest(data, datasetInfo, labels, numClasses)`
- * `RandomForest(data, datasetInfo, labels, numClasses, weights)`
- * `RandomForest(data, datasetInfo, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
- * `RandomForest(data, datasetInfo, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
-   - **Train on mixed categorical data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `rf = RandomForest(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
+ * `rf = RandomForest(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0)`
+   - Train on mixed categorical data (optionally with instance weights).
 
 ---
 
@@ -122,15 +96,16 @@ section below.
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `info` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
+| `weights` | [`arma::rowvec`]('../matrices.md') | Instance weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numTrees` | `size_t` | Number of trees to train in the random forest. | `20`
 |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
 | `minGainSplit` | `double` | Minimum gain for a node to split in each decision tree. | `1e-7` |
 | `maxDepth` | `size_t` | Maximum depth for each decision tree. (0 means no limit.) | `0` |
+| `warmStart` | `bool` | (Only available in `Train()`.)  If true, training adds `numTrees` trees to the random forest.  If `false`, an entirely new random forest will be created. | `false` |
 
  * If OpenMP is enabled<!-- TODO: link! -->, one thread will be used to train
    each of the `numTrees` trees in the random forest.  The computational effort
@@ -152,64 +127,41 @@ section below.
 ### Training
 
 If training is not done as part of the constructor call, it can be done with one
-of the versions of the `Train()` member function.  For an instance of
-`RandomForest` named `rf`, the following functions for training are available:
+of the following versions of the `Train()` member function:
 
- * `rf.Train(data, labels, numClasses)`
- * `rf.Train(data, labels, numClasses, weights)`
- * `rf.Train(data, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
- * `rf.Train(data, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
- * `rf.Train(data, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
- * `rf.Train(data, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
-   - **Train on numerical-only data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `rf.Train(data, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+ * `rf.Train(data, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+   - Train on numerical-only data (optionally with instance weights).
    - Returns a `double` with the average gain of each tree in the random forest.
      By default, this is the Gini gain, unless a different
      [`FitnessFunction` template parameter](#fully-custom-behavior) is
      specified.
-   - If the optional `warmStart` parameter is set to `true`, then the `Train()`
-     call will simply add `numTrees` new trees to the existing random forest.
-     Otherwise, a new random forest will be trained.
 
 ---
 
- * `rf.Train(data, datasetInfo, labels, numClasses)`
- * `rf.Train(data, datasetInfo, labels, numClasses, weights)`
- * `rf.Train(data, datasetInfo, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth)`
- * `rf.Train(data, datasetInfo, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth)`
- * `rf.Train(data, datasetInfo, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
- * `rf.Train(data, datasetInfo, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, warmStart)`
-   - **Train on mixed categorical data (optionally with instance weights).**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
-   - Returns a `double` with the average gain of each tree in the random forest.
-     By default, this is the Gini gain, unless a different
-     [`FitnessFunction` template parameter](#fully-custom-behavior) is
-     specified.
-   - If the optional `warmStart` parameter is set to `true`, then the `Train()`
-     call will simply add `numTrees` new trees to the existing random forest.
-     Otherwise, a new random forest will be trained.
+ * `rf.Train(data, info, labels, numClasses,          numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+ * `rf.Train(data, info, labels, numClasses, weights, numTrees=20, minLeafSize=1, minGainSplit=1e-7, maxDepth=0, warmStart=false)`
+   - Train on mixed categorical data (optionally with instance weights).
 
 ---
 
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
-The `warmStart` option, which allows incremental training (i.e. additional
-training on top of an existing model) is of type `bool` and defaults to `false`.
-This option is not available in the [constructors](#constructors).
+**Notes**:
+
+ * The `warmStart` option, which allows incremental training (i.e. additional
+   training on top of an existing model) is of type `bool` and defaults to
+   `false`.  This option is not available in the [constructors](#constructors).
+
+ * `Train()` returns a `double` with the average gain of each tree in the random
+   forest.  By default, this is the Gini gain, unless a different
+   [`FitnessFunction` template parameter](#fully-custom-behavior) is specified.
 
 ### Classification
 
 Once a `RandomForest` is trained, the `Classify()` member function can be used
-to make class predictions for new data.  Defaults and types are detailed in the
+to make class predictions for new data.  Parameters are detailed in the
 [Classification Parameters](#classification-parameters) section below.
 
 #### Forms:
@@ -224,8 +176,6 @@ to make class predictions for new data.  Defaults and types are detailed in the
     - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
-    - The class probabilities are stored in `probabilities_vec`, which is set to
-      length `numClasses`.
     - The probability of class `i` can be accessed with `probabilities_vec[i]`.
 
 ---
@@ -233,8 +183,6 @@ to make class predictions for new data.  Defaults and types are detailed in the
  * `rf.Classify(data, predictions)`
     - ***(Multi-point)***
     - Classify a set of points.
-    - The predicted class of each point is stored in `predictions`, which is set
-      to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
 
 ---
@@ -242,11 +190,7 @@ to make class predictions for new data.  Defaults and types are detailed in the
  * `rf.Classify(data, predictions, probabilities)`
     - ***(Multi-point)***
     - Classify a set of points and compute class probabilities for each point.
-    - The predicted class of each point is stored in `predictions`, which is set
-      to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
-    - The class probabilities for each point are stored in `probabilities`,
-      which is set to size `numClasses` by `data.n_cols`.
     - The probability of class `j` for data point `i` can be accessed with
       `probabilities(j, i)`.
 
@@ -258,11 +202,11 @@ to make class predictions for new data.  Defaults and types are detailed in the
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
+| _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
-| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
-| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
+| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
+| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes, number of columns will be equal to `data.n_cols`). |
 
 ***Note:*** different types can be used for `data` and `point` (e.g.
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
@@ -287,28 +231,8 @@ Each method is fully documented.
 
 ### Simple Examples
 
-Train a random forest on random numeric data and predict labels on a test set:
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000, arma::fill::randu);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-// Train in the constructor, using 10 trees in the forest.
-RandomForest<> rf(dataset, labels, 5, 10);
-
-// Create test data (500 points).
-arma::mat testDataset(10, 500, arma::fill::randu);
-arma::Row<size_t> predictions;
-rf.Classify(testDataset, predictions);
-// Now `predictions` holds predictions for the test dataset.
-
-// Print some information about the test predictions.
-std::cout << arma::accu(predictions == 3) << " test points classified as class "
-    << "3." << std::endl;
-```
+See also the [simple usage example](#simple-usage-example) for a trivial use of
+`RandomForest`.
 
 ---
 
@@ -491,10 +415,33 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 
 #### Fully custom behavior.
 
-The `RandomForest<>` class also supports several template parameters, which can
-be used for custom behavior during learning.  This flexibility is used to
-provide [API-compatible variants of `RandomForest`](#variants).  The full
-signature of the class is as follows:
+mlpack provides a few variants of the random forest classifier, using the
+template parameters of the `RandomForest` class.  The following types can be
+used as drop-in replacements throughout this documentation page:
+
+ * `RandomForest`
+    - This is an implementation of Breiman's seminal random forest algorithm
+      ([website](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm),
+      [paper pdf](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)).
+    - The [`DecisionTree`](#decision_tree) class is used for each individual
+      decision tree.
+    - When training each individual decision tree, bootstrapping is used to
+      compute the samples given to each tree for training.
+
+ * `ExtraTrees`
+    - This is an implementation of the Extremely Randomized Trees algorithm
+      ([paper pdf](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=336a165c17c9c56160d332b9f4a2b403fccbdbfb)).
+    - When training an `ExtraTrees` model, each individual decision tree chooses
+      splits for numeric data randomly.
+    - Training an `ExtraTrees` model is generally much faster than
+      `RandomForest`, but the accuracy of the `ExtraTrees` model will be lower.
+    - To use `ExtraTrees`, simply replace `RandomForest` with `ExtraTrees` in
+      the documentation below.
+
+---
+
+Fully custom classes can also be used to control the behavior of the
+`RandomForest` class.  The full signature of the class is as follows:
 
 ```c++
 RandomForest<FitnessFunction,
