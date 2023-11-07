@@ -113,9 +113,6 @@ of the versions of the `Train()` member function.  For an instance of
  * `tree.Train(data, labels, numClasses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
  * `tree.Train(data, labels, numClasses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
    - Train on numerical-only data (optionally with instance weights).
-   - Returns a `double` with the final gain of the tree (the Gini gain, unless a
-     different [`FitnessFunction` template parameter](#fully-custom-behavior) is
-     specified.
 
 ---
 
