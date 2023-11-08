@@ -180,8 +180,8 @@ class MultiheadAttentionType : public Layer<MatType>
     srcSeqLen = this->inputDimensions[1];
     if (embedDim % numHeads != 0)
     {
-      Log::Fatal << "Embedding dimension must be divisible by number of \
-        attention heads." << std::endl;
+      Log::Fatal << "Embedding dimension must be divisible by number of "
+          << "attention heads." << std::endl;
     }
 
     headDim = embedDim / numHeads;
