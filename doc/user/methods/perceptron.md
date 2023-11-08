@@ -66,7 +66,6 @@ section below.
 
 #### Forms:
 
-<!-- TODO: deprecate dimensionality form -->
  * `p = Perceptron()`
    - Initialize perceptron without training.
    - You will need to call [`Train()`](#training) later to train the perceptron
@@ -104,14 +103,12 @@ section below.
 | `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `dimensionality` | `size_t` | Dimensionality of data (only used if an initialized but untrained model is desired). | _(N/A)_ |
-| `maxIterations` | `size_t` | Maximum number of iterations during training. | `1000` |
+| `maxIterations` | `size_t` | Maximum number of iterations during training.  Can also be set with `MaxIterations()`. | `1000` |
 
 ### Training
 
 If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
-
-<!-- TODO: add unweighted version -->
 
  * `p.Train(data, labels, numClasses, maxIterations=1000)`
    - Train the perceptron on unweighted data.
@@ -126,10 +123,15 @@ of the following versions of the `Train()` member function:
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
-***Note***: training is incremental.  Successive calls to `Train()` will not
-reinitialize the model, unless the given data has different dimensionality or
-`numClasses` is different.  To reinitialize the model, call `Reset()` (see
-[Other Functionality](#other-functionality)).
+***Notes***:
+
+ * Training is incremental.  Successive calls to `Train()` will not reinitialize
+   the model, unless the given data has different dimensionality or `numClasses`
+   is different.  To reinitialize the model, call `Reset()` (see
+   [Other Functionality](#other-functionality)).
+
+ * If `maxIterations` is not passed, but has been set in the constructor or with
+   `MaxIterations()`, the previous setting will be used.
 
 ### Classification
 
@@ -139,13 +141,13 @@ make class predictions for new data.  Defaults and types are detailed in the
 
 #### Forms:
 
- * `size_t predictedClass = tree.Classify(point)`
+ * `size_t predictedClass = p.Classify(point)`
     - ***(Single-point)***
     - Classify a single point, returning the predicted class.
 
 ---
 
- * `tree.Classify(data, predictions)`
+ * `p.Classify(data, predictions)`
     - ***(Multi-point)***
     - Classify a set of points.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
@@ -181,9 +183,11 @@ probabilities is not available.
  * `p.Weights()` will return an `arma::mat` with the weights of the model (each
    column corresponds to the weights for one class label).
 
-<!-- TODO: implement -->
-
  * `p.Reset()` will re-initialize the weights and biases of the model.
+
+ * `p.MaxIterations()` can be used to get or set the maximum number of
+   iterations for training; e.g., `p.MaxIterations() = 500` will set the maximum
+   number of iterations to 500.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/perceptron/perceptron.hpp) can be consulted.  Each
