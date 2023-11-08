@@ -28,8 +28,6 @@ MultiheadAttentionType() :
     embedDim(0),
     numHeads(0),
     headDim(0),
-    attnMask(MatType()),
-    keyPaddingMask(MatType()),
     selfAttention(false)
 {
   // Nothing to do here.
