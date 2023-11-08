@@ -8,7 +8,7 @@ step function as an activation function.  mlpack's implementation of the
 control the behavior of the perceptron.
 
 Perceptrons are useful for classifying points with _discrete labels_ (i.e., `0`,
-`1`).  Because they are simple classifiers, they are also useful as _weak
+`1`, `2`).  Because they are simple classifiers, they are also useful as _weak
 learners_ for the [`AdaBoost`](#adaboost) boosting classifier.
 <!-- TODO: fix link above -->
 
