@@ -80,7 +80,8 @@ Forward(const MatType& input, MatType& output)
 {
   typedef typename arma::Cube<typename MatType::elem_type> CubeType;
 
-  if (input.n_rows != embedDim * (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
+  if (input.n_rows != embedDim *
+      (selfAttention ? srcSeqLen : (tgtSeqLen + 2 * srcSeqLen)))
   {
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
   }
