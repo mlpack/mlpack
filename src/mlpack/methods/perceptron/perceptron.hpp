@@ -101,6 +101,7 @@ class Perceptron
    * @param instanceWeights Weight vector to use while training. For boosting
    *      purposes.
    */
+  mlpack_deprecated /* was previously only used by AdaBoost */
   Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
