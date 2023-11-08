@@ -47,8 +47,10 @@ namespace mlpack {
  * of shape `(embedDim * tgtSeqLen, batchSize)`. The embeddings are stored
  * consequently.
  *
- * srcSeqLen is inferred from dim 0 of the previous layer.
- * embedDim is inferred from
+ * The input to this layer is expected to be a sequence of embedding vectors.
+ * The embedding size is inferred from inputDimensions[0], and the source
+ * sequence length is inferred from inputDimensions[1].  If there are more than
+ * 2 dimensions, they are flattened into the source sequence length.
  *
  * @tparam MatType Type of the input/output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -176,8 +178,15 @@ class MultiheadAttentionType : public Layer<MatType>
 
   void ComputeOutputDimensions() override
   {
+    if (this->inputDimensions.size() < 2) {
+      Log::Fatal << "Must have at least two dimensions for MultiHeadAttention: "
+          << " [EmbeddingDim,SequenceLen]" << std::endl;
+    }
     embedDim = this->inputDimensions[0];
     srcSeqLen = this->inputDimensions[1];
+    for (size_t i=2; i<this->inputDimensions.size(); i++) {
+      srcSeqLen *= this->inputDimensions[i];
+    }
     if (embedDim % numHeads != 0)
     {
       Log::Fatal << "Embedding dimension must be divisible by number of "
