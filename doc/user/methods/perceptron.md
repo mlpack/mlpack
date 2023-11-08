@@ -8,17 +8,32 @@ step function as an activation function.  mlpack's implementation of the
 control the behavior of the perceptron.
 
 Perceptrons are useful for classifying points with _discrete labels_ (i.e., `0`,
-`1`, `1`).  Because they are simple classifiers, they are also useful as _weak
+`1`).  Because they are simple classifiers, they are also useful as _weak
 learners_ for the [`AdaBoost`](#adaboost) boosting classifier.
 <!-- TODO: fix link above -->
 
-#### Basic usage example excerpt:
+#### Simple usage example:
 
 ```c++
-Perceptron p;                            // Step 1: construct object.
-p.Train(data, labels, 3);                // Step 2: train model.
-p.Classify(test_data, test_predictions); // Step 3: use model to classify.
+// Train a perceptron on random numeric data and predict labels on test data:
+
+// All data and labels are uniform random; 10 dimensional data, 5 classes.
+// Replace with a data::Load() call or similar for a real application.
+arma::mat dataset(10, 1000, arma::fill::randu);
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+
+Perceptron<> p;                          // Step 1: create model.
+p.Train(dataset, labels, 5);             // Step 2: train model.
+arma::Row<size_t> predictions;
+tree.Classify(testDataset, predictions); // Step 3: classify points.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions == 1) << " test points classified as class "
+    << "1." << std::endl;
 ```
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick links:
 
@@ -52,38 +67,23 @@ section below.
 #### Forms:
 
 <!-- TODO: deprecate dimensionality form -->
- * `Perceptron()`
- * `Perceptron(numClasses)`
- * `Perceptron(numClasses, dimensionality, maxIterations)`
-   - **Initialize perceptron without training.**
-   - Unless `dimensionality` is specified, you will need to call
-     [`Train()`](#training) later to train the perceptron before calling
-     [`Classify()`](#classification).
-   - If specified, `dimensionality` indicates the number of dimensions that the
-     model will be trained on, and the model will be initialized (to all zeros).
+ * `p = Perceptron()`
+   - Initialize perceptron without training.
+   - You will need to call [`Train()`](#training) later to train the perceptron
+     before calling [`Classify()`](#classification).
 
 ---
 
- * `Perceptron(data, labels, numClasses)`
- * `Perceptron(data, labels, numClasses, weights)`
- * `Perceptron(data, labels, numClasses,          maxIterations)`
- * `Perceptron(data, labels, numClasses, weights, maxIterations)`
-   - **Train the perceptron (optionally with instance weights).**
-   - If hyperparameters are not specified here, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - If specified, `weights` should be a vector of length `data.n_cols`,
-     containing instance weights for each point in `data`.
+ * `p = Perceptron(numClasses, dimensionality, maxIterations=1000)`
+   - Initialize perceptron with all-zero weights and biases.
+   - `Classify()` can immediately be used; training is not required with this
+     form.
 
 ---
 
- * `Perceptron(other_perceptron, data, labels, numClasses, weights)`
-   - **Train the perceptron using hyperparameters from another perceptron and
-     weighted data**.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - `weights` should be a vector of length `data.n_cols`, containing instance
-     weights for each point in `data`.
+ * `p = Perceptron(data, labels, numClasses,          maxIterations=1000)`
+ * `p = Perceptron(data, labels, numClasses, weights, maxIterations=1000)`
+   - Train the perceptron (optionally with instance weights).
 
 ---
 
@@ -103,37 +103,23 @@ section below.
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `dimensionality` | `size_t` | Dimensionality of data (only needed if an
-initialized but untrained model is desired). | _(N/A)_ |
+| `dimensionality` | `size_t` | Dimensionality of data (only used if an initialized but untrained model is desired). | _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations during training. | `1000` |
 
 ### Training
 
 If training is not done as part of the constructor call, it can be done with one
-of the versions of the `Train()` member function.  For an instance of
-`Perceptron` named `p`, the following functions for training are available:
+of the following versions of the `Train()` member function:
 
 <!-- TODO: add unweighted version -->
 
- * `p.Train(data, labels, numClasses)`
- * `p.Train(data, labels, numClasses, maxIterations)`
-   - **Train the perceptron on unweighted data.**
-   - If hyperparameters are not specified here, and have not been otherwise set,
-     default values will be used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
+ * `p.Train(data, labels, numClasses, maxIterations=1000)`
+   - Train the perceptron on unweighted data.
 
 ---
 
- * `p.Train(data, labels, numClasses, weights)`
- * `p.Train(data, labels, numClasses, weights, maxIterations)`
-   - **Train the perceptron on data with instance weights.**
-   - If hyperparameters are not specified here, and have not been otherwise set,
-     default values will be used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
-   - `weights` should be a vector of length `data.n_cols`, containing instance
-     weights for each point in `data`.
+ * `p.Train(data, labels, numClasses, weights, maxIterations=1000)`
+   - Train the perceptron on data with instance weights.
 
 ---
 
@@ -141,8 +127,9 @@ Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
 ***Note***: training is incremental.  Successive calls to `Train()` will not
-reinitialize the model.  To reinitialize the model, call `Reset()` (see [Other
-Functionality](#other-functionality)).
+reinitialize the model, unless the given data has different dimensionality or
+`numClasses` is different.  To reinitialize the model, call `Reset()` (see
+[Other Functionality](#other-functionality)).
 
 ### Classification
 
@@ -161,8 +148,6 @@ make class predictions for new data.  Defaults and types are detailed in the
  * `tree.Classify(data, predictions)`
     - ***(Multi-point)***
     - Classify a set of points.
-    - The predicted classes of each point is stored in `predictions`, which is
-      set to length `data.n_cols`.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
 
 ---
@@ -178,13 +163,13 @@ probabilities is not available.
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
-| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
+| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 
 ### Other Functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
 
- * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) and
+ * A `Perceptron` can be serialized with [`data::Save()`](../formats.md) and
    [`data::Load()`](../formats.md).
 
  * `p.NumClasses()` will return a `size_t` indicating the number of classes the
@@ -206,28 +191,8 @@ method is fully documented.
 
 ### Simple Examples
 
-Train a perceptron on random numeric data and predict labels on a test set.
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000, arma::fill::randu);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-// Train in the constructor.
-Perceptron<> p(dataset, labels, 5);
-
-// Create test data (500 points).
-arma::mat testDataset(10, 500, arma::fill::randu);
-arma::Row<size_t> predictions;
-tree.Classify(testDataset, predictions);
-// Now `predictions` holds predictions for the test dataset.
-
-// Print some information about the test predictions.
-std::cout << arma::accu(predictions == 1) << " test points classified as class "
-    << "1." << std::endl;
-```
+See also the [simple usage example](#simple-usage-example) for a trivial use of
+`Perceptron`.
 
 ---
 
@@ -311,6 +276,8 @@ Perceptron<LearnPolicy,
  * `MatType`: specifies the type of matrix used for learning and internal
    representation of weights and biases.
 
+---
+
 #### `LearnPolicy`
 
  * Specifies the step to be taken when a point is misclassified.
@@ -329,15 +296,19 @@ class CustomLearnPolicy
   //
   // `VecType` will be an Armadillo-like vector type.  It will be a column from
   // the training data matrix (`data`) given to `Train()` or to the constructor.
-  template<typename VecType>
+  //
+  // `eT` is the element type of the Perceptron (e.g. `float`, `double`).
+  template<typename VecType, typename eT>
   void UpdateWeights(const VecType& trainingPoint,
-                     arma::mat& weights,
-                     arma::vec& biases,
+                     arma::Mat<eT>& weights,
+                     arma::Col<eT>& biases,
                      const size_t incorrectClass,
                      const size_t correctClass,
                      const double instanceWeight = 1.0);
 };
 ```
+
+---
 
 #### `WeightInitializationPolicy`
 
@@ -375,6 +346,8 @@ class CustomWeightInitializationPolicy
   }
 };
 ```
+
+---
 
 #### `MatType`
 
