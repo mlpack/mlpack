@@ -45,10 +45,10 @@ class SimpleWeightUpdate
    * @param instanceWeight Weight to be given to this particular point during
    *      training (this is useful for boosting).
    */
-  template<typename VecType>
+  template<typename VecType, typename eT>
   void UpdateWeights(const VecType& trainingPoint,
-                     arma::mat& weights,
-                     arma::vec& biases,
+                     arma::Mat<eT>& weights,
+                     arma::Col<eT>& biases,
                      const size_t incorrectClass,
                      const size_t correctClass,
                      const double instanceWeight = 1.0)
