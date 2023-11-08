@@ -111,7 +111,7 @@ class BaseLayer : public Layer<MatType>
                 MatType& g)
   {
     MatType derivative;
-    ActivationFunction::Deriv(output, derivative);
+    ActivationFunction::Deriv(input, output, derivative);
     g = gy % derivative;
   }
 

@@ -65,24 +65,28 @@ class ElliotFunction
   /**
    * Computes the first derivative of the Elliot function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x).
    */
-  static double Deriv(const double y)
+  static double Deriv(const double /* x */, const double y)
   {
+    // TODO: I don't think this is correct
     return std::pow(1.0 - std::abs(y), 2);
   }
 
   /**
    * Computes the first derivatives of the Elliot function.
    * 
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y, OutputVecType &x)
+  template <typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType & /* x */, const OutputVecType& y, DerivVecType &dy)
   {
-    x = arma::pow(1.0 - arma::abs(y), 2);
+    // TODO: I don't think this is correct
+    dy = arma::pow(1.0 - arma::abs(y), 2);
   }
 }; // class ElliotFunction
 

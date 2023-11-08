@@ -207,7 +207,7 @@ double ActivationJacobianTest(arma::mat& input,
     deriv(i) = 1;
 
     arma::mat delta(input.n_rows, input.n_cols);
-    ActivationFunction::Deriv(output, delta);
+    ActivationFunction::Deriv(input, output, delta);
     delta %= deriv;
 
     jacobianB.col(i) = delta;

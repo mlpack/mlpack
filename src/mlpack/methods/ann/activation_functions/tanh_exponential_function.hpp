@@ -67,26 +67,33 @@ class TanhExpFunction
   /**
    * Computes the first derivative of the TanhExp function.
    *
-   * @param y Input activation.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double y)
   {
-    return std::tanh(std::exp(y)) - y * std::exp(y) *
-        (std::pow(std::tanh(std::exp(y)), 2) - 1);
+    // leverage both y and x
+    // return std::tanh(std::exp(y)) - y * std::exp(y) *
+    //     (std::pow(std::tanh(std::exp(y)), 2) - 1);
+    return x == 0 ? std::tanh(1) : y / x + x * std::exp(x) * (1 - std::pow(y / x, 2));
   }
 
   /**
    * Computes the first derivatives of the tanh function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
   {
-    x = arma::tanh(arma::exp(y)) - y % arma::exp(y) %
-        (arma::pow(arma::tanh(arma::exp(y)), 2) - 1);
+    // leverage both y and x
+    // x = arma::tanh(arma::exp(y)) - y % arma::exp(y) %
+    //     (arma::pow(arma::tanh(arma::exp(y)), 2) - 1);
+    dy = y / x + x % arma::exp(x) % (1 - arma::pow(y / x, 2));
+    dy(arma::find(x == 0)).fill(std::tanh(1));
   }
 }; // class TanhExpFunction
 
