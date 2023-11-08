@@ -129,6 +129,15 @@ class Perceptron
              const arma::rowvec& instanceWeights = arma::rowvec());
 
   /**
+   * After training, use the weights matrix to classify `point`, and return the
+   * predicted class.
+   *
+   * @param point Test point to classify.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  /**
    * Classification function. After training, use the weights matrix to
    * classify test, and put the predicted classes in predictedLabels.
    *
@@ -136,7 +145,13 @@ class Perceptron
    * @param predictedLabels Vector to store the predicted classes after
    *     classifying test.
    */
-  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels) const;
+
+  /**
+   * Reset the model, so that the next call to `Train()` will not be
+   * incremental.
+   */
+  void Reset();
 
   /**
    * Serialize the perceptron.

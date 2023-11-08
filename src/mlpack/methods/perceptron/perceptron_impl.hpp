@@ -218,6 +218,19 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
   }
 }
 
+/**
+ * Reset the model, so that the next call to `Train()` will not be
+ * incremental.
+ */
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
+void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Reset()
+{
+  weights.clear();
+  biases.clear();
+}
+
 //! Serialize the perceptron.
 template<typename LearnPolicy,
          typename WeightInitializationPolicy,
