@@ -98,7 +98,8 @@ template<typename MatType>
 void FlexibleReLUType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::clamp(input, 0.0, std::numeric_limits<typename MatType::elem_type>::max()) + alpha(0);
+  output = arma::clamp(input, 0.0,
+      std::numeric_limits<typename MatType::elem_type>::max()) + alpha(0);
 }
 
 template<typename MatType>
