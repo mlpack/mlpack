@@ -672,3 +672,32 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
     REQUIRE(testLabels(i) == labels(i));
   }
 }
+
+TEST_CASE("SoftmaxImmediateTrainTest", "[SoftmaxRegressionTest]")
+{
+  // Initialize a random dataset.
+  const size_t numClasses = 3;
+  const size_t inputSize = 10;
+  const size_t points = 500;
+  arma::mat data;
+  data.randu(inputSize, points);
+
+  // Create random class labels.
+  arma::Row<size_t> labels(points);
+  for (size_t i = 0; i < points; ++i)
+    labels(i) = RandInt(0, numClasses);
+
+  // Train without setting any parameters to the constructor.
+  SoftmaxRegression sr;
+  sr.Train(data, labels, numClasses);
+
+  // Now classify some points.
+  // This just makes sure that the model can successfully make predictions at
+  // all (i.e. no exception thrown).
+  arma::Row<size_t> predictions;
+  sr.Classify(data, predictions);
+
+  REQUIRE(predictions.n_elem == labels.n_elem);
+  REQUIRE(arma::all(predictions >= 0));
+  REQUIRE(arma::all(predictions <= 2));
+}
