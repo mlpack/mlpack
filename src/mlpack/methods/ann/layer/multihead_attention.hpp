@@ -50,7 +50,12 @@ namespace mlpack {
  * The input to this layer is expected to be a sequence of embedding vectors.
  * The embedding size is inferred from inputDimensions[0], and the source
  * sequence length is inferred from inputDimensions[1].  If there are more than
- * 2 dimensions, they are flattened into the source sequence length.
+ * 2 dimensions, they are flattened into the source sequence length.  If
+ * selfAttention is true, then query, key, and value are all the same, so the
+ * input data should be of size [embedDim * seqLen, batchSize].  Otherwise,
+ * the input data should be of size
+ * [embedDim * (2 * srcSeqLen + tgtSeqLen), batchSize].  The
+ * output data will always be of size (embedDim * tgtSeqLen, batchSize)
  *
  * @tparam MatType Type of the input/output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -76,11 +81,15 @@ class MultiheadAttentionType : public Layer<MatType>
    *
    * @param tgtSeqLen Target sequence length.
    * @param numHeads Number of parallel attention heads.
+   * @param attnMask Two dimensional Attention Mask.  Takes the values [-Inf, 0]
+   * @param keyPaddingMask Key Padding Mask.  Takes the values [-Inf, 0]
    * @param selfAttention Use self-attention; source key, query, and value all
    *     come from the same inputs
    */
   MultiheadAttentionType(const size_t tgtSeqLen,
                          const size_t numHeads,
+                         const MatType& attnMask = MatType(),
+                         const MatType& keyPaddingMask = MatType(),
                          const bool selfAttention = false);
 
   //! Clone the MultiheadAttentionType object. This handles polymorphism
@@ -139,6 +148,11 @@ class MultiheadAttentionType : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
+  //! Get the parameters.
+  MatType const& Parameters() const override { return weights; }
+  //! Modify the parameters.
+  MatType& Parameters() override { return weights; }
+
   //! Get the target sequence length.
   size_t TgtSeqLen() const { return tgtSeqLen; }
   //! Modify the target sequence length.
@@ -183,9 +197,29 @@ class MultiheadAttentionType : public Layer<MatType>
           << " [EmbeddingDim,SequenceLen]" << std::endl;
     }
     embedDim = this->inputDimensions[0];
-    srcSeqLen = this->inputDimensions[1];
-    for (size_t i=2; i<this->inputDimensions.size(); i++) {
-      srcSeqLen *= this->inputDimensions[i];
+    if (selfAttention) {
+      // for selfAttention, query, key, and value
+      // all come from the same values
+      // also, srcSeqLen must == tgtSeqLen
+      srcSeqLen = this->inputDimensions[1];
+      for (size_t i=2; i<this->inputDimensions.size(); i++) {
+        srcSeqLen *= this->inputDimensions[i];
+      }
+      if (srcSeqLen != tgtSeqLen) {
+        Log::Fatal << "If using selfAttention, srcSeqLen must equal tgtSeqLen"
+                   << std::endl;
+      }
+    }
+    else {
+      // if we are not using self attention (where query == key == value),
+      // then the source sequence needs have
+      // query = tgtSeqLen
+      // key = srcSeqLen
+      // value = srcSeqLen
+      if ((this->inputDimensions[1] - tgtSeqLen) % 2 != 0) {
+        Log::Fatal << "input dimension 1 is invalid." << std::endl;
+      }
+      srcSeqLen = (this->inputDimensions[1] - tgtSeqLen) / 2;
     }
     if (embedDim % numHeads != 0)
     {
@@ -197,9 +231,17 @@ class MultiheadAttentionType : public Layer<MatType>
 
     // This returns the output as a 2-dimensional (embedDim * tgtSeqLen)
     // matrix.
-    this->outputDimensions = std::vector<size_t>(2, 1);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(), 1);
     this->outputDimensions[0] = embedDim;
     this->outputDimensions[1] = tgtSeqLen;
+    for (size_t i=2; i<this->outputDimensions.size(); i++) {
+      this->outputDimensions[i] = this->inputDimensions[i];
+      if (this->outputDimensions[1] % this->inputDimensions[i] != 0) {
+        Log::Fatal << "tgtSeqLen " << tgtSeqLen << " not divisible by extra "
+            << "dimension " << this->inputDimensions[i] << std::endl;
+      }
+      this->outputDimensions[1] /= this->inputDimensions[i];
+    }
   }
 
   size_t InputShape() const
@@ -226,10 +268,11 @@ class MultiheadAttentionType : public Layer<MatType>
   //! Dimensionality of each head.
   size_t headDim;
 
-  //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen).
+  //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen).  Takes
+  //! the values [-Inf, 0]
   MatType attnMask;
 
-  //! Key Padding Mask.
+  //! Key Padding Mask.  Takes the values [-Inf, 0]
   MatType keyPaddingMask;
 
   //! Whether or not self-attention is used (source key, value, and query all

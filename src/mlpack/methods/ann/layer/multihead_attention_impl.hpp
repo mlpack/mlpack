@@ -38,11 +38,15 @@ MultiheadAttentionType<MatType, RegularizerType>::
 MultiheadAttentionType(
     const size_t tgtSeqLen,
     const size_t numHeads,
+    const MatType& attnmask,
+    const MatType& keypaddingmask,
     const bool selfAttention) :
     tgtSeqLen(tgtSeqLen),
     srcSeqLen(0),
     embedDim(0),
     numHeads(numHeads),
+    attnMask(attnmask),
+    keyPaddingMask(keypaddingmask),
     selfAttention(selfAttention)
 {
 }
@@ -141,40 +145,24 @@ Forward(const MatType& input, MatType& output)
 
   // Apply the attention mask if provided. The attention mask is used to black-
   // out future sequences and generally used in Encoder-Decoder attention.
-  // The attention mask has elements 0 or 1.
+  // The attention mask has elements -inf or 0.
   // The shape of the attention mask : (tgtSeqLen, srcSeqLen).
   if (!attnMask.is_empty())
   {
     if (attnMask.n_rows != tgtSeqLen || attnMask.n_cols != srcSeqLen)
       Log::Fatal << "The size of the 'attn_mask' is not correct.\n";
-    // not sure if there is a better way to do this.  now that the mask
-    // is 0 or 1, we can't simply add, but converting first seems slow
-    const arma::uword rows = tgtSeqLen;
-    const arma::uword cols = srcSeqLen;
-    for (arma::uword i=0; i<rows; i++) {
-      for (arma::uword j=0; j<cols; j++) {
-        if (attnMask.at(i, j) == 0) {
-          scores.tube(i, j).fill(-INFINITY);
-        }
-      }
-    }
+    scores.each_slice() += attnMask;
   }
 
   // Apply the key padding mask when provided. It blacks-out any particular
   // word in the sequence.
-  // The key padding mask has elements 0 or 1.
+  // The key padding mask has elements -inf or 0
   // The shape of keyPaddingMask : (1, srcSeqLen).
   if (!keyPaddingMask.is_empty())
   {
     if (keyPaddingMask.n_rows != 1 || keyPaddingMask.n_cols != srcSeqLen)
         Log::Fatal << "The size of the 'keyPaddingMask' is not correct.\n";
-    // not sure if there is a better way to do this.  now that the mask
-    // is 0 or 1, we can't simply add, but converting first seems slow
-    for (arma::uword pos=0; pos<keyPaddingMask.n_elem; pos++) {
-      if (keyPaddingMask.at(pos) == 0) {
-        scores.tube(0, pos, tgtSeqLen, pos).fill(-INFINITY);
-      }
-    }
+    scores.each_slice() += arma::repmat(keyPaddingMask, tgtSeqLen, 1);
   }
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
@@ -491,11 +479,11 @@ serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(selfAttention));
   ar(CEREAL_NVP(softmax));
   ar(CEREAL_NVP(regularizer));
+  ar(CEREAL_NVP(attnMask));
+  ar(CEREAL_NVP(keyPaddingMask));
 
   if (Archive::is_loading::value)
   {
-    attnMask.clear();
-    keyPaddingMask.clear();
     queryWt.clear();
     keyWt.clear();
     valueWt.clear();
