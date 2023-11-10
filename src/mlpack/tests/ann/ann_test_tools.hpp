@@ -125,7 +125,7 @@ double CustomJacobianTest(ModuleType& module,
     deriv(i) = 1;
 
     arma::mat delta(input.n_rows, input.n_cols);
-    module.Backward(output, deriv, delta);
+    module.Backward(input, output, deriv, delta);
 
     jacobianB.col(i) = delta;
   }
