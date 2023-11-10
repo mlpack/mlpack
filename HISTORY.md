@@ -1,5 +1,18 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix include ordering issue for `LinearRegression` (#3541).
+
+  * Fix L1 regularization in case where weight is zero (#3545).
+
+  * Use HTTPS for all auto-downloaded dependencies (#3550).
+
+  * More robust detection of C++17 mode in the MSVC "compiler" (#3555).
+
+  * Fix setting number of classes correctly in `SoftmaxRegression::Train()`
+    (#3553).
+
+### mlpack 4.2.1
+###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
 
   * Reinforcement Learning: Twin Delayed Deep Deterministic
@@ -11,13 +24,15 @@
 
   * Add `ClassProbabilities()` member to `DecisionTree` so that the internal
     details of trees can be more easily inspected (#3511).
-  
+
   * Bipolar sigmoid activation function added and invertible functions 
     fixed (#3506).
 
   * Add auto-configured `mlpack/config.hpp` to contain configuration details of
     mlpack that are required at compile time.  STB detection is now done in this
     file with the `MLPACK_HAS_STB` macro (#3519).
+
+  * Fix CRAN package alias for R bindings (#3543).
 
 ### mlpack 4.2.0
 ###### 2023-06-14

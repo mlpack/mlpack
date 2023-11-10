@@ -13,7 +13,11 @@
 #ifndef MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP
 #define MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP
 
-#include <mlpack/core.hpp>
+// Because RegressionDistribution uses LinearRegression internally, we need to
+// make sure we define LinearRegression fully before we define
+// RegressionDistribution.  Therefore we have to include the prereqs first, and
+// include the core later.
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 
@@ -167,5 +171,8 @@ class LinearRegression
 
 // Include implementation.
 #include "linear_regression_impl.hpp"
+
+// Now that LinearRegression is defined, we can include the core.
+#include <mlpack/core.hpp>
 
 #endif // MLPACK_METHODS_LINEAR_REGRESSION_HPP

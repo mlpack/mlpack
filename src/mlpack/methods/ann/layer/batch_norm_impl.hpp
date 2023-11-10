@@ -277,7 +277,7 @@ void BatchNormType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
 
   const size_t batchSize = input.n_cols;
   const size_t inputSize = inputDimension;

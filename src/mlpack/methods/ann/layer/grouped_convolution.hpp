@@ -390,10 +390,10 @@ class GroupedConvolutionType : public Layer<MatType>
   arma::Cube<typename MatType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
-  Padding padding;
+  PaddingType<MatType> padding;
 
   //! Locally-stored padding layer for backward pass.
-  Padding paddingBackward;
+  PaddingType<MatType> paddingBackward;
 
   //! Type of padding.
   std::string paddingType;

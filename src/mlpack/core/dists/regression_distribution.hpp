@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
-#define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
