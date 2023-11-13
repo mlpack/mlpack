@@ -105,6 +105,13 @@ section below.
 | `dimensionality` | `size_t` | Dimensionality of data (only used if an initialized but untrained model is desired). | _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations during training.  Can also be set with `MaxIterations()`. | `1000` |
 
+As an alternative to passing `maxIterations`, it can be set with a standalone
+method.  The following function can be used before calling `Train()` to set
+the maximum number of iterations:
+
+ * `p.MaxIterations() = maxIter;` will set the maximum number of iterations
+   during training to `maxIter`.
+
 ### Training
 
 If training is not done as part of the constructor call, it can be done with one
@@ -184,10 +191,6 @@ probabilities is not available.
    column corresponds to the weights for one class label).
 
  * `p.Reset()` will re-initialize the weights and biases of the model.
-
- * `p.MaxIterations()` can be used to get or set the maximum number of
-   iterations for training; e.g., `p.MaxIterations() = 500` will set the maximum
-   number of iterations to 500.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/perceptron/perceptron.hpp) can be consulted.  Each
