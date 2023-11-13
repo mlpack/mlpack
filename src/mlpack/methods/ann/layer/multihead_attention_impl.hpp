@@ -1,7 +1,8 @@
 /**
  * @file methods/ann/layer/multihead_attention_impl.hpp
  * @author Mrityunjay Tripathi
- *
+ * * @author Adam Kropp
+
  * Implementation of the MultiheadAttention class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
