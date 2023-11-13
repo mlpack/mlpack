@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/elish_function.hpp
  * @author Bisakh Mondal
+ * @author Adam Kropp
  *
  * Definition and implementation of the ELiSH function as described by
  * Mina Basirat and Peter M. Roth.
@@ -112,10 +113,8 @@ class ElishFunction
     // the x<0 part can be as well?
     dy = ((x < 0.0) % (arma::exp(x) - 2 / (1 + arma::exp(x)) + 2 / arma::pow(
             1 + arma::exp(x), 2))) +
-            ((x > 0) % (y / x) % (1.0 + x - y));
-    // the expression above is indeterminate at 0, even though
-    // the expression solely in terms of x is defined (= 0.5)
-    dy(arma::find(x == 0)).fill(0.5);
+            ((x > 0) % (y / x) % (1.0 + x - y)) +
+            ((x == 0) % 0.5);
   }
 }; // class ElishFunction
 
