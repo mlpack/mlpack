@@ -86,7 +86,9 @@ class MishFunction
    * @param dy The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType &x, const OutputVecType & /* y */, DerivVecType &dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
     dy = arma::exp(x) % (4 * (x + 1) + arma::exp(x) % (4 * x + 6) +
         4 * arma::exp(2 * x) + arma::exp(3 * x)) /
