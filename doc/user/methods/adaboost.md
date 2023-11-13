@@ -377,6 +377,8 @@ class CustomWeakLearner
 };
 ```
 
+---
+
 #### `MatType`
 
  * Specifies the matrix type to use for data when learning a model (or
