@@ -84,7 +84,9 @@ class HardSigmoidFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
     dy.set_size(size(y));
 
