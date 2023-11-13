@@ -208,11 +208,11 @@ class MultiheadAttentionType : public Layer<MatType>
       for (size_t i=2; i<this->inputDimensions.size(); i++)
       {
         srcSeqLen *= this->inputDimensions[i];
+      }
       if (srcSeqLen != tgtSeqLen)
       {
         Log::Fatal << "If using selfAttention, srcSeqLen (" << srcSeqLen
             << " must equal tgtSeqLen " << tgtSeqLen << ")!" << std::endl;
-                   << std::endl;
       }
     }
     else

@@ -111,10 +111,12 @@ class ElishFunction
   {
     // simplified the x>=0 part to be in terms of x and y -- maybe
     // the x<0 part can be as well?
-    dy = ((x < 0.0) % (arma::exp(x) - 2 / (1 + arma::exp(x)) + 2 / arma::pow(
-            1 + arma::exp(x), 2))) +
-            ((x > 0) % (y / x) % (1.0 + x - y)) +
-            ((x == 0) % 0.5);
+    dy(arma::find(x < 0)) = (arma::exp(x) - 2 / (1 + arma::exp(x)) + 2
+        / arma::pow(1 + arma::exp(x), 2));
+    dy(arma::find(x > 0)) = (y / x) % (1.0 + x - y);
+    dy(arma::find(x == 0)).fill(0.5);
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= 0.5)
   }
 }; // class ElishFunction
 

@@ -57,9 +57,9 @@ class SplineFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  static double Deriv(const double x, const double y)
   {
-    return  2 * x * std::log(1 + x) + std::pow(x, 2) / (1 + x);
+    return  x != 0 ? 2 * y / x + std::pow(x, 2) / (1 + x) : 0;
   }
 
   /**
@@ -71,10 +71,11 @@ class SplineFunction
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType& x,
-                    const OutputVecType& /* y */,
+                    const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = 2 * x % arma::log(1 + x) + arma::pow(x, 2) / (1 + x);
+    dy(arma::find(x != 0)) = 2 * y / x + arma::pow(x, 2) / (1 + x);
+    dy(arma::find(x == 0)).zeros();
   }
 }; // class SplineFunction
 
