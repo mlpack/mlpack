@@ -24,10 +24,10 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-Perceptron<> p;                          // Step 1: create model.
-p.Train(dataset, labels, 5);             // Step 2: train model.
+Perceptron p;                         // Step 1: create model.
+p.Train(dataset, labels, 5);          // Step 2: train model.
 arma::Row<size_t> predictions;
-tree.Classify(testDataset, predictions); // Step 3: classify points.
+p.Classify(testDataset, predictions); // Step 3: classify points.
 
 // Print some information about the test predictions.
 std::cout << arma::accu(predictions == 1) << " test points classified as class "
@@ -211,27 +211,27 @@ arma::mat dataset;
 data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris.labels.csv", dataset, true);
+data::Load("iris.labels.csv", labels, true);
 
 // Create a Perceptron object.
-Perceptron<> p;
+Perceptron p;
 // Set the maximum number of iterations to 100.  (This can also be done in the
 // constructor.)
 p.MaxIterations() = 100;
 
 // Train the model for up to 100 iterations.
-p.Train(data, labels, 3);
+p.Train(dataset, labels, 3);
 
 // Now, compute and print accuracy on the training set.
 arma::Row<size_t> predictions;
-p.Classify(data, predictions);
+p.Classify(dataset, predictions);
 std::cout << "Training set accuracy after 100 iterations: "
     << (100.0 * double(arma::accu(labels == predictions)) / labels.n_elem)
     << "\%." << std::endl;
 
 // Train for another 250 iterations and compute training set accuracy again.
-p.Train(data, labels, 3, 250);
-p.Classify(data, predictions);
+p.Train(dataset, labels, 3, 250);
+p.Classify(dataset, predictions);
 std::cout << "Training set accuracy after 350 iterations: "
     << (100.0 * double(arma::accu(labels == predictions)) / labels.n_elem)
     << "\%." << std::endl;
@@ -242,7 +242,7 @@ std::cout << "Training set accuracy after 350 iterations: "
 Load a saved perceptron from disk and print information about it.
 
 ```c++
-Perceptron<> p;
+Perceptron p;
 // This call assumes a perceptron called "p" has already been saved to
 // `perceptron.bin` with `data::Save()`.
 data::Load("perceptron.bin", "p", p, true);
@@ -382,7 +382,7 @@ Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization> p(dataset,
 // Create test data (500 points).
 arma::mat testDataset(10, 500, arma::fill::randu);
 arma::Row<size_t> predictions;
-tree.Classify(testDataset, predictions);
+p.Classify(testDataset, predictions);
 // Now `predictions` holds predictions for the test dataset.
 
 // Print some information about the test predictions.
@@ -404,13 +404,13 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-Perceptron<> p(dataset, labels, 5);
+Perceptron p(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::sp_fmat testDataset;
 testDataset.sprandu(100, 500, 0.01);
 arma::Row<size_t> predictions;
-tree.Classify(testDataset, predictions);
+p.Classify(testDataset, predictions);
 // Now `predictions` holds predictions for the test dataset.
 
 // Print some information about the test predictions.

@@ -22,7 +22,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-AdaBoost<> ab;                         // Step 1: create model.
+AdaBoost ab;                           // Step 1: create model.
 ab.Train(dataset, labels, 5);          // Step 2: train model.
 arma::Row<size_t> predictions;
 ab.Classify(testDataset, predictions); // Step 3: classify points.
@@ -231,14 +231,14 @@ arma::mat dataset;
 data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris.labels.csv", dataset, true);
+data::Load("iris.labels.csv", labels, true);
 
-// Create a weak learner with the desired hyperparameters.
-Perceptron<> p;
-p.MaxIterations() = 500; // We'll use a custom maximum number of iterations.
-
-AdaBoost<> ab;
-ab.Train(dataset, labels, 3, p);
+AdaBoost ab;
+// Train with a custom number of perceptron iterations, and custom AdaBoost
+// parameters.
+ab.Train(dataset, labels, 3, 75 /* maximum number of weak learners */,
+                             1e-6 /* tolerance for AdaBoost convergence */,
+                             100 /* maximum number of perceptron iterations */);
 
 // Now predict the label of a point and the probabilities of each class.
 size_t prediction;
@@ -261,9 +261,9 @@ arma::mat dataset;
 data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris_labels.csv", dataset, true);
+data::Load("iris.labels.csv", dataset, true);
 
-AdaBoost<> ab;
+AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
 ab.Tolerance() = 1e-4; // Set a custom tolerance for convergence.
 
@@ -280,7 +280,7 @@ Load an AdaBoost model and print some information about it.
 
 ```c++
 // Load a saved model named "adaboost_model" from `adaboost_model.bin`.
-AdaBoost<> ab;
+AdaBoost ab;
 data::Load("adaboost_model.bin", "adaboost_model", ab, true);
 
 std::cout << "Details about the model in `adaboost_model.bin`:" << std::endl;
@@ -400,8 +400,16 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-// Note that we specify decision stumps as the weak learner type.
-AdaBoost<ID3DecisionStump> ab(dataset, labels, 5);
+// Note that we specify decision stumps as the weak learner type, and pass
+// hyperparameters for the decision stump (these could be omitted).  See the
+// DecisionTree documentation for more details on the ID3DecisionStump-specific
+// hyperparameters.
+AdaBoost<ID3DecisionStump> ab(dataset, labels, 5,
+    25 /* maximum number of decision stumps */,
+    1e-6 /* tolerance for convergence of AdaBoost */,
+    /** Hyperparameters specific to ID3DecisionStump: **/
+    10 /* minimum number of points in each leaf of the decision stump */,
+    1e-5 /* minimum gain for splitting the root node of the decision stump */);
 
 // Create test data (500 points).
 arma::mat testDataset(10, 500, arma::fill::randu);
@@ -427,8 +435,10 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor, using floating-point data.
-// (TODO: do we have to explicitly write MatType?)
-AdaBoost<> ab(dataset, labels, 5);
+// The weak learner type is now a floating-point Perceptron.
+typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, arma::fmat>
+    PerceptronType;
+AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
