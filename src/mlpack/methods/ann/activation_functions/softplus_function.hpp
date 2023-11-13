@@ -91,7 +91,9 @@ class SoftplusFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputType, typename OutputType, typename DerivType>
-  static void Deriv(const InputType& x, const OutputType& /* y */, DerivType &dy)
+  static void Deriv(const InputType& x,
+                    const OutputType& /* y */,
+                    DerivType& dy)
   {
     dy = 1.0 / (1 + arma::exp(-x));
   }
