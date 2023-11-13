@@ -192,7 +192,8 @@ class MultiheadAttentionType : public Layer<MatType>
 
   void ComputeOutputDimensions() override
   {
-    if (this->inputDimensions.size() < 2) {
+    if (this->inputDimensions.size() < 2)
+    {
       Log::Fatal << "Must have at least two dimensions for MultiHeadAttention: "
           << " [EmbeddingDim,SequenceLen]" << std::endl;
     }
