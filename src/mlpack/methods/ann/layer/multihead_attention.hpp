@@ -241,7 +241,8 @@ class MultiheadAttentionType : public Layer<MatType>
     this->outputDimensions[1] = tgtSeqLen;
     for (size_t i=2; i<this->outputDimensions.size(); i++) {
       this->outputDimensions[i] = this->inputDimensions[i];
-      if (this->outputDimensions[1] % this->inputDimensions[i] != 0) {
+      if (this->outputDimensions[1] % this->inputDimensions[i] != 0)
+      {
         Log::Fatal << "tgtSeqLen " << tgtSeqLen << " not divisible by extra "
             << "dimension " << this->inputDimensions[i] << std::endl;
       }
