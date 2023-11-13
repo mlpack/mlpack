@@ -211,7 +211,8 @@ class MultiheadAttentionType : public Layer<MatType>
       }
       if (srcSeqLen != tgtSeqLen)
       {
-        Log::Fatal << "If using selfAttention, srcSeqLen must equal tgtSeqLen"
+        Log::Fatal << "If using selfAttention, srcSeqLen (" << srcSeqLen
+            << " must equal tgtSeqLen " << tgtSeqLen << ")!" << std::endl;
                    << std::endl;
       }
     }
