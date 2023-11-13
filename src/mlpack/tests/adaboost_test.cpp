@@ -19,8 +19,6 @@
 using namespace arma;
 using namespace mlpack;
 
-// TODO: adapt to non-deprecated calls
-
 /**
  * This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.  It
  * checks whether the hamming loss breaches the upperbound, which is provided by
@@ -46,16 +44,14 @@ TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest]", mat, fmat)
   // Run the perceptron for perceptronIter iterations.
   int perceptronIter = 400;
 
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
-  PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
-
   // Define parameters for AdaBoost.
   size_t iterations = 100;
-  eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(tolerance);
-  eT ztProduct = a.Train(inputData, labels.row(0), numClasses, p, iterations,
-      tolerance);
+  eT tolerance = 2e-10;
+  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
+      PerceptronType;
+  AdaBoost<PerceptronType, MatType> a;
+  eT ztProduct = a.Train(inputData, labels.row(0), numClasses, iterations,
+      tolerance, perceptronIter);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -79,12 +75,10 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]", mat, fmat)
   typedef typename MatType::elem_type eT;
 
   MatType inputData;
-
   if (!data::Load("iris.csv", inputData))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-
   if (!data::Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
@@ -106,13 +100,13 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]", mat, fmat)
   // Define parameters for AdaBoost.
   size_t iterations = 100;
   eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses, p,
-      iterations, tolerance);
+  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses,
+      iterations, tolerance, perceptronIter);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
 
-  size_t countError = accu(labels != predictedLabels);;
+  size_t countError = accu(labels != predictedLabels);
   eT error = (eT) countError / labels.n_cols;
 
   REQUIRE(error <= weakLearnerErrorRate + 0.03);
@@ -150,8 +144,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]", mat,
   size_t iterations = 50;
   eT tolerance = 1e-10;
   AdaBoost<PerceptronType, MatType> a(tolerance);
-  eT ztProduct = a.Train(inputData, labels.row(0), numClasses, p, iterations,
-      tolerance);
+  eT ztProduct = a.Train(inputData, labels.row(0), numClasses, iterations,
+      tolerance, perceptronIter);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -201,8 +195,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn", "[AdaBoostTest]", mat,
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses, p,
-      iterations, tolerance);
+  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses,
+      iterations, tolerance, perceptronIter);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -245,8 +239,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
   size_t iterations = 50;
   eT tolerance = 1e-10;
   AdaBoost<PerceptronType, MatType> a(tolerance);
-  eT ztProduct = a.Train(inputData, labels.row(0), numClasses, p, iterations,
-      tolerance);
+  eT ztProduct = a.Train(inputData, labels.row(0), numClasses, iterations,
+      tolerance, perceptronIter);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -296,8 +290,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest]", mat,
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses, p,
-      iterations, tolerance);
+  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses,
+      iterations, tolerance, perceptronIter);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -330,14 +324,13 @@ TEMPLATE_TEST_CASE("HammingLossIris_DS", "[AdaBoostTest]", mat, fmat)
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
   Row<size_t> labelsvec = labels.row(0);
-  ID3DecisionStump ds(inputData, labelsvec, numClasses, inpBucketSize);
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
   AdaBoost<ID3DecisionStump, MatType> a(tolerance);
-  eT ztProduct = a.Train(inputData, labelsvec, numClasses, ds, iterations,
-      tolerance);
+  eT ztProduct = a.Train(inputData, labelsvec, numClasses, iterations,
+      tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -388,8 +381,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest]", mat, fmat)
   size_t iterations = 50;
   eT tolerance = 1e-10;
 
-  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses,
+      iterations, tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -432,8 +425,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn_DS", "[AdaBoostTest]", mat,
   eT tolerance = 1e-10;
 
   AdaBoost<ID3DecisionStump, MatType> a(tolerance);
-  eT ztProduct = a.Train(inputData, labelsvec, numClasses, ds, iterations,
-      tolerance);
+  eT ztProduct = a.Train(inputData, labelsvec, numClasses, iterations,
+      tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -481,8 +474,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn_DS", "[AdaBoostTest]", mat,
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
-  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses,
+      iterations, tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -524,8 +517,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS", "[AdaBoostTest]", mat,
   eT tolerance = 1e-10;
 
   AdaBoost<ID3DecisionStump, MatType> a(tolerance);
-  eT ztProduct = a.Train(inputData, labelsvec, numClasses, ds, iterations,
-      tolerance);
+  eT ztProduct = a.Train(inputData, labelsvec, numClasses, iterations,
+      tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -575,8 +568,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]", mat,
   size_t iterations = 500;
   eT tolerance = 1e-23;
 
-  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses,
+      iterations, tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -629,8 +622,8 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
   // Define parameters for AdaBoost.
   size_t iterations = 100;
   eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses, p,
-      iterations, tolerance);
+  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses,
+      iterations, tolerance, perceptronIter);
 
   Row<size_t> predictedLabels1(testData.n_cols),
               predictedLabels2(testData.n_cols);
@@ -700,8 +693,8 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
-  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<ID3DecisionStump, MatType> a(inputData, labelsvec, numClasses,
+      iterations, tolerance, inpBucketSize);
 
   Row<size_t> predictedLabels1(testData.n_cols),
               predictedLabels2(testData.n_cols);
@@ -762,8 +755,8 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses, p,
-      iterations, tolerance);
+  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses,
+      iterations, tolerance, perceptronIter);
 
   MatType testData;
   if (!data::Load("iris_test.csv", testData))
@@ -832,8 +825,8 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
   // Now train AdaBoost.
   size_t iterations = 50;
   eT tolerance = 1e-10;
-  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses, p,
-      iterations, tolerance);
+  AdaBoost<PerceptronType, MatType> a(inputData, labels.row(0), numClasses,
+      iterations, tolerance, perceptronIter);
 
   // Now load another dataset...
   if (!data::Load("vc2.csv", inputData))
@@ -845,7 +838,8 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
 
   PerceptronType p2(inputData, labels.row(0), newNumClasses, perceptronIter);
 
-  a.Train(inputData, labels.row(0), newNumClasses, p2, iterations, tolerance);
+  a.Train(inputData, labels.row(0), newNumClasses, iterations, tolerance,
+      perceptronIter);
 
   // Load test set to see if it trained on vc2 correctly.
   MatType testData;
@@ -860,7 +854,7 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
   Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
-  int localError = accu(trueTestLabels != predictedLabels);
+  size_t localError = accu(trueTestLabels != predictedLabels);
   eT lError = (eT) localError / trueTestLabels.n_cols;
 
   REQUIRE(lError <= 0.30);
@@ -880,8 +874,7 @@ TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]", fmat, mat)
 
   typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
       PerceptronType;
-  PerceptronType p(data, labels, 2, 800);
-  AdaBoost<PerceptronType, MatType> ab(data, labels, 2, p, 50, 1e-10);
+  AdaBoost<PerceptronType, MatType> ab(data, labels, 2, 50, 1e-10, 800);
 
   // Now create another dataset to train with.
   MatType otherData = randu<MatType>(5, 200);
@@ -893,9 +886,8 @@ TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]", fmat, mat)
   for (size_t i = 150; i < 200; ++i)
     otherLabels[i] = 2;
 
-  PerceptronType p2(otherData, otherLabels, 3, 500);
-  AdaBoost<PerceptronType, MatType> abText(otherData, otherLabels, 3, p2, 50,
-      1e-10);
+  AdaBoost<PerceptronType, MatType> abText(otherData, otherLabels, 3, 50, 1e-10,
+      500);
 
   AdaBoost<PerceptronType, MatType> abXml, abBinary;
 
@@ -937,8 +929,7 @@ TEMPLATE_TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]", mat,
   for (size_t i = 250; i < 500; ++i)
     labels[i] = 1;
 
-  ID3DecisionStump p(data, labels, 2, 800);
-  AdaBoost<ID3DecisionStump, MatType> ab(data, labels, 2, p, 50, 1e-10);
+  AdaBoost<ID3DecisionStump, MatType> ab(data, labels, 2, 50, 1e-10, 40);
 
   // Now create another dataset to train with.
   MatType otherData = randu<MatType>(5, 200);
@@ -950,9 +941,8 @@ TEMPLATE_TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]", mat,
   for (size_t i = 150; i < 200; ++i)
     otherLabels[i] = 2;
 
-  ID3DecisionStump p2(otherData, otherLabels, 3, 500);
-  AdaBoost<ID3DecisionStump, MatType> abText(otherData, otherLabels, 3, p2, 50,
-      1e-10);
+  AdaBoost<ID3DecisionStump, MatType> abText(otherData, otherLabels, 3, 50,
+      1e-10, 25);
 
   AdaBoost<ID3DecisionStump, MatType> abXml, abBinary;
 
@@ -970,7 +960,7 @@ TEMPLATE_TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]", mat,
   for (size_t i = 0; i < ab.WeakLearners(); ++i)
   {
     REQUIRE(ab.WeakLearner(i).SplitDimension() ==
-           abXml.WeakLearner(i).SplitDimension());
+            abXml.WeakLearner(i).SplitDimension());
     REQUIRE(ab.WeakLearner(i).SplitDimension() ==
             abText.WeakLearner(i).SplitDimension());
     REQUIRE(ab.WeakLearner(i).SplitDimension() ==
@@ -1034,7 +1024,6 @@ TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs", "[AdaBoostTest]",
 TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
 {
   typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
 
   MatType inputData;
   if (!data::Load("iris.csv", inputData))
@@ -1073,7 +1062,6 @@ TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
 TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
 {
   typedef TestType MatType;
-  typedef typename MatType::elem_type ElemType;
 
   // Create random data.
   MatType data = randu<MatType>(10, 100);
@@ -1082,49 +1070,32 @@ TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
 
   typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
       PerceptronType;
-  PerceptronType p; // For versions that take an initialized weak learner.
-  p.MaxIterations() = 150;
-  AdaBoost<PerceptronType, MatType> a1, a2, a3, a4, a5, a6, a7;
-  a1.MaxIterations() = 75;
-  a4.MaxIterations() = 65;
-  a1.Tolerance() = 1e-4;
-  a2.Tolerance() = 1e-5;
-  a4.Tolerance() = 2e-4;
-  a5.Tolerance() = 2e-5;
+  AdaBoost<PerceptronType, MatType> a1, a2, a3, a4;
+  a1.MaxIterations() = 65;
+  a1.Tolerance() = 2e-4;
+  a2.Tolerance() = 2e-5;
 
-  a1.Train(data, labels, 4, p);
-  a2.Train(data, labels, 4, p, 10);
-  a3.Train(data, labels, 4, p, 50, 1e-3);
-  a4.Train(data, labels, 4);
-  a5.Train(data, labels, 4, 15);
-  a6.Train(data, labels, 4, 55, 1e-3);
-  a7.Train(data, labels, 4, 60, 2e-3, 100);
+  a1.Train(data, labels, 4);
+  a2.Train(data, labels, 4, 15);
+  a3.Train(data, labels, 4, 55, 1e-3);
+  a4.Train(data, labels, 4, 60, 2e-3, 100);
 
   // Make sure hyperparameters were set correctly, where appropriate.
   REQUIRE(a1.MaxIterations() == 75);
   REQUIRE(a2.MaxIterations() == 10);
   REQUIRE(a3.MaxIterations() == 50);
   REQUIRE(a4.MaxIterations() == 65);
-  REQUIRE(a5.MaxIterations() == 15);
-  REQUIRE(a6.MaxIterations() == 55);
-  REQUIRE(a7.MaxIterations() == 60);
 
   REQUIRE(a1.Tolerance() == Approx(1e-4));
   REQUIRE(a2.Tolerance() == Approx(1e-5));
   REQUIRE(a3.Tolerance() == Approx(1e-3));
   REQUIRE(a4.Tolerance() == Approx(2e-4));
-  REQUIRE(a5.Tolerance() == Approx(2e-5));
-  REQUIRE(a6.Tolerance() == Approx(1e-3));
-  REQUIRE(a7.Tolerance() == Approx(2e-3));
 
   // Make sure anything at all was trained.
   REQUIRE(a1.WeakLearners() > 0);
   REQUIRE(a2.WeakLearners() > 0);
   REQUIRE(a3.WeakLearners() > 0);
   REQUIRE(a4.WeakLearners() > 0);
-  REQUIRE(a5.WeakLearners() > 0);
-  REQUIRE(a6.WeakLearners() > 0);
-  REQUIRE(a7.WeakLearners() > 0);
 
   // Make sure the maximum number of iterations in the perceptron was set
   // properly.
@@ -1132,7 +1103,4 @@ TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
   REQUIRE(a2.WeakLearner(0).MaxIterations() == 150);
   REQUIRE(a3.WeakLearner(0).MaxIterations() == 150);
   REQUIRE(a4.WeakLearner(0).MaxIterations() == 1000);
-  REQUIRE(a5.WeakLearner(0).MaxIterations() == 1000);
-  REQUIRE(a6.WeakLearner(0).MaxIterations() == 1000);
-  REQUIRE(a7.WeakLearner(0).MaxIterations() == 100);
 }
