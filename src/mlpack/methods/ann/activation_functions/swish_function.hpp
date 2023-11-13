@@ -90,7 +90,9 @@ class SwishFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
       dy = (y / x) % (1.0 + x - y);
       // the expression above is indeterminate at 0, even though
