@@ -216,10 +216,14 @@ class MultiheadAttentionType : public Layer<MatType>
       // query = tgtSeqLen
       // key = srcSeqLen
       // value = srcSeqLen
-      if ((this->inputDimensions[1] - tgtSeqLen) % 2 != 0) {
+      size_t len = this->inputDimensions[1];
+      for (size_t i=2; i<this->inputDimensions.size(); i++) {
+        len *= this->inputDimensions[i];
+      }
+      if ((len - tgtSeqLen) % 2 != 0) {
         Log::Fatal << "input dimension 1 is invalid." << std::endl;
       }
-      srcSeqLen = (this->inputDimensions[1] - tgtSeqLen) / 2;
+      srcSeqLen = (len - tgtSeqLen) / 2;
     }
     if (embedDim % numHeads != 0)
     {
