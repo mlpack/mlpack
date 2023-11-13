@@ -1081,15 +1081,15 @@ TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
   a4.Train(data, labels, 4, 60, 2e-3, 100);
 
   // Make sure hyperparameters were set correctly, where appropriate.
-  REQUIRE(a1.MaxIterations() == 75);
-  REQUIRE(a2.MaxIterations() == 10);
-  REQUIRE(a3.MaxIterations() == 50);
-  REQUIRE(a4.MaxIterations() == 65);
+  REQUIRE(a1.MaxIterations() == 65);
+  REQUIRE(a2.MaxIterations() == 15);
+  REQUIRE(a3.MaxIterations() == 55);
+  REQUIRE(a4.MaxIterations() == 60);
 
-  REQUIRE(a1.Tolerance() == Approx(1e-4));
-  REQUIRE(a2.Tolerance() == Approx(1e-5));
+  REQUIRE(a1.Tolerance() == Approx(2e-4));
+  REQUIRE(a2.Tolerance() == Approx(2e-5));
   REQUIRE(a3.Tolerance() == Approx(1e-3));
-  REQUIRE(a4.Tolerance() == Approx(2e-4));
+  REQUIRE(a4.Tolerance() == Approx(2e-3));
 
   // Make sure anything at all was trained.
   REQUIRE(a1.WeakLearners() > 0);
@@ -1099,8 +1099,8 @@ TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
 
   // Make sure the maximum number of iterations in the perceptron was set
   // properly.
-  REQUIRE(a1.WeakLearner(0).MaxIterations() == 150);
-  REQUIRE(a2.WeakLearner(0).MaxIterations() == 150);
-  REQUIRE(a3.WeakLearner(0).MaxIterations() == 150);
-  REQUIRE(a4.WeakLearner(0).MaxIterations() == 1000);
+  REQUIRE(a1.WeakLearner(0).MaxIterations() == 1000);
+  REQUIRE(a2.WeakLearner(0).MaxIterations() == 1000);
+  REQUIRE(a3.WeakLearner(0).MaxIterations() == 1000);
+  REQUIRE(a4.WeakLearner(0).MaxIterations() == 100);
 }
