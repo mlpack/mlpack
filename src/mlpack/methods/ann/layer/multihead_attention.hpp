@@ -244,7 +244,8 @@ class MultiheadAttentionType : public Layer<MatType>
 
     // This returns the output as a 2-dimensional (embedDim * tgtSeqLen)
     // matrix.
-    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(), 1);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
     this->outputDimensions[0] = embedDim;
     this->outputDimensions[1] = tgtSeqLen;
     for (size_t i=2; i<this->outputDimensions.size(); i++)
