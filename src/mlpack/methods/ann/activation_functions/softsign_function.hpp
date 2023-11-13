@@ -96,7 +96,9 @@ class SoftsignFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& x, const OutputVecType& /* y */, DerivVecType& dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
     // TODO: same as above
     // x = arma::pow(1.0 - arma::abs(y), 2);
