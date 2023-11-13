@@ -31,6 +31,7 @@
 #include <mlpack/core/cereal/array_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
+#include <mlpack/core/cereal/template_class_version.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
 
 // All code should have access to logging.
