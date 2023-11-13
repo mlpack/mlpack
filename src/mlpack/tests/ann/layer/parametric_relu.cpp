@@ -130,8 +130,6 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
     double msreTrain = ComputeMSRE(predictions, trainLabels);
     model.Predict(testData, predictions);
     double msreTest = ComputeMSRE(predictions, testLabels);
-    std::cout << "train: " << msreTrain << "\n";
-    std::cout << "test: " << msreTest << "\n";
 
     double relativeMSRE = std::abs((msreTest - msreTrain) / msreTrain);
     if (relativeMSRE <= 0.35)
