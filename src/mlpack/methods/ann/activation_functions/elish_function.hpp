@@ -111,9 +111,11 @@ class ElishFunction
   {
     // simplified the x>=0 part to be in terms of x and y -- maybe
     // the x<0 part can be as well?
-    dy(arma::find(x < 0)) = (arma::exp(x) - 2 / (1 + arma::exp(x)) + 2
-        / arma::pow(1 + arma::exp(x), 2));
-    dy(arma::find(x > 0)) = (y / x) % (1.0 + x - y);
+    arma::uvec ltz = arma::find(x < 0);
+    InputVecType ex = arma::exp(x(ltz));
+    dy(ltz) = (ex - 2 / (1 + ex) + 2 / arma::pow(1 + ex, 2));
+    arma::uvec gtz = arma::find(x > 0);
+    dy(gtz) = (y(gtz) / x(gtz)) % (1.0 + x(gtz) - y(gtz));
     dy(arma::find(x == 0)).fill(0.5);
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)

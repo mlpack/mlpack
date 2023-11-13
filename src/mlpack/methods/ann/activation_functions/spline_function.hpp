@@ -74,7 +74,7 @@ class SplineFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy(arma::find(x != 0)) = 2 * y / x + arma::pow(x, 2) / (1 + x);
+    dy = 2 * y / x + arma::pow(x, 2) / (1 + x);
     dy(arma::find(x == 0)).zeros();
   }
 }; // class SplineFunction
