@@ -49,13 +49,16 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(const ElemType tolerance) :
  * @param other Weak Learner, which has been initialized already.
  */
 template<typename WeakLearnerType, typename MatType>
+template<typename WeakLearnerInType>
 AdaBoost<WeakLearnerType, MatType>::AdaBoost(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const WeakLearnerType& other,
+    const WeakLearnerInType& other,
     const size_t maxIterations,
-    const typename MatType::elem_type tol) :
+    const typename MatType::elem_type tol,
+    const typename std::enable_if<
+        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*) :
     maxIterations(maxIterations),
     tolerance(tol)
 {
