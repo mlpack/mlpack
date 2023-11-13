@@ -60,7 +60,6 @@ class GaussianFunction
    */
   static double Deriv(const double x, const double y)
   {
-    // return 2 * -y * std::exp(-1 * std::pow(y, 2));
     return -2 * x * y;
   }
 
