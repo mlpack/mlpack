@@ -45,7 +45,8 @@ void CheckActivationCorrect(const arma::colvec input,
   ActivationFunction::Fn(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
+    REQUIRE(activations.at(i) ==
+        Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }
 }
 
