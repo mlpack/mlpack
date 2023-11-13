@@ -316,6 +316,12 @@ behavior.  The full signature of the class is:
 AdaBoost<WeakLearnerType, MatType>
 ```
 
+ * `WeakLearnerType`: the weak classifier to ensemble in the AdaBoost model.
+ * `MatType`: specifies the type of matrix used for learning and internal
+   representation of model parameters.
+
+---
+
 #### `WeakLearnerType`
 
 <!-- TODO: fix links! -->
