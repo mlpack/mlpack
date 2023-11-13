@@ -69,10 +69,9 @@ class ElliotFunction
    * @param y Result of Fn(x).
    * @return f'(x).
    */
-  static double Deriv(const double /* x */, const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    // TODO: I don't think this is correct
-    return std::pow(1.0 - std::abs(y), 2);
+    return 1.0 / std::pow(1.0 + std::abs(x), 2);
   }
 
   /**
@@ -83,10 +82,11 @@ class ElliotFunction
    * @param dy The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType & /* x */, const OutputVecType& y, DerivVecType &dy)
+  static void Deriv(const InputVecType & x,
+                    const OutputVecType& /* y */,
+                    DerivVecType &dy)
   {
-    // TODO: I don't think this is correct
-    dy = arma::pow(1.0 - arma::abs(y), 2);
+    dy = 1.0 / arma::pow(1.0 + arma::abs(x), 2);
   }
 }; // class ElliotFunction
 
