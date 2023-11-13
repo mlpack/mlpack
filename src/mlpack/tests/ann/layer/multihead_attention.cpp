@@ -156,7 +156,6 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
   }
 }
 
-
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */

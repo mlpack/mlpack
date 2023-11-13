@@ -45,7 +45,8 @@ void CheckActivationCorrect(const arma::colvec input,
   ActivationFunction::Fn(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
+    REQUIRE(activations.at(i) ==
+        Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }
 }
 
@@ -64,7 +65,7 @@ void CheckDerivativeCorrect(const arma::colvec input,
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; ++i)
   {
-    auto output = ActivationFunction::Fn(input.at(i));
+    double output = ActivationFunction::Fn(input.at(i));
     REQUIRE(ActivationFunction::Deriv(input.at(i), output) ==
         Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }

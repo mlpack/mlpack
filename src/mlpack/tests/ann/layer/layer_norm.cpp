@@ -113,7 +113,6 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
   layer.InputDimensions() = std::vector<size_t>({ 5 });
   layer.ComputeOutputDimensions();
 
-
   // Make sure we can get the parameters successfully.
   REQUIRE(layer.InSize() == 5);
   REQUIRE(layer.Epsilon() == 1e-3);
