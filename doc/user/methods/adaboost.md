@@ -8,13 +8,30 @@ default, the `Perceptron` class is used as a weak learner.
 `AdaBoost` is useful for classifying points with _discrete labels_ (i.e. `0`,
 `1`, `2`).
 
-#### Basic usage example excerpt:
+#### Simple usage example:
+
+Train an AdaBoost model on random data and predict labels on a random test set.
 
 ```c++
-AdaBoost ab;                            // Step 1: construct object.
-ab.Train(data, labels, 3);              // Step 2: train model.
-ab.Classify(testData, testPredictions); // Step 3: use model to classify.
+// Train an AdaBoost model on random data and predict labels on test data:
+
+// All data and labels are uniform random; 10 dimensional data, 5 classes.
+// Replace with a data::Load() call or similar for a real application.
+arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+
+AdaBoost<> ab;                         // Step 1: create model.
+ab.Train(dataset, labels, 5);          // Step 2: train model.
+arma::Row<size_t> predictions;
+ab.Classify(testDataset, predictions); // Step 3: classify points.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions == 3) << " test points classified as class "
+    << "3." << std::endl;
 ```
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick links:
 
@@ -40,44 +57,39 @@ ab.Classify(testData, testPredictions); // Step 3: use model to classify.
 
 ### Constructors
 
-Construct an `AdaBoost` object using one of the constructors below.  Defaults
-and types are detailed in the [Constructor Parameters](#constructor-parameters)
-section below.
-
-#### Forms:
-
- * `AdaBoost()`
- * `AdaBoost(tolerance)`
-   - **Initialize model without training.**
+ * `ab = AdaBoost(tolerance=1e-6)`
+   - Initialize model without training.
    - You will need to call [`Train()`](#training) later to train the tree before
      calling [`Classify()`](#classification).
 
 ---
 <!-- TODO: add this variant! -->
 
- * `AdaBoost(data, labels, numClasses)`
- * `AdaBoost(data, labels, numClasses, maxIterations, tolerance)`
-   - **Train model using default weak learner parameters.**
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
+ * `ab = AdaBoost(data, labels, numClasses, maxIterations=100, tolerance=1e-6)`
+   - Train model using default weak learner hyperparameters.
 
 ---
 
- * `AdaBoost(data, labels, numClasses, weakLearner)`
- * `AdaBoost(data, labels, numClasses, weakLearner, maxIterations, tolerance)`
-   - **Train model with custom weak learner parameters.**
+ * `ab = AdaBoost(data, labels, numClasses, weakLearner, maxIterations=100, tolerance=1e-6)`
+   - Train model with custom weak learner parameters.
    - The given `weakLearner` does not need to be trained; any hyperparameter
      settings in `weakLearner` are used for training each AdaBoost weak
      learner (see the [simple examples](#simple-examples)). <!-- TODO: link to
 specific example -->
-   - If hyperparameters are not specified, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
 
 ---
 
-<!-- TODO: a variant that allows passing hyperparameters directly! -->
+<!-- TODO: add this variant! -->
+
+ * `ab = AdaBoost(data, labels, numClasses, maxIterations=100, tolerance=1e-6, [weak
+   learner hyperparameters...])`
+   - Train model with custom weak learner hyperparameters.
+   - Hyperparameters for the weak learner are any arguments to the weak
+     learner's `Train()` function that come after `numClasses` or `weights`.
+   - The only hyperparameter for the default weak learner (`Perceptron`) is
+     `maxIterations`.
+   - See [examples of this constructor in use](#simple-examples). <!-- TODO:
+     better link -->
 
 ---
 
@@ -102,8 +114,8 @@ below `tolerance`, training will terminate and no more weak learners will be
 added. | `1e-6` |
 
 As an alternative to passing hyperparameters, each hyperparameter can be set
-with a standalone method.  For an instance of `AdaBoost` named `ab`, the
-following functions can be used before calling `Train()` to set hyperparameters:
+with a standalone method.  The following functions can be used before calling
+`Train()` to set hyperparameters:
 
 <!-- TODO: actually fix this in code -->
 
@@ -125,39 +137,43 @@ named `ab`, the following functions for training are available:
 
 <!-- TODO: implement this variant -->
 
- * `ab.Train(data, labels, numClasses)`
- * `ab.Train(data, labels, numClasses, maxIterations, tolerance)`
-   - **Train model using default weak learner parameters.**
-   - If hyperparameters are not specified here, and have not been otherwise set,
-     default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
+ * `ab.Train(data, labels, numClasses, maxIterations=100, tolerance=1e-6)`
+   - Train model using default weak learner parameters.
 
 ---
 
- * `ab.Train(data, labels, numClasses, weakLearner)`
- * `ab.Train(data, labels, numClasses, weakLearner, maxIterations, tolerance)`
-   - **Train model with custom weak learner parameters.**
+ * `ab.Train(data, labels, numClasses, weakLearner, maxIterations=100, tolerance=1e-6)`
+   - Train model with custom weak learner parameters.
    - The given `weakLearner` does not need to be trained; any hyperparameter
      settings in `weakLearner` are used for training each AdaBoost weak learner
      (see the [simple examples](#simple-examples)). <!-- TODO: link to specific
 example -->
-   - If hyperparameters for AdaBoost are not specified, and have not been
-     otherwise set, default values are used.
-   - `labels` should be a vector of length `data.n_cols`, containing values from
-     `0` to `numClasses - 1` (inclusive).
 
 ---
 
 <!-- TODO: a variant that allows passing hyperparameters directly! -->
+
+ * `ab.Train(data, labels, numClasses, maxIterations=100, tolerance=1e-6, [weak learner hyperparameters...])`
+   - Train model with custom weak learner parameters.
+   - Hyperparameters for the weak learner are any arguments to the weak
+     learner's `Train()` function that come after `numClasses` or `weights`.
+   - The only hyperparameter for the default weak learner (`Perceptron`) is
+     `maxIterations`.
+   - See [examples of this form in use](#simple-examples). <!-- TODO:
+     better link -->
 
 ---
 
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
 
-***Note***: training is not incremental.  A second call to `Train()` will
-retrain the AdaBoost model from scratch.
+***Notes***:
+
+ * Training is not incremental.  A second call to `Train()` will retrain the
+   AdaBoost model from scratch.
+
+ * `Train()` returns a `double` indicating an upper bound on the training error
+   (specifically, the product of _Zt_ values, as described in the paper).
 
 ### Classification
 
@@ -179,8 +195,6 @@ the [Classification Parameters](#classification-parameters) section below.
    - ***(Single-point)***
    - Classify a single point and compute class probabilities.
    - The predicted class is stored in `prediction`.
-   - The class probabilities are stored in `probabilities_vec`, which is set to
-     length `numClasses`.
    - The probability of class `i` can be accessed with `probabilities_vec[i]`.
 
 ---
@@ -188,8 +202,6 @@ the [Classification Parameters](#classification-parameters) section below.
  * `ab.Classify(data, predictions)`
    - ***(Multi-point)***
    - Classify a set of points.
-   - The predicted class of each point is stored in `predictions`, which is set
-     to length `data.n_cols`.
    - The prediction for data point `i` can be accessed with `predictions[i]`.
 
 ---
@@ -197,11 +209,7 @@ the [Classification Parameters](#classification-parameters) section below.
  * `ab.Classify(data, predictions, probabilities)`
    - ***(Multi-point)***
    - Classify a set of points and compute class probabilities for each point.
-   - The predicted class of each point is stored in `predictions`, which is set
-     to length `data.n_cols`.
    - The prediction for data point `i` can be accessed with `predictions[i]`.
-   - The class probabilities for each point are stored in `probabilities`, which
-     is set to size `numClasses` by `data.n_cols`.
    - The probability of class `j` for data point `i` can be accessed with
      `probabilities(j, i)`.
 
@@ -216,8 +224,8 @@ the [Classification Parameters](#classification-parameters) section below.
 | _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
-| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into. |
-| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes). |
+| _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
+| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes; number of columns will be equal to `data.n_cols`). |
 
 ### Other Functionality
 
@@ -242,28 +250,8 @@ is fully documented.
 
 ### Simple Examples
 
-Train an AdaBoost model on random data and predict labels on a random test set.
-
-```c++
-// 1000 random points in 10 dimensions.
-arma::mat dataset(10, 1000, arma::fill::randu);
-// Random labels for each point, totaling 5 classes.
-arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-
-// Train in the constructor.
-AdaBoost<> ab(dataset, labels, 5);
-
-// Create test data (500 points).
-arma::mat testDataset(10, 500, arma::fill::randu);
-arma::Row<size_t> predictions;
-ab.Classify(testDataset, predictions);
-// Now `predictions` holds predictions for the test dataset.
-
-// Print some information about the test predictions.
-std::cout << arma::accu(predictions == 3) << " test points classified as class "
-    << "3." << std::endl;
-```
+See also the [simple usage example](#simple-usage-example) for a trivial usage
+of the `AdaBoost` class.
 
 ---
 
