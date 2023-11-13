@@ -79,7 +79,9 @@ class GELUFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& x, const OutputVecType& /* y */, DerivVecType& dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
     dy = 0.5 * arma::tanh(0.0356774 * arma::pow(x, 3) + 0.797885 * x) +
         (0.0535161 * arma::pow(x, 3) + 0.398942 * x) %
