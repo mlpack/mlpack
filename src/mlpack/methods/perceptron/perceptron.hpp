@@ -86,11 +86,14 @@ class Perceptron
    * @param maxIterations Maximum number of iterations for the perceptron
    *     learning algorithm.
    */
+  template<typename WeightsType>
   Perceptron(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const arma::rowvec& instanceWeights,
-             const size_t maxIterations = 1000);
+             const WeightsType& instanceWeights,
+             const size_t maxIterations = 1000,
+             const typename std::enable_if<
+                 arma::is_arma_type<WeightsType>::value>::type* = 0);
 
   /**
    * Alternate constructor which copies parameters from an already initiated
@@ -104,12 +107,15 @@ class Perceptron
    * @param instanceWeights Weight vector to use while training. For boosting
    *      purposes.
    */
+  template<typename WeightsType>
   mlpack_deprecated /* was previously only used by AdaBoost */
   Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const arma::rowvec& instanceWeights);
+             const WeightsType& instanceWeights,
+             const typename std::enable_if<
+                 arma::is_arma_type<WeightsType>::value>::type* = 0);
 
   /**
    * Train the perceptron on the given data for up to the maximum number of
@@ -251,11 +257,11 @@ class Perceptron
    * If `HasWeights` is `false`, then `instanceWeights` is ignored (and may be
    * left empty).
    */
-  template<bool HasWeights>
+  template<bool HasWeights, typename WeightsType>
   void TrainInternal(const MatType& data,
                      const arma::Row<size_t>& labels,
                      const size_t numClasses,
-                     const arma::rowvec& instanceWeights = arma::rowvec());
+                     const WeightsType& instanceWeights = WeightsType());
 
   //! The maximum number of iterations during training.
   size_t maxIterations;

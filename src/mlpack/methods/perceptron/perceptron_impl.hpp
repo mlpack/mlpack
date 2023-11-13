@@ -58,7 +58,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     maxIterations(maxIterations)
 {
   // Start training.
-  TrainInternal<false>(data, labels, numClasses);
+  TrainInternal<false, arma::Row<typename MatType::elem_type>>(data, labels,
+      numClasses);
 }
 
 /**
@@ -75,12 +76,15 @@ template<
     typename WeightInitializationPolicy,
     typename MatType
 >
+template<typename WeightsType>
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const arma::rowvec& instanceWeights,
-    const size_t maxIterations) :
+    const WeightsType& instanceWeights,
+    const size_t maxIterations,
+    const typename std::enable_if<
+        arma::is_arma_type<WeightsType>::value>::type*) :
     maxIterations(maxIterations)
 {
   // Start training.
@@ -103,12 +107,16 @@ template<
     typename WeightInitializationPolicy,
     typename MatType
 >
+template<typename WeightsType>
+mlpack_deprecated
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const Perceptron& other,
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const arma::rowvec& instanceWeights) :
+    const WeightsType& instanceWeights,
+    const typename std::enable_if<
+        arma::is_arma_type<WeightsType>::value>::type*) :
     maxIterations(other.maxIterations)
 {
   TrainInternal<true>(data, labels, numClasses, instanceWeights);
@@ -137,7 +145,8 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     const arma::Row<size_t>& labels,
     const size_t numClasses)
 {
-  TrainInternal<false>(data, labels, numClasses);
+  TrainInternal<false, arma::Row<typename MatType::elem_type>>(data, labels,
+      numClasses);
 }
 
 /**
@@ -170,7 +179,8 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
 {
   // Set the maximum number of iterations and call unweighted Train().
   this->maxIterations = maxIterations;
-  TrainInternal<false>(data, labels, numClasses);
+  TrainInternal<false, arma::Row<typename MatType::elem_type>>(data, labels,
+      numClasses);
 }
 
 /**
@@ -246,13 +256,13 @@ template<
     typename WeightInitializationPolicy,
     typename MatType
 >
-template<bool HasWeights>
+template<bool HasWeights, typename WeightsType>
 void Perceptron<
     LearnPolicy, WeightInitializationPolicy, MatType
 >::TrainInternal(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
-                 const arma::rowvec& instanceWeights)
+                 const WeightsType& instanceWeights)
 {
   // Do we need to resize the weights?
   if (weights.n_cols != numClasses || weights.n_rows != data.n_rows)
@@ -297,7 +307,7 @@ void Perceptron<
         // the correct class.
         if (HasWeights)
           LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow, tempLabel,
-              instanceWeights(j));
+              (typename MatType::elem_type) instanceWeights(j));
         else
           LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow,
               tempLabel);

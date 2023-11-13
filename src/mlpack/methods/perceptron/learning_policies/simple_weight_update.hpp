@@ -51,7 +51,7 @@ class SimpleWeightUpdate
                      arma::Col<eT>& biases,
                      const size_t incorrectClass,
                      const size_t correctClass,
-                     const double instanceWeight = 1.0)
+                     const eT instanceWeight = 1.0)
   {
     weights.col(incorrectClass) -= instanceWeight * trainingPoint;
     biases(incorrectClass) -= instanceWeight;
