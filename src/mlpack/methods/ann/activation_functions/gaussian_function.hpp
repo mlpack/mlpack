@@ -73,7 +73,6 @@ class GaussianFunction
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
   {
-    // dy = 2 * -y % arma::exp(-1 * arma::pow(y, 2));
     dy = -2 * x % y;
   }
 }; // class GaussianFunction
