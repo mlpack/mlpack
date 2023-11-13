@@ -104,7 +104,9 @@ class ElishFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
     // simplified the x>=0 part to be in terms of x and y -- maybe
     // the x<0 part can be as well?
