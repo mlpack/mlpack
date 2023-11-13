@@ -1,7 +1,8 @@
 /**
  * @file methods/ann/layer/layer_norm.hpp
  * @author Shikhar Jaiswal
- *
+ * * @author Adam Kropp
+
  * Definition of the Layer Normalization class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
