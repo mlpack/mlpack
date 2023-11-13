@@ -87,7 +87,9 @@ class TanhExpFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
-  static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
     // leverage both y and x
     // x = arma::tanh(arma::exp(y)) - y % arma::exp(y) %
