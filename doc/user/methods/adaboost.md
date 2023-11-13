@@ -69,8 +69,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 ---
 
- * `ab = AdaBoost(data, labels, numClasses, maxIterations=100, tolerance=1e-6, [weak
-   learner hyperparameters...])`
+ * `ab = AdaBoost(data, labels, numClasses, maxIterations=100, tolerance=1e-6, _[weak learner hyperparameters...]_)`
    - Train model with custom weak learner hyperparameters.
    - Hyperparameters for the weak learner are any arguments to the weak
      learner's `Train()` function that come after `numClasses` or `weights`.
@@ -97,9 +96,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 hyperparameters will be used as settings for weak learners during training. |
 _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations of AdaBoost.MH to use.  This is the maximum number of weak learners to train.  (0 means no limit, and weak learners will be trained until the tolerance is met.) | `100` |
-| `tolerance` | `double` | When the weighted residual (`r_t`) of the model goes
-below `tolerance`, training will terminate and no more weak learners will be
-added. | `1e-6` |
+| `tolerance` | `double` | When the weighted residual (`r_t`) of the model goes below `tolerance`, training will terminate and no more weak learners will be added. | `1e-6` |
 
 As an alternative to passing hyperparameters, each hyperparameter can be set
 with a standalone method.  The following functions can be used before calling
