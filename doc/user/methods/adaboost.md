@@ -63,23 +63,11 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
      calling [`Classify()`](#classification).
 
 ---
-<!-- TODO: add this variant! -->
 
  * `ab = AdaBoost(data, labels, numClasses, maxIterations=100, tolerance=1e-6)`
    - Train model using default weak learner hyperparameters.
 
 ---
-
- * `ab = AdaBoost(data, labels, numClasses, weakLearner, maxIterations=100, tolerance=1e-6)`
-   - Train model with custom weak learner parameters.
-   - The given `weakLearner` does not need to be trained; any hyperparameter
-     settings in `weakLearner` are used for training each AdaBoost weak
-     learner (see the [simple examples](#simple-examples)). <!-- TODO: link to
-specific example -->
-
----
-
-<!-- TODO: add this variant! -->
 
  * `ab = AdaBoost(data, labels, numClasses, maxIterations=100, tolerance=1e-6, [weak
    learner hyperparameters...])`
@@ -117,8 +105,6 @@ As an alternative to passing hyperparameters, each hyperparameter can be set
 with a standalone method.  The following functions can be used before calling
 `Train()` to set hyperparameters:
 
-<!-- TODO: actually fix this in code -->
-
  * `ab.MaxIterations() = maxIter;` will set the maximum number of weak learners
    during training to `maxIter`.
  * `ab.Tolerance() = tol;` will set the tolerance to `tol`.
@@ -135,23 +121,10 @@ If training is not done as part of the constructor call, it can be done with one
 of the versions of the `Train()` member function.  For an instance of `AdaBoost`
 named `ab`, the following functions for training are available:
 
-<!-- TODO: implement this variant -->
-
  * `ab.Train(data, labels, numClasses, maxIterations=100, tolerance=1e-6)`
    - Train model using default weak learner parameters.
 
 ---
-
- * `ab.Train(data, labels, numClasses, weakLearner, maxIterations=100, tolerance=1e-6)`
-   - Train model with custom weak learner parameters.
-   - The given `weakLearner` does not need to be trained; any hyperparameter
-     settings in `weakLearner` are used for training each AdaBoost weak learner
-     (see the [simple examples](#simple-examples)). <!-- TODO: link to specific
-example -->
-
----
-
-<!-- TODO: a variant that allows passing hyperparameters directly! -->
 
  * `ab.Train(data, labels, numClasses, maxIterations=100, tolerance=1e-6, [weak learner hyperparameters...])`
    - Train model with custom weak learner parameters.
@@ -182,8 +155,6 @@ used to make class predictions for new data.  Defaults and types are detailed in
 the [Classification Parameters](#classification-parameters) section below.
 
 #### Forms:
-
-<!-- TODO: add single-point forms -->
 
  * `size_t predictedClass = ab.Classify(point)`
    - ***(Single-point)***
