@@ -79,7 +79,7 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
     const size_t numClasses,
     const size_t maxIterations,
     const typename MatType::elem_type tol,
-    WeakLearnerArgs&... weakLearnerArgs) :
+    WeakLearnerArgs&&... weakLearnerArgs) :
     maxIterations(maxIterations),
     tolerance(tol)
 {

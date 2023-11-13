@@ -107,7 +107,7 @@ class AdaBoost
            const size_t numClasses,
            const size_t maxIterations = 100,
            const ElemType tolerance = 1e-6,
-           WeakLearnerArgs&... weakLearnerArgs);
+           WeakLearnerArgs&&... weakLearnerArgs);
 
   /**
    * Constructor.  This runs the AdaBoost.MH algorithm to provide a trained
