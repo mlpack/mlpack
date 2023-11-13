@@ -199,7 +199,8 @@ class MultiheadAttentionType : public Layer<MatType>
           << " [EmbeddingDim,SequenceLen]" << std::endl;
     }
     embedDim = this->inputDimensions[0];
-    if (selfAttention) {
+    if (selfAttention)
+    {
       // for selfAttention, query, key, and value
       // all come from the same values
       // also, srcSeqLen must == tgtSeqLen
