@@ -115,10 +115,10 @@ class ElishFunction
     // the expression solely in terms of x is defined (= 0.5)
     // only calculate exp(x) once for each element where x < 0
     // this gives approx 3x speedup, despite allocating the temp vector
-    InputVecType ex = (x < 0) % arma::exp(x);
+    DerivVecType ex = (x < 0) % arma::exp(x);
     dy = ((x < 0) % ((ex - 2 / (1 + ex) + 2 / arma::pow(1 + ex, 2)))) +
          ((x > 0) % ((y / x) % (1.0 + x - y))) +
-         ((x == 0) % arma::ones<InputVecType>(x.n_elem) * 0.5);
+         ((x == 0) % arma::ones<DerivVecType>(x.n_elem) * 0.5);
   }
 }; // class ElishFunction
 
