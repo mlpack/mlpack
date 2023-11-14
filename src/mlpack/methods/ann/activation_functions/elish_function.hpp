@@ -117,8 +117,10 @@ class ElishFunction
     // this gives approx 3x speedup, despite allocating the temp vector
     DerivVecType ex = (x < 0) % arma::exp(x);
     dy = ((x < 0) % ((ex - 2 / (1 + ex) + 2 / arma::pow(1 + ex, 2)))) +
-         ((x > 0) % ((y / x) % (1.0 + x - y))) +
-         ((x == 0) % arma::ones<DerivVecType>(x.n_elem) * 0.5);
+         ((x > 0) % ((y / x) % (1.0 + x - y)));
+    // need to do this here, because the /x above gives nans even when the
+    // condition is not met (e.g. when x > 0 is false)
+    dy(arma::find(x == 0)).fill(0.5);
   }
 }; // class ElishFunction
 
