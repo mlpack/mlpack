@@ -111,19 +111,14 @@ class ElishFunction
   {
     // simplified the x>=0 part to be in terms of x and y -- maybe
     // the x<0 part can be as well?
-    dy.set_size(arma::size(y));
-    arma::uvec ltz = arma::find(x < 0);
-    if (!ltz.empty()) {
-      InputVecType ex = arma::exp(x(ltz));
-      dy(ltz) = (ex - 2 / (1 + ex) + 2 / arma::pow(1 + ex, 2));
-    }
-    arma::uvec gtz = arma::find(x > 0);
-    if (!gtz.empty()) {
-      dy(gtz) = (y(gtz) / x(gtz)) % (1.0 + x(gtz) - y(gtz));
-    }
-    dy(arma::find(x == 0)).fill(0.5);
-    // the expression above is indeterminate at 0, even though
+    // the expression is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)
+    // only calculate exp(x) once for each element where x < 0
+    // this gives approx 3x speedup, despite allocating the temp vector
+    InputVecType ex = (x < 0) % arma::exp(x);
+    dy = ((x < 0) % ((ex - 2 / (1 + ex) + 2 / arma::pow(1 + ex, 2)))) +
+         ((x > 0) % ((y / x) % (1.0 + x - y))) +
+         ((x == 0) % arma::ones<InputVecType>(x.n_elem) * 0.5);
   }
 }; // class ElishFunction
 
