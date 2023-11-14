@@ -638,7 +638,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
     constexpr int D = 5;
 
     arma::mat trainX = arma::randu<arma::mat>(D, N);
-    arma::Row<size_t> trainY(N, arma::fill::randu);
+    arma::Row<size_t> trainY = arma::randi<arma::Row<size_t>>(N,
+        arma::distr_param(0, 1));
 
     SetInputParam("training", trainX);
     SetInputParam("labels", trainY);
