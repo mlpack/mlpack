@@ -144,11 +144,11 @@ to make class predictions for new data.
 
 ---
 
- * `tree.Classify(point, prediction, probabilities_vec)`
+ * `tree.Classify(point, prediction, probabilitiesVec)`
     - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
-    - The probability of class `i` can be accessed with `probabilities_vec[i]`.
+    - The probability of class `i` can be accessed with `probabilitiesVec[i]`.
 
 ---
 
@@ -174,7 +174,7 @@ to make class predictions for new data.
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| _single-point_ | `probabilities_vec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
+| _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
