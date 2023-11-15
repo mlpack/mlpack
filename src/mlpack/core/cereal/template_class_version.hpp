@@ -63,7 +63,7 @@ struct Version<CEREAL_UNPACK TYPE>                                             \
     return CEREAL_UNPACK VERSION_NUMBER;                                       \
   }                                                                            \
                                                                                \
-  CEREAL_UNUSED_FUNCTION                                                       \
+  static void unused() { (void) version; }                                     \
 }; /* end Version */                                                           \
                                                                                \
 template<CEREAL_UNPACK ARGS>                                                   \
