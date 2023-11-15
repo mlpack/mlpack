@@ -150,10 +150,7 @@ Types of each argument are the same as in the table for constructors
 ### Prediction
 
 Once a `DecisionTreeRegressor` is trained, the `Predict()` member function can
-be used to make class predictions for new data.  Defaults and types are detailed
-in the [Prediction Parameters](#prediction-parameters) section below.
-
-#### Forms:
+be used to make class predictions for new data.
 
  * `double predictedValue = tree.Predict(point)`
    - ***(Single-point)***
