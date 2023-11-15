@@ -30,11 +30,11 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-RandomForest<> rf;                  // Step 1: create model.
+mlpack::RandomForest rf;            // Step 1: create model.
 rf.Train(dataset, labels, 5, 10);   // Step 2: train model.
 arma::Row<size_t> predictions;
 rf.Classify(testData, predictions); // Step 3: classify points.
-// You can also use `ExtraTrees<>` instead of `RandomForest<>`!
+// You can also use `ExtraTrees` instead of `RandomForest`!
 
 // Print some information about the test predictions.
 std::cout << arma::accu(predictions == 3) << " test points classified as class "
@@ -250,7 +250,7 @@ arma::Row<size_t> labels;
 data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the random forest.
-RandomForest<> rf;
+mlpack::RandomForest rf;
 // Train 10 trees on the given dataset, with a minimum leaf size of 3.
 rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */);
@@ -289,7 +289,7 @@ std::cout << "After training 20 trees, test set accuracy is " << accuracy
 Load a random forest and print some information about it.
 
 ```c++
-RandomForest<> rf;
+mlpack::RandomForest rf;
 // This call assumes a random forest called "rf" has already been saved to
 // `rf.bin` with `data::Save()`.
 data::Load("rf.bin", "rf", rf, true);
@@ -325,7 +325,7 @@ data::Load("covertype.test.arff", testDataset, info, true);
 data::Load("covertype.test.labels.csv", testLabels, true);
 
 // Create the random forest.
-RandomForest<> rf;
+mlpack::RandomForest rf;
 // Train 20 trees on the given dataset, with a minimum leaf size of 5.
 rf.Train(dataset, info, labels, 7 /* classes */, 20 /* trees */,
          5 /* minimum leaf size */);
@@ -362,7 +362,7 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using 10 trees in the forest.
 // Note that `ExtraTrees` has exactly the same API as `RandomForest`.
-ExtraTrees<> rf(dataset, labels, 5, 10);
+mlpack::ExtraTrees rf(dataset, labels, 5, 10);
 
 // Create a single test point.
 arma::vec testPoint(10, arma::fill::randu);
@@ -398,7 +398,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-RandomForest<> rf(dataset, labels, 5);
+mlpack::RandomForest rf(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
@@ -520,7 +520,7 @@ class CustomFitnessFunction
     - By default each random subset is of size `sqrt(d)` where `d` is the number
       of dimensions in the data.
     - If constructed as `MultipleRandomDimensionSelect(n)` and passed to the
-      constructor of `RandomForest<>` or the `Train()` function, each random
+      constructor of `RandomForest` or the `Train()` function, each random
       subset will be of size `n`.
  * Each `RandomForest` [constructor](#constructors) and each version of
    the [`Train()`](#training) function optionally accept an instantiated

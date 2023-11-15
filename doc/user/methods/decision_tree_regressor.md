@@ -24,7 +24,7 @@ arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::rowvec responses = arma::randn<arma::rowvec>(1000);
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-DecisionTreeRegressor<> tree;           // Step 1: create tree.
+mlpack::DecisionTreeRegressor tree;     // Step 1: create tree.
 tree.Train(dataset, responses);         // Step 2: train model.
 arma::rowvec predictions;
 tree.Predict(testDataset, predictions); // Step 3: use model to predict.
@@ -233,7 +233,7 @@ data::Split(data, responses, trainData, testData, trainResponses, testResponses,
     0.2);
 
 // Create the tree.
-DecisionTreeRegressor<> tree;
+mlpack::DecisionTreeRegressor tree;
 // Train on the given dataset, specifying a minimum gain of 1e-6 and keeping the
 // default minimum leaf size.
 const double mse = tree.Train(trainData, info, trainResponses,
@@ -261,7 +261,7 @@ std::cout << "Average error on test set: " << testAverageError << "."
 Load a tree and print some information about it.
 
 ```c++
-DecisionTreeRegressor<> tree;
+mlpack::DecisionTreeRegressor tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
 data::Load("tree.bin", "tree", tree, true);
@@ -296,7 +296,7 @@ arma::fmat dataset(10, 1000, arma::fill::randu);
 arma::frowvec responses = arma::randn<arma::frowvec>(1000);
 
 // Train in the constructor.
-DecisionTreeRegressor<> tree(dataset, responses, 5);
+mlpack::DecisionTreeRegressor tree(dataset, responses, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
@@ -313,7 +313,7 @@ std::cout << arma::accu(predictions > 1) << " test points predicted to have "
 
 #### Fully custom behavior.
 
-The `DecisionTreeRegressor<>` class also supports several template parameters,
+The `DecisionTreeRegressor` class also supports several template parameters,
 which can be used for custom behavior during learning.  The full signature of
 the class is as follows:
 
