@@ -39,7 +39,7 @@ struct Version<CEREAL_UNPACK TYPE>                                             \
                                                                                \
   static inline const std::uint32_t version = registerVersion();               \
                                                                                \
-  CEREAL_UNUSED_FUNCTION                                                       \
+  static void unused() { (void) version; }                                     \
 }; /* end Version */                                                           \
                                                                                \
 }                                                                              \
