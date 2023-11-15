@@ -11,6 +11,8 @@
   * Fix setting number of classes correctly in `SoftmaxRegression::Train()`
     (#3553).
 
+  * Allow passing weak learner hyperparameters directly to AdaBoost (#3560).
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
