@@ -252,9 +252,11 @@ void FFN<
   }
   else if (inputDimensions.size() > 0)
   {
-    const size_t inputDims = std::accumulate(inputDimensions.begin(),
-        inputDimensions.end(), 0);
-    CheckNetwork("FFN::Reset()", inputDims, true, false);
+    size_t inputDim = inputDimensions[0];
+    for (size_t i=1; i<inputDimensions.size(); i++) {
+      inputDim *= inputDimensions[i];
+    }
+    CheckNetwork("FFN::Reset()", inputDim, true, false);
   }
   else
   {
