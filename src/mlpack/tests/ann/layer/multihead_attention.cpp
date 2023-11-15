@@ -156,6 +156,43 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
   }
 }
 
+
+// Simple numerical gradient checker.
+template<class FunctionType>
+double _CheckGradient(FunctionType& function, const double eps = 1e-7)
+{
+  // Get gradients for the current parameters.
+  arma::mat orgGradient, gradient, estGradient;
+  function.Gradient(orgGradient);
+
+  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
+
+  // Compute numeric approximations to gradient.
+  for (size_t i = 0; i < orgGradient.n_elem; ++i)
+  {
+    double tmp = function.Parameters()(i);
+
+    // Perturb parameter with a positive constant and get costs.
+    function.Parameters()(i) += eps;
+    double costPlus = function.Gradient(gradient);
+
+    // Perturb parameter with a negative constant and get costs.
+    function.Parameters()(i) -= (2 * eps);
+    double costMinus = function.Gradient(gradient);
+
+    // Restore the parameter value.
+    function.Parameters()(i) = tmp;
+
+    // Compute numerical gradients using the costs calculated above.
+    estGradient(i) = (costPlus - costMinus) / (2 * eps);
+    std::cout << "CheckGradient[" << i << "] costPlus=" << costPlus << ", costMinus=" << costMinus << ", est[" << i << "]=" << estGradient(i) << std::endl;
+  }
+
+  // Estimate error of gradient.
+  return arma::norm(orgGradient - estGradient) /
+         arma::norm(orgGradient + estGradient);
+}
+
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
@@ -195,15 +232,17 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       model = new FFN<NegativeLogLikelihood, XavierInitialization>();
       model->InputDimensions() = {embedDim, srcSeqLen * 2 + tgtSeqLen};
       model->ResetData(input, target);
-      // attnModule = new MultiheadAttention(tgtSeqLen, srcSeqLen, embedDim,
-      //     nHeads);
-      // attnModule->AttentionMask() = attnMask;
-      // attnModule->KeyPaddingMask() = keyPaddingMask;
-      // model->Add(attnModule);
       model->Add<MultiheadAttention>(tgtSeqLen, nHeads,
                                      attnMask, keyPaddingMask);
       model->Add<Linear>(vocabSize);
       model->Add<LogSoftMax>();
+      model->Reset();
+
+      arma::mat output(vocabSize, batchSize);
+      model->Forward(input, output);
+      input.print("input");
+      output.print("initial output");
+      count = 0;
     }
 
     ~GradientFunction()
@@ -211,10 +250,18 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
       delete model;
     }
 
-    double Gradient(arma::mat& gradient) const
+    double Gradient(arma::mat& gradient)
     {
+      ++count;
+      std::cout << "[" << count << "]" << "Evaluating gradient" << std::endl;
+      model->Parameters().print("parameters " + std::to_string(count));
       double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      std::cout << "[" << count << "]" << "error=" << error << std::endl;
+      arma::mat output(vocabSize, batchSize);
+      model->Forward(input, output);
+      output.print("output " + std::to_string(count));
       model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      gradient.print("gradient " + std::to_string(count));
       return error;
     }
 
@@ -230,7 +277,8 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
     const size_t nHeads;
     const size_t vocabSize;
     const size_t batchSize;
+    size_t count;
   } function;
 
-  REQUIRE(CheckGradient(function) <= 3e-06);
+  REQUIRE(_CheckGradient(function) <= 3e-06);
 }
