@@ -161,10 +161,7 @@ Types of each argument are the same as in the table for constructors
 ### Classification
 
 Once a `RandomForest` is trained, the `Classify()` member function can be used
-to make class predictions for new data.  Parameters are detailed in the
-[Classification Parameters](#classification-parameters) section below.
-
-#### Forms:
+to make class predictions for new data.
 
  * `size_t predictedClass = rf.Classify(point)`
    - ***(Single-point)***
