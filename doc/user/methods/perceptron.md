@@ -24,7 +24,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-Perceptron p;                         // Step 1: create model.
+mlpack::Perceptron p;                 // Step 1: create model.
 p.Train(dataset, labels, 5);          // Step 2: train model.
 arma::Row<size_t> predictions;
 p.Classify(testDataset, predictions); // Step 3: classify points.
@@ -214,7 +214,7 @@ arma::Row<size_t> labels;
 data::Load("iris.labels.csv", labels, true);
 
 // Create a Perceptron object.
-Perceptron p;
+mlpack::Perceptron p;
 // Set the maximum number of iterations to 100.  (This can also be done in the
 // constructor.)
 p.MaxIterations() = 100;
@@ -242,7 +242,7 @@ std::cout << "Training set accuracy after 350 iterations: "
 Load a saved perceptron from disk and print information about it.
 
 ```c++
-Perceptron p;
+mlpack::Perceptron p;
 // This call assumes a perceptron called "p" has already been saved to
 // `perceptron.bin` with `data::Save()`.
 data::Load("perceptron.bin", "p", p, true);
@@ -376,8 +376,8 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.  Weights will be initialized randomly.
-Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization> p(dataset,
-    labels, 5);
+mlpack::Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization> p(
+    dataset, labels, 5);
 
 // Create test data (500 points).
 arma::mat testDataset(10, 500, arma::fill::randu);
@@ -404,7 +404,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-Perceptron p(dataset, labels, 5);
+mlpack::Perceptron p(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::sp_fmat testDataset;

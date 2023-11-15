@@ -22,7 +22,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-AdaBoost ab;                           // Step 1: create model.
+mlpack::AdaBoost ab;                   // Step 1: create model.
 ab.Train(dataset, labels, 5);          // Step 2: train model.
 arma::Row<size_t> predictions;
 ab.Classify(testDataset, predictions); // Step 3: classify points.
@@ -233,7 +233,7 @@ data::Load("iris.csv", dataset, true);
 arma::Row<size_t> labels;
 data::Load("iris.labels.csv", labels, true);
 
-AdaBoost ab;
+mlpack::AdaBoost ab;
 // Train with a custom number of perceptron iterations, and custom AdaBoost
 // parameters.
 ab.Train(dataset, labels, 3, 75 /* maximum number of weak learners */,
@@ -263,7 +263,7 @@ data::Load("iris.csv", dataset, true);
 arma::Row<size_t> labels;
 data::Load("iris.labels.csv", dataset, true);
 
-AdaBoost ab;
+mlpack::AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
 ab.Tolerance() = 1e-4; // Set a custom tolerance for convergence.
 
@@ -280,7 +280,7 @@ Load an AdaBoost model and print some information about it.
 
 ```c++
 // Load a saved model named "adaboost_model" from `adaboost_model.bin`.
-AdaBoost ab;
+mlpack::AdaBoost ab;
 data::Load("adaboost_model.bin", "adaboost_model", ab, true);
 
 std::cout << "Details about the model in `adaboost_model.bin`:" << std::endl;
@@ -404,7 +404,7 @@ arma::Row<size_t> labels =
 // hyperparameters for the decision stump (these could be omitted).  See the
 // DecisionTree documentation for more details on the ID3DecisionStump-specific
 // hyperparameters.
-AdaBoost<ID3DecisionStump> ab(dataset, labels, 5,
+mlpack::AdaBoost<ID3DecisionStump> ab(dataset, labels, 5,
     25 /* maximum number of decision stumps */,
     1e-6 /* tolerance for convergence of AdaBoost */,
     /** Hyperparameters specific to ID3DecisionStump: **/
@@ -438,7 +438,7 @@ arma::Row<size_t> labels =
 // The weak learner type is now a floating-point Perceptron.
 typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, arma::fmat>
     PerceptronType;
-AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
+mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
