@@ -21,7 +21,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
 
-DecisionTree<> tree;                     // Step 1: create model.
+mlpack::DecisionTree tree;               // Step 1: create model.
 tree.Train(dataset, labels, 5);          // Step 2: train model.
 arma::Row<size_t> predictions;
 tree.Classify(testDataset, predictions); // Step 3: classify points.
@@ -107,8 +107,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 ### Training
 
 If training is not done as part of the constructor call, it can be done with one
-of the versions of the `Train()` member function.  For an instance of
-`DecisionTree` named `tree`, the following functions for training are available:
+of the following versions of the `Train()` member function:
 
  * `tree.Train(data, labels, numClasses,          minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
  * `tree.Train(data, labels, numClasses, weights, minLeafSize=10, minGainSplit=1e-7, maxDepth=0)`
@@ -232,7 +231,7 @@ arma::Row<size_t> labels;
 data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the tree.
-DecisionTree<> tree;
+mlpack::DecisionTree tree;
 // Train on the given dataset, specifying a minimum leaf size of 5.
 tree.Train(dataset, info, labels, 7 /* classes */, 5 /* minimum leaf size */);
 
@@ -259,7 +258,7 @@ std::cout << "Class probabilities of second test point: " <<
 Load a tree and print some information about it.
 
 ```c++
-DecisionTree<> tree;
+mlpack::DecisionTree tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
 data::Load("tree.bin", "tree", tree, true);
@@ -298,7 +297,7 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.
-DecisionTree<> tree(dataset, labels, 5);
+mlpack::DecisionTree tree(dataset, labels, 5);
 
 // Create test data (500 points).
 arma::fmat testDataset(10, 500, arma::fill::randu);
@@ -315,7 +314,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### Fully custom behavior.
 
-The `DecisionTree<>` class also supports several template parameters, which can
+The `DecisionTree` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
 
@@ -549,7 +548,7 @@ class CustomCategoricalSplit
     - By default each random subset is of size `sqrt(d)` where `d` is the number
       of dimensions in the data.
     - If constructed as `MultipleRandomDimensionSelect(n)` and passed to the
-      constructor of `DecisionTree<>` or the `Train()` function, each random
+      constructor of `DecisionTree` or the `Train()` function, each random
       subset will be of size `n`.
  * Each `DecisionTree` [constructor](#constructors) and each version of the
    [`Train()`](#training) function optionally accept an instantiated
