@@ -236,13 +236,6 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
                                      attnMask, keyPaddingMask);
       model->Add<Linear>(vocabSize);
       model->Add<LogSoftMax>();
-      model->Reset();
-
-      arma::mat output(vocabSize, batchSize);
-      model->Forward(input, output);
-      input.print("input");
-      output.print("initial output");
-      count = 0;
     }
 
     ~GradientFunction()
@@ -252,16 +245,8 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 
     double Gradient(arma::mat& gradient)
     {
-      ++count;
-      std::cout << "[" << count << "]" << "Evaluating gradient" << std::endl;
-      model->Parameters().print("parameters " + std::to_string(count));
       double error = model->Evaluate(model->Parameters(), 0, batchSize);
-      std::cout << "[" << count << "]" << "error=" << error << std::endl;
-      arma::mat output(vocabSize, batchSize);
-      model->Forward(input, output);
-      output.print("output " + std::to_string(count));
       model->Gradient(model->Parameters(), 0, gradient, batchSize);
-      gradient.print("gradient " + std::to_string(count));
       return error;
     }
 
