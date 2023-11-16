@@ -247,7 +247,7 @@ class MultiheadAttentionType : public Layer<MatType>
         1);
     this->outputDimensions[0] = embedDim;
     this->outputDimensions[1] = tgtSeqLen;
-    for (size_t i=2; i<this->outputDimensions.size(); i++)
+    for (size_t i = 2; i < this->outputDimensions.size(); i++)
     {
       this->outputDimensions[i] = this->inputDimensions[i];
       if (this->outputDimensions[1] % this->inputDimensions[i] != 0)
