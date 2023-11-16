@@ -1,7 +1,7 @@
 /**
  * @file methods/ann/layer/multihead_attention_impl.hpp
  * @author Mrityunjay Tripathi
- * * @author Adam Kropp
+ * @author Adam Kropp
 
  * Implementation of the MultiheadAttention class.
  *

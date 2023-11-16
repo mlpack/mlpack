@@ -205,7 +205,7 @@ class MultiheadAttentionType : public Layer<MatType>
       // all come from the same values
       // also, srcSeqLen must == tgtSeqLen
       srcSeqLen = this->inputDimensions[1];
-      for (size_t i=2; i<this->inputDimensions.size(); i++)
+      for (size_t i = 2; i < this->inputDimensions.size(); i++)
       {
         srcSeqLen *= this->inputDimensions[i];
       }
@@ -223,7 +223,7 @@ class MultiheadAttentionType : public Layer<MatType>
       // key = srcSeqLen
       // value = srcSeqLen
       size_t len = this->inputDimensions[1];
-      for (size_t i=2; i<this->inputDimensions.size(); i++)
+      for (size_t i = 2; i < this->inputDimensions.size(); i++)
       {
         len *= this->inputDimensions[i];
       }
@@ -247,7 +247,7 @@ class MultiheadAttentionType : public Layer<MatType>
         1);
     this->outputDimensions[0] = embedDim;
     this->outputDimensions[1] = tgtSeqLen;
-    for (size_t i=2; i<this->outputDimensions.size(); i++)
+    for (size_t i = 2; i < this->outputDimensions.size(); i++)
     {
       this->outputDimensions[i] = this->inputDimensions[i];
       if (this->outputDimensions[1] % this->inputDimensions[i] != 0)
