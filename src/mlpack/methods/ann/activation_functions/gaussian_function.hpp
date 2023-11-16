@@ -1,6 +1,7 @@
 /**
  * @file gaussian_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of the gaussian function.
  *

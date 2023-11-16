@@ -2,6 +2,7 @@
  * @file tests/layer/multihead_attention.cpp
  * @author Marcus Edel
  * @author Praveen Ch
+ * @author Adam Kropp
  *
  * Tests the multihead_attention layer.
  *
@@ -156,43 +157,6 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
   }
 }
 
-
-// Simple numerical gradient checker.
-template<class FunctionType>
-double _CheckGradient(FunctionType& function, const double eps = 1e-7)
-{
-  // Get gradients for the current parameters.
-  arma::mat orgGradient, gradient, estGradient;
-  function.Gradient(orgGradient);
-
-  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
-
-  // Compute numeric approximations to gradient.
-  for (size_t i = 0; i < orgGradient.n_elem; ++i)
-  {
-    double tmp = function.Parameters()(i);
-
-    // Perturb parameter with a positive constant and get costs.
-    function.Parameters()(i) += eps;
-    double costPlus = function.Gradient(gradient);
-
-    // Perturb parameter with a negative constant and get costs.
-    function.Parameters()(i) -= (2 * eps);
-    double costMinus = function.Gradient(gradient);
-
-    // Restore the parameter value.
-    function.Parameters()(i) = tmp;
-
-    // Compute numerical gradients using the costs calculated above.
-    estGradient(i) = (costPlus - costMinus) / (2 * eps);
-    std::cout << "CheckGradient[" << i << "] costPlus=" << costPlus << ", costMinus=" << costMinus << ", est[" << i << "]=" << estGradient(i) << std::endl;
-  }
-
-  // Estimate error of gradient.
-  return arma::norm(orgGradient - estGradient) /
-         arma::norm(orgGradient + estGradient);
-}
-
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
@@ -265,5 +229,5 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
     size_t count;
   } function;
 
-  REQUIRE(_CheckGradient(function) <= 3e-06);
+  REQUIRE(CheckGradient(function) <= 3e-06);
 }

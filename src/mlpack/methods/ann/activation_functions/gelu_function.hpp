@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/gelu_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of the Gaussian Error Linear Unit (GELU)
  * function.

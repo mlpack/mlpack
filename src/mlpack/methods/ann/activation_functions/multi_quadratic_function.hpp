@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/multi_quadratic_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of multi quadratic function.
  *

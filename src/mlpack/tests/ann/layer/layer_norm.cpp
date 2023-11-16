@@ -2,6 +2,7 @@
  * @file tests/layer/layer_norm.cpp
  * @author Marcus Edel
  * @author Praveen Ch
+ * @author Adam Kropp
  *
  * Tests the multihead_attention layer.
  *

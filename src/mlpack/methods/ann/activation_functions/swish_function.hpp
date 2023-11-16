@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/swish_function.hpp
  * @author Vivek Pal
+ * @author Adam Kropp
  *
  * Definition and implementation of the Swish function as described by
  * Prajit Ramachandran, Barret Zoph & Quoc V. Le
@@ -95,9 +96,9 @@ class SwishFunction
                     DerivVecType& dy)
   {
     dy = (y / x) % (1.0 + x - y);
-    dy(arma::find(x == 0)).fill(0.5);
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0.5)
+    dy(arma::find(x == 0)).fill(0.5);
   }
 }; // class SwishFunction
 

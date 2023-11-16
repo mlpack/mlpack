@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/spline_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of Spline function.
  *
@@ -75,6 +76,8 @@ class SplineFunction
                     DerivVecType& dy)
   {
     dy = 2 * y / x + arma::pow(x, 2) / (1 + x);
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= 0)
     dy(arma::find(x == 0)).zeros();
   }
 }; // class SplineFunction

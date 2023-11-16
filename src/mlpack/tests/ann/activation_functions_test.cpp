@@ -2,6 +2,7 @@
  * @file tests/activation_functions_test.cpp
  * @author Marcus Edel
  * @author Dhawal Arora
+ * @author Adam Kropp
  *
  * Tests for the various activation functions.
  *

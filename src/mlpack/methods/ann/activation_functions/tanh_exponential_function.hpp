@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/tanh_exponential_function.hpp
  * @author Mayank Raj
+ * @author Adam Kropp
  *
  * Definition and implementation of the Tanh exponential  function.
  *
@@ -92,6 +93,8 @@ class TanhExpFunction
   {
     // leverage both y and x
     dy = y / x + x % arma::exp(x) % (1 - arma::pow(y / x, 2));
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= tanh(1))
     dy(arma::find(x == 0)).fill(std::tanh(1));
   }
 }; // class TanhExpFunction
