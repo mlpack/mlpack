@@ -223,7 +223,7 @@ class MultiheadAttentionType : public Layer<MatType>
       // key = srcSeqLen
       // value = srcSeqLen
       size_t len = this->inputDimensions[1];
-      for (size_t i=2; i<this->inputDimensions.size(); i++)
+      for (size_t i = 2; i < this->inputDimensions.size(); i++)
       {
         len *= this->inputDimensions[i];
       }
