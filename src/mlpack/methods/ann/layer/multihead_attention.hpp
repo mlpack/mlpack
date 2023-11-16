@@ -205,7 +205,7 @@ class MultiheadAttentionType : public Layer<MatType>
       // all come from the same values
       // also, srcSeqLen must == tgtSeqLen
       srcSeqLen = this->inputDimensions[1];
-      for (size_t i=2; i<this->inputDimensions.size(); i++)
+      for (size_t i = 2; i < this->inputDimensions.size(); i++)
       {
         srcSeqLen *= this->inputDimensions[i];
       }
