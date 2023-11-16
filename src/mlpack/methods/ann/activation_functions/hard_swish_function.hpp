@@ -104,7 +104,7 @@ class HardSwishFunction
    */
   template <typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType &x,
-                    const OutputVecType & y,
+                    const OutputVecType& y,
                     DerivVecType &dy)
   {
     dy.set_size(size(x));
