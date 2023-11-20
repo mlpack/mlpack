@@ -136,8 +136,7 @@ TEST_CASE("LRWithOptimizerCallback", "[CallbackTest]")
   ens::StandardSGD sgd(0.1, 1, 5);
   LogisticRegression<> logisticRegression(data, responses, sgd, 0.001);
   std::stringstream stream;
-  logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
-                                             ens::PrintLoss(stream));
+  logisticRegression.Train(data, responses, sgd, ens::PrintLoss(stream));
 
   REQUIRE(stream.str().length() > 0);
 }
