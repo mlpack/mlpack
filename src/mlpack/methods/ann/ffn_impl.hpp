@@ -253,7 +253,7 @@ void FFN<
   else if (inputDimensions.size() > 0)
   {
     size_t inputDim = inputDimensions[0];
-    for (size_t i=1; i<inputDimensions.size(); i++) {
+    for (size_t i = 1; i < inputDimensions.size(); i++)
       inputDim *= inputDimensions[i];
     CheckNetwork("FFN::Reset()", inputDim, true, false);
   }
