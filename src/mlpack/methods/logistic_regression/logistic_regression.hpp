@@ -62,10 +62,13 @@ class LogisticRegression
    * @param responses Outputs resulting from input training variables.
    * @param lambda L2-regularization parameter.
    */
-  template<typename... CallbackTypes>
+  template<typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
-                     const double lambda = 0,
+                     const double lambda = 0.0,
                      CallbackTypes&&... callbacks);
 
   /**
@@ -83,11 +86,14 @@ class LogisticRegression
    * @param callbacks Instantiated ensmallen callbacks fro the default optimizer
    *     (L-BFGS).
    */
-  template<typename... CallbackTypes>
+  template<typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      const arma::rowvec& initialPoint,
-                     const double lambda = 0,
+                     const double lambda = 0.0,
                      CallbackTypes&&... callbacks);
 
   /**
@@ -105,11 +111,18 @@ class LogisticRegression
    * @param callbacks Instantiated ensmallen callbacks fro the default optimizer
    *     (L-BFGS).
    */
-  template<typename OptimizerType, typename... CallbackTypes>
+  template<typename OptimizerType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      OptimizerType& optimizer,
-                     const double lambda,
+                     const double lambda = 0.0,
                      CallbackTypes&&... callbacks);
 
   /**
@@ -128,12 +141,19 @@ class LogisticRegression
    * @param callbacks Instantiated ensmallen callbacks fro the default optimizer
    *     (L-BFGS).
    */
-  template<typename OptimizerType, typename... CallbackTypes>
+  template<typename OptimizerType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      OptimizerType& optimizer,
                      const arma::rowvec& initialPoint,
-                     const double lambda,
+                     const double lambda = 0.0,
                      CallbackTypes&&... callbacks);
 
   /**
@@ -153,7 +173,11 @@ class LogisticRegression
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
+  template<typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   double Train(const MatType& predictors,
                const arma::Row<size_t>& responses,
                CallbackTypes&&... callbacks);
@@ -176,7 +200,11 @@ class LogisticRegression
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
+  template<typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   double Train(const MatType& predictors,
                const arma::Row<size_t>& responses,
                const double lambda,
@@ -200,7 +228,14 @@ class LogisticRegression
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType, typename... CallbackTypes>
+  template<typename OptimizerType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   double Train(const MatType& predictors,
                const arma::Row<size_t>& responses,
                OptimizerType& optimizer,
@@ -225,7 +260,14 @@ class LogisticRegression
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType, typename... CallbackTypes>
+  template<typename OptimizerType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   double Train(const MatType& predictors,
                const arma::Row<size_t>& responses,
                OptimizerType& optimizer,
@@ -317,6 +359,13 @@ class LogisticRegression
   mlpack_deprecated /* to be removed in mlpack 5.0.0 */
   void Classify(const MatType& dataset,
                 arma::mat& probabilities) const;
+
+  /**
+   * Reset the weights in the model to zeros.  This function can be used between
+   * calls to Train(), to force learning of a new model instead of incremental
+   * training.
+   */
+  void Reset();
 
   /**
    * Compute the accuracy of the model on the given predictors and responses,

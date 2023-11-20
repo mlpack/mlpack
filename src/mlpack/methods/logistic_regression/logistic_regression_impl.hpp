@@ -21,28 +21,6 @@ namespace mlpack {
 
 template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
-    const double lambda) :
-    lambda(lambda)
-{
-  Train(predictors, responses);
-}
-
-template<typename MatType>
-LogisticRegression<MatType>::LogisticRegression(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
-    const arma::rowvec& initialPoint,
-    const double lambda) :
-    parameters(initialPoint),
-    lambda(lambda)
-{
-  Train(predictors, responses);
-}
-
-template<typename MatType>
-LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
     parameters(arma::rowvec(dimensionality + 1, arma::fill::zeros)),
@@ -52,30 +30,84 @@ LogisticRegression<MatType>::LogisticRegression(
 }
 
 template<typename MatType>
-template<typename OptimizerType>
+template<typename... CallbackTypes, typename>
+LogisticRegression<MatType>::LogisticRegression(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    const double lambda,
+    CallbackTypes&&... callbacks) :
+    lambda(lambda)
+{
+  Train(predictors, responses, callbacks...);
+}
+
+template<typename MatType>
+template<typename... CallbackTypes, typename>
+LogisticRegression<MatType>::LogisticRegression(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    const arma::rowvec& initialPoint,
+    const double lambda,
+    CallbackTypes&&... callbacks) :
+    parameters(initialPoint),
+    lambda(lambda)
+{
+  Train(predictors, responses, callbacks...);
+}
+
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
-    const double lambda) :
+    const double lambda,
+    CallbackTypes&&... callbacks) :
     lambda(lambda)
 {
-  Train(predictors, responses, optimizer);
+  Train(predictors, responses, optimizer, callbacks...);
 }
 
 template<typename MatType>
-template<typename OptimizerType, typename... CallbackTypes>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+LogisticRegression<MatType>::LogisticRegression(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    OptimizerType& optimizer,
+    const arma::rowvec& initialPoint,
+    const double lambda,
+    CallbackTypes&&... callbacks) :
+    lambda(lambda)
+{
+  Train(predictors, responses, optimizer, callbacks...);
+}
+
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename>
 double LogisticRegression<MatType>::Train(
-        const MatType& predictors,
-        const arma::Row<size_t>& responses,
-        CallbackTypes&&... callbacks)
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
   return Train(predictors, responses, optimizer, callbacks...);
 }
 
 template<typename MatType>
-template<typename OptimizerType, typename... CallbackTypes>
+template<typename OptimizerType, typename... CallbackTypes, typename>
+double LogisticRegression<MatType>::Train(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    const double lambda,
+    CallbackTypes&&... callbacks)
+{
+  this->lambda = lambda;
+  OptimizerType optimizer;
+  return Train(predictors, responses, optimizer, callbacks...);
+}
+
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
 double LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
@@ -99,6 +131,19 @@ double LogisticRegression<MatType>::Train(
 }
 
 template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+double LogisticRegression<MatType>::Train(
+    const MatType& predictors,
+    const arma::Row<size_t>& responses,
+    OptimizerType& optimizer,
+    const double lambda,
+    CallbackTypes&&... callbacks)
+{
+  this->lambda = lambda;
+  return Train(predictors, responses, optimizer, callbacks...);
+}
+
+template<typename MatType>
 template<typename VecType>
 size_t LogisticRegression<MatType>::Classify(const VecType& point,
                                              const double decisionBoundary)
@@ -107,6 +152,23 @@ size_t LogisticRegression<MatType>::Classify(const VecType& point,
   return size_t(1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
       parameters.tail_cols(parameters.n_elem - 1)))) +
       (1.0 - decisionBoundary));
+}
+
+template<typename MatType>
+template<typename VecType>
+void LogisticRegression<MatType>::Classify(const VecType& point,
+                                           size_t& prediction,
+                                           arma::vec& probabilities,
+                                           const double decisionBoundary) const
+{
+  const double logit = 1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
+      parameters.tail_cols(parameters.n_elem - 1))));
+
+  probabilities.set_size(2);
+  probabilities[0] = (1 - logit);
+  probabilities[1] = logit;
+
+  prediction = (size_t) (logit + (1.0 - decisionBoundary));
 }
 
 template<typename MatType>
@@ -123,6 +185,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
 }
 
 template<typename MatType>
+mlpack_deprecated
 void LogisticRegression<MatType>::Classify(const MatType& dataset,
                                            arma::mat& probabilities) const
 {
@@ -132,6 +195,31 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
   probabilities.row(1) = 1.0 / (1.0 + arma::exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset));
   probabilities.row(0) = 1.0 - probabilities.row(1);
+}
+
+template<typename MatType>
+void LogisticRegression<MatType>::Classify(const MatType& dataset,
+                                           arma::Row<size_t>& predictions,
+                                           arma::mat& probabilities,
+                                           const double decisionBoundary) const
+{
+  // Set correct sizes for outputs.
+  predictions.set_size(dataset.n_cols);
+  probabilities.set_size(2, dataset.n_cols);
+
+  probabilities.row(1) = 1.0 / (1.0 + arma::exp(-parameters(0) -
+      parameters.tail_cols(parameters.n_elem - 1) * dataset));
+  probabilities.row(0) = 1.0 - probabilities.row(1);
+
+  predictions = arma::conv_to<arma::Row<size_t>>::from(probabilities.row(1) +
+      (1.0 - decisionBoundary));
+}
+
+template<typename MatType>
+void LogisticRegression<MatType>::Reset()
+{
+  // Zero out parameters vector.
+  parameters.zeros();
 }
 
 template<typename MatType>
