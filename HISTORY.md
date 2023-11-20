@@ -13,7 +13,8 @@
 
   * Adapt MultiheadAttention and LayerNorm to new Layer interface (#3547)
 
-  * Inconsistent use of the "input" parameter to the Backward method in ANNs (#3551)
+  * Fix inconsistent use of the "input" parameter to the Backward method in ANNs
+    (#3551).
 
 ### mlpack 4.2.1
 ###### 2023-09-05
