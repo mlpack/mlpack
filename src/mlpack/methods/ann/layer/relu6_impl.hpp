@@ -84,7 +84,10 @@ void ReLU6Type<MatType>::Forward(
 
 template<typename MatType>
 void ReLU6Type<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   #pragma omp for
   for (size_t i = 0; i < input.n_elem; ++i)

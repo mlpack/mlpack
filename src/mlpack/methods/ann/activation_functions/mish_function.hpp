@@ -67,28 +67,32 @@ class MishFunction
   /**
    * Computes the first derivative of the Mish function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return std::exp(y) * (4 * (y + 1) + std::exp(y) * (4 * y + 6) +
-           4 * std::exp(2 * y) + std::exp(3 * y)) /
-           std::pow(std::exp(2 * y) + 2 * std::exp(y) + 2, 2);
+    return std::exp(x) * (4 * (x + 1) + std::exp(x) * (4 * x + 6) +
+           4 * std::exp(2 * x) + std::exp(3 * x)) /
+           std::pow(std::exp(2 * x) + 2 * std::exp(x) + 2, 2);
   }
 
   /**
    * Computes the first derivatives of the Mish function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y, OutputVecType &x)
+  template <typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
-    x = arma::exp(y) % (4 * (y + 1) + arma::exp(y) % (4 * y + 6) +
-        4 * arma::exp(2 * y) + arma::exp(3 * y)) /
-        arma::pow(arma::exp(2 * y) + 2 * arma::exp(y) + 2, 2);
+    dy = arma::exp(x) % (4 * (x + 1) + arma::exp(x) % (4 * x + 6) +
+        4 * arma::exp(2 * x) + arma::exp(3 * x)) /
+        arma::pow(arma::exp(2 * x) + 2 * arma::exp(x) + 2, 2);
   }
 }; // class MishFunction
 

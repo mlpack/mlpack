@@ -47,7 +47,7 @@ class LeakyReLUType : public Layer<MatType>
    *
    * @param alpha Non zero gradient.
    */
-  LeakyReLUType(const double alpha = 0.03);
+  LeakyReLUType(const typename MatType::elem_type alpha = 0.03);
 
   //! Clone the LeakyReLUType object. This handles polymorphism correctly.
   LeakyReLUType* Clone() const { return new LeakyReLUType(*this); }
@@ -78,16 +78,20 @@ class LeakyReLUType : public Layer<MatType>
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input, const MatType& gy, MatType& g);
+  void Backward(const MatType& input,
+                const MatType& /* output */,
+                const MatType& gy,
+                MatType& g);
 
   //! Get the non zero gradient.
-  double const& Alpha() const { return alpha; }
+  typename MatType::elem_type const& Alpha() const { return alpha; }
   //! Modify the non zero gradient.
-  double& Alpha() { return alpha; }
+  typename MatType::elem_type& Alpha() { return alpha; }
 
   //! Serialize the layer.
   template<typename Archive>
@@ -95,7 +99,7 @@ class LeakyReLUType : public Layer<MatType>
 
  private:
   //! Leakyness Parameter in the range 0 <alpha< 1
-  double alpha;
+  typename MatType::elem_type alpha;
 }; // class LeakyReLUType
 
 // Convenience typedefs.

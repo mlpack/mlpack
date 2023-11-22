@@ -42,7 +42,7 @@ TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
 
   // Test the Backward function.
   delta.set_size(5, 1);
-  module.Backward(input, output, delta);
+  module.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 5);
 }
 

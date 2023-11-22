@@ -273,13 +273,14 @@ void BatchNormType<MatType>::Forward(
 
 template<typename MatType>
 void BatchNormType<MatType>::Backward(
-    const MatType& input,
+    const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  const size_t batchSize = input.n_cols;
+  const size_t batchSize = gy.n_cols;
   const size_t inputSize = inputDimension;
   const size_t m = inputSize * batchSize * higherDimension;
 

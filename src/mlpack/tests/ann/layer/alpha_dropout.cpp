@@ -49,7 +49,7 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
 
   // Test the Backward function when training phase.
   arma::mat delta;
-  module.Backward(input, input, delta);
+  module.Backward(input, output, input, delta);
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - 0)) <= 0.1);
 
   // Test the Forward function when testing phase.

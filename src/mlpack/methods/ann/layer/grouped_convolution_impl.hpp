@@ -388,7 +388,10 @@ void GroupedConvolutionType<
     GradientConvolutionRule,
     MatType
 >::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   arma::Cube<typename MatType::elem_type> mappedError;
   MakeAlias(mappedError, ((MatType&) gy).memptr(), this->outputDimensions[0],
@@ -535,7 +538,7 @@ void GroupedConvolutionType<
   arma::Cube<typename MatType::elem_type> tempCube;
   MakeAlias(tempCube, temp.memptr(), apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
-  paddingBackward.Backward(input, usingPadding ? inputPadded : input, temp);
+  paddingBackward.Backward(input, {} /* unused */, usingPadding ? inputPadded : input, temp);
 
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
@@ -612,7 +615,7 @@ void GroupedConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = Padding(padWLeft, padWRight, padHTop, padHBottom);
+  padding = PaddingType<MatType>(padWLeft, padWRight, padHTop, padHBottom);
   padding.InputDimensions() = this->inputDimensions;
   padding.ComputeOutputDimensions();
 
@@ -650,7 +653,7 @@ void GroupedConvolutionType<
   apparentHeight = (this->outputDimensions[1] - 1) * strideHeight + 
       kernelHeight;
 
-  paddingBackward = Padding(0, padding.OutputDimensions()[0] -
+  paddingBackward = PaddingType<MatType>(0, padding.OutputDimensions()[0] -
       apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
   paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
       apparentHeight, inMaps * higherInDimensions });

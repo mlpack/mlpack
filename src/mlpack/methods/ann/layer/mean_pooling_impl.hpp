@@ -129,6 +129,7 @@ void MeanPoolingType<MatType>::Forward(
 template<typename MatType>
 void MeanPoolingType<MatType>::Backward(
   const MatType& input,
+  const MatType& /* output */,
   const MatType& gy,
   MatType& g)
 {
@@ -376,7 +377,7 @@ void MeanPoolingType<MatType>::Unpooling(
           rowEnd = output.n_rows - 1;
         }
 
-        arma::mat OutputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));
+        MatType OutputArea = output(arma::span(i, rowEnd), arma::span(j, colEnd));
 
         unpooledError = arma::Mat<typename MatType::elem_type>(OutputArea.n_rows, OutputArea.n_cols);
         unpooledError.fill(error(rowidx, colidx) / OutputArea.n_elem);

@@ -77,6 +77,7 @@ void AddType<MatType>::Forward(const MatType& input, MatType& output)
 template<typename MatType>
 void AddType<MatType>::Backward(
     const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {

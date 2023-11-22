@@ -110,7 +110,7 @@ void ReparametrizationType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   OutputType tmp;
-  SoftplusFunction::Deriv(preStdDev, tmp);
+  SoftplusFunction::Deriv(preStdDev, stdDev, tmp);
 
   if (includeKl)
   {
