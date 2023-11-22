@@ -312,7 +312,7 @@ class LogisticRegression
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                arma::vec& probabilities,
+                arma::rowvec& probabilities,
                 const double decisionBoundary = 0.5) const;
 
   /**
