@@ -111,4 +111,38 @@ struct IsVector<arma::subview_row<eT> >
 
 #endif
 
+// Get the row vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetRowType
+{
+  typedef MatType type; // Not sure...
+};
+
+template<typename eT>
+struct GetRowType<arma::Mat<eT>>
+{
+  typedef arma::Row<eT> type;
+};
+
+template<typename eT>
+struct GetRowType<arma::SpMat<eT>>
+{
+  typedef arma::SpRow<eT> type;
+};
+
+// Get the dense row vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetDenseRowType
+{
+  typedef typename GetRowType<MatType>::type type;
+};
+
+template<typename eT>
+struct GetDenseRowType<arma::SpMat<eT>>
+{
+  typedef arma::Row<eT> type;
+};
+
 #endif

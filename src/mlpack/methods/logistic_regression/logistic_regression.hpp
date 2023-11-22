@@ -37,6 +37,9 @@ template<typename MatType = arma::mat>
 class LogisticRegression
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+  typedef typename GetDenseRowType<MatType>::type RowType;
+
   /**
    * Construct the LogisticRegression class without performing any training.
    * The dimensionality of the data (which will be used to set the size of the
@@ -92,7 +95,7 @@ class LogisticRegression
            >::value>::type>
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
-                     const arma::rowvec& initialPoint,
+                     const RowType& initialPoint,
                      const double lambda = 0.0,
                      CallbackTypes&&... callbacks);
 
@@ -152,7 +155,7 @@ class LogisticRegression
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      OptimizerType& optimizer,
-                     const arma::rowvec& initialPoint,
+                     const RowType& initialPoint,
                      const double lambda = 0.0,
                      CallbackTypes&&... callbacks);
 
@@ -275,9 +278,9 @@ class LogisticRegression
                CallbackTypes&&... callbacks);
 
   //! Return the parameters (the b vector).
-  const arma::rowvec& Parameters() const { return parameters; }
+  const RowType& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
-  arma::rowvec& Parameters() { return parameters; }
+  RowType& Parameters() { return parameters; }
 
   //! Return the lambda value for L2-regularization.
   const double& Lambda() const { return lambda; }
@@ -312,7 +315,7 @@ class LogisticRegression
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                arma::rowvec& probabilities,
+                RowType& probabilities,
                 const double decisionBoundary = 0.5) const;
 
   /**
@@ -402,7 +405,7 @@ class LogisticRegression
 
  private:
   //! Vector of trained parameters (size: dimensionality plus one).
-  arma::rowvec parameters;
+  RowType parameters;
   //! L2-regularization penalty parameter.
   double lambda;
 };

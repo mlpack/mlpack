@@ -23,10 +23,11 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
-    parameters(arma::rowvec(dimensionality + 1, arma::fill::zeros)),
+    parameters(dimensionality + 1),
     lambda(lambda)
 {
   // No training to do here.
+  parameters.zeros();
 }
 
 template<typename MatType>
@@ -46,7 +47,7 @@ template<typename... CallbackTypes, typename>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
-    const arma::rowvec& initialPoint,
+    const LogisticRegression<MatType>::RowType& initialPoint,
     const double lambda,
     CallbackTypes&&... callbacks) :
     parameters(initialPoint),
@@ -75,9 +76,10 @@ LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
-    const arma::rowvec& initialPoint,
+    const LogisticRegression<MatType>::RowType& initialPoint,
     const double lambda,
     CallbackTypes&&... callbacks) :
+    parameters(initialPoint),
     lambda(lambda)
 {
   Train(predictors, responses, optimizer,
@@ -123,7 +125,7 @@ double LogisticRegression<MatType>::Train(
 
   // Set size of parameters vector according to the input data received.
   if (parameters.n_elem != predictors.n_rows + 1)
-    parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
+    parameters.zeros(predictors.n_rows + 1);
 
   const double out = optimizer.Optimize(errorFunction, parameters,
       callbacks...);
@@ -161,10 +163,11 @@ size_t LogisticRegression<MatType>::Classify(const VecType& point,
 
 template<typename MatType>
 template<typename VecType>
-void LogisticRegression<MatType>::Classify(const VecType& point,
-                                           size_t& prediction,
-                                           arma::rowvec& probabilities,
-                                           const double decisionBoundary) const
+void LogisticRegression<MatType>::Classify(
+    const VecType& point,
+    size_t& prediction,
+    LogisticRegression<MatType>::RowType& probabilities,
+    const double decisionBoundary) const
 {
   const double logit = 1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
       parameters.tail_cols(parameters.n_elem - 1))));
