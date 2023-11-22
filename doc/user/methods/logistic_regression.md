@@ -265,8 +265,8 @@ std::cout << "Objective on test set:     "
 ---
 
 Train a logistic regression model with SGD and save the model every epoch using
-a custom ensmallen callback.  This requires a
-[custom callback](https://www.ensmallen.org/docs.html#custom-callbacks):
+a [custom ensmallen
+callback](https://www.ensmallen.org/docs.html#custom-callbacks):
 
 ```c++
 // This callback saves the model into "model-<epoch>.bin" after every epoch.
@@ -380,7 +380,7 @@ control the element type of the model.  The full signature of the class is:
 LogisticRegression<MatType>
 ```
 
-`MatType` specifies the type of matrix used for learning and internal
+`MatType` specifies the type of matrix used for training data and internal
 representation of model parameters.  Any matrix type that implements the
 Armadillo API can be used.  The example below trains a logistic regression model
 on sparse 32-bit floating point data.
@@ -412,4 +412,4 @@ std::cout << "Class probabilities for random test point: "
 ***Note***: if `MatType` is a sparse object (e.g. `sp_fmat`), the internal
 parameter representation will be a *dense* vector containing elements of the
 same type (e.g. `frowvec`).  This is because L2-regularized logistic regression,
-even on sparse data, does not necessarily produce sparse models.
+even when training on sparse data, does not necessarily produce sparse models.
