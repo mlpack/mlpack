@@ -1113,7 +1113,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 
   // Specify data and labels and initial point and lambda, and optionally
   // callbacks.
-  arma::rowvec initialPoint(50, 1, arma::fill::randu); // TODO: fix type
+  arma::Row<typename MatType::elem_type> initialPoint(50, 1, arma::fill::randu);
   LogisticRegression<MatType> lr5(data, labels, initialPoint, 0.1);
   LogisticRegression<MatType> lr6(data, labels, initialPoint, 0.1,
       ens::EarlyStopAtMinLoss());
