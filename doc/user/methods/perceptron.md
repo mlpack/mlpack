@@ -205,10 +205,10 @@ Train a perceptron multiple times, incrementally, with custom hyperparameters.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-data::Load("iris.csv", dataset, true);
+mlpack::data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris.labels.csv", labels, true);
+mlpack::data::Load("iris.labels.csv", labels, true);
 
 // Create a Perceptron object.
 mlpack::Perceptron p;
@@ -242,7 +242,7 @@ Load a saved perceptron from disk and print information about it.
 mlpack::Perceptron p;
 // This call assumes a perceptron called "p" has already been saved to
 // `perceptron.bin` with `data::Save()`.
-data::Load("perceptron.bin", "p", p, true);
+mlpack::data::Load("perceptron.bin", "p", p, true);
 
 if (p.NumClasses() > 0)
 {

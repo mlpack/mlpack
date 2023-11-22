@@ -225,10 +225,10 @@ Train an AdaBoost model using the hyperparameters from an existing weak learner.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-data::Load("iris.csv", dataset, true);
+mlpack::data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris.labels.csv", labels, true);
+mlpack::data::Load("iris.labels.csv", labels, true);
 
 mlpack::AdaBoost ab;
 // Train with a custom number of perceptron iterations, and custom AdaBoost
@@ -255,10 +255,10 @@ trained model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-data::Load("iris.csv", dataset, true);
+mlpack::data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-data::Load("iris.labels.csv", dataset, true);
+mlpack::data::Load("iris.labels.csv", dataset, true);
 
 mlpack::AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
@@ -268,7 +268,7 @@ ab.Tolerance() = 1e-4; // Set a custom tolerance for convergence.
 ab.Train(dataset, labels, 3);
 
 // Save the model to `adaboost_model.bin`.
-data::Save("adaboost_model.bin", "adaboost_model", ab, true);
+mlpack::data::Save("adaboost_model.bin", "adaboost_model", ab, true);
 ```
 
 ---
@@ -278,7 +278,7 @@ Load an AdaBoost model and print some information about it.
 ```c++
 // Load a saved model named "adaboost_model" from `adaboost_model.bin`.
 mlpack::AdaBoost ab;
-data::Load("adaboost_model.bin", "adaboost_model", ab, true);
+mlpack::data::Load("adaboost_model.bin", "adaboost_model", ab, true);
 
 std::cout << "Details about the model in `adaboost_model.bin`:" << std::endl;
 std::cout << "  - Trained on " << ab.NumClasses() << " classes." << std::endl;
