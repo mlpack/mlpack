@@ -965,8 +965,9 @@ TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
     responses[i] = 1;
   }
 
+  arma::Row<size_t> predictions;
   arma::mat probabilities;
-  lr.Classify(data, probabilities);
+  lr.Classify(data, predictions, probabilities);
 
   REQUIRE(probabilities.n_cols == data.n_cols);
   REQUIRE(probabilities.n_rows == 2);
@@ -982,6 +983,16 @@ TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
     else
       REQUIRE(probabilities(1, i) == Approx(1.0).epsilon(0.10));
   }
+
+  // Classify a single point and make sure that we get reasonable probabilities.
+  arma::rowvec probabilities2;
+  size_t prediction;
+  lr.Classify(data.col(0), prediction, probabilities2);
+
+  REQUIRE(probabilities2.n_elem == 2);
+  REQUIRE(accu(probabilities2) == Approx(1.0));
+  REQUIRE(probabilities2[0] == Approx(probabilities(0, 0)));
+  REQUIRE(probabilities2[1] == Approx(probabilities(1, 0)));
 }
 
 /**
@@ -1077,4 +1088,145 @@ TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
   const double acc = lr.ComputeAccuracy(data, responses);
 
   REQUIRE(acc == Approx(100.0).epsilon(0.03)); // 3% error tolerance.
+}
+
+// Test all constructor variants.  This test is more about checking that all
+// variants compile correctly than anything else.
+TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
+    "[LogisticRegression]", arma::mat, arma::fmat)
+{
+  typedef TestType MatType;
+
+  // Create random data.
+  MatType data(50, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  labels.subvec(500, 999) = 1;
+
+  // Empty constructor.
+  LogisticRegression<MatType> lr1;
+
+  // Specify data and labels and lambda, and optionally callbacks.
+  LogisticRegression<MatType> lr2(data, labels, 0.1);
+  LogisticRegression<MatType> lr3(data, labels, 0.1, ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr4(data, labels, 0.1, ens::EarlyStopAtMinLoss(),
+      ens::GradClipByNorm(1000.0));
+
+  // Specify data and labels and initial point and lambda, and optionally
+  // callbacks.
+  arma::rowvec initialPoint(50, 1, arma::fill::randu); // TODO: fix type
+  LogisticRegression<MatType> lr5(data, labels, initialPoint, 0.1);
+  LogisticRegression<MatType> lr6(data, labels, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr7(data, labels, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1000.0));
+
+  // Specify data, labels, optimizer, and lambda, and optionally callbacks.
+  ens::AdaDelta optimizer(0.01);
+  LogisticRegression<MatType> lr8(data, labels, optimizer, 0.1);
+  LogisticRegression<MatType> lr9(data, labels, optimizer, 0.1,
+      ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr10(data, labels, optimizer, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1000.0));
+
+  // Specify data, labels, optimizer, initial point, and lambda, and optionally
+  // callbacks.
+  LogisticRegression<MatType> lr11(data, labels, optimizer, initialPoint, 0.1);
+  LogisticRegression<MatType> lr12(data, labels, optimizer, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr13(data, labels, optimizer, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1000.0));
+
+  // Now we don't care what the training actually produced, but we do care that
+  // the model trained at all and has the right size (except for the first one).
+  REQUIRE(lr1.Parameters().n_elem == 0);
+  REQUIRE(lr2.Parameters().n_elem == 51);
+  REQUIRE(lr3.Parameters().n_elem == 51);
+  REQUIRE(lr4.Parameters().n_elem == 51);
+  REQUIRE(lr5.Parameters().n_elem == 51);
+  REQUIRE(lr6.Parameters().n_elem == 51);
+  REQUIRE(lr7.Parameters().n_elem == 51);
+  REQUIRE(lr8.Parameters().n_elem == 51);
+  REQUIRE(lr9.Parameters().n_elem == 51);
+  REQUIRE(lr10.Parameters().n_elem == 51);
+  REQUIRE(lr11.Parameters().n_elem == 51);
+  REQUIRE(lr12.Parameters().n_elem == 51);
+  REQUIRE(lr13.Parameters().n_elem == 51);
+}
+
+// Test all Train() variants.  This test is more about checking that all
+// variants compile correctly than anything else.
+TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegression]",
+    arma::mat, arma::fmat)
+{
+  typedef TestType MatType;
+
+  // Create random data.
+  MatType data(50, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  labels.subvec(500, 999) = 1;
+
+  // Construct all objects that we will use, but don't train.
+  LogisticRegression<MatType> lr1, lr2, lr3, lr4, lr5, lr6, lr7, lr8, lr9, lr10,
+      lr11, lr12, lr13, lr14, lr15, lr16, lr17, lr18;
+
+  // Specify data and labels only, and optionally callbacks.
+  lr1.Train(data, labels);
+  lr2.Train(data, labels, ens::EarlyStopAtMinLoss());
+  lr3.Train(data, labels, ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+
+  // Specify data and labels only, with a different optimizer, and optionally
+  // callbacks.
+  lr4.template Train<ens::GradientDescent>(data, labels);
+  lr5.template Train<ens::GradientDescent>(data, labels,
+      ens::EarlyStopAtMinLoss());
+  lr6.template Train<ens::GradientDescent>(data, labels,
+      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+
+  // Specify data, labels, and lambda, and optionally callbacks.
+  lr7.Train(data, labels, 0.1);
+  lr8.Train(data, labels, 0.1, ens::EarlyStopAtMinLoss());
+  lr9.Train(data, labels, 0.1, ens::EarlyStopAtMinLoss(),
+      ens::GradClipByNorm(1.0));
+
+  // Specify data, labels, and lambda, using a different optimizer, and
+  // optionally callbacks.
+  lr10.template Train<ens::StandardSGD>(data, labels, 0.1);
+  lr11.template Train<ens::StandardSGD>(data, labels, 0.1,
+      ens::EarlyStopAtMinLoss());
+  lr12.template Train<ens::StandardSGD>(data, labels, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+
+  // Specify data, labels, and an instantiated optimizer, optionally with
+  // callbacks.
+  ens::AdaDelta optimizer(0.01);
+  lr13.Train(data, labels, optimizer);
+  lr14.Train(data, labels, optimizer, ens::EarlyStopAtMinLoss());
+  lr15.Train(data, labels, optimizer, ens::EarlyStopAtMinLoss(),
+      ens::GradClipByNorm(1.0));
+
+  // Specify data, labels, an instantiated optimizer, and lambda, optionally
+  // with callbacks.
+  lr16.Train(data, labels, optimizer, 0.1);
+  lr17.Train(data, labels, optimizer, 0.1, ens::EarlyStopAtMinLoss());
+  lr18.Train(data, labels, optimizer, 0.1, ens::EarlyStopAtMinLoss(),
+      ens::GradClipByNorm(1.0));
+
+  REQUIRE(lr1.Parameters().n_elem == 51);
+  REQUIRE(lr2.Parameters().n_elem == 51);
+  REQUIRE(lr3.Parameters().n_elem == 51);
+  REQUIRE(lr4.Parameters().n_elem == 51);
+  REQUIRE(lr5.Parameters().n_elem == 51);
+  REQUIRE(lr6.Parameters().n_elem == 51);
+  REQUIRE(lr7.Parameters().n_elem == 51);
+  REQUIRE(lr8.Parameters().n_elem == 51);
+  REQUIRE(lr9.Parameters().n_elem == 51);
+  REQUIRE(lr10.Parameters().n_elem == 51);
+  REQUIRE(lr11.Parameters().n_elem == 51);
+  REQUIRE(lr12.Parameters().n_elem == 51);
+  REQUIRE(lr13.Parameters().n_elem == 51);
+  REQUIRE(lr14.Parameters().n_elem == 51);
+  REQUIRE(lr15.Parameters().n_elem == 51);
+  REQUIRE(lr16.Parameters().n_elem == 51);
+  REQUIRE(lr17.Parameters().n_elem == 51);
+  REQUIRE(lr18.Parameters().n_elem == 51);
 }
