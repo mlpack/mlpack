@@ -309,7 +309,6 @@ ens::AdaDelta adaDelta(0.001, 1);
 adaDelta.MaxIterations() = 100 * dataset.n_cols; // 100 epochs maximum.
 
 // Use the custom callback and an L2 penalty parameter of 0.01.
-lr.Parameters().zeros(dataset.n_rows + 1);
 lr.Train(dataset, labels, adaDelta, 0.01, ModelCheckpoint(lr),
     ens::ProgressBar());
 
