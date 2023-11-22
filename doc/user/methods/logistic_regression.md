@@ -84,9 +84,9 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, either `0` or `1`.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `initialPoint` | `arma::rowvec` | Initial model weights to start optimization from.  Should have length `data.n_rows + 1`.  The first element is the bias.  If not specified, a zero vector will be used. | zero vector |
-| `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `L_BFGS()` |
+| `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::L_BFGS()` |
 | `lambda` | `double` | L2 regularization penalty parameter.  Must be nonnegative. | `0.0` |
-| `callbacks...` | [any set of ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation) | Optional callbacks for the ensmallen optimizer, such as e.g. `ens::PrintLoss()` or others. | _(N/A)_ |
+| `callbacks...` | [any set of ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation) | Optional callbacks for the ensmallen optimizer, such as e.g. `ens::ProgressBar()`, `ens::Report()`, or others. | _(N/A)_ |
 
 <!-- TODO: fix link -->
 
@@ -94,15 +94,15 @@ As an alternative to passing `lambda` or `initialPoint`, these can be set with a
 standalone method.  The following functions can be used before calling
 `Train()`:
 
- * `ab.Lambda() = l;` will set the value of the L2 regularization penalty
+ * `lr.Lambda() = l;` will set the value of the L2 regularization penalty
    parameter to `l`.
- * `ab.Parameters() = initialPoint` will set the initial point for the training
+ * `lr.Parameters() = initialPoint;` will set the initial point for the training
    optimization to `initialPoint`.
 
 ***Note***: Setting `lambda` too small may cause the model to overfit; however,
 setting it too large may cause the model to underfit.  [Automatic hyperparameter
-tuning](#hyperparameter_tuner) can be used to find a good value of `lambda`, if
-it is not set manually.
+tuning](#hyperparameter_tuner) can be used to find a good value of `lambda`
+instead of a manual setting.
 
 ### Training
 
@@ -110,7 +110,7 @@ If training is not done as part of the constructor call, it can be done with one
 of the following versions of the `Train()` member function:
 
  * `lr.Train(data, labels)`
- * `lr.Train(data, labels, [callbacks...])`
+ * `lr.Train(data, labels, lambda=0.0, [callbacks...])`
    - Train model, optionally specifying callbacks for the default L-BFGS
      optimizer.
 
@@ -186,7 +186,7 @@ can be used to make class predictions for new data.
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to 2; number of columns will be equal to `data.n_cols`). |
 ||||
-| _all_ | `decisionBoundary` | `double` | If the logistic function value for a point is greater than `decisionBoundary`, it is classified as class `1`. | `0.5` |
+| _all_ | `decisionBoundary` | `double` | If the logistic function value for a point is greater than `decisionBoundary`, it is classified as class `1`.  Defaults to `0.5`. |
 
 ### Other Functionality
 
@@ -385,11 +385,6 @@ representation of model parameters.  Any matrix type that implements the
 Armadillo API can be used.  The example below trains a logistic regression model
 on sparse 32-bit floating point data.
 
-***Note***: if `MatType` is given as a sparse object (e.g. `sp_fmat`), the
-internal parameter representation will be a *dense* vector containing elements
-of the same type (e.g. `frowvec`).  This is because L2-regularized logistic
-regression, even on sparse data, does not necessarily produce sparse models.
-
 ```c++
 // Create random, sparse 100-dimensional data.
 arma::sp_fmat dataset;
@@ -413,3 +408,8 @@ std::cout << "Prediction for random test point: " << prediction << "."
 std::cout << "Class probabilities for random test point: "
     << probabilitiesVec;
 ```
+
+***Note***: if `MatType` is a sparse object (e.g. `sp_fmat`), the internal
+parameter representation will be a *dense* vector containing elements of the
+same type (e.g. `frowvec`).  This is because L2-regularized logistic regression,
+even on sparse data, does not necessarily produce sparse models.
