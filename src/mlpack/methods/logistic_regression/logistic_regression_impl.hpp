@@ -38,7 +38,7 @@ LogisticRegression<MatType>::LogisticRegression(
     CallbackTypes&&... callbacks) :
     lambda(lambda)
 {
-  Train(predictors, responses, callbacks...);
+  Train(predictors, responses, std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
@@ -52,7 +52,7 @@ LogisticRegression<MatType>::LogisticRegression(
     parameters(initialPoint),
     lambda(lambda)
 {
-  Train(predictors, responses, callbacks...);
+  Train(predictors, responses, std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
@@ -65,7 +65,8 @@ LogisticRegression<MatType>::LogisticRegression(
     CallbackTypes&&... callbacks) :
     lambda(lambda)
 {
-  Train(predictors, responses, optimizer, callbacks...);
+  Train(predictors, responses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
@@ -79,7 +80,8 @@ LogisticRegression<MatType>::LogisticRegression(
     CallbackTypes&&... callbacks) :
     lambda(lambda)
 {
-  Train(predictors, responses, optimizer, callbacks...);
+  Train(predictors, responses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
@@ -90,7 +92,8 @@ double LogisticRegression<MatType>::Train(
     CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
-  return Train(predictors, responses, optimizer, callbacks...);
+  return Train(predictors, responses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
@@ -103,7 +106,8 @@ double LogisticRegression<MatType>::Train(
 {
   this->lambda = lambda;
   OptimizerType optimizer;
-  return Train(predictors, responses, optimizer, callbacks...);
+  return Train(predictors, responses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
@@ -140,7 +144,8 @@ double LogisticRegression<MatType>::Train(
     CallbackTypes&&... callbacks)
 {
   this->lambda = lambda;
-  return Train(predictors, responses, optimizer, callbacks...);
+  return Train(predictors, responses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
 template<typename MatType>
