@@ -84,10 +84,11 @@ class RectifierFunction
   /**
    * Computes the first derivative of the rectifier function.
    *
-   * @param x Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x)
+  static double Deriv(const double x, const double /* y */)
   {
     return (double)(x > 0);
   }
@@ -95,16 +96,16 @@ class RectifierFunction
   /**
    * Computes the first derivatives of the rectifier function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputType, typename OutputType>
-  static void Deriv(const InputType& y, OutputType& x)
+  template<typename InputType, typename OutputType, typename DerivType>
+  static void Deriv(const InputType& x,
+                    const OutputType& /* y */,
+                    DerivType& dy)
   {
-    x.set_size(arma::size(y));
-
-    for (size_t i = 0; i < y.n_elem; ++i)
-      x(i) = Deriv(y(i));
+    dy = arma::conv_to<DerivType>::from(x > 0);
   }
 }; // class RectifierFunction
 

@@ -84,11 +84,15 @@ class AlphaDropoutType : public Layer<MatType>
   /**
    * Ordinary feed backward pass of the alpha_dropout layer.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */, const MatType& gy, MatType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
+                const MatType& gy,
+                MatType& g);
 
   //! The probability of setting a value to alphaDash.
   double Ratio() const { return ratio; }

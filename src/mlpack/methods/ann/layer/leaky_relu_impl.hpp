@@ -81,7 +81,10 @@ void LeakyReLUType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void LeakyReLUType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   #pragma omp for
   for (size_t i = 0; i < (size_t) input.n_elem; ++i)

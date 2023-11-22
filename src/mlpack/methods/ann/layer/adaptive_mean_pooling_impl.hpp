@@ -99,10 +99,11 @@ void AdaptiveMeanPoolingType<MatType>::Forward(
 template<typename MatType>
 void AdaptiveMeanPoolingType<MatType>::Backward(
   const MatType& input,
+  const MatType& output,
   const MatType& gy,
   MatType& g)
 {
-  poolingLayer.Backward(input, gy, g);
+  poolingLayer.Backward(input, output, gy, g);
 }
 
 template<typename MatType>

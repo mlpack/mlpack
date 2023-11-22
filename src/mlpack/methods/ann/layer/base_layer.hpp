@@ -62,7 +62,8 @@ namespace mlpack {
  */
 template <
     class ActivationFunction = LogisticFunction,
-    typename MatType = arma::mat
+    typename MatType = arma::mat,
+    bool DerivRequiresOutput = true
 >
 class BaseLayer : public Layer<MatType>
 {
@@ -99,14 +100,18 @@ class BaseLayer : public Layer<MatType>
    * Backward pass: compute the function f(x) by propagating x backwards through
    * f, using the results from the forward pass.
    *
-   * @param input The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input, const MatType& gy, MatType& g)
+  void Backward(const MatType& input,
+                const MatType& output,
+                const MatType& gy,
+                MatType& g)
   {
     MatType derivative;
-    ActivationFunction::Deriv(input, derivative);
+    ActivationFunction::Deriv(input, output, derivative);
     g = gy % derivative;
   }
 

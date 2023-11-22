@@ -53,7 +53,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(12, 1);
-  module1.Backward(input, output, delta);
+  module1.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 28.0);
 
   // For Square input.
@@ -78,7 +78,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(9, 1);
-  module2.Backward(input, output, delta);
+  module2.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 15.0);
 
   // For Square input.
@@ -103,7 +103,7 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(16, 1);
-  module3.Backward(input, output, delta);
+  module3.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 30.0);
 
   // For Rectangular input.
@@ -126,6 +126,6 @@ TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   delta.set_size(20, 1);
-  module4.Backward(input, output, delta);
+  module4.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 2.0);
 }

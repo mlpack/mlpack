@@ -219,13 +219,13 @@ Train a decision tree on mixed categorical data:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-data::DatasetInfo info;
+mlpack::data::DatasetInfo info;
 // See https://datasets.mlpack.org/covertype.train.arff.
-data::Load("covertype.train.arff", dataset, info, true);
+mlpack::data::Load("covertype.train.arff", dataset, info, true);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-data::Load("covertype.train.labels.csv", labels, true);
+mlpack::data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the tree.
 mlpack::DecisionTree tree;
@@ -235,7 +235,7 @@ tree.Train(dataset, info, labels, 7 /* classes */, 5 /* minimum leaf size */);
 // Load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::data::Load("covertype.test.arff", testDataset, info, true);
 
 // Predict class of first test point.
 const size_t firstPrediction = tree.Classify(testDataset.col(0));
@@ -258,7 +258,7 @@ Load a tree and print some information about it.
 mlpack::DecisionTree tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
-data::Load("tree.bin", "tree", tree, true);
+mlpack::data::Load("tree.bin", "tree", tree, true);
 
 if (tree.NumChildren() > 0)
 {

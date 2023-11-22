@@ -238,13 +238,13 @@ Train a random forest incrementally on random mixed categorical data:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-data::DatasetInfo info;
+mlpack::data::DatasetInfo info;
 // See https://datasets.mlpack.org/covertype.train.arff.
-data::Load("covertype.train.arff", dataset, info, true);
+mlpack::data::Load("covertype.train.arff", dataset, info, true);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-data::Load("covertype.train.labels.csv", labels, true);
+mlpack::data::Load("covertype.train.labels.csv", labels, true);
 
 // Create the random forest.
 mlpack::RandomForest rf;
@@ -255,11 +255,11 @@ rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
 // Now load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::data::Load("covertype.test.arff", testDataset, info, true);
 
 arma::Row<size_t> testLabels;
 // See https://datasets.mlpack.org/covertype.test.labels.csv.
-data::Load("covertype.test.labels.csv", testLabels, true);
+mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
 
 // Compute test set accuracy.
 arma::Row<size_t> testPredictions;
@@ -289,7 +289,7 @@ Load a random forest and print some information about it.
 mlpack::RandomForest rf;
 // This call assumes a random forest called "rf" has already been saved to
 // `rf.bin` with `data::Save()`.
-data::Load("rf.bin", "rf", rf, true);
+mlpack::data::Load("rf.bin", "rf", rf, true);
 
 std::cout << "The random forest in 'rf.bin' contains " << rf.NumTrees()
     << " trees." << std::endl;
@@ -308,7 +308,7 @@ performance of each individual tree:
 ```c++
 // Load a categorical dataset (training and test sets).
 arma::mat dataset, testDataset;
-data::DatasetInfo info;
+mlpack::data::DatasetInfo info;
 arma::Row<size_t> labels, testLabels;
 
 // See the following files:
@@ -316,10 +316,10 @@ arma::Row<size_t> labels, testLabels;
 //  * https://datasets.mlpack.org/covertype.train.labels.csv
 //  * https://datasets.mlpack.org/covertype.test.arff
 //  * https://datasets.mlpack.org/covertype.test.labels.csv
-data::Load("covertype.train.arff", dataset, info, true);
-data::Load("covertype.train.labels.csv", labels, true);
-data::Load("covertype.test.arff", testDataset, info, true);
-data::Load("covertype.test.labels.csv", testLabels, true);
+mlpack::data::Load("covertype.train.arff", dataset, info, true);
+mlpack::data::Load("covertype.train.labels.csv", labels, true);
+mlpack::data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
 
 // Create the random forest.
 mlpack::RandomForest rf;

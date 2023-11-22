@@ -215,19 +215,19 @@ Train a decision tree regressor on mixed categorical data.
 ```c++
 // Load a categorical dataset.
 arma::mat data;
-data::DatasetInfo info;
+mlpack::data::DatasetInfo info;
 // See https://datasets.mlpack.org/telecom_churn.arff.
-data::Load("telecom_churn.arff", data, info, true);
+mlpack::data::Load("telecom_churn.arff", data, info, true);
 
 arma::rowvec responses;
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
-data::Load("telecom_churn.responses.csv", responses, true);
+mlpack::data::Load("telecom_churn.responses.csv", responses, true);
 
 // Split data into training set (80%) and test set (20%).
 arma::mat trainData, testData;
 arma::rowvec trainResponses, testResponses;
-data::Split(data, responses, trainData, testData, trainResponses, testResponses,
-    0.2);
+mlpack::data::Split(data, responses, trainData, testData, trainResponses,
+    testResponses, 0.2);
 
 // Create the tree.
 mlpack::DecisionTreeRegressor tree;
@@ -261,7 +261,7 @@ Load a tree and print some information about it.
 mlpack::DecisionTreeRegressor tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `data::Save()`.
-data::Load("tree.bin", "tree", tree, true);
+mlpack::data::Load("tree.bin", "tree", tree, true);
 
 std::cout << "Information about the DecisionTreeRegressor in `tree.bin`:"
     << std::endl;
