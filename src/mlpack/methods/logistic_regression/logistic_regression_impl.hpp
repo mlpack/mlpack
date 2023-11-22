@@ -157,7 +157,7 @@ size_t LogisticRegression<MatType>::Classify(const VecType& point,
     const
 {
   return size_t(1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
-      parameters.tail_cols(parameters.n_elem - 1)))) +
+      parameters.tail_cols(parameters.n_elem - 1).t()))) +
       (1.0 - decisionBoundary));
 }
 
@@ -170,7 +170,7 @@ void LogisticRegression<MatType>::Classify(
     const double decisionBoundary) const
 {
   const double logit = 1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
-      parameters.tail_cols(parameters.n_elem - 1))));
+      parameters.tail_cols(parameters.n_elem - 1).t())));
 
   probabilities.set_size(2);
   probabilities[0] = (1 - logit);

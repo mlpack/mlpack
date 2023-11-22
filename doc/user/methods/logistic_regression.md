@@ -18,7 +18,7 @@ or `1`).  For multi-class logistic regression, see
 // Replace with a data::Load() call or similar for a real application.
 arma::mat dataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 1));
 arma::mat testDataset(5, 500, arma::fill::randu); // 500 test points.
 
 mlpack::LogisticRegression lr;         // Step 1: create model.
@@ -66,7 +66,6 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 
 ---
 
-<!-- TODO: implement! -->
  * `lr = LogisticRegression(data, labels, optimizer,               lambda=0.0, [callbacks...])`
  * `lr = LogisticRegression(data, labels, optimizer, initialPoint, lambda=0.0, [callbacks...])`
    - Train model with a custom ensmallen optimizer, optionally specifying an
@@ -151,8 +150,6 @@ can be used to make class predictions for new data.
 
 ---
 
-<!-- TODO: implement this! -->
-
  * `lr.Classify(point, prediction, probabilitiesVec, decisionBoundary=0.5)`
    - ***(Single-point)***
    - Classify a single point and compute class probabilities.
@@ -211,8 +208,6 @@ can be used to make class predictions for new data.
  * `lr.ComputeError(data, labels)` will return the loss of the logistic
    regression objective function on the given `data` with the given `labels`.
 
-<!-- TODO: implement! -->
-
  * `lr.Reset()` will reset the weights of the model to zeros.
 
 For complete functionality, the [source
@@ -232,10 +227,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, true);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, true);
 
 mlpack::LogisticRegression lr;
 lr.Lambda() = 0.1;
@@ -251,18 +246,19 @@ lr.Train(dataset, labels, optimizer, ens::ProgressBar(), ens::Report());
 
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testDataset;
-data::Load("satellite.test.csv", testDataset, true);
+mlpack::data::Load("satellite.test.csv", testDataset, true);
 // See https://datasets.mlpack.org/satellite.test.labels.csv.
 arma::Row<size_t> testLabels;
-data::Load("satellite.test.labels.csv", testLabels, true);
+mlpack::data::Load("satellite.test.labels.csv", testLabels, true);
 
+std::cout << std::endl;
 std::cout << "Accuracy on training set: "
     << lr.ComputeAccuracy(dataset, labels) << "\%." << std::endl;
 std::cout << "Accuracy on test set:     "
     << lr.ComputeAccuracy(testDataset, testLabels) << "\%." << std::endl;
 std::cout << "Objective on training set: "
     << lr.ComputeError(dataset, labels) << "." << std::endl;
-std::cout << "Objective on test set: "
+std::cout << "Objective on test set:     "
     << lr.ComputeError(testDataset, testLabels) << "." << std::endl;
 ```
 
@@ -277,7 +273,7 @@ a custom ensmallen callback.  This requires a
 class ModelCheckpoint
 {
  public:
-  ModelCheckpoint(mlpack::LogisticRegression& model) : model(model) { }
+  ModelCheckpoint(mlpack::LogisticRegression<>& model) : model(model) { }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
   bool EndEpoch(OptimizerType& /* optimizer */,
@@ -287,12 +283,12 @@ class ModelCheckpoint
                 const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";
-    data::Save(filename, "lr_model", model, true);
+    mlpack::data::Save(filename, "lr_model", model, true);
     return false; // Do not terminate the optimization.
   }
 
  private:
-  mlpack::LogisticRegression& model;
+  mlpack::LogisticRegression<>& model;
 };
 ```
 
@@ -301,21 +297,21 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-data::Load("satellite.train.csv", dataset, true);
+mlpack::data::Load("satellite.train.csv", dataset, true);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-data::Load("satellite.train.labels.csv", labels, true);
+mlpack::data::Load("satellite.train.labels.csv", labels, true);
 
 mlpack::LogisticRegression lr;
 
-// Create SGD optimizer with a small step size and batch size of 1.
-ens::StandardSGD sgd(1e-4, 1);
-sgd.MaxIterations() = 100 * dataset.n_cols; // 100 epochs maximum.
+// Create AdaDelta optimizer with a small step size and batch size of 1.
+ens::AdaDelta adaDelta(0.001, 1);
+adaDelta.MaxIterations() = 100 * dataset.n_cols; // 100 epochs maximum.
 
-// Use the custom callback and an L2 penalty parameter of 0.01.  Initialize the
-// model to random uniform weights.
-model.Parameters() = arma::randu<arma::rowvec>(dataset.n_rows + 1);
-lr.Train(dataset, labels, optimizer, 0.01, ModelCheckpoint(lr));
+// Use the custom callback and an L2 penalty parameter of 0.01.
+lr.Parameters().zeros(dataset.n_rows + 1);
+lr.Train(dataset, labels, adaDelta, 0.01, ModelCheckpoint(lr),
+    ens::ProgressBar());
 
 // Now files like model-1.bin, model-2.bin, etc. should be saved on disk.
 ```
@@ -328,7 +324,7 @@ Load an existing logistic regression model and print some information about it.
 mlpack::LogisticRegression lr;
 // This assumes that a model called "lr_model" has been saved to the file
 // "model-1.bin" (as in the previous example).
-data::Load("model-1.bin", "lr_model", lr, true);
+mlpack::data::Load("model-1.bin", "lr_model", lr, true);
 
 // Print the dimensionality of the model and some other statistics.
 std::cout << "The dimensionality of the model in model-1.bin is "
@@ -336,7 +332,7 @@ std::cout << "The dimensionality of the model in model-1.bin is "
 std::cout << "The bias parameter for the model is " << lr.Parameters()[0]
     << "." << std::endl;
 
-arma::vec point(lr.Parameters().n_rows - 1, arma::fill::randu);
+arma::vec point(lr.Parameters().n_elem - 1, arma::fill::randu);
 std::cout << "The predicted class for a random point, using a decision boundary"
     << " of 0.2, is " << lr.Classify(point, 0.2) << "." << std::endl;
 ```
@@ -350,11 +346,11 @@ Perform incremental training on multiple datasets with multiple calls to
 // Generate two random datasets.
 arma::mat firstDataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> firstLabels =
-    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 1));
 
 arma::mat secondDataset(5, 1500, arma::fill::randu); // 1500 points.
 arma::Row<size_t> secondLabels =
-    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+    arma::randi<arma::Row<size_t>>(1500, arma::distr_param(0, 1));
 
 // Train a model on the first dataset with an L2 regularization penalty
 // parameter of 0.01.
@@ -389,28 +385,31 @@ representation of model parameters.  Any matrix type that implements the
 Armadillo API can be used.  The example below trains a logistic regression model
 on sparse 32-bit floating point data.
 
-<!-- TODO: fix internal representation -->
+***Note***: if `MatType` is given as a sparse object (e.g. `sp_fmat`), the
+internal parameter representation will be a *dense* vector containing elements
+of the same type (e.g. `frowvec`).  This is because L2-regularized logistic
+regression, even on sparse data, does not necessarily produce sparse models.
 
 ```c++
 // Create random, sparse 100-dimensional data.
-arma::sp_fmat dataset(100, 5000);
-dataset.sprandu();
+arma::sp_fmat dataset;
+dataset.sprandu(100, 5000, 0.3);
 arma::Row<size_t> labels =
-    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+    arma::randi<arma::Row<size_t>>(5000, arma::distr_param(0, 1));
 
 // Train with L2 regularization penalty parameter of 0.1.
 mlpack::LogisticRegression<arma::sp_fmat> lr(dataset, labels, 0.1);
 
 // Now classify a test point.
-arma::sp_fvec point(100);
-point.sprandu();
+arma::sp_fvec point;
+point.sprandu(100, 1, 0.3);
 
 size_t prediction;
-arma::rowvec probabilitiesVec;
+arma::frowvec probabilitiesVec;
 lr.Classify(point, prediction, probabilitiesVec);
 
 std::cout << "Prediction for random test point: " << prediction << "."
     << std::endl;
 std::cout << "Class probabilities for random test point: "
-    << probabilitiesVec.t();
+    << probabilitiesVec;
 ```
