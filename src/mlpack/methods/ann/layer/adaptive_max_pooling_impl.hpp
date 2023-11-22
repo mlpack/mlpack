@@ -99,10 +99,11 @@ void AdaptiveMaxPoolingType<MatType>::Forward(
 template<typename MatType>
 void AdaptiveMaxPoolingType<MatType>::Backward(
   const MatType& input,
+  const MatType& output,
   const MatType& gy,
   MatType& g)
 {
-  poolingLayer.Backward(input, gy, g);
+  poolingLayer.Backward(input, output, gy, g);
 }
 
 template<typename MatType>

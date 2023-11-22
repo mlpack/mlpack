@@ -11,6 +11,12 @@
   * Fix setting number of classes correctly in `SoftmaxRegression::Train()`
     (#3553).
 
+  * Adapt `MultiheadAttention` and `LayerNorm` ANN layers to new Layer interface
+    (#3547).
+
+  * Fix inconsistent use of the "input" parameter to the Backward method in ANNs
+    (#3551).
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).

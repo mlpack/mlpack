@@ -111,7 +111,10 @@ void AlphaDropoutType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void AlphaDropoutType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = gy % mask * a;
 }

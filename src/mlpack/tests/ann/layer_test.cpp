@@ -41,3 +41,5 @@
 #include "layer/softmax.cpp"
 #include "layer/softmin.cpp"
 #include "layer/ftswish.cpp"
+#include "layer/layer_norm.cpp"
+#include "layer/multihead_attention.cpp"

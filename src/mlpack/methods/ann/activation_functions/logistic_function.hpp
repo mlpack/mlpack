@@ -64,23 +64,25 @@ class LogisticFunction
    * Computes the first derivative of the logistic function.
    *
    * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x)
+  static double Deriv(const double /* x */, const double y)
   {
-    return x * (1.0 - x);
+    return y * (1.0 - y);
   }
 
   /**
    * Computes the first derivatives of the logistic function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& /* x */, const OutputVecType& y, DerivVecType& dy)
   {
-    x = y % (1.0 - y);
+    dy = y % (1.0 - y);
   }
 
   /**

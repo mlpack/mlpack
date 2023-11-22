@@ -105,7 +105,10 @@ void PReLUType<MatType>::Forward(
 
 template<typename MatType>
 void PReLUType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   MatType derivative;
   derivative.set_size(arma::size(input));

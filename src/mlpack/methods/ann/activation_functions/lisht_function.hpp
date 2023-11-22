@@ -67,24 +67,28 @@ class LiSHTFunction
   /**
    * Computes the first derivative of the LiSHT function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return std::tanh(y) + y * (1 - std::pow(std::tanh(y), 2));
+    return std::tanh(x) + x * (1 - std::pow(std::tanh(x), 2));
   }
 
   /**
    * Computes the first derivatives of the LiSHT function.
    * 
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y, OutputVecType &x)
+  template <typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
-    x = arma::tanh(y) + y % (1 - arma::pow(arma::tanh(y), 2));
+    dy = arma::tanh(x) + x % (1 - arma::pow(arma::tanh(x), 2));
   }
 }; // class LishtFunction
 

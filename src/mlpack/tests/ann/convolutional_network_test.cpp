@@ -453,7 +453,7 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   delta.set_size(input.size());
 
   REQUIRE_NOTHROW(c.Forward(input, output));
-  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+  REQUIRE_NOTHROW(c.Backward(input, output, output, delta));
 
   // Now test with a stride of 3.
   c = Convolution(1, 3, 3, 3, 3, 0, 0);
@@ -469,7 +469,7 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   delta.set_size(input.size());
 
   REQUIRE_NOTHROW(c.Forward(input, output));
-  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+  REQUIRE_NOTHROW(c.Backward(input, output, output, delta));
 
   // Now test with different strides for height and width.
   c = Convolution(1, 3, 3, 2, 3, 0, 0);
@@ -485,7 +485,7 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   delta.set_size(input.size());
 
   REQUIRE_NOTHROW(c.Forward(input, output));
-  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+  REQUIRE_NOTHROW(c.Backward(input, output, output, delta));
 }
 
 // Test that the Convolution layer gives reasonable output when a non-zero
@@ -520,5 +520,5 @@ TEST_CASE("CustomPaddingTest", "[ConvolutionalNetworkTest]")
   REQUIRE(output(output.n_rows - 1, 0) == 1.0);
 
   delta.set_size(input.size());
-  REQUIRE_NOTHROW(c.Backward(input, output, delta));
+  REQUIRE_NOTHROW(c.Backward(input, output, output, delta));
 }

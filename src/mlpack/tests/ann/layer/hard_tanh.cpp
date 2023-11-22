@@ -56,7 +56,7 @@ TEST_CASE("SimpleHardTanHTest", "[ANNLayerTest]")
   g.set_size(5,5);
   
   //Test the Backward function
-  module.Backward(output, gy, g);
+  module.Backward(input, output, gy, g);
   REQUIRE(arma::accu(g - delta) == Approx(0).epsilon(1e-4));
 }
 

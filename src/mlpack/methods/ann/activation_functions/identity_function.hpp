@@ -53,10 +53,11 @@ class IdentityFunction
   /**
    * Computes the first derivative of the identity function.
    *
-   * @param * (x) Input data.
+   * @param * (x) Input activation.
+   * @param * (y) Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double /* x */)
+  static double Deriv(const double /* x */, const double /* y */)
   {
     return 1.0;
   }
@@ -64,13 +65,14 @@ class IdentityFunction
   /**
    * Computes the first derivatives of the identity function.
    *
-   * @param y Input data/activation.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param * (y) Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x, const OutputVecType& /* y */, DerivVecType& dy)
   {
-    x.ones(arma::size(y));
+    dy.ones(arma::size(x));
   }
 
   /**
@@ -78,7 +80,7 @@ class IdentityFunction
    * tensor as input.
    *
    * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param dy The resulting derivatives.
    */
   template<typename eT>
   static void Deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)

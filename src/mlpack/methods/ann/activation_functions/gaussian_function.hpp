@@ -1,6 +1,7 @@
 /**
  * @file gaussian_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of the gaussian function.
  *
@@ -54,24 +55,26 @@ class GaussianFunction
   /**
    * Computes the first derivative of the gaussian function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double y)
   {
-    return 2 * -y * std::exp(-1 * std::pow(y, 2));
+    return -2 * x * y;
   }
 
   /**
    * Computes the first derivatives of the gaussian function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x, const OutputVecType& y, DerivVecType& dy)
   {
-    x = 2 * -y % arma::exp(-1 * arma::pow(y, 2));
+    dy = -2 * x % y;
   }
 }; // class GaussianFunction
 

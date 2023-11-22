@@ -119,6 +119,7 @@ void Linear3DType<MatType, RegularizerType>::Forward(
 template<typename MatType, typename RegularizerType>
 void Linear3DType<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
