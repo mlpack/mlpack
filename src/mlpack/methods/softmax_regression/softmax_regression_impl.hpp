@@ -17,7 +17,8 @@
 
 namespace mlpack {
 
-inline SoftmaxRegression::SoftmaxRegression(
+template<typename MatType>
+inline SoftmaxRegression<MatType>::SoftmaxRegression(
     const size_t inputSize,
     const size_t numClasses,
     const bool fitIntercept) :
@@ -25,13 +26,14 @@ inline SoftmaxRegression::SoftmaxRegression(
     lambda(0.0001),
     fitIntercept(fitIntercept)
 {
-  SoftmaxRegressionFunction::InitializeWeights(
+  SoftmaxRegressionFunction<MatType>::InitializeWeights(
       parameters, inputSize, numClasses, fitIntercept);
 }
 
+template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename, typename>
-SoftmaxRegression::SoftmaxRegression(
-    const arma::mat& data,
+SoftmaxRegression<MatType>::SoftmaxRegression(
+    const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
@@ -46,16 +48,17 @@ SoftmaxRegression::SoftmaxRegression(
       std::forward<CallbackTypes>(callbacks)...);
 }
 
+template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename, typename>
 mlpack_deprecated /** To be removed in mlpack 5.0.0; use the overload below. */
-double SoftmaxRegression::Train(const arma::mat& data,
-                                const arma::Row<size_t>& labels,
-                                const size_t numClasses,
-                                OptimizerType optimizer,
-                                CallbackTypes&&... callbacks)
+double SoftmaxRegression<MatType>::Train(const MatType& data,
+                                         const arma::Row<size_t>& labels,
+                                         const size_t numClasses,
+                                         OptimizerType optimizer,
+                                         CallbackTypes&&... callbacks)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
-                                      fitIntercept);
+  SoftmaxRegressionFunction<MatType> regressor(data, labels, numClasses, lambda,
+                                               fitIntercept);
   if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
 
@@ -69,20 +72,22 @@ double SoftmaxRegression::Train(const arma::mat& data,
   return out;
 }
 
+template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename, typename>
-double SoftmaxRegression::Train(const arma::mat& data,
-                                const arma::Row<size_t>& labels,
-                                const size_t numClasses,
-                                const double lambda,
-                                const bool fitIntercept,
-                                OptimizerType optimizer,
-                                CallbackTypes&&... callbacks)
+typename SoftmaxRegression<MatType>::ElemType
+SoftmaxRegression<MatType>::Train(const MatType& data,
+                                  const arma::Row<size_t>& labels,
+                                  const size_t numClasses,
+                                  const double lambda,
+                                  const bool fitIntercept,
+                                  OptimizerType optimizer,
+                                  CallbackTypes&&... callbacks)
 {
   this->lambda = lambda;
   this->fitIntercept = fitIntercept;
 
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
-                                      fitIntercept);
+  SoftmaxRegressionFunction<MatType> regressor(data, labels, numClasses, lambda,
+                                               fitIntercept);
   if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
 
@@ -96,59 +101,44 @@ double SoftmaxRegression::Train(const arma::mat& data,
   return out;
 }
 
-inline void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                        arma::Row<size_t>& labels)
+template<typename MatType>
+inline void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
+                                                 arma::Row<size_t>& labels)
     const
 {
-  arma::mat probabilities;
-  Classify(dataset, probabilities);
-
-  // Prepare necessary data.
-  labels.zeros(dataset.n_cols);
-  double maxProbability = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; ++j)
-    {
-      // If a higher class probability is encountered, change prediction.
-      if (probabilities(j, i) > maxProbability)
-      {
-        maxProbability = probabilities(j, i);
-        labels(i) = j;
-      }
-    }
-
-    // Set maximum probability to zero for the next input.
-    maxProbability = 0;
-  }
+  MatType probabilities;
+  Classify(dataset, labels, probabilities);
 }
 
+template<typename MatType>
 template<typename VecType>
-size_t SoftmaxRegression::Classify(const VecType& point) const
+size_t SoftmaxRegression<MatType>::Classify(const VecType& point) const
 {
   arma::Row<size_t> label(1);
   Classify(point, label);
   return size_t(label(0));
 }
 
+template<typename MatType>
 template<typename VecType>
-void SoftmaxRegression::Classify(const VecType& point,
-                                 size_t& prediction,
-                                 arma::rowvec& probabilitiesVec) const
+void SoftmaxRegression<MatType>::Classify(const VecType& point,
+                                          size_t& prediction,
+                                          arma::rowvec& probabilitiesVec) const
 {
   arma::Row<size_t> label(1);
   Classify(point, label, probabilitiesVec);
   prediction = label[0];
 }
 
-inline void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                        arma::Row<size_t>& labels,
-                                        arma::mat& probabilities)
+template<typename MatType>
+inline void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
+                                                 arma::Row<size_t>& labels,
+                                                 MatType& probabilities)
     const
 {
+  util::CheckSameDimensionality(dataset, FeatureSize(),
+      "SoftmaxRegression::Classify()");
+
   Classify(dataset, probabilities);
 
   // Prepare necessary data.
@@ -174,15 +164,16 @@ inline void SoftmaxRegression::Classify(const arma::mat& dataset,
   }
 }
 
-inline mlpack_deprecated void SoftmaxRegression::Classify(
-    const arma::mat& dataset,
-    arma::mat& probabilities) const
+template<typename MatType>
+inline mlpack_deprecated void SoftmaxRegression<MatType>::Classify(
+    const MatType& dataset,
+    MatType& probabilities) const
 {
   util::CheckSameDimensionality(dataset, FeatureSize(),
       "SoftmaxRegression::Classify()");
 
   // Calculate the probabilities for each test input.
-  arma::mat hypothesis;
+  MatType hypothesis;
   if (fitIntercept)
   {
     // In order to add the intercept term, we should compute following matrix:
@@ -204,8 +195,9 @@ inline mlpack_deprecated void SoftmaxRegression::Classify(
                                             numClasses, 1);
 }
 
-inline double SoftmaxRegression::ComputeAccuracy(
-    const arma::mat& testData,
+template<typename MatType>
+inline double SoftmaxRegression<MatType>::ComputeAccuracy(
+    const MatType& testData,
     const arma::Row<size_t>& labels) const
 {
   arma::Row<size_t> predictions;
@@ -221,6 +213,38 @@ inline double SoftmaxRegression::ComputeAccuracy(
 
   // Return percentage accuracy.
   return (count * 100.0) / predictions.n_elem;
+}
+
+template<typename MatType>
+void SoftmaxRegression<MatType>::Reset()
+{
+  SoftmaxRegressionFunction<MatType>::InitializeWeights(
+      parameters, parameters.n_cols, parameters.n_rows, fitIntercept);
+}
+
+template<typename MatType>
+template<typename Archive>
+void SoftmaxRegression<MatType>::serialize(Archive& ar,
+                                           const unsigned int version)
+{
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // This is the legacy version: `parameters` is of type arma::mat.
+    arma::mat parametersTmp;
+    ar(cereal::make_nvp("parameters", parametersTmp));
+    parameters = arma::conv_to<MatType>::from(parametersTmp);
+
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(fitIntercept));
+  }
+  else
+  {
+    ar(CEREAL_NVP(parameters));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(fitIntercept));
+  }
 }
 
 } // namespace mlpack

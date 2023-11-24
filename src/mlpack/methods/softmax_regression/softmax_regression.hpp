@@ -54,9 +54,12 @@ namespace mlpack {
  * regressor.Classify(testData, predictions);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class SoftmaxRegression
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
    * value of lambda is 0.0001.  Be sure to use Train() before calling
@@ -89,12 +92,12 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction, arma::mat
+               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  SoftmaxRegression(const arma::mat& data,
+  SoftmaxRegression(const MatType& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
@@ -117,13 +120,13 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction, arma::mat
+               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
   mlpack_deprecated /* To be removed in mlpack 5.0.0; use the overload below. */
-  double Train(const arma::mat& data,
+  double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,
                OptimizerType optimizer,
@@ -147,18 +150,18 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction, arma::mat
+               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  double Train(const arma::mat& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               const double lambda = 0.0001,
-               const bool fitIntercept = true,
-               OptimizerType optimizer = OptimizerType(),
-               CallbackTypes&&... callbacks);
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 const double lambda = 0.0001,
+                 const bool fitIntercept = true,
+                 OptimizerType optimizer = OptimizerType(),
+                 CallbackTypes&&... callbacks);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -168,7 +171,7 @@ class SoftmaxRegression
    * @param dataset Set of points to classify.
    * @param labels Predicted labels for each point.
    */
-  void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
+  void Classify(const MatType& dataset, arma::Row<size_t>& labels) const;
 
   /**
    * Classify the given point. The predicted class label is returned.
@@ -205,9 +208,9 @@ class SoftmaxRegression
    * @param labels Predicted labels for each point.
    * @param probabilities Class probabilities for each point.
    */
-  void Classify(const arma::mat& dataset,
+  void Classify(const MatType& dataset,
                 arma::Row<size_t>& labels,
-                arma::mat& probabilities) const;
+                MatType& probabilities) const;
 
   /**
    * Classify the given points, returning class probabilities for each point.
@@ -216,8 +219,8 @@ class SoftmaxRegression
    * @param probabilities Class probabilities for each point.
    */
   mlpack_deprecated /** To be removed in mlpack 5.0.0. */
-  void Classify(const arma::mat& dataset,
-                arma::mat& probabilities) const;
+  void Classify(const MatType& dataset,
+                MatType& probabilities) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -227,7 +230,7 @@ class SoftmaxRegression
    * @param testData Matrix of data points using which predictions are made.
    * @param labels Vector of labels associated with the data.
    */
-  double ComputeAccuracy(const arma::mat& testData,
+  double ComputeAccuracy(const MatType& testData,
                          const arma::Row<size_t>& labels) const;
 
   //! Sets the number of classes.
@@ -244,9 +247,16 @@ class SoftmaxRegression
   bool FitIntercept() const { return fitIntercept; }
 
   //! Get the model parameters.
-  arma::mat& Parameters() { return parameters; }
+  MatType& Parameters() { return parameters; }
   //! Get the model parameters.
-  const arma::mat& Parameters() const { return parameters; }
+  const MatType& Parameters() const { return parameters; }
+
+  /**
+   * Reset the weights in the model to small random values.  This function can
+   * be used between calls to Train(), to force learning of a new model instead
+   * of incremental training.
+   */
+  void Reset();
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
@@ -257,17 +267,11 @@ class SoftmaxRegression
    * Serialize the SoftmaxRegression model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(parameters));
-    ar(CEREAL_NVP(numClasses));
-    ar(CEREAL_NVP(lambda));
-    ar(CEREAL_NVP(fitIntercept));
-  }
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! Parameters after optimization.
-  arma::mat parameters;
+  MatType parameters;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.
@@ -277,6 +281,9 @@ class SoftmaxRegression
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+    (mlpack::SoftmaxRegression<MatType>), (1));
 
 // Include implementation.
 #include "softmax_regression_impl.hpp"

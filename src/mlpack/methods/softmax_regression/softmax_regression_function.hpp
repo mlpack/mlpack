@@ -18,9 +18,13 @@
 
 namespace mlpack {
 
+template<typename MatType = arma::mat>
 class SoftmaxRegressionFunction
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+  typedef typename GetSparseMatType<MatType>::type SpMatType;
+
   /**
    * Construct the Softmax Regression objective function with the given
    * parameters.
@@ -31,14 +35,14 @@ class SoftmaxRegressionFunction
    * @param lambda L2-regularization constant.
    * @param fitIntercept Intercept term flag.
    */
-  SoftmaxRegressionFunction(const arma::mat& data,
+  SoftmaxRegressionFunction(const MatType& data,
                             const arma::Row<size_t>& labels,
                             const size_t numClasses,
                             const double lambda = 0.0001,
                             const bool fitIntercept = false);
 
   //! Initializes the parameters of the model to suitable values.
-  const arma::mat InitializeWeights();
+  const MatType InitializeWeights();
 
   /**
    * Shuffle the dataset.
@@ -54,9 +58,9 @@ class SoftmaxRegressionFunction
    * @param fitIntercept If true, an intercept is fitted.
    * @return Initialized model weights.
    */
-  static const arma::mat InitializeWeights(const size_t featureSize,
-                                           const size_t numClasses,
-                                           const bool fitIntercept = false);
+  static const MatType InitializeWeights(const size_t featureSize,
+                                         const size_t numClasses,
+                                         const bool fitIntercept = false);
 
   /**
    * Initialize Softmax Regression weights (trainable parameters) with the given
@@ -67,7 +71,7 @@ class SoftmaxRegressionFunction
    * @param numClasses Number of classes for classification.
    * @param fitIntercept Intercept term flag.
    */
-  static void InitializeWeights(arma::mat &weights,
+  static void InitializeWeights(MatType& weights,
                                 const size_t featureSize,
                                 const size_t numClasses,
                                 const bool fitIntercept = false);
@@ -79,7 +83,7 @@ class SoftmaxRegressionFunction
    * @param groundTruth Pointer to arma::mat which stores the computed matrix.
    */
   void GetGroundTruthMatrix(const arma::Row<size_t>& labels,
-                            arma::sp_mat& groundTruth);
+                            SpMatType& groundTruth);
 
   /**
    * Evaluate the probabilities matrix with the passed parameters.
@@ -92,8 +96,8 @@ class SoftmaxRegressionFunction
    * @param start Index of point to start at.
    * @param batchSize Number of points to calculate probabilities for.
    */
-  void GetProbabilitiesMatrix(const arma::mat& parameters,
-                              arma::mat& probabilities,
+  void GetProbabilitiesMatrix(const MatType& parameters,
+                              MatType& probabilities,
                               const size_t start,
                               const size_t batchSize) const;
 
@@ -106,7 +110,7 @@ class SoftmaxRegressionFunction
    *
    * @param parameters Current values of the model parameters.
    */
-  double Evaluate(const arma::mat& parameters) const;
+  ElemType Evaluate(const MatType& parameters) const;
 
   /**
    * Evaluate the objective function of the softmax regression model for a
@@ -119,9 +123,9 @@ class SoftmaxRegressionFunction
    * @param start First index of the data points to use.
    * @param batchSize Number of data points to evaluate objective for.
    */
-  double Evaluate(const arma::mat& parameters,
-                  const size_t start,
-                  const size_t batchSize = 1) const;
+  ElemType Evaluate(const MatType& parameters,
+                    const size_t start,
+                    const size_t batchSize = 1) const;
 
   /**
    * Evaluates the gradient values of the objective function given the current
@@ -132,7 +136,8 @@ class SoftmaxRegressionFunction
    * @param parameters Current values of the model parameters.
    * @param gradient Matrix where gradient values will be stored.
    */
-  void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
+  template<typename GradType>
+  void Gradient(const MatType& parameters, GradType& gradient) const;
 
   /**
    * Evaluate the gradient of the objective function given the current set of
@@ -145,9 +150,10 @@ class SoftmaxRegressionFunction
    * @param gradient Matrix to store gradient into.
    * @param batchSize Number of data points to evaluate gradient for.
    */
-  void Gradient(const arma::mat& parameters,
+  template<typename GradType>
+  void Gradient(const MatType& parameters,
                 const size_t start,
-                arma::mat& gradient,
+                GradType& gradient,
                 const size_t batchSize = 1) const;
 
   /**
@@ -159,12 +165,13 @@ class SoftmaxRegressionFunction
    *    gradient is to be computed.
    * @param gradient Out param for the gradient value.
    */
-  void PartialGradient(const arma::mat& parameters,
+  template<typename GradType>
+  void PartialGradient(const MatType& parameters,
                        size_t j,
-                       arma::sp_mat& gradient) const;
+                       GradType& gradient) const;
 
   //! Return the initial point for the optimization.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  const MatType& GetInitialPoint() const { return initialPoint; }
 
   //! Gets the number of classes.
   size_t NumClasses() const { return numClasses; }
@@ -189,11 +196,11 @@ class SoftmaxRegressionFunction
 
  private:
   //! Training data matrix.  This is an alias until the data is shuffled.
-  arma::mat data;
+  MatType data;
   //! Label matrix for the provided data.
-  arma::sp_mat groundTruth;
+  SpMatType groundTruth;
   //! Initial parameter point.
-  arma::mat initialPoint;
+  MatType initialPoint;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.
