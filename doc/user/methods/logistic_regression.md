@@ -399,13 +399,13 @@ arma::sp_fvec point;
 point.sprandu(100, 1, 0.3);
 
 size_t prediction;
-arma::frowvec probabilitiesVec;
+arma::fvec probabilitiesVec;
 lr.Classify(point, prediction, probabilitiesVec);
 
 std::cout << "Prediction for random test point: " << prediction << "."
     << std::endl;
 std::cout << "Class probabilities for random test point: "
-    << probabilitiesVec;
+    << probabilitiesVec.t();
 ```
 
 ***Note***: if `MatType` is a sparse object (e.g. `sp_fmat`), the internal

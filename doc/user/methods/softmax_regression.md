@@ -232,14 +232,14 @@ arma::Row<size_t> labels;
 mlpack::data::Load("mnist.train.labels.csv", labels, true);
 
 mlpack::SoftmaxRegression sr;
-sr.Lambda() = 0.1;
 
 // Create AdaDelta optimizer with custom step size and batch size.
-ens::AMSGrad optimizer(0.01 /* step size */, 16 /* batch size */);
-optimizer.MaxIterations() = 100 * dataset.n_cols; // Allow 100 epochs.
+ens::AdaGrad optimizer(0.0005 /* step size */, 16 /* batch size */);
+optimizer.MaxIterations() = 10 * dataset.n_cols; // Allow 10 epochs.
 
 // Print a progress bar and an optimization report when training is finished.
-sr.Train(dataset, labels, 10 /* numClasses */, optimizer, ens::ProgressBar(),
+sr.Train(dataset, labels, 10 /* numClasses */, optimizer,
+    0.01 /* lambda */, true /* fit intercept */, ens::ProgressBar(),
     ens::Report());
 
 // Now predict on test labels and compute accuracy.
@@ -256,10 +256,6 @@ std::cout << "Accuracy on training set: "
     << sr.ComputeAccuracy(dataset, labels) << "\%." << std::endl;
 std::cout << "Accuracy on test set:     "
     << sr.ComputeAccuracy(testDataset, testLabels) << "\%." << std::endl;
-std::cout << "Objective on training set: "
-    << sr.ComputeError(dataset, labels) << "." << std::endl;
-std::cout << "Objective on test set:     "
-    << sr.ComputeError(testDataset, testLabels) << "." << std::endl;
 ```
 
 ---
@@ -305,11 +301,11 @@ mlpack::data::Load("mnist.train.labels.csv", labels, true);
 mlpack::SoftmaxRegression sr;
 
 // Create AdaBound optimizer with small step size and batch size of 32.
-ens::AdaBound adaBound(0.001, 32);
-adaBound.MaxIterations() = 100 * dataset.n_cols; // 100 epochs maximum.
+ens::AdaBound adaGrad(0.0005, 32);
+adaGrad.MaxIterations() = 10 * dataset.n_cols; // 10 epochs maximum.
 
 // Use the custom callback and an L2 penalty parameter of 0.01.
-sr.Train(dataset, labels, 10 /* numClasses */, adaBound, 0.01,
+sr.Train(dataset, labels, 10 /* numClasses */, adaGrad, 0.01, true,
     ModelCheckpoint(sr), ens::ProgressBar());
 
 // Now files like model-1.bin, model-2.bin, etc. should be saved on disk.
@@ -332,7 +328,7 @@ std::cout << "The dimensionality of the model in model-1.bin is "
     << dimensionality << "." << std::endl;
 std::cout << "The bias parameters for the model, for each class, are: "
     << std::endl;
-std::cout << lr.Parameters().col(0).t();
+std::cout << sr.Parameters().col(0).t();
 
 arma::vec point(dimensionality, arma::fill::randu);
 std::cout << "The predicted class for a random point is " << sr.Classify(point)
@@ -360,7 +356,7 @@ mlpack::SoftmaxRegression sr(firstDataset, firstLabels, 4, 0.01, false);
 
 // Now compute the accuracy on the second dataset and print it.
 std::cout << "Accuracy on second dataset: "
-    << sr.ComputeAccuracy(secondDataset, secondLabels) << "." << std::endl;
+    << sr.ComputeAccuracy(secondDataset, secondLabels) << "\%." << std::endl;
 
 // Train for a second round on the second dataset.
 sr.Train(secondDataset, secondLabels, 4);
@@ -368,7 +364,7 @@ sr.Train(secondDataset, secondLabels, 4);
 // Now compute the accuracy on the second dataset again and print it.
 // (Note that it may not be all that much better because this is random data!)
 std::cout << "Accuracy on second dataset after second training: "
-    << sr.ComputeAccuracy(secondDataset, secondLabels) << "." << std::endl;
+    << sr.ComputeAccuracy(secondDataset, secondLabels) << "\%." << std::endl;
 ```
 
 ---
@@ -395,20 +391,20 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(5000, arma::distr_param(0, 2));
 
 // Train with L2 regularization penalty parameter of 0.1.
-mlpack::SoftmaxRegression<arma::sp_fmat> lr(dataset, labels, 3, 0.1);
+mlpack::SoftmaxRegression<arma::sp_fmat> sr(dataset, labels, 3, 0.1);
 
 // Now classify a test point.
 arma::sp_fvec point;
 point.sprandu(100, 1, 0.3);
 
 size_t prediction;
-arma::frowvec probabilitiesVec;
+arma::fvec probabilitiesVec;
 sr.Classify(point, prediction, probabilitiesVec);
 
 std::cout << "Prediction for random test point: " << prediction << "."
     << std::endl;
 std::cout << "Class probabilities for random test point: "
-    << probabilitiesVec;
+    << probabilitiesVec.t();
 ```
 
 ***Note***: if `MatType` is a sparse object (e.g. `sp_fmat`), the internal
