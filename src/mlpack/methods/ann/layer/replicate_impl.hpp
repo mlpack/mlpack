@@ -108,7 +108,7 @@ void ReplicateType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void ReplicateType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input, const MatType& /* output */, const MatType& gy, MatType& g)
 {
   g.set_size(input.n_rows, input.n_cols);
 

@@ -19,12 +19,10 @@
 namespace mlpack {
 
 /**
- * Implementation of the Replicate class. The Replicate class works as a
- * feed-forward fully connected network container which plugs various layers
- * together.
- *
- * NOTE: this class is not intended to exist for long!  It will be replaced with
- * a more flexible DAG network type.
+ * Implementation of the Replicate class. The Replicate class replicates the
+ * input n times along a specified axis.  The output will have the same number
+ * of dimnensions as the input, with all dimensions other than the one
+ * specified in axis being the same size as the input.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
@@ -54,7 +52,7 @@ class ReplicateType : public Layer<MatType>
   virtual ~ReplicateType();
 
   //! Clone the ReplicateType object. This handles polymorphism correctly.
-  ReplicateType* Clone() const { return new ReplicateType(*this); }
+  ReplicateType* Clone() const override { return new ReplicateType(*this); }
 
   //! Copy the given ReplicateType layer.
   ReplicateType(const ReplicateType& other);
@@ -79,11 +77,13 @@ class ReplicateType : public Layer<MatType>
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param * (output) The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
+  void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g) override;
 
@@ -92,10 +92,7 @@ class ReplicateType : public Layer<MatType>
 
   size_t N() const { return n; }
 
-  // We don't need to overload WeightSize(); MultiLayer already computes this
-  // correctly.  (It is the sum of weights of all child layers.)
-
-  void ComputeOutputDimensions()
+  void ComputeOutputDimensions() override
   {
 
     const size_t numOutputDimensions = this->inputDimensions.size();
