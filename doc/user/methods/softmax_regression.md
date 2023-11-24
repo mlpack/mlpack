@@ -60,10 +60,17 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS())`
- * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS(), [callbacks...])`
-   - Train model, optionally specifying hyperparameters, a custom ensmallen
-     optimizer, and callbacks for the optimizer.
+ * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=true)`
+ * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=true, [callbacks...])`
+   - Train model, optionally specifying hyperparameters and callbacks for the
+     default ensmallen optimizer.
+
+---
+
+ * `sr = SoftmaxRegression(data, labels, numClasses, optimizer, lambda=0.0001, fitIntercept=true)`
+ * `sr = SoftmaxRegression(data, labels, numClasses, optimizer, lambda=0.0001, fitIntercept=true, [callbacks...])`
+    - Train model with a custom ensmallen optimizer, optionally specifying
+      hyperparameters and callbacks for the custom optimizer.
 
 ---
 
@@ -81,7 +88,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `lambda` | `double` | L2 regularization penalty parameter.  Must be nonnegative. | `0.0001` |
 | `fitIntercept` | `bool` | If true, an intercept term is fit to the model. | `true` |
-| `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::L_BFGS()` |
+| `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | _(N/A)_ |
 | `callbacks...` | [any set of ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation) | Optional callbacks for the ensmallen optimizer, such as e.g. `ens::ProgressBar()`, `ens::Report()`, or others. | _(N/A)_ |
 
 As an alternative to passing `lambda`, it can be set with a
@@ -103,10 +110,17 @@ instead of a manual setting.
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
 
- * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS())`
- * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS(), [callbacks...])`
-   - Train model, optionally specifying hyperparameters, a custom ensmallen
-     optimizer, and callbacks for the optimizer.
+ * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=true)`
+ * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=true, [callbacks...])`
+   - Train model, optionally specifying hyperparameters and callbacks for the
+     default ensmallen optimizer.
+
+---
+
+ * `sr.Train(data, labels, numClasses, optimizer, lambda=0.0001, fitIntercept=true)`
+ * `sr.Train(data, labels, numClasses, optimizer, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS(), [callbacks...])`
+   - Train model with a custom ensmallen optimizer, optionally specifying
+    hyperparameters and callbacks for the optimizer.
 
 ---
 
