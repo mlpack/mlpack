@@ -350,7 +350,7 @@ class LogisticRegression
    */
   void Classify(const MatType& dataset,
                 arma::Row<size_t>& predictions,
-                arma::mat& probabilities,
+                MatType& probabilities,
                 const double decisionBoundary = 0.5) const;
 
   /**
@@ -361,7 +361,7 @@ class LogisticRegression
    */
   mlpack_deprecated /* to be removed in mlpack 5.0.0 */
   void Classify(const MatType& dataset,
-                arma::mat& probabilities) const;
+                MatType& probabilities) const;
 
   /**
    * Reset the weights in the model to zeros.  This function can be used between

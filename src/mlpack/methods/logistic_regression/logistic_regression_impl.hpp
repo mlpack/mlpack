@@ -195,7 +195,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
 template<typename MatType>
 mlpack_deprecated
 void LogisticRegression<MatType>::Classify(const MatType& dataset,
-                                           arma::mat& probabilities) const
+                                           MatType& probabilities) const
 {
   // Set correct size of output matrix.
   probabilities.set_size(2, dataset.n_cols);
@@ -208,7 +208,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
 template<typename MatType>
 void LogisticRegression<MatType>::Classify(const MatType& dataset,
                                            arma::Row<size_t>& predictions,
-                                           arma::mat& probabilities,
+                                           MatType& probabilities,
                                            const double decisionBoundary) const
 {
   // Set correct sizes for outputs.
