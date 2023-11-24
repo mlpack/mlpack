@@ -338,7 +338,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
 
   // Did we want training accuracy?
-  if (params.Has("print_training_accuracy"))
+  if (params.Has("training") && params.Has("print_training_accuracy"))
   {
     timers.Start("lr_prediction");
     arma::Row<size_t> predictions;
