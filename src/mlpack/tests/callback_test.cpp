@@ -209,7 +209,7 @@ TEST_CASE("SRWithOptimizerCallback", "[CallbackTest]")
   ens::StandardSGD sgd(0.1, 1, 5);
   std::stringstream stream;
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
   sr.Train(data, labels, numClasses, sgd, ens::ProgressBar(70, stream));
 
   REQUIRE(stream.str().length() > 0);

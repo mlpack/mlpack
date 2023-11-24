@@ -33,7 +33,7 @@ TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
     labels(i) = RandInt(0, numClasses);
 
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
-  SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
+  SoftmaxRegressionFunction<> srf(data, labels, numClasses, 0);
 
   // Run a number of trials.
   for (size_t i = 0; i < trials; ++i)
@@ -80,9 +80,9 @@ TEST_CASE("SoftmaxRegressionFunctionRegularizationEvaluate",
     labels(i) = RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
-  SoftmaxRegressionFunction srfNoReg(data, labels, numClasses, 0);
-  SoftmaxRegressionFunction srfSmallReg(data, labels, numClasses, 1);
-  SoftmaxRegressionFunction srfBigReg(data, labels, numClasses, 20);
+  SoftmaxRegressionFunction<> srfNoReg(data, labels, numClasses, 0);
+  SoftmaxRegressionFunction<> srfSmallReg(data, labels, numClasses, 1);
+  SoftmaxRegressionFunction<> srfBigReg(data, labels, numClasses, 20);
 
   // Run a number of trials.
   for (size_t i = 0; i < trials; ++i)
@@ -123,8 +123,8 @@ TEST_CASE("SoftmaxRegressionFunctionGradient",
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.
-  SoftmaxRegressionFunction srf1(data, labels, numClasses, 0);
-  SoftmaxRegressionFunction srf2(data, labels, numClasses, 20);
+  SoftmaxRegressionFunction<> srf1(data, labels, numClasses, 0);
+  SoftmaxRegressionFunction<> srf2(data, labels, numClasses, 20);
 
   // Create a random set of parameters.
   arma::mat parameters;
@@ -195,7 +195,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -239,7 +239,7 @@ TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]")
   }
 
   // Now train a logistic regression object on it.
-  SoftmaxRegression lr(data, responses, 2, 0.01, true);
+  SoftmaxRegression<> lr(data, responses, 2, 0.01, true);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -307,7 +307,7 @@ TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -355,8 +355,8 @@ TEST_CASE("SoftmaxRegressionTrainTest", "[SoftmaxRegressionTest]")
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-  SoftmaxRegression sr(dataset.n_rows, 2);
-  SoftmaxRegression sr2(dataset.n_rows, 2);
+  SoftmaxRegression<> sr(dataset.n_rows, 2);
+  SoftmaxRegression<> sr2(dataset.n_rows, 2);
   sr.Parameters() = sr2.Parameters();
   ens::L_BFGS lbfgs;
   sr.Train(dataset, labels, 2, std::move(lbfgs));
@@ -386,10 +386,10 @@ TEST_CASE("SoftmaxRegressionOptimizerTrainTest", "[SoftmaxRegressionTest]")
     labels[i] = size_t(1.0);
 
   ens::L_BFGS lbfgs;
-  SoftmaxRegression sr(dataset.n_rows, 2, true);
+  SoftmaxRegression<> sr(dataset.n_rows, 2, true);
 
   ens::L_BFGS lbfgs2;
-  SoftmaxRegression sr2(dataset.n_rows, 2, true);
+  SoftmaxRegression<> sr2(dataset.n_rows, 2, true);
 
   sr.Lambda() = sr2.Lambda() = 0.01;
   sr.Parameters() = sr2.Parameters();
@@ -456,7 +456,7 @@ TEST_CASE("SoftmaxRegressionClassifySinglePointTest",
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
@@ -539,7 +539,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
@@ -627,7 +627,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
   }
 
   // Train softmax regression object.
-  SoftmaxRegression sr(data, labels, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
@@ -688,7 +688,7 @@ TEST_CASE("SoftmaxImmediateTrainTest", "[SoftmaxRegressionTest]")
     labels(i) = RandInt(0, numClasses);
 
   // Train without setting any parameters to the constructor.
-  SoftmaxRegression sr;
+  SoftmaxRegression<> sr;
   sr.Train(data, labels, numClasses);
 
   // Now classify some points.

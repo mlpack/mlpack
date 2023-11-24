@@ -100,9 +100,9 @@ PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
-PARAM_MODEL_IN(SoftmaxRegression, "input_model", "File containing existing "
+PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
     "model (parameters).", "m");
-PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
+PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
     "softmax regression model to.", "M");
 
 // Testing.
@@ -171,12 +171,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
       "no results will be saved");
 
-  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(params, timers,
+  SoftmaxRegression<>* sm = TrainSoftmax<SoftmaxRegression<>>(params, timers,
       maxIterations);
 
   TestClassifyAcc(params, timers, sm->NumClasses(), *sm);
 
-  params.Get<SoftmaxRegression*>("output_model") = sm;
+  params.Get<SoftmaxRegression<>*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
