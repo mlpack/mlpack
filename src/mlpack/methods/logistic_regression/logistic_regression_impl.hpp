@@ -170,7 +170,7 @@ template<typename VecType>
 void LogisticRegression<MatType>::Classify(
     const VecType& point,
     size_t& prediction,
-    LogisticRegression<MatType>::RowType& probabilities,
+    LogisticRegression<MatType>::ColType& probabilities,
     const double decisionBoundary) const
 {
   const double logit = 1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,

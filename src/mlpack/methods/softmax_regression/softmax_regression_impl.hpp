@@ -163,7 +163,7 @@ template<typename VecType>
 void SoftmaxRegression<MatType>::Classify(
     const VecType& point,
     size_t& prediction,
-    typename SoftmaxRegression<MatType>::DenseRowType& probabilitiesVec) const
+    typename SoftmaxRegression<MatType>::DenseColType& probabilitiesVec) const
 {
   arma::Row<size_t> label(1);
   Classify(point, label, probabilitiesVec);

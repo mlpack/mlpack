@@ -39,6 +39,7 @@ class LogisticRegression
  public:
   typedef typename MatType::elem_type ElemType;
   typedef typename GetDenseRowType<MatType>::type RowType;
+  typedef typename GetDenseColType<MatType>::type ColType;
 
   /**
    * Construct the LogisticRegression class without performing any training.
@@ -315,7 +316,7 @@ class LogisticRegression
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                RowType& probabilities,
+                ColType& probabilities,
                 const double decisionBoundary = 0.5) const;
 
   /**

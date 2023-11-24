@@ -61,6 +61,7 @@ class SoftmaxRegression
   typedef typename MatType::elem_type ElemType;
   typedef typename GetDenseMatType<MatType>::type DenseMatType;
   typedef typename GetDenseRowType<MatType>::type DenseRowType;
+  typedef typename GetDenseColType<MatType>::type DenseColType;
 
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
@@ -266,7 +267,7 @@ class SoftmaxRegression
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                DenseRowType& probabilitiesVec) const;
+                DenseColType& probabilitiesVec) const;
 
   /**
    * Classify the given points, returning class probabilities and predicted

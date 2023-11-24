@@ -985,7 +985,7 @@ TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
   }
 
   // Classify a single point and make sure that we get reasonable probabilities.
-  arma::rowvec probabilities2;
+  arma::vec probabilities2;
   size_t prediction;
   lr.Classify(data.col(0), prediction, probabilities2);
 

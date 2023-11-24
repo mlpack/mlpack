@@ -589,6 +589,16 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
     REQUIRE(arma::sum(probabilities.col(i)) ==
         Approx(1.0).epsilon(1e-7));
   }
+
+  // Test Classify() on a single point.
+  size_t prediction = sr.Classify(data.col(0));
+  REQUIRE(prediction == predictions[0]);
+
+  arma::vec probabilitiesVec;
+  sr.Classify(data.col(0), prediction, probabilitiesVec);
+  REQUIRE(prediction == predictions[0]);
+  REQUIRE(arma::approx_equal(probabilities.col(0), probabilitiesVec, "absdiff",
+      1e-5));
 }
 
 TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
