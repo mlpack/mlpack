@@ -88,7 +88,8 @@ LogisticRegression<MatType>::LogisticRegression(
 
 template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename>
-double LogisticRegression<MatType>::Train(
+typename LogisticRegression<MatType>::ElemType
+LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     CallbackTypes&&... callbacks)
@@ -100,7 +101,8 @@ double LogisticRegression<MatType>::Train(
 
 template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename>
-double LogisticRegression<MatType>::Train(
+typename LogisticRegression<MatType>::ElemType
+LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     const double lambda,
@@ -114,7 +116,8 @@ double LogisticRegression<MatType>::Train(
 
 template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename, typename>
-double LogisticRegression<MatType>::Train(
+typename LogisticRegression<MatType>::ElemType
+LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
@@ -138,7 +141,8 @@ double LogisticRegression<MatType>::Train(
 
 template<typename MatType>
 template<typename OptimizerType, typename... CallbackTypes, typename, typename>
-double LogisticRegression<MatType>::Train(
+typename LogisticRegression<MatType>::ElemType
+LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,

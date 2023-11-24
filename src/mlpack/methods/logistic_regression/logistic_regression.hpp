@@ -181,9 +181,9 @@ class LogisticRegression
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  double Train(const MatType& predictors,
-               const arma::Row<size_t>& responses,
-               CallbackTypes&&... callbacks);
+  ElemType Train(const MatType& predictors,
+                 const arma::Row<size_t>& responses,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the LogisticRegression model on the given input data.  By default,
@@ -208,10 +208,10 @@ class LogisticRegression
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  double Train(const MatType& predictors,
-               const arma::Row<size_t>& responses,
-               const double lambda,
-               CallbackTypes&&... callbacks);
+  ElemType Train(const MatType& predictors,
+                 const arma::Row<size_t>& responses,
+                 const double lambda,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
@@ -239,10 +239,10 @@ class LogisticRegression
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  double Train(const MatType& predictors,
-               const arma::Row<size_t>& responses,
-               OptimizerType& optimizer,
-               CallbackTypes&&... callbacks);
+  ElemType Train(const MatType& predictors,
+                 const arma::Row<size_t>& responses,
+                 OptimizerType& optimizer,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
@@ -271,11 +271,11 @@ class LogisticRegression
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
            >::value>::type>
-  double Train(const MatType& predictors,
-               const arma::Row<size_t>& responses,
-               OptimizerType& optimizer,
-               const double lambda,
-               CallbackTypes&&... callbacks);
+  ElemType Train(const MatType& predictors,
+                 const arma::Row<size_t>& responses,
+                 OptimizerType& optimizer,
+                 const double lambda,
+                 CallbackTypes&&... callbacks);
 
   //! Return the parameters (the b vector).
   const RowType& Parameters() const { return parameters; }
