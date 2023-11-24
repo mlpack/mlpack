@@ -61,8 +61,8 @@ inline void SoftmaxRegressionFunction<MatType>::Shuffle()
   size_t loc = 0;
   while (it != groundTruth.end())
   {
-    newLocations(0, loc) = reverseOrdering(it.col());
-    newLocations(1, loc) = it.row();
+    newLocations(0, loc) = it.row();
+    newLocations(1, loc) = reverseOrdering(it.col());
     values(loc) = (*it);
 
     ++it;
@@ -246,7 +246,7 @@ SoftmaxRegressionFunction<MatType>::Evaluate(const MatType& parameters,
 
   logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1) %
       arma::log(probabilities)) / batchSize;
-  weightDecay = 0.5 * lambda * arma::accu(parameters * parameters);
+  weightDecay = 0.5 * lambda * arma::norm(arma::vectorise(parameters), 2);
 
   return -logLikelihood + weightDecay;
 }
@@ -276,7 +276,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
     // the cost of building matrix [1; data].
     MatType inner = probabilities - groundTruth;
     gradient.col(0) =
-        inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
+        inner * arma::ones<MatType>(data.n_cols, 1) / data.n_cols +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.t() / data.n_cols +
@@ -307,7 +307,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
     MatType inner = probabilities - groundTruth.cols(start, start +
         batchSize - 1);
     gradient.col(0) =
-        inner * arma::ones<arma::mat>(batchSize, 1) / batchSize +
+        inner * arma::ones<MatType>(batchSize, 1) / batchSize +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.cols(start, start + batchSize - 1).t() / batchSize +
