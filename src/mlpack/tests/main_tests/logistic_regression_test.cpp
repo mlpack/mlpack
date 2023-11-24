@@ -629,8 +629,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
 }
 
 /**
-  * Check that running the binding with print_training_accuracy set to true
-  * does not crash.
+ * Check that running the binding with print_training_accuracy set to true
+ * does not crash.
  **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPrintTrainingAccuracyTest",
                 "[LogisticRegressionMainTest][BindingTests]")
