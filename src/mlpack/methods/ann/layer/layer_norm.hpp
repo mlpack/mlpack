@@ -1,7 +1,7 @@
 /**
  * @file methods/ann/layer/layer_norm.hpp
  * @author Shikhar Jaiswal
- *
+ * @author Adam Kropp
  * Definition of the Layer Normalization class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -52,36 +52,24 @@ namespace mlpack {
  * }
  * @endcode
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-  typename InputType = arma::mat,
-  typename OutputType = arma::mat
+  typename MatType = arma::mat
 >
-class LayerNormType : public Layer<InputType, OutputType>
+class LayerNormType : public Layer<MatType>
 {
  public:
-  //! Create the LayerNormType object.
-  LayerNormType();
-
   /**
    * Create the LayerNorm object for a specified number of input units.
    *
-   * @param size The number of input units.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
-  LayerNormType(const size_t size, const double eps = 1e-8);
+  LayerNormType(const double eps = 1e-8);
 
   //! Clone the LayerNormType object. This handles polymorphism correctly.
-  LayerNormType* Clone() const { return new LayerNormType(*this); }
-
-  /**
-   * Reset the layer parameters.
-   */
-  void Reset();
+  LayerNormType* Clone() const override { return new LayerNormType(*this); }
 
   /**
    * Forward pass of Layer Normalization. Transforms the input data
@@ -91,18 +79,20 @@ class LayerNormType : public Layer<InputType, OutputType>
    * @param input Input data for the layer.
    * @param output Resulting output activations.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output) override;
 
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& input,
-                const OutputType& gy,
-                OutputType& g);
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
+                const MatType& gy,
+                MatType& g) override;
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -111,20 +101,20 @@ class LayerNormType : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void Gradient(const InputType& input,
-                const OutputType& error,
-                OutputType& gradient);
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient) override;
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  MatType const& Parameters() const override { return weights; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  MatType& Parameters() override { return weights; }
 
   //! Get the mean across single training data.
-  OutputType Mean() { return mean; }
+  MatType Mean() { return mean; }
 
   //! Get the variance across single training data.
-  OutputType Variance() { return variance; }
+  MatType Variance() { return variance; }
 
   //! Get the number of input units.
   size_t InSize() const { return size; }
@@ -132,7 +122,23 @@ class LayerNormType : public Layer<InputType, OutputType>
   //! Get the value of epsilon.
   double Epsilon() const { return eps; }
 
-  const size_t WeightSize() const { return 2 * size; }
+  size_t WeightSize() const override { return 2 * size; }
+
+  void ComputeOutputDimensions() override
+  {
+    // The default implementation is to assume that the output size is the same
+    // as the input.
+    this->outputDimensions = this->inputDimensions;
+    size = this->inputDimensions[0];
+    for (size_t i = 1; i < this->inputDimensions.size(); i++)
+      size *= this->inputDimensions[i];
+  }
+
+  void SetWeights(typename MatType::elem_type* /* weightsPtr */) override;
+
+  void CustomInitialize(
+      MatType& /* W */,
+      const size_t /* elements */) override;
 
   /**
    * Serialize the layer.
@@ -141,39 +147,36 @@ class LayerNormType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t size;
-
   //! Locally-stored epsilon value.
   double eps;
 
-  //! Variable to keep track of whether we are in loading or saving mode.
-  bool loading;
+  // Cached size for the normalization.
+  size_t size;
 
   //! Locally-stored scale parameter.
-  OutputType gamma;
+  MatType gamma;
 
   //! Locally-stored shift parameter.
-  OutputType beta;
+  MatType beta;
 
   //! Locally-stored parameters.
-  OutputType weights;
+  MatType weights;
 
   //! Locally-stored mean object.
-  OutputType mean;
+  MatType mean;
 
   //! Locally-stored variance object.
-  OutputType variance;
+  MatType variance;
 
   //! Locally-stored normalized input.
-  OutputType normalized;
+  MatType normalized;
 
   //! Locally-stored zero mean input.
-  OutputType inputMean;
+  MatType inputMean;
 }; // class LayerNormType
 
 // Standard LayerNorm type
-typedef LayerNormType<arma::mat, arma::mat> LayerNorm;
+typedef LayerNormType<arma::mat> LayerNorm;
 
 } // namespace mlpack
 

@@ -238,7 +238,10 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void LSTMType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   MatType gyLocal;
   if (this->HasPreviousStep())

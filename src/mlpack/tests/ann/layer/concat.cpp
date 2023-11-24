@@ -64,7 +64,7 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   // Test the Backward function.
   error = arma::zeros(20, 1);
   delta.set_size(input.n_rows, input.n_cols);
-  module.Backward(input, error, delta);
+  module.Backward(input, output, error, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
 

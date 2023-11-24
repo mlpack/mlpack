@@ -99,11 +99,12 @@ void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void LogSoftMaxType<MatType>::Backward(
-    const MatType& input,
+    const MatType& /* input */,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  g = gy - arma::exp(input) % arma::repmat(arma::sum(gy), input.n_rows, 1);
+  g = gy - arma::exp(output) % arma::repmat(arma::sum(gy), output.n_rows, 1);
 }
 
 } // namespace mlpack

@@ -86,7 +86,10 @@ void HardTanHType<MatType>::Forward(
 
 template<typename MatType>
 void HardTanHType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = gy;
   
