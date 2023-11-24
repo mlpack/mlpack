@@ -278,6 +278,8 @@ void LogisticRegression<MatType>::serialize(Archive& ar,
     arma::rowvec parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
     parameters = arma::conv_to<RowType>::from(parametersTmp);
+
+    ar(CEREAL_NVP(lambda));
   }
   else
   {
