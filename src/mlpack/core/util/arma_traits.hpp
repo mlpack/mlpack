@@ -145,6 +145,20 @@ struct GetDenseRowType<arma::SpMat<eT>>
   typedef arma::Row<eT> type;
 };
 
+// Get the dense matrix type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetDenseMatType
+{
+  typedef MatType type;
+};
+
+template<typename eT>
+struct GetDenseMatType<arma::SpMat<eT>>
+{
+  typedef arma::Mat<eT> type;
+};
+
 // Get the sparse matrix type corresponding to a given MatType.
 
 template<typename MatType>

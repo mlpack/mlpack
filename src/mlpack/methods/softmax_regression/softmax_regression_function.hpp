@@ -23,6 +23,7 @@ class SoftmaxRegressionFunction
 {
  public:
   typedef typename MatType::elem_type ElemType;
+  typedef typename GetDenseMatType<MatType>::type DenseMatType;
   typedef typename GetSparseMatType<MatType>::type SpMatType;
 
   /**
@@ -42,7 +43,7 @@ class SoftmaxRegressionFunction
                             const bool fitIntercept = false);
 
   //! Initializes the parameters of the model to suitable values.
-  const MatType InitializeWeights();
+  const DenseMatType InitializeWeights();
 
   /**
    * Shuffle the dataset.
@@ -58,9 +59,9 @@ class SoftmaxRegressionFunction
    * @param fitIntercept If true, an intercept is fitted.
    * @return Initialized model weights.
    */
-  static const MatType InitializeWeights(const size_t featureSize,
-                                         const size_t numClasses,
-                                         const bool fitIntercept = false);
+  static const DenseMatType InitializeWeights(const size_t featureSize,
+                                              const size_t numClasses,
+                                              const bool fitIntercept = false);
 
   /**
    * Initialize Softmax Regression weights (trainable parameters) with the given
@@ -71,7 +72,7 @@ class SoftmaxRegressionFunction
    * @param numClasses Number of classes for classification.
    * @param fitIntercept Intercept term flag.
    */
-  static void InitializeWeights(MatType& weights,
+  static void InitializeWeights(DenseMatType& weights,
                                 const size_t featureSize,
                                 const size_t numClasses,
                                 const bool fitIntercept = false);
@@ -96,8 +97,8 @@ class SoftmaxRegressionFunction
    * @param start Index of point to start at.
    * @param batchSize Number of points to calculate probabilities for.
    */
-  void GetProbabilitiesMatrix(const MatType& parameters,
-                              MatType& probabilities,
+  void GetProbabilitiesMatrix(const DenseMatType& parameters,
+                              DenseMatType& probabilities,
                               const size_t start,
                               const size_t batchSize) const;
 
@@ -110,7 +111,7 @@ class SoftmaxRegressionFunction
    *
    * @param parameters Current values of the model parameters.
    */
-  ElemType Evaluate(const MatType& parameters) const;
+  ElemType Evaluate(const DenseMatType& parameters) const;
 
   /**
    * Evaluate the objective function of the softmax regression model for a
@@ -123,7 +124,7 @@ class SoftmaxRegressionFunction
    * @param start First index of the data points to use.
    * @param batchSize Number of data points to evaluate objective for.
    */
-  ElemType Evaluate(const MatType& parameters,
+  ElemType Evaluate(const DenseMatType& parameters,
                     const size_t start,
                     const size_t batchSize = 1) const;
 
@@ -137,7 +138,7 @@ class SoftmaxRegressionFunction
    * @param gradient Matrix where gradient values will be stored.
    */
   template<typename GradType>
-  void Gradient(const MatType& parameters, GradType& gradient) const;
+  void Gradient(const DenseMatType& parameters, GradType& gradient) const;
 
   /**
    * Evaluate the gradient of the objective function given the current set of
@@ -151,7 +152,7 @@ class SoftmaxRegressionFunction
    * @param batchSize Number of data points to evaluate gradient for.
    */
   template<typename GradType>
-  void Gradient(const MatType& parameters,
+  void Gradient(const DenseMatType& parameters,
                 const size_t start,
                 GradType& gradient,
                 const size_t batchSize = 1) const;
@@ -166,12 +167,12 @@ class SoftmaxRegressionFunction
    * @param gradient Out param for the gradient value.
    */
   template<typename GradType>
-  void PartialGradient(const MatType& parameters,
+  void PartialGradient(const DenseMatType& parameters,
                        size_t j,
                        GradType& gradient) const;
 
   //! Return the initial point for the optimization.
-  const MatType& GetInitialPoint() const { return initialPoint; }
+  const DenseMatType& GetInitialPoint() const { return initialPoint; }
 
   //! Gets the number of classes.
   size_t NumClasses() const { return numClasses; }
@@ -200,7 +201,7 @@ class SoftmaxRegressionFunction
   //! Label matrix for the provided data.
   SpMatType groundTruth;
   //! Initial parameter point.
-  MatType initialPoint;
+  DenseMatType initialPoint;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.

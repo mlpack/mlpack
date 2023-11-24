@@ -79,25 +79,27 @@ inline void SoftmaxRegressionFunction<MatType>::Shuffle()
  * lead to each class output being the same.
  */
 template<typename MatType>
-inline const MatType SoftmaxRegressionFunction<MatType>::InitializeWeights()
+inline const typename SoftmaxRegressionFunction<MatType>::DenseMatType
+SoftmaxRegressionFunction<MatType>::InitializeWeights()
 {
   return InitializeWeights(data.n_rows, numClasses, fitIntercept);
 }
 
 template<typename MatType>
-inline const MatType SoftmaxRegressionFunction<MatType>::InitializeWeights(
+inline const typename SoftmaxRegressionFunction<MatType>::DenseMatType
+SoftmaxRegressionFunction<MatType>::InitializeWeights(
     const size_t featureSize,
     const size_t numClasses,
     const bool fitIntercept)
 {
-  MatType parameters;
+  DenseMatType parameters;
   InitializeWeights(parameters, featureSize, numClasses, fitIntercept);
   return parameters;
 }
 
 template<typename MatType>
 inline void SoftmaxRegressionFunction<MatType>::InitializeWeights(
-    MatType& weights,
+    typename SoftmaxRegressionFunction<MatType>::DenseMatType& weights,
     const size_t featureSize,
     const size_t numClasses,
     const bool fitIntercept)
@@ -157,12 +159,12 @@ inline void SoftmaxRegressionFunction<MatType>::GetGroundTruthMatrix(
  */
 template<typename MatType>
 inline void SoftmaxRegressionFunction<MatType>::GetProbabilitiesMatrix(
-    const MatType& parameters,
-    MatType& probabilities,
+    const typename SoftmaxRegressionFunction<MatType>::DenseMatType& parameters,
+    typename SoftmaxRegressionFunction<MatType>::DenseMatType& probabilities,
     const size_t start,
     const size_t batchSize) const
 {
-  MatType hypothesis;
+  DenseMatType hypothesis;
 
   if (fitIntercept)
   {
@@ -193,7 +195,9 @@ inline void SoftmaxRegressionFunction<MatType>::GetProbabilitiesMatrix(
 template<typename MatType>
 inline
 typename SoftmaxRegressionFunction<MatType>::ElemType
-SoftmaxRegressionFunction<MatType>::Evaluate(const MatType& parameters) const
+SoftmaxRegressionFunction<MatType>::Evaluate(
+    const typename SoftmaxRegressionFunction<MatType>::DenseMatType& parameters)
+    const
 {
   // The objective function is the negative log likelihood of the model
   // calculated over all the training examples. Mathematically it is as follows:
@@ -211,7 +215,7 @@ SoftmaxRegressionFunction<MatType>::Evaluate(const MatType& parameters) const
   // The sum is calculated over all the classes.
   // x_i is the input vector for a particular training example.
   // theta_j is the parameter vector associated with a particular class.
-  MatType probabilities;
+  DenseMatType probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);
 
   // Calculate the log likelihood and regularization terms.
@@ -234,9 +238,10 @@ SoftmaxRegressionFunction<MatType>::Evaluate(const MatType& parameters) const
 template<typename MatType>
 inline
 typename SoftmaxRegressionFunction<MatType>::ElemType
-SoftmaxRegressionFunction<MatType>::Evaluate(const MatType& parameters,
-                                             const size_t start,
-                                             const size_t batchSize) const
+SoftmaxRegressionFunction<MatType>::Evaluate(
+    const typename SoftmaxRegressionFunction<MatType>::DenseMatType& parameters,
+    const size_t start,
+    const size_t batchSize) const
 {
   MatType probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
@@ -257,7 +262,8 @@ SoftmaxRegressionFunction<MatType>::Evaluate(const MatType& parameters,
 template<typename MatType>
 template<typename GradType>
 inline void SoftmaxRegressionFunction<MatType>::Gradient(
-    const MatType& parameters, GradType& gradient) const
+    const typename SoftmaxRegressionFunction<MatType>::DenseMatType& parameters,
+    GradType& gradient) const
 {
   // Calculate the class probabilities for each training example. The
   // probabilities for each of the classes are given by:
@@ -265,7 +271,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
   // The sum is calculated over all the classes.
   // x_i is the input vector for a particular training example.
   // theta_j is the parameter vector associated with a particular class.
-  MatType probabilities;
+  DenseMatType probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);
 
   // Calculate the parameter gradients.
@@ -274,9 +280,9 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
   {
     // Treating the intercept term parameters.col(0) seperately to avoid
     // the cost of building matrix [1; data].
-    MatType inner = probabilities - groundTruth;
+    DenseMatType inner = probabilities - groundTruth;
     gradient.col(0) =
-        inner * arma::ones<MatType>(data.n_cols, 1) / data.n_cols +
+        inner * arma::ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.t() / data.n_cols +
@@ -292,22 +298,22 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
 template<typename MatType>
 template<typename GradType>
 inline void SoftmaxRegressionFunction<MatType>::Gradient(
-    const MatType& parameters,
+    const typename SoftmaxRegressionFunction<MatType>::DenseMatType& parameters,
     const size_t start,
     GradType& gradient,
     const size_t batchSize) const
 {
-  MatType probabilities;
+  DenseMatType probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
 
   // Calculate the parameter gradients.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   if (fitIntercept)
   {
-    MatType inner = probabilities - groundTruth.cols(start, start +
+    DenseMatType inner = probabilities - groundTruth.cols(start, start +
         batchSize - 1);
     gradient.col(0) =
-        inner * arma::ones<MatType>(batchSize, 1) / batchSize +
+        inner * arma::ones<DenseMatType>(batchSize, 1) / batchSize +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.cols(start, start + batchSize - 1).t() / batchSize +
@@ -324,23 +330,23 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
 template<typename MatType>
 template<typename GradType>
 inline void SoftmaxRegressionFunction<MatType>::PartialGradient(
-    const MatType& parameters,
+    const typename SoftmaxRegressionFunction<MatType>::DenseMatType& parameters,
     const size_t j,
     GradType& gradient) const
 {
   gradient.zeros(arma::size(parameters));
 
-  MatType probabilities;
+  DenseMatType probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);
 
   // Calculate the required part of the gradient.
-  MatType inner = probabilities - groundTruth;
+  DenseMatType inner = probabilities - groundTruth;
   if (fitIntercept)
   {
     if (j == 0)
     {
       gradient.col(j) =
-          inner * arma::ones<MatType>(data.n_cols, 1) / data.n_cols +
+          inner * arma::ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
           lambda * parameters.col(0);
     }
     else

@@ -59,6 +59,8 @@ class SoftmaxRegression
 {
  public:
   typedef typename MatType::elem_type ElemType;
+  typedef typename GetDenseMatType<MatType>::type DenseMatType;
+  typedef typename GetDenseRowType<MatType>::type DenseRowType;
 
   /**
    * Initialize the SoftmaxRegression without performing training.  Default
@@ -91,7 +93,7 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
+               OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -123,7 +125,7 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
+               OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -156,7 +158,7 @@ class SoftmaxRegression
            typename FirstCallbackType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
+               OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>::type,
            typename = typename std::enable_if<
               std::is_class<FirstCallbackType>::value
@@ -189,7 +191,7 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
+               OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -219,7 +221,7 @@ class SoftmaxRegression
   template<typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, SoftmaxRegressionFunction<MatType>, MatType
+               OptimizerType, SoftmaxRegressionFunction<MatType>, DenseMatType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -264,7 +266,7 @@ class SoftmaxRegression
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& prediction,
-                arma::rowvec& probabilitiesVec) const;
+                DenseRowType& probabilitiesVec) const;
 
   /**
    * Classify the given points, returning class probabilities and predicted
@@ -279,7 +281,7 @@ class SoftmaxRegression
    */
   void Classify(const MatType& dataset,
                 arma::Row<size_t>& labels,
-                MatType& probabilities) const;
+                DenseMatType& probabilities) const;
 
   /**
    * Classify the given points, returning class probabilities for each point.
@@ -289,7 +291,7 @@ class SoftmaxRegression
    */
   mlpack_deprecated /** To be removed in mlpack 5.0.0. */
   void Classify(const MatType& dataset,
-                MatType& probabilities) const;
+                DenseMatType& probabilities) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -340,7 +342,7 @@ class SoftmaxRegression
 
  private:
   //! Parameters after optimization.
-  MatType parameters;
+  DenseMatType parameters;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.

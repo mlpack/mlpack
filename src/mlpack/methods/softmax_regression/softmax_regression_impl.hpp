@@ -123,6 +123,7 @@ SoftmaxRegression<MatType>::Train(const MatType& data,
 {
   this->lambda = lambda;
   this->fitIntercept = fitIntercept;
+  this->numClasses = numClasses;
 
   SoftmaxRegressionFunction<MatType> regressor(data, labels, numClasses, lambda,
                                                fitIntercept);
@@ -159,9 +160,10 @@ size_t SoftmaxRegression<MatType>::Classify(const VecType& point) const
 
 template<typename MatType>
 template<typename VecType>
-void SoftmaxRegression<MatType>::Classify(const VecType& point,
-                                          size_t& prediction,
-                                          arma::rowvec& probabilitiesVec) const
+void SoftmaxRegression<MatType>::Classify(
+    const VecType& point,
+    size_t& prediction,
+    typename SoftmaxRegression<MatType>::DenseRowType& probabilitiesVec) const
 {
   arma::Row<size_t> label(1);
   Classify(point, label, probabilitiesVec);
@@ -169,16 +171,16 @@ void SoftmaxRegression<MatType>::Classify(const VecType& point,
 }
 
 template<typename MatType>
-inline void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
-                                                 arma::Row<size_t>& labels,
-                                                 MatType& probabilities)
-    const
+inline void SoftmaxRegression<MatType>::Classify(
+    const MatType& dataset,
+    arma::Row<size_t>& labels,
+    typename SoftmaxRegression<MatType>::DenseMatType& probabilities) const
 {
   util::CheckSameDimensionality(dataset, FeatureSize(),
       "SoftmaxRegression::Classify()");
 
   // Calculate the probabilities for each test input.
-  MatType hypothesis;
+  DenseMatType hypothesis;
   if (fitIntercept)
   {
     // In order to add the intercept term, we should compute following matrix:
@@ -225,7 +227,7 @@ inline void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
 template<typename MatType>
 inline mlpack_deprecated void SoftmaxRegression<MatType>::Classify(
     const MatType& dataset,
-    MatType& probabilities) const
+    typename SoftmaxRegression<MatType>::DenseMatType& probabilities) const
 {
   arma::Row<size_t> labels;
   Classify(dataset, labels, probabilities);
@@ -268,7 +270,7 @@ void SoftmaxRegression<MatType>::serialize(Archive& ar,
     // This is the legacy version: `parameters` is of type arma::mat.
     arma::mat parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
-    parameters = arma::conv_to<MatType>::from(parametersTmp);
+    parameters = arma::conv_to<DenseMatType>::from(parametersTmp);
 
     ar(CEREAL_NVP(numClasses));
     ar(CEREAL_NVP(lambda));
