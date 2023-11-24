@@ -17,6 +17,9 @@
   * Fix inconsistent use of the "input" parameter to the Backward method in ANNs
     (#3551).
 
+  * Fix `preprocess_split()` call in documentation for `LinearRegression` and
+    `AdaBoost` Python classes (#3563).
+
 ### mlpack 4.2.1
 ###### 2023-09-05
   * Reinforcement Learning: Gaussian noise (#3515).
