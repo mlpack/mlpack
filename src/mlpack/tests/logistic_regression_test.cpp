@@ -1230,3 +1230,32 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegression]",
   REQUIRE(lr17.Parameters().n_elem == 51);
   REQUIRE(lr18.Parameters().n_elem == 51);
 }
+
+// Make sure resetting the model does something.
+TEST_CASE("LogisticRegressionResetTest", "[LogisticRegression]")
+{
+  // Create random data.
+  arma::mat data(50, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  labels.subvec(500, 999) = 1;
+
+  // Create two logistic regression models.
+  LogisticRegression<> lr1, lr2;
+
+  ens::L_BFGS lbfgs1(1, 1); // Use only one iteration.
+  ens::L_BFGS lbfgs2(1, 1);
+
+  lr1.Train(data, labels, lbfgs1);
+  lr2.Train(data, labels, lbfgs2);
+
+  REQUIRE(
+      arma::approx_equal(lr1.Parameters(), lr2.Parameters(), "absdiff", 1e-5));
+
+  // Now reset one model and incrementally train the other.
+  lr1.Reset();
+  lr1.Train(data, labels, lbfgs1);
+  lr2.Train(data, labels, lbfgs2);
+
+  REQUIRE(
+      !arma::approx_equal(lr1.Parameters(), lr2.Parameters(), "absdiff", 1e-5));
+}
