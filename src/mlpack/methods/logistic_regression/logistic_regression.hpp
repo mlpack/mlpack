@@ -117,7 +117,7 @@ class LogisticRegression
   template<typename OptimizerType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+               OptimizerType, LogisticRegressionFunction<MatType>, RowType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -147,7 +147,7 @@ class LogisticRegression
   template<typename OptimizerType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+               OptimizerType, LogisticRegressionFunction<MatType>, RowType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -234,7 +234,7 @@ class LogisticRegression
   template<typename OptimizerType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+               OptimizerType, LogisticRegressionFunction<MatType>, RowType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -266,7 +266,7 @@ class LogisticRegression
   template<typename OptimizerType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType, LogisticRegressionFunction<MatType>, arma::mat
+               OptimizerType, LogisticRegressionFunction<MatType>, RowType
            >::value>::type,
            typename = typename std::enable_if<IsEnsCallbackTypes<
                CallbackTypes...
@@ -411,6 +411,9 @@ class LogisticRegression
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+    (mlpack::LogisticRegression<MatType>), (1));
 
 // Include implementation.
 #include "logistic_regression_impl.hpp"

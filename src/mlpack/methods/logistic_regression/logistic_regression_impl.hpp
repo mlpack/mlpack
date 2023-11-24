@@ -266,10 +266,20 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 template<typename MatType>
 template<typename Archive>
 void LogisticRegression<MatType>::serialize(Archive& ar,
-    const uint32_t /* version */)
+    const uint32_t version)
 {
-  ar(CEREAL_NVP(parameters));
-  ar(CEREAL_NVP(lambda));
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // This is the legacy version: `parameters` is of type arma::rowvec.
+    arma::rowvec parametersTmp;
+    ar(cereal::make_nvp("parameters", parametersTmp));
+    parameters = arma::conv_to<RowType>::from(parametersTmp);
+  }
+  else
+  {
+    ar(CEREAL_NVP(parameters));
+    ar(CEREAL_NVP(lambda));
+  }
 }
 
 } // namespace mlpack
