@@ -147,7 +147,8 @@ can be used to make class predictions for new data.
 
  * `size_t predictedClass = sr.Classify(point)`
    - ***(Single-point)***
-   - Classify a single point, returning the predicted class (`0` or `1`).
+   - Classify a single point, returning the predicted class (`0` through
+     `numClasses - 1`, inclusive).
 
 ---
 
@@ -206,8 +207,7 @@ can be used to make class predictions for new data.
    the given `data` with the given `labels`.  The returned accuracy is between 0
    and 100.
 
- * `sr.Reset()` will reset the weights of the model to zeros.  <!-- TODO: verify
-   -->
+ * `sr.Reset()` will reset the weights of the model to small random values.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/softmax_regression/softmax_regression.hpp) can be
@@ -233,7 +233,7 @@ mlpack::data::Load("mnist.train.labels.csv", labels, true);
 
 mlpack::SoftmaxRegression sr;
 
-// Create AdaDelta optimizer with custom step size and batch size.
+// Create AdaGrad optimizer with custom step size and batch size.
 ens::AdaGrad optimizer(0.0005 /* step size */, 16 /* batch size */);
 optimizer.MaxIterations() = 10 * dataset.n_cols; // Allow 10 epochs.
 
@@ -260,8 +260,8 @@ std::cout << "Accuracy on test set:     "
 
 ---
 
-Train a softmax regression model with SGD and save the model every epoch using a
-[custom ensmallen
+Train a softmax regression model with AdaGrad and save the model every epoch
+using a [custom ensmallen
 callback](https://www.ensmallen.org/docs.html#custom-callbacks):
 
 ```c++
@@ -300,8 +300,8 @@ mlpack::data::Load("mnist.train.labels.csv", labels, true);
 
 mlpack::SoftmaxRegression sr;
 
-// Create AdaBound optimizer with small step size and batch size of 32.
-ens::AdaBound adaGrad(0.0005, 32);
+// Create AdaGrad optimizer with small step size and batch size of 32.
+ens::AdaGrad adaGrad(0.0005, 32);
 adaGrad.MaxIterations() = 10 * dataset.n_cols; // 10 epochs maximum.
 
 // Use the custom callback and an L2 penalty parameter of 0.01.
