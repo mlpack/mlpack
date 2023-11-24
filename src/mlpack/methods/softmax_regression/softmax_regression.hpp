@@ -68,12 +68,13 @@ class SoftmaxRegression
    */
   SoftmaxRegression(const size_t inputSize = 0,
                     const size_t numClasses = 0,
-                    const bool fitIntercept = false);
+                    const bool fitIntercept = true);
+
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
    * passed, which controls the amount of L2-regularization in the objective
-   * function. By default, the model takes a small value.
+   * function. By default, the model takes a small value for lambda.
    *
    * @tparam OptimizerType Desired optimizer type.
    * @param data Input training features. Each column associate with one sample
@@ -82,39 +83,83 @@ class SoftmaxRegression
    * @param optimizer Desired optimizer.
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
+   * @param callbacks Callback(s) for ensmallen optimizer `OptimizerType`.
+   *        See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  template<typename OptimizerType = ens::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, SoftmaxRegressionFunction, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
-                    const bool fitIntercept = false,
-                    OptimizerType optimizer = OptimizerType());
+                    const bool fitIntercept = true,
+                    OptimizerType optimizer = OptimizerType(),
+                    CallbackTypes&&... callbacks);
+
   /**
-   * Construct the SoftmaxRegression class with the provided data and labels.
-   * This will train the model. Optionally, the parameter 'lambda' can be
-   * passed, which controls the amount of L2-regularization in the objective
-   * function. By default, the model takes a small value.
+   * Train the softmax regression with the given training data.
    *
    * @tparam OptimizerType Desired optimizer type.
-   * @tparam CallbackTypes Types of Callback Functions.
-   * @param data Input training features. Each column associate with one sample
+   * @param data Input data with each column as one example.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
+   * @param callbacks Callback(s) for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
+   */
+  template<typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, SoftmaxRegressionFunction, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  mlpack_deprecated /* To be removed in mlpack 5.0.0; use the overload below. */
+  double Train(const arma::mat& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               OptimizerType optimizer,
+               CallbackTypes&&... callbacks);
+
+  /**
+   * Train the softmax regression with the given training data and optionally
+   * the given hyperparameters.
+   *
+   * @tparam OptimizerType Desired optimizer type.
+   * @param data Input data with each column as one example.
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @param fitIntercept add intercept term or not.
+   * @param fitIntercept Whether or not to fit an intercept term to the model.
    * @param optimizer Desired optimizer.
-   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
-   *        See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @param callbacks Callback(s) for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
    */
-  template<typename OptimizerType, typename... CallbackTypes>
-  SoftmaxRegression(const arma::mat& data,
-                    const arma::Row<size_t>& labels,
-                    const size_t numClasses,
-                    const double lambda,
-                    const bool fitIntercept,
-                    OptimizerType optimizer,
-                    CallbackTypes&&... callbacks);
+  template<typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType, SoftmaxRegressionFunction, arma::mat
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  double Train(const arma::mat& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const double lambda = 0.0001,
+               const bool fitIntercept = true,
+               OptimizerType optimizer = OptimizerType(),
+               CallbackTypes&&... callbacks);
+
   /**
    * Classify the given points, returning the predicted labels for each point.
    * The function calculates the probabilities for every class, given a data
@@ -124,15 +169,30 @@ class SoftmaxRegression
    * @param labels Predicted labels for each point.
    */
   void Classify(const arma::mat& dataset, arma::Row<size_t>& labels) const;
+
   /**
    * Classify the given point. The predicted class label is returned.
    * The function calculates the probabilites for every class, given the point.
    * It then chooses the class which has the highest probability among all.
+   *
    * @param point Point to be classified.
    * @return Predicted class label of the point.
    */
   template<typename VecType>
   size_t Classify(const VecType& point) const;
+
+  /**
+   * Classify the given point, storing the predicted label in `prediction` and
+   * storing class probabilities in `probabilitiesVec`.
+   *
+   * @param point Point to be classified.
+   * @param prediction size_t to store the label in.
+   * @param probabilitiesVec Vector to store class probabilities in.
+   */
+  template<typename VecType>
+  void Classify(const VecType& point,
+                size_t& prediction,
+                arma::rowvec& probabilitiesVec) const;
 
   /**
    * Classify the given points, returning class probabilities and predicted
@@ -155,6 +215,7 @@ class SoftmaxRegression
    * @param dataset Matrix of data points to be classified.
    * @param probabilities Class probabilities for each point.
    */
+  mlpack_deprecated /** To be removed in mlpack 5.0.0. */
   void Classify(const arma::mat& dataset,
                 arma::mat& probabilities) const;
 
@@ -168,40 +229,6 @@ class SoftmaxRegression
    */
   double ComputeAccuracy(const arma::mat& testData,
                          const arma::Row<size_t>& labels) const;
-  /**
-   * Train the softmax regression with the given training data.
-   *
-   * @tparam OptimizerType Desired optimizer type.
-   * @param data Input data with each column as one example.
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
-   * @return Objective value of the final point.
-   */
-  template<typename OptimizerType = ens::L_BFGS>
-  double Train(const arma::mat& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               OptimizerType optimizer = OptimizerType());
-  /**
-   * Train the softmax regression with the given training data.
-   *
-   * @tparam OptimizerType Desired optimizer type.
-   * @tparam CallbackTypes Types of Callback Functions.
-   * @param data Input data with each column as one example.
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
-   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
-   *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   * @return Objective value of the final point.
-   */
-  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
-  double Train(const arma::mat& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               OptimizerType optimizer,
-               CallbackTypes&&... callbacks);
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }

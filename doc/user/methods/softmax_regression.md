@@ -60,8 +60,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=false, optimizer=ens::L_BFGS())`
- * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=false, optimizer=ens::L_BFGS(), [callbacks...])`
+ * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS())`
+ * `sr = SoftmaxRegression(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS(), [callbacks...])`
    - Train model, optionally specifying hyperparameters, a custom ensmallen
      optimizer, and callbacks for the optimizer.
 
@@ -103,8 +103,8 @@ instead of a manual setting.
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
 
- * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=false, optimizer=ens::L_BFGS())`
- * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=false, optimizer=ens::L_BFGS(), [callbacks...])`
+ * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS())`
+ * `sr.Train(data, labels, numClasses, lambda=0.0001, fitIntercept=true, optimizer=ens::L_BFGS(), [callbacks...])`
    - Train model, optionally specifying hyperparameters, a custom ensmallen
      optimizer, and callbacks for the optimizer.
 
