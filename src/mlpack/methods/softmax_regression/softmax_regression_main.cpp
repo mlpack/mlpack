@@ -215,8 +215,9 @@ void TestClassifyAcc(util::Params& params,
   arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
+  arma::mat probabilities;
   timers.Start("softmax_regression_classification");
-  model.Classify(testData, predictLabels);
+  model.Classify(testData, predictLabels, probabilities);
   timers.Stop("softmax_regression_classification");
 
   // Calculate accuracy, if desired.
@@ -261,15 +262,9 @@ void TestClassifyAcc(util::Params& params,
   if (params.Has("predictions"))
     params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 
-  // Compute probabiltiies, if desired.
+  // Save probabiltiies, if desired.
   if (params.Has("probabilities"))
-  {
-    Log::Info << "Calculating class probabilities of points in '"
-        << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    arma::mat probabilities;
-    model.Classify(testData, probabilities);
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
-  }
 }
 
 template<typename Model>
