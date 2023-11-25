@@ -149,7 +149,10 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void ConcatType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   // The implementation of MultiLayer is fine: this will allocate a matrix that
   // is able to hold each child layer's delta (which has the same size as the
@@ -181,7 +184,10 @@ void ConcatType<MatType>::Backward(
     MatType delta = gyTmp.cols(startCol, startCol + cols - 1);
     // Reshape so that the batch size is the number of columns.
     delta.reshape(delta.n_elem / gy.n_cols, gy.n_cols);
-    this->network[i]->Backward(this->layerOutputs[i], delta,
+    this->network[i]->Backward(
+        input,
+        this->layerOutputs[i],
+        delta,
         this->layerDeltas[i]);
 
     startCol += cols;
@@ -196,7 +202,8 @@ void ConcatType<MatType>::Backward(
 
 template<typename MatType>
 void ConcatType<MatType>::Backward(
-    const MatType& /* input */,
+    const MatType& input,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g,
     const size_t index)
@@ -231,7 +238,11 @@ void ConcatType<MatType>::Backward(
   // Reshape so that the batch size is the number of columns.
   delta.reshape(delta.n_elem / gy.n_cols, gy.n_cols);
 
-  this->network[index]->Backward(this->layerOutputs[index], delta, g);
+  this->network[index]->Backward(
+          input,
+          this->layerOutputs[index],
+          delta,
+          g);
 }
 
 template<typename MatType>

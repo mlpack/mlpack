@@ -109,7 +109,10 @@ void LinearNoBiasType<MatType, RegularizerType>::Forward(
 
 template<typename MatType, typename RegularizerType>
 void LinearNoBiasType<MatType, RegularizerType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = weight.t() * gy;
 }

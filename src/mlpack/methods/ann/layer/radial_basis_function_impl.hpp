@@ -130,6 +130,7 @@ void RBFType<MatType, Activation>::Forward(
 template<typename MatType, typename Activation>
 void RBFType<MatType, Activation>::Backward(
     const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& /* gy */,
     MatType& /* g */)
 {

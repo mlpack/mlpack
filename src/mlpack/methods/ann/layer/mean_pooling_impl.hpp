@@ -129,6 +129,7 @@ void MeanPoolingType<MatType>::Forward(
 template<typename MatType>
 void MeanPoolingType<MatType>::Backward(
   const MatType& input,
+  const MatType& /* output */,
   const MatType& gy,
   MatType& g)
 {

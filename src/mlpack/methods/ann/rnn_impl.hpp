@@ -493,13 +493,14 @@ typename MatType::elem_type RNN<
     }
 
     // Now pass that error backwards through the network.
-    MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
-        outputs.n_cols);
-    MatType networkDelta;
-    network.network.Backward(outputData, error, networkDelta);
-
     MakeAlias(stepData, predictors.slice(t - 1).colptr(begin),
         predictors.n_rows, batchSize);
+    MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
+        outputs.n_cols);
+
+    MatType networkDelta;
+    network.network.Backward(stepData, outputData, error, networkDelta);
+
     network.network.Gradient(stepData, error, currentGradient);
     gradient += currentGradient;
 

@@ -175,21 +175,26 @@ void MultiLayer<MatType>::Forward(
 
 template<typename MatType>
 void MultiLayer<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& output,
+    const MatType& gy,
+    MatType& g)
 {
   if (network.size() > 1)
   {
     // Initialize memory for the backward pass (if needed).
     InitializeBackwardPassMemory(input.n_cols);
 
-    network.back()->Backward(input, gy, layerDeltas.back());
+    network.back()->Backward(layerOutputs[network.size() - 2], output, gy,
+        layerDeltas.back());
     for (size_t i = network.size() - 2; i > 0; --i)
-      network[i]->Backward(layerOutputs[i], layerDeltas[i + 1], layerDeltas[i]);
-    network[0]->Backward(layerOutputs[0], layerDeltas[1], g);
+      network[i]->Backward(layerOutputs[i - 1], layerOutputs[i],
+          layerDeltas[i + 1], layerDeltas[i]);
+    network[0]->Backward(input, layerOutputs[0], layerDeltas[1], g);
   }
   else if (network.size() == 1)
   {
-    network[0]->Backward(input, gy, g);
+    network[0]->Backward(input, output, gy, g);
   }
   else
   {

@@ -48,7 +48,7 @@ void CheckReLU6Correct(const arma::colvec input,
   {
     REQUIRE(activations.at(i) == Approx(ActivationTarget.at(i)).epsilon(1e-5));
   }
-  relu6.Backward(activations, error, derivatives);
+  relu6.Backward(input, activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(DerivativeTarget.at(i)).epsilon(1e-5));

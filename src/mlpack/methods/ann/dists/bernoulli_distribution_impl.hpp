@@ -77,7 +77,7 @@ void BernoulliDistribution<DataType>::LogProbBackward(
   }
   else
   {
-    LogisticFunction::Deriv(probability, output);
+    LogisticFunction::Deriv(logits, probability, output);
     output = (observation / (probability + eps) - (1 - observation) /
         (1 - probability + eps)) % output;
   }

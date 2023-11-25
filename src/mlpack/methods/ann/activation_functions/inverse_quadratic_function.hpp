@@ -53,24 +53,26 @@ class InvQuadFunction
   /**
    * Computes the first derivative of the Inverse Quadratic function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return  - 2 * y / std::pow(1 + std::pow(y, 2), 2);
+    return  - 2 * x / std::pow(1 + std::pow(x, 2), 2);
   }
 
   /**
    * Computes the first derivatives of the Inverse Quadratic function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& x, OutputVecType& y)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x, const OutputVecType& /* y */, DerivVecType &dy)
   {
-    y = - 2 * x / arma::pow(1 + arma::pow(x, 2), 2);
+    dy = - 2 * x / arma::pow(1 + arma::pow(x, 2), 2);
   }
 }; // class InvQuadFunction
 

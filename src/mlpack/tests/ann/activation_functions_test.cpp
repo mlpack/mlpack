@@ -2,6 +2,7 @@
  * @file tests/activation_functions_test.cpp
  * @author Marcus Edel
  * @author Dhawal Arora
+ * @author Adam Kropp
  *
  * Tests for the various activation functions.
  *
@@ -37,7 +38,7 @@ void CheckActivationCorrect(const arma::colvec input,
   for (size_t i = 0; i < target.n_elem; ++i)
   {
     REQUIRE(ActivationFunction::Fn(input.at(i)) ==
-        Approx(target.at(i)).epsilon(1e-5));
+        Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }
 
   // Test the activation function using the entire vector as input.
@@ -45,7 +46,8 @@ void CheckActivationCorrect(const arma::colvec input,
   ActivationFunction::Fn(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+    REQUIRE(activations.at(i) ==
+        Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }
 }
 
@@ -64,16 +66,19 @@ void CheckDerivativeCorrect(const arma::colvec input,
   // Test the calculation of the derivatives using a single value as input.
   for (size_t i = 0; i < target.n_elem; ++i)
   {
-    REQUIRE(ActivationFunction::Deriv(input.at(i)) ==
-        Approx(target.at(i)).epsilon(1e-5));
+    double output = ActivationFunction::Fn(input.at(i));
+    REQUIRE(ActivationFunction::Deriv(input.at(i), output) ==
+        Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec outputs;
+  ActivationFunction::Fn(input, outputs);
   arma::colvec derivatives;
-  ActivationFunction::Deriv(input, derivatives);
+  ActivationFunction::Deriv(input, outputs, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5).margin(1e-15));
   }
 }
 
@@ -92,7 +97,7 @@ void CheckInverseCorrect(const arma::colvec input)
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     REQUIRE(ActivationFunction::Inv(ActivationFunction::Fn(input.at(i))) ==
-        Approx(input.at(i)).epsilon(1e-5));
+        Approx(input.at(i)).epsilon(1e-5).margin(1e-15));
   }
 
   // Test the calculation of the inverse using the entire vector as input.
@@ -102,7 +107,7 @@ void CheckInverseCorrect(const arma::colvec input)
 
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(input.at(i)).epsilon(1e-5));
+    REQUIRE(activations.at(i) == Approx(input.at(i)).epsilon(1e-5).margin(1e-15));
   }
 }
 
@@ -147,7 +152,9 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  lrf.Backward(input, error, derivatives);
+  arma::colvec output(input.n_elem);
+  lrf.Forward(input, output);
+  lrf.Backward(input, output, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -201,7 +208,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   module.Forward(input, activations);
-  module.Backward(activations, error, derivatives);
+  module.Backward(input, activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -255,7 +262,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   module.Forward(input, activations);
-  module.Backward(activations, error, derivatives);
+  module.Backward(input, activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -315,7 +322,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
   selu.ComputeOutputDimensions();
 
   selu.Forward(input, activations);
-  selu.Backward(activations, error, derivatives);
+  selu.Backward(input, activations, error, derivatives);
   
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda())) <= 10e-4);
@@ -323,7 +330,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
   input.fill(-1);
 
   selu.Forward(input, activations);
-  selu.Backward(activations, error, derivatives);
+  selu.Backward(input, activations, error, derivatives);
 
   REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda() * selu.Alpha() - arma::mean(activations))) <= 10e-4);
@@ -341,7 +348,7 @@ TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
                                          0.41997434 0.41997434 0.07065082 1");
 
   CheckActivationCorrect<TanhFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<TanhFunction>(desiredActivations, desiredDerivatives);
+  CheckDerivativeCorrect<TanhFunction>(activationData, desiredDerivatives);
   CheckInverseCorrect<TanhFunction>(desiredActivations);
   
   arma::mat inputTemp(desiredActivations.n_elem, 1);
@@ -364,7 +371,7 @@ TEST_CASE("LogisticFunctionTest", "[ActivationFunctionsTest]")
                                          0.10499359 0.25");
 
   CheckActivationCorrect<LogisticFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<LogisticFunction>(desiredActivations,
+  CheckDerivativeCorrect<LogisticFunction>(activationData,
                                            desiredDerivatives);
   CheckInverseCorrect<LogisticFunction>(activationData);
 }
@@ -381,7 +388,7 @@ TEST_CASE("SoftsignFunctionTest", "[ActivationFunctionsTest]")
                                          9.7642e-05 0.25 0.25 0.11111111 1");
 
   CheckActivationCorrect<SoftsignFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<SoftsignFunction>(desiredActivations,
+  CheckDerivativeCorrect<SoftsignFunction>(activationData,
                                            desiredDerivatives);
   CheckInverseCorrect<SoftsignFunction>(desiredActivations);
 
@@ -412,7 +419,7 @@ TEST_CASE("RectifierFunctionTest", "[ActivationFunctionsTest]")
   const arma::colvec desiredDerivatives("0 1 1 0 1 0 1 0");
 
   CheckActivationCorrect<RectifierFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<RectifierFunction>(desiredActivations,
+  CheckDerivativeCorrect<RectifierFunction>(activationData,
                                             desiredDerivatives);
 
   arma::mat inputTemp(desiredActivations.n_elem, 1);
@@ -477,12 +484,12 @@ TEST_CASE("SoftplusFunctionTest", "[ActivationFunctionsTest]")
                                          0 1.31326168 0.31326168 2.12692801 \
                                          0.69314718 1000 10000");
 
-  const arma::colvec desiredDerivatives("0.53168946 0.96231041 0.98913245 \
-                                         0.5 0.78805844 0.57768119 0.89349302\
-                                         0.66666666 1 1");
+  const arma::colvec desiredDerivatives("0.11920292 0.96083427 0.98901305 \
+                                        3.04574060e-44 0.73105857 0.26894142 \
+                                        0.88079707 0.5 1 1");
 
   CheckActivationCorrect<SoftplusFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<SoftplusFunction>(desiredActivations,
+  CheckDerivativeCorrect<SoftplusFunction>(activationData,
                                            desiredDerivatives);
   CheckInverseCorrect<SoftplusFunction>(desiredActivations);
 }
@@ -503,7 +510,7 @@ TEST_CASE("HardSigmoidFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<HardSigmoidFunction>(activationData,
                                               desiredActivations);
-  CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
+  CheckDerivativeCorrect<HardSigmoidFunction>(activationData,
                                               desiredDerivatives);
 
   arma::mat inputTemp(desiredActivations.n_elem, 1);
@@ -522,14 +529,14 @@ TEST_CASE("MishFunctionTest", "[ActivationFunctionsTest]")
                                          4.498914 -3.05183208e-42 0.86509836 \
                                          -0.30340138 1.943959 0");
 
-  const arma::colvec desiredDerivatives("0.4382387  1.0159768849 \
-                                         1.0019108 0.6 \
-                                         1.0192586  0.40639898 \
-                                         1.0725079  0.6");
+  const arma::colvec desiredDerivatives("-0.10835509242 1.01574465162 \
+                                        1.00190704417 -3.05183208657e-42 \
+                                        1.0490362201 0.0592167558774 \
+                                        1.06931793428 0.6");
 
   CheckActivationCorrect<MishFunction>(activationData,
                                        desiredActivations);
-  CheckDerivativeCorrect<MishFunction>(desiredActivations,
+  CheckDerivativeCorrect<MishFunction>(activationData,
                                        desiredDerivatives);
 }
 
@@ -544,14 +551,13 @@ TEST_CASE("LiSHTFunctionTest", "[ActivationFunctionsTest]")
                                          4.4988894 100.2 0.7615942 \
                                          0.7615942 1.9280552 0");
 
-  const arma::colvec desiredDerivatives("1.1150033 1.0181904 \
-                                         1.001978 1.0 \
-                                         1.0896928 1.0896928 \
-                                         1.1150033 0.0");
+  const arma::colvec desiredDerivatives("-1.1053292 1.0178798 1.001974 \
+                                        -1.0 1.1815685 -1.1815685 1.1053292 \
+                                        0.0");
 
   CheckActivationCorrect<LiSHTFunction>(activationData,
                                         desiredActivations);
-  CheckDerivativeCorrect<LiSHTFunction>(desiredActivations,
+  CheckDerivativeCorrect<LiSHTFunction>(activationData,
                                         desiredDerivatives);
 }
 
@@ -565,13 +571,12 @@ TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
                                          4.5 -0.0 0.84119199 \
                                          -0.158808 1.954597694 0.0");
 
-  const arma::colvec desiredDerivatives("0.4637992 1.0065302 \
-                                         1.0000293 0.5 1.03513446 \
-                                         0.37435387 1.090984 0.5");
+  const arma::colvec desiredDerivatives("-0.086099065 1.0064931 1.0000293 \
+                                        0 1.0829639 -0.0829639 1.0860991 0.5");
 
   CheckActivationCorrect<GELUFunction>(activationData,
                                        desiredActivations);
-  CheckDerivativeCorrect<GELUFunction>(desiredActivations,
+  CheckDerivativeCorrect<GELUFunction>(activationData,
                                        desiredDerivatives);
 }
 
@@ -594,7 +599,7 @@ TEST_CASE("ElliotFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<ElliotFunction>(activationData
                                                 ,desiredActivation);
-  CheckDerivativeCorrect<ElliotFunction>(desiredActivation
+  CheckDerivativeCorrect<ElliotFunction>(activationData
                                                 ,desiredDerivate);
   arma::mat inputTemp(activationData.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<ElliotFunction>(inputTemp);
@@ -611,13 +616,13 @@ TEST_CASE("ElishFunctionTest", "[ActivationFunctionsTest]")
                                          -3.0457406e-44 0.731058578 \
                                          -0.1700034 1.76159415 0.0 ");
 
-  const arma::colvec desiredDerivatives("0.4033889 1.0856292 \
-                                         1.03921798 0.5 0.83540389 \
-                                         0.34725726 1.07378804 0.5");
+  const arma::colvec desiredDerivatives("-0.074651888 1.0812559 1.0379111 \
+                                        0.0 0.92767051 -0.025344425 1.0907842 \
+                                        0.5");
 
   CheckActivationCorrect<ElishFunction>(activationData,
                                         desiredActivations);
-  CheckDerivativeCorrect<ElishFunction>(desiredActivations,
+  CheckDerivativeCorrect<ElishFunction>(activationData,
                                         desiredDerivatives);
 }
 
@@ -631,12 +636,11 @@ TEST_CASE("InverseQuadraticFunctionTest", "[ActivationFunctionsTest]")
                                          9.95913e-05 0.5 0.5 \
                                          0.2 1");
 
-  const arma::colvec desiredDerivatives("-0.369822 -0.175152 -0.0937021 \
-                                         -0.000199183 -0.64 -0.64 -0.369822\
-                                         -0.5");
+  const arma::colvec desiredDerivatives("0.16 -0.05065792 -0.019930796 \
+                                        1.9876519e-06 -0.5 0.5 -0.16 0.0");
 
   CheckActivationCorrect<InvQuadFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<InvQuadFunction>(desiredActivations,
+  CheckDerivativeCorrect<InvQuadFunction>(activationData,
                                           desiredDerivatives);
 }
 
@@ -650,12 +654,11 @@ TEST_CASE("QuadraticFunctionTest", "[ActivationFunctionsTest]")
                                          10040 1 1 \
                                          4 0");
 
-  const arma::colvec desiredDerivatives("8 20.48 40.50 \
-                                         20080 2 2 \
-                                         8 0");
+  const arma::colvec desiredDerivatives("-4.0 6.4 9.0 -200.4 \
+                                        2.0 -2.0 4.0 0.0");
 
   CheckActivationCorrect<QuadraticFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<QuadraticFunction>(desiredActivations,
+  CheckDerivativeCorrect<QuadraticFunction>(activationData,
                                             desiredDerivatives);
 }
 
@@ -671,12 +674,12 @@ TEST_CASE("SplineFunctionTest", "[ActivationFunctionsTest]")
                                          46355.9 0.693147 0.693147 \
                                          4.39445 0");
 
-  const arma::colvec desiredDerivatives("18.3923 94.6819 280.03866 \
-                                         1042462.1078 1.0137702 1.0137702 \
-                                         18.3923 0");
+  const arma::colvec desiredDerivatives("5.7277825 11.622636 19.024551 \
+                                        1024.4765 1.8862944 1.8862944 \
+                                        5.7277825 0.0");
 
   CheckActivationCorrect<SplineFunction>(activationData1, desiredActivations);
-  CheckDerivativeCorrect<SplineFunction>(desiredActivations,
+  CheckDerivativeCorrect<SplineFunction>(activationData1,
                                          desiredDerivatives);
 }
 
@@ -690,12 +693,12 @@ TEST_CASE("MultiquadFunctionTest", "[ActivationFunctionsTest]")
                                          100.205 1.41421 1.41421 \
                                          2.23607 1");
 
-  const arma::colvec desiredDerivatives("0.912871 0.95828 0.97727 \
-                                         0.99995 0.816496 0.816496 \
-                                         0.912871 0.707107");
+  const arma::colvec desiredDerivatives("-0.89442719 0.95447998 0.97618706 \
+                                        -0.9999502 0.70710678 -0.70710678 \
+                                        0.89442719 0.0");
 
   CheckActivationCorrect<MultiQuadFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<MultiQuadFunction>(desiredActivations,
+  CheckDerivativeCorrect<MultiQuadFunction>(activationData,
                                             desiredDerivatives);
 }
 
@@ -712,12 +715,12 @@ TEST_CASE("Poisson1FunctionTest", "[ActivationFunctionsTest]")
                                          0.0269518 0 -5.43656 \
                                          0.135335 -1");
 
-  const arma::colvec desiredDerivatives("1.02404e+11 1.74647 1.88633 \
-                                         1.92058 2 1707.81 \
-                                         1.62864 8.15485");
+  const arma::colvec desiredDerivatives("29.556224 -0.048914645 -0.027772491 \
+                                        -0.020213841 0.36787944 8.1548455 0.0 \
+                                        2.0");
 
   CheckActivationCorrect<Poisson1Function>(activationData1, desiredActivations);
-  CheckDerivativeCorrect<Poisson1Function>(desiredActivations,
+  CheckDerivativeCorrect<Poisson1Function>(activationData1,
                                            desiredDerivatives);
 }
 
@@ -731,17 +734,13 @@ TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
                                          0 0.367879441 0.367879441 \
                                          0.018315639 1");
 
-  const arma::colvec desiredDerivatives("-0.036618991635992616 \
-                                         -0.0000714259999 \
-                                         -0.0000000032104561 \
-                                         0 -0.6426287436 \
-                                         -0.642628743680 \
-                                         -0.03661899163 \
-                                         -0.73575888234");
+  const arma::colvec desiredDerivatives("0.073262556 -0.00022856224 \
+                                        -1.4447052e-08 0.0 -0.73575888 \
+                                        0.73575888 -0.073262556 0.0");
 
   CheckActivationCorrect<GaussianFunction>(activationData,
                                            desiredActivations);
-  CheckDerivativeCorrect<GaussianFunction>(desiredActivations,
+  CheckDerivativeCorrect<GaussianFunction>(activationData,
                                            desiredDerivatives);
 }
 
@@ -758,12 +757,12 @@ TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
                                          1.1701345 1.8047248");
 
   // Hand-calculated values.
-  const arma::colvec desiredDerivatives("1.0 0.38734546 0.5 \
-                                         0.89004483 1.1015749");
+  const arma::colvec desiredDerivatives("1.0 -0.15713333 0.0 1.0149333 \
+                                        1.2054667");
 
   CheckActivationCorrect<HardSwishFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<HardSwishFunction>
-      (desiredActivations, desiredDerivatives);
+      (activationData, desiredDerivatives);
 }
 
 /**
@@ -778,11 +777,11 @@ TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
                                          0.991329 -0.352135 2.0 0.0000");
 
   // Hand-calculated values.
-  const arma::colvec desiredDerivatives("0.523051 1.0000 1.0000 \
-                                         1.03924 0.449818 1.00002 0.761594");
+  const arma::colvec desiredDerivatives("-0.13125793 1.0 1.0 1.0382654 \
+                                        0.029872881 1.0000218 0.76159416");
 
   CheckActivationCorrect<TanhExpFunction>(activationData, desiredActivations);
-  CheckDerivativeCorrect<TanhExpFunction>(desiredActivations,
+  CheckDerivativeCorrect<TanhExpFunction>(activationData,
       desiredDerivatives);
 }
 
@@ -802,12 +801,34 @@ TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 
   // Calculated with PyTorch.
   arma::colvec desiredDerivate(
-      "0.38191673159599304 1.073788046836853 1.0392179489135742 \
-       0.49049633741378784 0.36713290214538574 0.8354039788246155 \
-       0.5 1.0004087686538696");
+      "-0.090784249 1.0907842 1.0379111 -0.015610205 0.072329488 \
+      0.92767051 0.5 1.0004086");
 
   CheckActivationCorrect<SILUFunction>(activationData, desiredActivation);
-  CheckDerivativeCorrect<SILUFunction>(desiredActivation, desiredDerivate);
+  CheckDerivativeCorrect<SILUFunction>(activationData, desiredDerivate);
+}
+
+/**
+ * Basic test of the SILU(Sigmoid Weighted Linear Unit) Function
+ */
+TEST_CASE("SwishFunctionTest", "[ActivationFunctionsTest]")
+{
+    // Random generated values.
+    const arma::colvec activationData("-2 2 4.5 -5.7 -1 1 0 10");
+
+    // Calculated with PyTorch.
+    arma::colvec desiredActivation(
+            "-0.23840583860874176 1.7615940570831299 4.450558662414551 \
+       -0.01900840364396572 -0.2689414322376251 0.7310585975646973 \
+       0.0 9.99954605102539");
+
+    // Calculated with PyTorch.
+    arma::colvec desiredDerivate(
+            "-0.090784249 1.0907842 1.0379111 -0.015610205 0.072329488 \
+      0.92767051 0.5 1.0004086");
+
+    CheckActivationCorrect<SwishFunction>(activationData, desiredActivation);
+    CheckDerivativeCorrect<SwishFunction>(activationData, desiredDerivate);
 }
 
 /**
@@ -829,7 +850,7 @@ TEST_CASE("HyperSinhFunctionTest", "[ActivationFunctionsTest]")
 		0.5143602116050813 0.9075000000000002 1.9200000000000004 2.43");
   
   CheckActivationCorrect<HyperSinhFunction>(activationData, desiredActivation);
-  CheckDerivativeCorrect<HyperSinhFunction>(desiredActivation, desiredDerivate);
+  CheckDerivativeCorrect<HyperSinhFunction>(activationData, desiredDerivate);
 
   arma::mat inputTemp(activationData.n_elem, 1);
   double maxRelativeError = ActivationJacobianTest<HyperSinhFunction>(inputTemp);
@@ -855,7 +876,7 @@ TEST_CASE("BipolaSigmoidFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<BipolarSigmoidFunction>(activationData
                                                 ,desiredActivation);
-  CheckDerivativeCorrect<BipolarSigmoidFunction>(desiredActivation
+  CheckDerivativeCorrect<BipolarSigmoidFunction>(activationData
                                                 ,desiredDerivate);
 
   arma::mat inputTemp(activationData.n_elem, 1);
