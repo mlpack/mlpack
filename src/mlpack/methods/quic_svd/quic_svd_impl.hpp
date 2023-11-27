@@ -29,8 +29,8 @@ inline QUIC_SVD::QUIC_SVD(
 }
 
 inline QUIC_SVD::QUIC_SVD(
-    const double epsilon,
-    const double delta)
+    const double /* epsilon */,
+    const double /* delta */)
 {
   /* Nothing to do here */
 }
