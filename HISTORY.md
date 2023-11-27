@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+### mlpack 4.3.0
+###### 2023-11-22
   * Fix include ordering issue for `LinearRegression` (#3541).
 
   * Fix L1 regularization in case where weight is zero (#3545).
