@@ -60,12 +60,6 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 ### Constructors
 
-Construct a `DecisionTreeRegressor` object using one of the constructors below.
-Defaults and types are detailed in the [Constructor
-Parameters](#constructor-parameters) section below.
-
-#### Forms:
-
  * `tree = DecisionTreeRegressor()`
    - Initialize tree without training.
    - You will need to call [`Train()`](#training) later to train the tree before
