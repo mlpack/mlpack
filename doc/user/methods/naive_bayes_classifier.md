@@ -18,7 +18,7 @@ arma::Row<size_t> labels =
 arma::mat testDataset(5, 500, arma::fill::randu); // 500 test points.
 
 mlpack::NaiveBayesClassifier nbc;       // Step 1: create model.
-nbc.Train(dataset, labels);             // Step 2: train model.
+nbc.Train(dataset, labels, 4);          // Step 2: train model.
 arma::Row<size_t> predictions;
 nbc.Classify(testDataset, predictions); // Step 3: classify points.
 
@@ -208,12 +208,12 @@ mlpack::data::Load("mnist.train.csv", dataset, true);
 arma::Row<size_t> labels;
 mlpack::data::Load("mnist.train.labels.csv", labels, true);
 
-mlpack::NaiveBayesClassifier nbc(data.n_rows /* dimensionality */,
+mlpack::NaiveBayesClassifier nbc(dataset.n_rows /* dimensionality */,
                                  10 /* numClasses */);
 
 // Iterate over all points in the dataset and call Train() on each point.
-for (size_t i = 0; i < data.n_cols; ++i)
-  nbc.Train(data.col(i), labels[i]);
+for (size_t i = 0; i < dataset.n_cols; ++i)
+  nbc.Train(dataset.col(i), labels[i]);
 
 // Now compute the accuracy of the fully trained model on a test set.
 
@@ -233,7 +233,7 @@ std::cout << "Accuracy of model on test data: " << accuracy << "\%."
     << std::endl;
 
 // Save the model to disk with the name "nbc".
-data::Save("nbc_model.bin", "nbc", nbc, true);
+mlpack::data::Save("nbc_model.bin", "nbc", nbc, true);
 ```
 
 ---
@@ -241,10 +241,10 @@ data::Save("nbc_model.bin", "nbc", nbc, true);
 Load a saved Naive Bayes classifier and print some information about it.
 
 ```c++
-NaiveBayesClassifier nbc;
+mlpack::NaiveBayesClassifier nbc;
 
 // Load the model named "nbc" from "nbc_model.bin".
-data::Load("nbc_model.bin", "nbc", nbc, true);
+mlpack::data::Load("nbc_model.bin", "nbc", nbc, true);
 
 // Print information about the model.
 std::cout << "The dimensionality of the model in nbc_model.bin is "
@@ -255,7 +255,9 @@ std::cout << "The prior probabilities of each class are: "
     << nbc.Probabilities().t();
 
 // Compute the class probabilities of a random point.
-arma::vec randomPoint(nbc.Means().n_rows, arma::fill::randu);
+// For our random point, we'll use one of the means plus some noise.
+arma::vec randomPoint = nbc.Means().col(2) +
+    10.0 * arma::randu<arma::vec>(nbc.Means().n_rows);
 
 size_t prediction;
 arma::vec probabilities;
