@@ -84,6 +84,11 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `epsilon` | `double` | Initial small value for sample variances, to prevent
 underflow (via `log(0)`). | 1e-10 |
 
+As an alternative to passing the `epsilon` parameter, it can be set with the
+standalone `Epsilon()` method: `nbc.Epsilon() = eps;` will set the value of
+`epsilon` to `eps` for the next time non-incremental `Train()` or `Reset()` is
+called.
+
 ### Training
 
 If training is not done as part of the constructor call, it can be done with the
