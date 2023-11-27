@@ -124,14 +124,14 @@ an exception will be thrown.
 Once a `NaiveBayesClassifier` model is trained, the `Classify()` member function
 can be used to make class predictions for new data.
 
- * `size_t predictedClass = sr.Classify(point)`
+ * `size_t predictedClass = nbc.Classify(point)`
    - ***(Single-point)***
    - Classify a single point, returning the predicted class (`0` through
      `numClasses - 1`, inclusive).
 
 ---
 
- * `sr.Classify(point, prediction, probabilitiesVec)`
+ * `nbc.Classify(point, prediction, probabilitiesVec)`
    - ***(Single-point)***
    - Classify a single point and compute class probabilities.
    - The predicted class is stored in `prediction`.
@@ -308,7 +308,7 @@ dataset.sprandu(100, 5000, 0.3);
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(5000, arma::distr_param(0, 2));
 
-mlpack::NaiveBayesClassifier<arma::fmat> sr(dataset, labels, 3);
+mlpack::NaiveBayesClassifier<arma::fmat> nbc(dataset, labels, 3);
 
 // Now classify a test point.
 arma::sp_fvec point;
@@ -316,7 +316,7 @@ point.sprandu(100, 1, 0.3);
 
 size_t prediction;
 arma::fvec probabilitiesVec;
-sr.Classify(point, prediction, probabilitiesVec);
+nbc.Classify(point, prediction, probabilitiesVec);
 
 std::cout << "Prediction for random test point: " << prediction << "."
     << std::endl;
