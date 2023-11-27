@@ -72,6 +72,8 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
      initial set of weights to start the optimization from and callbacks for the
      optimizer.
 
+---
+
 #### Constructor Parameters:
 
 <!-- TODOs for table below:
