@@ -315,3 +315,6 @@ std::cout << "Prediction for random test point: " << prediction << "."
 std::cout << "Class probabilities for random test point: "
     << probabilitiesVec.t();
 ```
+
+***Note:*** dense objects should be used for `ModelMatType`, since in general
+the mean and sample variance of sparse data is dense.
