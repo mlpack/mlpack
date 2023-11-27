@@ -62,7 +62,8 @@ ReplicateType<MatType>::ReplicateType(ReplicateType&& other) :
 }
 
 template<typename MatType>
-ReplicateType<MatType>& ReplicateType<MatType>::operator=(const ReplicateType& other)
+ReplicateType<MatType>&
+ReplicateType<MatType>::operator=(const ReplicateType& other)
 {
   if (this != &other)
   {
@@ -94,7 +95,8 @@ ReplicateType<MatType>& ReplicateType<MatType>::operator=(ReplicateType&& other)
 template<typename MatType>
 void ReplicateType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  // since the tensors are flattened to columns, we are just multiplying n_rows by n for the total outputs
+  // since the tensors are flattened to columns, we are just multiplying n_rows
+  // by n for the total outputs
   output.set_size(input.n_rows * sizeMult, input.n_cols);
 
   output = input.rows(outIdxs);
@@ -102,7 +104,10 @@ void ReplicateType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void ReplicateType<MatType>::Backward(
-    const MatType& input, const MatType& /* output */, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g.set_size(input.n_rows, input.n_cols);
 

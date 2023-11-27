@@ -89,13 +89,16 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other)
 template<typename MatType>
 void RepeatType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  // since the tensors are flattened to columns, we are just multiplying n_rows by n for the total outputs
+  // since the tensors are flattened to columns, we are just multiplying n_rows
+  // by n for the total outputs
   output.set_size(input.n_rows * n, input.n_cols);
 
   // Now alias the matrix so we can repelem it properly
   MatType inalias, outalias;
-  MakeAlias(inalias, (typename MatType::elem_type*) input.memptr(), aliasRows, aliasCols * input.n_cols);
-  MakeAlias(outalias, (typename MatType::elem_type*) output.memptr(), aliasRows * this->n, aliasCols * input.n_cols);
+  MakeAlias(inalias, (typename MatType::elem_type*) input.memptr(),
+            aliasRows, aliasCols * input.n_cols);
+  MakeAlias(outalias, (typename MatType::elem_type*) output.memptr(),
+            aliasRows * this->n, aliasCols * input.n_cols);
   if (axis == 0) {
     outalias = arma::repelem(inalias, n, 1);
   }
@@ -106,18 +109,24 @@ void RepeatType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void RepeatType<MatType>::Backward(
-    const MatType& input, const MatType& /* output */, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g.set_size(input.n_rows, input.n_cols);
 
   // Now alias the matrix so we can repmat it properly
   MatType galias, gyalias;
-  MakeAlias(galias, (typename MatType::elem_type*) g.memptr(), aliasRows, aliasCols * gy.n_cols);
-  MakeAlias(gyalias, (typename MatType::elem_type*) gy.memptr(), aliasRows * this->n, aliasCols * gy.n_cols);
+  MakeAlias(galias, (typename MatType::elem_type*) g.memptr(),
+            aliasRows, aliasCols * gy.n_cols);
+  MakeAlias(gyalias, (typename MatType::elem_type*) gy.memptr(),
+            aliasRows * this->n, aliasCols * gy.n_cols);
 
   if (axis == 0) {
     for (size_t i=0; i<galias.n_rows; i++) {
-      galias.row(i) = arma::mean(gyalias.rows(i * aliasRows, (i+1) * aliasRows - 1), 0);
+      galias.row(i) = arma::mean(gyalias.rows(i * aliasRows,
+                                              (i+1) * aliasRows - 1), 0);
     }
   }
   else {
