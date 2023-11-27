@@ -81,8 +81,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `incremental` | `bool` | If `true`, then the model will not be reset before training, and will use a robust incremental algorithm for variance computation. | `true` |
-| `epsilon` | `double` | Initial small value for sample variances, to prevent
-underflow (via `log(0)`). | 1e-10 |
+| `epsilon` | `double` | Initial small value for sample variances, to prevent underflow (via `log(0)`). | 1e-10 |
 
 As an alternative to passing the `epsilon` parameter, it can be set with the
 standalone `Epsilon()` method: `nbc.Epsilon() = eps;` will set the value of
@@ -230,11 +229,17 @@ arma::Row<size_t> testLabels;
 mlpack::data::Load("mnist.test.labels.csv", testLabels, true);
 
 arma::Row<size_t> predictions;
+nbc.Classify(dataset, predictions);
+const double trainAccuracy = 100.0 *
+    ((double) arma::accu(predictions == labels)) / labels.n_elem;
+std::cout << "Accuracy of model on training data: " << trainAccuracy << "\%."
+    << std::endl;
+
 nbc.Classify(testDataset, predictions);
 
-const double accuracy = 100.0 *
+const double testAccuracy = 100.0 *
     ((double) arma::accu(predictions == testLabels)) / testLabels.n_elem;
-std::cout << "Accuracy of model on test data: " << accuracy << "\%."
+std::cout << "Accuracy of model on test data:     " << testAccuracy << "\%."
     << std::endl;
 
 // Save the model to disk with the name "nbc".
@@ -256,6 +261,8 @@ std::cout << "The dimensionality of the model in nbc_model.bin is "
     << nbc.Means().n_rows << "." << std::endl;
 std::cout << "The number of classes in the model is "
     << nbc.Probabilities().n_elem << "." << std::endl;
+std::cout << "The model was trained on " << nbc.TrainingPoints() << " points."
+    << std::endl;
 std::cout << "The prior probabilities of each class are: "
     << nbc.Probabilities().t();
 
@@ -283,12 +290,13 @@ NaiveBayesClassifier<ModelMatType>
 ```
 
 `ModelMatType` specifies the type of matrix used for training data and internal
-representation of model parameters.  Any matrix type that implements the
-Armadillo API can be used.
+representation of model parameters.
 
-Note that the `Train()` and `Classify()` functions themselves are templatized
-and can allow any matrix type that has the same element type.  So, for instance,
-a `NaiveBayesClassifier<arma::mat>` can accept an `arma::sp_mat` for training.
+ * Any matrix type that implements the Armadillo API can be used.
+
+ * `Train()` and `Classify()` functions themselves are templatized and can allow
+   any matrix type that has the same element type.  So, for instance, a
+   `NaiveBayesClassifier<arma::mat>` can accept an `arma::sp_mat` for training.
 
 The example below trains a Naive Bayes model on sparse 32-bit floating point
 data, but uses dense 32-bit floating point matrices to store the model itself.
