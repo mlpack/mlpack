@@ -38,8 +38,8 @@ class ReplicateType : public Layer<MatType>
   ReplicateType();
 
   /**
-   * Create the Replicate object, specifying a particular axis on which the layer
-   * outputs should be replicated.
+   * Create the Replicate object, specifying a particular axis on which the
+   * layer outputs should be replicated.
    *
    * @param multiples The number of times to repeat along each axis. Must be
    *        the same size as InputDimensions.
@@ -117,7 +117,8 @@ class ReplicateType : public Layer<MatType>
     sizeMult = 1;
     size_t outSize = 1;
     for (size_t i=0; i<multiples.size(); i++) {
-      idxs.reshape(outSize * this->inputDimensions[i], idxs.n_elem / (outSize * this->inputDimensions[i]));
+      idxs.reshape(outSize * this->inputDimensions[i],
+                   idxs.n_elem / (outSize * this->inputDimensions[i]));
       idxs = arma::repmat(idxs, multiples[i], 1);
       this->outputDimensions[i] *= multiples[i];
       sizeMult *= multiples[i];

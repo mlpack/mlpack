@@ -88,7 +88,8 @@ TEST_CASE("ReplicateTestCase2", "[ANNLayerTest]")
   delta.set_size(12, 1);
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(4, 6);
-  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2) + prevDelta.submat(0, 3, 3, 5)) / 2;
+  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2)
+      + prevDelta.submat(0, 3, 3, 5)) / 2;
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
 }
@@ -125,8 +126,10 @@ TEST_CASE("ReplicateTestCase3", "[ANNLayerTest]")
   delta.set_size(12, 1);
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(8, 6);
-  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2) + prevDelta.submat(4, 0, 7, 2)
-      + prevDelta.submat(0, 3, 3, 5) + prevDelta.submat(4, 3, 7, 5)) / 4;
+  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2)
+      + prevDelta.submat(4, 0, 7, 2)
+      + prevDelta.submat(0, 3, 3, 5)
+      + prevDelta.submat(4, 3, 7, 5)) / 4;
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
 }
