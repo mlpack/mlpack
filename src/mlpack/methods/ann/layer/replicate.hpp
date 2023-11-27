@@ -20,9 +20,9 @@ namespace mlpack {
 
 /**
  * Implementation of the Replicate class. The Replicate class replicates the
- * input n times along a specified axis.  The output will have the same number
- * of dimnensions as the input, with all dimensions other than the one
- * specified in axis being the same size as the input.
+ * input a specified number of times along each axis.  The output will have the
+ * same number of dimnensions as the input, with each dimension multiplied by
+ * the specified scalar.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
@@ -32,8 +32,8 @@ class ReplicateType : public Layer<MatType>
 {
  public:
   /**
-   * Create the Replicate object.  The axis used for replication will be the last
-   * one.
+   * Create the Replicate object with no multiples.  If not set later, this
+   * is equivalent to an identity layer.
    */
   ReplicateType();
 
@@ -41,10 +41,10 @@ class ReplicateType : public Layer<MatType>
    * Create the Replicate object, specifying a particular axis on which the layer
    * outputs should be replicated.
    *
-   * @param n Number of times to replicate
-   * @param axis Replicate axis.
+   * @param multiples The number of times to repeat along each axis. Must be
+   *        the same size as InputDimensions.
    */
-  ReplicateType(const size_t n, const size_t axis = 0);
+  ReplicateType(std::vector<size_t> multiples);
 
   /**
    * Destroy the layers held by the model.
@@ -87,47 +87,47 @@ class ReplicateType : public Layer<MatType>
                 const MatType& gy,
                 MatType& g) override;
 
-  //! Get the axis of replicateenation.
-  size_t Axis() const { return axis; }
+  //! Get the replication multiples
+  const std::vector<size_t>& Multiples() const { return multiples; }
 
-  size_t N() const { return n; }
+  //! Get the replication multiples for modification
+  std::vector<size_t>& Multiples() {
+    this->validOutputDimensions = false;
+    return multiples;
+  }
 
   void ComputeOutputDimensions() override
   {
-
-    const size_t numOutputDimensions = this->inputDimensions.size();
-
-    // If the user did not specify an axis, we will use the last one.
-    // Otherwise, we must sanity check to ensure that the axis we are
-    // replicating along is valid.
-    if (!useAxis)
-    {
-      axis = this->inputDimensions.size() - 1;
-    }
-    else if (axis >= numOutputDimensions)
+    if (multiples.size() > this->inputDimensions.size())
     {
       std::ostringstream oss;
-      oss << "Replicate::ComputeOutputDimensions(): cannot replicate outputs "
-          << "along axis " << axis << " when input only has "
-          << this->inputDimensions.size() << " axes!";
+      oss << "Replicate::ComputeOutputDimensions(): multiples vector must "
+          << "have the same or less dimensions than InputDimensions";
       throw std::invalid_argument(oss.str());
     }
 
+    size_t inputSize = this->inputDimensions[0];
+    for (size_t i=1; i<this->inputDimensions.size(); i++) {
+      inputSize *= this->inputDimensions[i];
+    }
+    arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
+
     // Now, we replicate the output along a specific axis.
     this->outputDimensions = this->inputDimensions;
-    this->outputDimensions[axis] *= n;
-
-    aliasRows = this->inputDimensions[0];
-    aliasCols = 1;
-    for (size_t i=1; i<this->inputDimensions.size(); i++) {
-      if (i < axis) {
-        aliasRows *= this->inputDimensions[i];
-      }
-      else {
-        aliasCols *= this->inputDimensions[i];
-      }
+    sizeMult = 1;
+    size_t outSize = 1;
+    for (size_t i=0; i<multiples.size(); i++) {
+      idxs.reshape(outSize * this->inputDimensions[i], idxs.n_elem / (outSize * this->inputDimensions[i]));
+      idxs = arma::repmat(idxs, multiples[i], 1);
+      this->outputDimensions[i] *= multiples[i];
+      sizeMult *= multiples[i];
+      outSize *= this->outputDimensions[i];
     }
-
+    outIdxs = idxs.as_col();
+    coefs = arma::zeros<MatType>(inputSize, outSize);
+    for (size_t i=0; i<outIdxs.n_elem; i++) {
+      coefs.at(outIdxs.at(i), i) = 1.0 / (typename MatType::elem_type) sizeMult;
+    }
   }
 
   /**
@@ -138,15 +138,11 @@ class ReplicateType : public Layer<MatType>
 
  private:
   //! Parameter which indicates the axis of replicateenation.
-  size_t axis;
+  std::vector<size_t> multiples;
 
-  size_t n;
-
-  //! Parameter which indicates whether to use the axis of replication.
-  bool useAxis;
-
-  size_t aliasRows;
-  size_t aliasCols;
+  size_t sizeMult;
+  arma::uvec outIdxs;
+  MatType coefs;
 }; // class ReplicateType.
 
 // Standard Replicate layer.
