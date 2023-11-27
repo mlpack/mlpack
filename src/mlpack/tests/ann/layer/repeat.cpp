@@ -1,8 +1,8 @@
 /**
- * @file tests/ann/layer/replicate.cpp
+ * @file tests/ann/layer/repeat.cpp
  * @author Adam Kropp
  *
- * Tests the replicate layer.
+ * Tests the repeat layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,13 +20,13 @@
 using namespace mlpack;
 
 /**
- * Simple test for Replicate layer.
+ * Simple test for Repeat layer along axis 0.
  */
-TEST_CASE("ReplicateTestCase1", "[ANNLayerTest]")
+TEST_CASE("RepeatTestCase0", "[ANNLayerTest]")
 {
   // Input will be 4 x 3.
   arma::mat input = arma::mat(4, 3, arma::fill::randn);
-  arma::mat target = arma::repmat(input, 2, 1);
+  arma::mat target = arma::repelem(input, 2, 1);
   input.reshape(12, 1);
   target.reshape(24, 1);
 
@@ -34,8 +34,7 @@ TEST_CASE("ReplicateTestCase1", "[ANNLayerTest]")
   // Output-Size should be 8 x 3.
   output.set_size(24, 1);
 
-
-  Replicate module1({2, 1});
+  Repeat module1(2, 0);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -51,19 +50,22 @@ TEST_CASE("ReplicateTestCase1", "[ANNLayerTest]")
   delta.set_size(12, 1);
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(8, 3);
-  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2) + prevDelta.submat(4, 0, 7, 2)) / 2;
+  arma::mat targetDelta(4, 3);
+  for (size_t i=0; i<targetDelta.n_rows; i++) {
+    targetDelta.row(i) = prevDelta.rows(i * 2, (i + 1) * 2 - 1) / 2;
+  }
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
 }
 
 /**
- * Simple test for Replicate layer.
+ * Simple test for Repeat layer along axis 1.
  */
-TEST_CASE("ReplicateTestCase2", "[ANNLayerTest]")
+TEST_CASE("RepeatTestCase1", "[ANNLayerTest]")
 {
   // Input will be 4 x 3.
   arma::mat input = arma::mat(4, 3, arma::fill::randn);
-  arma::mat target = arma::repmat(input, 1, 2);
+  arma::mat target = arma::repelem(input, 1, 2);
   input.reshape(12, 1);
   target.reshape(24, 1);
 
@@ -71,8 +73,7 @@ TEST_CASE("ReplicateTestCase2", "[ANNLayerTest]")
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-
-  Replicate module1({1, 2});
+  Repeat module1(2, 1);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -88,45 +89,10 @@ TEST_CASE("ReplicateTestCase2", "[ANNLayerTest]")
   delta.set_size(12, 1);
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(4, 6);
-  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2) + prevDelta.submat(0, 3, 3, 5)) / 2;
-  targetDelta.reshape(12, 1);
-  CheckMatrices(delta, targetDelta, 1e-1);
-}
-
-/**
- * Simple test for Replicate layer.
- */
-TEST_CASE("ReplicateTestCase3", "[ANNLayerTest]")
-{
-  // Input will be 4 x 3.
-  arma::mat input = arma::mat(4, 3, arma::fill::randn);
-  arma::mat target = arma::repmat(input, 2, 2);
-  input.reshape(12, 1);
-  target.reshape(48, 1);
-
-  arma::mat output;
-  // Output-Size should be 8 x 6.
-  output.set_size(48, 1);
-
-
-  Replicate module1({2, 2});
-  module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
-  module1.ComputeOutputDimensions();
-  REQUIRE(module1.OutputDimensions().size() == 2);
-  REQUIRE(module1.OutputDimensions()[0] == 8);
-  REQUIRE(module1.OutputDimensions()[1] == 6);
-  module1.Forward(input, output);
-  CheckMatrices(output, target, 1e-1);
-  REQUIRE(output.n_elem == 48);
-  REQUIRE(output.n_cols == 1);
-
-  arma::mat prevDelta = arma::mat(48, 1, arma::fill::randn);
-  arma::mat delta;
-  delta.set_size(12, 1);
-  module1.Backward(input, output, prevDelta, delta);
-  prevDelta.reshape(8, 6);
-  arma::mat targetDelta = (prevDelta.submat(0, 0, 3, 2) + prevDelta.submat(4, 0, 7, 2)
-      + prevDelta.submat(0, 3, 3, 5) + prevDelta.submat(4, 3, 7, 5)) / 4;
+  arma::mat targetDelta(4, 3);
+  for (size_t i=0; i<targetDelta.n_cols; i++) {
+    targetDelta.col(i) = prevDelta.cols(i * 2, (i + 1) * 2 - 1) / 2;
+  }
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
 }

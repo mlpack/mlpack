@@ -19,21 +19,16 @@ namespace mlpack {
 
 template<typename MatType>
 ReplicateType<MatType>::ReplicateType(
-    const size_t _n, const size_t axis) :
+    std::vector<size_t> _multiples) :
     Layer<MatType>(),
-    axis(axis),
-    n(_n),
-    useAxis(true)
+    multiples(_multiples)
 {
   // Nothing to do.
 }
 
 template<typename MatType>
 ReplicateType<MatType>::ReplicateType() :
-    Layer<MatType>(),
-    axis(0),
-    n(1),
-    useAxis(false)
+    Layer<MatType>()
 {
   // Nothing to do.
 }
@@ -47,9 +42,10 @@ ReplicateType<MatType>::~ReplicateType()
 template<typename MatType>
 ReplicateType<MatType>::ReplicateType(const ReplicateType& other) :
     Layer<MatType>(other),
-    axis(other.axis),
-    n(other.n),
-    useAxis(other.useAxis)
+    multiples(other.multiples),
+    sizeMult(other.sizeMult),
+    outIdxs(other.outIdxs),
+    coefs(other.coefs)
 {
   // Nothing else to do.
 }
@@ -57,9 +53,10 @@ ReplicateType<MatType>::ReplicateType(const ReplicateType& other) :
 template<typename MatType>
 ReplicateType<MatType>::ReplicateType(ReplicateType&& other) :
     Layer<MatType>(std::move(other)),
-    axis(std::move(other.axis)),
-    n(other.n),
-    useAxis(std::move(other.useAxis))
+    multiples(std::move(other.multiples)),
+    sizeMult(other.sizeMult),
+    outIdxs(std::move(other.outIdxs)),
+    coefs(std::move(other.coefs))
 {
   // Nothing else to do.
 }
@@ -70,9 +67,10 @@ ReplicateType<MatType>& ReplicateType<MatType>::operator=(const ReplicateType& o
   if (this != &other)
   {
     Layer<MatType>::operator=(other);
-    axis = other.axis;
-    n = other.n;
-    useAxis = other.useAxis;
+    multiples = other.multiples;
+    sizeMult = other.sizeMult;
+    outIdxs = other.outIdxs;
+    coefs = other.coefs;
   }
 
   return *this;
@@ -84,9 +82,10 @@ ReplicateType<MatType>& ReplicateType<MatType>::operator=(ReplicateType&& other)
   if (this != &other)
   {
     Layer<MatType>::operator=(std::move(other));
-    axis = std::move(other.axis);
-    n = other.n;
-    useAxis = std::move(other.useAxis);
+    multiples = std::move(other.multiples);
+    sizeMult = other.sizeMult;
+    outIdxs = std::move(other.outIdxs);
+    coefs = std::move(other.coefs);
   }
 
   return *this;
@@ -96,14 +95,9 @@ template<typename MatType>
 void ReplicateType<MatType>::Forward(const MatType& input, MatType& output)
 {
   // since the tensors are flattened to columns, we are just multiplying n_rows by n for the total outputs
-  output.set_size(input.n_rows * n, input.n_cols);
+  output.set_size(input.n_rows * sizeMult, input.n_cols);
 
-  // Now alias the matrix so we can repmat it properly
-  MatType inalias((typename MatType::elem_type*) input.memptr(), aliasRows, aliasCols * input.n_cols, false, true);
-  MatType outalias((typename MatType::elem_type*) output.memptr(), aliasRows * this->n, aliasCols * input.n_cols, false, true);
-
-  // now, we need to re-shape
-  outalias = arma::repmat(inalias, n, 1);
+  output = input.rows(outIdxs);
 }
 
 template<typename MatType>
@@ -112,15 +106,7 @@ void ReplicateType<MatType>::Backward(
 {
   g.set_size(input.n_rows, input.n_cols);
 
-  // Now alias the matrix so we can repmat it properly
-  MatType galias((typename MatType::elem_type*) g.memptr(), aliasRows, aliasCols * gy.n_cols, false, true);
-  MatType gyalias((typename MatType::elem_type*) gy.memptr(), aliasRows * this->n, aliasCols * gy.n_cols, false, true);
-
-  galias = gyalias.rows(0, aliasRows-1);
-  for (size_t i=1; i<this->n; i++) {
-    galias += gyalias.rows(i * aliasRows, (i+1) * aliasRows - 1);
-  }
-  galias /= this->n;
+  g = coefs * gy;
 }
 
 template<typename MatType>
@@ -130,9 +116,10 @@ void ReplicateType<MatType>::serialize(
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
-  ar(CEREAL_NVP(axis));
-  ar(CEREAL_NVP(n));
-  ar(CEREAL_NVP(useAxis));
+  ar(CEREAL_NVP(multiples));
+  ar(CEREAL_NVP(sizeMult));
+  ar(CEREAL_NVP(outIdxs));
+  ar(CEREAL_NVP(coefs));
 }
 
 } // namespace mlpack
