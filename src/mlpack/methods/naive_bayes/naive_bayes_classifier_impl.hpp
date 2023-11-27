@@ -46,7 +46,8 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
   {
     probabilities.zeros(numClasses);
     means.zeros(data.n_rows, numClasses);
-    variances.zeros(data.n_rows, numClasses);
+    variances.set_size(data.n_rows, numClasses);
+    variances.fill(epsilon);
   }
   else
   {
@@ -69,7 +70,8 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
   // Initialize model to 0.
   probabilities.zeros(numClasses);
   means.zeros(dimensionality, numClasses);
-  variances.zeros(dimensionality, numClasses);
+  variances.set_size(dimensionality, numClasses);
+  variances.fill(epsilon);
 }
 
 template<typename ModelMatType>
@@ -294,8 +296,8 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   // To prevent underflow in log of sum of exp of x operation (where x is a
   // small negative value), we use logsumexp(x - max(x)) + max(x).
-  const double maxValue = arma::max(logLikelihoods);
-  const double logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
+  const ElemType maxValue = logLikelihoods.max();
+  const ElemType logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
       maxValue;
   probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
@@ -406,7 +408,8 @@ void NaiveBayesClassifier<ModelMatType>::Reset(const size_t dimensionality,
 
   probabilities.zeros(numClasses);
   means.zeros(dimensionality, numClasses);
-  variances.zeros(dimensionality, numClasses);
+  variances.set_size(dimensionality, numClasses);
+  variances.fill(epsilon);
   trainingPoints = 0;
 }
 
