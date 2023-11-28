@@ -38,8 +38,8 @@ class ReplicateType : public Layer<MatType>
   ReplicateType();
 
   /**
-   * Create the Replicate object, specifying a particular axis on which the
-   * layer outputs should be replicated.
+   * Create the Replicate object, specifying the number of repeated blocks
+   * along each dimension.
    *
    * @param multiples The number of times to repeat along each axis. Must be
    *        the same size as InputDimensions.
@@ -77,12 +77,12 @@ class ReplicateType : public Layer<MatType>
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The input data (x) given to the forward pass.
+   * @param * (input) The input data (x) given to the forward pass.
    * @param * (output) The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input,
+  void Backward(const MatType& /* input */,
                 const MatType& /* output */,
                 const MatType& gy,
                 MatType& g) override;
@@ -117,11 +117,13 @@ class ReplicateType : public Layer<MatType>
     sizeMult = 1;
     size_t outSize = 1;
     for (size_t i=0; i<multiples.size(); i++) {
-      idxs.reshape(outSize * this->inputDimensions[i],
-                   idxs.n_elem / (outSize * this->inputDimensions[i]));
-      idxs = arma::repmat(idxs, multiples[i], 1);
-      this->outputDimensions[i] *= multiples[i];
-      sizeMult *= multiples[i];
+      if (multiples[i] != 1) {
+        idxs.reshape(outSize * this->inputDimensions[i],
+                     idxs.n_elem / (outSize * this->inputDimensions[i]));
+        idxs = arma::repmat(idxs, multiples[i], 1);
+        this->outputDimensions[i] *= multiples[i];
+        sizeMult *= multiples[i];
+      }
       outSize *= this->outputDimensions[i];
     }
     outIdxs = idxs.as_col();
@@ -138,7 +140,7 @@ class ReplicateType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Parameter which indicates the axis of replicateenation.
+  //! Parameter to indicate number of times to replicate along each dimension
   std::vector<size_t> multiples;
 
   size_t sizeMult;

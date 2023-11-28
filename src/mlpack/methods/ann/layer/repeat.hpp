@@ -38,13 +38,13 @@ class RepeatType : public Layer<MatType>
   RepeatType();
 
   /**
-   * Create the Repeat object, specifying a particular axis on which the layer
-   * outputs should be repeatd.
+   * Create the Repeat object, specifying the number of times to repeat
+   * along each dimension.
    *
-   * @param n Number of times to repeat
-   * @param axis Repeat axis.
+   * @param multiples The number of times to repeat along each axis. Must be
+   *        the same size as InputDimensions.
    */
-  RepeatType(const size_t n, const size_t axis = 0);
+  RepeatType(std::vector<size_t> multiples);
 
   /**
    * Destroy the layers held by the model.
@@ -77,55 +77,70 @@ class RepeatType : public Layer<MatType>
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The input data (x) given to the forward pass.
+   * @param * (input) The input data (x) given to the forward pass.
    * @param * (output) The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input,
+  void Backward(const MatType& /* input */,
                 const MatType& /* output */,
                 const MatType& gy,
                 MatType& g) override;
 
-  //! Get the axis of repeatenation.
-  size_t Axis() const { return axis; }
+  //! Get the repeat multiples
+  const std::vector<size_t>& Multiples() const { return multiples; }
 
-  size_t N() const { return n; }
+  //! Get the repeat multiples for modification
+  std::vector<size_t>& Multiples() {
+    this->validOutputDimensions = false;
+    return multiples;
+  }
 
   void ComputeOutputDimensions() override
   {
 
     const size_t numOutputDimensions = this->inputDimensions.size();
 
-    // Sanity check to ensure that the axis we are
-    // replicating along is valid.
-    if (axis >= numOutputDimensions)
+    if (multiples.size() > this->inputDimensions.size())
     {
       std::ostringstream oss;
-      oss << "Repeat::ComputeOutputDimensions(): cannot repeat outputs "
-          << "along axis " << axis << " when input only has "
-          << this->inputDimensions.size() << " axes!";
+      oss << "Repeat::ComputeOutputDimensions(): multiples vector must "
+          << "have the same or less dimensions than InputDimensions";
       throw std::invalid_argument(oss.str());
     }
 
+    size_t inputSize = this->inputDimensions[0];
+    for (size_t i=1; i<this->inputDimensions.size(); i++) {
+      inputSize *= this->inputDimensions[i];
+    }
+    arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
+
     // Now, we repeat the output along a specific axis.
     this->outputDimensions = this->inputDimensions;
-    this->outputDimensions[axis] *= n;
-
-    // if axis is 0, we just want the first dimension in rows, and will use
-    // repelem.  If axis is > 0, we want the first axis dimensions in rows,
-    // and will use repmat.
-    aliasRows = this->inputDimensions[0];
-    aliasCols = 1;
-    for (size_t i=1; i<this->inputDimensions.size(); i++) {
-      if (i < axis) {
-        aliasRows *= this->inputDimensions[i];
+    sizeMult = 1;
+    size_t outSize = 1;
+    for (size_t i=0; i<multiples.size(); i++) {
+      if (multiples[i] != 1) {
+        if (i == 0) {
+          idxs.reshape(outSize * this->inputDimensions[i],
+                       idxs.n_elem / (outSize * this->inputDimensions[i]));
+          idxs = arma::repelem(idxs, multiples[i], 1);
+        }
+        else {
+          idxs.reshape(outSize,
+                       idxs.n_elem / outSize);
+          idxs = arma::repelem(idxs, 1, multiples[i]);
+        }
+        this->outputDimensions[i] *= multiples[i];
+        sizeMult *= multiples[i];
       }
-      else {
-        aliasCols *= this->inputDimensions[i];
-      }
+      outSize *= this->outputDimensions[i];
     }
-
+    outIdxs = idxs.as_col();
+    coefs = arma::zeros<MatType>(inputSize, outSize);
+    for (size_t i=0; i<outIdxs.n_elem; i++) {
+      coefs.at(outIdxs.at(i), i) = 1.0 / (typename MatType::elem_type) sizeMult;
+    }
   }
 
   /**
@@ -135,13 +150,12 @@ class RepeatType : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Parameter which indicates the axis of repeatenation.
-  size_t axis;
+  //! Parameter to indicate number of times to repeat along each dimension
+  std::vector<size_t> multiples;
 
-  size_t n;
-
-  size_t aliasRows;
-  size_t aliasCols;
+  size_t sizeMult;
+  arma::uvec outIdxs;
+  MatType coefs;
 }; // class RepeatType.
 
 // Standard Repeat layer.
