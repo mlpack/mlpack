@@ -34,7 +34,7 @@ TEST_CASE("RepeatTestCase0", "[ANNLayerTest]")
   // Output-Size should be 8 x 3.
   output.set_size(24, 1);
 
-  Repeat module1(2, 0);
+  Repeat module1({2, 1});
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -52,7 +52,8 @@ TEST_CASE("RepeatTestCase0", "[ANNLayerTest]")
   prevDelta.reshape(8, 3);
   arma::mat targetDelta(4, 3);
   for (size_t i=0; i<targetDelta.n_rows; i++) {
-    targetDelta.row(i) = prevDelta.rows(i * 2, (i + 1) * 2 - 1) / 2;
+    targetDelta.row(i)
+      = arma::sum(prevDelta.rows(i * 2, i * 2 + 1), 0) / 2;
   }
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
@@ -73,7 +74,7 @@ TEST_CASE("RepeatTestCase1", "[ANNLayerTest]")
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-  Repeat module1(2, 1);
+  Repeat module1({1, 2});
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -91,7 +92,52 @@ TEST_CASE("RepeatTestCase1", "[ANNLayerTest]")
   prevDelta.reshape(4, 6);
   arma::mat targetDelta(4, 3);
   for (size_t i=0; i<targetDelta.n_cols; i++) {
-    targetDelta.col(i) = prevDelta.cols(i * 2, (i + 1) * 2 - 1) / 2;
+    targetDelta.col(i)
+      = arma::sum(prevDelta.cols(i * 2, i * 2 + 1), 1) / 2;
+  }
+  targetDelta.reshape(12, 1);
+  CheckMatrices(delta, targetDelta, 1e-1);
+}
+
+/**
+ * Simple test for Repeat layer along axis 0 and 1.
+ */
+TEST_CASE("RepeatTestCase2", "[ANNLayerTest]")
+{
+  // Input will be 4 x 3.
+  arma::mat input = arma::mat(4, 3, arma::fill::randn);
+  arma::mat target = arma::repelem(input, 2, 2);
+  input.reshape(12, 1);
+  target.reshape(48, 1);
+
+  arma::mat output;
+  // Output-Size should be 8 x 6.
+  output.set_size(48, 1);
+
+  Repeat module1({2, 2});
+  module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
+  module1.ComputeOutputDimensions();
+  REQUIRE(module1.OutputDimensions().size() == 2);
+  REQUIRE(module1.OutputDimensions()[0] == 8);
+  REQUIRE(module1.OutputDimensions()[1] == 6);
+  module1.Forward(input, output);
+  CheckMatrices(output, target, 1e-1);
+  REQUIRE(output.n_elem == 48);
+  REQUIRE(output.n_cols == 1);
+
+  arma::mat prevDelta = arma::mat(48, 1, arma::fill::randn);
+  arma::mat delta;
+  delta.set_size(12, 1);
+  module1.Backward(input, output, prevDelta, delta);
+  prevDelta.reshape(8, 6);
+  arma::mat targetDelta(4, 3);
+  for (size_t i=0; i<targetDelta.n_rows; i++) {
+    for (size_t j=0; j<targetDelta.n_cols; j++) {
+      targetDelta.at(i, j) = (prevDelta.at(i * 2, j * 2)
+          + prevDelta.at(i * 2 + 1, j * 2)
+          + prevDelta.at(i * 2, j * 2 + 1)
+          + prevDelta.at(i * 2 + 1, j * 2 + 1)) / 4;
+    }
   }
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);

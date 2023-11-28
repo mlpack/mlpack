@@ -19,19 +19,16 @@ namespace mlpack {
 
 template<typename MatType>
 RepeatType<MatType>::RepeatType(
-    const size_t _n, const size_t axis) :
+    std::vector<size_t> _multiples) :
     Layer<MatType>(),
-    axis(axis),
-    n(_n)
+    multiples(_multiples)
 {
   // Nothing to do.
 }
 
 template<typename MatType>
 RepeatType<MatType>::RepeatType() :
-    Layer<MatType>(),
-    axis(0),
-    n(1)
+    Layer<MatType>()
 {
   // Nothing to do.
 }
@@ -45,8 +42,10 @@ RepeatType<MatType>::~RepeatType()
 template<typename MatType>
 RepeatType<MatType>::RepeatType(const RepeatType& other) :
     Layer<MatType>(other),
-    axis(other.axis),
-    n(other.n)
+    multiples(other.multiples),
+    sizeMult(other.sizeMult),
+    outIdxs(other.outIdxs),
+    coefs(other.coefs)
 {
   // Nothing else to do.
 }
@@ -54,8 +53,10 @@ RepeatType<MatType>::RepeatType(const RepeatType& other) :
 template<typename MatType>
 RepeatType<MatType>::RepeatType(RepeatType&& other) :
     Layer<MatType>(std::move(other)),
-    axis(std::move(other.axis)),
-    n(other.n)
+    multiples(other.multiples),
+    sizeMult(other.sizeMult),
+    outIdxs(other.outIdxs),
+    coefs(other.coefs)
 {
   // Nothing else to do.
 }
@@ -66,8 +67,10 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(const RepeatType& other)
   if (this != &other)
   {
     Layer<MatType>::operator=(other);
-    axis = other.axis;
-    n = other.n;
+    multiples = other.multiples;
+    sizeMult = other.sizeMult;
+    outIdxs = other.outIdxs;
+    coefs = other.coefs;
   }
 
   return *this;
@@ -79,8 +82,10 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other)
   if (this != &other)
   {
     Layer<MatType>::operator=(std::move(other));
-    axis = std::move(other.axis);
-    n = other.n;
+    multiples = std::move(other.multiples);
+    sizeMult = other.sizeMult;
+    outIdxs = std::move(other.outIdxs);
+    coefs = std::move(other.coefs);
   }
 
   return *this;
@@ -89,53 +94,17 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other)
 template<typename MatType>
 void RepeatType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  // since the tensors are flattened to columns, we are just multiplying n_rows
-  // by n for the total outputs
-  output.set_size(input.n_rows * n, input.n_cols);
-
-  // Now alias the matrix so we can repelem it properly
-  MatType inalias, outalias;
-  MakeAlias(inalias, (typename MatType::elem_type*) input.memptr(),
-            aliasRows, aliasCols * input.n_cols);
-  MakeAlias(outalias, (typename MatType::elem_type*) output.memptr(),
-            aliasRows * this->n, aliasCols * input.n_cols);
-  if (axis == 0) {
-    outalias = arma::repelem(inalias, n, 1);
-  }
-  else {
-    outalias = arma::repmat(inalias, n, 1);
-  }
+  output = input.rows(outIdxs);
 }
 
 template<typename MatType>
 void RepeatType<MatType>::Backward(
-    const MatType& input,
+    const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  g.set_size(input.n_rows, input.n_cols);
-
-  // Now alias the matrix so we can repmat it properly
-  MatType galias, gyalias;
-  MakeAlias(galias, (typename MatType::elem_type*) g.memptr(),
-            aliasRows, aliasCols * gy.n_cols);
-  MakeAlias(gyalias, (typename MatType::elem_type*) gy.memptr(),
-            aliasRows * this->n, aliasCols * gy.n_cols);
-
-  if (axis == 0) {
-    for (size_t i=0; i<galias.n_rows; i++) {
-      galias.row(i) = arma::mean(gyalias.rows(i * aliasRows,
-                                              (i+1) * aliasRows - 1), 0);
-    }
-  }
-  else {
-    galias = gyalias.rows(0, aliasRows - 1);
-    for (size_t i = 1; i < this->n; i++) {
-      galias += gyalias.rows(i * aliasRows, (i + 1) * aliasRows - 1);
-    }
-    galias /= this->n;
-  }
+  g = coefs * gy;
 }
 
 template<typename MatType>
@@ -145,10 +114,10 @@ void RepeatType<MatType>::serialize(
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
-  ar(CEREAL_NVP(axis));
-  ar(CEREAL_NVP(n));
-  ar(CEREAL_NVP(aliasRows));
-  ar(CEREAL_NVP(aliasCols));
+  ar(CEREAL_NVP(multiples));
+  ar(CEREAL_NVP(sizeMult));
+  ar(CEREAL_NVP(outIdxs));
+  ar(CEREAL_NVP(coefs));
 }
 
 } // namespace mlpack
