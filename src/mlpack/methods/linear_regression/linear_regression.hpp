@@ -26,9 +26,12 @@ namespace mlpack {
  * Optionally, this class can perform ridge regression, if the lambda parameter
  * is set to a number greater than zero.
  */
+template<typename ModelMatType = arma::mat>
 class LinearRegression
 {
  public:
+  typedef typename ModelMatType::elem_type ElemType;
+
   /**
    * Creates the model.
    *
@@ -37,8 +40,9 @@ class LinearRegression
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const arma::mat& predictors,
-                   const arma::rowvec& responses,
+  template<typename MatType, typename ResponsesType>
+  LinearRegression(const MatType& predictors,
+                   const ResponsesType& responses,
                    const double lambda = 0,
                    const bool intercept = true);
 
@@ -51,9 +55,10 @@ class LinearRegression
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
-  LinearRegression(const arma::mat& predictors,
-                   const arma::rowvec& responses,
-                   const arma::rowvec& weights,
+  template<typename MatType, typename ResponsesType>
+  LinearRegression(const MatType& predictors,
+                   const ResponsesType& responses,
+                   const ResponsesType& weights,
                    const double lambda = 0,
                    const bool intercept = true);
 
@@ -119,8 +124,9 @@ class LinearRegression
    * @param responses y, the responses to the data points.
    * @return The least squares error after training.
    */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses);
+  template<typename MatType, typename ResponsesType>
+  ElemType Train(const MatType& predictors,
+                 const ResponsesType& responses);
 
   /**
    * Train the LinearRegression model on the given data and weights. Careful!
@@ -134,9 +140,10 @@ class LinearRegression
    * @param lambda L2 regularization penalty parameter to use.
    * @return The least squares error after training.
    */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
-               const double lambda);
+  template<typename MatType, typename ResponsesType>
+  ElemType Train(const MatType& predictors,
+                 const ResponsesType& responses,
+                 const double lambda);
 
   /**
    * Train the LinearRegression model on the given data and weights. Careful!
@@ -147,75 +154,80 @@ class LinearRegression
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @param lambda L2 regularization penalty parameter to use.
-   * @param intercept Whether or not to fit an intercept term.
-   * @return The least squares error after training.
-   */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
-               const double lambda,
-               const bool intercept);
-
-  /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
-   * @return The least squares error after training.
-   */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
-               const arma::rowvec& weights);
-
-  /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
-   * @param lambda L2 regularization penalty parameter to use.
-   * @return The least squares error after training.
-   */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
-               const arma::rowvec& weights,
-               const double lambda);
-
-  /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
    * @param lambda L2 regularization penalty parameter to use.
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
-  double Train(const arma::mat& predictors,
-               const arma::rowvec& responses,
-               const arma::rowvec& weights,
-               const double lambda,
-               const bool intercept);
+  template<typename MatType, typename ResponsesType>
+  ElemType Train(const MatType& predictors,
+                 const ResponsesType& responses,
+                 const double lambda,
+                 const bool intercept);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @return The least squares error after training.
+   */
+  template<typename MatType, typename ResponsesType>
+  ElemType Train(const MatType& predictors,
+                 const ResponsesType& responses,
+                 const ResponsesType& weights);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @param lambda L2 regularization penalty parameter to use.
+   * @return The least squares error after training.
+   */
+  template<typename MatType, typename ResponsesType>
+  ElemType Train(const MatType& predictors,
+                 const ResponsesType& responses,
+                 const ResponsesType& weights,
+                 const double lambda);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @param lambda L2 regularization penalty parameter to use.
+   * @param intercept Whether or not to fit an intercept term.
+   * @return The least squares error after training.
+   */
+  template<typename MatType, typename ResponsesType>
+  ElemType Train(const MatType& predictors,
+                 const ResponsesType& responses,
+                 const ResponsesType& weights,
+                 const double lambda,
+                 const bool intercept);
 
   /**
    * Calculate y_i for a single data point.
    *
    * @param point the data point to calculate with.
    */
-  double Predict(const arma::vec& point) const;
+  template<typename VecType>
+  ElemType Predict(const VecType& point) const;
 
   /**
    * Calculate y_i for each data point in points.
@@ -223,7 +235,8 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::rowvec& predictions) const;
+  template<typename MatType, typename ResponsesType>
+  void Predict(const MatType& points, ResponsesType& predictions) const;
 
   /**
    * Calculate the L2 squared error on the given predictors and responses using
@@ -242,13 +255,14 @@ class LinearRegression
    * @param points Matrix of predictors (X).
    * @param responses Transposed vector of responses (y^T).
    */
-  double ComputeError(const arma::mat& points,
-                      const arma::rowvec& responses) const;
+  template<typename MatType, typename ResponsesType>
+  ElemType ComputeError(const MatType& points,
+                        const ResponsesType& responses) const;
 
   //! Return the parameters (the b vector).
-  const arma::vec& Parameters() const { return parameters; }
+  const ModelMatType& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
-  arma::vec& Parameters() { return parameters; }
+  ModelMatType& Parameters() { return parameters; }
 
   //! Return the Tikhonov regularization parameter for ridge regression.
   double Lambda() const { return lambda; }
@@ -262,19 +276,14 @@ class LinearRegression
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(parameters));
-    ar(CEREAL_NVP(lambda));
-    ar(CEREAL_NVP(intercept));
-  }
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   /**
    * The calculated B.
    * Initialized and filled by constructor to hold the least squares solution.
    */
-  arma::vec parameters;
+  ModelMatType parameters;
 
   /**
    * The Tikhonov regularization parameter for ridge regression (0 for linear
