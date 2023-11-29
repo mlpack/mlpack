@@ -92,7 +92,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
 | `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `responses` | [`arma::rowvec`]('../matrices.md') | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
