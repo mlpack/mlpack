@@ -132,6 +132,46 @@ DecisionTree<FitnessFunction,
       dimensionSelector);
 }
 
+//! Construct and train with weights on numerical data.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+             NumericSplitType,
+             CategoricalSplitType,
+             DimensionSelectionType,
+             NoRecursion>::DecisionTree(
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*)
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+}
+
 //! Construct and train with weights.
 template<typename FitnessFunction,
         template<typename> class NumericSplitType,
@@ -169,48 +209,6 @@ DecisionTree<FitnessFunction,
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
               tmpWeights, minimumLeafSize, minimumGainSplit);
-}
-
-//! Construct and train with weights.
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename DimensionSelectionType,
-         bool NoRecursion>
-template<typename MatType, typename LabelsType, typename WeightsType>
-DecisionTree<FitnessFunction,
-             NumericSplitType,
-             CategoricalSplitType,
-             DimensionSelectionType,
-             NoRecursion>::DecisionTree(
-    MatType data,
-    LabelsType labels,
-    const size_t numClasses,
-    WeightsType weights,
-    const size_t minimumLeafSize,
-    const double minimumGainSplit,
-    const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector,
-    const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
-{
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
-
-  // Copy or move data.
-  TrueMatType tmpData(std::move(data));
-  TrueLabelsType tmpLabels(std::move(labels));
-  TrueWeightsType tmpWeights(std::move(weights));
-
-  // Set the correct dimensionality for the dimension selector.
-  dimensionSelector.Dimensions() = tmpData.n_rows;
-
-  // Pass off work to the weighted Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
 //! Construct and train with weights.
