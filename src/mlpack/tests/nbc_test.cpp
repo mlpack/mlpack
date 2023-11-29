@@ -457,7 +457,7 @@ TEMPLATE_TEST_CASE("NBCIncrementalTest", "[NBCTest]", arma::fmat, arma::mat)
     labels[i] = trainData(trainData.n_rows - 1, i);
   trainData.shed_row(trainData.n_rows - 1);
 
-  NaiveBayesClassifier<MatType> nbc(trainData.n_rows, classes);
+  NaiveBayesClassifier<MatType> nbc(trainData.n_rows, 2);
 
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
