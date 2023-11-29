@@ -63,8 +63,8 @@ inline double RegressionDistribution::Probability(
     const arma::vec& observation) const
 {
   arma::rowvec fitted;
-  rf.Predict(observation.rows(1, observation.n_rows-1), fitted);
-  return err.Probability(observation(0)-fitted.t());
+  rf.Predict(observation.rows(1, observation.n_rows - 1), fitted);
+  return err.Probability(observation(0) - fitted.t());
 }
 
 inline void RegressionDistribution::Predict(const arma::mat& points,

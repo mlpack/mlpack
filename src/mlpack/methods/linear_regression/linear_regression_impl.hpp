@@ -37,18 +37,67 @@ inline LinearRegression::LinearRegression(
   Train(predictors, responses, weights, intercept);
 }
 
+mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
 inline double LinearRegression::Train(const arma::mat& predictors,
                                       const arma::rowvec& responses,
                                       const bool intercept)
 {
-  return Train(predictors, responses, arma::rowvec(), intercept);
+  return Train(predictors, responses, arma::rowvec(), this->lambda, intercept);
 }
 
+mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
 inline double LinearRegression::Train(const arma::mat& predictors,
                                       const arma::rowvec& responses,
                                       const arma::rowvec& weights,
                                       const bool intercept)
 {
+  return Train(predictors, responses, weights, this->lambda, intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses)
+{
+  return Train(predictors, responses, arma::rowvec(), this->lambda,
+      this->intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const double lambda)
+{
+  return Train(predictors, responses, arma::rowvec(), lambda, this->intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const double lambda,
+                                      const bool intercept)
+{
+  return Train(predictors, responses, arma::rowvec(), lambda, intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const arma::rowvec& weights)
+{
+  return Train(predictors, responses, weights, this->lambda, this->intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const arma::rowvec& weights,
+                                      const double lambda)
+{
+  return Train(predictors, responses, weights, lambda, this->intercept);
+}
+
+inline double LinearRegression::Train(const arma::mat& predictors,
+                                      const arma::rowvec& responses,
+                                      const arma::rowvec& weights,
+                                      const double lambda,
+                                      const bool intercept)
+{
+  this->lambda = lambda;
   this->intercept = intercept;
 
   /*
@@ -106,7 +155,7 @@ inline void LinearRegression::Predict(
     // Prevent underflow.
     const size_t labels = (parameters.n_rows == 0) ? size_t(0) :
         size_t(parameters.n_rows - 1);
-    util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()", 
+    util::CheckSameDimensionality(points, labels, "LinearRegression::Predict()",
         "points");
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
@@ -119,7 +168,7 @@ inline void LinearRegression::Predict(
   {
     // We want to be sure we have the correct number of dimensions in
     // the dataset.
-    util::CheckSameDimensionality(points, parameters, 
+    util::CheckSameDimensionality(points, parameters,
         "LinearRegression::Predict()", "points");
     predictions = arma::trans(parameters) * points;
   }
@@ -131,7 +180,7 @@ inline double LinearRegression::ComputeError(
 {
   // Sanity check on data.
   util::CheckSameSizes(predictors, responses, "LinearRegression::Train()");
-  
+
   // Get the number of columns and rows of the dataset.
   const size_t nCols = predictors.n_cols;
   const size_t nRows = predictors.n_rows;

@@ -71,14 +71,90 @@ class LinearRegression
    * regularization parameter lambda, call Lambda() or set a different value in
    * the constructor.
    *
+   * This version of `Train()` is deprecated and will be removed in mlpack
+   * 5.0.0.  Use the version of `Train()` that specifies `lambda` before
+   * `intercept` instead.
+   *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
+  mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
-               const bool intercept = true);
+               const bool intercept);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * This version of `Train()` is deprecated and will be removed in mlpack
+   * 5.0.0.  Use the version of `Train()` that specifies `lambda` before
+   * `intercept` instead.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @param intercept Whether or not to fit an intercept term.
+   * @return The least squares error after training.
+   */
+  mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const arma::rowvec& weights,
+               const bool intercept);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @return The least squares error after training.
+   */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param lambda L2 regularization penalty parameter to use.
+   * @return The least squares error after training.
+   */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const double lambda);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param lambda L2 regularization penalty parameter to use.
+   * @param intercept Whether or not to fit an intercept term.
+   * @return The least squares error after training.
+   */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const double lambda,
+               const bool intercept);
 
   /**
    * Train the LinearRegression model on the given data and weights. Careful!
@@ -90,13 +166,49 @@ class LinearRegression
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
    * @param weights Observation weights (for boosting).
+   * @return The least squares error after training.
+   */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const arma::rowvec& weights);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @param lambda L2 regularization penalty parameter to use.
+   * @return The least squares error after training.
+   */
+  double Train(const arma::mat& predictors,
+               const arma::rowvec& responses,
+               const arma::rowvec& weights,
+               const double lambda);
+
+  /**
+   * Train the LinearRegression model on the given data and weights. Careful!
+   * This will completely ignore and overwrite the existing model. This
+   * particular implementation does not have an incremental training algorithm.
+   * To set the regularization parameter lambda, call Lambda() or set a
+   * different value in the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the responses to the data points.
+   * @param weights Observation weights (for boosting).
+   * @param lambda L2 regularization penalty parameter to use.
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
                const arma::rowvec& weights,
-               const bool intercept = true);
+               const double lambda,
+               const bool intercept);
 
   /**
    * Calculate y_i for each data point in points.

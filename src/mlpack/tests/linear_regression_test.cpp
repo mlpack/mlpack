@@ -265,3 +265,58 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
 
   REQUIRE(std::isfinite(error) == true);
 }
+
+/**
+ * Make sure all versions of Train() work correctly.
+ */
+TEST_CASE("LinearRegressionAllTrainVersionsTest", "[LinearRegressionTest]")
+{
+  // The data doesn't really matter for this test; mostly we want to make sure
+  // that all the Train() variants work properly.
+  arma::mat predictors;
+  predictors = { {  0, 1, 2, 4, 8, 16 },
+                 { 16, 8, 4, 2, 1,  0 } };
+  arma::rowvec responses = "0 2 4 3 8 8";
+  arma::rowvec weights = "1.0 1.1 1.2 0.8 0.9 1.0";
+
+  LinearRegression lr1, lr2, lr3, lr4, lr5, lr6;
+
+  lr1.Train(predictors, responses);
+  lr2.Train(predictors, responses, 0.1);
+  lr3.Train(predictors, responses, 0.2, false);
+  lr4.Train(predictors, responses, weights);
+  lr5.Train(predictors, responses, weights, 0.3);
+  lr6.Train(predictors, responses, weights, 0.4, false);
+
+  // We don't care about the specifics of the trained model, but we want to just
+  // make sure everything appears to be correct from the sizes and
+  // hyperparameters.
+  REQUIRE(lr1.Lambda() == Approx(0.0).margin(1e-10));
+  REQUIRE(lr1.Intercept() == true);
+  REQUIRE(lr1.Parameters().n_elem == 3);
+
+  REQUIRE(lr2.Lambda() == Approx(0.1).margin(1e-10));
+  REQUIRE(lr2.Intercept() == true);
+  REQUIRE(lr2.Parameters().n_elem == 3);
+
+  REQUIRE(lr3.Lambda() == Approx(0.2).margin(1e-10));
+  REQUIRE(lr3.Intercept() == false);
+  REQUIRE(lr3.Parameters().n_elem == 2);
+
+  REQUIRE(lr4.Lambda() == Approx(0.0).margin(1e-10));
+  REQUIRE(lr4.Intercept() == true);
+  REQUIRE(lr4.Parameters().n_elem == 3);
+
+  REQUIRE(lr5.Lambda() == Approx(0.3).margin(1e-10));
+  REQUIRE(lr5.Intercept() == true);
+  REQUIRE(lr5.Parameters().n_elem == 3);
+
+  REQUIRE(lr6.Lambda() == Approx(0.4).margin(1e-10));
+  REQUIRE(lr6.Intercept() == false);
+  REQUIRE(lr6.Parameters().n_elem == 2);
+
+  // We can also check that the weighted model is different from the unweighted
+  // model.
+  REQUIRE(!arma::approx_equal(lr1.Parameters(), lr4.Parameters(), "absdiff",
+      1e-5));
+}
