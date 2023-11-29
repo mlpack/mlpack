@@ -309,21 +309,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     model->Lambda() = lambda;
 
-    // Did we want training accuracy?
-    if (params.Has("print_training_accuracy"))
-    {
-      timers.Start("lr_prediction");
-      arma::Row<size_t> predictions;
-      model->Classify(regressors, predictions);
-
-      const size_t correct = arma::accu(predictions == responses);
-
-      Log::Info << correct << " of " << responses.n_elem << " correct on training"
-          << " set (" << (double(correct) / double(responses.n_elem) * 100) << ")."
-          << endl;
-      timers.Stop("lr_prediction");
-    }
-
     if (optimizerType == "sgd")
     {
       ens::SGD<> sgdOpt;
@@ -349,6 +334,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       timers.Start("logistic_regression_optimization");
       model->Train(regressors, responses, lbfgsOpt);
       timers.Stop("logistic_regression_optimization");
+    }
+
+    // Did we want training accuracy?
+    if (params.Has("print_training_accuracy"))
+    {
+      timers.Start("lr_prediction");
+      arma::Row<size_t> predictions;
+      model->Classify(regressors, predictions);
+
+      const size_t correct = arma::accu(predictions == responses);
+
+      Log::Info << correct << " of " << responses.n_elem << " correct on training"
+          << " set (" << (double(correct) / double(responses.n_elem) * 100) << ")."
+          << endl;
+      timers.Stop("lr_prediction");
     }
   }
   
