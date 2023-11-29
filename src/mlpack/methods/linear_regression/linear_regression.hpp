@@ -211,6 +211,13 @@ class LinearRegression
                const bool intercept);
 
   /**
+   * Calculate y_i for a single data point.
+   *
+   * @param point the data point to calculate with.
+   */
+  double Predict(const arma::vec& point) const;
+
+  /**
    * Calculate y_i for each data point in points.
    *
    * @param points the data points to calculate with.

@@ -34,7 +34,7 @@ inline LinearRegression::LinearRegression(
     lambda(lambda),
     intercept(intercept)
 {
-  Train(predictors, responses, weights, intercept);
+  Train(predictors, responses, weights, lambda, intercept);
 }
 
 mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
@@ -142,6 +142,32 @@ inline double LinearRegression::Train(const arma::mat& predictors,
 
   parameters = arma::solve(cov, p * r.t());
   return ComputeError(predictors, responses);
+}
+
+inline double LinearRegression::Predict(const arma::vec& point) const
+{
+  if (intercept)
+  {
+    // We want to be sure we have the correct number of dimensions in the
+    // dataset.
+    // Prevent underflow.
+    const size_t labels = (parameters.n_rows == 0) ? size_t(0) :
+        size_t(parameters.n_rows - 1);
+    util::CheckSameDimensionality(point, labels, "LinearRegression::Predict()",
+        "point");
+
+    return dot(parameters.subvec(1, parameters.n_elem - 1).t(), point) +
+        parameters(0);
+  }
+  else
+  {
+    // We want to be sure we have the correct number of dimensions in
+    // the dataset.
+    util::CheckSameDimensionality(point, parameters,
+        "LinearRegression::Predict()", "point");
+
+    return dot(parameters.t(), point);
+  }
 }
 
 inline void LinearRegression::Predict(

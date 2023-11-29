@@ -320,3 +320,28 @@ TEST_CASE("LinearRegressionAllTrainVersionsTest", "[LinearRegressionTest]")
   REQUIRE(!arma::approx_equal(lr1.Parameters(), lr4.Parameters(), "absdiff",
       1e-5));
 }
+
+/**
+ * Ensure that single-point Predict() returns the same results as multi-point
+ * Predict().
+ */
+TEST_CASE("LinearRegressionSinglePointPredictTest", "[LinearRegressionTest]")
+{
+  arma::mat predictors;
+  predictors = { {  0, 1, 2, 4, 8, 16 },
+                 { 16, 8, 4, 2, 1,  0 } };
+  arma::rowvec responses = "0 2 4 3 8 8";
+
+  LinearRegression lr(predictors, responses, 0.1, true);
+
+  // Compute predictions for test points in batch.
+  arma::rowvec predictions;
+  lr.Predict(predictors, predictions);
+
+  // Now compute each prediction individually.
+  for (size_t i = 0; i < predictors.n_cols; ++i)
+  {
+    const double prediction = lr.Predict(predictors.col(i));
+    REQUIRE(prediction == Approx(predictions[i]));
+  }
+}
