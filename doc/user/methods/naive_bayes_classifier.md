@@ -107,8 +107,6 @@ If training is not done as part of the constructor call, it can be done with the
      appropriate constructor form to set `dimensionality`, or by calling
      `Reset()` (see [other functionality](#other_functionality)).
 
-<!-- TODO: does this look decent? -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `point` | [`arma::vec`](../matrices.md) | [Column-major](../matrices.md) training point (i.e. one column). | _(N/A)_ |
