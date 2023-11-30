@@ -364,5 +364,62 @@ TEMPLATE_TEST_CASE("LinearRegressionSinglePointPredictTest",
 }
 
 // Make sure training on submatrices and subvectors works.
+TEST_CASE("LinearRegressionSubmatrixTrainingTest", "[LinearRegressionTest]")
+{
+  // The quality of the model doesn't matter---mostly this is a compilation
+  // test.
+  arma::mat predictors(100, 1000, arma::fill::randu);
+  arma::rowvec responses(1000, arma::fill::randu);
+  arma::rowvec weights(1000, arma::fill::randu);
+
+  LinearRegression<> lr1(predictors.cols(0, 499), responses.subvec(0, 499));
+  LinearRegression<> lr2;
+  lr2.Train(predictors.cols(0, 499), responses.subvec(0, 499));
+  LinearRegression<> lr3(predictors.cols(0, 499), responses.subvec(0, 499),
+      weights.subvec(0, 499));
+  LinearRegression<> lr4;
+  lr4.Train(predictors.cols(0, 499), responses.subvec(0, 499),
+      weights.subvec(0, 499));
+
+  REQUIRE(lr1.Parameters().n_elem == 101);
+  REQUIRE(lr2.Parameters().n_elem == 101);
+  REQUIRE(lr3.Parameters().n_elem == 101);
+  REQUIRE(lr4.Parameters().n_elem == 101);
+
+  arma::rowvec predictions;
+
+  lr1.Predict(predictors.cols(500, 999), predictions);
+  REQUIRE(predictions.n_cols == 500);
+
+  lr2.Predict(predictors.cols(500, 999), predictions);
+  REQUIRE(predictions.n_cols == 500);
+
+  lr3.Predict(predictors.cols(500, 999), predictions);
+  REQUIRE(predictions.n_cols == 500);
+
+  lr4.Predict(predictors.cols(500, 999), predictions);
+  REQUIRE(predictions.n_cols == 500);
+}
 
 // Make sure we can train on sparse data.
+TEST_CASE("LinearRegressionSparseTrainingTest", "[LinearRegressionTest]")
+{
+  // For this test the quality of the model doesn't matter---mostly this is a
+  // compilation test, but we check that the sizes of the returned predictions
+  // and the sizes of the learned models are correct.
+
+  // Generate sparse random data.
+  arma::sp_mat data;
+  data.sprandu(100, 5000, 0.3);
+
+  arma::rowvec responses(5000, arma::fill::randu);
+
+  LinearRegression<> lr(data, responses);
+
+  REQUIRE(lr.Parameters().n_elem == 101);
+
+  arma::rowvec predictions;
+  lr.Predict(data, predictions);
+
+  REQUIRE(predictions.n_elem == 5000);
+}

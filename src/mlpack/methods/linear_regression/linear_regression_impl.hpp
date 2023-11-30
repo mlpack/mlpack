@@ -24,7 +24,8 @@ inline LinearRegression<ModelMatType>::LinearRegression(
     const ResponsesType& responses,
     const double lambda,
     const bool intercept) :
-    LinearRegression(predictors, responses, ResponsesType(), lambda, intercept)
+    LinearRegression(predictors, responses,
+        arma::Row<typename ResponsesType::elem_type>(), lambda, intercept)
 { /* Nothing to do. */ }
 
 template<typename ModelMatType>
@@ -83,7 +84,8 @@ typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses)
 {
-  return Train(predictors, responses, ResponsesType(), this->lambda,
+  return Train(predictors, responses,
+      arma::Row<typename ResponsesType::elem_type>(), this->lambda,
       this->intercept);
 }
 
@@ -95,7 +97,8 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
                                       const double lambda)
 {
-  return Train(predictors, responses, ResponsesType(), lambda, this->intercept);
+  return Train(predictors, responses,
+      arma::Row<typename ResponsesType::elem_type>(), lambda, this->intercept);
 }
 
 template<typename ModelMatType>
@@ -107,7 +110,8 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const double lambda,
                                       const bool intercept)
 {
-  return Train(predictors, responses, ResponsesType(), lambda, intercept);
+  return Train(predictors, responses,
+      arma::Row<typename ResponsesType::elem_type>(), lambda, intercept);
 }
 
 template<typename ModelMatType>
@@ -288,7 +292,7 @@ LinearRegression<ModelMatType>::ComputeError(
 
   // Calculate the differences between actual responses and predicted responses.
   // We must also add the intercept (parameters(0)) to the predictions.
-  ResponsesType temp;
+  arma::Row<typename ResponsesType::elem_type> temp;
   if (intercept)
   {
     // Ensure that we have the correct number of dimensions in the dataset.
