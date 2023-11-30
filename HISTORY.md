@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add `print_training_accuracy` option to LogisticRegression bindings (#3552).
+    
   * Fix `preprocess_split()` call in documentation for `LinearRegression` and
     `AdaBoost` Python classes (#3563).
 
@@ -10,8 +12,6 @@
   * Fix L1 regularization in case where weight is zero (#3545).
 
   * Use HTTPS for all auto-downloaded dependencies (#3550).
-
-  * Add `print_training_accuracy` option to LogisticRegression bindings (#3552).
 
   * More robust detection of C++17 mode in the MSVC "compiler" (#3555, #3557).
 
