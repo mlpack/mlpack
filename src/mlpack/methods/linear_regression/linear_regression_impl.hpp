@@ -182,7 +182,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   const size_t nCols = predictors.n_cols;
 
   // TODO: avoid copy if possible.
-  arma::Mat<ElemType> p = predictors;
+  arma::Mat<ElemType> p = arma::conv_to<arma::Mat<ElemType>>::from(predictors);
   arma::Row<ElemType> r = responses;
 
   // Here we add the row of ones to the predictors.
