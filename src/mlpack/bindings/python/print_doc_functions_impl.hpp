@@ -413,12 +413,13 @@ inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& testLabels,
                                   const std::string& splitRatio)
 {
-  std::string splitString = ">>> ";
-  splitString += testDataset + ", " + testLabels + ", ";
-  splitString += trainDataset + ", " + trainLabels;
-  splitString += " = ";
-  splitString += "preprocess_split(input_=" + datasetName + ", input_labels=";
-  splitString += labelName + ", test_ratio=" + splitRatio + ")";
+  std::string splitString;
+  splitString += ">>> d = preprocess_split(input_=" + datasetName + ", input_labels=";
+  splitString += labelName + ", test_ratio=" + splitRatio + ")\n";
+  splitString += ">>> " + trainDataset + " = d['training']\n";
+  splitString += ">>> " + trainLabels + " = d['training_labels']\n";
+  splitString += ">>> " + testDataset + " = d['test']\n";
+  splitString += ">>> " + testLabels + " = d['test_labels']";
   return splitString;
 }
 
