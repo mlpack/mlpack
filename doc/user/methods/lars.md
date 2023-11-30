@@ -1,19 +1,44 @@
 ## `LARS`
 
+The `LARS` class implements the least-angle regression (LARS) algorithm for
+L1-penalized and L2-penalized regression.  `LARS` can also solve the LASSO
+(least absolute shrinkage and selection operator) problem.  The LARS algorithm
+is a *path* algorithm, and thus will recover solutions for *all* L1 penalty
+parameters greater than or equal to the given L1 penalty parameter.
 
 #### Simple usage example:
 
 ```c++
+// Train a LARS model on random numeric data and make predictions.
+
+// All data and responses are uniform random; this uses 10 dimensional data.
+// Replace with a data::Load() call or similar for a real application.
+arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
+arma::rowvec responses = arma::randn<arma::rowvec>(1000);
+arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+
+mlpack::LARS lars(true, 0.1 /* L1 penalty */); // Step 1: create model.
+lars.Train(dataset, responses);                // Step 2: train model.
+arma::rowvec predictions;
+lars.Predict(testDataset, predictions);        // Step 3: use model to predict.
+
+// Print some information about the test predictions.
+std::cout << arma::accu(predictions > 0.7) << " test points predicted to have"
+    << " responses greater than 0.7." << std::endl;
+std::cout << arma::accu(predictions < 0) << " test points predicted to have "
+    << "negative responses." << std::endl;
 ```
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick links:
 
- * [Constructors](#constructors): create `LinearRegression` objects.
+ * [Constructors](#constructors): create `LARS` objects.
  * [`Train()`](#training): train model.
  * [`Predict()`](#prediction): predict with a trained model.
  * [Other functionality](#other-functionality) for loading, saving, and
    inspecting.
+ * [The LARS path](#the-lars-path): use models from the LARS path with different
+   L1 penalty values.
  * [Examples](#simple-examples) of simple usage and links to detailed example
    projects.
  * [Template parameters](#advanced-functionality-different-element-types) for
@@ -27,6 +52,31 @@
 
 ### Constructors
 
+ * `lars = LARS(useCholesky=false, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+   - Initialize the model without training.
+   - You will need to call [`Train()`](#training) later to train the model
+     before calling [`Predict()`](#prediction).
+
+---
+
+<!-- TODO: change to rowMajor from transposeData -->
+ * `lars = LARS(data, responses, transposeData=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+   - Train model on the given data and responses, using the given settings for
+     hyperparameters.
+
+---
+
+ * `lars = LARS(data, responses, transposeData, useCholesky, gramMatrix, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+   - *(Advanced constructor)*.
+   - Train model on the given data and responses, using a precomputed Gram
+     matrix (`gramMatrix`, equivalent to `data * data.t()`).
+   - Using a precomputed Gram matrix can save time, if it has already been
+     computed.
+   - ***Note:*** any precomputed Gram matrix must also match the settings of
+     `fitIntercept` and `normalizeData`; so, if both are `true`, then
+     `gramMatrix` must be computed on mean-centered data whose features are
+     normalized to have unit variance.
+
 ---
 
 #### Constructor Parameters:
@@ -38,16 +88,64 @@
 
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | Training matrix. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
-| `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`. | _(N/A)_ |
-| `lambda` | `double` | L2 regularization penalty parameter. | `0.0` |
-| `intercept` | `bool` | Whether to fit an intercept term in the model. | `bool` |
+| `transposeData` | `bool` | Should be set to true if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation. | `true` |
+| `useCholesky` | `bool` | If `true`, use the Cholesky decomposition of the Gram
+matrix to solve linear systems (as opposed to the full Gram matrix). | `true` |
+| `gramMatrix` | [`arma::mat`](../matrices.md) | Precomputed Gram matrix of `data` (i.e.  `data * data.t()` for column-major data). | _(N/A)_ |
+| `lambda1` | `double` | L1 regularization penalty parameter. | `0.0` |
+| `lambda2` | `double` | L2 regularization penalty parameter. | `0.0` |
+| `tolerance` | `double` | Tolerance on feature correlations for convergence. | `1e-16` |
+| `fitIntercept` | `bool` | If `true`, an intercept term will be included in the model. | `true` |
+| `normalizeData` | `bool` | If `true`, data will be normalized before fitting
+the model. | `true` |
+
+***Notes:***
+
+ - The `lambda1` parameter implicitly controls the sparsity of the model; for
+   more sparse models (i.e. fewer nonzero weights), specify a larger `lambda1`.
+
+ - Specifying a too-small `lambda1` or `lambda2` value may cause the model to
+   overfit; however, setting it too large may cause the model to underfit.
+   Because LARS is a path algorithm, the
+   [`SelectBeta()`](#other_functionality) functions can be used to select models
+   with different values of `lambda1`.  For tuning `lambda2`,
+   [Automatic hyperparameter tuning](#hyperparameter-tuner) can be used.
+
+ - `fitIntercept` and `normalizeData` are recommended to be set as `true`, in
+   accordance with the original LARS algorithm.  `false` can be used for
+   `fitIntercept` if the features and responses are already mean-centered, and
+   `false` can also be used for `normalizeData` if the features are already
+   unit-variance.  Using `false` for either option can provide a small amount of
+   speedup.
+
+ - `useCholesky` should generally be set to `true` and in most situations will
+   result in faster training.
 
 ### Training
 
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
+
+<!-- TODO: deprecate beta version -->
+<!-- TODO: implement hyperparameters versions -->
+
+ * `lars.Train(data, responses, transposeData=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+   - Train the model on the given data.
+
+---
+
+ * `lars.Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+   - *(Advanced training.)*
+   - Train model on the given data and responses, using a precomputed Gram
+     matrix (`gramMatrix`, equivalent to `data * data.t()`).
+   - Using a precomputed Gram matrix can save time, if it has already been
+     computed.
+   - ***Note:*** any precomputed Gram matrix must also match the settings of
+     `fitIntercept` and `normalizeData`; so, if both are `true`, then
+     `gramMatrix` must be computed on mean-centered data whose features are
+     normalized to have unit variance.
 
 ---
 
@@ -56,10 +154,18 @@ Types of each argument are the same as in the table for constructors
 
 ***Notes:***
 
+ * Training is not incremental.  A second call to `Train()` will retrain the
+   model from scratch.
+
+ * `Train()` returns the mean squared error (MSE) of the model on the training
+   set as a `double`.
+
 ### Prediction
 
 Once a `LARS` model is trained, the `Predict()` member function
 can be used to make predictions for new data.
+
+<!-- TODO: implement single-point version -->
 
  * `double predictedValue = lars.Predict(point)`
    - ***(Single-point)***
@@ -90,19 +196,59 @@ can be used to make predictions for new data.
  * A `LARS` model can be serialized with
    [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
 
-<!-- TODO: update for LARS -->
- * `lr.Intercept()` will return a `bool` indicating whether the model was
-   trained with an intercept term.
+ * `lars.Beta()` will return an `arma::vec` with the model parameters.  This
+   will have length equal to the dimensionality of the model.  Note that
+   `lars.Beta()` can be changed to a different model on the LARS path using the
+   [`lars.SelectBeta()` method](#the-lars-path).
 
- * `lr.Parameters()` will return an `arma::vec&` with the model parameters.
-   This will have length equal to the dimensionality of the model if
-   `lr.Intercept()` is `false`, and length equal to the dimensionality of the
-   model plus one if `lr.Intercept()` is `true`.  If an intercept was fitted,
-   the intercept term is the first element of `lr.Parameters()`.
+ * `lars.Intercept()` will return a `double` representing the fitted intercept
+   term, if `lars.FitIntercept()` is `true`.
 
- * `lr.ComputeError(data, responses)` will return a `double` containing the mean
-   squared error (MSE) of the model on `data`, given that the true responses are
-   `responses`.
+ * `lars.ActiveSet()` will return a `std::vector<size_t>&` containing the
+   indices of nonzero dimensions in the model parameters (`lars.Beta()`).
+
+ * `lars.ComputeError(data, responses, rowMajor=false)` will return a `double`
+   containing the mean squared error (MSE) of the model on `data`, given that
+   the true responses are `responses`.
+
+### The LARS Path
+
+LARS is a *path* (or stepwise) algorithm, meaning it adds one feature at a time
+to the model.  This in turn means that when we train a LARS model with
+`lambda1` set to `l`, we also recover every possible LARS model on the same data
+with a `lambda1` greater than `l`.
+
+The `LARS` class provides a way to access all of the models on the path, and
+switch between them for prediction purposes:
+
+ * `lars.BetaPath()` returns a `std::vector<arma::vec>&` containing each set of
+   model weights on the LARS path.
+
+ * `lars.InterceptPath()` returns a `std::vector<double>&` containing each
+   intercept value on the LARS path.  These values are only meaningful if
+   `lars.FitIntercept()` is `true`.
+
+ * `lars.LambdaPath()` returns a `std::vector<double>&` containing each
+   `lambda1` value that is associated with each element in `lars.BetaPath()` and
+   `lars.InterceptPath()`.  That is, `lars.LambdaPath(i)` is the `lambda1` value
+   corresponding to the model defined by `lars.BetaPath(i)` and
+   `lars.InterceptPath(i)`.
+
+<!-- TODO: implement -->
+ * `lars.SelectBeta(lambda1)` will set the model weights (`lars.ActiveSet()`,
+   `lars.Beta()` and `lars.Intercept()`) to the path location with L1 penalty
+   `lambda1`.  This is equivalent to calling `lars.Train(data, responses,
+   transposeData, useCholesky, lambda1)`---but much more efficient!
+
+<!-- TODO: implement -->
+ * `lars.SelectedLambda()` returns the currently selected L1 regularization
+   penalty parameter.
+
+ * For any value `lambda1` between `lars.LambdaPath(i)` and `lars.LambdaPath(i +
+   1)`, the corresponding model is a linear interpolation between
+   `lars.BetaPath(i)` and `lars.BetaPath(i + 1)` (and `lars.InterceptPath(i)`
+   and `lars.InterceptPath(i + 1)`).  This exact linear interpolation is what is
+   computed by `lars.SelectBeta(lambda1)`.
 
 ### Simple Examples
 
@@ -111,7 +257,140 @@ of the `LARS` class.
 
 ---
 
+Train a LARS model in the constructor, and print the MSE on training and
+test data for each set of weights in the path.
+
+```c++
+// See https://datasets.mlpack.org/wave_energy_farm_100.csv.
+arma::mat data;
+mlpack::data::Load("wave_energy_farm_100.csv", data, true);
+
+// Split the last row off: it is the responses.
+arma::rowvec responses = data.row(data.n_rows - 1);
+data.shed_rows(data.n_rows - 1);
+
+// Split into a training and test dataset.  20% of the data is held out as a
+// test set.
+arma::mat trainingData, testData;
+arma::rowvec trainingResponses, testResponses;
+data::Split(data, responses, trainingData, trainingResponses, testData,
+    testResponses, 0.2);
+
+// Train a LARS model with lambda1 = 1e-5 and lambda2 = 1e-6.
+mlpack::LARS lars(trainingData, trainingResponses, true, true, 1e-5, 1e-6);
+
+// Iterate over all the models in the path.
+const size_t pathLength = lars.BetaPath().size();
+for (size_t i = 0; i < pathLength; ++i)
+{
+  // Use the i'th model in the path.
+  lars.SelectBeta(lars.BetaPath(i));
+
+  std::cout << "L1 penalty parameter: " << lars.SelectedLambda() << std::endl;
+  std::cout << "  MSE on training set: "
+      << lars.ComputeError(trainingData, trainingResponses) << "." << std::endl;
+  std::cout << "  MSE on test set:     "
+      << lars.ComputeError(testData, testResponses) << "." << std::endl;
+}
+```
+
 ---
+
+Train a LARS model, print predictions for a random point, and save to a file.
+
+```c++
+// See https://datasets.mlpack.org/admission_predict.csv.
+arma::mat data;
+mlpack::data::Load("admission_predict.csv", data, true); 
+
+// See https://datasets.mlpack.org/admission_predict.responses.csv.
+arma::rowvec responses;
+mlpack::data::Load("admission_predict.responses.csv", responses, true);
+
+// Train a LARS model with only L2 regularization.
+mlpack::LARS lars(data, responses, true, true, 0.0, 0.1 /* lambda2 */);
+
+// Predict on a random point.
+arma::vec point = arma::randu<arma::vec>(data.n_rows);
+const double prediction = lars.Predict(point);
+
+std::cout << "Prediction on random point: " << prediction << "." << std::endl;
+
+// Save the model to "lars_model.bin" with the name "lars".
+mlpack::data::Save("lars_model.bin", "lars", lars, true);
+```
+
+---
+
+Load a LARS model from disk and print some information about it.
+
+```c++
+// This assumes a model named "lars" has previously been saved to
+// "lars_model.bin".
+mlpack::LARS lars;
+mlpack::data::Load("lars_model.bin", "lars", lars, true);
+
+if (lars.Beta().n_elem)
+{
+  std::cout << "lars_model.bin contains an untrained LARS model." << std::endl;
+}
+else
+{
+  std::cout << "Information on the LARS model in lars_model.bin:" << std::endl;
+
+  std::cout << " - Model dimensionality: " << lars.Beta().n_elem << "."
+      << std::endl;
+  std::cout << " - Has intercept: "
+      << (lars.FitIntercept() ? std::string("yes") : std::string("no")) << "."
+      << std::endl;
+  std::cout << " - Current L1 regularization penalty parameter value: "
+      << lars.SelectedLambda() << "." << std::endl;
+  std::cout << " - L2 regularization penalty parameter: " << lars.Lambda2()
+      << "." << std::endl;
+  std::cout << " - Number of nonzero elements in model: "
+      << lars.ActiveSet().size() << "." << std::endl;
+  std::cout << " - Number of models in LARS path: " << lars.BetaPath().size()
+      << "." << std::endl;
+  std::cout << " - Model weight for dimension 0: " << lars.Beta()[0] << "."
+      << std::endl;
+
+  if (lars.FitIntercept())
+  {
+    std::cout << " - Intercept value: " << lars.Intercept() << "." << std::endl;
+  }
+}
+```
+
+---
+
+Train several models with different L2 regularization penalty parameters, using
+a precomputed Gram matrix.
+
+```c++
+// See https://datasets.mlpack.org/admission_predict.csv.
+arma::mat data;
+mlpack::data::Load("admission_predict.csv", data, true);
+
+// See https://datasets.mlpack.org/admission_predict.responses.csv.
+arma::rowvec responses;
+mlpack::data::Load("admission_predict.responses.csv", responses, true);
+
+// Precompute Gram matrix.
+arma::mat gramMatrix = data * data.t();
+
+std::vector<double> lambda2Values = { 0.0001, 0.001, 0.01, 0.1, 1.0 };
+for (lambda2 : lambda2Values)
+{
+  // Build a LARS model using the precomputed Gram matrix.  We did not normalize
+  // or center the data before computing the Gram matrix, so we have to set
+  // fitIntercept and normalizeData accordingly.
+  LARS lars(data, responses, true, true, gramMatrix, 0.01, lambda2, 1e-16,
+      false, false);
+
+  std::cout << "MSE with L2 penalty " << lambda2 << ": "
+      << lars.ComputeError(data, responses) << "." << std::endl;
+}
+```
 
 ### Advanced Functionality: Different Element Types
 
@@ -130,7 +409,38 @@ Note that the `Train()` and `Predict()` functions themselves are templatized and
 can allow any matrix type that has the same element type.  So, for instance, a
 `LARS<arma::mat>` can accept an `arma::sp_mat` for training.
 
-The example below TODO
+The example below trains a LARS model on sparse 32-bit precision data, using
+`arma::sp_mat` to store the model parameters.
 
 ```c++
+// Create random, sparse 1000-dimensional data.
+arma::sp_fmat dataset;
+dataset.sprandu(1000, 5000, 0.1);
+
+// Generate noisy responses from random data.
+arma::fvec trueWeights(1000, arma::fill::randu);
+arma::frowvec responses = trueWeights.t() * dataset +
+    0.01 * arma::randu<arma::frowvec>(5000) /* noise term */;
+
+mlpack::LARS<arma::sp_fmat> lars;
+lars.Lambda1() = 0.1;
+lars.Lambda2() = 0.01;
+
+lars.Train(dataset, responses);
+
+// Compute the MSE on the training set and a random test set.
+arma::sp_fmat testDataset;
+testDataset.sprandu(1000, 2500, 0.3);
+
+arma::frowvec testResponses = trueWeights.t() * testDataset +
+    0.01 * arma::randu<arma::frowvec>(2500) /* noise term */;
+
+std::cout << "MSE on training set: "
+    << lars.ComputeError(dataset, responses) << "." << std::endl;
+std::cout << "MSE on test set:     "
+    << lars.ComputeError(testDataset, testResponses) << "." << std::endl;
 ```
+
+***Note:*** it is generally only more efficient to use a sparse type (e.g.
+`arma::sp_mat`) for `ModelMatType` when the L1 regularization parameter is set
+such that a highly sparse model is produced.
