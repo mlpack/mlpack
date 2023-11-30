@@ -21,25 +21,30 @@ using namespace mlpack;
  * Creates two 10x3 random matrices and one 10x1 "results" matrix.
  * Finds B in y=BX with one matrix, then predicts against the other.
  */
-TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]")
+TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
+    arma::fmat, arma::mat)
 {
+  typedef TestType MatType;
+  typedef arma::Row<typename MatType::elem_type> RowType;
+  typedef arma::Col<typename MatType::elem_type> ColType;
+
   // Predictors and points are 10x3 matrices.
-  arma::mat predictors(3, 10);
-  arma::mat points(3, 10);
+  MatType predictors(3, 10);
+  MatType points(3, 10);
 
   // Responses is the "correct" value for each point in predictors and points.
-  arma::rowvec responses(10);
+  RowType responses(10);
 
   // The values we get back when we predict for points.
-  arma::rowvec predictions(10);
+  RowType predictions(10);
 
   // We'll randomly select some coefficients for the linear response.
-  arma::vec coeffs;
+  ColType coeffs;
   coeffs.randu(4);
 
   // Now generate each point.
   for (size_t row = 0; row < 3; row++)
-    predictors.row(row) = arma::linspace<arma::rowvec>(0, 9, 10);
+    predictors.row(row) = arma::linspace<RowType>(0, 9, 10);
 
   points = predictors;
 
@@ -57,7 +62,7 @@ TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]")
         dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
 
   // Initialize and predict.
-  LinearRegression lr(predictors, responses);
+  LinearRegression<MatType> lr(predictors, responses);
   lr.Predict(points, predictions);
 
   // Output result and verify we have less than 5% error from "correct" value
@@ -69,16 +74,20 @@ TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]")
 /**
  * Check the functionality of ComputeError().
  */
-TEST_CASE("ComputeErrorTest", "[LinearRegressionTest]")
+TEMPLATE_TEST_CASE("ComputeErrorTest", "[LinearRegressionTest]", arma::fmat,
+    arma::mat)
 {
-  arma::mat predictors;
+  typedef TestType MatType;
+  typedef arma::Row<typename MatType::elem_type> RowType;
+
+  MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },
                  { 16, 8, 4, 2, 1,  0 } };
-  arma::rowvec responses = "0 2 4 3 8 8";
+  RowType responses = "0 2 4 3 8 8";
 
   // http://www.mlpack.org/trac/ticket/298
   // This dataset gives a cost of 1.189500337 (as calculated in Octave).
-  LinearRegression lr(predictors, responses);
+  LinearRegression<MatType> lr(predictors, responses);
 
   REQUIRE(lr.ComputeError(predictors, responses) ==
       Approx(1.189500337).epsilon(1e-5));
@@ -95,7 +104,7 @@ TEST_CASE("ComputeErrorPerfectFitTest", "[LinearRegressionTest]")
                  { 0, 1, 2, 2, 2, 6 } };
   arma::rowvec responses = "0 2 4 3 8 8";
 
-  LinearRegression lr(predictors, responses);
+  LinearRegression<> lr(predictors, responses);
 
   REQUIRE(lr.ComputeError(predictors, responses) == Approx(0.0).margin(1e-25));
 }
@@ -116,7 +125,7 @@ TEST_CASE("RidgeRegressionTest", "[LinearRegressionTest]")
   // invertible.  If ridge regression is not working correctly, then the matrix
   // will not be invertible and the test should segfault (or something else
   // ugly).
-  LinearRegression lr(data, responses, 0.0001);
+  LinearRegression<> lr(data, responses, 0.0001);
 
   // Now just make sure that it predicts some more zeros.
   arma::rowvec predictedResponses;
@@ -167,7 +176,7 @@ TEST_CASE("RidgeRegressionTestCase", "[LinearRegressionTest]")
         dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
 
   // Initialize and predict with very small lambda.
-  LinearRegression lr(predictors, responses, 0.001);
+  LinearRegression<> lr(predictors, responses, 0.001);
   lr.Predict(points, predictions);
 
   // Output result and verify we have less than 5% error from "correct" value
@@ -186,8 +195,8 @@ TEST_CASE("LinearRegressionTrainTest", "[LinearRegressionTest]")
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
   arma::rowvec responses = arma::randu<arma::rowvec>(1000);
 
-  LinearRegression lr(dataset, responses, 0.3);
-  LinearRegression lrTrain;
+  LinearRegression<> lr(dataset, responses, 0.3);
+  LinearRegression<> lrTrain;
   lrTrain.Lambda() = 0.3;
 
   lrTrain.Train(dataset, responses);
@@ -209,8 +218,8 @@ TEST_CASE("LinearRegressionTest", "[LinearRegressionTest]")
   arma::rowvec responses;
   responses.randn(800);
 
-  LinearRegression lr(data, responses, 0.05); // Train the model.
-  LinearRegression xmlLr, jsonLr, binaryLr;
+  LinearRegression<> lr(data, responses, 0.05); // Train the model.
+  LinearRegression<> xmlLr, jsonLr, binaryLr;
 
   SerializeObjectAll(lr, xmlLr, jsonLr, binaryLr);
 
@@ -260,7 +269,7 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
         dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
 
   // Initialize and predict.
-  LinearRegression lr;
+  LinearRegression<> lr;
   double error = lr.Train(predictors, responses);
 
   REQUIRE(std::isfinite(error) == true);
@@ -269,24 +278,28 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
 /**
  * Make sure all versions of Train() work correctly.
  */
-TEST_CASE("LinearRegressionAllTrainVersionsTest", "[LinearRegressionTest]")
+TEMPLATE_TEST_CASE("LinearRegressionAllTrainVersionsTest",
+    "[LinearRegressionTest]", arma::fmat, arma::mat)
 {
+  typedef TestType MatType;
+  typedef arma::Row<typename MatType::elem_type> RowType;
+
   // The data doesn't really matter for this test; mostly we want to make sure
   // that all the Train() variants work properly.
-  arma::mat predictors;
+  MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },
                  { 16, 8, 4, 2, 1,  0 } };
-  arma::rowvec responses = "0 2 4 3 8 8";
-  arma::rowvec weights = "1.0 1.1 1.2 0.8 0.9 1.0";
+  RowType responses = "0 2 4 3 8 8";
+  RowType weights = "1.0 1.1 1.2 0.8 0.9 1.0";
 
-  LinearRegression lr1, lr2, lr3, lr4, lr5, lr6;
+  LinearRegression<MatType> lr1, lr2, lr3, lr4, lr5, lr6;
 
-  lr1.Train(predictors, responses);
-  lr2.Train(predictors, responses, 0.1);
-  lr3.Train(predictors, responses, 0.2, false);
-  lr4.Train(predictors, responses, weights);
-  lr5.Train(predictors, responses, weights, 0.3);
-  lr6.Train(predictors, responses, weights, 0.4, false);
+  (void) lr1.Train(predictors, responses);
+  (void) lr2.Train(predictors, responses, 0.1);
+  (void) lr3.Train(predictors, responses, 0.2, false);
+  (void) lr4.Train(predictors, responses, weights);
+  (void) lr5.Train(predictors, responses, weights, 0.3);
+  (void) lr6.Train(predictors, responses, weights, 0.4, false);
 
   // We don't care about the specifics of the trained model, but we want to just
   // make sure everything appears to be correct from the sizes and
@@ -325,17 +338,21 @@ TEST_CASE("LinearRegressionAllTrainVersionsTest", "[LinearRegressionTest]")
  * Ensure that single-point Predict() returns the same results as multi-point
  * Predict().
  */
-TEST_CASE("LinearRegressionSinglePointPredictTest", "[LinearRegressionTest]")
+TEMPLATE_TEST_CASE("LinearRegressionSinglePointPredictTest",
+    "[LinearRegressionTest]", arma::fmat, arma::mat)
 {
-  arma::mat predictors;
+  typedef TestType MatType;
+  typedef arma::Row<typename MatType::elem_type> RowType;
+
+  MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },
                  { 16, 8, 4, 2, 1,  0 } };
-  arma::rowvec responses = "0 2 4 3 8 8";
+  RowType responses = "0 2 4 3 8 8";
 
-  LinearRegression lr(predictors, responses, 0.1, true);
+  LinearRegression<MatType> lr(predictors, responses, 0.1, true);
 
   // Compute predictions for test points in batch.
-  arma::rowvec predictions;
+  RowType predictions;
   lr.Predict(predictors, predictions);
 
   // Now compute each prediction individually.
@@ -345,3 +362,7 @@ TEST_CASE("LinearRegressionSinglePointPredictTest", "[LinearRegressionTest]")
     REQUIRE(prediction == Approx(predictions[i]));
   }
 }
+
+// Make sure training on submatrices and subvectors works.
+
+// Make sure we can train on sparse data.

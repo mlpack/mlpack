@@ -174,7 +174,7 @@ TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
     BayesianLinearRegression blr(false, false);
     blr.Train(matX, y);
 
-    LinearRegression ridge(matX, y, blr.Alpha() / blr.Beta(), false);
+    LinearRegression<> ridge(matX, y, blr.Alpha() / blr.Beta(), false);
 
     blr.Predict(matX, blrPred);
     ridge.Predict(matX, ridgePred);
