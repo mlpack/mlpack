@@ -547,14 +547,14 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType>
+  template<bool UseWeights, typename MatType, typename WeightsType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
                const data::DatasetInfo& datasetInfo,
                arma::Row<size_t>& labels,
                const size_t numClasses,
-               arma::rowvec& weights,
+               WeightsType& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
@@ -576,13 +576,13 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType>
+  template<bool UseWeights, typename MatType, typename WeightsType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
                arma::Row<size_t>& labels,
                const size_t numClasses,
-               arma::rowvec& weights,
+               WeightsType& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
