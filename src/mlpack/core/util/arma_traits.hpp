@@ -111,4 +111,24 @@ struct IsVector<arma::subview_row<eT> >
 
 #endif
 
+// Get the column vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetColType
+{
+  typedef MatType type; // Not sure...
+};
+
+template<typename eT>
+struct GetColType<arma::Mat<eT>>
+{
+  typedef arma::Col<eT> type;
+};
+
+template<typename eT>
+struct GetColType<arma::SpMat<eT>>
+{
+  typedef arma::SpCol<eT> type;
+};
+
 #endif

@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ResponsesType, typename>
 inline LinearRegression<ModelMatType>::LinearRegression(
     const MatType& predictors,
     const ResponsesType& responses,
@@ -28,11 +28,14 @@ inline LinearRegression<ModelMatType>::LinearRegression(
 { /* Nothing to do. */ }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType,
+         typename ResponsesType,
+         typename WeightsType,
+         typename, typename>
 inline LinearRegression<ModelMatType>::LinearRegression(
     const MatType& predictors,
     const ResponsesType& responses,
-    const ResponsesType& weights,
+    const WeightsType& weights,
     const double lambda,
     const bool intercept) :
     lambda(lambda),
@@ -63,7 +66,18 @@ inline double LinearRegression<ModelMatType>::Train(
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType>
+inline
+typename LinearRegression<ModelMatType>::ElemType
+LinearRegression<ModelMatType>::Train(const MatType& predictors,
+                                      const arma::rowvec& responses)
+{
+  return Train(predictors, responses, arma::rowvec(), this->lambda,
+      this->intercept);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
@@ -74,7 +88,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ResponsesType, typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
@@ -85,7 +99,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType, typename ResponsesType, typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
@@ -97,35 +111,55 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const ResponsesType& weights)
+                                      const arma::rowvec& responses,
+                                      const arma::rowvec& weights)
 {
   return Train(predictors, responses, weights, this->lambda, this->intercept);
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType,
+         typename ResponsesType,
+         typename WeightsType,
+         typename, typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
-                                      const ResponsesType& weights,
+                                      const WeightsType& weights)
+{
+  return Train(predictors, responses, weights, this->lambda, this->intercept);
+}
+
+template<typename ModelMatType>
+template<typename MatType,
+         typename ResponsesType,
+         typename WeightsType,
+         typename, typename>
+inline
+typename LinearRegression<ModelMatType>::ElemType
+LinearRegression<ModelMatType>::Train(const MatType& predictors,
+                                      const ResponsesType& responses,
+                                      const WeightsType& weights,
                                       const double lambda)
 {
   return Train(predictors, responses, weights, lambda, this->intercept);
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType>
+template<typename MatType,
+         typename ResponsesType,
+         typename WeightsType,
+         typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
-                                      const ResponsesType& weights,
+                                      const WeightsType& weights,
                                       const double lambda,
                                       const bool intercept)
 {
@@ -148,15 +182,15 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   const size_t nCols = predictors.n_cols;
 
   // TODO: avoid copy if possible.
-  MatType p = predictors;
-  MatType r = responses;
+  arma::Mat<ElemType> p = predictors;
+  arma::Row<ElemType> r = responses;
 
   // Here we add the row of ones to the predictors.
   // The intercept is not penalized. Add an "all ones" row to design and set
   // intercept = false to get a penalized intercept.
   if (intercept)
   {
-    p.insert_rows(0, arma::ones<MatType>(1, nCols));
+    p.insert_rows(0, arma::ones<arma::Mat<ElemType>>(1, nCols));
   }
 
   if (weights.n_elem > 0)
@@ -170,8 +204,8 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // Then we'll use Armadillo to solve it.
   // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
   // (assuming the SVD is used to solve it)
-  MatType cov = p * p.t() +
-      lambda * arma::eye<MatType>(p.n_rows, p.n_rows);
+  arma::Mat<ElemType> cov = p * p.t() +
+      ((ElemType) lambda) * arma::eye<arma::Mat<ElemType>>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());
   return ComputeError(predictors, responses);
@@ -224,8 +258,7 @@ inline void LinearRegression<ModelMatType>::Predict(
         "points");
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
-    predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
-        * points;
+    predictions = parameters.subvec(1, parameters.n_elem - 1).t() * points;
     // Now add the intercept.
     predictions += parameters(0);
   }
@@ -289,10 +322,10 @@ void LinearRegression<ModelMatType>::serialize(Archive& ar,
 {
   if (cereal::is_loading<Archive>() && version == 0)
   {
-    // Old versions always represented `parameters` as an arma::rowvec.
-    arma::rowvec parametersTmp;
+    // Old versions represented `parameters` as an arma::vec.
+    arma::vec parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
-    parameters = arma::conv_to<ModelMatType>::from(parametersTmp);
+    parameters = arma::conv_to<ModelColType>::from(parametersTmp);
   }
   else
   {
