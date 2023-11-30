@@ -90,7 +90,6 @@ instead of a manual setting.
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
 
-<!-- TODO: implement, and deprecate old version -->
  * `lr.Train(data, responses,          lambda=0.0, intercept=true)`
  * `lr.Train(data, responses, weights, lambda=0.0, intercept=true)`
    - Train model on the given data, optionally with instance weights.
