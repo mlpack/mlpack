@@ -365,7 +365,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     const MatType& querySet,
     const size_t k,
     arma::Mat<size_t>& neighbors,
-    MatType& distances)
+    arma::Mat<ElemType>& distances)
 {
   if (k > referenceSet->n_cols)
   {
@@ -386,14 +386,14 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // To avoid an extra copy, we will store the neighbors and distances in a
   // separate matrix.
   arma::Mat<size_t>* neighborPtr = &neighbors;
-  MatType* distancePtr = &distances;
+  arma::Mat<ElemType>* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
   if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (searchMode == DUAL_TREE_MODE)
     {
-      distancePtr = new MatType; // Query indices need to be mapped.
+      distancePtr = new arma::Mat<ElemType>; // Query indices need to be mapped.
       neighborPtr = new arma::Mat<size_t>;
     }
     else if (!oldFromNewReferences.empty())
@@ -570,7 +570,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     Tree& queryTree,
     const size_t k,
     arma::Mat<size_t>& neighbors,
-    MatType& distances,
+    arma::Mat<ElemType>& distances,
     bool sameSet)
 {
   if (k > referenceSet->n_cols)
@@ -648,7 +648,7 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Search(
     const size_t k,
     arma::Mat<size_t>& neighbors,
-    MatType& distances)
+    arma::Mat<ElemType>& distances)
 {
   if (k > referenceSet->n_cols)
   {
@@ -670,7 +670,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   scores = 0;
 
   arma::Mat<size_t>* neighborPtr = &neighbors;
-  MatType* distancePtr = &distances;
+  arma::Mat<ElemType>* distancePtr = &distances;
 
   if (!oldFromNewReferences.empty() && TreeTraits<Tree>::RearrangesDataset)
   {
@@ -825,8 +825,8 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 double NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
-    MatType& foundDistances,
-    MatType& realDistances)
+    arma::Mat<ElemType>& foundDistances,
+    arma::Mat<ElemType>& realDistances)
 {
   if (foundDistances.n_rows != realDistances.n_rows ||
       foundDistances.n_cols != realDistances.n_cols)
