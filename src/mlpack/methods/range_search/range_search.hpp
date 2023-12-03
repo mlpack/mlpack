@@ -47,6 +47,9 @@ class RangeSearch
   //! Convenience typedef.
   typedef TreeType<MetricType, RangeSearchStat, MatType> Tree;
 
+  //! The type of element held in MatType.
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * Initialize the RangeSearch object with a given reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
@@ -191,7 +194,7 @@ class RangeSearch
   void Search(const MatType& querySet,
               const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
-              std::vector<std::vector<double>>& distances);
+              std::vector<std::vector<ElemType>>& distances);
 
   /**
    * Given a pre-built query tree, search for all reference points in the given
@@ -232,7 +235,7 @@ class RangeSearch
   void Search(Tree* queryTree,
               const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
-              std::vector<std::vector<double>>& distances);
+              std::vector<std::vector<ElemType>>& distances);
 
   /**
    * Search for all points in the given range for each point in the reference
@@ -265,7 +268,7 @@ class RangeSearch
    */
   void Search(const Range& range,
               std::vector<std::vector<size_t>>& neighbors,
-              std::vector<std::vector<double>>& distances);
+              std::vector<std::vector<ElemType>>& distances);
 
   //! Get whether single-tree search is being used.
   bool SingleMode() const { return singleMode; }
