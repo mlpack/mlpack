@@ -80,7 +80,7 @@ class DBSCAN
    */
   template<typename MatType>
   size_t Cluster(const MatType& data,
-                 arma::mat& centroids);
+                 MatType& centroids);
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters
@@ -108,7 +108,7 @@ class DBSCAN
   template<typename MatType>
   size_t Cluster(const MatType& data,
                  arma::Row<size_t>& assignments,
-                 arma::mat& centroids);
+                 MatType& centroids);
 
  private:
   //! Maximum distance between two points to be part of same cluster.

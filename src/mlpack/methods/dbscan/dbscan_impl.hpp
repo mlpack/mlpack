@@ -43,7 +43,7 @@ template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
-    arma::mat& centroids)
+    MatType& centroids)
 {
   // These assignments will be thrown away, but there is no way to avoid
   // calculating them.
@@ -62,7 +62,7 @@ template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments,
-    arma::mat& centroids)
+    MatType& centroids)
 {
   const size_t numClusters = Cluster(data, assignments);
 
