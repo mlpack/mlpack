@@ -134,6 +134,7 @@ class LARS
    * @param normalizeData If true, normalize all features to have unit variance
    * for training.
    */
+  mlpack_deprecated
   LARS(const bool useCholesky,
        const arma::mat& gramMatrix,
        const double lambda1 = 0.0,
@@ -248,6 +249,7 @@ class LARS
    * @param transposeData Set to false if the data is row-major.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
+  mlpack_deprecated
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
                arma::vec& beta,
@@ -261,6 +263,9 @@ class LARS
    * necessary (i.e., you want to pass in a row-major matrix), pass 'false' for
    * the transposeData parameter.
    *
+   * All of the different overloads below are needed until C++17 is the minimum
+   * required standard (then std::optional could be used).
+   *
    * @param data Input data.
    * @param responses A vector of targets.
    * @param transposeData Should be true if the input data is column-major and
@@ -270,6 +275,127 @@ class LARS
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
                const bool transposeData = true);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const double lambda1);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const double lambda1,
+               const double lambda2);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const double lambda1,
+               const double lambda2,
+               const double tolerance);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const double lambda1,
+               const double lambda2,
+               const double tolerance,
+               const bool fitIntercept);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const double lambda1,
+               const double lambda2,
+               const double tolerance,
+               const bool fitIntercept,
+               const bool normalizeData);
+
+  /**
+   * Run LARS with a precomputed Gram matrix.  The input matrix (like all mlpack
+   * matrices) should be column-major -- each column is an observation and each
+   * row is a dimension.  However, because LARS is more efficient on a row-major
+   * matrix, this method will (internally) transpose the matrix.  If this
+   * transposition is not necessary (i.e., you want to pass in a row-major
+   * matrix), pass 'false' for the transposeData parameter.
+   *
+   * All of the different overloads below are needed until C++17 is the minimum
+   * required standard (then std::optional could be used).
+   *
+   * @param data Input data.
+   * @param responses A vector of targets.
+   * @param transposeData Should be true if the input data is column-major and
+   *     false otherwise.
+   * @return minimum cost error(||y-beta*X||2 is used to calculate error).
+   */
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const arma::mat& gramMatrix);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const arma::mat& gramMatrix,
+               const double lambda1);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const arma::mat& gramMatrix,
+               const double lambda1,
+               const double lambda2);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const arma::mat& gramMatrix,
+               const double lambda1,
+               const double lambda2,
+               const double tolerance);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const arma::mat& gramMatrix,
+               const double lambda1,
+               const double lambda2,
+               const double tolerance,
+               const bool fitIntercept);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData,
+               const bool useCholesky,
+               const arma::mat& gramMatrix,
+               const double lambda1,
+               const double lambda2,
+               const double tolerance,
+               const bool fitIntercept,
+               const bool normalizeData);
+
+  /**
+   * Predict y_i for the given data point.
+   *
+   * @param point The data point to regress on.
+   * @return Predicted value for y_i for `point`.
+   */
+  double Predict(const arma::vec& point) const;
 
   /**
    * Predict y_i for each data point in the given data matrix using the
@@ -337,8 +463,8 @@ class LARS
     {
       if (matGram != &matGramInternal)
       {
-        throw std::invalid_argument("LARS::NormalizeData(): cannot change value "
-            "when an external Gram matrix was specified!");
+        throw std::invalid_argument("LARS::NormalizeData(): cannot change value"
+            " when an external Gram matrix was specified!");
       }
 
       normalizeData = newNormalizeData;
@@ -354,17 +480,32 @@ class LARS
   const std::vector<arma::vec>& BetaPath() const { return betaPath; }
 
   //! Access the solution coefficients
-  const arma::vec& Beta() const { return betaPath.back(); }
+  const arma::vec& Beta() const
+  {
+    return (selectedIndex < betaPath.size()) ?
+        betaPath[selectedIndex] : selectedBeta;
+  }
 
   //! Access the set of values for lambda1 after each iteration; the solution is
   //! the last element.
   const std::vector<double>& LambdaPath() const { return lambdaPath; }
 
   //! Return the intercept (if fitted, otherwise 0).
-  double Intercept() const { return interceptPath.back(); }
+  double Intercept() const
+  {
+    return (selectedIndex < interceptPath.size()) ?
+        interceptPath[selectedIndex] : selectedIntercept;
+  }
 
   //! Return the intercept path (the intercept for every model).
   const std::vector<double>& InterceptPath() const { return interceptPath; }
+
+  //! Set the model to use the given lambda1 value in the path.
+  void SelectBeta(const double lambda1);
+
+  //! Get the L1 penalty parameter corresponding to the currently selected
+  //! model.
+  double SelectedLambda1() const { return selectedLambda1; }
 
   //! Access the upper triangular cholesky factor.
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
@@ -435,6 +576,21 @@ class LARS
 
   //! Active set of dimensions.
   std::vector<size_t> activeSet;
+
+  //! Selected lambda1 value for Predict().
+  double selectedLambda1;
+
+  //! Index of selected beta (if selectedLambda1 is in lambdaPath).
+  size_t selectedIndex;
+
+  //! Selected beta, if selectedLambda1 is not in lambdaPath.
+  arma::vec selectedBeta;
+
+  //! Selected intercept, if selectedLambda1 is not in lambdaPath.
+  double selectedIntercept;
+
+  //! Might be needed to compute the intercept for other lambda values.
+  double offsetY;
 
   //! Active set membership indicator (for each dimension).
   std::vector<bool> isActive;

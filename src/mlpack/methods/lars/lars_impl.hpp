@@ -32,7 +32,11 @@ inline LARS::LARS(
     lambda2(lambda2),
     tolerance(tolerance),
     fitIntercept(fitIntercept),
-    normalizeData(normalizeData)
+    normalizeData(normalizeData),
+    selectedLambda1(lambda1),
+    selectedIndex(0),
+    selectedIntercept(0.0),
+    offsetY(0.0)
 { /* Nothing left to do. */ }
 
 inline LARS::LARS(
@@ -51,7 +55,11 @@ inline LARS::LARS(
     lambda2(lambda2),
     tolerance(tolerance),
     fitIntercept(fitIntercept),
-    normalizeData(normalizeData)
+    normalizeData(normalizeData),
+    selectedLambda1(lambda1),
+    selectedIndex(0),
+    selectedIntercept(0.0),
+    offsetY(0.0)
 { /* Nothing left to do */ }
 
 inline LARS::LARS(
@@ -104,6 +112,11 @@ inline LARS::LARS(const LARS& other) :
     lambdaPath(other.lambdaPath),
     interceptPath(other.interceptPath),
     activeSet(other.activeSet),
+    selectedLambda1(other.selectedLambda1),
+    selectedIndex(other.selectedIndex),
+    selectedBeta(other.selectedBeta),
+    selectedIntercept(other.selectedIntercept),
+    offsetY(other.offsetY),
     isActive(other.isActive),
     ignoreSet(other.ignoreSet),
     isIgnored(other.isIgnored)
@@ -129,6 +142,11 @@ inline LARS::LARS(LARS&& other) :
     lambdaPath(std::move(other.lambdaPath)),
     interceptPath(std::move(other.interceptPath)),
     activeSet(std::move(other.activeSet)),
+    selectedLambda1(std::move(other.selectedLambda1)),
+    selectedIndex(std::move(other.selectedIndex)),
+    selectedBeta(std::move(other.selectedBeta)),
+    selectedIntercept(std::move(other.selectedIntercept)),
+    offsetY(std::move(other.offsetY)),
     isActive(std::move(other.isActive)),
     ignoreSet(std::move(other.ignoreSet)),
     isIgnored(std::move(other.isIgnored))
@@ -158,6 +176,11 @@ inline LARS& LARS::operator=(const LARS& other)
   lambdaPath = other.lambdaPath;
   interceptPath = other.interceptPath;
   activeSet = other.activeSet;
+  selectedLambda1 = other.selectedLambda1;
+  selectedIndex = other.selectedIndex;
+  selectedBeta = other.selectedBeta;
+  selectedIntercept = other.selectedIntercept;
+  offsetY = other.offsetY;
   isActive = other.isActive;
   ignoreSet = other.ignoreSet;
   isIgnored = other.isIgnored;
@@ -185,6 +208,11 @@ inline LARS& LARS::operator=(LARS&& other)
   betaPath = std::move(other.betaPath);
   lambdaPath = std::move(other.lambdaPath);
   interceptPath = std::move(other.interceptPath);
+  selectedLambda1 = std::move(other.selectedLambda1);
+  selectedIndex = std::move(other.selectedIndex);
+  selectedBeta = std::move(other.selectedBeta);
+  selectedIntercept = std::move(other.selectedIntercept);
+  offsetY = std::move(other.offsetY);
   activeSet = std::move(other.activeSet);
   isActive = std::move(other.isActive);
   ignoreSet = std::move(other.ignoreSet);
@@ -192,11 +220,178 @@ inline LARS& LARS::operator=(LARS&& other)
   return *this;
 }
 
+mlpack_deprecated
 inline double LARS::Train(const arma::mat& matX,
                           const arma::rowvec& y,
                           arma::vec& beta,
                           const bool transposeData)
 {
+  const double result = Train(matX, y, transposeData);
+  beta = betaPath.back();
+  return result;
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData)
+{
+  return Train(data, responses, transposeData, this->useCholesky, this->lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky)
+{
+  return Train(data, responses, transposeData, useCholesky, this->lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const double lambda1)
+{
+  return Train(data, responses, transposeData, useCholesky, lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const double lambda1,
+                          const double lambda2)
+{
+  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+      this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const double lambda1,
+                          const double lambda2,
+                          const double tolerance)
+{
+  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+      tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const double lambda1,
+                          const double lambda2,
+                          const double tolerance,
+                          const bool fitIntercept)
+{
+  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+      tolerance, fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const arma::mat& gramMatrix)
+{
+  return Train(data, responses, transposeData, useCholesky, gramMatrix,
+      this->lambda1, this->lambda2, this->tolerance, this->fitIntercept,
+      this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const arma::mat& gramMatrix,
+                          const double lambda1)
+{
+  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const arma::mat& gramMatrix,
+                          const double lambda1,
+                          const double lambda2)
+{
+  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+      lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const arma::mat& gramMatrix,
+                          const double lambda1,
+                          const double lambda2,
+                          const double tolerance)
+{
+  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+      lambda2, tolerance, this->fitIntercept, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const arma::mat& gramMatrix,
+                          const double lambda1,
+                          const double lambda2,
+                          const double tolerance,
+                          const bool fitIntercept)
+{
+  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+      lambda2, fitIntercept, tolerance, this->normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& data,
+                          const arma::rowvec& responses,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const arma::mat& gramMatrix,
+                          const double lambda1,
+                          const double lambda2,
+                          const double tolerance,
+                          const bool fitIntercept,
+                          const bool normalizeData)
+{
+  // Set Gram matrix.
+  matGramInternal.clear();
+  matGram = &gramMatrix;
+
+  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+      tolerance, fitIntercept, normalizeData);
+}
+
+inline double LARS::Train(const arma::mat& matX,
+                          const arma::rowvec& y,
+                          const bool transposeData,
+                          const bool useCholesky,
+                          const double lambda1,
+                          const double lambda2,
+                          const double tolerance,
+                          const bool fitIntercept,
+                          const bool normalizeData)
+{
+  // Update hyperparameter settings.
+  this->useCholesky = useCholesky;
+  this->lambda1 = lambda1;
+  this->lambda2 = lambda2;
+  this->tolerance = tolerance;
+  this->fitIntercept = fitIntercept;
+  this->normalizeData = normalizeData;
+
   // Clear any previous solution information.
   betaPath.clear();
   lambdaPath.clear();
@@ -205,6 +400,7 @@ inline double LARS::Train(const arma::mat& matX,
   ignoreSet.clear();
   isIgnored.clear();
   matUtriCholFactor.reset();
+  selectedBeta.clear();
 
   // Update values in case lambda1 or lambda2 changed.
   lasso = (lambda1 != 0);
@@ -223,7 +419,7 @@ inline double LARS::Train(const arma::mat& matX,
       (fitIntercept) ? yCentered : y;
 
   arma::vec offsetX; // used only if fitting an intercept
-  double offsetY = 0.0; // used only if fitting an intercept
+  this->offsetY = 0.0; // used only if fitting an intercept
   arma::vec stdX; // used only if normalizing
 
   if (transposeData)
@@ -278,8 +474,8 @@ inline double LARS::Train(const arma::mat& matX,
 
   if (fitIntercept)
   {
-    offsetY = arma::mean(y);
-    yCentered = y - offsetY;
+    this->offsetY = arma::mean(y);
+    yCentered = y - this->offsetY;
   }
 
   // Compute X' * y.
@@ -293,7 +489,7 @@ inline double LARS::Train(const arma::mat& matX,
   isIgnored.resize(dataRef.n_cols, false);
 
   // Initialize yHat and beta.
-  beta = arma::zeros(dataRef.n_cols);
+  arma::vec beta = arma::zeros(dataRef.n_cols);
   arma::vec yHat = arma::zeros(dataRef.n_rows);
   arma::vec yHatDirection(dataRef.n_rows);
 
@@ -322,7 +518,7 @@ inline double LARS::Train(const arma::mat& matX,
     lambdaPath[0] = lambda1;
 
     if (fitIntercept)
-      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[0]));
+      interceptPath.push_back(this->offsetY - arma::dot(offsetX, betaPath[0]));
     else
       interceptPath.push_back(0.0);
 
@@ -647,7 +843,7 @@ inline double LARS::Train(const arma::mat& matX,
   {
     interceptPath.clear();
     for (size_t i = 0; i < betaPath.size(); ++i)
-      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[i]));
+      interceptPath.push_back(this->offsetY - arma::dot(offsetX, betaPath[i]));
   }
   else
   {
@@ -655,18 +851,12 @@ inline double LARS::Train(const arma::mat& matX,
     interceptPath.resize(betaPath.size(), 0.0);
   }
 
-  // Unfortunate copy...
-  beta = betaPath.back();
+  // Make the model we use point to the last element in the path after
+  // interpolation.
+  selectedLambda1 = lambda1;
+  selectedIndex = betaPath.size() - 1;
 
   return ComputeError(matX, y, !transposeData);
-}
-
-inline double LARS::Train(const arma::mat& data,
-                          const arma::rowvec& responses,
-                          const bool transposeData)
-{
-  arma::vec beta;
-  return Train(data, responses, beta, transposeData);
 }
 
 inline void LARS::Predict(const arma::mat& points,
@@ -675,13 +865,83 @@ inline void LARS::Predict(const arma::mat& points,
 {
   // We really only need to store beta internally...
   if (rowMajor && !fitIntercept)
-    predictions = trans(points * betaPath.back());
+    predictions = trans(points * Beta());
   else if (rowMajor)
-    predictions = trans(points * betaPath.back()) + interceptPath.back();
+    predictions = trans(points * Beta()) + Intercept();
   else if (fitIntercept)
-    predictions = betaPath.back().t() * points + interceptPath.back();
+    predictions = Beta().t() * points + Intercept();
   else
-    predictions = betaPath.back().t() * points;
+    predictions = Beta().t() * points;
+}
+
+inline void LARS::SelectBeta(const double selLambda1)
+{
+  if (selLambda1 < lambda1)
+  {
+    std::ostringstream oss;
+    oss << "LARS::SelectBeta(): given lambda1 value (" << selLambda1 << ") "
+        << "cannot be less than model's Lambda1() value (" << lambda1
+        << ")!";
+    throw std::invalid_argument(oss.str());
+  }
+  else if (betaPath.size() == 0)
+  {
+    throw std::runtime_error("LARS::SelectBeta(): model must be trained "
+        "before calling SelectBeta()!");
+  }
+
+  this->selectedLambda1 = selLambda1;
+  selectedBeta.clear();
+
+  // Find which lambda values we are interpolating between.  lambdaPath is in
+  // reverse order (due to the fact that LARS is a stepwise algorithm), so the
+  // largest lambdas come first.
+  size_t i = 0;
+  while (i < lambdaPath.size())
+  {
+    if (selLambda1 == lambdaPath[i])
+    {
+      // If it's an exact match, no interpolation is necessary, and we can
+      // directly use the element from the path.
+      selectedIndex = i;
+      return;
+    }
+    else if (selLambda1 > lambdaPath[i])
+    {
+      // It's not an exact match, but lambdaPath[i] is the first lambda element
+      // that is smaller than the desired lambda.
+      break;
+    }
+
+    ++i;
+  }
+
+  // In the case where selLambda1 is larger than the largest lambda we have a
+  // model for, we can interpolate between the zero vector and the first model.
+  if (i == 0)
+  {
+    const double interp = selLambda1 / lambdaPath[0];
+    selectedIndex = betaPath.size();
+
+    selectedLambda1 = interp * lambdaPath[0];
+    selectedBeta = interp * betaPath[0];
+    // Computing the intercept differs just a little bit from what's expected,
+    // because we have to account for the offsetY term, which is not zero even
+    // for a zero model.
+    selectedIntercept = (1 - interp) * this->offsetY +
+        interp * interceptPath[0];
+  }
+  else
+  {
+    const double interp = (lambdaPath[i - 1] - selLambda1) /
+        (lambdaPath[i - 1] - lambdaPath[i]);
+    selectedIndex = betaPath.size();
+
+    selectedLambda1 = (1 - interp) * lambdaPath[i - 1] + interp * lambdaPath[i];
+    selectedBeta = (1 - interp) * betaPath[i - 1] + interp * betaPath[i];
+    selectedIntercept = (1 - interp) * interceptPath[i - 1] +
+        interp * interceptPath[i];
+  }
 }
 
 // Private functions.
@@ -861,7 +1121,7 @@ inline double LARS::ComputeError(const arma::mat& matX,
  * Serialize the LARS model.
  */
 template<typename Archive>
-void LARS::serialize(Archive& ar, const uint32_t /* version */)
+void LARS::serialize(Archive& ar, const uint32_t version)
 {
   // If we're loading, we have to use the internal storage.
   if (cereal::is_loading<Archive>())
@@ -891,6 +1151,15 @@ void LARS::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(isActive));
   ar(CEREAL_NVP(ignoreSet));
   ar(CEREAL_NVP(isIgnored));
+
+  if (version > 0)
+  {
+    ar(CEREAL_NVP(selectedLambda1));
+    ar(CEREAL_NVP(selectedIndex));
+    ar(CEREAL_NVP(selectedBeta));
+    ar(CEREAL_NVP(selectedIntercept));
+    ar(CEREAL_NVP(offsetY));
+  }
 }
 
 } // namespace mlpack
