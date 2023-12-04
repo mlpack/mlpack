@@ -101,6 +101,26 @@ matrix to solve linear systems (as opposed to the full Gram matrix). | `true` |
 | `normalizeData` | `bool` | If `true`, data will be normalized before fitting
 the model. | `true` |
 
+As an alternative to passing hyperparameters, each hyperparameter can be set
+with a standalone method.  The following functions can be used before calling
+`Train()` to set hyperparameters:
+
+ * `lars.RowMajor() = rowMajor;` will set whether the data is given in row-major
+   form to `rowMajor`.
+ * `lars.UseCholesky() = useChol;` will set whether or not the Cholesky
+   decomposition will be used during training to `useChol`.
+ * `lars.Lambda1() = lambda1;` will set the L1 regularization penalty parameter
+   to `lambda1`.
+ * `lars.Lambda2() = lambda2;` will set the L2 regularization penalty parameter
+   to `lambda2`.
+ * `lars.Tolerance() = tol;` will set the convergence tolerance to `tol`.
+ * `lars.FitIntercept(fitIntercept);` will set whether an intercept will be fit
+   to `fitIntercept`.  If an external Gram matrix has been specified, this will
+   throw an exception.
+ * `lars.NormalizeData(normalizeData);` will set whether data should be
+   normalized to `normalizeData`.  If an external Gram matrix has been
+   specified, this will throw an exception.
+
 ***Notes:***
 
  - The `lambda1` parameter implicitly controls the sparsity of the model; for
@@ -202,7 +222,7 @@ can be used to make predictions for new data.
    [`lars.SelectBeta()` method](#the-lars-path).
 
  * `lars.Intercept()` will return a `double` representing the fitted intercept
-   term, if `lars.FitIntercept()` is `true`.
+   term, or 0 if `lars.FitIntercept()` is `false`.
 
  * `lars.ActiveSet()` will return a `std::vector<size_t>&` containing the
    indices of nonzero dimensions in the model parameters (`lars.Beta()`).
@@ -238,7 +258,8 @@ switch between them for prediction purposes:
  * `lars.SelectBeta(lambda1)` will set the model weights (`lars.ActiveSet()`,
    `lars.Beta()` and `lars.Intercept()`) to the path location with L1 penalty
    `lambda1`.  This is equivalent to calling `lars.Train(data, responses,
-   transposeData, useCholesky, lambda1)`---but much more efficient!
+   transposeData, useCholesky, lambda1)`---but much more efficient!  `lambda1`
+   cannot be greater than `lars.Lambda1()`, or an exception will be thrown.
 
 <!-- TODO: implement -->
  * `lars.SelectedLambda()` returns the currently selected L1 regularization
