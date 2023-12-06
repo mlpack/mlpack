@@ -176,10 +176,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Fatal << "Number of responses must be equal to number of rows of X!"
           << endl;
 
-    vec beta;
     arma::rowvec y = std::move(matY);
     timers.Start("lars_regression");
-    lars->Train(matX, y, beta, false /* do not transpose */);
+    lars->Train(matX, y, false /* do not transpose */);
     timers.Stop("lars_regression");
   }
   else // We must have --input_model_file.
