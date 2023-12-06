@@ -758,3 +758,346 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
     CheckKKT(beta, X, y, 1.0);
   }
 }
+
+// Check that all variants of constructors appear to work.
+TEST_CASE("LARSConstructorVariantTest", "[LARSTest]")
+{
+  // The results of the training are not all that important here; the more
+  // important thing is just that all the overloads compile properly.  We do
+  // some basic sanity checks on the trained model nonetheless.
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 100);
+  arma::mat Xt = X.t();
+
+  const arma::vec xMean = arma::mean(X, 1);
+  arma::vec xStds = arma::stddev(X, 0, 1);
+  xStds.replace(0.0, 1.0);
+  const double yMean = arma::mean(y);
+
+  arma::mat centeredX = X.each_col() - xMean;
+  arma::rowvec centeredY = y - yMean;
+
+  arma::mat centeredUnitX = centeredX.each_col() / xStds;
+
+  arma::mat matGram = X * X.t();
+  arma::mat centeredUnitMatGram = centeredUnitX * centeredUnitX.t();
+
+  LARS l1;
+  LARS l2(false, 0.1, 0.2, 1e-15, false, false);
+  LARS l3(X, y);
+  LARS l4(Xt, y, false);
+  LARS l5(Xt, y, false, false);
+  LARS l6(Xt, y, false, false, 0.1);
+  LARS l7(X, y, true, false, 0.11, 0.01);
+  LARS l8(X, y, true, false, 0.12, 0.02, 1e-8);
+  LARS l9(centeredX, centeredY, true, false, 0.13, 0.03, 1e-7, false);
+  LARS l10(centeredUnitX, centeredY, true, false, 0.14, 0.04, 1e-6, false,
+      false);
+
+  REQUIRE(l1.BetaPath().size() == 0);
+
+  REQUIRE(l2.BetaPath().size() == 0);
+  REQUIRE(l2.UseCholesky() == false);
+  REQUIRE(l2.Lambda1() == Approx(0.1));
+  REQUIRE(l2.Lambda2() == Approx(0.2));
+  REQUIRE(l2.Tolerance() == Approx(1e-15));
+  REQUIRE(l2.FitIntercept() == false);
+  REQUIRE(l2.NormalizeData() == false);
+
+  REQUIRE(l3.Beta().n_elem == X.n_rows);
+
+  REQUIRE(l4.Beta().n_elem == X.n_rows);
+
+  REQUIRE(l5.Beta().n_elem == X.n_rows);
+  REQUIRE(l5.UseCholesky() == false);
+
+  REQUIRE(l6.Beta().n_elem == X.n_rows);
+  REQUIRE(l6.UseCholesky() == false);
+  REQUIRE(l6.Lambda1() == Approx(0.1));
+
+  REQUIRE(l7.Beta().n_elem == X.n_rows);
+  REQUIRE(l7.UseCholesky() == false);
+  REQUIRE(l7.Lambda1() == Approx(0.11));
+  REQUIRE(l7.Lambda2() == Approx(0.01));
+
+  REQUIRE(l8.Beta().n_elem == X.n_rows);
+  REQUIRE(l8.UseCholesky() == false);
+  REQUIRE(l8.Lambda1() == Approx(0.12));
+  REQUIRE(l8.Lambda2() == Approx(0.02));
+  REQUIRE(l8.Tolerance() == Approx(1e-8));
+
+  REQUIRE(l9.Beta().n_elem == X.n_rows);
+  REQUIRE(l9.UseCholesky() == false);
+  REQUIRE(l9.Lambda1() == Approx(0.13));
+  REQUIRE(l9.Lambda2() == Approx(0.03));
+  REQUIRE(l9.Tolerance() == Approx(1e-7));
+  REQUIRE(l9.FitIntercept() == false);
+
+  REQUIRE(l10.Beta().n_elem == X.n_rows);
+  REQUIRE(l10.UseCholesky() == false);
+  REQUIRE(l10.Lambda1() == Approx(0.14));
+  REQUIRE(l10.Lambda2() == Approx(0.04));
+  REQUIRE(l10.Tolerance() == Approx(1e-6));
+  REQUIRE(l10.FitIntercept() == false);
+  REQUIRE(l10.NormalizeData() == false);
+
+  // Now check constructors where we specify the Gram matrix.
+
+  const size_t dim = centeredUnitMatGram.n_rows;
+  LARS l11(X, y, true, false, centeredUnitMatGram);
+  LARS l12(Xt, y, false, false, centeredUnitMatGram, 0.1);
+
+  // If lambda2 > 0, then we have to adjust the Gram matrix to account for that.
+  arma::mat centeredUnitMatGramL13 = centeredUnitMatGram +
+      0.01 * arma::eye<arma::mat>(dim, dim);
+  LARS l13(Xt, y, false, false, centeredUnitMatGramL13, 0.11, 0.01);
+
+  arma::mat centeredUnitMatGramL14 = centeredUnitMatGram +
+      0.02 * arma::eye<arma::mat>(dim, dim);
+  LARS l14(Xt, y, false, false, centeredUnitMatGramL14, 0.12, 0.02, 1e-15);
+
+  arma::mat centeredUnitMatGramL15 = centeredUnitMatGram +
+      0.03 * arma::eye<arma::mat>(dim, dim);
+  LARS l15(centeredX, centeredY, true, false, centeredUnitMatGramL15, 0.13,
+      0.03, 1e-14, false);
+
+  arma::mat centeredUnitMatGramL16 = centeredUnitMatGram +
+      0.04 * arma::eye<arma::mat>(dim, dim);
+  LARS l16(centeredUnitX, centeredY, true, false, centeredUnitMatGramL16, 0.14,
+      0.04, 1e-13, false, false);
+
+  REQUIRE(l11.Beta().n_elem == X.n_rows);
+  REQUIRE(l11.UseCholesky() == false);
+
+  REQUIRE(l12.Beta().n_elem == X.n_rows);
+  REQUIRE(l12.UseCholesky() == false);
+  REQUIRE(l12.Lambda1() == Approx(0.1));
+
+  REQUIRE(l13.Beta().n_elem == X.n_rows);
+  REQUIRE(l13.UseCholesky() == false);
+  REQUIRE(l13.Lambda1() == Approx(0.11));
+  REQUIRE(l13.Lambda2() == Approx(0.01));
+
+  REQUIRE(l14.Beta().n_elem == X.n_rows);
+  REQUIRE(l14.UseCholesky() == false);
+  REQUIRE(l14.Lambda1() == Approx(0.12));
+  REQUIRE(l14.Lambda2() == Approx(0.02));
+  REQUIRE(l14.Tolerance() == Approx(1e-15));
+
+  REQUIRE(l15.Beta().n_elem == X.n_rows);
+  REQUIRE(l15.UseCholesky() == false);
+  REQUIRE(l15.Lambda1() == Approx(0.13));
+  REQUIRE(l15.Lambda2() == Approx(0.03));
+  REQUIRE(l15.Tolerance() == Approx(1e-14));
+  REQUIRE(l15.FitIntercept() == false);
+
+  REQUIRE(l16.Beta().n_elem == X.n_rows);
+  REQUIRE(l16.UseCholesky() == false);
+  REQUIRE(l16.Lambda1() == Approx(0.14));
+  REQUIRE(l16.Lambda2() == Approx(0.04));
+  REQUIRE(l16.Tolerance() == Approx(1e-13));
+  REQUIRE(l16.FitIntercept() == false);
+  REQUIRE(l16.NormalizeData() == false);
+}
+
+// Check that all variants of Train() appear to work.
+TEST_CASE("LARSTrainVariantTest", "[LARSTest]")
+{
+  // The results of the training are not all that important here; the more
+  // important thing is just that all the overloads compile properly.  We do
+  // some basic sanity checks on the trained model nonetheless.
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 5);
+  arma::mat Xt = X.t();
+
+  const arma::vec xMean = arma::mean(X, 1);
+  arma::vec xStds = arma::stddev(X, 0, 1);
+  xStds.replace(0.0, 1.0);
+  const double yMean = arma::mean(y);
+
+  arma::mat centeredX = X.each_col() - xMean;
+  arma::rowvec centeredY = y - yMean;
+
+  arma::mat centeredUnitX = centeredX.each_col() / xStds;
+
+  arma::mat matGram = X * X.t();
+  arma::mat centeredUnitMatGram = centeredUnitX * centeredUnitX.t();
+
+  LARS l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14;
+
+  l1.Train(X, y);
+  l2.Train(Xt, y, false);
+  l3.Train(Xt, y, false, false);
+  l4.Train(Xt, y, false, false, 0.1);
+  l5.Train(Xt, y, false, false, 0.11, 0.01);
+  l6.Train(Xt, y, false, false, 0.12, 0.02, 1e-15);
+  l7.Train(centeredX, centeredY, true, false, 0.13, 0.03, 1e-14, false);
+  l8.Train(centeredX, centeredY, true, false, 0.14, 0.04, 1e-13, false, false);
+
+  l9.Train(Xt, y, false, false, centeredUnitMatGram);
+  l10.Train(X, y, true, false, centeredUnitMatGram, 0.15);
+
+  // If lambda2 > 0, then we have to adjust the Gram matrix.
+  const size_t dim = centeredUnitMatGram.n_rows;
+  arma::mat centeredUnitMatGramL11 = centeredUnitMatGram +
+      0.05 * arma::eye<arma::mat>(dim, dim);
+  l11.Train(X, y, true, false, centeredUnitMatGramL11, 0.16, 0.05);
+
+  arma::mat centeredUnitMatGramL12 = centeredUnitMatGram +
+      0.06 * arma::eye<arma::mat>(dim, dim);
+  l12.Train(X, y, true, false, centeredUnitMatGramL12, 0.17, 0.06, 1e-12);
+
+  arma::mat centeredUnitMatGramL13 = centeredUnitMatGram +
+      0.07 * arma::eye<arma::mat>(dim, dim);
+  l13.Train(centeredX, centeredY, true, false, centeredUnitMatGramL13, 0.18,
+      0.07, 1e-11, false);
+
+  arma::mat centeredUnitMatGramL14 = centeredUnitMatGram +
+      0.08 * arma::eye<arma::mat>(dim, dim);
+  l14.Train(centeredUnitX, centeredY, true, false, centeredUnitMatGramL14, 0.19,
+      0.08, 1e-10, false, false);
+
+  REQUIRE(l1.Beta().n_elem == X.n_rows);
+
+  REQUIRE(l2.Beta().n_elem == X.n_rows);
+
+  REQUIRE(l3.Beta().n_elem == X.n_rows);
+  REQUIRE(l3.UseCholesky() == false);
+
+  REQUIRE(l4.Beta().n_elem == X.n_rows);
+  REQUIRE(l4.UseCholesky() == false);
+  REQUIRE(l4.Lambda1() == Approx(0.1));
+
+  REQUIRE(l5.Beta().n_elem == X.n_rows);
+  REQUIRE(l5.UseCholesky() == false);
+  REQUIRE(l5.Lambda1() == Approx(0.11));
+  REQUIRE(l5.Lambda2() == Approx(0.01));
+
+  REQUIRE(l6.Beta().n_elem == X.n_rows);
+  REQUIRE(l6.UseCholesky() == false);
+  REQUIRE(l6.Lambda1() == Approx(0.12));
+  REQUIRE(l6.Lambda2() == Approx(0.02));
+  REQUIRE(l6.Tolerance() == Approx(1e-15));
+
+  REQUIRE(l7.Beta().n_elem == X.n_rows);
+  REQUIRE(l7.UseCholesky() == false);
+  REQUIRE(l7.Lambda1() == Approx(0.13));
+  REQUIRE(l7.Lambda2() == Approx(0.03));
+  REQUIRE(l7.Tolerance() == Approx(1e-14));
+  REQUIRE(l7.FitIntercept() == false);
+
+  REQUIRE(l8.Beta().n_elem == X.n_rows);
+  REQUIRE(l8.UseCholesky() == false);
+  REQUIRE(l8.Lambda1() == Approx(0.14));
+  REQUIRE(l8.Lambda2() == Approx(0.04));
+  REQUIRE(l8.Tolerance() == Approx(1e-13));
+  REQUIRE(l8.FitIntercept() == false);
+  REQUIRE(l8.NormalizeData() == false);
+
+  REQUIRE(l9.Beta().n_elem == X.n_rows);
+  REQUIRE(l9.UseCholesky() == false);
+
+  REQUIRE(l10.Beta().n_elem == X.n_rows);
+  REQUIRE(l10.UseCholesky() == false);
+  REQUIRE(l10.Lambda1() == Approx(0.15));
+
+  REQUIRE(l11.Beta().n_elem == X.n_rows);
+  REQUIRE(l11.UseCholesky() == false);
+  REQUIRE(l11.Lambda1() == Approx(0.16));
+  REQUIRE(l11.Lambda2() == Approx(0.05));
+
+  REQUIRE(l12.Beta().n_elem == X.n_rows);
+  REQUIRE(l12.UseCholesky() == false);
+  REQUIRE(l12.Lambda1() == Approx(0.17));
+  REQUIRE(l12.Lambda2() == Approx(0.06));
+  REQUIRE(l12.Tolerance() == Approx(1e-12));
+
+  REQUIRE(l13.Beta().n_elem == X.n_rows);
+  REQUIRE(l13.UseCholesky() == false);
+  REQUIRE(l13.Lambda1() == Approx(0.18));
+  REQUIRE(l13.Lambda2() == Approx(0.07));
+  REQUIRE(l13.Tolerance() == Approx(1e-11));
+  REQUIRE(l13.FitIntercept() == false);
+
+  REQUIRE(l14.Beta().n_elem == X.n_rows);
+  REQUIRE(l14.UseCholesky() == false);
+  REQUIRE(l14.Lambda1() == Approx(0.19));
+  REQUIRE(l14.Lambda2() == Approx(0.08));
+  REQUIRE(l14.Tolerance() == Approx(1e-10));
+  REQUIRE(l14.FitIntercept() == false);
+  REQUIRE(l14.NormalizeData() == false);
+}
+
+// Ensure that SelectBeta() works correctly.
+TEST_CASE("LARSSelectBetaTest", "[LARSTest]")
+{
+  // Train a model on a randomly generated problem.  Then, we will iterate
+  // through different selected lambda values, ensuring that the error on the
+  // training set is monotonically increasing.
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 100);
+
+  LARS lars(X, y);
+
+  // Ensure that the solution with no regularization is fully dense.
+  REQUIRE(lars.ActiveSet().size() == X.n_rows);
+  REQUIRE(lars.Beta().n_elem == X.n_rows);
+
+  // Now step through numerous different lambda values.
+  double lastError = std::numeric_limits<double>::max();
+  for (int i = 5; i >= -5; i -= 0.1)
+  {
+    const double selLambda1 = std::pow(10.0, (double) i);
+    lars.SelectBeta(selLambda1);
+
+    REQUIRE(lars.Beta().n_elem == X.n_rows);
+    REQUIRE(lars.SelectedLambda1() == Approx(selLambda1));
+    REQUIRE(arma::accu(lars.Beta() != 0.0) == lars.ActiveSet().size());
+    const double newError = lars.ComputeError(X, y);
+    REQUIRE(newError <= lastError);
+    lastError = newError;
+  }
+
+  // Lastly, step through values corresponding to the lambda path exactly.
+  // Here we can just check that we are looking at the right model via
+  // Intercept() and Beta().
+  for (size_t i = 0; i < lars.LambdaPath().size(); ++i)
+  {
+    lars.SelectBeta(lars.LambdaPath()[i]);
+
+    REQUIRE(lars.SelectedLambda1() == Approx(lars.LambdaPath()[i]));
+    REQUIRE(lars.Intercept() == Approx(lars.InterceptPath()[i]));
+    REQUIRE(arma::approx_equal(lars.Beta(), lars.BetaPath()[i], "absdiff",
+        1e-5));
+  }
+}
+
+// Test that SelectBeta() throws an error when the model is not trained.
+TEST_CASE("LARSSelectBetaUntrainedModelTest", "[LARSTest]")
+{
+  LARS lars;
+
+  REQUIRE_THROWS_AS(lars.SelectBeta(0.01), std::runtime_error);
+}
+
+// Test that SelectBeta() throws an exception when an invalid new lambda1 value
+// is specified.
+TEST_CASE("LARSSelectBetaInvalidLambda1Test", "[LARSTest]")
+{
+  arma::mat X;
+  arma::rowvec y;
+
+  GenerateProblem(X, y, 1000, 100);
+
+  LARS lars;
+  lars.Lambda1() = 1.0;
+  lars.Train(X, y);
+
+  REQUIRE_THROWS_AS(lars.SelectBeta(0.1), std::runtime_error);
+}
