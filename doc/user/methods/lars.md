@@ -75,7 +75,9 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
    - ***Note:*** any precomputed Gram matrix must also match the settings of
      `fitIntercept` and `normalizeData`; so, if both are `true`, then
      `gramMatrix` must be computed on mean-centered data whose features are
-     normalized to have unit variance.
+     normalized to have unit variance.  In addition, if `lambda2 > 0`, then
+     it is expected that `lambda2` is added to each element on the diagonal of
+     `gramMatrix`.
 
 ---
 
@@ -165,7 +167,9 @@ If training is not done as part of the constructor call, it can be done with the
    - ***Note:*** any precomputed Gram matrix must also match the settings of
      `fitIntercept` and `normalizeData`; so, if both are `true`, then
      `gramMatrix` must be computed on mean-centered data whose features are
-     normalized to have unit variance.
+     normalized to have unit variance.  In addition, if `lambda2 > 0`, then
+     it is expected that `lambda2` is added to each element on the diagonal of
+     `gramMatrix`.
 
 ---
 

@@ -88,8 +88,19 @@ inline LARS::LARS(
     const double tolerance,
     const bool fitIntercept,
     const bool normalizeData) :
-    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance, fitIntercept,
-        normalizeData)
+    matGram(&gramMatrix),
+    useCholesky(useCholesky),
+    lasso((lambda1 != 0)),
+    lambda1(lambda1),
+    elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2),
+    tolerance(tolerance),
+    fitIntercept(fitIntercept),
+    normalizeData(normalizeData),
+    selectedLambda1(lambda1),
+    selectedIndex(0),
+    selectedIntercept(0.0),
+    offsetY(0.0)
 {
   Train(data, responses, transposeData);
 }
@@ -352,7 +363,7 @@ inline double LARS::Train(const arma::mat& data,
                           const bool fitIntercept)
 {
   return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
-      lambda2, fitIntercept, tolerance, this->normalizeData);
+      lambda2, tolerance, fitIntercept, this->normalizeData);
 }
 
 inline double LARS::Train(const arma::mat& data,
@@ -569,8 +580,8 @@ inline double LARS::Train(const arma::mat& matX,
     if (maxCorr < tolerance)
       break;
 
-    if ((matGram != &matGramInternal) && ((maxActiveCorr - minActiveCorr) >
-        100 * std::numeric_limits<double>::epsilon()))
+    if ((matGram != &matGramInternal) &&
+        ((maxActiveCorr - minActiveCorr) / maxActiveCorr) > 1e-10)
     {
       // Construct the error message to match the user's settings.
       std::ostringstream oss;
@@ -584,8 +595,10 @@ inline double LARS::Train(const arma::mat& matX,
         oss << "unit-variance (normalized) ";
       else
         oss << "non-normalized ";
-      oss << "data!";
-      oss << std::endl;
+      oss << "data";
+      if (lambda2 > 0.0)
+        oss << " with lambda2 = " << lambda2 << " added to the diagonal";
+      oss << "!";
       throw std::runtime_error(oss.str());
     }
 
