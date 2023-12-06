@@ -1051,7 +1051,7 @@ TEST_CASE("LARSSelectBetaTest", "[LARSTest]")
 
   // Now step through numerous different lambda values.
   double lastError = std::numeric_limits<double>::max();
-  for (int i = 5; i >= -5; i -= 0.1)
+  for (double i = 5.0; i >= -5.0; i -= 0.1)
   {
     const double selLambda1 = std::pow(10.0, (double) i);
     lars.SelectBeta(selLambda1);
@@ -1099,5 +1099,5 @@ TEST_CASE("LARSSelectBetaInvalidLambda1Test", "[LARSTest]")
   lars.Lambda1() = 1.0;
   lars.Train(X, y);
 
-  REQUIRE_THROWS_AS(lars.SelectBeta(0.1), std::runtime_error);
+  REQUIRE_THROWS_AS(lars.SelectBeta(0.1), std::invalid_argument);
 }
