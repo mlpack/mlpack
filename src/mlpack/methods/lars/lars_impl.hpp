@@ -127,6 +127,7 @@ inline LARS::LARS(const LARS& other) :
     selectedIndex(other.selectedIndex),
     selectedBeta(other.selectedBeta),
     selectedIntercept(other.selectedIntercept),
+    selectedActiveSet(other.selectedActiveSet),
     offsetY(other.offsetY),
     isActive(other.isActive),
     ignoreSet(other.ignoreSet),
@@ -157,6 +158,7 @@ inline LARS::LARS(LARS&& other) :
     selectedIndex(std::move(other.selectedIndex)),
     selectedBeta(std::move(other.selectedBeta)),
     selectedIntercept(std::move(other.selectedIntercept)),
+    selectedActiveSet(std::move(other.selectedActiveSet)),
     offsetY(std::move(other.offsetY)),
     isActive(std::move(other.isActive)),
     ignoreSet(std::move(other.ignoreSet)),
@@ -191,6 +193,7 @@ inline LARS& LARS::operator=(const LARS& other)
   selectedIndex = other.selectedIndex;
   selectedBeta = other.selectedBeta;
   selectedIntercept = other.selectedIntercept;
+  selectedActiveSet = other.selectedActiveSet;
   offsetY = other.offsetY;
   isActive = other.isActive;
   ignoreSet = other.ignoreSet;
@@ -223,6 +226,7 @@ inline LARS& LARS::operator=(LARS&& other)
   selectedIndex = std::move(other.selectedIndex);
   selectedBeta = std::move(other.selectedBeta);
   selectedIntercept = std::move(other.selectedIntercept);
+  selectedActiveSet = std::move(other.selectedActiveSet);
   offsetY = std::move(other.offsetY);
   activeSet = std::move(other.activeSet);
   isActive = std::move(other.isActive);
@@ -887,6 +891,66 @@ inline void LARS::Predict(const arma::mat& points,
     predictions = Beta().t() * points;
 }
 
+inline void LARS::FitIntercept(const bool newFitIntercept)
+{
+  // If we are storing a Gram matrix internally, but now will be normalizing
+  // data, then the Gram matrix we have computed is incorrect and needs to be
+  // recomputed.
+  if (fitIntercept != newFitIntercept)
+  {
+    if (matGram != &matGramInternal)
+    {
+      throw std::invalid_argument("LARS::FitIntercept(): cannot change value "
+          "when an external Gram matrix was specified!");
+    }
+
+    fitIntercept = newFitIntercept;
+    matGramInternal.clear();
+  }
+}
+
+inline void LARS::NormalizeData(const bool newNormalizeData)
+{
+  // If we are storing a Gram matrix internally, but now will be normalizing
+  // data, then the Gram matrix we have computed is incorrect and needs to be
+  // recomputed.
+  if (normalizeData != newNormalizeData)
+  {
+    if (matGram != &matGramInternal)
+    {
+      throw std::invalid_argument("LARS::NormalizeData(): cannot change value"
+          " when an external Gram matrix was specified!");
+    }
+
+    normalizeData = newNormalizeData;
+    matGramInternal.clear();
+  }
+}
+
+inline const std::vector<size_t>& LARS::ActiveSet() const
+{
+  if (selectedIndex != (betaPath.size() - 1))
+    return selectedActiveSet;
+  else
+    return activeSet;
+}
+
+inline const arma::vec& LARS::Beta() const
+{
+  if (selectedIndex < betaPath.size())
+    return betaPath[selectedIndex];
+  else
+    return selectedBeta;
+}
+
+inline double LARS::Intercept() const
+{
+  if (selectedIndex < betaPath.size())
+    return interceptPath[selectedIndex];
+  else
+    return selectedIntercept;
+}
+
 inline void LARS::SelectBeta(const double selLambda1)
 {
   if (selLambda1 < lambda1)
@@ -917,6 +981,14 @@ inline void LARS::SelectBeta(const double selLambda1)
       // If it's an exact match, no interpolation is necessary, and we can
       // directly use the element from the path.
       selectedIndex = i;
+
+      // However, we may need to compute the active set.
+      if (i != lambdaPath.size() - 1)
+      {
+        selectedActiveSet = arma::conv_to<std::vector<size_t>>::from(
+            arma::find(betaPath[i] != 0));
+      }
+
       return;
     }
     else if (selLambda1 > lambdaPath[i])
@@ -955,6 +1027,10 @@ inline void LARS::SelectBeta(const double selLambda1)
     selectedIntercept = (1 - interp) * interceptPath[i - 1] +
         interp * interceptPath[i];
   }
+
+  // Compute the active set of variables.
+  selectedActiveSet = arma::conv_to<std::vector<size_t>>::from(
+      arma::find(selectedBeta != 0));
 }
 
 // Private functions.
@@ -1171,6 +1247,7 @@ void LARS::serialize(Archive& ar, const uint32_t version)
     ar(CEREAL_NVP(selectedIndex));
     ar(CEREAL_NVP(selectedBeta));
     ar(CEREAL_NVP(selectedIntercept));
+    ar(CEREAL_NVP(selectedActiveSet));
     ar(CEREAL_NVP(offsetY));
   }
 }

@@ -433,69 +433,29 @@ class LARS
   //! Get whether or not to fit an intercept.
   bool FitIntercept() const { return fitIntercept; }
   //! Modify whether or not to fit an intercept.
-  void FitIntercept(const bool newFitIntercept)
-  {
-    // If we are storing a Gram matrix internally, but now will be normalizing
-    // data, then the Gram matrix we have computed is incorrect and needs to be
-    // recomputed.
-    if (fitIntercept != newFitIntercept)
-    {
-      if (matGram != &matGramInternal)
-      {
-        throw std::invalid_argument("LARS::FitIntercept(): cannot change value "
-            "when an external Gram matrix was specified!");
-      }
-
-      fitIntercept = newFitIntercept;
-      matGramInternal.clear();
-    }
-  }
+  void FitIntercept(const bool newFitIntercept);
 
   //! Get whether or not to normalize data during training.
   bool NormalizeData() const { return normalizeData; }
   //! Modify whether or not to normalize data during training.
-  void NormalizeData(const bool newNormalizeData)
-  {
-    // If we are storing a Gram matrix internally, but now will be normalizing
-    // data, then the Gram matrix we have computed is incorrect and needs to be
-    // recomputed.
-    if (normalizeData != newNormalizeData)
-    {
-      if (matGram != &matGramInternal)
-      {
-        throw std::invalid_argument("LARS::NormalizeData(): cannot change value"
-            " when an external Gram matrix was specified!");
-      }
+  void NormalizeData(const bool newNormalizeData);
 
-      normalizeData = newNormalizeData;
-      matGramInternal.clear();
-    }
-  }
-
-  //! Access the set of active dimensions.
-  const std::vector<size_t>& ActiveSet() const { return activeSet; }
+  //! Access the set of active dimensions in the currently selected model.
+  const std::vector<size_t>& ActiveSet() const;
 
   //! Access the set of coefficients after each iteration; the solution is the
   //! last element.
   const std::vector<arma::vec>& BetaPath() const { return betaPath; }
 
   //! Access the solution coefficients
-  const arma::vec& Beta() const
-  {
-    return (selectedIndex < betaPath.size()) ?
-        betaPath[selectedIndex] : selectedBeta;
-  }
+  const arma::vec& Beta() const;
 
   //! Access the set of values for lambda1 after each iteration; the solution is
   //! the last element.
   const std::vector<double>& LambdaPath() const { return lambdaPath; }
 
   //! Return the intercept (if fitted, otherwise 0).
-  double Intercept() const
-  {
-    return (selectedIndex < interceptPath.size()) ?
-        interceptPath[selectedIndex] : selectedIntercept;
-  }
+  double Intercept() const;
 
   //! Return the intercept path (the intercept for every model).
   const std::vector<double>& InterceptPath() const { return interceptPath; }
@@ -588,6 +548,10 @@ class LARS
 
   //! Selected intercept, if selectedLambda1 is not in lambdaPath.
   double selectedIntercept;
+
+  //! Selected active set of dimensions, if selectedLambda1 is not the last
+  //! element in the path.
+  std::vector<size_t> selectedActiveSet;
 
   //! Might be needed to compute the intercept for other lambda values.
   double offsetY;
