@@ -72,8 +72,8 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky,
     LARS lars(useCholesky, lambda1, lambda2);
     lars.FitIntercept(fitIntercept);
     lars.NormalizeData(normalizeData);
-    arma::vec betaOpt;
-    lars.Train(X, y, betaOpt);
+    lars.Train(X, y);
+    arma::vec betaOpt = lars.Beta();
 
     if (fitIntercept)
     {
@@ -151,12 +151,11 @@ TEST_CASE("CholeskySingularityTest", "[LARSTest]")
     LARS lars(true, lambda1, 0.0);
     lars.FitIntercept(false);
     lars.NormalizeData(false);
-    arma::vec betaOpt;
-    lars.Train(X, y, betaOpt);
+    lars.Train(X, y);
 
-    arma::vec errCorr = (X * X.t()) * betaOpt - X * y.t();
+    arma::vec errCorr = (X * X.t()) * lars.Beta() - X * y.t();
 
-    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
+    LARSVerifyCorrectness(lars.Beta(), errCorr, lambda1);
   }
 }
 
@@ -179,12 +178,11 @@ TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
     LARS lars(false, lambda1, 0.0);
     lars.FitIntercept(false);
     lars.NormalizeData(false);
-    arma::vec betaOpt;
-    lars.Train(X, y, betaOpt);
+    lars.Train(X, y);
 
-    arma::vec errCorr = (X * X.t()) * betaOpt - X * y.t();
+    arma::vec errCorr = (X * X.t()) * lars.Beta() - X * y.t();
 
-    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
+    LARSVerifyCorrectness(lars.Beta(), errCorr, lambda1);
   }
 }
 
@@ -208,12 +206,11 @@ TEST_CASE("PredictTest", "[LARSTest]")
         LARS lars(useCholesky, lambda1, lambda2);
         lars.FitIntercept(false);
         lars.NormalizeData(false);
-        arma::vec betaOpt;
-        lars.Train(X, y, betaOpt);
+        lars.Train(X, y);
 
         // Calculate what the actual error should be with these regression
         // parameters.
-        arma::vec betaOptPred = (X * X.t()) * betaOpt;
+        arma::vec betaOptPred = (X * X.t()) * lars.Beta();
         arma::rowvec predictions;
         lars.Predict(X, predictions);
         arma::vec adjPred = X * predictions.t();
@@ -242,8 +239,7 @@ TEST_CASE("PredictRowMajorTest", "[LARSTest]")
   LARS lars(false, 0, 0);
   lars.FitIntercept(false);
   lars.NormalizeData(false);
-  arma::vec betaOpt;
-  lars.Train(X, y, betaOpt);
+  lars.Train(X, y);
 
   // Get both row-major and column-major predictions.  Make sure they are the
   // same.
@@ -278,16 +274,15 @@ TEST_CASE("LARSRetrainTest", "[LARSTest]")
   LARS lars(false, 0.1, 0.1);
   lars.FitIntercept(false);
   lars.NormalizeData(false);
-  arma::vec betaOpt;
-  lars.Train(origX, origY, betaOpt);
+  lars.Train(origX, origY);
 
   // Now train on new data.
-  lars.Train(newX, newY, betaOpt);
+  lars.Train(newX, newY);
 
   arma::vec errCorr = (newX * trans(newX) + 0.1 *
-        arma::eye(75, 75)) * betaOpt - newX * newY.t();
+        arma::eye(75, 75)) * lars.Beta() - newX * newY.t();
 
-  LARSVerifyCorrectness(betaOpt, errCorr, 0.1);
+  LARSVerifyCorrectness(lars.Beta(), errCorr, 0.1);
 }
 
 /**
@@ -307,16 +302,15 @@ TEST_CASE("RetrainCholeskyTest", "[LARSTest]")
   LARS lars(true, 0.1, 0.1);
   lars.FitIntercept(false);
   lars.NormalizeData(false);
-  arma::vec betaOpt;
-  lars.Train(origX, origY, betaOpt);
+  lars.Train(origX, origY);
 
   // Now train on new data.
-  lars.Train(newX, newY, betaOpt);
+  lars.Train(newX, newY);
 
   arma::vec errCorr = (newX * trans(newX) + 0.1 *
-        arma::eye(75, 75)) * betaOpt - newX * newY.t();
+        arma::eye(75, 75)) * lars.Beta() - newX * newY.t();
 
-  LARSVerifyCorrectness(betaOpt, errCorr, 0.1);
+  LARSVerifyCorrectness(lars.Beta(), errCorr, 0.1);
 }
 
 /**
@@ -331,8 +325,8 @@ TEST_CASE("TrainingAndAccessingBetaTest", "[LARSTest]")
   GenerateProblem(X, y, 1000, 100);
 
   LARS lars1;
-  arma::vec beta;
-  lars1.Train(X, y, beta);
+  lars1.Train(X, y);
+  arma::vec beta = lars1.Beta();
 
   LARS lars2;
   lars2.Train(X, y);
@@ -354,8 +348,8 @@ TEST_CASE("TrainingConstructorWithDefaultsTest", "[LARSTest]")
   GenerateProblem(X, y, 1000, 100);
 
   LARS lars1;
-  arma::vec beta;
-  lars1.Train(X, y, beta);
+  lars1.Train(X, y);
+  arma::vec beta = lars1.Beta();
 
   LARS lars2(X, y);
 
@@ -381,8 +375,8 @@ TEST_CASE("TrainingConstructorWithNonDefaultsTest", "[LARSTest]")
   double lambda2 = 0.4;
 
   LARS lars1(useCholesky, lambda1, lambda2);
-  arma::vec beta;
-  lars1.Train(X, y, beta);
+  lars1.Train(X, y);
+  arma::vec beta = lars1.Beta();
 
   LARS lars2(X, y, transposeData, useCholesky, lambda1, lambda2);
 
@@ -411,29 +405,25 @@ TEST_CASE("LARSTrainReturnCorrelation", "[LARSTest]")
 
   // Test with Cholesky decomposition and with lasso.
   LARS lars1(true, lambda1, 0.0);
-  arma::vec betaOpt1;
-  double error = lars1.Train(X, y, betaOpt1);
+  double error = lars1.Train(X, y);
 
   REQUIRE(std::isfinite(error) == true);
 
   // Test without Cholesky decomposition and with lasso.
   LARS lars2(false, lambda1, 0.0);
-  arma::vec betaOpt2;
-  error = lars2.Train(X, y, betaOpt2);
+  error = lars2.Train(X, y);
 
   REQUIRE(std::isfinite(error) == true);
 
   // Test with Cholesky decomposition and with elasticnet.
   LARS lars3(true, lambda1, lambda2);
-  arma::vec betaOpt3;
-  error = lars3.Train(X, y, betaOpt3);
+  error = lars3.Train(X, y);
 
   REQUIRE(std::isfinite(error) == true);
 
   // Test without Cholesky decomposition and with elasticnet.
   LARS lars4(false, lambda1, lambda2);
-  arma::vec betaOpt4;
-  error = lars4.Train(X, y, betaOpt4);
+  error = lars4.Train(X, y);
 
   REQUIRE(std::isfinite(error) == true);
 }
@@ -457,8 +447,7 @@ TEST_CASE("LARSTestComputeError", "[LARSTest]")
   LARS lars1(true, 0.1, 0.0);
   lars1.FitIntercept(false);
   lars1.NormalizeData(false);
-  arma::vec betaOpt1;
-  double train1 = lars1.Train(X, y, betaOpt1);
+  double train1 = lars1.Train(X, y);
   double cost = lars1.ComputeError(X, y);
 
   REQUIRE(cost <= 1);
@@ -552,14 +541,13 @@ TEST_CASE("PredictFitInterceptTest", "[LARSTest]")
         LARS lars(useCholesky, lambda1, lambda2);
         lars.FitIntercept(true);
         lars.NormalizeData(false);
-        arma::vec betaOpt;
-        lars.Train(X, y, betaOpt);
+        lars.Train(X, y);
         const double intercept = arma::mean(y) -
-            arma::dot(arma::mean(X, 1), betaOpt);
+            arma::dot(arma::mean(X, 1), lars.Beta());
 
         // Calculate what the actual error should be with these regression
         // parameters.
-        arma::vec betaOptPred = X.t() * betaOpt + intercept;
+        arma::vec betaOptPred = X.t() * lars.Beta() + intercept;
         arma::rowvec predictions;
         lars.Predict(X, predictions);
         arma::vec adjPred = predictions.t();
@@ -598,12 +586,11 @@ TEST_CASE("PredictNormalizeDataTest", "[LARSTest]")
         LARS lars(useCholesky, lambda1, lambda2);
         lars.FitIntercept(false);
         lars.NormalizeData(true);
-        arma::vec betaOpt;
-        lars.Train(X, y, betaOpt);
+        lars.Train(X, y);
 
         // Calculate what the actual error should be with these regression
         // parameters.
-        arma::vec betaOptPred = (X * X.t()) * betaOpt;
+        arma::vec betaOptPred = (X * X.t()) * lars.Beta();
         arma::rowvec predictions;
         lars.Predict(X, predictions);
         arma::vec adjPred = X * predictions.t();
@@ -642,14 +629,13 @@ TEST_CASE("PredictFitInterceptNormalizeDataTest", "[LARSTest]")
         LARS lars(useCholesky, lambda1, lambda2);
         lars.FitIntercept(true);
         lars.NormalizeData(true);
-        arma::vec betaOpt;
-        lars.Train(X, y, betaOpt);
+        lars.Train(X, y);
         const double intercept = arma::mean(y) -
-            arma::dot(arma::mean(X, 1), betaOpt);
+            arma::dot(arma::mean(X, 1), lars.Beta());
 
         // Calculate what the actual error should be with these regression
         // parameters.
-        arma::vec betaOptPred = X.t() * betaOpt + intercept;
+        arma::vec betaOptPred = X.t() * lars.Beta() + intercept;
         arma::rowvec predictions;
         lars.Predict(X, predictions);
         arma::vec adjPred = predictions.t();
@@ -715,7 +701,6 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
   arma::field<arma::mat> F;
   F.load("lars_kkt.bin");
 
-  arma::vec beta;
   bool useCholesky = true;
   LARS lars(useCholesky, 1.0, 0.0);
 
@@ -730,19 +715,19 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
 
     lars.FitIntercept(false);
     lars.NormalizeData(false);
-    lars.Train(X, y, beta, false);
-    CheckKKT(beta, X, y, 1.0);
+    lars.Train(X, y, false);
+    CheckKKT(lars.Beta(), X, y, 1.0);
 
     // Now try when we fit an intercept too.
     lars.FitIntercept(true);
     lars.NormalizeData(false);
-    lars.Train(X, y, beta, false);
+    lars.Train(X, y, false);
 
     // Now mean-center data before the check.
     X.each_row() -= xMean;
     y -= yMean;
 
-    CheckKKT(beta, X, y, 1.0);
+    CheckKKT(lars.Beta(), X, y, 1.0);
 
     X.each_row() += xMean;
     y += yMean;
@@ -750,9 +735,10 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
     // Now try when we normalize the data.
     lars.FitIntercept(false);
     lars.NormalizeData(true);
-    lars.Train(X, y, beta, false);
+    lars.Train(X, y, false);
 
     X.each_row() /= xStds;
+    arma::vec beta = lars.Beta();
     beta %= xStds.t();
 
     CheckKKT(beta, X, y, 1.0);
@@ -761,7 +747,8 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
 
     lars.FitIntercept(true);
     lars.NormalizeData(true);
-    lars.Train(X, y, beta, false);
+    lars.Train(X, y, false);
+    beta = lars.Beta();
 
     X.each_row() -= xMean;
     X.each_row() /= xStds;

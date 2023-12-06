@@ -1062,8 +1062,7 @@ TEST_CASE("LARSTest", "[SerializationTest]")
   arma::rowvec y = beta.t() * X;
 
   LARS lars(true, 0.1, 0.1);
-  arma::vec betaOpt;
-  lars.Train(X, y, betaOpt);
+  lars.Train(X, y);
 
   // Now, serialize.
   LARS xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
@@ -1073,8 +1072,7 @@ TEST_CASE("LARSTest", "[SerializationTest]")
   arma::mat jsonX = arma::randn(25, 150);
   arma::vec jsonBeta = arma::randn(25, 1);
   arma::rowvec jsonY = jsonBeta.t() * jsonX;
-  arma::vec jsonBetaOpt;
-  jsonLars.Train(jsonX, jsonY, jsonBetaOpt);
+  jsonLars.Train(jsonX, jsonY);
 
   SerializeObjectAll(lars, xmlLars, binaryLars, jsonLars);
 
