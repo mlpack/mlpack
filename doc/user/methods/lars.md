@@ -1,10 +1,10 @@
 ## `LARS`
 
 The `LARS` class implements the least-angle regression (LARS) algorithm for
-L1-penalized and L2-penalized regression.  `LARS` can also solve the LASSO
-(least absolute shrinkage and selection operator) problem.  The LARS algorithm
-is a *path* algorithm, and thus will recover solutions for *all* L1 penalty
-parameters greater than or equal to the given L1 penalty parameter.
+L1-penalized and L2-penalized linear regression.  `LARS` can also solve the
+LASSO (least absolute shrinkage and selection operator) problem.  The LARS
+algorithm is a *path* algorithm, and thus will recover solutions for *all* L1
+penalty parameters greater than or equal to the given L1 penalty parameter.
 
 #### Simple usage example:
 
@@ -59,14 +59,13 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 ---
 
-<!-- TODO: change to rowMajor from transposeData -->
- * `lars = LARS(data, responses, transposeData=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+ * `lars = LARS(data, responses, colMajor=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
    - Train model on the given data and responses, using the given settings for
      hyperparameters.
 
 ---
 
- * `lars = LARS(data, responses, transposeData, useCholesky, gramMatrix, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+ * `lars = LARS(data, responses, colMajor, useCholesky, gramMatrix, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
    - *(Advanced constructor)*.
    - Train model on the given data and responses, using a precomputed Gram
      matrix (`gramMatrix`, equivalent to `data * data.t()`).
@@ -92,7 +91,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | Training matrix. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
-| `transposeData` | `bool` | Should be set to true if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation. | `true` |
+| `colMajor` | `bool` | Should be set to `true` if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation. | `false` |
 | `useCholesky` | `bool` | If `true`, use the Cholesky decomposition of the Gram
 matrix to solve linear systems (as opposed to the full Gram matrix). | `true` |
 | `gramMatrix` | [`arma::mat`](../matrices.md) | Precomputed Gram matrix of `data` (i.e.  `data * data.t()` for column-major data). | _(N/A)_ |
@@ -100,15 +99,12 @@ matrix to solve linear systems (as opposed to the full Gram matrix). | `true` |
 | `lambda2` | `double` | L2 regularization penalty parameter. | `0.0` |
 | `tolerance` | `double` | Tolerance on feature correlations for convergence. | `1e-16` |
 | `fitIntercept` | `bool` | If `true`, an intercept term will be included in the model. | `true` |
-| `normalizeData` | `bool` | If `true`, data will be normalized before fitting
-the model. | `true` |
+| `normalizeData` | `bool` | If `true`, data will be normalized before fitting the model. | `true` |
 
 As an alternative to passing hyperparameters, each hyperparameter can be set
 with a standalone method.  The following functions can be used before calling
 `Train()` to set hyperparameters:
 
- * `lars.RowMajor() = rowMajor;` will set whether the data is given in row-major
-   form to `rowMajor`.
  * `lars.UseCholesky() = useChol;` will set whether or not the Cholesky
    decomposition will be used during training to `useChol`.
  * `lars.Lambda1() = lambda1;` will set the L1 regularization penalty parameter
@@ -153,12 +149,12 @@ If training is not done as part of the constructor call, it can be done with the
 <!-- TODO: deprecate beta version -->
 <!-- TODO: implement hyperparameters versions -->
 
- * `lars.Train(data, responses, transposeData=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+ * `lars.Train(data, responses, colMajor=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
    - Train the model on the given data.
 
 ---
 
- * `lars.Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
+ * `lars.Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
    - *(Advanced training.)*
    - Train model on the given data and responses, using a precomputed Gram
      matrix (`gramMatrix`, equivalent to `data * data.t()`).
@@ -231,7 +227,7 @@ can be used to make predictions for new data.
  * `lars.ActiveSet()` will return a `std::vector<size_t>&` containing the
    indices of nonzero dimensions in the model parameters (`lars.Beta()`).
 
- * `lars.ComputeError(data, responses, rowMajor=false)` will return a `double`
+ * `lars.ComputeError(data, responses, colMajor=false)` will return a `double`
    containing the squared error of the model on `data`, given that
    the true responses are `responses`.  To obtain the MSE, divide by the number
    of points in `data`.
@@ -263,7 +259,7 @@ switch between them for prediction purposes:
  * `lars.SelectBeta(lambda1)` will set the model weights (`lars.ActiveSet()`,
    `lars.Beta()` and `lars.Intercept()`) to the path location with L1 penalty
    `lambda1`.  This is equivalent to calling `lars.Train(data, responses,
-   transposeData, useCholesky, lambda1)`---but much more efficient!  `lambda1`
+   colMajor, useCholesky, lambda1)`---but much more efficient!  `lambda1`
    cannot be greater than `lars.Lambda1()`, or an exception will be thrown.
 
 <!-- TODO: implement -->

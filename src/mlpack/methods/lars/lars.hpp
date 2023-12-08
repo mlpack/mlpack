@@ -151,8 +151,8 @@ class LARS
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *     solving linear system (as opposed to using the full Gram matrix).
    * @param lambda1 Regularization parameter for l1-norm penalty.
@@ -170,7 +170,7 @@ class LARS
            >::type>
   LARS(const MatType& data,
        const ResponsesType& responses,
-       bool transposeData = true,
+       bool colMajor = true,
        const bool useCholesky = false,
        const ElemType lambda1 = 0.0,
        const ElemType lambda2 = 0.0,
@@ -189,8 +189,8 @@ class LARS
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *     solving linear system (as opposed to using the full Gram matrix).
    * @param gramMatrix Gram matrix.
@@ -209,7 +209,7 @@ class LARS
            >::type>
   LARS(const MatType& data,
        const ResponsesType& responses,
-       const bool transposeData,
+       const bool colMajor,
        const bool useCholesky,
        const DenseMatType& gramMatrix,
        const ElemType lambda1 = 0.0,
@@ -251,37 +251,38 @@ class LARS
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
    * will (internally) transpose the matrix.  If this transposition is not
-   * necessary (i.e., you want to pass in a row-major matrix), pass 'false' for
-   * the transposeData parameter.
+   * necessary (i.e., you want to pass in a row-major matrix), pass `false` for
+   * the `colMajor` parameter.
    *
-   * @param data Column-major input data (or row-major input data if rowMajor =
-   *     true).
+   * @param data Column-major input data (or row-major input data if colMajor =
+   *     false).
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
-   * @param transposeData Set to false if the data is row-major.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
   mlpack_deprecated
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
                arma::vec& beta,
-               const bool transposeData = true);
+               const bool colMajor = true);
 
   /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
    * will (internally) transpose the matrix.  If this transposition is not
-   * necessary (i.e., you want to pass in a row-major matrix), pass 'false' for
-   * the transposeData parameter.
+   * necessary (i.e., you want to pass in a row-major matrix), pass `false` for
+   * the `colMajor` parameter.
    *
    * All of the different overloads below are needed until C++17 is the minimum
    * required standard (then std::optional could be used).
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
 
@@ -290,7 +291,7 @@ class LARS
   template<typename MatType>
   ElemType Train(const MatType& data,
                  const arma::rowvec& responses,
-                 const bool transposeData = true);
+                 const bool colMajor = true);
 
   template<typename MatType,
            typename ResponsesType,
@@ -303,7 +304,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData = true);
+                 const bool colMajor = true);
 
   template<typename MatType,
            typename ResponsesType,
@@ -313,7 +314,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky);
 
   template<typename MatType,
@@ -324,7 +325,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const ElemType lambda1);
 
@@ -336,7 +337,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const ElemType lambda1,
                  const ElemType lambda2);
@@ -349,7 +350,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const ElemType lambda1,
                  const ElemType lambda2,
@@ -363,7 +364,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const ElemType lambda1,
                  const ElemType lambda2,
@@ -378,7 +379,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const ElemType lambda1,
                  const ElemType lambda2,
@@ -392,15 +393,15 @@ class LARS
    * row is a dimension.  However, because LARS is more efficient on a row-major
    * matrix, this method will (internally) transpose the matrix.  If this
    * transposition is not necessary (i.e., you want to pass in a row-major
-   * matrix), pass 'false' for the transposeData parameter.
+   * matrix), pass `false` for the `colMajor` parameter.
    *
    * All of the different overloads below are needed until C++17 is the minimum
    * required standard (then std::optional could be used).
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
   template<typename MatType,
@@ -411,7 +412,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const DenseMatType& gramMatrix);
 
@@ -423,7 +424,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const DenseMatType& gramMatrix,
                  const ElemType lambda1);
@@ -436,7 +437,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const DenseMatType& gramMatrix,
                  const ElemType lambda1,
@@ -450,7 +451,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const DenseMatType& gramMatrix,
                  const ElemType lambda1,
@@ -465,7 +466,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const DenseMatType& gramMatrix,
                  const ElemType lambda1,
@@ -481,7 +482,7 @@ class LARS
            >::type>
   ElemType Train(const MatType& data,
                  const ResponsesType& responses,
-                 const bool transposeData,
+                 const bool colMajor,
                  const bool useCholesky,
                  const DenseMatType& gramMatrix,
                  const ElemType lambda1,
@@ -505,13 +506,13 @@ class LARS
    *
    * @param points The data points to regress on.
    * @param predictions y, which will contained calculated values on completion.
-   * @param rowMajor Should be true if the data points matrix is row-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    */
   template<typename MatType, typename ResponsesType>
   void Predict(const MatType& points,
                ResponsesType& predictions,
-               const bool rowMajor = false) const;
+               const bool colMajor = true) const;
 
   //! Get the L1 regularization coefficient.
   ElemType Lambda1() const { return lambda1; }
@@ -584,17 +585,16 @@ class LARS
    * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
    * cost error.
    *
-   * @param matX Column-major input data (or row-major input data if rowMajor =
-   *     true).
+   * @param matX Column-major input data (or row-major input data if colMajor =
+   *     false).
    * @param y responses A vector of targets.
-   * @param rowMajor Should be true if the data points matrix is row-major and
-   *   false otherwise.
+   * @param colMajor Should be true if the data points matrix is column-major.
    * @return The minimum cost error.
    */
   template<typename MatType, typename ResponsesType>
   ElemType ComputeError(const MatType& matX,
                         const ResponsesType& y,
-                        const bool rowMajor = false);
+                        const bool colMajor = true);
 
  private:
   //! Gram matrix.

@@ -70,7 +70,7 @@ template<typename MatType, typename ResponsesType, typename>
 inline LARS<ModelMatType>::LARS(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::ElemType lambda1,
     const typename LARS<ModelMatType>::ElemType lambda2,
@@ -79,7 +79,7 @@ inline LARS<ModelMatType>::LARS(
     const bool normalizeData) :
     LARS(useCholesky, lambda1, lambda2, tolerance, fitIntercept, normalizeData)
 {
-  Train(data, responses, transposeData);
+  Train(data, responses, colMajor);
 }
 
 template<typename ModelMatType>
@@ -87,7 +87,7 @@ template<typename MatType, typename ResponsesType, typename>
 inline LARS<ModelMatType>::LARS(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
     const typename LARS<ModelMatType>::ElemType lambda1,
@@ -109,7 +109,7 @@ inline LARS<ModelMatType>::LARS(
     selectedIntercept(0.0),
     offsetY(0.0)
 {
-  Train(data, responses, transposeData);
+  Train(data, responses, colMajor);
 }
 
 // Copy Constructor.
@@ -253,9 +253,9 @@ mlpack_deprecated
 inline double LARS<ModelMatType>::Train(const arma::mat& matX,
                                         const arma::rowvec& y,
                                         arma::vec& beta,
-                                        const bool transposeData)
+                                        const bool colMajor)
 {
-  const double result = Train(matX, y, transposeData);
+  const double result = Train(matX, y, colMajor);
   beta = betaPath.back();
   return result;
 }
@@ -266,9 +266,9 @@ template<typename MatType>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const arma::rowvec& responses,
-                          const bool transposeData)
+                          const bool colMajor)
 {
-  return Train(data, responses, transposeData, this->useCholesky, this->lambda1,
+  return Train(data, responses, colMajor, this->useCholesky, this->lambda1,
       this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -277,9 +277,9 @@ template<typename MatType, typename ResponsesType, typename, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const ResponsesType& responses,
-                          const bool transposeData)
+                          const bool colMajor)
 {
-  return Train(data, responses, transposeData, this->useCholesky, this->lambda1,
+  return Train(data, responses, colMajor, this->useCholesky, this->lambda1,
       this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -288,10 +288,10 @@ template<typename MatType, typename ResponsesType, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const ResponsesType& responses,
-                          const bool transposeData,
+                          const bool colMajor,
                           const bool useCholesky)
 {
-  return Train(data, responses, transposeData, useCholesky, this->lambda1,
+  return Train(data, responses, colMajor, useCholesky, this->lambda1,
       this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -300,11 +300,11 @@ template<typename MatType, typename ResponsesType, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const ResponsesType& responses,
-                          const bool transposeData,
+                          const bool colMajor,
                           const bool useCholesky,
                           const typename LARS<ModelMatType>::ElemType lambda1)
 {
-  return Train(data, responses, transposeData, useCholesky, lambda1,
+  return Train(data, responses, colMajor, useCholesky, lambda1,
       this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -313,12 +313,12 @@ template<typename MatType, typename ResponsesType, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const ResponsesType& responses,
-                          const bool transposeData,
+                          const bool colMajor,
                           const bool useCholesky,
                           const typename LARS<ModelMatType>::ElemType lambda1,
                           const typename LARS<ModelMatType>::ElemType lambda2)
 {
-  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
       this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -327,13 +327,13 @@ template<typename MatType, typename ResponsesType, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const ResponsesType& responses,
-                          const bool transposeData,
+                          const bool colMajor,
                           const bool useCholesky,
                           const typename LARS<ModelMatType>::ElemType lambda1,
                           const typename LARS<ModelMatType>::ElemType lambda2,
                           const typename LARS<ModelMatType>::ElemType tolerance)
 {
-  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
       tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -342,14 +342,14 @@ template<typename MatType, typename ResponsesType, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& data,
                           const ResponsesType& responses,
-                          const bool transposeData,
+                          const bool colMajor,
                           const bool useCholesky,
                           const typename LARS<ModelMatType>::ElemType lambda1,
                           const typename LARS<ModelMatType>::ElemType lambda2,
                           const typename LARS<ModelMatType>::ElemType tolerance,
                           const bool fitIntercept)
 {
-  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
       tolerance, fitIntercept, this->normalizeData);
 }
 
@@ -359,11 +359,11 @@ inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix)
 {
-  return Train(data, responses, transposeData, useCholesky, gramMatrix,
+  return Train(data, responses, colMajor, useCholesky, gramMatrix,
       this->lambda1, this->lambda2, this->tolerance, this->fitIntercept,
       this->normalizeData);
 }
@@ -374,12 +374,12 @@ inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
     const typename LARS<ModelMatType>::ElemType lambda1)
 {
-  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
       this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -389,13 +389,13 @@ inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
     const typename LARS<ModelMatType>::ElemType lambda1,
     const typename LARS<ModelMatType>::ElemType lambda2)
 {
-  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
       lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -405,14 +405,14 @@ inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
     const typename LARS<ModelMatType>::ElemType lambda1,
     const typename LARS<ModelMatType>::ElemType lambda2,
     const typename LARS<ModelMatType>::ElemType tolerance)
 {
-  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
       lambda2, tolerance, this->fitIntercept, this->normalizeData);
 }
 
@@ -422,7 +422,7 @@ inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
     const typename LARS<ModelMatType>::ElemType lambda1,
@@ -430,7 +430,7 @@ LARS<ModelMatType>::Train(
     const typename LARS<ModelMatType>::ElemType tolerance,
     const bool fitIntercept)
 {
-  return Train(data, responses, transposeData, useCholesky, gramMatrix, lambda1,
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
       lambda2, tolerance, fitIntercept, this->normalizeData);
 }
 
@@ -440,7 +440,7 @@ inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(
     const MatType& data,
     const ResponsesType& responses,
-    const bool transposeData,
+    const bool colMajor,
     const bool useCholesky,
     const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
     const typename LARS<ModelMatType>::ElemType lambda1,
@@ -453,7 +453,7 @@ LARS<ModelMatType>::Train(
   matGramInternal.clear();
   matGram = &gramMatrix;
 
-  return Train(data, responses, transposeData, useCholesky, lambda1, lambda2,
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
       tolerance, fitIntercept, normalizeData);
 }
 
@@ -462,7 +462,7 @@ template<typename MatType, typename ResponsesType, typename, typename>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::Train(const MatType& matX,
                           const ResponsesType& y,
-                          const bool transposeData,
+                          const bool colMajor,
                           const bool useCholesky,
                           const typename LARS<ModelMatType>::ElemType lambda1,
                           const typename LARS<ModelMatType>::ElemType lambda2,
@@ -500,7 +500,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
   // dataRef is row-major.  We can reuse the given matX, but only if we don't
   // need to do any transformations to it.
   const MatType& dataRef =
-      (transposeData || fitIntercept || normalizeData) ? dataTrans : matX;
+      (colMajor || fitIntercept || normalizeData) ? dataTrans : matX;
   const ResponsesType& yRef =
       (fitIntercept) ? yCentered : y;
 
@@ -508,7 +508,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
   this->offsetY = 0.0; // used only if fitting an intercept
   arma::Col<ElemType> stdX; // used only if normalizing
 
-  if (transposeData)
+  if (colMajor)
   {
     if (fitIntercept)
     {
@@ -951,7 +951,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
   selectedLambda1 = lambda1;
   selectedIndex = betaPath.size() - 1;
 
-  return ComputeError(matX, y, !transposeData);
+  return ComputeError(matX, y, colMajor);
 }
 
 template<typename ModelMatType>
@@ -969,11 +969,11 @@ template<typename ModelMatType>
 template<typename MatType, typename ResponsesType>
 inline void LARS<ModelMatType>::Predict(const MatType& points,
                                         ResponsesType& predictions,
-                                        const bool rowMajor) const
+                                        const bool colMajor) const
 {
-  if (rowMajor && !fitIntercept)
+  if (!colMajor && !fitIntercept)
     predictions = trans(points * Beta());
-  else if (rowMajor)
+  else if (!colMajor)
     predictions = trans(points * Beta()) + Intercept();
   else if (fitIntercept)
     predictions = Beta().t() * points + Intercept();
@@ -1322,17 +1322,12 @@ template<typename MatType, typename ResponsesType>
 inline typename LARS<ModelMatType>::ElemType
 LARS<ModelMatType>::ComputeError(const MatType& matX,
                                  const ResponsesType& y,
-                                 const bool rowMajor)
+                                 const bool colMajor)
 {
-  if (rowMajor)
-  {
+  if (!colMajor)
     return arma::accu(arma::pow(y - trans(matX * Beta()) - Intercept(), 2.0));
-  }
-
   else
-  {
     return arma::accu(arma::pow(y - Beta().t() * matX - Intercept(), 2.0));
-  }
 }
 
 /**

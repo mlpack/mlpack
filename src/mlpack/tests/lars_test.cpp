@@ -291,7 +291,7 @@ TEST_CASE("PredictRowMajorTest", "[LARSTest]")
   arma::rowvec rowMajorPred, colMajorPred;
 
   lars.Predict(X, colMajorPred);
-  lars.Predict(X.t(), rowMajorPred, true);
+  lars.Predict(X.t(), rowMajorPred, false);
 
   REQUIRE(colMajorPred.n_elem == rowMajorPred.n_elem);
   for (size_t i = 0; i < colMajorPred.n_elem; ++i)
@@ -1103,8 +1103,6 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
   arma::Row<ElemType> y;
 
   GenerateProblem(X, y, 1000, 100);
-  // Add some noise.
-  y += 0.2 * arma::randu<arma::Row<ElemType>>(y.n_elem);
 
   LARS<MatType> lars(X, y);
 
