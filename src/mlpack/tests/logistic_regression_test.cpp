@@ -1093,14 +1093,14 @@ TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
 // Test all constructor variants.  This test is more about checking that all
 // variants compile correctly than anything else.
 TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
-    "[LogisticRegression]", arma::mat, arma::fmat)
+    "[LogisticRegressionTest]", arma::mat, arma::fmat)
 {
   typedef TestType MatType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
   arma::Row<size_t> labels(1000, arma::fill::zeros);
-  labels.subvec(500, 999) = 1;
+  labels.subvec(500, 999).fill(1);
 
   // Empty constructor.
   LogisticRegression<MatType> lr1;
@@ -1113,7 +1113,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 
   // Specify data and labels and initial point and lambda, and optionally
   // callbacks.
-  arma::Row<typename MatType::elem_type> initialPoint(50, 1, arma::fill::randu);
+  arma::Row<typename MatType::elem_type> initialPoint(50, arma::fill::randu);
   LogisticRegression<MatType> lr5(data, labels, initialPoint, 0.1);
   LogisticRegression<MatType> lr6(data, labels, initialPoint, 0.1,
       ens::EarlyStopAtMinLoss());
@@ -1138,7 +1138,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 
   // Now we don't care what the training actually produced, but we do care that
   // the model trained at all and has the right size (except for the first one).
-  REQUIRE(lr1.Parameters().n_elem == 0);
+  REQUIRE(lr1.Parameters().n_elem == 1);
   REQUIRE(lr2.Parameters().n_elem == 51);
   REQUIRE(lr3.Parameters().n_elem == 51);
   REQUIRE(lr4.Parameters().n_elem == 51);
@@ -1155,7 +1155,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 
 // Test all Train() variants.  This test is more about checking that all
 // variants compile correctly than anything else.
-TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegression]",
+TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
     arma::mat, arma::fmat)
 {
   typedef TestType MatType;
@@ -1163,7 +1163,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegression]",
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
   arma::Row<size_t> labels(1000, arma::fill::zeros);
-  labels.subvec(500, 999) = 1;
+  labels.subvec(500, 999).fill(1);
 
   // Construct all objects that we will use, but don't train.
   LogisticRegression<MatType> lr1, lr2, lr3, lr4, lr5, lr6, lr7, lr8, lr9, lr10,
@@ -1232,12 +1232,12 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegression]",
 }
 
 // Make sure resetting the model does something.
-TEST_CASE("LogisticRegressionResetTest", "[LogisticRegression]")
+TEST_CASE("LogisticRegressionResetTest", "[LogisticRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
   arma::Row<size_t> labels(1000, arma::fill::zeros);
-  labels.subvec(500, 999) = 1;
+  labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.
   LogisticRegression<> lr1, lr2;

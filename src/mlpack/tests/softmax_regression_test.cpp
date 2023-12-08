@@ -878,12 +878,12 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionTrainVariantTest",
 }
 
 // Make sure resetting a model does something.
-TEST_CASE("SoftmaxRegressionResetTest", "[SoftmaxRegression]")
+TEST_CASE("SoftmaxRegressionResetTest", "[SoftmaxRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
   arma::Row<size_t> labels(1000, arma::fill::zeros);
-  labels.subvec(500, 999) = 1;
+  labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.
   SoftmaxRegression<> sr1, sr2;
