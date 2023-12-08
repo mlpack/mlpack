@@ -181,8 +181,8 @@ Types of each argument are the same as in the table for constructors
  * Training is not incremental.  A second call to `Train()` will retrain the
    model from scratch.
 
- * `Train()` returns the mean squared error (MSE) of the model on the training
-   set as a `double`.
+ * `Train()` returns the squared error (loss) of the model on the training set
+   as a `double`.  To obtain the MSE, divide by the number of training points.
 
 ### Prediction
 
@@ -232,8 +232,9 @@ can be used to make predictions for new data.
    indices of nonzero dimensions in the model parameters (`lars.Beta()`).
 
  * `lars.ComputeError(data, responses, rowMajor=false)` will return a `double`
-   containing the mean squared error (MSE) of the model on `data`, given that
-   the true responses are `responses`.
+   containing the squared error of the model on `data`, given that
+   the true responses are `responses`.  To obtain the MSE, divide by the number
+   of points in `data`.
 
 ### The LARS Path
 
@@ -254,9 +255,9 @@ switch between them for prediction purposes:
 
  * `lars.LambdaPath()` returns a `std::vector<double>&` containing each
    `lambda1` value that is associated with each element in `lars.BetaPath()` and
-   `lars.InterceptPath()`.  That is, `lars.LambdaPath(i)` is the `lambda1` value
-   corresponding to the model defined by `lars.BetaPath(i)` and
-   `lars.InterceptPath(i)`.
+   `lars.InterceptPath()`.  That is, `lars.LambdaPath()[i]` is the `lambda1`
+    value corresponding to the model defined by `lars.BetaPath()[i]` and
+    `lars.InterceptPath()[i]`.
 
 <!-- TODO: implement -->
  * `lars.SelectBeta(lambda1)` will set the model weights (`lars.ActiveSet()`,
@@ -266,14 +267,14 @@ switch between them for prediction purposes:
    cannot be greater than `lars.Lambda1()`, or an exception will be thrown.
 
 <!-- TODO: implement -->
- * `lars.SelectedLambda()` returns the currently selected L1 regularization
+ * `lars.SelectedLambda1()` returns the currently selected L1 regularization
    penalty parameter.
 
  * For any value `lambda1` between `lars.LambdaPath(i)` and `lars.LambdaPath(i +
    1)`, the corresponding model is a linear interpolation between
-   `lars.BetaPath(i)` and `lars.BetaPath(i + 1)` (and `lars.InterceptPath(i)`
-   and `lars.InterceptPath(i + 1)`).  This exact linear interpolation is what is
-   computed by `lars.SelectBeta(lambda1)`.
+   `lars.BetaPath()[i]` and `lars.BetaPath()[i + 1]` (and
+   `lars.InterceptPath()[i]` and `lars.InterceptPath()[i + 1]`).  This exact
+   linear interpolation is what is computed by `lars.SelectBeta(lambda1)`.
 
 ### Simple Examples
 
@@ -290,15 +291,17 @@ test data for each set of weights in the path.
 arma::mat data;
 mlpack::data::Load("wave_energy_farm_100.csv", data, true);
 
-// Split the last row off: it is the responses.
+// Split the last row off: it is the responses.  Also, normalize the responses
+// to [0, 1].
 arma::rowvec responses = data.row(data.n_rows - 1);
-data.shed_rows(data.n_rows - 1);
+responses /= responses.max();
+data.shed_row(data.n_rows - 1);
 
 // Split into a training and test dataset.  20% of the data is held out as a
 // test set.
 arma::mat trainingData, testData;
 arma::rowvec trainingResponses, testResponses;
-data::Split(data, responses, trainingData, trainingResponses, testData,
+mlpack::data::Split(data, responses, trainingData, testData, trainingResponses,
     testResponses, 0.2);
 
 // Train a LARS model with lambda1 = 1e-5 and lambda2 = 1e-6.
@@ -309,13 +312,15 @@ const size_t pathLength = lars.BetaPath().size();
 for (size_t i = 0; i < pathLength; ++i)
 {
   // Use the i'th model in the path.
-  lars.SelectBeta(lars.BetaPath(i));
+  lars.SelectBeta(lars.LambdaPath()[i]);
 
-  std::cout << "L1 penalty parameter: " << lars.SelectedLambda() << std::endl;
-  std::cout << "  MSE on training set: "
-      << lars.ComputeError(trainingData, trainingResponses) << "." << std::endl;
-  std::cout << "  MSE on test set:     "
-      << lars.ComputeError(testData, testResponses) << "." << std::endl;
+  const double trainMSE = lars.ComputeError(trainingData, trainingResponses) /
+      trainingData.n_cols;
+  const double testMSE = lars.ComputeError(testData, testResponses) /
+      testData.n_cols;
+  std::cout << "L1 penalty parameter: " << lars.SelectedLambda1() << std::endl;
+  std::cout << "  MSE on training set: " << trainMSE << "." << std::endl;
+  std::cout << "  MSE on test set:     " << testMSE << "." << std::endl;
 }
 ```
 
@@ -355,7 +360,7 @@ Load a LARS model from disk and print some information about it.
 mlpack::LARS lars;
 mlpack::data::Load("lars_model.bin", "lars", lars, true);
 
-if (lars.Beta().n_elem)
+if (lars.BetaPath().size() == 0)
 {
   std::cout << "lars_model.bin contains an untrained LARS model." << std::endl;
 }
@@ -369,7 +374,7 @@ else
       << (lars.FitIntercept() ? std::string("yes") : std::string("no")) << "."
       << std::endl;
   std::cout << " - Current L1 regularization penalty parameter value: "
-      << lars.SelectedLambda() << "." << std::endl;
+      << lars.SelectedLambda1() << "." << std::endl;
   std::cout << " - L2 regularization penalty parameter: " << lars.Lambda2()
       << "." << std::endl;
   std::cout << " - Number of nonzero elements in model: "
@@ -403,17 +408,17 @@ mlpack::data::Load("admission_predict.responses.csv", responses, true);
 // Precompute Gram matrix.
 arma::mat gramMatrix = data * data.t();
 
-std::vector<double> lambda2Values = { 0.0001, 0.001, 0.01, 0.1, 1.0 };
-for (lambda2 : lambda2Values)
+std::vector<double> lambda2Values = { 0.01, 0.1, 1.0, 10.0, 100.0 };
+for (double lambda2 : lambda2Values)
 {
   // Build a LARS model using the precomputed Gram matrix.  We did not normalize
   // or center the data before computing the Gram matrix, so we have to set
   // fitIntercept and normalizeData accordingly.
-  LARS lars(data, responses, true, true, gramMatrix, 0.01, lambda2, 1e-16,
-      false, false);
+  mlpack::LARS lars(data, responses, true, true, gramMatrix, 0.01, lambda2,
+      1e-16, false, false);
 
   std::cout << "MSE with L2 penalty " << lambda2 << ": "
-      << lars.ComputeError(data, responses) << "." << std::endl;
+      << (lars.ComputeError(data, responses) / data.n_cols) << "." << std::endl;
 }
 ```
 
@@ -439,8 +444,7 @@ The example below trains a LARS model on sparse 32-bit precision data, using
 
 ```c++
 // Create random, sparse 1000-dimensional data.
-arma::sp_fmat dataset;
-dataset.sprandu(1000, 5000, 0.1);
+arma::fmat dataset(1000, 5000, arma::fill::randu);
 
 // Generate noisy responses from random data.
 arma::fvec trueWeights(1000, arma::fill::randu);
@@ -454,16 +458,16 @@ lars.Lambda2() = 0.01;
 lars.Train(dataset, responses);
 
 // Compute the MSE on the training set and a random test set.
-arma::sp_fmat testDataset;
-testDataset.sprandu(1000, 2500, 0.3);
-
+arma::fmat testDataset(1000, 2500, arma::fill::randu);
 arma::frowvec testResponses = trueWeights.t() * testDataset +
     0.01 * arma::randu<arma::frowvec>(2500) /* noise term */;
 
-std::cout << "MSE on training set: "
-    << lars.ComputeError(dataset, responses) << "." << std::endl;
-std::cout << "MSE on test set:     "
-    << lars.ComputeError(testDataset, testResponses) << "." << std::endl;
+const float trainMSE = lars.ComputeError(dataset, responses) / dataset.n_cols;
+const float testMSE = lars.ComputeError(testDataset, testResponses) /
+    testDataset.n_cols;
+
+std::cout << "MSE on training set: " << trainMSE << "." << std::endl;
+std::cout << "MSE on test set:     " << testMSE << "." << std::endl;
 ```
 
 ***Note:*** it is generally only more efficient to use a sparse type (e.g.
