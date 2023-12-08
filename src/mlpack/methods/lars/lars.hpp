@@ -717,6 +717,9 @@ class LARS
 
 } // namespace mlpack
 
+CEREAL_TEMPLATE_CLASS_VERSION((typename ModelMatType),
+    (mlpack::LARS<ModelMatType>), (1));
+
 // Include implementation of serialize().
 #include "lars_impl.hpp"
 

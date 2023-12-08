@@ -375,6 +375,9 @@ class LinearRegression
 
 } // namespace mlpack
 
+CEREAL_TEMPLATE_CLASS_VERSION((typename ModelMatType),
+    (mlpack::LinearRegression<ModelMatType>), (1));
+
 // Include implementation.
 #include "linear_regression_impl.hpp"
 
