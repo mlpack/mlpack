@@ -44,6 +44,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 #### See also:
 
  * [mlpack regression techniques](#mlpack_regression_techniques) <!-- TODO: fix link! -->
+ * [`LARS`](lars.md) <!-- TODO: fix link -->
  * [Linear Regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
 
 ### Constructors

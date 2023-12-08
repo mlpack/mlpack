@@ -208,6 +208,7 @@ can be used to make predictions for new data.
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | _multi-point_ | `predictions` | [`arma::rowvec&`](../matrices.md) | Vector of `double`s to store predictions into.  Will be set to length `data.n_cols`. |
 | _multi-point_ | `colMajor` | `bool` | Should be set to `true` if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation.  (Default `true`.) |
+
 ### Other Functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
