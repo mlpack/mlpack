@@ -124,15 +124,13 @@ inline void AdaBoostModel::Train(const arma::mat& data,
   if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
   {
     delete dsBoost;
-    ID3DecisionStump ds(data, labels, max(labels) + 1);
-    dsBoost = new AdaBoost<ID3DecisionStump>(data, labels, numClasses, ds,
+    dsBoost = new AdaBoost<ID3DecisionStump>(data, labels, numClasses,
         iterations, tolerance);
   }
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
   {
     delete pBoost;
-    Perceptron<> p(data, labels, max(labels) + 1);
-    pBoost = new AdaBoost<Perceptron<>>(data, labels, numClasses, p, iterations,
+    pBoost = new AdaBoost<Perceptron<>>(data, labels, numClasses, iterations,
         tolerance);
   }
 }

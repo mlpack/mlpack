@@ -627,3 +627,25 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
   // Check that the output changed when the decision boundary moved.
   REQUIRE(arma::accu(output1 != output2) > 0);
 }
+
+/**
+ * Check that running the binding with print_training_accuracy set to true
+ * does not crash.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPrintTrainingAccuracyTest",
+                "[LogisticRegressionMainTest][BindingTests]")
+{
+  constexpr int N = 100;
+  constexpr int D = 5;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = arma::randi<arma::Row<size_t>>(N,
+      arma::distr_param(0, 1));
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("print_training_accuracy", true);
+
+  // Run the binding with print_training_accuracy set to true.
+  REQUIRE_NOTHROW(RUN_BINDING());
+}

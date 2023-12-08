@@ -1,8 +1,12 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add `print_training_accuracy` option to LogisticRegression bindings (#3552).
+    
+  * Fix `preprocess_split()` call in documentation for `LinearRegression` and
+    `AdaBoost` Python classes (#3563).
 
 ### mlpack 4.3.0
-###### 2023-11-22
+###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
 
   * Fix L1 regularization in case where weight is zero (#3545).
@@ -19,6 +23,8 @@
 
   * Fix inconsistent use of the "input" parameter to the Backward method in ANNs
     (#3551).
+
+  * Allow passing weak learner hyperparameters directly to AdaBoost (#3560).
 
 ### mlpack 4.2.1
 ###### 2023-09-05

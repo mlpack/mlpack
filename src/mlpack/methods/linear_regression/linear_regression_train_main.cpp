@@ -46,14 +46,14 @@ BINDING_EXAMPLE(
     GET_DATASET("X", "https://example.com") + "\n" +
     GET_DATASET("y", "https://example.com") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
-    "0.2") + "\n" +
-    CREATE_OBJECT("model", "linear_regression") + "\n" +
-    CALL_METHOD("model", "train", "training", "X_train",
-        "training_responses", "y_train"));
+        "0.2") + "\n" +
+    CREATE_OBJECT("lr", "linear_regression") + "\n" +
+    CALL_METHOD("lr", "train", "training", "X_train", "training_responses",
+        "y_train"));
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
-       "@doc/tutorials/linear_regression.md");
+    "@doc/tutorials/linear_regression.md");
 
 PARAM_MATRIX_IN_REQ("training", "Matrix containing training set X (regressors).",
     "t");
