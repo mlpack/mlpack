@@ -239,6 +239,25 @@ TEMPLATE_TEST_CASE("PredictTest", "[LARSTest]", arma::fmat, arma::mat)
           else
             REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(1e-7));
         }
+
+        // Now check with single-point Predict().
+        for (size_t i = 0; i < X.n_cols; ++i)
+        {
+          // Pass different types into Predict() to test templating support.
+          const ElemType pred1 = lars.Predict(X.col(i));
+          const ElemType pred2 = lars.Predict(X.unsafe_col(i));
+
+          if (std::abs(betaOptPred[i]) < 1e-5)
+          {
+            REQUIRE(pred1 == Approx(0.0).margin(1e-5));
+            REQUIRE(pred2 == Approx(0.0).margin(1e-5));
+          }
+          else
+          {
+            REQUIRE(pred1 == Approx(betaOptPred[i]).epsilon(1e-7));
+            REQUIRE(pred2 == Approx(betaOptPred[i]).epsilon(1e-7));
+          }
+        }
       }
     }
   }

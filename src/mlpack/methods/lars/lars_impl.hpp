@@ -960,9 +960,9 @@ inline typename LARS<ModelMatType>::ElemType LARS<ModelMatType>::Predict(
     const VecType& point) const
 {
   if (!fitIntercept)
-    return Beta().t() * point;
+    return arma::dot(Beta(), point);
   else
-    return Beta().t() * point + Intercept();
+    return arma::dot(Beta(), point) + Intercept();
 }
 
 template<typename ModelMatType>
