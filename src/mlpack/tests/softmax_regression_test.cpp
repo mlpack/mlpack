@@ -749,7 +749,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionConstructorVariantTest",
 
   // Specify hyperparameters and two callbacks.
   SoftmaxRegression<MatType> sr5(data, labels, 4, 0.003, true,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
 
   // Specify hyperparameters and optimizer.
   ens::StandardSGD sgd(0.01);
@@ -761,7 +761,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionConstructorVariantTest",
 
   // Specify hyperparameters, optimizer, and two callbacks.
   SoftmaxRegression<MatType> sr8(data, labels, 4, sgd, 0.006, true,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(10.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
 
   // Now we don't care what the training call actually produced, but we do care
   // that the model trained ate all and has the right size (except for the first
@@ -828,7 +828,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionTrainVariantTest",
 
   // Specify hyperparameters and two callbacks.
   sr4.Train(data, labels, 4, 0.003, false, ens::EarlyStopAtMinLoss(),
-      ens::GradClipByNorm(0.1));
+      ens::TimerStop(1000.0));
 
   // Specify hyperparameters and an optimizer.
   ens::AdaDelta adaDelta(0.01);
@@ -839,7 +839,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionTrainVariantTest",
 
   // Specify hyperparameters, an optimizer, and two callbacks.
   sr7.Train(data, labels, 4, adaDelta, 0.006, true, ens::EarlyStopAtMinLoss(),
-      ens::GradClipByNorm(0.1));
+      ens::TimerStop(1000.0));
 
   // Now we don't care what the training actually produced, but we do want to
   // make sure that the model trained at all and has the right size.

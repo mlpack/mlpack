@@ -1109,7 +1109,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
   LogisticRegression<MatType> lr2(data, labels, 0.1);
   LogisticRegression<MatType> lr3(data, labels, 0.1, ens::EarlyStopAtMinLoss());
   LogisticRegression<MatType> lr4(data, labels, 0.1, ens::EarlyStopAtMinLoss(),
-      ens::GradClipByNorm(1000.0));
+      ens::TimerStop(1000.0));
 
   // Specify data and labels and initial point and lambda, and optionally
   // callbacks.
@@ -1118,7 +1118,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
   LogisticRegression<MatType> lr6(data, labels, initialPoint, 0.1,
       ens::EarlyStopAtMinLoss());
   LogisticRegression<MatType> lr7(data, labels, initialPoint, 0.1,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1000.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
 
   // Specify data, labels, optimizer, and lambda, and optionally callbacks.
   ens::AdaDelta optimizer(0.01);
@@ -1126,7 +1126,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
   LogisticRegression<MatType> lr9(data, labels, optimizer, 0.1,
       ens::EarlyStopAtMinLoss());
   LogisticRegression<MatType> lr10(data, labels, optimizer, 0.1,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1000.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
 
   // Specify data, labels, optimizer, initial point, and lambda, and optionally
   // callbacks.
@@ -1134,7 +1134,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
   LogisticRegression<MatType> lr12(data, labels, optimizer, initialPoint, 0.1,
       ens::EarlyStopAtMinLoss());
   LogisticRegression<MatType> lr13(data, labels, optimizer, initialPoint, 0.1,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1000.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
 
   // Now we don't care what the training actually produced, but we do care that
   // the model trained at all and has the right size (except for the first one).
@@ -1172,7 +1172,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
   // Specify data and labels only, and optionally callbacks.
   lr1.Train(data, labels);
   lr2.Train(data, labels, ens::EarlyStopAtMinLoss());
-  lr3.Train(data, labels, ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+  lr3.Train(data, labels, ens::EarlyStopAtMinLoss(), ens::TimerStop(1.0));
 
   // Specify data and labels only, with a different optimizer, and optionally
   // callbacks.
@@ -1180,13 +1180,13 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
   lr5.template Train<ens::GradientDescent>(data, labels,
       ens::EarlyStopAtMinLoss());
   lr6.template Train<ens::GradientDescent>(data, labels,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1.0));
 
   // Specify data, labels, and lambda, and optionally callbacks.
   lr7.Train(data, labels, 0.1);
   lr8.Train(data, labels, 0.1, ens::EarlyStopAtMinLoss());
   lr9.Train(data, labels, 0.1, ens::EarlyStopAtMinLoss(),
-      ens::GradClipByNorm(1.0));
+      ens::TimerStop(1.0));
 
   // Specify data, labels, and lambda, using a different optimizer, and
   // optionally callbacks.
@@ -1194,7 +1194,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
   lr11.template Train<ens::StandardSGD>(data, labels, 0.1,
       ens::EarlyStopAtMinLoss());
   lr12.template Train<ens::StandardSGD>(data, labels, 0.1,
-      ens::EarlyStopAtMinLoss(), ens::GradClipByNorm(1.0));
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1.0));
 
   // Specify data, labels, and an instantiated optimizer, optionally with
   // callbacks.
@@ -1202,14 +1202,14 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
   lr13.Train(data, labels, optimizer);
   lr14.Train(data, labels, optimizer, ens::EarlyStopAtMinLoss());
   lr15.Train(data, labels, optimizer, ens::EarlyStopAtMinLoss(),
-      ens::GradClipByNorm(1.0));
+      ens::TimerStop(1.0));
 
   // Specify data, labels, an instantiated optimizer, and lambda, optionally
   // with callbacks.
   lr16.Train(data, labels, optimizer, 0.1);
   lr17.Train(data, labels, optimizer, 0.1, ens::EarlyStopAtMinLoss());
   lr18.Train(data, labels, optimizer, 0.1, ens::EarlyStopAtMinLoss(),
-      ens::GradClipByNorm(1.0));
+      ens::TimerStop(1.0));
 
   REQUIRE(lr1.Parameters().n_elem == 51);
   REQUIRE(lr2.Parameters().n_elem == 51);
