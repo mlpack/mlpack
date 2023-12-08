@@ -1326,12 +1326,12 @@ LARS<ModelMatType>::ComputeError(const MatType& matX,
 {
   if (rowMajor)
   {
-    return arma::accu(arma::pow(y - trans(matX * betaPath.back()), 2.0));
+    return arma::accu(arma::pow(y - trans(matX * Beta()) - Intercept(), 2.0));
   }
 
   else
   {
-    return arma::accu(arma::pow(y - betaPath.back().t() * matX, 2.0));
+    return arma::accu(arma::pow(y - Beta().t() * matX - Intercept(), 2.0));
   }
 }
 
