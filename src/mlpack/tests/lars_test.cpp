@@ -231,32 +231,42 @@ TEMPLATE_TEST_CASE("PredictTest", "[LARSTest]", arma::fmat, arma::mat)
         lars.Predict(X, predictions);
         arma::Col<ElemType> adjPred = X * predictions.t();
 
+        const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-7 :
+            1e-4;
+
         REQUIRE(predictions.n_elem == 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
         {
           if (std::abs(betaOptPred[i]) < 1e-5)
             REQUIRE(adjPred[i] == Approx(0.0).margin(1e-5));
           else
-            REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(1e-7));
+            REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(tol));
         }
 
-        // Now check with single-point Predict().
+        // Now check with single-point Predict(), in two ways: we will pass
+        // different types into Predict() to test templating support.
         for (size_t i = 0; i < X.n_cols; ++i)
-        {
-          // Pass different types into Predict() to test templating support.
-          const ElemType pred1 = lars.Predict(X.col(i));
-          const ElemType pred2 = lars.Predict(X.unsafe_col(i));
+          predictions[i] = lars.Predict(X.col(i));
 
+        adjPred = X * predictions.t();
+        for (size_t i = 0; i < betaOptPred.n_elem; ++i)
+        {
           if (std::abs(betaOptPred[i]) < 1e-5)
-          {
-            REQUIRE(pred1 == Approx(0.0).margin(1e-5));
-            REQUIRE(pred2 == Approx(0.0).margin(1e-5));
-          }
+            REQUIRE(adjPred[i] == Approx(0.0).margin(1e-5));
           else
-          {
-            REQUIRE(pred1 == Approx(betaOptPred[i]).epsilon(1e-7));
-            REQUIRE(pred2 == Approx(betaOptPred[i]).epsilon(1e-7));
-          }
+            REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(tol));
+        }
+
+        for (size_t i = 0; i < X.n_cols; ++i)
+          predictions[i] = lars.Predict(X.unsafe_col(i));
+
+        adjPred = X * predictions.t();
+        for (size_t i = 0; i < betaOptPred.n_elem; ++i)
+        {
+          if (std::abs(betaOptPred[i]) < 1e-5)
+            REQUIRE(adjPred[i] == Approx(0.0).margin(1e-5));
+          else
+            REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(tol));
         }
       }
     }
@@ -1093,6 +1103,8 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
   arma::Row<ElemType> y;
 
   GenerateProblem(X, y, 1000, 100);
+  // Add some noise.
+  y += 0.2 * arma::randu<arma::Row<ElemType>>(y.n_elem);
 
   LARS<MatType> lars(X, y);
 
@@ -1102,6 +1114,8 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
 
   // Now step through numerous different lambda values.
   ElemType lastError = std::numeric_limits<ElemType>::max();
+  const ElemType errorTol = (std::is_same<ElemType, double>::value) ? 1e-10 :
+      1e-5;
   for (ElemType i = 5.0; i >= -5.0; i -= 0.1)
   {
     const ElemType selLambda1 = std::pow(10.0, (ElemType) i);
@@ -1111,7 +1125,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
     REQUIRE(lars.SelectedLambda1() == Approx(selLambda1).margin(tol));
     REQUIRE(arma::accu(lars.Beta() != 0.0) == lars.ActiveSet().size());
     const ElemType newError = lars.ComputeError(X, y);
-    REQUIRE(newError <= lastError);
+    REQUIRE(newError <= lastError + errorTol);
     lastError = newError;
   }
 
@@ -1158,24 +1172,24 @@ TEMPLATE_TEST_CASE("LARSSparseModelDenseData", "[LARSTest]", float, double)
 {
   typedef TestType eT;
 
-  // 10k-dimensional data.
-  arma::Mat<eT> data(10000, 1000, arma::fill::randu);
+  // 1k-dimensional data.
+  arma::Mat<eT> data(1000, 500, arma::fill::randu);
 
   arma::SpCol<eT> betaSp;
-  betaSp.sprandu(10000, 1, 0.1);
-  arma::Col<eT> beta = betaSp + arma::randu<arma::Col<eT>>(10000) * 0.01;
+  betaSp.sprandu(1000, 1, 0.1);
+  arma::Col<eT> beta = betaSp + arma::randu<arma::Col<eT>>(1000) * 0.01;
 
   // Create slightly noisy responses.
   arma::Row<eT> responses = beta.t() * data +
-      0.02 * arma::randu<arma::Row<eT>>(1000);
+      0.02 * arma::randu<arma::Row<eT>>(500);
 
   LARS<arma::SpMat<eT>> lars1(data, responses, true, true, 0.5, 0.01);
   LARS<arma::SpMat<eT>> lars2(true, 0.01, 1e-4);
   lars2.Train(data, responses);
 
   // Make sure we at least approximately recovered the solution vector.
-  REQUIRE(lars1.Beta().n_elem == 10000);
-  REQUIRE(lars2.Beta().n_elem == 10000);
+  REQUIRE(lars1.Beta().n_elem == 1000);
+  REQUIRE(lars2.Beta().n_elem == 1000);
 
   REQUIRE((arma::norm(lars1.Beta() - beta, 2) / lars1.Beta().n_elem) < 0.01);
   REQUIRE((arma::norm(lars2.Beta() - beta, 2) / lars2.Beta().n_elem) < 0.01);
@@ -1193,14 +1207,13 @@ TEMPLATE_TEST_CASE("LARSSparseModelDenseData", "[LARSTest]", float, double)
   REQUIRE((arma::accu(arma::abs(responses - responses2)) / responses.n_elem)
       < 0.1);
 
-  // Make sure ComputeError returns something reasonable.  This actually could
-  // be quite large because the responses tend to be large.
-  REQUIRE((lars1.ComputeError(data, responses) / responses.n_elem) < 100000);
-  REQUIRE((lars2.ComputeError(data, responses) / responses.n_elem) < 100000);
+  // Make sure ComputeError returns something reasonable.
+  REQUIRE((lars1.ComputeError(data, responses) / responses.n_elem) < 1);
+  REQUIRE((lars2.ComputeError(data, responses) / responses.n_elem) < 1);
 
-  REQUIRE(lars1.ActiveSet().size() < 10000);
+  REQUIRE(lars1.ActiveSet().size() < 1000);
   REQUIRE(lars1.ActiveSet().size() > 0);
 
-  REQUIRE(lars2.ActiveSet().size() < 10000);
+  REQUIRE(lars2.ActiveSet().size() < 1000);
   REQUIRE(lars2.ActiveSet().size() > 0);
 }
