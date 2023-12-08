@@ -141,7 +141,7 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
 
     bool useCholesky = false;
     // Normalization and fitting and intercept are disabled.
-    LARS lars(useCholesky, 0.5 * lambda, 0, 1e-16 /* default tolerance */,
+    LARS<> lars(useCholesky, 0.5 * lambda, 0, 1e-16 /* default tolerance */,
         false, false);
 
     // Run LARS for this point, by making an alias of the point and passing

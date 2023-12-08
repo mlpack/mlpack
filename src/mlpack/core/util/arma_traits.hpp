@@ -131,4 +131,22 @@ struct GetColType<arma::SpMat<eT>>
   typedef arma::SpCol<eT> type;
 };
 
+template<typename MatType>
+struct GetDenseMatType
+{
+  typedef MatType type; // Not sure...
+};
+
+template<typename eT>
+struct GetDenseMatType<arma::Mat<eT>>
+{
+  typedef arma::Mat<eT> type;
+};
+
+template<typename eT>
+struct GetDenseMatType<arma::SpMat<eT>>
+{
+  typedef arma::Mat<eT> type;
+};
+
 #endif

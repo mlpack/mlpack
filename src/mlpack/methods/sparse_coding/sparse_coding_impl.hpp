@@ -71,7 +71,7 @@ inline void SparseCoding::Encode(const arma::mat& data,
 
     bool useCholesky = true;
     // Intercept fitting and data normalization is disabled.
-    LARS lars(useCholesky, lambda1, lambda2, 1e-16 /* default tolerance */,
+    LARS<> lars(useCholesky, lambda1, lambda2, 1e-16 /* default tolerance */,
         false, false);
 
     // Create an alias of the code (using the same memory), and then LARS will

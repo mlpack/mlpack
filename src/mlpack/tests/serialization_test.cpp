@@ -1061,11 +1061,11 @@ TEST_CASE("LARSTest", "[SerializationTest]")
   arma::vec beta = arma::randn(75, 1);
   arma::rowvec y = beta.t() * X;
 
-  LARS lars(true, 0.1, 0.1);
+  LARS<> lars(true, 0.1, 0.1);
   lars.Train(X, y);
 
   // Now, serialize.
-  LARS xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
+  LARS<> xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
       jsonLars(false, 0.1, 0.1);
 
   // Train jsonLars.
