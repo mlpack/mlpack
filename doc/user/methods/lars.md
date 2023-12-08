@@ -92,8 +92,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 | `data` | [`arma::mat`](../matrices.md) | Training matrix. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `colMajor` | `bool` | Should be set to `true` if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation. | `false` |
-| `useCholesky` | `bool` | If `true`, use the Cholesky decomposition of the Gram
-matrix to solve linear systems (as opposed to the full Gram matrix). | `true` |
+| `useCholesky` | `bool` | If `true`, use the Cholesky decomposition of the Gram matrix to solve linear systems (as opposed to the full Gram matrix). | `false` |
 | `gramMatrix` | [`arma::mat`](../matrices.md) | Precomputed Gram matrix of `data` (i.e.  `data * data.t()` for column-major data). | _(N/A)_ |
 | `lambda1` | `double` | L1 regularization penalty parameter. | `0.0` |
 | `lambda2` | `double` | L2 regularization penalty parameter. | `0.0` |
@@ -193,7 +192,7 @@ can be used to make predictions for new data.
 
 ---
 
- * `lars.Predict(data, predictions)`
+ * `lars.Predict(data, predictions, colMajor=true)`
    - ***(Multi-point)***
    - Make predictions for a set of points.
    - The prediction for data point `i` can be accessed with `predictions[i]`.
@@ -208,7 +207,7 @@ can be used to make predictions for new data.
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | _multi-point_ | `predictions` | [`arma::rowvec&`](../matrices.md) | Vector of `double`s to store predictions into.  Will be set to length `data.n_cols`. |
-
+| _multi-point_ | `colMajor` | `bool` | Should be set to `true` if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation.  (Default `true`.) |
 ### Other Functionality
 
 <!-- TODO: we should point directly to the documentation of those functions -->
@@ -227,7 +226,7 @@ can be used to make predictions for new data.
  * `lars.ActiveSet()` will return a `std::vector<size_t>&` containing the
    indices of nonzero dimensions in the model parameters (`lars.Beta()`).
 
- * `lars.ComputeError(data, responses, colMajor=false)` will return a `double`
+ * `lars.ComputeError(data, responses, colMajor=true)` will return a `double`
    containing the squared error of the model on `data`, given that
    the true responses are `responses`.  To obtain the MSE, divide by the number
    of points in `data`.
@@ -260,15 +259,15 @@ switch between them for prediction purposes:
    `lars.Beta()` and `lars.Intercept()`) to the path location with L1 penalty
    `lambda1`.  This is equivalent to calling `lars.Train(data, responses,
    colMajor, useCholesky, lambda1)`---but much more efficient!  `lambda1`
-   cannot be greater than `lars.Lambda1()`, or an exception will be thrown.
+   cannot be less than `lars.Lambda1()`, or an exception will be thrown.
 
 <!-- TODO: implement -->
  * `lars.SelectedLambda1()` returns the currently selected L1 regularization
    penalty parameter.
 
- * For any value `lambda1` between `lars.LambdaPath(i)` and `lars.LambdaPath(i +
-   1)`, the corresponding model is a linear interpolation between
-   `lars.BetaPath()[i]` and `lars.BetaPath()[i + 1]` (and
+ * For any value `lambda1` between `lars.LambdaPath()[i]` and
+   `lars.LambdaPath()[i + 1]`, the corresponding model is a linear interpolation
+   between `lars.BetaPath()[i]` and `lars.BetaPath()[i + 1]` (and
    `lars.InterceptPath()[i]` and `lars.InterceptPath()[i + 1]`).  This exact
    linear interpolation is what is computed by `lars.SelectBeta(lambda1)`.
 
@@ -310,6 +309,8 @@ for (size_t i = 0; i < pathLength; ++i)
   // Use the i'th model in the path.
   lars.SelectBeta(lars.LambdaPath()[i]);
 
+  // ComputeError() returns the total loss, which we need to divide by the
+  // number of points to get the MSE.
   const double trainMSE = lars.ComputeError(trainingData, trainingResponses) /
       trainingData.n_cols;
   const double testMSE = lars.ComputeError(testData, testResponses) /
@@ -433,10 +434,10 @@ used.
 
 Note that the `Train()` and `Predict()` functions themselves are templatized and
 can allow any matrix type that has the same element type.  So, for instance, a
-`LARS<arma::mat>` can accept an `arma::sp_mat` for training.
+`LARS<arma::sp_mat>` can accept an `arma::mat` for training.
 
-The example below trains a LARS model on sparse 32-bit precision data, using
-`arma::sp_mat` to store the model parameters.
+The example below trains a LARS model on 32-bit precision data, using
+`arma::sp_fmat` to store the model parameters.
 
 ```c++
 // Create random, sparse 1000-dimensional data.
