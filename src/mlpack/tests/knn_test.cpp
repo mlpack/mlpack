@@ -17,6 +17,18 @@
 using namespace mlpack;
 
 /**
+ * A couple of handful declarations for float32 testing.
+ * These will be removed when we refactor the Bounds to accept MatType.
+ * For now, we will keep the following declarations.
+ */
+template<typename MetricType>
+using FloatHRectBound = HRectBound<MetricType, float>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using FloatKDTree = BinarySpaceTree<MetricType, StatisticType, MatType,
+                                    FloatHRectBound, MidpointSplit>;
+
+/**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).
  */
 TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
@@ -763,12 +775,16 @@ TEST_CASE("KNNSingleTreeVsNaiveF32", "[KNNTest]")
   if (!data::Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::fmat>
-    knn(dataset, SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort,
+                 EuclideanDistance,
+                 arma::fmat,
+                 FloatKDTree> knn(dataset, SINGLE_TREE_MODE);
 
   // Set up computation for naive mode.
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::fmat>
-    naive(dataset, NAIVE_MODE);
+  NeighborSearch<NearestNeighborSort,
+                 EuclideanDistance,
+                 arma::fmat,
+                 FloatKDTree> naive(dataset, NAIVE_MODE);
 
   arma::Mat<size_t> neighborsTree;
   arma::fmat distancesTree;
