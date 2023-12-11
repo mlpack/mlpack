@@ -1335,7 +1335,18 @@ void HoeffdingTree<
         // Train(), since the col() function is not provided.  So,
         // unfortunately, instead, we'll just extract the non-contiguous
         // submatrix.
-        MatType childData = data.cols(indices[i].subvec(0, counts[i] - 1));
+        //
+        // I'd rather be able to use:
+        //
+        // arma::Mat<typename MatType::elem_type> childData =
+        //     data.cols(indices[i].subvec(0, counts[i] - 1));
+        //
+        // but this isn't currently supported by Armadillo.
+        arma::Mat<typename MatType::elem_type> childData(data.n_rows,
+            counts[i]);
+        for (size_t j = 0; j < counts[i]; ++j)
+          childData.col(j) = data.col(indices[i][j]);
+
         children[i]->Train(childData, childLabels, numClasses, true);
       }
     }
