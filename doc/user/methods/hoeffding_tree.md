@@ -540,6 +540,11 @@ class CustomNumericSplit
    structure `SplitInfo` that is used at classification time:
 
 ```c++
+// The job of this class is to track sufficient statistics of training data,
+// returning gain information if a split were to happen according to this
+// class's split strategy.
+//
+// For details, consult the HoeffdingCategoricalSplit class implementation.
 template<typename FitnessFunction>
 class CustomCategoricalSplit
 {
