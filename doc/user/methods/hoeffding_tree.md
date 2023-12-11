@@ -6,8 +6,8 @@ Gini impurity to choose which feature to split on.  The class offers several
 template parameters and several runtime options that can be used to control the
 behavior of the tree.
 
-Hoeffding trees are useful for classifying points with _discrete labels_ (i.e.
-`0`, `1`, `2`).
+Hoeffding trees (also known as "Very Fast Decision Trees" or VFDTs) are useful
+for classifying points with _discrete labels_ (i.e.  `0`, `1`, `2`).
 
 #### Simple usage example:
 
@@ -57,13 +57,13 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
  * `tree = HoeffdingTree()`
    - Initialize tree without training.
-   - You will need to call [`Train()`](#training) later to train the tree before
-     calling [`Classify()`](#classification).
+   - You will need to call the batch version of [`Train()`](#training) later to
+     train the tree before calling [`Classify()`](#classification).
 
 ---
 
- * `tree = HoeffdingTree(numClasses)`
- * `tree = HoeffdingTree(numClasses, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
+ * `tree = HoeffdingTree(dimensionality, numClasses)`
+ * `tree = HoeffdingTree(dimensionality, numClasses, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
    - Initialize tree for incremental training on numerical-only data.
    - The single-point [`Train()`](#training) function can be used to train
      incrementally.
@@ -105,6 +105,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
 | `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `dimensionality` | `size_t` | When using on numeric-only data, this specifies the number of dimensions in the data. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `batchTraining` | `bool` | If `true`, a batch training algorithm is used, instead of the usual incremental algorithm.  This is generally more efficient for larger datasets. | `true` |
 | `successProbability` | `double` | Probability of success required for Hoeffding bound before a node split can happen. | `0.95` |
@@ -125,22 +126,31 @@ of the following versions of the `Train()` member function:
 
  * `tree.Train(point, label)`
    - Streaming (incremental) training: train on a single data point.
+   - The number of classes and dataset information must have already been
+     specified by a previous constructor, `Train()`, or `Reset()` call.
 
 ---
 
-<!-- TODO: deprecate existing similar version -->
-
+ * `tree.Train(data, labels)`
  * `tree.Train(data, labels, numClasses)`
  * `tree.Train(data, labels, numClasses, batchTraining=true, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
-   - Train on numerical-only data.
+   - Train on the given data.
+   - If the data is mixed categorical, then `datasetInfo` should have already
+     been passed via a previous constructor, `Train()`, or `Reset()` call.
+   - `numClasses` does not need to be specified if it has been specified in an
+     earlier constructor or `Train()` call.
 
 ---
 
-<!-- TODO: deprecate existing similar version -->
-
+ * `tree.Train(data, datasetInfo, labels)`
  * `tree.Train(data, datasetInfo, labels, numClasses)`
  * `tree.Train(data, datasetInfo, labels, numClasses, batchTraining=true, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
    - Train on mixed categorical data.
+   - The previous overload (without `datasetInfo`) can be used instead if
+     `datasetInfo` has already been passed in a previous constructor, `Train()`,
+     or `Reset()` call, and has not changed.
+   - `numClasses` does not need to be specified if it has been specified in an
+     earlier constructor or `Train()` call.
 
 ---
 
@@ -164,13 +174,11 @@ to make class predictions for new data.
 
 ---
 
-<!-- TODO: deprecate old version and implement -->
-
- * `tree.Classify(point, prediction, probabilitiesVec)`
+ * `tree.Classify(point, prediction, probability)`
     - ***(Single-point)***
     - Classify a single point and compute class probabilities.
     - The predicted class is stored in `prediction`.
-    - The probability of class `i` can be accessed with `probabilitiesVec[i]`.
+    - The probability of class `i` is stored in `probability`.
 
 ---
 
@@ -181,14 +189,12 @@ to make class predictions for new data.
 
 ---
 
-<!-- TODO: deprecate old version and implement -->
-
  * `tree.Classify(data, predictions, probabilities)`
     - ***(Multi-point)***
     - Classify a set of points and compute class probabilities for each point.
     - The prediction for data point `i` can be accessed with `predictions[i]`.
-    - The probability of class `j` for data point `i` can be accessed with
-      `probabilities(j, i)`.
+    - The probability of class `predictions[i]` for data point `i` can be
+      accessed with `probabilities[i]`.
 
 ---
 
@@ -198,11 +204,11 @@ to make class predictions for new data.
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
+| _single-point_ | `probability` | `double&` | `double` to store predicted class probability into. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
-| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes, number of columns will be equal to `data.n_cols`). |
+| _multi-point_ | `probabilities` | [`arma::rowvec&`](../matrices.md) | Vector to store probability of predicted class in for each point.  Will be set to length `data.n_cols`. |
 
 ***Note:*** different types can be used for `data` and `point` (e.g.
 `arma::fmat`, `arma::sp_mat`, `arma::sp_vec`, etc.).  However, the element type
@@ -227,10 +233,22 @@ that is used should be the same type that was used for training.
  * `tree.SplitDimension()` returns a `size_t` indicating which dimension the
    node `tree` splits on.
 
-<!-- TODO: implement -->
+ * `tree.NumSamples()` returns a `size_t` indicating the number of points seen
+   so far by `tree`, if `tree` has not yet split.  If `tree` has split (i.e. if
+   `tree.NumChildren() > 0`), then what is returned is the number of points seen
+   up until the split occurred.
 
  * `tree.NumClasses()` returns a `size_t` indicating the number of classes the
    tree was trained on.
+
+ * `tree.Reset()` will reset the tree to an empty tree, and:
+   - `tree.Reset()` will leave the number of classes and dataset information
+     (e.g. `datasetInfo`) intact.
+   - `tree.Reset(dimensionality, numClasses)` will set the number of classes to
+     `numClasses` and set the dimensionality of the data to `dimensionality`,
+     assuming all dimensions are numeric.
+   - `tree.Reset(datasetInfo, numClasses)` will set the number of classes to
+     `numClasses` and set the dataset information to `datasetInfo`.
 
 For complete functionality, the [source
 code](/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp) can be consulted.
@@ -357,6 +375,66 @@ else
 
 ---
 
+Train a tree, reset a tree, and train again.
+
+```c++
+// See the following files:
+//  - https://datasets.mlpack.org/covertype.train.arff.
+//  - https://datasets.mlpack.org/covertype.train.labels.csv.
+//  - https://datasets.mlpack.org/covertype.test.arff.
+//  - https://datasets.mlpack.org/covertype.test.labels.arff.
+
+arma::mat dataset, testDataset;
+arma::Row<size_t> labels, testLabels;
+mlpack::data::DatasetInfo info;
+
+mlpack::data::Load("covertype.train.arff", dataset, info, true);
+mlpack::data::Load("covertype.train.labels.csv", labels, true);
+mlpack::data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
+
+// Create a tree, and train on the training data.
+mlpack::HoeffdingTree tree(info, 7 /* number of classes */, 0.98);
+tree.MinSamples() = 500;
+tree.CheckInterval() = 500;
+
+tree.Train(dataset, labels);
+
+// Print accuracy on the training and test set.
+arma::Row<size_t> predictions, testPredictions;
+tree.Classify(dataset, predictions);
+tree.Classify(testDataset, testPredictions);
+
+double trainAcc = (100.0 * arma::accu(predictions == labels)) / labels.n_elem;
+double testAcc = (100.0 * arma::accu(testPredictions == testLabels)) /
+    testLabels.n_elem;
+
+std::cout << "When trained on the training data:" << std::endl;
+std::cout << "  - Training set accuracy: " << trainAcc << "\%." << std::endl;
+std::cout << "  - Test set accuracy:     " << testAcc << "\%." << std::endl;
+
+// Now reset the tree, and train on the test set instead.
+// The dataset info and number of classes has not changed, so we can just call
+// Reset() with no arguments.
+tree.Reset();
+tree.Train(testDataset, testLabels);
+
+// Print accuracy on the training and test set, now that we have trained on the
+// test set.
+tree.Classify(dataset, predictions);
+tree.Classify(testDataset, testPredictions);
+
+trainAcc = (100.0 * arma::accu(predictions == labels)) / labels.n_elem;
+testAcc = (100.0 * arma::accu(testPredictions == testLabels)) /
+    testLabels.n_elem;
+
+std::cout << "When trained on the test data:" << std::endl;
+std::cout << "  - Training set accuracy: " << trainAcc << "\%." << std::endl;
+std::cout << "  - Test set accuracy:     " << testAcc << "\%." << std::endl;
+```
+
+---
+
 ### Advanced Functionality: Template Parameters
 
 #### Using different element types.
@@ -441,18 +519,23 @@ class CustomFitnessFunction
 
  * Specifies the strategy to be used during training when splitting a numeric
    feature.
- * The `HoeffdingDoubleNumericSplit` _(default)_ class is available for drop-in
-   usage and discretizes the given numeric data into a default of 10 bins.  This
-   expects `double` to be the type of the input data.
- * The `HoeffdingFloatNumericSplit` class is available for drop-in usage and
-   operates similarly to `HoeffdingDoubleNumericSplit`, but expects `float` to
-   be the type of the input data.
- * The `BinaryNumericSplit` class is available for drop-in usage and splits
-   numeric features in two in the way that maximizes gain.  This split type is
-   more computationally expensive during training.
+
+ * Several options are already implemented and available for drop-in usage.
+   - The `HoeffdingDoubleNumericSplit` _(default)_ class discretizes the given
+     numeric data into a default of 10 bins.  This expects `double` to be the
+     type of the input data.
+   - The `HoeffdingFloatNumericSplit` class operates similarly to
+     `HoeffdingDoubleNumericSplit`, but expects `float` to be the type of the
+     input data.
+   - The `BinaryNumericSplit` class splits numeric features in two in the way
+     that maximizes gain.  This split type is more computationally expensive
+     during training.
+
  * A custom class must take a [`FitnessFunction`](#fitness-function) as a
    template parameter, implement several functions, and have an internal
    structure `SplitInfo` that is used at classification time:
+
+TODO: note about constructor arguments
 
 ```c++
 // The job of this class is to track sufficient statistics of training data,
@@ -533,11 +616,15 @@ class CustomNumericSplit
 
  * Specifies the strategy to be used during training when splitting a
     categorical feature.
+
  * The `HoeffdingCategoricalSplit` _(default)_ is available for drop-in usage
    and splits all categories into their own node.
+
  * A custom class must take a [`FitnessFunction`](#fitness-function) as a
    template parameter, implement several functions, and have an internal
    structure `SplitInfo` that is used at classification time:
+
+TODO: note about constructor arguments
 
 ```c++
 // The job of this class is to track sufficient statistics of training data,
