@@ -80,14 +80,17 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
  * `tree = HoeffdingTree(data, labels, numClasses)
  * `tree = HoeffdingTree(data, labels, numClasses, batchTraining=true, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
-   - Train non-incrementally on numerical-only data.
-    TODO: should this actually be numerical-only?
+   - Train non-incrementally on the given data.
+   - The tree will be reset if `numClasses` or the data's dimensionality does
+     not match the current settings of the tree.
 
 ---
 
  * `tree = HoeffdingTree(data, datasetInfo, labels, numClasses)
  * `tree = HoeffdingTree(data, datasetInfo, labels, numClasses, batchTraining=true, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
    - Train non-incrementally on mixed categorical data.
+   - The tree will be reset if `numClasses` or `datasetInfo` does not match the
+     current settings of the tree.
 
 ---
 
@@ -113,11 +116,28 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | `checkInterval` | `size_t` | Number of samples required before each split check.  Higher values check less often, which is more efficient, but may not split a node as early as possible. | `100` |
 | `minSamples` | `size_t` | Minimum number of samples for a node to see before a split is allowed. | `100` |
 
+As an alternative to passing hyperparameters, these can be set with a
+standalone method.  The following functions can be used before calling
+`Train()`:
+
+ * `tree.SuccessProbability(successProbability);` will set the required success
+   probability for splitting to `successProbability`.
+ * `tree.MaxSamples(maxSamples);` will set the maximum number of samples before
+   a split to `maxSamples`.
+ * `tree.CheckInterval(checkInterval);` will set the number of samples between
+   split checks to `checkInterval`.
+ * `tree.MinSamples(minSamples);` will set the minimum number of samples before
+   a split to `minSamples`.
+
+***Notes:***
+
  * Setting `successProbability` higher than the default means that the Hoeffding
    tree is less likely (and will take more samples) to split a node.  This can
    result in a smaller tree.
 
-***Note:*** different types can be used for `data` (e.g., `arma::fmat`, `arma::sp_mat`).
+ * Different types can be used for `data` (e.g., `arma::fmat`, `arma::sp_mat`).
+   See [template parameters](#advanced-functionality-template-parameters) for
+   using different `NumericSplitType`s that accept different element types.
 
 ### Training
 
@@ -288,15 +308,15 @@ mlpack::data::Load("covertype.test.arff", testDataset, info, true);
 
 // Predict class of first test point.
 const size_t firstPrediction = tree.Classify(testDataset.col(0));
-std::cout << "Predicted class of first test point is " << firstPrediction << "."
+std::cout << "First test point has predicted class " << firstPrediction << "."
     << std::endl;
 
 // Predict class and probabilities of second test point.
 size_t secondPrediction;
-arma::vec secondProbabilities;
-tree.Classify(testDataset.col(1), secondPrediction, secondProbabilities);
-std::cout << "Class probabilities of second test point: " <<
-    secondProbabilities.t();
+double secondProbability;
+tree.Classify(testDataset.col(1), secondPrediction, secondProbability);
+std::cout << "Second test point has predicted class " << secondPrediction
+    << " with probability " << secondProbability << "." << std::endl;
 ```
 
 ---
@@ -326,20 +346,20 @@ arma::Row<size_t> testLabels;
 mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
 
 // Create the tree with custom parameters.
-mlpack::HoeffdingTree tree;
-tree.SuccessProbability() = 0.99;
-tree.CheckInterval() = 500;
+mlpack::HoeffdingTree tree(info, 7 /* number of classes */);
+tree.SuccessProbability(0.99);
+tree.CheckInterval(500);
 
 // Now iterate over 10k-point chunks in the dataset.
-for (size_t start = 0; start < data.n_cols; start += 10000)
+for (size_t start = 0; start < dataset.n_cols; start += 10000)
 {
-  size_t end = std::min(start + 9999, data.n_cols - 1);
+  size_t end = std::min(start + 9999, (size_t) dataset.n_cols - 1);
 
   tree.Train(dataset.cols(start, end), info, labels.subvec(start, end));
 
   // Compute accuracy on the test set.
   arma::Row<size_t> predictions;
-  tree.Predict(testDataset, predictions);
+  tree.Classify(testDataset, predictions);
   const double accuracy = 100.0 * arma::accu(predictions == testLabels) /
       testLabels.n_elem;
 
@@ -395,8 +415,8 @@ mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
 
 // Create a tree, and train on the training data.
 mlpack::HoeffdingTree tree(info, 7 /* number of classes */, 0.98);
-tree.MinSamples() = 500;
-tree.CheckInterval() = 500;
+tree.MinSamples(500);
+tree.CheckInterval(500);
 
 tree.Train(dataset, labels);
 
@@ -531,11 +551,17 @@ class CustomFitnessFunction
      that maximizes gain.  This split type is more computationally expensive
      during training.
 
+ * If a non-default `NumericSplitType` is specified, the following constructor
+   forms can be used to pass constructed `NumericSplitType`s to the
+   `HoeffdingTree` to use as copy-constructed templates during splitting:
+    - `HoeffdingTree(dimensionality, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+    - `HoeffdingTree(datasetInfo, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+    - `HoeffdingTree(data, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+    - `HoeffdingTree(data, datasetInfo, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+
  * A custom class must take a [`FitnessFunction`](#fitness-function) as a
    template parameter, implement several functions, and have an internal
    structure `SplitInfo` that is used at classification time:
-
-TODO: note about constructor arguments
 
 ```c++
 // The job of this class is to track sufficient statistics of training data,
@@ -620,11 +646,17 @@ class CustomNumericSplit
  * The `HoeffdingCategoricalSplit` _(default)_ is available for drop-in usage
    and splits all categories into their own node.
 
+ * If a non-default `CategoricalSplitType` is specified, the following
+   constructor forms can be used to pass constructed `CategoricalSplitType`s to
+   the `HoeffdingTree` to use as copy-constructed templates during splitting:
+    - `HoeffdingTree(dimensionality, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+    - `HoeffdingTree(datasetInfo, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+    - `HoeffdingTree(data, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+    - `HoeffdingTree(data, datasetInfo, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
+
  * A custom class must take a [`FitnessFunction`](#fitness-function) as a
    template parameter, implement several functions, and have an internal
    structure `SplitInfo` that is used at classification time:
-
-TODO: note about constructor arguments
 
 ```c++
 // The job of this class is to track sufficient statistics of training data,
