@@ -278,6 +278,12 @@ std::cout << "Random point class prediction: " << prediction << "."
 std::cout << "Random point class probabilities: " << probabilities.t();
 ```
 
+---
+
+See also the following fully-working examples:
+
+ - [Microchip QA Classification using `NaiveBayesClassifier`](https://github.com/mlpack/examples/blob/master/microchip_quality_control_naive_bayes/microchip-quality-control-naive-bayes-cpp.ipynb)
+
 ### Advanced Functionality: Different Element Types
 
 The `NaiveBayesClassifier` class has one template parameter that can be used to
