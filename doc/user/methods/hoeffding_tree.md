@@ -78,7 +78,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 ---
 
- * `tree = HoeffdingTree(data, labels, numClasses)
+ * `tree = HoeffdingTree(data, labels, numClasses)`
  * `tree = HoeffdingTree(data, labels, numClasses, batchTraining=true, successProbability=0.95, maxSamples=0, checkInterval=100, minSamples=100)`
    - Train non-incrementally on the given data.
    - The tree will be reset if `numClasses` or the data's dimensionality does
