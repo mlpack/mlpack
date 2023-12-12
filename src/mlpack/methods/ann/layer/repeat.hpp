@@ -105,7 +105,7 @@ class RepeatType : public Layer<MatType>
     {
       std::ostringstream oss;
       oss << "Repeat::ComputeOutputDimensions(): multiples vector must "
-          << "have the same or less dimensions than InputDimensions";
+          << "have the same or fewer dimensions than InputDimensions";
       throw std::invalid_argument(oss.str());
     }
 
