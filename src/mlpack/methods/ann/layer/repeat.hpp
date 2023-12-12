@@ -99,7 +99,6 @@ class RepeatType : public Layer<MatType>
 
   void ComputeOutputDimensions() override
   {
-
     const size_t numOutputDimensions = this->inputDimensions.size();
 
     if (multiples.size() > this->inputDimensions.size())
