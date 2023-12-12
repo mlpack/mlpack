@@ -110,7 +110,7 @@ class RepeatType : public Layer<MatType>
     }
 
     size_t inputSize = this->inputDimensions[0];
-    for (size_t i=1; i<this->inputDimensions.size(); i++) {
+    for (size_t i = 1; i < this->inputDimensions.size(); i++) {
       inputSize *= this->inputDimensions[i];
     }
     arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
