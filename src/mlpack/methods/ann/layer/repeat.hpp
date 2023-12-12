@@ -20,9 +20,9 @@ namespace mlpack {
 
 /**
  * Implementation of the Repeat class. The Repeat class repeats the
- * input n times along a specified axis.  The output will have the same number
- * of dimnensions as the input, with all dimensions other than the one
- * specified in axis being the same size as the input.
+ * input a specified number of times along a each dimension.  The output
+ * will have the same number of dimensions as the input, with each dimension
+ * multiplied by a specified multiple.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
