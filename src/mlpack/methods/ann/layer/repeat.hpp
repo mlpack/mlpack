@@ -49,7 +49,7 @@ class RepeatType : public Layer<MatType>
   /**
    * Destroy the layers held by the model.
    */
-  virtual ~RepeatType();
+  virtual ~RepeatType() { }
 
   //! Clone the RepeatType object. This handles polymorphism correctly.
   RepeatType* Clone() const override { return new RepeatType(*this); }
@@ -97,10 +97,17 @@ class RepeatType : public Layer<MatType>
     return multiples;
   }
 
+  /**
+   * @brief Computes the output dimensions of the Repeat layer.
+   *
+   * The ComputeOutputDimensions function computes the output dimensions of the
+   * Repeat layer based on the input dimensions and the repeat multiples. The
+   * output dimensions will have the same number of dimensions as the input,
+   * with all dimensions other than the one specified in the axis being the same
+   * size as the input.
+   */
   void ComputeOutputDimensions() override
   {
-    const size_t numOutputDimensions = this->inputDimensions.size();
-
     if (multiples.size() > this->inputDimensions.size())
     {
       std::ostringstream oss;
@@ -110,23 +117,36 @@ class RepeatType : public Layer<MatType>
     }
 
     size_t inputSize = this->inputDimensions[0];
-    for (size_t i = 1; i < this->inputDimensions.size(); i++) {
+    for (size_t i = 1; i < this->inputDimensions.size(); i++)
+    {
       inputSize *= this->inputDimensions[i];
     }
     arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
 
-    // Now, we repeat the output along a specific axis.
+    // Here, we are going to pre-compute the source index for each output
+    // for a single tensor.  Since the tensors are flattened into 1-d
+    // vectors, we can fill the output row-wise based on these
+    // indices.
     this->outputDimensions = this->inputDimensions;
-    sizeMult = 1;
+    size_t sizeMult = 1;
     size_t outSize = 1;
-    for (size_t i=0; i<multiples.size(); i++) {
-      if (multiples[i] != 1) {
-        if (i == 0) {
+
+    // iteratively reshape the index matrix such that the dimension
+    // to be repeated (and all prior) are flattened to a column, and
+    // then repelem rowwise.
+    for (size_t i = 0; i < multiples.size(); i++)
+    {
+      if (multiples[i] != 1)
+      {
+        // For the first dimension, we need to do the repelem columnwise.
+        if (i == 0)
+        {
           idxs.reshape(outSize * this->inputDimensions[i],
                        idxs.n_elem / (outSize * this->inputDimensions[i]));
           idxs = arma::repelem(idxs, multiples[i], 1);
         }
-        else {
+        else
+        {
           idxs.reshape(outSize,
                        idxs.n_elem / outSize);
           idxs = arma::repelem(idxs, 1, multiples[i]);
@@ -137,8 +157,13 @@ class RepeatType : public Layer<MatType>
       outSize *= this->outputDimensions[i];
     }
     outIdxs = idxs.as_col();
+
+    // Now, we are going to pre-compute the contribution of each output
+    // element to the input elements.  This will be used in the backward
+    // pass with a simple matrix multiplication.
     coefs = arma::zeros<MatType>(inputSize, outSize);
-    for (size_t i=0; i<outIdxs.n_elem; i++) {
+    for (size_t i = 0; i < outIdxs.n_elem; i++)
+    {
       coefs.at(outIdxs.at(i), i) = 1.0 / (typename MatType::elem_type) sizeMult;
     }
   }
@@ -153,8 +178,12 @@ class RepeatType : public Layer<MatType>
   //! Parameter to indicate number of times to repeat along each dimension
   std::vector<size_t> multiples;
 
-  size_t sizeMult;
+  // Cache the target indices for a single tensor for use
+  // in the forward pass.
   arma::uvec outIdxs;
+
+  // Cache the contributions of each output element to the
+  // input elements for use in the backward pass.
   MatType coefs;
 }; // class RepeatType.
 

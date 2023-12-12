@@ -49,7 +49,7 @@ class ReplicateType : public Layer<MatType>
   /**
    * Destroy the layers held by the model.
    */
-  virtual ~ReplicateType();
+  virtual ~ReplicateType() { }
 
   //! Clone the ReplicateType object. This handles polymorphism correctly.
   ReplicateType* Clone() const override { return new ReplicateType(*this); }
@@ -107,17 +107,27 @@ class ReplicateType : public Layer<MatType>
     }
 
     size_t inputSize = this->inputDimensions[0];
-    for (size_t i=1; i<this->inputDimensions.size(); i++) {
+    for (size_t i = 1; i < this->inputDimensions.size(); i++)
+    {
       inputSize *= this->inputDimensions[i];
     }
     arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
 
-    // Now, we replicate the output along a specific axis.
+    // Here, we are going to pre-compute the source index for each output
+    // for a single tensor.  Since the tensors are flattened into 1-d
+    // vectors, we can fill the output row-wise based on these
+    // indices.
     this->outputDimensions = this->inputDimensions;
-    sizeMult = 1;
+    size_t sizeMult = 1;
     size_t outSize = 1;
-    for (size_t i=0; i<multiples.size(); i++) {
-      if (multiples[i] != 1) {
+
+    // iteratively reshape the index matrix such that the dimension
+    // to be replicated (and all prior) are flattened to a column, and
+    // then repmat columnwise.
+    for (size_t i = 0; i < multiples.size(); i++)
+    {
+      if (multiples[i] != 1)
+      {
         idxs.reshape(outSize * this->inputDimensions[i],
                      idxs.n_elem / (outSize * this->inputDimensions[i]));
         idxs = arma::repmat(idxs, multiples[i], 1);
@@ -127,8 +137,13 @@ class ReplicateType : public Layer<MatType>
       outSize *= this->outputDimensions[i];
     }
     outIdxs = idxs.as_col();
+
+    // Now, we are going to pre-compute the contribution of each output
+    // element to the input elements.  This will be used in the backward
+    // pass with a simple matrix multiplication.
     coefs = arma::zeros<MatType>(inputSize, outSize);
-    for (size_t i=0; i<outIdxs.n_elem; i++) {
+    for (size_t i = 0; i < outIdxs.n_elem; i++)
+    {
       coefs.at(outIdxs.at(i), i) = 1.0 / (typename MatType::elem_type) sizeMult;
     }
   }
@@ -143,8 +158,12 @@ class ReplicateType : public Layer<MatType>
   //! Parameter to indicate number of times to replicate along each dimension
   std::vector<size_t> multiples;
 
-  size_t sizeMult;
+  // Cache the target indices for a single tensor for use
+  // in the forward pass.
   arma::uvec outIdxs;
+
+  // Cache the contributions of each output element to the
+  // input elements for use in the backward pass.
   MatType coefs;
 }; // class ReplicateType.
 
