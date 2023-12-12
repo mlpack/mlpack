@@ -21,7 +21,7 @@ namespace mlpack {
 /**
  * Implementation of the Replicate class. The Replicate class replicates the
  * input a specified number of times along each axis.  The output will have the
- * same number of dimnensions as the input, with each dimension multiplied by
+ * same number of dimensions as the input, with each dimension multiplied by
  * the specified scalar.
  *
  * @tparam MatType Matrix representation to accept as input and use for
