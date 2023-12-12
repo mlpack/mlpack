@@ -91,7 +91,8 @@ class RepeatType : public Layer<MatType>
   const std::vector<size_t>& Multiples() const { return multiples; }
 
   //! Get the repeat multiples for modification
-  std::vector<size_t>& Multiples() {
+  std::vector<size_t>& Multiples()
+  {
     this->validOutputDimensions = false;
     return multiples;
   }
