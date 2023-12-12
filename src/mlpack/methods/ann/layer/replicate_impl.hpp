@@ -34,16 +34,9 @@ ReplicateType<MatType>::ReplicateType() :
 }
 
 template<typename MatType>
-ReplicateType<MatType>::~ReplicateType()
-{
-  // Nothing to do: the child layer memory is already cleared by MultiLayer.
-}
-
-template<typename MatType>
 ReplicateType<MatType>::ReplicateType(const ReplicateType& other) :
     Layer<MatType>(other),
     multiples(other.multiples),
-    sizeMult(other.sizeMult),
     outIdxs(other.outIdxs),
     coefs(other.coefs)
 {
@@ -54,7 +47,6 @@ template<typename MatType>
 ReplicateType<MatType>::ReplicateType(ReplicateType&& other) :
     Layer<MatType>(std::move(other)),
     multiples(std::move(other.multiples)),
-    sizeMult(other.sizeMult),
     outIdxs(std::move(other.outIdxs)),
     coefs(std::move(other.coefs))
 {
@@ -69,7 +61,6 @@ ReplicateType<MatType>::operator=(const ReplicateType& other)
   {
     Layer<MatType>::operator=(other);
     multiples = other.multiples;
-    sizeMult = other.sizeMult;
     outIdxs = other.outIdxs;
     coefs = other.coefs;
   }
@@ -84,7 +75,6 @@ ReplicateType<MatType>& ReplicateType<MatType>::operator=(ReplicateType&& other)
   {
     Layer<MatType>::operator=(std::move(other));
     multiples = std::move(other.multiples);
-    sizeMult = other.sizeMult;
     outIdxs = std::move(other.outIdxs);
     coefs = std::move(other.coefs);
   }
@@ -116,7 +106,6 @@ void ReplicateType<MatType>::serialize(
   ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(multiples));
-  ar(CEREAL_NVP(sizeMult));
   ar(CEREAL_NVP(outIdxs));
   ar(CEREAL_NVP(coefs));
 }
