@@ -313,9 +313,18 @@ TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
   REQUIRE(approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
   REQUIRE(approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
 
+  std::cout << "PERCEPTRON: p1.weights = " << p1.Weights() << std::endl;
+  std::cout << "PERCEPTRON: p2.weights = " << p2.Weights() << std::endl;
+  std::cout << "PERCEPTRON: p1.biases = " << p1.Biases() << std::endl;
+  std::cout << "PERCEPTRON: p2.biases = " << p2.Biases() << std::endl;
   // Training p1 again should result in a different model.
   p1.Train(trainData, labels, 2);
 
+  std::cout << "PERCEPTRON: Re-trained p1" << std::endl;
+  std::cout << "PERCEPTRON: p1.weights = " << p1.Weights() << std::endl;
+  std::cout << "PERCEPTRON: p2.weights = " << p2.Weights() << std::endl;
+  std::cout << "PERCEPTRON: p1.biases = " << p1.Biases() << std::endl;
+  std::cout << "PERCEPTRON: p2.biases = " << p2.Biases() << std::endl;
   REQUIRE(!approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
   REQUIRE(!approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
 }
