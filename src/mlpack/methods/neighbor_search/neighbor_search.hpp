@@ -82,6 +82,8 @@ class NeighborSearch
  public:
   //! Convenience typedef.
   typedef TreeType<MetricType, NeighborSearchStat<SortPolicy>, MatType> Tree;
+  //! The type of element held in MatType.
+  typedef typename MatType::elem_type ElemType;
 
   /**
    * Initialize the NeighborSearch object, passing a reference dataset (this is
@@ -223,7 +225,7 @@ class NeighborSearch
   void Search(const MatType& querySet,
               const size_t k,
               arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+              arma::Mat<ElemType>& distances);
 
   /**
    * Given a pre-built query tree, search for the nearest neighbors of each
@@ -248,7 +250,7 @@ class NeighborSearch
   void Search(Tree& queryTree,
               const size_t k,
               arma::Mat<size_t>& neighbors,
-              arma::mat& distances,
+              arma::Mat<ElemType>& distances,
               bool sameSet = false);
 
   /**
@@ -267,7 +269,7 @@ class NeighborSearch
    */
   void Search(const size_t k,
               arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+              arma::Mat<ElemType>& distances);
 
   /**
    * Calculate the average relative error (effective error) between the
@@ -284,8 +286,8 @@ class NeighborSearch
    *     query point.
    * @return Average relative error.
    */
-  static double EffectiveError(arma::mat& foundDistances,
-                               arma::mat& realDistances);
+  static double EffectiveError(arma::Mat<ElemType>& foundDistances,
+                               arma::Mat<ElemType>& realDistances);
 
   /**
    * Calculate the recall (% of neighbors found) given the list of found

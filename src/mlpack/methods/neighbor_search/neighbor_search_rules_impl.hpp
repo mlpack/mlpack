@@ -61,7 +61,7 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
 template<typename SortPolicy, typename MetricType, typename TreeType>
 void NeighborSearchRules<SortPolicy, MetricType, TreeType>::GetResults(
     arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+    arma::Mat<ElemType>& distances)
 {
   neighbors.set_size(k, querySet.n_cols);
   distances.set_size(k, querySet.n_cols);

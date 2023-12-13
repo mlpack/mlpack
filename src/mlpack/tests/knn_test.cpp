@@ -17,6 +17,18 @@
 using namespace mlpack;
 
 /**
+ * A couple of handful declarations for float32 testing.
+ * These will be removed when we refactor the Bounds to accept MatType.
+ * For now, we will keep the following declarations.
+ */
+template<typename MetricType>
+using FloatHRectBound = HRectBound<MetricType, float>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using FloatKDTree = BinarySpaceTree<MetricType, StatisticType, MatType,
+                                    FloatHRectBound, MidpointSplit>;
+
+/**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).
  */
 TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
@@ -746,6 +758,48 @@ TEST_CASE("KNNSingleTreeVsNaive", "[KNNTest]")
   }
 }
 
+/**
+ * Test the single-tree nearest-neighbors method with the naive method.
+ *
+ * The main difference with the above test is that this one loads the reference
+ * dataset as a float32, and the distances as a float32 as well.
+ *
+ * Errors are produced if the results are not identical.
+ */
+TEST_CASE("KNNSingleTreeVsNaiveF32", "[KNNTest]")
+{
+  arma::fmat dataset;
+
+  // Hard-coded filename: bad?
+  // Code duplication: also bad!
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
+
+  NeighborSearch<NearestNeighborSort,
+                 EuclideanDistance,
+                 arma::fmat,
+                 FloatKDTree> knn(dataset, SINGLE_TREE_MODE);
+
+  // Set up computation for naive mode.
+  NeighborSearch<NearestNeighborSort,
+                 EuclideanDistance,
+                 arma::fmat,
+                 FloatKDTree> naive(dataset, NAIVE_MODE);
+
+  arma::Mat<size_t> neighborsTree;
+  arma::fmat distancesTree;
+  knn.Search(15, neighborsTree, distancesTree);
+
+  arma::Mat<size_t> neighborsNaive;
+  arma::fmat distancesNaive;
+  naive.Search(15, neighborsNaive, distancesNaive);
+
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
+  {
+    REQUIRE(neighborsTree[i] ==neighborsNaive[i]);
+    REQUIRE(distancesTree[i] == Approx(distancesNaive[i]).epsilon(1e-7));
+  }
+}
 /**
  * Test the cover tree single-tree nearest-neighbors method against the naive
  * method.  This uses only a random reference dataset.
