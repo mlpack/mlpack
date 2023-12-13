@@ -42,7 +42,7 @@ class ReplicateType : public Layer<MatType>
    * along each dimension.
    *
    * @param multiples The number of times to repeat along each axis. Must be
-   *        the same size as InputDimensions.
+   *        the same size or smaller than InputDimensions.
    */
   ReplicateType(std::vector<size_t> multiples);
 
