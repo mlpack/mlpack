@@ -503,6 +503,9 @@ class LinearSVM
 
 } // namespace mlpack
 
+CEREAL_TEMPLATE_CLASS_VERSION((typename ModelMatType),
+    (mlpack::LinearSVM<ModelMatType>), (1));
+
 // Include implementation.
 #include "linear_svm_impl.hpp"
 
