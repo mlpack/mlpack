@@ -659,11 +659,10 @@ LARS<ModelMatType>::Train(const MatType& matX,
       break;
 
     // Floats require a really large tolerance for this condition.
-    const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-10 : 0.01;
+    const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-8 : 0.01;
     if ((matGram != &matGramInternal) &&
         ((maxActiveCorr - minActiveCorr) / maxActiveCorr) > tol)
     {
-      std::cout << ((maxActiveCorr - minActiveCorr) / maxActiveCorr) << "\n";
       // Construct the error message to match the user's settings.
       std::ostringstream oss;
       oss << "LARS::Train(): correlation conditions violated; check that your "
