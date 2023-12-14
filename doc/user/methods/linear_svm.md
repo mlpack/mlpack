@@ -49,7 +49,6 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 ### Constructors
 
  * `svm = LinearSVM()`
- * `svm = LinearSVM(lambda=0.0001, delta=1.0, fitIntercept=false)`
    - Initialize the parameters of the model without training.
    - You will need to call [`Train()`](#training) later to train the model
      before calling [`Classify()`](#classification).
@@ -231,7 +230,7 @@ ens::AMSGrad optimizer(0.01 /* step size */, 16 /* batch size */);
 optimizer.MaxIterations() = 100 * dataset.n_cols; // Allow 100 epochs.
 
 // Print a progress bar and an optimization report when training is finished.
-svm.Train(dataset, labels, optimizer, ens::ProgressBar(), ens::Report());
+svm.Train(dataset, labels, 2, optimizer, ens::ProgressBar(), ens::Report());
 
 // Now predict on test labels and compute accuracy.
 
@@ -259,12 +258,14 @@ ensmallen callback](https://www.ensmallen.org/docs.html#custom-callbacks):
 class ModelCheckpoint
 {
  public:
-  ModelCheckpoint(mlpack::LogisticRegression<>& model) : model(model) { }
+  ModelCheckpoint(mlpack::LinearSVM<>& model) : model(model) { }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
   bool EndEpoch(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,                                                                                                                                                const MatType& /* coordinates */,
-                const size_t epoch,                                                                                                                                                          const double /* objective */)
+                FunctionType& /* function */,
+                const MatType& /* coordinates */,
+                const size_t epoch,
+                const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";                                                                                                      mlpack::data::Save(filename, "svm", model, true);
     return false; // Do not terminate the optimization.
@@ -285,7 +286,7 @@ mlpack::data::Load("satellite.train.csv", dataset, true);
 arma::Row<size_t> labels;
 mlpack::data::Load("satellite.train.labels.csv", labels, true);
 
-mlpack::LinearSVM lr;
+mlpack::LinearSVM svm;
 
 // Create AdaDelta optimizer with a small step size and batch size of 1.
 ens::AdaDelta adaDelta(0.001, 1);
@@ -293,7 +294,7 @@ adaDelta.MaxIterations() = 100 * dataset.n_cols; // 100 epochs maximum.
 
 // Use the custom callback and an L2 penalty parameter of 0.01, with default
 // delta and fitting an intercept.
-svm.Train(dataset, labels, adaDelta, 0.01, 1.0, true, ModelCheckpoint(lr),
+svm.Train(dataset, labels, 2, adaDelta, 0.01, 1.0, true, ModelCheckpoint(svm),
     ens::ProgressBar());
 
 // Now files like model-1.bin, model-2.bin, etc. should be saved on disk.
@@ -330,7 +331,7 @@ std::cout << "The L2 regularization penalty parameter is: " << svm.Lambda()
     << "." << std::endl;
 
 std::cout << "Weights for the first dimension are: "
-    << svm.Parameters().row(0) << "." << std::endl;
+    << svm.Parameters().row(0);
 ```
 
 ---
