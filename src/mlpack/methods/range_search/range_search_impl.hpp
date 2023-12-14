@@ -86,7 +86,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
   {
-    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
+    referenceTree = BuildTree<Tree>(std::move(MatType()),
         oldFromNewReferences);
     referenceSet = &referenceTree->Dataset();
     treeOwner = true;
@@ -132,7 +132,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
 {
   // Clear other object.
   other.referenceTree =
-      BuildTree<Tree>(std::move(arma::mat()), other.oldFromNewReferences);
+      BuildTree<Tree>(std::move(MatType()), other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.treeOwner = true;
   other.naive = false;
@@ -286,7 +286,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const MatType& querySet,
-    const Range& range,
+    const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<ElemType>>& distances)
 {
@@ -456,7 +456,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
-    const Range& range,
+    const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<ElemType>>& distances)
 {
@@ -522,7 +522,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
-    const Range& range,
+    const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<ElemType>>& distances)
 {

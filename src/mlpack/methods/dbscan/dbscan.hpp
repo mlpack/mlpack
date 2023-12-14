@@ -74,7 +74,7 @@ class DBSCAN
    * Performs DBSCAN clustering on the data, returning number of clusters
    * and also the centroid of each cluster.
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Only dense matrix type (e.g., arma::mat or coot::mat).
    * @param data Dataset to cluster.
    * @param centroids Matrix in which centroids are stored.
    */
@@ -87,7 +87,7 @@ class DBSCAN
    * and also the list of cluster assignments.  If assignments[i] == SIZE_MAX,
    * then the point is considered "noise".
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Only dense matrix type (e.g., arma::mat or coot::mat).
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    */
@@ -100,7 +100,7 @@ class DBSCAN
    * the centroid of each cluster and also the list of cluster assignments.
    * If assignments[i] == SIZE_MAX, then the point is considered "noise".
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Only dense matrix type (e.g., arma::mat or coot::mat).
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    * @param centroids Matrix in which centroids are stored.

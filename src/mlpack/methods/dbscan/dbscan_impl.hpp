@@ -151,8 +151,9 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
+  typedef typename MatType::elem_type ElemType;
   std::vector<std::vector<size_t>> neighbors;
-  std::vector<std::vector<double>> distances;
+  std::vector<std::vector<ElemType>> distances;
 
   // Note that the strategy here is somewhat different from the original DBSCAN
   // paper.  The original DBSCAN paper grows each cluster individually to its
@@ -230,9 +231,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
+  typedef typename MatType::elem_type ElemType;
   // For each point, find the points in epsilon-neighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
-  std::vector<std::vector<double>> distances;
+  std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
   rangeSearch.Search(Range(0.0, epsilon), neighbors, distances);
