@@ -199,7 +199,8 @@ can be used to make class predictions for new data.
    `svm.Parameters()` represents the bias parameters for each class.
 
  * `svm.FeatureSize()` will return the number of features in the model.  This is
-   equivalent to `data.n_rows` when the model was trained.
+   equivalent to `data.n_rows` when the model was trained.  The output is only
+   valid if the model has been trained.
 
  * `svm.ComputeAccuracy(data, labels)` will return the accuracy of the model on
    the given `data` with the given `labels`.  The returned accuracy is between 0
