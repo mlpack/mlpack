@@ -5,6 +5,8 @@
   * Fix `preprocess_split()` call in documentation for `LinearRegression` and
     `AdaBoost` Python classes (#3563).
 
+  * Add Repeat and Replicate ANN Layer Types (#3565)
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
