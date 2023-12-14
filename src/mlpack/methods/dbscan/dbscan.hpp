@@ -47,10 +47,13 @@ namespace mlpack {
  *      with.
  */
 template<typename RangeSearchType = RangeSearch<>,
-         typename PointSelectionPolicy = OrderedPointSelection>
+         typename PointSelectionPolicy = OrderedPointSelection,
+         typename MatType = arma::mat>
 class DBSCAN
 {
  public:
+  //! Easy access to Element Type of the matrix.
+  typedef typename MatType::elem_type ElemType;
   /**
    * Construct the DBSCAN object with the given parameters.  The batchMode
    * parameter should be set to false in the case where RAM issues will be
@@ -64,7 +67,7 @@ class DBSCAN
    * @param rangeSearch Optional instantiated RangeSearch object.
    * @param pointSelector OptionL instantiated PointSelectionPolicy object.
    */
-  DBSCAN(const double epsilon,
+  DBSCAN(const ElemType epsilon,
          const size_t minPoints,
          const bool batchMode = true,
          RangeSearchType rangeSearch = RangeSearchType(),
@@ -78,7 +81,6 @@ class DBSCAN
    * @param data Dataset to cluster.
    * @param centroids Matrix in which centroids are stored.
    */
-  template<typename MatType>
   size_t Cluster(const MatType& data,
                  MatType& centroids);
 
@@ -91,7 +93,6 @@ class DBSCAN
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    */
-  template<typename MatType>
   size_t Cluster(const MatType& data,
                  arma::Row<size_t>& assignments);
 
@@ -105,14 +106,16 @@ class DBSCAN
    * @param assignments Vector to store cluster assignments.
    * @param centroids Matrix in which centroids are stored.
    */
-  template<typename MatType>
   size_t Cluster(const MatType& data,
                  arma::Row<size_t>& assignments,
                  MatType& centroids);
 
  private:
   //! Maximum distance between two points to be part of same cluster.
-  double epsilon;
+  ElemType epsilon;
+
+  //! Zero, just a variable holder for zero value, can be f16, f32 or double.
+  ElemType zero;
 
   //! Minimum number of points to be in the epsilon-neighborhood (including
   //! itself) for the point to be a core-point.
@@ -137,7 +140,6 @@ class DBSCAN
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
    */
-  template<typename MatType>
   void PointwiseCluster(const MatType& data, UnionFind& uf);
 
   /**
@@ -149,7 +151,6 @@ class DBSCAN
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
    */
-  template<typename MatType>
   void BatchCluster(const MatType& data, UnionFind& uf);
 };
 

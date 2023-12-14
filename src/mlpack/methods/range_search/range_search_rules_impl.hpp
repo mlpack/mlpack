@@ -83,7 +83,7 @@ RangeSearchRules<MetricType, TreeType>::Score(const size_t queryIndex,
 {
   // We must get the minimum and maximum distances and store them in this
   // object.
-  Range distances;
+  RangeType<ElemType> distances;
 
   if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
@@ -154,7 +154,7 @@ typename RangeSearchRules<MetricType, TreeType>::ElemType
 RangeSearchRules<MetricType, TreeType>::Score(TreeType& queryNode,
                                               TreeType& referenceNode)
 {
-  Range distances;
+  RangeType<ElemType> distances;
   if (TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // It is possible that the base case has already been calculated.

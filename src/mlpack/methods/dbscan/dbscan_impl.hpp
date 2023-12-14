@@ -19,9 +19,10 @@ namespace mlpack {
 /**
  * Construct the DBSCAN object with the given parameters.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy>
-DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
-    const double epsilon,
+template<typename RangeSearchType, typename PointSelectionPolicy,
+         typename MatType>
+DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::DBSCAN(
+    const ElemType epsilon,
     const size_t minPoints,
     const bool batchMode,
     RangeSearchType rangeSearch,
@@ -39,9 +40,9 @@ DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
  * Performs DBSCAN clustering on the data, returning number of clusters
  * and also the centroid of each cluster.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
+template<typename RangeSearchType, typename PointSelectionPolicy,
+         typename MatType>
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
     const MatType& data,
     MatType& centroids)
 {
@@ -57,9 +58,9 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
  * Performs DBSCAN clustering on the data, returning number of clusters,
  * the centroid of each cluster and also the list of cluster assignments.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
+template<typename RangeSearchType, typename PointSelectionPolicy,
+         typename MatType>
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments,
     MatType& centroids)
@@ -93,9 +94,9 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
  * Performs DBSCAN clustering on the data, returning the number of clusters and
  * also the list of cluster assignments.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
+template<typename RangeSearchType, typename PointSelectionPolicy,
+         typename MatType>
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments)
 {
@@ -145,13 +146,12 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
  * and can save on RAM usage.  It may be slower than the batch search with a
  * dual-tree algorithm.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
-void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
+template<typename RangeSearchType, typename PointSelectionPolicy,
+         typename MatType>
+void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  typedef typename MatType::elem_type ElemType;
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
 
@@ -182,7 +182,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     visited[index] = true;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(index), Range(0.0, epsilon), neighbors,
+    rangeSearch.Search(data.col(index), RangeType<ElemType>(zero, epsilon),
+        neighbors,
         distances);
 
     // Union to all neighbors if the point is not noise.
@@ -225,19 +226,18 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
  * and also the list of cluster assignments.  This can perform search in batch,
  * naive search).
  */
-template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
-void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
+template<typename RangeSearchType, typename PointSelectionPolicy,
+         typename MatType>
+void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  typedef typename MatType::elem_type ElemType;
   // For each point, find the points in epsilon-neighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(Range(0.0, epsilon), neighbors, distances);
+  rangeSearch.Search(RangeType<ElemType>(zero, epsilon), neighbors, distances);
   Log::Info << "Range search complete." << std::endl;
 
   // See the description of the algorithm in `PointwiseCluster()`.  The strategy
