@@ -1,9 +1,9 @@
 ## `LinearSVM`
 
 The `LinearSVM` class implements an L2-regularized support vector machine for
-numerical data, with training done using any ensmallen optimizer.  The class
-offers standard classification functionality.  Linear SVM is useful for
-multi-class classification (i.e. classes are `0`, `1`, `2`, etc.).
+numerical data that can train using any ensmallen optimizer.  The class offers
+standard classification functionality.  Linear SVM is useful for multi-class
+classification (i.e. classes are `0`, `1`, `2`, etc.).
 
 #### Simple usage example:
 
@@ -94,10 +94,6 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 | `delta` | `double` | Margin of difference between correct class and other classes. | `1.0` |
 | `fitIntercept` | `bool` | If `true`, then an intercept term is fitted to the model. | `false` |
 | `callbacks...` | [any set of ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation) | Optional callbacks for the ensmallen optimizer, such as e.g. `ens::ProgressBar()`, `ens::Report()`, or others. | _(N/A)_ |
-As an alternative to passing the `epsilon` parameter, it can be set with the
-standalone `Epsilon()` method: `nbc.Epsilon() = eps;` will set the value of
-`epsilon` to `eps` for the next time non-incremental `Train()` or `Reset()` is
-called.
 
 As an alternative to passing `lambda`, `delta`, or `fitIntercept`, these can be
 set with a standalone method.  The following functions can be used before
@@ -114,15 +110,15 @@ calling `Train()`:
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
 
- * `svm.Train(data, labels, numClasses, [callbacks...])`
+ * `svm.Train(data, labels, numClasses,            [callbacks...])`
  * `svm.Train(data, labels, numClasses, optimizer, [callbacks...])`
    - Train model without changing any hyperparameters, optionally using a custom
      ensmallen optimizer and specifying callbacks for use during optimization.
 
 ---
 
- * `svm.Train(data, labels, numClasses,            lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])
- * `svm.Train(data, labels, numClasses, optimizer, lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])
+ * `svm.Train(data, labels, numClasses,            lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])`
+ * `svm.Train(data, labels, numClasses, optimizer, lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])`
    - Train model on the given data, specifying hyperparameters and optionally
      also a custom ensmallen optimizer and callbacks for use during
      optimization.
@@ -267,7 +263,8 @@ class ModelCheckpoint
                 const size_t epoch,
                 const double /* objective */)
   {
-    const std::string filename = "model-" + std::to_string(epoch) + ".bin";                                                                                                      mlpack::data::Save(filename, "svm", model, true);
+    const std::string filename = "model-" + std::to_string(epoch) + ".bin";
+    mlpack::data::Save(filename, "svm", model, true);
     return false; // Do not terminate the optimization.
   }
 
@@ -342,7 +339,7 @@ The `LinearSVM` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
 ```c++
-NaiveBayesClassifier<ModelMatType>
+LinearSVM<ModelMatType>
 ```
 
 `ModelMatType` specifies the type of matrix used for training data and internal
