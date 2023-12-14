@@ -48,11 +48,20 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 
 ### Constructors
 
- * `svm = NaiveBayesClassifier(dimensionality)`
- * `svm = NaiveBayesClassifier(dimensionality, numClasses, lambda=0.0001, delta=1.0, fitIntercept=false)`
-   - Initialize the model without training.
+ * `svm = LinearSVM()`
+ * `svm = LinearSVM(lambda=0.0001, delta=1.0, fitIntercept=false)`
+   - Initialize the parameters of the model without training.
    - You will need to call [`Train()`](#training) later to train the model
      before calling [`Classify()`](#classification).
+
+---
+
+ * `svm = LinearSVM(dimensionality, numClasses, lambda=0.0001, delta=1.0, fitIntercept=false)`
+   - Initialize the model without training, to default weights.
+   - [`Classify()`](#classification) can immediately be called and
+     `Parameters()` returns valid weights, but the model is otherwise untrained.
+   - The model should be trained with [`Train()`](#training) before calling
+     [`Classify()`](#classification).
 
 ---
 
@@ -106,16 +115,18 @@ calling `Train()`:
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
 
- * `svm.Train(data, labels, numClasses, lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])
-   - Train model on the given data, optionally specifying ensmallen callbacks
-     for use during optimization.
+ * `svm.Train(data, labels, numClasses, [callbacks...])`
+ * `svm.Train(data, labels, numClasses, optimizer, [callbacks...])`
+   - Train model without changing any hyperparameters, optionally using a custom
+     ensmallen optimizer and specifying callbacks for use during optimization.
 
 ---
 
- * `svm.Train(data, labels, numClasses, optimizer, lambda=0.0001, delta=1.0,
-   fitIntercept=false, [callbacks...])
-   - Train model on the given data with a custom ensmallen optimizer, optionally
-     specifying callbacks for use during optimization.
+ * `svm.Train(data, labels, numClasses,            lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])
+ * `svm.Train(data, labels, numClasses, optimizer, lambda=0.0001, delta=1.0, fitIntercept=false, [callbacks...])
+   - Train model on the given data, specifying hyperparameters and optionally
+     also a custom ensmallen optimizer and callbacks for use during
+     optimization.
 
 ---
 
