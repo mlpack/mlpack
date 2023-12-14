@@ -29,11 +29,79 @@ inline BayesianLinearRegression::BayesianLinearRegression(
     alpha(0.0),
     beta(0.0),
     gamma(0.0)
-{/* Nothing to do */}
+{ /* Nothing to do */ }
 
-inline double BayesianLinearRegression::Train(const arma::mat& data,
-                                              const arma::rowvec& responses)
+inline BayesianLinearRegression::BayesianLinearRegression(
+    const arma::mat& data,
+    const arma::rowvec& responses,
+    const bool centerData,
+    const bool scaleData,
+    const size_t maxIterations,
+    const double tolerance) :
+    centerData(centerData),
+    scaleData(scaleData),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    responsesOffset(0.0),
+    alpha(0.0),
+    beta(0.0),
+    gamma(0.0)
 {
+  // Train the model.
+  Train(data, responses);
+}
+
+inline double BayesianLinearRegression::Train(
+    const arma::mat& data,
+    const arma::rowvec& responses)
+{
+  return Train(data, responses, this->centerData, this->scaleData,
+      this->maxIterations, this->tolerance);
+}
+
+inline double BayesianLinearRegression::Train(
+    const arma::mat& data,
+    const arma::rowvec& responses,
+    const bool centerData)
+{
+  return Train(data, responses, centerData, this->scaleData,
+      this->maxIterations, this->tolerance);
+}
+
+inline double BayesianLinearRegression::Train(
+    const arma::mat& data,
+    const arma::rowvec& responses,
+    const bool centerData,
+    const bool scaleData)
+{
+  return Train(data, responses, centerData, scaleData, this->maxIterations,
+      this->tolerance);
+}
+
+inline double BayesianLinearRegression::Train(
+    const arma::mat& data,
+    const arma::rowvec& responses,
+    const bool centerData,
+    const bool scaleData,
+    const size_t maxIterations)
+{
+  return Train(data, responses, centerData, scaleData, maxIterations,
+      this->tolerance);
+}
+
+inline double BayesianLinearRegression::Train(
+    const arma::mat& data,
+    const arma::rowvec& responses,
+    const bool centerData,
+    const bool scaleData,
+    const size_t maxIterations,
+    const double tolerance)
+{
+  this->centerData = centerData;
+  this->scaleData = scaleData;
+  this->maxIterations = maxIterations;
+  this->tolerance = tolerance;
+
   arma::mat phi;
   arma::rowvec t;
   arma::colvec eigVal;
@@ -87,6 +155,28 @@ inline double BayesianLinearRegression::Train(const arma::mat& data,
   return RMSE(data, responses);
 }
 
+template<typename VecType>
+inline double BayesianLinearRegression::Predict(const VecType& point) const
+{
+  // Center and scale the point before applying the model.
+  arma::mat centeredPoint;
+  CenterScaleDataPred(point, centeredPoint);
+  return arma::dot(omega, centeredPoint) + responsesOffset;
+}
+
+template<typename VecType>
+inline void BayesianLinearRegression::Predict(const VecType& point,
+                                              double& prediction,
+                                              double& stddev) const
+{
+  // Center and scale the point before applying the model.
+  arma::mat centeredPoint;
+  CenterScaleDataPred(point, centeredPoint);
+  prediction = arma::dot(omega, centeredPoint) + responsesOffset;
+  stddev = std::sqrt(Variance() +
+      arma::accu(centeredPoint % (matCovariance * centeredPoint)));
+}
+
 inline void BayesianLinearRegression::Predict(const arma::mat& points,
                                               arma::rowvec& predictions) const
 {
@@ -131,7 +221,6 @@ inline double BayesianLinearRegression::CenterScaleData(
                                                      responses.n_elem, false,
                                                      true);
   }
-
   else if (centerData && !scaleData)
   {
     dataOffset = mean(data, 1);
@@ -139,7 +228,6 @@ inline double BayesianLinearRegression::CenterScaleData(
     dataProc = data.each_col() - dataOffset;
     responsesProc = responses - responsesOffset;
   }
-
   else if (!centerData && scaleData)
   {
     dataScale = stddev(data, 0, 1);
@@ -148,7 +236,6 @@ inline double BayesianLinearRegression::CenterScaleData(
                                                      responses.n_elem, false,
                                                      true);
   }
-
   else
   {
     dataOffset = mean(data, 1);
@@ -157,6 +244,7 @@ inline double BayesianLinearRegression::CenterScaleData(
     dataProc = (data.each_col() - dataOffset).each_col() / dataScale;
     responsesProc = responses - responsesOffset;
   }
+
   return responsesOffset;
 }
 
@@ -169,17 +257,14 @@ inline void BayesianLinearRegression::CenterScaleDataPred(
     dataProc = arma::mat(const_cast<double*>(data.memptr()), data.n_rows,
                          data.n_cols, false, true);
   }
-
   else if (centerData && !scaleData)
   {
     dataProc = data.each_col() - dataOffset;
   }
-
   else if (!centerData && scaleData)
   {
     dataProc = data.each_col() / dataScale;
   }
-
   else
   {
     dataProc = (data.each_col() - dataOffset).each_col() / dataScale;

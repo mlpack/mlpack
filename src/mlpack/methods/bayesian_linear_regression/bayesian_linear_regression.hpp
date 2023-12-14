@@ -99,9 +99,9 @@ class BayesianLinearRegression
 {
  public:
   /**
-   * Set the parameters of Bayesian Ridge regression object. The
-   * regularization parameter is automatically set to its optimal value by
-   * maximization of the marginal likelihood.
+   * Set the parameters of Bayesian Ridge regression object. The regularization
+   * parameter will be automatically set to its optimal value by maximization of
+   * the marginal likelihood when training is done.
    *
    * @param centerData Whether or not center the data according to the
    *    examples.
@@ -117,16 +117,94 @@ class BayesianLinearRegression
                            const double tolerance = 1e-4);
 
   /**
+   * Create the BayesianLinearRegression object and train the model.  The
+   * regularization parameter is automatically set to its optimal value by
+   * maximization of the maginal likelihood.
+   *
+   * @param data Column-major input data, dim(P, N).
+   * @param responses A vector of targets, dim(N).
+   * @param centerData Whether or not center the data according to the
+   *    examples.
+   * @param scaleData Whether or not scale the data according to the
+   *    standard deviation of each feature.
+   * @param maxIterations Maximum number of iterations for convergency.
+   * @param tolerance Level from which the solution is considered sufficientlly
+   *    stable.
+   * @return Root mean squared error.
+   */
+  BayesianLinearRegression(const arma::mat& data,
+                           const arma::rowvec& responses,
+                           const bool centerData = true,
+                           const bool scaleData = false,
+                           const size_t maxIterations = 50,
+                           const double tolerance = 1e-4);
+
+  /**
    * Run BayesianLinearRegression. The input matrix (like all mlpack matrices)
    * should be column-major -- each column is an observation and each row is a
    * dimension.
    *
    * @param data Column-major input data, dim(P, N).
    * @param responses A vector of targets, dim(N).
+   * @param centerData Whether or not center the data according to the
+   *    examples.
+   * @param scaleData Whether or not scale the data according to the
+   *    standard deviation of each feature.
+   * @param maxIterations Maximum number of iterations for convergency.
+   * @param tolerance Level from which the solution is considered sufficientlly
+   *    stable.
    * @return Root mean squared error.
    */
+  // Many overloads necessary here until std::optional is available with C++17.
   double Train(const arma::mat& data,
                const arma::rowvec& responses);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool centerData);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool centerData,
+               const bool scaleData);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool centerData,
+               const bool scaleData,
+               const size_t maxIterations);
+
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool centerData,
+               const bool scaleData,
+               const size_t maxIterations,
+               const double tolerance);
+
+  /**
+   * Predict \f$y\f$ for a single data point \f$x\f$ using the currently-trained
+   * Bayesian ridge regression model.
+   *
+   * @param point The data point to apply the model to.
+   * @return Prediction for the `point`.
+   */
+  template<typename VecType>
+  double Predict(const VecType& point) const;
+
+  /**
+   * Predict \f$y\f$ for a single data point \f$x\f$ using the currently-trained
+   * Bayesian ridge regression model, storing the prediction in `prediction` and
+   * the standard deviation of the prediction in `stddev`.
+   *
+   * @param point The data point to apply the model to.
+   * @param prediction `double` to store the prediction into.
+   * @param stddev `double` to store the standard deviation of the prediction
+   * into.
+   */
+  template<typename VecType>
+  void Predict(const VecType& point,
+               double& prediction,
+               double& stddev) const;
 
   /**
    * Predict \f$y_{i}\f$ for each data point in the given data matrix using the
@@ -134,7 +212,6 @@ class BayesianLinearRegression
    *
    * @param points The data points to apply the model.
    * @param predictions y, Contains the  predicted values on completion.
-   * @return Root mean squared error computed on the train set.
    */
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
