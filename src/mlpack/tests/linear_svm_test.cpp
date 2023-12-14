@@ -486,7 +486,7 @@ TEST_CASE("LinearSVMLBFGSSimpleTest", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.005));
+  REQUIRE(acc == Approx(100.0).epsilon(0.005));
 }
 
 /**
@@ -514,12 +514,12 @@ TEST_CASE("LinearSVMGradientDescentSimpleTest", "[LinearSVMTest]")
 
   // Create a linear svm object using custom gradient descent optimizer.
   ens::GradientDescent optimizer(stepSize, maxIterations, tolerance);
-  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-      delta, false, optimizer);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, optimizer, lambda,
+      delta, false);
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.005));
+  REQUIRE(acc == Approx(100.0).epsilon(0.005));
 }
 
 /**
@@ -632,8 +632,7 @@ TEST_CASE("LinearSVMFitIntercept", "[LinearSVMTest]")
     }
 
     // Now train a svm object on it.
-    LinearSVM<arma::mat> svm(data, labels, numClasses, lambda,
-        delta, true, ens::L_BFGS());
+    LinearSVM<arma::mat> svm(data, labels, numClasses, lambda, delta, true);
 
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
@@ -775,12 +774,12 @@ TEST_CASE("LinearSVMPSGDSimpleTest", "[LinearSVMTest]")
   ens::ParallelSGD<ens::ConstantStep> optimizer(0,
       std::ceil((float) dataset.n_cols / omp_get_max_threads()),
       1e-5, true, decayPolicy);
-  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-      delta, false, optimizer);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, optimizer, lambda,
+      delta, false);
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(1e-2));
+  REQUIRE(acc == Approx(100.0).epsilon(1e-2));
 }
 
 /**
@@ -824,13 +823,13 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 
     // Train linear svm object using Parallel SGD optimizer.
     // The threadShareSize is chosen such that each function gets optimized.
-    ens::ParallelSGD<ens::ConstantStep> optimizer(0,
+    ens::ParallelSGD<ens::ConstantStep> optimizer(100000,
         std::ceil((float) data.n_cols / omp_get_max_threads()),
         1e-5, true, decayPolicy);
-    LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda,
-        delta, false, optimizer);
+    LinearSVM<arma::mat> lsvm(data, labels, numClasses, optimizer, lambda,
+        delta, false);
 
-    // Compare training accuracy to 1.
+    // Compare training accuracy to 100.
     const double acc = lsvm.ComputeAccuracy(data, labels);
 
     // Create test dataset.
@@ -849,8 +848,8 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
     const double testAcc = lsvm.ComputeAccuracy(data, labels);
 
     // Larger tolerance is sometimes needed.
-    if (testAcc == Approx(1.0).epsilon(0.02) &&
-        acc == Approx(1.0).epsilon(0.02))
+    if (testAcc == Approx(100.0).epsilon(0.02) &&
+        acc == Approx(100.0).epsilon(0.02))
     {
       success = true;
       break;
@@ -876,10 +875,8 @@ TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]")
   for (size_t i = 0; i < 800; ++i)
     labels[i] = RandInt(0, 2);
 
-  LinearSVM<arma::mat> lr(denseDataset, labels, 2, 0.3, 1,
-      false, ens::L_BFGS());
-  LinearSVM<arma::sp_mat> lrSparse(dataset, labels, 2, 0.3, 1,
-      false, ens::L_BFGS());
+  LinearSVM<arma::mat> lr(denseDataset, labels, 2, 0.3, 1, false);
+  LinearSVM<arma::sp_mat> lrSparse(dataset, labels, 2, 0.3, 1, false);
 
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
@@ -1188,8 +1185,8 @@ TEST_CASE("LinearSVMCallbackTest", "[LinearSVMTest]")
   CallbackTestFunction cb;
 
   ens::L_BFGS opt;
-  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-      delta, false, opt, cb);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda, delta,
+      false, cb);
 
   REQUIRE(cb.calledEndOptimization == true);
 }
