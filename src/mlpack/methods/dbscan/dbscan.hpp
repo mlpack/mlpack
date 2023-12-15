@@ -115,7 +115,7 @@ class DBSCAN
   ElemType epsilon;
 
   //! Zero, just a variable holder for zero value, can be f16, f32 or double.
-  ElemType zero;
+  ElemType zero = 0.0;
 
   //! Minimum number of points to be in the epsilon-neighborhood (including
   //! itself) for the point to be a core-point.
