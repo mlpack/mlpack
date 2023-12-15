@@ -16,7 +16,8 @@
 
 namespace mlpack {
 
-inline BayesianLinearRegression::BayesianLinearRegression(
+template<typename ModelMatType>
+inline BayesianLinearRegression<ModelMatType>::BayesianLinearRegression(
     const bool centerData,
     const bool scaleData,
     const size_t maxIterations,
@@ -31,9 +32,11 @@ inline BayesianLinearRegression::BayesianLinearRegression(
     gamma(0.0)
 { /* Nothing to do */ }
 
-inline BayesianLinearRegression::BayesianLinearRegression(
-    const arma::mat& data,
-    const arma::rowvec& responses,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename>
+inline BayesianLinearRegression<ModelMatType>::BayesianLinearRegression(
+    const MatType& data,
+    const ResponsesType& responses,
     const bool centerData,
     const bool scaleData,
     const size_t maxIterations,
@@ -51,26 +54,50 @@ inline BayesianLinearRegression::BayesianLinearRegression(
   Train(data, responses);
 }
 
-inline double BayesianLinearRegression::Train(
-    const arma::mat& data,
+template<typename ModelMatType>
+template<typename MatType>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Train(
+    const MatType& data,
     const arma::rowvec& responses)
 {
   return Train(data, responses, this->centerData, this->scaleData,
       this->maxIterations, this->tolerance);
 }
 
-inline double BayesianLinearRegression::Train(
-    const arma::mat& data,
-    const arma::rowvec& responses,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename, typename>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses)
+{
+  return Train(data, responses, this->centerData, this->scaleData,
+      this->maxIterations, this->tolerance);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
     const bool centerData)
 {
   return Train(data, responses, centerData, this->scaleData,
       this->maxIterations, this->tolerance);
 }
 
-inline double BayesianLinearRegression::Train(
-    const arma::mat& data,
-    const arma::rowvec& responses,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
     const bool centerData,
     const bool scaleData)
 {
@@ -78,9 +105,13 @@ inline double BayesianLinearRegression::Train(
       this->tolerance);
 }
 
-inline double BayesianLinearRegression::Train(
-    const arma::mat& data,
-    const arma::rowvec& responses,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
     const bool centerData,
     const bool scaleData,
     const size_t maxIterations)
@@ -89,9 +120,13 @@ inline double BayesianLinearRegression::Train(
       this->tolerance);
 }
 
-inline double BayesianLinearRegression::Train(
-    const arma::mat& data,
-    const arma::rowvec& responses,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
     const bool centerData,
     const bool scaleData,
     const size_t maxIterations,
@@ -102,10 +137,10 @@ inline double BayesianLinearRegression::Train(
   this->maxIterations = maxIterations;
   this->tolerance = tolerance;
 
-  arma::mat phi;
-  arma::rowvec t;
-  arma::colvec eigVal;
-  arma::mat eigVec;
+  ModelMatType phi;
+  DenseRowType t;
+  DenseVecType eigVal;
+  ModelMatType eigVec;
 
   // Preprocess the data. Center and scale.
   responsesOffset = CenterScaleData(data, responses, phi, t);
@@ -117,20 +152,20 @@ inline double BayesianLinearRegression::Train(
   }
 
   // Compute this quantities once and for all.
-  const arma::mat eigVecInv = inv(eigVec);
-  const arma::colvec eigVecInvPhitT = eigVecInv * phi * t.t();
+  const ModelMatType eigVecInv = inv(eigVec);
+  const DenseVecType eigVecInvPhitT = eigVecInv * phi * t.t();
 
   // Initialize the hyperparameters and begin with an infinitely broad prior.
   alpha = 1e-6;
   beta =  1 / (var(t, 1) * 0.1);
 
   unsigned short i = 0;
-  double crit = 1.0;
+  ElemType crit = 1.0;
 
-  while ((crit > tolerance) && (i < maxIterations))
+  while (((double) crit > tolerance) && (i < maxIterations))
   {
-    double deltaAlpha = -alpha;
-    double deltaBeta = -beta;
+    ElemType deltaAlpha = -alpha;
+    ElemType deltaBeta = -beta;
 
     // Update the solution.
     omega = eigVec * diagmat(1 / (eigVal + (alpha / beta))) * eigVecInvPhitT;
@@ -140,7 +175,7 @@ inline double BayesianLinearRegression::Train(
     alpha = gamma / dot(omega, omega);
 
     // Update beta.
-    const arma::rowvec temp = t - omega.t() * phi;
+    const DenseRowType temp = t - omega.t() * phi;
     beta = (data.n_cols - gamma) / dot(temp, temp);
 
     // Compute the stopping criterion.
@@ -155,71 +190,131 @@ inline double BayesianLinearRegression::Train(
   return RMSE(data, responses);
 }
 
+template<typename ModelMatType>
 template<typename VecType>
-inline double BayesianLinearRegression::Predict(const VecType& point) const
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::Predict(const VecType& point) const
 {
-  // Center and scale the point before applying the model.
-  arma::mat centeredPoint;
-  CenterScaleDataPred(point, centeredPoint);
-  return arma::dot(omega, centeredPoint) + responsesOffset;
+  // Center and scale the point before applying the model, if needed.
+  if (!centerData && !scaleData)
+    return arma::dot(omega, point) + responsesOffset;
+  else if (centerData && !scaleData)
+    return arma::dot(omega, point - dataOffset) + responsesOffset;
+  else if (!centerData && scaleData)
+    return arma::dot(omega, point / dataScale) + responsesOffset;
+  else
+    return arma::dot(omega, (point - dataOffset) / dataScale) + responsesOffset;
 }
 
+template<typename ModelMatType>
 template<typename VecType>
-inline void BayesianLinearRegression::Predict(const VecType& point,
-                                              double& prediction,
-                                              double& stddev) const
+inline void BayesianLinearRegression<ModelMatType>::Predict(
+    const VecType& point,
+    typename BayesianLinearRegression<ModelMatType>::ElemType& prediction,
+    typename BayesianLinearRegression<ModelMatType>::ElemType& stddev) const
 {
-  // Center and scale the point before applying the model.
-  arma::mat centeredPoint;
-  CenterScaleDataPred(point, centeredPoint);
-  prediction = arma::dot(omega, centeredPoint) + responsesOffset;
-  stddev = std::sqrt(Variance() +
-      arma::accu(centeredPoint % (matCovariance * centeredPoint)));
+  prediction = Predict(point);
+
+  ElemType inner;
+  if (!centerData && !scaleData)
+  {
+    stddev = std::sqrt(Variance() +
+        arma::accu(point % (matCovariance * point)));
+    inner = arma::accu(point % (matCovariance * point));
+  }
+  else if (centerData && !scaleData)
+  {
+    inner = arma::accu((point - dataOffset) %
+        (matCovariance * (point - dataOffset)));
+  }
+  else if (!centerData && scaleData)
+  {
+    inner = arma::accu((point / dataScale) %
+        (matCovariance * (point / dataScale)));
+  }
+  else
+  {
+    inner = arma::accu(((point - dataOffset) / dataScale) %
+        (matCovariance * ((point - dataOffset) / dataScale)));
+  }
+
+  stddev = std::sqrt(Variance() + inner);
 }
 
-inline void BayesianLinearRegression::Predict(const arma::mat& points,
-                                              arma::rowvec& predictions) const
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename>
+inline void BayesianLinearRegression<ModelMatType>::Predict(
+    const MatType& points,
+    ResponsesType& predictions) const
 {
-  // Center and scale the points before applying the model.
-  arma::mat matX;
-  CenterScaleDataPred(points, matX);
-  predictions = omega.t() * matX + responsesOffset;
+  if (!centerData && !scaleData)
+  {
+    predictions = omega.t() * points + responsesOffset;
+  }
+  else
+  {
+    // Center and scale the points before applying the model.
+    arma::Mat<ElemType> pointsProc;
+    CenterScaleDataPred(points, pointsProc);
+
+    predictions = omega.t() * pointsProc + responsesOffset;
+  }
 }
 
-inline void BayesianLinearRegression::Predict(const arma::mat& points,
-                                              arma::rowvec& predictions,
-                                              arma::rowvec& std) const
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename>
+inline void BayesianLinearRegression<ModelMatType>::Predict(
+    const MatType& points,
+    ResponsesType& predictions,
+    ResponsesType& std) const
 {
-  // Center and scale the points before applying the model.
-  arma::mat matX;
-  CenterScaleDataPred(points, matX);
-  predictions = omega.t() * matX + responsesOffset;
-  // Compute the standard deviation for each point.
-  std = sqrt(Variance() + sum(matX % (matCovariance * matX), 0));
+  if (!centerData && !scaleData)
+  {
+    Predict(points, predictions);
+    std = arma::sqrt(Variance() + arma::sum(points %
+        (matCovariance * points), 0));
+  }
+  else
+  {
+    // Center or scale data.
+    arma::Mat<ElemType> pointsProc;
+    CenterScaleDataPred(points, pointsProc);
+
+    predictions = omega.t() * pointsProc + responsesOffset;
+    std = arma::sqrt(Variance() + arma::sum(pointsProc %
+        (matCovariance * pointsProc), 0));
+  }
 }
 
-inline double BayesianLinearRegression::RMSE(
-    const arma::mat& data,
-    const arma::rowvec& responses) const
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename>
+inline
+typename BayesianLinearRegression<ModelMatType>::ElemType
+BayesianLinearRegression<ModelMatType>::RMSE(
+    const MatType& data,
+    const ResponsesType& responses) const
 {
-  arma::rowvec predictions;
+  typename GetDenseRowType<ResponsesType>::type predictions;
   Predict(data, predictions);
   return sqrt(mean(square(responses - predictions)));
 }
 
-inline double BayesianLinearRegression::CenterScaleData(
-    const arma::mat& data,
-    const arma::rowvec& responses,
-    arma::mat& dataProc,
-    arma::rowvec& responsesProc)
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType>
+inline double BayesianLinearRegression<ModelMatType>::CenterScaleData(
+    const MatType& data,
+    const ResponsesType& responses,
+    MatType& dataProc,
+    ResponsesType& responsesProc)
 {
   if (!centerData && !scaleData)
   {
-    dataProc = arma::mat(const_cast<double*>(data.memptr()), data.n_rows,
+    dataProc = MatType(const_cast<ElemType*>(data.memptr()), data.n_rows,
                                              data.n_cols, false, true);
-    responsesProc = arma::rowvec(const_cast<double*>(responses.memptr()),
-                                                     responses.n_elem, false,
-                                                     true);
+    responsesProc = ResponsesType(const_cast<ElemType*>(responses.memptr()),
+                                                        responses.n_elem, false,
+                                                        true);
   }
   else if (centerData && !scaleData)
   {
@@ -232,9 +327,9 @@ inline double BayesianLinearRegression::CenterScaleData(
   {
     dataScale = stddev(data, 0, 1);
     dataProc = data.each_col() / dataScale;
-    responsesProc = arma::rowvec(const_cast<double*>(responses.memptr()),
-                                                     responses.n_elem, false,
-                                                     true);
+    responsesProc = ResponsesType(const_cast<ElemType*>(responses.memptr()),
+                                                        responses.n_elem, false,
+                                                        true);
   }
   else
   {
@@ -248,14 +343,15 @@ inline double BayesianLinearRegression::CenterScaleData(
   return responsesOffset;
 }
 
-inline void BayesianLinearRegression::CenterScaleDataPred(
-    const arma::mat& data,
-    arma::mat& dataProc) const
+template<typename ModelMatType>
+template<typename MatType, typename OutMatType>
+inline void BayesianLinearRegression<ModelMatType>::CenterScaleDataPred(
+    const MatType& data,
+    OutMatType& dataProc) const
 {
   if (!centerData && !scaleData)
   {
-    dataProc = arma::mat(const_cast<double*>(data.memptr()), data.n_rows,
-                         data.n_cols, false, true);
+    return; // Don't modify dataProc.
   }
   else if (centerData && !scaleData)
   {
@@ -274,22 +370,59 @@ inline void BayesianLinearRegression::CenterScaleDataPred(
 /**
  * Serialize the Bayesian linear regression model.
  */
+template<typename ModelMatType>
 template<typename Archive>
-void BayesianLinearRegression::serialize(Archive& ar,
-                                         const uint32_t /* version */)
+void BayesianLinearRegression<ModelMatType>::serialize(Archive& ar,
+                                                       const uint32_t version)
 {
   ar(CEREAL_NVP(centerData));
   ar(CEREAL_NVP(scaleData));
   ar(CEREAL_NVP(maxIterations));
   ar(CEREAL_NVP(tolerance));
-  ar(CEREAL_NVP(dataOffset));
-  ar(CEREAL_NVP(dataScale));
-  ar(CEREAL_NVP(responsesOffset));
-  ar(CEREAL_NVP(alpha));
-  ar(CEREAL_NVP(beta));
-  ar(CEREAL_NVP(gamma));
-  ar(CEREAL_NVP(omega));
-  ar(CEREAL_NVP(matCovariance));
+
+  // In older versions, dataOffset and dataScale were of type arma::colvec,
+  // responsesOffset, alpha, beta, and gamma were of type double, omega was of
+  // type arma::colvec, and matCovariance was of type arma::mat.
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    arma::colvec colvecTmp;
+    ar(cereal::make_nvp("dataOffset", colvecTmp));
+    dataOffset = arma::conv_to<DenseVecType>::from(colvecTmp);
+
+    ar(cereal::make_nvp("dataScale", colvecTmp));
+    dataScale = arma::conv_to<DenseVecType>::from(colvecTmp);
+
+    double dblTmp;
+    ar(cereal::make_nvp("responsesOffset", dblTmp));
+    responsesOffset = (ElemType) dblTmp;
+
+    ar(cereal::make_nvp("alpha", dblTmp));
+    alpha = (ElemType) dblTmp;
+
+    ar(cereal::make_nvp("beta", dblTmp));
+    beta = (ElemType) dblTmp;
+
+    ar(cereal::make_nvp("gamma", dblTmp));
+    gamma = (ElemType) dblTmp;
+
+    ar(cereal::make_nvp("omega", colvecTmp));
+    omega = arma::conv_to<DenseVecType>::from(colvecTmp);
+
+    arma::mat matTmp;
+    ar(cereal::make_nvp("matCovariance", matTmp));
+    matCovariance = arma::conv_to<ModelMatType>::from(matCovariance);
+  }
+  else
+  {
+    ar(CEREAL_NVP(dataOffset));
+    ar(CEREAL_NVP(dataScale));
+    ar(CEREAL_NVP(responsesOffset));
+    ar(CEREAL_NVP(alpha));
+    ar(CEREAL_NVP(beta));
+    ar(CEREAL_NVP(gamma));
+    ar(CEREAL_NVP(omega));
+    ar(CEREAL_NVP(matCovariance));
+  }
 }
 
 } // namespace mlpack

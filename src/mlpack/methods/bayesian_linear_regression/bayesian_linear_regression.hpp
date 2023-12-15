@@ -95,9 +95,14 @@ namespace mlpack {
  * estimator.Predict(xTest, responses, stds)
  * @endcode
  */
+template<typename ModelMatType = arma::mat>
 class BayesianLinearRegression
 {
  public:
+  typedef typename ModelMatType::elem_type ElemType;
+  typedef typename GetDenseColType<ModelMatType>::type DenseVecType;
+  typedef typename GetDenseRowType<ModelMatType>::type DenseRowType;
+
   /**
    * Set the parameters of Bayesian Ridge regression object. The regularization
    * parameter will be automatically set to its optimal value by maximization of
@@ -132,8 +137,13 @@ class BayesianLinearRegression
    *    stable.
    * @return Root mean squared error.
    */
-  BayesianLinearRegression(const arma::mat& data,
-                           const arma::rowvec& responses,
+  template<typename MatType,
+           typename ResponsesType,
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  BayesianLinearRegression(const MatType& data,
+                           const ResponsesType& responses,
                            const bool centerData = true,
                            const bool scaleData = false,
                            const size_t maxIterations = 50,
@@ -156,30 +166,69 @@ class BayesianLinearRegression
    * @return Root mean squared error.
    */
   // Many overloads necessary here until std::optional is available with C++17.
-  double Train(const arma::mat& data,
-               const arma::rowvec& responses);
+  // The first overload is also necessary to avoid confusing the hyperparameter
+  // tuner, so that this can be correctly detected as a regression algorithm.
+  template<typename MatType>
+  ElemType Train(const MatType& data,
+                 const arma::rowvec& responses);
 
-  double Train(const arma::mat& data,
-               const arma::rowvec& responses,
-               const bool centerData);
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type,
+           typename = typename std::enable_if<
+               !std::is_same<ResponsesType, arma::rowvec>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses);
 
-  double Train(const arma::mat& data,
-               const arma::rowvec& responses,
-               const bool centerData,
-               const bool scaleData);
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool centerData);
 
-  double Train(const arma::mat& data,
-               const arma::rowvec& responses,
-               const bool centerData,
-               const bool scaleData,
-               const size_t maxIterations);
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool centerData,
+                 const bool scaleData);
 
-  double Train(const arma::mat& data,
-               const arma::rowvec& responses,
-               const bool centerData,
-               const bool scaleData,
-               const size_t maxIterations,
-               const double tolerance);
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool centerData,
+                 const bool scaleData,
+                 const size_t maxIterations);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool centerData,
+                 const bool scaleData,
+                 const size_t maxIterations,
+                 const double tolerance);
 
   /**
    * Predict \f$y\f$ for a single data point \f$x\f$ using the currently-trained
@@ -189,7 +238,7 @@ class BayesianLinearRegression
    * @return Prediction for the `point`.
    */
   template<typename VecType>
-  double Predict(const VecType& point) const;
+  ElemType Predict(const VecType& point) const;
 
   /**
    * Predict \f$y\f$ for a single data point \f$x\f$ using the currently-trained
@@ -203,8 +252,8 @@ class BayesianLinearRegression
    */
   template<typename VecType>
   void Predict(const VecType& point,
-               double& prediction,
-               double& stddev) const;
+               ElemType& prediction,
+               ElemType& stddev) const;
 
   /**
    * Predict \f$y_{i}\f$ for each data point in the given data matrix using the
@@ -213,8 +262,13 @@ class BayesianLinearRegression
    * @param points The data points to apply the model.
    * @param predictions y, Contains the  predicted values on completion.
    */
-  void Predict(const arma::mat& points,
-               arma::rowvec& predictions) const;
+  template<typename MatType,
+           typename ResponsesType,
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  void Predict(const MatType& points,
+               ResponsesType& predictions) const;
 
   /**
    * Predict \f$y_{i}\f$ and the standard deviation of the predictive posterior
@@ -226,9 +280,14 @@ class BayesianLinearRegression
    *     completion.
    * @param std Standard deviations of the predictions.
    */
-  void Predict(const arma::mat& points,
-               arma::rowvec& predictions,
-               arma::rowvec& std) const;
+  template<typename MatType,
+           typename ResponsesType,
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  void Predict(const MatType& points,
+               ResponsesType& predictions,
+               ResponsesType& std) const;
 
   /**
    * Compute the Root Mean Square Error between the predictions returned by the
@@ -238,8 +297,13 @@ class BayesianLinearRegression
    * @param responses A vector of targets.
    * @return Root mean squared error.
    **/
-  double RMSE(const arma::mat& data,
-              const arma::rowvec& responses) const;
+  template<typename MatType,
+           typename ResponsesType,
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType RMSE(const MatType& data,
+                const ResponsesType& responses) const;
 
   /**
    * Get the solution vector.
@@ -276,7 +340,7 @@ class BayesianLinearRegression
    *
    * @return responsesOffset
    */
-  const arma::colvec& DataOffset() const { return dataOffset; }
+  const DenseVecType& DataOffset() const { return dataOffset; }
 
   /**
    * Get the vector of standard deviations computed on the features over the
@@ -284,14 +348,14 @@ class BayesianLinearRegression
    *
    * @return dataOffset
    */
-  const arma::colvec& DataScale() const { return dataScale; }
+  const DenseVecType& DataScale() const { return dataScale; }
 
   /**
    * Get the mean value of the train responses.
    *
    * @return responsesOffset
    */
-  double ResponsesOffset() const { return responsesOffset; }
+  ElemType ResponsesOffset() const { return responsesOffset; }
 
   //! Get whether the data will be centered during training.
   bool CenterData() const { return centerData; }
@@ -335,28 +399,28 @@ class BayesianLinearRegression
   double tolerance;
 
   //! Mean vector computed over the points.
-  arma::colvec dataOffset;
+  DenseVecType dataOffset;
 
   //! Std vector computed over the points.
-  arma::colvec dataScale;
+  DenseVecType dataScale;
 
   //! Mean of the response vector computed over the points.
-  double responsesOffset;
+  ElemType responsesOffset;
 
   //! Precision of the prior pdf (gaussian).
-  double alpha;
+  ElemType alpha;
 
   //! Noise inverse variance.
-  double beta;
+  ElemType beta;
 
   //! Effective number of parameters.
-  double gamma;
+  ElemType gamma;
 
   //! Solution vector.
-  arma::colvec omega;
+  DenseVecType omega;
 
   //! Covariance matrix of the solution vector omega.
-  arma::mat matCovariance;
+  ModelMatType matCovariance;
 
   /**
    * Center and scale the data accordind to centerData and scaleData.
@@ -368,19 +432,23 @@ class BayesianLinearRegression
    * @param responsesProc Responses processed, dim(N).
    * @return reponsesOffset Mean of responses.
    */
-  double CenterScaleData(const arma::mat& data,
-                         const arma::rowvec& responses,
-                         arma::mat& dataProc,
-                         arma::rowvec& responsesProc);
+  template<typename MatType, typename ResponsesType>
+  double CenterScaleData(const MatType& data,
+                         const ResponsesType& responses,
+                         MatType& dataProc,
+                         ResponsesType& responsesProc);
 
   /**
-   * Center and scale the points before prediction.
+   * Center and scale the points before prediction.  This should only be called
+   * if centerData or scaleData is true; if neither is true, then `dataProc`
+   * will be unmodified.
    *
    * @param data Design matrix in column-major format, dim(P, N).
    * @param dataProc Data processed, dim(P, N).
    */
-  void CenterScaleDataPred(const arma::mat& data,
-                           arma::mat& dataProc) const;
+  template<typename MatType, typename OutMatType>
+  void CenterScaleDataPred(const MatType& data,
+                           OutMatType& dataProc) const;
 };
 
 } // namespace mlpack

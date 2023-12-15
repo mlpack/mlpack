@@ -42,7 +42,7 @@ TEST_CASE("BayesianLinearRegressionRegressionTest",
   GenerateProblem(matX, y, 200, 10);
 
   // Instanciate and train the estimator.
-  BayesianLinearRegression estimator(true);
+  BayesianLinearRegression<> estimator(true);
   estimator.Train(matX, y);
   estimator.Predict(matX, predictions);
 
@@ -63,7 +63,7 @@ TEST_CASE("TestCenter0ScaleData0", "[BayesianLinearRegressionTest]")
 
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression estimator(false, false);
+  BayesianLinearRegression<> estimator(false, false);
 
   estimator.Train(matX, y);
 
@@ -85,7 +85,7 @@ TEST_CASE("TestCenterDataTrueScaleDataTrue", "[BayesianLinearRegressionTest]")
   size_t nDims = 5, nPoints = 100;
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression estimator(true, true);
+  BayesianLinearRegression<> estimator(true, true);
   estimator.Train(matX, y);
 
   arma::colvec xMean = arma::mean(matX, 1);
@@ -108,7 +108,7 @@ TEST_CASE("OptionsMakeModelDifferent", "[BayesianLinearRegressionTest]")
   size_t nDims = 10, nPoints = 100;
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression blr(false, false), blrC(true, false),
+  BayesianLinearRegression<> blr(false, false), blrC(true, false),
       blrCS(true, true);
 
   blr.Train(matX, y);
@@ -133,7 +133,7 @@ TEST_CASE("SingularMatix", "[BayesianLinearRegressionTest]")
   // Now the first and the second rows are indentical.
   matX.row(1) = matX.row(0);
 
-  BayesianLinearRegression estimator;
+  BayesianLinearRegression<> estimator;
   estimator.Train(matX, y);
 }
 
@@ -146,7 +146,7 @@ TEST_CASE("PredictiveUncertainties", "[BayesianLinearRegressionTest]")
 
   GenerateProblem(matX, y, 100, 10, 1);
 
-  BayesianLinearRegression estimator(true, true);
+  BayesianLinearRegression<> estimator(true, true);
   estimator.Train(matX, y);
 
   arma::rowvec responses, std;
@@ -180,7 +180,7 @@ TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
   {
     GenerateProblem(matX, y, 100, 10, 1);
 
-    BayesianLinearRegression blr(false, false);
+    BayesianLinearRegression<> blr(false, false);
     blr.Train(matX, y);
 
     LinearRegression ridge(matX, y, blr.Alpha() / blr.Beta(), false);
@@ -221,16 +221,16 @@ TEMPLATE_TEST_CASE("BayesianLinearRegressionConstructorVariantTest",
   // The important thing here is that all of the inputs to the constructor are
   // properly parsed.  The actual details of the models that are learned are
   // less important and are checked by other tests.
-  BayesianLinearRegression blr1;
-  BayesianLinearRegression blr2(false);
-  BayesianLinearRegression blr3(false, true);
-  BayesianLinearRegression blr4(false, true, 100);
-  BayesianLinearRegression blr5(false, true, 110, 1e-3);
-  BayesianLinearRegression blr6(matX, y);
-  BayesianLinearRegression blr7(matX, y, false);
-  BayesianLinearRegression blr8(matX, y, false, true);
-  BayesianLinearRegression blr9(matX, y, false, true, 120);
-  BayesianLinearRegression blr10(matX, y, false, true, 130, 1e-2);
+  BayesianLinearRegression<> blr1;
+  BayesianLinearRegression<> blr2(false);
+  BayesianLinearRegression<> blr3(false, true);
+  BayesianLinearRegression<> blr4(false, true, 100);
+  BayesianLinearRegression<> blr5(false, true, 110, 1e-3);
+  BayesianLinearRegression<> blr6(matX, y);
+  BayesianLinearRegression<> blr7(matX, y, false);
+  BayesianLinearRegression<> blr8(matX, y, false, true);
+  BayesianLinearRegression<> blr9(matX, y, false, true, 120);
+  BayesianLinearRegression<> blr10(matX, y, false, true, 130, 1e-2);
 
   // Check that the hyperparameters as reported by the model are correct.
   REQUIRE(blr1.Omega().n_elem == 0);
@@ -285,7 +285,7 @@ TEMPLATE_TEST_CASE("BayesianLinearRegressionTrainVariantTest",
   size_t nDims = 5, nPoints = 100;
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression blr1, blr2, blr3, blr4, blr5;
+  BayesianLinearRegression<> blr1, blr2, blr3, blr4, blr5;
 
   blr1.Train(matX, y);
   blr2.Train(matX, y, false);
