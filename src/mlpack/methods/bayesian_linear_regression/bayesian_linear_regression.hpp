@@ -453,6 +453,9 @@ class BayesianLinearRegression
 
 } // namespace mlpack
 
+CEREAL_TEMPLATE_CLASS_VERSION((typename ModelMatType),
+    (mlpack::BayesianLinearRegression<ModelMatType>), (1));
+
 // Include implementation of serialize.
 #include "bayesian_linear_regression_impl.hpp"
 
