@@ -8,7 +8,7 @@ to control the data type used for storing the model.
 #### Simple usage example:
 
 ```c++
-// Train a  linear regression model on random data and make predictions.
+// Train a Bayesian linear regression model on random data and make predictions.
 
 // All data and responses are uniform random; this uses 10 dimensional data.
 // Replace with a data::Load() call or similar for a real application.
@@ -288,20 +288,15 @@ BayesianLinearRegression<ModelMatType>
 
 `ModelMatType` specifies the type of matrix used for the internal representation
 of model parameters.  Any matrix type that implements the Armadillo API can be
-used.
+used; however, the matrix should be dense, as in general
+`BayesianLinearRegression` will produce models that are not sparse.
 
-Note that the `Train()` and `Predict()` functions themselves are templatized and
-can allow any matrix type that has the same element type.  So, for instance, a
-`BayesianLinearRegression<arma::mat>` can accept an `arma::sp_mat` for training.
-
-The example below trains a Bayesian linear regression model on sparse 32-bit
-floating point data, but uses a dense 32-bit floating point vector to store the
-model itself.
+The example below trains a Bayesian linear regression model on 32-bit floating
+point data.
 
 ```c++
 // Create random, sparse 100-dimensional data.
-arma::sp_fmat dataset;
-dataset.sprandu(100, 5000, 0.3);
+arma::fmat dataset(100, 5000, arma::fill::randu);
 
 // Generate noisy responses from random data.
 arma::fvec trueWeights(100, arma::fill::randu);
@@ -315,8 +310,7 @@ blr.MaxIterations() = 75;
 blr.Train(dataset, responses);
 
 // Compute the RMSE on the training set and a random test set.
-arma::sp_fmat testDataset;
-testDataset.sprandu(100, 1000, 0.3);
+arma::fmat testDataset(100, 1000, arma::fill::randu);
 
 arma::frowvec testResponses = trueWeights.t() * testDataset +
     0.01 * arma::randu<arma::frowvec>(1000) /* noise term */;
@@ -326,6 +320,3 @@ std::cout << "RMSE on training set: "
 std::cout << "RMSE on test set:     "
     << blr.RMSE(testDataset, testResponses) << "." << std::endl;
 ```
-
-***Note:*** dense objects should be used for `ModelMatType`, since in general
-`BayesianLinearRegression` will produce models that are not sparse.
