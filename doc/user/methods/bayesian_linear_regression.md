@@ -57,7 +57,6 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 ---
 
-<!-- TODO: implement -->
  * `blr = BayesianLinearRegression(data, responses)`
  * `blr = BayesianLinearRegression(data, responses, centerData=true, scaleData=false, maxIterations=50, tolerance=1e-4)`
    - Train model on the given data.
@@ -98,9 +97,6 @@ If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
 
  * `blr.Train(data, responses, centerData=true, scaleData=false, maxIterations=50, tolerance=1e-4)`
-   - Train model on the given data.
-
----
 
 Types of each argument are the same as in the table for constructors
 [above](#constructor-parameters).
