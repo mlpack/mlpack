@@ -46,7 +46,8 @@ class RangeSearch
  public:
   //! Convenience typedef.
   typedef TreeType<MetricType, RangeSearchStat, MatType> Tree;
-
+   //! The type of Matrix.
+  typedef MatType Mat;
   //! The type of element held in MatType.
   typedef typename MatType::elem_type ElemType;
 

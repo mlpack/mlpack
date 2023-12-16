@@ -47,13 +47,14 @@ namespace mlpack {
  *      with.
  */
 template<typename RangeSearchType = RangeSearch<>,
-         typename PointSelectionPolicy = OrderedPointSelection,
-         typename MatType = arma::mat>
+         typename PointSelectionPolicy = OrderedPointSelection>
 class DBSCAN
 {
  public:
+   //! Easy access to the MatType.
+  typedef typename RangeSearchType::Mat MatType;
   //! Easy access to Element Type of the matrix.
-  typedef typename MatType::elem_type ElemType;
+  typedef typename RangeSearchType::Mat::elem_type ElemType;
   /**
    * Construct the DBSCAN object with the given parameters.  The batchMode
    * parameter should be set to false in the case where RAM issues will be
@@ -113,9 +114,6 @@ class DBSCAN
  private:
   //! Maximum distance between two points to be part of same cluster.
   ElemType epsilon;
-
-  //! Zero, just a variable holder for zero value, can be f16, f32 or double.
-  ElemType zero = 0.0;
 
   //! Minimum number of points to be in the epsilon-neighborhood (including
   //! itself) for the point to be a core-point.

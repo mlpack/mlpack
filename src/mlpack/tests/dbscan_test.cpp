@@ -230,8 +230,7 @@ TEST_CASE("Float32OutlierSingleModeTest", "[DBSCANTest]")
          EuclideanDistance,
          arma::Mat<float>,
          FloatKDTree>,
-         OrderedPointSelection,
-         arma::Mat<float>> d(0.1, 3, false);
+         OrderedPointSelection> d(0.1, 3, false);
 
   arma::Row<size_t> assignments;
   const size_t clusters = d.Cluster(points, assignments);

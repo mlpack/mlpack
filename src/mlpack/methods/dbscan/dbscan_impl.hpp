@@ -19,9 +19,8 @@ namespace mlpack {
 /**
  * Construct the DBSCAN object with the given parameters.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy,
-         typename MatType>
-DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::DBSCAN(
+template<typename RangeSearchType, typename PointSelectionPolicy>
+DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
     const ElemType epsilon,
     const size_t minPoints,
     const bool batchMode,
@@ -40,9 +39,8 @@ DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::DBSCAN(
  * Performs DBSCAN clustering on the data, returning number of clusters
  * and also the centroid of each cluster.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy,
-         typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
+template<typename RangeSearchType, typename PointSelectionPolicy>
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     MatType& centroids)
 {
@@ -58,9 +56,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
  * Performs DBSCAN clustering on the data, returning number of clusters,
  * the centroid of each cluster and also the list of cluster assignments.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy,
-         typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
+template<typename RangeSearchType, typename PointSelectionPolicy>
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments,
     MatType& centroids)
@@ -94,9 +91,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
  * Performs DBSCAN clustering on the data, returning the number of clusters and
  * also the list of cluster assignments.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy,
-         typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
+template<typename RangeSearchType, typename PointSelectionPolicy>
+size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments)
 {
@@ -146,9 +142,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::Cluster(
  * and can save on RAM usage.  It may be slower than the batch search with a
  * dual-tree algorithm.
  */
-template<typename RangeSearchType, typename PointSelectionPolicy,
-         typename MatType>
-void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::PointwiseCluster(
+template<typename RangeSearchType, typename PointSelectionPolicy>
+void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
@@ -182,7 +177,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::PointwiseCluster(
     visited[index] = true;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(index), RangeType<ElemType>(zero, epsilon),
+    rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
         neighbors,
         distances);
 
@@ -226,9 +221,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::PointwiseCluster(
  * and also the list of cluster assignments.  This can perform search in batch,
  * naive search).
  */
-template<typename RangeSearchType, typename PointSelectionPolicy,
-         typename MatType>
-void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::BatchCluster(
+template<typename RangeSearchType, typename PointSelectionPolicy>
+void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
@@ -237,7 +231,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy, MatType>::BatchCluster(
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(RangeType<ElemType>(zero, epsilon), neighbors, distances);
+  rangeSearch.Search(RangeType<ElemType>(ElemType(0.0), epsilon), neighbors, distances);
   Log::Info << "Range search complete." << std::endl;
 
   // See the description of the algorithm in `PointwiseCluster()`.  The strategy
