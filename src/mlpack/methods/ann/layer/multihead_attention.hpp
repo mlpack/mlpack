@@ -77,8 +77,7 @@ class MultiheadAttentionType : public Layer<MatType>
   /**
    * Create the MultiheadAttention object using the specified modules.
    * The attnMask and keyPaddingMask arguments are defined as a mask
-   * where 1 passes values and 0 masks them, unlike the original
-   * paper which uses 0 to pass values and -inf to mask them.
+   * 0 passes values and -inf masks them, as in the original paper.
    *
    * @param tgtSeqLen Target sequence length.
    * @param numHeads Number of parallel attention heads.
