@@ -298,21 +298,10 @@ TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
   labels.subvec(50, 99).ones();
 
   Perceptron<> p1, p2;
-  std::cout << "PERCEPTRON: init" << std::endl;
-  std::cout << "PERCEPTRON: p1.weights = " << p1.Weights() << std::endl;
-  std::cout << "PERCEPTRON: p2.weights = " << p2.Weights() << std::endl;
-  std::cout << "PERCEPTRON: p1.biases = " << p1.Biases() << std::endl;
-  std::cout << "PERCEPTRON: p2.biases = " << p2.Biases() << std::endl;
-
   // This should result in the same model, because the default initialization is
   // zeros.
   p1.Train(trainData, labels, 2, 1);
   p2.Train(trainData, labels, 2, 1);
-  std::cout << "PERCEPTRON: Trained p1 and p2" << std::endl;
-  std::cout << "PERCEPTRON: p1.weights = " << p1.Weights() << std::endl;
-  std::cout << "PERCEPTRON: p2.weights = " << p2.Weights() << std::endl;
-  std::cout << "PERCEPTRON: p1.biases = " << p1.Biases() << std::endl;
-  std::cout << "PERCEPTRON: p2.biases = " << p2.Biases() << std::endl;
 
   REQUIRE(approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
   REQUIRE(approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
@@ -324,7 +313,6 @@ TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
   REQUIRE(approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
   REQUIRE(approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
 
-  std::cout << "PERCEPTRON: Reset and retrained p2" << std::endl;
   std::cout << "PERCEPTRON: p1.weights = " << p1.Weights() << std::endl;
   std::cout << "PERCEPTRON: p2.weights = " << p2.Weights() << std::endl;
   std::cout << "PERCEPTRON: p1.biases = " << p1.Biases() << std::endl;
