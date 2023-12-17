@@ -178,8 +178,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
 
     // Do the range search for only this point.
     rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
-        neighbors,
-        distances);
+        neighbors, distances);
 
     // Union to all neighbors if the point is not noise.
     //
