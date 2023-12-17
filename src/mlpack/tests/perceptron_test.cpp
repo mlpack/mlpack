@@ -288,7 +288,6 @@ TEST_CASE("InstanceWeightsConstructor", "[PerceptronTest]")
  */
 TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
 {
-  arma::arma_rng::set_seed(0);
   mat trainData = randu<mat>(10, 100);
   for (size_t i = 0; i < 50; ++i)
     trainData.col(i) -= 0.5;
