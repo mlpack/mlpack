@@ -132,7 +132,7 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param j Index of the feature with respect to which the gradient is to
    *    be computed.
-   * @param gradient Sparse matrix to output gradient into.
+   * @param gradient Matrix to output gradient into.
    */
   template<typename CoordinatesType, typename GradType>
   void PartialGradient(const CoordinatesType& parameters,
