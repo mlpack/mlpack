@@ -1,5 +1,5 @@
 /**
- * @file separable_convolution.hpp
+ * @file methods/ann/layer/separable_convolution.hpp
  * @author Kartik Dutt
  * @author Aakash Kaushik
  * 
@@ -26,9 +26,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 
-#include "layer_types.hpp"
-#include "padding.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -51,7 +48,7 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class SeparableConvolution
+class SeparableConvolution: public Layer<arma::mat>
 {
  public:
   //! Create the Separable Convolution object.
@@ -129,7 +126,12 @@ class SeparableConvolution
    * Set the weight and bias term.
    */
   void Reset();
-
+  //! Clone the SeparableConvolution object. This handles polymorphism
+  //! correctly.
+  SeparableConvolution* Clone() const override
+  {
+    return new SeparableConvolution(*this);
+  }
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -413,6 +415,14 @@ class SeparableConvolution
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  typedef SeparableConvolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+    > SeparableConvolution;
 }; // Separable Convolution Class.
 
 } // namespace ann

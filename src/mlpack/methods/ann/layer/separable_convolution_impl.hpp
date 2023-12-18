@@ -1,5 +1,5 @@
 /**
- * @file separable_convolution_impl.hpp
+ * @file methods/ann/layer/separable_convolution_impl.hpp
  * @author Kartik Dutt
  * @author Aakash Kaushik
  *
