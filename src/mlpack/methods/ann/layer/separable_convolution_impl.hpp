@@ -26,13 +26,13 @@ template <
     typename InputDataType,
     typename OutputDataType
 >
-SeparableConvolution<
+SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::SeparableConvolution()
+>::SeparableConvolutionType()
 {
   // Nothing to do here.
 }
@@ -44,13 +44,13 @@ template <
     typename InputDataType,
     typename OutputDataType
 >
-SeparableConvolution<
+SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::SeparableConvolution(
+>::SeparableConvolutionType(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -116,13 +116,13 @@ template <
     typename InputDataType,
     typename OutputDataType
 >
-SeparableConvolution<
+SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::SeparableConvolution(
+>::SeparableConvolutionType(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -188,7 +188,7 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-void SeparableConvolution<
+void SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -210,7 +210,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void SeparableConvolution<
+void SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -289,7 +289,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void SeparableConvolution<
+void SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -349,7 +349,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void SeparableConvolution<
+void SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -429,7 +429,7 @@ template<
     typename OutputDataType
 >
 template<typename Archive>
-void SeparableConvolution<
+void SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -468,7 +468,7 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-void SeparableConvolution<
+void SeparableConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
