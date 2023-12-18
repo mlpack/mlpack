@@ -78,15 +78,22 @@ LogisticRegressionFunction<MatType>::Evaluate(
   // multiplied by the squared l2-norm of the parameters then divided by two.
   typedef typename CoordinatesType::elem_type ElemType;
 
+  // Specifying these here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType half = ((ElemType) 0.5);
+  constexpr ElemType one = ((ElemType) 1);
+  constexpr ElemType two = ((ElemType) 2);
+
   // For the regularization, we ignore the first term, which is the intercept
   // term and take every term except the last one in the decision variable.
-  const ElemType regularization = 0.5 * lambda *
+  const ElemType regularization = half * lambda *
       dot(parameters.tail_cols(parameters.n_elem - 1),
       parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
-  const CoordinatesType sigmoid = 1.0 / (1.0 + exp(-(parameters(0, 0) +
+  const CoordinatesType sigmoid = one / (one + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   // Assemble full objective function.  Often the objective function and the
@@ -95,9 +102,9 @@ LogisticRegressionFunction<MatType>::Evaluate(
   // terms for computational efficiency.  Note that the conversion causes some
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
-  const ElemType result = accu(log(1.0 -
+  const ElemType result = accu(log(one -
       arma::conv_to<CoordinatesType>::from(responses) + sigmoid %
-      (2 * arma::conv_to<CoordinatesType>::from(responses) - 1.0)));
+      (two * arma::conv_to<CoordinatesType>::from(responses) - one)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
@@ -117,21 +124,28 @@ LogisticRegressionFunction<MatType>::Evaluate(
 {
   typedef typename CoordinatesType::elem_type ElemType;
 
+  // Specifying these here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType one = ((ElemType) 1);
+  constexpr ElemType two = ((ElemType) 2);
+
   // Calculate the regularization term.
   const ElemType regularization = lambda *
-      (batchSize / (2.0 * predictors.n_cols)) *
+      (batchSize / (two * predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
           parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const CoordinatesType sigmoid = 1.0 / (1.0 + exp(-(parameters(0, 0) +
+  const CoordinatesType sigmoid = one / (one + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1))));
 
   // Compute the objective for the given batch size from a given point.
   CoordinatesType respD = arma::conv_to<CoordinatesType>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(log(1.0 - respD + sigmoid % (2 * respD - 1.0)));
+  const ElemType result = accu(log(one - respD + sigmoid %
+      (two * respD - one)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
@@ -144,11 +158,18 @@ void LogisticRegressionFunction<MatType>::Gradient(
     const CoordinatesType& parameters,
     GradType& gradient) const
 {
+  typedef typename CoordinatesType::elem_type ElemType;
+
   // Regularization term.
   GradType regularization;
   regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
 
-  const CoordinatesType sigmoids = (1 / (1 + exp(-parameters(0, 0)
+  // Specifying this here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType one = ((ElemType) 1);
+
+  const CoordinatesType sigmoids = (one / (one + exp(-parameters(0, 0)
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(size(parameters));
@@ -167,16 +188,23 @@ void LogisticRegressionFunction<MatType>::Gradient(
                 GradType& gradient,
                 const size_t batchSize) const
 {
+  typedef typename CoordinatesType::elem_type ElemType;
+
   // Regularization term.
   GradType regularization;
   regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
       / predictors.n_cols * batchSize;
 
+  // Specifying this here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType one = ((ElemType) 1);
+
   const CoordinatesType exponents = parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1);
   // Calculating the sigmoid function values.
-  const CoordinatesType sigmoids = 1.0 / (1.0 + exp(-exponents));
+  const CoordinatesType sigmoids = one / (one + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   gradient[0] = -accu(responses.subvec(begin, begin + batchSize - 1) -
@@ -197,7 +225,14 @@ void LogisticRegressionFunction<MatType>::PartialGradient(
     const size_t j,
     GradType& gradient) const
 {
-  const CoordinatesType diffs = responses - (1 / (1 + exp(-parameters(0, 0)
+  typedef typename CoordinatesType::elem_type ElemType;
+
+  // Specifying this here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType one = ((ElemType) 1);
+
+  const CoordinatesType diffs = responses - (one / (one + exp(-parameters(0, 0)
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(size(parameters));
@@ -222,16 +257,22 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
 {
   typedef typename CoordinatesType::elem_type ElemType;
 
+  // Specifying these here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType one = ((ElemType) 1);
+  constexpr ElemType two = ((ElemType) 2);
+
   // Regularization term.
   GradType regularization = lambda *
       parameters.tail_cols(parameters.n_elem - 1);
 
-  const ElemType objectiveRegularization = lambda / 2.0 *
+  const ElemType objectiveRegularization = lambda / two *
       dot(parameters.tail_cols(parameters.n_elem - 1),
           parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const CoordinatesType sigmoids = 1.0 / (1.0 + exp(-(parameters(0, 0) +
+  const CoordinatesType sigmoids = one / (one + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(size(parameters));
@@ -240,9 +281,9 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       predictors.t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  ElemType result = accu(log(1.0 -
+  ElemType result = accu(log(one -
       arma::conv_to<CoordinatesType>::from(responses) + sigmoids %
-      (2 * arma::conv_to<CoordinatesType>::from(responses) - 1.0)));
+      (two * arma::conv_to<CoordinatesType>::from(responses) - one)));
 
   // Invert the result, because it's a minimization.
   return objectiveRegularization - result;
@@ -259,18 +300,24 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
 {
   typedef typename CoordinatesType::elem_type ElemType;
 
+  // Specifying these here makes the code below a little bit cleaner, and avoids
+  // accidentally casting an entire expression to `double`, e.g., by the use of
+  // `1.0` or similar.
+  constexpr ElemType one = ((ElemType) 1);
+  constexpr ElemType two = ((ElemType) 2);
+
   // Regularization term.
   GradType regularization =
       lambda * parameters.tail_cols(parameters.n_elem - 1) / predictors.n_cols *
       batchSize;
 
   const ElemType objectiveRegularization = lambda *
-      (batchSize / (2.0 * predictors.n_cols)) *
+      (batchSize / (two * predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
           parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const CoordinatesType sigmoids = 1.0 / (1.0 + exp(-(parameters(0, 0) +
+  const CoordinatesType sigmoids = one / (one + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1))));
 
@@ -284,7 +331,8 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
   // Now compute the objective function using the sigmoids.
   CoordinatesType respD = arma::conv_to<CoordinatesType>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(log(1.0 - respD + sigmoids % (2 * respD - 1.0)));
+  const ElemType result = accu(log(one - respD + sigmoids %
+      (two * respD - one)));
 
   // Invert the result, because it's a minimization.
   return objectiveRegularization - result;

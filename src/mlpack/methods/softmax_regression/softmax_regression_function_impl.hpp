@@ -223,7 +223,8 @@ SoftmaxRegressionFunction<MatType>::Evaluate(
 
   logLikelihood = arma::accu(groundTruth % arma::log(probabilities)) /
                   data.n_cols;
-  weightDecay = 0.5 * lambda * arma::accu(parameters % parameters);
+  weightDecay = ((typename MatType::elem_type) 0.5) * lambda *
+      arma::accu(parameters % parameters);
 
   // The cost is the sum of the negative log likelihood and the regularization
   // terms.
@@ -251,7 +252,8 @@ SoftmaxRegressionFunction<MatType>::Evaluate(
 
   logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1) %
       arma::log(probabilities)) / batchSize;
-  weightDecay = 0.5 * lambda * arma::norm(arma::vectorise(parameters), 2);
+  weightDecay = ((typename MatType::elem_type) 0.5) * lambda *
+      arma::norm(arma::vectorise(parameters), 2);
 
   return -logLikelihood + weightDecay;
 }
