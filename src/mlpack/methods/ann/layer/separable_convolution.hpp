@@ -48,11 +48,11 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class SeparableConvolution: public Layer<arma::mat>
+class SeparableConvolutionType: public Layer<arma::mat>
 {
  public:
   //! Create the Separable Convolution object.
-  SeparableConvolution();
+  SeparableConvolutionType();
 
   /**
    * Create the Separable Convolution object using the specified number of input maps,
@@ -73,7 +73,7 @@ class SeparableConvolution: public Layer<arma::mat>
    *                  Defaults to 1.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  SeparableConvolution(const size_t inSize,
+  SeparableConvolutionType(const size_t inSize,
                        const size_t outSize,
                        const size_t kernelWidth,
                        const size_t kernelHeight,
@@ -109,7 +109,7 @@ class SeparableConvolution: public Layer<arma::mat>
    *                  Defaults to 1.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  SeparableConvolution(const size_t inSize,
+  SeparableConvolutionType(const size_t inSize,
                        const size_t outSize,
                        const size_t kernelWidth,
                        const size_t kernelHeight,
@@ -126,11 +126,11 @@ class SeparableConvolution: public Layer<arma::mat>
    * Set the weight and bias term.
    */
   void Reset();
-  //! Clone the SeparableConvolution object. This handles polymorphism
+  //! Clone the SeparableConvolutionType object. This handles polymorphism
   //! correctly.
-  SeparableConvolution* Clone() const override
+  SeparableConvolutionType* Clone() const override
   {
-    return new SeparableConvolution(*this);
+    return new SeparableConvolutionType(*this);
   }
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -416,14 +416,15 @@ class SeparableConvolution: public Layer<arma::mat>
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  typedef SeparableConvolution<
-    ForwardConvolutionRule,
-    BackwardConvolutionRule,
-    GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
-    > SeparableConvolution;
 }; // Separable Convolution Class.
+
+typedef SeparableConvolutionType<
+    NaiveConvolution<ValidConvolution>,
+    NaiveConvolution<FullConvolution>,
+    NaiveConvolution<ValidConvolution>,
+    arma::mat,
+    arma::mat> 
+    SeparableConvolution;
 
 } // namespace ann
 } // namespace mlpack
