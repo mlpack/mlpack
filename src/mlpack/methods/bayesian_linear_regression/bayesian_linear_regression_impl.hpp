@@ -156,11 +156,11 @@ BayesianLinearRegression<ModelMatType>::Train(
   const DenseVecType eigVecInvPhitT = eigVecInv * phi * t.t();
 
   // Initialize the hyperparameters and begin with an infinitely broad prior.
-  alpha = 1e-6;
-  beta =  1 / (var(t, 1) * 0.1);
+  alpha = ((ElemType) 1e-6);
+  beta =  ((ElemType) 1 / (var(t, 1) * 0.1));
 
   unsigned short i = 0;
-  ElemType crit = 1.0;
+  ElemType crit = ((ElemType) 1.0);
 
   while (((double) crit > tolerance) && (i < maxIterations))
   {
@@ -185,7 +185,8 @@ BayesianLinearRegression<ModelMatType>::Train(
     i++;
   }
   // Compute the covariance matrix for the uncertainties later.
-  matCovariance = eigVec * diagmat(1 / (beta * eigVal + alpha)) * eigVecInv;
+  matCovariance = eigVec * diagmat(((ElemType) 1) / (beta * eigVal + alpha)) *
+      eigVecInv;
 
   return RMSE(data, responses);
 }
