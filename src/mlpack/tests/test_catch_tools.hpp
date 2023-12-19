@@ -22,19 +22,26 @@
     REQUIRE(std::abs((R) - (L)) <= (E) * std::abs(R))
 
 // Check the values of two matrices.
-inline void CheckMatrices(const arma::mat& a,
-                          const arma::mat& b,
+template <typename MatTypeA, typename MatTypeB,
+    typename = std::enable_if_t<arma::is_arma_type<MatTypeA>::value
+        && arma::is_arma_type<MatTypeB>::value
+        && !std::is_integral<typename MatTypeA::elem_type>::value
+        && !std::is_integral<typename MatTypeB::elem_type>::value>>
+inline void CheckMatrices(const MatTypeA& _a,
+                          const MatTypeB& _b,
                           double tolerance = 1e-5)
 {
-  REQUIRE(a.n_rows == b.n_rows);
-  REQUIRE(a.n_cols == b.n_cols);
+  arma::unwrap<MatTypeA> a(_a);
+  arma::unwrap<MatTypeB> b(_b);
+  REQUIRE(a.M.n_rows == b.M.n_rows);
+  REQUIRE(a.M.n_cols == b.M.n_cols);
 
-  for (size_t i = 0; i < a.n_elem; ++i)
+  for (size_t i = 0; i < a.M.n_elem; ++i)
   {
-    if (std::abs(a[i]) < tolerance / 2)
-      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
+    if (std::abs(a.M[i]) < tolerance / 2)
+      REQUIRE(b.M[i] == Approx(0.0).margin(tolerance / 2));
     else
-      REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance / 100));
+      REQUIRE(a.M[i] == Approx(b.M[i]).epsilon(tolerance / 100));
   }
 }
 
@@ -64,20 +71,28 @@ inline void CheckFields(const FieldType& a,
 }
 
 // Check the values of two cubes.
-inline void CheckMatrices(const arma::cube& a,
-                          const arma::cube& b,
+template <typename CubeTypeA, typename CubeTypeB,
+    typename = std::enable_if_t<arma::is_arma_cube_type<CubeTypeA>::value
+        && arma::is_arma_cube_type<CubeTypeB>::value
+        && !std::is_integral<typename CubeTypeA::elem_type>::value
+        && !std::is_integral<typename CubeTypeB::elem_type>::value>,
+    typename = void>
+inline void CheckMatrices(const CubeTypeA& _a,
+                          const CubeTypeB& _b,
                           double tolerance = 1e-5)
 {
-  REQUIRE(a.n_rows == b.n_rows);
-  REQUIRE(a.n_cols == b.n_cols);
-  REQUIRE(a.n_slices == b.n_slices);
+  arma::unwrap_cube<CubeTypeA> a(_a);
+  arma::unwrap_cube<CubeTypeB> b(_b);
+  REQUIRE(a.M.n_rows == b.M.n_rows);
+  REQUIRE(a.M.n_cols == b.M.n_cols);
+  REQUIRE(a.M.n_slices == b.M.n_slices);
 
-  for (size_t i = 0; i < a.n_elem; ++i)
+  for (size_t i = 0; i < a.M.n_elem; ++i)
   {
-    if (std::abs(a[i]) < tolerance / 2)
-      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
+    if (std::abs(a.M[i]) < tolerance / 2)
+      REQUIRE(b.M[i] == Approx(0.0).margin(tolerance / 2));
     else
-      REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance / 100));
+      REQUIRE(a.M[i] == Approx(b.M[i]).epsilon(tolerance / 100));
   }
 }
 

@@ -32,19 +32,23 @@ class RepeatType : public Layer<MatType>
 {
  public:
   /**
-   * Create the Repeat object.  Axis defaults to 0, and n defaults to 1, meaning
-   * this is the same as an Identity layer.
+   * Create the Repeat object.  Multiples will be empty (e.g. 1s for all
+   * dimensions), so this is the equivalent of an Identity Layer.
    */
   RepeatType();
 
   /**
    * Create the Repeat object, specifying the number of times to repeat
-   * along each dimension.
+   * along each dimension, as well as whether to interleave the output or
+   * repeat in blocks.
    *
    * @param multiples The number of times to repeat along each axis. Must be
    *        the same size or smaller than InputDimensions.
+   * @apram interleave If true, the output will be interleaved (similar to
+   *        arma::repelem).  If false, the output will be repeated in blocks.
+   *
    */
-  RepeatType(std::vector<size_t> multiples);
+  RepeatType(std::vector<size_t> multiples, bool interleave = false);
 
   /**
    * Destroy the layers held by the model.
@@ -57,11 +61,11 @@ class RepeatType : public Layer<MatType>
   //! Copy the given RepeatType layer.
   RepeatType(const RepeatType& other);
   //! Take ownership of the given RepeatType layer.
-  RepeatType(RepeatType&& other);
+  RepeatType(RepeatType&& other) noexcept;
   //! Copy the given RepeatType layer.
   RepeatType& operator=(const RepeatType& other);
   //! Take ownership of the given RepeatType layer.
-  RepeatType& operator=(RepeatType&& other);
+  RepeatType& operator=(RepeatType&& other) noexcept;
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -97,6 +101,12 @@ class RepeatType : public Layer<MatType>
     return multiples;
   }
 
+  //! Get the interleave parameter
+  bool Interleave() const { return interleave; }
+
+  //! Get the interleave parameter for modification
+  bool& Interleave() { return interleave; }
+
   /**
    * @brief Computes the output dimensions of the Repeat layer.
    *
@@ -106,67 +116,7 @@ class RepeatType : public Layer<MatType>
    * with all dimensions other than the one specified in the axis being the same
    * size as the input.
    */
-  void ComputeOutputDimensions() override
-  {
-    if (multiples.size() > this->inputDimensions.size())
-    {
-      std::ostringstream oss;
-      oss << "Repeat::ComputeOutputDimensions(): multiples vector must "
-          << "have the same or fewer dimensions than InputDimensions";
-      throw std::invalid_argument(oss.str());
-    }
-
-    size_t inputSize = this->inputDimensions[0];
-    for (size_t i = 1; i < this->inputDimensions.size(); i++)
-    {
-      inputSize *= this->inputDimensions[i];
-    }
-    arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
-
-    // Here, we are going to pre-compute the source index for each output
-    // for a single tensor.  Since the tensors are flattened into 1-d
-    // vectors, we can fill the output row-wise based on these
-    // indices.
-    this->outputDimensions = this->inputDimensions;
-    size_t sizeMult = 1;
-    size_t outSize = 1;
-
-    // iteratively reshape the index matrix such that the dimension
-    // to be repeated (and all prior) are flattened to a column, and
-    // then repelem rowwise.
-    for (size_t i = 0; i < multiples.size(); i++)
-    {
-      if (multiples[i] != 1)
-      {
-        // For the first dimension, we need to do the repelem columnwise.
-        if (i == 0)
-        {
-          idxs.reshape(outSize * this->inputDimensions[i],
-                       idxs.n_elem / (outSize * this->inputDimensions[i]));
-          idxs = arma::repelem(idxs, multiples[i], 1);
-        }
-        else
-        {
-          idxs.reshape(outSize,
-                       idxs.n_elem / outSize);
-          idxs = arma::repelem(idxs, 1, multiples[i]);
-        }
-        this->outputDimensions[i] *= multiples[i];
-        sizeMult *= multiples[i];
-      }
-      outSize *= this->outputDimensions[i];
-    }
-    outIdxs = idxs.as_col();
-
-    // Now, we are going to pre-compute the contribution of each output
-    // element to the input elements.  This will be used in the backward
-    // pass with a simple matrix multiplication.
-    coefs = arma::zeros<MatType>(inputSize, outSize);
-    for (size_t i = 0; i < outIdxs.n_elem; i++)
-    {
-      coefs.at(outIdxs.at(i), i) = 1.0 / (typename MatType::elem_type) sizeMult;
-    }
-  }
+  void ComputeOutputDimensions() override;
 
   /**
    * Serialize the layer.
@@ -177,6 +127,9 @@ class RepeatType : public Layer<MatType>
  private:
   //! Parameter to indicate number of times to repeat along each dimension
   std::vector<size_t> multiples;
+
+  //! Parameter to indicate whether to interleave the output
+  bool interleave;
 
   // Cache the target indices for a single tensor for use
   // in the forward pass.
