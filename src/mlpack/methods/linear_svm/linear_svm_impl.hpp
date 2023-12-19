@@ -258,7 +258,7 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     parameters = svm.InitialPoint();
 
   // Train the model.
-  const double out = optimizer.Optimize(svm, parameters, callbacks...);
+  const ElemType out = optimizer.Optimize(svm, parameters, callbacks...);
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;
