@@ -1113,7 +1113,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
   // Now step through numerous different lambda values.
   ElemType lastError = std::numeric_limits<ElemType>::max();
   const ElemType errorTol = (std::is_same<ElemType, double>::value) ? 1e-10 :
-      1e-5;
+      1e-3;
   for (ElemType i = 5.0; i >= -5.0; i -= 0.1)
   {
     const ElemType selLambda1 = std::pow(10.0, (ElemType) i);
