@@ -514,6 +514,11 @@ Below, details are given for the requirements of each of these template types.
  * Specifies the fitness function to use when learning a decision tree.
  * The `GiniImpurity` _(default)_ and `HoeffdingInformationGain` classes are
    available for drop-in usage.
+ * `GiniImpurity` uses the [Gini impurity](https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity),
+   which measures the probability of a randomly labeled random element in the
+   split nodes being correctly labeled.
+ * `HoeffdingInformationGain` uses the [information gain](https://en.wikipedia.org/wiki/Decision_tree_learning#Information_gain),
+   which is based on the information-theoretic entropy of the possible splits.
  * A custom class must implement two functions:
 
 ```c++
