@@ -262,7 +262,7 @@ void TestClassifyAcc(util::Params& params,
   if (params.Has("predictions"))
     params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 
-  // Save probabiltiies, if desired.
+  // Save probabilities, if desired.
   if (params.Has("probabilities"))
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }

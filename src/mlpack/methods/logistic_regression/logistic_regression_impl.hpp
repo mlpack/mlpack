@@ -160,9 +160,12 @@ size_t LogisticRegression<MatType>::Classify(const VecType& point,
                                              const double decisionBoundary)
     const
 {
-  return size_t(1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
+  // Used to prevent automatic casting to double.
+  constexpr ElemType one = ((ElemType) 1);
+
+  return size_t(one / (one + std::exp(-parameters(0) - arma::dot(point,
       parameters.tail_cols(parameters.n_elem - 1).t()))) +
-      (1.0 - decisionBoundary));
+      (one - ((ElemType) decisionBoundary)));
 }
 
 template<typename MatType>
@@ -173,14 +176,17 @@ void LogisticRegression<MatType>::Classify(
     LogisticRegression<MatType>::ColType& probabilities,
     const double decisionBoundary) const
 {
-  const double logit = 1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
+  // Used to prevent automatic casting to double.
+  constexpr ElemType one = ((ElemType) 1);
+
+  const ElemType logit = one / (one + std::exp(-parameters(0) - arma::dot(point,
       parameters.tail_cols(parameters.n_elem - 1).t())));
 
   probabilities.set_size(2);
   probabilities[0] = (1 - logit);
   probabilities[1] = logit;
 
-  prediction = (size_t) (logit + (1.0 - decisionBoundary));
+  prediction = (size_t) (logit + (one - ((ElemType) decisionBoundary)));
 }
 
 template<typename MatType>
@@ -188,12 +194,15 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
                                            arma::Row<size_t>& labels,
                                            const double decisionBoundary) const
 {
+  // Used to prevent automatic casting to double.
+  constexpr ElemType one = ((ElemType) 1);
+
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = arma::conv_to<arma::Row<size_t>>::from((1.0 /
-      (1.0 + arma::exp(-parameters(0) -
+  labels = arma::conv_to<arma::Row<size_t>>::from((one /
+      (one + arma::exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
-      (1.0 - decisionBoundary));
+      (one - ((ElemType) decisionBoundary)));
 }
 
 template<typename MatType>
@@ -215,16 +224,19 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
                                            MatType& probabilities,
                                            const double decisionBoundary) const
 {
+  // Used to prevent automatic casting to double.
+  constexpr ElemType one = ((ElemType) 1);
+
   // Set correct sizes for outputs.
   predictions.set_size(dataset.n_cols);
   probabilities.set_size(2, dataset.n_cols);
 
-  probabilities.row(1) = 1.0 / (1.0 + arma::exp(-parameters(0) -
+  probabilities.row(1) = one / (one + arma::exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset));
-  probabilities.row(0) = 1.0 - probabilities.row(1);
+  probabilities.row(0) = one - probabilities.row(1);
 
   predictions = arma::conv_to<arma::Row<size_t>>::from(probabilities.row(1) +
-      (1.0 - decisionBoundary));
+      (one - ((ElemType) decisionBoundary)));
 }
 
 template<typename MatType>
