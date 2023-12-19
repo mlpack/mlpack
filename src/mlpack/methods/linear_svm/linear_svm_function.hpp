@@ -190,7 +190,8 @@ class LinearSVMFunction
   //! Label matrix for provided data
   SparseMatType groundTruth;
 
-  //! The datapoints for training.  This will be an alias until Shuffle().
+  //! The datapoints for training.  This will be an alias until Shuffle() is
+  //! called.
   MatType dataset;
 
   //! Number of Classes.
