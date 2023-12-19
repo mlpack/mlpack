@@ -31,17 +31,17 @@ inline void CheckMatrices(const MatTypeA& _a,
                           const MatTypeB& _b,
                           double tolerance = 1e-5)
 {
-  arma::unwrap<MatTypeA> a(_a);
-  arma::unwrap<MatTypeB> b(_b);
-  REQUIRE(a.M.n_rows == b.M.n_rows);
-  REQUIRE(a.M.n_cols == b.M.n_cols);
+  arma::Proxy<MatTypeA> a(_a);
+  arma::Proxy<MatTypeB> b(_b);
+  REQUIRE(a.get_n_rows() == b.get_n_rows());
+  REQUIRE(a.get_n_cols() == b.get_n_cols());
 
-  for (size_t i = 0; i < a.M.n_elem; ++i)
+  for (size_t i = 0; i < a.get_n_elem(); ++i)
   {
-    if (std::abs(a.M[i]) < tolerance / 2)
-      REQUIRE(b.M[i] == Approx(0.0).margin(tolerance / 2));
+    if (std::abs(a[i]) < tolerance / 2)
+      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
     else
-      REQUIRE(a.M[i] == Approx(b.M[i]).epsilon(tolerance / 100));
+      REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance / 100));
   }
 }
 
@@ -81,18 +81,18 @@ inline void CheckMatrices(const CubeTypeA& _a,
                           const CubeTypeB& _b,
                           double tolerance = 1e-5)
 {
-  arma::unwrap_cube<CubeTypeA> a(_a);
-  arma::unwrap_cube<CubeTypeB> b(_b);
-  REQUIRE(a.M.n_rows == b.M.n_rows);
-  REQUIRE(a.M.n_cols == b.M.n_cols);
-  REQUIRE(a.M.n_slices == b.M.n_slices);
+  arma::ProxyCube<CubeTypeA> a(_a);
+  arma::ProxyCube<CubeTypeB> b(_b);
+  REQUIRE(a.get_n_rows() == b.get_n_rows());
+  REQUIRE(a.get_n_cols() == b.get_n_cols());
+  REQUIRE(a.get_n_slices() == b.get_n_slices());
 
-  for (size_t i = 0; i < a.M.n_elem; ++i)
+  for (size_t i = 0; i < a.get_n_elem(); ++i)
   {
-    if (std::abs(a.M[i]) < tolerance / 2)
-      REQUIRE(b.M[i] == Approx(0.0).margin(tolerance / 2));
+    if (std::abs(a[i]) < tolerance / 2)
+      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
     else
-      REQUIRE(a.M[i] == Approx(b.M[i]).epsilon(tolerance / 100));
+      REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance / 100));
   }
 }
 
