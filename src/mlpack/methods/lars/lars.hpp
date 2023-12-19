@@ -708,8 +708,8 @@ class LARS
   void CholeskyInsert(ElemType sqNormNewX, const VecType& newGramCol);
 
   template<typename MatType>
-  void GivensRotate(const typename arma::Col<ElemType>::fixed<2>& x,
-                    typename arma::Col<ElemType>::fixed<2>& rotatedX,
+  void GivensRotate(const typename arma::Col<ElemType>::template fixed<2>& x,
+                    typename arma::Col<ElemType>::template fixed<2>& rotatedX,
                     MatType& G);
 
   void CholeskyDelete(const size_t colToKill);

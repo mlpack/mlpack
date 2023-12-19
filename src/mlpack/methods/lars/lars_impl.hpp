@@ -1253,10 +1253,10 @@ template<typename MatType>
 inline void LARS<ModelMatType>::GivensRotate(
     const typename arma::Col<
         typename LARS<ModelMatType>::ElemType
-    >::fixed<2>& x,
+    >::template fixed<2>& x,
     typename arma::Col<
         typename LARS<ModelMatType>::ElemType
-    >::fixed<2>& rotatedX,
+    >::template fixed<2>& rotatedX,
     MatType& matG)
 {
   if (x(1) == 0)
