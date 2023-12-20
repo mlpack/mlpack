@@ -56,29 +56,17 @@ class RectifierFunction
   }
 
   /**
-   * Computes the rectifier function using a dense matrix as input.
+   * Computes the rectifier function using a 2nd /3rd-order tensor as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename eT>
-  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  template<typename MatType>
+  static void Fn(const MatType& x, MatType& y)
   {
-    y.zeros(x.n_rows, x.n_cols);
-    y = arma::max(y, x);
-  }
-
-  /**
-   * Computes the rectifier function using a 3rd-order tensor as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  static void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
-  {
-    y.zeros(x.n_rows, x.n_cols, x.n_slices);
-    y = arma::max(y, x);
+    y.set_size(size(x));
+    y.zeros();
+    y = max(y, x);
   }
 
   /**
