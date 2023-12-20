@@ -15,23 +15,60 @@
 #define MLPACK_METHODS_ANN_MAKE_ALIAS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <bandicoot>
 
 namespace mlpack {
+
+template<typename MatType>
+struct IsCootMatType;
+
+template<typename CubeType>
+struct IsCootCubeType;
+
+template<typename MatType>
+struct IsCootMatType
+{
+  constexpr static bool value = false;
+};
+
+template<typename CubeType>
+struct IsCootCubeType
+{
+  constexpr static bool value = false;
+};
+
+#ifdef MLPACK_HAS_COOT
+template<typename MatType>
+struct IsCootMatType
+{
+  constexpr static bool value = true;
+};
+
+template<typename CubeType>
+struct IsCootCubeType
+{
+  constexpr static bool value = true;
+};
+
+#endif
 
 /**
  * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
  * `numCols`.
  */
-template<typename MatType>
+template<typename MatType,
+         typename = typename std::enable_if<
+         !IsCootMatType<MatType>::value>::type>
 void MakeAlias(MatType& m,
-               typename MatType::elem_type* newMem,
+               MatType oldMat,
                const size_t numRows,
                const size_t numCols)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  m.~MatType();
+  typename MatType::elem_type* newMem = oldMat.memptr();
+  m.~Mat();
   new (&m) MatType(newMem, numRows, numCols, false, true);
 }
 
@@ -39,9 +76,11 @@ void MakeAlias(MatType& m,
  * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
  * `numCols` x `numSlices`.
  */
-template<typename CubeType>
+template<typename CubeType,
+         typename = typename std::enable_if<
+         !IsCootCubeType<CubeType>::value>::type>
 void MakeAlias(CubeType& c,
-               typename CubeType::elem_type* newMem,
+               CubeType oldCube,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)
@@ -49,9 +88,50 @@ void MakeAlias(CubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  c.~CubeType();
+  typename CubeType::elem_type* newMem = oldCube.memptr();
+  c.~Cube();
   new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
 }
+
+#ifdef MLPACK_HAS_COOT
+template<typename MatType,
+         typename = typename std::enable_if<
+         IsCootMatType<MatType>::value>::type>
+void MakeAlias(MatType& m,
+               MatType oldMat,
+               const size_t numRows,
+               const size_t numCols)
+{
+  // We use placement new to reinitialize the object, since the copy and move
+  // assignment operators in Armadillo will end up copying memory instead of
+  // making an alias.
+  typename MatType::elem_type* newMem = oldMat.get_dev_mem();
+  m.~Mat();
+  new (&m) MatType(newMem, numRows, numCols, false, true);
+}
+
+/**
+ * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
+ * `numCols` x `numSlices`.
+ */
+template<typename CubeType,
+         typename = typename std::enable_if<
+         IsCootCubeType<CubeType>::value>::type>
+void MakeAlias(CubeType& c,
+               CubeType oldCube,
+               const size_t numRows,
+               const size_t numCols,
+               const size_t numSlices)
+{
+  // We use placement new to reinitialize the object, since the copy and move
+  // assignment operators in Armadillo will end up copying memory instead of
+  // making an alias.
+  typename CubeType::elem_type* newMem = oldCube.get_dev_mem();
+  c.~Cube();
+  new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
+}
+
+#endif
 
 } // namespace mlpack
 

@@ -206,11 +206,12 @@ void FFN<
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols) - i);
 
-    const MatType predictorAlias(
-        const_cast<typename MatType::elem_type*>(predictors.colptr(i)),
-        predictors.n_rows, effectiveBatchSize, false, true);
-    MatType resultAlias(results.colptr(i), results.n_rows,
-        effectiveBatchSize, false, true);
+    MatType predictorAlias, resultAlias;
+    MakeAlias(predictorAlias, predictors.col(i),
+              predictors.n_rows, effectiveBatchSize);
+
+    MakeAlias(resultAlias, results.col(i),
+              results.n_rows, effectiveBatchSize
 
     network.Forward(predictorAlias, resultAlias);
   }
@@ -451,8 +452,8 @@ typename MatType::elem_type FFN<
   // pass.
   networkOutput.set_size(network.OutputSize(), batchSize);
   MatType predictorsBatch, responsesBatch;
-  MakeAlias(predictorsBatch, predictors.colptr(begin), predictors.n_rows, batchSize);
-  MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows, batchSize);
+  MakeAlias(predictorsBatch, predictors.col(begin), predictors.n_rows, batchSize);
+  MakeAlias(responsesBatch, responses.col(begin), responses.n_rows, batchSize);
   network.Forward(predictorsBatch, networkOutput);
 
   return outputLayer.Forward(networkOutput, responsesBatch) + network.Loss();
@@ -499,9 +500,9 @@ typename MatType::elem_type FFN<
 
   // Alias the batches so we don't copy memory.
   MatType predictorsBatch, responsesBatch;
-  MakeAlias(predictorsBatch, predictors.colptr(begin), predictors.n_rows,
+  MakeAlias(predictorsBatch, predictors.col(begin), predictors.n_rows,
       batchSize);
-  MakeAlias(responsesBatch, responses.colptr(begin), responses.n_rows,
+  MakeAlias(responsesBatch, responses.col(begin), responses.n_rows,
       batchSize);
 
   network.Forward(predictorsBatch, networkOutput);
