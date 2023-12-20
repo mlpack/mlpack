@@ -56,31 +56,33 @@ struct IsCootCubeType
  * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
  * `numCols`.
  */
-template<typename MatType,
+template<typename InMatType,
+         typename OutMatType,
          typename = typename std::enable_if<
-         !IsCootMatType<MatType>::value>::type>
-void MakeAlias(MatType& m,
-               MatType oldMat,
+         !IsCootMatType<InMatType>::value>::type>
+void MakeAlias(OutMatType& m,
+               InMatType oldMat,
                const size_t numRows,
                const size_t numCols)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename MatType::elem_type* newMem = oldMat.memptr();
+  typename InMatType::elem_type* newMem = oldMat.memptr();
   m.~Mat();
-  new (&m) MatType(newMem, numRows, numCols, false, true);
+  new (&m) OutMatType(newMem, numRows, numCols, false, true);
 }
 
 /**
  * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
  * `numCols` x `numSlices`.
  */
-template<typename CubeType,
+template<typename InCubeType,
+         typename OutCubeType,
          typename = typename std::enable_if<
-         !IsCootCubeType<CubeType>::value>::type>
-void MakeAlias(CubeType& c,
-               CubeType oldCube,
+         !IsCootCubeType<InCubeType>::value>::type>
+void MakeAlias(OutCubeType& c,
+               InCubeType oldCube,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)
@@ -88,37 +90,39 @@ void MakeAlias(CubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename CubeType::elem_type* newMem = oldCube.memptr();
+  typename InCubeType::elem_type* newMem = oldCube.memptr();
   c.~Cube();
-  new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
+  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
 }
 
 #ifdef MLPACK_HAS_COOT
-template<typename MatType,
+template<typename InMatType,
+         typename OutMatType,
          typename = typename std::enable_if<
-         IsCootMatType<MatType>::value>::type>
-void MakeAlias(MatType& m,
-               MatType oldMat,
+         IsCootMatType<InMatType>::value>::type>
+void MakeAlias(OutMatType& m,
+               InMatType oldMat,
                const size_t numRows,
                const size_t numCols)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename MatType::elem_type* newMem = oldMat.get_dev_mem();
+  typename InMatType::elem_type* newMem = oldMat.get_dev_mem();
   m.~Mat();
-  new (&m) MatType(newMem, numRows, numCols, false, true);
+  new (&m) OutMatType(newMem, numRows, numCols, false, true);
 }
 
 /**
  * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
  * `numCols` x `numSlices`.
  */
-template<typename CubeType,
+template<typename InCubeType,
+         typename OutCubeType,
          typename = typename std::enable_if<
-         IsCootCubeType<CubeType>::value>::type>
-void MakeAlias(CubeType& c,
-               CubeType oldCube,
+         IsCootCubeType<InCubeType>::value>::type>
+void MakeAlias(OutCubeType& c,
+               InCubeType oldCube,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)
@@ -126,9 +130,9 @@ void MakeAlias(CubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename CubeType::elem_type* newMem = oldCube.get_dev_mem();
+  typename InCubeType::elem_type* newMem = oldCube.get_dev_mem();
   c.~Cube();
-  new (&c) CubeType(newMem, numRows, numCols, numSlices, false, true);
+  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
 }
 
 #endif

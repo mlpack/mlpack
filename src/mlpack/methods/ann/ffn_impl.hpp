@@ -211,7 +211,7 @@ void FFN<
               predictors.n_rows, effectiveBatchSize);
 
     MakeAlias(resultAlias, results.col(i),
-              results.n_rows, effectiveBatchSize
+              results.n_rows, effectiveBatchSize);
 
     network.Forward(predictorAlias, resultAlias);
   }

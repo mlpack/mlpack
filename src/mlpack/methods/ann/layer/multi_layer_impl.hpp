@@ -388,7 +388,7 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   for (size_t i = 0; i < layerOutputs.size(); ++i)
   {
     const size_t layerOutputSize = network[i]->OutputSize();
-    MakeAlias(layerOutputs[i], layerOutputMatrix.colptr(start),
+    MakeAlias(layerOutputs[i], layerOutputMatrix.col(start),
         layerOutputSize, batchSize);
     start += batchSize * layerOutputSize;
   }
@@ -417,7 +417,7 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
     for (size_t j = 0; j < this->network[i]->InputDimensions().size(); ++j)
       layerInputSize *= this->network[i]->InputDimensions()[j];
 
-    MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
+    MakeAlias(layerDeltas[i], layerDeltaMatrix.col(start), layerInputSize,
         batchSize);
     start += batchSize * layerInputSize;
   }
