@@ -5,7 +5,7 @@
   * Fix `preprocess_split()` call in documentation for `LinearRegression` and
     `AdaBoost` Python classes (#3563).
 
-  * Add Repeat and Replicate ANN Layer Types (#3565)
+  * Added Repeat ANN Layer Type (#3565)
 
   * Remove `round()` implementation for old MSVC compilers (#3570).
 
