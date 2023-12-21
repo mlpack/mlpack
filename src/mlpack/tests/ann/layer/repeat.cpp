@@ -183,7 +183,8 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
   delta.set_size(12, 1);
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(8, 3);
-  MatType targetDelta = (prevDelta.submat(0, 0, 3, 2) + prevDelta.submat(4, 0, 7, 2)) / 2;
+  MatType targetDelta = (prevDelta.submat(0, 0, 3, 2) +
+      prevDelta.submat(4, 0, 7, 2)) / 2;
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
 }
