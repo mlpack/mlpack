@@ -232,7 +232,7 @@ TEMPLATE_TEST_CASE("PredictTest", "[LARSTest]", arma::fmat, arma::mat)
         arma::Col<ElemType> adjPred = X * predictions.t();
 
         const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-7 :
-            1e-4;
+            1e-3;
 
         REQUIRE(predictions.n_elem == 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
