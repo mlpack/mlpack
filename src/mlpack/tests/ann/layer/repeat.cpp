@@ -206,7 +206,6 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-
   RepeatType<MatType> module1({1, 2}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
