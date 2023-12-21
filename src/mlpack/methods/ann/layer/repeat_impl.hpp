@@ -105,7 +105,7 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   {
     inputSize *= this->inputDimensions[i];
   }
-  arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize-1);
+  arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize - 1);
 
   // Here, we are going to pre-compute the source index for each output
   // for a single tensor.  Since the tensors are flattened into 1-d
