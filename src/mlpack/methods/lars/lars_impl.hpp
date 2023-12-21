@@ -1300,7 +1300,7 @@ inline void LARS<ModelMatType>::CholeskyDelete(const size_t colToKill)
     for (size_t k = colToKill; k < n; ++k)
     {
       DenseMatType matG;
-      typename arma::Col<ElemType>::fixed<2> rotatedVec;
+      typename arma::Col<ElemType>::template fixed<2> rotatedVec;
       GivensRotate(matUtriCholFactor(arma::span(k, k + 1), k), rotatedVec,
           matG);
       matUtriCholFactor(arma::span(k, k + 1), k) = rotatedVec;
