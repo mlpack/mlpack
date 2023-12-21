@@ -46,7 +46,6 @@ class RepeatType : public Layer<MatType>
    *        the same size or smaller than InputDimensions.
    * @apram interleave If true, the output will be interleaved (similar to
    *        arma::repelem).  If false, the output will be repeated in blocks.
-   *
    */
   RepeatType(std::vector<size_t> multiples, bool interleave = false);
 
