@@ -142,7 +142,8 @@ void RepeatType<MatType>::ComputeOutputDimensions()
       outSize *= this->outputDimensions[i];
     }
   }
-  else {
+  else
+  {
     // iteratively reshape the index matrix such that the dimension
     // to be replicated (and all prior) are flattened to a column, and
     // then repmat columnwise.
