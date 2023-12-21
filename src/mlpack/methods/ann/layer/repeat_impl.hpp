@@ -43,7 +43,8 @@ RepeatType<MatType>::RepeatType(const RepeatType& other) :
     multiples(other.multiples),
     interleave(other.interleave),
     outIdxs(other.outIdxs),
-    coefs(other.coefs)
+    sizeMult(other.sizeMult),
+    backIdxs(other.backIdxs)
 {
   // Nothing else to do.
 }
@@ -54,7 +55,8 @@ RepeatType<MatType>::RepeatType(RepeatType&& other)  noexcept :
     multiples(other.multiples),
     interleave(other.interleave),
     outIdxs(other.outIdxs),
-    coefs(other.coefs)
+    sizeMult(other.sizeMult),
+    backIdxs(other.backIdxs)
 {
   // Nothing else to do.
 }
@@ -68,7 +70,8 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(const RepeatType& other)
     multiples = other.multiples;
     interleave = other.interleave;
     outIdxs = other.outIdxs;
-    coefs = other.coefs;
+    sizeMult = other.sizeMult;
+    backIdxs = other.backIdxs;
   }
 
   return *this;
@@ -83,7 +86,8 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other) noexcept
     multiples = std::move(other.multiples);
     interleave = std::move(other.interleave);
     outIdxs = std::move(other.outIdxs);
-    coefs = std::move(other.coefs);
+    sizeMult = other.sizeMult;
+    backIdxs = other.backIdxs;
   }
 
   return *this;
@@ -112,17 +116,17 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   // vectors, we can fill the output row-wise based on these
   // indices.
   this->outputDimensions = this->inputDimensions;
-  size_t sizeMult = 1;
+  sizeMult = 1;
   size_t outSize = 1;
 
-  if (interleave)
+  // iteratively reshape the index matrix such that the dimension
+  // to be repeated (and all prior) are flattened to a column, and
+  // then repelem rowwise or repmat columwise.
+  for (size_t i = 0; i < multiples.size(); i++)
   {
-    // iteratively reshape the index matrix such that the dimension
-    // to be repeated (and all prior) are flattened to a column, and
-    // then repelem rowwise.
-    for (size_t i = 0; i < multiples.size(); i++)
+    if (multiples[i] != 1)
     {
-      if (multiples[i] != 1)
+      if (interleave)
       {
         // For the first dimension, we need to do the repelem columnwise.
         if (i == 0)
@@ -136,39 +140,29 @@ void RepeatType<MatType>::ComputeOutputDimensions()
                        idxs.n_elem / outSize);
           idxs = arma::repelem(idxs, 1, multiples[i]);
         }
-        this->outputDimensions[i] *= multiples[i];
-        sizeMult *= multiples[i];
       }
-      outSize *= this->outputDimensions[i];
-    }
-  }
-  else
-  {
-    // iteratively reshape the index matrix such that the dimension
-    // to be replicated (and all prior) are flattened to a column, and
-    // then repmat columnwise.
-    for (size_t i = 0; i < multiples.size(); i++)
-    {
-      if (multiples[i] != 1)
+      else
       {
         idxs.reshape(outSize * this->inputDimensions[i],
                      idxs.n_elem / (outSize * this->inputDimensions[i]));
         idxs = arma::repmat(idxs, multiples[i], 1);
-        this->outputDimensions[i] *= multiples[i];
-        sizeMult *= multiples[i];
       }
-      outSize *= this->outputDimensions[i];
+      this->outputDimensions[i] *= multiples[i];
+      sizeMult *= multiples[i];
     }
+    outSize *= this->outputDimensions[i];
   }
   outIdxs = idxs.as_col();
 
   // Now, we are going to pre-compute the contribution of each output
   // element to the input elements.  This will be used in the backward
   // pass with a simple matrix multiplication.
-  coefs = arma::zeros<MatType>(inputSize, outSize);
+  backIdxs.set_size(inputSize, sizeMult);
+  arma::uvec counts(inputSize, arma::fill::zeros);
   for (size_t i = 0; i < outIdxs.n_elem; i++)
   {
-    coefs.at(outIdxs.at(i), i) = 1.0 / (typename MatType::elem_type) sizeMult;
+    auto r = outIdxs.at(i);
+    backIdxs.at(r, counts.at(r)++) = i;
   }
 }
 
@@ -185,7 +179,12 @@ void RepeatType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = coefs * gy;
+  g = gy.rows(backIdxs.col(0));
+  for (size_t c = 1; c < sizeMult; c++)
+  {
+    g += gy.rows(backIdxs.col(c));
+  }
+  g /= sizeMult;
 }
 
 template<typename MatType>
@@ -198,7 +197,8 @@ void RepeatType<MatType>::serialize(
   ar(CEREAL_NVP(multiples));
   ar(CEREAL_NVP(interleave));
   ar(CEREAL_NVP(outIdxs));
-  ar(CEREAL_NVP(coefs));
+  ar(CEREAL_NVP(sizeMult));
+  ar(CEREAL_NVP(backIdxs));
 }
 
 } // namespace mlpack

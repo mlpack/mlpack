@@ -34,6 +34,7 @@ class RepeatType : public Layer<MatType>
   /**
    * Create the Repeat object.  Multiples will be empty (e.g. 1s for all
    * dimensions), so this is the equivalent of an Identity Layer.
+   * Interleave will be false (e.g. repeat in blocks).
    */
   RepeatType();
 
@@ -136,7 +137,8 @@ class RepeatType : public Layer<MatType>
 
   // Cache the contributions of each output element to the
   // input elements for use in the backward pass.
-  MatType coefs;
+  size_t sizeMult;
+  arma::umat backIdxs;
 }; // class RepeatType.
 
 // Standard Repeat layer.
