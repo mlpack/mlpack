@@ -137,8 +137,10 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(8, 6);
   MatType targetDelta(4, 3);
-  for (size_t i=0; i<targetDelta.n_rows; i++) {
-    for (size_t j=0; j<targetDelta.n_cols; j++) {
+  for (size_t i = 0; i < targetDelta.n_rows; i++)
+  {
+    for (size_t j = 0; j < targetDelta.n_cols; j++)
+    {
       targetDelta.at(i, j) = (prevDelta.at(i * 2, j * 2)
           + prevDelta.at(i * 2 + 1, j * 2)
           + prevDelta.at(i * 2, j * 2 + 1)
