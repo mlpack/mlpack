@@ -95,9 +95,9 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
   module1.Backward(input, output, prevDelta, delta);
   prevDelta.reshape(4, 6);
   MatType targetDelta(4, 3);
-  for (size_t i=0; i<targetDelta.n_cols; i++) {
-    targetDelta.col(i)
-      = arma::sum(prevDelta.cols(i * 2, i * 2 + 1), 1) / 2;
+  for (size_t i = 0; i < targetDelta.n_cols; i++)
+  {
+    targetDelta.col(i) = arma::sum(prevDelta.cols(i * 2, i * 2 + 1), 1) / 2;
   }
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
