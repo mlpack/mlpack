@@ -22,7 +22,7 @@
  */
 #ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_RECTIFIER_FUNCTION_HPP
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_RECTIFIER_FUNCTION_HPP
-
+#undef max
 #include <mlpack/prereqs.hpp>
 #include <algorithm>
 
