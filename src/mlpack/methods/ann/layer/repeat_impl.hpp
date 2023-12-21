@@ -124,7 +124,7 @@ void RepeatType<MatType>::ComputeOutputDimensions()
     {
       if (multiples[i] != 1)
       {
-// For the first dimension, we need to do the repelem columnwise.
+        // For the first dimension, we need to do the repelem columnwise.
         if (i == 0)
         {
           idxs.reshape(outSize * this->inputDimensions[i],
