@@ -149,7 +149,6 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
   CheckMatrices(delta, targetDelta, 1e-1);
 }
 
-
 /**
  * Simple test for Repeat layer using block repeats.
  */
