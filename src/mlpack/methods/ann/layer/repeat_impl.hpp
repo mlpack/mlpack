@@ -21,10 +21,10 @@ namespace mlpack {
 
 template<typename MatType>
 RepeatType<MatType>::RepeatType(
-    std::vector<size_t> _multiples, bool _interleave) :
+    std::vector<size_t> multiples, bool interleave) :
     Layer<MatType>(),
-    multiples(std::move(_multiples)),
-    interleave(_interleave)
+    multiples(std::move(multiples)),
+    interleave(interleave)
 {
   // Nothing to do.
 }
