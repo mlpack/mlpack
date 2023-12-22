@@ -116,7 +116,7 @@ struct IsVector<arma::subview_row<eT> >
 template<typename MatType>
 struct GetRowType
 {
-  typedef MatType type; // Not sure...
+  typedef arma::Row<typename MatType::elem_type> type;
 };
 
 template<typename eT>
@@ -136,7 +136,7 @@ struct GetRowType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetColType
 {
-  typedef MatType type; // Not sure...
+  typedef arma::Row<typename MatType::elem_type> type;
 };
 
 template<typename eT>
@@ -184,7 +184,7 @@ struct GetDenseColType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetDenseMatType
 {
-  typedef MatType type;
+  typedef arma::Mat<typename MatType::elem_type> type;
 };
 
 template<typename eT>
