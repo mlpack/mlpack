@@ -17,6 +17,18 @@
 
 using namespace mlpack;
 
+/**
+ * A couple of handful declarations for float32 testing.
+ * These will be removed when we refactor the Bounds to accept MatType.
+ * For now, we will keep the following declarations.
+ */
+template<typename MetricType>
+using FloatHRectBound = HRectBound<MetricType, float>;
+
+template<typename MetricType, typename StatisticType, typename MatType>
+using FloatKDTree = BinarySpaceTree<MetricType, StatisticType, MatType,
+                                    FloatHRectBound, MidpointSplit>;
+
 TEST_CASE("OneClusterTest", "[DBSCANTest]")
 {
   // Make sure that if we have points in the unit box, and if we set epsilon
@@ -190,6 +202,35 @@ TEST_CASE("OutlierSingleModeTest", "[DBSCANTest]")
   points.col(101) = arma::vec("1.5 1.5");
 
   DBSCAN<> d(0.1, 3, false);
+
+  arma::Row<size_t> assignments;
+  const size_t clusters = d.Cluster(points, assignments);
+
+  REQUIRE(clusters > 0);
+  REQUIRE(assignments.n_elem == points.n_cols);
+  REQUIRE(assignments[15] == SIZE_MAX);
+  REQUIRE(assignments[45] == SIZE_MAX);
+  REQUIRE(assignments[101] == SIZE_MAX);
+}
+
+/**
+ * Check that outliers are properly labeled as noise
+ * in the case of float32.
+ */
+TEST_CASE("Float32OutlierSingleModeTest", "[DBSCANTest]")
+{
+  arma::Mat<float> points(2, 200, arma::fill::randu);
+
+  // Add 3 outliers.
+  points.col(15) = arma::Col<float>("10.3 1.6");
+  points.col(45) = arma::Col<float>("-100 0.0");
+  points.col(101) = arma::Col<float>("1.5 1.5");
+
+  DBSCAN<RangeSearch<
+         EuclideanDistance,
+         arma::Mat<float>,
+         FloatKDTree>,
+         OrderedPointSelection> d(0.1, 3, false);
 
   arma::Row<size_t> assignments;
   const size_t clusters = d.Cluster(points, assignments);

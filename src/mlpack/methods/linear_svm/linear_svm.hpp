@@ -73,17 +73,53 @@ namespace mlpack {
  * lsvm.Classify(test_data, predictions);
  * @endcode
  *
- * @tparam MatType Type of data matrix.
+ * @tparam ModelMatType Type of data matrix to use to store model parameters.
  */
-template <typename MatType = arma::mat>
+template<typename ModelMatType = arma::mat>
 class LinearSVM
 {
  public:
+  typedef typename ModelMatType::elem_type ElemType;
+  typedef typename GetDenseMatType<ModelMatType>::type DenseMatType;
+  typedef typename GetDenseColType<ModelMatType>::type DenseColType;
+
+  /**
+   * Initialize the Linear SVM without performing training.  Default
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   *
+   * @param lambda L2-regularization constant.
+   * @param delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   */
+  LinearSVM();
+
+  /**
+   * Initialize the Linear SVM without performing training.  Default
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   *
+   * @param dimensionality Size of the input feature vector.
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @param delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   */
+  LinearSVM(const size_t dimensionality,
+            const size_t numClasses,
+            const double lambda = 0.0001,
+            const double delta = 1.0,
+            const bool fitIntercept = false);
+
   /**
    * Construct the LinearSVM class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
+   *
+   * This constructor is deprecated; if you want to specify a custom optimizer,
+   * use the constructor with the optimizer after `numClasses`.  The constructor
+   * will be removed in mlpack 5.0.0.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @tparam CallbackTypes Types of callback functions.
@@ -97,8 +133,18 @@ class LinearSVM
    * @param callbacks Callback functions.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  template <typename OptimizerType, typename... CallbackTypes>
-  LinearSVM(const MatType& data,
+  template<typename OptimizerType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               LinearSVMFunction<arma::mat, ModelMatType>,
+               ModelMatType
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  mlpack_deprecated /** To be removed in mlpack 5.0.0. **/
+  LinearSVM(const arma::mat& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses,
             const double lambda,
@@ -113,6 +159,10 @@ class LinearSVM
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
+   * This constructor is deprecated; if you want to specify a custom optimizer,
+   * use the constructor with the optimizer after `numClasses`.  The constructor
+   * will be removed in mlpack 5.0.0.
+   *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
@@ -122,45 +172,210 @@ class LinearSVM
    * @param fitIntercept add intercept term or not.
    * @param optimizer Desired optimizer.
    */
-  template <typename OptimizerType = ens::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               LinearSVMFunction<arma::mat, ModelMatType>,
+               ModelMatType
+           >::value>::type>
+  mlpack_deprecated /** To be removed in mlpack 5.0.0. **/
+  LinearSVM(const arma::mat& data,
+            const arma::Row<size_t>& labels,
+            const size_t numClasses,
+            const double lambda,
+            const double delta,
+            const bool fitIntercept,
+            OptimizerType optimizer);
+
+  /**
+   * Construct the LinearSVM class with the provided data and labels.
+   * This will train the model. Optionally, hyperparameters can be passed.
+   *
+   * @tparam OptimizerType Desired differentiable separable optimizer
+   * @param data Input training features. Each column associate with one sample
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   * @param delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   * @param callbacks Callback Functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   */
+  template<typename MatType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
   LinearSVM(const MatType& data,
             const arma::Row<size_t>& labels,
-            const size_t numClasses = 2,
+            const size_t numClasses,
             const double lambda = 0.0001,
             const double delta = 1.0,
             const bool fitIntercept = false,
-            OptimizerType optimizer = OptimizerType());
+            CallbackTypes&&... callbacks);
 
   /**
-   * Initialize the Linear SVM without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling
-   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   * Construct the LinearSVM class with the provided data and labels.  This will
+   * train the model with the given custom optimizer. Optionally,
+   * hyperparameters can be passed.
    *
-   * @param inputSize Size of the input feature vector.
+   * @tparam OptimizerType Desired differentiable separable optimizer
+   * @param data Input training features. Each column associate with one sample
+   * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept add intercept term or not.
+   * @param callbacks Callback Functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  LinearSVM(const size_t inputSize,
-            const size_t numClasses = 0,
+  template<typename MatType,
+           typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  LinearSVM(const MatType& data,
+            const arma::Row<size_t>& labels,
+            const size_t numClasses,
+            OptimizerType& optimizer,
             const double lambda = 0.0001,
             const double delta = 1.0,
-            const bool fitIntercept = false);
+            const bool fitIntercept = false,
+            CallbackTypes&&... callbacks);
+
   /**
-   * Initialize the Linear SVM without performing training.  Default
-   * value of lambda is 0.0001.  Be sure to use Train() before calling
-   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   * Train the Linear SVM with the given training data.
    *
+   * @param data Input training features. Each column associate with one sample.
+   * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept add intercept term or not.
+   * @param callbacks Callback Functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
    */
-  LinearSVM(const size_t numClasses = 0,
-            const double lambda = 0.0001,
-            const double delta = 1.0,
-            const bool fitIntercept = false);
+  // Many overloads are necessary because we don't yet require C++17, which
+  // would give std::optional support.
+  template<typename MatType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 CallbackTypes&&... callbackTypes);
+
+  template<typename MatType>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 const double lambda);
+
+  template<typename MatType>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 const double lambda,
+                 const double delta);
+
+  template<typename MatType,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 const double lambda,
+                 const double delta,
+                 const bool fitIntercept,
+                 CallbackTypes&&... callbacks);
+
+  /**
+   * Train the Linear SVM with the given training data using a custom ensmallen
+   * optimizer.
+   *
+   * @tparam OptimizerType Desired optimizer.
+   * @param data Input training features. Each column associate with one sample.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param optimizer Desired optimizer.
+   * @param lambda L2-regularization constant.
+   * @param delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
+   * @param callbacks Callback Functions.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return Objective value of the final point.
+   */
+  // Many overloads are necessary because we don't yet require C++17, which
+  // would give std::optional support.
+  template<typename MatType,
+           typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               LinearSVMFunction<MatType, ModelMatType>,
+               ModelMatType
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 OptimizerType optimizer,
+                 CallbackTypes&&... callbacks);
+
+  template<typename MatType,
+           typename OptimizerType = ens::L_BFGS,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               LinearSVMFunction<MatType, ModelMatType>,
+               ModelMatType
+           >::value>::type>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 OptimizerType optimizer,
+                 const double lambda);
+
+  template<typename MatType,
+           typename OptimizerType = ens::L_BFGS,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               LinearSVMFunction<MatType, ModelMatType>,
+               ModelMatType
+           >::value>::type>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 OptimizerType optimizer,
+                 const double lambda,
+                 const double delta);
+
+  template<typename MatType,
+           typename OptimizerType = ens::L_BFGS,
+           typename... CallbackTypes,
+           typename = typename std::enable_if<IsEnsOptimizer<
+               OptimizerType,
+               LinearSVMFunction<MatType, ModelMatType>,
+               ModelMatType
+           >::value>::type,
+           typename = typename std::enable_if<IsEnsCallbackTypes<
+               CallbackTypes...
+           >::value>::type>
+  ElemType Train(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses,
+                 OptimizerType optimizer,
+                 const double lambda,
+                 const double delta,
+                 const bool fitIntercept,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -171,6 +386,7 @@ class LinearSVM
    * @param data Set of points to classify.
    * @param labels Predicted labels for each point.
    */
+  template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& labels) const;
 
@@ -185,9 +401,10 @@ class LinearSVM
    * @param labels Predicted labels for each point.
    * @param scores Class probabilities for each point.
    */
+  template<typename MatType>
   void Classify(const MatType& data,
                 arma::Row<size_t>& labels,
-                arma::mat& scores) const;
+                DenseMatType& scores) const;
 
   /**
    * Classify the given points, returning class scores for each point.
@@ -195,7 +412,8 @@ class LinearSVM
    * @param data Matrix of data points to be classified.
    * @param scores Class scores for each point.
    */
-  void Classify(const MatType& data,
+  mlpack_deprecated
+  void Classify(const arma::mat& data,
                 arma::mat& scores) const;
 
   /**
@@ -210,6 +428,20 @@ class LinearSVM
   size_t Classify(const VecType& point) const;
 
   /**
+   * Classify the given point. The predicted class label is stored in `label`,
+   * and the probability of each class is stored in `probabilities`..
+   *
+   * @param point Point to be classified.
+   * @param label size_t to store predicted label into.
+   * @param probabilities Vector to store class probabilities into.
+   * @return Predicted class label of the point.
+   */
+  template<typename VecType>
+  void Classify(const VecType& point,
+                size_t& label,
+                DenseColType& probabilities) const;
+
+  /**
    * Computes accuracy of the learned model given the feature data and the
    * labels associated with each data point. Predictions are made using the
    * provided data and are compared with the actual labels.
@@ -218,45 +450,9 @@ class LinearSVM
    * @param testLabels Vector of labels associated with the data.
    * @return Accuracy of the model.
    */
+  template<typename MatType>
   double ComputeAccuracy(const MatType& testData,
                          const arma::Row<size_t>& testLabels) const;
-
-  /**
-   * Train the Linear SVM with the given training data.
-   *
-   * @tparam OptimizerType Desired optimizer.
-   * @tparam CallbackTypes Types of Callback Functions.
-   * @param data Input training features. Each column associate with one sample.
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
-   * @param callbacks Callback Functions.
-   *      See https://www.ensmallen.org/docs.html#callback-documentation.
-   * @return Objective value of the final point.
-   */
-  template <typename OptimizerType, typename... CallbackTypes>
-  double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses,
-               OptimizerType optimizer,
-               CallbackTypes&&... callbacks);
-
-  /**
-   * Train the Linear SVM with the given training data.
-   *
-   * @tparam OptimizerType Desired optimizer.
-   * @param data Input training features. Each column associate with one sample.
-   * @param labels Labels associated with the feature data.
-   * @param numClasses Number of classes for classification.
-   * @param optimizer Desired optimizer.
-   * @return Objective value of the final point.
-   */
-  template <typename OptimizerType = ens::L_BFGS>
-  double Train(const MatType& data,
-               const arma::Row<size_t>& labels,
-               const size_t numClasses = 2,
-               OptimizerType optimizer = OptimizerType());
-
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }
@@ -277,9 +473,9 @@ class LinearSVM
   bool& FitIntercept() { return fitIntercept; }
 
   //! Set the model parameters.
-  arma::mat& Parameters() { return parameters; }
+  ModelMatType& Parameters() { return parameters; }
   //! Get the model parameters.
-  const arma::mat& Parameters() const { return parameters; }
+  const ModelMatType& Parameters() const { return parameters; }
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
@@ -290,17 +486,11 @@ class LinearSVM
    * Serialize the LinearSVM model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(parameters));
-    ar(CEREAL_NVP(numClasses));
-    ar(CEREAL_NVP(lambda));
-    ar(CEREAL_NVP(fitIntercept));
-  }
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameters after optimization.
-  arma::mat parameters;
+  ModelMatType parameters;
   //! Number of classes.
   size_t numClasses;
   //! L2-Regularization constant.
@@ -312,6 +502,9 @@ class LinearSVM
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION((typename ModelMatType),
+    (mlpack::LinearSVM<ModelMatType>), (1));
 
 // Include implementation.
 #include "linear_svm_impl.hpp"
