@@ -51,7 +51,8 @@ class LogisticRegressionFunction
   const arma::Row<size_t>& Responses() const { return responses; }
 
   /**
-  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  * Shuffle the order of function visitation.  This may be called by the
+  * optimizer.
   */
   void Shuffle();
 
@@ -66,7 +67,9 @@ class LogisticRegressionFunction
    *
    * @param parameters Vector of logistic regression parameters.
    */
-  double Evaluate(const arma::mat& parameters) const;
+  template<typename CoordinatesType>
+  typename CoordinatesType::elem_type Evaluate(
+      const CoordinatesType& parameters) const;
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
@@ -85,9 +88,11 @@ class LogisticRegressionFunction
    * @param batchSize Number of points to be passed at a time to use for
    *     objective function evaluation.
    */
-  double Evaluate(const arma::mat& parameters,
-                  const size_t begin,
-                  const size_t batchSize = 1) const;
+  template<typename CoordinatesType>
+  typename CoordinatesType::elem_type Evaluate(
+      const CoordinatesType& parameters,
+      const size_t begin,
+      const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -96,7 +101,8 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param gradient Vector to output gradient into.
    */
-  void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
+  template<typename CoordinatesType, typename GradType>
+  void Gradient(const CoordinatesType& parameters, GradType& gradient) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -111,8 +117,8 @@ class LogisticRegressionFunction
    * @param batchSize Number of points to be processed as a batch for objective
    *     function gradient evaluation.
    */
-  template<typename GradType>
-  void Gradient(const arma::mat& parameters,
+  template<typename CoordinatesType, typename GradType>
+  void Gradient(const CoordinatesType& parameters,
                 const size_t begin,
                 GradType& gradient,
                 const size_t batchSize = 1) const;
@@ -126,30 +132,33 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param j Index of the feature with respect to which the gradient is to
    *    be computed.
-   * @param gradient Sparse matrix to output gradient into.
+   * @param gradient Matrix to output gradient into.
    */
-  void PartialGradient(const arma::mat& parameters,
+  template<typename CoordinatesType, typename GradType>
+  void PartialGradient(const CoordinatesType& parameters,
                        const size_t j,
-                       arma::sp_mat& gradient) const;
+                       GradType& gradient) const;
 
   /**
    * Evaluate the objective function and gradient of the logistic regression
    * log-likelihood function simultaneously with the given parameters.
    */
-  template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
-                              GradType& gradient) const;
+  template<typename CoordinatesType, typename GradType>
+  typename CoordinatesType::elem_type EvaluateWithGradient(
+      const CoordinatesType& parameters,
+      GradType& gradient) const;
 
   /**
    * Evaluate the objective function and gradient of the logistic regression
    * log-likelihood function simultaneously with the given parameters, for
    * the given batch size from a given point in the dataset.
    */
-  template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
-                              const size_t begin,
-                              GradType& gradient,
-                              const size_t batchSize = 1) const;
+  template<typename CoordinatesType, typename GradType>
+  typename CoordinatesType::elem_type EvaluateWithGradient(
+      const CoordinatesType& parameters,
+      const size_t begin,
+      GradType& gradient,
+      const size_t batchSize = 1) const;
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }

@@ -100,9 +100,9 @@ PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y). The labels must order as a row.", "l");
 
 // Model loading/saving.
-PARAM_MODEL_IN(SoftmaxRegression, "input_model", "File containing existing "
+PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
     "model (parameters).", "m");
-PARAM_MODEL_OUT(SoftmaxRegression, "output_model", "File to save trained "
+PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
     "softmax regression model to.", "M");
 
 // Testing.
@@ -171,12 +171,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
       "no results will be saved");
 
-  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(params, timers,
+  SoftmaxRegression<>* sm = TrainSoftmax<SoftmaxRegression<>>(params, timers,
       maxIterations);
 
   TestClassifyAcc(params, timers, sm->NumClasses(), *sm);
 
-  params.Get<SoftmaxRegression*>("output_model") = sm;
+  params.Get<SoftmaxRegression<>*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -215,8 +215,9 @@ void TestClassifyAcc(util::Params& params,
   arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
+  arma::mat probabilities;
   timers.Start("softmax_regression_classification");
-  model.Classify(testData, predictLabels);
+  model.Classify(testData, predictLabels, probabilities);
   timers.Stop("softmax_regression_classification");
 
   // Calculate accuracy, if desired.
@@ -261,15 +262,9 @@ void TestClassifyAcc(util::Params& params,
   if (params.Has("predictions"))
     params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 
-  // Compute probabiltiies, if desired.
+  // Save probabilities, if desired.
   if (params.Has("probabilities"))
-  {
-    Log::Info << "Calculating class probabilities of points in '"
-        << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    arma::mat probabilities;
-    model.Classify(testData, probabilities);
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
-  }
 }
 
 template<typename Model>
