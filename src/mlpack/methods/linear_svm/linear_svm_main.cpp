@@ -405,7 +405,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Info << "Calculating class probabilities of points in " << testOutput
           << "." << endl;
       arma::mat probabilities;
-      model->svm.Classify(testSet, probabilities);
+      model->svm.Classify(testSet, predictions, probabilities);
       params.Get<arma::mat>("probabilities") = std::move(probabilities);
     }
 
