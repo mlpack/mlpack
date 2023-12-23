@@ -313,7 +313,7 @@ TEST_CASE("PredictionsTypeTest", "[CVTest]")
   // CheckPredictionsType<FFN<>, arma::mat>();
 
   CheckPredictionsType<LogisticRegression<>, arma::Row<size_t>>();
-  CheckPredictionsType<SoftmaxRegression, arma::Row<size_t>>();
+  CheckPredictionsType<SoftmaxRegression<>, arma::Row<size_t>>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::mat>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::imat>();
   CheckPredictionsType<DecisionTree<>, arma::Row<size_t>, arma::mat,
@@ -376,7 +376,7 @@ TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
       "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression<>>::TakesDatasetInfo,
       "Value should be false");
-  static_assert(!MetaInfoExtractor<SoftmaxRegression>::TakesDatasetInfo,
+  static_assert(!MetaInfoExtractor<SoftmaxRegression<>>::TakesDatasetInfo,
       "Value should be false");
 }
 
@@ -388,7 +388,7 @@ TEST_CASE("TakesNumClassesTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
       "Value should be true");
-  static_assert(MetaInfoExtractor<SoftmaxRegression>::TakesNumClasses,
+  static_assert(MetaInfoExtractor<SoftmaxRegression<>>::TakesNumClasses,
       "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression<>>::TakesNumClasses,
       "Value should be false");

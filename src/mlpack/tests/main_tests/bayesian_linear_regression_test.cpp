@@ -41,8 +41,8 @@ TEST_CASE_METHOD(BRTestFixture,
 
   RUN_BINDING();
 
-  BayesianLinearRegression* estimator =
-      params.Get<BayesianLinearRegression*>("output_model");
+  BayesianLinearRegression<>* estimator =
+      params.Get<BayesianLinearRegression<>*>("output_model");
 
   REQUIRE(estimator->DataOffset().n_elem == 0);
   REQUIRE(estimator->DataScale().n_elem == 0);
@@ -61,7 +61,7 @@ TEST_CASE_METHOD(BRTestFixture,
   const arma::rowvec omega = arma::randu<arma::rowvec>(m);
   arma::rowvec y =  omega * matX;
 
-  BayesianLinearRegression model;
+  BayesianLinearRegression<> model;
   model.Train(matX, y);
 
   arma::rowvec responses;
@@ -72,8 +72,8 @@ TEST_CASE_METHOD(BRTestFixture,
 
   RUN_BINDING();
 
-  BayesianLinearRegression* mOut =
-      params.Get<BayesianLinearRegression*>("output_model");
+  BayesianLinearRegression<>* mOut =
+      params.Get<BayesianLinearRegression<>*>("output_model");
 
   ResetSettings();
 
@@ -101,7 +101,7 @@ TEST_CASE_METHOD(BRTestFixture,
   const arma::rowvec omega = arma::randu<arma::rowvec>(m);
   arma::rowvec y =  omega * matX;
 
-  BayesianLinearRegression model;
+  BayesianLinearRegression<> model;
   model.Train(matX, y);
 
   arma::rowvec responses;
@@ -121,7 +121,7 @@ TEST_CASE_METHOD(BRTestFixture,
   // An error should occur.
   SetInputParam("input", std::move(matX));
   SetInputParam("input_model",
-                params.Get<BayesianLinearRegression*>("output_model"));
+                params.Get<BayesianLinearRegression<>*>("output_model"));
   SetInputParam("test", std::move(matXtest));
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);

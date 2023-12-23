@@ -635,10 +635,10 @@ TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
     labels[i] = 0;
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = 1;
-  SoftmaxRegression sr(dataset, labels, 2);
-  SoftmaxRegression srXml(dataset.n_rows, 2);
-  SoftmaxRegression srText(dataset.n_rows, 2);
-  SoftmaxRegression srBinary(dataset.n_rows, 2);
+  SoftmaxRegression<> sr(dataset, labels, 2);
+  SoftmaxRegression<> srXml(dataset.n_rows, 2);
+  SoftmaxRegression<> srText(dataset.n_rows, 2);
+  SoftmaxRegression<> srBinary(dataset.n_rows, 2);
 
   SerializeObjectAll(sr, srXml, srText, srBinary);
 
@@ -1550,12 +1550,12 @@ TEST_CASE("BayesianLinearRegressionTest", "[SerializationTest]")
   arma::vec omega = arma::randn(75, 1);
   arma::rowvec y = omega.t() * matX;
 
-  BayesianLinearRegression blr(false, false);
+  BayesianLinearRegression<> blr(false, false);
   blr.Train(matX, y);
   arma::vec omegaOpt = blr.Omega();
 
   // Now, serialize.
-  BayesianLinearRegression xmlBlr(false, false), binaryBlr(false, false),
+  BayesianLinearRegression<> xmlBlr(false, false), binaryBlr(false, false),
     textBlr(false, false);
 
   SerializeObjectAll(blr, xmlBlr, binaryBlr, textBlr);
