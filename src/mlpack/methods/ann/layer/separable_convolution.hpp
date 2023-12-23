@@ -29,7 +29,6 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Separable Convolution class.The Separable Convolution class 
@@ -422,7 +421,7 @@ typedef SeparableConvolutionType<
     arma::mat> 
     SeparableConvolution;
 
-} // namespace ann
+
 } // namespace mlpack
 
 // Include implementation.
