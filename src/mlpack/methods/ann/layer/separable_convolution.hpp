@@ -26,6 +26,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
