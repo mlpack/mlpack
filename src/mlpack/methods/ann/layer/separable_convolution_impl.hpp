@@ -17,7 +17,6 @@
 #include "separable_convolution.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
 
 template <
     typename ForwardConvolutionRule,
@@ -472,7 +471,6 @@ void SeparableConvolutionType<
     padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
 }
 
-} // namespace ann
 } // namespace mlpack
 
 #endif
