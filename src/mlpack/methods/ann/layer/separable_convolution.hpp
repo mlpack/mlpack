@@ -36,19 +36,16 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam MatType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename MatType = arma::mat
 >
-class SeparableConvolutionType: public Layer<arma::mat>
+class SeparableConvolutionType: public Layer<MatType>
 {
  public:
   //! Create the Separable Convolution object.
@@ -139,8 +136,7 @@ class SeparableConvolutionType: public Layer<arma::mat>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template <typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -151,10 +147,9 @@ class SeparableConvolutionType: public Layer<arma::mat>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template <typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const MatType& /* input */,
+                const MatType& gy,
+                MatType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -163,35 +158,35 @@ class SeparableConvolutionType: public Layer<arma::mat>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template <typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  
+  void Gradient(const MatType& /* input */,
+                const MatType& error,
+                MatType& gradient);
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  MatType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  MatType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  MatType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  MatType& OutputParameter() { return outputParameter; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  MatType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  MatType& Parameters() { return weights; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  MatType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  MatType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  MatType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  MatType& Gradient() { return gradient; }
 
   //! Get the bias of the layer.
   arma::mat const& Bias() const { return bias; }
@@ -306,7 +301,7 @@ class SeparableConvolutionType: public Layer<arma::mat>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  template <typename eT>
+  
   void Rotate180(const arma::Cube<eT>& input, arma::Cube<eT>& output)
   {
     output = arma::Cube<eT>(input.n_rows, input.n_cols, input.n_slices);
@@ -322,8 +317,8 @@ class SeparableConvolutionType: public Layer<arma::mat>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  template <typename eT>
-  void Rotate180(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  
+  void Rotate180(const MatType& input, MatType& output)
   {
     /* left-right flip, up-down flip */
     output = arma::fliplr(arma::flipud(input));
@@ -363,7 +358,7 @@ class SeparableConvolutionType: public Layer<arma::mat>
   size_t padHTop;
 
   //! Locally-stored weights object.
-  OutputDataType weights;
+  MatType weights;
 
   //! Locally-stored weight object.
   arma::cube weight;
@@ -405,16 +400,16 @@ class SeparableConvolutionType: public Layer<arma::mat>
   ann::Padding<> padding;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  MatType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  MatType gradient;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  MatType inputParameter;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  MatType outputParameter;
 
 }; // Separable Convolution Class.
 
@@ -422,7 +417,6 @@ typedef SeparableConvolutionType<
     NaiveConvolution<ValidConvolution>,
     NaiveConvolution<FullConvolution>,
     NaiveConvolution<ValidConvolution>,
-    arma::mat,
     arma::mat> 
     SeparableConvolution;
 
