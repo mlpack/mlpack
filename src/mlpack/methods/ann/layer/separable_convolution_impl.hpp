@@ -207,6 +207,7 @@ void SeparableConvolutionType<
     MatType
 >::Forward(const MatType& input, MatType& output)
 {
+  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
   batchSize = input.n_cols;
   inputTemp = arma::cube(const_cast<MatType&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
@@ -228,7 +229,7 @@ void SeparableConvolutionType<
       padHBottom);
 
   output.set_size(wConv * hConv * outSize, batchSize);
-  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
+  outputTemp = CubeType(output.memptr(), wConv, hConv,
       outSize * batchSize, false, false);
   outputTemp.zeros();
 
@@ -285,11 +286,12 @@ void SeparableConvolutionType<
             const MatType& gy,
             MatType& g)
 {
+  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
   arma::cube mappedError(const_cast<MatType&>(gy).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
-  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
+  gTemp = CubeType(g.memptr(), inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices, false, false);
   gTemp.zeros();
 
@@ -342,11 +344,12 @@ void SeparableConvolutionType<
             const MatType& error,
             MatType& gradient)
 {
+  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
   arma::cube mappedError(const_cast<MatType&>(error).memptr(),
       outputWidth, outputHeight, outSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
-  gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
+  gradientTemp = CubeType(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
 

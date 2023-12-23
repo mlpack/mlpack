@@ -25,6 +25,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
+#include <mlpack/methods/ann/layer/padding.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -301,7 +302,7 @@ class SeparableConvolutionType: public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  
+template <typename eT>
   void Rotate180(const arma::Cube<eT>& input, arma::Cube<eT>& output)
   {
     output = arma::Cube<eT>(input.n_rows, input.n_cols, input.n_slices);
