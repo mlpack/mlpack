@@ -72,7 +72,11 @@
     CEREAL_REGISTER_TYPE(mlpack::PReLUType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::RBFType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ReLU6Type<__VA_ARGS__>); \
-    CEREAL_REGISTER_TYPE(mlpack::SeparableConvolutionType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::SeparableConvolutionType< \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::FullConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        __VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::SoftmaxType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::SoftminType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::HardTanHType<__VA_ARGS__>); \
