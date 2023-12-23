@@ -102,7 +102,7 @@ SeparableConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template <

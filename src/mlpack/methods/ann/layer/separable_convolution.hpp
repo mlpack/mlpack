@@ -398,7 +398,7 @@ template <typename eT>
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding<> padding;
+  Padding<> padding;
 
   //! Locally-stored delta object.
   MatType delta;
