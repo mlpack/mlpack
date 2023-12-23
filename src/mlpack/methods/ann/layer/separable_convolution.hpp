@@ -2,6 +2,7 @@
  * @file methods/ann/layer/separable_convolution.hpp
  * @author Kartik Dutt
  * @author Aakash Kaushik
+ * @author Sidharth
  * 
  * For more information, kindly refer to the following paper.
  *

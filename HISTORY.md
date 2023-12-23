@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Adapt `SeparableConvolution` ANN layer to new Layer interface (#3576).
+
   * Add `print_training_accuracy` option to LogisticRegression bindings (#3552).
     
   * Fix `preprocess_split()` call in documentation for `LinearRegression` and

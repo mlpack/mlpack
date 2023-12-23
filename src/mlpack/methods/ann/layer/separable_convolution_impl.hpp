@@ -2,6 +2,7 @@
  * @file methods/ann/layer/separable_convolution_impl.hpp
  * @author Kartik Dutt
  * @author Aakash Kaushik
+ * @author Sidharth
  *
  * Implementation of the Separable Convolution module class.
  *
