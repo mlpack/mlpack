@@ -2,15 +2,15 @@ name: Update CLI11
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '0 10 1/16 * *'
+    - cron: "0 10 1/16 * *"
 permissions:
   contents: read
 
 jobs:
   updateCLI11:
     permissions:
-      contents: write  # for peter-evans/create-pull-request to create branch
-      pull-requests: write  # for peter-evans/create-pull-request to create a PR
+      contents: write # for peter-evans/create-pull-request to create branch
+      pull-requests: write # for peter-evans/create-pull-request to create a PR
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     steps:
@@ -21,11 +21,11 @@ jobs:
           # Ping version information upstream.
           CLI11_RELEASE_JSON=$(curl -sL https://api.github.com/repos/CLIUtils/CLI11/releases/latest)
           CLI11_RELEASE_VERSION=$(jq -r ".tag_name" <<< "$CLI11_RELEASE_JSON" | tr -d v)
-          echo ::set-output name=release_tag::$(echo $CLI11_RELEASE_VERSION)
+          echo "release_tag=$(echo $CLI11_RELEASE_VERSION)" >> $GITHUB_OUTPUT
           # Extract out version information from git repository.
           CLI11_VERSION_VALUE=$(grep -i ".*#define CLI11_VERSION.*" src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp | grep -Po "(\d+\.)+\d+")
           # Set the current release tag.
-          echo ::set-output name=current_tag::$(echo $CLI11_VERSION_VALUE)
+          echo "current_tag=$(echo $CLI11_VERSION_VALUE)" >> $GITHUB_OUTPUT
 
       - name: Update CLI11
         if: steps.cli11-header.outputs.current_tag != steps.cli11-header.outputs.release_tag
