@@ -1485,7 +1485,7 @@ TEST_CASE("HoeffdingTreeEmptyConstructorTrainTest", "[HoeffdingTreeTest]")
   HoeffdingTree<> ht;
 
   // Just ensure that we can train without throwing an exception.
-  REQUIRE_NOTHROW(ht.Train(data, labels));
+  REQUIRE_NOTHROW(ht.Train(data, labels, 2));
 
   // Now, create a categorical dataset and retrain.
   arma::mat data2 = arma::mat(4, 3000);
@@ -1514,9 +1514,324 @@ TEST_CASE("HoeffdingTreeEmptyConstructorTrainTest", "[HoeffdingTreeTest]")
   }
 
   // Ensure we can train without throwing an exception.
-  REQUIRE_NOTHROW(ht.Train(data2, info, labels2));
+  REQUIRE_NOTHROW(ht.Train(data2, info, labels2, 3));
 
   // Train while specifying the number of classes.
-  REQUIRE_NOTHROW(ht.Train(data, labels, false, true, 2));
-  REQUIRE_NOTHROW(ht.Train(data2, info, labels2, false, 3));
+  REQUIRE_NOTHROW(ht.Train(data, labels, 2, false, true));
+  REQUIRE_NOTHROW(ht.Train(data2, info, labels2, 3, false));
+}
+
+// Test all numeric Train() variants.
+TEST_CASE("HoeffdingTreeNumericTrainVariantTest", "[HoeffdingTreeTest]")
+{
+  // Generate data.
+  arma::mat data(5, 1000, arma::fill::randu);
+  // Generate labels.
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1;
+
+  // Create trees.
+  HoeffdingTree<> htEmpty, ht1(5, 2), ht2(5, 2), ht3(5, 2), ht4(5, 2),
+      ht5(5, 2), ht6(5, 2), ht7(5, 2);
+
+  htEmpty.Train(data, labels, 2);
+  ht1.Train(data, labels);
+  ht2.Train(data, labels, 2);
+  ht3.Train(data, labels, 2, true);
+  ht4.Train(data, labels, 2, false, 0.96);
+  ht5.Train(data, labels, 2, false, 0.97, 150);
+  ht6.Train(data, labels, 2, false, 0.98, 160, 110);
+  ht7.Train(data, labels, 2, false, 0.99, 170, 120, 110);
+
+  REQUIRE(htEmpty.NumClasses() == 2);
+  REQUIRE(htEmpty.NumSamples() == data.n_cols);
+
+  REQUIRE(ht1.NumClasses() == 2);
+  REQUIRE(ht1.NumSamples() == data.n_cols);
+
+  REQUIRE(ht2.NumClasses() == 2);
+  REQUIRE(ht2.NumSamples() == data.n_cols);
+
+  REQUIRE(ht3.NumClasses() == 2);
+  REQUIRE(ht3.NumSamples() == data.n_cols);
+
+  REQUIRE(ht4.NumClasses() == 2);
+  REQUIRE(ht4.NumSamples() > 0);
+  REQUIRE(ht4.SuccessProbability() == 0.96);
+
+  REQUIRE(ht5.NumClasses() == 2);
+  REQUIRE(ht5.NumSamples() > 0);
+  REQUIRE(ht5.SuccessProbability() == 0.97);
+  REQUIRE(ht5.MaxSamples() == 150);
+
+  REQUIRE(ht6.NumClasses() == 2);
+  REQUIRE(ht6.NumSamples() > 0);
+  REQUIRE(ht6.SuccessProbability() == 0.98);
+  REQUIRE(ht6.MaxSamples() == 160);
+  REQUIRE(ht6.CheckInterval() == 110);
+
+  REQUIRE(ht7.NumClasses() == 2);
+  REQUIRE(ht7.NumSamples() > 0);
+  REQUIRE(ht7.SuccessProbability() == 0.99);
+  REQUIRE(ht7.MaxSamples() == 170);
+  REQUIRE(ht7.CheckInterval() == 120);
+  REQUIRE(ht7.MinSamples() == 110);
+}
+
+// Test all categorical Train() variants.
+TEST_CASE("HoeffdingTreeCategoricalTrainVariantTest", "[HoeffdingTreeTest]")
+{
+  // Generate data.
+  arma::mat data(4, 9000);
+  arma::Row<size_t> labels(9000);
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString<double>("0", 3);
+  for (size_t i = 0; i < 9000; i += 3)
+  {
+    data(0, i) = Random();
+    data(1, i) = Random();
+    data(2, i) = Random();
+    data(3, i) = 0.0;
+    labels[i] = 0;
+
+    data(0, i + 1) = Random();
+    data(1, i + 1) = Random() - 1.0;
+    data(2, i + 1) = Random() + 0.5;
+    data(3, i + 1) = 0.0;
+    labels[i + 1] = 2;
+
+    data(0, i + 2) = Random();
+    data(1, i + 2) = Random() + 1.0;
+    data(2, i + 2) = Random() + 0.8;
+    data(3, i + 2) = 0.0;
+    labels[i + 2] = 1;
+  }
+
+  // Create trees.
+  HoeffdingTree<> htEmpty, ht1(info, 3), ht2(info, 3), ht3(info, 3),
+      ht4(info, 3), ht5(info, 3), ht6(info, 3), ht7(info, 3);
+
+  htEmpty.Train(data, info, labels, 3);
+  ht1.Train(data, info, labels);
+  ht2.Train(data, info, labels, 3);
+  ht3.Train(data, info, labels, 3, true);
+  ht4.Train(data, info, labels, 3, false, 0.96);
+  ht5.Train(data, info, labels, 3, false, 0.97, 150);
+  ht6.Train(data, info, labels, 3, false, 0.98, 160, 110);
+  ht7.Train(data, info, labels, 3, false, 0.99, 170, 120, 110);
+
+  REQUIRE(htEmpty.NumClasses() == 3);
+  REQUIRE(htEmpty.NumSamples() == data.n_cols);
+
+  REQUIRE(ht1.NumClasses() == 3);
+  REQUIRE(ht1.NumSamples() == data.n_cols);
+
+  REQUIRE(ht2.NumClasses() == 3);
+  REQUIRE(ht2.NumSamples() == data.n_cols);
+
+  REQUIRE(ht3.NumClasses() == 3);
+  REQUIRE(ht3.NumSamples() == data.n_cols);
+
+  REQUIRE(ht4.NumClasses() == 3);
+  REQUIRE(ht4.NumSamples() > 0);
+  REQUIRE(ht4.SuccessProbability() == 0.96);
+
+  REQUIRE(ht5.NumClasses() == 3);
+  REQUIRE(ht5.NumSamples() > 0);
+  REQUIRE(ht5.SuccessProbability() == 0.97);
+  REQUIRE(ht5.MaxSamples() == 150);
+
+  REQUIRE(ht6.NumClasses() == 3);
+  REQUIRE(ht6.NumSamples() > 0);
+  REQUIRE(ht6.SuccessProbability() == 0.98);
+  REQUIRE(ht6.MaxSamples() == 160);
+  REQUIRE(ht6.CheckInterval() == 110);
+
+  REQUIRE(ht7.NumClasses() == 3);
+  REQUIRE(ht7.NumSamples() > 0);
+  REQUIRE(ht7.SuccessProbability() == 0.99);
+  REQUIRE(ht7.MaxSamples() == 170);
+  REQUIRE(ht7.CheckInterval() == 120);
+  REQUIRE(ht7.MinSamples() == 110);
+}
+
+// Test overloads of Reset().  (Also test NumSamples().)
+TEST_CASE("HoeffdingTreeResetTests", "[HoeffdingTreeTest]")
+{
+  // Generate data.
+  arma::mat data(5, 1000, arma::fill::randu);
+  // Generate labels.
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1;
+
+  // Train the tree.
+  HoeffdingTree<> ht(data, labels, 2);
+
+  REQUIRE(ht.NumSamples() > 0);
+  REQUIRE(ht.NumClasses() == 2);
+
+  // Reset the tree, changing nothing.
+  ht.Reset();
+  REQUIRE(ht.NumSamples() == 0);
+  REQUIRE(ht.NumChildren() == 0);
+
+  ht.Train(data, labels);
+  REQUIRE(ht.NumSamples() > 0);
+  REQUIRE(ht.NumClasses() == 2);
+
+  // Reset the tree, changing the dimensionality and number of classes.
+  ht.Reset(10, 3);
+  REQUIRE(ht.NumSamples() == 0);
+  REQUIRE(ht.NumChildren() == 0);
+
+  data = arma::randu<arma::mat>(10, 1000);
+  for(size_t i = 750; i < 1000; ++i)
+    labels[i] = 2;
+
+  ht.Train(data, labels);
+  REQUIRE(ht.NumSamples() > 0);
+  REQUIRE(ht.NumClasses() == 3);
+
+  // Reset the tree to work on categorical data with a different number of
+  // classes.
+  data::DatasetInfo info(10);
+  info.MapString<double>("0", 3);
+  data.row(9).fill(0.0);
+  for (size_t i = 0; i < 250; ++i)
+    labels[i] = 3;
+
+  ht.Reset(info, 4);
+  REQUIRE(ht.NumSamples() == 0);
+  REQUIRE(ht.NumChildren() == 0);
+
+  ht.Train(data, info, labels);
+
+  REQUIRE(ht.NumSamples() > 0);
+  REQUIRE(ht.NumClasses() == 4);
+}
+
+// Test that we can learn on floating-point data.
+TEST_CASE("HoeffdingTreeNumericFloatDataTest", "[HoeffdingTreeTest]")
+{
+  // We need to create a dataset with some amount of complexity, that must be
+  // split in a handful of ways to accurately classify the data.  An expanding
+  // spiral should do the trick here.  We'll make the spiral in two dimensions.
+  // The label will change as the index increases.
+  arma::fmat spiralDataset(2, 10000);
+  for (size_t i = 0; i < 10000; ++i)
+  {
+    // One circle every 20000 samples.  Plus some noise.
+    const float magnitude = 2.0 + (float(i) / 20000.0) + 0.5 * Random();
+    const float angle = (i % 20000) * (2 * M_PI) + Random();
+
+    const float x = magnitude * cos(angle);
+    const float y = magnitude * sin(angle);
+
+    spiralDataset(0, i) = x;
+    spiralDataset(1, i) = y;
+  }
+
+  arma::Row<size_t> labels(10000);
+  for (size_t i = 0; i < 2000; ++i)
+    labels[i] = 1;
+  for (size_t i = 2000; i < 4000; ++i)
+    labels[i] = 3;
+  for (size_t i = 4000; i < 6000; ++i)
+    labels[i] = 2;
+  for (size_t i = 6000; i < 8000; ++i)
+    labels[i] = 0;
+  for (size_t i = 8000; i < 10000; ++i)
+    labels[i] = 4;
+
+  // Now shuffle the dataset.
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 9999,
+      10000));
+  arma::fmat d(2, 10000);
+  arma::Row<size_t> l(10000);
+  for (size_t i = 0; i < 10000; ++i)
+  {
+    d.col(i) = spiralDataset.col(indices[i]);
+    l[i] = labels[indices[i]];
+  }
+
+  // Split into a training set and a test set.
+  arma::fmat trainingData = d.cols(0, 4999);
+  arma::fmat testData = d.cols(5000, 9999);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
+  arma::Row<size_t> testLabels = l.subvec(5000, 9999);
+
+  data::DatasetInfo info(2);
+
+  // Now build two decision trees; one in batch mode, and one in streaming mode.
+  // We need to set the confidence pretty high so that the streaming tree isn't
+  // able to have enough samples to build to the same leaves.
+  HoeffdingTree<GiniImpurity, HoeffdingFloatNumericSplit>
+      batchTree(trainingData, info, trainingLabels, 5, true, 0.99999999);
+  HoeffdingTree<GiniImpurity, HoeffdingFloatNumericSplit>
+      streamTree(trainingData, info, trainingLabels, 5, false, 0.99999999);
+
+  // Ensure that the performance of the batch tree is better.
+  size_t batchCorrect = 0;
+  size_t streamCorrect = 0;
+  for (size_t i = 0; i < 5000; ++i)
+  {
+    size_t streamLabel = streamTree.Classify(testData.col(i));
+    size_t batchLabel = batchTree.Classify(testData.col(i));
+
+    if (streamLabel == testLabels[i])
+      ++streamCorrect;
+    if (batchLabel == testLabels[i])
+      ++batchCorrect;
+  }
+
+  // The batch tree must be a bit better than the stream tree.  But not too
+  // much, since the accuracy is already going to be very high.
+  REQUIRE(batchCorrect >= streamCorrect);
+}
+
+// Test that we can learn on categorical floating-point data.
+TEST_CASE("HoeffdingTreeCategoricalFloatDataTest", "[HoeffdingTreeTest]")
+{
+  // Generate data.
+  arma::fmat dataset(4, 3000, arma::fill::randu);
+  arma::Row<size_t> labels(3000);
+  for (size_t i = 0; i < 3000; i += 3)
+  {
+    labels[i] = 0;
+
+    labels[i + 1] = 2;
+    dataset.col(i + 1) += 2.0;
+
+    labels[i + 2] = 1;
+    dataset.col(i + 2) -= 2.0;
+  }
+
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  info.MapString<double>("0", 3);
+  dataset.row(3).fill(0.0);
+
+  // Now build two decision trees; one in batch mode, and one in streaming mode.
+  HoeffdingTree<GiniImpurity, HoeffdingFloatNumericSplit>
+      batchTree(dataset, info, labels, 3, true);
+  HoeffdingTree<GiniImpurity, HoeffdingFloatNumericSplit>
+      streamTree(dataset, info, labels, 3, false);
+
+  // Make sure that we trained successfully.
+  arma::Row<size_t> batchPredictions, streamPredictions;
+  batchTree.Classify(dataset, batchPredictions);
+  streamTree.Classify(dataset, streamPredictions);
+
+  REQUIRE(batchPredictions.n_elem == labels.n_elem);
+  REQUIRE(streamPredictions.n_elem == labels.n_elem);
+
+  // Make sure that the accuracy is at least reasonable.  (This is a very loose
+  // test.)
+  REQUIRE(arma::accu(batchPredictions == labels) > (labels.n_elem / 2));
+  REQUIRE(arma::accu(streamPredictions == labels) > (labels.n_elem / 2));
 }
