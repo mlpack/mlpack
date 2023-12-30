@@ -269,3 +269,92 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
   targetDelta.reshape(12, 1);
   CheckMatrices(delta, targetDelta, 1e-1);
 }
+
+template <typename F> struct GradientBound {};
+template <> struct GradientBound<arma::mat>
+{
+  static constexpr double eps = 1e-5;
+  static constexpr double bound = 1e-4;
+};
+template <> struct GradientBound<arma::fmat>
+{
+  static constexpr double eps = 1e-3;
+  static constexpr double bound = 3e-3;
+};
+/**
+ * Numerical gradient test for MultiheadAttention layer.
+ */
+TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat)
+{
+  typedef TestType MatType;
+  struct GradientFunction
+  {
+    GradientFunction(std::vector<size_t> multiples, bool interleave) :
+        inputDimensions({3, 4}),
+        multiples(std::move(multiples)),
+        interleave(interleave),
+        outputSize(8),
+        vocabSize(5),
+        batchSize(20)
+    {
+      size_t inputSize = std::accumulate(inputDimensions.begin(),
+                                         inputDimensions.end(), 1,
+                                         std::multiplies<>());
+      input = arma::randu<MatType>(inputSize, batchSize);
+      target = arma::zeros<MatType>(vocabSize, batchSize);
+      for (size_t i = 0; i < target.n_elem; ++i)
+      {
+        const size_t label = RandInt(1, vocabSize);
+        target(i) = label;
+      }
+
+      model = new FFN<NegativeLogLikelihoodType<MatType>,RandomInitialization,MatType>();
+      model->InputDimensions() = inputDimensions;
+      model->ResetData(input, target);
+      model->template Add<RepeatType<MatType>>(multiples, interleave);
+      model->template Add<LinearType<MatType>>(vocabSize);
+      model->template Add<LogSoftMaxType<MatType>>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(MatType& gradient)
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    MatType& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihoodType<MatType>,RandomInitialization,MatType>* model;
+
+    MatType input, target;
+    const std::vector<size_t> inputDimensions;
+    const std::vector<size_t> multiples;
+    const bool interleave;
+    const size_t outputSize;
+    const size_t vocabSize;
+    const size_t batchSize;
+    size_t count;
+  };
+  GradientFunction fn1({2, 1}, true);
+  GradientFunction fn2({2, 1}, false);
+  GradientFunction fn3({1, 2}, true);
+  GradientFunction fn4({1, 2}, false);
+  GradientFunction fn5( {2, 2}, true);
+  GradientFunction fn6( {2, 2}, false);
+  
+  double eps = GradientBound<MatType>::eps;
+  double bound = GradientBound<MatType>::bound;
+
+  CHECK(CheckGradient<GradientFunction,MatType>(fn1, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction,MatType>(fn2, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction,MatType>(fn3, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction,MatType>(fn4, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction,MatType>(fn5, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction,MatType>(fn6, eps) <= bound);
+}
