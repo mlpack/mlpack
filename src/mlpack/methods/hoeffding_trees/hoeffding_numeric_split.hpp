@@ -146,6 +146,10 @@ template<typename FitnessFunction>
 using HoeffdingDoubleNumericSplit = HoeffdingNumericSplit<FitnessFunction,
     double>;
 
+template<typename FitnessFunction>
+using HoeffdingFloatNumericSplit = HoeffdingNumericSplit<FitnessFunction,
+    float>;
+
 } // namespace mlpack
 
 // Include implementation.

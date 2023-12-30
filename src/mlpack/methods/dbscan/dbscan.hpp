@@ -51,6 +51,10 @@ template<typename RangeSearchType = RangeSearch<>,
 class DBSCAN
 {
  public:
+   //! Easy access to the MatType.
+  typedef typename RangeSearchType::Mat MatType;
+  //! Easy access to Element Type of the matrix.
+  typedef typename RangeSearchType::Mat::elem_type ElemType;
   /**
    * Construct the DBSCAN object with the given parameters.  The batchMode
    * parameter should be set to false in the case where RAM issues will be
@@ -64,7 +68,7 @@ class DBSCAN
    * @param rangeSearch Optional instantiated RangeSearch object.
    * @param pointSelector OptionL instantiated PointSelectionPolicy object.
    */
-  DBSCAN(const double epsilon,
+  DBSCAN(const ElemType epsilon,
          const size_t minPoints,
          const bool batchMode = true,
          RangeSearchType rangeSearch = RangeSearchType(),
@@ -74,24 +78,22 @@ class DBSCAN
    * Performs DBSCAN clustering on the data, returning number of clusters
    * and also the centroid of each cluster.
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Only dense matrix type (e.g., arma::mat or coot::mat).
    * @param data Dataset to cluster.
    * @param centroids Matrix in which centroids are stored.
    */
-  template<typename MatType>
   size_t Cluster(const MatType& data,
-                 arma::mat& centroids);
+                 MatType& centroids);
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters
    * and also the list of cluster assignments.  If assignments[i] == SIZE_MAX,
    * then the point is considered "noise".
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Only dense matrix type (e.g., arma::mat or coot::mat).
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    */
-  template<typename MatType>
   size_t Cluster(const MatType& data,
                  arma::Row<size_t>& assignments);
 
@@ -100,19 +102,18 @@ class DBSCAN
    * the centroid of each cluster and also the list of cluster assignments.
    * If assignments[i] == SIZE_MAX, then the point is considered "noise".
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Only dense matrix type (e.g., arma::mat or coot::mat).
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments.
    * @param centroids Matrix in which centroids are stored.
    */
-  template<typename MatType>
   size_t Cluster(const MatType& data,
                  arma::Row<size_t>& assignments,
-                 arma::mat& centroids);
+                 MatType& centroids);
 
  private:
   //! Maximum distance between two points to be part of same cluster.
-  double epsilon;
+  ElemType epsilon;
 
   //! Minimum number of points to be in the epsilon-neighborhood (including
   //! itself) for the point to be a core-point.
@@ -137,7 +138,6 @@ class DBSCAN
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
    */
-  template<typename MatType>
   void PointwiseCluster(const MatType& data, UnionFind& uf);
 
   /**
@@ -149,7 +149,6 @@ class DBSCAN
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
    */
-  template<typename MatType>
   void BatchCluster(const MatType& data, UnionFind& uf);
 };
 
