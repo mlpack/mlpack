@@ -6,7 +6,7 @@ name: Update Catch
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '0 10 1/16 * *'
+    - cron: "0 10 1/16 * *"
 permissions:
   contents: read
 
@@ -16,7 +16,7 @@ jobs:
       contents: write # for peter-evans/create-pull-request to create branch
       pull-requests: write # for peter-evans/create-pull-request to create a PR
     if: ${{ false }}
-#    if: ${{ github.repository == 'mlpack/mlpack' }}
+    #    if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -26,7 +26,7 @@ jobs:
           # Ping version information upstream.
           CATCH_RELEASE_JSON=$(curl -sL https://api.github.com/repos/catchorg/Catch2/releases/latest)
           CATCH_RELEASE_VERSION=$(jq -r ".tag_name" <<< "$CATCH_RELEASE_JSON" | tr -d v)
-          echo ::set-output name=release_tag::$(echo $CATCH_RELEASE_VERSION)
+          echo "release_tag=$(echo $CATCH_RELEASE_VERSION)" >> $GITHUB_OUTPUT
           # Extract out version information from git repository.
           CATCH_VERSION_MAJOR=$(grep -i ".*#define CATCH_VERSION_MAJOR.*" src/mlpack/tests/catch.hpp | grep -o "[0-9]*")
           CATCH_VERSION_MINOR=$(grep -i ".*#define CATCH_VERSION_MINOR.*" src/mlpack/tests/catch.hpp | grep -o "[0-9]*")
@@ -34,7 +34,7 @@ jobs:
           # Combine values to match release tag information.
           CATCH_VERSION_VALUE=${CATCH_VERSION_MAJOR}.${CATCH_VERSION_MINOR}.${CATCH_VERSION_PATCH}
           # Set the current release tag.
-          echo ::set-output name=current_tag::$(echo $CATCH_VERSION_VALUE)
+          echo "current_tag=$(echo $CATCH_VERSION_VALUE)" >> $GITHUB_OUTPUT
 
       - name: Update Catch
         if: steps.catch-header.outputs.current_tag != steps.catch-header.outputs.release_tag
