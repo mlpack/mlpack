@@ -73,17 +73,17 @@ class SeparableConvolutionType: public Layer<MatType>
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   SeparableConvolutionType(const size_t inSize,
-                       const size_t outSize,
-                       const size_t kernelWidth,
-                       const size_t kernelHeight,
-                       const size_t strideWidth = 1,
-                       const size_t strideHeight = 1,
-                       const size_t padW = 0,
-                       const size_t padH = 0,
-                       const size_t inputWidth = 0,
-                       const size_t inputHeight = 0,
-                       const size_t numGroups = 1,
-                       const std::string& paddingType = "None");
+                           const size_t outSize,
+                           const size_t kernelWidth,
+                           const size_t kernelHeight,
+                           const size_t strideWidth = 1,
+                           const size_t strideHeight = 1,
+                           const size_t padW = 0,
+                           const size_t padH = 0,
+                           const size_t inputWidth = 0,
+                           const size_t inputHeight = 0,
+                           const size_t numGroups = 1,
+                           const std::string& paddingType = "None");
 
   /**
    * Create the Separable Convolution object using the specified number of input maps,
@@ -109,22 +109,23 @@ class SeparableConvolutionType: public Layer<MatType>
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
   SeparableConvolutionType(const size_t inSize,
-                       const size_t outSize,
-                       const size_t kernelWidth,
-                       const size_t kernelHeight,
-                       const size_t strideWidth,
-                       const size_t strideHeight,
-                       const std::tuple<size_t, size_t> padW,
-                       const std::tuple<size_t, size_t> padH,
-                       const size_t inputWidth = 0,
-                       const size_t inputHeight = 0,
-                       const size_t numGroups = 1,
-                       const std::string& paddingType = "None");
+                           const size_t outSize,
+                           const size_t kernelWidth,
+                           const size_t kernelHeight,
+                           const size_t strideWidth,
+                           const size_t strideHeight,
+                           const std::tuple<size_t, size_t> padW,
+                           const std::tuple<size_t, size_t> padH,
+                           const size_t inputWidth = 0,
+                           const size_t inputHeight = 0,
+                           const size_t numGroups = 1,
+                           const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
    */
   void Reset();
+  
   //! Clone the SeparableConvolutionType object. This handles polymorphism
   //! correctly.
   SeparableConvolutionType* Clone() const override

@@ -445,6 +445,7 @@ void SeparableConvolutionType<
         kernelHeight) + outSize, 1);
   }
 }
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,

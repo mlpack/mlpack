@@ -24,7 +24,6 @@ using namespace mlpack;
  * Simple Separable Convolution layer test.
  */
 TEST_CASE("SeparableConvolutionShapeAndSizeTest", "[ANNLayerTest]") {
-
   size_t inSize = 3;
   size_t outSize = 16;
   size_t kernelWidth = 3;
@@ -38,16 +37,16 @@ TEST_CASE("SeparableConvolutionShapeAndSizeTest", "[ANNLayerTest]") {
   size_t numGroups = 1; 
 
   SeparableConvolution module(inSize,
-                               outSize,
-                               kernelWidth,
-                               kernelHeight,
-                               strideWidth,
-                               strideHeight,
-                               padW,
-                               padH,
-                               inputWidth,
-                               inputHeight,
-                               numGroups);
+                              outSize,
+                              kernelWidth,
+                              kernelHeight,
+                              strideWidth,
+                              strideHeight,
+                              padW,
+                              padH,
+                              inputWidth,
+                              inputHeight,
+                              numGroups);
 
   /**
    * generating a random input
