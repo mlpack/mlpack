@@ -161,7 +161,6 @@ class SeparableConvolutionType: public Layer<MatType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  
   void Gradient(const MatType& /* input */,
                 const MatType& error,
                 MatType& gradient);
@@ -304,7 +303,7 @@ class SeparableConvolutionType: public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-template <typename eT>
+  template <typename eT>
   void Rotate180(const arma::Cube<eT>& input, arma::Cube<eT>& output)
   {
     output = arma::Cube<eT>(input.n_rows, input.n_cols, input.n_slices);
@@ -422,7 +421,6 @@ typedef SeparableConvolutionType<
     NaiveConvolution<ValidConvolution>,
     arma::mat> 
     SeparableConvolution;
-
 
 } // namespace mlpack
 

@@ -23,7 +23,8 @@ using namespace mlpack;
 /**
  * Simple Separable Convolution layer test.
  */
-TEST_CASE("SeparableConvolutionShapeAndSizeTest", "[ANNLayerTest]") {
+TEST_CASE("SeparableConvolutionShapeAndSizeTest", "[ANNLayerTest]") 
+{
   size_t inSize = 3;
   size_t outSize = 16;
   size_t kernelWidth = 3;
@@ -58,13 +59,13 @@ TEST_CASE("SeparableConvolutionShapeAndSizeTest", "[ANNLayerTest]") {
   module.Forward(input, output);
 
   /**
-   * comparing the input and output size
+   * comparing the input and output size for forward test
   */
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   
   /**
-   * generating random gradients for the backward pass
+   * generating random gradients for the backward pass 
   */
   arma::mat gradient;
   gradient.set_size(output.n_rows, output.n_cols);
