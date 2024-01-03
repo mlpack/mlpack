@@ -421,7 +421,6 @@ typedef SeparableConvolutionType<
     NaiveConvolution<ValidConvolution>,
     arma::mat> 
     SeparableConvolution;
-
 } // namespace mlpack
 
 // Include implementation.
