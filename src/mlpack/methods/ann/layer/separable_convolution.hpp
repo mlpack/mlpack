@@ -8,7 +8,7 @@
  *
  * @code
  * @article{
- *  author = {Laurent SIfre, Stéphane Mallat},
+ *  author = {Laurent Sifre, Stéphane Mallat},
  *  title = {Rigid-Motion Scattering for Texture Classification},
  *  year = {2014},
  *  url = {https://arxiv.org/pdf/1403.1687}
