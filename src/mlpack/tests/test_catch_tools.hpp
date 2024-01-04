@@ -21,6 +21,32 @@
 #define REQUIRE_RELATIVE_ERR(L, R, E) \
     REQUIRE(std::abs((R) - (L)) <= (E) * std::abs(R))
 
+template <typename MatType, typename ElemType = typename MatType::elem_type,
+          typename = std::enable_if_t<std::is_same<ElemType,
+              typename MatType::elem_type>::value>>
+class MatProxy {
+public:
+  explicit MatProxy(const MatType& mat) : mat(mat) { }
+  
+  const arma::Mat<ElemType> mat;
+  arma::uword n_elem() const { return mat.n_elem; }
+  arma::uword n_rows() const { return mat.n_rows; }
+  arma::uword n_cols() const { return mat.n_cols; }
+  ElemType operator[](const size_t i) const { return mat[i]; }
+};
+
+template <typename ElemType>
+class MatProxy<arma::Mat<ElemType>, ElemType> {
+ public:
+  explicit MatProxy(const arma::Mat<ElemType>& mat) : mat(mat) { }
+
+  const arma::Mat<ElemType>& mat;
+  arma::uword n_elem() const { return mat.n_elem; }
+  arma::uword n_rows() const { return mat.n_rows; }
+  arma::uword n_cols() const { return mat.n_cols; }
+  ElemType operator[](const size_t i) const { return mat[i]; }
+};
+
 // Check the values of two matrices.
 template <typename MatTypeA, typename MatTypeB,
     typename = std::enable_if_t<arma::is_arma_type<MatTypeA>::value
@@ -32,12 +58,12 @@ inline void CheckMatrices(const MatTypeA& _a,
                           const MatTypeB& _b,
                           double tolerance = 1e-5)
 {
-  arma::Mat<typename MatTypeA::elem_type> a(_a);
-  arma::Mat<typename MatTypeB::elem_type> b(_b);
-  REQUIRE(a.n_rows == b.n_rows);
-  REQUIRE(a.n_cols == b.n_cols);
+  MatProxy<MatTypeA> a(_a);
+  MatProxy<MatTypeB> b(_b);
+  REQUIRE(a.n_rows() == b.n_rows());
+  REQUIRE(a.n_cols() == b.n_cols());
 
-  for (size_t i = 0; i < a.n_elem; ++i)
+  for (size_t i = 0; i < a.n_elem(); ++i)
   {
     if (std::abs(a[i]) < tolerance / 2)
       REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
@@ -71,6 +97,35 @@ inline void CheckFields(const FieldType& a,
     CheckMatrices(a(i), b(i));
 }
 
+
+template <typename CubeType, typename ElemType = typename CubeType::elem_type,
+    typename = std::enable_if_t<std::is_same<ElemType,
+        typename CubeType::elem_type>::value>>
+class CubeProxy {
+ public:
+  explicit CubeProxy(const CubeType& cube) : cube(cube) { }
+
+  const arma::Cube<ElemType> cube;
+  arma::uword n_elem() const { return cube.n_elem; }
+  arma::uword n_rows() const { return cube.n_rows; }
+  arma::uword n_cols() const { return cube.n_cols; }
+  arma::uword n_slices() const { return cube.n_slices; }
+  ElemType operator[](const size_t i) const { return cube[i]; }
+};
+
+template <typename ElemType>
+class CubeProxy<arma::Cube<ElemType>, ElemType> {
+ public:
+  explicit CubeProxy(const arma::Cube<ElemType>& cube) : cube(cube) { }
+
+  const arma::Cube<ElemType>& cube;
+  arma::uword n_elem() const { return cube.n_elem; }
+  arma::uword n_rows() const { return cube.n_rows; }
+  arma::uword n_cols() const { return cube.n_cols; }
+  arma::uword n_slices() const { return cube.n_slices; }
+  ElemType operator[](const size_t i) const { return cube[i]; }
+};
+
 // Check the values of two cubes.
 template <typename CubeTypeA, typename CubeTypeB,
     typename = std::enable_if_t<arma::is_arma_cube_type<CubeTypeA>::value
@@ -83,13 +138,13 @@ inline void CheckMatrices(const CubeTypeA& _a,
                           const CubeTypeB& _b,
                           double tolerance = 1e-5)
 {
-  arma::Cube<typename CubeTypeA::elem_type> a(_a);
-  arma::Cube<typename CubeTypeB::elem_type> b(_b);
-  REQUIRE(a.n_rows == b.n_rows);
-  REQUIRE(a.n_cols == b.n_cols);
-  REQUIRE(a.n_slices == b.n_slices);
+  CubeProxy<CubeTypeA> a(_a);
+  CubeProxy<CubeTypeB> b(_b);
+  REQUIRE(a.n_rows() == b.n_rows());
+  REQUIRE(a.n_cols() == b.n_cols());
+  REQUIRE(a.n_slices() == b.n_slices());
 
-  for (size_t i = 0; i < a.n_elem; ++i)
+  for (size_t i = 0; i < a.n_elem(); ++i)
   {
     if (std::abs(a[i]) < tolerance / 2)
       REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
