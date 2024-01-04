@@ -281,6 +281,7 @@ template <> struct GradientBound<arma::fmat>
   static constexpr double eps = 1e-3;
   static constexpr double bound = 3e-3;
 };
+
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
