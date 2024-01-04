@@ -19,7 +19,7 @@
 #include "lin_alg.hpp"
 #include "log_add.hpp"
 #include "make_alias.hpp"
-#include "mat_redef.hpp"
+#include "safe_linalg.hpp"
 #include "multiply_slices.hpp"
 #include "quantile.hpp"
 #include "random_basis.hpp"

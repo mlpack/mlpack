@@ -24,7 +24,6 @@
 #define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_RECTIFIER_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/mat_redef.hpp>
 #include <algorithm>
 
 namespace mlpack {
