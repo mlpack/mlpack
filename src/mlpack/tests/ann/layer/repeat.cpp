@@ -309,7 +309,8 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
         target(i) = label;
       }
 
-      model = new FFN<NegativeLogLikelihoodType<MatType>,RandomInitialization,MatType>();
+      model = new FFN<NegativeLogLikelihoodType<MatType>,
+                      RandomInitialization, MatType>();
       model->InputDimensions() = inputDimensions;
       model->ResetData(input, target);
       model->template Add<RepeatType<MatType>>(multiples, interleave);
