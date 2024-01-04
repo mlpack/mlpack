@@ -29,7 +29,7 @@ RepeatType<MatType>::RepeatType(
 template<typename MatType>
 RepeatType<MatType>::RepeatType() :
     Layer<MatType>(),
-        interleave(false)
+    interleave(false)
 {
   // Nothing to do.
 }
