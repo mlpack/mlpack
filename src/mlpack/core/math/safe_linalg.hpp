@@ -3,7 +3,7 @@
  *
  * A shim around arma and coot functions to avoid confusion with standard 
  * library functions. This is necessary as we are using ADL to allow the
- * compiler to deduce to which library functions belings without the need
+ * compiler to deduce to which library functions belong without the need
  * for namespace. This is mostly needed for MSVC compiiler, gcc seems to
  * pass without an issue.
  *
