@@ -29,7 +29,7 @@ RepeatType<MatType>::RepeatType(
 template<typename MatType>
 RepeatType<MatType>::RepeatType() :
     Layer<MatType>(),
-        interleave(false)
+    interleave(false)
 {
   // Nothing to do.
 }
@@ -131,7 +131,8 @@ void RepeatType<MatType>::ComputeOutputDimensions()
           idxs.reshape(outSize * this->inputDimensions[i],
                        idxs.n_elem / (outSize * this->inputDimensions[i]));
           idxs = arma::repelem(idxs, multiples[i], 1);
-        } else
+        }
+        else
         {
           idxs.reshape(outSize,
                        idxs.n_elem / outSize);
