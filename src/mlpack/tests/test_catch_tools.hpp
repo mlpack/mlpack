@@ -25,7 +25,8 @@
 template <typename MatTypeA, typename MatTypeB,
     typename = std::enable_if_t<arma::is_arma_type<MatTypeA>::value
         && arma::is_arma_type<MatTypeB>::value
-        && std::is_same<typename MatTypeA::elem_type, typename MatTypeB::elem_type>::value
+        && std::is_same<typename MatTypeA::elem_type,
+                        typename MatTypeB::elem_type>::value
         && !std::is_integral<typename MatTypeA::elem_type>::value>>
 inline void CheckMatrices(const MatTypeA& _a,
                           const MatTypeB& _b,

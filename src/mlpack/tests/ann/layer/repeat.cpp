@@ -281,6 +281,7 @@ template <> struct GradientBound<arma::fmat>
   static constexpr double eps = 1e-3;
   static constexpr double bound = 3e-3;
 };
+
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
@@ -308,7 +309,8 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
         target(i) = label;
       }
 
-      model = new FFN<NegativeLogLikelihoodType<MatType>,RandomInitialization,MatType>();
+      model = new FFN<NegativeLogLikelihoodType<MatType>,
+                      RandomInitialization, MatType>();
       model->InputDimensions() = inputDimensions;
       model->ResetData(input, target);
       model->template Add<RepeatType<MatType>>(multiples, interleave);
