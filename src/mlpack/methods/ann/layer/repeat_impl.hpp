@@ -12,9 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_REPEAT_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_REPEAT_IMPL_HPP
 
-// In case it hasn't yet been included.
-#include <utility>
-
 #include "repeat.hpp"
 
 namespace mlpack {
