@@ -198,19 +198,23 @@ inline void HoeffdingTreeModel::Train(const arma::mat& dataset,
   switch (type)
   {
     case GINI_HOEFFDING:
-      giniHoeffdingTree->Train(dataset, labels, batchTraining);
+      giniHoeffdingTree->Train(dataset, labels, giniHoeffdingTree->NumClasses(),
+          batchTraining);
       break;
 
     case GINI_BINARY:
-      giniBinaryTree->Train(dataset, labels, batchTraining);
+      giniBinaryTree->Train(dataset, labels, giniBinaryTree->NumClasses(),
+          batchTraining);
       break;
 
     case INFO_HOEFFDING:
-      infoHoeffdingTree->Train(dataset, labels, batchTraining);
+      infoHoeffdingTree->Train(dataset, labels, infoHoeffdingTree->NumClasses(),
+          batchTraining);
       break;
 
     case INFO_BINARY:
-      infoBinaryTree->Train(dataset, labels, batchTraining);
+      infoBinaryTree->Train(dataset, labels, infoBinaryTree->NumClasses(),
+          batchTraining);
       break;
   }
 }
