@@ -105,7 +105,8 @@ inline void CheckFields(const FieldType& a,
 template <typename CubeType, typename ElemType = typename CubeType::elem_type,
     typename = std::enable_if_t<std::is_same<ElemType,
         typename CubeType::elem_type>::value>>
-class CubeProxy {
+class CubeProxy
+{
  public:
   explicit CubeProxy(const CubeType& cube) : cube(cube) { }
 
