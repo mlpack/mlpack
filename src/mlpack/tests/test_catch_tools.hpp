@@ -117,7 +117,8 @@ class CubeProxy {
 };
 
 template <typename ElemType>
-class CubeProxy<arma::Cube<ElemType>, ElemType> {
+class CubeProxy<arma::Cube<ElemType>, ElemType>
+{
  public:
   explicit CubeProxy(const arma::Cube<ElemType>& cube) : cube(cube) { }
 
