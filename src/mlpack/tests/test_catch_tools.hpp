@@ -38,7 +38,8 @@ public:
 };
 
 template <typename ElemType>
-class MatProxy<arma::Mat<ElemType>, ElemType> {
+class MatProxy<arma::Mat<ElemType>, ElemType>
+{
  public:
   explicit MatProxy(const arma::Mat<ElemType>& mat) : mat(mat) { }
 
