@@ -21,6 +21,7 @@
 #define REQUIRE_RELATIVE_ERR(L, R, E) \
     REQUIRE(std::abs((R) - (L)) <= (E) * std::abs(R))
 
+// Simple wrapper class to prevent copies of Armadillo matrices.
 template <typename MatType, typename ElemType = typename MatType::elem_type,
           typename = std::enable_if_t<std::is_same<ElemType,
               typename MatType::elem_type>::value>>
