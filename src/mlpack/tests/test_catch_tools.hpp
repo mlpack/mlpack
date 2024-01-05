@@ -24,7 +24,8 @@
 template <typename MatType, typename ElemType = typename MatType::elem_type,
           typename = std::enable_if_t<std::is_same<ElemType,
               typename MatType::elem_type>::value>>
-class MatProxy {
+class MatProxy
+{
 public:
   explicit MatProxy(const MatType& mat) : mat(mat) { }
   
