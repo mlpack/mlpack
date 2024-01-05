@@ -76,7 +76,7 @@ class LinearType : public Layer<MatType>
    * Reset the layer parameter (weights and bias). The method is called to
    * assign the allocated memory to the internal learnable parameters.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& originalWeights);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

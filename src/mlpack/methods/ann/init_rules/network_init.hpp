@@ -21,6 +21,57 @@
 namespace mlpack {
 
 /**
+ * Create a temporary matrix with a specific offset, this is only necessary
+ * since we have two  backend libraries to support. The first function
+ * overload is called when the MatType == arma.
+ *
+ * @param tmp The returned temporary matrix.
+ * @param Mat The original matrix we are taking part from it.
+ * @param offset The Start point of the tmp matrix.
+ * @param numRows The number of rows of the tmp matrix.
+ * @param numCols The numbers or cols of the tmp matrix.
+ */
+template<typename MatType,
+         typename = typename std::enable_if<
+         !IsCootMatType<MatType>::value>::type>
+void MakeTmp(MatType& tmp,
+             const MatType& Mat,
+             const size_t offset,
+             const size_t numRows,
+             const size_t numCols)
+{
+  tmp = MatType(Mat.memptr() + offset, numRows, numCols, false,
+      false);
+}
+
+#ifdef MLPACK_HAS_COOT
+/**
+ * Create a temporary matrix with a specific offset, this is only necessary
+ * since we have two  backend libraries to support. The first function
+ * overload is called when the MatType == coot.
+ *
+ * @param tmp The returned temporary matrix.
+ * @param Mat The original matrix we are taking part from it.
+ * @param offset The Start point of the tmp matrix.
+ * @param numRows The number of rows of the tmp matrix.
+ * @param numCols The numbers or cols of the tmp matrix.
+ */
+template<typename MatType,
+         typename = typename std::enable_if<
+         IsCootMatType<MatType>::value>::type>
+void MakeTmp(MatType& tmp,
+             const MatType& Mat,
+             const size_t offset,
+             const size_t numRows,
+             const size_t numCols)
+{
+  tmp = MatType(Mat.get_dev_mem() + offset, numRows, numCols, false,
+      false);
+}
+
+#endif
+
+/**
  * This class is used to initialize the network with the given initialization
  * rule.
  */
@@ -40,6 +91,7 @@ class NetworkInitialization
     // Nothing to do here.
   }
 
+
   /**
    * Initialize the specified network and store the results in the given
    * parameter.
@@ -48,9 +100,9 @@ class NetworkInitialization
    * @param parameter The network parameter.
    * @param parameterOffset Offset for network paramater, default 0.
    */
-  template <typename eT>
-  void Initialize(const std::vector<Layer<arma::Mat<eT>>*>& network,
-                  arma::Mat<eT>& parameters,
+  template <typename MatType>
+  void Initialize(const std::vector<Layer<MatType>*>& network,
+                  MatType& parameters,
                   size_t parameterOffset = 0)
   {
     // Determine the total number of parameters/weights of the given network.
@@ -71,8 +123,8 @@ class NetworkInitialization
         // Initialize the layer with the specified parameter/weight
         // initialization rule.
         const size_t weight = network[i]->WeightSize();
-        arma::Mat<eT> tmp = arma::Mat<eT>(parameters.memptr() + offset,
-            weight, 1, false, false);
+        MatType tmp;
+        MakeTmp(tmp, parameters, offset, weight, 1);
         initializeRule.Initialize(tmp, tmp.n_elem, 1);
 
         // Increase the parameter/weight offset for the next layer.

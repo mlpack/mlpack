@@ -61,7 +61,7 @@ template<typename InMatType,
          typename = typename std::enable_if<
          !IsCootMatType<InMatType>::value>::type>
 void MakeAlias(OutMatType& m,
-               InMatType oldMat,
+               const InMatType& oldMat,
                const size_t numRows,
                const size_t numCols)
 {
@@ -82,7 +82,7 @@ template<typename InCubeType,
          typename = typename std::enable_if<
          !IsCootCubeType<InCubeType>::value>::type>
 void MakeAlias(OutCubeType& c,
-               InCubeType oldCube,
+               const InCubeType& oldCube,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)
@@ -101,7 +101,7 @@ template<typename InMatType,
          typename = typename std::enable_if<
          IsCootMatType<InMatType>::value>::type>
 void MakeAlias(OutMatType& m,
-               InMatType oldMat,
+               const InMatType& oldMat,
                const size_t numRows,
                const size_t numCols)
 {
@@ -122,7 +122,7 @@ template<typename InCubeType,
          typename = typename std::enable_if<
          IsCootCubeType<InCubeType>::value>::type>
 void MakeAlias(OutCubeType& c,
-               InCubeType oldCube,
+               const InCubeType& oldCube,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)

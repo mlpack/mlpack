@@ -599,7 +599,7 @@ void FFN<
       "FFN::SetLayerMemory(): total layer weight size does not match parameter "
       "size!");
 
-  network.SetWeights(parameters.memptr());
+  network.SetWeights(parameters);
   layerMemoryIsSet = true;
 }
 
