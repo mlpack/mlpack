@@ -100,6 +100,7 @@ inline void CheckFields(const FieldType& a,
 }
 
 
+// Simple wrapper class to prevent copies of Armadillo cubes.
 template <typename CubeType, typename ElemType = typename CubeType::elem_type,
     typename = std::enable_if_t<std::is_same<ElemType,
         typename CubeType::elem_type>::value>>
