@@ -130,20 +130,20 @@ void RepeatType<MatType>::ComputeOutputDimensions()
         {
           idxs.reshape(outSize * this->inputDimensions[i],
                        idxs.n_elem / (outSize * this->inputDimensions[i]));
-          idxs = arma::repelem(idxs, multiples[i], 1);
+          idxs = repelem(idxs, multiples[i], 1);
         }
         else
         {
           idxs.reshape(outSize,
                        idxs.n_elem / outSize);
-          idxs = arma::repelem(idxs, 1, multiples[i]);
+          idxs = repelem(idxs, 1, multiples[i]);
         }
       }
       else
       {
         idxs.reshape(outSize * this->inputDimensions[i],
                      idxs.n_elem / (outSize * this->inputDimensions[i]));
-        idxs = arma::repmat(idxs, multiples[i], 1);
+        idxs = repmat(idxs, multiples[i], 1);
       }
       this->outputDimensions[i] *= multiples[i];
       sizeMult *= multiples[i];
