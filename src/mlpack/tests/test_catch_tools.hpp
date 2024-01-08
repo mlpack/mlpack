@@ -136,7 +136,8 @@ class CubeProxy<arma::Cube<ElemType>, ElemType>
 template <typename CubeTypeA, typename CubeTypeB,
     typename = std::enable_if_t<arma::is_arma_cube_type<CubeTypeA>::value
         && arma::is_arma_cube_type<CubeTypeB>::value
-        && std::is_same<typename CubeTypeA::elem_type, typename CubeTypeB::elem_type>::value
+        && std::is_same<typename CubeTypeA::elem_type,
+                        typename CubeTypeB::elem_type>::value
         && !std::is_integral<typename CubeTypeA::elem_type>::value>,
     typename = void>
 inline void CheckMatrices(const CubeTypeA& _a,
