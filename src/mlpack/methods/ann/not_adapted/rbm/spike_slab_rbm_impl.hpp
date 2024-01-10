@@ -107,7 +107,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
 
   for (size_t i = 0 ; i < hiddenSize; ++i)
   {
-    weightGrad.slice(i) = input * arma::repmat(slabMean.col(i).t(),
+    weightGrad.slice(i) = input * repmat(slabMean.col(i).t(),
         input.n_cols, 1) * spikeMean(i);
   }
 

@@ -74,7 +74,7 @@ void SoftmaxType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = output % (gy - arma::repmat(arma::sum(gy % output), output.n_rows, 1));
+  g = output % (gy - repmat(arma::sum(gy % output), output.n_rows, 1));
 }
 
 template<typename MatType>

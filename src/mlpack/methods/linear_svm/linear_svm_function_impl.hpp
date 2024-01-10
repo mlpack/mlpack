@@ -171,7 +171,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
     // On calculating the score, we add `b_i` term to each element of
     // `i_th` row of `scores`.
     scores = parameters.rows(0, dataset.n_rows - 1).t() * dataset
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1,
+        + repmat(parameters.row(dataset.n_rows).t(), 1,
         dataset.n_cols);
   }
 
@@ -180,7 +180,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
   //  - Adding the margin parameter `delta`.
   //  - Removing the `delta` parameter from correct class label in each
   //    column.
-  DenseMatType margin = scores - (arma::repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
@@ -218,11 +218,11 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t()
         * dataset.cols(firstId, lastId)
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1,
+        + repmat(parameters.row(dataset.n_rows).t(), 1,
         dataset.n_cols);
   }
 
-  DenseMatType margin = scores - (arma::repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
       * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
@@ -259,11 +259,11 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
   else
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t() * dataset
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1,
+        + repmat(parameters.row(dataset.n_rows).t(), 1,
         dataset.n_cols);
   }
 
-  DenseMatType margin = scores - (arma::repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
@@ -273,7 +273,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth
-      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // The gradient is evaluated as follows:
   //  - Add `x_i` to `w_j` if `margin_i_m`is positive.
@@ -324,10 +324,10 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t()
         * dataset.cols(firstId, lastId)
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1, batchSize);
+        + repmat(parameters.row(dataset.n_rows).t(), 1, batchSize);
   }
 
-  DenseMatType margin = scores - (arma::repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
       * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
@@ -337,7 +337,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth.cols(firstId, lastId)
-      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
   if (!fitIntercept)
@@ -378,11 +378,11 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
   else
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t() * dataset
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1,
+        + repmat(parameters.row(dataset.n_rows).t(), 1,
         dataset.n_cols);
   }
 
-  DenseMatType margin = scores - (arma::repmat(
+  DenseMatType margin = scores - (repmat(
       arma::ones<DenseColType>(numClasses).t() * (scores % groundTruth),
       numClasses, 1)) + delta - (delta * groundTruth);
 
@@ -392,7 +392,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth
-      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
   if (!fitIntercept)
@@ -451,11 +451,11 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t()
         * dataset.cols(firstId, lastId)
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1,
+        + repmat(parameters.row(dataset.n_rows).t(), 1,
                        (lastId - firstId + 1));
   }
 
-  DenseMatType margin = scores - (arma::repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
       * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
@@ -465,7 +465,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth.cols(firstId, lastId)
-      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
   if (!fitIntercept)

@@ -288,7 +288,7 @@ void LinearSVM<ModelMatType>::Classify(
   if (fitIntercept)
   {
     scores = parameters.rows(0, parameters.n_rows - 2).t() * data
-        + arma::repmat(parameters.row(parameters.n_rows - 1).t(), 1,
+        + repmat(parameters.row(parameters.n_rows - 1).t(), 1,
         data.n_cols);
   }
   else
@@ -314,7 +314,7 @@ void LinearSVM<ModelMatType>::Classify(
   if (fitIntercept)
   {
     scores = parameters.rows(0, parameters.n_rows - 2).t() * data
-        + arma::repmat(parameters.row(parameters.n_rows - 1).t(), 1,
+        + repmat(parameters.row(parameters.n_rows - 1).t(), 1,
         data.n_cols);
   }
   else

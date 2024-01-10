@@ -175,7 +175,7 @@ inline void SoftmaxRegressionFunction<MatType>::GetProbabilitiesMatrix(
     // Since the cost of join may be high due to the copy of original data,
     // split the hypothesis computation to two components.
     hypothesis = arma::exp(
-        arma::repmat(parameters.col(0), 1, batchSize) +
+        repmat(parameters.col(0), 1, batchSize) +
         parameters.cols(1, parameters.n_cols - 1) *
         data.cols(start, start + batchSize - 1));
   }
@@ -185,7 +185,7 @@ inline void SoftmaxRegressionFunction<MatType>::GetProbabilitiesMatrix(
         data.cols(start, start + batchSize - 1));
   }
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
+  probabilities = hypothesis / repmat(arma::sum(hypothesis, 0),
                                             numClasses, 1);
 }
 

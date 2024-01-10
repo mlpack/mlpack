@@ -35,7 +35,7 @@ inline Radical::Radical(
 inline void Radical::CopyAndPerturb(arma::mat& xNew,
                                     const arma::mat& x) const
 {
-  xNew = arma::repmat(x, replicates, 1) + noiseStdDev * arma::randn(replicates * x.n_rows,
+  xNew = repmat(x, replicates, 1) + noiseStdDev * arma::randn(replicates * x.n_rows,
       x.n_cols);
 }
 
