@@ -19,33 +19,31 @@
 
 namespace mlpack {
 
-template<typename MatType>
-struct IsCootMatType;
+template<typename eT>
+struct IsCootType;
 
-template<typename CubeType>
-struct IsCootCubeType;
-
-template<typename MatType>
-struct IsCootMatType
-{
-  constexpr static bool value = false;
-};
-
-template<typename CubeType>
-struct IsCootCubeType
+template<typename eT>
+struct IsCootType
 {
   constexpr static bool value = false;
 };
 
 #ifdef MLPACK_HAS_COOT
-template<typename MatType>
-struct IsCootMatType
+
+template<typename eT>
+struct IsCootType<coot::Mat<eT>>
 {
   constexpr static bool value = true;
 };
 
-template<typename CubeType>
-struct IsCootCubeType
+template<typename eT>
+struct IsCootType<coot::subview_col<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsCootType<coot::Cube<eT>>
 {
   constexpr static bool value = true;
 };
@@ -58,8 +56,7 @@ struct IsCootCubeType
  */
 template<typename InMatType,
          typename OutMatType,
-         typename = typename std::enable_if<
-             !IsCootMatType<InMatType>::value>::type>
+         std::enable_if_t<!IsCootType<InMatType>::value, bool> = true>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t numRows,
@@ -79,8 +76,7 @@ void MakeAlias(OutMatType& m,
  */
 template<typename InCubeType,
          typename OutCubeType,
-         typename = typename std::enable_if<
-         !IsCootCubeType<InCubeType>::value>::type>
+         std::enable_if_t<!IsCootType<InCubeType>::value, bool> = true>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
                const size_t numRows,
@@ -95,11 +91,9 @@ void MakeAlias(OutCubeType& c,
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
 }
 
-#ifdef MLPACK_HAS_COOT
 template<typename InMatType,
          typename OutMatType,
-         typename = typename std::enable_if<
-         IsCootMatType<InMatType>::value>::type>
+         std::enable_if_t<IsCootType<InMatType>::value, bool> = true>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t numRows,
@@ -119,8 +113,7 @@ void MakeAlias(OutMatType& m,
  */
 template<typename InCubeType,
          typename OutCubeType,
-         typename = typename std::enable_if<
-         IsCootCubeType<InCubeType>::value>::type>
+         std::enable_if_t<IsCootType<InCubeType>::value, bool> = true>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
                const size_t numRows,
@@ -134,8 +127,6 @@ void MakeAlias(OutCubeType& c,
   c.~Cube();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
 }
-
-#endif
 
 } // namespace mlpack
 
