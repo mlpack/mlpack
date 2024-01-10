@@ -1,4 +1,4 @@
-## Citation details
+# Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation for
