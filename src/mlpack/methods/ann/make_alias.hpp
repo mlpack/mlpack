@@ -59,7 +59,7 @@ struct IsCootCubeType
 template<typename InMatType,
          typename OutMatType,
          typename = typename std::enable_if<
-         !IsCootMatType<InMatType>::value>::type>
+             !IsCootMatType<InMatType>::value>::type>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t numRows,
