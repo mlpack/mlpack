@@ -188,7 +188,7 @@ class MountainCar
     State state;
     stepsPerformed = 0;
     state.Velocity() = 0.0;
-    state.Position() = arma::as_scalar(randu(1)) * 0.2 - 0.6;
+    state.Position() = arma::as_scalar(arma::randu(1)) * 0.2 - 0.6;
     return state;
   }
 

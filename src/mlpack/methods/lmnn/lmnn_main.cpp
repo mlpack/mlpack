@@ -338,7 +338,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   else if (rank)
   {
-    distance = randu(rank, data.n_rows);
+    distance = arma::randu(rank, data.n_rows);
   }
   // Normalize the data, if necessary.
   else if (normalize)

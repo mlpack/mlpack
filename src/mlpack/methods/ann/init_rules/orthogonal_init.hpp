@@ -44,7 +44,7 @@ class OrthogonalInitialization
     arma::Mat<eT> V;
     arma::Col<eT> s;
 
-    arma::svd_econ(W, s, V, randu<arma::Mat<eT> >(rows, cols));
+    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT> >(rows, cols));
     W *= gain;
   }
 
@@ -60,7 +60,7 @@ class OrthogonalInitialization
     arma::Mat<eT> V;
     arma::Col<eT> s;
 
-    arma::svd_econ(W, s, V, randu<arma::Mat<eT> >(W.n_rows, W.n_cols));
+    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT> >(W.n_rows, W.n_cols));
     W *= gain;
   }
 
