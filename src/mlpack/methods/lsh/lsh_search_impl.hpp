@@ -215,7 +215,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   // Step I: Prepare the second level hash.
 
   // Obtain the weights for the second hash.
-  secondHashWeights = arma::floor(arma::randu(numProj) *
+  secondHashWeights = arma::floor(randu(numProj) *
                                   (double) secondHashSize);
 
   // Instead of putting the points in the row corresponding to the bucket, we

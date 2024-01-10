@@ -201,7 +201,7 @@ class PrioritizedReplay
     double sumPerRange = totalSum / batchSize;
     for (size_t bt = 0; bt < batchSize; bt++)
     {
-      const double mass = arma::randu() * sumPerRange + bt * sumPerRange;
+      const double mass = randu() * sumPerRange + bt * sumPerRange;
       idxes(bt) = idxSum.FindPrefixSum(mass);
     }
     return idxes;

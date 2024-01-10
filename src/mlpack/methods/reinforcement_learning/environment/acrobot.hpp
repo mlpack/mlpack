@@ -212,7 +212,7 @@ class Acrobot
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
+    return State((randu<arma::colvec>(4) - 0.5) / 5.0);
   }
 
   /**
