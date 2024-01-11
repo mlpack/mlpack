@@ -64,24 +64,6 @@ class EpanechnikovKernel
   inline double Gradient(const double distance) const;
 
   /**
-   * Evaluate the Gradient of Epanechnikov kernel
-   * given that the squared distance between the two
-   * input points is known.
-   */
-  inline double GradientForSquaredDistance(const double distanceSquared) const;
-  /**
-   * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
-   * for the two vectors.
-   *
-   * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
-   * @param a First vector.
-   * @param b Second vector.
-   * @return the convolution integral value.
-   */
-  template<typename VecTypeA, typename VecTypeB>
-  double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b);
-
-  /**
    * Compute the normalizer of this Epanechnikov kernel for the given dimension.
    *
    * @param dimension Dimension to calculate the normalizer for.
