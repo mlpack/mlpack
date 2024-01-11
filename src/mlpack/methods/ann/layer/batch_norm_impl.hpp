@@ -216,8 +216,7 @@ void BatchNormType<MatType>::Forward(
     // Calculate mean and variance over all channels.
     MatType mean = arma::sum(arma::sum(inputTemp, 2), 0) / m;
     variance = arma::sum(arma::sum(arma::pow(
-        inputTemp.each_slice() - repmat(mean,
-        inputSize, 1), 2), 2), 0) / m;
+        inputTemp.each_slice() - repmat(mean, inputSize, 1), 2), 2), 0) / m;
 
     outputTemp.each_slice() -= repmat(mean, inputSize, 1);
 
@@ -226,8 +225,7 @@ void BatchNormType<MatType>::Forward(
     inputMean = outputTemp;
 
     // Normalize output.
-    outputTemp.each_slice() /= arma::sqrt(repmat(variance,
-        inputSize, 1) + eps);
+    outputTemp.each_slice() /= arma::sqrt(repmat(variance, inputSize, 1) + eps);
 
     // Re-used in backward propagation.
     normalized.set_size(arma::size(inputTemp));
@@ -260,14 +258,11 @@ void BatchNormType<MatType>::Forward(
         const_cast<MatType&>(output).memptr(), inputSize, size,
         batchSize * higherDimension, false, false);
 
-    outputTemp.each_slice() -= repmat(runningMean.t(),
-        inputSize, 1);
+    outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
     outputTemp.each_slice() /= arma::sqrt(repmat(runningVariance.t(),
         inputSize, 1) + eps);
-    outputTemp.each_slice() %= repmat(gamma.t(),
-        inputSize, 1);
-    outputTemp.each_slice() += repmat(beta.t(),
-        inputSize, 1);
+    outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
+    outputTemp.each_slice() += repmat(beta.t(), inputSize, 1);
   }
 }
 
@@ -301,8 +296,7 @@ void BatchNormType<MatType>::Backward(
 
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
-  gTemp = (norm.each_slice() % repmat(stdInv,
-      inputSize, 1)) +
+  gTemp = (norm.each_slice() % repmat(stdInv, inputSize, 1)) +
       ((inputMean.each_slice() % repmat(vars, inputSize, 1) * 2.0) / m);
 
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
