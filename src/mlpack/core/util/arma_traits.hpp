@@ -37,6 +37,18 @@ struct IsVector
   const static bool value = false;
 };
 
+template<typename MatType>
+struct IsMat
+{
+  const static bool value = false;
+};
+
+template<typename CubeType>
+struct IsCube
+{
+  const static bool value = false;
+};
+
 // Commenting out the first template per case, because
 // Visual Studio doesn't like this instantiaion pattern (error C2910).
 // template<>
@@ -77,6 +89,18 @@ struct IsVector<arma::subview_col<eT> >
 // template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsMat<arma::Mat<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCube<arma::Cube<eT> >
 {
   const static bool value = true;
 };

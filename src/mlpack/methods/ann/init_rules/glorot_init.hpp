@@ -67,8 +67,9 @@ class GlorotInitializationType
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W,
+  template<typename MatType,
+      std::enable_if_t<IsMat<MatType>::value, bool> = false>
+  void Initialize(MatType& W,
                   const size_t rows,
                   const size_t cols);
 
@@ -77,8 +78,9 @@ class GlorotInitializationType
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W);
+  template<typename MatType,
+      std::enable_if_t<IsMat<MatType>::value, bool> = false>
+  void Initialize(MatType& W);
 
   /**
    * Initialize the elements of the specified weight 3rd order tensor with
@@ -89,8 +91,9 @@ class GlorotInitializationType
    * @param cols Number of columns.
    * @param slices Number of slices.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W,
+  template<typename CubeType,
+      std::enable_if_t<IsCube<CubeType>::value, bool> = false>
+  void Initialize(CubeType& W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices);
@@ -101,8 +104,9 @@ class GlorotInitializationType
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W);
+  template<typename CubeType,
+      std::enable_if_t<IsCube<CubeType>::value, bool> = false>
+  void Initialize(CubeType& W);
 
   /**
    * Serialize the initialization.  (Nothing to serialize for this one.)
@@ -112,8 +116,9 @@ class GlorotInitializationType
 }; // class GlorotInitializationType
 
 template<>
-template<typename eT>
-inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
+template<typename MatType,
+    std::enable_if_t<IsMat<MatType>::value, bool>> 
+inline void GlorotInitializationType<false>::Initialize(MatType& W,
                                                         const size_t rows,
                                                         const size_t cols)
 {
@@ -126,11 +131,12 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
 }
 
 template<>
-template<typename eT>
-inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W)
+template<typename MatType, 
+    std::enable_if_t<IsMat<MatType>::value, bool>>
+inline void GlorotInitializationType<false>::Initialize(MatType& W)
 {
   if (W.is_empty())
-    Log::Fatal << "Cannot initialize and empty matrix." << std::endl;
+    Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
   double var = 2.0 / double(W.n_rows + W.n_cols);
   GaussianInitialization normalInit(0.0, var);
@@ -138,8 +144,9 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W)
 }
 
 template<>
-template<typename eT>
-inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
+template<typename MatType, 
+    std::enable_if_t<IsMat<MatType>::value, bool>>
+inline void GlorotInitializationType<true>::Initialize(MatType& W,
                                                        const size_t rows,
                                                        const size_t cols)
 {
@@ -153,8 +160,9 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
 }
 
 template<>
-template<typename eT>
-inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W)
+template<typename MatType,
+     std::enable_if_t<IsMat<MatType>::value, bool>>
+inline void GlorotInitializationType<true>::Initialize(MatType& W)
 {
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
@@ -166,8 +174,9 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W)
 }
 
 template <bool Uniform>
-template<typename eT>
-inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
+template<typename CubeType, 
+    std::enable_if_t<IsCube<CubeType>::value, bool>>
+inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W,
                                                           const size_t rows,
                                                           const size_t cols,
                                                           const size_t slices)
@@ -180,8 +189,9 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
 }
 
 template <bool Uniform>
-template<typename eT>
-inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W)
+template<typename CubeType,
+    std::enable_if_t<IsCube<CubeType>::value, bool>>
+inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W)
 {
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
