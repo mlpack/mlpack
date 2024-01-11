@@ -14,7 +14,7 @@ programs, and bindings to the Python, R, Julia, and Go languages.
 
 _If you use mlpack, please [cite the software](citation.md)._
 
-### mlpack basics
+## mlpack basics
 
 Installing mlpack can be done using the
 [instructions in the README](README.md#3-installing-and-using-mlpack-in-c);
@@ -35,25 +35,25 @@ the pages below.
  * [Core mlpack documentation](user/core.md): reference documentation for all
    core classes and functions that are used in mlpack.
 
-### mlpack algorithm documentation
+## mlpack algorithm documentation
 
 Documentation for each machine learning algorithm that mlpack implements is
-detailed in the pages below.
+detailed in the sections below.
 
- * [Classification algorithms](user/classification.md): classify points as
+ * [Classification algorithms](#classification-algorithms): classify points as
    discrete labels (`0`, `1`, `2`, ...).
- * [Regression algorithms](user/regression.md): predict continuous values.
- * [Clustering algorithms](user/clustering.md): group points into clusters.
- * [Geometric algorithms](user/geometry.md): computations based on distance
+ * [Regression algorithms](#regression-algorithms): predict continuous values.
+ * [Clustering algorithms](#clustering-algorithms): group points into clusters.
+ * [Geometric algorithms](#geometric-algorithms): computations based on distance
    metrics (nearest neighbors, kernel density estimation, etc.).
- * [Preprocessing utilities](user/preprocessing.md): prepare data for machine
+ * [Preprocessing utilities](#preprocessing-utilities): prepare data for machine
    learning algorithms.
- * [Transformations](user/transformations.md): transform data from one space to
+ * [Transformations](#transformations): transform data from one space to
    another (principal components analysis, etc.).
- * [Modeling utilities](user/modeling.md): cross-validation, hyperparameter
+ * [Modeling utilities](#modeling-utilities): cross-validation, hyperparameter
    tuning, etc.
 
-### Bindings to other languages
+## Bindings to other languages
 
 mlpack's bindings to other languages have less complete functionality than
 mlpack in C++, but almost all of the same algorithms are available.
@@ -83,7 +83,7 @@ mlpack in C++, but almost all of the same algorithms are available.
  * [Go quickstart](quickstart/go.md)
  * [Go reference documentation](https://www.mlpack.org/doc/go_documentation.html)
 
-### Examples and further documentation
+## Examples and further documentation
 
  * [mlpack examples repository](https://github.com/mlpack/examples/): numerous
    fully-working example applications of mlpack, in C++ and other languages.
@@ -93,7 +93,7 @@ mlpack in C++, but almost all of the same algorithms are available.
 For additional documentation beyond what is covered in all the resources above,
 the source code should be consulted.  Each method is fully documented.
 
-### Developer documentation
+## Developer documentation
 
 Throughout the codebase, mlpack uses some common template parameter policies.
 These are documented below.
@@ -113,3 +113,54 @@ for other languages:
  * [Automatic bindings](developer/bindings.md): details on mlpack's automatic
    binding generator system.
 
+## Algorithm documentation
+
+### Classification algorithms
+
+Classify points as discrete labels (`0`, `1`, `2`, ...).
+
+ * [`AdaBoost`](user/methods/adaboost.md): Adaptive Boosting
+ * [`DecisionTree`](user/methods/decision_tree.md): ID3-style decision tree
+   classifier
+ * [`LogisticRegression`](user/methods/logistic_regression.md): L2-regularized
+   logistic regression (two-class only)
+ * [`Perceptron`](user/methods/perceptron.md): simple Perceptron classifier
+ * [`SoftmaxRegression`](user/methods/softmax_regression.md): L2-regularized
+   softmax regression (i.e. multi-class logistic regression)
+
+### Regression algorithms
+
+Predict continuous values.
+
+ * [`DecisionTreeRegressor`](user/methods/decision_tree_regressor.md): ID3-style
+   decision tree regressor
+
+### Clustering algorithms
+
+Group points into clusters.
+
+<!-- TODO: add some -->
+
+### Geometric algorithms
+
+Computations based on distance metrics.
+
+<!-- TODO: add some -->
+
+### Preprocessing utilities
+
+Prepare data for machine learning algorithms.
+
+<!-- TODO: add some -->
+
+### Transformations
+
+Transform data from one space to another.
+
+<!-- TODO: add some -->
+
+### Modeling utilities
+
+Cross-validation, hyperparameter tuning, etc.
+
+<!-- TODO: add some -->
