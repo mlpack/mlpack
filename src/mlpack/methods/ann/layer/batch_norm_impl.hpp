@@ -148,8 +148,7 @@ BatchNormType<MatType>::operator=(
 }
 
 template<typename MatType>
-void BatchNormType<MatType>::SetWeights(
-    typename MatType::elem_type* weights)
+void BatchNormType<MatType>::SetWeights(const MatType& weights)
 {
   MakeAlias(weights, weights, WeightSize(), 1);
   // Gamma acts as the scaling parameters for the normalized output.
