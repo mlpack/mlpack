@@ -423,6 +423,10 @@ where `bw` is the bandwidth parameter of the kernel.
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
 
+ * `g.Gradient(distance)`
+   - Compute the (one-dimensional) gradient of the kernel function with respect
+     to the distance between two points, evaluated at `distance`.
+
  * `g.Normalizer(dimensionality)`
    - Return the [normalizing
      constant](https://en.wikipedia.org/wiki/Radial_basis_function_kernel) of
