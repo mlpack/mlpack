@@ -63,7 +63,7 @@ struct IsCootType<coot::Cube<eT>>
  */
 template<typename InMatType,
          typename OutMatType,
-         std::enable_if_t<!IsCootType<InMatType>::value, bool> = true>
+         std::enable_if_t<!IsCootType<InMatType>::value, bool> = false>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t offset,
@@ -84,7 +84,7 @@ void MakeAlias(OutMatType& m,
  */
 template<typename InCubeType,
          typename OutCubeType,
-         std::enable_if_t<!IsCootType<InCubeType>::value, bool> = true>
+         std::enable_if_t<!IsCootType<InCubeType>::value, bool> = false>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
                const size_t offset,
@@ -102,7 +102,7 @@ void MakeAlias(OutCubeType& c,
 
 template<typename InMatType,
          typename OutMatType,
-         std::enable_if_t<IsCootType<InMatType>::value, bool> = true>
+         std::enable_if_t<IsCootType<InMatType>::value, bool> = false>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t offset,
@@ -123,7 +123,7 @@ void MakeAlias(OutMatType& m,
  */
 template<typename InCubeType,
          typename OutCubeType,
-         std::enable_if_t<IsCootType<InCubeType>::value, bool> = true>
+         std::enable_if_t<IsCootType<InCubeType>::value, bool> = false>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
                const size_t offset,
