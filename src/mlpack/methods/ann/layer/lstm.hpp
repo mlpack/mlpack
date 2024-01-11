@@ -87,7 +87,7 @@ class LSTMType : public RecurrentLayer<MatType>
    * Reset the layer parameter. The method is called to
    * assign the allocated memory to the internal learnable parameters.
    */
-  void SetWeights(MatType weights);
+  void SetWeights(const MatType& weights);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function

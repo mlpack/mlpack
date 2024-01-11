@@ -94,7 +94,7 @@ void AddType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void AddType<MatType>::SetWeights(MatType weightPtr)
+void AddType<MatType>::SetWeights(const MatType& weightPtr)
 {
   // Set the weights to wrap the given memory.
   MakeAlias(weights, weightPtr, 1, outSize);

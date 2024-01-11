@@ -272,7 +272,7 @@ void ConvolutionType<
     BackwardConvolutionRule,
     GradientConvolutionRule,
     MatType
->::SetWeights(MatType weightPtr)
+>::SetWeights(const MatType& weightPtr)
 {
   MakeAlias(weight, weightPtr, kernelWidth, kernelHeight, maps * inMaps);
   if (useBias)

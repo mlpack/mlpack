@@ -52,7 +52,7 @@ class NoisyLinearType : public Layer<MatType>
   NoisyLinearType& operator=(NoisyLinearType&& other);
 
   //! Reset the layer parameter.
-  void SetWeights(MatType weights);
+  void SetWeights(const MatType& weights);
 
   //! Reset the noise parameters (epsilons).
   void ResetNoise();

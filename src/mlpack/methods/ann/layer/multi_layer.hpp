@@ -129,7 +129,7 @@ class MultiLayer : public Layer<MatType>
   /**
    * Set the weights of the layer to use the memory given as `weights`.
    */
-  virtual void SetWeights(MatType weights);
+  virtual void SetWeights(const MatType& weights);
 
   /**
    * Initialize the weight matrix of the layer.
