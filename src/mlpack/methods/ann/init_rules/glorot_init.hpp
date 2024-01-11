@@ -68,7 +68,7 @@ class GlorotInitializationType
    * @param cols Number of columns.
    */
   template<typename MatType,
-      std::enable_if_t<IsMat<MatType>::value, bool> = false>
+      typename std::enable_if_t<IsMat<MatType>::value, bool> = false>
   void Initialize(MatType& W,
                   const size_t rows,
                   const size_t cols);
@@ -79,7 +79,7 @@ class GlorotInitializationType
    * @param W Weight matrix to initialize.
    */
   template<typename MatType,
-      std::enable_if_t<IsMat<MatType>::value, bool> = false>
+      typename std::enable_if_t<IsMat<MatType>::value, bool> = false>
   void Initialize(MatType& W);
 
   /**
@@ -92,7 +92,7 @@ class GlorotInitializationType
    * @param slices Number of slices.
    */
   template<typename CubeType,
-      std::enable_if_t<IsCube<CubeType>::value, bool> = false>
+      typename std::enable_if_t<IsCube<CubeType>::value, bool> = false>
   void Initialize(CubeType& W,
                   const size_t rows,
                   const size_t cols,
@@ -105,7 +105,7 @@ class GlorotInitializationType
    * @param W Weight matrix to initialize.
    */
   template<typename CubeType,
-      std::enable_if_t<IsCube<CubeType>::value, bool> = false>
+      typename std::enable_if_t<IsCube<CubeType>::value, bool> = false>
   void Initialize(CubeType& W);
 
   /**
@@ -117,7 +117,7 @@ class GlorotInitializationType
 
 template<>
 template<typename MatType,
-    std::enable_if_t<IsMat<MatType>::value, bool>> 
+    typename std::enable_if_t<IsMat<MatType>::value, bool>> 
 inline void GlorotInitializationType<false>::Initialize(MatType& W,
                                                         const size_t rows,
                                                         const size_t cols)
@@ -132,7 +132,7 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W,
 
 template<>
 template<typename MatType, 
-    std::enable_if_t<IsMat<MatType>::value, bool>>
+    typename std::enable_if_t<IsMat<MatType>::value, bool>>
 inline void GlorotInitializationType<false>::Initialize(MatType& W)
 {
   if (W.is_empty())
@@ -145,7 +145,7 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W)
 
 template<>
 template<typename MatType, 
-    std::enable_if_t<IsMat<MatType>::value, bool>>
+    typename std::enable_if_t<IsMat<MatType>::value, bool>>
 inline void GlorotInitializationType<true>::Initialize(MatType& W,
                                                        const size_t rows,
                                                        const size_t cols)
@@ -161,7 +161,7 @@ inline void GlorotInitializationType<true>::Initialize(MatType& W,
 
 template<>
 template<typename MatType,
-     std::enable_if_t<IsMat<MatType>::value, bool>>
+     typename std::enable_if_t<IsMat<MatType>::value, bool>>
 inline void GlorotInitializationType<true>::Initialize(MatType& W)
 {
   if (W.is_empty())
@@ -175,7 +175,7 @@ inline void GlorotInitializationType<true>::Initialize(MatType& W)
 
 template <bool Uniform>
 template<typename CubeType, 
-    std::enable_if_t<IsCube<CubeType>::value, bool>>
+    typename std::enable_if_t<IsCube<CubeType>::value, bool>>
 inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W,
                                                           const size_t rows,
                                                           const size_t cols,
@@ -190,7 +190,7 @@ inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W,
 
 template <bool Uniform>
 template<typename CubeType,
-    std::enable_if_t<IsCube<CubeType>::value, bool>>
+    typename std::enable_if_t<IsCube<CubeType>::value, bool>>
 inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W)
 {
   if (W.is_empty())
