@@ -1,6 +1,7 @@
 /**
  * @file make_alias.hpp
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
  * Implementation of `MakeAlias()`, a utility function.  This is meant to be
  * used in `SetWeights()` calls in various layers, to wrap internal weight
@@ -53,19 +54,26 @@ struct IsCootType<coot::Cube<eT>>
 /**
  * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
  * `numCols`.
+ *
+ * @param tmp The constructed matrix.
+ * @param Mat The original matrix we are constructing part from it.
+ * @param offset The Start point of the constructed matrix.
+ * @param numRows The number of rows of the construced matrix.
+ * @param numCols The numbers or cols of the constructed matrix.
  */
 template<typename InMatType,
          typename OutMatType,
          std::enable_if_t<!IsCootType<InMatType>::value, bool> = true>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
+               const size_t offset,
                const size_t numRows,
                const size_t numCols)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InMatType::elem_type* newMem = oldMat.memptr();
+  typename InMatType::elem_type* newMem = oldMat.memptr() + offset;
   m.~Mat();
   new (&m) OutMatType(newMem, numRows, numCols, false, true);
 }
@@ -79,6 +87,7 @@ template<typename InCubeType,
          std::enable_if_t<!IsCootType<InCubeType>::value, bool> = true>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
+               const size_t offset,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)
@@ -86,7 +95,7 @@ void MakeAlias(OutCubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InCubeType::elem_type* newMem = oldCube.memptr();
+  typename InCubeType::elem_type* newMem = oldCube.memptr() + offset;
   c.~Cube();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
 }
@@ -96,13 +105,14 @@ template<typename InMatType,
          std::enable_if_t<IsCootType<InMatType>::value, bool> = true>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
+               const size_t offset,
                const size_t numRows,
                const size_t numCols)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InMatType::elem_type* newMem = oldMat.get_dev_mem();
+  typename InMatType::elem_type* newMem = oldMat.get_dev_mem() + offset;
   m.~Mat();
   new (&m) OutMatType(newMem, numRows, numCols, false, true);
 }
@@ -116,6 +126,7 @@ template<typename InCubeType,
          std::enable_if_t<IsCootType<InCubeType>::value, bool> = true>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
+               const size_t offset,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices)
@@ -123,7 +134,7 @@ void MakeAlias(OutCubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InCubeType::elem_type* newMem = oldCube.get_dev_mem();
+  typename InCubeType::elem_type* newMem = oldCube.get_dev_mem() + offset;
   c.~Cube();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
 }
