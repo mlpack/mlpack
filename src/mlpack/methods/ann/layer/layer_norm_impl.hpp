@@ -28,11 +28,11 @@ LayerNormType<MatType>::LayerNormType(const double eps) :
 
 template<typename MatType>
 void LayerNormType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    typename MatType::elem_type* weights)
 {
-  MakeAlias(weights, weightsPtr, 2 * size, 1);
-  MakeAlias(gamma, weightsPtr, size, 1);
-  MakeAlias(beta, weightsPtr + gamma.n_elem, size, 1);
+  MakeAlias(weights, weights, 2 * size, 1);
+  MakeAlias(gamma, weights, size, 1);
+  MakeAlias(beta, weights + gamma.n_elem, size, 1);
 }
 
 template<typename MatType>

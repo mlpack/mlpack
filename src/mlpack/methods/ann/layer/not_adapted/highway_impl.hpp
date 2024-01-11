@@ -71,17 +71,17 @@ HighwayType<InputType, OutputType>::operator=(HighwayType&& other)
 
 template<typename InputType, typename OutputType>
 void HighwayType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+    typename OutputType::elem_type* weights)
 {
-  transformWeight = OutputType(weightsPtr, this->inSize,
+  transformWeight = OutputType(weights, this->inSize,
       this->inSize, false, false);
-  transformBias = OutputType(weightsPtr + transformWeight.n_elem,
+  transformBias = OutputType(weights + transformWeight.n_elem,
       this->inSize, 1, false, false);
 
   size_t start = transformWeight.n_elem + transformBias.n_elem;
   for (size_t i = 0; i < this->network.size(); ++i)
   {
-    this->network[i]->SetWeights(weightsPtr + start);
+    this->network[i]->SetWeights(weights + start);
     start += this->network[i]->WeightSize();
   }
 }

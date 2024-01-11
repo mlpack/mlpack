@@ -235,7 +235,7 @@ void MultiLayer<MatType>::Gradient(
 }
 
 template<typename MatType>
-void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
+void MultiLayer<MatType>::SetWeights(MatType weights)
 {
   size_t start = 0;
   const size_t totalWeightSize = WeightSize();
@@ -249,7 +249,7 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
         "FNN::SetLayerMemory(): parameter size does not match total layer "
         "weight size!");
 
-    network[i]->SetWeights(weightsPtr + start);
+    network[i]->SetWeights(weights + start);
     start += weightSize;
   }
 

@@ -110,12 +110,12 @@ WeightNormType<InputType, OutputType>::~WeightNormType()
 
 template<typename InputType, typename OutputType>
 void WeightNormType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+    typename OutputType::elem_type* weights)
 {
   // Set the weights of the inside layer to layerWeights.
   // This is done to set the non-bias terms correctly.
   /* boost::apply_visitor(WeightSetVisitor(layerWeights, 0), wrappedLayer); */
-  wrappedLayer->SetWeights(weightsPtr);
+  wrappedLayer->SetWeights(weights);
   wrappedLayer->Parameters() = OutputType(layerWeights.memptr(),
       wrappedLayer->Parameters().n_rows, wrappedLayer->Parameters().n_cols,
       false, false);

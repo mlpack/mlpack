@@ -74,9 +74,9 @@ PReLUType<MatType>::operator=(PReLUType&& other)
 
 template<typename MatType>
 void PReLUType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    typename MatType::elem_type* weights)
 {
-  MakeAlias(alpha, weightsPtr, 1, 1);
+  MakeAlias(alpha, weights, 1, 1);
 }
 
 template<typename MatType>

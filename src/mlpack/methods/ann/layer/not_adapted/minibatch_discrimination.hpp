@@ -68,7 +68,7 @@ class MiniBatchDiscrimination : public Layer<InputType, OutputType>
   /**
    * Reset the layer parameter.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename OutputType::elem_type* weights);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function

@@ -30,9 +30,9 @@ LookupType<InputType, OutputDataType>::LookupType(
 
 template<typename InputType, typename OutputType>
 void LookupType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+    typename OutputType::elem_type* weights)
 {
-  weights = OutputType(weightsPtr, embeddingSize, vocabSize, false, true);
+  weights = OutputType(weights, embeddingSize, vocabSize, false, true);
 }
 
 template<typename InputType, typename OutputType>

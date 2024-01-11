@@ -127,9 +127,9 @@ class MultiLayer : public Layer<MatType>
                         MatType& gradient);
 
   /**
-   * Set the weights of the layer to use the memory given as `weightsPtr`.
+   * Set the weights of the layer to use the memory given as `weights`.
    */
-  virtual void SetWeights(typename MatType::elem_type* weightsPtr);
+  virtual void SetWeights(MatType weights);
 
   /**
    * Initialize the weight matrix of the layer.

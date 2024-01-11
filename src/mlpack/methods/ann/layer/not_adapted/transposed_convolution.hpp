@@ -136,7 +136,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   /*
    * Set the weight and bias term.
    */
-  void SetWeights(const typename OutputType::elem_type* weightsPtr);
+  void SetWeights(const typename OutputType::elem_type* weights);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

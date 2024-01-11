@@ -73,7 +73,7 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
   /**
    * Reset the layer parameters.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename OutputType::elem_type* weights);
 
   /**
    * Forward pass of the Virtual Batch Normalization layer. Transforms the input

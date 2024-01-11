@@ -149,13 +149,13 @@ BatchNormType<MatType>::operator=(
 
 template<typename MatType>
 void BatchNormType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    typename MatType::elem_type* weights)
 {
-  MakeAlias(weights, weightsPtr, WeightSize(), 1);
+  MakeAlias(weights, weights, WeightSize(), 1);
   // Gamma acts as the scaling parameters for the normalized output.
-  MakeAlias(gamma, weightsPtr, size, 1);
+  MakeAlias(gamma, weights, size, 1);
   // Beta acts as the shifting parameters for the normalized output.
-  MakeAlias(beta, weightsPtr + gamma.n_elem, size, 1);
+  MakeAlias(beta, weights + gamma.n_elem, size, 1);
 }
 
 template<typename MatType>

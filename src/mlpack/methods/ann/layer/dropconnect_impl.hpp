@@ -156,9 +156,9 @@ void DropConnectType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 void DropConnectType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    typename MatType::elem_type* weights)
 {
-  baseLayer->SetWeights(weightsPtr);
+  baseLayer->SetWeights(weights);
 }
 
 template<typename MatType>

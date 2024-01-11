@@ -134,7 +134,7 @@ class LayerNormType : public Layer<MatType>
       size *= this->inputDimensions[i];
   }
 
-  void SetWeights(typename MatType::elem_type* /* weightsPtr */) override;
+  void SetWeights(MatType /* weights */) override;
 
   void CustomInitialize(
       MatType& /* W */,
