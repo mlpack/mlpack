@@ -258,8 +258,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
   else
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t() * dataset
-        + repmat(parameters.row(dataset.n_rows).t(), 1,
-        dataset.n_cols);
+        + repmat(parameters.row(dataset.n_rows).t(), 1, dataset.n_cols);
   }
 
   DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
