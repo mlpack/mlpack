@@ -92,8 +92,7 @@ inline void RandomizedSVD::Apply(const MatType& data,
   if (data.n_cols >= data.n_rows)
   {
     R = arma::randn<arma::mat>(data.n_rows, iteratedPower);
-    Q = (data.t() * R) - repmat(arma::trans(R.t() * rowMean),
-        data.n_cols, 1);
+    Q = (data.t() * R) - repmat(arma::trans(R.t() * rowMean), data.n_cols, 1);
   }
   else
   {
