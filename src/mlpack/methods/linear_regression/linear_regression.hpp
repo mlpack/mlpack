@@ -52,11 +52,11 @@ class LinearRegression
                    const bool intercept = true);
 
   /**
-   * Creates the model with weighted learning.
+   * Creates the model with instance-weighted learning.
    *
    * @param predictors X, matrix of data points.
    * @param responses y, the measured data for each point in X.
-   * @param weights Observation weights (for boosting).
+   * @param weights Instance weights (for boosting).
    * @param lambda Regularization constant for ridge regression.
    * @param intercept Whether or not to include an intercept term.
    */
@@ -104,11 +104,11 @@ class LinearRegression
                const bool intercept);
 
   /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
+   * Train the LinearRegression model on the given data and instance weights.
+   * Careful!  This will completely ignore and overwrite the existing model.
+   * This particular implementation does not have an incremental training
+   * algorithm.  To set the regularization parameter lambda, call Lambda() or
+   * set a different value in the constructor.
    *
    * This version of `Train()` is deprecated and will be removed in mlpack
    * 5.0.0.  Use the version of `Train()` that specifies `lambda` before
@@ -116,7 +116,7 @@ class LinearRegression
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
+   * @param weights Instance weights (for boosting).
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
    */
@@ -215,15 +215,15 @@ class LinearRegression
                  const arma::rowvec& weights);
 
   /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
+   * Train the LinearRegression model on the given data and instance weights.
+   * Careful!  This will completely ignore and overwrite the existing model.
+   * This particular implementation does not have an incremental training
+   * algorithm.  To set the regularization parameter lambda, call Lambda() or
+   * set a different value in the constructor.
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
+   * @param weights Instance weights (for boosting).
    * @return The least squares error after training.
    */
   template<typename MatType,
@@ -244,15 +244,15 @@ class LinearRegression
                  const WeightsType& weights);
 
   /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
+   * Train the LinearRegression model on the given data and instance weights.
+   * Careful!  This will completely ignore and overwrite the existing model.
+   * This particular implementation does not have an incremental training
+   * algorithm.  To set the regularization parameter lambda, call Lambda() or
+   * set a different value in the constructor.
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
+   * @param weights Instance weights (for boosting).
    * @param lambda L2 regularization penalty parameter to use.
    * @return The least squares error after training.
    */
@@ -271,15 +271,15 @@ class LinearRegression
                  const double lambda);
 
   /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
+   * Train the LinearRegression model on the given data and instance weights.
+   * Careful!  This will completely ignore and overwrite the existing model.
+   * This particular implementation does not have an incremental training
+   * algorithm.  To set the regularization parameter lambda, call Lambda() or
+   * set a different value in the constructor.
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @param weights Observation weights (for boosting).
+   * @param weights Instance weights (for boosting).
    * @param lambda L2 regularization penalty parameter to use.
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
