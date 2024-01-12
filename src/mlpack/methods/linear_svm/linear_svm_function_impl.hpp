@@ -171,8 +171,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
     // On calculating the score, we add `b_i` term to each element of
     // `i_th` row of `scores`.
     scores = parameters.rows(0, dataset.n_rows - 1).t() * dataset
-        + repmat(parameters.row(dataset.n_rows).t(), 1,
-        dataset.n_cols);
+        + repmat(parameters.row(dataset.n_rows).t(), 1, dataset.n_cols);
   }
 
   // Evaluate the margin by the following steps:
