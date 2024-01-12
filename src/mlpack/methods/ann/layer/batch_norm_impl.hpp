@@ -231,8 +231,7 @@ void BatchNormType<MatType>::Forward(
     normalized.set_size(arma::size(inputTemp));
     normalized = outputTemp;
 
-    outputTemp.each_slice() %= repmat(gamma.t(),
-        inputSize, 1);
+    outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
     outputTemp.each_slice() += repmat(beta.t(),
         inputSize, 1);
 
