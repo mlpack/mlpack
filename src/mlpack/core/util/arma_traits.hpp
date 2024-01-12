@@ -38,7 +38,7 @@ struct IsVector
 };
 
 template<typename MatType>
-struct IsMat
+struct IsMatrix
 {
   const static bool value = false;
 };
@@ -94,7 +94,7 @@ struct IsVector<arma::subview_row<eT> >
 };
 
 template<typename eT>
-struct IsMat<arma::Mat<eT> >
+struct IsMatrix<arma::Mat<eT> >
 {
   const static bool value = true;
 };
