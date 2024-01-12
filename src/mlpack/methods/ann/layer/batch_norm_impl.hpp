@@ -232,8 +232,7 @@ void BatchNormType<MatType>::Forward(
     normalized = outputTemp;
 
     outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
-    outputTemp.each_slice() += repmat(beta.t(),
-        inputSize, 1);
+    outputTemp.each_slice() += repmat(beta.t(), inputSize, 1);
 
     count += 1;
     // Value for average factor which used to update running parameters.
