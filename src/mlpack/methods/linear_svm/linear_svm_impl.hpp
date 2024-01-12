@@ -313,8 +313,7 @@ void LinearSVM<ModelMatType>::Classify(
   if (fitIntercept)
   {
     scores = parameters.rows(0, parameters.n_rows - 2).t() * data
-        + repmat(parameters.row(parameters.n_rows - 1).t(), 1,
-        data.n_cols);
+        + repmat(parameters.row(parameters.n_rows - 1).t(), 1, data.n_cols);
   }
   else
   {
