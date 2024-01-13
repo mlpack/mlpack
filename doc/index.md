@@ -1,4 +1,5 @@
 # Documentation for mlpack
+
 ## A fast, flexible machine learning library
 
 mlpack is an intuitive, fast, and flexible header-only C++ machine learning
@@ -18,22 +19,21 @@ _If you use mlpack, please [cite the software](citation.md)._
 
 Installing mlpack can be done using the
 [instructions in the README](README.md#3-installing-and-using-mlpack-in-c);
-or the [Windows build guide](user/build_windows.md).  Then, the following
-simple guides are good places to get started:
+or the [Windows build guide](user/build_windows.md).
+The following basic guides are *highly recommended* before using mlpack.
 
- * [mlpack C++ quickstart](quickstart/cpp.md): create a couple simple C++
-   programs that use mlpack
- * [Sample Windows mlpack C++ application](user/sample_ml_app.md): create a
-   working mlpack Windows program using Visual Studio
+ * ***First steps***:
+   - [mlpack C++ quickstart](quickstart/cpp.md): create a couple simple C++
+     programs that use mlpack
+   - [Sample Windows mlpack C++ application](user/sample_ml_app.md): create a
+     working mlpack Windows program using Visual Studio
 
-After that, it's a good idea to familiarize yourself with the basics of the
-library.  The documentation for mlpack's algorithms depends on the concepts in
-the pages below.
+ * ***Basics of matrices and data in mlpack***:
+   - [Matrices and data in mlpack](user/matrices.md)
+   - [Loading and saving mlpack objects](user/load_save.md)
 
- * [Matrices and data in mlpack](user/matrices.md)
- * [Loading and saving mlpack objects](user/load_save.md)
- * [Core mlpack documentation](user/core.md): reference documentation for all
-   core classes and functions that are used in mlpack.
+ * ***Reference for mlpack core classes***:
+   - [Core mlpack documentation](user/core.md)
 
 ## mlpack algorithm documentation
 
@@ -52,68 +52,6 @@ detailed in the sections below.
    another (principal components analysis, etc.).
  * [Modeling utilities](#modeling-utilities): cross-validation, hyperparameter
    tuning, etc.
-
-## Bindings to other languages
-
-mlpack's bindings to other languages have less complete functionality than
-mlpack in C++, but almost all of the same algorithms are available.
-
-***Python***:
-
- * [Python quickstart](quickstart/python.md)
- * [Python reference documentation](https://www.mlpack.org/doc/python_documentation.html)
-
-***Julia***:
-
- * [Julia quickstart](quickstart/julia.md)
- * [Julia reference documentation](https://www.mlpack.org/doc/julia_documentation.html)
-
-***R***:
-
- * [R quickstart](quickstart/r.md)
- * [R reference documentation](https://www.mlpack.org/doc/r_documentation.html)
-
-***Command-line programs***:
-
- * [Command-line quickstart](quickstart/cli.md)
- * [Command-line reference documentation](https://www.mlpack.org/doc/cli_documentation.html)
-
-***Go***:
-
- * [Go quickstart](quickstart/go.md)
- * [Go reference documentation](https://www.mlpack.org/doc/go_documentation.html)
-
-## Examples and further documentation
-
- * [mlpack examples repository](https://github.com/mlpack/examples/): numerous
-   fully-working example applications of mlpack, in C++ and other languages.
- * [mlpack models repository](https://github.com/mlpack/models/): complex models
-   in C++ built with mlpack
-
-For additional documentation beyond what is covered in all the resources above,
-the source code should be consulted.  Each method is fully documented.
-
-## Developer documentation
-
-Throughout the codebase, mlpack uses some common template parameter policies.
-These are documented below.
-
- * [The `ElemType` policy](developer/elemtype.md): element types for data
- * [The `MetricType` policy](developer/metrics.md): distance metrics
- * [The `KernelType` policy](developer/kernels.md): kernel functions
- * [The `TreeType` policy](developer/trees.md): space trees (ball trees,
-   KD-trees, etc.)
-
-In addition, the following documentation may be useful when developing bindings
-for other languages:
-
- * [Timers](developer/timer.md): timing parts of bindings
- * [Writing an mlpack binding](developer/iodoc.md): simple examples of mlpack
-   bindings
- * [Automatic bindings](developer/bindings.md): details on mlpack's automatic
-   binding generator system.
-
-## Algorithm documentation
 
 ### Classification algorithms
 
@@ -164,3 +102,44 @@ Transform data from one space to another.
 Cross-validation, hyperparameter tuning, etc.
 
 <!-- TODO: add some -->
+
+## Bindings to other languages
+
+mlpack's bindings to other languages have less complete functionality than
+mlpack in C++, but almost all the same algorithms are available.
+
+| ***Python*** | -- | [quickstart](quickstart/python.md) | -- | [reference](https://www.mlpack.org/doc/python_documentation.html) |
+| ***Julia*** | -- | [quickstart](quickstart/julia.md) | -- | [reference](https://www.mlpack.org/doc/julia_documentation.html) |
+| ***R*** | -- | [quickstart](quickstart/r.md) | -- | [reference](https://www.mlpack.org/doc/r_documentation.html)
+| ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](https://www.mlpack.org/doc/cli_documentation.html) |
+| ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](https://www.mlpack.org/doc/go_documentation.html) |
+
+## Examples and further documentation
+
+ * [mlpack examples repository](https://github.com/mlpack/examples/): numerous
+   fully-working example applications of mlpack, in C++ and other languages.
+ * [mlpack models repository](https://github.com/mlpack/models/): complex models
+   in C++ built with mlpack
+
+For additional documentation beyond what is covered in all the resources above,
+the source code should be consulted.  Each method is fully documented.
+
+## Developer documentation
+
+Throughout the codebase, mlpack uses some common template parameter policies.
+These are documented below.
+
+ * [The `ElemType` policy](developer/elemtype.md): element types for data
+ * [The `MetricType` policy](developer/metrics.md): distance metrics
+ * [The `KernelType` policy](developer/kernels.md): kernel functions
+ * [The `TreeType` policy](developer/trees.md): space trees (ball trees,
+   KD-trees, etc.)
+
+In addition, the following documentation may be useful when developing bindings
+for other languages:
+
+ * [Timers](developer/timer.md): timing parts of bindings
+ * [Writing an mlpack binding](developer/iodoc.md): simple examples of mlpack
+   bindings
+ * [Automatic bindings](developer/bindings.md): details on mlpack's automatic
+   binding generator system.

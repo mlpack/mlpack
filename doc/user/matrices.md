@@ -1,13 +1,22 @@
 # Matrices in mlpack
 
-mlpack uses Armadillo matrices for matrix support.  Armadillo is a fast C++
-matrix library which makes use of advanced template metaprogramming techniques
-to provide the fastest possible linear algebra operations.
+mlpack uses Armadillo matrices for linear algebra support.  Armadillo is a fast
+C++ matrix library which uses advanced template metaprogramming techniques to
+provide the fastest possible linear algebra operations.
 
-Documentation on Armadillo can be found on [the Armadillo
+<center><p><img src="https://arma.sourceforge.net/img/armadillo_logo2.png" alt="Armadillo logo"></p></center>
+
+Detailed documentation on Armadillo can be found on [the Armadillo
 website](http://arma.sourceforge.net/docs.html).
 
 Nonetheless, there are a few further caveats for mlpack Armadillo usage.
+
+ * [An Armadillo primer](#an-armadillo-primer)
+ * [Representing data in mlpack](#representing-data-in-mlpack)
+ * [Loading data](#loading-data)
+ * [Loading and using categorical data](#loading-and-using-categorical-data)
+ * [Alternate matrix types](#alternate-matrix-types)
+ * [Adapting from other toolkits (Eigen, etc.)](#adapting-from-other-toolkits-eigen-etc)
 
 ## An Armadillo primer
 
@@ -20,15 +29,15 @@ matrix operations.
 // Create a 10x15 matrix with random elements.
 arma::mat m(10, 15, arma::fill::randu);
 
-std::cout << "Size of m: " << x.n_rows << " x " << x.n_cols << "." << std::endl;
+std::cout << "Size of m: " << m.n_rows << " x " << m.n_cols << "." << std::endl;
 
 // Sum all elements in the matrix.
 const double sumVal = arma::accu(m);
 std::cout << "Sum of all elements: " << sumVal << "." << std::endl;
 
 // Sum the elements in each column.
-arma::vec sums = arma::sum(m, 0);
-std::cout << "Sums in each column: " << sums.t();
+arma::rowvec sums = arma::sum(m, 0);
+std::cout << "Sums in each column: " << sums;
 
 // Add 1 to all elements.
 m += 1;
@@ -50,16 +59,16 @@ For more information on Armadillo, see the following resources:
 
 ## Representing data in mlpack
 
-Armadillo matrices, unlike numpy and some other toolkits, stores data in a
-*column-major* format.  This means that each column is located in contiguous
+Armadillo matrices, unlike numpy and some other toolkits, store data in a
+***column-major*** format.  This means that each column is located in contiguous
 memory; i.e., `x(0, 0)` is adjacent to `x(1, 0)` in memory.
 
 This means that, for the vast majority of machine learning methods, it is faster
-to store _observations as columns_ and _dimensions as rows_.  This is counter to
-most standard machine learning texts!  It also has some implications for linear
-algebra operations; for instance, computing the Gram matrix of a matrix `X` is
-typically expressed as `X^T X`, but when using column-major matrices, the
-expression must be `X X^T`.
+to store ***observations as columns*** and ***dimensions as rows***.  This is
+counter to most standard machine learning texts!  It also has some implications
+for linear algebra operations; for instance, computing the Gram matrix of a
+matrix `X` is typically expressed as `X^T X`, but when using column-major
+matrices, the expression must be `X X^T`.
 
 In general, the following Armadillo types are commonly used inside mlpack:
 
@@ -77,11 +86,8 @@ In general, the following Armadillo types are commonly used inside mlpack:
 mlpack provides two simple functions for loading and saving data matrices in a
 column-major form:
 
- * `data::Load(filename, matrix, fatal=false, transpose=true,
-   type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric_data))
-
- * `data::Save(filename, matrix, fatal=false, transpose=true,
-   type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric_data))
+ * `data::Load(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric_data))
+ * `data::Save(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric_data))
 
 As an example, consider the following CSV file:
 
@@ -117,11 +123,11 @@ mlpack::data::Load("data.csv", m, true);
 //  - each row corresponds to a dimension!
 //
 std::cout << "The matrix in 'data.csv' has: " << std::endl;
-std::cout << " - " << data.n_cols << " points." << std::endl;
-std::cout << " - " << data.n_rows << " dimensions." << std::endl;
+std::cout << " - " << m.n_cols << " points." << std::endl;
+std::cout << " - " << m.n_rows << " dimensions." << std::endl;
 
 std::cout << "The second point in the dataset: " << std::endl;
-std::cout << data.col(1).t();
+std::cout << m.col(1).t();
 
 // Now modify the matrix and save to a different format (space-separated
 // values).
@@ -131,24 +137,20 @@ mlpack::data::Save("data-mod.txt", m);
 
 Although Armadillo does provide a `.load()` and `.save()` member function for
 matrices, the `data::Load()` and `data::Save()` functions offer additional
-flexibility, and ensure that data is loaded in a column-major format.
+flexibility, and ensure that data is saved and loaded in a column-major format.
 
 ## Loading and using categorical data
 
 Some mlpack techniques support mixed categorical data, e.g., data where some
 dimensions take only categorical values (e.g. `0`, `1`, `2`, etc.).  String data
 and other non-numerical data can be represented as categorical values, and
-mlpack has support to load and save mixed categorical data:
+mlpack has support to load mixed categorical data:
 
  * The `data::DatasetInfo` auxiliary class stores information about whether each
    dimension is numeric or categorical.  ([full
    documentation](load_save.md#dataset_info))
-
  * `data::Load(filename, matrix, info, fatal=false, transpose=true)` ([full
    documentation](load_save.md#load_categorical))
-
- * `data::Save(filename, matrix, info, fatal=false, transpose=true)` ([full
-   documentation](load_save.md#save_categorical))
 
 For example, consider the following CSV file that contains strings:
 
@@ -170,7 +172,8 @@ $ cat mixed_string_data.csv
 ```
 
 The following program will load the data file, print information about
-categorical dimensions, then save categorical data back to disk.
+categorical dimensions, and prepare the data for use with an mlpack algorithm
+that supports mixed categorical data.
 
 ```c++
 // Load data from `mixed_string_data.csv` into `m`.  Throw an exception on
@@ -181,7 +184,7 @@ mlpack::data::Load("mixed_string_data.csv", m, info, true);
 
 // Print information about the data.
 std::cout << "The matrix in 'mixed_string_data.csv' has: " << std::endl;
-std::cout << " - " << data.n_cols << " points." << std::endl;
+std::cout << " - " << m.n_cols << " points." << std::endl;
 std::cout << " - " << info.Dimensionality() << " dimensions." << std::endl;
 
 // Print which dimensions are categorical.
@@ -198,14 +201,12 @@ for (size_t d = 0; d < info.Dimensionality(); ++d)
 // Note that we manually map the string values; MapString() returns the category
 // for a given value.
 m(0, 2) = 4;
-m(1, 2) = info.MapString("wonderful", 1); // Creates a new third category.
+m(1, 2) = info.MapString<double>("wonderful", 1); // Create new third category.
 m(2, 2) = 1;
-m(3, 2) = info.MapString("c", 1);
+m(3, 2) = info.MapString<double>("c", 1);
 m(4, 2) = 0;
 
-// Save the modified matrix.  Note that "wonderful" will be automatically
-// unmapped by `data::Save()`, as well as all other categorical values.
-mlpack::data::Save("mixed_string_data_mod.csv", m, info);
+// `m` can now be used with any mlpack algorithm that supports categorical data.
 ```
 
 Not every mlpack method supports categorical data.  Below are the list of
@@ -255,8 +256,10 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using floating-point data.
 // The weak learner type is now a floating-point Perceptron.
-typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, arma::fmat>
-    PerceptronType;
+typedef mlpack::Perceptron<
+    mlpack::SimpleWeightUpdate,
+    mlpack::ZeroInitialization,
+    arma::fmat> PerceptronType;
 mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).

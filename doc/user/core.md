@@ -4,24 +4,42 @@ Underlying the implementations of [mlpack's machine learning
 algorithms](index.md#mlpack-algorithm-documentation) are mlpack core support
 classes, each of which are documented on this page.
 
+ * [Core math utilities](#core-math-utilities): utility classes for mathematical
+   purposes
+ * [Distributions](#distributions): probability distributions
+ * [Metrics](#metrics): distance metrics for geometric algorithms
+ * [Kernels](#kernels): Mercer kernels for kernel-based algorithms
+
 ## Core math utilities
 
 Utilities in the `mlpack::math::` namespace are meant to provide additional
 mathematical support on top of Armadillo.
+
+ * [`math::Range`](#mathrange): simple mathematical range (i.e. `[0, 3]`)
 
 ---
 
 ### `math::Range`
 
 The `math::Range` class represents a simple mathematical range (i.e. `[0, 3]`),
-with each value represented as a `double`.
+with the bounds represented as `double`s.
+
+---
+
+#### Constructors
 
  * `r = math::Range()`
+   - Construct an empty range.
+
  * `r = math::Range(p)`
+   - Construct the range `[p, p]`.
+
  * `r = math::Range(lo, hi)`
-   - Construct a range.  If no value is specified, the range is empty; if `p` is
-     specified, the range is `[p, p]`; if `lo` and `hi` are specified, the range
-     is `[lo, hi]`.
+   - Construct the range `[lo, hi]`.
+
+---
+
+#### Accessing and modifying range properties
 
  * `r.Lo()` and `r.Hi()` return the lower and upper bounds of the range as
    `double`s.
@@ -32,6 +50,10 @@ with each value represented as a `double`.
    `double`.
 
  * `r.Mid()` returns the midpoint of the range as a `double`.
+
+---
+
+#### Working with ranges
 
  * Given two ranges `r1` and `r2`,
    - `r1 | r2` returns the union of the ranges,
@@ -50,23 +72,33 @@ with each value represented as a `double`.
    - `r *= d` scales `r.Lo()` and `r.Hi()` by `d`, and
    - `r.Contains(d)` returns `true` if `d` is contained in the range.
 
+---
+
  * To use ranges with different element types (e.g. `float`), use the type
    `math::RangeType<float>` or similar.
+
+---
 
 Example:
 
 ```c++
-math::Range r1(5.0, 6.0); // [5, 6]
-math::Range r2(7.0, 8.0); // [7, 8]
+mlpack::math::Range r1(5.0, 6.0); // [5, 6]
+mlpack::math::Range r2(7.0, 8.0); // [7, 8]
 
-math::Range r3 = r1 | r2; // [5, 8]
-math::Range r4 = r1 & r2; // empty range
+mlpack::math::Range r3 = r1 | r2; // [5, 8]
+mlpack::math::Range r4 = r1 & r2; // empty range
 
 bool b1 = r1.Contains(r2); // false
 bool b2 = r1.Contains(5.5); // true
 bool b3 = r1.Contains(r3); // true
 bool b4 = r3.Contains(r4); // false
+
+// Create a range of `float`s and a range of `int`s.
+mlpack::math::RangeType<float> r5(1.0f, 1.5f); // [1.0, 1.5]
+mlpack::math::RangeType<int> r6(3, 4); // [3, 4]
 ```
+
+---
 
 `math::Range` is used by:
 
@@ -80,17 +112,26 @@ bool b4 = r3.Contains(r4); // false
 mlpack has support for a number of different distributions, each supporting the
 same API.  These can be used with, for instance, the [`HMM`](hmm.md) class.
 
+ * [`DiscreteDistribution`](#discretedistribution): multidimensional categorical
+   distribution (generalized Bernoulli distribution)
+ * [`GaussianDistribution`](#gaussiandistribution): multidimensional Gaussian
+   distribution
+
 ### `DiscreteDistribution`
 
 `DiscreteDistribution` represents a multidimensional categorical distribution
-(or generalized Bernoulli distribution) where integer-valued vectors (e.g. `[0,
-3, 4]`) are associated with specific probabilities in each dimension.
+(or generalized Bernoulli distribution) where integer-valued vectors (e.g.
+`[0, 3, 4]`) are associated with specific probabilities in each dimension.
 
 *Example:* a 3-dimensional `DiscreteDistribution` will have a specific
 probability value associated with each integer value in each dimension.  So, for
 the vector `[0, 3, 4]`, `P(0)` in dimension 0 could be, e.g., `0.3`, `P(3)` in
 dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
 `0.6`.  Then, `P([0, 3, 4])` would be `0.3 * 0.4 * 0.6 = 0.072`.
+
+---
+
+#### Constructors
 
  * `d = DiscreteDistribution(numObservations)`
    - Create a one-dimensional discrete distribution with `numObservations`
@@ -112,16 +153,24 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
    - `probabilities[i]` is a vector such that `probabilities[i][j]` contains the
      probability of `j` in dimension `i`.
 
+---
+
+#### Access and modify properties of distribution
+
  * `d.Dimensionality()` returns a `size_t` indicating the number of dimensions
    in the multidimensional discrete distribution.
 
- * `d.Probabilities(i)` returns an `arma::vec` containing the probabilities of
+ * `d.Probabilities(i)` returns an `arma::vec&` containing the probabilities of
    each observation in dimension `i`.
    - `d.Probabilities(i)[j]` is the probability of `j` in dimension `i`.
    - This can be used to modify probabilities: `d.Probabilities(0)[1] = 0.7`
      sets the probability of observing the value `1` in dimension `0` to `0.7`.
    - *Note:* when setting probabilities manually, be sure that the sum of
      probabilities in a dimension is 1!
+
+---
+
+#### Compute probabilities of points
 
  * `d.Probability(observation)` returns the probability of the given
    observation as a `double`.
@@ -142,8 +191,16 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
  * `d.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
+---
+
+#### Sample from the distribution
+
  * `d.Random()` returns an `arma::vec` with a random sample from the
    multidimensional discrete distribution.
+
+---
+
+#### Fit the distribution to observations
 
  * `d.Train(observations)`
    - Fit the distribution to the given observations.
@@ -160,11 +217,13 @@ dimension 1 could be, e.g., `0.4`, and `P(4)` in dimension 2 could be, e.g.,
    - `observationProbabilities[i]` should be equal to the probability that
      `observations.col(i)` is from `d`.
 
+---
+
 *Example usage:*
 
 ```c++
 // Create a single-dimension Bernoulli distribution: P([0]) = 0.3, P([1]) = 0.7.
-DiscreteDistribution bernoulli(2);
+mlpack::DiscreteDistribution bernoulli(2);
 bernoulli.Probabilities(0)[0] = 0.3;
 bernoulli.Probabilities(0)[1] = 0.7;
 
@@ -177,7 +236,7 @@ arma::vec probDim0 = arma::vec("0.1 0.3 0.5 0.1"); // 4 possible values.
 arma::vec probDim1 = arma::vec("0.7 0.3");         // 2 possible values.
 arma::vec probDim2 = arma::vec("0.4 0.4 0.2");     // 3 possible values.
 std::vector<arma::vec> probs { probDim0, probDim1, probDim2 };
-DiscreteDistribution d(probs);
+mlpack::DiscreteDistribution d(probs);
 
 arma::vec obs("2 0 1");
 const double p3 = d.Probability(obs); // p3 = 0.5 * 0.7 * 0.4 = 0.14.
@@ -185,11 +244,12 @@ const double p3 = d.Probability(obs); // p3 = 0.5 * 0.7 * 0.4 = 0.14.
 // Estimate a 10-dimensional discrete distribution.
 // Each dimension takes values between 0 and 9.
 arma::mat observations = arma::randi<arma::mat>(10, 1000,
-    arma::distr_param(0, 10));
+    arma::distr_param(0, 9));
 
 // Create a distribution with 10 observations in each of the 10 dimensions.
-DiscreteDistribution d2(arma::Col<size_t>("10 10 10 10 10 10 10 10 10 10"));
-d2.Estimate(observations);
+mlpack::DiscreteDistribution d2(
+    arma::Col<size_t>("10 10 10 10 10 10 10 10 10 10"));
+d2.Train(observations);
 
 // Compute the probabilities of each point.
 arma::vec probabilities;
@@ -205,6 +265,10 @@ std::cout << "Average probability: " << arma::mean(probabilities) << "."
 `GaussianDistribution` is a standard multivariate Gaussian distribution with
 parameterized mean and covariance.
 
+---
+
+#### Constructors
+
  * `g = GaussianDistribution(dimensionality)`
    - Create the distribution with the given dimensionality.
    - The distribution will have a zero mean and unit diagonal covariance matrix.
@@ -215,6 +279,10 @@ parameterized mean and covariance.
      dimensionality of the distribution.
    - `covariance` is of type `arma::mat`, and should be symmetric and square,
      with rows and columns equal to the dimensionality of the distribution.
+
+---
+
+#### Access and modify properties of distribution
 
  * `g.Dimensionality()` returns the dimensionality of the distribution as a
    `size_t`.
@@ -231,6 +299,10 @@ parameterized mean and covariance.
 
  * `g.LogDetCov()` returns a `double` holding the log-determinant of the
    covariance.
+
+---
+
+#### Compute probabilities of points
 
  * `g.Probability(observation)` returns the probability of the given
    observation as a `double`.
@@ -249,8 +321,16 @@ parameterized mean and covariance.
  * `g.LogProbability(observations, probabilities)` computes the
    log-probabilities of many observations.
 
+---
+
+#### Sample from the distribution
+
  * `g.Random()` returns an `arma::vec` with a random sample from the
    multidimensional discrete distribution.
+
+---
+
+#### Fit the distribution to observations
 
  * `g.Train(observations)`
    - Fit the distribution to the given observations.
@@ -272,7 +352,7 @@ parameterized mean and covariance.
 ```c++
 // Create a Gaussian distribution in 3 dimensions with zero mean and unit
 // covariance.
-GaussianDistribution g(3);
+mlpack::GaussianDistribution g(3);
 
 // Compute the probability of the point [0, 0.5, 0.25].
 const double p = g.Probability(arma::vec("0 0.5 0.25"));
@@ -292,7 +372,7 @@ const double p2 = g.Probability(arma::vec("0 0.5 0.25"));
 // dimensions.
 arma::mat samples(50, 10000, arma::fill::randn); // Normally distributed.
 
-GaussianDistribution g2(50);
+mlpack::GaussianDistribution g2(50);
 g2.Train(samples);
 
 // Compute the probability of all of the samples.
@@ -320,6 +400,12 @@ including:
  * [`RANN`](rann.md)
  * [`KMeans`](kmeans.md)
 
+Supported metrics:
+
+ * [`LMetric`](#lmetric): generalized L-metric/Lp-metric, including
+   Manhattan/Euclidean/Chebyshev distances
+ * [Implement a custom metric](../developer/metrics.md)
+
 ### `LMetric`
 
 The `LMetric` template class implements a [generalized
@@ -341,12 +427,16 @@ LMetric<Power, TakeRoot>
    - If set to `false`, the metric will no longer satisfy the triangle
      inequality.
 
+---
+
 Several convenient typedefs are available:
 
  * `ManhattanDistance` (defined as `LMetric<1>`)
  * `EuclideanDistance` (defined as `LMetric<2>`)
  * `SquaredEuclideanDistance` (defined as `LMetric<2, false>`)
  * `ChebyshevDistance` (defined as `LMetric<INT_MAX>`)
+
+---
 
 The static `Evaluate()` method can be used to compute the distance between two
 vectors.
@@ -363,23 +453,36 @@ implements the Armadillo API (e.g. `arma::fvec`, `arma::sp_fvec`, etc.).
 arma::vec a("0.0 1.0 5.0");
 arma::vec b("1.0 3.0 5.0");
 
-const double d1 = ManhattanDistance::Evaluate(a, b);        // d1 = 3.0
-const double d2 = EuclideanDistance::Evaluate(a, b);        // d2 = 2.236
-const double d3 = SquaredEuclideanDistance::Evaluate(a, b); // d3 = 5.0
-const double d4 = ChebyshevDistance::Evaluate(a, b);        // d4 = 2.0
-const double d5 = LMetric<4>::Evaluate(a, b);               // d5 = 2.0305
-const double d6 = LMetric<3, false>::Evaluate(a, b);        // d6 = 9.0
+const double d1 = mlpack::ManhattanDistance::Evaluate(a, b);        // d1 = 3.0
+const double d2 = mlpack::EuclideanDistance::Evaluate(a, b);        // d2 = 2.24
+const double d3 = mlpack::SquaredEuclideanDistance::Evaluate(a, b); // d3 = 5.0
+const double d4 = mlpack::ChebyshevDistance::Evaluate(a, b);        // d4 = 2.0
+const double d5 = mlpack::LMetric<4>::Evaluate(a, b);               // d5 = 2.03
+const double d6 = mlpack::LMetric<3, false>::Evaluate(a, b);        // d6 = 9.0
+
+std::cout << "Manhattan distance:         " << d1 << "." << std::endl;
+std::cout << "Euclidean distance:         " << d2 << "." << std::endl;
+std::cout << "Squared Euclidean distance: " << d3 << "." << std::endl;
+std::cout << "Chebyshev distance:         " << d4 << "." << std::endl;
+std::cout << "L4-distance:                " << d5 << "." << std::endl;
+std::cout << "Cubed L3-distance:          " << d6 << "." << std::endl;
 
 // Compute the distance between two random 10-dimensional vectors in a matrix.
 arma::mat m(10, 100, arma::fill::randu);
 
-const double d7 = EuclideanDistance::Evaluate(m.col(0), m.col(7));
+const double d7 = mlpack::EuclideanDistance::Evaluate(m.col(0), m.col(7));
+
+std::cout << std::endl;
+std::cout << "Distance between two random vectors: " << d7 << "." << std::endl;
+std::cout << std::endl;
 
 // Compute the distance between two 32-bit precision `float` vectors.
 arma::fvec fa("0.0 1.0 5.0");
 arma::fvec fb("1.0 3.0 5.0");
 
-const double d8 = EuclideanDistance::Evaluate(fa, fb); // d8 = 2.236
+const double d8 = mlpack::EuclideanDistance::Evaluate(fa, fb); // d8 = 2.236
+
+std::cout << "Euclidean distance (fvec): " << d8 << "." << std::endl;
 ```
 
 ## Kernels
@@ -397,6 +500,12 @@ including:
  * [`FastMKS`](fastmks.md)
  * [`NystroemMethod`](nystroem_method.md)
 
+Supported kernels:
+
+ * [`GaussianKernel`](#gaussiankernel): standard Gaussian/radial basis
+   function/RBF kernel
+ * [Implement a custom kernel](../developer/kernels.md)
+
 ### `GaussianKernel`
 
 The `GaussianKernel` class implements the standard [Gaussian
@@ -407,11 +516,19 @@ The Gaussian kernel is defined as:
 `k(x1, x2) = exp(-|| x1 - x2 ||^2 / (2 * bw^2))`
 where `bw` is the bandwidth parameter of the kernel.
 
+---
+
+#### Constructors and properties
+
  * `g = GaussianKernel(bw=1.0)`
    - Create a `GaussianKernel` with the given bandwidth `bw`.
 
  * `g.Bandwidth()` returns the bandwidth of the kernel as a `double`.
    - To set the bandwidth, use `g.Bandwidth(newBandwidth)`.
+
+---
+
+#### Kernel evaluation
 
  * `g.Evaluate(x1, x2)`
    - Compute the kernel value between two vectors `x1` and `x2`.
@@ -422,6 +539,10 @@ where `bw` is the bandwidth parameter of the kernel.
    - Compute the kernel value between two vectors, given that the distance
      between those two vectors (`distance`) is already known.
    - `distance` should have type `double`.
+
+---
+
+#### Other utilities
 
  * `g.Gradient(distance)`
    - Compute the (one-dimensional) gradient of the kernel function with respect
@@ -438,16 +559,18 @@ where `bw` is the bandwidth parameter of the kernel.
 
 ```c++
 // Create a Gaussian kernel with default bandwidth.
-GaussianKernel g;
+mlpack::GaussianKernel g;
 
 // Create a Gaussian kernel with bandwidth 5.0.
-GaussianKernel g2(5.0);
+mlpack::GaussianKernel g2(5.0);
 
 // Evaluate the kernel value between two 3-dimensional points.
 arma::vec x1("0.5 1.0 1.5");
 arma::vec x2("1.5 1.0 0.5");
 const double k1 = g.Evaluate(x1, x2);
 const double k2 = g2.Evaluate(x1, x2);
+std::cout << "Kernel values: " << k1 << " (bw=1.0), " << k2 << " (bw=5.0)."
+    << std::endl;
 
 // Evaluate the kernel value when the distance between two points is already
 // computed.
@@ -457,16 +580,19 @@ const double k3 = g.Evaluate(distance);
 // Change the bandwidth of the kernel to 2.5.
 g.Bandwidth(2.5);
 const double k4 = g.Evaluate(x1, x2);
+std::cout << "Kernel value with bw=2.5: " << k4 << "." << std::endl;
 
 // Evaluate the kernel value between x1 and all points in a random matrix.
 arma::mat r(3, 100, arma::fill::randu);
 arma::vec kernelValues(100);
 for (size_t i = 0; i < r.n_cols; ++i)
   kernelValues[i] = g.Evaluate(x1, r.col(i));
+std::cout << "Average kernel value for random points: "
+    << arma::mean(kernelValues) << "." << std::endl;
 
 // Compute the kernel value between two 32-bit floating-point vectors.
 arma::fvec fx1("0.5 1.0 1.5");
 arma::fvec fx2("1.5 1.0 0.5");
-const double k4 = g.Evaluate(fx1, fx2);
-const double k5 = g2.Evaluate(fx1, fx2);
+const double k5 = g.Evaluate(fx1, fx2);
+const double k6 = g2.Evaluate(fx1, fx2);
 ```
