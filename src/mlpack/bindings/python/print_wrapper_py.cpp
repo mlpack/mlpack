@@ -13,6 +13,7 @@
 #include "print_wrapper_py.hpp"
 #include "get_arma_type.hpp"
 #include "wrapper_functions.hpp"
+#include "strip_type.hpp"
 #include <mlpack/core/util/io.hpp>
 
 using namespace mlpack::util;
@@ -42,18 +43,18 @@ void PrintWrapperPY(const std::string& category,
   // keeps track of indentation at each point.
   int indent = 0;
 
-  for(string i: methods)
+  for (string i: methods)
   {
     params[i] = IO::Parameters(groupName + "_" + i);
   }
 
-  if(category == "regression")
+  if (category == "regression")
   {
     cout << "class BaseEstimator:" << endl;
     cout << "  pass" << endl;
     cout << endl;
   }
-  else if(category == "classification")
+  else if (category == "classification")
   {
     cout << "class BaseEstimator:" << endl;
     cout << "  pass" << endl;
@@ -64,7 +65,7 @@ void PrintWrapperPY(const std::string& category,
   }
 
   // Import different mlpack programs that are to be wrapped.
-  for(size_t i = 0; i < methods.size(); i++)
+  for (size_t i = 0; i < methods.size(); i++)
   {
     cout << "from mlpack." << groupName << "_" << methods[i] << " ";
     cout << "import " << groupName << "_" << methods[i] << endl;
@@ -72,19 +73,19 @@ void PrintWrapperPY(const std::string& category,
 
   // Try importing scikit-learn, only for classification and
   // regression.
-  if(category == "regression")
+  if (category == "regression")
   {
     cout << "try:" << endl;
     cout << "  from sklearn.base import BaseEstimator" << endl;
   }
-  else if(category == "classification")
+  else if (category == "classification")
   {
     cout << "try: " << endl;
     cout << "  from sklearn.base import BaseEstimator, ClassifierMixin";
     cout << endl;
   }
 
-  if(category == "regression" || category == "classification")
+  if (category == "regression" || category == "classification")
   {
     cout << "except:" << endl;
     cout << "  pass" << endl;
@@ -93,30 +94,34 @@ void PrintWrapperPY(const std::string& category,
 
   // Check and store if every parameter is serializable,
   // a hyperparameter and boolean.
-  for(map<string, Params>::iterator i=params.begin();
-      i!=params.end(); i++)
+  for (map<string, Params>::iterator i = params.begin();
+       i != params.end(); i++)
   {
     map<string, ParamData> methodParams = i->second.Parameters();
 
-    for(map<string, ParamData>::iterator itr=methodParams.begin();
-        itr!=methodParams.end(); itr++)
+    for (map<string, ParamData>::iterator itr = methodParams.begin();
+         itr != methodParams.end(); itr++)
     {
+      // Get the sanitized name of the class.
+      string strippedName, unused1, unused2;
+      StripType(itr->second.cppType, strippedName, unused1, unused2);
+
       // Checking for serializability.
       bool isSerial;
       i->second.functionMap[itr->second.tname]["IsSerializable"](
           itr->second, NULL, (void*)& isSerial);
-      if(isSerial)
-        serializable.insert(itr->second.cppType);
+      if (isSerial)
+        serializable.insert(strippedName);
 
       // Checking for hyperparameter.
       bool isHyperParam = false;
       size_t foundArma = itr->second.cppType.find("arma");
-      if(itr->second.input && foundArma == string::npos && !isSerial)
+      if (itr->second.input && foundArma == string::npos && !isSerial)
         isHyperParam = true;
       hyperParams[itr->first] = isHyperParam;
 
       // Checking for boolean.
-      if(itr->second.cppType == "bool")
+      if (itr->second.cppType == "bool")
         isBool[itr->first] = true;
       else
         isBool[itr->first] = false;
@@ -126,9 +131,9 @@ void PrintWrapperPY(const std::string& category,
   string className = GetClassName(groupName);
 
   // print class.
-  if(category == "regression")
+  if (category == "regression")
     cout << "class " << className << "(BaseEstimator)" << ":" << endl;
-  else if(category == "classification")
+  else if (category == "classification")
   {
     cout << "class " << className << "(BaseEstimator, ClassifierMixin)" <<
         ":" << endl;
@@ -140,15 +145,15 @@ void PrintWrapperPY(const std::string& category,
   indent += 2;
   cout << string(indent, ' ') << "def __init__(self," << endl;
 
-  for(auto itr=hyperParams.begin(); itr!=hyperParams.end(); itr++)
+  for (auto itr = hyperParams.begin(); itr != hyperParams.end(); itr++)
   {
     // indent + 13, here 13 -> def __init__(
-    if(itr->second && isBool[itr->first])
+    if (itr->second && isBool[itr->first])
     {
       cout << string(indent+13, ' ') << GetValidName(itr->first)
           << " = False," << endl;
     }
-    else if(itr->second && !isBool[itr->first])
+    else if (itr->second && !isBool[itr->first])
     {
       cout << string(indent+13, ' ') << GetValidName(itr->first)
           << " = None," << endl;
@@ -161,10 +166,10 @@ void PrintWrapperPY(const std::string& category,
   // storing given arguments in attributes.
   indent += 2;
   cout << string(indent, ' ') << "# serializable attributes." << endl;
-  if(serializable.size() == 0)
+  if (serializable.size() == 0)
     cout << string(indent, ' ') << "# None" << endl;
 
-  for(auto itr=serializable.begin(); itr!=serializable.end(); itr++)
+  for (auto itr = serializable.begin(); itr != serializable.end(); itr++)
   {
     cout << string(indent, ' ');
     cout << "self._" << *itr << " = None" << endl;
@@ -173,9 +178,9 @@ void PrintWrapperPY(const std::string& category,
   cout << endl;
   cout << string(indent, ' ') << "# hyper-parameters." << endl;
 
-  for(auto itr=hyperParams.begin(); itr!=hyperParams.end(); itr++)
+  for (auto itr = hyperParams.begin(); itr != hyperParams.end(); itr++)
   {
-    if(itr->second)
+    if (itr->second)
     {
       string validName = GetValidName(itr->first);
       cout << string(indent, ' ');
@@ -187,7 +192,7 @@ void PrintWrapperPY(const std::string& category,
   indent -= 2;
 
   // print all method definitions.
-  for(string methodName: methods)
+  for (string methodName: methods)
   {
     // print method name.
     cout << string(indent, ' ') << "def " << GetMappedName(methodName);
@@ -205,39 +210,44 @@ void PrintWrapperPY(const std::string& category,
     int numMatrixInputs = 0;
     int numVectorInputs = 0;
 
-    if(category == "regression" || category == "classification")
+    if (category == "regression" || category == "classification")
     {
-      for(map<string, ParamData>::iterator itr=methodParams.begin();
-          itr!=methodParams.end(); itr++)
+      for (map<string, ParamData>::iterator itr = methodParams.begin();
+           itr != methodParams.end(); itr++)
       {
         // Throw error if there are more than one matrix input params,
         // or more than one vector input params.
-        if(numMatrixInputs > 1)
-          Log::Fatal << "More than one matrix input parameters for " <<
+        if (numMatrixInputs > 1)
+        {
+          Log::Fatal << "More than one matrix input parameter for " <<
               methodName << "(" << GetMappedName(methodName) << ") method!" <<
               endl;
-        if(numVectorInputs > 1)
-          Log::Fatal << "More than one vector input parameters for " <<
-              methodName << "(" << GetMappedName(methodName) << ") method!" <<
-              endl;
+        }
 
-        if(itr->second.input)
+        if (numVectorInputs > 1)
+        {
+          Log::Fatal << "More than one vector input parameter for " <<
+              methodName << "(" << GetMappedName(methodName) << ") method!" <<
+              endl;
+        }
+
+        if (itr->second.input)
         {
           // If this is a matrix parameter.
-          if(itr->second.cppType == "arma::mat" ||
-             itr->second.cppType ==
-             "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
-             itr->second.cppType == "arma::Mat<size_t>")
+          if (itr->second.cppType == "arma::mat" ||
+              itr->second.cppType ==
+                  "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
+              itr->second.cppType == "arma::Mat<size_t>")
           {
             numMatrixInputs++;
             mapToScikitNames[itr->first] = "X";
             invMapToScikitNames["X"] = itr->first;
           }
           // If this is a vector parameter.
-          else if(itr->second.cppType == "arma::vec" ||
-                  itr->second.cppType == "arma::rowvec" ||
-                  itr->second.cppType == "arma::Row<size_t>" ||
-                  itr->second.cppType == "arma::Col<size_t>")
+          else if (itr->second.cppType == "arma::vec" ||
+                   itr->second.cppType == "arma::rowvec" ||
+                   itr->second.cppType == "arma::Row<size_t>" ||
+                   itr->second.cppType == "arma::Col<size_t>")
           {
             numVectorInputs++;
             mapToScikitNames[itr->first] = "y";
@@ -248,13 +258,13 @@ void PrintWrapperPY(const std::string& category,
     }
 
     // Now we print the matrix and vector params.
-    if(category == "classification" || category == "regression")
+    if (category == "classification" || category == "regression")
     {
       bool hasX = false;
       bool hasy = false;
 
       // First print X, if it is present.
-      if(invMapToScikitNames.find("X") != invMapToScikitNames.end())
+      if (invMapToScikitNames.find("X") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
         cout << "X = None," << endl;
@@ -262,25 +272,25 @@ void PrintWrapperPY(const std::string& category,
       }
 
       // Now print y, if it is present.
-      if(invMapToScikitNames.find("y") != invMapToScikitNames.end())
+      if (invMapToScikitNames.find("y") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
         cout << "y = None," << endl;
         hasy = true;
       }
 
-      // Now print actual names, to make it work for
-      // both mapped and actual names.
+      // Now print actual names, to make it work for both mapped and actual
+      // names.
 
       // Now print actual name for X.
-      if(hasX)
+      if (hasX)
       {
         cout << string(indent + addIndent, ' ');
         cout << GetValidName(invMapToScikitNames["X"]) << " = None," << endl;
       }
 
       // Now print actual name for y.
-      if(hasy)
+      if (hasy)
       {
         cout << string(indent + addIndent, ' ');
         cout << GetValidName(invMapToScikitNames["y"]) << " = None," << endl;
@@ -295,10 +305,10 @@ void PrintWrapperPY(const std::string& category,
       string logicString = "";
       indent += 2;
 
-      if(hasX)
+      if (hasX)
       {
         string realName = GetValidName(invMapToScikitNames["X"]);
-        
+
         cout << string(indent, ' ') << "if X is not None and ";
         cout << realName << " is None:" << endl;
 
@@ -312,7 +322,7 @@ void PrintWrapperPY(const std::string& category,
         cout << endl;
       }
 
-      if(hasy)
+      if (hasy)
       {
         string realName = GetValidName(invMapToScikitNames["y"]);
 
@@ -332,13 +342,17 @@ void PrintWrapperPY(const std::string& category,
     else
     {
       // print input parameters.
-      for(map<string, ParamData>::iterator itr=methodParams.begin();
-          itr!=methodParams.end(); itr++)
+      for (map<string, ParamData>::iterator itr = methodParams.begin();
+           itr != methodParams.end(); itr++)
       {
         string validName = GetValidName(itr->first);
 
-        if(itr->second.input && serializable.find(itr->second.cppType) ==
-            serializable.end() && !hyperParams[itr->first])
+        // Get valid stripped name.
+        string strippedName, unused1, unused2;
+        StripType(itr->second.cppType, strippedName, unused1, unused2);
+
+        if (itr->second.input && serializable.find(strippedName) ==
+             serializable.end() && !hyperParams[itr->first])
         {
           cout << string(indent + addIndent, ' ');
           cout << validName << " = None," << endl;
@@ -357,8 +371,8 @@ void PrintWrapperPY(const std::string& category,
     int count = 0; // just for reference.
 
     // first pass through the parameters and print all required parameters.
-    for(map<string, ParamData>::iterator itr=methodParams.begin();
-        itr!=methodParams.end(); itr++)
+    for (map<string, ParamData>::iterator itr = methodParams.begin();
+         itr != methodParams.end(); itr++)
     {
       if(itr->second.input && itr->second.required)
       {
@@ -367,9 +381,11 @@ void PrintWrapperPY(const std::string& category,
           cout << string(indent + addIndent, ' ');
         cout << validName << " = ";
 
-        if(serializable.find(itr->second.cppType) != serializable.end())
-          cout << "self._" << itr->second.cppType << "," << endl;
-        else if(hyperParams[itr->first])
+        string strippedName, unused1, unused2;
+        StripType(itr->second.cppType, strippedName, unused1, unused2);
+        if (serializable.find(strippedName) != serializable.end())
+          cout << "self._" << strippedName << "," << endl;
+        else if (hyperParams[itr->first])
           cout << "self." << validName << "," << endl;
         else
           cout << validName << "," << endl;
@@ -379,20 +395,22 @@ void PrintWrapperPY(const std::string& category,
     }
 
     // Now print all non-required parameters.
-    for(map<string, ParamData>::iterator itr=methodParams.begin();
-        itr!=methodParams.end(); itr++)
+    for (map<string, ParamData>::iterator itr = methodParams.begin();
+         itr != methodParams.end(); itr++)
     {
-      if(itr->second.input && !itr->second.required)
+      if (itr->second.input && !itr->second.required)
       {
         string validName = GetValidName(itr->first);
 
-        if(count != 0)
+        if (count != 0)
           cout << string(indent + addIndent, ' ');
         cout << validName << " = ";
 
-        if(serializable.find(itr->second.cppType) != serializable.end())
-          cout << "self._" << itr->second.cppType << "," << endl;
-        else if(hyperParams[itr->first])
+        string strippedName, unused1, unused2;
+        StripType(itr->second.cppType, strippedName, unused1, unused2);
+        if (serializable.find(strippedName) != serializable.end())
+          cout << "self._" << strippedName << "," << endl;
+        else if (hyperParams[itr->first])
           cout << "self." << validName << "," << endl;
         else
           cout << validName << "," << endl;
@@ -409,15 +427,17 @@ void PrintWrapperPY(const std::string& category,
     string returnString = string(indent, ' ') + "return ";
     bool outputsOnlySerial = true;
 
-    for(map<string, ParamData>::iterator itr=methodParams.begin();
-        itr!=methodParams.end(); itr++)
+    for (map<string, ParamData>::iterator itr = methodParams.begin();
+         itr != methodParams.end(); itr++)
     {
-      if(!itr->second.input)
+      if (!itr->second.input)
       {
-        if(serializable.find(itr->second.cppType) != serializable.end())
+        string strippedName, unused1, unused2;
+        StripType(itr->second.cppType, strippedName, unused1, unused2);
+        if (serializable.find(strippedName) != serializable.end())
         {
           cout << string(indent, ' ');
-          cout << "self._" << itr->second.cppType << " = out[\"" <<
+          cout << "self._" << strippedName << " = out[\"" <<
               itr->first << "\"]" << endl;
         }
         else
@@ -430,7 +450,7 @@ void PrintWrapperPY(const std::string& category,
     cout << endl;
 
     // return somethings.
-    if(outputsOnlySerial)
+    if (outputsOnlySerial)
       cout << returnString + "self" << endl;
     else
       cout << returnString.substr(0, returnString.size() - 2) << endl;

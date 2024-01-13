@@ -107,8 +107,8 @@ BINDING_SEE_ALSO("LARS C++ class documentation",
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 
-PARAM_MODEL_IN(LARS, "input_model", "Trained LARS model to use.", "m");
-PARAM_MODEL_OUT(LARS, "output_model", "Output LARS model.", "M");
+PARAM_MODEL_IN(LARS<>, "input_model", "Trained LARS model to use.", "m");
+PARAM_MODEL_OUT(LARS<>, "output_model", "Output LARS model.", "M");
 
 PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
     "points).", "t");
@@ -149,11 +149,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       false, "no results will be saved");
   ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
-  LARS* lars;
+  LARS<>* lars;
   if (params.Has("input"))
   {
     // Initialize the object.
-    lars = new LARS(useCholesky, lambda1, lambda2);
+    lars = new LARS<>(useCholesky, lambda1, lambda2);
     lars->FitIntercept(!noIntercept);
     lars->NormalizeData(!noNormalize);
 
@@ -176,15 +176,14 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Fatal << "Number of responses must be equal to number of rows of X!"
           << endl;
 
-    vec beta;
     arma::rowvec y = std::move(matY);
     timers.Start("lars_regression");
-    lars->Train(matX, y, beta, false /* do not transpose */);
+    lars->Train(matX, y, false /* do not transpose */);
     timers.Stop("lars_regression");
   }
   else // We must have --input_model_file.
   {
-    lars = params.Get<LARS*>("input_model");
+    lars = params.Get<LARS<>*>("input_model");
   }
 
   if (params.Has("test"))
@@ -208,5 +207,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     params.Get<arma::mat>("output_predictions") = predictions.t();
   }
 
-  params.Get<LARS*>("output_model") = lars;
+  params.Get<LARS<>*>("output_model") = lars;
 }
