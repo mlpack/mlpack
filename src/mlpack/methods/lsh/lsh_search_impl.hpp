@@ -270,8 +270,8 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
     // and the corresponding offset be 'offset_i'.  Then the key of a single
     // point is obtained as:
     // key = { floor((<proj_i, point> + offset_i) / 'hashWidth') forall i }
-    arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i), 1,
-                                       this->referenceSet.n_cols);
+    arma::mat offsetMat = repmat(offsets.unsafe_col(i), 1,
+                                 this->referenceSet.n_cols);
     arma::mat hashMat = projections.slice(i).t() * (this->referenceSet);
     hashMat += offsetMat;
     hashMat /= hashWidth;

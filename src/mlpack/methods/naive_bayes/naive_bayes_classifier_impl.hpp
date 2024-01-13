@@ -217,7 +217,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
-  logLikelihoods = arma::log(arma::repmat(probabilities, 1, data.n_cols));
+  logLikelihoods = arma::log(repmat(probabilities, 1, data.n_cols));
   ModelMatType invVar = 1.0 / variances;
 
   // Calculate the joint log likelihood of point for each of the
@@ -228,7 +228,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   {
     // This is an adaptation of phi() for the case where the covariance is a
     // diagonal matrix.
-    ModelMatType diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
+    ModelMatType diffs = data - repmat(means.col(i), 1, data.n_cols);
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
 
