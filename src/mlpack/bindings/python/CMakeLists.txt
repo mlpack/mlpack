@@ -158,11 +158,16 @@ add_custom_command(TARGET python_copy PRE_BUILD
         ${CMAKE_CURRENT_SOURCE_DIR}/setup_readme.md
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
-# Copy all mlpack headers for inclusion in the package.
+# Copy all mlpack headers for inclusion in the package, but remove the bindings/
+# and tests/ directories as they should not be included.
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy_directory
         ${CMAKE_SOURCE_DIR}/src/
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/include/)
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E rm -r
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/include/mlpack/bindings/
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/include/mlpack/tests/)
 
 # Generate pkgconfig file for easy use of included headers.
 add_custom_target(python_pkgconfig

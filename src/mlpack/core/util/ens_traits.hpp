@@ -84,8 +84,10 @@ struct IsEnsCallbackTypes;
 template<typename CallbackType, typename... CallbackTypes>
 struct IsEnsCallbackTypes<CallbackType, CallbackTypes...>
 {
-  constexpr static bool value = std::is_class<CallbackType>::value &&
-      IsEnsCallbackTypes<CallbackTypes...>::value;
+  constexpr static bool value =
+      std::is_class<typename std::remove_cv<
+          typename std::remove_reference<CallbackType>::type
+      >::type>::value && IsEnsCallbackTypes<CallbackTypes...>::value;
 };
 
 template<>
