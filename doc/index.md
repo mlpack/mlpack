@@ -62,6 +62,8 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
    classifier
  * [`LogisticRegression`](user/methods/logistic_regression.md): L2-regularized
    logistic regression (two-class only)
+ * [`NaiveBayesClassifier`](user/methods/naive_bayes_classifier.md): simple
+   multi-class naive Bayes classifier
  * [`Perceptron`](user/methods/perceptron.md): simple Perceptron classifier
  * [`SoftmaxRegression`](user/methods/softmax_regression.md): L2-regularized
    softmax regression (i.e. multi-class logistic regression)
@@ -72,6 +74,10 @@ Predict continuous values.
 
  * [`DecisionTreeRegressor`](user/methods/decision_tree_regressor.md): ID3-style
    decision tree regressor
+ * [`LARS`](user/methods/lars.md): Least Angle Regression (LARS), L1-regularized
+   and L2-regularized
+ * [`LinearRegression`](user/methods/linear_regression.md): L2-regularized
+   linear regression (ridge regression)
 
 ### Clustering algorithms
 
