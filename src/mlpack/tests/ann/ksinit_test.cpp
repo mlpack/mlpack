@@ -85,11 +85,11 @@ void BuildVanillaNetwork(MatType& trainData,
 
   // Calculating the mean squared error on the training data.
   model.Predict(trainData, prediction);
-  trainError = mean(mean(square(prediction - trainLabels)));
+  trainError = arma::mean(arma::mean(square(prediction - trainLabels)));
 
   // Calculating the mean squared error on the test data
   model.Predict(testData, prediction);
-  testError = mean(mean(square(prediction - testLabels)));
+  testError = arma::mean(arma::mean(square(prediction - testLabels)));
 }
 
 /**

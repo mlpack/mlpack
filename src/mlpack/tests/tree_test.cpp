@@ -1438,7 +1438,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
   x.zeros();
   // Define an initial value.
   x[0] = 1.0;
-  x[1] = -mean(
+  x[1] = -arma::mean(
       dataset.cols(tree.Begin(), tree.Begin() + tree.Count() - 1).row(0));
 
   const size_t numIters = 1000000;

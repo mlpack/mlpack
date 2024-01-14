@@ -103,7 +103,7 @@ TEST_CASE("GMMTrainEMOneGaussian", "[GMMTest]")
     GMM gmm(1, 2);
     gmm.Train(data, 10);
 
-    arma::vec actualMean = mean(data, 1);
+    arma::vec actualMean = arma::mean(data, 1);
     arma::mat actualCovar = ColumnCovariance(data,
         1 /* biased estimator */);
 
@@ -192,7 +192,7 @@ TEST_CASE("GMMTrainEMMultipleGaussians", "[GMMTest]")
 
       // Calculate the actual means and covariances because they will probably
       // be different (this is easier to do before we shuffle the points).
-      means[i] = mean(data.cols(point, point + counts[i] - 1), 1);
+      means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
       covars[i] = ColumnCovariance(arma::mat(data.cols(point,
           point + counts[i] - 1)), 1 /* biased */);
 
@@ -727,7 +727,7 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
 
     // Calculate the actual means and covariances because they will probably
     // be different (this is easier to do before we shuffle the points).
-    means[i] = mean(data.cols(point, point + counts[i] - 1), 1);
+    means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
     covars[i] = ColumnCovariance(arma::mat(data.cols(point,
         point + counts[i] - 1)), 1 /* biased */);
 
@@ -901,7 +901,7 @@ TEST_CASE("DiagonalGMMTrainEMOneGaussian", "[GMMTest]")
     DiagonalGMM gmm(1, 2);
     gmm.Train(data, 10);
 
-    arma::vec actualMean = mean(data, 1);
+    arma::vec actualMean = arma::mean(data, 1);
     arma::vec actualCovar = arma::diagvec(
         ColumnCovariance(data,
         1 /* biased estimator */));

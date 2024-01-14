@@ -464,7 +464,7 @@ TEST_CASE("GaussianDistributionRandomTest", "[DistributionTest]")
     obs.col(i) = d.Random();
 
   // Now make sure that reflects the actual distribution.
-  arma::vec obsMean = mean(obs, 1);
+  arma::vec obsMean = arma::mean(obs, 1);
   arma::mat obsCov = ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
@@ -499,7 +499,7 @@ TEST_CASE("GaussianDistributionTrainTest", "[DistributionTest]")
   GaussianDistribution d;
 
   // Find actual mean and covariance of data.
-  arma::vec actualMean = mean(observations, 1);
+  arma::vec actualMean = arma::mean(observations, 1);
   arma::mat actualCov = ColumnCovariance(observations);
 
   d.Train(observations);
@@ -917,8 +917,8 @@ TEST_CASE("GammaDistributionTrainStatisticsTest", "[DistributionTest]")
 
   // Train object d2 with the data's statistics.
   GammaDistribution d2;
-  const arma::vec meanLogx = mean(arma::log(data), 1);
-  const arma::vec meanx = mean(data, 1);
+  const arma::vec meanLogx = arma::mean(arma::log(data), 1);
+  const arma::vec meanx = arma::mean(data, 1);
   const arma::vec logMeanx = arma::log(meanx);
   d2.Train(logMeanx, meanLogx, meanx);
 
@@ -1434,7 +1434,7 @@ TEST_CASE("DiagonalGaussianDistributionRandomTest", "[DistributionTest]")
     obs.col(i) = d.Random();
 
   // Make sure that reflects the actual distribution.
-  arma::vec obsMean = mean(obs, 1);
+  arma::vec obsMean = arma::mean(obs, 1);
   arma::mat obsCov = ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
@@ -1462,7 +1462,7 @@ TEST_CASE("DiagonalGaussianDistributionTrainTest", "[DistributionTest]")
   DiagonalGaussianDistribution d;
 
   // Calculate the actual mean and covariance of data using armadillo.
-  arma::vec actualMean = mean(observations, 1);
+  arma::vec actualMean = arma::mean(observations, 1);
   arma::mat actualCov = ColumnCovariance(observations);
 
   // Estimate the parameters.
