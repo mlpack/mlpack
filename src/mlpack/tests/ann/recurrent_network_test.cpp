@@ -317,8 +317,8 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 
   // The prediction must really follow the test data. So convert both the test
   // data and the pediction to vectors and compare the two.
-  arma::colvec testVector = arma::vectorise(testData);
-  arma::colvec predVector = arma::vectorise(prediction);
+  arma::colvec testVector = vectorise(testData);
+  arma::colvec predVector = vectorise(prediction);
 
   // Adjust the vectors for comparison, as the prediction is one step ahead.
   testVector = testVector.rows(1, testVector.n_rows - 1);

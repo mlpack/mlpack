@@ -121,7 +121,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCACenterTest",
   arma::mat output2 = params.Get<arma::mat>("output");
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
 }
 
 /**
@@ -204,7 +204,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCABandWidthTest",
     arma::mat output2 = params.Get<arma::mat>("output");
 
     // The resulting matrices should be different.
-    REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+    REQUIRE(arma::any(vectorise(output1 != output2)));
   }
 }
 
@@ -239,7 +239,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCAOffsetTest",
     arma::mat output2 = params.Get<arma::mat>("output");
 
     // The resulting matrices should be different.
-    REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+    REQUIRE(arma::any(vectorise(output1 != output2)));
   }
 }
 
@@ -266,7 +266,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCADegreeTest",
   arma::mat output2 = params.Get<arma::mat>("output");
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
 }
 
 /**
@@ -292,7 +292,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCAKernelScaleTest",
   arma::mat output2 = params.Get<arma::mat>("output");
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
 }
 
 /**
@@ -329,7 +329,7 @@ TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCASamplingSchemeTest",
   arma::mat output3 = params.Get<arma::mat>("output");
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  REQUIRE(arma::any(arma::vectorise(output2 != output3)));
-  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output2 != output3)));
+  REQUIRE(arma::any(vectorise(output1 != output3)));
 }
