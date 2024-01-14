@@ -323,7 +323,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   // Adjust the vectors for comparison, as the prediction is one step ahead.
   testVector = testVector.rows(1, testVector.n_rows - 1);
   predVector = predVector.rows(0, predVector.n_rows - 2);
-  double error = std::sqrt(arma::sum(arma::square(testVector - predVector))) /
+  double error = std::sqrt(arma::sum(square(testVector - predVector))) /
       testVector.n_rows;
 
   return error;
