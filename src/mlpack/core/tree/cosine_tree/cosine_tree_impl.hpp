@@ -469,7 +469,7 @@ inline double CosineTree::MonteCarloError(CosineTree* node,
   }
 
   // Compute mean and standard deviation of the weighted samples.
-  double mu = mean(weightedMagnitudes);
+  double mu = arma::mean(weightedMagnitudes);
   double sigma = arma::stddev(weightedMagnitudes);
 
   if (!sigma)

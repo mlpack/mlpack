@@ -77,7 +77,7 @@ double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
     recalls(c) = double(tp) / positiveLabels;
   }
 
-  return mean(recalls);
+  return arma::mean(recalls);
 }
 
 } // namespace mlpack

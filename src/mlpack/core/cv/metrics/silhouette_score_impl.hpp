@@ -22,7 +22,7 @@ double SilhouetteScore::Overall(const DataType& X,
                                 const Metric& metric)
 {
   util::CheckSameSizes(X, labels, "SilhouetteScore::Overall()");
-  return mean(SamplesScore(X, labels, metric));
+  return arma::mean(SamplesScore(X, labels, metric));
 }
 
 template<typename DataType>

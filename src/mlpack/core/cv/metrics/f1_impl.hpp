@@ -88,7 +88,7 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
         2.0 * precision * recall / (precision + recall);
   }
 
-  return mean(f1s);
+  return arma::mean(f1s);
 }
 
 } // namespace mlpack

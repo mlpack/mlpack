@@ -113,7 +113,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
 {
   arma::Col<ElemType> values(samples.n_elem);
 
-  mean = mean(data.cols(samples), 1);
+  mean = arma::mean(data.cols(samples), 1);
 
   arma::Col<ElemType> tmp(data.n_rows);
 

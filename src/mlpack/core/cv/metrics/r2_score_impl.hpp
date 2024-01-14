@@ -27,7 +27,7 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
   // Taking Predicted Output from the model.
   model.Predict(data, predictedResponses);
   // Mean value of response.
-  double meanResponses = mean(responses);
+  double meanResponses = arma::mean(responses);
 
   // Calculate the numerator i.e. residual sum of squares.
   double residualSumSquared = arma::accu(arma::square(responses -

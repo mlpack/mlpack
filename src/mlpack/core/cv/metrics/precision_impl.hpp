@@ -77,7 +77,7 @@ double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
     precisions(c) = double(tp) / numberOfPositivePredictions;
   }
 
-  return mean(precisions);
+  return arma::mean(precisions);
 }
 
 } // namespace mlpack
