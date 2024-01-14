@@ -188,7 +188,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
 
   // Adding the regularization term.
   constexpr ElemType half = ((ElemType) 0.5);
-  regularization = half * lambda * arma::dot(parameters, parameters);
+  regularization = half * lambda * dot(parameters, parameters);
 
   return loss + regularization;
 }
@@ -231,7 +231,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
 
   // Adding the regularization term.
   constexpr ElemType half = ((ElemType) 0.5);
-  regularization = half * lambda * arma::dot(parameters, parameters);
+  regularization = half * lambda * dot(parameters, parameters);
 
   cost = loss + regularization;
   return cost;
@@ -417,7 +417,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
 
   // Adding the regularization term.
   constexpr ElemType half = ((ElemType) 0.5);
-  regularization = half * lambda * arma::dot(parameters, parameters);
+  regularization = half * lambda * dot(parameters, parameters);
 
   cost = loss + regularization;
   return cost;
@@ -490,7 +490,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
 
   // Adding the regularization term.
   constexpr ElemType half = ((ElemType) 0.5);
-  regularization = half * lambda * arma::dot(parameters, parameters);
+  regularization = half * lambda * dot(parameters, parameters);
 
   cost = loss + regularization;
   return cost;
