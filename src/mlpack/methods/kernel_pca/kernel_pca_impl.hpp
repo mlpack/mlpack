@@ -40,7 +40,7 @@ void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
   {
-    arma::colvec transformedDataMean = arma::mean(transformedData, 1);
+    arma::colvec transformedDataMean = mean(transformedData, 1);
     transformedData = transformedData - (transformedDataMean *
         arma::ones<arma::rowvec>(transformedData.n_cols));
   }

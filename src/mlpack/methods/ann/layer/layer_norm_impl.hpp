@@ -60,7 +60,7 @@ template<typename MatType>
 void LayerNormType<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  mean = arma::mean(input, 0);
+  mean = mean(input, 0);
   variance = arma::var(input, 1, 0);
 
   // Normalize the input.

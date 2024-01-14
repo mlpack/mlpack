@@ -41,15 +41,15 @@ double InceptionScore(ModelType model,
     }
     arma::mat curPreds =
         arma::mat(preds.colptr(index), preds.n_rows, curSize, false, true);
-    arma::colvec c = arma::log(arma::mean(curPreds, 1));
+    arma::colvec c = arma::log(mean(curPreds, 1));
     arma::mat temp = arma::log(curPreds);
     temp.each_col() -= c;
     curPreds %= temp;
-    scores(i) = exp(arma::as_scalar(arma::mean(arma::sum(curPreds, 0))));
+    scores(i) = exp(arma::as_scalar(mean(arma::sum(curPreds, 0))));
     index += curSize;
   }
 
-  return arma::mean(scores);
+  return mean(scores);
 }
 
 } // namespace mlpack

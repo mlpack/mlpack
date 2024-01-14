@@ -306,7 +306,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     for (size_t i = 0; i < data.n_rows; ++i)
     {
-      data.row(i) -= arma::mean(data.row(i));
+      data.row(i) -= mean(data.row(i));
     }
   }
 

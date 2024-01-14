@@ -88,10 +88,10 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   output.reshape(shapeA, shapeB);
   runningMean = batchNorm.TrainingMean();
   runningMean.reshape(size, shapeB);
-  runningMean = arma::mean(runningMean, 1);
+  runningMean = mean(runningMean, 1);
   runningVariance = batchNorm.TrainingVariance();
   runningVariance.reshape(size, shapeB);
-  runningVariance = arma::mean(runningVariance, 1);
+  runningVariance = mean(runningVariance, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

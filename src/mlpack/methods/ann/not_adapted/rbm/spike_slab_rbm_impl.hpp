@@ -275,7 +275,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SlabMean(
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    slabMean.col(i) = arma::mean((1.0 / slabPenalty) * spike(i) *
+    slabMean.col(i) = mean((1.0 / slabPenalty) * spike(i) *
         weight.slice(i).t() * visible, 1);
   }
 }

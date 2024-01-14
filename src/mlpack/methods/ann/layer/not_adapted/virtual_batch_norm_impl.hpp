@@ -37,8 +37,8 @@ VirtualBatchNormType<InputType, OutputType>::VirtualBatchNormType(
     eps(eps),
     loading(false)
 {
-  referenceBatchMean = arma::mean(referenceBatch, 1);
-  referenceBatchMeanSquared = arma::mean(square(referenceBatch), 1);
+  referenceBatchMean = mean(referenceBatch, 1);
+  referenceBatchMeanSquared = mean(square(referenceBatch), 1);
   newCoefficient = 1.0 / (referenceBatch.n_cols + 1);
   oldCoefficient = 1 - newCoefficient;
 }
@@ -67,8 +67,8 @@ void VirtualBatchNormType<InputType, OutputType>::Forward(
       by feature maps.");
 
   inputParameter = input;
-  InputType inputMean = arma::mean(input, 1);
-  InputType inputMeanSquared = arma::mean(square(input), 1);
+  InputType inputMean = mean(input, 1);
+  InputType inputMeanSquared = mean(square(input), 1);
 
   mean = oldCoefficient * referenceBatchMean + newCoefficient * inputMean;
   OutputType meanSquared = oldCoefficient * referenceBatchMeanSquared +

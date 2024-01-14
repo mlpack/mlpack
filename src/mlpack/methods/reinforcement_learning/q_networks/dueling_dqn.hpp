@@ -182,7 +182,7 @@ class DuelingDQN
     completeNetwork.Predict(state, networkOutput);
     value = networkOutput.row(0);
     advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
-    actionValue = advantage.each_row() + (value - arma::mean(advantage));
+    actionValue = advantage.each_row() + (value - mean(advantage));
   }
 
   /**
@@ -198,7 +198,7 @@ class DuelingDQN
     value = networkOutput.row(0);
     advantage = networkOutput.rows(1, networkOutput.n_rows - 1);
     actionValue = advantage.each_row() +
-        (value - arma::mean(advantage));
+        (value - mean(advantage));
     this->actionValues = actionValue;
   }
 
@@ -215,7 +215,7 @@ class DuelingDQN
     lossFunction.Backward(this->actionValues, target, gradLoss);
 
     arma::mat gradValue = arma::sum(gradLoss);
-    arma::mat gradAdvantage = gradLoss.each_row() - arma::mean(gradLoss);
+    arma::mat gradAdvantage = gradLoss.each_row() - mean(gradLoss);
 
     arma::mat grad = arma::join_cols(gradValue, gradAdvantage);
     completeNetwork.Backward(state, grad, gradient);
