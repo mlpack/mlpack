@@ -76,7 +76,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
 
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    ElemType sum = arma::accu(arma::square(input.t() * weight.slice(i))) /
+    ElemType sum = arma::accu(square(input.t() * weight.slice(i))) /
         (2.0 * slabPenalty);
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }

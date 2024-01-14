@@ -182,7 +182,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
     arma::mat matAInvZXT = solve(A, codesXT);
 
-    arma::vec gradient = -arma::sum(arma::square(matAInvZXT), 1);
+    arma::vec gradient = -arma::sum(square(matAInvZXT), 1);
     gradient += 1;
 
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
