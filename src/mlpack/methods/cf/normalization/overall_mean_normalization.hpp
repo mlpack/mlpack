@@ -48,7 +48,7 @@ class OverallMeanNormalization
    */
   void Normalize(arma::mat& data)
   {
-    mean = mean(data.row(2));
+    mean = arma::mean(data.row(2));
     data.row(2) -= mean;
     // The algorithm omits rating of zero. If normalized rating equals zero,
     // it is set to the smallest positive float value.

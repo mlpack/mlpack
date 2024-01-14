@@ -300,7 +300,7 @@ class PrioritizedReplay
     UpdatePriorities(sampledIndices, tdError);
 
     // Update the gradient
-    gradients = mean(weights) * gradients;
+    gradients = arma::mean(weights) * gradients;
   }
 
   //! Get the number of steps for n-step agent.

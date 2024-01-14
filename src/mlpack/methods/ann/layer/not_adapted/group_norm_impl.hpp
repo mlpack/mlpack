@@ -74,7 +74,7 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   arma::mat reshapedInput(const_cast<arma::Mat<eT>&>(input).memptr(),
       input.n_rows / groupCount, input.n_cols * groupCount, false, false);
 
-  mean = mean(reshapedInput, 0);
+  mean = arma::mean(reshapedInput, 0);
   variance = arma::var(reshapedInput, 1, 0);
 
   // Normalize the input.

@@ -51,7 +51,7 @@ class MeanPoolingRule
   template<typename MatType>
   double Pooling(const MatType& input)
   {
-    return mean(mean(input));
+    return arma::mean(arma::mean(input));
   }
 
   /*
@@ -65,7 +65,7 @@ class MeanPoolingRule
   void Unpooling(const MatType& input, const double value, MatType& output)
   {
     output = arma::zeros<MatType>(input.n_rows, input.n_cols);
-    const double mean = mean(mean(input));
+    const double mean = arma::mean(arma::mean(input));
 
     output.elem(arma::find(mean == input, 1)).fill(value);
   }

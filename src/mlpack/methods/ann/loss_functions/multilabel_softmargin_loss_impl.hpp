@@ -43,7 +43,7 @@ typename MatType::elem_type MultiLabelSoftMarginLossType<MatType>::Forward(
 
   MatType logSigmoid = arma::log((1 / (1 + arma::exp(-input))));
   MatType logSigmoidNeg = arma::log(1 / (1 + arma::exp(input)));
-  MatType loss = mean(arma::sum(-(target % logSigmoid +
+  MatType loss = arma::mean(arma::sum(-(target % logSigmoid +
       (1 - target) % logSigmoidNeg)) % classWeights, 1);
 
   if (reduction)

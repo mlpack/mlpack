@@ -47,7 +47,7 @@ class ZScoreNormalization
    */
   void Normalize(arma::mat& data)
   {
-    mean = mean(data.row(2));
+    mean = arma::mean(data.row(2));
     stddev = arma::stddev(data.row(2));
 
     if (std::fabs(stddev) < 1e-14)
@@ -76,7 +76,7 @@ class ZScoreNormalization
   {
     // Caculate mean and stdev of all non zero ratings.
     arma::vec ratings = arma::nonzeros(cleanedData);
-    mean = mean(ratings);
+    mean = arma::mean(ratings);
     stddev = arma::stddev(ratings);
 
     if (std::fabs(stddev) < 1e-14)

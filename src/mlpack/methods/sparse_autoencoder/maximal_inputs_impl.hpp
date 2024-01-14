@@ -20,7 +20,7 @@ inline void MaximalInputs(const arma::mat& parameters, arma::mat& output)
 {
   arma::mat paramTemp(parameters.submat(0, 0, (parameters.n_rows - 1) / 2 - 1,
                                         parameters.n_cols - 2).t());
-  double const mean = mean(mean(paramTemp));
+  double const mean = arma::mean(arma::mean(paramTemp));
   paramTemp -= mean;
 
   NormalizeColByMax(paramTemp, output);
