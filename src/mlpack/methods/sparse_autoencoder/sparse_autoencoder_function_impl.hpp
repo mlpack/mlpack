@@ -103,11 +103,11 @@ inline double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters)
 
   // Compute activations of the hidden and output layers.
   Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+      repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
       hiddenLayer);
 
   Sigmoid(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
-      arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
+      repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
       outputLayer);
 
   arma::mat rhoCap, diff;
@@ -170,11 +170,11 @@ inline void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
 
   // Compute activations of the hidden and output layers.
   Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+      repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
       hiddenLayer);
 
   Sigmoid(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
-      arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
+      repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
       outputLayer);
 
   arma::mat rhoCap, diff;
@@ -195,7 +195,7 @@ inline void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
   delOut = diff % outputLayer % (1 - outputLayer);
   delHid = (parameters.submat(l1, 0, l3 - 1, l2 - 1) * delOut +
-      arma::repmat(klDivGrad, 1, data.n_cols)) % hiddenLayer %
+      repmat(klDivGrad, 1, data.n_cols)) % hiddenLayer %
       (1 - hiddenLayer);
 
   gradient.zeros(2 * hiddenSize + 1, visibleSize + 1);

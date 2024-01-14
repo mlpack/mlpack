@@ -115,11 +115,11 @@ Forward(const MatType& input, MatType& output)
   for (size_t i = 0; i < batchSize; ++i)
   {
     qProj.slice(i) = arma::trans(
-        queryWt * q.slice(i) + arma::repmat(qBias, 1, tgtSeqLen));
+        queryWt * q.slice(i) + repmat(qBias, 1, tgtSeqLen));
     kProj.slice(i) = arma::trans(
-        keyWt * k.slice(i) + arma::repmat(kBias, 1, srcSeqLen));
+        keyWt * k.slice(i) + repmat(kBias, 1, srcSeqLen));
     vProj.slice(i) = arma::trans(
-        valueWt * v.slice(i) + arma::repmat(vBias, 1, srcSeqLen));
+        valueWt * v.slice(i) + repmat(vBias, 1, srcSeqLen));
   }
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
@@ -155,7 +155,7 @@ Forward(const MatType& input, MatType& output)
   {
     if (keyPaddingMask.n_rows != 1 || keyPaddingMask.n_cols != srcSeqLen)
         Log::Fatal << "The size of the 'keyPaddingMask' is not correct.\n";
-    scores.each_slice() += arma::repmat(keyPaddingMask, tgtSeqLen, 1);
+    scores.each_slice() += repmat(keyPaddingMask, tgtSeqLen, 1);
   }
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
@@ -176,7 +176,7 @@ Forward(const MatType& input, MatType& output)
   for (size_t i = 0; i < batchSize; ++i)
   {
     output.col(i) = arma::vectorise(arma::trans(attnOut.slice(i) * outWt
-        + arma::repmat(outBias, tgtSeqLen, 1)));
+        + repmat(outBias, tgtSeqLen, 1)));
   }
 }
 

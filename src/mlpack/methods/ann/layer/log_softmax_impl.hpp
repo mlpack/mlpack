@@ -65,7 +65,7 @@ LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
 template<typename MatType>
 void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  MatType maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
+  MatType maxInput = repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
 
   // Approximation of the base-e exponential function. The acuracy however is
@@ -104,7 +104,7 @@ void LogSoftMaxType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = gy - arma::exp(output) % arma::repmat(arma::sum(gy), output.n_rows, 1);
+  g = gy - arma::exp(output) % repmat(arma::sum(gy), output.n_rows, 1);
 }
 
 } // namespace mlpack

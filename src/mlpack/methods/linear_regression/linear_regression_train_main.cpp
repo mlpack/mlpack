@@ -61,7 +61,7 @@ PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
 
-PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
+PARAM_MODEL_OUT(LinearRegression<>, "output_model", "Output LinearRegression "
     "model.", "M");
 
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
@@ -108,9 +108,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
     Log::Fatal << "Regressors and Responses must have the same number of data points!" << endl;
 
   timer.Start("regression");
-  LinearRegression* lr = new LinearRegression(regressors, responses, lambda);
+  LinearRegression<>* lr = new LinearRegression<>(regressors, responses,
+      lambda);
   timer.Stop("regression");
 
   // Save the model if needed.
-  params.Get<LinearRegression*>("output_model") = lr;
+  params.Get<LinearRegression<>*>("output_model") = lr;
 }
