@@ -40,7 +40,7 @@ inline arma::Mat<eT> ColumnCovariance(const arma::Mat<eT>& x,
     const size_t n = xAlias.n_cols;
     const eT normVal = (normType == 0) ? ((n > 1) ? eT(n - 1) : eT(1)) : eT(n);
 
-    const arma::Mat<eT> tmp = xAlias.each_col() - arma::mean(xAlias, 1);
+    const arma::Mat<eT> tmp = xAlias.each_col() - mean(xAlias, 1);
 
     out = tmp * tmp.t();
     out /= normVal;
