@@ -172,8 +172,7 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
     dW.slice(i) = errorTemp.slice(i) * inputTemp.slice(i).t();
   }
 
-  gradient.submat(0, 0, weight.n_elem - 1, 0)
-      = vectorise(arma::sum(dW, 2));
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = vectorise(arma::sum(dW, 2));
 
   gradient.submat(weight.n_elem, 0, weights.n_elem - 1, 0)
       = vectorise(arma::sum(arma::sum(errorTemp, 2), 1));

@@ -344,26 +344,22 @@ void LSTMType<MatType>::Gradient(
 
   // output2GateOutputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateOutputWeight.n_elem - 1, 0) =
-      vectorise(outputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(outputGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateOutputWeight.n_elem;
 
   // output2GateForgetWeight gradients.
   gradient.submat(offset, 0, offset + output2GateForgetWeight.n_elem - 1, 0) =
-      vectorise(forgetGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(forgetGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateForgetWeight.n_elem;
 
   // output2GateInputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateInputWeight.n_elem - 1, 0) =
-      vectorise(inputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(inputGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateInputWeight.n_elem;
 
   // output2HiddenWeight gradients.
   gradient.submat(offset, 0, offset + output2HiddenWeight.n_elem - 1, 0) =
-      vectorise(hiddenError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(hiddenError * outParameter.slice(this->CurrentStep()).t());
   offset += output2HiddenWeight.n_elem;
 
   // cell2GateOutputWeight gradients.
