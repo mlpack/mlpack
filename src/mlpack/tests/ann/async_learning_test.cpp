@@ -71,7 +71,7 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
       rewards[pos++] = reward;
       pos %= rewards.n_elem;
       // Maybe underestimated.
-      double avgReward = arma::mean(rewards);
+      double avgReward = mean(rewards);
       Log::Debug << "Average return: " << avgReward
           << " Episode return: " << reward << std::endl;
       if (avgReward > 60)
@@ -82,7 +82,7 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
     agent.Train(measure);
     Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
 
-    double avgReward = arma::mean(rewards);
+    double avgReward = mean(rewards);
     if (avgReward > 60)
     {
       success = true;
@@ -149,7 +149,7 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
       rewards[pos++] = reward;
       pos %= rewards.n_elem;
       // Maybe underestimated.
-      double avgReward = arma::mean(rewards);
+      double avgReward = mean(rewards);
       Log::Debug << "Average return: " << avgReward
                  << " Episode return: " << reward << std::endl;
       if (avgReward > 60)
@@ -160,7 +160,7 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
     agent.Train(measure);
     Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
 
-    double avgReward = arma::mean(rewards);
+    double avgReward = mean(rewards);
     if (avgReward > 60)
     {
       success = true;
@@ -222,7 +222,7 @@ TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
     rewards[pos++] = reward;
     pos %= rewards.n_elem;
     // Maybe underestimated.
-    double avgReward = arma::mean(rewards);
+    double avgReward = mean(rewards);
     Log::Debug << "Average return: " << avgReward
                << " Episode return: " << reward << std::endl;
     if (avgReward > 60)

@@ -111,9 +111,9 @@ TEST_CASE("GANTest", "[GANNetworkTest]")
         i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
 
-  double generatedMean = arma::as_scalar(arma::mean(
+  double generatedMean = arma::as_scalar(mean(
       generatedData.rows(0, dim - 1), 1));
-  double originalMean = arma::as_scalar(arma::mean(
+  double originalMean = arma::as_scalar(mean(
       generatedData.rows(dim, 2 * dim - 1), 1));
   double generatedStd = arma::as_scalar(arma::stddev(
       generatedData.rows(0, dim - 1), 0, 1));

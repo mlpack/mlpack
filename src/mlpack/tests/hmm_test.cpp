@@ -1656,7 +1656,7 @@ TEST_CASE("DiagonalGMMHMMOneGaussianOneStateTrainingTest", "[HMMTest]")
   hmm.Train(observations);
 
   // Generate the ground truth values.
-  arma::vec actualMean = arma::mean(observations[0], 1);
+  arma::vec actualMean = mean(observations[0], 1);
   arma::vec actualCovar = arma::diagvec(
       ColumnCovariance(observations[0],
       1 /* biased estimator */));

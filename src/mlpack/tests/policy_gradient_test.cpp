@@ -217,7 +217,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 
   // Verify that the noise vector has values drawn from a 
   // Gaussian distribution with the specified mean and standard deviation.
-  double mean = arma::mean(noise);
+  double mean = mean(noise);
   double stdDev = arma::stddev(noise);
 
   double meanErr = mean - mu;

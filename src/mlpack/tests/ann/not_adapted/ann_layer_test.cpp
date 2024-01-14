@@ -3952,7 +3952,7 @@ TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
   // Check Forward function.
   module.Forward(input, output);
   arma::mat pe = output - input;
-  CheckMatrices(arma::mean(pe, 1), module.Encoding());
+  CheckMatrices(mean(pe, 1), module.Encoding());
 
   // Check Backward function.
   module.Backward(input, gy, g);

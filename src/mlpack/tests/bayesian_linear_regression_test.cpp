@@ -88,9 +88,9 @@ TEST_CASE("TestCenterDataTrueScaleDataTrue", "[BayesianLinearRegressionTest]")
   BayesianLinearRegression<> estimator(true, true);
   estimator.Train(matX, y);
 
-  arma::colvec xMean = arma::mean(matX, 1);
+  arma::colvec xMean = mean(matX, 1);
   arma::colvec xStd = arma::stddev(matX, 0, 1);
-  double yMean = arma::mean(y);
+  double yMean = mean(y);
 
   REQUIRE((double) abs(sum(estimator.DataOffset() - xMean)) ==
       Approx(0.0).margin(1e-6));

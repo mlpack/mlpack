@@ -40,7 +40,7 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   arma::mat output(arma::size(input));
   module.Forward(input, output);
   // Check whether mean remains nearly same.
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))) <=
+  REQUIRE(arma::as_scalar(arma::abs(mean(input) - mean(output))) <=
       0.15);
 
   // Check whether variance remains nearly same.
@@ -50,7 +50,7 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   // Test the Backward function when training phase.
   arma::mat delta;
   module.Backward(input, output, input, delta);
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - 0)) <= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(mean(delta) - 0)) <= 0.1);
 
   // Test the Forward function when testing phase.
   module.Training() = false;

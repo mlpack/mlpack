@@ -281,8 +281,8 @@ TEST_CASE("SELUFunctionNormalizedTest", "[ActivationFunctionsTest]")
   SELU selu;
   selu.Forward(input, output);
 
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) -
-      arma::mean(output))) <= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(mean(input) -
+      mean(output))) <= 0.1);
   REQUIRE(arma::as_scalar(arma::abs(arma::var(input) -
       arma::var(output))) <= 0.1);
 }
@@ -300,8 +300,8 @@ TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
   SELU selu;
   selu.Forward(input, output);
 
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) -
-      arma::mean(output))) >= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(mean(input) -
+      mean(output))) >= 0.1);
   REQUIRE(arma::as_scalar(arma::abs(arma::var(input) -
       arma::var(output))) >= 0.1);
 }
@@ -324,7 +324,7 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
   selu.Forward(input, activations);
   selu.Backward(input, activations, error, derivatives);
   
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
+  REQUIRE(arma::as_scalar(arma::abs(mean(derivatives) -
       selu.Lambda())) <= 10e-4);
 
   input.fill(-1);
@@ -332,8 +332,8 @@ TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
   selu.Forward(input, activations);
   selu.Backward(input, activations, error, derivatives);
 
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
-      selu.Lambda() * selu.Alpha() - arma::mean(activations))) <= 10e-4);
+  REQUIRE(arma::as_scalar(arma::abs(mean(derivatives) -
+      selu.Lambda() * selu.Alpha() - mean(activations))) <= 10e-4);
 }
 
 /**

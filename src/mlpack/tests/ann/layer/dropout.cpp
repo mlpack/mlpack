@@ -37,12 +37,12 @@ TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   arma::mat output;
   module.Forward(input, output);
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))) <= 0.05);
+  REQUIRE(arma::as_scalar(arma::abs(mean(output) - (1 - p))) <= 0.05);
 
   // Test the Backward function.
   arma::mat delta;
   module.Backward(input, output, input, delta);
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))) <= 0.05);
+  REQUIRE(arma::as_scalar(arma::abs(mean(delta) - (1 - p))) <= 0.05);
 
   // Test the Forward function.
   module.Training() = false;

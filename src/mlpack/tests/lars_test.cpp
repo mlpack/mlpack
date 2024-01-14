@@ -88,8 +88,8 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky,
 
     if (fitIntercept)
     {
-      y -= arma::mean(y);
-      X.each_col() -= arma::mean(X, 1);
+      y -= mean(y);
+      X.each_col() -= mean(X, 1);
     }
 
     if (normalizeData)
@@ -555,8 +555,8 @@ TEST_CASE("LARSFitInterceptTest", "[LARSTest]")
   arma::mat features = arma::randu<arma::mat>(10, 100);
   arma::rowvec responses = arma::randu<arma::rowvec>(100);
 
-  arma::mat centeredFeatures = features.each_col() - arma::mean(features, 1);
-  arma::rowvec centeredResponses = responses - arma::mean(responses);
+  arma::mat centeredFeatures = features.each_col() - mean(features, 1);
+  arma::rowvec centeredResponses = responses - mean(responses);
 
   LARS<> l1(features, responses, true, true, 0.001, 0.001, 1e-16, true, false);
   LARS<> l2(centeredFeatures, centeredResponses, true, true, 0.001, 0.001, 1e-16, false, false);
@@ -564,8 +564,8 @@ TEST_CASE("LARSFitInterceptTest", "[LARSTest]")
   // The weights learned should be the same.
   REQUIRE(l1.Beta().n_elem == l2.Beta().n_elem);
   CheckMatrices(l1.Beta(), l2.Beta());
-  REQUIRE(l1.Intercept() == Approx(arma::mean(responses) -
-      arma::dot(arma::mean(features, 1), l1.Beta())));
+  REQUIRE(l1.Intercept() == Approx(mean(responses) -
+      arma::dot(mean(features, 1), l1.Beta())));
 }
 
 // Make sure that Predict() provides reasonable enough solutions when we are
@@ -590,8 +590,8 @@ TEST_CASE("PredictFitInterceptTest", "[LARSTest]")
         lars.FitIntercept(true);
         lars.NormalizeData(false);
         lars.Train(X, y);
-        const double intercept = arma::mean(y) -
-            arma::dot(arma::mean(X, 1), lars.Beta());
+        const double intercept = mean(y) -
+            arma::dot(mean(X, 1), lars.Beta());
 
         // Calculate what the actual error should be with these regression
         // parameters.
@@ -678,8 +678,8 @@ TEST_CASE("PredictFitInterceptNormalizeDataTest", "[LARSTest]")
         lars.FitIntercept(true);
         lars.NormalizeData(true);
         lars.Train(X, y);
-        const double intercept = arma::mean(y) -
-            arma::dot(arma::mean(X, 1), lars.Beta());
+        const double intercept = mean(y) -
+            arma::dot(mean(X, 1), lars.Beta());
 
         // Calculate what the actual error should be with these regression
         // parameters.
@@ -756,10 +756,10 @@ TEST_CASE("LARSTestKKT", "[LARSTest]")
   {
     arma::mat X = std::move(F(0, i));
     arma::rowvec y = std::move(F(1, i));
-    const arma::rowvec xMean = arma::mean(X, 0);
+    const arma::rowvec xMean = mean(X, 0);
     arma::rowvec xStds = arma::stddev(X, 0, 0);
     xStds.replace(0.0, 1.0);
-    const double yMean = arma::mean(y);
+    const double yMean = mean(y);
 
     lars.FitIntercept(false);
     lars.NormalizeData(false);
@@ -823,10 +823,10 @@ TEMPLATE_TEST_CASE("LARSConstructorVariantTest", "[LARSTest]", arma::fmat,
   GenerateProblem(X, y, 1000, 100);
   MatType Xt = X.t();
 
-  const arma::Col<ElemType> xMean = arma::mean(X, 1);
+  const arma::Col<ElemType> xMean = mean(X, 1);
   arma::Col<ElemType> xStds = arma::stddev(X, 0, 1);
   xStds.replace(0.0, 1.0);
-  const ElemType yMean = arma::mean(y);
+  const ElemType yMean = mean(y);
 
   MatType centeredX = X.each_col() - xMean;
   arma::Row<ElemType> centeredY = y - yMean;
@@ -970,10 +970,10 @@ TEMPLATE_TEST_CASE("LARSTrainVariantTest", "[LARSTest]", arma::fmat, arma::mat)
   GenerateProblem(X, y, 1000, 5);
   MatType Xt = X.t();
 
-  const arma::Col<ElemType> xMean = arma::mean(X, 1);
+  const arma::Col<ElemType> xMean = mean(X, 1);
   arma::Col<ElemType> xStds = arma::stddev(X, 0, 1);
   xStds.replace(0.0, 1.0);
-  const ElemType yMean = arma::mean(y);
+  const ElemType yMean = mean(y);
 
   MatType centeredX = X.each_col() - xMean;
   arma::Row<ElemType> centeredY = y - yMean;
