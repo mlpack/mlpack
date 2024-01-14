@@ -91,8 +91,8 @@ void CosineEmbeddingLossType<MatType>::Backward(
     {
       const int multiplier = similarity ? 1 : -1;
       outputTemp(arma::span(i, i + cols -1)) = -1 * multiplier *
-          (arma::normalise(inputTemp2(arma::span(i, i + cols - 1))) -
-          cosDist * arma::normalise(inputTemp1(arma::span(i, i + cols -
+          (normalise(inputTemp2(arma::span(i, i + cols - 1))) -
+          cosDist * normalise(inputTemp1(arma::span(i, i + cols -
           1)))) / std::sqrt(arma::accu(arma::pow(inputTemp1(arma::span(i, i +
           cols - 1)), 2)));
     }

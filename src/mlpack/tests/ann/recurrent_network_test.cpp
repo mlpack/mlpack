@@ -262,7 +262,7 @@ void GenerateNoisySinRNN(arma::cube& data,
 
   arma::colvec y = x;
   if (normalize)
-    y = arma::normalise(x);
+    y = normalise(x);
 
   // Now break this into columns of rho size slices.
   size_t numColumns = y.n_elem / rho;

@@ -107,7 +107,7 @@ class ProjVector
    * @param vect Vector to be considered.
    */
   ProjVector(const arma::vec& vect) :
-      projVect(arma::normalise(vect))
+      projVect(normalise(vect))
   {};
 
   /**
