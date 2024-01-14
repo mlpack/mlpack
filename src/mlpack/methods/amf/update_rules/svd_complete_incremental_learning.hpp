@@ -217,7 +217,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     deltaW.zeros();
 
     deltaW += (**it - arma::dot(W.row(currentItemIndex),
-        H.col(currentUserIndex))) * arma::trans(H.col(currentUserIndex));
+        H.col(currentUserIndex))) * trans(H.col(currentUserIndex));
     if (kw != 0) deltaW -= kw * W.row(currentItemIndex);
 
     W.row(currentItemIndex) += u*deltaW;
@@ -243,7 +243,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     size_t currentItemIndex = it->row();
 
     deltaH += (**it - arma::dot(W.row(currentItemIndex),
-        H.col(currentUserIndex))) * arma::trans(W.row(currentItemIndex));
+        H.col(currentUserIndex))) * trans(W.row(currentItemIndex));
     if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
     H.col(currentUserIndex) += u * deltaH;

@@ -114,11 +114,11 @@ Forward(const MatType& input, MatType& output)
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    qProj.slice(i) = arma::trans(
+    qProj.slice(i) = trans(
         queryWt * q.slice(i) + repmat(qBias, 1, tgtSeqLen));
-    kProj.slice(i) = arma::trans(
+    kProj.slice(i) = trans(
         keyWt * k.slice(i) + repmat(kBias, 1, srcSeqLen));
-    vProj.slice(i) = arma::trans(
+    vProj.slice(i) = trans(
         valueWt * v.slice(i) + repmat(vBias, 1, srcSeqLen));
   }
 
@@ -175,7 +175,7 @@ Forward(const MatType& input, MatType& output)
   // The final output is the linear projection of attention output.
   for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = vectorise(arma::trans(attnOut.slice(i) * outWt
+    output.col(i) = vectorise(trans(attnOut.slice(i) * outWt
         + repmat(outBias, tgtSeqLen, 1)));
   }
 }
@@ -229,12 +229,12 @@ Backward(const MatType& /* input */,
     if (selfAttention)
     {
       g.submat(0, i, g.n_rows - 1, i) =
-          vectorise(arma::trans(tmp.slice(i) * valueWt));
+          vectorise(trans(tmp.slice(i) * valueWt));
     }
     else
     {
       g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i) =
-          vectorise(arma::trans(tmp.slice(i) * valueWt));
+          vectorise(trans(tmp.slice(i) * valueWt));
     }
   }
 
@@ -264,13 +264,13 @@ Backward(const MatType& /* input */,
     {
       // Sum the query, key, and value deltas.
       g.submat(0, i, g.n_rows - 1, i) +=
-          vectorise(arma::trans(tmp.slice(i) * keyWt));
+          vectorise(trans(tmp.slice(i) * keyWt));
     }
     else
     {
       g.submat(tgtSeqLen * embedDim, i,
                (tgtSeqLen + srcSeqLen) * embedDim - 1, i) =
-          vectorise(arma::trans(tmp.slice(i) * keyWt));
+          vectorise(trans(tmp.slice(i) * keyWt));
     }
   }
 
@@ -289,12 +289,12 @@ Backward(const MatType& /* input */,
     {
       // Sum the query, key, and value deltas.
       g.submat(0, i, g.n_rows - 1, i) +=
-          vectorise(arma::trans(tmp.slice(i) * queryWt));
+          vectorise(trans(tmp.slice(i) * queryWt));
     }
     else
     {
       g.submat(0, i, tgtSeqLen * embedDim - 1, i) =
-          vectorise(arma::trans(tmp.slice(i) * queryWt));
+          vectorise(trans(tmp.slice(i) * queryWt));
     }
   }
 }

@@ -106,7 +106,7 @@ class SVDBatchLearning
         const double val = V(i, j);
         if (val != 0)
           deltaW.row(i) += (val - arma::dot(W.row(i), H.col(j))) *
-                                            arma::trans(H.col(j));
+                                            trans(H.col(j));
       }
       // Add regularization.
       if (kw != 0)
@@ -215,7 +215,7 @@ inline void SVDBatchLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
     const size_t row = it.row();
     const size_t col = it.col();
     deltaW.row(it.row()) += (*it - arma::dot(W.row(row), H.col(col))) *
-                                             arma::trans(H.col(col));
+                                             trans(H.col(col));
   }
 
   if (kw != 0)

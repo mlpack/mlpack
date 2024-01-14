@@ -171,7 +171,7 @@ inline void SVDIncompleteIncrementalLearning::WUpdate<arma::sp_mat>(
     double val = *it;
     size_t i = it.row();
     deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
-        arma::trans(H.col(currentUserIndex));
+        trans(H.col(currentUserIndex));
     if (kw != 0) deltaW.row(i) -= kw * W.row(i);
   }
 
@@ -193,7 +193,7 @@ inline void SVDIncompleteIncrementalLearning::HUpdate<arma::sp_mat>(
     if ((val = V(i, currentUserIndex)) != 0)
     {
       deltaH += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
-          arma::trans(W.row(i));
+          trans(W.row(i));
     }
   }
   if (kh != 0) deltaH -= kh * H.col(currentUserIndex);

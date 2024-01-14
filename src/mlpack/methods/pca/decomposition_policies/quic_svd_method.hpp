@@ -68,7 +68,7 @@ class QUICSVDPolicy
     eigVal = arma::pow(arma::diagvec(sigma), 2) / (data.n_cols - 1);
 
     // Project the samples to the principals.
-    transformedData = arma::trans(eigvec) * centeredData;
+    transformedData = trans(eigvec) * centeredData;
   }
 
   //! Get the error tolerance fraction for calculated subspace.

@@ -34,7 +34,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; ++i)
     sigma(i, i) = E(i, 0);
 
-  arma::mat V_rec = W * sigma * arma::trans(H);
+  arma::mat V_rec = W * sigma * trans(H);
 
   // return normalized frobenius error
   return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
@@ -56,7 +56,7 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   for (size_t i = 0; i < sigma.n_rows && i < sigma.n_cols; ++i)
     sigma(i, i) = E(i, 0);
 
-  arma::mat V_rec = W * sigma * arma::trans(H);
+  arma::mat V_rec = W * sigma * trans(H);
 
   // return normalized frobenius error
   return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
@@ -94,7 +94,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   W = W * arma::diagmat(sigma);
 
   // take transpose of the matrix H as required by CF module
-  H = arma::trans(H);
+  H = trans(H);
 
   // reconstruct the matrix
   arma::mat V_rec = W * H;
@@ -135,7 +135,7 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   W = W * arma::diagmat(sigma);
 
   // take transpose of the matrix H as required by CF module
-  H = arma::trans(H);
+  H = trans(H);
 
   // reconstruct the matrix
   arma::mat V_rec = W * H;
