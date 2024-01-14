@@ -31,7 +31,7 @@ void JoinType<InputType, OutputType>::Forward(
 {
   inSizeRows = input.n_rows;
   inSizeCols = input.n_cols;
-  output = arma::vectorise(input);
+  output = vectorise(input);
 }
 
 template<typename InputType, typename OutputType>

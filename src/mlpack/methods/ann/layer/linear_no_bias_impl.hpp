@@ -123,7 +123,7 @@ void LinearNoBiasType<MatType, RegularizerType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = vectorise(
       error * input.t());
   regularizer.Evaluate(weight, gradient);
 }
