@@ -1451,7 +1451,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
     success = true;
     for (size_t k = 0; k < tree.Count(); ++k)
     {
-      ElemType result = arma::dot(mat.col(k), x);
+      ElemType result = dot(mat.col(k), x);
       if (result > 0)
       {
         x -= mat.col(k) * delta;

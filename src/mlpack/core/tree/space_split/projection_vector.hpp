@@ -119,7 +119,7 @@ class ProjVector
   double Project(const VecType& point,
                  typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
-    return arma::dot(point, projVect);
+    return dot(point, projVect);
   }
 
   /**
