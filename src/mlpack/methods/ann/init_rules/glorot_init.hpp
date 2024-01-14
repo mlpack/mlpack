@@ -77,9 +77,9 @@ class GlorotInitializationType
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename MatType,
-      typename = typename std::enable_if_t<IsMatrix<MatType>::value>>
-  void Initialize(MatType& W);
+  template<typename MatType>
+  void Initialize(MatType& W,
+      typename std::enable_if_t<IsMatrix<MatType>::value>* = 0);
 
   /**
    * Initialize the elements of the specified weight 3rd order tensor with
@@ -102,9 +102,9 @@ class GlorotInitializationType
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename CubeType,
-      typename = typename std::enable_if_t<IsCube<CubeType>::value>>
-  void Initialize(CubeType& W);
+  template<typename CubeType>
+  void Initialize(CubeType& W,
+      typename std::enable_if_t<IsCube<CubeType>::value>* = 0);
 
   /**
    * Serialize the initialization.  (Nothing to serialize for this one.)
@@ -143,8 +143,9 @@ inline void GlorotInitializationType<true>::Initialize(MatType& W,
 }
 
 template<>
-template<typename MatType, typename>
-inline void GlorotInitializationType<false>::Initialize(MatType& W)
+template<typename MatType>
+inline void GlorotInitializationType<false>::Initialize(MatType& W,
+    typename std::enable_if_t<IsMatrix<MatType>::value>*)
 {
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
@@ -155,8 +156,9 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W)
 }
 
 template<>
-template<typename MatType, typename>
-inline void GlorotInitializationType<true>::Initialize(MatType& W)
+template<typename MatType>
+inline void GlorotInitializationType<true>::Initialize(MatType& W,
+    typename std::enable_if_t<IsMatrix<MatType>::value>*)
 {
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
@@ -182,8 +184,9 @@ inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W,
 }
 
 template <bool Uniform>
-template<typename CubeType, typename>
-inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W)
+template<typename CubeType>
+inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W,
+    typename std::enable_if_t<IsCube<CubeType>::value>*)
 {
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
