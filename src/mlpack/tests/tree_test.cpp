@@ -1861,7 +1861,7 @@ void CheckCovering(const TreeType& node)
 TEST_CASE("SimpleCoverTreeConstructionTest", "[TreeTest]")
 {
   // 20-point dataset.
-  arma::mat data = arma::trans(arma::mat("0.0 0.0;"
+  arma::mat data = trans(arma::mat("0.0 0.0;"
                                          "1.0 0.0;"
                                          "0.5 0.5;"
                                          "2.0 2.0;"

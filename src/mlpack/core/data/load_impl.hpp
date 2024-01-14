@@ -63,7 +63,7 @@ bool inline inplace_transpose(MatType& X, bool fatal)
 {
   try
   {
-    X = arma::trans(X);
+    X = trans(X);
     return true;
   }
   catch (const std::exception& e)
