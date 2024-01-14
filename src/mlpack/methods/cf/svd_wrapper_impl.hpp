@@ -37,7 +37,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   arma::mat V_rec = W * sigma * trans(H);
 
   // return normalized frobenius error
-  return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
+  return norm(V - V_rec, "fro") / norm(V, "fro");
 }
 
 template<>
@@ -59,7 +59,7 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   arma::mat V_rec = W * sigma * trans(H);
 
   // return normalized frobenius error
-  return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
+  return norm(V - V_rec, "fro") / norm(V, "fro");
 }
 
 template<class Factorizer>
@@ -100,7 +100,7 @@ double SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   arma::mat V_rec = W * H;
 
   // return the normalized frobenius norm
-  return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
+  return norm(V - V_rec, "fro") / norm(V, "fro");
 }
 
 template<>
@@ -141,7 +141,7 @@ double SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   arma::mat V_rec = W * H;
 
   // return the normalized frobenius norm
-  return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
+  return norm(V - V_rec, "fro") / norm(V, "fro");
 }
 
 } // namespace mlpack

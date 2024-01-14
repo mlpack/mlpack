@@ -163,7 +163,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
     {
       output(i) = RandNormal(visibleMean(i), 1.0 / visiblePenalty(0));
     }
-    if (arma::norm(output, 2) < radius)
+    if (norm(output, 2) < radius)
     {
       break;
     }
@@ -172,7 +172,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
   if (k == numMaxTrials)
   {
     Log::Warn << "Outputs are still not in visible unit "
-        << arma::norm(output, 2)
+        << norm(output, 2)
         << " terminating optimization."
         << std::endl;
   }

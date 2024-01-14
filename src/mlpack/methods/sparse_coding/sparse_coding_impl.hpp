@@ -218,7 +218,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
     // Take step and print useful information.
     dualVars += searchDirection;
-    normGradient = arma::norm(gradient, 2);
+    normGradient = norm(gradient, 2);
     Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
     Log::Debug << "  Gradient norm: " << std::scientific << normGradient
         << "." << std::endl;
@@ -249,7 +249,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
                              data.col(RandInt(data.n_cols)) +
                              data.col(RandInt(data.n_cols)));
 
-        dictionary.col(i) /= arma::norm(dictionary.col(i), 2);
+        dictionary.col(i) /= norm(dictionary.col(i), 2);
 
         // Increment inactive index counter.
         ++currentInactiveIndex;
@@ -270,7 +270,7 @@ inline void SparseCoding::ProjectDictionary()
 {
   for (size_t j = 0; j < atoms; ++j)
   {
-    double atomNorm = arma::norm(dictionary.col(j), 2);
+    double atomNorm = norm(dictionary.col(j), 2);
     if (atomNorm > 1)
     {
       Log::Info << "Norm of atom " << j << " exceeds 1 (" << std::scientific
@@ -286,11 +286,11 @@ inline double SparseCoding::Objective(const arma::mat& data,
     const
 {
   double l11NormZ = arma::sum(arma::sum(arma::abs(codes)));
-  double froNormResidual = arma::norm(data - (dictionary * codes), "fro");
+  double froNormResidual = norm(data - (dictionary * codes), "fro");
 
   if (lambda2 > 0)
   {
-    double froNormZ = arma::norm(codes, "fro");
+    double froNormZ = norm(codes, "fro");
     return 0.5 * (std::pow(froNormResidual, 2.0) + (lambda2 *
         std::pow(froNormZ, 2.0))) + (lambda1 * l11NormZ);
   }

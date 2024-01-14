@@ -74,8 +74,8 @@ double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(parameters.col(user), 2);
-    double itemVecNorm = arma::norm(parameters.col(item), 2);
+    double userVecNorm = norm(parameters.col(user), 2);
+    double itemVecNorm = norm(parameters.col(item), 2);
     double regularizationError = lambda * (userVecNorm * userVecNorm +
                                            itemVecNorm * itemVecNorm);
 
