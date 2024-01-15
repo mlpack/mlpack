@@ -79,7 +79,7 @@ class GlorotInitializationType
    */
   template<typename MatType>
   void Initialize(MatType& W,
-      typename std::enable_if_t<IsMatrix<MatType>::value>* = 0);
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0);
 
   /**
    * Initialize the elements of the specified weight 3rd order tensor with
