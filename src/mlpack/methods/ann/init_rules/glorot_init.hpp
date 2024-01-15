@@ -104,7 +104,7 @@ class GlorotInitializationType
    */
   template<typename CubeType>
   void Initialize(CubeType& W,
-      typename std::enable_if_t<IsCube<CubeType>::value>* = 0);
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0);
 
   /**
    * Serialize the initialization.  (Nothing to serialize for this one.)
