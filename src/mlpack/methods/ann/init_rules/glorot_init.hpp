@@ -158,7 +158,7 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W,
 template<>
 template<typename MatType>
 inline void GlorotInitializationType<true>::Initialize(MatType& W,
-    typename std::enable_if_t<IsMatrix<MatType>::value>*)
+    const typename std::enable_if_t<IsMatrix<MatType>::value>*)
 {
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
