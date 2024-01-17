@@ -190,7 +190,7 @@ inline void SoftmaxRegression<MatType>::Classify(
     // Since the cost of join maybe high due to the copy of original data,
     // split the hypothesis computation to two components.
     hypothesis = arma::exp(
-      arma::repmat(parameters.col(0), 1, dataset.n_cols) +
+      repmat(parameters.col(0), 1, dataset.n_cols) +
       parameters.cols(1, parameters.n_cols - 1) * dataset);
   }
   else
@@ -198,8 +198,7 @@ inline void SoftmaxRegression<MatType>::Classify(
     hypothesis = arma::exp(parameters * dataset);
   }
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
-                                            numClasses, 1);
+  probabilities = hypothesis / repmat(arma::sum(hypothesis, 0), numClasses, 1);
 
   // Prepare necessary data.
   labels.zeros(dataset.n_cols);

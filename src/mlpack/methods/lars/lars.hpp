@@ -28,9 +28,6 @@
 
 namespace mlpack {
 
-// beta is the estimator
-// yHat is the prediction from the current estimator
-
 /**
  * An implementation of LARS, a stage-wise homotopy-based algorithm for
  * l1-regularized linear regression (LASSO) and l1+l2 regularized linear
@@ -85,9 +82,14 @@ namespace mlpack {
  * }
  * @endcode
  */
+template<typename ModelMatType = arma::mat>
 class LARS
 {
  public:
+  typedef typename GetColType<ModelMatType>::type ModelColType;
+  typedef typename GetDenseMatType<ModelMatType>::type DenseMatType;
+  typedef typename ModelMatType::elem_type ElemType;
+
   /**
    * Set the parameters to LARS.  Both lambda1 and lambda2 default to 0.
    *
@@ -105,9 +107,9 @@ class LARS
    * for training.
    */
   LARS(const bool useCholesky = false,
-       const double lambda1 = 0.0,
-       const double lambda2 = 0.0,
-       const double tolerance = 1e-16,
+       const ElemType lambda1 = 0.0,
+       const ElemType lambda2 = 0.0,
+       const ElemType tolerance = 1e-16,
        const bool fitIntercept = true,
        const bool normalizeData = true);
 
@@ -134,6 +136,7 @@ class LARS
    * @param normalizeData If true, normalize all features to have unit variance
    * for training.
    */
+  mlpack_deprecated
   LARS(const bool useCholesky,
        const arma::mat& gramMatrix,
        const double lambda1 = 0.0,
@@ -148,8 +151,8 @@ class LARS
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *     solving linear system (as opposed to using the full Gram matrix).
    * @param lambda1 Regularization parameter for l1-norm penalty.
@@ -160,13 +163,18 @@ class LARS
    * @param normalizeData If true, normalize all features to have unit variance
    * for training.
    */
-  LARS(const arma::mat& data,
-       const arma::rowvec& responses,
-       const bool transposeData = true,
+  template<typename MatType,
+           typename ResponsesType,
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  LARS(const MatType& data,
+       const ResponsesType& responses,
+       bool colMajor = true,
        const bool useCholesky = false,
-       const double lambda1 = 0.0,
-       const double lambda2 = 0.0,
-       const double tolerance = 1e-16,
+       const ElemType lambda1 = 0.0,
+       const ElemType lambda2 = 0.0,
+       const ElemType tolerance = 1e-16,
        const bool fitIntercept = true,
        const bool normalizeData = true);
 
@@ -181,8 +189,8 @@ class LARS
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *     solving linear system (as opposed to using the full Gram matrix).
    * @param gramMatrix Gram matrix.
@@ -194,14 +202,19 @@ class LARS
    * @param normalizeData If true, normalize all features to have unit variance
    * for training.
    */
-  LARS(const arma::mat& data,
-       const arma::rowvec& responses,
-       const bool transposeData,
+  template<typename MatType,
+           typename ResponsesType,
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  LARS(const MatType& data,
+       const ResponsesType& responses,
+       const bool colMajor,
        const bool useCholesky,
-       const arma::mat& gramMatrix,
-       const double lambda1 = 0.0,
-       const double lambda2 = 0.0,
-       const double tolerance = 1e-16,
+       const DenseMatType& gramMatrix,
+       const ElemType lambda1 = 0.0,
+       const ElemType lambda2 = 0.0,
+       const ElemType tolerance = 1e-16,
        const bool fitIntercept = true,
        const bool normalizeData = true);
 
@@ -238,38 +251,254 @@ class LARS
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
    * will (internally) transpose the matrix.  If this transposition is not
-   * necessary (i.e., you want to pass in a row-major matrix), pass 'false' for
-   * the transposeData parameter.
+   * necessary (i.e., you want to pass in a row-major matrix), pass `false` for
+   * the `colMajor` parameter.
    *
-   * @param data Column-major input data (or row-major input data if rowMajor =
-   *     true).
+   * @param data Column-major input data (or row-major input data if colMajor =
+   *     false).
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
-   * @param transposeData Set to false if the data is row-major.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
+  mlpack_deprecated
   double Train(const arma::mat& data,
                const arma::rowvec& responses,
                arma::vec& beta,
-               const bool transposeData = true);
+               const bool colMajor = true);
 
   /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
    * will (internally) transpose the matrix.  If this transposition is not
-   * necessary (i.e., you want to pass in a row-major matrix), pass 'false' for
-   * the transposeData parameter.
+   * necessary (i.e., you want to pass in a row-major matrix), pass `false` for
+   * the `colMajor` parameter.
+   *
+   * All of the different overloads below are needed until C++17 is the minimum
+   * required standard (then std::optional could be used).
    *
    * @param data Input data.
    * @param responses A vector of targets.
-   * @param transposeData Should be true if the input data is column-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    * @return minimum cost error(||y-beta*X||2 is used to calculate error).
    */
-  double Train(const arma::mat& data,
-               const arma::rowvec& responses,
-               const bool transposeData = true);
+
+  // Dummy overload so MetaInfoExtractor can properly detect that LARS is a
+  // regression method.
+  template<typename MatType>
+  ElemType Train(const MatType& data,
+                 const arma::rowvec& responses,
+                 const bool colMajor = true);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type,
+           typename = typename std::enable_if<
+               !std::is_same<ResponsesType, arma::rowvec>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor = true);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const ElemType lambda1);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const ElemType lambda1,
+                 const ElemType lambda2);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const ElemType lambda1,
+                 const ElemType lambda2,
+                 const ElemType tolerance);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const ElemType lambda1,
+                 const ElemType lambda2,
+                 const ElemType tolerance,
+                 const bool fitIntercept);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const ElemType lambda1,
+                 const ElemType lambda2,
+                 const ElemType tolerance,
+                 const bool fitIntercept,
+                 const bool normalizeData);
+
+  /**
+   * Run LARS with a precomputed Gram matrix.  The input matrix (like all mlpack
+   * matrices) should be column-major -- each column is an observation and each
+   * row is a dimension.  However, because LARS is more efficient on a row-major
+   * matrix, this method will (internally) transpose the matrix.  If this
+   * transposition is not necessary (i.e., you want to pass in a row-major
+   * matrix), pass `false` for the `colMajor` parameter.
+   *
+   * All of the different overloads below are needed until C++17 is the minimum
+   * required standard (then std::optional could be used).
+   *
+   * @param data Input data.
+   * @param responses A vector of targets.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
+   * @return minimum cost error(||y-beta*X||2 is used to calculate error).
+   */
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const DenseMatType& gramMatrix);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const DenseMatType& gramMatrix,
+                 const ElemType lambda1);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const DenseMatType& gramMatrix,
+                 const ElemType lambda1,
+                 const ElemType lambda2);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const DenseMatType& gramMatrix,
+                 const ElemType lambda1,
+                 const ElemType lambda2,
+                 const ElemType tolerance);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const DenseMatType& gramMatrix,
+                 const ElemType lambda1,
+                 const ElemType lambda2,
+                 const ElemType tolerance,
+                 const bool fitIntercept);
+
+  template<typename MatType,
+           typename ResponsesType,
+           typename = void, /* so MetaInfoExtractor does not get confused */
+           typename = typename std::enable_if<
+               std::is_same<typename ResponsesType::elem_type, ElemType>::value
+           >::type>
+  ElemType Train(const MatType& data,
+                 const ResponsesType& responses,
+                 const bool colMajor,
+                 const bool useCholesky,
+                 const DenseMatType& gramMatrix,
+                 const ElemType lambda1,
+                 const ElemType lambda2,
+                 const ElemType tolerance,
+                 const bool fitIntercept,
+                 const bool normalizeData);
+
+  /**
+   * Predict y_i for the given data point.
+   *
+   * @param point The data point to regress on.
+   * @return Predicted value for y_i for `point`.
+   */
+  template<typename VecType>
+  ElemType Predict(const VecType& point) const;
 
   /**
    * Predict y_i for each data point in the given data matrix using the
@@ -277,22 +506,23 @@ class LARS
    *
    * @param points The data points to regress on.
    * @param predictions y, which will contained calculated values on completion.
-   * @param rowMajor Should be true if the data points matrix is row-major and
-   *     false otherwise.
+   * @param colMajor Should be true if the input data is column-major.  Passing
+   *     row-major data can avoid a transpose operation.
    */
-  void Predict(const arma::mat& points,
-               arma::rowvec& predictions,
-               const bool rowMajor = false) const;
+  template<typename MatType, typename ResponsesType>
+  void Predict(const MatType& points,
+               ResponsesType& predictions,
+               const bool colMajor = true) const;
 
   //! Get the L1 regularization coefficient.
-  double Lambda1() const { return lambda1; }
+  ElemType Lambda1() const { return lambda1; }
   //! Modify the L1 regularization coefficient.
-  double& Lambda1() { return lambda1; }
+  ElemType& Lambda1() { return lambda1; }
 
   //! Get the L2 regularization coefficient.
-  double Lambda2() const { return lambda2; }
+  ElemType Lambda2() const { return lambda2; }
   //! Modify the L2 regularization coefficient.
-  double& Lambda2() { return lambda2; }
+  ElemType& Lambda2() { return lambda2; }
 
   //! Get whether to use the Cholesky decomposition.
   bool UseCholesky() const { return useCholesky; }
@@ -300,74 +530,49 @@ class LARS
   bool& UseCholesky() { return useCholesky; }
 
   //! Get the tolerance for maximum correlation during training.
-  double Tolerance() const { return tolerance; }
+  ElemType Tolerance() const { return tolerance; }
   //! Modify the tolerance for maximum correlation during training.
-  double& Tolerance() { return tolerance; }
+  ElemType& Tolerance() { return tolerance; }
 
   //! Get whether or not to fit an intercept.
   bool FitIntercept() const { return fitIntercept; }
   //! Modify whether or not to fit an intercept.
-  void FitIntercept(const bool newFitIntercept)
-  {
-    // If we are storing a Gram matrix internally, but now will be normalizing
-    // data, then the Gram matrix we have computed is incorrect and needs to be
-    // recomputed.
-    if (fitIntercept != newFitIntercept)
-    {
-      if (matGram != &matGramInternal)
-      {
-        throw std::invalid_argument("LARS::FitIntercept(): cannot change value "
-            "when an external Gram matrix was specified!");
-      }
-
-      fitIntercept = newFitIntercept;
-      matGramInternal.clear();
-    }
-  }
+  void FitIntercept(const bool newFitIntercept);
 
   //! Get whether or not to normalize data during training.
   bool NormalizeData() const { return normalizeData; }
   //! Modify whether or not to normalize data during training.
-  void NormalizeData(const bool newNormalizeData)
-  {
-    // If we are storing a Gram matrix internally, but now will be normalizing
-    // data, then the Gram matrix we have computed is incorrect and needs to be
-    // recomputed.
-    if (normalizeData != newNormalizeData)
-    {
-      if (matGram != &matGramInternal)
-      {
-        throw std::invalid_argument("LARS::NormalizeData(): cannot change value "
-            "when an external Gram matrix was specified!");
-      }
+  void NormalizeData(const bool newNormalizeData);
 
-      normalizeData = newNormalizeData;
-      matGramInternal.clear();
-    }
-  }
-
-  //! Access the set of active dimensions.
-  const std::vector<size_t>& ActiveSet() const { return activeSet; }
+  //! Access the set of active dimensions in the currently selected model.
+  const std::vector<size_t>& ActiveSet() const;
 
   //! Access the set of coefficients after each iteration; the solution is the
   //! last element.
-  const std::vector<arma::vec>& BetaPath() const { return betaPath; }
+  const std::vector<ModelColType>& BetaPath() const { return betaPath; }
 
   //! Access the solution coefficients
-  const arma::vec& Beta() const { return betaPath.back(); }
+  const ModelColType& Beta() const;
 
   //! Access the set of values for lambda1 after each iteration; the solution is
   //! the last element.
-  const std::vector<double>& LambdaPath() const { return lambdaPath; }
+  const std::vector<ElemType>& LambdaPath() const { return lambdaPath; }
 
   //! Return the intercept (if fitted, otherwise 0).
-  double Intercept() const { return interceptPath.back(); }
+  ElemType Intercept() const;
 
   //! Return the intercept path (the intercept for every model).
-  const std::vector<double>& InterceptPath() const { return interceptPath; }
+  const std::vector<ElemType>& InterceptPath() const { return interceptPath; }
+
+  //! Set the model to use the given lambda1 value in the path.
+  void SelectBeta(const ElemType lambda1);
+
+  //! Get the L1 penalty parameter corresponding to the currently selected
+  //! model.
+  ElemType SelectedLambda1() const { return selectedLambda1; }
 
   //! Access the upper triangular cholesky factor.
-  const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
+  const DenseMatType& MatUtriCholFactor() const { return matUtriCholFactor; }
 
   /**
    * Serialize the LARS model.
@@ -380,26 +585,26 @@ class LARS
    * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
    * cost error.
    *
-   * @param matX Column-major input data (or row-major input data if rowMajor =
-   *     true).
+   * @param matX Column-major input data (or row-major input data if colMajor =
+   *     false).
    * @param y responses A vector of targets.
-   * @param rowMajor Should be true if the data points matrix is row-major and
-   *   false otherwise.
+   * @param colMajor Should be true if the data points matrix is column-major.
    * @return The minimum cost error.
    */
-  double ComputeError(const arma::mat& matX,
-                      const arma::rowvec& y,
-                      const bool rowMajor = false);
+  template<typename MatType, typename ResponsesType>
+  ElemType ComputeError(const MatType& matX,
+                        const ResponsesType& y,
+                        const bool colMajor = true);
 
  private:
   //! Gram matrix.
-  arma::mat matGramInternal;
+  DenseMatType matGramInternal;
 
   //! Pointer to the Gram matrix we will use.
-  const arma::mat* matGram;
+  const DenseMatType* matGram;
 
   //! Upper triangular cholesky factor; initially 0x0 matrix.
-  arma::mat matUtriCholFactor;
+  DenseMatType matUtriCholFactor;
 
   //! Whether or not to use Cholesky decomposition when solving linear system.
   bool useCholesky;
@@ -407,15 +612,15 @@ class LARS
   //! True if this is the LASSO problem.
   bool lasso;
   //! Regularization parameter for l1 penalty.
-  double lambda1;
+  ElemType lambda1;
 
   //! True if this is the elastic net problem.
   bool elasticNet;
   //! Regularization parameter for l2 penalty.
-  double lambda2;
+  ElemType lambda2;
 
   //! Tolerance for main loop.
-  double tolerance;
+  ElemType tolerance;
 
   //! Whether or not to fit an intercept.
   bool fitIntercept;
@@ -425,16 +630,35 @@ class LARS
   bool normalizeData;
 
   //! Solution path.
-  std::vector<arma::vec> betaPath;
+  std::vector<ModelColType> betaPath;
 
   //! Value of lambda_1 for each solution in solution path.
-  std::vector<double> lambdaPath;
+  std::vector<ElemType> lambdaPath;
 
   //! Intercept (only if fitIntercept is true).
-  std::vector<double> interceptPath;
+  std::vector<ElemType> interceptPath;
 
   //! Active set of dimensions.
   std::vector<size_t> activeSet;
+
+  //! Selected lambda1 value for Predict().
+  ElemType selectedLambda1;
+
+  //! Index of selected beta (if selectedLambda1 is in lambdaPath).
+  size_t selectedIndex;
+
+  //! Selected beta, if selectedLambda1 is not in lambdaPath.
+  ModelColType selectedBeta;
+
+  //! Selected intercept, if selectedLambda1 is not in lambdaPath.
+  ElemType selectedIntercept;
+
+  //! Selected active set of dimensions, if selectedLambda1 is not the last
+  //! element in the path.
+  std::vector<size_t> selectedActiveSet;
+
+  //! Might be needed to compute the intercept for other lambda values.
+  ElemType offsetY;
 
   //! Active set membership indicator (for each dimension).
   std::vector<bool> isActive;
@@ -468,26 +692,33 @@ class LARS
    */
   void Ignore(const size_t varInd);
 
-  // compute "equiangular" direction in output space
-  void ComputeYHatDirection(const arma::mat& matX,
-                            const arma::vec& betaDirection,
-                            arma::vec& yHatDirection);
+  // Compute "equiangular" direction in output space.
+  template<typename MatType, typename VecType>
+  void ComputeYHatDirection(const MatType& matX,
+                            const VecType& betaDirection,
+                            VecType& yHatDirection);
 
-  // interpolate to compute last solution vector
+  // Interpolate to compute last solution vector.
   void InterpolateBeta();
 
-  void CholeskyInsert(const arma::vec& newX, const arma::mat& X);
+  template<typename VecType, typename MatType>
+  void CholeskyInsert(const VecType& newX, const MatType& X);
 
-  void CholeskyInsert(double sqNormNewX, const arma::vec& newGramCol);
+  template<typename VecType>
+  void CholeskyInsert(ElemType sqNormNewX, const VecType& newGramCol);
 
-  void GivensRotate(const arma::vec::fixed<2>& x,
-                    arma::vec::fixed<2>& rotatedX,
-                    arma::mat& G);
+  template<typename MatType>
+  void GivensRotate(const typename arma::Col<ElemType>::template fixed<2>& x,
+                    typename arma::Col<ElemType>::template fixed<2>& rotatedX,
+                    MatType& G);
 
   void CholeskyDelete(const size_t colToKill);
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION((typename ModelMatType),
+    (mlpack::LARS<ModelMatType>), (1));
 
 // Include implementation of serialize().
 #include "lars_impl.hpp"

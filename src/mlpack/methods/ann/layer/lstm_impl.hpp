@@ -172,10 +172,10 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 
   if (this->HasPreviousStep())
   {
-    inputGate += arma::repmat(cell2GateInputWeight, 1, batchSize) %
+    inputGate += repmat(cell2GateInputWeight, 1, batchSize) %
         cell.slice(this->PreviousStep());
 
-    forgetGate += arma::repmat(cell2GateForgetWeight, 1, batchSize) %
+    forgetGate += repmat(cell2GateForgetWeight, 1, batchSize) %
         cell.slice(this->PreviousStep());
   }
 

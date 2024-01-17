@@ -75,7 +75,7 @@ void SpatialDropoutType<InputType, OutputType>::Forward(
     probabilities.fill(ratio);
     BernoulliDistribution<> bernoulli_dist(probabilities, false);
     maskRow = bernoulli_dist.Sample();
-    mask = arma::repmat(maskRow, inputSize, 1);
+    mask = repmat(maskRow, inputSize, 1);
 
     for (size_t n = 0; n < batchSize; n++)
       outputTemp.slice(n) = inputTemp.slice(n) % mask * scale;

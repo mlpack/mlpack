@@ -71,15 +71,16 @@ inline void SparseCoding::Encode(const arma::mat& data,
 
     bool useCholesky = true;
     // Intercept fitting and data normalization is disabled.
-    LARS lars(useCholesky, matGram, lambda1, lambda2,
-        1e-16 /* default tolerance */, false, false);
+    LARS<> lars(useCholesky, lambda1, lambda2, 1e-16 /* default tolerance */,
+        false, false);
 
     // Create an alias of the code (using the same memory), and then LARS will
     // place the result directly into that; then we will not need to have an
     // extra copy.
     arma::vec code = codes.unsafe_col(i);
     arma::rowvec responses = data.unsafe_col(i).t();
-    lars.Train(dictionary, responses, code, false);
+    lars.Train(dictionary, responses, false, useCholesky, matGram);
+    code = lars.Beta();
   }
 }
 
