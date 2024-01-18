@@ -89,3 +89,116 @@ TEST_CASE("SeparableConvolutionShapeAndSizeTest", "[ANNLayerTest]")
   REQUIRE(computedGradient.n_rows == module.Parameters().n_rows);
   REQUIRE(computedGradient.n_cols == module.Parameters().n_cols);
 }
+
+/**
+ * Jacobian test for the Separable Convolution layer
+*/
+TEST_CASE("CustomJacobianSeparableConvolutionTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 3;
+  const size_t outSize = 5;
+  const size_t kernelWidth = 3;
+  const size_t kernelHeight = 3;
+  const size_t strideWidth = 1;
+  const size_t strideHeight = 1;
+  const size_t padWLeft = 1;
+  const size_t padWRight = 1;
+  const size_t padHTop = 1;
+  const size_t padHBottom = 1;
+  const size_t inputWidth = 5;
+  const size_t inputHeight = 5;
+  const size_t numGroups = 1;
+
+  // Initialize the separable convolution layer.
+  SeparableConvolution layer(inSize,
+                             outSize,
+                             kernelWidth, 
+                             kernelHeight,
+                             strideWidth, 
+                             strideHeight, 
+                             padWLeft, 
+                             padWRight,
+                             padHTop, 
+                             padHBottom, 
+                             inputWidth, 
+                             inputHeight,
+                             numGroups);
+  /**
+   * Random input for Jacobian test.
+   */
+  arma::mat input = arma::randu(3, 5);
+  double error = CustomJacobianTest(layer, input);
+  /**
+   * Check whether the error is below a certain threshold.
+   */
+  REQUIRE(error <= 1e-5);
+}
+
+/**
+ * SeparableConvolution layer numerical gradient test.
+ */
+TEST_CASE("GradientSeparableConvolutionTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(32, 64)), 
+        target(arma::zeros(10, 64)) 
+    {
+      const size_t inSize = 3;
+      const size_t outSize = 5;
+      const size_t kernelWidth = 3;
+      const size_t kernelHeight = 3;
+      const size_t strideWidth = 1;
+      const size_t strideHeight = 1;
+      const size_t padWLeft = 1;
+      const size_t padWRight = 1;
+      const size_t padHTop = 1;
+      const size_t padHBottom = 1;
+      const size_t inputWidth = 5;
+      const size_t inputHeight = 5;
+      const size_t numGroups = 1;
+
+  // Initialize the separable convolution layer.
+      SeparableConvolution layer(inSize,
+                                outSize,
+                                kernelWidth, 
+                                kernelHeight,
+                                strideWidth, 
+                                strideHeight, 
+                                padWLeft, 
+                                padWRight,
+                                padHTop, 
+                                padHBottom, 
+                                inputWidth, 
+                                inputHeight,
+                                numGroups);
+
+      model = new FFN<NegativeLogLikelihood, XavierInitialization>();
+      model->ResetData(input, target);
+      model->Add<SeparableConvolution>(layer);
+      model->Add<LogSoftMax>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 64);
+      model->Gradient(model->Parameters(), 0, gradient, 64);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood, XavierInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  double gradient = CheckGradient(function);
+
+  REQUIRE(gradient < 1e-1);
+}
