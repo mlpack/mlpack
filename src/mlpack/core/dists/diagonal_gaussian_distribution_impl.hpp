@@ -60,7 +60,7 @@ inline void DiagonalGaussianDistribution::LogProbability(
 
   // Calculates log of exponent equation in multivariate Gaussian
   // distribution. We use only diagonal part for faster computation.
-  arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
+  arma::vec logExponents = -0.5 * trans(diffs % diffs) * invCov;
 
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }

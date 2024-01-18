@@ -273,7 +273,7 @@ inline void LinearRegression<ModelMatType>::Predict(
     // the dataset.
     util::CheckSameDimensionality(points, parameters,
         "LinearRegression::Predict()", "points");
-    predictions = arma::trans(parameters) * points;
+    predictions = trans(parameters) * points;
   }
 }
 

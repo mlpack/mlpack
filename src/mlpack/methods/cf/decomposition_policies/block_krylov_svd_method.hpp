@@ -81,7 +81,7 @@ class BlockKrylovSVDPolicy
     w = w * arma::diagmat(sigma);
 
     // Take transpose of the matrix h as required by CF class.
-    h = arma::trans(h);
+    h = trans(h);
   }
 
   /**

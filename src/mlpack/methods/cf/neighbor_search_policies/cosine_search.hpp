@@ -52,7 +52,7 @@ class CosineSearch
   CosineSearch(const arma::mat& referenceSet)
   {
     // Normalize all vectors to unit length.
-    arma::mat normalizedSet = arma::normalise(referenceSet, 2, 0);
+    arma::mat normalizedSet = normalise(referenceSet, 2, 0);
 
     neighborSearch.Train(std::move(normalizedSet));
   }
@@ -70,7 +70,7 @@ class CosineSearch
               arma::Mat<size_t>& neighbors, arma::mat& similarities)
   {
     // Normalize query vectors to unit length.
-    arma::mat normalizedQuery = arma::normalise(query, 2, 0);
+    arma::mat normalizedQuery = normalise(query, 2, 0);
 
     neighborSearch.Search(normalizedQuery, k, neighbors, similarities);
 

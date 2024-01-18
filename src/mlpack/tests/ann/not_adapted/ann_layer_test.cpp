@@ -1129,7 +1129,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   // For the first input the output should be equal to the output of
 //   // gate z_t as the previous output fed to the cell is all zeros.
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 
 //   expectedOutput = output;
 
@@ -1152,7 +1152,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   // Expected output for the second input.
 //   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 
 //   LayerTypes<> layer(gruAlloc);
 //   boost::apply_visitor(DeleteVisitor(), layer);
@@ -1734,7 +1734,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   // For the first input the output should be equal to the output of
 //   // gate z_t as the previous output fed to the cell is all zeros.
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 //
 //   expectedOutput = output;
 //
@@ -1757,7 +1757,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   // Expected output for the second input.
 //   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 //
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 //
 //   LayerTypes<> layer(gruAlloc);
 //   boost::apply_visitor(DeleteVisitor(), layer);

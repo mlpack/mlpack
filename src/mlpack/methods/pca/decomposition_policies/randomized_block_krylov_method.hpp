@@ -73,7 +73,7 @@ class RandomizedBlockKrylovSVDPolicy
     eigVal %= eigVal / (data.n_cols - 1);
 
     // Project the samples to the principals.
-    transformedData = arma::trans(eigvec) * centeredData;
+    transformedData = trans(eigvec) * centeredData;
   }
 
   //! Get the number of iterations for the power method.

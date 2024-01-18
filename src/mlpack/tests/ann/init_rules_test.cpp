@@ -25,7 +25,7 @@ TEST_CASE("ConstantInitTest", "[InitRulesTest]")
   RandomInitialization constantInit(1, 1);
   constantInit.Initialize(weights, 100, 100);
 
-  bool b = arma::all(arma::vectorise(weights) == 1);
+  bool b = arma::all(vectorise(weights) == 1);
   REQUIRE(b == 1);
 }
 
@@ -94,7 +94,7 @@ TEST_CASE("ConstInitTest", "[InitRulesTest]")
   ConstInitialization zeroInit(0);
   zeroInit.Initialize(weights, 100, 100);
 
-  bool b = arma::all(arma::vectorise(weights) == 0);
+  bool b = arma::all(vectorise(weights) == 0);
   REQUIRE(b == 1);
 }
 
@@ -211,7 +211,7 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   randomModel.Add<LogSoftMax>();
   randomModel.Predict(input, response);
 
-  bool b = arma::all(arma::vectorise(randomModel.Parameters()) == 0.5);
+  bool b = arma::all(vectorise(randomModel.Parameters()) == 0.5);
   REQUIRE(b == 1);
   REQUIRE(randomModel.Parameters().n_elem == 42);
 

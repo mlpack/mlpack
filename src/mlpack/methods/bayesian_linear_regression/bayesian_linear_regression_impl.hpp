@@ -199,13 +199,13 @@ BayesianLinearRegression<ModelMatType>::Predict(const VecType& point) const
 {
   // Center and scale the point before applying the model, if needed.
   if (!centerData && !scaleData)
-    return arma::dot(omega, point) + responsesOffset;
+    return dot(omega, point) + responsesOffset;
   else if (centerData && !scaleData)
-    return arma::dot(omega, point - dataOffset) + responsesOffset;
+    return dot(omega, point - dataOffset) + responsesOffset;
   else if (!centerData && scaleData)
-    return arma::dot(omega, point / dataScale) + responsesOffset;
+    return dot(omega, point / dataScale) + responsesOffset;
   else
-    return arma::dot(omega, (point - dataOffset) / dataScale) + responsesOffset;
+    return dot(omega, (point - dataOffset) / dataScale) + responsesOffset;
 }
 
 template<typename ModelMatType>
