@@ -106,8 +106,8 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   {
     inputSize *= this->inputDimensions[i];
   }
-  UintCol idxs = arma::regspace<UintCol>(0, inputSize - 1);
-
+  UintCol idxs_col = arma::regspace<UintCol>(0, inputSize - 1);
+  UintMat idxs = arma::conv_to<UintMat>::from(idxs_col);
   // Here, we are going to pre-compute the source index for each output
   // for a single tensor.  Since the tensors are flattened into 1-d
   // vectors, we can fill the output row-wise based on these
