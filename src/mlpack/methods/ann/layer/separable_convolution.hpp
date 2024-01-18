@@ -32,8 +32,19 @@
 namespace mlpack {
 
 /**
- * Implementation of the Separable Convolution class.The Separable Convolution class 
- * represents a single layer of a neural network.
+ * Depthwise separable convolution is a neural network operation that 
+ * splits standard convolutions into two stages: depthwise convolution
+ * and pointwise convolution. In the depthwise stage, individual channels
+ * of the input are convolved separately, reducing computation.
+ * 
+ * The pointwise stage combines these channel-wise results through
+ * a 1x1 convolution, preserving inter-channel relationships. 
+ * 
+ * This approach significantly reduces model parameters and computations,
+ * making it computationally efficient for mobile and edge devices.
+ * 
+ * The expected input for a depthwise separable convolution layer is a
+ * 3D tensor with dimensions (height, width, channels).
  * 
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
