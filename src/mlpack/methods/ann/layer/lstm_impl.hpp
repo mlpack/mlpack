@@ -311,7 +311,7 @@ void LSTMType<MatType>::Gradient(
 
   // Input2GateOutputWeight and input2GateOutputBias gradients.
   gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =
-      arma::vectorise(outputGateError * input.t());
+      vectorise(outputGateError * input.t());
   gradient.submat(input2GateOutputWeight.n_elem, 0,
       input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem - 1, 0) =
       arma::sum(outputGateError, 1);
@@ -319,7 +319,7 @@ void LSTMType<MatType>::Gradient(
 
   // input2GateForgetWeight and input2GateForgetBias gradients.
   gradient.submat(offset, 0, offset + input2GateForgetWeight.n_elem - 1, 0) =
-      arma::vectorise(forgetGateError * input.t());
+      vectorise(forgetGateError * input.t());
   gradient.submat(offset + input2GateForgetWeight.n_elem, 0,
       offset + input2GateForgetWeight.n_elem +
       input2GateForgetBias.n_elem - 1, 0) = arma::sum(forgetGateError, 1);
@@ -327,7 +327,7 @@ void LSTMType<MatType>::Gradient(
 
   // input2GateInputWeight and input2GateInputBias gradients.
   gradient.submat(offset, 0, offset + input2GateInputWeight.n_elem - 1, 0) =
-      arma::vectorise(inputGateError * input.t());
+      vectorise(inputGateError * input.t());
   gradient.submat(offset + input2GateInputWeight.n_elem, 0,
       offset + input2GateInputWeight.n_elem +
       input2GateInputBias.n_elem - 1, 0) = arma::sum(inputGateError, 1);
@@ -335,7 +335,7 @@ void LSTMType<MatType>::Gradient(
 
   // input2HiddenWeight and input2HiddenBias gradients.
   gradient.submat(offset, 0, offset + input2HiddenWeight.n_elem - 1, 0) =
-      arma::vectorise(hiddenError * input.t());
+      vectorise(hiddenError * input.t());
   gradient.submat(offset + input2HiddenWeight.n_elem, 0,
       offset + input2HiddenWeight.n_elem + input2HiddenBias.n_elem - 1, 0) =
       arma::sum(hiddenError, 1);
@@ -343,26 +343,22 @@ void LSTMType<MatType>::Gradient(
 
   // output2GateOutputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateOutputWeight.n_elem - 1, 0) =
-      arma::vectorise(outputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(outputGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateOutputWeight.n_elem;
 
   // output2GateForgetWeight gradients.
   gradient.submat(offset, 0, offset + output2GateForgetWeight.n_elem - 1, 0) =
-      arma::vectorise(forgetGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(forgetGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateForgetWeight.n_elem;
 
   // output2GateInputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateInputWeight.n_elem - 1, 0) =
-      arma::vectorise(inputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(inputGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateInputWeight.n_elem;
 
   // output2HiddenWeight gradients.
   gradient.submat(offset, 0, offset + output2HiddenWeight.n_elem - 1, 0) =
-      arma::vectorise(hiddenError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(hiddenError * outParameter.slice(this->CurrentStep()).t());
   offset += output2HiddenWeight.n_elem;
 
   // cell2GateOutputWeight gradients.

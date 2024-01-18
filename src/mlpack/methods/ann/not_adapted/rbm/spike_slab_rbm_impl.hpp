@@ -69,14 +69,14 @@ typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, double>::type
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     const arma::Mat<ElemType>& input)
 {
-  ElemType freeEnergy = 0.5 * visiblePenalty(0) * arma::dot(input, input);
+  ElemType freeEnergy = 0.5 * visiblePenalty(0) * dot(input, input);
 
   freeEnergy -= 0.5 * hiddenSize * poolSize *
       std::log((2.0 * M_PI) / slabPenalty);
 
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    ElemType sum = arma::accu(arma::square(input.t() * weight.slice(i))) /
+    ElemType sum = arma::accu(square(input.t() * weight.slice(i))) /
         (2.0 * slabPenalty);
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }
@@ -113,7 +113,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
 
   spikeBiasGrad = spikeMean;
   // Setting visiblePenaltyGrad.
-  gradient.row(weightGrad.n_elem + spikeBiasGrad.n_elem) = -0.5 * arma::dot(
+  gradient.row(weightGrad.n_elem + spikeBiasGrad.n_elem) = -0.5 * dot(
        input, input) / std::pow(input.n_cols, 2);
 }
 
@@ -163,7 +163,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
     {
       output(i) = RandNormal(visibleMean(i), 1.0 / visiblePenalty(0));
     }
-    if (arma::norm(output, 2) < radius)
+    if (norm(output, 2) < radius)
     {
       break;
     }
@@ -172,7 +172,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
   if (k == numMaxTrials)
   {
     Log::Warn << "Outputs are still not in visible unit "
-        << arma::norm(output, 2)
+        << norm(output, 2)
         << " terminating optimization."
         << std::endl;
   }

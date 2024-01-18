@@ -37,8 +37,7 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
 
   for (size_t i = 0; i < testSize; ++i)
   {
-    arma::vec delta = arma::vectorise(arma::abs(
-      trueOutputs.at(i) - predOutputs.at(i)));
+    arma::vec delta = vectorise(abs(trueOutputs.at(i) - predOutputs.at(i)));
     double maxDelta = arma::max(delta);
     if (maxDelta < tol)
     {

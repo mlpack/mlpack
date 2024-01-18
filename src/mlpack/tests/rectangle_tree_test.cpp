@@ -1158,7 +1158,7 @@ TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")
 // to allow us to test by hand without adding hundreds of points.
 TEST_CASE("RTreeSplitTest", "[RectangleTreeTraitsTest]")
 {
-  arma::mat data = arma::trans(arma::mat("0.0 0.0;"
+  arma::mat data = trans(arma::mat("0.0 0.0;"
                                          "0.0 1.0;"
                                          "1.0 0.1;"
                                          "1.0 0.5;"
@@ -1253,7 +1253,7 @@ TEST_CASE("RTreeSplitTest", "[RectangleTreeTraitsTest]")
 // to allow us to test by hand without adding hundreds of points.
 TEST_CASE("RStarTreeSplitTest", "[RectangleTreeTraitsTest]")
 {
-  arma::mat data = arma::trans(arma::mat("0.0 0.0;"
+  arma::mat data = trans(arma::mat("0.0 0.0;"
                                          "0.0 1.0;"
                                          "1.0 0.1;"
                                          "1.0 0.5;"

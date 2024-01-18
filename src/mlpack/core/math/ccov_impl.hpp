@@ -67,7 +67,7 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
   {
     if (x.n_rows == 1)
     {
-      const arma::Mat<T> tmpMat = arma::var(arma::trans(x), normType);
+      const arma::Mat<T> tmpMat = arma::var(trans(x), normType);
       out.set_size(1, 1);
       out[0] = tmpMat[0];
     }
@@ -86,8 +86,8 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
 
     const arma::Col<eT> acc = arma::sum(x, 1);
 
-    out = x * arma::trans(arma::conj(x));
-    out -= (acc * arma::trans(arma::conj(acc))) / eT(n);
+    out = x * trans(arma::conj(x));
+    out -= (acc * trans(arma::conj(acc))) / eT(n);
     out /= normVal;
   }
 
