@@ -34,8 +34,8 @@ class RepeatType : public Layer<MatType>
 {
  public:
   //! Get Specific Col type, not only arma
-  typedef typename GetColType<size_t>::type UintCol;
-  typedef typename GetDenseMatType<size_t>::type UintMat;
+  typedef typename GetUIntColType<MatType>::type UintCol;
+  typedef typename GetUIntDenseMatType<MatType>::type UintMat;
   /**
    * Create the Repeat object.  Multiples will be empty (e.g. 1s for all
    * dimensions), so this is the equivalent of an Identity Layer.

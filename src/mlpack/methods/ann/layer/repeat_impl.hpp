@@ -106,7 +106,7 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   {
     inputSize *= this->inputDimensions[i];
   }
-  UintMat idxs = arma::regspace<UintCol>(0, inputSize - 1);
+  UintCol idxs = arma::regspace<UintCol>(0, inputSize - 1);
 
   // Here, we are going to pre-compute the source index for each output
   // for a single tensor.  Since the tensors are flattened into 1-d
