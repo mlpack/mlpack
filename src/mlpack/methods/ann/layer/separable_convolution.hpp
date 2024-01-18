@@ -438,3 +438,4 @@ typedef SeparableConvolutionType<
 #include "separable_convolution_impl.hpp"
 
 #endif
+
