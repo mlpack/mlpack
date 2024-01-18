@@ -114,7 +114,7 @@ class RPTreeMaxSplit
   template<typename VecType>
   static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
-    return (arma::dot(point, splitInfo.direction) <= splitInfo.splitVal);
+    return (dot(point, splitInfo.direction) <= splitInfo.splitVal);
   }
 
  private:

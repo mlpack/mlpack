@@ -497,7 +497,7 @@ TEST_CASE("GMMClassifyTest", "[GMMTest]")
   gmm.Component(2) = GaussianDistribution("-2 -2", "2.2 1.4; 1.4 5.1");
   gmm.Weights() = "0.6 0.25 0.15";
 
-  arma::mat observations = arma::trans(arma::mat(
+  arma::mat observations = trans(arma::mat(
     " 0  0;"
     " 0  1;"
     " 0  2;"

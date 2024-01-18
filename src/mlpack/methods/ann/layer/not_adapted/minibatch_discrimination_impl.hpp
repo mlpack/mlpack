@@ -116,7 +116,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Gradient(
     const OutputType& /* error */,
     OutputType& gradient)
 {
-  gradient = arma::vectorise(deltaTemp * input.t());
+  gradient = vectorise(deltaTemp * input.t());
 }
 
 template<typename InputType, typename OutputType>

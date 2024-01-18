@@ -320,14 +320,14 @@ void FastLSTMType<InputType, OutputType>::Gradient(
 {
   // Gradient of the input to gate layer.
   gradient.submat(0, 0, input2GateWeight.n_elem - 1, 0) =
-      arma::vectorise(prevError * input.t());
+      vectorise(prevError * input.t());
 
   gradient.submat(input2GateWeight.n_elem, 0, input2GateWeight.n_elem +
       input2GateBias.n_elem - 1, 0) = arma::sum(prevError, 1);
 
   // Gradient of the output to gate layer.
   gradient.submat(input2GateWeight.n_elem + input2GateBias.n_elem, 0,
-      gradient.n_elem - 1, 0) = arma::vectorise(prevError *
+      gradient.n_elem - 1, 0) = vectorise(prevError *
       outParameter.cols(gradientStep - batchStep, gradientStep).t());
 
   if (gradientStep > batchStep)

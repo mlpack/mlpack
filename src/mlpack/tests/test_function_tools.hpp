@@ -30,11 +30,11 @@ using namespace mlpack;
  * @param shuffledResponses Matrix object to store the shuffled responses into.
  */
 inline void LogisticRegressionTestData(arma::mat& data,
-                                arma::mat& testData,
-                                arma::mat& shuffledData,
-                                arma::Row<size_t>& responses,
-                                arma::Row<size_t>& testResponses,
-                                arma::Row<size_t>& shuffledResponses)
+                                       arma::mat& testData,
+                                       arma::mat& shuffledData,
+                                       arma::Row<size_t>& responses,
+                                       arma::Row<size_t>& testResponses,
+                                       arma::Row<size_t>& shuffledResponses)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -79,15 +79,15 @@ inline void LogisticRegressionTestData(arma::mat& data,
   }
 }
 
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 void LoadBostonHousingDataset(MatType& trainData,
                               MatType& testData,
-                              arma::rowvec& trainResponses,
-                              arma::rowvec& testResponses,
+                              ResponsesType& trainResponses,
+                              ResponsesType& testResponses,
                               data::DatasetInfo& info)
 {
   MatType dataset;
-  arma::rowvec responses;
+  ResponsesType responses;
 
   // Defining categorical deimensions.
   info.SetDimensionality(13);
@@ -103,10 +103,11 @@ void LoadBostonHousingDataset(MatType& trainData,
       trainResponses, testResponses, 0.3);
 }
 
-inline double RMSE(const arma::Row<double>& predictions,
-                   const arma::Row<double>& trueResponses)
+template<typename ElemType>
+inline ElemType RMSE(const arma::Row<ElemType>& predictions,
+                     const arma::Row<ElemType>& trueResponses)
 {
-  double mse = arma::accu(arma::square(predictions - trueResponses)) /
+  ElemType mse = arma::accu(square(predictions - trueResponses)) /
       predictions.n_elem;
   return sqrt(mse);
 }

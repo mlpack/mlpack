@@ -76,7 +76,7 @@ TEST_CASE("SVDPlusPlusEvaluate", "[SVDPlusPlusTest]")
       userVec += parameters.col(user).subvec(0, rank - 1);
 
       double ratingError = rating - userBias - itemBias -
-          arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+          dot(userVec, parameters.col(item).subvec(0, rank - 1));
       double ratingErrorSquared = ratingError * ratingError;
 
       cost += ratingErrorSquared;
@@ -145,7 +145,7 @@ TEST_CASE("SVDPlusPlusFunctionRegularizationEvaluate", "[SVDPlusPlusTest]")
       {
         if (implicitVecsNormSquare(it.row()) < 0)
         {
-          implicitVecsNormSquare(it.row()) = arma::dot(
+          implicitVecsNormSquare(it.row()) = dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
         }
@@ -382,7 +382,7 @@ TEST_CASE("SVDPlusPlusFunctionOptimize", "[SVDPlusPlusTest]")
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     data(2, i) = userBias + itemBias +
-        arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+        dot(userVec, parameters.col(item).subvec(0, rank - 1));
   }
 
   // Make the SVD++ function and the optimizer.
@@ -421,7 +421,7 @@ TEST_CASE("SVDPlusPlusFunctionOptimize", "[SVDPlusPlusTest]")
     userVec += optParameters.col(user).subvec(0, rank - 1);
 
     predictedData(0, i) = userBias + itemBias +
-        arma::dot(userVec, optParameters.col(item).subvec(0, rank - 1));
+        dot(userVec, optParameters.col(item).subvec(0, rank - 1));
   }
 
   // Calculate relative error.
@@ -489,7 +489,7 @@ TEST_CASE("SVDPlusPlusFunctionParallelOptimize", "[SVDPlusPlusTest]")
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     data(2, i) = userBias + itemBias +
-        arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+        dot(userVec, parameters.col(item).subvec(0, rank - 1));
   }
 
   // Make the SVD++ function and the optimizer.
@@ -535,7 +535,7 @@ TEST_CASE("SVDPlusPlusFunctionParallelOptimize", "[SVDPlusPlusTest]")
     userVec += optParameters.col(user).subvec(0, rank - 1);
 
     predictedData(0, i) = userBias + itemBias +
-        arma::dot(userVec, optParameters.col(item).subvec(0, rank - 1));
+        dot(userVec, optParameters.col(item).subvec(0, rank - 1));
   }
 
   // Calculate relative error.

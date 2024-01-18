@@ -95,7 +95,7 @@ class SVDCompleteIncrementalLearning
       // Update feature vector if current entry is non-zero and break the loop.
       if (val != 0)
       {
-        deltaW += (val - arma::dot(W.row(currentItemIndex),
+        deltaW += (val - dot(W.row(currentItemIndex),
             H.col(currentUserIndex))) * H.col(currentUserIndex).t();
 
         // Add regularization.
@@ -127,7 +127,7 @@ class SVDCompleteIncrementalLearning
     const double val = V(currentItemIndex, currentUserIndex);
 
     // Update H matrix based on the non-zero entry found in WUpdate function.
-    deltaH += (val - arma::dot(W.row(currentItemIndex),
+    deltaH += (val - dot(W.row(currentItemIndex),
         H.col(currentUserIndex))) * W.row(currentItemIndex).t();
     // Add regularization.
     if (kh != 0)
@@ -216,8 +216,8 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     arma::mat deltaW(1, W.n_cols);
     deltaW.zeros();
 
-    deltaW += (**it - arma::dot(W.row(currentItemIndex),
-        H.col(currentUserIndex))) * arma::trans(H.col(currentUserIndex));
+    deltaW += (**it - dot(W.row(currentItemIndex),
+        H.col(currentUserIndex))) * trans(H.col(currentUserIndex));
     if (kw != 0) deltaW -= kw * W.row(currentItemIndex);
 
     W.row(currentItemIndex) += u*deltaW;
@@ -242,8 +242,8 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     size_t currentUserIndex = it->col();
     size_t currentItemIndex = it->row();
 
-    deltaH += (**it - arma::dot(W.row(currentItemIndex),
-        H.col(currentUserIndex))) * arma::trans(W.row(currentItemIndex));
+    deltaH += (**it - dot(W.row(currentItemIndex),
+        H.col(currentUserIndex))) * trans(W.row(currentItemIndex));
     if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
     H.col(currentUserIndex) += u * deltaH;

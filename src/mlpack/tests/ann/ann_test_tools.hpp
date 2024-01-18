@@ -280,7 +280,7 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
     }
   }
 
-  estGradient = arma::vectorise(estGradient);
+  estGradient = vectorise(estGradient);
   // Estimate error of gradient.
   return arma::norm(orgGradient - estGradient) /
       arma::norm(orgGradient + estGradient);

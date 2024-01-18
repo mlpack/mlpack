@@ -122,10 +122,10 @@ class RPTreeMeanSplit
   static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
     if (splitInfo.meanSplit)
-      return arma::dot(point - splitInfo.mean, point - splitInfo.mean) <=
+      return dot(point - splitInfo.mean, point - splitInfo.mean) <=
           splitInfo.splitVal;
 
-    return (arma::dot(point, splitInfo.direction) <= splitInfo.splitVal);
+    return (dot(point, splitInfo.direction) <= splitInfo.splitVal);
   }
 
  private:
