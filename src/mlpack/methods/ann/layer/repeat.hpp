@@ -33,6 +33,9 @@ template <typename MatType = arma::mat>
 class RepeatType : public Layer<MatType>
 {
  public:
+  //! Get Specific Col type, not only arma
+  typedef typename GetColType<size_t>::type UintCol;
+  typedef typename GetDenseMatType<size_t>::type UintMat;
   /**
    * Create the Repeat object.  Multiples will be empty (e.g. 1s for all
    * dimensions), so this is the equivalent of an Identity Layer.
@@ -135,12 +138,12 @@ class RepeatType : public Layer<MatType>
 
   // Cache the target indices for a single tensor for use
   // in the forward pass.
-  arma::uvec outIdxs;
+  UintCol outIdxs;
 
   // Cache the contributions of each output element to the
   // input elements for use in the backward pass.
   size_t sizeMult;
-  arma::umat backIdxs;
+  UintMat backIdxs;
 }; // class RepeatType.
 
 // Standard Repeat layer.
