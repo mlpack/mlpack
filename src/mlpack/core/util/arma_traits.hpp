@@ -217,6 +217,20 @@ struct GetDenseMatType<arma::SpMat<eT>>
   typedef arma::Mat<eT> type;
 };
 
+// Get the cube type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetCubeType
+{
+  typedef arma::Cube<typename MatType::elem_type> type;
+};
+
+template<typename eT>
+struct GetCubeType<arma::Mat<eT>>
+{
+  typedef arma::Cube<eT> type;
+};
+
 // Get the sparse matrix type corresponding to a given MatType.
 
 template<typename MatType>

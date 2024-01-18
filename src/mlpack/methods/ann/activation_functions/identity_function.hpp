@@ -44,8 +44,9 @@ class IdentityFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y)
+  template<typename VecType>
+  static void Fn(const VecType& x, VecType& y,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0)
   {
     y = x;
   }
@@ -82,8 +83,9 @@ class IdentityFunction
    * @param y Input activations.
    * @param dy The resulting derivatives.
    */
-  template<typename eT>
-  static void Deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)
+  template<typename CubeType>
+  static void Deriv(const CubeType& y, CubeType& x,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     x.ones(y.n_rows, y.n_cols, y.n_slices);
   }
