@@ -201,7 +201,9 @@ class NaiveConvolution
                           const size_t dH = 1,
                           const size_t dilationW = 1,
                           const size_t dilationH = 1,
-                          const bool appending = false)
+                          const bool appending = false,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
@@ -241,7 +243,9 @@ class NaiveConvolution
                           const size_t dH = 1,
                           const size_t dilationW = 1,
                           const size_t dilationH = 1,
-                          const bool appending = false)
+                          const bool appending = false,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
