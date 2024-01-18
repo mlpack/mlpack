@@ -135,11 +135,12 @@ class RepeatType : public Layer<MatType>
 
   // Cache the target indices for a single tensor for use
   // in the forward pass.
-  std::vector<size_t> outIdxs;
+  arma::uvec outIdxs;
 
   // Cache the contributions of each output element to the
   // input elements for use in the backward pass.
   size_t sizeMult;
+  arma::umat backIdxs;
 }; // class RepeatType.
 
 // Standard Repeat layer.

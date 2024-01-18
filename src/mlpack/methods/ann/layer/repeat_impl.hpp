@@ -40,7 +40,8 @@ RepeatType<MatType>::RepeatType(const RepeatType& other) :
     multiples(other.multiples),
     interleave(other.interleave),
     outIdxs(other.outIdxs),
-    sizeMult(other.sizeMult)
+    sizeMult(other.sizeMult),
+    backIdxs(other.backIdxs)
 {
   // Nothing else to do.
 }
@@ -51,7 +52,8 @@ RepeatType<MatType>::RepeatType(RepeatType&& other)  noexcept :
     multiples(other.multiples),
     interleave(other.interleave),
     outIdxs(other.outIdxs),
-    sizeMult(other.sizeMult)
+    sizeMult(other.sizeMult),
+    backIdxs(other.backIdxs)
 {
   // Nothing else to do.
 }
@@ -66,6 +68,7 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(const RepeatType& other)
     interleave = other.interleave;
     outIdxs = other.outIdxs;
     sizeMult = other.sizeMult;
+    backIdxs = other.backIdxs;
   }
 
   return *this;
@@ -81,6 +84,7 @@ RepeatType<MatType>& RepeatType<MatType>::operator=(RepeatType&& other) noexcept
     interleave = std::move(other.interleave);
     outIdxs = std::move(other.outIdxs);
     sizeMult = other.sizeMult;
+    backIdxs = other.backIdxs;
   }
 
   return *this;
@@ -102,13 +106,7 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   {
     inputSize *= this->inputDimensions[i];
   }
-  MatType idxs(inputSize, 1);
-  for (size_t i=0; i<inputSize; i++)
-  {
-    idxs.at(i) = i;
-  }
-  // want to do this, but can't leave it without a namespace (e.g. arma::)
-  //  MatType idxs = linspace<MatType>(0, inputSize - 1, inputSize);
+  arma::umat idxs = arma::regspace<arma::uvec>(0, inputSize - 1);
 
   // Here, we are going to pre-compute the source index for each output
   // for a single tensor.  Since the tensors are flattened into 1-d
@@ -152,24 +150,24 @@ void RepeatType<MatType>::ComputeOutputDimensions()
     }
     outSize *= this->outputDimensions[i];
   }
-  outIdxs.resize(idxs.n_elem);
-  for (size_t i=0; i<idxs.n_elem; i++)
+  outIdxs = idxs.as_col();
+
+  // Now, we are going to pre-compute the contribution of each output
+  // element to the input elements.  This will be used in the backward
+  // pass with a simple matrix multiplication.
+  backIdxs.set_size(inputSize, sizeMult);
+  arma::uvec counts(inputSize, arma::fill::zeros);
+  for (size_t i = 0; i < outIdxs.n_elem; i++)
   {
-    outIdxs[i] = idxs.at(i);
+    auto r = outIdxs.at(i);
+    backIdxs.at(r, counts.at(r)++) = i;
   }
 }
 
 template<typename MatType>
 void RepeatType<MatType>::Forward(const MatType& input, MatType& output)
 {
-#pragma omp parallel for
-  for (size_t j=0; j<input.n_cols; j++)
-  {
-    for (size_t i = 0; i < outIdxs.size(); i++)
-    {
-      output.at(i, j) = input.at(outIdxs.at(i), j);
-    }
-  }
+  output = input.rows(outIdxs);
 }
 
 template<typename MatType>
@@ -179,15 +177,12 @@ void RepeatType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-#pragma omp parallel for
-  for (size_t j=0; j<gy.n_cols; j++)
+  g = gy.rows(backIdxs.col(0));
+  for (size_t c = 1; c < sizeMult; c++)
   {
-    g.col(j).zeros();
-    for (size_t i=0; i<outIdxs.size(); i++) {
-      g.at(outIdxs.at(i), j) += gy.at(i, j);
-    }
-    g.col(j) /= sizeMult;
+    g += gy.rows(backIdxs.col(c));
   }
+  g /= sizeMult;
 }
 
 template<typename MatType>
@@ -201,6 +196,7 @@ void RepeatType<MatType>::serialize(
   ar(CEREAL_NVP(interleave));
   ar(CEREAL_NVP(outIdxs));
   ar(CEREAL_NVP(sizeMult));
+  ar(CEREAL_NVP(backIdxs));
 }
 
 } // namespace mlpack
