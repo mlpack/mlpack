@@ -79,7 +79,7 @@ TEST_CASE("LogisticRegressionFunctionRandomEvaluate",
     for (size_t j = 0; j < points; ++j)
     {
       const double sigmoid = (1.0 / (1.0 + exp(-parameters[0] -
-          arma::dot(data.col(j), parameters.subvec(1, dimension)))));
+          dot(data.col(j), parameters.subvec(1, dimension)))));
       if (responses[j] == 1.0)
         loglikelihood += log(std::pow(sigmoid, responses[j]));
       else

@@ -163,7 +163,7 @@ size_t LogisticRegression<MatType>::Classify(const VecType& point,
   // Used to prevent automatic casting to double.
   constexpr ElemType one = ((ElemType) 1);
 
-  return size_t(one / (one + std::exp(-parameters(0) - arma::dot(point,
+  return size_t(one / (one + std::exp(-parameters(0) - dot(point,
       parameters.tail_cols(parameters.n_elem - 1).t()))) +
       (one - ((ElemType) decisionBoundary)));
 }
@@ -179,7 +179,7 @@ void LogisticRegression<MatType>::Classify(
   // Used to prevent automatic casting to double.
   constexpr ElemType one = ((ElemType) 1);
 
-  const ElemType logit = one / (one + std::exp(-parameters(0) - arma::dot(point,
+  const ElemType logit = one / (one + std::exp(-parameters(0) - dot(point,
       parameters.tail_cols(parameters.n_elem - 1).t())));
 
   probabilities.set_size(2);

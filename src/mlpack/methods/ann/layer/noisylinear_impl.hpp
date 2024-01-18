@@ -140,13 +140,13 @@ void NoisyLinearType<MatType>::Gradient(
   MatType weightGrad = error * input.t();
 
   // Gradients for mu values.
-  gradient.rows(0, weight.n_elem - 1) = arma::vectorise(weightGrad);
+  gradient.rows(0, weight.n_elem - 1) = vectorise(weightGrad);
   gradient.rows(weight.n_elem, weight.n_elem + bias.n_elem - 1)
       = arma::sum(error, 1);
 
   // Gradients for sigma values.
   gradient.rows(weight.n_elem + bias.n_elem, gradient.n_elem - bias.n_elem - 1)
-      = arma::vectorise(weightGrad % weightEpsilon);
+      = vectorise(weightGrad % weightEpsilon);
   gradient.rows(gradient.n_elem - bias.n_elem, gradient.n_elem - 1)
       = arma::sum(error, 1) % biasEpsilon;
 }

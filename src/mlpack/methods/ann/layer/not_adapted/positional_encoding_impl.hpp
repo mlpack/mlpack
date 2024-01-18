@@ -49,7 +49,7 @@ void PositionalEncodingType<InputType, OutputType>::InitPositionalEncoding()
     positionalEncoding.col(2 * i) = arma::sin(theta.col(i));
     positionalEncoding.col(2 * i + 1) = arma::cos(theta.col(i));
   }
-  positionalEncoding = arma::vectorise(positionalEncoding.t());
+  positionalEncoding = vectorise(positionalEncoding.t());
 }
 
 template<typename InputType, typename OutputType>

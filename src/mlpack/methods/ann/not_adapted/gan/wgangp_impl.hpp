@@ -83,7 +83,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
       -arma::ones(1, batchSize);
   discriminator.Gradient(discriminator.parameter, numFunctions,
       normGradientDiscriminator, batchSize);
-  res += lambda * std::pow(arma::norm(normGradientDiscriminator, 2) - 1, 2);
+  res += lambda * std::pow(norm(normGradientDiscriminator, 2) - 1, 2);
 
   return res;
 }
@@ -160,7 +160,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       -arma::ones(1, batchSize);
   discriminator.Gradient(discriminator.parameter, numFunctions,
       normGradientDiscriminator, batchSize);
-  res += lambda * std::pow(arma::norm(normGradientDiscriminator, 2) - 1, 2);
+  res += lambda * std::pow(norm(normGradientDiscriminator, 2) - 1, 2);
 
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       generatedData;
