@@ -48,7 +48,7 @@ class SplineFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow(x, 2) % arma::log(1 + x);
+    y = arma::pow(x, 2) % log(1 + x);
   }
 
   /**

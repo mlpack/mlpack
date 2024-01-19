@@ -28,7 +28,7 @@ template<typename MatType>
 typename MatType::elem_type SoftMarginLossType<MatType>::Forward(
     const MatType& prediction, const MatType& target)
 {
-  MatType loss = arma::log(1 + exp(-target % prediction));
+  MatType loss = log(1 + exp(-target % prediction));
   typename MatType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)

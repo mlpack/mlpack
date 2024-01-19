@@ -44,7 +44,7 @@ template<typename DataType>
 DataType NormalDistribution<DataType>::LogProbability(
     const DataType& observation) const
 {
-  const DataType v1 = arma::log(sigma) + std::log(std::sqrt(2 * M_PI));
+  const DataType v1 = log(sigma) + std::log(std::sqrt(2 * M_PI));
   const DataType v2 = square(observation - mean) / (2 * square(sigma));
   return  (-v1 - v2);
 }

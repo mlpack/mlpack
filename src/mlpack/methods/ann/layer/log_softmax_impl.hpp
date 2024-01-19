@@ -93,7 +93,7 @@ void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
     return 0.0;
   });
 
-  maxInput.each_row() += arma::log(sum(output));
+  maxInput.each_row() += log(sum(output));
   output = input - maxInput;
 }
 
