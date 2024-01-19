@@ -181,7 +181,7 @@ void InitProneToOverfittingData(arma::mat& xs,
   arma::rowvec data = arma::linspace<arma::rowvec>(0.0, 10.0, N);
   xs = data;
   for (size_t i = 2; i <= M; ++i)
-    xs = arma::join_cols(xs, arma::pow(data, i));
+    xs = arma::join_cols(xs, pow(data, i));
 
   // Responses that approximately follow the function y = 2 * x. Adding noise to
   // avoid having a polynomial of degree 1 that exactly fits the points.
