@@ -133,8 +133,8 @@ inline double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters)
   // KL = sum_over_hSize(rho*log(rho/rhoCaq) + (1-rho)*log((1-rho)/(1-rhoCap)))
   sumOfSquaresError = 0.5 * arma::accu(diff % diff) / data.n_cols;
   weightDecay = 0.5 * lambda * wL2SquaredNorm;
-  klDivergence = beta * arma::accu(rho * arma::log(rho / rhoCap) + (1 - rho) *
-      arma::log((1 - rho) / (1 - rhoCap)));
+  klDivergence = beta * arma::accu(rho * log(rho / rhoCap) + (1 - rho) *
+      log((1 - rho) / (1 - rhoCap)));
 
   // The cost is the sum of the terms calculated above.
   cost = sumOfSquaresError + weightDecay + klDivergence;

@@ -195,10 +195,10 @@ TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
     rhoCap /= points;
 
     // Calculate divergence terms.
-    const double smallDivTerm = 5 * arma::accu(rho * arma::log(rho / rhoCap) +
-        (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
-    const double bigDivTerm = 20 * arma::accu(rho * arma::log(rho / rhoCap) +
-        (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
+    const double smallDivTerm = 5 * arma::accu(rho * log(rho / rhoCap) +
+        (1 - rho) * log((1 - rho) / (1 - rhoCap)));
+    const double bigDivTerm = 20 * arma::accu(rho * log(rho / rhoCap) +
+        (1 - rho) * log((1 - rho) / (1 - rhoCap)));
 
     REQUIRE(safNoDiv.Evaluate(parameters) + smallDivTerm ==
         Approx(safSmallDiv.Evaluate(parameters)).epsilon(1e-7));

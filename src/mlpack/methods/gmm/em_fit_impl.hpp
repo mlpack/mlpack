@@ -215,7 +215,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
-    arma::vec logProbabilities = arma::log(probabilities);
+    arma::vec logProbabilities = log(probabilities);
     for (size_t i = 0; i < dists.size(); ++i)
     {
       // Calculate the sum of probabilities of points, which is the
