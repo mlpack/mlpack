@@ -56,7 +56,7 @@ void NormalDistribution<DataType>::ProbBackward(
     DataType& dsigma) const
 {
   dmu = (observation - mean) / (square(sigma)) % Probability(observation);
-  dsigma = (- 1.0 / sigma + (square(observation - mean) / arma::pow(sigma, 3)))
+  dsigma = (- 1.0 / sigma + (square(observation - mean) / pow(sigma, 3)))
             % Probability(observation);
 }
 

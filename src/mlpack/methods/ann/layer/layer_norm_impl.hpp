@@ -90,7 +90,7 @@ void LayerNormType<MatType>::Backward(
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   const MatType var = sum(norm % inputMean, 0) %
-      arma::pow(stdInv, 3.0) * -0.5;
+      pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.

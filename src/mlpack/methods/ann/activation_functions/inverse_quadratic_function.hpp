@@ -47,7 +47,7 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = 1 / (1 + arma::pow(x, 2));
+    y = 1 / (1 + pow(x, 2));
   }
 
   /**
@@ -72,7 +72,7 @@ class InvQuadFunction
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType& x, const OutputVecType& /* y */, DerivVecType &dy)
   {
-    dy = - 2 * x / arma::pow(1 + arma::pow(x, 2), 2);
+    dy = - 2 * x / pow(1 + pow(x, 2), 2);
   }
 }; // class InvQuadFunction
 

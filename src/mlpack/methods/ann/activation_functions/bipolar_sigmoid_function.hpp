@@ -73,7 +73,7 @@ class BipolarSigmoidFunction
   template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType& /* x */, const OutputVecType& y, DerivVecType& dy)
   {
-    dy =  (1.0 - arma::pow(y, 2)) / 2.0;
+    dy =  (1.0 - pow(y, 2)) / 2.0;
   }
 }; // class BipolarSigmoidFunction
 

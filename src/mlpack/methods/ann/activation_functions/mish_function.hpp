@@ -92,7 +92,7 @@ class MishFunction
   {
     dy = exp(x) % (4 * (x + 1) + exp(x) % (4 * x + 6) +
         4 * exp(2 * x) + exp(3 * x)) /
-        arma::pow(exp(2 * x) + 2 * exp(x) + 2, 2);
+        pow(exp(2 * x) + 2 * exp(x) + 2, 2);
   }
 }; // class MishFunction
 

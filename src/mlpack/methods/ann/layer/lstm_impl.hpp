@@ -264,7 +264,7 @@ void LSTMType<MatType>::Backward(
 
   MatType cellError = gyLocal %
       outputGateActivation.slice(this->CurrentStep()) %
-      (1 - arma::pow(cellActivation.slice(this->CurrentStep()), 2)) +
+      (1 - pow(cellActivation.slice(this->CurrentStep()), 2)) +
       outputGateError.each_col() % cell2GateOutputWeight;
 
   if (this->HasPreviousStep())
@@ -289,7 +289,7 @@ void LSTMType<MatType>::Backward(
       (1.0 - inputGateActivation.slice(this->CurrentStep())));
 
   hiddenError = inputGateActivation.slice(this->CurrentStep()) % cellError %
-      (1 - arma::pow(hiddenLayerActivation.slice(this->CurrentStep()), 2));
+      (1 - pow(hiddenLayerActivation.slice(this->CurrentStep()), 2));
 
   inputCellError = forgetGateActivation.slice(this->CurrentStep()) % cellError +
       forgetGateError.each_col() % cell2GateForgetWeight +

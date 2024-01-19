@@ -48,7 +48,7 @@ class MultiQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow((1 + arma::pow(x, 2)), 0.5);
+    y = pow((1 + pow(x, 2)), 0.5);
   }
 
   /**

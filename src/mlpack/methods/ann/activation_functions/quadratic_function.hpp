@@ -47,7 +47,7 @@ class QuadraticFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow(x, 2);
+    y = pow(x, 2);
   }
 
   /**

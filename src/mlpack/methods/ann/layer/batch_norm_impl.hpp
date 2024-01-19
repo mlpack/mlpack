@@ -215,7 +215,7 @@ void BatchNormType<MatType>::Forward(
 
     // Calculate mean and variance over all channels.
     MatType mean = sum(sum(inputTemp, 2), 0) / m;
-    variance = sum(sum(arma::pow(
+    variance = sum(sum(pow(
         inputTemp.each_slice() - repmat(mean, inputSize, 1), 2), 2), 0) / m;
 
     outputTemp.each_slice() -= repmat(mean, inputSize, 1);
@@ -290,7 +290,7 @@ void BatchNormType<MatType>::Backward(
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   MatType temp = sum(sum(norm % inputMean, 2), 0);
-  MatType vars = temp % arma::pow(stdInv, 3) * (-0.5);
+  MatType vars = temp % pow(stdInv, 3) * (-0.5);
 
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
