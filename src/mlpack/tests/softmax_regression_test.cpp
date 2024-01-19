@@ -49,7 +49,7 @@ TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
     {
       arma::mat hypothesis, probabilities;
 
-      hypothesis = arma::exp(parameters * data.col(j));
+      hypothesis = exp(parameters * data.col(j));
       probabilities = hypothesis / arma::accu(hypothesis);
 
       logLikelihood += log(probabilities(labels(j), 0));

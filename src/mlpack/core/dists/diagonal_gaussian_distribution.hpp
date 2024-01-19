@@ -82,7 +82,7 @@ class DiagonalGaussianDistribution
   {
     arma::vec logProbabilities;
     LogProbability(x, logProbabilities);
-    probabilities = arma::exp(logProbabilities);
+    probabilities = exp(logProbabilities);
   }
 
   /**

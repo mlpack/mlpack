@@ -91,10 +91,10 @@ TEST_CASE("SparseAutoencoderFunctionRandomEvaluate", "[SparseAutoencoderTest]")
       arma::mat hiddenLayer, outputLayer, diff;
 
       hiddenLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
+          (1 + exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
           data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
       outputLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
+          (1 + exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
           * hiddenLayer + parameters.submat(l3, 0, l3, l2 - 1).t())));
       diff = outputLayer - data.col(j);
 
@@ -188,7 +188,7 @@ TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
       arma::mat hiddenLayer;
 
       hiddenLayer = 1.0 / (1 +
-          arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
+          exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
           data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
       rhoCap += hiddenLayer;
     }
