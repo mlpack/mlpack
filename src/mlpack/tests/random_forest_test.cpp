@@ -172,8 +172,8 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest]")
     noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
-  arma::mat fullData = arma::join_rows(dataset, noise);
-  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+  arma::mat fullData = join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = join_rows(labels, noiseLabels);
 
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
@@ -280,8 +280,8 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest]")
   for (size_t i = 2000; i < 4000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-  arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
+  arma::mat fullData = join_rows(trainingData, randomNoise);
+  arma::Row<size_t> fullLabels = join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
   RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 25 trees */, 1,
@@ -396,8 +396,8 @@ TEST_CASE("RandomForestNumericTrainReturnEntropy", "[RandomForestTest]")
     noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
-  arma::mat fullData = arma::join_rows(dataset, noise);
-  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+  arma::mat fullData = join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = join_rows(labels, noiseLabels);
 
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
@@ -449,8 +449,8 @@ TEST_CASE("RandomForestCategoricalTrainReturnEntropy", "[RandomForestTest]")
   for (size_t i = 4000; i < 6000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  arma::mat fullData = arma::join_rows(d, randomNoise);
-  arma::Row<size_t> fullLabels = arma::join_rows(l, randomLabels);
+  arma::mat fullData = join_rows(d, randomNoise);
+  arma::Row<size_t> fullLabels = join_rows(l, randomLabels);
 
   // Test random forest on unweighted categorical dataset.
   RandomForest<> rf;
@@ -577,8 +577,8 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
     noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
-  arma::mat fullData = arma::join_rows(dataset, noise);
-  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+  arma::mat fullData = join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = join_rows(labels, noiseLabels);
 
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);

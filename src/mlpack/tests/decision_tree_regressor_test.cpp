@@ -853,8 +853,8 @@ TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
   for (size_t i = 2000; i < 4000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-  arma::rowvec fullResponses = arma::join_rows(trainingResponses,
+  arma::mat fullData = join_rows(trainingData, randomNoise);
+  arma::rowvec fullResponses = join_rows(trainingResponses,
       randomResponses);
 
   // Build the tree.
@@ -908,8 +908,8 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
   for (size_t i = 2000; i < 4000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-  arma::rowvec fullResponses = arma::join_rows(trainingResponses,
+  arma::mat fullData = join_rows(trainingData, randomNoise);
+  arma::rowvec fullResponses = join_rows(trainingResponses,
       randomResponses);
 
   // Build the tree using MAD gain.
@@ -1006,8 +1006,8 @@ TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
       noiseResponses[i] = 15 + Random(0, 10); // Random response.
 
     // Concatenate data matrices.
-    arma::mat data = arma::join_rows(trainData, noise);
-    arma::rowvec fullResponses = arma::join_rows(trainResponses,
+    arma::mat data = join_rows(trainData, noise);
+    arma::rowvec fullResponses = join_rows(trainResponses,
         noiseResponses);
 
     // Set weights.
@@ -1062,8 +1062,8 @@ TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
       noiseResponses[i] = 15 + Random(0, 10); // Random response.
 
     // Concatenate data matrices.
-    arma::mat data = arma::join_rows(trainData, noise);
-    arma::rowvec fullResponses = arma::join_rows(trainResponses,
+    arma::mat data = join_rows(trainData, noise);
+    arma::rowvec fullResponses = join_rows(trainResponses,
         noiseResponses);
 
     // Now set weights.

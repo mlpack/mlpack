@@ -946,8 +946,8 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
     noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
-  arma::mat data = arma::join_rows(dataset, noise);
-  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+  arma::mat data = join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = join_rows(labels, noiseLabels);
 
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
@@ -1017,8 +1017,8 @@ TEST_CASE("CategoricalWeightedBuildTest", "[DecisionTreeTest]")
   for (size_t i = 2000; i < 4000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-  arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
+  arma::mat fullData = join_rows(trainingData, randomNoise);
+  arma::Row<size_t> fullLabels = join_rows(trainingLabels, randomLabels);
 
   // Build the tree.
   DecisionTree<> tree(fullData, di, fullLabels, 5, weights, 10);
@@ -1059,8 +1059,8 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
     noiseLabels[i] = RandInt(3); // Random label.
 
   // Concatenate data matrices.
-  arma::mat data = arma::join_rows(dataset, noise);
-  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+  arma::mat data = join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = join_rows(labels, noiseLabels);
 
   // Now set weights.
   arma::rowvec weights(dataset.n_cols + 1000);
@@ -1130,8 +1130,8 @@ TEST_CASE("CategoricalInformationGainWeightedBuildTest", "[DecisionTreeTest]")
   for (size_t i = 2000; i < 4000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-  arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
+  arma::mat fullData = join_rows(trainingData, randomNoise);
+  arma::Row<size_t> fullLabels = join_rows(trainingLabels, randomLabels);
 
   // Build the tree.
   DecisionTree<InformationGain> tree(fullData, di, fullLabels, 5, weights, 10);
