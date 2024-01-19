@@ -217,7 +217,7 @@ class DuelingDQN
     arma::mat gradValue = sum(gradLoss);
     arma::mat gradAdvantage = gradLoss.each_row() - arma::mean(gradLoss);
 
-    arma::mat grad = arma::join_cols(gradValue, gradAdvantage);
+    arma::mat grad = join_cols(gradValue, gradAdvantage);
     completeNetwork.Backward(state, grad, gradient);
   }
 

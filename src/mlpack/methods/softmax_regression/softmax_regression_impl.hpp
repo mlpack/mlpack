@@ -184,7 +184,7 @@ inline void SoftmaxRegression<MatType>::Classify(
   if (fitIntercept)
   {
     // In order to add the intercept term, we should compute following matrix:
-    //     [1; data] = arma::join_cols(ones(1, data.n_cols), data)
+    //     [1; data] = join_cols(ones(1, data.n_cols), data)
     //     hypothesis = exp(parameters * [1; data]).
     //
     // Since the cost of join maybe high due to the copy of original data,
