@@ -44,8 +44,8 @@ class GaussianInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W,
+  template<typename MatType>
+  void Initialize(MatType& W,
                   const size_t rows,
                   const size_t cols)
   {
@@ -60,8 +60,9 @@ class GaussianInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W)
+  template<typename MatType>
+  void Initialize(MatType& W,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
@@ -77,8 +78,8 @@ class GaussianInitialization
    * @param cols Number of columns.
    * @param slices Number of slices.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT> & W,
+  template<typename CubeType>
+  void Initialize(CubeType& W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
@@ -95,8 +96,9 @@ class GaussianInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT> & W)
+  template<typename CubeType>
+  void Initialize(CubeType& W,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
