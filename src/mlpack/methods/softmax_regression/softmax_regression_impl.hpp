@@ -198,7 +198,7 @@ inline void SoftmaxRegression<MatType>::Classify(
     hypothesis = exp(parameters * dataset);
   }
 
-  probabilities = hypothesis / repmat(arma::sum(hypothesis, 0), numClasses, 1);
+  probabilities = hypothesis / repmat(sum(hypothesis, 0), numClasses, 1);
 
   // Prepare necessary data.
   labels.zeros(dataset.n_cols);

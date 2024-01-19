@@ -176,7 +176,7 @@ void HighwayType<InputType, OutputType>::Gradient(
   gradient.submat(0, 0, transformWeight.n_elem - 1, 0) = vectorise(
       transformGateError * input.t());
   gradient.submat(transformWeight.n_elem, 0, transformWeight.n_elem +
-      transformBias.n_elem - 1, 0) = arma::sum(transformGateError, 1);
+      transformBias.n_elem - 1, 0) = sum(transformGateError, 1);
 }
 
 template<typename InputType, typename OutputType>

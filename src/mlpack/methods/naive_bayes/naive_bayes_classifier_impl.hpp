@@ -230,7 +230,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     // diagonal matrix.
     ModelMatType diffs = data - repmat(means.col(i), 1, data.n_cols);
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
-    arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
+    arma::Mat<ElemType> exponents = sum(diffs % rhs, 0);
 
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
         arma::accu(arma::log(variances.col(i))) + exponents);

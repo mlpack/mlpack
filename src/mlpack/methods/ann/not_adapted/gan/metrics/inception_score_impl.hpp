@@ -45,7 +45,7 @@ double InceptionScore(ModelType model,
     arma::mat temp = arma::log(curPreds);
     temp.each_col() -= c;
     curPreds %= temp;
-    scores(i) = exp(arma::as_scalar(arma::mean(arma::sum(curPreds, 0))));
+    scores(i) = exp(arma::as_scalar(arma::mean(sum(curPreds, 0))));
     index += curSize;
   }
 

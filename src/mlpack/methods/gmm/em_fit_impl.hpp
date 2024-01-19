@@ -131,7 +131,7 @@ Estimate(const arma::mat& observations,
       // covariance only with diagonal components.
       if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
-        arma::vec covariance = arma::sum((tmp % tmp) %
+        arma::vec covariance = sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
             trans(exp(condLogProb.col(i) - probRowSums[i]))), 1);
 
@@ -242,7 +242,7 @@ Estimate(const arma::mat& observations,
       // covariance only with diagonal components.
       if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
-        arma::vec cov = arma::sum((tmp % tmp) %
+        arma::vec cov = sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
             trans(exp(condLogProb.col(i) +
                             logProbabilities - probRowSums[i]))), 1);

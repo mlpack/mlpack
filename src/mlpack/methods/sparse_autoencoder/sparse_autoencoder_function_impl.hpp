@@ -113,7 +113,7 @@ inline double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters)
   arma::mat rhoCap, diff;
 
   // Average activations of the hidden layer.
-  rhoCap = arma::sum(hiddenLayer, 1) / data.n_cols;
+  rhoCap = sum(hiddenLayer, 1) / data.n_cols;
   // Difference between the reconstructed data and the original data.
   diff = outputLayer - data;
 
@@ -180,7 +180,7 @@ inline void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   arma::mat rhoCap, diff;
 
   // Average activations of the hidden layer.
-  rhoCap = arma::sum(hiddenLayer, 1) / data.n_cols;
+  rhoCap = sum(hiddenLayer, 1) / data.n_cols;
   // Difference between the reconstructed data and the original data.
   diff = outputLayer - data;
 
@@ -208,8 +208,8 @@ inline void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   gradient.submat(l1, 0, l3 - 1, l2 - 1) =
       (delOut * hiddenLayer.t() / data.n_cols +
       lambda * parameters.submat(l1, 0, l3 - 1, l2 - 1).t()).t();
-  gradient.submat(0, l2, l1 - 1, l2) = arma::sum(delHid, 1) / data.n_cols;
-  gradient.submat(l3, 0, l3, l2 - 1) = (arma::sum(delOut, 1) / data.n_cols).t();
+  gradient.submat(0, l2, l1 - 1, l2) = sum(delHid, 1) / data.n_cols;
+  gradient.submat(l3, 0, l3, l2 - 1) = (sum(delOut, 1) / data.n_cols).t();
 }
 
 } // namespace mlpack

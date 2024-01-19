@@ -75,7 +75,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Forward(
       else
       {
         distances.slice(i).col(j) =
-            exp(-arma::sum(abs(cubeM.slice(i) - cubeM.slice(j)), 1));
+            exp(-sum(abs(cubeM.slice(i) - cubeM.slice(j)), 1));
         output.col(i) += distances.slice(i).col(j);
       }
     }

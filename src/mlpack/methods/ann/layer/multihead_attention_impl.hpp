@@ -347,7 +347,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)
-      = vectorise(arma::sum(arma::sum(errorTemp, 2), 1));
+      = vectorise(sum(sum(errorTemp, 2), 1));
 
   // The shape of attnOut : (tgtSeqLen, embedDim, batchSize).
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
@@ -357,7 +357,7 @@ Gradient(const MatType& input,
   // Gradient wrt. outWt, i.e. dL/d(outWt). We will take sum of gyTemp along
   // the slices and vectorise the output.
   gradient.rows(3 * wtSize, 4 * wtSize - 1)
-      = vectorise(arma::sum(gyTemp, 2));
+      = vectorise(sum(gyTemp, 2));
 
   // Partial derivative wrt. attnOut.
   // The shape of outWt : (embedDim, embedDim).
@@ -381,7 +381,7 @@ Gradient(const MatType& input,
   // Gradient wrt. vBias, i.e. dL/d(vBias). We will take summation of errorTemp
   // over all the batches and over all the sequences.
   gradient.rows(4 * wtSize + 2 * embedDim, 4 * wtSize + 3 * embedDim - 1)
-      = vectorise(arma::sum(arma::sum(errorTemp, 2), 0));
+      = vectorise(sum(sum(errorTemp, 2), 0));
 
   // Shape of v : (srcSeqLen, embedDim, batchSize).
   // Shape of errorTemp : (srcSeqLen, embedDim, bathSize).
@@ -391,7 +391,7 @@ Gradient(const MatType& input,
   // Gradient wrt. valueWt, i.e. dL/d(valueWt). We will take summation over all
   // batches of errorTemp.
   gradient.rows(2 * wtSize, 3 * wtSize - 1)
-      = vectorise(arma::sum(errorTemp, 2));
+      = vectorise(sum(errorTemp, 2));
 
   // Now, the shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).
@@ -419,7 +419,7 @@ Gradient(const MatType& input,
   // Gradient wrt. kBias, i.e. dL/d(kBias). We will take summation over all the
   // batches of gyTemp and then over all the sequences.
   gradient.rows(4 * wtSize + embedDim, 4 * wtSize + 2 * embedDim - 1)
-      = vectorise(arma::sum(arma::sum(gyTemp, 2), 0));
+      = vectorise(sum(sum(gyTemp, 2), 0));
 
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of gyTemp : (srcSeqLen, embedDim, batchSize).
@@ -428,7 +428,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. keyWt, i.e. dL/d(keyWt). We will take summation over all the
   // batches of dkeyWt.
-  gradient.rows(wtSize, 2 * wtSize - 1) = vectorise(arma::sum(gyTemp, 2));
+  gradient.rows(wtSize, 2 * wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
@@ -442,7 +442,7 @@ Gradient(const MatType& input,
   // Gradient wrt. qBias, i.e. dL/d(qBias). We will take summation over all the
   // batches of gyTemp and over all the sequences.
   gradient.rows(4 * wtSize, 4 * wtSize + embedDim - 1)
-      = vectorise(arma::sum(arma::sum(gyTemp, 2), 0));
+      = vectorise(sum(sum(gyTemp, 2), 0));
 
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
@@ -451,7 +451,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. queryWt, i.e. dL/d(queryBias). We will take summation over
   // all the batches of gyTemp.
-  gradient.rows(0, wtSize - 1) = vectorise(arma::sum(gyTemp, 2));
+  gradient.rows(0, wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // Regularize according to the given regularization rule.
   regularizer.Evaluate(weights, gradient);

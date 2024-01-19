@@ -43,7 +43,7 @@ class HoeffdingInformationGain
     if (numElem == 0)
       return 0.0;
 
-    arma::Col<size_t> classCounts = arma::sum(counts, 1);
+    arma::Col<size_t> classCounts = sum(counts, 1);
 
     // Calculate the gain of the unsplit node.
     double gain = 0.0;

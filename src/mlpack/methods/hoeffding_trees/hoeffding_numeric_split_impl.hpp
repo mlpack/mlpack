@@ -152,7 +152,7 @@ size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
   {
     // We've calculated the bins, so we can just sum over the sufficient
     // statistics.
-    arma::Col<size_t> classCounts = arma::sum(sufficientStatistics, 1);
+    arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
     arma::uword maxIndex = 0;
     classCounts.max(maxIndex);
@@ -179,9 +179,9 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
   {
     // We've calculated the bins, so we can just sum over the sufficient
     // statistics.
-    arma::Col<size_t> classCounts = arma::sum(sufficientStatistics, 1);
+    arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
-    return double(classCounts.max()) / double(arma::sum(classCounts));
+    return double(classCounts.max()) / double(sum(classCounts));
   }
 }
 
