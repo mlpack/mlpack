@@ -160,7 +160,7 @@ struct GetRowType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetColType
 {
-  typedef arma::Row<typename MatType::elem_type> type;
+  typedef arma::Col<typename MatType::elem_type> type;
 };
 
 template<typename eT>
