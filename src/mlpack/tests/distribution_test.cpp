@@ -1457,7 +1457,7 @@ TEST_CASE("DiagonalGaussianDistributionTrainTest", "[DistributionTest]")
   arma::mat observations(4, 10000);
 
   for (size_t i = 0; i < 10000; ++i)
-    observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
+    observations.col(i) = (sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
   DiagonalGaussianDistribution d;
 
@@ -1522,7 +1522,7 @@ TEST_CASE("DiagonalGaussianWeightedParametersReductionTest",
   arma::vec probs("0.2 0.2 0.2 0.2 0.2");
 
   for (size_t i = 0; i < 5; ++i)
-    obs.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
+    obs.col(i) = (sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
   DiagonalGaussianDistribution d1;
   DiagonalGaussianDistribution d2;

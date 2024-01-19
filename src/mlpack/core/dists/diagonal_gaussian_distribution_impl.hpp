@@ -67,7 +67,7 @@ inline void DiagonalGaussianDistribution::LogProbability(
 
 inline arma::vec DiagonalGaussianDistribution::Random() const
 {
-  return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
+  return (sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
 }
 
 inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
