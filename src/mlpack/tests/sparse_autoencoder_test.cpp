@@ -98,7 +98,7 @@ TEST_CASE("SparseAutoencoderFunctionRandomEvaluate", "[SparseAutoencoderTest]")
           * hiddenLayer + parameters.submat(l3, 0, l3, l2 - 1).t())));
       diff = outputLayer - data.col(j);
 
-      reconstructionError += 0.5 * arma::sum(arma::sum(diff % diff));
+      reconstructionError += 0.5 * sum(sum(diff % diff));
     }
     reconstructionError /= points;
 

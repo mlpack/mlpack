@@ -1135,7 +1135,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   gru.Forward(input, output);
 
-//   double s = arma::as_scalar(arma::sum(expectedOutput));
+//   double s = arma::as_scalar(sum(expectedOutput));
 
 //   // Compute the value of z_t gate for the second input.
 //   arma::mat z_t = arma::ones(3, 1);
@@ -1145,7 +1145,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   // Compute the value of o_t gate for the second input.
 //   arma::mat o_t = arma::ones(3, 1);
-//   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
+//   o_t *= -(arma::as_scalar(sum(expectedOutput % z_t)) + 4);
 //   o_t = exp(o_t);
 //   o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 
@@ -1740,7 +1740,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   gru.Forward(input, output);
 //
-//   double s = arma::as_scalar(arma::sum(expectedOutput));
+//   double s = arma::as_scalar(sum(expectedOutput));
 //
 //   // Compute the value of z_t gate for the second input.
 //   arma::mat z_t = arma::ones(3, 1);
@@ -1750,7 +1750,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   // Compute the value of o_t gate for the second input.
 //   arma::mat o_t = arma::ones(3, 1);
-//   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
+//   o_t *= -(arma::as_scalar(sum(expectedOutput % z_t)) + 4);
 //   o_t = exp(o_t);
 //   o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 //
