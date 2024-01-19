@@ -250,7 +250,7 @@ inline arma::vec DiagonalGMM::Random() const
     }
   }
 
-  return arma::sqrt(dists[gaussian].Covariance()) %
+  return sqrt(dists[gaussian].Covariance()) %
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 

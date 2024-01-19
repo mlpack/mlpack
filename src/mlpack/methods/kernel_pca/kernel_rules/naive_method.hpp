@@ -87,7 +87,7 @@ class NaiveKernelRule
   eigvec = arma::fliplr(eigvec);
 
   transformedData = eigvec.t() * kernelMatrix;
-  transformedData.each_col() /= arma::sqrt(eigval);
+  transformedData.each_col() /= sqrt(eigval);
 }
 };
 

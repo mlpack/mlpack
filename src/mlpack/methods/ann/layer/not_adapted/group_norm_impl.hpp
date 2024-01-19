@@ -80,7 +80,7 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   // Normalize the input.
   output = reshapedInput.each_row() - mean;
   inputMean = output;
-  output.each_row() /= arma::sqrt(variance + eps);
+  output.each_row() /= sqrt(variance + eps);
 
   output.reshape(input.n_rows, input.n_cols);
   // Reused in the backward and gradient step.
@@ -125,7 +125,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
   arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
       gy.n_rows / groupCount, gy.n_cols * groupCount, false, false);
 
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const arma::mat stdInv = 1.0 / sqrt(variance + eps);
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   const arma::mat var = sum(normReshaped % inputMean, 0) %

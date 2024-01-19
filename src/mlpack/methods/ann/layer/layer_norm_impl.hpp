@@ -66,7 +66,7 @@ void LayerNormType<MatType>::Forward(
   // Normalize the input.
   output = input.each_row() - mean;
   inputMean = output;
-  output.each_row() /= arma::sqrt(variance + eps);
+  output.each_row() /= sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
   normalized = output;
@@ -83,7 +83,7 @@ void LayerNormType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / sqrt(variance + eps);
 
   // dl / dxhat.
   const MatType norm = gy.each_col() % gamma;

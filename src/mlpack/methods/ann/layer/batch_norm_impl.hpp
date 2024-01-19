@@ -225,7 +225,7 @@ void BatchNormType<MatType>::Forward(
     inputMean = outputTemp;
 
     // Normalize output.
-    outputTemp.each_slice() /= arma::sqrt(repmat(variance, inputSize, 1) + eps);
+    outputTemp.each_slice() /= sqrt(repmat(variance, inputSize, 1) + eps);
 
     // Re-used in backward propagation.
     normalized.set_size(arma::size(inputTemp));
@@ -257,7 +257,7 @@ void BatchNormType<MatType>::Forward(
         batchSize * higherDimension, false, false);
 
     outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
-    outputTemp.each_slice() /= arma::sqrt(repmat(runningVariance.t(),
+    outputTemp.each_slice() /= sqrt(repmat(runningVariance.t(),
         inputSize, 1) + eps);
     outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
     outputTemp.each_slice() += repmat(beta.t(), inputSize, 1);
@@ -271,7 +271,7 @@ void BatchNormType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / sqrt(variance + eps);
 
   const size_t batchSize = gy.n_cols;
   const size_t inputSize = inputDimension;
