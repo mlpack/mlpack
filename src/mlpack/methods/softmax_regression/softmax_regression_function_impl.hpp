@@ -170,18 +170,18 @@ inline void SoftmaxRegressionFunction<MatType>::GetProbabilitiesMatrix(
   {
     // In order to add the intercept term, we should compute following matrix:
     //     [1; data] = arma::join_cols(ones(1, data.n_cols), data)
-    //     hypothesis = arma::exp(parameters * [1; data]).
+    //     hypothesis = exp(parameters * [1; data]).
     //
     // Since the cost of join may be high due to the copy of original data,
     // split the hypothesis computation to two components.
-    hypothesis = arma::exp(
+    hypothesis = exp(
         repmat(parameters.col(0), 1, batchSize) +
         parameters.cols(1, parameters.n_cols - 1) *
         data.cols(start, start + batchSize - 1));
   }
   else
   {
-    hypothesis = arma::exp(parameters *
+    hypothesis = exp(parameters *
         data.cols(start, start + batchSize - 1));
   }
 

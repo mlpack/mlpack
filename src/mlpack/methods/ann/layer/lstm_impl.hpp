@@ -181,9 +181,9 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   }
 
   inputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-inputGate));
+      1.0 / (1.0 + exp(-inputGate));
   forgetGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-forgetGate));
+      1.0 / (1.0 + exp(-forgetGate));
 
   hiddenLayer = input2HiddenWeight * input;
   if (this->HasPreviousStep())
@@ -220,7 +220,7 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   outputGate.each_col() += input2GateOutputBias;
 
   outputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-outputGate));
+      1.0 / (1.0 + exp(-outputGate));
 
   cellActivation.slice(this->CurrentStep()) =
       arma::tanh(cell.slice(this->CurrentStep()));

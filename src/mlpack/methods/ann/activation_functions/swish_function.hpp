@@ -50,7 +50,7 @@ class SwishFunction
   template<typename eT>
   static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + exp(-x));
   }
 
   /**

@@ -104,7 +104,7 @@ void LogSoftMaxType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = gy - arma::exp(output) % repmat(arma::sum(gy), output.n_rows, 1);
+  g = gy - exp(output) % repmat(arma::sum(gy), output.n_rows, 1);
 }
 
 } // namespace mlpack

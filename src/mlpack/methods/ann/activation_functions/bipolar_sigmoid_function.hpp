@@ -48,7 +48,7 @@ class BipolarSigmoidFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = (1 - arma::exp(-x)) / (1 + arma::exp(-x));
+    y = (1 - exp(-x)) / (1 + exp(-x));
   }
 
   /**

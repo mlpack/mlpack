@@ -110,7 +110,7 @@ void HighwayType<InputType, OutputType>::Forward(
 
   transformGate = transformWeight * input;
   transformGate.each_col() += transformBias;
-  transformGateActivation = 1.0 /(1 + arma::exp(-transformGate));
+  transformGateActivation = 1.0 /(1 + exp(-transformGate));
   output = (this->layerOutputs.back() % transformGateActivation) +
       (input % (1 - transformGateActivation));
 }

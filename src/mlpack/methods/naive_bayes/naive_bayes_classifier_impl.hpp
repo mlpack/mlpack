@@ -378,7 +378,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     maxValue = arma::max(logLikelihoods.col(j));
     logProbX = log(arma::accu(exp(logLikelihoods.col(j) -
         maxValue))) + maxValue;
-    predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) - logProbX);
+    predictionProbs.col(j) = exp(logLikelihoods.col(j) - logProbX);
   }
 
   // Now calculate maximum probabilities for each point.

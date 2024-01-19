@@ -78,7 +78,7 @@ class SparseAutoencoderFunction
    */
   void Sigmoid(const arma::mat& x, arma::mat& output) const
   {
-    output = (1.0 / (1 + arma::exp(-x)));
+    output = (1.0 / (1 + exp(-x)));
   }
 
   //! Return the initial point for the optimization.

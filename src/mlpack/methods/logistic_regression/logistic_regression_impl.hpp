@@ -200,7 +200,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
   labels = arma::conv_to<arma::Row<size_t>>::from((one /
-      (one + arma::exp(-parameters(0) -
+      (one + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       (one - ((ElemType) decisionBoundary)));
 }
@@ -213,7 +213,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
   // Set correct size of output matrix.
   probabilities.set_size(2, dataset.n_cols);
 
-  probabilities.row(1) = 1.0 / (1.0 + arma::exp(-parameters(0) -
+  probabilities.row(1) = 1.0 / (1.0 + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset));
   probabilities.row(0) = 1.0 - probabilities.row(1);
 }
@@ -231,7 +231,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
   predictions.set_size(dataset.n_cols);
   probabilities.set_size(2, dataset.n_cols);
 
-  probabilities.row(1) = one / (one + arma::exp(-parameters(0) -
+  probabilities.row(1) = one / (one + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset));
   probabilities.row(0) = one - probabilities.row(1);
 
