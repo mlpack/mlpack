@@ -37,7 +37,7 @@ template<>
 template<typename MatType>
 void LRegularizer<1>::Evaluate(const MatType& weight, MatType& gradient)
 {
-  gradient += vectorise(factor * arma::sign(weight));
+  gradient += vectorise(factor * sign(weight));
 }
 
 // L2-Regularizer specializations.

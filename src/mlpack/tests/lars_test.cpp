@@ -721,7 +721,7 @@ void CheckKKT(const arma::vec& beta,
 {
   const double epsilon = 1e-10; // For numerical precision.
 
-  arma::vec v = X.t() * X * beta - X.t() * y.t() + lambda * arma::sign(beta);
+  arma::vec v = X.t() * X * beta - X.t() * y.t() + lambda * sign(beta);
   // Active set indices with global numbering: could be empty.
   arma::uvec ia = arma::find(arma::abs(beta) > epsilon);
   // Zero indices with global numbering: could be empty.

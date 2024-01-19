@@ -98,7 +98,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Backward(
       {
         continue;
       }
-      InputType t = arma::sign(M.slice(i) - M.slice(j));
+      InputType t = sign(M.slice(i) - M.slice(j));
       t.each_col() %=
           distances.slice(std::min(i, j)).col(std::max(i, j)) % gM.col(i);
       deltaM.slice(i) -= t;
