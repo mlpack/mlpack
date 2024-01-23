@@ -44,9 +44,10 @@ class IdentityFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename VecType>
-  static void Fn(const VecType& x, VecType& y,
-      const typename std::enable_if_t<IsVector<VecType>::value>* = 0)
+  template<typename InputVecType, typename OutputVecType>
+  static void Fn(const InputVecType& x, OutputVecType& y,
+      const typename std::enable_if_t<IsVector<InputVecType>::value>* = 0,
+      const typename std::enable_if_t<IsVector<OutputVecType>::value>* = 0)
   {
     y = x;
   }
