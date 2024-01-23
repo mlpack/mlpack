@@ -83,8 +83,7 @@ class SVDConvolution
         NaiveConvolution<BorderMode>::Convolution(input, subFilter, subOutput);
 
         subOutput = subOutput.t();
-        MatType tmp = arma::conv_to<MatType>::from(U.unsafe_col(0));
-        NaiveConvolution<BorderMode>::Convolution(subOutput, tmp,
+        NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(0),
             output);
 
         MatType temp;
@@ -95,8 +94,8 @@ class SVDConvolution
               subOutput);
 
           subOutput = subOutput.t();
-          tmp = arma::conv_to<MatType>::from(U.unsafe_col(r));
-          NaiveConvolution<BorderMode>::Convolution(subOutput, tmp, temp);
+          NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(r),
+              temp);
           output += temp;
         }
 
