@@ -300,7 +300,6 @@ class ConvolutionType : public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  template<typename CubeType>
   void Rotate180(const CubeType& input, CubeType& output)
   {
     output = CubeType(input.n_rows, input.n_cols, input.n_slices);
