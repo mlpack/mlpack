@@ -18,7 +18,7 @@ functions on top of Armadillo.
  * [`Range`](#range): simple mathematical range (i.e. `[0, 3]`)
 
  * [`ColumnCovariance()`](#columncovariance): compute covariance of
-   [column-major](matrices.md) data
+   [column-major](matrices.md#representing-data-in-mlpack) data
 
  * `ColumnsToBlocks`
 
@@ -136,16 +136,51 @@ bool b3 = r1.Contains(r3); // true
 bool b4 = r3.Contains(r4); // false
 
 // Create a range of `float`s and a range of `int`s.
-mlpack::math::RangeType<float> r5(1.0f, 1.5f); // [1.0, 1.5]
-mlpack::math::RangeType<int> r6(3, 4); // [3, 4]
+mlpack::RangeType<float> r5(1.0f, 1.5f); // [1.0, 1.5]
+mlpack::RangeType<int> r6(3, 4); // [3, 4]
 ```
 
 ---
 
-`math::Range` is used by:
+`Range` is used by:
 
  * [`RangeSearch`](range_search.md)
  * [mlpack trees](#trees)
+
+---
+
+### `ColumnCovariance()`
+
+ * `ColumnCovariance(X, normType=0)`
+   - `X`: a [column-major](matrices.md#representing-data-in-mlpack) data matrix
+   - `normType`: either `0` or `1` (see below)
+
+ * Computes the covariance of the data matrix `X`.
+
+ * Equivalent to `arma::cov(X.t(), normType)`, but avoids computing the
+   transpose and is thus slightly more efficient.
+
+ * `normType` controls the type of normalization done when computing the
+   covariance:
+   - `0` will normalize with `X.n_cols - 1`, providing the best unbiased
+     estimation of the covariance matrix (if the columns are from a normal
+     distribution);
+   - `1` will normalize with `X.n_cols`, providing the second moment about the
+     mean of the columns.
+
+ * Any dense matrix type can be used so long as it supports the Armadillo API
+   (e.g., `arma::mat`, `arma::fmat`, etc.).
+
+Example:
+
+```c++
+// Generate a random data matrix with 100 points in 5 dimensions.
+arma::mat data(5, 100, arma::fill::randu);
+
+// Compute the covariance matrix of the column-major matrix.
+arma::mat cov = ColumnCovariance(data);
+cov.print("Covariance of random matrix:");
+```
 
 ---
 

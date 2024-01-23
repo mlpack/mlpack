@@ -24,7 +24,7 @@ inline arma::Mat<eT> ColumnCovariance(const arma::Mat<eT>& x,
 {
   if (normType > 1)
   {
-    Log::Fatal << "ColumnCovariance(): norm_type must be 0 or 1!" << std::endl;
+    Log::Fatal << "ColumnCovariance(): normType must be 0 or 1!" << std::endl;
   }
 
   arma::Mat<eT> out;
@@ -56,7 +56,7 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
 {
   if (normType > 1)
   {
-    Log::Fatal << "ColumnCovariance(): norm_type must be 0 or 1" << std::endl;
+    Log::Fatal << "ColumnCovariance(): normType must be 0 or 1" << std::endl;
   }
 
   typedef typename std::complex<T> eT;
