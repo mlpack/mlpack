@@ -73,8 +73,8 @@ template <
 class ConvolutionType : public Layer<MatType>
 {
  public:
-  //! Get the CubeType from MatType
   typedef typename GetCubeType<MatType>::type CubeType;
+
   //! Create the ConvolutionType object.
   ConvolutionType();
 
@@ -301,8 +301,7 @@ class ConvolutionType : public Layer<MatType>
    * @param output The rotated output.
    */
   template<typename CubeType>
-  void Rotate180(const CubeType& input, CubeType& output,
-      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
+  void Rotate180(const CubeType& input, CubeType& output)
   {
     output = CubeType(input.n_rows, input.n_cols, input.n_slices);
 
@@ -317,8 +316,7 @@ class ConvolutionType : public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  void Rotate180(const MatType& input, MatType& output,
-      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
+  void Rotate180(const MatType& input, MatType& output)
   {
     // * left-right flip, up-down flip */
     output = fliplr(flipud(input));
