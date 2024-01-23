@@ -12,29 +12,71 @@ classes, each of which are documented on this page.
 
 ## Core math utilities
 
-Utilities in the `mlpack::math::` namespace are meant to provide additional
-mathematical support on top of Armadillo.
+mlpack provides a number of additional mathematical utility classes and
+functions on top of Armadillo.
 
- * [`math::Range`](#mathrange): simple mathematical range (i.e. `[0, 3]`)
+ * [`Range`](#range): simple mathematical range (i.e. `[0, 3]`)
+
+ * [`ColumnCovariance()`](#columncovariance): compute covariance of
+   [column-major](matrices.md) data
+
+ * `ColumnsToBlocks`
+
+ * `Digamma()` // used by GammaDistribution
+
+ * `Center()`
+ * `RandVector()`
+
+ * `LogAdd()` // used by HMM/GMM
+ * `AccuLog()`
+ * `LogSumExp()`
+ * `LogSumExpT()`
+
+ * `MakeAlias()`: combine with other location?
+
+ * `MultiplyCube2Cube()` // all used by MultiheadAttention
+ * `MultiplyMat2Cube()`
+ * `MultipleCube2Mat()`
+
+ * `ErfInverse()` // used by Quantile()
+ * `Quantile()` // used by KDE
+
+ * `RandomBasis()`
+
+ * `RandGenSeedOffset()`
+ * `RandGen()`
+ * `RandUniformDist()`
+ * `RandNormalDist()`
+ * `RandomSeed()`
+ * `Random()`
+ * `Random(lo, hi)`
+ * `RandBernoulli()`
+ * `RandInt()`
+ * `RandNormal()`
+ * `ObtainDistinctSamples()`
+
+ * `ShuffleData()`
+
+ * `Trigamma()` // used by GammaDistribution
 
 ---
 
-### `math::Range`
+### `Range`
 
-The `math::Range` class represents a simple mathematical range (i.e. `[0, 3]`),
+The `Range` class represents a simple mathematical range (i.e. `[0, 3]`),
 with the bounds represented as `double`s.
 
 ---
 
 #### Constructors
 
- * `r = math::Range()`
+ * `r = Range()`
    - Construct an empty range.
 
- * `r = math::Range(p)`
+ * `r = Range(p)`
    - Construct the range `[p, p]`.
 
- * `r = math::Range(lo, hi)`
+ * `r = Range(lo, hi)`
    - Construct the range `[lo, hi]`.
 
 ---
@@ -75,18 +117,18 @@ with the bounds represented as `double`s.
 ---
 
  * To use ranges with different element types (e.g. `float`), use the type
-   `math::RangeType<float>` or similar.
+   `RangeType<float>` or similar.
 
 ---
 
 Example:
 
 ```c++
-mlpack::math::Range r1(5.0, 6.0); // [5, 6]
-mlpack::math::Range r2(7.0, 8.0); // [7, 8]
+mlpack::Range r1(5.0, 6.0); // [5, 6]
+mlpack::Range r2(7.0, 8.0); // [7, 8]
 
-mlpack::math::Range r3 = r1 | r2; // [5, 8]
-mlpack::math::Range r4 = r1 & r2; // empty range
+mlpack::Range r3 = r1 | r2; // [5, 8]
+mlpack::Range r4 = r1 & r2; // empty range
 
 bool b1 = r1.Contains(r2); // false
 bool b2 = r1.Contains(5.5); // true
