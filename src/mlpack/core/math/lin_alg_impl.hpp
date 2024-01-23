@@ -17,13 +17,6 @@
 
 namespace mlpack {
 
-inline size_t SvecIndex(size_t i, size_t j, size_t n)
-{
-  if (i > j)
-    std::swap(i, j);
-  return (j-i) + (n*(n+1) - (n-i)*(n-i+1))/2;
-}
-
 /**
  * Creates a centered matrix, where centering is done by subtracting
  * the sum over the columns (a column vector) from each column of the matrix.
@@ -37,31 +30,6 @@ inline void Center(const arma::mat& x, arma::mat& xCentered)
   arma::vec rowMean = arma::sum(x, 1) / x.n_cols;
 
   xCentered = x - arma::repmat(rowMean, 1, x.n_cols);
-}
-
-/**
- * Whitens a matrix using the singular value decomposition of the covariance
- * matrix. Whitening means the covariance matrix of the result is the identity
- * matrix.
- */
-inline void WhitenUsingSVD(const arma::mat& x,
-                           arma::mat& xWhitened,
-                           arma::mat& whiteningMatrix)
-{
-  arma::mat covX, u, v, invSMatrix, temp1;
-  arma::vec sVector;
-
-  covX = ColumnCovariance(x);
-
-  svd(u, sVector, v, covX);
-
-  size_t d = sVector.n_elem;
-  invSMatrix.zeros(d, d);
-  invSMatrix.diag() = 1 / sqrt(sVector);
-
-  whiteningMatrix = v * invSMatrix * trans(u);
-
-  xWhitened = whiteningMatrix * x;
 }
 
 /**
@@ -85,36 +53,6 @@ inline void RandVector(arma::vec& v)
   }
 
   v /= sqrt(dot(v, v));
-}
-
-/**
- * Orthogonalize x and return the result in W, using eigendecomposition.
- * We will be using the formula \f$ W = x (x^T x)^{-0.5} \f$.
- */
-inline void Orthogonalize(const arma::mat& x, arma::mat& W)
-{
-  // For a matrix A, A^N = V * D^N * V', where VDV' is the
-  // eigendecomposition of the matrix A.
-  arma::mat eigenvalues, eigenvectors;
-  arma::vec egval;
-  eig_sym(egval, eigenvectors, ColumnCovariance(x));
-  VectorPower(egval, -0.5);
-
-  eigenvalues.zeros(egval.n_elem, egval.n_elem);
-  eigenvalues.diag() = egval;
-
-  arma::mat at = (eigenvectors * eigenvalues * trans(eigenvectors));
-
-  W = at * x;
-}
-
-/**
- * Orthogonalize x in-place.  This could be sped up by a custom
- * implementation.
- */
-inline void Orthogonalize(arma::mat& x)
-{
-  Orthogonalize(x, x);
 }
 
 /**
@@ -173,94 +111,6 @@ inline void RemoveRows(const arma::mat& input,
     {
       output.rows(curRow, nKeep - 1) = input.rows(rowsToRemove[removeInd] + 1,
           input.n_rows - 1);
-    }
-  }
-}
-
-inline void Svec(const arma::mat& input, arma::vec& output)
-{
-  const size_t n = input.n_rows;
-  const size_t n2bar = n * (n + 1) / 2;
-
-  output.zeros(n2bar);
-
-  size_t idx = 0;
-  for (size_t i = 0; i < n; ++i)
-  {
-    for (size_t j = i; j < n; ++j)
-    {
-      if (i == j)
-        output(idx++) = input(i, j);
-      else
-        output(idx++) = M_SQRT2 * input(i, j);
-    }
-  }
-}
-
-inline void Svec(const arma::sp_mat& input, arma::sp_vec& output)
-{
-  const size_t n = input.n_rows;
-  const size_t n2bar = n * (n + 1) / 2;
-
-  output.zeros(n2bar, 1);
-
-  for (auto it = input.begin(); it != input.end(); ++it)
-  {
-    const size_t i = it.row();
-    const size_t j = it.col();
-    if (i > j)
-      continue;
-    if (i == j)
-      output(SvecIndex(i, j, n)) = *it;
-    else
-      output(SvecIndex(i, j, n)) = M_SQRT2 * (*it);
-  }
-}
-
-inline void Smat(const arma::vec& input, arma::mat& output)
-{
-  const size_t n = static_cast<size_t>
-      (ceil((-1. + sqrt(1. + 8. * input.n_elem)) / 2.));
-
-  output.zeros(n, n);
-
-  size_t idx = 0;
-  for (size_t i = 0; i < n; ++i)
-  {
-    for (size_t j = i; j < n; ++j)
-    {
-      if (i == j)
-        output(i, j) = input(idx++);
-      else
-        output(i, j) = output(j, i) = M_SQRT1_2 * input(idx++);
-    }
-  }
-}
-
-inline void SymKronId(const arma::mat& A, arma::mat& op)
-{
-  // TODO(stephentu): there's probably an easier way to build this operator
-
-  const size_t n = A.n_rows;
-  const size_t n2bar = n * (n + 1) / 2;
-  op.zeros(n2bar, n2bar);
-
-  size_t idx = 0;
-  for (size_t i = 0; i < n; ++i)
-  {
-    for (size_t j = i; j < n; ++j)
-    {
-      for (size_t k = 0; k < n; ++k)
-      {
-        op(idx, SvecIndex(k, j, n)) +=
-          ((k == j) ? 1. : M_SQRT1_2) * A(i, k);
-        op(idx, SvecIndex(i, k, n)) +=
-          ((k == i) ? 1. : M_SQRT1_2) * A(k, j);
-      }
-      op.row(idx) *= 0.5;
-      if (i != j)
-        op.row(idx) *= M_SQRT2;
-      idx++;
     }
   }
 }

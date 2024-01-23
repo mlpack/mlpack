@@ -31,31 +31,9 @@ namespace mlpack {
 inline void Center(const arma::mat& x, arma::mat& xCentered);
 
 /**
- * Whitens a matrix using the singular value decomposition of the covariance
- * matrix. Whitening means the covariance matrix of the result is the identity
- * matrix.
- */
-inline void WhitenUsingSVD(const arma::mat& x,
-                           arma::mat& xWhitened,
-                           arma::mat& whiteningMatrix);
-
-
-/**
  * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N.
  */
 inline void RandVector(arma::vec& v);
-
-/**
- * Orthogonalize x and return the result in W, using eigendecomposition.
- * We will be using the formula \f$ W = x (x^T x)^{-0.5} \f$.
- */
-inline void Orthogonalize(const arma::mat& x, arma::mat& W);
-
-/**
- * Orthogonalize x in-place.  This could be sped up by a custom
- * implementation.
- */
-inline void Orthogonalize(arma::mat& x);
 
 /**
  * Remove a certain set of rows in a matrix while copying to a second matrix.
@@ -67,62 +45,6 @@ inline void Orthogonalize(arma::mat& x);
 inline void RemoveRows(const arma::mat& input,
                        const std::vector<size_t>& rowsToRemove,
                        arma::mat& output);
-
-/**
- * Upper triangular representation of a symmetric matrix, scaled such that,
- * dot(Svec(A), Svec(B)) == dot(A, B) for symmetric A, B. Specifically,
- *
- * Svec(K) = [ K_11, sqrt(2) K_12, ..., sqrt(2) K_1n, K_22, ..., sqrt(2) K_2n, ..., K_nn ]^T
- *
- * @param input A symmetric matrix
- * @param output
- */
-inline void Svec(const arma::mat& input, arma::vec& output);
-
-inline void Svec(const arma::sp_mat& input, arma::sp_vec& output);
-
-/**
- * The inverse of Svec. That is, Smat(Svec(A)) == A.
- *
- * @param input
- * @param output A symmetric matrix
- */
-inline void Smat(const arma::vec& input, arma::mat& output);
-
-/**
- * Return the index such that A[i,j] == factr(i, j) * svec(A)[pos(i, j)],
- * where factr(i, j) = sqrt(2) if i != j and 1 otherwise.
- *
- * @param i
- * @param j
- * @param n
- */
-inline size_t SvecIndex(size_t i, size_t j, size_t n);
-
-/**
- * If A is a symmetric matrix, then SymKronId returns an operator Op such that
- *
- *    Op * svec(X) == svec(0.5 * (AX + XA))
- *
- * for every symmetric matrix X
- *
- * @param A
- * @param op
- */
-inline void SymKronId(const arma::mat& A, arma::mat& op);
-
-/**
- * Signum function.
- * Return 1 if x>0; return 0 if x=0; return -1 if x<0.
- * Return type are the same as input type.
- *
- * @param x Number of any type.
- */
-template <typename T>
-T Sign(const T x)
-{
-  return (T(0) < x) - (x < T(0));
-}
 
 } // namespace mlpack
 
