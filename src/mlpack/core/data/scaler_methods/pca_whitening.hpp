@@ -13,7 +13,6 @@
 #define MLPACK_CORE_DATA_PCA_WHITENING_SCALE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/math/ccov.hpp>
 
 namespace mlpack {
