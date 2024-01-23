@@ -55,66 +55,6 @@ inline void RandVector(arma::vec& v)
   v /= sqrt(dot(v, v));
 }
 
-/**
- * Remove a certain set of rows in a matrix while copying to a second matrix.
- *
- * @param input Input matrix to copy.
- * @param rowsToRemove Vector containing indices of rows to be removed.
- * @param output Matrix to copy non-removed rows into.
- */
-inline void RemoveRows(const arma::mat& input,
-                       const std::vector<size_t>& rowsToRemove,
-                       arma::mat& output)
-{
-  const size_t nRemove = rowsToRemove.size();
-  const size_t nKeep = input.n_rows - nRemove;
-
-  if (nRemove == 0)
-  {
-    output = input; // Copy everything.
-  }
-  else
-  {
-    output.set_size(nKeep, input.n_cols);
-
-    size_t curRow = 0;
-    size_t removeInd = 0;
-    // First, check 0 to first row to remove.
-    if (rowsToRemove[0] > 0)
-    {
-      // Note that this implies that n_rows > 1.
-      output.rows(0, rowsToRemove[0] - 1) = input.rows(0, rowsToRemove[0] - 1);
-      curRow += rowsToRemove[0];
-    }
-
-    // Now, check i'th row to remove to (i + 1)'th row to remove, until i is the
-    // penultimate row.
-    while (removeInd < nRemove - 1)
-    {
-      const size_t height = rowsToRemove[removeInd + 1] -
-          rowsToRemove[removeInd] - 1;
-
-      if (height > 0)
-      {
-        output.rows(curRow, curRow + height - 1) =
-            input.rows(rowsToRemove[removeInd] + 1,
-                       rowsToRemove[removeInd + 1] - 1);
-        curRow += height;
-      }
-
-      removeInd++;
-    }
-
-    // Now that i is the last row to remove, check last row to remove to last
-    // row.
-    if (rowsToRemove[removeInd] < input.n_rows - 1)
-    {
-      output.rows(curRow, nKeep - 1) = input.rows(rowsToRemove[removeInd] + 1,
-          input.n_rows - 1);
-    }
-  }
-}
-
 } // namespace mlpack
 
 #endif

@@ -35,17 +35,6 @@ inline void Center(const arma::mat& x, arma::mat& xCentered);
  */
 inline void RandVector(arma::vec& v);
 
-/**
- * Remove a certain set of rows in a matrix while copying to a second matrix.
- *
- * @param input Input matrix to copy.
- * @param rowsToRemove Vector containing indices of rows to be removed.
- * @param output Matrix to copy non-removed rows into.
- */
-inline void RemoveRows(const arma::mat& input,
-                       const std::vector<size_t>& rowsToRemove,
-                       arma::mat& output);
-
 } // namespace mlpack
 
 // Partially include implementation
