@@ -42,16 +42,8 @@ functions on top of Armadillo.
 
  * `RandomBasis()`
 
- * `RandGenSeedOffset()`
- * `RandGen()`
- * `RandUniformDist()`
- * `RandNormalDist()`
- * `RandomSeed()`
- * `Random()`
- * `Random(lo, hi)`
- * `RandBernoulli()`
- * `RandInt()`
- * `RandNormal()`
+ * [RNG and random number utilities](#rng-and-random-number-utilities): extended
+   random number generation functions
  * `ObtainDistinctSamples()`
 
  * `ShuffleData()`
@@ -463,6 +455,45 @@ vectors containing logarithms.
    - `out[i]` will be equal to `log(e^(out[i]) + e^(AccuLog(m.row(i))))`.
    - `eT` represents the element type of `m` and `out` (e.g., `double` if `m` is
      `arma::mat` and `out` is `arma::vec`).
+
+---
+
+### RNG and random number utilities
+
+On top of the random number generation support that Armadillo provides via
+[randu()](https://arma.sourceforge.net/docs.html#randu),
+[randn()](https://arma.sourceforge.net/docs.html#randn), and
+[randi()](https://arma.sourceforge.net/docs.html#randi), mlpack provides
+a few additional thread-safe random number generation functions for generating
+random scalar values.
+
+ * `RandomSeed(seed)` will set the random seed of mlpack's RNGs ***and***
+   Armadillo's RNG to `seed`.
+   - This internally calls `arma::arma_rng::set_seed()`.
+   - In a multithreaded application, each thread's RNG will be deterministically
+     set to a different value based on `seed`.
+
+ * `Random()` returns a random `double` uniformly distributed between `0` and
+   `1`. <!-- TODO: is it inclusive? -->
+
+ * `Random(lo, hi)` returns a random `double` uniformly distributed between `lo`
+   and `hi`. <!-- TODO: is it inclusive? -->
+
+ * `RandBernoulli(p)` samples from a Bernoulli distribution with parameter `p`:
+   with probability `p`, `1` is returned; with probability `1 - p`, `0` is
+   returned.
+
+ * `RandInt(hiExclusive)` returns a random `int` uniformly distributed in the
+   range `[0, hiExclusive)`.
+
+ * `RandInt(lo, hiExclusive)` returns a random `int` uniformly distributed in
+   the range `[lo, hiExclusive)`.
+
+ * `RandNormal()` returns a random `double` normally distributed with mean `0`
+   and variance `1`.
+
+ * `RandNormal(mean, variance)` returns a random `double` normally distributed
+   with mean `mean` and variance `variance`.
 
 ---
 
