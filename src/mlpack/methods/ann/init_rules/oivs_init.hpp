@@ -79,8 +79,8 @@ class OivsInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename MatType>
+  void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
     RandomInitialization randomInit(-gamma, gamma);
     randomInit.Initialize(W, rows, cols);
@@ -93,8 +93,9 @@ class OivsInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W)
+  template<typename MatType>
+  void Initialize(MatType& W,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
     RandomInitialization randomInit(-gamma, gamma);
     randomInit.Initialize(W);
@@ -111,8 +112,8 @@ class OivsInitialization
    * @param cols Number of columns.
    * @param slices Number of slices.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W,
+  template<typename CubeType>
+  void Initialize(CubeType& W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
@@ -130,8 +131,9 @@ class OivsInitialization
    *
    * @param W 3rd order tensor to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W)
+  template<typename CubeType>
+  void Initialize(CubeType& W,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty cube." << std::endl;
