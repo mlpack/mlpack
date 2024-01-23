@@ -22,13 +22,6 @@
 namespace mlpack {
 
 /**
- * Auxiliary function to raise vector elements to a specific power.  The sign
- * is ignored in the power operation and then re-added.  Useful for
- * eigenvalues.
- */
-inline void VectorPower(arma::vec& vec, const double power);
-
-/**
  * Creates a centered matrix, where centering is done by subtracting
  * the sum over the columns (a column vector) from each column of the matrix.
  *

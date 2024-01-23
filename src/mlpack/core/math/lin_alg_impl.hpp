@@ -25,25 +25,6 @@ inline size_t SvecIndex(size_t i, size_t j, size_t n)
 }
 
 /**
- * Auxiliary function to raise vector elements to a specific power.  The sign
- * is ignored in the power operation and then re-added.  Useful for
- * eigenvalues.
- */
-inline void VectorPower(arma::vec& vec, const double power)
-{
-  for (size_t i = 0; i < vec.n_elem; ++i)
-  {
-    if (std::abs(vec(i)) > 1e-12)
-    {
-      vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) :
-          -std::pow(-vec(i), (double) power);
-     }
-    else
-      vec(i) = 0;
-  }
-}
-
-/**
  * Creates a centered matrix, where centering is done by subtracting
  * the sum over the columns (a column vector) from each column of the matrix.
  *
