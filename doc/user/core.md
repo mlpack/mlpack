@@ -20,7 +20,8 @@ functions on top of Armadillo.
  * [`ColumnCovariance()`](#columncovariance): compute covariance of
    [column-major](matrices.md#representing-data-in-mlpack) data
 
- * `ColumnsToBlocks`
+ * [`ColumnsToBlocks`](#columnstoblocks): reshape data points into a block
+   matrix for visualization (useful for images)
 
  * `Digamma()` // used by GammaDistribution
 
@@ -181,6 +182,208 @@ arma::mat data(5, 100, arma::fill::randu);
 arma::mat cov = ColumnCovariance(data);
 cov.print("Covariance of random matrix:");
 ```
+
+---
+
+### `ColumnsToBlocks`
+
+The `ColumnsToBlocks` class provides a way to transform data points (e.g.
+columns in a matrix) into a block matrix format, primarily useful for
+visualization as an image.
+
+As a simple example, given a matrix with four columns `A`, `B`, `C`, and `D`,
+`ColumnsToBlocks` can transform this matrix into the form
+
+```
+[[m m m m m]
+ [m A m B m]
+ [m m m m m]
+ [m C m D m]
+ [m m m m m]]
+```
+
+where `m` is a margin, and where each column may itself be reshaped into a
+block.
+
+---
+
+#### Constructors and properties
+
+ * `ctb = ColumnsToBlocks(rows, cols)`
+   - Create a `ColumnsToBlocks` object that will reshape the input matrix into
+     blocks of shape `rows` by `cols`.
+   - Each input column will be reshaped into a square (e.g. `ctb.BlockHeight()`
+     and `ctb.BlockWidth()` are set to `0`).
+
+ * `ctb = ColumnsToBlocks(rows, cols, blockHeight, blockWidth)`
+   - Create a `ColumnsToBlocks` object that will reshape the input matrix into
+     blocks of shape `rows` by `cols`.
+   - Each individual column will also be reshaped into a block of shape
+     `blockHeight` by `blockWidth`.
+
+ * `ctb.Rows(rows)` will set the number of rows in the block output to `rows`.
+   - `ctb.Rows()` will return a `size_t` with the current setting.
+
+ * `ctb.Cols(cols)` will set the number of columns in the block output to
+   `cols`.
+   - `ctb.Cols()` will return a `size_t` with the current setting.
+
+ * `ctb.BlockHeight(blockHeight)` will set the number of rows in each individual
+   block to `blockHeight`.
+   - `ctb.BlockHeight()` will return a `size_t` with the current setting.
+   - If `ctb.BlockHeight()` is `0`, each input column will be reshaped into a
+     square; if this is not possible, an exception will be thrown.
+
+ * `ctb.BlockWidth()` will set the number of columns in each individual block to
+   `blockWidth`.
+   - `ctb.BlockWidth()` will return a `size_t` with the current setting.
+   - If `ctb.BlockWidth()` is `0`, each input column will be reshaped into a
+     square; if this is not possible, an exception will be thrown.
+
+ * `ctb.BufSize(bufSize)` will set the number of margin elements to `bufSize`.
+   - `ctb.BufSize()` will return a `size_t` with the current setting.
+   - The default setting is `1`.
+
+ * `ctb.BufValue(bufValue)` will set the element used for margins to `bufValue`.
+   - `ctb.BufValue()` will return a `size_t` with the current setting.
+   - The default setting is `-1.0`.
+
+---
+
+### Scaling values
+
+`ColumnsToBlocks` also has the capability of linearly scaling values of the
+inputs to a given range.
+
+ * `ctb.Scale(true)` enables scaling values.
+   - By default scaling is disabled.
+   - `ctb.Scale(false)` will disable scaling.
+   - `ctb.Scale()` will return a `bool` indicating whether scaling is enabled.
+
+ * `ctb.MinRange(value)` sets the lower bound of the scaling range to `value`.
+   - `ctb.MinRange()` returns the current value as a `double`.
+
+ * `ctb.MaxRange(value)` sets the upper bound of the scaling range to `value`.
+   - `ctb.MaxRange()` returns the current value as a `double`.
+   - Must be greater than `ctb.MinRange()`, if `ctb.Scale() == true`.
+
+***Note:*** the margin element (`ctb.BufValue()`) is considered during the
+scaling process.
+
+---
+
+#### Transforming into block format
+
+ * `ctb.Transform(input, output)` will perform the columns-to-blocks
+   transformation on the given matrix `input`, storing the result in the matrix
+   `output`.
+   - An exception will be thrown if `input.n_rows` is not equal to
+     `ctb.BlockHeight() * ctb.BlockWidth()` (if neither of those are `0`).
+   - If either `ctb.BlockHeight()` or `ctb.BlockWidth()` is `0`, each column
+     will be reshaped into a square, and an exception will be thrown if
+     `input.n_rows` is not a perfect square (i.e. if `sqrt(input.n_rows)` is not
+     an integer).
+
+---
+
+#### Examples
+
+Reshape two 4-element vectors into one row of two blocks.
+
+```c++
+// This matrix has two columns.
+arma::mat input;
+input = { { -1.0000, 0.1429 },
+          { -0.7143, 0.4286 },
+          { -0.4286, 0.7143 },
+          { -0.1429, 1.0000 } };
+input.print("Input columns:");
+
+arma::mat output;
+ColumnsToBlocks ctb(1, 2);
+ctb.Transform(input, output);
+
+// The columns of the input will be reshaped as a square which is
+// surrounded by padding value -1 (this value could be changed with the
+// BufValue() method):
+// -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+// -1.0000  -1.0000  -0.4286  -1.0000   0.1429   0.7143  -1.0000
+// -1.0000  -0.7143  -0.1429  -1.0000   0.4286   1.0000  -1.0000
+// -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000  -1.0000
+output.print("Output using 2x2 block size:");
+
+// Now, let's change some parameters; let's have each input column output not
+// as a square, but as a 4x1 vector.
+ctb.BlockWidth(1);
+ctb.BlockHeight(4);
+ctb.Transform(input, output);
+
+// The output here will be similar, but each maximal input is 4x1:
+// -1.0000 -1.0000 -1.0000 -1.0000 -1.0000
+// -1.0000 -1.0000 -1.0000  0.1429 -1.0000
+// -1.0000 -0.7143 -1.0000  0.4286 -1.0000
+// -1.0000 -0.4286 -1.0000  0.7143 -1.0000
+// -1.0000 -0.1429 -1.0000  1.0000 -1.0000
+// -1.0000 -1.0000 -1.0000 -1.0000 -1.0000
+output.print("Output using 4x1 block size:");
+```
+
+---
+
+Load simple images and reshape into blocks.
+
+```c++
+// Load some favicons from websites associated with mlpack.
+std::vector<std::string> images;
+// See the following files:
+// - https://datasets.mlpack.org/images/mlpack-favicon.png
+// - https://datasets.mlpack.org/images/ensmallen-favicon.png
+// - https://datasets.mlpack.org/images/armadillo-favicon.png 
+// - https://datasets.mlpack.org/images/bandicoot-favicon.png
+images.push_back("mlpack-favicon.png");
+images.push_back("ensmallen-favicon.png");
+images.push_back("armadillo-favicon.png");
+images.push_back("bandicoot-favicon.png");
+
+mlpack::data::ImageInfo info;
+info.Channels(1); // Force loading in grayscale.
+
+arma::mat matrix;
+mlpack::data::Load(images, matrix, info, true);
+
+// Now `matrix` has 4 columns, each of which is an individual image.
+// Let's save that as its own image just for visualization.
+mlpack::data::ImageInfo outInfo(matrix.n_cols, matrix.n_rows, 1);
+mlpack::data::Save("favicons-matrix.png", matrix, outInfo, true);
+
+// Use ColumnsToBlocks to create a 2x2 block matrix holding each image.
+ColumnsToBlocks ctb(2, 2);
+ctb.BufValue(0.0); // Use 0 for the margin value.
+ctb.BufSize(2); // Use 2-pixel margins.
+
+arma::mat blocks;
+ctb.Transform(matrix, blocks);
+
+mlpack::data::ImageInfo blockOutInfo(blocks.n_cols, blocks.n_rows, 1);
+mlpack::data::Save("favicons-blocks.png", blocks, blockOutInfo, true);
+```
+
+The resulting images (before and after using `ColumnsToBlocks`) are shown below.
+
+*Before*:
+
+<!-- TODO! -->
+
+*After*:
+
+<!-- TODO! -->
+
+---
+
+#### See also
+
+ * [Loading and saving image data](load_save.md#image-data)
+ * [`SparseAutoencoder`](sparse_autoencoder.md)
 
 ---
 
