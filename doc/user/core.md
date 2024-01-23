@@ -23,14 +23,13 @@ functions on top of Armadillo.
  * [`ColumnsToBlocks`](#columnstoblocks): reshape data points into a block
    matrix for visualization (useful for images)
 
- * [Distribution utilities](#distribution_utilities): `Digamma()`, `Trigamma()`
+ * [Distribution utilities](#distribution-utilities): `Digamma()`, `Trigamma()`
 
- * `RandVector()`
+ * [`RandVector()`](#randvector): generate random vector on the unit sphere
+   using the Box-Muller transform
 
- * `LogAdd()` // used by HMM/GMM
- * `AccuLog()`
- * `LogSumExp()`
- * `LogSumExpT()`
+ * [Logarithmic utilities](#logarithmic-utilities): `LogAdd()`, `AccuLog()`,
+   `LogSumExp()`, `LogSumExpT()`.
 
  * `MakeAlias()`: combine with other location?
 
@@ -392,6 +391,78 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 
  * Both of these functions are used internally by the
    [`GammaDistribution`](#gammadistribution) class.
+
+---
+
+### `RandVector()`
+
+ * `RandVector(v)` generates a random vector on the unit sphere (i.e. with an
+   L2-norm of 1) and stores it in `v` (an `arma::vec`).
+
+ * The [Box-Muller transform](https://en.wikipedia.org/wiki/Box-Muller_Transform)
+   is used to generate the vector. <!-- TODO: check accuracy of statement! -->
+
+ * `v` is not resized, and should have size equal to the desired dimensionality
+   when `RandVector()` is called.
+
+*Example*:
+
+```
+// Generate a random 10-dimensional vector.
+arma::vec v;
+v.set_size(10);
+RandVector(v);
+v.print("Random 10-dimensional vector: ");
+
+std::cout << "Random 10-dimensional vector: " << std::endl;
+std::cout << v.t();
+std::cout << "L2-norm of vector (should be 1): " << arma::norm(v, 2) << "."
+    << std::endl;
+```
+
+### Logarithmic utilities
+
+mlpack contains a few functions that are useful for working with logarithms, or
+vectors containing logarithms.
+
+ * `LogAdd(x, y)` for scalars `x` and `y` (e.g. `double`, `float`, `int`, etc.)
+   will return `log(e^x + e^y)`.
+
+ * `AccuLog(v)`, given a vector `v` containing log values, will return the
+   scalar log-sum of those values:
+   `log(e^(v[0]) + e^(v[1]) + ... + e^(v[v.n_elem - 1]))`.
+
+ * `LogSumExp(m, out)`, given a matrix `m` (`arma::mat`) containing log values,
+   will compute the scalar log-sum of each *column*, storing the result in the
+   column vector `out` (type `arma::vec`).
+   - `out` will be set to size `m.n_cols`.
+   - `out[i]` will be equal to `AccuLog(m.col(i))`.
+   - Different element types can be used for `m` and `out` (e.g. `arma::fmat`
+     and `arma::fvec`).
+
+ * `LogSumExpT(m, out)`, given a matrix `m` (type `arma::mat`) containing log
+   values, will compute the scalar log-sum of each *row*, storing the result in
+   the column vector `out` (type `arma::vec`)
+   - `out` will be set to size `m.n_rows`.
+   - `out[i]` will be equal to `AccuLog(m.row(i))`.
+   - Different element types can be used for `m` and `out` (e.g. `arma::fmat`
+     and `arma::fvec`).
+
+---
+
+ * `LogSumExp<eT, true>(m, out)` performs an incremental sum, otherwise
+   identical to `LogSumExp()`.
+   - The input values of `out` are not ignored.
+   - `out[i]` will be equal to `log(e^(out[i]) + e^(AccuLog(m.col(i))))`.
+   - `eT` represents the element type of `m` and `out` (e.g., `double` if `m` is
+     `arma::mat` and `out` is `arma::vec`).
+
+ * `LogSumExpT<eT, true>(m, out)` performs an incremental sum, otherwise
+   identical to `LogSumExpT()`.
+   - The input values of `out` are not ignored.
+   - `out[i]` will be equal to `log(e^(out[i]) + e^(AccuLog(m.row(i))))`.
+   - `eT` represents the element type of `m` and `out` (e.g., `double` if `m` is
+     `arma::mat` and `out` is `arma::vec`).
 
 ---
 
