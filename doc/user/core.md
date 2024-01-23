@@ -23,9 +23,8 @@ functions on top of Armadillo.
  * [`ColumnsToBlocks`](#columnstoblocks): reshape data points into a block
    matrix for visualization (useful for images)
 
- * `Digamma()` // used by GammaDistribution
+ * [Distribution utilities](#distribution_utilities): `Digamma()`, `Trigamma()`
 
- * `Center()`
  * `RandVector()`
 
  * `LogAdd()` // used by HMM/GMM
@@ -57,8 +56,6 @@ functions on top of Armadillo.
  * `ObtainDistinctSamples()`
 
  * `ShuffleData()`
-
- * `Trigamma()` // used by GammaDistribution
 
 ---
 
@@ -384,6 +381,17 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 
  * [Loading and saving image data](load_save.md#image-data)
  * [`SparseAutoencoder`](sparse_autoencoder.md)
+
+---
+
+### Distribution utilities
+
+ * `Digamma(x)` returns <!-- TODO -->
+
+ * `Trigamma(x)` returns <!-- TODO -->
+
+ * Both of these functions are used internally by the
+   [`GammaDistribution`](#gammadistribution) class.
 
 ---
 
