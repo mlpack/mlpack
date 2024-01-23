@@ -40,11 +40,9 @@ functions on top of Armadillo.
  * `ErfInverse()` // used by Quantile()
  * `Quantile()` // used by KDE
 
- * `RandomBasis()`
-
  * [RNG and random number utilities](#rng-and-random-number-utilities): extended
-   random number generation functions
- * `ObtainDistinctSamples()`
+   scalar random number generation functions
+ * [`RandomBasis()`](#randombasis): generate a random orthogonal basis
 
  * `ShuffleData()`
 
@@ -494,6 +492,55 @@ random scalar values.
 
  * `RandNormal(mean, variance)` returns a random `double` normally distributed
    with mean `mean` and variance `variance`.
+
+*Examples*:
+
+```c++
+mlpack::RandomSeed(123); // Set a specific random seed.
+
+const double r1 = mlpack::Random();             // In the range [0, 1].
+const double r2 = mlpack::Random(3, 4);         // In the range [3, 4].
+const double r3 = mlpack::RandBernoulli(0.25);  // P(1) = 0.25.
+const int    r4 = mlpack::RandInt(10);          // In the range [0, 10).
+const int    r5 = mlpack::RandInt(5, 10);       // In the range [5, 10).
+const double r6 = mlpack::RandNormal();         // r6 ~ N(0, 1).
+const double r7 = mlpack::RandNormal(2.0, 3.0); // r7 ~ N(2, 3).
+
+std::cout << "Random():            " << r1 << "." << std::endl;
+std::cout << "Random(3, 4):        " << r2 << "." << std::endl;
+std::cout << "RandBernoulli(0.25): " << r3 << "." << std::endl;
+std::cout << "RandInt(10):         " << r4 << "." << std::endl;
+std::cout << "RandInt(5, 10):      " << r5 << "." << std::endl;
+std::cout << "RandNormal():        " << r6 << "." << std::endl;
+std::cout << "RandNormal(2, 3):    " << r7 << "." << std::endl;
+```
+
+---
+
+### `RandomBasis()`
+
+The `RandomBasis()` function generates a random d-dimensional orthogonal basis.
+
+ * `RandomBasis(basis, d)` fills the matrix `basis` with `d` orthogonal vectors,
+   each of dimension `d`.
+   - `basis.col(i)` represents the `i`th basis vector.
+   - `basis` will have size `d` rows by `d` cols.
+
+ * The random basis is generated using the QR decomposition.
+
+*Example*:
+
+```c++
+arma::mat basis;
+
+// Generate a 10-dimensional random basis.
+mlpack::RandomBasis(basis, 10);
+
+// Each two vectors are orthogonal.
+std::cout << "Dot product of basis vectors 2 and 4: "
+    << arma::dot(basis.col(2), basis.col(4)) << " (should be zero)."
+    << std::endl;
+```
 
 ---
 
