@@ -13,7 +13,6 @@
 #define MLPACK_CORE_MATH_MATH_HPP
 
 #include "ccov.hpp"
-#include "clamp.hpp"
 #include "columns_to_blocks.hpp"
 #include "digamma.hpp"
 #include "lin_alg.hpp"

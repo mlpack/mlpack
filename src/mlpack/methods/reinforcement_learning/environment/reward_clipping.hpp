@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CLIPPING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 
@@ -89,9 +88,9 @@ class RewardClipping
                 State& nextState)
   {
     // Get original unclipped reward from base environment.
-    double unclippedReward =  environment.Sample(state, action, nextState);
+    double unclippedReward = environment.Sample(state, action, nextState);
     // Clip rewards according to the min and max limit and return.
-    return ClampRange(unclippedReward, minReward, maxReward);
+    return std::min(std::max(unclippedReward, minReward), maxReward);
   }
 
   /**
