@@ -79,7 +79,6 @@ add_executable(mlpack_test
   knn_test.cpp
   krann_search_test.cpp
   lars_test.cpp
-  lin_alg_test.cpp
   linear_regression_test.cpp
   lmnn_test.cpp
   linear_svm_test.cpp

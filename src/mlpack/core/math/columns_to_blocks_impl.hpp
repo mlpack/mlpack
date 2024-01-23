@@ -47,8 +47,8 @@ inline void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
     if (!IsPerfectSquare(maximalInputs.n_rows))
     {
       std::ostringstream oss;
-      oss << "ColumnsToBlocks::Transform(): input.n_rows (" << input.n_rows
-          << ") should be a perfect square!";
+      oss << "ColumnsToBlocks::Transform(): input.n_rows ("
+          << maximalInputs.n_rows << ") should be a perfect square!";
       throw std::runtime_error(oss.str());
     }
 
@@ -63,7 +63,7 @@ inline void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
     std::ostringstream oss;
     oss << "ColumnsToBlocks::Transform(): blockHeight * blockWidth ("
         << blockHeight << " * " << blockWidth << ") should be equal to "
-        << "input.n_rows (" << input.n_rows << ")!";
+        << "input.n_rows (" << maximalInputs.n_rows << ")!";
     throw std::runtime_error(oss.str());
   }
 

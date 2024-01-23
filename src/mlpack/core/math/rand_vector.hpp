@@ -1,36 +1,18 @@
 /**
- * @file core/math/lin_alg_impl.hpp
- * @author Stephen Tu
+ * @file core/math/rand_vector.hpp
  * @author Nishant Mehta
  *
- * Linear algebra utilities.
- * 
+ * Utility to generate a random vector on the unit sphere.
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_MATH_LIN_ALG_IMPL_HPP
-#define MLPACK_CORE_MATH_LIN_ALG_IMPL_HPP
-
-#include "lin_alg.hpp"
+#ifndef MLPACK_CORE_MATH_RAND_VECTOR_HPP
+#define MLPACK_CORE_MATH_RAND_VECTOR_HPP
 
 namespace mlpack {
-
-/**
- * Creates a centered matrix, where centering is done by subtracting
- * the sum over the columns (a column vector) from each column of the matrix.
- *
- * @param x Input matrix
- * @param xCentered Matrix to write centered output into
- */
-inline void Center(const arma::mat& x, arma::mat& xCentered)
-{
-  // Get the mean of the elements in each row.
-  arma::vec rowMean = arma::sum(x, 1) / x.n_cols;
-
-  xCentered = x - arma::repmat(rowMean, 1, x.n_cols);
-}
 
 /**
  * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N.

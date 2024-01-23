@@ -44,10 +44,9 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::mat& eigvec)
 {
   // Center the data into a temporary matrix.
-  arma::mat centeredData;
-  Center(data, centeredData);
+  arma::mat centeredData = data.each_col() - arma::mean(data, 0);
 
-  // Scale the data if the user ask for.
+  // Scale the data if the user asked for it.
   ScaleData(centeredData);
 
   decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
@@ -113,8 +112,7 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   arma::vec eigVal;
 
   // Center the data into a temporary matrix.
-  arma::mat centeredData;
-  Center(data, centeredData);
+  arma::mat centeredData = data.each_col() - arma::mean(centeredData, 0);
 
   // Scale the data if the user ask for.
   ScaleData(centeredData);
