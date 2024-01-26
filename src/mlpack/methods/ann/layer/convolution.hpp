@@ -73,6 +73,8 @@ template <
 class ConvolutionType : public Layer<MatType>
 {
  public:
+  typedef typename GetCubeType<MatType>::type CubeType;
+
   //! Create the ConvolutionType object.
   ConvolutionType();
 
@@ -196,12 +198,12 @@ class ConvolutionType : public Layer<MatType>
   MatType& Parameters() { return weights; }
 
   //! Get the weight of the layer as a cube.
-  arma::Cube<typename MatType::elem_type> const& Weight() const
+  CubeType const& Weight() const
   {
     return weight;
   }
   //! Modify the weight of the layer as a cube.
-  arma::Cube<typename MatType::elem_type>& Weight() { return weight; }
+  CubeType& Weight() { return weight; }
 
   //! Get the bias of the layer.
   MatType const& Bias() const { return bias; }
@@ -298,14 +300,13 @@ class ConvolutionType : public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  template<typename eT>
-  void Rotate180(const arma::Cube<eT>& input, arma::Cube<eT>& output)
+  void Rotate180(const CubeType& input, CubeType& output)
   {
-    output = arma::Cube<eT>(input.n_rows, input.n_cols, input.n_slices);
+    output = CubeType(input.n_rows, input.n_cols, input.n_slices);
 
     // * left-right flip, up-down flip */
     for (size_t s = 0; s < output.n_slices; s++)
-      output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
+      output.slice(s) = fliplr(flipud(input.slice(s)));
   }
 
   /**
@@ -314,11 +315,10 @@ class ConvolutionType : public Layer<MatType>
    * @param input The input data to be rotated.
    * @param output The rotated output.
    */
-  template<typename eT>
-  void Rotate180(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  void Rotate180(const MatType& input, MatType& output)
   {
     // * left-right flip, up-down flip */
-    output = arma::fliplr(arma::flipud(input));
+    output = fliplr(flipud(input));
   }
 
   //! Locally-stored number of output channels.
@@ -358,22 +358,22 @@ class ConvolutionType : public Layer<MatType>
   MatType weights;
 
   //! Locally-stored weight object.
-  arma::Cube<typename MatType::elem_type> weight;
+  CubeType weight;
 
   //! Locally-stored bias term object.
   MatType bias;
 
   //! Locally-stored transformed output parameter.
-  arma::Cube<typename MatType::elem_type> outputTemp;
+  CubeType outputTemp;
 
   //! Locally-stored transformed padded input parameter.
   MatType inputPadded;
 
   //! Locally-stored transformed error parameter.
-  arma::Cube<typename MatType::elem_type> gTemp;
+  CubeType gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::Cube<typename MatType::elem_type> gradientTemp;
+  CubeType gradientTemp;
 
   //! Locally-stored padding layer.
   PaddingType<MatType> padding;
