@@ -45,8 +45,7 @@ void MeanSquaredLogarithmicErrorType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  loss = 2 * (log(1. + prediction) - log(1. + target)) /
-      (1. + prediction);
+  loss = 2 * (log(1. + prediction) - log(1. + target)) / (1. + prediction);
 
   if (!reduction)
     loss = loss / target.n_elem;
