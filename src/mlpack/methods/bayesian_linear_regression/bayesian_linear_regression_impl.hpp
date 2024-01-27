@@ -273,8 +273,7 @@ inline void BayesianLinearRegression<ModelMatType>::Predict(
   if (!centerData && !scaleData)
   {
     Predict(points, predictions);
-    std = sqrt(Variance() + sum(points %
-        (matCovariance * points), 0));
+    std = sqrt(Variance() + sum(points % (matCovariance * points), 0));
   }
   else
   {
