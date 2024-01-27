@@ -282,8 +282,7 @@ inline void BayesianLinearRegression<ModelMatType>::Predict(
     CenterScaleDataPred(points, pointsProc);
 
     predictions = omega.t() * pointsProc + responsesOffset;
-    std = sqrt(Variance() + sum(pointsProc %
-        (matCovariance * pointsProc), 0));
+    std = sqrt(Variance() + sum(pointsProc % (matCovariance * pointsProc), 0));
   }
 }
 
