@@ -119,8 +119,7 @@ void RBFType<MatType, Activation>::Forward(
   for (size_t i = 0; i < input.n_cols; i++)
   {
     MatType temp = centres.each_col() - input.col(i);
-    distances.col(i) = pow(sum(
-        pow((temp), 2), 0), 0.5).t();
+    distances.col(i) = pow(sum(pow((temp), 2), 0), 0.5).t();
   }
   Activation::Fn(distances * std::pow(betas, 0.5), output);
 }
