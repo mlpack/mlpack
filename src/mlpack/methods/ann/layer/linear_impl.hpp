@@ -129,9 +129,7 @@ void LinearType<MatType, RegularizerType>::Gradient(
     MatType& gradient)
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = vectorise(error * input.t());
-  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
-      sum(error, 1);
-
+  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) = sum(error, 1);
   regularizer.Evaluate(weights, gradient);
 }
 

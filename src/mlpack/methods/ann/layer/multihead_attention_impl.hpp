@@ -356,8 +356,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. outWt, i.e. dL/d(outWt). We will take sum of gyTemp along
   // the slices and vectorise the output.
-  gradient.rows(3 * wtSize, 4 * wtSize - 1)
-      = vectorise(sum(gyTemp, 2));
+  gradient.rows(3 * wtSize, 4 * wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // Partial derivative wrt. attnOut.
   // The shape of outWt : (embedDim, embedDim).
@@ -390,8 +389,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. valueWt, i.e. dL/d(valueWt). We will take summation over all
   // batches of errorTemp.
-  gradient.rows(2 * wtSize, 3 * wtSize - 1)
-      = vectorise(sum(errorTemp, 2));
+  gradient.rows(2 * wtSize, 3 * wtSize - 1) = vectorise(sum(errorTemp, 2));
 
   // Now, the shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).

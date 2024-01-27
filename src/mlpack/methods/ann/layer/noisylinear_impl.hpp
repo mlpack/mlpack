@@ -141,8 +141,7 @@ void NoisyLinearType<MatType>::Gradient(
 
   // Gradients for mu values.
   gradient.rows(0, weight.n_elem - 1) = vectorise(weightGrad);
-  gradient.rows(weight.n_elem, weight.n_elem + bias.n_elem - 1)
-      = sum(error, 1);
+  gradient.rows(weight.n_elem, weight.n_elem + bias.n_elem - 1) = sum(error, 1);
 
   // Gradients for sigma values.
   gradient.rows(weight.n_elem + bias.n_elem, gradient.n_elem - bias.n_elem - 1)

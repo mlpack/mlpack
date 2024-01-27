@@ -32,8 +32,7 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
 
   arma::vec ids = arma::linspace<arma::vec>(0, n - 1, n);
 
-  arma::vec lowRank = ((1 - strength) *
-      exp(-1.0 * pow((ids / rank), 2)));
+  arma::vec lowRank = ((1 - strength) * exp(-1.0 * pow((ids / rank), 2)));
   arma::vec tail = strength * exp(-0.1 * ids / rank);
 
   arma::mat s = arma::zeros<arma::mat>(n, n);
