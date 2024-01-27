@@ -1061,8 +1061,7 @@ TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
 
     // Concatenate data matrices.
     arma::mat data = join_rows(trainData, noise);
-    arma::rowvec fullResponses = join_rows(trainResponses,
-        noiseResponses);
+    arma::rowvec fullResponses = join_rows(trainResponses, noiseResponses);
 
     // Now set weights.
     arma::rowvec weights(trainData.n_cols + 100);
