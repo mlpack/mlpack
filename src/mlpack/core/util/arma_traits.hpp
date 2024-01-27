@@ -164,12 +164,9 @@ struct GetColType
 };
 
 template<typename MatType>
-struct GetUIntColType
+struct GetUColType
 {
-  typedef typename MatType::elem_type eT;
-  typedef typename std::conditional<
-    std::is_same<eT, arma::uword>::value, eT, arma::uword>::type elem;
-  typedef arma::Col<elem> type;
+  typedef arma::Col<arma::uword> type;
 };
 
 template<typename eT>
@@ -221,12 +218,9 @@ struct GetDenseMatType
 };
 
 template<typename MatType>
-struct GetUIntDenseMatType
+struct GetUDenseMatType
 {
-  typedef typename MatType::elem_type eT;
-  typedef typename std::conditional<
-    std::is_same<eT, arma::uword>::value, eT, arma::uword>::type elem;
-  typedef arma::Mat<elem> type;
+  typedef arma::Mat<arma::uword> type;
 };
 
 template<typename eT>

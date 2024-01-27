@@ -159,7 +159,7 @@ void RepeatType<MatType>::ComputeOutputDimensions()
   UintCol counts(inputSize, arma::fill::zeros);
   for (size_t i = 0; i < outIdxs.n_elem; i++)
   {
-    auto r = outIdxs.at(i);
+    arma::uword r = outIdxs.at(i);
     backIdxs.at(r, counts.at(r)++) = i;
   }
 }
