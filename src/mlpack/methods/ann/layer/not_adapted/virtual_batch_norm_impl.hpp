@@ -98,8 +98,7 @@ void VirtualBatchNormType<InputType, OutputType>::Backward(
   const OutputType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const OutputType var = sum(norm % inputSubMean, 1) %
-      pow(stdInv, 3.0) * -0.5;
+  const OutputType var = sum(norm % inputSubMean, 1) % pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * newCoefficient / m.
