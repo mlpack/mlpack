@@ -60,8 +60,7 @@ class MishFunction
   template <typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x % (exp(2 * x) + 2 * exp(x)) /
-        (2 + 2 * exp(x) + exp(2 * x));
+    y = x % (exp(2 * x) + 2 * exp(x)) / (2 + 2 * exp(x) + exp(2 * x));
   }
 
   /**
