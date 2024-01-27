@@ -909,8 +909,7 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
     weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = join_rows(trainingData, randomNoise);
-  arma::rowvec fullResponses = join_rows(trainingResponses,
-      randomResponses);
+  arma::rowvec fullResponses = join_rows(trainingResponses, randomResponses);
 
   // Build the tree using MAD gain.
   DecisionTreeRegressor<MADGain> tree(fullData, di, fullResponses, weights,
