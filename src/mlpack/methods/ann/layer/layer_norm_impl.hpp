@@ -89,8 +89,7 @@ void LayerNormType<MatType>::Backward(
   const MatType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const MatType var = sum(norm % inputMean, 0) %
-      pow(stdInv, 3.0) * -0.5;
+  const MatType var = sum(norm % inputMean, 0) % pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
