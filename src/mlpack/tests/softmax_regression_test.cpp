@@ -687,8 +687,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    REQUIRE(sum(probabilities.col(i)) ==
-        Approx(1.0).epsilon(1e-7));
+    REQUIRE(sum(probabilities.col(i)) == Approx(1.0).epsilon(1e-7));
     REQUIRE(testLabels(i) == labels(i));
   }
 }
