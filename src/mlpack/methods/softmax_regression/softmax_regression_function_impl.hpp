@@ -181,8 +181,7 @@ inline void SoftmaxRegressionFunction<MatType>::GetProbabilitiesMatrix(
   }
   else
   {
-    hypothesis = exp(parameters *
-        data.cols(start, start + batchSize - 1));
+    hypothesis = exp(parameters * data.cols(start, start + batchSize - 1));
   }
 
   probabilities = hypothesis / repmat(sum(hypothesis, 0), numClasses, 1);
