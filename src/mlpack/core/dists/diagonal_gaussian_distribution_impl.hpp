@@ -67,7 +67,7 @@ inline void DiagonalGaussianDistribution::LogProbability(
 
 inline arma::vec DiagonalGaussianDistribution::Random() const
 {
-  return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
+  return (sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
 }
 
 inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
@@ -84,11 +84,11 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   }
 
   // Calculate and normalize the mean.
-  mean = arma::sum(observations, 1) / observations.n_cols;
+  mean = sum(observations, 1) / observations.n_cols;
 
   // Now calculate the covariance.
   const arma::mat diffs = observations.each_col() - mean;
-  covariance += arma::sum(diffs % diffs, 1);
+  covariance += sum(diffs % diffs, 1);
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
   // to make the estimator unbiased.

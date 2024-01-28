@@ -48,7 +48,7 @@ class SplineFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow(x, 2) % arma::log(1 + x);
+    y = pow(x, 2) % log(1 + x);
   }
 
   /**
@@ -75,7 +75,7 @@ class SplineFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = 2 * y / x + arma::pow(x, 2) / (1 + x);
+    dy = 2 * y / x + pow(x, 2) / (1 + x);
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0)
     dy(arma::find(x == 0)).zeros();

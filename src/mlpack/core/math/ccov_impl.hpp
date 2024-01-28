@@ -84,7 +84,7 @@ inline arma::Mat<std::complex<T>> ColumnCovariance(
     const eT normVal = (normType == 0) ?
         ((n > 1) ? eT(n - 1) : eT(1)) : eT(n);
 
-    const arma::Col<eT> acc = arma::sum(x, 1);
+    const arma::Col<eT> acc = sum(x, 1);
 
     out = x * trans(arma::conj(x));
     out -= (acc * trans(arma::conj(acc))) / eT(n);

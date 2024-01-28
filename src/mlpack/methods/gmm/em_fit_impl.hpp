@@ -118,7 +118,7 @@ Estimate(const arma::mat& observations,
     {
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != -std::numeric_limits<double>::infinity())
-        dists[i].Mean() = observations * arma::exp(condLogProb.col(i) -
+        dists[i].Mean() = observations * exp(condLogProb.col(i) -
                                                    probRowSums[i]);
       else
         continue;
@@ -131,9 +131,9 @@ Estimate(const arma::mat& observations,
       // covariance only with diagonal components.
       if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
-        arma::vec covariance = arma::sum((tmp % tmp) %
+        arma::vec covariance = sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
-            trans(arma::exp(condLogProb.col(i) - probRowSums[i]))), 1);
+            trans(exp(condLogProb.col(i) - probRowSums[i]))), 1);
 
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
@@ -141,7 +141,7 @@ Estimate(const arma::mat& observations,
       }
       else
       {
-        arma::mat tmpB = tmp.each_row() % trans(arma::exp(condLogProb.col(i) -
+        arma::mat tmpB = tmp.each_row() % trans(exp(condLogProb.col(i) -
                                                           probRowSums[i]));
         arma::mat covariance = tmp * trans(tmpB);
 
@@ -153,7 +153,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = arma::exp(probRowSums - std::log(observations.n_cols));
+    weights = exp(probRowSums - std::log(observations.n_cols));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;
@@ -215,7 +215,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
-    arma::vec logProbabilities = arma::log(probabilities);
+    arma::vec logProbabilities = log(probabilities);
     for (size_t i = 0; i < dists.size(); ++i)
     {
       // Calculate the sum of probabilities of points, which is the
@@ -229,7 +229,7 @@ Estimate(const arma::mat& observations,
       if (probRowSums[i] != -std::numeric_limits<double>::infinity())
       {
         dists[i].Mean() = observations *
-              arma::exp(condLogProb.col(i) + logProbabilities - probRowSums[i]);
+              exp(condLogProb.col(i) + logProbabilities - probRowSums[i]);
       }
       else
         continue;
@@ -242,9 +242,9 @@ Estimate(const arma::mat& observations,
       // covariance only with diagonal components.
       if (std::is_same<Distribution, DiagonalGaussianDistribution>::value)
       {
-        arma::vec cov = arma::sum((tmp % tmp) %
+        arma::vec cov = sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
-            trans(arma::exp(condLogProb.col(i) +
+            trans(exp(condLogProb.col(i) +
                             logProbabilities - probRowSums[i]))), 1);
 
         // Apply covariance constraint.
@@ -253,7 +253,7 @@ Estimate(const arma::mat& observations,
       }
       else
       {
-        arma::mat tmpB = tmp.each_row() % trans(arma::exp(condLogProb.col(i) +
+        arma::mat tmpB = tmp.each_row() % trans(exp(condLogProb.col(i) +
             logProbabilities - probRowSums[i]));
         arma::mat cov = (tmp * trans(tmpB));
 
@@ -265,7 +265,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = arma::exp(probRowSums - AccuLog(logProbabilities));
+    weights = exp(probRowSums - AccuLog(logProbabilities));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;

@@ -35,7 +35,7 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   // Converting probability scores of PositiveClass, from row to column vector.
   arma::vec colScores = arma::conv_to<arma::vec>::from(scores);
 
-  size_t numberOfTrueLabels  = arma::sum(binaryLabels);
+  size_t numberOfTrueLabels  = sum(binaryLabels);
   size_t numberOfFalseLabels = binaryLabels.n_rows - numberOfTrueLabels;
 
   // Check if only one class is given in labels.

@@ -58,7 +58,7 @@ inline void RandomizedSVD::Apply(const arma::sp_mat& data,
                                  const size_t rank)
 {
   // Center the data into a temporary matrix for sparse matrix.
-  arma::sp_mat rowMean = arma::sum(data, 1) / data.n_cols;
+  arma::sp_mat rowMean = sum(data, 1) / data.n_cols;
 
   Apply(data, u, s, v, rank, rowMean);
 }
@@ -70,7 +70,7 @@ inline void RandomizedSVD::Apply(const arma::mat& data,
                                  const size_t rank)
 {
   // Center the data into a temporary matrix.
-  arma::mat rowMean = arma::sum(data, 1) / data.n_cols + eps;
+  arma::mat rowMean = sum(data, 1) / data.n_cols + eps;
 
   Apply(data, u, s, v, rank, rowMean);
 }

@@ -214,8 +214,8 @@ void BatchNormType<MatType>::Forward(
     outputTemp = inputTemp;
 
     // Calculate mean and variance over all channels.
-    MatType mean = arma::sum(arma::sum(inputTemp, 2), 0) / m;
-    variance = arma::sum(arma::sum(arma::pow(
+    MatType mean = sum(sum(inputTemp, 2), 0) / m;
+    variance = sum(sum(pow(
         inputTemp.each_slice() - repmat(mean, inputSize, 1), 2), 2), 0) / m;
 
     outputTemp.each_slice() -= repmat(mean, inputSize, 1);
@@ -225,7 +225,7 @@ void BatchNormType<MatType>::Forward(
     inputMean = outputTemp;
 
     // Normalize output.
-    outputTemp.each_slice() /= arma::sqrt(repmat(variance, inputSize, 1) + eps);
+    outputTemp.each_slice() /= sqrt(repmat(variance, inputSize, 1) + eps);
 
     // Re-used in backward propagation.
     normalized.set_size(arma::size(inputTemp));
@@ -257,7 +257,7 @@ void BatchNormType<MatType>::Forward(
         batchSize * higherDimension, false, false);
 
     outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
-    outputTemp.each_slice() /= arma::sqrt(repmat(runningVariance.t(),
+    outputTemp.each_slice() /= sqrt(repmat(runningVariance.t(),
         inputSize, 1) + eps);
     outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
     outputTemp.each_slice() += repmat(beta.t(), inputSize, 1);
@@ -271,7 +271,7 @@ void BatchNormType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / sqrt(variance + eps);
 
   const size_t batchSize = gy.n_cols;
   const size_t inputSize = inputDimension;
@@ -289,8 +289,8 @@ void BatchNormType<MatType>::Backward(
       gyTemp.each_slice() % repmat(gamma.t(), inputSize, 1);
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  MatType temp = arma::sum(arma::sum(norm % inputMean, 2), 0);
-  MatType vars = temp % arma::pow(stdInv, 3) * (-0.5);
+  MatType temp = sum(sum(norm % inputMean, 2), 0);
+  MatType vars = temp % pow(stdInv, 3) * (-0.5);
 
   // Step 3: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
@@ -299,7 +299,7 @@ void BatchNormType<MatType>::Backward(
 
   // Step 4: sum (dl / dxhat * -1 / stdInv) + variance *
   // sum (-2 * (x - mu)) / m.
-  MatType normTemp = arma::sum(arma::sum((norm.each_slice() %
+  MatType normTemp = sum(sum((norm.each_slice() %
       repmat(-stdInv, inputSize, 1)) + 
       (inputMean.each_slice() % repmat(vars, inputSize, 1) * (-2.0) / m),
       2), 0) / m;
@@ -319,11 +319,11 @@ void BatchNormType<MatType>::Gradient(
       error.n_cols * higherDimension, false, false);
 
   // Step 5: dl / dy * xhat.
-  MatType temp = arma::sum(arma::sum(normalized % errorTemp, 0), 2);
+  MatType temp = sum(sum(normalized % errorTemp, 0), 2);
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = temp.t();
 
   // Step 6: dl / dy.
-  temp = arma::sum(arma::sum(errorTemp, 0), 2);
+  temp = sum(sum(errorTemp, 0), 2);
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) = temp.t();
 }
 

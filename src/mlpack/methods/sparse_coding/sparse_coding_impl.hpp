@@ -182,7 +182,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
     arma::mat matAInvZXT = solve(A, codesXT);
 
-    arma::vec gradient = -arma::sum(square(matAInvZXT), 1);
+    arma::vec gradient = -sum(square(matAInvZXT), 1);
     gradient += 1;
 
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
@@ -200,11 +200,11 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
     while (true)
     {
       // Calculate objective.
-      double sumDualVars = arma::sum(dualVars);
+      double sumDualVars = sum(dualVars);
       double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
       double fNew = -(-trace(trans(codesXT) * solve(codesZT +
           diagmat(dualVars + alpha * searchDirection), codesXT)) -
-          (sumDualVars + alpha * arma::sum(searchDirection)));
+          (sumDualVars + alpha * sum(searchDirection)));
 
       if (fNew <= fOld + alpha * sufficientDecrease)
       {
@@ -285,7 +285,7 @@ inline double SparseCoding::Objective(const arma::mat& data,
                                       const arma::mat& codes)
     const
 {
-  double l11NormZ = arma::sum(arma::sum(arma::abs(codes)));
+  double l11NormZ = sum(sum(arma::abs(codes)));
   double froNormResidual = norm(data - (dictionary * codes), "fro");
 
   if (lambda2 > 0)

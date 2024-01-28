@@ -41,8 +41,7 @@ RBFType<MatType, Activation>::RBFType(
     {
       double maxDis = 0;
       MatType temp = centres.each_col() - centres.col(i);
-      maxDis = arma::accu(arma::max(arma::pow(arma::sum(
-          arma::pow((temp), 2), 0), 0.5).t()));
+      maxDis = arma::accu(arma::max(pow(sum(pow((temp), 2), 0), 0.5).t()));
       if (maxDis > sigmas)
         sigmas = maxDis;
     }
@@ -120,8 +119,7 @@ void RBFType<MatType, Activation>::Forward(
   for (size_t i = 0; i < input.n_cols; i++)
   {
     MatType temp = centres.each_col() - input.col(i);
-    distances.col(i) = arma::pow(arma::sum(
-        arma::pow((temp), 2), 0), 0.5).t();
+    distances.col(i) = pow(sum(pow((temp), 2), 0), 0.5).t();
   }
   Activation::Fn(distances * std::pow(betas, 0.5), output);
 }

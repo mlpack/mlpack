@@ -177,7 +177,7 @@ inline void DiagonalGMM::LogProbability(const arma::mat& observation,
   }
 
   // Save log(weights) as a vector.
-  arma::vec logWeights = arma::log(weights);
+  arma::vec logWeights = log(weights);
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);
@@ -250,7 +250,7 @@ inline arma::vec DiagonalGMM::Random() const
     }
   }
 
-  return arma::sqrt(dists[gaussian].Covariance()) %
+  return sqrt(dists[gaussian].Covariance()) %
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 

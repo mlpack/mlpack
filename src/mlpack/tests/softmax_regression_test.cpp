@@ -49,7 +49,7 @@ TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
     {
       arma::mat hypothesis, probabilities;
 
-      hypothesis = arma::exp(parameters * data.col(j));
+      hypothesis = exp(parameters * data.col(j));
       probabilities = hypothesis / arma::accu(hypothesis);
 
       logLikelihood += log(probabilities(labels(j), 0));
@@ -586,8 +586,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     REQUIRE(predictions[i] < numClasses);
-    REQUIRE(arma::sum(probabilities.col(i)) ==
-        Approx(1.0).epsilon(1e-7));
+    REQUIRE(sum(probabilities.col(i)) == Approx(1.0).epsilon(1e-7));
   }
 
   // Test Classify() on a single point.
@@ -687,8 +686,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    REQUIRE(arma::sum(probabilities.col(i)) ==
-        Approx(1.0).epsilon(1e-7));
+    REQUIRE(sum(probabilities.col(i)) == Approx(1.0).epsilon(1e-7));
     REQUIRE(testLabels(i) == labels(i));
   }
 }

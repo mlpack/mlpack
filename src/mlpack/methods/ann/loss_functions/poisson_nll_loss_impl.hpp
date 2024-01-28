@@ -40,18 +40,18 @@ typename MatType::elem_type PoissonNLLLossType<MatType>::Forward(
   MatType loss(arma::size(prediction));
 
   if (logInput)
-    loss = arma::exp(prediction) - target % prediction;
+    loss = exp(prediction) - target % prediction;
   else
   {
     CheckProbs(prediction);
-    loss = prediction - target % arma::log(prediction + eps);
+    loss = prediction - target % log(prediction + eps);
   }
 
   if (full)
   {
     const auto mask = target > 1.0;
-    const MatType approx = target % arma::log(target) - target
-        + 0.5 * arma::log(2 * M_PI * target);
+    const MatType approx = target % log(target) - target
+        + 0.5 * log(2 * M_PI * target);
     loss.elem(arma::find(mask)) += approx.elem(arma::find(mask));
   }
   typename MatType::elem_type lossSum = arma::accu(loss);
@@ -71,7 +71,7 @@ void PoissonNLLLossType<MatType>::Backward(
   loss.set_size(size(prediction));
 
   if (logInput)
-    loss = (arma::exp(prediction) - target);
+    loss = (exp(prediction) - target);
   else
     loss = (1 - target / (prediction + eps));
 

@@ -101,7 +101,7 @@ TEST_CASE("SplitShuffleDataResultMat", "[SplitDataTest]")
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
   REQUIRE(std::get<1>(value).n_cols == 2); // Test data.
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
 }
 
@@ -115,7 +115,7 @@ TEST_CASE("SplitDataResultMat", "[SplitDataTest]")
   REQUIRE(std::get<0>(value).n_cols == 8); // Train data.
   REQUIRE(std::get<1>(value).n_cols == 2); // Test data.
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   // Order matters here.
   CheckMatrices(input, concat);
 }
@@ -130,7 +130,7 @@ TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
   REQUIRE(std::get<0>(value).n_cols == 10); // Train data.
   REQUIRE(std::get<1>(value).n_cols == 0); // Test data.
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   // Order matters here.
   CheckMatrices(input, concat);
 }
@@ -145,7 +145,7 @@ TEST_CASE("TotalRatioSplitData", "[SplitDataTest]")
   REQUIRE(std::get<0>(value).n_cols == 0); // Train data.
   REQUIRE(std::get<1>(value).n_cols == 10); // Test data.
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   // Order matters here.
   CheckMatrices(input, concat);
 }
@@ -200,7 +200,7 @@ TEST_CASE("SplitDataLargerTest", "[SplitDataTest]")
   REQUIRE(std::get<0>(value).n_cols == 497 - size_t(0.3 * 497));
   REQUIRE(std::get<1>(value).n_cols == size_t(0.3 * 497));
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
 }
 
@@ -286,7 +286,7 @@ TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
   REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 1)).n_rows == 2);
   REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 2)).n_rows == 3);
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
 }
 
@@ -315,9 +315,9 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   twoLabel.fill(2);
   threeLabel.fill(3);
 
-  Row<size_t> labels = arma::join_rows(zeroLabel, oneLabel);
-  labels = arma::join_rows(labels, twoLabel);
-  labels = arma::join_rows(labels, threeLabel);
+  Row<size_t> labels = join_rows(zeroLabel, oneLabel);
+  labels = join_rows(labels, twoLabel);
+  labels = join_rows(labels, threeLabel);
   const double testRatio = 0.3;
 
   const auto value = Split(input, labels, testRatio, false, true);
@@ -331,7 +331,7 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 2)).n_rows == 19);
   REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 3)).n_rows == 9);
 
-  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat concat = join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
 }
 
@@ -392,8 +392,8 @@ TEST_CASE("SplitMatrixLabeledData", "[SplitDataTest]")
   REQUIRE(std::get<2>(value).n_cols == 8);
   REQUIRE(std::get<3>(value).n_cols == 2);
 
-  mat inputConcat = arma::join_rows(std::get<0>(value), std::get<1>(value));
-  mat labelsConcat = arma::join_rows(std::get<2>(value), std::get<3>(value));
+  mat inputConcat = join_rows(std::get<0>(value), std::get<1>(value));
+  mat labelsConcat = join_rows(std::get<2>(value), std::get<3>(value));
 
   // Order matters here.
   CheckMatrices(input, inputConcat);

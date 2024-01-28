@@ -548,8 +548,8 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
 
   // Calculate scores. score = distance^2.
   arma::vec scores(2 * numProj);
-  scores.rows(0, numProj - 1) = arma::pow(limLow, 2);
-  scores.rows(numProj, (2 * numProj) - 1) = arma::pow(limHigh, 2);
+  scores.rows(0, numProj - 1) = pow(limLow, 2);
+  scores.rows(numProj, (2 * numProj) - 1) = pow(limHigh, 2);
 
   // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]

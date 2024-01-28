@@ -80,7 +80,7 @@ void GroupNorm<InputDataType, OutputDataType>::Forward(
   // Normalize the input.
   output = reshapedInput.each_row() - mean;
   inputMean = output;
-  output.each_row() /= arma::sqrt(variance + eps);
+  output.each_row() /= sqrt(variance + eps);
 
   output.reshape(input.n_rows, input.n_cols);
   // Reused in the backward and gradient step.
@@ -125,11 +125,11 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
   arma::mat normReshaped(const_cast<arma::Mat<eT>&>(norm).memptr(),
       gy.n_rows / groupCount, gy.n_cols * groupCount, false, false);
 
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const arma::mat stdInv = 1.0 / sqrt(variance + eps);
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const arma::mat var = arma::sum(normReshaped % inputMean, 0) %
-      arma::pow(stdInv, 3.0) * -0.5;
+  const arma::mat var = sum(normReshaped % inputMean, 0) %
+      pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
@@ -138,7 +138,7 @@ void GroupNorm<InputDataType, OutputDataType>::Backward(
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_row() += arma::sum(normReshaped.each_row() % -stdInv, 0) /
+  g.each_row() += sum(normReshaped.each_row() % -stdInv, 0) /
       inputReshaped.n_rows;
   g.reshape(input.n_rows, input.n_cols);
 }
@@ -152,22 +152,22 @@ void GroupNorm<InputDataType, OutputDataType>::Gradient(
 {
   assert(error.n_rows % size == 0);
   const size_t channelSize = error.n_rows / size;
-  temp = arma::sum(normalized % error, 1);
+  temp = sum(normalized % error, 1);
   arma::mat tempReshaped((temp).memptr(),
       channelSize, temp.n_elem / channelSize, false, false);
 
   gradient.set_size(size + size, 1);
 
   // Step 5: dl / dy * xhat.
-  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(tempReshaped, 0).t();
+  gradient.submat(0, 0, gamma.n_elem - 1, 0) = sum(tempReshaped, 0).t();
 
-  temp = arma::sum(error, 1);
+  temp = sum(error, 1);
   arma::mat tempErrorReshaped((temp).memptr(),
       channelSize, temp.n_elem / channelSize, false, false);
 
   // Step 6: dl / dy.
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(tempErrorReshaped, 0).t();
+      sum(tempErrorReshaped, 0).t();
 }
 
 template<typename InputDataType, typename OutputDataType>

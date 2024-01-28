@@ -67,7 +67,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
       distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
           data.col(samples[j]));
 
-    const ElemType spread = arma::sum(distances % distances) / samples.n_elem;
+    const ElemType spread = sum(distances % distances) / samples.n_elem;
 
     if (spread > bestSpread)
     {

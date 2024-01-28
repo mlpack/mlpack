@@ -23,7 +23,7 @@ double Accuracy::Evaluate(MLAlgorithm& model,
 
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
-  size_t amountOfCorrectPredictions = arma::sum(predictedLabels == labels);
+  size_t amountOfCorrectPredictions = sum(predictedLabels == labels);
 
   return (double) amountOfCorrectPredictions / labels.n_elem;
 }

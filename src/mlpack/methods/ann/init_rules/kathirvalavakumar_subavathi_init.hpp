@@ -69,7 +69,7 @@ class KathirvalavakumarSubavathiInitialization
   KathirvalavakumarSubavathiInitialization(const MatType& data,
                                            const double s) : s(s)
   {
-    dataSum = arma::sum(data % data);
+    dataSum = sum(data % data);
   }
 
   /**
@@ -84,7 +84,7 @@ class KathirvalavakumarSubavathiInitialization
   void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
     typedef typename GetRowType<MatType>::type RowType; 
-    RowType b = s * arma::sqrt(3 / (rows * dataSum));
+    RowType b = s * sqrt(3 / (rows * dataSum));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W, rows, cols);
@@ -101,7 +101,7 @@ class KathirvalavakumarSubavathiInitialization
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
     typedef typename GetRowType<MatType>::type RowType; 
-    RowType b = s * arma::sqrt(3 / (W.n_rows * dataSum));
+    RowType b = s * sqrt(3 / (W.n_rows * dataSum));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W);

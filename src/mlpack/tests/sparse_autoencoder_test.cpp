@@ -91,14 +91,14 @@ TEST_CASE("SparseAutoencoderFunctionRandomEvaluate", "[SparseAutoencoderTest]")
       arma::mat hiddenLayer, outputLayer, diff;
 
       hiddenLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
+          (1 + exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
           data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
       outputLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
+          (1 + exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
           * hiddenLayer + parameters.submat(l3, 0, l3, l2 - 1).t())));
       diff = outputLayer - data.col(j);
 
-      reconstructionError += 0.5 * arma::sum(arma::sum(diff % diff));
+      reconstructionError += 0.5 * sum(sum(diff % diff));
     }
     reconstructionError /= points;
 
@@ -188,17 +188,17 @@ TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
       arma::mat hiddenLayer;
 
       hiddenLayer = 1.0 / (1 +
-          arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
+          exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
           data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
       rhoCap += hiddenLayer;
     }
     rhoCap /= points;
 
     // Calculate divergence terms.
-    const double smallDivTerm = 5 * arma::accu(rho * arma::log(rho / rhoCap) +
-        (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
-    const double bigDivTerm = 20 * arma::accu(rho * arma::log(rho / rhoCap) +
-        (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
+    const double smallDivTerm = 5 * arma::accu(rho * log(rho / rhoCap) +
+        (1 - rho) * log((1 - rho) / (1 - rhoCap)));
+    const double bigDivTerm = 20 * arma::accu(rho * log(rho / rhoCap) +
+        (1 - rho) * log((1 - rho) / (1 - rhoCap)));
 
     REQUIRE(safNoDiv.Evaluate(parameters) + smallDivTerm ==
         Approx(safSmallDiv.Evaluate(parameters)).epsilon(1e-7));

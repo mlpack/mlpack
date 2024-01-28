@@ -271,7 +271,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth
-      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(sum(mask), numClasses, 1)) + mask;
 
   // The gradient is evaluated as follows:
   //  - Add `x_i` to `w_j` if `margin_i_m`is positive.
@@ -335,7 +335,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth.cols(firstId, lastId)
-      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
   if (!fitIntercept)
@@ -390,7 +390,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth
-      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
   if (!fitIntercept)
@@ -462,7 +462,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
       { val = (val > 0) ? 1: 0; });
 
   DenseMatType difference = groundTruth.cols(firstId, lastId)
-      % (-repmat(arma::sum(mask), numClasses, 1)) + mask;
+      % (-repmat(sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
   if (!fitIntercept)

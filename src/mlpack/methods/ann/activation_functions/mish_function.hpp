@@ -60,8 +60,7 @@ class MishFunction
   template <typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x % (arma::exp(2 * x) + 2 * arma::exp(x)) /
-        (2 + 2 * arma::exp(x) + arma::exp(2 * x));
+    y = x % (exp(2 * x) + 2 * exp(x)) / (2 + 2 * exp(x) + exp(2 * x));
   }
 
   /**
@@ -90,9 +89,9 @@ class MishFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy = arma::exp(x) % (4 * (x + 1) + arma::exp(x) % (4 * x + 6) +
-        4 * arma::exp(2 * x) + arma::exp(3 * x)) /
-        arma::pow(arma::exp(2 * x) + 2 * arma::exp(x) + 2, 2);
+    dy = exp(x) % (4 * (x + 1) + exp(x) % (4 * x + 6) +
+        4 * exp(2 * x) + exp(3 * x)) /
+        pow(exp(2 * x) + 2 * exp(x) + 2, 2);
   }
 }; // class MishFunction
 
