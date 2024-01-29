@@ -33,18 +33,20 @@ functions on top of Armadillo.
 
  * `MakeAlias()`: combine with other location?
 
- * `MultiplyCube2Cube()` // all used by MultiheadAttention
- * `MultiplyMat2Cube()`
- * `MultipleCube2Mat()`
+ * [`MultiplyCube2Cube()`](#multiplycube2cube): multiply each slice in a cube by
+   each slice in another cube
+ * [`MultiplyMat2Cube()`](#multiplymat2cube): multiply a matrix by each slice in
+   a cube
+ * [`MultiplyCube2Mat()`](#multiplycube2mat): multiply each slice in a cube by a
+   matrix
 
- * `ErfInverse()` // used by Quantile()
- * `Quantile()` // used by KDE
+ * [`Quantile()`](#quantile): compute the quantile function of the Gaussian
+   distribution
 
  * [RNG and random number utilities](#rng-and-random-number-utilities): extended
    scalar random number generation functions
  * [`RandomBasis()`](#randombasis): generate a random orthogonal basis
-
- * `ShuffleData()`
+ * [`ShuffleData()`](#shuffledata): shuffle a dataset and associated labels
 
 ---
 
@@ -456,6 +458,139 @@ vectors containing logarithms.
 
 ---
 
+### `MultiplyCube2Cube()`
+
+ * `z = MultiplyCube2Cube(x, y, transX=false, transY=false)`
+   - Inputs `x` and `y` are cubes (e.g. `arma::cube`), and must have the same
+     number of slices
+   - `z` is a cube whose slices are the slices of `x` and `y` multiplied
+   - `transX` and `transY` indicate whether each slice of `x` and `y` should be
+     transposed before multiplication.
+
+ * If `transX` and `transY` are `false`, then
+   `z.slice(i) = x.slice(i) * y.slice(i)`.
+
+ * If `transX` is `false` and `transY` is `true`, then
+   `z.slice(i) = x.slice(i) * y.slice(i).t()`.
+
+ * The inner dimensions of `x` and `y` must match for multiplication, or an
+   exception will be thrown.
+
+*Example usage:*
+
+```c++
+// Generate two random cubes.
+arma::cube x(10, 100, 5, arma::fill::randu); // 5 matrices, each 10x100.
+arma::cube y(12, 100, 5, arma::fill::randu); // 5 matrices, each 12x100.
+
+arma::cube z = mlpack::MultiplyCube2Cube(x, y, false, true);
+
+// Output size should be 10x12x5.
+std::cout << "Output size: " << z.n_rows << "x" << z.n_cols << "x" << z.n_slices
+    << "." << std::endl;
+```
+
+---
+
+### `MultiplyMat2Cube()`
+
+ * `z = MultiplyMat2Cube(x, y, transX=false, transY=false)`
+   - Input `x` is a matrix and `y` is a cube (e.g. `arma::cube`).
+   - `z` is a cube whose slices are `x` multiplied by the slices of `y`.
+   - `transX` and `transY` indicate whether `x` and each slice of `y` should be
+     transposed before multiplication.
+
+ * If `transX` and `transY` are `false`, then `z.slice(i) = x * y.slice(i)`.
+
+ * If `transX` is `false` and `transY` is `true`, then
+   `z.slice(i) = x * y.slice(i).t()`.
+
+ * The inner dimensions of `x` and `y` must match for multiplication, or an
+   exception will be thrown.
+
+*Example usage:*
+
+```c++
+// Generate random inputs.
+arma::mat  x(10, 100,    arma::fill::randu); // Random 10x100 matrix.
+arma::cube y(12, 100, 5, arma::fill::randu); // 5 matrices, each 12x100.
+
+arma::cube z = mlpack::MultiplyMat2Cube(x, y, false, true);
+
+// Output size should be 10x12x5.
+std::cout << "Output size: " << z.n_rows << "x" << z.n_cols << "x" << z.n_slices
+    << "." << std::endl;
+```
+
+---
+
+### `MultiplyCube2Mat()`
+
+ * `z = MultiplyCube2Mat(x, y, transX=false, transY=false)`
+   - Input `x` is a cube (e.g. `arma::cube`) and `y` is a matrix.
+   - `z` is a cube whose slices are the slices of `x` multiplied with `y`.
+   - `transX` and `transY` indicate whether each slice of `x` and `y` should be
+     transposed before multiplication.
+
+ * If `transX` and `transY` are `false`, then `z.slice(i) = x.slice(i) * y`.
+
+ * If `transX` is `true` and `transY` is `false`, then
+   `z.slice(i) = x.slice(i).t() * y`.
+
+ * The inner dimensions of `x` and `y` must match for multiplication, or an
+   exception will be thrown.
+
+*Example usage:*
+
+```c++
+// Generate two random cubes.
+arma::cube x(12, 50, 5, arma::fill::randu); // 5 matrices, each 12x50.
+arma::mat  y(12, 60,    arma::fill::randu); // Random 12x60 matrix.
+
+arma::cube z = mlpack::MultiplyCube2Mat(x, y, true, false);
+
+// Output size should be 50x60x5.
+std::cout << "Output size: " << z.n_rows << "x" << z.n_cols << "x" << z.n_slices
+    << "." << std::endl;
+```
+
+---
+
+### `Quantile()`
+
+ * Compute the quantile function of the Gaussian distribution at the given
+   probability.
+
+ * `double q = Quantile(p, mu=0.0, sigma=1.0)`
+   - `q` is the computed quantile.
+   - `p` is the probability to compute the quantile of (between 0 and 1).
+   - `mu` is the (optional) mean of the Gaussian distribution.
+   - `sigma` is the (optional) standard deviation of the Gaussian distribution.
+   - All arguments are `double`s.
+
+ * See also [Quantile function on Wikipedia](https://en.wikipedia.org/wiki/Quantile_function).
+
+*Example usage:*
+
+```c++
+// 70% of points from N(0, 1) are less than q1 = 0.524.
+double q1 = mlpack::Quantile(0.7);
+
+// 90% of points from N(0, 1) are less than q2 = 1.282.
+double q2 = mlpack::Quantile(0.9);
+
+// 50% of points from N(1, 1) are less than q3 = 1.0.
+double q3 = mlpack::Quantile(0.5, 1.0); // Quantile of 1.0 for N(1, 1) is 1.0.
+
+// 10% of points from N(1, 0.1) are less than q4 = 0.871.
+double q4 = mlpack::Quantile(0.1, 1.0, 0.1);
+
+std::cout << "Quantile(0.7): " << q1 << "." << std::endl;
+std::cout << "Quantile(0.9): " << q2 << "." << std::endl;
+std::cout << "Quantile(0.5, 1.0): " << q3 << "." << std::endl;
+std::cout << "Quantile(0.1, 1.0, 0.1): " << q4 << "." << std::endl;
+```
+
 ### RNG and random number utilities
 
 On top of the random number generation support that Armadillo provides via
@@ -540,6 +675,79 @@ mlpack::RandomBasis(basis, 10);
 std::cout << "Dot product of basis vectors 2 and 4: "
     << arma::dot(basis.col(2), basis.col(4)) << " (should be zero)."
     << std::endl;
+```
+
+---
+
+### `ShuffleData()`
+
+Shuffle a [column-major](matrices.md#representing-data-in-mlpack) dataset and
+associated labels/responses, optionally with weights.  This preserves the
+connection of each data point to its label (and optionally its weight).
+
+ * `ShuffleData(inputData, inputLabels, outputData, outputLabels)`
+   - Permute data points and labels from `inputData` and `inputLabels` randomly,
+     storing the result in `outputData` and `outputLabels`.
+   - `outputData` will be set to the same size as `inputData`.
+   - `outputLabels` will be set to the same size as `inputLabels`.
+   - `inputData` can be a dense matrix, a sparse matrix, or a cube, with any
+     element type.  (That is, `inputData` may have type `arma::mat`,
+     `arma::fmat`, `arma::sp_mat`, `arma::cube`, etc.)
+   - `inputLabels` must be a dense vector type but may hold any element type
+     (e.g.  `arma::Row<size_t>`, `arma::uvec`, `arma::vec`, etc.).
+   - `outputData` must have the same type as `inputData`, and `outputLabels`
+     must have the same type as `inputLabels`.
+
+ * `ShuffleData(inputData, inputLabels, inputWeights, outputData, outputLabels, outputWeights)`
+   - Identical to the previous overload, but also handles weights via
+     `inputWeights` and `outputWeights`.
+   - `inputWeights` must be a dense vector type but may hold any element type
+     (e.g.  `arma::rowvec`, `arma::frowvec`, `arma::vec`, etc.)
+   - `outputWeights` must have the same type as `inputWeights`.
+
+***Note:*** when `inputData` is a cube (e.g. `arma::cube` or similar), the
+columns of the cube will be shuffled.
+
+*Example usage:*
+
+```c++
+// See https://datasets.mlpack.org/iris.csv.
+arma::mat dataset;
+mlpack::data::Load("iris.csv", dataset, true);
+// See https://datasets.mlpack.org/iris.labels.csv.
+arma::Row<size_t> labels;
+mlpack::data::Load("iris.labels.csv", labels, true);
+
+// Now shuffle the points in the iris dataset.
+arma::mat shuffledDataset;
+arma::Row<size_t> shuffledLabels;
+ShuffleData(dataset, labels, shuffledDataset, shuffledLabels);
+
+std::cout << "Before shuffling, the first point was: " << std::endl;
+std::cout << "  " << dataset.col(0).t();
+std::cout << "with label " << labels[0] << "." << std::endl;
+std::cout << std::endl;
+std::cout << "After shuffling, the first point is: " << std::endl;
+std::cout << "  " << shuffledDataset.col(0).t();
+std::cout << "with label " << shuffledLabels[0] << "." << std::endl;
+
+// Generate random weights, then shuffle those also.
+arma::rowvec weights(dataset.n_cols, arma::fill::randu);
+arma::rowvec shuffledWeights;
+ShuffleData(dataset, labels, weights, shuffledDataset, shuffledLabels,
+    shuffledWeights);
+
+std::cout << std::endl << std::endl;
+std::cout << "Before shuffling with weights, the first point was: "
+    << std::endl;
+std::cout << "  " << dataset.col(0).t();
+std::cout << "with label " << labels[0] << " and weight " << weights[0] << "."
+    << std::endl;
+std::cout << std::endl;
+std::cout << "After shuffling with weights, the first point is: " << std::endl;
+std::cout << "  " << shuffledDataset.col(0).t();
+std::cout << "with label " << shuffledLabels[0] << " and weight "
+    << shuffledWeights[0] << "." << std::endl;
 ```
 
 ---
