@@ -15,7 +15,7 @@
   #define HAD_DEBUG
   #undef DEBUG
 #endif
-#include <mlpack/core/util/log.hpp>
+
 #ifdef HAD_DEBUG
   #undef HAD_DEBUG
   #define DEBUG
