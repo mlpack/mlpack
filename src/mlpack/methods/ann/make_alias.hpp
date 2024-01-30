@@ -16,10 +16,13 @@
 #define MLPACK_METHODS_ANN_MAKE_ALIAS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <bandicoot>
 
 namespace mlpack {
 
+/**
+ * We need to transfer all the metaprog to core/util before merging.
+ * 
+ */
 template<typename eT>
 struct IsCootType;
 
@@ -62,13 +65,13 @@ struct IsCootType<coot::Cube<eT>>
  * @param numCols The numbers or cols of the constructed matrix.
  */
 template<typename InMatType,
-         typename OutMatType,
-         typename std::enable_if_t<!IsCootType<InMatType>::value, bool> = false>
+         typename OutMatType>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t offset,
                const size_t numRows,
-               const size_t numCols)
+               const size_t numCols,
+               const typename std::enable_if_t<!IsCootType<InMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -83,14 +86,14 @@ void MakeAlias(OutMatType& m,
  * `numCols` x `numSlices`.
  */
 template<typename InCubeType,
-         typename OutCubeType,
-         typename std::enable_if_t<!IsCootType<InCubeType>::value, bool> = false>
+         typename OutCubeType>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
                const size_t offset,
                const size_t numRows,
                const size_t numCols,
-               const size_t numSlices)
+               const size_t numSlices,
+               const typename std::enable_if_t<!IsCootType<InCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -101,13 +104,13 @@ void MakeAlias(OutCubeType& c,
 }
 
 template<typename InMatType,
-         typename OutMatType,
-         typename std::enable_if_t<IsCootType<InMatType>::value, bool> = false>
+         typename OutMatType>
 void MakeAlias(OutMatType& m,
                const InMatType& oldMat,
                const size_t offset,
                const size_t numRows,
-               const size_t numCols)
+               const size_t numCols,
+               const typename std::enable_if_t<IsCootType<InMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -123,13 +126,13 @@ void MakeAlias(OutMatType& m,
  * `numCols` x `numSlices`.
  */
 template<typename InColType,
-         typename OutColType,
-         typename std::enable_if_t<IsCootType<InColType>::value, bool> = false>
+         typename OutColType>
 void MakeAlias(OutColType& c,
                const InColType& oldCol,
                const size_t offset,
                const size_t numRows,
-               const size_t numCols)
+               const size_t numCols,
+               const typename std::enable_if_t<IsCootType<InColType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -144,14 +147,14 @@ void MakeAlias(OutColType& c,
  * `numCols` x `numSlices`.
  */
 template<typename InCubeType,
-         typename OutCubeType,
-         typename std::enable_if_t<IsCootType<InCubeType>::value, bool> = false>
+         typename OutCubeType>
 void MakeAlias(OutCubeType& c,
                const InCubeType& oldCube,
                const size_t offset,
                const size_t numRows,
                const size_t numCols,
-               const size_t numSlices)
+               const size_t numSlices,
+               const typename std::enable_if_t<IsCootType<InCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
