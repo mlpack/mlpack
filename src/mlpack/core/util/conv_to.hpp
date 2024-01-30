@@ -22,7 +22,7 @@ namespace mlpack {
  * @tparam OutputType The data type to convert to.
  */
 template<typename OutputType>
-class conv_to
+class ConvTo
 {
   public:
 
@@ -35,7 +35,7 @@ class conv_to
     */
    template<typename InputType>
    inline static typename std::enable_if<
-      !arma::is_arma_type<InputType>::value, OutputType>::type
+      !coot::is_coot_type<InputType>::value, OutputType>::type
    from(const InputType& input)
    {
      return coot::conv_to<OutputType>::from(input);

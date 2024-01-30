@@ -93,7 +93,7 @@ class RectifierFunction
                     const OutputType& /* y */,
                     DerivType& dy)
   {
-    dy = conv_to<DerivType>::from(x > 0);
+    dy = ConvTo<DerivType>::from(x > 0);
   }
 }; // class RectifierFunction
 
