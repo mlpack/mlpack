@@ -1,6 +1,7 @@
 /**
  * @file core/util/conv_to.hpp
  * @author Marcus Edel
+ * @author Omar Shrit
  *
  * A simple `conv_to` wrapper that based on the data type forwards to
  * `coot::conv_to` or `arma::conv_to`. This file is borrowed from ensmallen.
@@ -34,9 +35,10 @@ class ConvTo
     * @param input The input that is converted.
     */
    template<typename InputType>
-   inline static typename std::enable_if<
-      !coot::is_coot_type<InputType>::value, OutputType>::type
-   from(const InputType& input)
+   inline static OutputType from(const InputType& input,
+                                 const typename std::enable_if_t<
+                                 coot::is_coot_type<InputType>::value ||
+                                 coot::is_coot_type<OutputType>::value>* = 0)
    {
      return coot::conv_to<OutputType>::from(input);
    }
@@ -49,9 +51,10 @@ class ConvTo
     * @param input The input that is converted.
     */
    template<typename InputType>
-   inline static typename std::enable_if<
-      arma::is_arma_type<InputType>::value, OutputType>::type
-   from(const InputType& input)
+   inline static OutputType from(const InputType& input,
+                                 const typename std::enable_if_t<
+                                 arma::is_arma_type<InputType>::value ||
+                                 arma::is_arma_type<OutputType>::value>* = 0)
    {
      return arma::conv_to<OutputType>::from(input);
    }
