@@ -35,6 +35,9 @@ The following basic guides are *highly recommended* before using mlpack.
  * ***Reference for mlpack core classes***:
    - [Core mlpack documentation](user/core.md)
 
+ * ***Bindings to other languages*** (Python/R/CLI/Julia/Go):
+   - [Links to quickstarts and references](#bindings-to-other-languages)
+
 ## mlpack algorithm documentation
 
 Documentation for each machine learning algorithm that mlpack implements is
