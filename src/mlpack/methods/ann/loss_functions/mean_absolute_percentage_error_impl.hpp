@@ -39,7 +39,7 @@ void MeanAbsolutePercentageErrorType<MatType>::Backward(
     MatType& loss)
 
 {
-  loss = (((arma::conv_to<arma::mat>::from(prediction < target) * -2) + 1) /
+  loss = (((conv_to<arma::mat>::from(prediction < target) * -2) + 1) /
       target) * (100 / target.n_cols);
 }
 
