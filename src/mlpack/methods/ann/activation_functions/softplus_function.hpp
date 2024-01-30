@@ -95,7 +95,7 @@ class SoftplusFunction
                     const OutputType& /* y */,
                     DerivType& dy)
   {
-    dy = 1.0 / (1 + arma::exp(-x));
+    dy = 1.0 / (1 + exp(-x));
   }
 
   /**

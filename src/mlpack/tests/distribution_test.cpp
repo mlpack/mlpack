@@ -917,9 +917,9 @@ TEST_CASE("GammaDistributionTrainStatisticsTest", "[DistributionTest]")
 
   // Train object d2 with the data's statistics.
   GammaDistribution d2;
-  const arma::vec meanLogx = arma::mean(arma::log(data), 1);
+  const arma::vec meanLogx = arma::mean(log(data), 1);
   const arma::vec meanx = arma::mean(data, 1);
-  const arma::vec logMeanx = arma::log(meanx);
+  const arma::vec logMeanx = log(meanx);
   d2.Train(logMeanx, meanLogx, meanx);
 
   REQUIRE(d1.Alpha(0) == Approx(d2.Alpha(0)).epsilon(1e-7));
@@ -1457,7 +1457,7 @@ TEST_CASE("DiagonalGaussianDistributionTrainTest", "[DistributionTest]")
   arma::mat observations(4, 10000);
 
   for (size_t i = 0; i < 10000; ++i)
-    observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
+    observations.col(i) = (sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
   DiagonalGaussianDistribution d;
 
@@ -1522,7 +1522,7 @@ TEST_CASE("DiagonalGaussianWeightedParametersReductionTest",
   arma::vec probs("0.2 0.2 0.2 0.2 0.2");
 
   for (size_t i = 0; i < 5; ++i)
-    obs.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
+    obs.col(i) = (sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
   DiagonalGaussianDistribution d1;
   DiagonalGaussianDistribution d2;

@@ -36,8 +36,8 @@ double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
 
-  size_t tp = arma::sum((labels == PC) % (predictedLabels == PC));
-  size_t numberOfPositiveClassInstances = arma::sum(labels == PC);
+  size_t tp = sum((labels == PC) % (predictedLabels == PC));
+  size_t numberOfPositiveClassInstances = sum(labels == PC);
 
   return double(tp) / numberOfPositiveClassInstances;
 }
@@ -72,8 +72,8 @@ double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
   arma::vec recalls = arma::vec(numClasses);
   for (size_t c = 0; c < numClasses; ++c)
   {
-    size_t tp = arma::sum((labels == c) % (predictedLabels == c));
-    size_t positiveLabels = arma::sum(labels == c);
+    size_t tp = sum((labels == c) % (predictedLabels == c));
+    size_t positiveLabels = sum(labels == c);
     recalls(c) = double(tp) / positiveLabels;
   }
 

@@ -62,7 +62,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
       d.Probabilities(0) =
-          arma::exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
+          exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
 
       size = 2 + d.Random()(0);
     }

@@ -163,6 +163,12 @@ struct GetColType
   typedef arma::Col<typename MatType::elem_type> type;
 };
 
+template<typename MatType>
+struct GetUColType
+{
+  typedef arma::Col<arma::uword> type;
+};
+
 template<typename eT>
 struct GetColType<arma::Mat<eT>>
 {
@@ -209,6 +215,12 @@ template<typename MatType>
 struct GetDenseMatType
 {
   typedef arma::Mat<typename MatType::elem_type> type;
+};
+
+template<typename MatType>
+struct GetUDenseMatType
+{
+  typedef arma::Mat<arma::uword> type;
 };
 
 template<typename eT>

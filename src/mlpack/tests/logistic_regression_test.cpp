@@ -510,7 +510,7 @@ TEST_CASE("LogisticRegressionLBFGSSimpleTest", "[LogisticRegressionTest]")
   LogisticRegression<> lr(data, responses);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large 0.1% error tolerance is because the optimizer may terminate before
@@ -534,7 +534,7 @@ TEST_CASE("LogisticRegressionSGDSimpleTest", "[LogisticRegressionTest]")
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large 0.1% error tolerance is because the optimizer may terminate before
@@ -558,7 +558,7 @@ TEST_CASE("LogisticRegressionLBFGSRegularizationSimpleTest",
   LogisticRegression<> lr(data, responses, 0.001);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large error tolerance is because the optimizer may terminate before
@@ -584,7 +584,7 @@ TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest",
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large error tolerance is because the optimizer may terminate before
@@ -706,7 +706,7 @@ TEST_CASE("LogisticRegressionInstantiatedOptimizer", "[LogisticRegressionTest]")
   LogisticRegression<> lr(data, responses, lbfgsOpt, 0.0005);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Error tolerance is small because we tightened the optimizer tolerance.
@@ -721,7 +721,7 @@ TEST_CASE("LogisticRegressionInstantiatedOptimizer", "[LogisticRegressionTest]")
   LogisticRegression<> lr2(data, responses, sgdOpt, 0.0005);
 
   // Test sigmoid function.
-  sigmoids = 1 / (1 + arma::exp(-lr2.Parameters()[0]
+  sigmoids = 1 / (1 + exp(-lr2.Parameters()[0]
       - lr2.Parameters().tail_cols(lr2.Parameters().n_elem - 1) * data));
 
   // Error tolerance is small because we tightened the optimizer tolerance.

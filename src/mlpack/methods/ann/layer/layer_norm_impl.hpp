@@ -65,7 +65,7 @@ void LayerNormType<MatType>::Forward(
   // Normalize the input.
   output = input.each_row() - mean;
   inputMean = output;
-  output.each_row() /= arma::sqrt(variance + eps);
+  output.each_row() /= sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
   normalized = output;
@@ -82,14 +82,13 @@ void LayerNormType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  const MatType stdInv = 1.0 / arma::sqrt(variance + eps);
+  const MatType stdInv = 1.0 / sqrt(variance + eps);
 
   // dl / dxhat.
   const MatType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const MatType var = arma::sum(norm % inputMean, 0) %
-      arma::pow(stdInv, 3.0) * -0.5;
+  const MatType var = sum(norm % inputMean, 0) % pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * 1 / m.
@@ -98,7 +97,7 @@ void LayerNormType<MatType>::Backward(
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / gy.n_rows;
+  g.each_row() += sum(norm.each_row() % -stdInv, 0) / gy.n_rows;
 }
 
 template<typename MatType>
@@ -110,11 +109,10 @@ void LayerNormType<MatType>::Gradient(
   gradient.set_size(size + size, 1);
 
   // Step 5: dl / dy * xhat.
-  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
+  gradient.submat(0, 0, gamma.n_elem - 1, 0) = sum(normalized % error, 1);
 
   // Step 6: dl / dy.
-  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(error, 1);
+  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) = sum(error, 1);
 }
 
 template<typename MatType>

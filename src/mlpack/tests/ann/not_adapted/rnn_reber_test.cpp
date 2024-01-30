@@ -274,10 +274,10 @@ arma::Mat<char> GenerateReberGrammarData(
     for (size_t j = 0; j < trainReber.length() - 1; ++j)
     {
       ReberTranslation(trainReber[j], translation);
-      trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
+      trainInput(0, i) = join_cols(trainInput(0, i), translation);
 
       ReberTranslation(trainReber[j + 1], translation);
-      trainLabels(0, i) = arma::join_cols(trainLabels(0, i), translation);
+      trainLabels(0, i) = join_cols(trainLabels(0, i), translation);
     }
   }
 
@@ -293,7 +293,7 @@ arma::Mat<char> GenerateReberGrammarData(
     for (size_t j = 0; j < testReber.length() - 1; ++j)
     {
       ReberTranslation(testReber[j], translation);
-      testInput(0, i) = arma::join_cols(testInput(0, i), translation);
+      testInput(0, i) = join_cols(testInput(0, i), translation);
     }
   }
 

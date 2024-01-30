@@ -51,7 +51,7 @@ class SwishFunction
   static void Fn(const MatType& x, MatType& y,
      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0) 
   {
-    y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + exp(-x));
   }
 
   /**

@@ -83,7 +83,7 @@ class SimilarityInterpolation
           << std::endl;
     }
 
-    double similaritiesSum = arma::sum(similarities);
+    double similaritiesSum = sum(similarities);
     if (std::fabs(similaritiesSum) < 1e-14)
     {
       weights.fill(1.0 / similarities.n_elem);

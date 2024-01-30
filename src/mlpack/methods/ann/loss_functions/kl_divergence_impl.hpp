@@ -30,7 +30,7 @@ typename MatType::elem_type KLDivergenceType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  MatType loss = target % (arma::log(target) - prediction);
+  MatType loss = target % (log(target) - prediction);
   typename MatType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)

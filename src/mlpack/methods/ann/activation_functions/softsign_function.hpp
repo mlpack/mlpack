@@ -98,7 +98,7 @@ class SoftsignFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy = 1.0 / arma::pow(1.0 + arma::abs(x), 2);
+    dy = 1.0 / pow(1.0 + arma::abs(x), 2);
   }
 
   /**

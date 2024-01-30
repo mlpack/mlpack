@@ -258,7 +258,7 @@ void FastLSTMType<InputType, OutputType>::Backward(
 
   cellActivationError = gyLocal % gateActivation.submat(outSize,
       backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
-      (1 - arma::pow(cellActivation.cols(backwardStep - batchStep,
+      (1 - pow(cellActivation.cols(backwardStep - batchStep,
       backwardStep), 2));
 
   if (gradientStepIdx > 0)
@@ -291,7 +291,7 @@ void FastLSTMType<InputType, OutputType>::Backward(
 
   prevError.submat(3 * outSize, 0, 4 * outSize - 1, batchStep) =
       gateActivation.submat(0, backwardStep - batchStep,
-      outSize - 1, backwardStep) % cellActivationError % (1 - arma::pow(
+      outSize - 1, backwardStep) % cellActivationError % (1 - pow(
       stateActivation.cols(backwardStep - batchStep, backwardStep), 2));
 
   prevError.submat(outSize, 0, 2 * outSize - 1, batchStep) =
@@ -323,7 +323,7 @@ void FastLSTMType<InputType, OutputType>::Gradient(
       vectorise(prevError * input.t());
 
   gradient.submat(input2GateWeight.n_elem, 0, input2GateWeight.n_elem +
-      input2GateBias.n_elem - 1, 0) = arma::sum(prevError, 1);
+      input2GateBias.n_elem - 1, 0) = sum(prevError, 1);
 
   // Gradient of the output to gate layer.
   gradient.submat(input2GateWeight.n_elem + input2GateBias.n_elem, 0,

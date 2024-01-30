@@ -123,7 +123,7 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
       {
         arma::mat aMat = A.slice(i);
         arma::mat bMat = B.slice(i);
-        calculatedOut.slice(i) = arma::join_cols(aMat, bMat);
+        calculatedOut.slice(i) = join_cols(aMat, bMat);
       }
       x = 2;
     }
@@ -134,7 +134,7 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
       {
         arma::mat aMat = A.slice(i);
         arma::mat bMat = B.slice(i);
-        calculatedOut.slice(i) = arma::join_rows(aMat, bMat);
+        calculatedOut.slice(i) = join_rows(aMat, bMat);
       }
       y = 2;
     }

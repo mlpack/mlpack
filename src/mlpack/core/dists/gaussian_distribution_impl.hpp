@@ -67,7 +67,7 @@ inline void GaussianDistribution::FactorCovariance()
 
   invCov = invCovLower.t() * invCovLower;
   double sign = 0.;
-  arma::log_det(logDetCov, sign, covLower);
+  log_det(logDetCov, sign, covLower);
   logDetCov *= 2;
 }
 
