@@ -81,8 +81,8 @@ inline void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
       // Now, copy the elements of the row to the output submatrix.
       const size_t minRow = bufSize + i * rowOffset;
       const size_t minCol = bufSize + j * colOffset;
-      const size_t maxRow = i * rowOffset + blockHeight;
-      const size_t maxCol = j * colOffset + blockWidth;
+      const size_t maxRow = bufSize + i * rowOffset + blockHeight - 1;
+      const size_t maxCol = bufSize + j * colOffset + blockWidth - 1;
 
       output.submat(minRow, minCol, maxRow, maxCol) =
           arma::reshape(maximalInputs.col(k++), blockHeight, blockWidth);
