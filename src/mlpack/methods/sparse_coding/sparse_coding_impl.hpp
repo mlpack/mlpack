@@ -241,7 +241,8 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
     size_t currentActiveIndex = 0;
     for (size_t i = 0; i < atoms; ++i)
     {
-      if (activeAtoms[currentActiveIndex] != i)
+      if (currentActiveIndex >= activeAtoms.size() ||
+          activeAtoms[currentActiveIndex] != i)
       {
         // This atom is inactive.  Reinitialize it randomly.
         dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
