@@ -31,7 +31,8 @@ functions on top of Armadillo.
  * [Logarithmic utilities](#logarithmic-utilities): `LogAdd()`, `AccuLog()`,
    `LogSumExp()`, `LogSumExpT()`.
 
- * `MakeAlias()`: combine with other location?
+<!-- TODO: do something with MakeAlias(); but it needs to be refactored first
+-->
 
  * [`MultiplyCube2Cube()`](#multiplycube2cube): multiply each slice in a cube by
    each slice in another cube
@@ -381,12 +382,32 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 
 ### Distribution utilities
 
- * `Digamma(x)` returns <!-- TODO -->
+ * `Digamma(x)` returns the logarithmic derivative of the gamma function (see
+   [Wikipedia](https://en.wikipedia.org/wiki/Digamma_function)).
+    - `x` should have type `double`.
+    - The return type is `double`.
 
- * `Trigamma(x)` returns <!-- TODO -->
+ * `Trigamma(x)` returns the [trigamma function](https://en.wikipedia.org/wiki/Trigamma_function) at the value `x`.
+    - `x` should have type `double`.
+    - The return type is `double`.
 
  * Both of these functions are used internally by the
    [`GammaDistribution`](#gammadistribution) class.
+
+*Example*:
+
+```
+const double d1 = mlpack::Digamma(0.25);
+const double d2 = mlpack::Digamma(1.0);
+
+const double t1 = mlpack::Trigamma(0.25);
+const double t2 = mlpack::Trigamma(1.0);
+
+std::cout << "Digamma(0.25):  " << d1 << "." << std::endl;
+std::cout << "Digamma(1.0):   " << d2 << "." << std::endl;
+std::cout << "Trigamma(0.25): " << t1 << "." << std::endl;
+std::cout << "Trigamma(1.0):  " << t2 << "." << std::endl;
+```
 
 ---
 
@@ -395,8 +416,8 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
  * `RandVector(v)` generates a random vector on the unit sphere (i.e. with an
    L2-norm of 1) and stores it in `v` (an `arma::vec`).
 
- * The [Box-Muller transform](https://en.wikipedia.org/wiki/Box-Muller_Transform)
-   is used to generate the vector. <!-- TODO: check accuracy of statement! -->
+ * The [Box-Muller transform](https://en.wikipedia.org/wiki/Box-Muller_transform)
+   is used to generate the vector.
 
  * `v` is not resized, and should have size equal to the desired dimensionality
    when `RandVector()` is called.
@@ -611,10 +632,10 @@ random scalar values.
      set to a different value based on `seed`.
 
  * `Random()` returns a random `double` uniformly distributed between `0` and
-   `1`. <!-- TODO: is it inclusive? -->
+   `1`, *not including 1*.
 
  * `Random(lo, hi)` returns a random `double` uniformly distributed between `lo`
-   and `hi`. <!-- TODO: is it inclusive? -->
+   and `hi`, *not including `hi`*.
 
  * `RandBernoulli(p)` samples from a Bernoulli distribution with parameter `p`:
    with probability `p`, `1` is returned; with probability `1 - p`, `0` is
