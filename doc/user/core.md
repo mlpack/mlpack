@@ -34,13 +34,9 @@ functions on top of Armadillo.
 <!-- TODO: do something with MakeAlias(); but it needs to be refactored first
 -->
 
- * [`MultiplyCube2Cube()`](#multiplycube2cube): multiply each slice in a cube by
-   each slice in another cube
- * [`MultiplyMat2Cube()`](#multiplymat2cube): multiply a matrix by each slice in
-   a cube
- * [`MultiplyCube2Mat()`](#multiplycube2mat): multiply each slice in a cube by a
-   matrix
-
+ * [`MultiplyCube2Cube()`](#multiplycube2cube): multiply each slice in a cube by each slice in another cube
+ * [`MultiplyMat2Cube()`](#multiplymat2cube): multiply a matrix by each slice in a cube
+ * [`MultiplyCube2Mat()`](#multiplycube2mat): multiply each slice in a cube by a matrix
  * [`Quantile()`](#quantile): compute the quantile function of the Gaussian
    distribution
 
@@ -196,7 +192,7 @@ block.
 
 ---
 
-#### Constructors and properties
+#### Constructors
 
  * `ctb = ColumnsToBlocks(rows, cols)`
    - Create a `ColumnsToBlocks` object that will reshape the input matrix into
@@ -209,6 +205,10 @@ block.
      blocks of shape `rows` by `cols`.
    - Each individual column will also be reshaped into a block of shape
      `blockHeight` by `blockWidth`.
+
+---
+
+#### Properties
 
  * `ctb.Rows(rows)` will set the number of rows in the block output to `rows`.
    - `ctb.Rows()` will return a `size_t` with the current setting.
@@ -449,6 +449,8 @@ vectors containing logarithms.
    scalar log-sum of those values:
    `log(e^(v[0]) + e^(v[1]) + ... + e^(v[v.n_elem - 1]))`.
 
+---
+
  * `LogSumExp(m, out)`, given a matrix `m` (`arma::mat`) containing log values,
    will compute the scalar log-sum of each *column*, storing the result in the
    column vector `out` (type `arma::vec`).
@@ -658,8 +660,8 @@ random scalar values.
 ```c++
 mlpack::RandomSeed(123); // Set a specific random seed.
 
-const double r1 = mlpack::Random();             // In the range [0, 1].
-const double r2 = mlpack::Random(3, 4);         // In the range [3, 4].
+const double r1 = mlpack::Random();             // In the range [0, 1).
+const double r2 = mlpack::Random(3, 4);         // In the range [3, 4).
 const double r3 = mlpack::RandBernoulli(0.25);  // P(1) = 0.25.
 const int    r4 = mlpack::RandInt(10);          // In the range [0, 10).
 const int    r5 = mlpack::RandInt(5, 10);       // In the range [5, 10).
@@ -711,8 +713,8 @@ associated labels/responses, optionally with weights.  This preserves the
 connection of each data point to its label (and optionally its weight).
 
  * `ShuffleData(inputData, inputLabels, outputData, outputLabels)`
-   - Permute data points and labels from `inputData` and `inputLabels` randomly,
-     storing the result in `outputData` and `outputLabels`.
+   - Randomly permute data points and labels from `inputData` and `inputLabels`
+     into `outputData` and `outputLabels`.
    - `outputData` will be set to the same size as `inputData`.
    - `outputLabels` will be set to the same size as `inputLabels`.
    - `inputData` can be a dense matrix, a sparse matrix, or a cube, with any
