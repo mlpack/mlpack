@@ -167,7 +167,7 @@ Example:
 arma::mat data(5, 100, arma::fill::randu);
 
 // Compute the covariance matrix of the column-major matrix.
-arma::mat cov = ColumnCovariance(data);
+arma::mat cov = mlpack::ColumnCovariance(data);
 cov.print("Covariance of random matrix:");
 ```
 
@@ -288,7 +288,7 @@ input = { { -1.0000, 0.1429 },
 input.print("Input columns:");
 
 arma::mat output;
-ColumnsToBlocks ctb(1, 2);
+mlpack::ColumnsToBlocks ctb(1, 2);
 ctb.Transform(input, output);
 
 // The columns of the input will be reshaped as a square which is
@@ -334,7 +334,7 @@ images.push_back("armadillo-favicon.png");
 images.push_back("bandicoot-favicon.png");
 
 mlpack::data::ImageInfo info;
-info.Channels(1); // Force loading in grayscale.
+info.Channels() = 1; // Force loading in grayscale.
 
 arma::mat matrix;
 mlpack::data::Load(images, matrix, info, true);
@@ -345,7 +345,7 @@ mlpack::data::ImageInfo outInfo(matrix.n_cols, matrix.n_rows, 1);
 mlpack::data::Save("favicons-matrix.png", matrix, outInfo, true);
 
 // Use ColumnsToBlocks to create a 2x2 block matrix holding each image.
-ColumnsToBlocks ctb(2, 2);
+mlpack::ColumnsToBlocks ctb(2, 2);
 ctb.BufValue(0.0); // Use 0 for the margin value.
 ctb.BufSize(2); // Use 2-pixel margins.
 
@@ -360,11 +360,15 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 
 *Before*:
 
-<!-- TODO! -->
+<center>
+<img src="img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
+</center>
 
 *After*:
 
-<!-- TODO! -->
+<center>
+<img src="img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
+</center>
 
 ---
 
@@ -673,8 +677,8 @@ mlpack::RandomBasis(basis, 10);
 
 // Each two vectors are orthogonal.
 std::cout << "Dot product of basis vectors 2 and 4: "
-    << arma::dot(basis.col(2), basis.col(4)) << " (should be zero)."
-    << std::endl;
+    << arma::dot(basis.col(2), basis.col(4))
+    << " (should be zero or very close!)." << std::endl;
 ```
 
 ---
@@ -721,7 +725,7 @@ mlpack::data::Load("iris.labels.csv", labels, true);
 // Now shuffle the points in the iris dataset.
 arma::mat shuffledDataset;
 arma::Row<size_t> shuffledLabels;
-ShuffleData(dataset, labels, shuffledDataset, shuffledLabels);
+mlpack::ShuffleData(dataset, labels, shuffledDataset, shuffledLabels);
 
 std::cout << "Before shuffling, the first point was: " << std::endl;
 std::cout << "  " << dataset.col(0).t();
@@ -734,7 +738,7 @@ std::cout << "with label " << shuffledLabels[0] << "." << std::endl;
 // Generate random weights, then shuffle those also.
 arma::rowvec weights(dataset.n_cols, arma::fill::randu);
 arma::rowvec shuffledWeights;
-ShuffleData(dataset, labels, weights, shuffledDataset, shuffledLabels,
+mlpack::ShuffleData(dataset, labels, weights, shuffledDataset, shuffledLabels,
     shuffledWeights);
 
 std::cout << std::endl << std::endl;
