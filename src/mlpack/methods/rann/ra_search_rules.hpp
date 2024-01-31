@@ -232,7 +232,7 @@ class RASearchRules
     if (numSamplesMade.n_elem == 0)
       return 0;
     else
-      return arma::sum(numSamplesMade);
+      return sum(numSamplesMade);
   }
 
   typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;

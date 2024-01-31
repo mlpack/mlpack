@@ -52,7 +52,7 @@ TEST_CASE("RegularizedSVDFunctionRandomEvaluate", "[RegularizedSVDTest]")
       const size_t item = data(1, j) + numUsers;
 
       const double rating = data(2, j);
-      const double ratingError = rating - arma::dot(parameters.col(user),
+      const double ratingError = rating - dot(parameters.col(user),
                                                     parameters.col(item));
       const double ratingErrorSquared = ratingError * ratingError;
 
@@ -218,7 +218,7 @@ TEST_CASE("RegularizedSVDFunctionOptimize", "[RegularizedSVDTest]")
   // Make rating entries based on the parameters.
   for (size_t i = 0; i < numRatings; ++i)
   {
-    data(2, i) = arma::dot(parameters.col(data(0, i)),
+    data(2, i) = dot(parameters.col(data(0, i)),
                            parameters.col(numUsers + data(1, i)));
   }
 
@@ -234,7 +234,7 @@ TEST_CASE("RegularizedSVDFunctionOptimize", "[RegularizedSVDTest]")
   arma::mat predictedData(1, numRatings);
   for (size_t i = 0; i < numRatings; ++i)
   {
-    predictedData(0, i) = arma::dot(optParameters.col(data(0, i)),
+    predictedData(0, i) = dot(optParameters.col(data(0, i)),
                                     optParameters.col(numUsers + data(1, i)));
   }
 
@@ -276,7 +276,7 @@ TEST_CASE("RegularizedSVDFunctionOptimizeHOGWILD", "[RegularizedSVDTest]")
   // Make rating entries based on the parameters.
   for (size_t i = 0; i < numRatings; ++i)
   {
-    data(2, i) = arma::dot(parameters.col(data(0, i)),
+    data(2, i) = dot(parameters.col(data(0, i)),
                            parameters.col(numUsers + data(1, i)));
   }
 
@@ -299,7 +299,7 @@ TEST_CASE("RegularizedSVDFunctionOptimizeHOGWILD", "[RegularizedSVDTest]")
   arma::mat predictedData(1, numRatings);
   for (size_t i = 0; i < numRatings; ++i)
   {
-    predictedData(0, i) = arma::dot(optParameters.col(data(0, i)),
+    predictedData(0, i) = dot(optParameters.col(data(0, i)),
                                     optParameters.col(numUsers + data(1, i)));
   }
 

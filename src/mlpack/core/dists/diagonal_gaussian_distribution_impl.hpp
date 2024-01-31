@@ -60,14 +60,14 @@ inline void DiagonalGaussianDistribution::LogProbability(
 
   // Calculates log of exponent equation in multivariate Gaussian
   // distribution. We use only diagonal part for faster computation.
-  arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
+  arma::vec logExponents = -0.5 * trans(diffs % diffs) * invCov;
 
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
 
 inline arma::vec DiagonalGaussianDistribution::Random() const
 {
-  return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
+  return (sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
 }
 
 inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
@@ -84,11 +84,11 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   }
 
   // Calculate and normalize the mean.
-  mean = arma::sum(observations, 1) / observations.n_cols;
+  mean = sum(observations, 1) / observations.n_cols;
 
   // Now calculate the covariance.
   const arma::mat diffs = observations.each_col() - mean;
-  covariance += arma::sum(diffs % diffs, 1);
+  covariance += sum(diffs % diffs, 1);
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
   // to make the estimator unbiased.

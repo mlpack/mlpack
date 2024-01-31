@@ -62,14 +62,14 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
       d.Probabilities(0) =
-          arma::exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
+          exp2(arma::linspace(1, maxLength - 1, maxLength - 1));
 
       size = 2 + d.Random()(0);
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
       size, arma::distr_param(0, 1));
     arma::colvec vecLabel = arma::conv_to<arma::colvec>::from(
-      arma::repmat(vecInput, nRepeats, 1));
+        repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + addSeparator + vecLabel.n_elem;
     input(i) = arma::zeros(totSize, 2);
     input(i).col(0).rows(0, vecInput.n_elem - 1) =

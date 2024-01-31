@@ -63,7 +63,7 @@ void MarginRankingLossType<MatType>::Backward(
   MatType lossPrediction2 = lossPrediction1;
   lossPrediction1 = -target % lossPrediction1;
   lossPrediction2 = target % lossPrediction2;
-  loss = arma::join_cols(lossPrediction1, lossPrediction2);
+  loss = join_cols(lossPrediction1, lossPrediction2);
 
   if (!reduction)
     loss = loss / target.n_elem;

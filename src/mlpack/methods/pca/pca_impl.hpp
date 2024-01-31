@@ -160,7 +160,7 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // Calculate the dimension we should keep.
   size_t newDimension = 0;
   double varSum = 0.0;
-  eigVal /= arma::sum(eigVal); // Normalize eigenvalues.
+  eigVal /= sum(eigVal); // Normalize eigenvalues.
   while ((varSum < varRetained) && (newDimension < eigVal.n_elem))
   {
     varSum += eigVal[newDimension];

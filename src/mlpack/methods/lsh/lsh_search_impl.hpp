@@ -270,8 +270,8 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
     // and the corresponding offset be 'offset_i'.  Then the key of a single
     // point is obtained as:
     // key = { floor((<proj_i, point> + offset_i) / 'hashWidth') forall i }
-    arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i), 1,
-                                       this->referenceSet.n_cols);
+    arma::mat offsetMat = repmat(offsets.unsafe_col(i), 1,
+                                 this->referenceSet.n_cols);
     arma::mat hashMat = projections.slice(i).t() * (this->referenceSet);
     hashMat += offsetMat;
     hashMat /= hashWidth;
@@ -548,8 +548,8 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
 
   // Calculate scores. score = distance^2.
   arma::vec scores(2 * numProj);
-  scores.rows(0, numProj - 1) = arma::pow(limLow, 2);
-  scores.rows(numProj, (2 * numProj) - 1) = arma::pow(limHigh, 2);
+  scores.rows(0, numProj - 1) = pow(limLow, 2);
+  scores.rows(numProj, (2 * numProj) - 1) = pow(limHigh, 2);
 
   // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]

@@ -324,7 +324,7 @@ inline double LocalCoordinateCoding::Objective(
     const size_t pointInd = (size_t) (adjacencies(l) / atoms);
 
     weightedL1NormZ += fabs(codes(atomInd, pointInd)) * arma::as_scalar(
-        arma::sum(arma::square(dictionary.col(atomInd) - data.col(pointInd))));
+        sum(square(dictionary.col(atomInd) - data.col(pointInd))));
   }
 
   double froNormResidual = norm(data - dictionary * codes, "fro");

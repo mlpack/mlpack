@@ -49,7 +49,7 @@ class GaussianFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::exp(-1 * arma::pow(x, 2));
+    y = exp(-1 * pow(x, 2));
   }
 
   /**

@@ -196,7 +196,7 @@ TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
     for (; j != basisQueue.cend(); ++j)
     {
       currentNode = *j;
-      REQUIRE(arma::dot(currentNode->BasisVector(), newBasisVector) ==
+      REQUIRE(dot(currentNode->BasisVector(), newBasisVector) ==
           Approx(0.0).margin(1e-5));
     }
 

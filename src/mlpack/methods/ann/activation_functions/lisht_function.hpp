@@ -88,7 +88,7 @@ class LiSHTFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy = arma::tanh(x) + x % (1 - arma::pow(arma::tanh(x), 2));
+    dy = arma::tanh(x) + x % (1 - pow(arma::tanh(x), 2));
   }
 }; // class LishtFunction
 

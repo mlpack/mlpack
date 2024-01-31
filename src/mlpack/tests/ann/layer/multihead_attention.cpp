@@ -59,7 +59,7 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
   module.KeyPaddingMask() = keyPaddingMask;
 
   // Forward test.
-  arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+  arma::mat input = join_cols(join_cols(query, query), query);
 
   module.Forward(input, output);
   REQUIRE(output.n_rows == embedDim * tLen);
@@ -94,7 +94,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     const size_t batchSize = 1;
 
     arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
-    arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+    arma::mat input = join_cols(join_cols(query, query), query);
 
     MultiheadAttention module(tgtSeqLen, nHeads);
     module.InputDimensions() = std::vector<size_t>({ embedDim, 3 * tgtSeqLen });
@@ -118,7 +118,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
 
     arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
     arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat input = arma::join_cols(arma::join_cols(query, key), key);
+    arma::mat input = join_cols(join_cols(query, key), key);
 
     MultiheadAttention module(tgtSeqLen, nHeads);
     module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * srcSeqLen + tgtSeqLen });
@@ -143,7 +143,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
     arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
     arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat input = arma::join_cols(arma::join_cols(query, key), value);
+    arma::mat input = join_cols(join_cols(query, key), value);
 
     MultiheadAttention module(tgtSeqLen, nHeads);
     module.InputDimensions() = std::vector<size_t>({ embedDim, 2 * srcSeqLen + tgtSeqLen });

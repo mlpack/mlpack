@@ -52,7 +52,7 @@ class NormalDistribution
    */
   DataType Probability(const DataType& observation) const
   {
-    return arma::exp(LogProbability(observation));
+    return exp(LogProbability(observation));
   }
 
   /**

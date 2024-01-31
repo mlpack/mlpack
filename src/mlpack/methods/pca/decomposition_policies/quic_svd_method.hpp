@@ -65,10 +65,10 @@ class QUICSVDPolicy
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the
     // covariance matrix is X * X' / (N - 1).
-    eigVal = arma::pow(arma::diagvec(sigma), 2) / (data.n_cols - 1);
+    eigVal = pow(arma::diagvec(sigma), 2) / (data.n_cols - 1);
 
     // Project the samples to the principals.
-    transformedData = arma::trans(eigvec) * centeredData;
+    transformedData = trans(eigvec) * centeredData;
   }
 
   //! Get the error tolerance fraction for calculated subspace.

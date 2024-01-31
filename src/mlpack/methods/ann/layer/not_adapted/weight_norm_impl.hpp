@@ -136,7 +136,7 @@ void WeightNormType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   // Initialize the non-bias weights of wrapped layer.
-  const double normVectorParameter = arma::norm(vectorParameter, 2);
+  const double normVectorParameter = norm(vectorParameter, 2);
   layerWeights.rows(0, layerWeightSize - biasWeightSize - 1) =
       scalarParameter(0) * vectorParameter / normVectorParameter;
 
@@ -163,7 +163,7 @@ void WeightNormType<InputType, OutputType>::Gradient(
   wrappedLayer->Gradient(input, error, gradient);
 
   // Store the norm of vector parameter temporarily.
-  const double normVectorParameter = arma::norm(vectorParameter, 2);
+  const double normVectorParameter = norm(vectorParameter, 2);
 
   // Set the gradients of the bias terms.
   if (biasWeightSize != 0)

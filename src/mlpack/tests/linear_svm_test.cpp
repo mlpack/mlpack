@@ -221,7 +221,7 @@ TEST_CASE("LinearSVMFunctionRegularizationEvaluate", "[LinearSVMTest]")
     parameters.randu(inputSize, numClasses);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = arma::dot(parameters, parameters);
+    wL2SquaredNorm = dot(parameters, parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;
@@ -312,7 +312,7 @@ TEST_CASE("LinearSVMFunctionRegularizationSeparableEvaluate", "[LinearSVMTest]")
     parameters.randu(inputSize, numClasses);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = 0.5 * arma::dot(parameters, parameters);
+    wL2SquaredNorm = 0.5 * dot(parameters, parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;

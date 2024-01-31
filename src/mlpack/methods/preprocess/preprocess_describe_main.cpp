@@ -92,7 +92,7 @@ double SumNthPowerDeviations(const arma::rowvec& input,
                              const double& fMean,
                              size_t n)
 {
-  return arma::sum(arma::pow(input - fMean, static_cast<double>(n)));
+  return sum(pow(input - fMean, static_cast<double>(n)));
 }
 
 /**

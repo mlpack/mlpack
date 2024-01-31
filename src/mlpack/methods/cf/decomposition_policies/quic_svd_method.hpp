@@ -81,7 +81,7 @@ class QUIC_SVDPolicy
     w = w * sigma;
 
     // Take transpose of the matrix h as required by CF class.
-    h = arma::trans(h);
+    h = trans(h);
   }
 
   /**

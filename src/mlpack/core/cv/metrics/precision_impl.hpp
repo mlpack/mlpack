@@ -36,8 +36,8 @@ double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
 
-  size_t tp = arma::sum((labels == PC) % (predictedLabels == PC));
-  size_t numberOfPositivePredictions = arma::sum(predictedLabels == PC);
+  size_t tp = sum((labels == PC) % (predictedLabels == PC));
+  size_t numberOfPositivePredictions = sum(predictedLabels == PC);
 
   return double(tp) / numberOfPositivePredictions;
 }
@@ -72,8 +72,8 @@ double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
   arma::vec precisions = arma::vec(numClasses);
   for (size_t c = 0; c < numClasses; ++c)
   {
-    size_t tp = arma::sum((labels == c) % (predictedLabels == c));
-    size_t numberOfPositivePredictions = arma::sum(predictedLabels == c);
+    size_t tp = sum((labels == c) % (predictedLabels == c));
+    size_t numberOfPositivePredictions = sum(predictedLabels == c);
     precisions(c) = double(tp) / numberOfPositivePredictions;
   }
 

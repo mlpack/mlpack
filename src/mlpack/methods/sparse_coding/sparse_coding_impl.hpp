@@ -181,7 +181,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
     arma::mat matAInvZXT = solve(A, codesXT);
 
-    arma::vec gradient = -arma::sum(arma::square(matAInvZXT), 1);
+    arma::vec gradient = -sum(square(matAInvZXT), 1);
     gradient += 1;
 
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
@@ -199,11 +199,11 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
     while (true)
     {
       // Calculate objective.
-      double sumDualVars = arma::sum(dualVars);
+      double sumDualVars = sum(dualVars);
       double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
       double fNew = -(-trace(trans(codesXT) * solve(codesZT +
           diagmat(dualVars + alpha * searchDirection), codesXT)) -
-          (sumDualVars + alpha * arma::sum(searchDirection)));
+          (sumDualVars + alpha * sum(searchDirection)));
 
       if (fNew <= fOld + alpha * sufficientDecrease)
       {
@@ -217,7 +217,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
     // Take step and print useful information.
     dualVars += searchDirection;
-    normGradient = arma::norm(gradient, 2);
+    normGradient = norm(gradient, 2);
     Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
     Log::Debug << "  Gradient norm: " << std::scientific << normGradient
         << "." << std::endl;
@@ -248,7 +248,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
                              data.col(RandInt(data.n_cols)) +
                              data.col(RandInt(data.n_cols)));
 
-        dictionary.col(i) /= arma::norm(dictionary.col(i), 2);
+        dictionary.col(i) /= norm(dictionary.col(i), 2);
       }
       else
       {
@@ -269,7 +269,7 @@ inline void SparseCoding::ProjectDictionary()
 {
   for (size_t j = 0; j < atoms; ++j)
   {
-    double atomNorm = arma::norm(dictionary.col(j), 2);
+    double atomNorm = norm(dictionary.col(j), 2);
     if (atomNorm > 1)
     {
       Log::Info << "Norm of atom " << j << " exceeds 1 (" << std::scientific
@@ -284,12 +284,12 @@ inline double SparseCoding::Objective(const arma::mat& data,
                                       const arma::mat& codes)
     const
 {
-  double l11NormZ = arma::sum(arma::sum(arma::abs(codes)));
-  double froNormResidual = arma::norm(data - (dictionary * codes), "fro");
+  double l11NormZ = sum(sum(arma::abs(codes)));
+  double froNormResidual = norm(data - (dictionary * codes), "fro");
 
   if (lambda2 > 0)
   {
-    double froNormZ = arma::norm(codes, "fro");
+    double froNormZ = norm(codes, "fro");
     return 0.5 * (std::pow(froNormResidual, 2.0) + (lambda2 *
         std::pow(froNormZ, 2.0))) + (lambda1 * l11NormZ);
   }

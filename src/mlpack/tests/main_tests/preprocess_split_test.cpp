@@ -222,7 +222,7 @@ TEST_CASE_METHOD(
   REQUIRE(params.Get<arma::mat>("test").n_cols ==
       std::floor(0.1 * inputSize));
 
-  arma::mat concat = arma::join_rows(params.Get<arma::mat>("training"),
+  arma::mat concat = join_rows(params.Get<arma::mat>("training"),
       params.Get<arma::mat>("test"));
   CheckMatrices(inputData, concat);
 }

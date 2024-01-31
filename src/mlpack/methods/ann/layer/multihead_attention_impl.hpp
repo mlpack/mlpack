@@ -114,12 +114,12 @@ Forward(const MatType& input, MatType& output)
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    qProj.slice(i) = arma::trans(
-        queryWt * q.slice(i) + arma::repmat(qBias, 1, tgtSeqLen));
-    kProj.slice(i) = arma::trans(
-        keyWt * k.slice(i) + arma::repmat(kBias, 1, srcSeqLen));
-    vProj.slice(i) = arma::trans(
-        valueWt * v.slice(i) + arma::repmat(vBias, 1, srcSeqLen));
+    qProj.slice(i) = trans(
+        queryWt * q.slice(i) + repmat(qBias, 1, tgtSeqLen));
+    kProj.slice(i) = trans(
+        keyWt * k.slice(i) + repmat(kBias, 1, srcSeqLen));
+    vProj.slice(i) = trans(
+        valueWt * v.slice(i) + repmat(vBias, 1, srcSeqLen));
   }
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
@@ -155,7 +155,7 @@ Forward(const MatType& input, MatType& output)
   {
     if (keyPaddingMask.n_rows != 1 || keyPaddingMask.n_cols != srcSeqLen)
         Log::Fatal << "The size of the 'keyPaddingMask' is not correct.\n";
-    scores.each_slice() += arma::repmat(keyPaddingMask, tgtSeqLen, 1);
+    scores.each_slice() += repmat(keyPaddingMask, tgtSeqLen, 1);
   }
 
   for (size_t i = 0; i < numHeads * batchSize; ++i)
@@ -175,8 +175,8 @@ Forward(const MatType& input, MatType& output)
   // The final output is the linear projection of attention output.
   for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = arma::vectorise(arma::trans(attnOut.slice(i) * outWt
-        + arma::repmat(outBias, tgtSeqLen, 1)));
+    output.col(i) = vectorise(trans(attnOut.slice(i) * outWt
+        + repmat(outBias, tgtSeqLen, 1)));
   }
 }
 
@@ -229,12 +229,12 @@ Backward(const MatType& /* input */,
     if (selfAttention)
     {
       g.submat(0, i, g.n_rows - 1, i) =
-          arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+          vectorise(trans(tmp.slice(i) * valueWt));
     }
     else
     {
       g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i) =
-          arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
+          vectorise(trans(tmp.slice(i) * valueWt));
     }
   }
 
@@ -264,13 +264,13 @@ Backward(const MatType& /* input */,
     {
       // Sum the query, key, and value deltas.
       g.submat(0, i, g.n_rows - 1, i) +=
-          arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+          vectorise(trans(tmp.slice(i) * keyWt));
     }
     else
     {
       g.submat(tgtSeqLen * embedDim, i,
                (tgtSeqLen + srcSeqLen) * embedDim - 1, i) =
-          arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
+          vectorise(trans(tmp.slice(i) * keyWt));
     }
   }
 
@@ -289,12 +289,12 @@ Backward(const MatType& /* input */,
     {
       // Sum the query, key, and value deltas.
       g.submat(0, i, g.n_rows - 1, i) +=
-          arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+          vectorise(trans(tmp.slice(i) * queryWt));
     }
     else
     {
       g.submat(0, i, tgtSeqLen * embedDim - 1, i) =
-          arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
+          vectorise(trans(tmp.slice(i) * queryWt));
     }
   }
 }
@@ -347,7 +347,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)
-      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 1));
+      = vectorise(sum(sum(errorTemp, 2), 1));
 
   // The shape of attnOut : (tgtSeqLen, embedDim, batchSize).
   // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
@@ -356,8 +356,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. outWt, i.e. dL/d(outWt). We will take sum of gyTemp along
   // the slices and vectorise the output.
-  gradient.rows(3 * wtSize, 4 * wtSize - 1)
-      = arma::vectorise(arma::sum(gyTemp, 2));
+  gradient.rows(3 * wtSize, 4 * wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // Partial derivative wrt. attnOut.
   // The shape of outWt : (embedDim, embedDim).
@@ -381,7 +380,7 @@ Gradient(const MatType& input,
   // Gradient wrt. vBias, i.e. dL/d(vBias). We will take summation of errorTemp
   // over all the batches and over all the sequences.
   gradient.rows(4 * wtSize + 2 * embedDim, 4 * wtSize + 3 * embedDim - 1)
-      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 0));
+      = vectorise(sum(sum(errorTemp, 2), 0));
 
   // Shape of v : (srcSeqLen, embedDim, batchSize).
   // Shape of errorTemp : (srcSeqLen, embedDim, bathSize).
@@ -390,8 +389,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. valueWt, i.e. dL/d(valueWt). We will take summation over all
   // batches of errorTemp.
-  gradient.rows(2 * wtSize, 3 * wtSize - 1)
-      = arma::vectorise(arma::sum(errorTemp, 2));
+  gradient.rows(2 * wtSize, 3 * wtSize - 1) = vectorise(sum(errorTemp, 2));
 
   // Now, the shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
   // The shape of vProj : (srcSeqLen, headDim, numHeads * batchSize).
@@ -419,7 +417,7 @@ Gradient(const MatType& input,
   // Gradient wrt. kBias, i.e. dL/d(kBias). We will take summation over all the
   // batches of gyTemp and then over all the sequences.
   gradient.rows(4 * wtSize + embedDim, 4 * wtSize + 2 * embedDim - 1)
-      = arma::vectorise(arma::sum(arma::sum(gyTemp, 2), 0));
+      = vectorise(sum(sum(gyTemp, 2), 0));
 
   // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of gyTemp : (srcSeqLen, embedDim, batchSize).
@@ -428,7 +426,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. keyWt, i.e. dL/d(keyWt). We will take summation over all the
   // batches of dkeyWt.
-  gradient.rows(wtSize, 2 * wtSize - 1) = arma::vectorise(arma::sum(gyTemp, 2));
+  gradient.rows(wtSize, 2 * wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // The shape of kProj : (srcSeqLen, headDim, numHeads * batchSize).
   // The shape of errorTemp : (tgtSeqLen, srcSeqLen, numHeads * batchSize).
@@ -442,7 +440,7 @@ Gradient(const MatType& input,
   // Gradient wrt. qBias, i.e. dL/d(qBias). We will take summation over all the
   // batches of gyTemp and over all the sequences.
   gradient.rows(4 * wtSize, 4 * wtSize + embedDim - 1)
-      = arma::vectorise(arma::sum(arma::sum(gyTemp, 2), 0));
+      = vectorise(sum(sum(gyTemp, 2), 0));
 
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // The shape of q : (embedDim, tgtSeqLen, batchSize).
@@ -451,7 +449,7 @@ Gradient(const MatType& input,
 
   // Gradient wrt. queryWt, i.e. dL/d(queryBias). We will take summation over
   // all the batches of gyTemp.
-  gradient.rows(0, wtSize - 1) = arma::vectorise(arma::sum(gyTemp, 2));
+  gradient.rows(0, wtSize - 1) = vectorise(sum(gyTemp, 2));
 
   // Regularize according to the given regularization rule.
   regularizer.Evaluate(weights, gradient);

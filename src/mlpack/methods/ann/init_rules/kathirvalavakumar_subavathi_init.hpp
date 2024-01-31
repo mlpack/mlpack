@@ -65,11 +65,11 @@ class KathirvalavakumarSubavathiInitialization
    * @param data The input patterns.
    * @param s Parameter that defines the active region.
    */
-  template<typename eT>
-  KathirvalavakumarSubavathiInitialization(const arma::Mat<eT>& data,
+  template<typename MatType>
+  KathirvalavakumarSubavathiInitialization(const MatType& data,
                                            const double s) : s(s)
   {
-    dataSum = arma::sum(data % data);
+    dataSum = sum(data % data);
   }
 
   /**
@@ -80,10 +80,11 @@ class KathirvalavakumarSubavathiInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename MatType>
+  void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
-    arma::Row<eT> b = s * arma::sqrt(3 / (rows * dataSum));
+    typedef typename GetRowType<MatType>::type RowType; 
+    RowType b = s * sqrt(3 / (rows * dataSum));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W, rows, cols);
@@ -95,10 +96,12 @@ class KathirvalavakumarSubavathiInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W)
+  template<typename MatType>
+  void Initialize(MatType& W,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    arma::Row<eT> b = s * arma::sqrt(3 / (W.n_rows * dataSum));
+    typedef typename GetRowType<MatType>::type RowType; 
+    RowType b = s * sqrt(3 / (W.n_rows * dataSum));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W);
@@ -113,8 +116,8 @@ class KathirvalavakumarSubavathiInitialization
    * @param cols Number of columns.
    * @param slices Number of slices
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W,
+  template<typename CubeType>
+  void Initialize(CubeType& W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
@@ -132,8 +135,9 @@ class KathirvalavakumarSubavathiInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W)
+  template<typename CubeType>
+  void Initialize(CubeType& W,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty cube." << std::endl;

@@ -901,11 +901,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -916,7 +916,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // h = o * tanh(c).
@@ -983,11 +983,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -998,7 +998,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // h = o * tanh(c).
@@ -1123,36 +1123,36 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   // Compute the z_t gate output.
 //   arma::mat expectedOutput = arma::ones(3, 1);
 //   expectedOutput *= -4;
-//   expectedOutput = arma::exp(expectedOutput);
+//   expectedOutput = exp(expectedOutput);
 //   expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
 //   expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
 
 //   // For the first input the output should be equal to the output of
 //   // gate z_t as the previous output fed to the cell is all zeros.
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 
 //   expectedOutput = output;
 
 //   gru.Forward(input, output);
 
-//   double s = arma::as_scalar(arma::sum(expectedOutput));
+//   double s = arma::as_scalar(sum(expectedOutput));
 
 //   // Compute the value of z_t gate for the second input.
 //   arma::mat z_t = arma::ones(3, 1);
 //   z_t *= -(s + 4);
-//   z_t = arma::exp(z_t);
+//   z_t = exp(z_t);
 //   z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
 
 //   // Compute the value of o_t gate for the second input.
 //   arma::mat o_t = arma::ones(3, 1);
-//   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
-//   o_t = arma::exp(o_t);
+//   o_t *= -(arma::as_scalar(sum(expectedOutput % z_t)) + 4);
+//   o_t = exp(o_t);
 //   o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 
 //   // Expected output for the second input.
 //   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 
 //   LayerTypes<> layer(gruAlloc);
 //   boost::apply_visitor(DeleteVisitor(), layer);
@@ -1506,11 +1506,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -1521,7 +1521,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 //
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // h = o * tanh(c).
@@ -1588,11 +1588,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -1603,7 +1603,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 //
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // h = o * tanh(c).
@@ -1728,36 +1728,36 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   // Compute the z_t gate output.
 //   arma::mat expectedOutput = arma::ones(3, 1);
 //   expectedOutput *= -4;
-//   expectedOutput = arma::exp(expectedOutput);
+//   expectedOutput = exp(expectedOutput);
 //   expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
 //   expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
 //
 //   // For the first input the output should be equal to the output of
 //   // gate z_t as the previous output fed to the cell is all zeros.
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 //
 //   expectedOutput = output;
 //
 //   gru.Forward(input, output);
 //
-//   double s = arma::as_scalar(arma::sum(expectedOutput));
+//   double s = arma::as_scalar(sum(expectedOutput));
 //
 //   // Compute the value of z_t gate for the second input.
 //   arma::mat z_t = arma::ones(3, 1);
 //   z_t *= -(s + 4);
-//   z_t = arma::exp(z_t);
+//   z_t = exp(z_t);
 //   z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
 //
 //   // Compute the value of o_t gate for the second input.
 //   arma::mat o_t = arma::ones(3, 1);
-//   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
-//   o_t = arma::exp(o_t);
+//   o_t *= -(arma::as_scalar(sum(expectedOutput % z_t)) + 4);
+//   o_t = exp(o_t);
 //   o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 //
 //   // Expected output for the second input.
 //   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 //
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 //
 //   LayerTypes<> layer(gruAlloc);
 //   boost::apply_visitor(DeleteVisitor(), layer);

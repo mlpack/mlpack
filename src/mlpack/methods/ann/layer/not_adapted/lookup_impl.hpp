@@ -47,7 +47,7 @@ void LookupType<InputType, OutputType>::Forward(
     // ith column of output is a vectorized form of a matrix of shape
     // (embeddingSize, seqLength) selected as a combination of columns from the
     // weights.
-    output.col(i) = arma::vectorise(weights.cols(
+    output.col(i) = vectorise(weights.cols(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
   }
 }

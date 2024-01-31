@@ -62,7 +62,7 @@ class TanhExpFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x % arma::tanh(arma::exp(x));
+    y = x % arma::tanh(exp(x));
   }
 
   /**
@@ -92,7 +92,7 @@ class TanhExpFunction
                     DerivVecType& dy)
   {
     // leverage both y and x
-    dy = y / x + x % arma::exp(x) % (1 - arma::pow(y / x, 2));
+    dy = y / x + x % exp(x) % (1 - pow(y / x, 2));
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= tanh(1))
     dy(arma::find(x == 0)).fill(std::tanh(1));

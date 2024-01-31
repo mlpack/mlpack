@@ -53,7 +53,7 @@ class GELUFunction
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y = 0.5 * x % (1 + arma::tanh(std::sqrt(2 / M_PI) *
-        (x + 0.044715 * arma::pow(x, 3))));
+        (x + 0.044715 * pow(x, 3))));
   }
 
   /**
@@ -84,9 +84,9 @@ class GELUFunction
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
-    dy = 0.5 * arma::tanh(0.0356774 * arma::pow(x, 3) + 0.797885 * x) +
-        (0.0535161 * arma::pow(x, 3) + 0.398942 * x) %
-        arma::pow(1 / arma::cosh(0.0356774 * arma::pow(x, 3) +
+    dy = 0.5 * arma::tanh(0.0356774 * pow(x, 3) + 0.797885 * x) +
+        (0.0535161 * pow(x, 3) + 0.398942 * x) %
+        pow(1 / arma::cosh(0.0356774 * pow(x, 3) +
         0.797885 * x), 2) + 0.5;
     dy(arma::find(x < -10)).fill(0); // catch overflows
   }

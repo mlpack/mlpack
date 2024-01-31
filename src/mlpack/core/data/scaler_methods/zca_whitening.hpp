@@ -86,7 +86,7 @@ class ZCAWhitening
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
-    output = inv(pca.EigenVectors()) * arma::diagmat(arma::sqrt(
+    output = inv(pca.EigenVectors()) * arma::diagmat(sqrt(
         pca.EigenValues())) * inv(pca.EigenVectors().t()) * input;
     output = (output.each_col() + pca.ItemMean());
   }

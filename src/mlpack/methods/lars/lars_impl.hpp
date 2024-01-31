@@ -604,7 +604,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
     lambdaPath[0] = lambda1;
 
     if (fitIntercept)
-      interceptPath.push_back(this->offsetY - arma::dot(offsetX, betaPath[0]));
+      interceptPath.push_back(this->offsetY - dot(offsetX, betaPath[0]));
     else
       interceptPath.push_back(0.0);
 
@@ -938,7 +938,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
   {
     interceptPath.clear();
     for (size_t i = 0; i < betaPath.size(); ++i)
-      interceptPath.push_back(this->offsetY - arma::dot(offsetX, betaPath[i]));
+      interceptPath.push_back(this->offsetY - dot(offsetX, betaPath[i]));
   }
   else
   {
@@ -960,9 +960,9 @@ inline typename LARS<ModelMatType>::ElemType LARS<ModelMatType>::Predict(
     const VecType& point) const
 {
   if (!fitIntercept)
-    return arma::dot(Beta(), point);
+    return dot(Beta(), point);
   else
-    return arma::dot(Beta(), point) + Intercept();
+    return dot(Beta(), point) + Intercept();
 }
 
 template<typename ModelMatType>
@@ -1325,9 +1325,9 @@ LARS<ModelMatType>::ComputeError(const MatType& matX,
                                  const bool colMajor)
 {
   if (!colMajor)
-    return arma::accu(arma::pow(y - trans(matX * Beta()) - Intercept(), 2.0));
+    return arma::accu(pow(y - trans(matX * Beta()) - Intercept(), 2.0));
   else
-    return arma::accu(arma::pow(y - Beta().t() * matX - Intercept(), 2.0));
+    return arma::accu(pow(y - Beta().t() * matX - Intercept(), 2.0));
 }
 
 /**

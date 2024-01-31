@@ -112,7 +112,7 @@ void Linear3DType<MatType, RegularizerType>::Forward(
     // Shape of inputTemp : (inSize, nPoints, batchSize).
     MatType z = weight * inputTemp.slice(i);
     z.each_col() += bias;
-    output.col(i) = arma::vectorise(z);
+    output.col(i) = vectorise(z);
   }
 }
 
@@ -141,7 +141,7 @@ void Linear3DType<MatType, RegularizerType>::Backward(
   {
     // Shape of weight : (outSize, inSize).
     // Shape of gyTemp : (outSize, nPoints, batchSize).
-    g.col(i) = arma::vectorise(weight.t() * gyTemp.slice(i));
+    g.col(i) = vectorise(weight.t() * gyTemp.slice(i));
   }
 }
 
@@ -172,11 +172,10 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
     dW.slice(i) = errorTemp.slice(i) * inputTemp.slice(i).t();
   }
 
-  gradient.submat(0, 0, weight.n_elem - 1, 0)
-      = arma::vectorise(arma::sum(dW, 2));
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = vectorise(sum(dW, 2));
 
   gradient.submat(weight.n_elem, 0, weights.n_elem - 1, 0)
-      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 1));
+      = vectorise(sum(sum(errorTemp, 2), 1));
 
   regularizer.Evaluate(weights, gradient);
 }

@@ -37,6 +37,18 @@ struct IsVector
   const static bool value = false;
 };
 
+template<typename MatType>
+struct IsMatrix
+{
+  const static bool value = false;
+};
+
+template<typename CubeType>
+struct IsCube
+{
+  const static bool value = false;
+};
+
 // Commenting out the first template per case, because
 // Visual Studio doesn't like this instantiaion pattern (error C2910).
 // template<>
@@ -77,6 +89,18 @@ struct IsVector<arma::subview_col<eT> >
 // template<>
 template<typename eT>
 struct IsVector<arma::subview_row<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsMatrix<arma::Mat<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCube<arma::Cube<eT> >
 {
   const static bool value = true;
 };
@@ -136,7 +160,13 @@ struct GetRowType<arma::SpMat<eT>>
 template<typename MatType>
 struct GetColType
 {
-  typedef arma::Row<typename MatType::elem_type> type;
+  typedef arma::Col<typename MatType::elem_type> type;
+};
+
+template<typename MatType>
+struct GetUColType
+{
+  typedef arma::Col<arma::uword> type;
 };
 
 template<typename eT>
@@ -187,10 +217,27 @@ struct GetDenseMatType
   typedef arma::Mat<typename MatType::elem_type> type;
 };
 
+template<typename MatType>
+struct GetUDenseMatType
+{
+  typedef arma::Mat<arma::uword> type;
+};
+
 template<typename eT>
 struct GetDenseMatType<arma::SpMat<eT>>
 {
   typedef arma::Mat<eT> type;
+};
+
+// Get the cube type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetCubeType;
+
+template<typename eT>
+struct GetCubeType<arma::Mat<eT>>
+{
+  typedef arma::Cube<eT> type;
 };
 
 // Get the sparse matrix type corresponding to a given MatType.

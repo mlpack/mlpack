@@ -31,8 +31,7 @@ typename MatType::elem_type MeanSquaredLogarithmicErrorType<MatType>::Forward(
     const MatType& target)
 {
   typename MatType::elem_type lossSum =
-      arma::accu(arma::square(arma::log(1.0 + target) -
-      arma::log(1.0 + prediction)));
+      arma::accu(square(log(1.0 + target) - log(1.0 + prediction)));
 
   if (reduction)
     return lossSum;
@@ -46,8 +45,7 @@ void MeanSquaredLogarithmicErrorType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target)) /
-      (1. + prediction);
+  loss = 2 * (log(1. + prediction) - log(1. + target)) / (1. + prediction);
 
   if (!reduction)
     loss = loss / target.n_elem;

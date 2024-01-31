@@ -565,7 +565,7 @@ TEST_CASE("LARSFitInterceptTest", "[LARSTest]")
   REQUIRE(l1.Beta().n_elem == l2.Beta().n_elem);
   CheckMatrices(l1.Beta(), l2.Beta());
   REQUIRE(l1.Intercept() == Approx(arma::mean(responses) -
-      arma::dot(arma::mean(features, 1), l1.Beta())));
+      dot(arma::mean(features, 1), l1.Beta())));
 }
 
 // Make sure that Predict() provides reasonable enough solutions when we are
@@ -591,7 +591,7 @@ TEST_CASE("PredictFitInterceptTest", "[LARSTest]")
         lars.NormalizeData(false);
         lars.Train(X, y);
         const double intercept = arma::mean(y) -
-            arma::dot(arma::mean(X, 1), lars.Beta());
+            dot(arma::mean(X, 1), lars.Beta());
 
         // Calculate what the actual error should be with these regression
         // parameters.
@@ -679,7 +679,7 @@ TEST_CASE("PredictFitInterceptNormalizeDataTest", "[LARSTest]")
         lars.NormalizeData(true);
         lars.Train(X, y);
         const double intercept = arma::mean(y) -
-            arma::dot(arma::mean(X, 1), lars.Beta());
+            dot(arma::mean(X, 1), lars.Beta());
 
         // Calculate what the actual error should be with these regression
         // parameters.
@@ -721,14 +721,14 @@ void CheckKKT(const arma::vec& beta,
 {
   const double epsilon = 1e-10; // For numerical precision.
 
-  arma::vec v = X.t() * X * beta - X.t() * y.t() + lambda * arma::sign(beta);
+  arma::vec v = X.t() * X * beta - X.t() * y.t() + lambda * sign(beta);
   // Active set indices with global numbering: could be empty.
   arma::uvec ia = arma::find(arma::abs(beta) > epsilon);
   // Zero indices with global numbering: could be empty.
   arma::uvec iz = arma::find(arma::abs(beta) <= epsilon);
 
   // Should be zero if beta is the solution.
-  const double crit = arma::dot(beta, v);
+  const double crit = dot(beta, v);
   REQUIRE(std::abs(crit) < epsilon);
 
   // v should be zero at the Active Set ia.

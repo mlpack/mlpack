@@ -1042,7 +1042,7 @@ void DecisionTree<FitnessFunction,
   if (children.size() == 0)
   {
     predictions.fill(majorityClass);
-    probabilities = arma::repmat(classProbabilities, 1, data.n_cols);
+    probabilities = repmat(classProbabilities, 1, data.n_cols);
     return;
   }
 

@@ -432,10 +432,10 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
   arma::mat noiseData("-1 -2 -3 -4 -5");
   arma::rowvec noiseResponses("10 20 30 40 50");
 
-  arma::mat allData = arma::join_rows(noiseData, data);
-  arma::rowvec allResponces = arma::join_rows(noiseResponses, responses);
+  arma::mat allData = join_rows(noiseData, data);
+  arma::rowvec allResponces = join_rows(noiseResponses, responses);
 
-  arma::rowvec weights = arma::join_rows(arma::zeros(noiseData.n_cols).t(),
+  arma::rowvec weights = join_rows(arma::zeros(noiseData.n_cols).t(),
       arma::ones(data.n_cols).t());
 
   SimpleCV<LinearRegression<>, MSE> weightedCV(0.3, allData, allResponces,
@@ -443,7 +443,7 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
 
   REQUIRE(weightedCV.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
-  arma::rowvec weights2 = arma::join_rows(arma::zeros(noiseData.n_cols - 1).t(),
+  arma::rowvec weights2 = join_rows(arma::zeros(noiseData.n_cols - 1).t(),
       arma::ones(data.n_cols + 1).t());
 
   SimpleCV<LinearRegression<>, MSE> weightedCV2(0.3, allData, allResponces,
@@ -506,21 +506,21 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+        join_rows(trainingLabels, predictedLabels), numClasses);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, datasetInfo, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+        join_rows(trainingLabels, predictedLabels), numClasses);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, trainingLabels, numClasses, weights, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+        join_rows(trainingLabels, predictedLabels), numClasses, weights);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
@@ -528,7 +528,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
         trainingData, datasetInfo, trainingLabels, numClasses, weights,
         minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+        join_rows(trainingLabels, predictedLabels), numClasses, weights);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
 }
@@ -620,8 +620,8 @@ TEST_CASE("KFoldCVWithWeightedLRTest", "[CVTest]")
   arma::rowvec responses("1 2 30 40");
   arma::rowvec weights("1 1 0 0");
 
-  KFoldCV<LinearRegression<>, MSE> cv(2, arma::join_rows(data, data),
-      arma::join_rows(responses, responses), arma::join_rows(weights, weights),
+  KFoldCV<LinearRegression<>, MSE> cv(2, join_rows(data, data),
+      join_rows(responses, responses), join_rows(weights, weights),
       false);
   cv.Evaluate();
 
@@ -649,9 +649,9 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
   arma::Row<size_t> labels = originalLabels.cols(0, 1199);
   arma::rowvec weights(data.n_cols, arma::fill::randu);
 
-  arma::mat doubledData = arma::join_rows(data, data);
-  arma::Row<size_t> doubledLabels = arma::join_rows(labels, labels);
-  arma::rowvec doubledWeights = arma::join_rows(weights, weights);
+  arma::mat doubledData = join_rows(data, data);
+  arma::Row<size_t> doubledLabels = join_rows(labels, labels);
+  arma::rowvec doubledWeights = join_rows(weights, weights);
 
   size_t numClasses = 5;
   size_t minimumLeafSize = 8;

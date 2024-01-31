@@ -32,7 +32,7 @@ TEST_CASE("RandomizedSVDReconstructionError", "[RandomizedSVDTest]")
 
   arma::mat s = arma::diagmat(arma::vec("1 0.1 0.01"));
 
-  arma::mat data = arma::trans(U * arma::diagmat(s) * V.t());
+  arma::mat data = trans(U * arma::diagmat(s) * V.t());
 
   // Center the data into a temporary matrix.
   arma::mat centeredData = data.each_col() - arma::mean(centeredData, 0);

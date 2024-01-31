@@ -64,7 +64,7 @@ TEST_CASE("QUICSVDSingularValueError", "[QUICSVDTest]")
 
   arma::mat s = arma::diagmat(arma::vec("1 0.1 0.01"));
 
-  arma::mat data = arma::trans(U * arma::diagmat(s) * V.t());
+  arma::mat data = trans(U * arma::diagmat(s) * V.t());
 
   arma::vec s1, s3;
   arma::mat U1, U2, V1, V2, s2;

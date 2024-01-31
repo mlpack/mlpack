@@ -181,7 +181,7 @@ void InitProneToOverfittingData(arma::mat& xs,
   arma::rowvec data = arma::linspace<arma::rowvec>(0.0, 10.0, N);
   xs = data;
   for (size_t i = 2; i <= M; ++i)
-    xs = arma::join_cols(xs, arma::pow(data, i));
+    xs = join_cols(xs, pow(data, i));
 
   // Responses that approximately follow the function y = 2 * x. Adding noise to
   // avoid having a polynomial of degree 1 that exactly fits the points.
@@ -322,13 +322,13 @@ TEST_CASE("HPTMaximizationTest", "[HPTTest]")
 {
   // Initializing a linearly separable dataset.
   arma::mat xs = arma::linspace<arma::rowvec>(0.0, 10.0, 50);
-  arma::Row<size_t> ys = arma::join_rows(arma::zeros<arma::Row<size_t>>(25),
+  arma::Row<size_t> ys = join_rows(arma::zeros<arma::Row<size_t>>(25),
       arma::ones<arma::Row<size_t>>(25));
 
   // We will train and validate on the same dataset.
   double validationSize = 0.5;
-  arma::mat doubledXs = arma::join_rows(xs, xs);
-  arma::Row<size_t> doubledYs = arma::join_rows(ys, ys);
+  arma::mat doubledXs = join_rows(xs, xs);
+  arma::Row<size_t> doubledYs = join_rows(ys, ys);
 
   // Defining lambdas to choose from. Zero should be preferred since big lambdas
   // are likely to restrict capabilities of logistic regression.

@@ -55,7 +55,7 @@ TEST_CASE("BiasSVDFunctionRandomEvaluate", "[BiasSVDTest]")
       const double userBias = parameters(rank, user);
       const double itemBias = parameters(rank, item);
       const double ratingError = rating - userBias - itemBias -
-          arma::dot(parameters.col(user).subvec(0, rank - 1),
+          dot(parameters.col(user).subvec(0, rank - 1),
                     parameters.col(item).subvec(0, rank - 1));
       const double ratingErrorSquared = ratingError * ratingError;
 
@@ -263,7 +263,7 @@ TEST_CASE("BiasSVDFunctionOptimize", "[BiasSVDTest]")
     const double userBias = parameters(rank, user);
     const double itemBias = parameters(rank, item);
     data(2, i) = userBias + itemBias +
-        arma::dot(parameters.col(user).subvec(0, rank - 1),
+        dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
   }
 
@@ -284,7 +284,7 @@ TEST_CASE("BiasSVDFunctionOptimize", "[BiasSVDTest]")
     const double userBias = optParameters(rank, user);
     const double itemBias = optParameters(rank, item);
     predictedData(0, i) = userBias + itemBias +
-        arma::dot(optParameters.col(user).subvec(0, rank - 1),
+        dot(optParameters.col(user).subvec(0, rank - 1),
                   optParameters.col(item).subvec(0, rank - 1));
   }
 
@@ -331,7 +331,7 @@ TEST_CASE("BiasSVDFunctionParallelOptimize", "[BiasSVDTest]")
     const double userBias = parameters(rank, user);
     const double itemBias = parameters(rank, item);
     data(2, i) = userBias + itemBias +
-        arma::dot(parameters.col(user).subvec(0, rank - 1),
+        dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
   }
 
@@ -359,7 +359,7 @@ TEST_CASE("BiasSVDFunctionParallelOptimize", "[BiasSVDTest]")
     const double userBias = optParameters(rank, user);
     const double itemBias = optParameters(rank, item);
     predictedData(0, i) = userBias + itemBias +
-        arma::dot(optParameters.col(user).subvec(0, rank - 1),
+        dot(optParameters.col(user).subvec(0, rank - 1),
                   optParameters.col(item).subvec(0, rank - 1));
   }
 

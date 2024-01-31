@@ -63,7 +63,7 @@ class SILUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + exp(-x));
   }
 
   /**

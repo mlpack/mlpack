@@ -161,7 +161,7 @@ class LpPooling
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     arma::Mat<eT> inputPre = input;
-    inputPre = arma::pow(inputPre, normType);
+    inputPre = pow(inputPre, normType);
 
     for (size_t i = 1; i < input.n_cols; ++i)
       inputPre.col(i) += inputPre.col(i - 1);
@@ -199,7 +199,7 @@ class LpPooling
       }
     }
 
-    output = arma::pow(output, 1.0 / normType);
+    output = pow(output, 1.0 / normType);
   }
 
   /**
@@ -240,11 +240,11 @@ class LpPooling
         arma::mat InputArea = input(arma::span(i, rowEnd),
             arma::span(j, colEnd));
 
-        size_t sum = pow(arma::accu(arma::pow(InputArea, normType)),
+        size_t sum = pow(arma::accu(pow(InputArea, normType)),
             (normType - 1) / normType);
         unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
         unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
-        unpooledError %= arma::pow(InputArea, normType - 1);
+        unpooledError %= pow(InputArea, normType - 1);
         unpooledError /= sum;
         output(arma::span(i, i + InputArea.n_rows - 1),
             arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;

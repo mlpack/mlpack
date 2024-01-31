@@ -32,9 +32,8 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
 
   arma::vec ids = arma::linspace<arma::vec>(0, n - 1, n);
 
-  arma::vec lowRank = ((1 - strength) *
-      arma::exp(-1.0 * arma::pow((ids / rank), 2)));
-  arma::vec tail = strength * arma::exp(-0.1 * ids / rank);
+  arma::vec lowRank = ((1 - strength) * exp(-1.0 * pow((ids / rank), 2)));
+  arma::vec tail = strength * exp(-0.1 * ids / rank);
 
   arma::mat s = arma::zeros<arma::mat>(n, n);
   s.diag() = lowRank + tail;
@@ -57,7 +56,7 @@ TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
 
   arma::mat s = arma::diagmat(arma::vec("1 0.1 0.01"));
 
-  arma::mat data = arma::trans(U * arma::diagmat(s) * V.t());
+  arma::mat data = trans(U * arma::diagmat(s) * V.t());
 
   // Center the data into a temporary matrix.
   arma::mat centeredData = data.each_col() - arma::mean(data, 1);
