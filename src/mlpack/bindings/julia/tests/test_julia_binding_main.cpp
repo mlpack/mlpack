@@ -10,12 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core.hpp>
+#include <mlpack/core/util/io.hpp>
 
 #undef BINDING_NAME
 #define BINDING_NAME test_julia_binding
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 using namespace std;
 using namespace mlpack;

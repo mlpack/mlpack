@@ -29,11 +29,11 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   }
 
   // Compute labels with "1" for positive class and "0" for the other.
-  arma::Col<size_t> binaryLabels = ConvTo<arma::Col<size_t>>::from(
+  arma::Col<size_t> binaryLabels = arma::conv_to<arma::Col<size_t>>::from(
       (labels == PositiveClass));
 
   // Converting probability scores of PositiveClass, from row to column vector.
-  arma::vec colScores = ConvTo<arma::vec>::from(scores);
+  arma::vec colScores = arma::conv_to<arma::vec>::from(scores);
 
   size_t numberOfTrueLabels  = sum(binaryLabels);
   size_t numberOfFalseLabels = binaryLabels.n_rows - numberOfTrueLabels;
@@ -69,7 +69,7 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   cumulativeSum = cumulativeSum(uniqueScoreIndices);
 
   arma::vec tpr, fpr;
-  tpr = ConvTo<arma::vec>::from(cumulativeSum);
+  tpr = arma::conv_to<arma::vec>::from(cumulativeSum);
   fpr = 1 + uniqueScoreIndices - tpr;
   tpr /= numberOfTrueLabels;
   fpr /= numberOfFalseLabels;

@@ -35,13 +35,26 @@
 #include <mlpack/prereqs.hpp>
 
 // Now the core mlpack classes.
-#include <mlpack/core/util/util.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
+#include <mlpack/core/util/ens_traits.hpp>
+#include <mlpack/core/util/conv_to.hpp>
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/io.hpp>
+#include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/data.hpp>
 #include <mlpack/core/math/math.hpp>
+
+// mlpack::backtrace only for linux
+#ifdef MLPACK_HAS_BFD_DL
+  #include <mlpack/core/util/backtrace.hpp>
+#endif
+
 #include <mlpack/core/dists/dists.hpp>
 #include <mlpack/core/kernels/kernels.hpp>
 #include <mlpack/core/metrics/metrics.hpp>
 #include <mlpack/core/tree/tree.hpp>
+
+// Include cross-validation and hyperparameter tuning framework.
 #include <mlpack/core/cv/cv.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
 

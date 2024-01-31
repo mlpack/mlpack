@@ -34,7 +34,7 @@ bool Save(const std::string& filename,
           const bool fatal)
 {
   arma::Mat<unsigned char> tmpMatrix =
-      ConvTo<arma::Mat<unsigned char>>::from(matrix);
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
 
   return SaveImage(filename, tmpMatrix, info, fatal);
 }
@@ -139,7 +139,7 @@ inline bool SaveImage(const std::string& filename,
   else if ("hdr" == Extension(filename))
   {
     // We'll have to convert to float...
-    arma::fmat tmpImage = ConvTo<arma::fmat>::from(image);
+    arma::fmat tmpImage = arma::conv_to<arma::fmat>::from(image);
     status = stbi_write_hdr(filename.c_str(), info.Width(), info.Height(),
         info.Channels(), tmpImage.memptr());
   }

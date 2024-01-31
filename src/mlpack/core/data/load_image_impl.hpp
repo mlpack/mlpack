@@ -40,7 +40,7 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  matrix = ConvTo<arma::Mat<eT>>::from(tempMatrix);
+  matrix = arma::conv_to<arma::Mat<eT>>::from(tempMatrix);
   Timer::Stop("loading_image");
   return true;
 }
@@ -86,7 +86,7 @@ bool Load(const std::vector<std::string>& files,
       return false;
   }
 
-  matrix = ConvTo<arma::Mat<eT>>::from(tmpMatrix);
+  matrix = arma::conv_to<arma::Mat<eT>>::from(tmpMatrix);
   return true;
 }
 
