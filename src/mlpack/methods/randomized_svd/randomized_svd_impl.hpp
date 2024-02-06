@@ -91,12 +91,12 @@ inline void RandomizedSVD::Apply(const MatType& data,
   // Apply the centered data matrix to a random matrix, obtaining Q.
   if (data.n_cols >= data.n_rows)
   {
-    R = arma::randn<arma::mat>(data.n_rows, iteratedPower);
+    R = Randn<arma::mat>(data.n_rows, iteratedPower);
     Q = (data.t() * R) - repmat(trans(R.t() * rowMean), data.n_cols, 1);
   }
   else
   {
-    R = arma::randn<arma::mat>(data.n_cols, iteratedPower);
+    R = Randn<arma::mat>(data.n_cols, iteratedPower);
     Q = (data * R) - (rowMean * (arma::ones(1, data.n_cols) * R));
   }
 

@@ -20,7 +20,7 @@ namespace mlpack {
 #ifdef MLPACK_HAS_COOT
 
 template<typename InputType>
-InputType randi(const size_t rows,
+InputType Randi(const size_t rows,
                 const size_t cols,
                 const coot::distr_param& param
                 const typename std::enable_if_t<
@@ -31,7 +31,7 @@ InputType randi(const size_t rows,
 }
 
 template<typename InputType>
-InputType randn(const size_t rows, 
+InputType Randn(const size_t rows, 
                 const size_t cols, 
                 const typename std::enable_if_t<
                     coot::is_coot_type<InputType>::value>* = 0)
@@ -40,7 +40,15 @@ InputType randn(const size_t rows,
 }
 
 template<typename InputType>
-InputType randu(const size_t rows,
+InputType Randn(const size_t n_elem, 
+                const typename std::enable_if_t<
+                    coot::is_coot_type<InputType>::value>* = 0)
+{
+  return coot::randn<InputType>(n_elem);
+}
+
+template<typename InputType>
+InputType Randu(const size_t rows,
                 const size_t cols,
                 const typename std::enable_if<
                     coot::is_coot_type<InputType>::value>* = 0)
@@ -51,7 +59,7 @@ InputType randu(const size_t rows,
 #endif
 
 template<typename InputType>
-InputType randi(const size_t rows,
+InputType Randi(const size_t rows,
                 const size_t cols,
                 const arma::distr_param& param,
                 const typename std::enable_if_t<
@@ -60,9 +68,9 @@ InputType randi(const size_t rows,
   return arma::randi<InputType>(rows, cols, param);
 }
 
-template<typename InputType>
-InputType randn(const size_t rows,
-                const size_t cols,
+template<typename InputType, typename VarType, typename VarType2>
+InputType Randn(const VarType rows,
+                const VarType2 cols,
                 const typename std::enable_if_t<
                     arma::is_arma_type<InputType>::value>* = 0)
 {
@@ -70,7 +78,15 @@ InputType randn(const size_t rows,
 }
 
 template<typename InputType>
-InputType randu(const size_t rows,
+InputType Randn(const size_t n_elem,
+                const typename std::enable_if_t<
+                    arma::is_arma_type<InputType>::value>* = 0)
+{
+  return arma::randn<InputType>(n_elem);
+}
+
+template<typename InputType>
+InputType Randu(const size_t rows,
                 const size_t cols,
                 const typename std::enable_if_t<
                     arma::is_arma_type<InputType>::value>* = 0)

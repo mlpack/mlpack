@@ -180,7 +180,7 @@ inline arma::vec GMM::Random() const
     Log::Fatal << "Cholesky decomposition failed." << std::endl;
   }
   return trans(cholDecomp) *
-      arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
+      Randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 
 /**

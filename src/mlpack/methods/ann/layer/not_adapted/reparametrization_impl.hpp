@@ -97,7 +97,7 @@ void ReparametrizationType<InputType, OutputType>::Forward(
   preStdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
 
   if (stochastic)
-    gaussianSample = arma::randn<OutputType>(latentSize, input.n_cols);
+    gaussianSample = Randn<OutputType>(latentSize, input.n_cols);
   else
     gaussianSample = arma::ones<OutputType>(latentSize, input.n_cols) * 0.7;
 

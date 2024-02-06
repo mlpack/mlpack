@@ -297,7 +297,7 @@ void TD3<
 
   if (!deterministic)
   {
-    arma::colvec noise = arma::randn<arma::colvec>(outputAction.n_rows) * 0.1;
+    arma::colvec noise = Randn<arma::colvec>(outputAction.n_rows) * 0.1;
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }

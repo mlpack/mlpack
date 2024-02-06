@@ -37,7 +37,7 @@ NormalDistribution<DataType>::NormalDistribution(
 template<typename DataType>
 DataType NormalDistribution<DataType>::Sample() const
 {
-  return sigma * arma::randn<DataType>(mean.n_elem) + mean;
+  return sigma * Randn<DataType>(mean.n_elem) + mean;
 }
 
 template<typename DataType>
