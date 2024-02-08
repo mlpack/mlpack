@@ -42,6 +42,7 @@
 #include "mlpack/methods/fastmks.hpp"
 #include "mlpack/methods/gmm.hpp"
 #include "mlpack/methods/hmm.hpp"
+#include "mlpack/methods/huber_regression.hpp"
 #include "mlpack/methods/hoeffding_trees.hpp"
 #include "mlpack/methods/kde.hpp"
 #include "mlpack/methods/kernel_pca.hpp"
