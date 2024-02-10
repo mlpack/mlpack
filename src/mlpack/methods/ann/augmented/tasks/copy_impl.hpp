@@ -66,7 +66,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
 
       size = 2 + d.Random()(0);
     }
-    arma::colvec vecInput = arma::randi<arma::colvec>(
+    arma::colvec vecInput = Randi<arma::colvec>(
       size, arma::distr_param(0, 1));
     arma::colvec vecLabel = arma::conv_to<arma::colvec>::from(
         repmat(vecInput, nRepeats, 1));
