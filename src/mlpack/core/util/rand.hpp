@@ -56,6 +56,14 @@ InputType Randu(const size_t rows,
   return coot::randu<InputType>(rows, cols);
 }
 
+template<typename InputType>
+InputType Randu(const size_t n_elem, 
+                const typename std::enable_if_t<
+                    coot::is_coot_type<InputType>::value>* = 0)
+{
+  return coot::randu<InputType>(n_elem);
+}
+
 #endif
 
 template<typename InputType>
@@ -92,6 +100,14 @@ InputType Randu(const size_t rows,
                     arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::randu<InputType>(rows, cols);
+}
+
+template<typename InputType>
+InputType Randu(const size_t n_elem,
+                const typename std::enable_if_t<
+                    arma::is_arma_type<InputType>::value>* = 0)
+{
+  return arma::randu<InputType>(n_elem);
 }
 
 } // namespace mlpack

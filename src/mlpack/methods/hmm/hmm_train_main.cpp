@@ -247,7 +247,7 @@ struct Init
       const size_t dimensionality = e[i].Mean().n_rows;
       e[i].Mean().randu();
       // Generate random covariance.
-      arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
+      arma::mat r = Randu<arma::mat>(dimensionality, dimensionality);
       e[i].Covariance(r * r.t());
     }
   }
@@ -269,7 +269,7 @@ struct Init
         e[i].Component(g).Mean().randu();
 
         // Generate random covariance.
-        arma::mat r = arma::randu<arma::mat>(dimensionality,
+        arma::mat r = Randu<arma::mat>(dimensionality,
             dimensionality);
         e[i].Component(g).Covariance(r * r.t());
       }
@@ -293,7 +293,7 @@ struct Init
         e[i].Component(g).Mean().randu();
 
         // Generate random diagonal covariance.
-        arma::vec r = arma::randu<arma::vec>(dimensionality);
+        arma::vec r = Randu<arma::vec>(dimensionality);
         e[i].Component(g).Covariance(r);
       }
     }
