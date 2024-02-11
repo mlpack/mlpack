@@ -930,27 +930,27 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
   {
     for (size_t i = 0; i < points / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g1.Random());
+      data.col(i) = ConvTo<VecType>::From(g1.Random());
       labels(i) = 0;
     }
     for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g2.Random());
+      data.col(i) = ConvTo<VecType>::From(g2.Random());
       labels(i) = 1;
     }
     for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g3.Random());
+      data.col(i) = ConvTo<VecType>::From(g3.Random());
       labels(i) = 2;
     }
     for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g4.Random());
+      data.col(i) = ConvTo<VecType>::From(g4.Random());
       labels(i) = 3;
     }
     for (size_t i = (4 * points) / 5; i < points; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g5.Random());
+      data.col(i) = ConvTo<VecType>::From(g5.Random());
       labels(i) = 4;
     }
 
@@ -965,27 +965,27 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
     // Create test dataset.
     for (size_t i = 0; i < points / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g1.Random());
+      data.col(i) = ConvTo<VecType>::From(g1.Random());
       labels(i) = 0;
     }
     for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g2.Random());
+      data.col(i) = ConvTo<VecType>::From(g2.Random());
       labels(i) = 1;
     }
     for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g3.Random());
+      data.col(i) = ConvTo<VecType>::From(g3.Random());
       labels(i) = 2;
     }
     for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g4.Random());
+      data.col(i) = ConvTo<VecType>::From(g4.Random());
       labels(i) = 3;
     }
     for (size_t i = (4 * points) / 5; i < points; ++i)
     {
-      data.col(i) = ConvTo<VecType>::from(g5.Random());
+      data.col(i) = ConvTo<VecType>::From(g5.Random());
       labels(i) = 4;
     }
 
@@ -1029,27 +1029,27 @@ TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
 
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g1.Random());
+    data.col(i) = ConvTo<VecType>::From(g1.Random());
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g2.Random());
+    data.col(i) = ConvTo<VecType>::From(g2.Random());
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g3.Random());
+    data.col(i) = ConvTo<VecType>::From(g3.Random());
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g4.Random());
+    data.col(i) = ConvTo<VecType>::From(g4.Random());
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g5.Random());
+    data.col(i) = ConvTo<VecType>::From(g5.Random());
     labels(i) = 4;
   }
 
@@ -1059,27 +1059,27 @@ TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g1.Random());
+    data.col(i) = ConvTo<VecType>::From(g1.Random());
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g2.Random());
+    data.col(i) = ConvTo<VecType>::From(g2.Random());
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g3.Random());
+    data.col(i) = ConvTo<VecType>::From(g3.Random());
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g4.Random());
+    data.col(i) = ConvTo<VecType>::From(g4.Random());
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = ConvTo<VecType>::from(g5.Random());
+    data.col(i) = ConvTo<VecType>::From(g5.Random());
     labels(i) = 4;
   }
 
