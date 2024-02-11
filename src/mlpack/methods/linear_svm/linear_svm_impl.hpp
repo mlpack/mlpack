@@ -298,7 +298,7 @@ void LinearSVM<ModelMatType>::Classify(
   // Prepare necessary data.
   labels.zeros(data.n_cols);
 
-  labels = ConvTo<arma::Row<size_t>>::from(
+  labels = ConvTo<arma::Row<size_t>>::From(
       arma::index_max(scores));
 }
 
@@ -372,7 +372,7 @@ void LinearSVM<ModelMatType>::serialize(Archive& ar, const uint32_t version)
   {
     arma::mat parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
-    parameters = ConvTo<arma::mat>::from(parametersTmp);
+    parameters = ConvTo<arma::mat>::From(parametersTmp);
   }
   else
   {

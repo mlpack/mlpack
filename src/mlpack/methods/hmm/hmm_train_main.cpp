@@ -123,7 +123,7 @@ struct Init
          ++it)
     {
       arma::Col<size_t> maxSeqs =
-          ConvTo<arma::Col<size_t>>::from(arma::max(*it, 1)) + 1;
+          ConvTo<arma::Col<size_t>>::From(arma::max(*it, 1)) + 1;
       maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 

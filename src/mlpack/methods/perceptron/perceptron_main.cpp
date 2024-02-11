@@ -242,7 +242,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Use the last row of the training data as the labels.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
-      labelsIn = ConvTo<Row<size_t>>::from(
+      labelsIn = ConvTo<Row<size_t>>::From(
           trainingData.row(trainingData.n_rows - 1));
       trainingData.shed_row(trainingData.n_rows - 1);
     }

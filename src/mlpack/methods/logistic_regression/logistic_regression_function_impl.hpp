@@ -103,8 +103,8 @@ LogisticRegressionFunction<MatType>::Evaluate(
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
   const ElemType result = accu(log(one -
-      ConvTo<CoordinatesType>::from(responses) + sigmoid %
-      (two * ConvTo<CoordinatesType>::from(responses) - one)));
+      ConvTo<CoordinatesType>::From(responses) + sigmoid %
+      (two * ConvTo<CoordinatesType>::From(responses) - one)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
@@ -142,7 +142,7 @@ LogisticRegressionFunction<MatType>::Evaluate(
       predictors.cols(begin, begin + batchSize - 1))));
 
   // Compute the objective for the given batch size from a given point.
-  CoordinatesType respD = ConvTo<CoordinatesType>::from(
+  CoordinatesType respD = ConvTo<CoordinatesType>::From(
       responses.subvec(begin, begin + batchSize - 1));
   const ElemType result = accu(log(one - respD + sigmoid %
       (two * respD - one)));
@@ -282,8 +282,8 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
 
   // Now compute the objective function using the sigmoids.
   ElemType result = accu(log(one -
-      ConvTo<CoordinatesType>::from(responses) + sigmoids %
-      (two * ConvTo<CoordinatesType>::from(responses) - one)));
+      ConvTo<CoordinatesType>::From(responses) + sigmoids %
+      (two * ConvTo<CoordinatesType>::From(responses) - one)));
 
   // Invert the result, because it's a minimization.
   return objectiveRegularization - result;
@@ -329,7 +329,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  CoordinatesType respD = ConvTo<CoordinatesType>::from(
+  CoordinatesType respD = ConvTo<CoordinatesType>::From(
       responses.subvec(begin, begin + batchSize - 1));
   const ElemType result = accu(log(one - respD + sigmoids %
       (two * respD - one)));

@@ -48,7 +48,7 @@ void LookupType<InputType, OutputType>::Forward(
     // (embeddingSize, seqLength) selected as a combination of columns from the
     // weights.
     output.col(i) = vectorise(weights.cols(
-        ConvTo<arma::uvec>::from(input.col(i)) - 1));
+        ConvTo<arma::uvec>::From(input.col(i)) - 1));
   }
 }
 
@@ -77,7 +77,7 @@ void LookupType<InputType, OutputType>::Gradient(
   gradient.zeros();
   for (size_t i = 0; i < batchSize; ++i)
   {
-    gradient.cols(ConvTo<arma::uvec>::from(input.col(i)) - 1)
+    gradient.cols(ConvTo<arma::uvec>::From(input.col(i)) - 1)
         += errorTemp.slice(i);
   }
 }

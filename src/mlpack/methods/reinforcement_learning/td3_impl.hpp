@@ -194,7 +194,7 @@ void TD3<
 
   arma::mat sampledActionValues(action.size, sampledActions.size());
   for (size_t i = 0; i < sampledActions.size(); i++)
-    sampledActionValues.col(i) = ConvTo<arma::colvec>::from
+    sampledActionValues.col(i) = ConvTo<arma::colvec>::From
                                  (sampledActions[i].action);
   arma::mat learningQInput = arma::join_vert(sampledActionValues,
       sampledStates);
@@ -301,7 +301,7 @@ void TD3<
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
-  action.action = ConvTo<std::vector<double>>::from(outputAction);
+  action.action = ConvTo<std::vector<double>>::From(outputAction);
 }
 
 template <

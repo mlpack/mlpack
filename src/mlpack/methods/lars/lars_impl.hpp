@@ -697,7 +697,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         // This is equivalent to the above 5 lines.
         arma::Col<ElemType> newGramCol = matGram->elem(
             changeInd * dataRef.n_cols +
-            ConvTo<arma::uvec>::from(activeSet));
+            ConvTo<arma::uvec>::From(activeSet));
 
         CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
       }
@@ -1084,7 +1084,7 @@ inline void LARS<ModelMatType>::SelectBeta(
       // However, we may need to compute the active set.
       if (i != lambdaPath.size() - 1)
       {
-        selectedActiveSet = ConvTo<std::vector<size_t>>::from(
+        selectedActiveSet = ConvTo<std::vector<size_t>>::From(
             arma::find(betaPath[i] != 0));
       }
 
@@ -1136,7 +1136,7 @@ inline void LARS<ModelMatType>::SelectBeta(
   }
 
   // Compute the active set of variables.
-  selectedActiveSet = ConvTo<std::vector<size_t>>::from(
+  selectedActiveSet = ConvTo<std::vector<size_t>>::From(
       arma::find(selectedBeta != 0));
 }
 
@@ -1346,7 +1346,7 @@ void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
       // Older versions stored matGramInternal as type arma::mat.
       arma::mat matGramInternalTmp;
       ar(cereal::make_nvp("matGramInternal", matGramInternalTmp));
-      matGramInternal = ConvTo<ModelMatType>::from(matGramInternalTmp);
+      matGramInternal = ConvTo<ModelMatType>::From(matGramInternalTmp);
     }
     else
     {
@@ -1366,7 +1366,7 @@ void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
     // double/arma::mat and converts as needed.
     arma::mat matUtriCholFactorTmp;
     ar(cereal::make_nvp("matUtriCholFactor", matUtriCholFactorTmp));
-    matUtriCholFactor = ConvTo<ModelMatType>::from(matUtriCholFactorTmp);
+    matUtriCholFactor = ConvTo<ModelMatType>::From(matUtriCholFactorTmp);
 
     ar(CEREAL_NVP(useCholesky));
     ar(CEREAL_NVP(lasso));
@@ -1390,7 +1390,7 @@ void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
     ar(cereal::make_nvp("betaPath", betaPathTmp));
     betaPath.resize(betaPathTmp.size());
     for (size_t i = 0; i < betaPathTmp.size(); ++i)
-      betaPath[i] = ConvTo<ModelColType>::from(betaPathTmp[i]);
+      betaPath[i] = ConvTo<ModelColType>::From(betaPathTmp[i]);
 
     std::vector<double> lambdaPathTmp;
     ar(cereal::make_nvp("lambdaPath", lambdaPathTmp));

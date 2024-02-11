@@ -66,7 +66,7 @@ inline void Constraints<MetricType>::ReorderResults(
         // We must sort these elements by norm.
         arma::Col<size_t> newNeighbors =
             neighbors.col(i).subvec(start, end - 1);
-        arma::uvec indices = ConvTo<arma::uvec>::from(newNeighbors);
+        arma::uvec indices = ConvTo<arma::uvec>::From(newNeighbors);
 
         arma::uvec order = arma::sort_index(norms.elem(indices));
         neighbors.col(i).subvec(start, end - 1) =

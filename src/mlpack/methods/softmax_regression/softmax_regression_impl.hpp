@@ -269,7 +269,7 @@ void SoftmaxRegression<MatType>::serialize(Archive& ar,
     // This is the legacy version: `parameters` is of type arma::mat.
     arma::mat parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
-    parameters = ConvTo<DenseMatType>::from(parametersTmp);
+    parameters = ConvTo<DenseMatType>::From(parametersTmp);
 
     ar(CEREAL_NVP(numClasses));
     ar(CEREAL_NVP(lambda));

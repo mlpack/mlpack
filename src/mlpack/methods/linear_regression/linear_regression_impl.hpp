@@ -186,7 +186,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   const size_t nCols = predictors.n_cols;
 
   // TODO: avoid copy if possible.
-  arma::Mat<ElemType> p = ConvTo<arma::Mat<ElemType>>::from(predictors);
+  arma::Mat<ElemType> p = ConvTo<arma::Mat<ElemType>>::From(predictors);
   arma::Row<ElemType> r = responses;
 
   // Here we add the row of ones to the predictors.
@@ -330,7 +330,7 @@ void LinearRegression<ModelMatType>::serialize(Archive& ar,
     // Old versions represented `parameters` as an arma::vec.
     arma::vec parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
-    parameters = ConvTo<ModelColType>::from(parametersTmp);
+    parameters = ConvTo<ModelColType>::From(parametersTmp);
   }
   else
   {

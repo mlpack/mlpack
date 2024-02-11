@@ -385,7 +385,7 @@ void RunKMeans(util::Params& params,
         // Save only the labels.  TODO: figure out how to get this to output an
         // arma::Mat<size_t> instead of an arma::mat.
         params.Get<arma::mat>("output") =
-            ConvTo<arma::mat>::from(assignments);
+            ConvTo<arma::mat>::From(assignments);
       }
       else
       {

@@ -294,7 +294,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     // The initial predictors for y, Nx1.
-    rawLabels = ConvTo<arma::Row<size_t>>::from(
+    rawLabels = ConvTo<arma::Row<size_t>>::From(
         trainingSet.row(trainingSet.n_rows - 1));
     trainingSet.shed_row(trainingSet.n_rows - 1);
   }

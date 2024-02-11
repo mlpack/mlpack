@@ -195,7 +195,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     arma::rowvec feature;
     if (rowMajor)
-      feature = ConvTo<arma::rowvec>::from(data.col(dim));
+      feature = ConvTo<arma::rowvec>::From(data.col(dim));
     else
       feature = data.row(dim);
 
