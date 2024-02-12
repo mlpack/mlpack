@@ -118,7 +118,7 @@ InputType Randu(const size_t rows,
                 const typename std::enable_if_t<
                     arma::is_arma_type<InputType>::value>* = 0)
 {
-  return Randu<InputType>(rows, cols);
+  return arma::randu<InputType>(rows, cols);
 }
 
 template<typename InputType>
@@ -126,7 +126,7 @@ InputType Randu(const size_t n_elem,
                 const typename std::enable_if_t<
                     arma::is_arma_type<InputType>::value>* = 0)
 {
-  return Randu<InputType>(n_elem);
+  return arma::randu<InputType>(n_elem);
 }
 
 } // namespace mlpack
