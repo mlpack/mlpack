@@ -27,10 +27,10 @@ namespace mlpack {
  *
  * @param A the input that is passed.
  */
-template<typename InputType, typename OutputType>
-inline OutputType Max(const InputType& A,
-                      const typename std::enable_if_t<
-                      coot::is_coot_type<InputType>::value>* = 0)
+template<typename InputType>
+inline auto Max(const InputType& A,
+                const typename std::enable_if_t<
+                coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::max(A);
 }
@@ -45,10 +45,10 @@ inline OutputType Max(const InputType& A,
  * @param B the input to be compared / could be also the dimension.
  */
 
-template<typename InputType, typename InputType2, typename OutputType>
-inline OutputType Max(const InputType& A, const InputType2& B,
-                      const typename std::enable_if_t<
-                      coot::is_coot_type<InputType>::value>* = 0)
+template<typename InputType, typename InputType2>
+inline auto Max(const InputType& A, const InputType2& B,
+                const typename std::enable_if_t<
+                coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::max(A, B);
 }
@@ -59,10 +59,10 @@ inline OutputType Max(const InputType& A, const InputType2& B,
  *
  * @param A the input that is passed.
  */
-template<typename InputType, typename OutputType>
-inline OutputType Min(const InputType& A,
-                      const typename std::enable_if_t<
-                      coot::is_coot_type<InputType>::value>* = 0)
+template<typename InputType>
+inline auto Min(const InputType& A,
+                const typename std::enable_if_t<
+                coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::min(A);
 }
@@ -71,10 +71,10 @@ inline OutputType Min(const InputType& A,
  *
  * @param input The input that is passed.
  */
-template<typename InputType, typename InputType2, typename OutputType>
-inline OutputType Min(const InputType& A, const InputType2& B, 
-                      const typename std::enable_if_t<
-                      coot::is_coot_type<InputType>::value>* = 0)
+template<typename InputType, typename InputType2>
+inline auto Min(const InputType& A, const InputType2& B, 
+                const typename std::enable_if_t<
+                coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::min(A, B);
 }
@@ -87,10 +87,10 @@ inline OutputType Min(const InputType& A, const InputType2& B,
  *
  * @param A the input that is passed.
  */
-template<typename InputType, typename OutputType>
-inline OutputType Max(const InputType& A,
-                      const typename std::enable_if_t<
-                      arma::is_arma_type<InputType>::value>* = 0)
+template<typename InputType>
+inline auto Max(const InputType& A,
+                const typename std::enable_if_t<
+                arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::max(A);
 }
@@ -104,10 +104,10 @@ inline OutputType Max(const InputType& A,
  * @param A the input to be compared.
  * @param B the input to be compared / could be also the dimension.
  */
-template<typename InputType, typename InputType2, typename OutputType>
-inline OutputType Max(const InputType& A, const InputType2& B, 
-                      const typename std::enable_if_t<
-                      arma::is_arma_type<InputType>::value>* = 0)
+template<typename InputType, typename InputType2>
+inline auto Max(const InputType& A, const InputType2& B, 
+                const typename std::enable_if_t<
+                arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::max(A, B);
 }
@@ -118,10 +118,10 @@ inline OutputType Max(const InputType& A, const InputType2& B,
  *
  * @param A the input that is passed.
  */
-template<typename InputType, typename OutputType>
-inline OutputType Min(const InputType& A,
-                      const typename std::enable_if_t<
-                      arma::is_arma_type<InputType>::value>* = 0)
+template<typename InputType>
+inline auto Min(const InputType& A,
+                const typename std::enable_if_t<
+                arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::min(A);
 }
@@ -135,10 +135,10 @@ inline OutputType Min(const InputType& A,
  * @param A the input to be compared.
  * @param B the input to be compared / could be also the dimension.
  */
-template<typename InputType, typename InputType2, typename OutputType>
-inline OutputType Min(const InputType& A, const InputType2& B, 
-                      const typename std::enable_if_t<
-                      arma::is_arma_type<InputType>::value>* = 0)
+template<typename InputType, typename InputType2>
+inline auto Min(const InputType& A, const InputType2& B, 
+                const typename std::enable_if_t<
+                arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::min(A, B);
 }
