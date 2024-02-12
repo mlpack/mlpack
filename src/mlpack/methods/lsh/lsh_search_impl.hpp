@@ -343,7 +343,7 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
   } // Loop over tables.
 
   Log::Info << "Final hash table size: " << numRowsInTable << " rows, with a "
-            << "maximum length of " << arma::max(secondHashBinCounts) << ", "
+            << "maximum length of " << Max(secondHashBinCounts) << ", "
             << "totaling " << accu(secondHashBinCounts) << " elements."
             << std::endl;
 }

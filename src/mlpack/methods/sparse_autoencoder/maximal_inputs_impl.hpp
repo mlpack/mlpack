@@ -32,7 +32,7 @@ inline void NormalizeColByMax(const arma::mat &input,
   output.set_size(input.n_rows, input.n_cols);
   for (arma::uword i = 0; i != input.n_cols; ++i)
   {
-    const double max = arma::max(arma::abs(input.col(i)));
+    const double max = Max(arma::abs(input.col(i)));
     if (max != 0.0)
     {
       output.col(i) = input.col(i) / max;

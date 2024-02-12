@@ -200,7 +200,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       feature = data.row(dim);
 
     // f at the front of the variable names means "feature".
-    const double fMax = arma::max(feature);
+    const double fMax = Max(feature);
     const double fMin = arma::min(feature);
     const double fMean = arma::mean(feature);
     const double fStd = arma::stddev(feature, population);

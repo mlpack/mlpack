@@ -252,7 +252,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Info << "Training random forest with " << numTrees << " trees..."
         << endl;
 
-    const size_t numClasses = arma::max(labels) + 1;
+    const size_t numClasses = Max(labels) + 1;
 
     // Train the model.
     rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,

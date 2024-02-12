@@ -72,7 +72,7 @@ class SVDConvolution
 
       // Rank approximation using the singular values calculated with singular
       // value decomposition of dense filter matrix.
-      const size_t rank = sum(s > (s.n_elem * arma::max(s) * arma::datum::eps));
+      const size_t rank = sum(s > (s.n_elem * Max(s) * arma::datum::eps));
 
       // Test for separability based on the rank of the kernel and take
       // advantage of the low rank.
