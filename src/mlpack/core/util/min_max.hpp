@@ -22,27 +22,59 @@ namespace mlpack {
 #ifdef MLPACK_HAS_COOT
 
 /**
- * Forward to coot::max if the Input type is bandicoot.
+ * forward to coot::max if the input type is armadillo.
+ * return the extremum value.
  *
- * @param input The input that is passed.
+ * @param A the input that is passed.
  */
-template<typename InputType>
-inline InputType Max(const InputType& A, const InputType& B,
-                     const typename std::enable_if_t<
-                     coot::is_coot_type<InputType>::value>* = 0)
+template<typename InputType, typename OutputType>
+inline OutputType Max(const InputType& A,
+                      const typename std::enable_if_t<
+                      coot::is_coot_type<InputType>::value>* = 0)
+{
+  return coot::max(A);
+}
+
+/**
+ * forward to coot::max(A, B) if the input type is armadillo.
+ * return the matrix/cube containing element-wise-extremum values.
+ * or
+ * return the extremum value along dimension
+ *
+ * @param A the input to be compared.
+ * @param B the input to be compared / could be also the dimension.
+ */
+
+template<typename InputType, typename InputType2, typename OutputType>
+inline OutputType Max(const InputType& A, const InputType2& B,
+                      const typename std::enable_if_t<
+                      coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::max(A, B);
 }
 
 /**
+ * forward to coot::min if the input type is armadillo.
+ * return the extremum value.
+ *
+ * @param A the input that is passed.
+ */
+template<typename InputType, typename OutputType>
+inline OutputType Min(const InputType& A,
+                      const typename std::enable_if_t<
+                      coot::is_coot_type<InputType>::value>* = 0)
+{
+  return coot::min(A);
+}
+/**
  * Forward to coot::min if the Input type is bandicoot.
  *
  * @param input The input that is passed.
  */
-template<typename InputType>
-inline InputType Min(const InputType& A, const InputType& B, 
-                     const typename std::enable_if_t<
-                     coot::is_coot_type<InputType>::value>* = 0)
+template<typename InputType, typename InputType2, typename OutputType>
+inline OutputType Min(const InputType& A, const InputType2& B, 
+                      const typename std::enable_if_t<
+                      coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::min(A, B);
 }
@@ -51,26 +83,62 @@ inline InputType Min(const InputType& A, const InputType& B,
 
 /**
  * forward to arma::max if the input type is armadillo.
+ * return the extremum value.
  *
- * @param input the input that is passed.
+ * @param A the input that is passed.
  */
-template<typename InputType>
-inline InputType Max(const InputType& A, const InputType& B, 
-                     const typename std::enable_if_t<
-                     arma::is_arma_type<InputType>::value>* = 0)
+template<typename InputType, typename OutputType>
+inline OutputType Max(const InputType& A,
+                      const typename std::enable_if_t<
+                      arma::is_arma_type<InputType>::value>* = 0)
+{
+  return arma::max(A);
+}
+
+/**
+ * forward to arma::max(A, B) if the input type is armadillo.
+ * return the matrix/cube containing element-wise-extremum values.
+ * or
+ * return the extremum value along dimension
+ *
+ * @param A the input to be compared.
+ * @param B the input to be compared / could be also the dimension.
+ */
+template<typename InputType, typename InputType2, typename OutputType>
+inline OutputType Max(const InputType& A, const InputType2& B, 
+                      const typename std::enable_if_t<
+                      arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::max(A, B);
 }
 
 /**
  * forward to arma::min if the input type is armadillo.
+ * return the extremum value.
  *
- * @param input the input that is passed.
+ * @param A the input that is passed.
  */
-template<typename InputType>
-inline InputType Min(const InputType& A, const InputType& B, 
-                     const typename std::enable_if_t<
-                     arma::is_arma_type<InputType>::value>* = 0)
+template<typename InputType, typename OutputType>
+inline OutputType Min(const InputType& A,
+                      const typename std::enable_if_t<
+                      arma::is_arma_type<InputType>::value>* = 0)
+{
+  return arma::min(A);
+}
+
+/**
+ * forward to arma::min(A, B) if the input type is armadillo.
+ * return the matrix/cube containing element-wise-extremum values.
+ * or
+ * return the extremum value along dimension
+ *
+ * @param A the input to be compared.
+ * @param B the input to be compared / could be also the dimension.
+ */
+template<typename InputType, typename InputType2, typename OutputType>
+inline OutputType Min(const InputType& A, const InputType2& B, 
+                      const typename std::enable_if_t<
+                      arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::min(A, B);
 }
