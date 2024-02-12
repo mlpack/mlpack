@@ -288,7 +288,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     // The initial predictors for y, Nx1.
-    responses = arma::conv_to<arma::Row<size_t>>::from(
+    responses = ConvTo<arma::Row<size_t>>::From(
         regressors.row(regressors.n_rows - 1));
     regressors.shed_row(regressors.n_rows - 1);
   }

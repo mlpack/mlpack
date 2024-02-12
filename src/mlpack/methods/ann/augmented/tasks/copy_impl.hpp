@@ -68,7 +68,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
     }
     arma::colvec vecInput = arma::randi<arma::colvec>(
       size, arma::distr_param(0, 1));
-    arma::colvec vecLabel = arma::conv_to<arma::colvec>::from(
+    arma::colvec vecLabel = ConvTo<arma::colvec>::From(
         repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + addSeparator + vecLabel.n_elem;
     input(i) = arma::zeros(totSize, 2);

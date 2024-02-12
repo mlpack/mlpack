@@ -10,13 +10,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
+#include <mlpack/core.hpp>
 
 #undef BINDING_NAME
 #define BINDING_NAME image_converter
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core.hpp>
 
 using namespace mlpack;
 using namespace mlpack::util;

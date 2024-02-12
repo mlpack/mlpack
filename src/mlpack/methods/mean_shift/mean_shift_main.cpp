@@ -156,7 +156,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // TODO: figure out how to output as an arma::Mat<size_t> so that files
       // aren't way larger than needed.
       params.Get<arma::mat>("output") =
-          arma::conv_to<arma::mat>::from(assignments);
+          ConvTo<arma::mat>::From(assignments);
     }
   }
 
