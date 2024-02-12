@@ -98,7 +98,7 @@ inline double SilhouetteScore::MeanDistanceFromCluster(
   }
   else
   {
-    double distance = arma::accu(distances.elem(sameClusterIndices));
+    double distance = Accu(distances.elem(sameClusterIndices));
     distance /= (numSameCluster - sameCluster);
     return distance;
   }

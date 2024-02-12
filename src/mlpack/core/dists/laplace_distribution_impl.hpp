@@ -90,7 +90,7 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations,
   mean.zeros(observations.n_rows);
   for (size_t i = 0; i < observations.n_cols; ++i)
     mean += observations.col(i) * probabilities(i);
-  mean /= arma::accu(probabilities);
+  mean /= Accu(probabilities);
 
   // This is the same formula as the previous function, but here we are
   // multiplying by the probability that the point is actually from
@@ -98,7 +98,7 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations,
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
     scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);
-  scale /= arma::accu(probabilities);
+  scale /= Accu(probabilities);
 }
 
 } // namespace mlpack
