@@ -212,10 +212,10 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
 
   if (killEmptyOutput.n_elem == allowEmptyOutput.n_elem)
   {
-    REQUIRE(arma::accu(killEmptyOutput != allowEmptyOutput) > 1);
-    REQUIRE(arma::accu(killEmptyOutput != normalOutput) > 1);
+    REQUIRE(Accu(killEmptyOutput != allowEmptyOutput) > 1);
+    REQUIRE(Accu(killEmptyOutput != normalOutput) > 1);
   }
-  REQUIRE(arma::accu(normalOutput != allowEmptyOutput) > 1);
+  REQUIRE(Accu(normalOutput != allowEmptyOutput) > 1);
 }
 
 /**

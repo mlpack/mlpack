@@ -34,10 +34,10 @@ TEST_CASE("L1MetricTest", "[MetricTest]")
 
   ManhattanDistance lMetric;
 
-  REQUIRE((double) arma::accu(arma::abs(a1 - b1)) ==
+  REQUIRE((double) Accu(arma::abs(a1 - b1)) ==
       Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
-  REQUIRE((double) arma::accu(arma::abs(a2 - b2)) ==
+  REQUIRE((double) Accu(arma::abs(a2 - b2)) ==
       Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
@@ -60,10 +60,10 @@ TEST_CASE("L2MetricTest", "[MetricTest]")
 
   EuclideanDistance lMetric;
 
-  REQUIRE((double) sqrt(arma::accu(square(a1 - b1))) ==
+  REQUIRE((double) sqrt(Accu(square(a1 - b1))) ==
       Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
-  REQUIRE((double) sqrt(arma::accu(square(a2 - b2))) ==
+  REQUIRE((double) sqrt(Accu(square(a2 - b2))) ==
       Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 

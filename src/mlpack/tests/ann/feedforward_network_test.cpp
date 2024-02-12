@@ -47,7 +47,7 @@ void TestNetwork(ModelType& model,
         arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
   }
 
-  size_t correct = arma::accu(prediction == testLabels);
+  size_t correct = Accu(prediction == testLabels);
 
   double classificationError = 1 - double(correct) / testData.n_cols;
   REQUIRE(classificationError <= classificationErrorThreshold);
@@ -477,7 +477,7 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
             arma::max(currentResuls.col(i)) == currentResuls.col(i), 1));
       }
 
-      size_t correct = arma::accu(prediction == currentLabels);
+      size_t correct = Accu(prediction == currentLabels);
       error(1 - (double) correct / batchSize);
     }
     Log::Debug << "Current training error: " << error.mean() << std::endl;
