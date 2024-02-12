@@ -29,7 +29,7 @@ typename MatType::elem_type MeanAbsolutePercentageErrorType<MatType>::Forward(
     const MatType& target)
 {
   MatType loss = arma::abs((prediction - target) / target);
-  return arma::accu(loss) * (100 / target.n_cols);
+  return Accu(loss) * (100 / target.n_cols);
 }
 
 template<typename MatType>

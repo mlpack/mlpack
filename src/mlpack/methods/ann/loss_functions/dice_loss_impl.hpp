@@ -28,8 +28,8 @@ typename MatType::elem_type DiceLossType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  return 1 - ((2 * arma::accu(target % prediction) + smooth) /
-      (arma::accu(target % target) + arma::accu(
+  return 1 - ((2 * Accu(target % prediction) + smooth) /
+      (Accu(target % target) + Accu(
       prediction % prediction) + smooth));
 }
 
@@ -39,10 +39,10 @@ void DiceLossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  loss = -2 * (target * (arma::accu(prediction % prediction) +
-      arma::accu(target % target) + smooth) - prediction *
-      (2 * arma::accu(target % prediction) + smooth)) / std::pow(
-      arma::accu(target % target) + arma::accu(prediction % prediction)
+  loss = -2 * (target * (Accu(prediction % prediction) +
+      Accu(target % target) + smooth) - prediction *
+      (2 * Accu(target % prediction) + smooth)) / std::pow(
+      Accu(target % target) + Accu(prediction % prediction)
       + smooth, 2.0);
 }
 

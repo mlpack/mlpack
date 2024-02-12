@@ -31,7 +31,7 @@ typename MatType::elem_type HingeEmbeddingLossType<MatType>::Forward(
     const MatType& target)
 {
   MatType loss = (1 - target) / 2 + prediction % (target);
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  typename MatType::elem_type lossSum = Accu(loss);
 
   if (reduction)
     return lossSum;

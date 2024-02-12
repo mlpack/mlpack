@@ -41,7 +41,7 @@ SigmoidCrossEntropyErrorType<MatType>::Forward(
         std::log(1 + std::exp(-std::abs(prediction[i])));
   }
 
-  ElemType lossSum = maximum - arma::accu(prediction % target);
+  ElemType lossSum = maximum - Accu(prediction % target);
 
   if (reduction)
     return lossSum;
