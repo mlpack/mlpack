@@ -232,7 +232,7 @@ TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
             arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
     }
 
-    size_t correct = Accu(prediction == Y);
+    size_t correct = accu(prediction == Y);
     double classificationError = 1 - double(correct) / X.n_cols;
     if (classificationError <= 0.25)
     {

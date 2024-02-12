@@ -173,7 +173,7 @@ void WeightNormType<InputType, OutputType>::Gradient(
   }
 
   // Calculate the gradients of the scalar parameter.
-  gradient[gradient.n_rows - 1] = Accu(layerGradients.rows(0,
+  gradient[gradient.n_rows - 1] = accu(layerGradients.rows(0,
       layerWeightSize - biasWeightSize - 1) % vectorParameter) /
       normVectorParameter;
 

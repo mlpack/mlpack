@@ -582,7 +582,7 @@ void GroupedConvolutionType<
 
         if (useBias)
           gradient[weight.n_elem + group * outGroupSize + outMap] += 
-              Accu(curError);
+              accu(curError);
       }
     }
   }

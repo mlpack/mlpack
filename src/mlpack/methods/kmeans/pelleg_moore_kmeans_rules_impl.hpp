@@ -64,7 +64,7 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
   // holds all of the points in the dataset.  Our goal is to determine whether
   // or not this node is dominated by a single cluster.
   const size_t whitelisted = centroids.n_cols -
-      Accu(referenceNode.Stat().Blacklist());
+      accu(referenceNode.Stat().Blacklist());
 
   distanceCalculations += whitelisted;
 

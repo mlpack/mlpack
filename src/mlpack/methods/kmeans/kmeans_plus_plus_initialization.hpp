@@ -89,7 +89,7 @@ class KMeansPlusPlusInitialization
 
       // Next normalize the distribution (actually technically we could avoid
       // this).
-      distribution /= Accu(distribution);
+      distribution /= accu(distribution);
 
       // Turn it into a CDF for convenience...
       for (size_t j = 1; j < distribution.n_elem; ++j)

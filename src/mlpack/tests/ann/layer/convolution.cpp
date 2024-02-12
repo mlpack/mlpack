@@ -85,7 +85,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module1.Parameters().zeros();
   module1.Forward(input, output);
 
-  REQUIRE(Accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == 25);
   REQUIRE(output.n_cols == 1);
 
@@ -108,7 +108,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module2.Parameters().zeros();
   module2.Forward(input, output);
 
-  REQUIRE(Accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == 49);
   REQUIRE(output.n_cols == 1);
 
@@ -227,14 +227,14 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(Accu(output) == 4108);
+  REQUIRE(accu(output) == 4108);
 
   // Set bias to one.
   layer.Bias().fill(1.0);
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(Accu(output) == 4156);
+  REQUIRE(accu(output) == 4156);
 }
 
 /**
@@ -300,14 +300,14 @@ TEST_CASE("NoBiasConvolutionLayerTestCase", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(Accu(output) == 4108);
+  REQUIRE(accu(output) == 4108);
 
   // Set bias to one.
   layer.Bias().fill(1.0);
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(Accu(output) == 4108);
+  REQUIRE(accu(output) == 4108);
 }
 
 /**
@@ -356,12 +356,12 @@ TEST_CASE("AdvancedConvolutionLayerTest", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(Accu(output) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(12.6755657196).epsilon(1e-5));
 
   arma::mat delta;
   delta.set_size(8, 3);
   layer.Backward(input, output, output, delta);
-  REQUIRE(Accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
 }
 
 /**
@@ -434,12 +434,12 @@ TEST_CASE("AdvancedConvolutionLayerWithStrideTest", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(Accu(output) == Approx(364.7379150391).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(364.7379150391).epsilon(1e-5));
 
   arma::mat delta;
   delta.set_size(32, 3);
   layer.Backward(input, output, output, delta);
-  REQUIRE(Accu(delta) == Approx(115.3515701294).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(115.3515701294).epsilon(1e-5));
 }
 
 // Make a simple convolutional layer with non-square filters, and make sure the

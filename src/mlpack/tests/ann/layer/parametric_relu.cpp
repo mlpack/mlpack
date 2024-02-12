@@ -38,7 +38,7 @@ TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
                            {-0.022, -0.015, 0.8},
                            {5.5, -0.047, 2.1},
                            {0.2, 0.1, -0.005}};
-  REQUIRE(Accu(arma::abs(actualOutput - predOutput)) ==
+  REQUIRE(accu(arma::abs(actualOutput - predOutput)) ==
       Approx(0.0).margin(1e-4));
 }
 
@@ -68,7 +68,7 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
                       {-0.3, 0.002, -0.5},
                       {0.1, -0.1, 0.0030}};
 
-  REQUIRE(Accu(arma::abs(actualG - predG)) ==
+  REQUIRE(accu(arma::abs(actualG - predG)) ==
       Approx(0.0).margin(1e-4));
 }
 
@@ -92,13 +92,13 @@ TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
   arma::mat predGradient;
   module.Gradient(input, error, predGradient);
 
-  REQUIRE(0.0103 - Accu(predGradient) ==
+  REQUIRE(0.0103 - accu(predGradient) ==
       Approx(0.0).margin(1e-4));
 }
 
 double ComputeMSRE(arma::mat input, arma::mat target)
 {
-  return std::pow(Accu(pow(input - target, 2)) / target.n_cols, 0.5);
+  return std::pow(accu(pow(input - target, 2)) / target.n_cols, 0.5);
 }
 
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")

@@ -789,10 +789,10 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     REQUIRE(predictedLabels1(i) == maxIndex);
-    REQUIRE(Accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
+    REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
-  size_t localError = Accu(trueTestLabels != predictedLabels1);
+  size_t localError = accu(trueTestLabels != predictedLabels1);
   eT lError = (eT) localError / labels.n_cols;
   REQUIRE(lError <= 0.30);
 }

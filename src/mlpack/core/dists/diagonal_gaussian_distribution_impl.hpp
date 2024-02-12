@@ -28,14 +28,14 @@ inline DiagonalGaussianDistribution::DiagonalGaussianDistribution(
 inline void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
 {
   invCov = 1 / covariance;
-  logDetCov = Accu(log(covariance));
+  logDetCov = accu(log(covariance));
   this->covariance = covariance;
 }
 
 inline void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
 {
   invCov = 1 / covariance;
-  logDetCov = Accu(log(covariance));
+  logDetCov = accu(log(covariance));
   this->covariance = std::move(covariance);
 }
 
@@ -94,7 +94,7 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   // to make the estimator unbiased.
   covariance /= (observations.n_cols - 1);
   invCov = 1 / covariance;
-  logDetCov = Accu(log(covariance));
+  logDetCov = accu(log(covariance));
 }
 
 inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
@@ -116,14 +116,14 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   // of the weights, and the v2 is the sum of the each weight squared.
   // If you want to know more detailed description,
   // please refer to https://en.wikipedia.org/wiki/Weighted_arithmetic_mean.
-  double v1 = Accu(probabilities);
+  double v1 = accu(probabilities);
 
   // If their sum is 0, there is nothing in this Gaussian.
   // At least, set the covariance so that it's invertible.
   if (v1 == 0)
   {
     invCov = 1 / (covariance += 1e-50);
-    logDetCov = Accu(log(covariance));
+    logDetCov = accu(log(covariance));
     return;
   }
 
@@ -138,7 +138,7 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   covariance += (diffs % diffs) * normalizedProbs;
 
   // Calculate the sum of each weight squared.
-  const double v2 = Accu(normalizedProbs % normalizedProbs);
+  const double v2 = accu(normalizedProbs % normalizedProbs);
 
   // Finish estimating the covariance by normalizing, with
   // the (1 / (v1 - (v2 / v1))) to make the estimator unbiased.
@@ -146,7 +146,7 @@ inline void DiagonalGaussianDistribution::Train(const arma::mat& observations,
     covariance /= (1 - v2);
 
   invCov = 1 / covariance;
-  logDetCov = Accu(log(covariance));
+  logDetCov = accu(log(covariance));
 }
 
 } // namespace mlpack

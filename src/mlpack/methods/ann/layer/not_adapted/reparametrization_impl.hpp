@@ -129,7 +129,7 @@ double ReparametrizationType<InputType, OutpuType>::Loss()
   if (!includeKl)
     return 0;
 
-  return -0.5 * beta * Accu(2 * log(stdDev) - pow(stdDev, 2)
+  return -0.5 * beta * accu(2 * log(stdDev) - pow(stdDev, 2)
       - pow(mean, 2) + 1) / mean.n_cols;
 }
 

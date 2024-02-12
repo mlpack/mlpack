@@ -29,7 +29,7 @@ typename MatType::elem_type SoftMarginLossType<MatType>::Forward(
     const MatType& prediction, const MatType& target)
 {
   MatType loss = log(1 + exp(-target % prediction));
-  typename MatType::elem_type lossSum = Accu(loss);
+  typename MatType::elem_type lossSum = accu(loss);
 
   if (reduction)
     return lossSum;

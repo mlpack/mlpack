@@ -233,7 +233,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     arma::Mat<ElemType> exponents = sum(diffs % rhs, 0);
 
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        Accu(log(variances.col(i))) + exponents);
+        accu(log(variances.col(i))) + exponents);
   }
 }
 
@@ -297,7 +297,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // To prevent underflow in log of sum of exp of x operation (where x is a
   // small negative value), we use logsumexp(x - max(x)) + max(x).
   const ElemType maxValue = logLikelihoods.max();
-  const ElemType logProbX = log(Accu(exp(logLikelihoods - maxValue))) +
+  const ElemType logProbX = log(accu(exp(logLikelihoods - maxValue))) +
       maxValue;
   probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
@@ -376,7 +376,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     // Besides, to prevent underflow in log of sum of exp of x operation (where
     // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
     maxValue = arma::max(logLikelihoods.col(j));
-    logProbX = log(Accu(exp(logLikelihoods.col(j) -
+    logProbX = log(accu(exp(logLikelihoods.col(j) -
         maxValue))) + maxValue;
     predictionProbs.col(j) = exp(logLikelihoods.col(j) - logProbX);
   }

@@ -429,7 +429,7 @@ void TransposedConvolutionType<
     }
 
     gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
-        (outMap % outSize), 0) = Accu(mappedError.slices(outMap, outMap));
+        (outMap % outSize), 0) = accu(mappedError.slices(outMap, outMap));
   }
 }
 

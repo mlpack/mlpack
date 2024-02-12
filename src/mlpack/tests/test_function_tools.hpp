@@ -107,7 +107,7 @@ template<typename ElemType>
 inline ElemType RMSE(const arma::Row<ElemType>& predictions,
                      const arma::Row<ElemType>& trueResponses)
 {
-  ElemType mse = Accu(square(predictions - trueResponses)) /
+  ElemType mse = accu(square(predictions - trueResponses)) /
       predictions.n_elem;
   return sqrt(mse);
 }

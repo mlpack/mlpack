@@ -47,7 +47,7 @@ class SSELoss
     if (values.n_elem == 0)
       return 0;
 
-    return Accu(values) / (typename VecType::elem_type) values.n_elem;
+    return accu(values) / (typename VecType::elem_type) values.n_elem;
   }
 
   /**
@@ -57,7 +57,7 @@ class SSELoss
   double OutputLeafValue(const MatType& /* input */,
                          const WeightVecType& /* weights */)
   {
-    return -ApplyL1(Accu(gradients)) / (Accu(hessians) + lambda);
+    return -ApplyL1(accu(gradients)) / (accu(hessians) + lambda);
   }
 
   /**
@@ -68,8 +68,8 @@ class SSELoss
    */
   double Evaluate(const size_t begin, const size_t end)
   {
-    return std::pow(ApplyL1(Accu(gradients.subvec(begin, end))), 2) /
-        (Accu(hessians.subvec(begin, end)) + lambda);
+    return std::pow(ApplyL1(accu(gradients.subvec(begin, end))), 2) /
+        (accu(hessians.subvec(begin, end)) + lambda);
   }
 
   /**
@@ -89,8 +89,8 @@ class SSELoss
     gradients = (input.row(1) - input.row(0)).t();
     hessians = arma::vec(input.n_cols, arma::fill::ones);
 
-    return std::pow(ApplyL1(Accu(gradients)), 2) /
-        (Accu(hessians) + lambda);
+    return std::pow(ApplyL1(accu(gradients)), 2) /
+        (accu(hessians) + lambda);
   }
  private:
   //! The L1 regularization parameter.

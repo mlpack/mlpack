@@ -78,21 +78,21 @@ TEST_CASE("SimpleAddLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  REQUIRE(Accu(module.Parameters()) == Accu(output));
+  REQUIRE(accu(module.Parameters()) == accu(output));
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  REQUIRE(Accu(output) == Accu(delta));
+  REQUIRE(accu(output) == accu(delta));
 
   // Test the forward function.
   input = arma::ones(10, 1);
   module.Forward(input, output);
-  REQUIRE(10 + Accu(module.Parameters()) ==
-      Approx(Accu(output)).epsilon(1e-5));
+  REQUIRE(10 + accu(module.Parameters()) ==
+      Approx(accu(output)).epsilon(1e-5));
 
   // Test the backward function.
   module.Backward(input, output, delta);
-  REQUIRE(Accu(output) == Approx(Accu(delta)).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(accu(delta)).epsilon(1e-5));
 }
 */
 
@@ -181,20 +181,20 @@ TEST_CASE("SimpleConstantLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  REQUIRE(Accu(output) == 30.0);
+  REQUIRE(accu(output) == 30.0);
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 
   // Test the forward function.
   input = arma::ones(10, 1);
   module.Forward(input, output);
-  REQUIRE(Accu(output) == 30.0);
+  REQUIRE(accu(output) == 30.0);
 
   // Test the backward function.
   module.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 }*/
 
 /**
@@ -241,13 +241,13 @@ TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
 //   // Test the Forward function.
 //   input = arma::zeros(10, 1);
 //   module.Forward(input, output);
-//   REQUIRE(Accu(module.Parameters().submat(100,
+//   REQUIRE(accu(module.Parameters().submat(100,
 //           0, module.Parameters().n_elem - 1, 0)) ==
-//           Approx(Accu(output)).epsilon(1e-5));
+//           Approx(accu(output)).epsilon(1e-5));
 
 //   // Test the Backward function.
 //   module.Backward(input, input, delta);
-//   REQUIRE(Accu(delta) == 0);
+//   REQUIRE(accu(delta) == 0);
 // }
 
 // /**
@@ -324,7 +324,7 @@ TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
 
 //   // Test the Backward function.
 //   module.Backward(input, input, delta);
-//   REQUIRE(Accu(delta) == 0);
+//   REQUIRE(accu(delta) == 0);
 // }
 
 // /**
@@ -496,20 +496,20 @@ TEST_CASE("SimpleSelectLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   Select moduleA(3);
   moduleA.Forward(input, outputA);
-  REQUIRE(30 == Accu(outputA));
+  REQUIRE(30 == accu(outputA));
 
   // Test the Forward function.
   Select moduleB(3, 5);
   moduleB.Forward(input, outputB);
-  REQUIRE(15 == Accu(outputB));
+  REQUIRE(15 == accu(outputB));
 
   // Test the Backward function.
   moduleA.Backward(input, outputA, delta);
-  REQUIRE(30 == Accu(delta));
+  REQUIRE(30 == accu(delta));
 
   // Test the Backward function.
   moduleB.Backward(input, outputA, delta);
-  REQUIRE(15 == Accu(delta));
+  REQUIRE(15 == accu(delta));
 }
 */
 
@@ -539,14 +539,14 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   Join module;
   module.Forward(input, output);
-  REQUIRE(50 == Accu(output));
+  REQUIRE(50 == accu(output));
 
   bool b = output.n_rows == 1 || output.n_cols == 1;
   REQUIRE(b == true);
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  REQUIRE(50 == Accu(delta));
+  REQUIRE(50 == accu(delta));
 
   b = delta.n_rows == input.n_rows && input.n_cols;
   REQUIRE(b == true);
@@ -575,11 +575,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //     // Test the Forward function.
 //     module.Forward(input, output);
-//     REQUIRE(10 * numMergeModules == Accu(output));
+//     REQUIRE(10 * numMergeModules == accu(output));
 
 //     // Test the Backward function.
 //     module.Backward(input, output, delta);
-//     REQUIRE(Accu(output) == Accu(delta));
+//     REQUIRE(accu(output) == accu(delta));
 //   }
 // }
 
@@ -1180,11 +1180,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //     // Test the Forward function.
 //     module.Forward(input, output);
-//     REQUIRE(10 * numMergeModules == Accu(output));
+//     REQUIRE(10 * numMergeModules == accu(output));
 //
 //     // Test the Backward function.
 //     module.Backward(input, output, delta);
-//     REQUIRE(Accu(output) == Accu(delta));
+//     REQUIRE(accu(output) == accu(delta));
 //   }
 // }
 
@@ -1790,17 +1790,17 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   for (size_t i = 0; i < batchSize; ++i)
   {
     // The Lookup module uses index - 1 for the cols.
-    const double outputSum = Accu(module.Parameters().cols(
+    const double outputSum = accu(module.Parameters().cols(
         ConvTo<arma::uvec>::From(input.col(i)) - 1));
 
-    REQUIRE(std::fabs(outputSum - Accu(output.col(i))) <= 1e-5);
+    REQUIRE(std::fabs(outputSum - accu(output.col(i))) <= 1e-5);
   }
 
   // Test the Gradient function.
   arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
 
-  REQUIRE(std::fabs(Accu(error) - Accu(gradient)) <= 1e-07);
+  REQUIRE(std::fabs(accu(error) - accu(gradient)) <= 1e-07);
 }
 */
 
@@ -1933,8 +1933,8 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   layer1.Forward(input1, output1);
   layer1.Backward(output1, output1, unzoomedOutput1);
 
-  REQUIRE(Accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
-  REQUIRE(Accu(unzoomedOutput1) - 1317.00 ==
+  REQUIRE(accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
+  REQUIRE(accu(unzoomedOutput1) - 1317.00 ==
           Approx(0.0).margin(1e-05));
 }
 */
@@ -2225,12 +2225,12 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose()
-  REQUIRE(Accu(output) == 360.0);
+  REQUIRE(accu(output) == 360.0);
 
   // Test the backward function.
   module1.Backward(input, output, delta);
   // Value calculated using tensorflow.nn.conv2d()
-  REQUIRE(Accu(delta) == 720.0);
+  REQUIRE(accu(delta) == 720.0);
 
   TransposedConvolution module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
   // Test the forward function.
@@ -2245,12 +2245,12 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module2.Reset();
   module2.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(Accu(output) == 1512.0);
+  REQUIRE(accu(output) == 1512.0);
 
   // Test the backward function.
   module2.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(Accu(delta) == 6504.0);
+  REQUIRE(accu(delta) == 6504.0);
 
   TransposedConvolution module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
   // Test the forward function.
@@ -2263,12 +2263,12 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module3.Reset();
   module3.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(Accu(output) == 2370.0);
+  REQUIRE(accu(output) == 2370.0);
 
   // Test the backward function.
   module3.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(Accu(delta) == 19154.0);
+  REQUIRE(accu(delta) == 19154.0);
 
   TransposedConvolution module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
   // Test the forward function.
@@ -2281,12 +2281,12 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module4.Reset();
   module4.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(Accu(output) == 6000.0);
+  REQUIRE(accu(output) == 6000.0);
 
   // Test the backward function.
   module4.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(Accu(delta) == 86208.0);
+  REQUIRE(accu(delta) == 86208.0);
 
   TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
   // Test the forward function.
@@ -2299,12 +2299,12 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module5.Reset();
   module5.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(Accu(output) == 120.0);
+  REQUIRE(accu(output) == 120.0);
 
   // Test the backward function.
   module5.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(Accu(delta) == 960.0);
+  REQUIRE(accu(delta) == 960.0);
 
   TransposedConvolution module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
   // Test the forward function.
@@ -2317,12 +2317,12 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module6.Reset();
   module6.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(Accu(output) == 410.0);
+  REQUIRE(accu(output) == 410.0);
 
   // Test the backward function.
   module6.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(Accu(delta) == 4444.0);
+  REQUIRE(accu(delta) == 4444.0);
 
   TransposedConvolution module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
   // Test the forward function.
@@ -2335,11 +2335,11 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   module7.Reset();
   module7.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  REQUIRE(Accu(output) == 606.0);
+  REQUIRE(accu(output) == 606.0);
 
   module7.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  REQUIRE(Accu(delta) == 7732.0);
+  REQUIRE(accu(delta) == 7732.0);
 }
 */
 
@@ -2415,11 +2415,11 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
     // Test the Forward function.
     module.Forward(input, output);
-    REQUIRE(10 == Accu(output));
+    REQUIRE(10 == accu(output));
 
     // Test the Backward function.
     module.Backward(input, output, delta);
-    REQUIRE(Accu(output) == Accu(delta));
+    REQUIRE(accu(output) == accu(delta));
   }
 }
 */
@@ -2490,11 +2490,11 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   module1.Reset();
 //   module1.Forward(input, output);
 //   // Value calculated using tensorflow.nn.atrous_conv2d()
-//   REQUIRE(Accu(output) == 792.0);
+//   REQUIRE(accu(output) == 792.0);
 
 //   // Test the Backward function.
 //   module1.Backward(input, output, delta);
-//   REQUIRE(Accu(delta) == 2376);
+//   REQUIRE(accu(delta) == 2376);
 
 //   AtrousConvolution<> module2(1, 1, 3, 3, 2, 2, 0, 0, 7, 7, 2, 2);
 //   // Test the forward function.
@@ -2506,11 +2506,11 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   module2.Reset();
 //   module2.Forward(input, output);
 //   // Value calculated using tensorflow.nn.conv2d()
-//   REQUIRE(Accu(output) == 264.0);
+//   REQUIRE(accu(output) == 264.0);
 
 //   // Test the backward function.
 //   module2.Backward(input, output, delta);
-//   REQUIRE(Accu(delta) == 792.0);
+//   REQUIRE(accu(delta) == 792.0);
 // }
 
 // /**
@@ -2633,7 +2633,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   module1.Reset();
 //   module1.Forward(input, output);
 
-//   REQUIRE(Accu(output) == 0);
+//   REQUIRE(accu(output) == 0);
 //   REQUIRE(output.n_rows == 9);
 //   REQUIRE(output.n_cols == 1);
 
@@ -2651,7 +2651,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   module2.Reset();
 //   module2.Forward(input, output);
 
-//   REQUIRE(Accu(output) == 0);
+//   REQUIRE(accu(output) == 0);
 //   REQUIRE(output.n_rows == 49);
 //   REQUIRE(output.n_cols == 1);
 
@@ -2756,7 +2756,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   input = arma::zeros(10, 1);
 //   module.Forward(input, output);
 
-//   double parameterSum = Accu(linear->Parameters().submat(
+//   double parameterSum = accu(linear->Parameters().submat(
 //       100, 0, linear->Parameters().n_elem - 1, 0));
 
 //   // Test the Backward function.
@@ -2765,8 +2765,8 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   // Clean up before we break,
 //   delete linear;
 
-//   REQUIRE(parameterSum == Approx(Accu(output)).epsilon(1e-5));
-//   REQUIRE(Accu(delta) == 0);
+//   REQUIRE(parameterSum == Approx(accu(output)).epsilon(1e-5));
+//   REQUIRE(accu(delta) == 0);
 // }
 
 /**
@@ -2788,7 +2788,7 @@ TEST_CASE("MultiplyMergeRunTest", "[ANNLayerTest]")
   input = arma::zeros(10, 1);
   module.Forward(input, output);
 
-  double parameterSum = Accu(linear->Parameters().submat(
+  double parameterSum = accu(linear->Parameters().submat(
       100, 0, linear->Parameters().n_elem - 1, 0));
 
   // Test the Backward function.
@@ -2797,8 +2797,8 @@ TEST_CASE("MultiplyMergeRunTest", "[ANNLayerTest]")
   // Clean up before we break,
   delete linear;
 
-  REQUIRE(parameterSum == Approx(Accu(output)).epsilon(1e-5));
-  REQUIRE(Accu(delta) == 0);
+  REQUIRE(parameterSum == Approx(accu(output)).epsilon(1e-5));
+  REQUIRE(accu(delta) == 0);
 }
 */
 
@@ -2940,12 +2940,12 @@ TEST_CASE("SimpleReparametrizationLayerTest", "[ANNLayerTest]")
   input = join_cols(arma::ones<arma::mat>(5, 1) * -15,
       arma::zeros<arma::mat>(5, 1));
   module.Forward(input, output);
-  REQUIRE(Accu(output) <= 1e-5);
+  REQUIRE(accu(output) <= 1e-5);
 
   // Test the Backward function.
   arma::mat gy = arma::zeros<arma::mat>(5, 1);
   module.Backward(input, gy, delta);
-  REQUIRE(Accu(delta) != 0); // klBackward will be added.
+  REQUIRE(accu(delta) != 0); // klBackward will be added.
 }
 */
 
@@ -2985,7 +2985,7 @@ TEST_CASE("ReparametrizationLayerIncludeKlTest", "[ANNLayerTest]")
   gy = arma::zeros(output.n_rows, output.n_cols);
   module.Backward(output, gy, delta);
 
-  REQUIRE(Accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 }
 */
 
@@ -3377,8 +3377,8 @@ TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 //   // Test the Backward function.
 //   module.Backward(input, input, delta);
 
-//   REQUIRE(0 == Accu(output));
-//   REQUIRE(Accu(delta) == 0);
+//   REQUIRE(0 == accu(output));
+//   REQUIRE(accu(delta) == 0);
 // }
 
 // /**
@@ -3405,11 +3405,11 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose().
-  REQUIRE(Accu(output) == 0.0);
+  REQUIRE(accu(output) == 0.0);
 
   // Test the Backward Function.
   module1.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0.0);
+  REQUIRE(accu(delta) == 0.0);
 
   // Test Valid for non zero padding.
   TransposedConvolution module2(1, 1, 3, 3, 2, 2,
@@ -3425,11 +3425,11 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module2.Reset();
   module2.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d().
-  REQUIRE(Accu(output) == 120.0);
+  REQUIRE(accu(output) == 120.0);
 
   // Test the Backward Function.
   module2.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 960.0);
+  REQUIRE(accu(delta) == 960.0);
 
   // Test for same padding type.
   TransposedConvolution module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
@@ -3438,13 +3438,13 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module3.Reset();
   module3.Forward(input, output);
-  REQUIRE(Accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module3.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0.0);
+  REQUIRE(accu(delta) == 0.0);
 
   // Output shape should equal input.
   TransposedConvolution module4(1, 1, 3, 3, 1, 1,
@@ -3455,13 +3455,13 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module4.Reset();
   module4.Forward(input, output);
-  REQUIRE(Accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module4.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0.0);
+  REQUIRE(accu(delta) == 0.0);
 
   TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
   // Test the forward function.
@@ -3469,13 +3469,13 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
   module5.Reset();
   module5.Forward(input, output);
-  REQUIRE(Accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module5.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0.0);
+  REQUIRE(accu(delta) == 0.0);
 
   TransposedConvolution module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
   // Test the forward function.
@@ -3483,13 +3483,13 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
   module6.Reset();
   module6.Forward(input, output);
-  REQUIRE(Accu(output) == 0);
+  REQUIRE(accu(output) == 0);
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module6.Backward(input, output, delta);
-  REQUIRE(Accu(delta) == 0.0);
+  REQUIRE(accu(delta) == 0.0);
 }
 */
 
@@ -3513,7 +3513,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 //   module1.InputWidth() = 4;
 //   module1.Forward(input, output);
 //   // Calculated using torch.nn.LPPool2d().
-//   REQUIRE(Accu(output) - 706.0 == Approx(0.0).margin(2e-5));
+//   REQUIRE(accu(output) - 706.0 == Approx(0.0).margin(2e-5));
 //   REQUIRE(output.n_elem == 2);
 //
 //   // For Square input.
@@ -3534,7 +3534,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 //   module3.InputWidth() = 4;
 //   module3.Forward(input, output);
 //   // Calculated using torch.nn.LPPool2d().
-//   REQUIRE(Accu(output) - 77.0 == Approx(0.0).margin(2e-5));
+//   REQUIRE(accu(output) - 77.0 == Approx(0.0).margin(2e-5));
 //   REQUIRE(output.n_elem == 4);
 // }
 

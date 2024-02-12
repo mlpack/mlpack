@@ -61,7 +61,7 @@ template<typename DataType>
 double BernoulliDistribution<DataType>::LogProbability(
     const DataType& observation) const
 {
-  return Accu(log(probability + eps) % observation +
+  return accu(log(probability + eps) % observation +
       log(1 - probability + eps) % (1 - observation)) /
       observation.n_cols;
 }

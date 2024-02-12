@@ -625,7 +625,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
       params.Get<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
-  REQUIRE(Accu(output1 != output2) > 0);
+  REQUIRE(accu(output1 != output2) > 0);
 }
 
 /**

@@ -119,7 +119,7 @@ void FlexibleReLUType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  gradient(0) = Accu(error) / input.n_cols;
+  gradient(0) = accu(error) / input.n_cols;
 }
 
 template<typename MatType>

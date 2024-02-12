@@ -173,7 +173,7 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
     for (size_t i = 0; i < samplesSeen; ++i)
       classes[labels[i]]++;
 
-    return double(classes.max()) / double(Accu(classes));
+    return double(classes.max()) / double(accu(classes));
   }
   else
   {

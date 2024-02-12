@@ -136,7 +136,7 @@ TEST_CASE("SparseAutoencoderFunctionRegularizationEvaluate",
 
     double wL2SquaredNorm;
 
-    wL2SquaredNorm = Accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
+    wL2SquaredNorm = accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
         parameters.submat(0, 0, l3 - 1, l2 - 1));
 
     // Calculate regularization terms.
@@ -195,9 +195,9 @@ TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
     rhoCap /= points;
 
     // Calculate divergence terms.
-    const double smallDivTerm = 5 * Accu(rho * log(rho / rhoCap) +
+    const double smallDivTerm = 5 * accu(rho * log(rho / rhoCap) +
         (1 - rho) * log((1 - rho) / (1 - rhoCap)));
-    const double bigDivTerm = 20 * Accu(rho * log(rho / rhoCap) +
+    const double bigDivTerm = 20 * accu(rho * log(rho / rhoCap) +
         (1 - rho) * log((1 - rho) / (1 - rhoCap)));
 
     REQUIRE(safNoDiv.Evaluate(parameters) + smallDivTerm ==

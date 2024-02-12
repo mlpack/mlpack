@@ -91,7 +91,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostProbabilitiesTest",
   REQUIRE(probabilities.n_cols == testSize);
 
   for (size_t i = 0; i < testSize; ++i)
-    REQUIRE(Accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
+    REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
 }
 
 /**
@@ -300,7 +300,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
   arma::Row<size_t> outputPerceptron;
   outputPerceptron = std::move(params.Get<arma::Row<size_t>>("output"));
 
-  REQUIRE(Accu(output != outputPerceptron) > 1);
+  REQUIRE(accu(output != outputPerceptron) > 1);
 }
 
 /**
@@ -339,7 +339,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
   params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
-  size_t correct = Accu(output == testLabels);
+  size_t correct = accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
   CleanMemory();
@@ -357,7 +357,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
   params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
-  correct = Accu(output == testLabels);
+  correct = accu(output == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
 
   CleanMemory();
@@ -375,7 +375,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
   params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
-  correct = Accu(output == testLabels);
+  correct = accu(output == testLabels);
   double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
 
   REQUIRE(accuracy1 <= accuracy10);
@@ -417,7 +417,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffTolTest",
   params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
-  size_t correct = Accu(output == testLabels);
+  size_t correct = accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
   CleanMemory();
@@ -434,7 +434,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffTolTest",
   params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
-  correct = Accu(output == testLabels);
+  correct = accu(output == testLabels);
   double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
 
   CleanMemory();
@@ -451,7 +451,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffTolTest",
   params.Get<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
-  correct = Accu(output == testLabels);
+  correct = accu(output == testLabels);
   double accuracy3 = (double(correct) / double(testLabels.n_elem) * 100);
 
   REQUIRE(accuracy1 <= accuracy2);

@@ -1121,7 +1121,7 @@ TEMPLATE_TEST_CASE("LARSSelectBetaTest", "[LARSTest]", arma::fmat, arma::mat)
 
     REQUIRE(lars.Beta().n_elem == X.n_rows);
     REQUIRE(lars.SelectedLambda1() == Approx(selLambda1).margin(tol));
-    REQUIRE(Accu(lars.Beta() != 0.0) == lars.ActiveSet().size());
+    REQUIRE(accu(lars.Beta() != 0.0) == lars.ActiveSet().size());
     const ElemType newError = lars.ComputeError(X, y);
     REQUIRE(newError <= lastError + errorTol);
     lastError = newError;
@@ -1200,9 +1200,9 @@ TEMPLATE_TEST_CASE("LARSSparseModelDenseData", "[LARSTest]", float, double)
   REQUIRE(responses1.n_elem == responses.n_elem);
   REQUIRE(responses2.n_elem == responses.n_elem);
 
-  REQUIRE((Accu(arma::abs(responses - responses1)) / responses.n_elem)
+  REQUIRE((accu(arma::abs(responses - responses1)) / responses.n_elem)
       < 0.1);
-  REQUIRE((Accu(arma::abs(responses - responses2)) / responses.n_elem)
+  REQUIRE((accu(arma::abs(responses - responses2)) / responses.n_elem)
       < 0.1);
 
   // Make sure ComputeError returns something reasonable.

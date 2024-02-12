@@ -29,7 +29,7 @@ class GiniImpurity
     arma::vec splitCounts(counts.n_cols);
     for (size_t i = 0; i < counts.n_cols; ++i)
     {
-      splitCounts[i] = Accu(counts.col(i));
+      splitCounts[i] = accu(counts.col(i));
       numElem += splitCounts[i];
     }
 

@@ -518,6 +518,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMainMonteCarloFlag",
 
   // Check whether results are equal.
   differences = arma::abs(estimations1 - estimations2);
-  const double sumDifferences = Accu(differences);
+  const double sumDifferences = accu(differences);
   REQUIRE(sumDifferences > 0);
 }

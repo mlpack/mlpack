@@ -38,7 +38,6 @@
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/ens_traits.hpp>
 #include <mlpack/core/util/conv_to.hpp>
-#include <mlpack/core/util/accu.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/deprecated.hpp>

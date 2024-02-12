@@ -211,7 +211,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   }
 
   arma::uword maxIndex = 0;
-  probabilities /= Accu(probabilities);
+  probabilities /= accu(probabilities);
   probabilities.max(maxIndex);
   prediction = (size_t) maxIndex;
 }
@@ -250,7 +250,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
-    probabilities.col(i) /= Accu(probabilities.col(i));
+    probabilities.col(i) /= accu(probabilities.col(i));
     probabilities.col(i).max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
@@ -441,9 +441,9 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
     for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
-        rt += Accu(D.col(j));
+        rt += accu(D.col(j));
       else
-        rt -= Accu(D.col(j));
+        rt -= accu(D.col(j));
     }
 
     if ((i > 0) && (std::abs(rt - crt) < tolerance))

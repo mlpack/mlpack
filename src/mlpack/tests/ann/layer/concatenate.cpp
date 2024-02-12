@@ -38,12 +38,12 @@ TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
   output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
-  REQUIRE(Accu(output) == 7.5);
+  REQUIRE(accu(output) == 7.5);
 
   // Test the Backward function.
   delta.set_size(5, 1);
   module.Backward(input, output, output, delta);
-  REQUIRE(Accu(delta) == 5);
+  REQUIRE(accu(delta) == 5);
 }
 
 /**

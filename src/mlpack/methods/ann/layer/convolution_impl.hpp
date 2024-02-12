@@ -544,7 +544,7 @@ void ConvolutionType<
       }
 
       if (useBias)
-        gradient[weight.n_elem + outMap] += Accu(curError);
+        gradient[weight.n_elem + outMap] += accu(curError);
     }
   }
 }

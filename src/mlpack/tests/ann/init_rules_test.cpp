@@ -234,7 +234,7 @@ TEST_CASE("NetworkInitTest", "[InitRulesTest]")
   zeroModel.Add<LogSoftMax>();
   zeroModel.Predict(input, response);
 
-  REQUIRE(Accu(zeroModel.Parameters()) == 0);
+  REQUIRE(accu(zeroModel.Parameters()) == 0);
   REQUIRE(zeroModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the

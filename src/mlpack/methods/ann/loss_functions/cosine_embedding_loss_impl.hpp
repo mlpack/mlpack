@@ -93,7 +93,7 @@ void CosineEmbeddingLossType<MatType>::Backward(
       outputTemp(arma::span(i, i + cols -1)) = -1 * multiplier *
           (normalise(inputTemp2(arma::span(i, i + cols - 1))) -
           cosDist * normalise(inputTemp1(arma::span(i, i + cols -
-          1)))) / std::sqrt(Accu(pow(inputTemp1(arma::span(i, i +
+          1)))) / std::sqrt(accu(pow(inputTemp1(arma::span(i, i +
           cols - 1)), 2)));
     }
 

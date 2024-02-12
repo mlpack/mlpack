@@ -117,7 +117,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
   for (size_t j = 0; j < atoms; ++j)
   {
-    if (Accu(codes.row(j) != 0) == 0)
+    if (accu(codes.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
   }
 

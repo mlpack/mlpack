@@ -167,7 +167,7 @@ TEST_CASE("GMMTrainEMMultipleGaussians", "[GMMTest]")
     counts += 1;
 
     // Account for rounding errors (possibly necessary).
-    counts[gaussians - 1] += (data.n_cols - Accu(counts));
+    counts[gaussians - 1] += (data.n_cols - accu(counts));
 
     // Build each Gaussian individually.
     size_t point = 0;
@@ -702,7 +702,7 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
   counts += 1;
 
   // Account for rounding errors (possibly necessary).
-  counts[gaussians - 1] += (data.n_cols - Accu(counts));
+  counts[gaussians - 1] += (data.n_cols - accu(counts));
 
   // Build each Gaussian individually.
   size_t point = 0;

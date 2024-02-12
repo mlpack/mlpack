@@ -84,7 +84,7 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
     meanxVec += probabilities(i) * rdata.col(i);
   }
 
-  double totProbability = Accu(probabilities);
+  double totProbability = accu(probabilities);
 
   meanLogxVec /= totProbability;
   meanxVec /= totProbability;
