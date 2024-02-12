@@ -20,7 +20,7 @@ namespace mlpack {
  * A utility class that based on the data type forwards to `coot::conv_to` or
  * `arma::conv_to`.
  *
- * @tparam OutputType The data type to convert to.
+ * @param OutputType The data type to convert to.
  */
 template<typename OutputType>
 class ConvTo
