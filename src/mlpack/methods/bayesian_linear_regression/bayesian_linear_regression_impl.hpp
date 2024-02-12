@@ -386,10 +386,10 @@ void BayesianLinearRegression<ModelMatType>::serialize(Archive& ar,
   {
     arma::colvec colvecTmp;
     ar(cereal::make_nvp("dataOffset", colvecTmp));
-    dataOffset = arma::conv_to<DenseVecType>::from(colvecTmp);
+    dataOffset = ConvTo<DenseVecType>::From(colvecTmp);
 
     ar(cereal::make_nvp("dataScale", colvecTmp));
-    dataScale = arma::conv_to<DenseVecType>::from(colvecTmp);
+    dataScale = ConvTo<DenseVecType>::From(colvecTmp);
 
     double dblTmp;
     ar(cereal::make_nvp("responsesOffset", dblTmp));
@@ -405,11 +405,11 @@ void BayesianLinearRegression<ModelMatType>::serialize(Archive& ar,
     gamma = (ElemType) dblTmp;
 
     ar(cereal::make_nvp("omega", colvecTmp));
-    omega = arma::conv_to<DenseVecType>::from(colvecTmp);
+    omega = ConvTo<DenseVecType>::From(colvecTmp);
 
     arma::mat matTmp;
     ar(cereal::make_nvp("matCovariance", matTmp));
-    matCovariance = arma::conv_to<ModelMatType>::from(matCovariance);
+    matCovariance = ConvTo<ModelMatType>::From(matCovariance);
   }
   else
   {

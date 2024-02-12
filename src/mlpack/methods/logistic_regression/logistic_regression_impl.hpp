@@ -199,7 +199,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
 
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = arma::conv_to<arma::Row<size_t>>::from((one /
+  labels = ConvTo<arma::Row<size_t>>::From((one /
       (one + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       (one - ((ElemType) decisionBoundary)));
@@ -235,7 +235,7 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
       parameters.tail_cols(parameters.n_elem - 1) * dataset));
   probabilities.row(0) = one - probabilities.row(1);
 
-  predictions = arma::conv_to<arma::Row<size_t>>::from(probabilities.row(1) +
+  predictions = ConvTo<arma::Row<size_t>>::From(probabilities.row(1) +
       (one - ((ElemType) decisionBoundary)));
 }
 
@@ -289,7 +289,7 @@ void LogisticRegression<MatType>::serialize(Archive& ar,
     // This is the legacy version: `parameters` is of type arma::rowvec.
     arma::rowvec parametersTmp;
     ar(cereal::make_nvp("parameters", parametersTmp));
-    parameters = arma::conv_to<RowType>::from(parametersTmp);
+    parameters = ConvTo<RowType>::From(parametersTmp);
 
     ar(CEREAL_NVP(lambda));
   }

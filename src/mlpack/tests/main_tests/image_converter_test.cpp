@@ -44,7 +44,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
 TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = arma::conv_to<arma::mat>::from(
+  arma::mat testimage = ConvTo<arma::mat>::From(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
@@ -81,7 +81,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
 TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = arma::conv_to<arma::mat>::from(
+  arma::mat testimage = ConvTo<arma::mat>::From(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
@@ -99,7 +99,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
 TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = arma::conv_to<arma::mat>::from(
+  arma::mat testimage = ConvTo<arma::mat>::From(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
@@ -119,7 +119,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
 TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = arma::conv_to<arma::mat>::from(
+  arma::mat testimage = ConvTo<arma::mat>::From(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
@@ -138,7 +138,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
 TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = arma::conv_to<arma::mat>::from(
+  arma::mat testimage = ConvTo<arma::mat>::From(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
