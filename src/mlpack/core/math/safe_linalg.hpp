@@ -1,5 +1,5 @@
 /**
- * @file core/math/safe_linalg.hpp
+ * @file core/util/min_max.hpp
  * @author Omar Shrit
  * @author Ryan Curtin
  *
@@ -14,39 +14,67 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_MAT_REDEF_HPP
-#define MLPACK_CORE_MAT_REDEF_HPP
+#ifndef MLPACK_CORE_UTIL_MIN_MAX_HPP
+#define MLPACK_CORE_UTIL_MIN_MAX_HPP
 
 namespace mlpack {
 
-template<typename eT>
-inline arma::Mat<eT> SafeMax(const arma::Mat<eT>& A, const arma::Mat<eT>& B)
-{
-  return arma::max(A, B);
-}
-
-template<typename eT>
-inline arma::Mat<eT> SafeMin(const arma::Mat<eT>& A, const arma::Mat<eT>& B)
-{
-  return arma::min(A, B);
-}
-
 #ifdef MLPACK_HAS_COOT
 
-template<typename eT>
-inline coot::Mat<eT> SafeMax(const coot::Mat<eT>& A, const coot::Mat<eT>& B)
+/**
+ * Forward to coot::max if the Input type is bandicoot.
+ *
+ * @param input The input that is passed.
+ */
+template<typename InputType>
+inline InputType Max(const InputType& A, const InputType& B,
+                     const typename std::enable_if_t<
+                     coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::max(A, B);
 }
 
-template<typename eT>
-inline coot::Mat<eT> SafeMin(const coot::Mat<eT>& A, const coot::Mat<eT>& B)
+/**
+ * Forward to coot::min if the Input type is bandicoot.
+ *
+ * @param input The input that is passed.
+ */
+template<typename InputType>
+inline InputType Min(const InputType& A, const InputType& B, 
+                     const typename std::enable_if_t<
+                     coot::is_coot_type<InputType>::value>* = 0)
 {
   return coot::min(A, B);
 }
 
 #endif
 
+/**
+ * forward to arma::max if the input type is armadillo.
+ *
+ * @param input the input that is passed.
+ */
+template<typename eT>
+inline InputType Max(const InputType& A, const InputType& B, 
+                     const typename std::enable_if_t<
+                     arma::is_coot_type<InputType>::value>* = 0)
+{
+  return arma::max(A, B);
 }
+
+/**
+ * forward to arma::min if the input type is armadillo.
+ *
+ * @param input the input that is passed.
+ */
+template<typename eT>
+inline InputType Min(const InputType& A, const InputType& B, 
+                     const typename std::enable_if_t<
+                     arma::is_coot_type<InputType>::value>* = 0)
+{
+  return arma::min(A, B);
+}
+
+} // namespace mlpack
 
 #endif
