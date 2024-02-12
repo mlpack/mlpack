@@ -142,7 +142,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
           << "dimensions are less than 2." << endl;
     }
 
-    labelsIn = conv_to<Row<size_t>>::from(
+    labelsIn = ConvTo<arma::Row<size_t>>::From(
         trainingData.row(trainingData.n_rows - 1));
     trainingData.shed_row(trainingData.n_rows - 1);
   }
