@@ -63,7 +63,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (UseWeights)
   {
     classWeightSums.zeros(numClasses, 2);
-    totalWeight = arma::accu(weights);
+    totalWeight = Accu(weights);
     bestFoundGain *= totalWeight;
 
     for (size_t i = 0; i < data.n_elem; ++i)
@@ -174,7 +174,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   double totalRightWeight = 0.0;
   if (UseWeights)
   {
-    totalWeight = arma::accu(weights);
+    totalWeight = Accu(weights);
     bestFoundGain *= totalWeight;
   }
   else

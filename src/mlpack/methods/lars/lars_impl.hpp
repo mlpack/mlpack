@@ -1325,9 +1325,9 @@ LARS<ModelMatType>::ComputeError(const MatType& matX,
                                  const bool colMajor)
 {
   if (!colMajor)
-    return arma::accu(pow(y - trans(matX * Beta()) - Intercept(), 2.0));
+    return Accu(pow(y - trans(matX * Beta()) - Intercept(), 2.0));
   else
-    return arma::accu(pow(y - Beta().t() * matX - Intercept(), 2.0));
+    return Accu(pow(y - Beta().t() * matX - Intercept(), 2.0));
 }
 
 /**

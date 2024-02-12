@@ -343,7 +343,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> predictions;
       model->Classify(regressors, predictions);
 
-      const size_t correct = arma::accu(predictions == responses);
+      const size_t correct = Accu(predictions == responses);
 
       Log::Info << correct << " of " << responses.n_elem << " correct on training"
           << " set (" << (double(correct) / double(responses.n_elem) * 100) << ")."

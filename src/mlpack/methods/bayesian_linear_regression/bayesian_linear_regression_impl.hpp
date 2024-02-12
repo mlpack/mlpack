@@ -221,22 +221,22 @@ inline void BayesianLinearRegression<ModelMatType>::Predict(
   if (!centerData && !scaleData)
   {
     stddev = std::sqrt(Variance() +
-        arma::accu(point % (matCovariance * point)));
-    inner = arma::accu(point % (matCovariance * point));
+        Accu(point % (matCovariance * point)));
+    inner = Accu(point % (matCovariance * point));
   }
   else if (centerData && !scaleData)
   {
-    inner = arma::accu((point - dataOffset) %
+    inner = Accu((point - dataOffset) %
         (matCovariance * (point - dataOffset)));
   }
   else if (!centerData && scaleData)
   {
-    inner = arma::accu((point / dataScale) %
+    inner = Accu((point / dataScale) %
         (matCovariance * (point / dataScale)));
   }
   else
   {
-    inner = arma::accu(((point - dataOffset) / dataScale) %
+    inner = Accu(((point - dataOffset) / dataScale) %
         (matCovariance * ((point - dataOffset) / dataScale)));
   }
 

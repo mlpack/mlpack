@@ -70,7 +70,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (UseWeights)
   {
     classWeightSums.zeros(numClasses, 2);
-    totalWeight = arma::accu(sortedWeights);
+    totalWeight = Accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
     // Initialize the counts.
@@ -243,7 +243,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   if (UseWeights)
   {
-    totalWeight = arma::accu(sortedWeights);
+    totalWeight = Accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
     for (size_t i = 0; i < minimum - 1; ++i)
@@ -382,7 +382,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   if (UseWeights)
   {
-    totalWeight = arma::accu(sortedWeights);
+    totalWeight = Accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
     for (size_t i = 0; i < minimum - 1; ++i)

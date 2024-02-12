@@ -120,7 +120,7 @@ inline double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters)
   double wL2SquaredNorm;
 
   // Calculate squared L2-norms of w1 and w2.
-  wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
+  wL2SquaredNorm = Accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
       parameters.submat(0, 0, l3 - 1, l2 - 1));
 
   double sumOfSquaresError, weightDecay, klDivergence, cost;
@@ -131,9 +131,9 @@ inline double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters)
   // of the weights w1 and w2. 'klDivergence' is the cost of the hidden layer
   // activations not being low. It is given by the following formula:
   // KL = sum_over_hSize(rho*log(rho/rhoCaq) + (1-rho)*log((1-rho)/(1-rhoCap)))
-  sumOfSquaresError = 0.5 * arma::accu(diff % diff) / data.n_cols;
+  sumOfSquaresError = 0.5 * Accu(diff % diff) / data.n_cols;
   weightDecay = 0.5 * lambda * wL2SquaredNorm;
-  klDivergence = beta * arma::accu(rho * log(rho / rhoCap) + (1 - rho) *
+  klDivergence = beta * Accu(rho * log(rho / rhoCap) + (1 - rho) *
       log((1 - rho) / (1 - rhoCap)));
 
   // The cost is the sum of the terms calculated above.
