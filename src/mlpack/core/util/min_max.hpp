@@ -54,10 +54,10 @@ inline InputType Min(const InputType& A, const InputType& B,
  *
  * @param input the input that is passed.
  */
-template<typename eT>
+template<typename InputType>
 inline InputType Max(const InputType& A, const InputType& B, 
                      const typename std::enable_if_t<
-                     arma::is_coot_type<InputType>::value>* = 0)
+                     arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::max(A, B);
 }
@@ -67,10 +67,10 @@ inline InputType Max(const InputType& A, const InputType& B,
  *
  * @param input the input that is passed.
  */
-template<typename eT>
+template<typename InputType>
 inline InputType Min(const InputType& A, const InputType& B, 
                      const typename std::enable_if_t<
-                     arma::is_coot_type<InputType>::value>* = 0)
+                     arma::is_arma_type<InputType>::value>* = 0)
 {
   return arma::min(A, B);
 }
