@@ -336,7 +336,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         Log::Info << "Calculation complete." << endl;
       }
 
-      const double averageError = arma::sum(exactDistances.row(0) /
+      const double averageError = sum(exactDistances.row(0) /
           distances.row(0)) / distances.n_cols;
       const double minError = arma::min(exactDistances.row(0) /
           distances.row(0));

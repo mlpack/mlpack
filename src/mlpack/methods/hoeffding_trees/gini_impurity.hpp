@@ -37,7 +37,7 @@ class GiniImpurity
     if (numElem == 0)
       return 0.0;
 
-    arma::Col<size_t> classCounts = arma::sum(counts, 1);
+    arma::Col<size_t> classCounts = sum(counts, 1);
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;

@@ -130,8 +130,8 @@ TEST_CASE_METHOD(
   predictions = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset passed parameters.
-  SoftmaxRegression* m = params.Get<SoftmaxRegression*>("output_model");
-  params.Get<SoftmaxRegression*>("output_model") = NULL;
+  SoftmaxRegression<>* m = params.Get<SoftmaxRegression<>*>("output_model");
+  params.Get<SoftmaxRegression<>*>("output_model") = NULL;
   CleanMemory();
   ResetSettings();
 
@@ -262,7 +262,7 @@ TEST_CASE_METHOD(
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                params.Get<SoftmaxRegression*>("output_model"));
+                params.Get<SoftmaxRegression<>*>("output_model"));
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
@@ -308,7 +308,7 @@ TEST_CASE_METHOD(
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = params.Get<SoftmaxRegression*>("output_model")->Parameters();
+  modelParam = params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
   // Reset passed parameters.
   CleanMemory();
@@ -329,7 +329,7 @@ TEST_CASE_METHOD(
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
     REQUIRE(modelParam[i] !=
-        params.Get<SoftmaxRegression*>("output_model")->Parameters()[i]);
+        params.Get<SoftmaxRegression<>*>("output_model")->Parameters()[i]);
   }
 }
 
@@ -374,7 +374,7 @@ TEST_CASE_METHOD(
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = params.Get<SoftmaxRegression*>("output_model")->Parameters();
+  modelParam = params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
   // Reset passed parameters.
   CleanMemory();
@@ -395,7 +395,7 @@ TEST_CASE_METHOD(
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
     REQUIRE(modelParam[i] !=
-        params.Get<SoftmaxRegression*>("output_model")->Parameters()[i]);
+        params.Get<SoftmaxRegression<>*>("output_model")->Parameters()[i]);
   }
 }
 
@@ -440,7 +440,7 @@ TEST_CASE_METHOD(
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = params.Get<SoftmaxRegression*>("output_model")->Parameters();
+  modelParam = params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
   // Reset passed parameters.
   CleanMemory();
@@ -458,7 +458,7 @@ TEST_CASE_METHOD(
   // Check that initial parameters has 1 more parameter than
   // final parameters matrix.
   REQUIRE(
-      params.Get<SoftmaxRegression*>("output_model")->Parameters().n_cols ==
+      params.Get<SoftmaxRegression<>*>("output_model")->Parameters().n_cols ==
       modelParam.n_cols + 1);
 }
 

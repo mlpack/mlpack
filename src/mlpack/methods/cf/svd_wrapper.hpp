@@ -53,7 +53,7 @@ class SVDWrapper
    * @param sigma eigenvalue matrix
    * @param H second unitary matrix
    *
-   * @note V = W * sigma * arma::trans(H)
+   * @note V = W * sigma * trans(H)
    */
   double Apply(const arma::mat& V,
                arma::mat& W,

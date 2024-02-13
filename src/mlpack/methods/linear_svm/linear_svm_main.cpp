@@ -294,7 +294,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     // The initial predictors for y, Nx1.
-    rawLabels = arma::conv_to<arma::Row<size_t>>::from(
+    rawLabels = ConvTo<arma::Row<size_t>>::From(
         trainingSet.row(trainingSet.n_rows - 1));
     trainingSet.shed_row(trainingSet.n_rows - 1);
   }
@@ -405,7 +405,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Info << "Calculating class probabilities of points in " << testOutput
           << "." << endl;
       arma::mat probabilities;
-      model->svm.Classify(testSet, probabilities);
+      model->svm.Classify(testSet, predictions, probabilities);
       params.Get<arma::mat>("probabilities") = std::move(probabilities);
     }
 

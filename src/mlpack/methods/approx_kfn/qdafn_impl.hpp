@@ -112,7 +112,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
     std::priority_queue<std::pair<double, size_t>> queue;
     for (size_t i = 0; i < l; ++i)
     {
-      const double val = sValues(0, i) - arma::dot(querySet.col(q),
+      const double val = sValues(0, i) - dot(querySet.col(q),
           lines.col(i));
       queue.push(std::make_pair(val, i));
     }

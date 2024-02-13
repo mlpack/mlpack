@@ -66,10 +66,10 @@ class NaiveKernelRule
   // centered. Since we actually never work in the feature space we cannot
   // center the data. So, we perform a "psuedo-centering" using the kernel
   // matrix.
-  arma::rowvec rowMean = arma::sum(kernelMatrix, 0) / kernelMatrix.n_cols;
-  kernelMatrix.each_col() -= arma::sum(kernelMatrix, 1) / kernelMatrix.n_cols;
+  arma::rowvec rowMean = sum(kernelMatrix, 0) / kernelMatrix.n_cols;
+  kernelMatrix.each_col() -= sum(kernelMatrix, 1) / kernelMatrix.n_cols;
   kernelMatrix.each_row() -= rowMean;
-  kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
+  kernelMatrix += sum(rowMean) / kernelMatrix.n_cols;
 
   // Eigendecompose the centered kernel matrix.
   kernelMatrix = arma::symmatu(kernelMatrix);
@@ -87,7 +87,7 @@ class NaiveKernelRule
   eigvec = arma::fliplr(eigvec);
 
   transformedData = eigvec.t() * kernelMatrix;
-  transformedData.each_col() /= arma::sqrt(eigval);
+  transformedData.each_col() /= sqrt(eigval);
 }
 };
 

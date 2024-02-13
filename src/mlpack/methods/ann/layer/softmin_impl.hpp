@@ -62,7 +62,7 @@ void SoftminType<MatType>::Forward(
     const MatType& input,
     MatType& output)
 {
-  MatType softminInput = arma::exp(-(input.each_row() -
+  MatType softminInput = exp(-(input.each_row() -
       arma::min(input, 0)));
   output = softminInput.each_row() / sum(softminInput, 0);
 }
@@ -74,7 +74,7 @@ void SoftminType<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  g = output % (gy - arma::repmat(arma::sum(gy % output), output.n_rows, 1));
+  g = output % (gy - repmat(sum(gy % output), output.n_rows, 1));
 }
 
 template<typename MatType>

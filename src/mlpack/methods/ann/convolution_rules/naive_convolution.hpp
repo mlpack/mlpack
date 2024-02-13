@@ -47,18 +47,21 @@ class NaiveConvolution
    * @param appending If true, it will not initialize the output. Instead,
    *                  it will append the results to the output.
    */
-  template<typename eT, typename Border = BorderMode>
+  template<typename InMatType, typename FilMatType, typename OutMatType,
+      typename Border = BorderMode>
   static typename std::enable_if<
       std::is_same<Border, ValidConvolution>::value, void>::type
-  Convolution(const arma::Mat<eT>& input,
-              const arma::Mat<eT>& filter,
-              arma::Mat<eT>& output,
+  Convolution(const InMatType& input,
+              const FilMatType& filter,
+              OutMatType& output,
               const size_t dW = 1,
               const size_t dH = 1,
               const size_t dilationW = 1,
               const size_t dilationH = 1,
-              const bool appending = false)
+              const bool appending = false,
+              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
+    typedef typename InMatType::elem_type eT;
     // Compute the output size.  The filterRows and filterCols computation must
     // take into account the fact that dilation only adds rows or columns
     // *between* filter elements.  So, e.g., a dilation of 2 on a kernel size of
@@ -105,17 +108,19 @@ class NaiveConvolution
    * @param appending If true, it will not initialize the output. Instead,
    *                  it will append the results to the output.
    */
-  template<typename eT, typename Border = BorderMode>
+  template<typename InMatType, typename FilMatType, typename OutMatType,
+      typename Border = BorderMode>
   static typename std::enable_if<
       std::is_same<Border, FullConvolution>::value, void>::type
-  Convolution(const arma::Mat<eT>& input,
-              const arma::Mat<eT>& filter,
-              arma::Mat<eT>& output,
+  Convolution(const InMatType& input,
+              const FilMatType& filter,
+              OutMatType& output,
               const size_t dW = 1,
               const size_t dH = 1,
               const size_t dilationW = 1,
               const size_t dilationH = 1,
-              const bool appending = false)
+              const bool appending = false,
+              const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
   {
     // First, compute the necessary padding for the full convolution.  It is
     // possible that this might be an overestimate.  Note that these variables
@@ -126,7 +131,7 @@ class NaiveConvolution
     const size_t paddingCols = filterCols - 1;
 
     // Pad filter and input to the working output shape.
-    arma::Mat<eT> inputPadded(input.n_rows + 2 * paddingRows,
+    InMatType inputPadded(input.n_rows + 2 * paddingRows,
         input.n_cols + 2 * paddingCols, arma::fill::zeros);
     inputPadded.submat(paddingRows, paddingCols, paddingRows + input.n_rows - 1,
         paddingCols + input.n_cols - 1) = input;
@@ -148,23 +153,25 @@ class NaiveConvolution
    * @param appending If true, it will not initialize the output. Instead,
    *                  it will append the results to the output.
    */
-  template<typename eT>
-  static void Convolution(const arma::Cube<eT>& input,
-                          const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output,
+  template<typename CubeType>
+  static void Convolution(const CubeType& input,
+                          const CubeType& filter,
+                          CubeType& output,
                           const size_t dW = 1,
                           const size_t dH = 1,
                           const size_t dilationW = 1,
                           const size_t dilationH = 1,
-                          const bool appending = false)
+                          const bool appending = false,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    arma::Mat<eT> convOutput;
+    typedef typename GetDenseMatType<CubeType>::type MatType;
+    MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput, dW, dH, dilationW, dilationH, appending);
 
     if (!appending)
-      output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-          input.n_slices);
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; ++i)
@@ -188,23 +195,25 @@ class NaiveConvolution
    * @param appending If true, it will not initialize the output. Instead,
    *                  it will append the results to the output.
    */
-  template<typename eT>
-  static void Convolution(const arma::Mat<eT>& input,
-                          const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output,
+  template<typename MatType, typename CubeType>
+  static void Convolution(const MatType& input,
+                          const CubeType& filter,
+                          CubeType& output,
                           const size_t dW = 1,
                           const size_t dH = 1,
                           const size_t dilationW = 1,
                           const size_t dilationH = 1,
-                          const bool appending = false)
+                          const bool appending = false,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    arma::Mat<eT> convOutput;
+    MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
         convOutput, dW, dH, dilationW, dilationH, appending);
 
     if (!appending)
-      output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-          filter.n_slices);
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
+
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < filter.n_slices; ++i)
@@ -228,23 +237,25 @@ class NaiveConvolution
    * @param appending If true, it will not initialize the output. Instead,
    *                  it will append the results to the output.
    */
-  template<typename eT>
-  static void Convolution(const arma::Cube<eT>& input,
-                          const arma::Mat<eT>& filter,
-                          arma::Cube<eT>& output,
+  template<typename MatType, typename CubeType>
+  static void Convolution(const CubeType& input,
+                          const MatType& filter,
+                          CubeType& output,
                           const size_t dW = 1,
                           const size_t dH = 1,
                           const size_t dilationW = 1,
                           const size_t dilationH = 1,
-                          const bool appending = false)
+                          const bool appending = false,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    arma::Mat<eT> convOutput;
+    MatType convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
         convOutput, dW, dH, dilationW, dilationH, appending);
 
     if (!appending)
-      output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-          input.n_slices);
+      output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
+
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; ++i)

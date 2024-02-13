@@ -1,0 +1,7 @@
+prefix=${pcfiledir}/../../
+includedir=${prefix}/include
+
+Name: mlpack
+Description: a flexible, fast machine learning library
+Version: @PACKAGE_VERSION@
+Cflags: -I${includedir}

@@ -58,7 +58,7 @@ class HyperbolicTangentKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b)
   {
-    return tanh(scale * arma::dot(a, b) + offset);
+    return tanh(scale * dot(a, b) + offset);
   }
 
   //! Get scale factor.

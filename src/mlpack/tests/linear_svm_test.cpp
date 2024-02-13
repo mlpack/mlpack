@@ -221,7 +221,7 @@ TEST_CASE("LinearSVMFunctionRegularizationEvaluate", "[LinearSVMTest]")
     parameters.randu(inputSize, numClasses);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = arma::dot(parameters, parameters);
+    wL2SquaredNorm = dot(parameters, parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;
@@ -312,7 +312,7 @@ TEST_CASE("LinearSVMFunctionRegularizationSeparableEvaluate", "[LinearSVMTest]")
     parameters.randu(inputSize, numClasses);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = 0.5 * arma::dot(parameters, parameters);
+    wL2SquaredNorm = 0.5 * dot(parameters, parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;
@@ -486,7 +486,7 @@ TEST_CASE("LinearSVMLBFGSSimpleTest", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.005));
+  REQUIRE(acc == Approx(100.0).epsilon(0.005));
 }
 
 /**
@@ -514,12 +514,12 @@ TEST_CASE("LinearSVMGradientDescentSimpleTest", "[LinearSVMTest]")
 
   // Create a linear svm object using custom gradient descent optimizer.
   ens::GradientDescent optimizer(stepSize, maxIterations, tolerance);
-  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-      delta, false, optimizer);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, optimizer, lambda,
+      delta, false);
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.005));
+  REQUIRE(acc == Approx(100.0).epsilon(0.005));
 }
 
 /**
@@ -632,8 +632,7 @@ TEST_CASE("LinearSVMFitIntercept", "[LinearSVMTest]")
     }
 
     // Now train a svm object on it.
-    LinearSVM<arma::mat> svm(data, labels, numClasses, lambda,
-        delta, true, ens::L_BFGS());
+    LinearSVM<arma::mat> svm(data, labels, numClasses, lambda, delta, true);
 
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
@@ -775,12 +774,12 @@ TEST_CASE("LinearSVMPSGDSimpleTest", "[LinearSVMTest]")
   ens::ParallelSGD<ens::ConstantStep> optimizer(0,
       std::ceil((float) dataset.n_cols / omp_get_max_threads()),
       1e-5, true, decayPolicy);
-  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-      delta, false, optimizer);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, optimizer, lambda,
+      delta, false);
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(1e-2));
+  REQUIRE(acc == Approx(100.0).epsilon(1e-2));
 }
 
 /**
@@ -824,13 +823,13 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 
     // Train linear svm object using Parallel SGD optimizer.
     // The threadShareSize is chosen such that each function gets optimized.
-    ens::ParallelSGD<ens::ConstantStep> optimizer(0,
+    ens::ParallelSGD<ens::ConstantStep> optimizer(100000,
         std::ceil((float) data.n_cols / omp_get_max_threads()),
         1e-5, true, decayPolicy);
-    LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda,
-        delta, false, optimizer);
+    LinearSVM<arma::mat> lsvm(data, labels, numClasses, optimizer, lambda,
+        delta, false);
 
-    // Compare training accuracy to 1.
+    // Compare training accuracy to 100.
     const double acc = lsvm.ComputeAccuracy(data, labels);
 
     // Create test dataset.
@@ -849,8 +848,8 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
     const double testAcc = lsvm.ComputeAccuracy(data, labels);
 
     // Larger tolerance is sometimes needed.
-    if (testAcc == Approx(1.0).epsilon(0.02) &&
-        acc == Approx(1.0).epsilon(0.02))
+    if (testAcc == Approx(100.0).epsilon(0.02) &&
+        acc == Approx(100.0).epsilon(0.02))
     {
       success = true;
       break;
@@ -863,23 +862,28 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 #endif
 
 /**
- * Test sparse and dense linear svm and make sure they both work the
+ * Test sparse and dense linear svm training and make sure they both work the
  * same using the L-BFGS optimizer.
  */
-TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]")
+TEMPLATE_TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]", float, double)
 {
+  typedef TestType ElemType;
+  typedef typename arma::SpMat<ElemType> SparseMatType;
+  typedef typename arma::Mat<ElemType> MatType;
+
   // Create a random dataset.
-  arma::sp_mat dataset;
+  SparseMatType dataset;
   dataset.sprandu(10, 800, 0.3);
-  arma::mat denseDataset(dataset);
+  MatType denseDataset(dataset);
   arma::Row<size_t> labels(800);
   for (size_t i = 0; i < 800; ++i)
     labels[i] = RandInt(0, 2);
 
-  LinearSVM<arma::mat> lr(denseDataset, labels, 2, 0.3, 1,
-      false, ens::L_BFGS());
-  LinearSVM<arma::sp_mat> lrSparse(dataset, labels, 2, 0.3, 1,
-      false, ens::L_BFGS());
+  LinearSVM<> lr(denseDataset, labels, 2, 0.3, 1, false);
+  LinearSVM<> lrSparse(dataset, labels, 2, 0.3, 1, false);
+
+  // Make the initial points the same.
+  lrSparse.Parameters() = lr.Parameters();
 
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
@@ -891,10 +895,15 @@ TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]")
 
 /**
  * Test training of linear svm for multiple classes on a complex gaussian
- * dataset using L-BFGS optimizer.
+ * dataset using L-BFGS optimizer, with different types.
  */
-TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]")
+TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]", float,
+    double)
 {
+  typedef TestType ElemType;
+  typedef typename arma::Mat<ElemType> MatType;
+  typedef typename arma::Col<ElemType> VecType;
+
   const size_t points = 1000;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
@@ -908,7 +917,7 @@ TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]")
   GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
   GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
-  arma::mat data(inputSize, points);
+  MatType data(inputSize, points);
   arma::Row<size_t> labels(points);
 
   // This loop can be removed when ensmallen PR #136 is merged into a version
@@ -921,32 +930,32 @@ TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]")
   {
     for (size_t i = 0; i < points / 5; ++i)
     {
-      data.col(i) = g1.Random();
+      data.col(i) = ConvTo<VecType>::From(g1.Random());
       labels(i) = 0;
     }
     for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
-      data.col(i) = g2.Random();
+      data.col(i) = ConvTo<VecType>::From(g2.Random());
       labels(i) = 1;
     }
     for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
-      data.col(i) = g3.Random();
+      data.col(i) = ConvTo<VecType>::From(g3.Random());
       labels(i) = 2;
     }
     for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
-      data.col(i) = g4.Random();
+      data.col(i) = ConvTo<VecType>::From(g4.Random());
       labels(i) = 3;
     }
     for (size_t i = (4 * points) / 5; i < points; ++i)
     {
-      data.col(i) = g5.Random();
+      data.col(i) = ConvTo<VecType>::From(g5.Random());
       labels(i) = 4;
     }
 
     // Train linear svm object using L-BFGS optimizer.
-    LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda);
+    LinearSVM<MatType> lsvm(data, labels, numClasses, lambda);
 
     // Compare training accuracy to 1.
     const double acc = lsvm.ComputeAccuracy(data, labels);
@@ -956,27 +965,27 @@ TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]")
     // Create test dataset.
     for (size_t i = 0; i < points / 5; ++i)
     {
-      data.col(i) = g1.Random();
+      data.col(i) = ConvTo<VecType>::From(g1.Random());
       labels(i) = 0;
     }
     for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
-      data.col(i) = g2.Random();
+      data.col(i) = ConvTo<VecType>::From(g2.Random());
       labels(i) = 1;
     }
     for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
-      data.col(i) = g3.Random();
+      data.col(i) = ConvTo<VecType>::From(g3.Random());
       labels(i) = 2;
     }
     for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
-      data.col(i) = g4.Random();
+      data.col(i) = ConvTo<VecType>::From(g4.Random());
       labels(i) = 3;
     }
     for (size_t i = (4 * points) / 5; i < points; ++i)
     {
-      data.col(i) = g5.Random();
+      data.col(i) = ConvTo<VecType>::From(g5.Random());
       labels(i) = 4;
     }
 
@@ -995,8 +1004,13 @@ TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest]")
 /**
  * Testing single point classification (Classify()).
  */
-TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]")
+TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
+    double)
 {
+  typedef TestType ElemType;
+  typedef typename arma::Mat<ElemType> MatType;
+  typedef typename arma::Col<ElemType> VecType;
+
   const size_t points = 500;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
@@ -1010,70 +1024,79 @@ TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]")
   GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
   GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
-  arma::mat data(inputSize, points);
+  MatType data(inputSize, points);
   arma::Row<size_t> labels(points);
 
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = g1.Random();
+    data.col(i) = ConvTo<VecType>::From(g1.Random());
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = g2.Random();
+    data.col(i) = ConvTo<VecType>::From(g2.Random());
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = g3.Random();
+    data.col(i) = ConvTo<VecType>::From(g3.Random());
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = g4.Random();
+    data.col(i) = ConvTo<VecType>::From(g4.Random());
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = g5.Random();
+    data.col(i) = ConvTo<VecType>::From(g5.Random());
     labels(i) = 4;
   }
 
   // Train linear svm object.
-  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda);
+  LinearSVM<MatType> lsvm(data, labels, numClasses, lambda);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = g1.Random();
+    data.col(i) = ConvTo<VecType>::From(g1.Random());
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = g2.Random();
+    data.col(i) = ConvTo<VecType>::From(g2.Random());
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = g3.Random();
+    data.col(i) = ConvTo<VecType>::From(g3.Random());
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = g4.Random();
+    data.col(i) = ConvTo<VecType>::From(g4.Random());
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = g5.Random();
+    data.col(i) = ConvTo<VecType>::From(g5.Random());
     labels(i) = 4;
   }
 
-  lsvm.Classify(data, labels);
+  MatType scores;
+  lsvm.Classify(data, labels, scores);
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     REQUIRE(lsvm.Classify(data.col(i)) == labels(i));
+
+    size_t prediction;
+    VecType scoresVec;
+    lsvm.Classify(data.col(i), prediction, scoresVec);
+
+    REQUIRE(prediction == labels(i));
+    REQUIRE(scoresVec.n_elem == scores.n_rows);
+    REQUIRE(arma::approx_equal(scoresVec, scores.col(i), "absdiff", 1e-5));
   }
 }
 
@@ -1188,8 +1211,259 @@ TEST_CASE("LinearSVMCallbackTest", "[LinearSVMTest]")
   CallbackTestFunction cb;
 
   ens::L_BFGS opt;
-  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-      delta, false, opt, cb);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda, delta,
+      false, cb);
 
   REQUIRE(cb.calledEndOptimization == true);
+}
+
+// Test all variants of LinearSVM constructors.
+TEMPLATE_TEST_CASE("LinearSVMConstructorVariantTest", "[LinearSVMTest]",
+    arma::fmat, arma::mat)
+{
+  typedef TestType MatType;
+
+  // Create some random data.  The results here do not matter all that much;
+  // this is more of a test that all constructor variants successfully compile
+  // and produce models at all.
+  MatType dataset(10, 800, arma::fill::randu);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = RandInt(0, 2);
+
+  LinearSVM<> lsvm1;
+  LinearSVM<> lsvm2(10, 2);
+  LinearSVM<> lsvm3(10, 2, 0.0002, 1.1, true);
+  LinearSVM<> lsvm4(dataset, labels, 2);
+  LinearSVM<> lsvm5(dataset, labels, 2, 0.0003, 1.2, true);
+  LinearSVM<> lsvm6(dataset, labels, 2, 0.0004, 1.3, true,
+      CallbackTestFunction());
+  LinearSVM<> lsvm7(dataset, labels, 2, 0.0005, 1.4, true,
+      CallbackTestFunction(), ens::TimerStop(1.0));
+
+  ens::StandardSGD sgd;
+  LinearSVM<> lsvm8(dataset, labels, 2, sgd);
+  LinearSVM<> lsvm9(dataset, labels, 2, sgd, 0.0006, 1.5, true);
+  LinearSVM<> lsvm10(dataset, labels, 2, sgd, 0.0007, 1.6, true,
+      CallbackTestFunction());
+  LinearSVM<> lsvm11(dataset, labels, 2, sgd, 0.0008, 1.7, true,
+      CallbackTestFunction(), ens::TimerStop(1.0));
+
+  // Check that the variants that did not train have reasonable values.
+  REQUIRE(lsvm1.Lambda() == Approx(0.0001));
+  REQUIRE(lsvm1.Delta() == Approx(1.0));
+  REQUIRE(lsvm1.FitIntercept() == false);
+
+  REQUIRE(lsvm2.Lambda() == Approx(0.0001));
+  REQUIRE(lsvm2.Delta() == Approx(1.0));
+  REQUIRE(lsvm2.FitIntercept() == false);
+  REQUIRE(lsvm2.NumClasses() == 2);
+
+  REQUIRE(lsvm3.Lambda() == Approx(0.0002));
+  REQUIRE(lsvm3.Delta() == Approx(1.1));
+  REQUIRE(lsvm3.FitIntercept() == true);
+  REQUIRE(lsvm3.NumClasses() == 2);
+
+  // Now check that the variants that trained have reasonable models of the
+  // right size.
+  REQUIRE(lsvm4.Lambda() == Approx(0.0001));
+  REQUIRE(lsvm4.Delta() == Approx(1.0));
+  REQUIRE(lsvm4.FitIntercept() == false);
+  REQUIRE(lsvm4.FeatureSize() == 10);
+  REQUIRE(lsvm4.NumClasses() == 2);
+
+  REQUIRE(lsvm5.Lambda() == Approx(0.0003));
+  REQUIRE(lsvm5.Delta() == Approx(1.2));
+  REQUIRE(lsvm5.FitIntercept() == true);
+  REQUIRE(lsvm5.FeatureSize() == 10);
+  REQUIRE(lsvm5.NumClasses() == 2);
+
+  REQUIRE(lsvm6.Lambda() == Approx(0.0004));
+  REQUIRE(lsvm6.Delta() == Approx(1.3));
+  REQUIRE(lsvm6.FitIntercept() == true);
+  REQUIRE(lsvm6.FeatureSize() == 10);
+  REQUIRE(lsvm6.NumClasses() == 2);
+
+  REQUIRE(lsvm7.Lambda() == Approx(0.0005));
+  REQUIRE(lsvm7.Delta() == Approx(1.4));
+  REQUIRE(lsvm7.FitIntercept() == true);
+  REQUIRE(lsvm7.FeatureSize() == 10);
+  REQUIRE(lsvm7.NumClasses() == 2);
+
+  REQUIRE(lsvm8.Lambda() == Approx(0.0001));
+  REQUIRE(lsvm8.Delta() == Approx(1.0));
+  REQUIRE(lsvm8.FitIntercept() == false);
+  REQUIRE(lsvm8.FeatureSize() == 10);
+  REQUIRE(lsvm8.NumClasses() == 2);
+
+  REQUIRE(lsvm9.Lambda() == Approx(0.0006));
+  REQUIRE(lsvm9.Delta() == Approx(1.5));
+  REQUIRE(lsvm9.FitIntercept() == true);
+  REQUIRE(lsvm9.FeatureSize() == 10);
+  REQUIRE(lsvm9.NumClasses() == 2);
+
+  REQUIRE(lsvm10.Lambda() == Approx(0.0007));
+  REQUIRE(lsvm10.Delta() == Approx(1.6));
+  REQUIRE(lsvm10.FitIntercept() == true);
+  REQUIRE(lsvm10.FeatureSize() == 10);
+  REQUIRE(lsvm10.NumClasses() == 2);
+
+  REQUIRE(lsvm11.Lambda() == Approx(0.0008));
+  REQUIRE(lsvm11.Delta() == Approx(1.7));
+  REQUIRE(lsvm11.FitIntercept() == true);
+  REQUIRE(lsvm11.FeatureSize() == 10);
+  REQUIRE(lsvm11.NumClasses() == 2);
+}
+
+// Test all variants of LinearSVM Train() functions.
+TEMPLATE_TEST_CASE("LinearSVMTrainVariantTest", "[LinearSVMTest]", arma::fmat,
+    arma::mat)
+{
+  typedef TestType MatType;
+
+  // Create some random data.  The results here do not matter all that much;
+  // this is more of a test that all constructor variants successfully compile
+  // and produce models at all.
+  MatType dataset(10, 800, arma::fill::randu);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = RandInt(0, 2);
+
+  LinearSVM<> lsvm1(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm2(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm3(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm4(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm5(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm6(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm7(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm8(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm9(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm10(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm11(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm12(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm13(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm14(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm15(10, 2, 1.2, 0.5, true);
+  LinearSVM<> lsvm16(10, 2, 1.2, 0.5, true);
+
+  lsvm1.Train(dataset, labels, 2);
+  lsvm2.Train(dataset, labels, 2, CallbackTestFunction());
+  lsvm3.Train(dataset, labels, 2, CallbackTestFunction(), ens::TimerStop(1.0));
+  lsvm4.Train(dataset, labels, 2, 0.0002);
+  lsvm5.Train(dataset, labels, 2, 0.0003, 1.1);
+  lsvm6.Train(dataset, labels, 2, 0.0004, 1.2, false);
+  lsvm7.Train(dataset, labels, 2, 0.0005, 1.3, true, CallbackTestFunction());
+  lsvm8.Train(dataset, labels, 2, 0.0006, 1.4, false, CallbackTestFunction(),
+      ens::TimerStop(1.0));
+
+  ens::Adam adam;
+  lsvm9.Train(dataset, labels, 2, adam);
+  lsvm10.Train(dataset, labels, 2, adam, CallbackTestFunction());
+  lsvm11.Train(dataset, labels, 2, adam, CallbackTestFunction(),
+      ens::TimerStop(1.0));
+  lsvm12.Train(dataset, labels, 2, adam, 0.0007);
+  lsvm13.Train(dataset, labels, 2, adam, 0.0008, 1.5);
+  lsvm14.Train(dataset, labels, 2, adam, 0.0009, 1.6, false);
+  lsvm15.Train(dataset, labels, 2, adam, 0.001, 1.7, true,
+      CallbackTestFunction());
+  lsvm16.Train(dataset, labels, 2, adam, 0.0011, 1.8, false,
+      CallbackTestFunction(), ens::TimerStop(1.0));
+
+  // Check that all hyperparameters are set as expected, and that the model has
+  // the correct size.
+  REQUIRE(lsvm1.Lambda() == Approx(1.2));
+  REQUIRE(lsvm1.Delta() == Approx(0.5));
+  REQUIRE(lsvm1.FitIntercept() == true);
+  REQUIRE(lsvm1.FeatureSize() == 10);
+  REQUIRE(lsvm1.NumClasses() == 2);
+
+  REQUIRE(lsvm2.Lambda() == Approx(1.2));
+  REQUIRE(lsvm2.Delta() == Approx(0.5));
+  REQUIRE(lsvm2.FitIntercept() == true);
+  REQUIRE(lsvm2.FeatureSize() == 10);
+  REQUIRE(lsvm2.NumClasses() == 2);
+
+  REQUIRE(lsvm3.Lambda() == Approx(1.2));
+  REQUIRE(lsvm3.Delta() == Approx(0.5));
+  REQUIRE(lsvm3.FitIntercept() == true);
+  REQUIRE(lsvm3.FeatureSize() == 10);
+  REQUIRE(lsvm3.NumClasses() == 2);
+
+  REQUIRE(lsvm4.Lambda() == Approx(0.0002));
+  REQUIRE(lsvm4.Delta() == Approx(0.5));
+  REQUIRE(lsvm4.FitIntercept() == true);
+  REQUIRE(lsvm4.FeatureSize() == 10);
+  REQUIRE(lsvm4.NumClasses() == 2);
+
+  REQUIRE(lsvm5.Lambda() == Approx(0.0003));
+  REQUIRE(lsvm5.Delta() == Approx(1.1));
+  REQUIRE(lsvm5.FitIntercept() == true);
+  REQUIRE(lsvm5.FeatureSize() == 10);
+  REQUIRE(lsvm5.NumClasses() == 2);
+
+  REQUIRE(lsvm6.Lambda() == Approx(0.0004));
+  REQUIRE(lsvm6.Delta() == Approx(1.2));
+  REQUIRE(lsvm6.FitIntercept() == false);
+  REQUIRE(lsvm6.FeatureSize() == 10);
+  REQUIRE(lsvm6.NumClasses() == 2);
+
+  REQUIRE(lsvm7.Lambda() == Approx(0.0005));
+  REQUIRE(lsvm7.Delta() == Approx(1.3));
+  REQUIRE(lsvm7.FitIntercept() == true);
+  REQUIRE(lsvm7.FeatureSize() == 10);
+  REQUIRE(lsvm7.NumClasses() == 2);
+
+  REQUIRE(lsvm8.Lambda() == Approx(0.0006));
+  REQUIRE(lsvm8.Delta() == Approx(1.4));
+  REQUIRE(lsvm8.FitIntercept() == false);
+  REQUIRE(lsvm8.FeatureSize() == 10);
+  REQUIRE(lsvm8.NumClasses() == 2);
+
+  REQUIRE(lsvm9.Lambda() == Approx(1.2));
+  REQUIRE(lsvm9.Delta() == Approx(0.5));
+  REQUIRE(lsvm9.FitIntercept() == true);
+  REQUIRE(lsvm9.FeatureSize() == 10);
+  REQUIRE(lsvm9.NumClasses() == 2);
+
+  REQUIRE(lsvm10.Lambda() == Approx(1.2));
+  REQUIRE(lsvm10.Delta() == Approx(0.5));
+  REQUIRE(lsvm10.FitIntercept() == true);
+  REQUIRE(lsvm10.FeatureSize() == 10);
+  REQUIRE(lsvm10.NumClasses() == 2);
+
+  REQUIRE(lsvm11.Lambda() == Approx(1.2));
+  REQUIRE(lsvm11.Delta() == Approx(0.5));
+  REQUIRE(lsvm11.FitIntercept() == true);
+  REQUIRE(lsvm11.FeatureSize() == 10);
+  REQUIRE(lsvm11.NumClasses() == 2);
+
+  REQUIRE(lsvm12.Lambda() == Approx(0.0007));
+  REQUIRE(lsvm12.Delta() == Approx(0.5));
+  REQUIRE(lsvm12.FitIntercept() == true);
+  REQUIRE(lsvm12.FeatureSize() == 10);
+  REQUIRE(lsvm12.NumClasses() == 2);
+
+  REQUIRE(lsvm13.Lambda() == Approx(0.0008));
+  REQUIRE(lsvm13.Delta() == Approx(1.5));
+  REQUIRE(lsvm13.FitIntercept() == true);
+  REQUIRE(lsvm13.FeatureSize() == 10);
+  REQUIRE(lsvm13.NumClasses() == 2);
+
+  REQUIRE(lsvm14.Lambda() == Approx(0.0009));
+  REQUIRE(lsvm14.Delta() == Approx(1.6));
+  REQUIRE(lsvm14.FitIntercept() == false);
+  REQUIRE(lsvm14.FeatureSize() == 10);
+  REQUIRE(lsvm14.NumClasses() == 2);
+
+  REQUIRE(lsvm15.Lambda() == Approx(0.001));
+  REQUIRE(lsvm15.Delta() == Approx(1.7));
+  REQUIRE(lsvm15.FitIntercept() == true);
+  REQUIRE(lsvm15.FeatureSize() == 10);
+  REQUIRE(lsvm15.NumClasses() == 2);
+
+  REQUIRE(lsvm16.Lambda() == Approx(0.0011));
+  REQUIRE(lsvm16.Delta() == Approx(1.8));
+  REQUIRE(lsvm16.FitIntercept() == false);
+  REQUIRE(lsvm16.FeatureSize() == 10);
+  REQUIRE(lsvm16.NumClasses() == 2);
 }

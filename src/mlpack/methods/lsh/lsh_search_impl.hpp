@@ -270,8 +270,8 @@ void LSHSearch<SortPolicy, MatType>::Train(MatType referenceSet,
     // and the corresponding offset be 'offset_i'.  Then the key of a single
     // point is obtained as:
     // key = { floor((<proj_i, point> + offset_i) / 'hashWidth') forall i }
-    arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i), 1,
-                                       this->referenceSet.n_cols);
+    arma::mat offsetMat = repmat(offsets.unsafe_col(i), 1,
+                                 this->referenceSet.n_cols);
     arma::mat hashMat = projections.slice(i).t() * (this->referenceSet);
     hashMat += offsetMat;
     hashMat /= hashWidth;
@@ -548,8 +548,8 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
 
   // Calculate scores. score = distance^2.
   arma::vec scores(2 * numProj);
-  scores.rows(0, numProj - 1) = arma::pow(limLow, 2);
-  scores.rows(numProj, (2 * numProj) - 1) = arma::pow(limHigh, 2);
+  scores.rows(0, numProj - 1) = pow(limLow, 2);
+  scores.rows(numProj, (2 * numProj) - 1) = pow(limHigh, 2);
 
   // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]
@@ -739,8 +739,8 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
 
   // Compute the primary hash value of each key of the query into a bucket of
   // the secondHashTable using the secondHashWeights.
-  hashMat.row(0) = arma::conv_to<arma::Row<size_t>> // Floor by typecasting
-      ::from(secondHashWeights.t() * allProjInTables);
+  hashMat.row(0) = ConvTo<arma::Row<size_t>> // Floor by typecasting
+      ::From(secondHashWeights.t() * allProjInTables);
   // Mod to compute 2nd-level codes.
   for (size_t i = 0; i < numTablesToSearch; ++i)
     hashMat(0, i) = (hashMat(0, i) % secondHashSize);
@@ -760,8 +760,8 @@ void LSHSearch<SortPolicy, MatType>::ReturnIndicesFromTable(
       // Map each probing bin to a bin in secondHashTable (just like we did for
       // the primary hash table).
       hashMat(arma::span(1, T), i) = // Compute code of rows 1:end of column i
-        arma::conv_to< arma::Col<size_t> >:: // floor by typecasting to size_t
-        from(secondHashWeights.t() * additionalProbingBins);
+        ConvTo<arma::Col<size_t>>:: // floor by typecasting to size_t
+        From(secondHashWeights.t() * additionalProbingBins);
       for (size_t p = 1; p < T + 1; ++p)
         hashMat(p, i) = (hashMat(p, i) % secondHashSize);
     }

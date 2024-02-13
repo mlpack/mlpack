@@ -424,7 +424,7 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
     zt = 0.0;
 
     // Build the weight vectors.
-    weights = arma::sum(D);
+    weights = sum(D);
 
     // This is split into a separate function, so that we can still call
     // AdaBoost::Train() with extra hyperparameters, even when the weak learner

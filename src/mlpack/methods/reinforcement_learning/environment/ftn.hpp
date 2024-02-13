@@ -224,7 +224,7 @@ class FruitTreeNavigation
         }
 
         arma::mat branches = arma::zeros(rewardSize, (size_t) std::pow(2, depth - 1));
-        tree = arma::join_rows(branches, Fruits());
+        tree = join_rows(branches, Fruits());
       }
 
       // Extract array index from {(row, column)} representation.

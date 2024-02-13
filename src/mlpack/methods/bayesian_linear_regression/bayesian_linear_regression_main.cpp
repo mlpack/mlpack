@@ -109,10 +109,10 @@ PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
 PARAM_ROW_IN("responses", "Matrix of responses/observations (y).", "r");
 
-PARAM_MODEL_IN(BayesianLinearRegression, "input_model", "Trained "
+PARAM_MODEL_IN(BayesianLinearRegression<>, "input_model", "Trained "
                "BayesianLinearRegression model to use.", "m");
 
-PARAM_MODEL_OUT(BayesianLinearRegression, "output_model", "Output "
+PARAM_MODEL_OUT(BayesianLinearRegression<>, "output_model", "Output "
                 "BayesianLinearRegression model.", "M");
 
 PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
@@ -149,12 +149,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Ignore out_predictions unless test is specified.
   ReportIgnoredParam(params, {{"test", false}}, "predictions");
 
-  BayesianLinearRegression* bayesLinReg;
+  BayesianLinearRegression<>* bayesLinReg;
   if (params.Has("input"))
   {
     Log::Info << "Input given; model will be trained." << std::endl;
     // Initialize the object.
-    bayesLinReg = new BayesianLinearRegression(center, scale);
+    bayesLinReg = new BayesianLinearRegression<>(center, scale);
 
     // Load covariates.
     mat matX = std::move(params.Get<arma::mat>("input"));
@@ -180,7 +180,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   else // We must have --input_model_file.
   {
-    bayesLinReg = params.Get<BayesianLinearRegression*>("input_model");
+    bayesLinReg = params.Get<BayesianLinearRegression<>*>("input_model");
   }
 
   if (params.Has("test"))
@@ -209,5 +209,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     params.Get<arma::mat>("predictions") = std::move(predictions);
   }
 
-  params.Get<BayesianLinearRegression*>("output_model") = bayesLinReg;
+  params.Get<BayesianLinearRegression<>*>("output_model") = bayesLinReg;
 }

@@ -117,7 +117,7 @@ void GlimpseType<InputType, OutputType>::Forward(
 
   for (size_t i = 0; i < outputTemp.n_slices; ++i)
   {
-    outputTemp.slice(i) = arma::trans(outputTemp.slice(i));
+    outputTemp.slice(i) = trans(outputTemp.slice(i));
   }
 
   output = OutputType(outputTemp.memptr(), outputTemp.n_elem, 1);

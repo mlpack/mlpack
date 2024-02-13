@@ -288,7 +288,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     // The initial predictors for y, Nx1.
-    responses = arma::conv_to<arma::Row<size_t>>::from(
+    responses = ConvTo<arma::Row<size_t>>::From(
         regressors.row(regressors.n_rows - 1));
     regressors.shed_row(regressors.n_rows - 1);
   }
@@ -386,7 +386,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Info << "Calculating class probabilities of points in '"
           << params.GetPrintable<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
-      model->Classify(testSet, probabilities);
+      model->Classify(testSet, predictions, probabilities);
 
       if (params.Has("probabilities"))
         params.Get<arma::mat>("probabilities") = std::move(probabilities);

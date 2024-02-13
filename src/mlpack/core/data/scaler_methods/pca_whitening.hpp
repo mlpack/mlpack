@@ -93,7 +93,7 @@ class PCAWhitening
     }
     output.copy_size(input);
     output = (input.each_col() - itemMean);
-    output = arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t()
+    output = arma::diagmat(1.0 / (sqrt(eigenValues))) * eigenVectors.t()
         * output;
   }
 
@@ -106,7 +106,7 @@ class PCAWhitening
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
-    output = arma::diagmat(arma::sqrt(eigenValues)) * inv(eigenVectors.t())
+    output = arma::diagmat(sqrt(eigenValues)) * inv(eigenVectors.t())
         * input;
     output = (output.each_col() + itemMean);
   }

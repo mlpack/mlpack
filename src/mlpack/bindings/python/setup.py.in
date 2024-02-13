@@ -116,6 +116,12 @@ else:
                       else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs]
 
+# Find all include files.
+include_files = []
+for (path, directories, filenames) in os.walk('mlpack/include/'):
+  for filename in filenames:
+    include_files.append(os.path.join('..', path, filename))
+
 setup(name='mlpack',
       version='${PACKAGE_VERSION}',
       description='a flexible, fast machine learning library',
@@ -141,6 +147,8 @@ setup(name='mlpack',
       install_requires=['cython>=0.24', 'numpy', 'pandas'],
       package_dir={ '': '.' }, # Might be superfluous.
       packages=['mlpack'],
+      package_data={ 'mlpack': include_files + ['../mlpack/share/pkgconfig/mlpack.pc'] },
+      include_package_data=True,
       cmdclass={ 'build_ext': build_ext },
       ext_modules = modules,
       setup_requires=['cython', 'pytest-runner'],

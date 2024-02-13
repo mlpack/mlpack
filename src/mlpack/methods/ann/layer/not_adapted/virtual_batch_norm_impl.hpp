@@ -38,7 +38,7 @@ VirtualBatchNormType<InputType, OutputType>::VirtualBatchNormType(
     loading(false)
 {
   referenceBatchMean = arma::mean(referenceBatch, 1);
-  referenceBatchMeanSquared = arma::mean(arma::square(referenceBatch), 1);
+  referenceBatchMeanSquared = arma::mean(square(referenceBatch), 1);
   newCoefficient = 1.0 / (referenceBatch.n_cols + 1);
   oldCoefficient = 1 - newCoefficient;
 }
@@ -68,16 +68,16 @@ void VirtualBatchNormType<InputType, OutputType>::Forward(
 
   inputParameter = input;
   InputType inputMean = arma::mean(input, 1);
-  InputType inputMeanSquared = arma::mean(arma::square(input), 1);
+  InputType inputMeanSquared = arma::mean(square(input), 1);
 
   mean = oldCoefficient * referenceBatchMean + newCoefficient * inputMean;
   OutputType meanSquared = oldCoefficient * referenceBatchMeanSquared +
       newCoefficient * inputMeanSquared;
-  variance = meanSquared - arma::square(mean);
+  variance = meanSquared - square(mean);
   // Normalize the input.
   output = input.each_col() - mean;
   inputSubMean = output;
-  output.each_col() /= arma::sqrt(variance + eps);
+  output.each_col() /= sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
   normalized = output;
@@ -92,14 +92,13 @@ void VirtualBatchNormType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
-  const OutputType stdInv = 1.0 / arma::sqrt(variance + eps);
+  const OutputType stdInv = 1.0 / sqrt(variance + eps);
 
   // dl / dxhat.
   const OutputType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const OutputType var = arma::sum(norm % inputSubMean, 1) %
-      arma::pow(stdInv, 3.0) * -0.5;
+  const OutputType var = sum(norm % inputSubMean, 1) % pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
   // dl / dmu * newCoefficient / m.
@@ -108,7 +107,7 @@ void VirtualBatchNormType<InputType, OutputType>::Backward(
 
   // (sum (dl / dxhat * -1 / stdInv) + (variance * mean * -2)) *
   // newCoefficient / m.
-  g.each_col() += (arma::sum(norm.each_col() % -stdInv, 1) + (var %
+  g.each_col() += (sum(norm.each_col() % -stdInv, 1) + (var %
       mean * -2)) * newCoefficient / inputParameter.n_cols;
 }
 
@@ -121,11 +120,10 @@ void VirtualBatchNormType<InputType, OutputType>::Gradient(
   gradient.set_size(size + size, 1);
 
   // Step 5: dl / dy * xhat.
-  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
+  gradient.submat(0, 0, gamma.n_elem - 1, 0) = sum(normalized % error, 1);
 
   // Step 6: dl / dy.
-  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(error, 1);
+  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) = sum(error, 1);
 }
 
 template<typename InputType, typename OutputType>

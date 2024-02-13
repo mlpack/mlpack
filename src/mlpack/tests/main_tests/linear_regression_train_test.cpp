@@ -44,8 +44,7 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitDifferentLambdas",
   // The first solution.
   RUN_BINDING();
   arma::rowvec preds1;
-  params.Get<LinearRegression*>("output_model")->Predict(testX,
-      preds1);
+  params.Get<LinearRegression<>*>("output_model")->Predict(testX, preds1);
   const double testY1 = preds1(0);
 
   ResetSettings();
@@ -57,8 +56,7 @@ TEST_CASE_METHOD(LRFitTestFixture, "LRFitDifferentLambdas",
   // The second solution.
   RUN_BINDING();
   arma::rowvec preds2;
-  params.Get<LinearRegression*>("output_model")->Predict(testX,
-      preds2);
+  params.Get<LinearRegression<>*>("output_model")->Predict(testX, preds2);
   const double testY2 = preds2(0);
 
   // Second solution has stronger regularization,

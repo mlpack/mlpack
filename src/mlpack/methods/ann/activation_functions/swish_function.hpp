@@ -47,10 +47,11 @@ class SwishFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename eT>
-  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  template<typename MatType>
+  static void Fn(const MatType& x, MatType& y,
+     const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0) 
   {
-    y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + exp(-x));
   }
 
   /**
@@ -59,8 +60,9 @@ class SwishFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y)
+  template<typename VecType>
+  static void Fn(const VecType& x, VecType& y,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0)
   {
     y.set_size(arma::size(x));
 

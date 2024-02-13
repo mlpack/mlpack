@@ -83,7 +83,7 @@ typename VecTypeA::elem_type LMetric<3, true>::Evaluate(
   for (size_t i = 0; i < a.n_elem; ++i)
     sum += std::pow(fabs(a[i] - b[i]), 3.0);
 
-  return std::pow(arma::accu(arma::pow(arma::abs(a - b), 3.0)), 1.0 / 3.0);
+  return std::pow(arma::accu(pow(arma::abs(a - b), 3.0)), 1.0 / 3.0);
 }
 
 template<>
@@ -92,7 +92,7 @@ typename VecTypeA::elem_type LMetric<3, false>::Evaluate(
     const VecTypeA& a,
     const VecTypeB& b)
 {
-  return arma::accu(arma::pow(arma::abs(a - b), 3.0));
+  return arma::accu(pow(arma::abs(a - b), 3.0));
 }
 
 // L-infinity (Chebyshev distance) specialization

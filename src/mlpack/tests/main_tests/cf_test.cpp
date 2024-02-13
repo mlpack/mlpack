@@ -421,7 +421,7 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodTest",
   const arma::Mat<size_t> output2 = params.Get<arma::Mat<size_t>>("output");
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
 }
 
 /**
@@ -505,8 +505,8 @@ TEST_CASE_METHOD(CFTestFixture, "CFInterpolationTest",
   REQUIRE(output3.n_cols == 7);
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output3)));
 }
 
 /**
@@ -590,8 +590,8 @@ TEST_CASE_METHOD(CFTestFixture, "CFNeighborSearchTest",
   REQUIRE(output3.n_cols == 7);
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output3)));
 }
 
 /**
@@ -688,6 +688,6 @@ TEST_CASE_METHOD(CFTestFixture, "CFNormalizationTest",
   REQUIRE(output3.n_cols == 7);
 
   // The resulting matrices should be different.
-  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(vectorise(output1 != output2)));
+  REQUIRE(arma::any(vectorise(output1 != output3)));
 }

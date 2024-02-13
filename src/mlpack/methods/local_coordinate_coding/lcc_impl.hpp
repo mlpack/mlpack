@@ -141,14 +141,15 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
 
     bool useCholesky = false;
     // Normalization and fitting and intercept are disabled.
-    LARS lars(useCholesky, dictGramTD, 0.5 * lambda, 0,
-        1e-16 /* default tolerance */, false, false);
+    LARS<> lars(useCholesky, 0.5 * lambda, 0, 1e-16 /* default tolerance */,
+        false, false);
 
     // Run LARS for this point, by making an alias of the point and passing
     // that.
     arma::vec beta = codes.unsafe_col(i);
     arma::rowvec responses = data.unsafe_col(i).t();
-    lars.Train(dictPrime, responses, beta, false);
+    lars.Train(dictPrime, responses, false, useCholesky, dictGramTD);
+    beta = lars.Beta();
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }
@@ -328,7 +329,7 @@ inline double LocalCoordinateCoding::Objective(
     const size_t pointInd = (size_t) (adjacencies(l) / atoms);
 
     weightedL1NormZ += fabs(codes(atomInd, pointInd)) * arma::as_scalar(
-        arma::sum(arma::square(dictionary.col(atomInd) - data.col(pointInd))));
+        sum(square(dictionary.col(atomInd) - data.col(pointInd))));
   }
 
   double froNormResidual = norm(data - dictionary * codes, "fro");

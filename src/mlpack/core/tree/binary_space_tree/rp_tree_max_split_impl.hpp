@@ -54,7 +54,7 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
 
   // Find the median of scalar products of the samples and the normal vector.
   for (size_t k = 0; k < samples.n_elem; ++k)
-    values[k] = arma::dot(data.col(samples[k]), direction);
+    values[k] = dot(data.col(samples[k]), direction);
 
   const ElemType maximum = arma::max(values);
   const ElemType minimum = arma::min(values);

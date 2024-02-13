@@ -29,7 +29,7 @@ TEST_CASE("CVFunctionTest", "[HPTTest]")
   arma::vec beta = arma::randn(5, 1);
   arma::rowvec ys = beta.t() * xs + 0.1 * arma::randn(1, 100);
 
-  SimpleCV<LARS, MSE> cv(0.2, xs, ys);
+  SimpleCV<LARS<>, MSE> cv(0.2, xs, ys);
 
   bool transposeData = true;
   bool useCholesky = false;
@@ -41,7 +41,7 @@ TEST_CASE("CVFunctionTest", "[HPTTest]")
 
   FixedArg<bool, 1> fixedUseCholesky{useCholesky};
   FixedArg<double, 3> fixedLambda1{lambda2};
-  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
+  CVFunction<decltype(cv), LARS<>, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
       cvFun(cv, datasetInfo, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
@@ -64,7 +64,7 @@ TEST_CASE("CVFunctionCategoricalTest", "[HPTTest]")
   arma::vec beta = arma::randn(5, 1);
   arma::rowvec ys = beta.t() * xs + 0.1 * arma::randn(1, 100);
 
-  SimpleCV<LARS, MSE> cv(0.2, xs, ys);
+  SimpleCV<LARS<>, MSE> cv(0.2, xs, ys);
 
   bool transposeData = true;
   bool useCholesky = false;
@@ -78,7 +78,7 @@ TEST_CASE("CVFunctionCategoricalTest", "[HPTTest]")
 
   FixedArg<bool, 1> fixedUseCholesky{useCholesky};
   FixedArg<double, 3> fixedLambda1{lambda2};
-  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
+  CVFunction<decltype(cv), LARS<>, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
       cvFun(cv, datasetInfo, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
@@ -137,7 +137,7 @@ TEST_CASE("CVFunctionGradientTest", "[HPTTest]")
   double b = -1.5;
   double c = 2.5;
   double d = 3.0;
-  QuadraticFunction<LARS> lf(a, b, c, d);
+  QuadraticFunction<LARS<>> lf(a, b, c, d);
 
   // All values are numeric.
   IncrementPolicy policy(true);
@@ -145,7 +145,7 @@ TEST_CASE("CVFunctionGradientTest", "[HPTTest]")
 
   double relativeDelta = 0.01;
   double minDelta = 0.001;
-  CVFunction<decltype(lf), LARS, 3> cvFun(lf, datasetInfo, relativeDelta,
+  CVFunction<decltype(lf), LARS<>, 3> cvFun(lf, datasetInfo, relativeDelta,
       minDelta);
 
   double x = 0.0;
@@ -181,7 +181,7 @@ void InitProneToOverfittingData(arma::mat& xs,
   arma::rowvec data = arma::linspace<arma::rowvec>(0.0, 10.0, N);
   xs = data;
   for (size_t i = 2; i <= M; ++i)
-    xs = arma::join_cols(xs, arma::pow(data, i));
+    xs = join_cols(xs, pow(data, i));
 
   // Responses that approximately follow the function y = 2 * x. Adding noise to
   // avoid having a polynomial of degree 1 that exactly fits the points.
@@ -202,7 +202,7 @@ void FindLARSBestLambdas(arma::mat& xs,
                          double& bestLambda2,
                          double& bestObjective)
 {
-  SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
+  SimpleCV<LARS<>, MSE> cv(validationSize, xs, ys);
 
   bestObjective = std::numeric_limits<double>::max();
 
@@ -250,8 +250,8 @@ TEST_CASE("GridSearchTest", "[HPTTest]")
   for (double lambda2 : lambda2Set)
     datasetInfo.MapString<size_t>(lambda2, 1);
 
-  SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
-  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
+  SimpleCV<LARS<>, MSE> cv(validationSize, xs, ys);
+  CVFunction<decltype(cv), LARS<>, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
       cvFun(cv, datasetInfo, 0.0, 0.0, {transposeData}, {useCholesky});
 
   ens::GridSearch optimizer;
@@ -297,7 +297,7 @@ TEST_CASE("HPTTest", "[HPTTest]")
       expectedObjective);
 
   double actualLambda1, actualLambda2;
-  HyperParameterTuner<LARS, MSE, SimpleCV, GridSearch>
+  HyperParameterTuner<LARS<>, MSE, SimpleCV, GridSearch>
       hpt(validationSize, xs, ys);
   std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Fixed(transposeData),
       Fixed(useCholesky), lambda1Set, lambda2Set);
@@ -322,13 +322,13 @@ TEST_CASE("HPTMaximizationTest", "[HPTTest]")
 {
   // Initializing a linearly separable dataset.
   arma::mat xs = arma::linspace<arma::rowvec>(0.0, 10.0, 50);
-  arma::Row<size_t> ys = arma::join_rows(arma::zeros<arma::Row<size_t>>(25),
+  arma::Row<size_t> ys = join_rows(arma::zeros<arma::Row<size_t>>(25),
       arma::ones<arma::Row<size_t>>(25));
 
   // We will train and validate on the same dataset.
   double validationSize = 0.5;
-  arma::mat doubledXs = arma::join_rows(xs, xs);
-  arma::Row<size_t> doubledYs = arma::join_rows(ys, ys);
+  arma::mat doubledXs = join_rows(xs, xs);
+  arma::Row<size_t> doubledYs = join_rows(ys, ys);
 
   // Defining lambdas to choose from. Zero should be preferred since big lambdas
   // are likely to restrict capabilities of logistic regression.
@@ -368,7 +368,7 @@ TEST_CASE("HPTGradientDescentTest", "[HPTTest]")
   // We pass LARS just because some ML algorithm should be passed. We pass MSE
   // to tell HyperParameterTuner that the objective function (QuadraticFunction)
   // should be minimized.
-  HyperParameterTuner<LARS, MSE, QuadraticFunction,
+  HyperParameterTuner<LARS<>, MSE, QuadraticFunction,
       GradientDescent> hpt(a, b, c, d, xMin, yMin, zMin);
 
   // Setting GradientDescent to find more close solution to the optimal one.

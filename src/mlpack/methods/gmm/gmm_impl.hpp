@@ -94,7 +94,7 @@ inline void GMM::LogProbability(const arma::mat& observation,
   }
 
   // Save log(weights) as a vector.
-  arma::vec logWeights = arma::log(weights);
+  arma::vec logWeights = log(weights);
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);

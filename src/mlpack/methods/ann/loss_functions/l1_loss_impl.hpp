@@ -44,7 +44,7 @@ void L1LossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  loss = arma::sign(prediction - target);
+  loss = sign(prediction - target);
 
   if (!reduction)
     loss = loss / target.n_elem;

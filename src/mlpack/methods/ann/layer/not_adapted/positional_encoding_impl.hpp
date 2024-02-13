@@ -41,7 +41,7 @@ void PositionalEncodingType<InputType, OutputType>::InitPositionalEncoding()
 {
   positionalEncoding.set_size(maxSequenceLength, embedDim);
   const InputType position = arma::regspace(0, 1, maxSequenceLength - 1);
-  const InputType divTerm = arma::exp(arma::regspace(0, 2, embedDim - 1)
+  const InputType divTerm = exp(arma::regspace(0, 2, embedDim - 1)
       * (- std::log(10000.0) / embedDim));
   const InputType theta = position * divTerm.t();
   for (size_t i = 0; i < theta.n_cols; ++i)
@@ -49,7 +49,7 @@ void PositionalEncodingType<InputType, OutputType>::InitPositionalEncoding()
     positionalEncoding.col(2 * i) = arma::sin(theta.col(i));
     positionalEncoding.col(2 * i + 1) = arma::cos(theta.col(i));
   }
-  positionalEncoding = arma::vectorise(positionalEncoding.t());
+  positionalEncoding = vectorise(positionalEncoding.t());
 }
 
 template<typename InputType, typename OutputType>

@@ -17,38 +17,8 @@
 
 namespace mlpack {
 
-template<typename OptimizerType>
-SoftmaxRegression::SoftmaxRegression(
-    const arma::mat& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double lambda,
-    const bool fitIntercept,
-    OptimizerType optimizer) :
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
-{
-  Train(data, labels, numClasses, optimizer);
-}
-
-template<typename OptimizerType, typename... CallbackTypes>
-SoftmaxRegression::SoftmaxRegression(
-    const arma::mat& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double lambda,
-    const bool fitIntercept,
-    OptimizerType optimizer,
-    CallbackTypes&&... callbacks) :
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
-{
-  Train(data, labels, numClasses, optimizer, callbacks...);
-}
-
-inline SoftmaxRegression::SoftmaxRegression(
+template<typename MatType>
+inline SoftmaxRegression<MatType>::SoftmaxRegression(
     const size_t inputSize,
     const size_t numClasses,
     const bool fitIntercept) :
@@ -56,110 +26,215 @@ inline SoftmaxRegression::SoftmaxRegression(
     lambda(0.0001),
     fitIntercept(fitIntercept)
 {
-  SoftmaxRegressionFunction::InitializeWeights(
+  SoftmaxRegressionFunction<MatType>::InitializeWeights(
       parameters, inputSize, numClasses, fitIntercept);
 }
 
-inline void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                        arma::Row<size_t>& labels)
-    const
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+SoftmaxRegression<MatType>::SoftmaxRegression(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const bool fitIntercept,
+    CallbackTypes&&... callbacks) :
+    numClasses(numClasses),
+    lambda(lambda),
+    fitIntercept(fitIntercept)
 {
-  arma::mat probabilities;
-  Classify(dataset, probabilities);
-
-  // Prepare necessary data.
-  labels.zeros(dataset.n_cols);
-  double maxProbability = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; ++j)
-    {
-      // If a higher class probability is encountered, change prediction.
-      if (probabilities(j, i) > maxProbability)
-      {
-        maxProbability = probabilities(j, i);
-        labels(i) = j;
-      }
-    }
-
-    // Set maximum probability to zero for the next input.
-    maxProbability = 0;
-  }
+  OptimizerType optimizer;
+  Train(data, labels, numClasses, lambda, fitIntercept, std::move(optimizer),
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
-inline void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                        arma::Row<size_t>& labels,
-                                        arma::mat& probabilities)
-    const
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+SoftmaxRegression<MatType>::SoftmaxRegression(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    OptimizerType& optimizer,
+    const double lambda,
+    const bool fitIntercept,
+    CallbackTypes&&... callbacks) :
+    numClasses(numClasses),
+    lambda(lambda),
+    fitIntercept(fitIntercept)
 {
-  Classify(dataset, probabilities);
-
-  // Prepare necessary data.
-  labels.zeros(dataset.n_cols);
-  double maxProbability = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; ++j)
-    {
-      // If a higher class probability is encountered, change prediction.
-      if (probabilities(j, i) > maxProbability)
-      {
-        maxProbability = probabilities(j, i);
-        labels(i) = j;
-      }
-    }
-
-    // Set maximum probability to zero for the next input.
-    maxProbability = 0;
-  }
+  Train(data, labels, numClasses, lambda, fitIntercept, std::move(optimizer),
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
-inline void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                        arma::mat& probabilities)
-    const
+template<typename MatType>
+template<typename OptimizerType,
+         typename FirstCallbackType,
+         typename... CallbackTypes,
+         typename, typename, typename>
+mlpack_deprecated /** To be removed in mlpack 5.0.0; use the overload below. */
+double SoftmaxRegression<MatType>::Train(const MatType& data,
+                                         const arma::Row<size_t>& labels,
+                                         const size_t numClasses,
+                                         OptimizerType optimizer,
+                                         FirstCallbackType&& firstCallback,
+                                         CallbackTypes&&... callbacks)
 {
-  util::CheckSameDimensionality(dataset, FeatureSize(),
-      "SoftmaxRegression::Classify()");
+  SoftmaxRegressionFunction<MatType> regressor(data, labels, numClasses, lambda,
+                                               fitIntercept);
+  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
+    parameters = regressor.GetInitialPoint();
 
-  // Calculate the probabilities for each test input.
-  arma::mat hypothesis;
-  if (fitIntercept)
-  {
-    // In order to add the intercept term, we should compute following matrix:
-    //     [1; data] = arma::join_cols(ones(1, data.n_cols), data)
-    //     hypothesis = arma::exp(parameters * [1; data]).
-    //
-    // Since the cost of join maybe high due to the copy of original data,
-    // split the hypothesis computation to two components.
-    hypothesis = arma::exp(
-      arma::repmat(parameters.col(0), 1, dataset.n_cols) +
-      parameters.cols(1, parameters.n_cols - 1) * dataset);
-  }
-  else
-  {
-    hypothesis = arma::exp(parameters * dataset);
-  }
+  // Train the model.
+  const double out = optimizer.Optimize(regressor, parameters, firstCallback,
+      callbacks...);
+  this->numClasses = numClasses;
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
-                                            numClasses, 1);
+  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
+            << "trained model is " << out << "." << std::endl;
+
+  return out;
 }
 
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+typename SoftmaxRegression<MatType>::ElemType
+SoftmaxRegression<MatType>::Train(const MatType& data,
+                                  const arma::Row<size_t>& labels,
+                                  const size_t numClasses,
+                                  const double lambda,
+                                  const bool fitIntercept,
+                                  CallbackTypes&&... callbacks)
+{
+  OptimizerType optimizer;
+  return Train(data, labels, numClasses, optimizer, lambda, fitIntercept,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename MatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+typename SoftmaxRegression<MatType>::ElemType
+SoftmaxRegression<MatType>::Train(const MatType& data,
+                                  const arma::Row<size_t>& labels,
+                                  const size_t numClasses,
+                                  OptimizerType& optimizer,
+                                  const double lambda,
+                                  const bool fitIntercept,
+                                  CallbackTypes&&... callbacks)
+{
+  this->lambda = lambda;
+  this->fitIntercept = fitIntercept;
+  this->numClasses = numClasses;
+
+  SoftmaxRegressionFunction<MatType> regressor(data, labels, numClasses, lambda,
+                                               fitIntercept);
+  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
+    parameters = regressor.GetInitialPoint();
+
+  // Train the model.
+  const double out = optimizer.Optimize(regressor, parameters, callbacks...);
+  this->numClasses = numClasses;
+
+  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
+            << "trained model is " << out << "." << std::endl;
+
+  return out;
+}
+
+template<typename MatType>
+inline void SoftmaxRegression<MatType>::Classify(const MatType& dataset,
+                                                 arma::Row<size_t>& labels)
+    const
+{
+  MatType probabilities;
+  Classify(dataset, labels, probabilities);
+}
+
+template<typename MatType>
 template<typename VecType>
-size_t SoftmaxRegression::Classify(const VecType& point) const
+size_t SoftmaxRegression<MatType>::Classify(const VecType& point) const
 {
   arma::Row<size_t> label(1);
   Classify(point, label);
   return size_t(label(0));
 }
 
-inline double SoftmaxRegression::ComputeAccuracy(
-    const arma::mat& testData,
+template<typename MatType>
+template<typename VecType>
+void SoftmaxRegression<MatType>::Classify(
+    const VecType& point,
+    size_t& prediction,
+    typename SoftmaxRegression<MatType>::DenseColType& probabilitiesVec) const
+{
+  arma::Row<size_t> label(1);
+  Classify(point, label, probabilitiesVec);
+  prediction = label[0];
+}
+
+template<typename MatType>
+inline void SoftmaxRegression<MatType>::Classify(
+    const MatType& dataset,
+    arma::Row<size_t>& labels,
+    typename SoftmaxRegression<MatType>::DenseMatType& probabilities) const
+{
+  util::CheckSameDimensionality(dataset, FeatureSize(),
+      "SoftmaxRegression::Classify()");
+
+  // Calculate the probabilities for each test input.
+  DenseMatType hypothesis;
+  if (fitIntercept)
+  {
+    // In order to add the intercept term, we should compute following matrix:
+    //     [1; data] = join_cols(ones(1, data.n_cols), data)
+    //     hypothesis = exp(parameters * [1; data]).
+    //
+    // Since the cost of join maybe high due to the copy of original data,
+    // split the hypothesis computation to two components.
+    hypothesis = exp(
+      repmat(parameters.col(0), 1, dataset.n_cols) +
+      parameters.cols(1, parameters.n_cols - 1) * dataset);
+  }
+  else
+  {
+    hypothesis = exp(parameters * dataset);
+  }
+
+  probabilities = hypothesis / repmat(sum(hypothesis, 0), numClasses, 1);
+
+  // Prepare necessary data.
+  labels.zeros(dataset.n_cols);
+  double maxProbability = 0;
+
+  // For each test input.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    // For each class.
+    for (size_t j = 0; j < numClasses; ++j)
+    {
+      // If a higher class probability is encountered, change prediction.
+      if (probabilities(j, i) > maxProbability)
+      {
+        maxProbability = probabilities(j, i);
+        labels(i) = j;
+      }
+    }
+
+    // Set maximum probability to zero for the next input.
+    maxProbability = 0;
+  }
+}
+
+template<typename MatType>
+inline mlpack_deprecated void SoftmaxRegression<MatType>::Classify(
+    const MatType& dataset,
+    typename SoftmaxRegression<MatType>::DenseMatType& probabilities) const
+{
+  arma::Row<size_t> labels;
+  Classify(dataset, labels, probabilities);
+}
+
+template<typename MatType>
+inline double SoftmaxRegression<MatType>::ComputeAccuracy(
+    const MatType& testData,
     const arma::Row<size_t>& labels) const
 {
   arma::Row<size_t> predictions;
@@ -177,47 +252,36 @@ inline double SoftmaxRegression::ComputeAccuracy(
   return (count * 100.0) / predictions.n_elem;
 }
 
-template<typename OptimizerType>
-double SoftmaxRegression::Train(const arma::mat& data,
-                                const arma::Row<size_t>& labels,
-                                const size_t numClasses,
-                                OptimizerType optimizer)
+template<typename MatType>
+void SoftmaxRegression<MatType>::Reset()
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
-                                      fitIntercept);
-  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
-    parameters = regressor.GetInitialPoint();
-
-  // Train the model.
-  const double out = optimizer.Optimize(regressor, parameters);
-  this->numClasses = numClasses;
-
-  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
-            << "trained model is " << out << "." << std::endl;
-
-  return out;
+  SoftmaxRegressionFunction<MatType>::InitializeWeights(
+      parameters, parameters.n_cols, parameters.n_rows, fitIntercept);
 }
 
-template<typename OptimizerType, typename... CallbackTypes>
-double SoftmaxRegression::Train(const arma::mat& data,
-                                const arma::Row<size_t>& labels,
-                                const size_t numClasses,
-                                OptimizerType optimizer,
-                                CallbackTypes&&... callbacks)
+template<typename MatType>
+template<typename Archive>
+void SoftmaxRegression<MatType>::serialize(Archive& ar,
+                                           const unsigned int version)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
-                                      fitIntercept);
-  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
-    parameters = regressor.GetInitialPoint();
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // This is the legacy version: `parameters` is of type arma::mat.
+    arma::mat parametersTmp;
+    ar(cereal::make_nvp("parameters", parametersTmp));
+    parameters = ConvTo<DenseMatType>::From(parametersTmp);
 
-  // Train the model.
-  const double out = optimizer.Optimize(regressor, parameters, callbacks...);
-  this->numClasses = numClasses;
-
-  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
-            << "trained model is " << out << "." << std::endl;
-
-  return out;
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(fitIntercept));
+  }
+  else
+  {
+    ar(CEREAL_NVP(parameters));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(fitIntercept));
+  }
 }
 
 } // namespace mlpack

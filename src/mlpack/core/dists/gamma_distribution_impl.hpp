@@ -56,9 +56,9 @@ inline void GammaDistribution::Train(const arma::mat& rdata, const double tol)
     return;
 
   // Calculate log(mean(x)) and mean(log(x)) of each dataset row.
-  const arma::vec meanLogxVec = arma::mean(arma::log(rdata), 1);
+  const arma::vec meanLogxVec = arma::mean(log(rdata), 1);
   const arma::vec meanxVec = arma::mean(rdata, 1);
-  const arma::vec logMeanxVec = arma::log(meanxVec);
+  const arma::vec logMeanxVec = log(meanxVec);
 
   // Call the statistics-only GammaDistribution::Train() function to fit the
   // parameters. That function does all the work so we're done.
@@ -80,7 +80,7 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
 
   for (size_t i = 0; i < rdata.n_cols; ++i)
   {
-    meanLogxVec += probabilities(i) * arma::log(rdata.col(i));
+    meanLogxVec += probabilities(i) * log(rdata.col(i));
     meanxVec += probabilities(i) * rdata.col(i);
   }
 
@@ -88,7 +88,7 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
 
   meanLogxVec /= totProbability;
   meanxVec /= totProbability;
-  logMeanxVec = arma::log(meanxVec);
+  logMeanxVec = log(meanxVec);
 
   // Call the statistics-only GammaDistribution::Train() function to fit the
   // parameters. That function does all the work so we're done.

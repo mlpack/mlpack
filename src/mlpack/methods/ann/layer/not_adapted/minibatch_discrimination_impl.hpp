@@ -75,7 +75,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Forward(
       else
       {
         distances.slice(i).col(j) =
-            arma::exp(-arma::sum(abs(cubeM.slice(i) - cubeM.slice(j)), 1));
+            exp(-sum(abs(cubeM.slice(i) - cubeM.slice(j)), 1));
         output.col(i) += distances.slice(i).col(j);
       }
     }
@@ -98,7 +98,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Backward(
       {
         continue;
       }
-      InputType t = arma::sign(M.slice(i) - M.slice(j));
+      InputType t = sign(M.slice(i) - M.slice(j));
       t.each_col() %=
           distances.slice(std::min(i, j)).col(std::max(i, j)) % gM.col(i);
       deltaM.slice(i) -= t;
@@ -116,7 +116,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Gradient(
     const OutputType& /* error */,
     OutputType& gradient)
 {
-  gradient = arma::vectorise(deltaTemp * input.t());
+  gradient = vectorise(deltaTemp * input.t());
 }
 
 template<typename InputType, typename OutputType>

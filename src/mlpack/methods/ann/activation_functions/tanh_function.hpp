@@ -75,7 +75,7 @@ class TanhFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = 1 - arma::pow(y, 2);
+    dy = 1 - pow(y, 2);
   }
 
   /**

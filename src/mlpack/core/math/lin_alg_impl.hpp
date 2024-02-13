@@ -53,7 +53,7 @@ inline void VectorPower(arma::vec& vec, const double power)
 inline void Center(const arma::mat& x, arma::mat& xCentered)
 {
   // Get the mean of the elements in each row.
-  arma::vec rowMean = arma::sum(x, 1) / x.n_cols;
+  arma::vec rowMean = sum(x, 1) / x.n_cols;
 
   xCentered = x - arma::repmat(rowMean, 1, x.n_cols);
 }

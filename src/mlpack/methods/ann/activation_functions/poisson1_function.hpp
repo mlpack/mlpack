@@ -47,7 +47,7 @@ class Poisson1Function
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = (x - 1) % arma::exp(-x);
+    y = (x - 1) % exp(-x);
   }
 
   /**
@@ -74,7 +74,7 @@ class Poisson1Function
                     const OutputVecType& /* y */,
                     DerivVecType &dy)
   {
-    dy = -arma::exp(-x) % (x - 2);
+    dy = -exp(-x) % (x - 2);
   }
 }; // class Poisson1Function
 

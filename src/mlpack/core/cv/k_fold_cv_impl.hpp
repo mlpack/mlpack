@@ -227,7 +227,7 @@ void KFoldCV<MLAlgorithm,
   binSize = source.n_cols / k;
   lastBinSize = source.n_cols - ((k - 1) * binSize);
 
-  destination = (k == 2) ? source : arma::join_rows(source,
+  destination = (k == 2) ? source : join_rows(source,
       source.cols(0, source.n_cols - lastBinSize - 1));
 }
 

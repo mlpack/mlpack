@@ -288,16 +288,17 @@ TEST_CASE("InstanceWeightsConstructor", "[PerceptronTest]")
  */
 TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
 {
-  mat trainData = randu<mat>(10, 100);
-  for (size_t i = 0; i < 50; ++i)
-    trainData.col(i) -= 0.5;
-  for (size_t i = 50; i < 100; ++i)
-    trainData.col(i) += 0.5;
-  Row<size_t> labels(100);
-  labels.subvec(0, 49).zeros();
-  labels.subvec(50, 99).ones();
+  mat trainData = randu<mat>(10, 1000);
+  for (size_t i = 0; i < 500; ++i)
+    trainData.col(i) += 0.6;
+  for (size_t i = 500; i < 1000; ++i)
+    trainData.col(i) += 0.8;
+  Row<size_t> labels(1000);
+  labels.subvec(0, 499).zeros();
+  labels.subvec(500, 999).ones();
 
   Perceptron<> p1, p2;
+
   // This should result in the same model, because the default initialization is
   // zeros.
   p1.Train(trainData, labels, 2, 1);
@@ -316,8 +317,9 @@ TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
   // Training p1 again should result in a different model.
   p1.Train(trainData, labels, 2);
 
+  // The biases often converge to the same -1/0/1 values, but it's sufficient
+  // to just check the weights.
   REQUIRE(!approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
-  REQUIRE(!approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
 }
 
 // Test all forms of Train().

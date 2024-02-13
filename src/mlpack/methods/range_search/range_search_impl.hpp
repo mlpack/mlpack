@@ -86,7 +86,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
   {
-    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
+    referenceTree = BuildTree<Tree>(std::move(MatType()),
         oldFromNewReferences);
     referenceSet = &referenceTree->Dataset();
     treeOwner = true;
@@ -132,7 +132,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
 {
   // Clear other object.
   other.referenceTree =
-      BuildTree<Tree>(std::move(arma::mat()), other.oldFromNewReferences);
+      BuildTree<Tree>(std::move(MatType()), other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.treeOwner = true;
   other.naive = false;
@@ -286,9 +286,9 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const MatType& querySet,
-    const Range& range,
+    const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
-    std::vector<std::vector<double>>& distances)
+    std::vector<std::vector<ElemType>>& distances)
 {
   util::CheckSameDimensionality(querySet, *referenceSet,
       "RangeSearch::Search()", "query set");
@@ -305,7 +305,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   // To avoid extra copies, we will store the unmapped neighbors and distances
   // in a separate object.
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
-  std::vector<std::vector<double>>* distancePtr = &distances;
+  std::vector<std::vector<ElemType>>* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
   if (TreeTraits<Tree>::RearrangesDataset)
@@ -314,7 +314,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // ourselves.
     if (!singleMode && !naive)
     {
-      distancePtr = new std::vector<std::vector<double>>;
+      distancePtr = new std::vector<std::vector<ElemType>>;
       neighborPtr = new std::vector<std::vector<size_t>>;
     }
 
@@ -456,9 +456,9 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
-    const Range& range,
+    const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
-    std::vector<std::vector<double>>& distances)
+    std::vector<std::vector<ElemType>>& distances)
 {
   // If there are no points, there is no search to be done.
   if (referenceSet->n_cols == 0)
@@ -522,9 +522,9 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
-    const Range& range,
+    const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
-    std::vector<std::vector<double>>& distances)
+    std::vector<std::vector<ElemType>>& distances)
 {
   // If there are no points, there is no search to be done.
   if (referenceSet->n_cols == 0)
@@ -532,12 +532,12 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
   // Here, we will use the query set as the reference set.
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
-  std::vector<std::vector<double>>* distancePtr = &distances;
+  std::vector<std::vector<ElemType>>* distancePtr = &distances;
 
   if (TreeTraits<Tree>::RearrangesDataset && treeOwner)
   {
     // We will always need to rearrange in this case.
-    distancePtr = new std::vector<std::vector<double>>;
+    distancePtr = new std::vector<std::vector<ElemType>>;
     neighborPtr = new std::vector<std::vector<size_t>>;
   }
 

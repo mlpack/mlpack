@@ -635,10 +635,10 @@ TEST_CASE("SoftmaxRegressionTest", "[SerializationTest]")
     labels[i] = 0;
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = 1;
-  SoftmaxRegression sr(dataset, labels, 2);
-  SoftmaxRegression srXml(dataset.n_rows, 2);
-  SoftmaxRegression srText(dataset.n_rows, 2);
-  SoftmaxRegression srBinary(dataset.n_rows, 2);
+  SoftmaxRegression<> sr(dataset, labels, 2);
+  SoftmaxRegression<> srXml(dataset.n_rows, 2);
+  SoftmaxRegression<> srText(dataset.n_rows, 2);
+  SoftmaxRegression<> srBinary(dataset.n_rows, 2);
 
   SerializeObjectAll(sr, srXml, srText, srBinary);
 
@@ -1061,20 +1061,18 @@ TEST_CASE("LARSTest", "[SerializationTest]")
   arma::vec beta = arma::randn(75, 1);
   arma::rowvec y = beta.t() * X;
 
-  LARS lars(true, 0.1, 0.1);
-  arma::vec betaOpt;
-  lars.Train(X, y, betaOpt);
+  LARS<> lars(true, 0.1, 0.1);
+  lars.Train(X, y);
 
   // Now, serialize.
-  LARS xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
+  LARS<> xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
       jsonLars(false, 0.1, 0.1);
 
   // Train jsonLars.
   arma::mat jsonX = arma::randn(25, 150);
   arma::vec jsonBeta = arma::randn(25, 1);
   arma::rowvec jsonY = jsonBeta.t() * jsonX;
-  arma::vec jsonBetaOpt;
-  jsonLars.Train(jsonX, jsonY, jsonBetaOpt);
+  jsonLars.Train(jsonX, jsonY);
 
   SerializeObjectAll(lars, xmlLars, binaryLars, jsonLars);
 
@@ -1552,12 +1550,12 @@ TEST_CASE("BayesianLinearRegressionTest", "[SerializationTest]")
   arma::vec omega = arma::randn(75, 1);
   arma::rowvec y = omega.t() * matX;
 
-  BayesianLinearRegression blr(false, false);
+  BayesianLinearRegression<> blr(false, false);
   blr.Train(matX, y);
   arma::vec omegaOpt = blr.Omega();
 
   // Now, serialize.
-  BayesianLinearRegression xmlBlr(false, false), binaryBlr(false, false),
+  BayesianLinearRegression<> xmlBlr(false, false), binaryBlr(false, false),
     textBlr(false, false);
 
   SerializeObjectAll(blr, xmlBlr, binaryBlr, textBlr);

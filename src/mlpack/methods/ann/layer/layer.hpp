@@ -81,7 +81,7 @@ class Layer
   { /* Nothing to do here */ }
 
   //! Copy assignment operator.  This is not responsible for copying weights!
-  virtual Layer& operator=(const Layer& layer)
+  Layer& operator=(const Layer& layer)
   {
     if (&layer != this)
     {
@@ -95,7 +95,7 @@ class Layer
   }
 
   //! Move assignment operator.  This is not responsible for moving weights!
-  virtual Layer& operator=(Layer&& layer)
+  Layer& operator=(Layer&& layer)
   {
     if (&layer != this)
     {

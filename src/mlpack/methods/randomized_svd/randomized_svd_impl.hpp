@@ -58,7 +58,7 @@ inline void RandomizedSVD::Apply(const arma::sp_mat& data,
                                  const size_t rank)
 {
   // Center the data into a temporary matrix for sparse matrix.
-  arma::sp_mat rowMean = arma::sum(data, 1) / data.n_cols;
+  arma::sp_mat rowMean = sum(data, 1) / data.n_cols;
 
   Apply(data, u, s, v, rank, rowMean);
 }
@@ -70,7 +70,7 @@ inline void RandomizedSVD::Apply(const arma::mat& data,
                                  const size_t rank)
 {
   // Center the data into a temporary matrix.
-  arma::mat rowMean = arma::sum(data, 1) / data.n_cols + eps;
+  arma::mat rowMean = sum(data, 1) / data.n_cols + eps;
 
   Apply(data, u, s, v, rank, rowMean);
 }
@@ -92,8 +92,7 @@ inline void RandomizedSVD::Apply(const MatType& data,
   if (data.n_cols >= data.n_rows)
   {
     R = arma::randn<arma::mat>(data.n_rows, iteratedPower);
-    Q = (data.t() * R) - arma::repmat(arma::trans(R.t() * rowMean),
-        data.n_cols, 1);
+    Q = (data.t() * R) - repmat(trans(R.t() * rowMean), data.n_cols, 1);
   }
   else
   {
@@ -119,11 +118,11 @@ inline void RandomizedSVD::Apply(const MatType& data,
     {
       Q = (data * Q) - rowMean * (arma::ones(1, data.n_cols) * Q);
       arma::lu(Q, v, Q);
-      Q = (data.t() * Q) - arma::repmat(rowMean.t() * Q, data.n_cols, 1);
+      Q = (data.t() * Q) - repmat(rowMean.t() * Q, data.n_cols, 1);
     }
     else
     {
-      Q = (data.t() * Q) - arma::repmat(rowMean.t() * Q, data.n_cols, 1);
+      Q = (data.t() * Q) - repmat(rowMean.t() * Q, data.n_cols, 1);
       arma::lu(Q, v, Q);
       Q = (data * Q) - (rowMean * (arma::ones(1, data.n_cols) * Q));
     }
@@ -153,7 +152,7 @@ inline void RandomizedSVD::Apply(const MatType& data,
   }
   else
   {
-    Qdata = (Q.t() * data) - arma::repmat(Q.t() * rowMean, 1,  data.n_cols);
+    Qdata = (Q.t() * data) - repmat(Q.t() * rowMean, 1,  data.n_cols);
     arma::svd_econ(u, s, v, Qdata);
     u = Q * u;
   }

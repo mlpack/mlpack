@@ -77,7 +77,7 @@ template<typename FitnessFunction>
 size_t HoeffdingCategoricalSplit<FitnessFunction>::MajorityClass() const
 {
   // Calculate the class that we have seen the most of.
-  arma::Col<size_t> classCounts = arma::sum(sufficientStatistics, 1);
+  arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
   arma::uword maxIndex = 0;
   classCounts.max(maxIndex);
@@ -88,7 +88,7 @@ size_t HoeffdingCategoricalSplit<FitnessFunction>::MajorityClass() const
 template<typename FitnessFunction>
 double HoeffdingCategoricalSplit<FitnessFunction>::MajorityProbability() const
 {
-  arma::Col<size_t> classCounts = arma::sum(sufficientStatistics, 1);
+  arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
   return double(classCounts.max()) / double(arma::accu(classCounts));
 }

@@ -34,22 +34,19 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
     {
       if (i == j)
       {
-        double s =
-            arma::as_scalar(
-            arma::sign((weight.row(i) * weight.row(i).t()) - 1));
+        double s = arma::as_scalar(sign((weight.row(i) * weight.row(i).t()) - 1));
         grad.row(i) += 2 * s * weight.row(i);
       }
       else
       {
-        double s = arma::as_scalar(
-            arma::sign(weight.row(i) * weight.row(j).t()));
+        double s = arma::as_scalar(sign(weight.row(i) * weight.row(j).t()));
         grad.row(i) += s * weight.row(j);
         grad.row(j) += s * weight.row(i);
       }
     }
   }
 
-  gradient += arma::vectorise(grad) * factor;
+  gradient += vectorise(grad) * factor;
 }
 
 template<typename Archive>

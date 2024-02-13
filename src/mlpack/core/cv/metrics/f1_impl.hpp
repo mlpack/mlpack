@@ -36,9 +36,9 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
   arma::Row<size_t> predictedLabels;
   model.Classify(data, predictedLabels);
 
-  size_t tp = arma::sum((labels == PC) % (predictedLabels == PC));
-  size_t numberOfPositivePredictions = arma::sum(predictedLabels == PC);
-  size_t numberOfPositiveClassInstances = arma::sum(labels == PC);
+  size_t tp = sum((labels == PC) % (predictedLabels == PC));
+  size_t numberOfPositivePredictions = sum(predictedLabels == PC);
+  size_t numberOfPositiveClassInstances = sum(labels == PC);
 
   double precision = double(tp) / numberOfPositivePredictions;
   double recall = double(tp) / numberOfPositiveClassInstances;
@@ -78,9 +78,9 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
   arma::vec f1s = arma::vec(numClasses);
   for (size_t c = 0; c < numClasses; ++c)
   {
-    size_t tp = arma::sum((labels == c) % (predictedLabels == c));
-    size_t positivePredictions = arma::sum(predictedLabels == c);
-    size_t positiveLabels = arma::sum(labels == c);
+    size_t tp = sum((labels == c) % (predictedLabels == c));
+    size_t positivePredictions = sum(predictedLabels == c);
+    size_t positiveLabels = sum(labels == c);
 
     double precision = double(tp) / positivePredictions;
     double recall = double(tp) / positiveLabels;

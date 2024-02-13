@@ -22,16 +22,14 @@ namespace util {
 // Utility functions to correctly handle transposed Armadillo matrices.
 template<typename T>
 inline void TransposeIfNeeded(
-    const std::string& identifier,
-    T& value,
-    bool transpose)
+    T& /* value */,
+    bool /* transpose */)
 {
   // No transpose needed for non-matrices.
   return;
 }
 
 inline void TransposeIfNeeded(
-    const std::string& identifier,
     arma::mat& value,
     bool transpose)
 {
@@ -59,7 +57,7 @@ inline void SetParam(util::Params& params,
                      T& value,
                      bool transpose = false)
 {
-  TransposeIfNeeded(identifier, value, transpose);
+  TransposeIfNeeded(value, transpose);
   params.Get<T>(identifier) = std::move(value);
 }
 
