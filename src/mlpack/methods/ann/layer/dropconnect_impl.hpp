@@ -114,7 +114,7 @@ void DropConnectType<MatType>::Forward(const MatType& input, MatType& output)
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
-    mask = Randu<MatType>(denoise.n_rows, denoise.n_cols);
+    mask.randu(denoise.n_rows, denoise.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
 
     baseLayer->Parameters() = denoise % mask;

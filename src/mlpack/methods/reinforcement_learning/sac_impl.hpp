@@ -302,7 +302,8 @@ void SAC<
 
   if (!deterministic)
   {
-    arma::colvec noise = Randn<arma::colvec>(outputAction.n_rows) * 0.1;
+    arma::colvec noise;
+    noise.randn(outputAction.n_rows) * 0.1;
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
