@@ -32,9 +32,9 @@ namespace mlpack {
  *
  * @code
  * // 100-point 5-dimensional random dataset.
- * arma::mat data = Randu<arma::mat>(5, 100);
+ * arma::mat data = arma::randu<arma::mat>(5, 100);
  * // Noisy responses retrieved by a random linear transformation of data.
- * arma::rowvec responses = Randu<arma::rowvec>(5) * data +
+ * arma::rowvec responses = arma::randu<arma::rowvec>(5) * data +
  *     0.1 * arma::randn<arma::rowvec>(100);
  *
  * // Using 80% of data for training and remaining 20% for assessing MSE.
