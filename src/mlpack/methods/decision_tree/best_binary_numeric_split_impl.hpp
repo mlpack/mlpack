@@ -117,7 +117,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   for (size_t index = minimum; index < data.n_elem - minimum; ++index)
   {
     class_changed = (sortedLabels[index - 1] != sortedLabels[index]
-                  || (repeat && class_changed));
+        || (repeat && class_changed));
     repeat = data[sortedIndices[index - 1]] == data[sortedIndices[index]];
     eligible_cut = !repeat && class_changed;
     
@@ -135,7 +135,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       ++classCounts(sortedLabels[index - 1], 0);
     }
     if (!eligible_cut)
-        continue;
+      continue;
  
     // Calculate the gain for the left and right child.  Only use weights if
     // needed.
