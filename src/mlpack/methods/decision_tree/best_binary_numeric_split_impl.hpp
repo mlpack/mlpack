@@ -103,8 +103,24 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       ++classCounts(sortedLabels[i], 1);
   }
 
+  // Flags for validating whether the current sample index k is
+  // eligible as a cut point. {repeat} if the value at index k is
+  // part of a repeating sequence. {class_changed} if the class at 
+  // index k changed from k-1. {eligible_cut} if the value did not 
+  // repeat and the class changed, meaning index k is a boundary 
+  // point. See Fayyad and Irani (1992) for more details on eligible 
+  // cut points.
+  bool class_changed = false;
+  bool repeat = false; 
+  bool eligible_cut = false; 
+
   for (size_t index = minimum; index < data.n_elem - minimum; ++index)
   {
+    class_changed = (sortedLabels[index - 1] != sortedLabels[index]
+                  || (repeat && class_changed));
+    repeat = data[sortedIndices[index - 1]] == data[sortedIndices[index]];
+    eligible_cut = !repeat && class_changed;
+    
     // Update class weight sums or counts.
     if (UseWeights)
     {
@@ -118,11 +134,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       --classCounts(sortedLabels[index - 1], 1);
       ++classCounts(sortedLabels[index - 1], 0);
     }
-
-    // Make sure that the value has changed.
-    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
-      continue;
-
+    if (!eligible_cut)
+        continue;
+ 
     // Calculate the gain for the left and right child.  Only use weights if
     // needed.
     const double leftGain = UseWeights ?
