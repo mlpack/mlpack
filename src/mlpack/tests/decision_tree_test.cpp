@@ -282,16 +282,16 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest", "[DecisionTreeTest]")
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
-  arma::vec classProbabilities;
+  arma::vec splitInfo;
   BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
-      labels, 2, weights, 3, 1e-7, classProbabilities, aux);
+      labels, 2, weights, 3, 1e-7, splitInfo, aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -304,9 +304,9 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest", "[DecisionTreeTest]")
 
   // The class probabilities, for this split, hold the splitting point, which
   // should be between 4 and 5.
-  REQUIRE(classProbabilities.n_elem == 1);
-  REQUIRE(classProbabilities[0] > 0.4);
-  REQUIRE(classProbabilities[0] < 0.5);
+  REQUIRE(splitInfo.n_elem == 1);
+  REQUIRE(splitInfo[0] > 0.4);
+  REQUIRE(splitInfo[0] < 0.5);
 }
 
 /**
@@ -564,6 +564,482 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
   REQUIRE(classProbabilities.n_elem == 0);
+}
+
+/**
+ * Check that the BestBinaryCategoricalSplit will split perfectly 
+ * (in the binary class setting) when this is clearly possible. 
+ * Category C₂ is class one and the rest are class zero.
+ */
+TEST_CASE("BestBinaryCategoricalSplitBinaryClassTwoPerfectTest", 
+    "[DecisionTreeTest]")
+{
+  size_t N = 3131;
+  size_t K = 17;
+  double EPSILON = 1e-7;
+  size_t numClasses = 2;
+  size_t minLeaf = 10;
+
+  vec splitInfo;
+  BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  vec data = randi<vec>(N, distr_param(0,K-1));
+  rowvec weights = ones<rowvec>(N); 
+  Row<size_t> labels(N);
+  for (size_t i = 0; i < N; ++i)
+    labels[i] = (size_t) data[i] == 2;
+
+  // Find the best binary split of the data. 
+  double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
+  double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, data, K, labels, numClasses, weights, minLeaf, 
+      EPSILON, splitInfo, aux
+  );
+  double weightedGain = BestBinaryCategoricalSplit<GiniGain>
+      ::SplitIfBetter<true>(
+          bestGain, data, K, labels, numClasses, weights, minLeaf, 
+          EPSILON, splitInfo, aux
+  );
+
+  // The split into categories [(2), (0, 1, 3, ..., K-1)] would be 
+  // optimal, resulting in two pure children nodes, therefore the gain 
+  // should be zero here. Unity weights means that the gain is the same 
+  // with or without weights.
+  REQUIRE(gain > bestGain);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(gain == Approx(0.0).margin(EPSILON));
+
+  // CalculateDirection should now send all of C₂ to the 
+  // one direction and the remaining Cⱼ to the other.
+  vec class1_data = ones(N) * 2;
+  vec class1_direction(N);
+  vec class0_data= randi<vec>(N, distr_param(3, K - 1));
+  vec class0_direction(N);
+
+  for (size_t i = 0; i < N; ++i)
+  {
+    class0_direction(i) = BestBinaryCategoricalSplit<GiniGain>
+        ::CalculateDirection(
+            class0_data(i), splitInfo, aux
+    );
+    class1_direction(i) = BestBinaryCategoricalSplit<GiniGain>
+          ::CalculateDirection(
+              class1_data(i), splitInfo, aux
+    );
+  }
+  REQUIRE((all(class0_direction == LEFT) || all(class0_direction == RIGHT)));
+  REQUIRE((all(class1_direction == LEFT) || all(class1_direction == RIGHT)));
+}
+
+/** 
+ * Check that the BestBinaryCategoricalSplit will split optimally in the 
+ * multi-class setting. We need another test for this case because the 
+ * algorithm for multiple classes is fundamentally different. Labels are 
+ * created by the identity function over categories, that is a sample with 
+ * category Cⱼ has label j. All but four of the samples are category (and label) 
+ * zero, therefore BestBinaryCategoricalSplit should choose to partition 
+ * category C₀ from all the rest of the Cⱼ. 
+ */
+TEST_CASE("BestBinaryCategoricalSplitMultiClassZeroTest", "[DecisionTreeTest]")
+{
+  size_t N = 3131;
+  size_t K = 5; 
+  double EPSILON = 1e-7;
+  size_t numClasses = K;
+  size_t minLeaf = 10;
+
+  vec splitInfo;
+  BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+  size_t index;  
+
+  // Initialize data such that it is all category C₂, except for one 
+  // sample from each of the remaining categories. Labels are mapped 
+  // by the identity function. Category Cᵢ -> i.
+  vec data = zeros(N); 
+  Row<size_t> labels = zeros<Row<size_t>>(N);
+  rowvec weights = ones<rowvec>(N); 
+  for (size_t category = 1; category < K; ++category)
+  {
+    index = randi(distr_param(0, N-1));
+    data[index] = (double) category;
+    labels[index] = category;
+  }
+
+  // Find the best binary split of the data.
+  double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
+  double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, data, K, labels, numClasses, weights, minLeaf, 
+      EPSILON, splitInfo, aux
+  );
+  double weightedGain = BestBinaryCategoricalSplit<GiniGain>
+      ::SplitIfBetter<true>(
+          bestGain, data, K, labels, numClasses, weights, minLeaf, 
+          EPSILON, splitInfo, aux
+  );
+
+  // The split into categories [(0), (1, 2, ..., K-1)] would be 
+  // optimal, resulting in one pure child node of many zeros, and
+  // one child with K - 1 samples, all of different classes.
+  double expectedGain = -.00095816; 
+
+  REQUIRE(gain > bestGain);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(gain == Approx(expectedGain).margin(EPSILON));
+  
+  // CalculateDirection should now send all of C₂ to the 
+  // one direction and the remaining Cⱼ to the other.
+  vec class0_data = zeros(N);
+  vec class0_direction(N);
+  vec classj_data= randi<vec>(N, distr_param(1, K - 1));
+  vec classj_direction(N);
+
+  for (size_t i = 0; i < N; ++i)
+  {
+    class0_direction(i) = BestBinaryCategoricalSplit<GiniGain>
+        ::CalculateDirection(
+            class0_data(i), splitInfo, aux
+    );
+    classj_direction(i) = BestBinaryCategoricalSplit<GiniGain>
+        ::CalculateDirection(
+            classj_data(i), splitInfo, aux
+    );
+  }
+  REQUIRE((all(class0_direction == LEFT) || all(class0_direction == RIGHT)));
+  REQUIRE((all(classj_direction == LEFT) || all(classj_direction == RIGHT)));
+}
+
+/**
+ * Check that no split is made when it doesn't get us anything
+ * in the binary classification setting.
+ */
+TEST_CASE("BestBinaryCategoricalSplitNoGainBinaryTest", "[DecisionTreeTest]")
+{
+  size_t N = 300;
+  size_t K = 10; 
+  double EPSILON = 1e-7;
+  size_t numClasses = 2;
+  size_t minLeaf = 10;
+
+  vec splitInfo;
+  BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+  vec data(N);
+  Row<size_t> labels(N);
+  rowvec weights = ones<rowvec>(N);
+
+  for (size_t i = 0; i < N; i += numClasses)
+  {
+    data[i] = int(i / numClasses) % 10;
+    labels[i] = 0;
+    data[i + 1] = int(i / numClasses) % 10;
+    labels[i + 1] = 1;
+  }
+
+  // Call the method to do the splitting.
+  double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
+  double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, data, K, labels, numClasses, weights, minLeaf, EPSILON,
+      splitInfo, aux);
+  double weightedGain =
+      BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<true>(
+          bestGain, data, K, labels, numClasses, weights, 
+          minLeaf, EPSILON, splitInfo, aux
+      );
+
+  // Make sure that there was no split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(splitInfo.n_elem == 0);
+}
+
+/**
+ * Check that no split is made when it doesn't get us anything
+ * in the multi-class classification setting.
+ */
+TEST_CASE("BestBinaryCategoricalSplitNoGainMultiTest", "[DecisionTreeTest]")
+{
+  size_t N = 300;
+  size_t K = 10; 
+  double EPSILON = 1e-7;
+  size_t numClasses = 5;
+  size_t minLeaf = 10;
+
+  vec splitInfo;
+  BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+  vec data(N);
+  Row<size_t> labels(N);
+  rowvec weights = ones<rowvec>(N);
+
+  for (size_t i = 0; i < N; i += numClasses)
+  {
+    data[i] = int(i / numClasses) % 10;
+    labels[i] = 0;
+    data[i + 1] = int(i / numClasses) % 10;
+    labels[i + 1] = 1;
+    data[i + 2] = int(i / numClasses) % 10;
+    labels[i + 2] = 2;
+    data[i + 3] = int(i / numClasses) % 10;
+    labels[i + 3] = 3;
+    data[i + 4] = int(i / numClasses) % 10;
+    labels[i + 4] = 4;
+  }
+
+  // Call the method to do the splitting.
+  double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
+  double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, data, K, labels, numClasses, weights, minLeaf, EPSILON,
+      splitInfo, aux);
+  double weightedGain =
+      BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<true>(
+          bestGain, data, K, labels, numClasses, weights, minLeaf, 
+          EPSILON, splitInfo, aux
+      );
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(splitInfo.n_elem == 0);
+}
+
+/**
+ * Make sure that BestBinaryCategoricalSplit respects the minimum number 
+ * of samples required to split in the binary classification setting.
+ */
+TEST_CASE("BestBinaryCategoricalSplitMinSamplesBinaryTest", "[DecisionTreeTest]")
+{
+  size_t K = 4; 
+  double EPSILON = 1e-7;
+  size_t numClasses = 2;
+  size_t minLeaf = 8;
+
+  vec data("0 0 0 1 1 1 2 2 2 3 3 3");
+  Row<size_t> labels("0 0 0 1 1 1 0 0 0 1 1 1");
+  rowvec weights(labels.n_elem);
+  weights.ones();
+
+  vec splitInfo;
+  BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
+  double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, data, K, labels, numClasses, weights, minLeaf, EPSILON,
+      splitInfo, aux);
+
+  // Make sure it's not split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(splitInfo.n_elem == 0);
+}
+
+/**
+ * Make sure that BestBinaryCategoricalSplit respects the minimum number 
+ * of samples required to split in the multi-class setting.
+ */
+TEST_CASE("BestBinaryCategoricalSplitMinSamplesMultiTest", "[DecisionTreeTest]")
+{
+  size_t K = 4; 
+  double EPSILON = 1e-7;
+  size_t numClasses = 4;
+  size_t minLeaf = 8;
+
+  vec data("0 0 0 1 1 1 2 2 2 3 3 3");
+  Row<size_t> labels("0 0 0 1 1 1 2 2 2 3 3 3");
+  rowvec weights(labels.n_elem);
+  weights.ones();
+
+  vec splitInfo;
+  BestBinaryCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  double bestGain = GiniGain::Evaluate<false>(labels, numClasses, weights);
+  double gain = BestBinaryCategoricalSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, data, K, labels, numClasses, weights, minLeaf, EPSILON,
+      splitInfo, aux);
+
+  // Make sure it's not split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(splitInfo.n_elem == 0);
+}
+
+/**
+ * Test that we can build a decision tree on a simple categorical dataset
+ * (the mushroom dataset from UCI) using the BestBinaryCategoricalSplit 
+ * in a binary classification setting. This dataset can be found at
+ *
+ *      https://archive.ics.uci.edu/dataset/73/mushroom
+ */
+TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
+{
+
+    // Load the categorical UCI mushroom dataset and split 
+    // into a training set and test set.
+    mat dataset;
+    Row<size_t> labels;
+    data::DatasetInfo dataInfo;
+
+    data::LoadCSV csv("mushroom.data.csv");
+    csv.LoadCategoricalCSV(dataset, dataInfo);
+    data::Load("mushroom.labels.csv", labels, true);
+
+    mat trainDataset, testDataset;
+    Row<size_t> trainLabels, testLabels;
+    data::Split(dataset, labels, 
+        trainDataset, testDataset, trainLabels, testLabels, 0.3);
+
+    // Build the DecisionTree with a BestBinaryCategoricalSplit.
+    size_t numClasses = 2;
+    size_t minLeaf = 10;
+    size_t maxDepth = 4; 
+    double minGainSplit = 10e-7;
+
+    DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+        tree(trainDataset, dataInfo, trainLabels, numClasses, 
+             minLeaf, minGainSplit, maxDepth
+    );
+    // Compute the accuracy of the DecisionTree. It should
+    // be well over 95%.
+    Row<size_t> predictions;
+    tree.Classify(testDataset, predictions);
+
+    size_t correct = 0;
+    for (size_t i = 0; i < testDataset.n_cols; ++i)
+      if (testLabels[i] == predictions[i])
+        ++correct;
+
+    const double correctPct = double(correct) / double(testDataset.n_cols);
+    REQUIRE(predictions.n_cols == testDataset.n_cols);
+    REQUIRE(correctPct > 0.95);
+}
+
+/**
+ * Test that we can build a decision tree on a simple categorical dataset
+ * using the BestBinaryCategoricalSplit in a multi-class setting.
+ */
+TEST_CASE("BestCategoricalBuildMultiTest", "[DecisionTreeTest]")
+{
+  mat d;
+  Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  // Split into a training set and a test set.
+  mat trainingData = d.cols(0, 1999);
+  mat testData = d.cols(2000, 3999);
+  Row<size_t> trainingLabels = l.subvec(0, 1999);
+  Row<size_t> testLabels = l.subvec(2000, 3999);
+
+
+  // Build the tree.
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+      tree(trainingData, di, trainingLabels, 5, 10);
+
+  // Now evaluate the accuracy of the tree.
+  Row<size_t> predictions;
+  tree.Classify(testData, predictions);
+
+  size_t correct = 0;
+  for (size_t i = 0; i < testData.n_cols; ++i)
+    if (testLabels[i] == predictions[i])
+      ++correct;
+
+  // Make sure we got at least 70% accuracy.
+  const double correctPct = double(correct) / double(testData.n_cols);
+  REQUIRE(predictions.n_cols == testData.n_cols);
+  REQUIRE(correctPct > 0.70);
+}
+
+/**
+ * Test that we can build a decision tree with weights on a simple categorical
+ * dataset using the BestBinaryCategoricalSplit.
+ */
+TEST_CASE("BestCategoricalBuildTestWithWeight", "[DecisionTreeTest]")
+{
+  mat d;
+  Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  // Split into a training set and a test set.
+  mat trainingData = d.cols(0, 1999);
+  mat testData = d.cols(2000, 3999);
+  Row<size_t> trainingLabels = l.subvec(0, 1999);
+  Row<size_t> testLabels = l.subvec(2000, 3999);
+
+  Row<double> weights = ones<Row<double>>(
+      trainingLabels.n_elem);
+
+  // Build the tree.
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+      tree(trainingData, di, trainingLabels, 5, weights, 10);
+
+  // Now evaluate the accuracy of the tree.
+  Row<size_t> predictions;
+  tree.Classify(testData, predictions);
+
+  REQUIRE(predictions.n_elem == testData.n_cols);
+  size_t correct = 0;
+  for (size_t i = 0; i < testData.n_cols; ++i)
+    if (testLabels[i] == predictions[i])
+      ++correct;
+
+  // Make sure we got at least 90% accuracy.
+  const double correctPct = double(correct) / double(testData.n_cols);
+  REQUIRE(correctPct > 0.90);
+}
+
+/**
+ * Test that we can build a decision tree on a simple categorical dataset using
+ * weights, with low-weight noise added, using the BestBinaryCategoricalSplit.
+ */
+TEST_CASE("BestCategoricalBuildTestWithWeightNoisy", "[DecisionTreeTest]")
+{
+  mat d;
+  Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  // Split into a training set and a test set.
+  mat trainingData = d.cols(0, 1999);
+  mat testData = d.cols(2000, 3999);
+  Row<size_t> trainingLabels = l.subvec(0, 1999);
+  Row<size_t> testLabels = l.subvec(2000, 3999);
+
+  // Now create random points.
+  mat randomNoise(4, 2000);
+  Row<size_t> randomLabels(2000);
+  for (size_t i = 0; i < 2000; ++i)
+  {
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random();
+    randomNoise(2, i) = RandInt(4);
+    randomNoise(3, i) = RandInt(2);
+    randomLabels[i] = RandInt(5);
+  }
+
+  // Generate weights.
+  rowvec weights(4000);
+  for (size_t i = 0; i < 2000; ++i)
+    weights[i] = Random(0.9, 1.0);
+  for (size_t i = 2000; i < 4000; ++i)
+    weights[i] = Random(0.0, 0.001);
+
+  mat fullData = join_rows(trainingData, randomNoise);
+  Row<size_t> fullLabels = join_rows(trainingLabels, randomLabels);
+
+  // Build the tree.
+  DecisionTree<GiniGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+      tree(fullData, di, fullLabels, 5, weights, 10);
+
+  // Now evaluate the accuracy of the tree.
+  Row<size_t> predictions;
+  tree.Classify(testData, predictions);
+
+  REQUIRE(predictions.n_elem == testData.n_cols);
+  size_t correct = 0;
+  for (size_t i = 0; i < testData.n_cols; ++i)
+    if (testLabels[i] == predictions[i])
+      ++correct;
+
+  // Make sure we got at least 90% accuracy.
+  const double correctPct = double(correct) / double(testData.n_cols);
+  REQUIRE(correctPct > 0.90);
 }
 
 /**
