@@ -103,13 +103,15 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       ++classCounts(sortedLabels[i], 1);
   }
 
-  // Flags for validating whether the current sample index k is
-  // eligible as a cut point. {repeat} if the value at index k is
-  // part of a repeating sequence. {class_changed} if the class at 
-  // index k changed from k-1. {eligible_cut} if the value did not 
-  // repeat and the class changed, meaning index k is a boundary 
-  // point. See Fayyad and Irani (1992) for more details on eligible 
-  // cut points.
+  /**
+   * Flags for validating whether the current sample index k is
+   * eligible as a cut point. {repeat} if the value at index k is
+   * part of a repeating sequence. {class_changed} if the class at 
+   * index k changed from k-1. {eligible_cut} if the value did not 
+   * repeat and the class changed, meaning index k is a boundary 
+   * point. See Fayyad and Irani (1992) for more details on eligible 
+   * cut points.
+   */
   bool class_changed = false;
   bool repeat = false; 
   bool eligible_cut = false; 
