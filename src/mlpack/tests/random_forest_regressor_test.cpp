@@ -50,16 +50,20 @@ TEST_CASE("UnweightedLearnTest", "[RandomForestRegressorTest]")
 
   rfr.Train(Xtrain, Ytrain);
   dtr.Train(Xtrain, Ytrain);
+  
+  double TestMean = arma::mean(Ytest);
 
   arma::Row<double> rfrPred;
   rfr.Predict(Xtest, rfrPred);
-  double rfrStdErr = arma::mean(Ytest-rfrPred);
+  //Calculate r2 score for random forest regressor
+  double rfrR2Score = 1 - arma::sum(square(Ytest-rfrPred))/arma::sum(square(Ytest-TestMean));
 
   arma::Row<double> dtrPred;
   dtr.Predict(Xtest, dtrPred);
-  double dtrStdErr = arma::mean(Ytest-dtrPred);
+  //Calculate r2 score for decision tree regressor
+  double dtrR2Score = 1 - arma::sum(square(Ytest-dtrPred))/arma::sum(square(Ytest-TestMean));
 
-  REQUIRE(rfrStdErr < dtrStdErr);
+  REQUIRE(rfrR2Score > dtrR2Score);
 }
 
 TEST_CASE("WarmStartRegressorTreesTest", "[RandomForestRegressorTest]")
