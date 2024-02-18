@@ -22,7 +22,7 @@ using namespace mlpack;
 /**
  * Make sure an empty forest cannot predict.
  */
-TEST_CASE("EmptyClassifyTest", "[RandomForestRegressorTest]")
+TEST_CASE("EmptyPredictTest", "[RandomForestRegressorTest]")
 {
   RandomForestRegressor<> rf; // No training.
 
@@ -36,7 +36,7 @@ TEST_CASE("EmptyClassifyTest", "[RandomForestRegressorTest]")
  * Test unweighted numeric learning, making sure that we get better performance
  * than a single decision tree.
  */
-TEST_CASE("UnweightedLearningTest", "[RandomForestRegressorTest]")
+TEST_CASE("UnweightedLearnTest", "[RandomForestRegressorTest]")
 {
     // Loading data.
     data::DatasetInfo info;
@@ -62,7 +62,7 @@ TEST_CASE("UnweightedLearningTest", "[RandomForestRegressorTest]")
   REQUIRE(rfrStdErr < dtrStdErr);
 }
 
-TEST_CASE("WarmStartTreesTest", "[RandomForestRegressorTest]")
+TEST_CASE("WarmStartRegressorTreesTest", "[RandomForestRegressorTest]")
 {
   // Loading data.
     data::DatasetInfo info;
