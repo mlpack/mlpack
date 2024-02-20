@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_RANDOM_FOREST_RANDOM_FOREST_REGRESSOR_HPP
 
 #include <mlpack/methods/decision_tree/decision_tree_regressor.hpp>
-//#include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 #include "bootstrap.hpp"
 
 namespace mlpack {
@@ -280,7 +279,7 @@ class RandomForestRegressor
    * @param point Point to be classified.
    */
   template<typename VecType>
-  size_t Predict(const VecType& point) const;
+  double Predict(const VecType& point) const;
 
   /**
    * Predict the classes of each point in the given dataset.  If the random

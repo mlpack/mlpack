@@ -292,7 +292,7 @@ template<
     bool UseBootstrap
 >
 template<typename VecType>
-size_t RandomForestRegressor<
+double RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
@@ -308,8 +308,8 @@ size_t RandomForestRegressor<
     return 0;
   }
 
-  size_t prediction;
-  size_t totalSum = 0;
+  double prediction;
+  double totalSum = 0;
   for (size_t i = 0; i < trees.size(); ++i)
   {
     totalSum += trees[i].Predict(point);
