@@ -37,7 +37,7 @@ The following basic guides are *highly recommended* before using mlpack.
  * ***Reference for mlpack core classes***:
    - [Core mlpack documentation](user/core.md)
 
- * ***Using mlpack natively with our extensions in Python, R, CLI, Julia, and Go *** :
+ * ***Using mlpack natively with our extensions in Python, R, CLI, Julia, and Go***:
    - [Links to quickstarts and references](#bindings-to-other-languages)
 
 ## mlpack algorithm documentation
