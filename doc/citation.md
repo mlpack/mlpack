@@ -2,8 +2,15 @@
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation for
-[the paper below](https://joss.theoj.org/papers/10.21105/joss.05026) (given in
-BibTeX format):
+[the paper below](https://joss.theoj.org/papers/10.21105/joss.05026):
+
+ * ***mlpack 4: a fast, header-only C++ machine learning library***.  R.R.
+   Curtin, M. Edel, O. Shrit, S. Agrawal, S. Basak, J.J. Balamuta, R.
+   Birmingham, K. Dutt, D. Eddelbuettel, R. Garg, S. Jaiswal, A. Kaushik, S.
+   Kim, A. Mukherjee, N.G. Sai, N. Sharma, Y.S. Parihar, R. Swain, C. Sanderson.
+   _Journal of Open Source Software_ 8:82, p. 5026, 2023.
+
+In BibTeX format:
 
 ```
 @article{mlpack2023,
