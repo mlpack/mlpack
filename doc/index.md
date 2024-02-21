@@ -10,8 +10,10 @@ mlpack's lightweight C++ implementation makes it ideal for deployment, and it
 can also be used for interactive prototyping via C++ notebooks (these can be
 seen in action on mlpack's [homepage](https://www.mlpack.org/)).
 
-In addition to its powerful C++ interface, mlpack also provides command-line
-programs, and bindings to the [Python](quickstart/python.md), [R](quickstart/r.md), [Julia](quickstart/julia.md), and [Go](quickstart/go.md) languages.
+In addition to its powerful C++ interface, mlpack also provides [command-line
+programs](quickstart/cli.md), and bindings to the
+[Python](quickstart/python.md), [R](quickstart/r.md),
+[Julia](quickstart/julia.md), and [Go](quickstart/go.md) languages.
 
 _If you use mlpack, please [cite the software](citation.md)._
 
