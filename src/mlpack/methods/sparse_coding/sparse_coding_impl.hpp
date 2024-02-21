@@ -114,10 +114,10 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
   std::vector<arma::uword> activeAtoms;
-  for (size_t j = 0; j < atoms; ++j)
+  for (arma::uword j = 0; j < atoms; ++j)
   {
     if (arma::any(codes.row(j) != 0))
-      activeAtoms.push_back((arma::uword) j);
+      activeAtoms.push_back(j);
   }
 
   const size_t nActiveAtoms = activeAtoms.size();
