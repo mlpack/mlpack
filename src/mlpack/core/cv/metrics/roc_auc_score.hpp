@@ -40,8 +40,17 @@ class ROCAUCScore
    * @param labels Ground truth (correct) labels.
    * @param scores Probability scores of positive class.
    */
-  static double Evaluate(const arma::Row<size_t>& labels,
+  static double BinaryEvaluate(const arma::Row<size_t>& labels,
                          const arma::Row<double>& scores);
+
+  /**
+   * Calculate average area under the ROC curve in One vs Rest.
+   *
+   * @param labels Ground truth (correct) labels (n_examples).
+   * @param scores Probability scores of all labels (n_labels,n_examples).
+   */
+  static double Evaluate(const arma::Row<size_t>& labels,
+                         const arma::mat& scores);
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want

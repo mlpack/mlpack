@@ -17,6 +17,89 @@ namespace mlpack {
 
 template<size_t PositiveClass>
 double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
+                     const  arma::mat& scores)
+{
+  size_t classes = arma::size(scores)[0];
+  size_t n_examples = arma::size(scores)[1];
+
+
+  // Checks if the no. of labels is 0.
+  if (n_examples == 0)
+  {
+    throw std::invalid_argument(
+        "ROCAUCScore::Evaluate(): "
+        "number of points in input data cannot be zero");
+  }
+
+  arma::Row<size_t> class_labels = arma::unique(labels);
+ 
+  // Checks if the no. of unique labels is greater than the classes in score.
+  if(class_labels.n_elem > classes)
+  {
+    throw std::invalid_argument(
+        "ROCAUCScore::Evaluate(): "
+        "number of unique labels in true labels cannot be greater "
+        "than the no. of scores per datapoint , ROCAUCScore is undefined");
+  }
+  
+  // Computes AUC for the given positive score. 
+  if(classes == 1)
+  {
+      return BinaryEvaluate(labels,scores);
+  }
+
+  arma::mat ones(size(arma::sum(scores, 0)),arma::fill::ones);
+  bool allOnes = arma::approx_equal(arma::sum(scores, 0), ones, "absdiff", 1e-5);
+  
+  // Checks if sum of all label probabilities is near zero.
+  if(!allOnes)
+  {
+    throw std::invalid_argument(
+        "ROCAUCScore::Evaluate(): "
+        "sum of probalilies of all classifiers for a datapoint must "
+        "be equal to 1, ROCAUCScore is undefined");
+  }
+
+  class_labels = arma::sort(class_labels); 
+  arma::Row<size_t> binaryLabels;
+  arma::rowvec binaryScore;   
+  
+  // Computes score for positive class and returns AUC.
+  if(classes == 2)
+  { 
+    size_t positiveCol = class_labels(1) == PositiveClass;
+    arma::rowvec binaryScore = scores.row(positiveCol);
+    return BinaryEvaluate(labels, binaryScore);
+  }
+
+  // Computes the class wise AUC in a One vs Rest manner.
+  double auc = 0.0;
+  for(size_t class_label = 0; class_label < classes; class_label++)
+  {
+    // Computes positive and 0 labels for class_label. 
+    if(PositiveClass != 0)
+    {
+      binaryLabels = arma::conv_to<arma::Row<size_t>>::from
+                    (labels == class_labels(class_label)) * PositiveClass;
+    }
+    else
+    {
+      binaryLabels = arma::conv_to<arma::Row<size_t>>::from
+                    (labels == class_labels(class_label));
+      binaryLabels = arma::conv_to<arma::Row<size_t>>::from(binaryLabels == 0);
+    }
+    binaryScore = scores.row(class_labels(class_label));
+    auc += BinaryEvaluate(binaryLabels, binaryScore);
+  }
+
+  // Returns average AUC.
+  auc = auc / classes ;
+  return auc;
+}
+
+
+template<size_t PositiveClass>
+double ROCAUCScore<PositiveClass>::BinaryEvaluate(const arma::Row<size_t>& labels,
                                             const arma::rowvec& scores)
 {
   util::CheckSameSizes(labels, scores, "ROCAUCScore::Evaluate()");
