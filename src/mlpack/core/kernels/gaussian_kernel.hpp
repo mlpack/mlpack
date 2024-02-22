@@ -125,7 +125,7 @@ class GaussianKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
-    return Evaluate(sqrt(SquaredEuclideanDistance::Evaluate(a, b) /
+    return Evaluate(std::sqrt(SquaredEuclideanDistance::Evaluate(a, b) /
         2.0)) / (Normalizer(a.n_rows) * std::pow(2.0, (double) a.n_rows / 2.0));
   }
 

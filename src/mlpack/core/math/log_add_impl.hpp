@@ -83,7 +83,7 @@ void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y)
     // Compute the maximum in each column (treating y as a column too).
     maxs = max(max(x, 1), y);
 
-    y = maxs + std::log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1) +
+    y = maxs + log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1) +
         exp(y - maxs));
   }
   else
@@ -91,7 +91,7 @@ void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y)
     // Compute the maximum element in each column.
     maxs = max(x, 1);
 
-    y = maxs + std::log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1));
+    y = maxs + log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1));
   }
 
   if (maxs.has_inf())
@@ -116,7 +116,7 @@ void LogSumExpT(const T& x, arma::Col<typename T::elem_type>& y)
     // Compute the maximum element in each column.
     maxs = max(max(x, 0), y.t());
 
-    y = maxs.t() + std::log(sum(exp(x - repmat(maxs, x.n_rows, 1)), 0) +
+    y = maxs.t() + log(sum(exp(x - repmat(maxs, x.n_rows, 1)), 0) +
         exp(y.t() - maxs)).t();
   }
   else
@@ -124,7 +124,7 @@ void LogSumExpT(const T& x, arma::Col<typename T::elem_type>& y)
     // Compute the maximum element in each column.
     arma::Row<typename T::elem_type> maxs = max(x, 0);
 
-    y = (maxs + std::log(sum(exp(x - repmat(maxs, x.n_rows, 1)), 0))).t();
+    y = (maxs + log(sum(exp(x - repmat(maxs, x.n_rows, 1)), 0))).t();
   }
 
   if (maxs.has_inf())
