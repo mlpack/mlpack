@@ -11,7 +11,7 @@ inlineCxxPlugin <- function(...) {
     settings <- plugin()
     settings$env$PKG_CPPFLAGS <- paste("-I../inst/include", openmp_flag)
     # C++14 is required
-    settings$env$USE_CXX14 <- "yes"
+    if (getRversion() < "4.2.0") settings$env$USE_CXX14 <- "yes"
 
     settings
 }
