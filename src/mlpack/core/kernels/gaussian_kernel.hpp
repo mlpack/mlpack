@@ -93,18 +93,6 @@ class GaussianKernel
   }
 
   /**
-   * Evaluation of the gradient of Gaussian kernel
-   * given the squared distance between two points.
-   *
-   * @param t The squared distance between the two points
-   * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
-   *     constructor.
-   */
-  double GradientForSquaredDistance(const double t) const {
-    return gamma * std::exp(gamma * t);
-  }
-
-  /**
    * Obtain the normalization constant of the Gaussian kernel.
    *
    * @param dimension
@@ -114,21 +102,6 @@ class GaussianKernel
   {
     return std::pow(std::sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
   }
-
-  /**
-   * Obtain a convolution integral of the Gaussian kernel.
-   *
-   * @param a First vector.
-   * @param b Second vector.
-   * @return The convolution integral.
-   */
-  template<typename VecTypeA, typename VecTypeB>
-  double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
-  {
-    return Evaluate(std::sqrt(SquaredEuclideanDistance::Evaluate(a, b) /
-        2.0)) / (Normalizer(a.n_rows) * std::pow(2.0, (double) a.n_rows / 2.0));
-  }
-
 
   //! Get the bandwidth.
   double Bandwidth() const { return bandwidth; }
