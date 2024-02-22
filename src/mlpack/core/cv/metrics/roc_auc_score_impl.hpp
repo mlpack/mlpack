@@ -32,7 +32,13 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   }
 
   arma::Row<size_t> class_labels = arma::unique(labels);
- 
+
+  // Computes AUC for the given positive score. 
+  if(classes == 1 && class_labels.n_elem <= 2)
+  {
+      return BinaryEvaluate(labels,scores);
+  }
+
   // Checks if the no. of unique labels is greater than the classes in score.
   if(class_labels.n_elem > classes)
   {
@@ -40,12 +46,6 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
         "ROCAUCScore::Evaluate(): "
         "number of unique labels in true labels cannot be greater "
         "than the no. of scores per datapoint , ROCAUCScore is undefined");
-  }
-  
-  // Computes AUC for the given positive score. 
-  if(classes == 1)
-  {
-      return BinaryEvaluate(labels,scores);
   }
 
   arma::mat ones(size(arma::sum(scores, 0)),arma::fill::ones);
