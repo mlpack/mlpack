@@ -232,12 +232,12 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]",
   arma::Row<size_t> responses(1000);
   for (size_t i = 0; i < 500; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g1.Random());
+    data.col(i) = ConvTo<MatType>::From(g1.Random());
     responses[i] = 0;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g2.Random());
+    data.col(i) = ConvTo<MatType>::From(g2.Random());
     responses[i] = 1;
   }
 
@@ -251,12 +251,12 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]",
   // Create a test set.
   for (size_t i = 0; i < 500; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g1.Random());
+    data.col(i) = ConvTo<MatType>::From(g1.Random());
     responses[i] = 0;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g2.Random());
+    data.col(i) = ConvTo<MatType>::From(g2.Random());
     responses[i] = 1;
   }
 
@@ -289,27 +289,27 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
   for (size_t i = 0; i < points / 5; ++i)
   {
     // TODO: when GaussianDistribution is templatized, remove the conv_to.
-    data.col(i) = arma::conv_to<MatType>::from(g1.Random());
+    data.col(i) = ConvTo<MatType>::From(g1.Random());
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g2.Random());
+    data.col(i) = ConvTo<MatType>::From(g2.Random());
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g3.Random());
+    data.col(i) = ConvTo<MatType>::From(g3.Random());
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g4.Random());
+    data.col(i) = ConvTo<MatType>::From(g4.Random());
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g5.Random());
+    data.col(i) = ConvTo<MatType>::From(g5.Random());
     labels(i) = 4;
   }
 
@@ -323,27 +323,27 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g1.Random());
+    data.col(i) = ConvTo<MatType>::From(g1.Random());
     labels(i) = 0;
   }
   for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g2.Random());
+    data.col(i) = ConvTo<MatType>::From(g2.Random());
     labels(i) = 1;
   }
   for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g3.Random());
+    data.col(i) = ConvTo<MatType>::From(g3.Random());
     labels(i) = 2;
   }
   for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g4.Random());
+    data.col(i) = ConvTo<MatType>::From(g4.Random());
     labels(i) = 3;
   }
   for (size_t i = (4 * points) / 5; i < points; ++i)
   {
-    data.col(i) = arma::conv_to<MatType>::from(g5.Random());
+    data.col(i) = ConvTo<MatType>::From(g5.Random());
     labels(i) = 4;
   }
 

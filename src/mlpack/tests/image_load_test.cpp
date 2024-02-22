@@ -115,7 +115,7 @@ TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  arma::mat input = arma::conv_to<arma::mat>::from(im1);
+  arma::mat input = ConvTo<arma::mat>::From(im1);
   REQUIRE(Save("APITest.bmp", input, info, false) == true);
 
   arma::mat output;
