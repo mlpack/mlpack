@@ -18,8 +18,22 @@
 namespace mlpack {
 
 /**
- * This class implements a random forest regressor
+ * This class implements a random forest regressor.
+ * The RandomForestRegressor class implements a parallelized random forest regressor 
+ * that supports numerical and categorical features, by default using MSE (minimum 
+ * sqaured error) to chosee which feature to split on. Random forests are a collection 
+ * of decision trees that give better performance than a single decision tree.
  */
+
+/*
+ * FitnessFunction : the measure of goodness to use when deciding on tree splits.
+ * DimensionSelectionType: the strategy used for proposing dimensions to attempt to split on.
+ * NumericSplitType: the strategy used for finding splits on numeric data dimensions.
+ * CategoricalSplitType: the strategy used for finding splits on categorical data dimensions.
+ * UseBootstrap: a boolean indicating whether or not to use a bootstrap sample when training 
+ *               each tree in the forest.
+*/
+
 template<typename FitnessFunction = MSEGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
@@ -46,7 +60,7 @@ class RandomForestRegressor
    * the strategy used to choose dimensions.
    *
    * @param dataset Dataset to train on.
-   * @param responses Responses for each training point
+   * @param responses Responses for each training point.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.

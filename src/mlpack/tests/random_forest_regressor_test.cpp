@@ -38,30 +38,29 @@ TEST_CASE("EmptyPredictTest", "[RandomForestRegressorTest]")
  */
 TEST_CASE("UnweightedLearnTest", "[RandomForestRegressorTest]")
 {
-    // Loading data.
-    data::DatasetInfo info;
-    arma::mat Xtrain, Xtest;
-    arma::rowvec Ytrain, Ytest;
-    LoadBostonHousingDataset(Xtrain, Xtest, Ytrain, Ytest,
-        info);
+  // Loading data.
+  data::DatasetInfo info;
+  arma::mat trainData, testData;
+  arma::rowvec trainResponses, testResponses;
+  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses, info);
 
   mlpack::RandomForestRegressor<> rfr;
   mlpack::DecisionTreeRegressor<> dtr;
 
-  rfr.Train(Xtrain, Ytrain);
-  dtr.Train(Xtrain, Ytrain);
+  rfr.Train(trainData, trainResponses);
+  dtr.Train(trainData, trainResponses);
   
-  double TestMean = arma::mean(Ytest);
+  double testMean = arma::mean(testResponses);
 
   arma::Row<double> rfrPred;
-  rfr.Predict(Xtest, rfrPred);
-  //Calculate r2 score for random forest regressor
-  double rfrR2Score = 1 - arma::sum(square(Ytest-rfrPred))/arma::sum(square(Ytest-TestMean));
+  rfr.Predict(testData, rfrPred);
+  // Calculate r2 score for random forest regressor.
+  double rfrR2Score = 1 - arma::sum(square(testResponses - rfrPred)) / arma::sum(square(testResponses - TestMean));
 
   arma::Row<double> dtrPred;
-  dtr.Predict(Xtest, dtrPred);
-  //Calculate r2 score for decision tree regressor
-  double dtrR2Score = 1 - arma::sum(square(Ytest-dtrPred))/arma::sum(square(Ytest-TestMean));
+  dtr.Predict(testData, dtrPred);
+  // Calculate r2 score for decision tree regressor.
+  double dtrR2Score = 1 - arma::sum(square(testResponses - dtrPred)) / arma::sum(square(testResponses - TestMean));
 
   REQUIRE(rfrR2Score > dtrR2Score);
 }
@@ -69,11 +68,10 @@ TEST_CASE("UnweightedLearnTest", "[RandomForestRegressorTest]")
 TEST_CASE("WarmStartRegressorTreesTest", "[RandomForestRegressorTest]")
 {
   // Loading data.
-    data::DatasetInfo info;
-    arma::mat trainData, testData;
-    arma::rowvec trainResponses, testResponses;
-    LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
-        info);
+  data::DatasetInfo info;
+  arma::mat trainData, testData;
+  arma::rowvec trainResponses, testResponses;
+  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses, info);
 
   // Train a random forest.
   RandomForestRegressor<> rfr(trainData, info, trainResponses, 25 /* 25 trees */, 1,
