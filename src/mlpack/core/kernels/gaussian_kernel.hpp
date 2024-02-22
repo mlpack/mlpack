@@ -64,7 +64,7 @@ class GaussianKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(gamma * SquaredEuclideanDistance::Evaluate(a, b));
+    return std::exp(gamma * SquaredEuclideanDistance::Evaluate(a, b));
   }
 
   /**

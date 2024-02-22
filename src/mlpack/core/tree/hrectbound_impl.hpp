@@ -296,7 +296,7 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
       return (ElemType) std::pow((double) sum,
           1.0 / (double) MetricType::Power) / 2.0;
     else
-      return sum / pow(2.0, MetricType::Power);
+      return sum / std::pow(2.0, MetricType::Power);
   }
 }
 
