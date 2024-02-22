@@ -58,12 +58,12 @@ class SphericalKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b) const
   {
-    double distance = sqrt(SquaredEuclideanDistance::Evaluate(a, b));
+    double distance = std::sqrt(SquaredEuclideanDistance::Evaluate(a, b));
     if (distance >= 2.0 * bandwidth)
     {
       return 0.0;
     }
-    double volumeSquared = pow(Normalizer(a.n_rows), 2.0);
+    double volumeSquared = std::pow(Normalizer(a.n_rows), 2.0);
 
     switch (a.n_rows)
     {
@@ -71,8 +71,9 @@ class SphericalKernel
         return 1.0 / volumeSquared * (2.0 * bandwidth - distance);
       case 2:
         return 1.0 / volumeSquared *
-          (2.0 * bandwidth * bandwidth * acos(distance/(2.0 * bandwidth)) -
-          distance / 4.0 * sqrt(4.0*bandwidth*bandwidth-distance*distance));
+          (2.0 * bandwidth * bandwidth * acos(distance / (2.0 * bandwidth)) -
+          distance / 4.0 * 
+          std::sqrt(4.0 * bandwidth * bandwidth - distance * distance));
       default:
         Log::Fatal << "The spherical kernel does not support convolution\
           integrals above dimension two, yet..." << std::endl;
@@ -81,8 +82,8 @@ class SphericalKernel
   }
   double Normalizer(size_t dimension) const
   {
-    return pow(bandwidth, (double) dimension) * pow(M_PI, dimension / 2.0) /
-        std::tgamma(dimension / 2.0 + 1.0);
+    return std::pow(bandwidth, (double) dimension) *
+      std::pow(M_PI, dimension / 2.0) / std::tgamma(dimension / 2.0 + 1.0);
   }
 
   /**

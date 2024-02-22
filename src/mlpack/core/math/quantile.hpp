@@ -28,7 +28,7 @@ inline double ErfInverse(double x)
 {
   double w, p;
 
-  w = -log((1.0 - x) * (1.0 + x));
+  w = -std::log((1.0 - x) * (1.0 + x));
 
   if (w < 6.250000) 
   {
@@ -59,7 +59,7 @@ inline double ErfInverse(double x)
   } 
   else if (w < 16.000000) 
   {
-    w = sqrt(w) - 3.250000;
+    w = std::sqrt(w) - 3.250000;
     p = 2.2137376921775787049e-09;
     p = 9.0756561938885390979e-08 + p * w;
     p = -2.7517406297064545428e-07 + p * w;
@@ -82,7 +82,7 @@ inline double ErfInverse(double x)
   } 
   else 
   {
-    w = sqrt(w) - 5.000000;
+    w = std::sqrt(w) - 5.000000;
     p = -2.7109920616438573243e-11;
     p = -2.5556418169965252055e-10 + p * w;
     p = 1.5076572693500548083e-09 + p * w;

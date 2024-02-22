@@ -46,7 +46,7 @@ class GaussianKernel
    */
   GaussianKernel(const double bandwidth) :
       bandwidth(bandwidth),
-      gamma(-0.5 * pow(bandwidth, -2.0))
+      gamma(-0.5 * std::pow(bandwidth, -2.0))
   { }
 
   /**
@@ -77,7 +77,7 @@ class GaussianKernel
   double Evaluate(const double t) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(gamma * std::pow(t, 2.0));
+    return std::exp(gamma * std::pow(t, 2.0));
   }
 
   /**
@@ -89,7 +89,7 @@ class GaussianKernel
    *     constructor.
    */
   double Gradient(const double t) const {
-    return 2 * t * gamma * exp(gamma * std::pow(t, 2.0));
+    return 2 * t * gamma * std::exp(gamma * std::pow(t, 2.0));
   }
 
   /**
@@ -101,7 +101,7 @@ class GaussianKernel
    *     constructor.
    */
   double GradientForSquaredDistance(const double t) const {
-    return gamma * exp(gamma * t);
+    return gamma * std::exp(gamma * t);
   }
 
   /**
@@ -112,7 +112,7 @@ class GaussianKernel
    */
   double Normalizer(const size_t dimension)
   {
-    return pow(sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
+    return std::pow(std::sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
   }
 
   /**
@@ -126,7 +126,7 @@ class GaussianKernel
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
     return Evaluate(sqrt(SquaredEuclideanDistance::Evaluate(a, b) /
-        2.0)) / (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
+        2.0)) / (Normalizer(a.n_rows) * std::pow(2.0, (double) a.n_rows / 2.0));
   }
 
 
@@ -138,7 +138,7 @@ class GaussianKernel
   void Bandwidth(const double bandwidth)
   {
     this->bandwidth = bandwidth;
-    this->gamma = -0.5 * pow(bandwidth, -2.0);
+    this->gamma = -0.5 * std::pow(bandwidth, -2.0);
   }
 
   //! Get the precalculated constant.

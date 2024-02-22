@@ -128,7 +128,7 @@ class RegressionDistribution
    */
   double LogProbability(const arma::vec& observation) const
   {
-    return log(Probability(observation));
+    return std::log(Probability(observation));
   }
 
   /**

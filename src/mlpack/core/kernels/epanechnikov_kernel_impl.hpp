@@ -60,8 +60,8 @@ inline double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
     case 2:
       return 1.0 / volumeSquared *
           ((2.0 / 3.0 * bandwidth * bandwidth - distance * distance) *
-          asin(sqrt(1.0 - std::pow(distance / (2.0 * bandwidth), 2.0))) +
-          sqrt(4.0 * bandwidth * bandwidth - distance * distance) *
+          asin(std::sqrt(1.0 - std::pow(distance / (2.0 * bandwidth), 2.0))) +
+          std::sqrt(4.0 * bandwidth * bandwidth - distance * distance) *
           (distance / 6.0 + 2.0 / 9.0 * distance *
           std::pow(distance / bandwidth, 2.0) - distance / 72.0 *
           std::pow(distance / bandwidth, 4.0)));
@@ -79,7 +79,7 @@ inline double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
  */
 inline double EpanechnikovKernel::Normalizer(const size_t dimension)
 {
-  return 2.0 * pow(bandwidth, (double) dimension) *
+  return 2.0 * std::pow(bandwidth, (double) dimension) *
       std::pow(M_PI, dimension / 2.0) /
       (std::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
 }
