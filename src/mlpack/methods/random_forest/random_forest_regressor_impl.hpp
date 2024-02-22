@@ -43,7 +43,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -51,7 +51,7 @@ RandomForestRegressor<
     CategoricalSplitType,
     UseBootstrap
 >::RandomForestRegressor(const MatType& dataset,
-                const arma::Row<double>& responses,
+                const arma::Row<ResponsesType>& responses,
                 const size_t numTrees,
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
@@ -74,7 +74,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -83,7 +83,7 @@ RandomForestRegressor<
     UseBootstrap
 >::RandomForestRegressor(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
-                const arma::Row<double>& responses,
+                const arma::Row<ResponsesType>& responses,
                 const size_t numTrees,
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
@@ -105,7 +105,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -113,7 +113,7 @@ RandomForestRegressor<
     CategoricalSplitType,
     UseBootstrap
 >::RandomForestRegressor(const MatType& dataset,
-                const arma::Row<double>& responses,
+                const arma::Row<ResponsesType>& responses,
                 const arma::rowvec& weights,
                 const size_t numTrees,
                 const size_t minimumLeafSize,
@@ -136,7 +136,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -145,7 +145,7 @@ RandomForestRegressor<
     UseBootstrap
 >::RandomForestRegressor(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
-                const arma::Row<double>& responses,
+                const arma::Row<ResponsesType>& responses,
                 const arma::rowvec& weights,
                 const size_t numTrees,
                 const size_t minimumLeafSize,
@@ -167,7 +167,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 double RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -175,7 +175,7 @@ double RandomForestRegressor<
     CategoricalSplitType,
     UseBootstrap
 >::Train(const MatType& dataset,
-         const arma::Row<double>& responses,
+         const arma::Row<ResponsesType>& responses,
          const size_t numTrees,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
@@ -198,7 +198,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 double RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -207,7 +207,7 @@ double RandomForestRegressor<
     UseBootstrap
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<double>& responses,
+         const arma::Row<ResponsesType>& responses,
          const size_t numTrees,
          const size_t minimumLeafSize,
          const double minimumGainSplit,
@@ -229,7 +229,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 double RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -237,7 +237,7 @@ double RandomForestRegressor<
     CategoricalSplitType,
     UseBootstrap
 >::Train(const MatType& dataset,
-         const arma::Row<double>& responses,
+         const arma::Row<ResponsesType>& responses,
          const arma::rowvec& weights,
          const size_t numTrees,
          const size_t minimumLeafSize,
@@ -260,7 +260,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 double RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -269,7 +269,7 @@ double RandomForestRegressor<
     UseBootstrap
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<double>& responses,
+         const arma::Row<ResponsesType>& responses,
          const arma::rowvec& weights,
          const size_t numTrees,
          const size_t minimumLeafSize,
@@ -328,7 +328,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<typename MatType>
+template<typename MatType, typename ResponsesType>
 void RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -336,7 +336,7 @@ void RandomForestRegressor<
     CategoricalSplitType,
     UseBootstrap
 >::Predict(const MatType& data,
-            arma::Row<double>& predictions) const
+            arma::Row<ResponsesType>& predictions) const
 {
   // Check edge case.
   if (trees.size() == 0)
@@ -395,7 +395,7 @@ template<
     template<typename> class CategoricalSplitType,
     bool UseBootstrap
 >
-template<bool UseWeights, bool UseDatasetInfo, typename MatType>
+template<bool UseWeights, bool UseDatasetInfo, typename MatType, typename ResponsesType>
 double RandomForestRegressor<
     FitnessFunction,
     DimensionSelectionType,
@@ -404,7 +404,7 @@ double RandomForestRegressor<
     UseBootstrap
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
-         const arma::Row<double>& responses,
+         const arma::Row<ResponsesType>& responses,
          const arma::rowvec& weights,
          const size_t numTrees,
          const size_t minimumLeafSize,
@@ -445,7 +445,7 @@ double RandomForestRegressor<
     #endif
 
     MatType bootstrapDataset;
-    arma::Row<double> bootstrapresponses;
+    arma::Row<ResponsesType> bootstrapresponses;
     arma::rowvec bootstrapWeights;
     if (UseBootstrap)
     {

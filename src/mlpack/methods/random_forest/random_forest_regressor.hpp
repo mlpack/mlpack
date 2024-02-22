@@ -53,9 +53,9 @@ class RandomForestRegressor
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   RandomForestRegressor(const MatType& dataset,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
@@ -80,10 +80,10 @@ class RandomForestRegressor
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   RandomForestRegressor(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
@@ -105,9 +105,9 @@ class RandomForestRegressor
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   RandomForestRegressor(const MatType& dataset,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -134,10 +134,10 @@ class RandomForestRegressor
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   RandomForestRegressor(const MatType& dataset,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -164,9 +164,9 @@ class RandomForestRegressor
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   double Train(const MatType& data,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
@@ -195,10 +195,10 @@ class RandomForestRegressor
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
@@ -226,9 +226,9 @@ class RandomForestRegressor
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   double Train(const MatType& data,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -259,10 +259,10 @@ class RandomForestRegressor
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const arma::rowvec& weights,
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
@@ -288,9 +288,9 @@ class RandomForestRegressor
    * @param data Set of points to predict.
    * @param predictions Output predictions for each point in the dataset.
    */
-  template<typename MatType>
+  template<typename MatType, typename ResponsesType>
   void Predict(const MatType& data,
-                arma::Row<double>& predictions) const;
+                arma::Row<ResponsesType>& predictions) const;
 
   //! Access a tree in the forest.
   const DecisionTreeType& Tree(const size_t i) const { return trees[i]; }
@@ -328,10 +328,10 @@ class RandomForestRegressor
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<bool UseWeights, bool UseDatasetInfo, typename MatType>
+  template<bool UseWeights, bool UseDatasetInfo, typename MatType, typename ResponsesType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
-               const arma::Row<double>& responses,
+               const arma::Row<ResponsesType>& responses,
                const arma::rowvec& weights,
                const size_t numTrees,
                const size_t minimumLeafSize,
