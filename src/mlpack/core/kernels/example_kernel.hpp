@@ -90,24 +90,6 @@ class ExampleKernel
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 
   /**
-   * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
-   * for the two vectors.  In this case, because
-   * our simple example kernel has no internal parameters, we can declare the
-   * function static.  For a more complex example which cannot be declared
-   * static, see the GaussianKernel, which stores an internal parameter.
-   *
-   * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
-   *      expected).
-   * @tparam VecTypeB Type of second vector (arma::vec, arma::sp_vec).
-   * @param * (a) First vector.
-   * @param * (b) Second vector.
-   * @return the convolution integral value.
-   */
-  template<typename VecTypeA, typename VecTypeB>
-  static double ConvolutionIntegral(const VecTypeA& /* a */,
-                                    const VecTypeB& /* b */) { return 0; }
-
-  /**
    * Obtains the normalizing volume for the kernel with dimension $dimension$.
    * In this case, because our simple example kernel has no internal parameters,
    * we can declare the function static.  For a more complex example which
