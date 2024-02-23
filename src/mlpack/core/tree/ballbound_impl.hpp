@@ -14,7 +14,6 @@
 
 // In case it hasn't been included already.
 #include "ballbound.hpp"
-#include <mlpack/core/math/clamp.hpp>
 
 #include <string>
 
@@ -159,7 +158,7 @@ BallBound<MetricType, VecType>::MinDistance(
   if (radius < 0)
     return std::numeric_limits<ElemType>::max();
   else
-    return ClampNonNegative(metric->Evaluate(point, center) - radius);
+    return std::max(metric->Evaluate(point, center) - radius, (ElemType) 0.0);
 }
 
 /**
@@ -176,7 +175,7 @@ BallBound<MetricType, VecType>::MinDistance(const BallBound& other)
   {
     const ElemType delta = metric->Evaluate(center, other.center) - radius -
         other.radius;
-    return ClampNonNegative(delta);
+    return std::max(delta, (ElemType) 0.0);
   }
 }
 
@@ -228,8 +227,7 @@ BallBound<MetricType, VecType>::RangeDistance(
   else
   {
     const ElemType dist = metric->Evaluate(center, point);
-    return Range(ClampNonNegative(dist - radius),
-                                              dist + radius);
+    return Range(std::max(dist - radius, (ElemType) 0.0), dist + radius);
   }
 }
 
@@ -245,8 +243,7 @@ BallBound<MetricType, VecType>::RangeDistance(
   {
     const ElemType dist = metric->Evaluate(center, other.center);
     const ElemType sumradius = radius + other.radius;
-    return Range(ClampNonNegative(dist - sumradius),
-                                              dist + sumradius);
+    return Range(std::max(dist - sumradius, (ElemType) 0.0), dist + sumradius);
   }
 }
 

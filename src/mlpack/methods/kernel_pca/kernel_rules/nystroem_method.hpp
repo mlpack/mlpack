@@ -49,7 +49,7 @@ class NystroemKernelRule
     transformedData = G.t() * G;
 
     // Center the reconstructed approximation.
-    Center(transformedData, transformedData);
+    transformedData.each_col() -= arma::mean(transformedData, 1);
 
     // For PCA the data has to be centered, even if the data is centered. But
     // it is not guaranteed that the data, when mapped to the kernel space, is
