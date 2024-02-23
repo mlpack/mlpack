@@ -22,7 +22,6 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   size_t classes = arma::size(scores)[0];
   size_t n_examples = arma::size(scores)[1];
 
-
   // Checks if the no. of labels is 0.
   if (n_examples == 0)
   {
@@ -34,25 +33,25 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   arma::Row<size_t> class_labels = arma::unique(labels);
 
   // Computes AUC for the given positive score. 
-  if(classes == 1 && class_labels.n_elem <= 2)
+  if (classes == 1 && class_labels.n_elem <= 2)
   {
       return BinaryEvaluate(labels,scores);
   }
 
   // Checks if the no. of unique labels is greater than the classes in score.
-  if(class_labels.n_elem > classes)
+  if (class_labels.n_elem > classes)
   {
     throw std::invalid_argument(
         "ROCAUCScore::Evaluate(): "
         "number of unique labels in true labels cannot be greater "
-        "than the no. of scores per datapoint , ROCAUCScore is undefined");
+        "than the no. of scores per datapoint, ROCAUCScore is undefined");
   }
 
   arma::mat ones(size(arma::sum(scores, 0)),arma::fill::ones);
   bool allOnes = arma::approx_equal(arma::sum(scores, 0), ones, "absdiff", 1e-5);
   
-  // Checks if sum of all label probabilities is near zero.
-  if(!allOnes)
+  // Checks if sum of all label probabilities is near one.
+  if (!allOnes)
   {
     throw std::invalid_argument(
         "ROCAUCScore::Evaluate(): "
@@ -65,7 +64,7 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
   arma::rowvec binaryScore;   
   
   // Computes score for positive class and returns AUC.
-  if(classes == 2)
+  if (classes == 2)
   { 
     size_t positiveCol = class_labels(1) == PositiveClass;
     arma::rowvec binaryScore = scores.row(positiveCol);
@@ -74,10 +73,10 @@ double ROCAUCScore<PositiveClass>::Evaluate(const arma::Row<size_t>& labels,
 
   // Computes the class wise AUC in a One vs Rest manner.
   double auc = 0.0;
-  for(size_t class_label = 0; class_label < classes; class_label++)
+  for (size_t class_label = 0; class_label < classes; class_label++)
   {
     // Computes positive and 0 labels for class_label. 
-    if(PositiveClass != 0)
+    if (PositiveClass != 0)
     {
       binaryLabels = arma::conv_to<arma::Row<size_t>>::from
                     (labels == class_labels(class_label)) * PositiveClass;

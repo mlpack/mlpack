@@ -44,8 +44,9 @@ class ROCAUCScore
                          const arma::Row<double>& scores);
 
   /**
-   * Calculate average area under the ROC curve in One vs Rest.
-   *
+   * Calculate average area under the ROC curve in One vs Rest(Assumption : 
+   * classwise scores are arranged in increasing order of label values.).
+   * 
    * @param labels Ground truth (correct) labels (n_examples).
    * @param scores Probability scores of all labels (n_labels,n_examples).
    */
