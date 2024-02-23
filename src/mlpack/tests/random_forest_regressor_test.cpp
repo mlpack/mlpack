@@ -55,12 +55,12 @@ TEST_CASE("UnweightedLearnTest", "[RandomForestRegressorTest]")
   arma::Row<double> rfrPred;
   rfr.Predict(testData, rfrPred);
   // Calculate r2 score for random forest regressor.
-  double rfrR2Score = 1 - arma::sum(square(testResponses - rfrPred)) / arma::sum(square(testResponses - TestMean));
+  double rfrR2Score = 1 - arma::sum(square(testResponses - rfrPred)) / arma::sum(arma(testResponses - testMean));
 
   arma::Row<double> dtrPred;
   dtr.Predict(testData, dtrPred);
   // Calculate r2 score for decision tree regressor.
-  double dtrR2Score = 1 - arma::sum(square(testResponses - dtrPred)) / arma::sum(square(testResponses - TestMean));
+  double dtrR2Score = 1 - arma::sum(square(testResponses - dtrPred)) / arma::sum(arma(testResponses - testMean));
 
   REQUIRE(rfrR2Score > dtrR2Score);
 }
