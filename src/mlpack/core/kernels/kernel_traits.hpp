@@ -35,6 +35,14 @@ class KernelTraits
    * If true, then the kernel include a squared distance, ||x - y||^2 .
    */
   static const bool UsesSquaredDistance = false;
+  /**
+  * If true, then the kernel is symmetric: K(x, y) = K(y, x) for all x, y.
+  */
+  static const bool IsSymmetric = true;
+  /**
+  * If true, then the kernel is positive definite: K(x, x) >= 0 for all x.
+  */
+  static const bool IsPositiveDefinite = true;
 };
 
 } // namespace mlpack
