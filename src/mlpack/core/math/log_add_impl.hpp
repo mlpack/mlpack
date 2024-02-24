@@ -20,7 +20,7 @@ namespace mlpack {
  *
  * @f[
  * e^z = e^x + e^y
- * e^z = e^x(1 + e^{y-x})     = e^y(1 + e^{x-y})
+ * e^z = e^x(1 + e^{y-x})      = e^y(1 + e^{x-y})
  * z   = x + \log(1 + e^{y-x}) = y + \log(1 + e^{x-y})
  * @f]
  *
@@ -49,7 +49,7 @@ T LogAdd(T x, T y)
   if (std::isinf(d) || std::isinf(r))
     return r;
 
-  return r + log(1 + exp(d));
+  return r + std::log(1 + std::exp(d));
 }
 
 /**
@@ -65,7 +65,7 @@ typename T::elem_type AccuLog(const T& x)
   if (maxVal == -std::numeric_limits<typename T::elem_type>::infinity())
     return maxVal;
 
-  return maxVal + log(sum(exp(x - maxVal)));;
+  return maxVal + std::log(sum(exp(x - maxVal)));;
 }
 
 /**
@@ -83,8 +83,7 @@ void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y)
     // Compute the maximum in each column (treating y as a column too).
     maxs = max(max(x, 1), y);
 
-    y = maxs + log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1) +
-        exp(y - maxs));
+    y = maxs + log(sum(exp(x - repmat(maxs, 1, x.n_cols)), 1) + exp(y - maxs));
   }
   else
   {

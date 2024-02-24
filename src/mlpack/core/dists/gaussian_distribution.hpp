@@ -72,7 +72,7 @@ class GaussianDistribution
    */
   double Probability(const arma::vec& observation) const
   {
-    return exp(LogProbability(observation));
+    return std::exp(LogProbability(observation));
   }
 
   /**

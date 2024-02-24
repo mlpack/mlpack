@@ -189,7 +189,7 @@ T Trigamma(T x)
 
     T s = fabs(x) < fabs(z) ? sin(M_PI * x) : sin(M_PI * z);
 
-    return -Trigamma(z) + pow(M_PI, 2) / (s * s);
+    return -Trigamma(z) + std::pow(M_PI, 2) / (s * s);
   }
 
   if (x < 1)

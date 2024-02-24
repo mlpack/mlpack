@@ -25,7 +25,7 @@ inline double LaplaceDistribution::LogProbability(
 {
   // Evaluate the PDF of the Laplace distribution to determine
   // the log probability.
-  return -log(2. * scale) - arma::norm(observation - mean, 2) / scale;
+  return -std::log(2. * scale) - arma::norm(observation - mean, 2) / scale;
 }
 
 /**

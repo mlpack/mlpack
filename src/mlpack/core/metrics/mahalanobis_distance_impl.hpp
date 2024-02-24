@@ -43,7 +43,7 @@ double MahalanobisDistance<true>::Evaluate(const VecTypeA& a,
 
   arma::vec m = (a - b);
   arma::mat out = trans(m) * covariance * m; // 1x1;
-  return sqrt(out[0]);
+  return std::sqrt(out[0]);
 }
 
 // Serialize the Mahalanobis distance.
