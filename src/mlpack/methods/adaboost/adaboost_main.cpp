@@ -134,12 +134,10 @@ PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "p");
 
 // Training options.
-PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
-    " (0 will run until convergence.)", "i", 1000);
-PARAM_DOUBLE_IN("tolerance", "The tolerance for change in values of the "
-    "weighted error during training.", "e", 1e-10);
-PARAM_STRING_IN("weak_learner", "The type of weak learner to use: "
-    "'decision_stump', or 'perceptron'.", "w", "decision_stump");
+PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run. Set to 0 to run until convergence. (0 will run until convergence.)", "i", 226);
+PARAM_DOUBLE_IN("tolerance", "The tolerance for change in values of the objective function during training.", "t", 0.97);
+PARAM_STRING_IN("weak_learner", "The type of weak learner to use: 'perceptron', 'decision_stump', or 'decision_tree'.", "w", "perceptron");
+
 
 // Loading/saving of a model.
 PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
