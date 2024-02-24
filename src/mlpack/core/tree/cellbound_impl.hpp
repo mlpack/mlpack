@@ -865,7 +865,7 @@ CellBound<MetricType, ElemType>::RangeDistance(
           (ElemType) std::pow((double) minLoSum, 1.0 /
               (double) MetricType::Power),
           (ElemType) std::pow((double) maxHiSum, 1.0 /
-            (double) MetricType::Power));
+              (double) MetricType::Power));
     }
   }
 
