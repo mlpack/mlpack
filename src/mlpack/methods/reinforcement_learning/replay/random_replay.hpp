@@ -186,7 +186,7 @@ class RandomReplay
               arma::irowvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
-    arma::uvec sampledIndices = Randi<arma::uvec>(
+    arma::uvec sampledIndices = randi<arma::uvec>(
         batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);

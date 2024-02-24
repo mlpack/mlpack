@@ -27,7 +27,7 @@ inline MatrixCompletion::MatrixCompletion(
     n(n),
     indices(indices),
     values(values),
-    sdp(indices.n_cols, 0, Randu<arma::mat>(m + n, r))
+    sdp(indices.n_cols, 0, randu<arma::mat>(m + n, r))
 {
   CheckValues();
   InitSDP();
@@ -59,7 +59,7 @@ inline MatrixCompletion::MatrixCompletion(
     indices(indices),
     values(values),
     sdp(indices.n_cols, 0,
-        Randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
+        randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
 {
   CheckValues();
   InitSDP();

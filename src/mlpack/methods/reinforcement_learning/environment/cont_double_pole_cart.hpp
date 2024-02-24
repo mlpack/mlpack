@@ -282,7 +282,7 @@ class ContinuousDoublePoleCart
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State((Randu<arma::vec>(6) - 0.5) / 10.0);
+    return State((randu<arma::vec>(6) - 0.5) / 10.0);
   }
 
   /**
