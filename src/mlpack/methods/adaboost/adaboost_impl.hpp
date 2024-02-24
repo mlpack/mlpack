@@ -462,7 +462,7 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
 
     // Our goal is to find alphat which minimizes or approximately minimizes the
     // value of Z as a function of alpha.
-    alphat = 0.5 * log((1 + rt) / (1 - rt));
+    alphat = 0.5 * std::log((1 + rt) / (1 - rt));
 
     alpha.push_back(alphat);
     wl.push_back(w);
@@ -470,7 +470,7 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
     // Now start modifying the weights.
     for (size_t j = 0; j < D.n_cols; ++j)
     {
-      const ElemType expo = exp(alphat);
+      const ElemType expo = std::exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
         for (size_t k = 0; k < D.n_rows; ++k)

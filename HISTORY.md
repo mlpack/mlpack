@@ -9,6 +9,8 @@
 
   * Remove `round()` implementation for old MSVC compilers (#3570).
 
+  * Added inline plugin to the R bindings to allow for other R packages to link to headers (#3626, h/t @cgiachalis).
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).

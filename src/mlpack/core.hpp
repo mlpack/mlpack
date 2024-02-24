@@ -37,6 +37,7 @@
 // Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/ens_traits.hpp>
+#include <mlpack/core/util/using.hpp>
 #include <mlpack/core/util/conv_to.hpp>
 #include <mlpack/core/util/min_max.hpp>
 #include <mlpack/core/util/log.hpp>

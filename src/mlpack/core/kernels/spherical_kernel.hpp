@@ -44,45 +44,11 @@ class SphericalKernel
     return (SquaredEuclideanDistance::Evaluate(a, b) <= bandwidthSquared) ?
         1.0 : 0.0;
   }
-  /**
-   * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
-   * for the two vectors.
-   *
-   * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
-   *       expected).
-   * @tparam VecTypeB Type of second vector.
-   * @param a First vector.
-   * @param b Second vector.
-   * @return The convolution integral value.
-   */
-  template<typename VecTypeA, typename VecTypeB>
-  double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b) const
-  {
-    double distance = sqrt(SquaredEuclideanDistance::Evaluate(a, b));
-    if (distance >= 2.0 * bandwidth)
-    {
-      return 0.0;
-    }
-    double volumeSquared = pow(Normalizer(a.n_rows), 2.0);
 
-    switch (a.n_rows)
-    {
-      case 1:
-        return 1.0 / volumeSquared * (2.0 * bandwidth - distance);
-      case 2:
-        return 1.0 / volumeSquared *
-          (2.0 * bandwidth * bandwidth * acos(distance/(2.0 * bandwidth)) -
-          distance / 4.0 * sqrt(4.0*bandwidth*bandwidth-distance*distance));
-      default:
-        Log::Fatal << "The spherical kernel does not support convolution\
-          integrals above dimension two, yet..." << std::endl;
-        return -1.0;
-    }
-  }
   double Normalizer(size_t dimension) const
   {
-    return pow(bandwidth, (double) dimension) * pow(M_PI, dimension / 2.0) /
-        std::tgamma(dimension / 2.0 + 1.0);
+    return std::pow(bandwidth, (double) dimension) *
+        std::pow(M_PI, dimension / 2.0) / std::tgamma(dimension / 2.0 + 1.0);
   }
 
   /**
@@ -94,6 +60,7 @@ class SphericalKernel
   {
     return (t <= bandwidth) ? 1.0 : 0.0;
   }
+
   double Gradient(double t)
   {
     return t == bandwidth ? arma::datum::nan : 0.0;

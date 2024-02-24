@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
-#define MLPACK_METHODS_NN_COLUMNS_TO_BLOCKS_HPP
+#ifndef MLPACK_CORE_MATH_COLUMNS_TO_BLOCKS_HPP
+#define MLPACK_CORE_MATH_COLUMNS_TO_BLOCKS_HPP
 
 #include <mlpack/prereqs.hpp>
 

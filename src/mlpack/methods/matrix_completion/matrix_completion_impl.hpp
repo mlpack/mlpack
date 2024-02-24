@@ -119,7 +119,7 @@ inline size_t MatrixCompletion::DefaultRank(const size_t m,
   //   Pablo Moscato, Michael Norman, and Gabor Pataki.
   //   Math Oper. Res., 23(2). 1998.
   const size_t mpn = m + n;
-  float r = 0.5 + sqrt(0.25 + 2 * p);
+  float r = 0.5 + std::sqrt(0.25 + 2 * p);
   if (ceil(r) > mpn)
     r = mpn; // An upper bound on the dimension.
   return ceil(r);

@@ -79,7 +79,7 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
-    W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
+    W.imbue( [&]() { return std::sqrt(variance) * arma::randn(); } );
   }
 
   /**
@@ -102,7 +102,7 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
-    W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
+    W.imbue( [&]() { return std::sqrt(variance) * arma::randn(); } );
   }
 
   /**

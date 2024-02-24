@@ -19,7 +19,7 @@ namespace mlpack {
 /**
  * Computes the inverse erf function using the rational approximation from
  * Numerical Recipes.
- * Code accompanying the article "Approximating the erfinv function" in 
+ * Code accompanying the article "Approximating the erfinv function" in
  * GPU Computing Gems, Volume 2.
  *
  * @param x Input value.
@@ -28,9 +28,9 @@ inline double ErfInverse(double x)
 {
   double w, p;
 
-  w = -log((1.0 - x) * (1.0 + x));
+  w = -std::log((1.0 - x) * (1.0 + x));
 
-  if (w < 6.250000) 
+  if (w < 6.250000)
   {
     w = w - 3.125000;
     p = -3.6444120640178196996e-21;
@@ -56,10 +56,10 @@ inline double ErfInverse(double x)
     p = -0.0060336708714301490533 + p * w;
     p = 0.24015818242558961693 + p * w;
     p = 1.6536545626831027356 + p * w;
-  } 
-  else if (w < 16.000000) 
+  }
+  else if (w < 16.000000)
   {
-    w = sqrt(w) - 3.250000;
+    w = std::sqrt(w) - 3.250000;
     p = 2.2137376921775787049e-09;
     p = 9.0756561938885390979e-08 + p * w;
     p = -2.7517406297064545428e-07 + p * w;
@@ -79,10 +79,10 @@ inline double ErfInverse(double x)
     p = 0.005370914553590063617 + p * w;
     p = 1.0052589676941592334 + p * w;
     p = 3.0838856104922207635 + p * w;
-  } 
-  else 
+  }
+  else
   {
-    w = sqrt(w) - 5.000000;
+    w = std::sqrt(w) - 5.000000;
     p = -2.7109920616438573243e-11;
     p = -2.5556418169965252055e-10 + p * w;
     p = 1.5076572693500548083e-09 + p * w;
@@ -105,7 +105,7 @@ inline double ErfInverse(double x)
 }
 
 /**
- * Computes the quantile function of Guassian distribution at given probability.
+ * Computes the quantile function of Gaussian distribution at given probability.
  *
  * @param p Probability value.
  * @param mu Mean of the distribution. (Default 0)

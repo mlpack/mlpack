@@ -737,7 +737,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
             solve(trimatl(trans(matUtriCholFactor)), s));
 
-        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
       }
       else
@@ -758,7 +758,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
             solve(trimatl(trans(matUtriCholFactor)), s));
 
-        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
       }
     }
@@ -777,7 +777,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
       if (solvedOk)
       {
         // Ok, no singularity.
-        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }
       else
@@ -799,7 +799,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
             arma::ones<MatType>(activeSet.size(), 1));
-        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }
     }
@@ -1201,7 +1201,7 @@ inline void LARS<ModelMatType>::CholeskyInsert(const VecType& newX,
     matUtriCholFactor.set_size(1, 1);
 
     if (elasticNet)
-      matUtriCholFactor(0, 0) = sqrt(dot(newX, newX) + lambda2);
+      matUtriCholFactor(0, 0) = std::sqrt(dot(newX, newX) + lambda2);
     else
       matUtriCholFactor(0, 0) = norm(newX, 2);
   }
@@ -1225,9 +1225,9 @@ inline void LARS<ModelMatType>::CholeskyInsert(
     matUtriCholFactor.set_size(1, 1);
 
     if (elasticNet)
-      matUtriCholFactor(0, 0) = sqrt(sqNormNewX + lambda2);
+      matUtriCholFactor(0, 0) = std::sqrt(sqNormNewX + lambda2);
     else
-      matUtriCholFactor(0, 0) = sqrt(sqNormNewX);
+      matUtriCholFactor(0, 0) = std::sqrt(sqNormNewX);
   }
   else
   {
@@ -1242,8 +1242,8 @@ inline void LARS<ModelMatType>::CholeskyInsert(
     matNewR(arma::span(0, n - 1), arma::span(0, n - 1)) = matUtriCholFactor;
     matNewR(arma::span(0, n - 1), n) = matUtriCholFactork;
     matNewR(n, arma::span(0, n - 1)).fill(0.0);
-    matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork,
-                                          matUtriCholFactork));
+    matNewR(n, n) = std::sqrt(sqNormNewX - dot(matUtriCholFactork,
+                                               matUtriCholFactork));
 
     matUtriCholFactor = std::move(matNewR);
   }

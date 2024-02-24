@@ -113,22 +113,21 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   }
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
-  std::vector<size_t> inactiveAtoms;
-
-  for (size_t j = 0; j < atoms; ++j)
+  std::vector<arma::uword> activeAtoms;
+  for (arma::uword j = 0; j < atoms; ++j)
   {
-    if (accu(codes.row(j) != 0) == 0)
-      inactiveAtoms.push_back(j);
+    if (arma::any(codes.row(j) != 0))
+      activeAtoms.push_back(j);
   }
 
-  const size_t nInactiveAtoms = inactiveAtoms.size();
-  const size_t nActiveAtoms = atoms - nInactiveAtoms;
+  const size_t nActiveAtoms = activeAtoms.size();
+  const size_t nInactiveAtoms = atoms - nActiveAtoms;
 
   // Efficient construction of Z restricted to active atoms.
   arma::mat matActiveZ;
   if (nInactiveAtoms > 0)
   {
-    RemoveRows(codes, inactiveAtoms, matActiveZ);
+    matActiveZ = codes.rows(arma::uvec(activeAtoms));
   }
 
   if (nInactiveAtoms > 0)
@@ -163,7 +162,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   arma::mat codesXT;
   arma::mat codesZT;
 
-  if (inactiveAtoms.empty())
+  if (nInactiveAtoms == 0)
   {
     codesXT = codes * trans(data);
     codesZT = codes * trans(codes);
@@ -228,7 +227,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
       converged = true;
   }
 
-  if (inactiveAtoms.empty())
+  if (nInactiveAtoms == 0)
   {
     // Directly update dictionary.
     dictionary = trans(solve(codesZT + diagmat(dualVars), codesXT));
@@ -239,10 +238,11 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
         diagmat(dualVars), codesXT));
 
     // Update all atoms.
-    size_t currentInactiveIndex = 0;
+    size_t currentActiveIndex = 0;
     for (size_t i = 0; i < atoms; ++i)
     {
-      if (inactiveAtoms[currentInactiveIndex] == i)
+      if (currentActiveIndex >= activeAtoms.size() ||
+          activeAtoms[currentActiveIndex] != i)
       {
         // This atom is inactive.  Reinitialize it randomly.
         dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
@@ -250,14 +250,14 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
                              data.col(RandInt(data.n_cols)));
 
         dictionary.col(i) /= norm(dictionary.col(i), 2);
-
-        // Increment inactive index counter.
-        ++currentInactiveIndex;
       }
       else
       {
         // Update estimate.
-        dictionary.col(i) = activeDictionary.col(i - currentInactiveIndex);
+        dictionary.col(i) = activeDictionary.col(currentActiveIndex);
+
+        // Increment active index counter.
+        ++currentActiveIndex;
       }
     }
   }
