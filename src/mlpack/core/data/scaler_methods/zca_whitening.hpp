@@ -13,7 +13,6 @@
 #define MLPACK_CORE_DATA_ZCA_WHITENING_SCALE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
 
 namespace mlpack {

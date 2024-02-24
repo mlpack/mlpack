@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 #include "rp_tree_max_split.hpp"
 #include <mlpack/core/tree/perform_split.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
 
 namespace mlpack {
 
