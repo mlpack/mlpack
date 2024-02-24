@@ -161,7 +161,7 @@ class DiscreteDistribution
   double LogProbability(const arma::vec& observation) const
   {
     // TODO: consider storing log probabilities instead?
-    return log(Probability(observation));
+    return std::log(Probability(observation));
   }
 
   /**
@@ -190,7 +190,7 @@ class DiscreteDistribution
   {
     logProbabilities.set_size(x.n_cols);
     for (size_t i = 0; i < x.n_cols; ++i)
-      logProbabilities(i) = log(Probability(x.unsafe_col(i)));
+      logProbabilities(i) = std::log(Probability(x.unsafe_col(i)));
   }
 
   /**

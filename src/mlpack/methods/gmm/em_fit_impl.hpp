@@ -92,7 +92,7 @@ Estimate(const arma::mat& observations,
       // Gaussian.  First we make an alias of the condLogProb vector.
       arma::vec condLogProbAlias = condLogProb.unsafe_col(i);
       dists[i].LogProbability(observations, condLogProbAlias);
-      condLogProbAlias += log(weights[i]);
+      condLogProbAlias += std::log(weights[i]);
     }
 
     // Normalize row-wise.
@@ -196,7 +196,7 @@ Estimate(const arma::mat& observations,
       // Gaussian.  First we make an alias of the condLogProb vector.
       arma::vec condLogProbAlias = condLogProb.unsafe_col(i);
       dists[i].LogProbability(observations, condLogProbAlias);
-      condLogProbAlias += log(weights[i]);
+      condLogProbAlias += std::log(weights[i]);
     }
 
     // Normalize row-wise.
@@ -386,7 +386,7 @@ LogLikelihood(const arma::mat& observations,
   for (size_t i = 0; i < dists.size(); ++i)
   {
     dists[i].LogProbability(observations, logPhis);
-    logLikelihoods.row(i) = log(weights(i)) + trans(logPhis);
+    logLikelihoods.row(i) = std::log(weights(i)) + trans(logPhis);
   }
   // Now sum over every point.
   for (size_t j = 0; j < observations.n_cols; ++j)

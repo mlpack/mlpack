@@ -60,7 +60,7 @@ class LaplacianKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(-EuclideanDistance::Evaluate(a, b) / bandwidth);
+    return std::exp(-EuclideanDistance::Evaluate(a, b) / bandwidth);
   }
 
   /**
@@ -74,7 +74,7 @@ class LaplacianKernel
   double Evaluate(const double t) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(-t / bandwidth);
+    return std::exp(-t / bandwidth);
   }
 
   /**
@@ -87,7 +87,7 @@ class LaplacianKernel
    *     constructor.
    */
   double Gradient(const double t) const  {
-    return exp(-t / bandwidth) / -bandwidth;
+    return std::exp(-t / bandwidth) / -bandwidth;
   }
 
   //! Get the bandwidth.

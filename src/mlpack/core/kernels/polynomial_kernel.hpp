@@ -53,7 +53,7 @@ class PolynomialKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
-    return pow((dot(a, b) + offset), degree);
+    return std::pow((dot(a, b) + offset), degree);
   }
 
   //! Get the degree of the polynomial.

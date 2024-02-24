@@ -296,7 +296,7 @@ BayesianLinearRegression<ModelMatType>::RMSE(
 {
   typename GetDenseRowType<ResponsesType>::type predictions;
   Predict(data, predictions);
-  return sqrt(mean(square(responses - predictions)));
+  return std::sqrt(mean(square(responses - predictions)));
 }
 
 template<typename ModelMatType>
