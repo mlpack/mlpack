@@ -136,7 +136,7 @@ PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run. Set to 0 to run until convergence. (0 will run until convergence.)", "i", 226);
 PARAM_DOUBLE_IN("tolerance", "The tolerance for change in values of the objective function during training.", "t", 0.97);
-PARAM_STRING_IN("weak_learner", "The type of weak learner to use: 'perceptron', 'decision_stump', or 'decision_tree'.", "w", "perceptron");
+PARAM_STRING_IN("weak_learner",g"The type of weak learner to use: 'perceptron', 'decision_stump', or  'decision_tree'.", "w", "perceptron");
 
 
 // Loading/saving of a model.
