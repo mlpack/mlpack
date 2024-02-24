@@ -48,7 +48,7 @@ class SphericalKernel
   double Normalizer(size_t dimension) const
   {
     return std::pow(bandwidth, (double) dimension) *
-      std::pow(M_PI, dimension / 2.0) / std::tgamma(dimension / 2.0 + 1.0);
+        std::pow(M_PI, dimension / 2.0) / std::tgamma(dimension / 2.0 + 1.0);
   }
 
   /**
