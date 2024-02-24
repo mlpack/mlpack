@@ -519,7 +519,8 @@ HRectBound<MetricType, ElemType>::RangeDistance(
     {
       return RangeType<ElemType>(
           (ElemType) std::pow((double) loSum, 1.0 / (double) MetricType::Power),
-          (ElemType) std::pow((double) hiSum, 1.0 / (double) MetricType::Power));
+          (ElemType) std::pow((double) hiSum,
+              1.0 / (double) MetricType::Power));
     }
   }
   else
