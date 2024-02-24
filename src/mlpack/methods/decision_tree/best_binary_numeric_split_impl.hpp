@@ -112,16 +112,16 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
    * point. See Fayyad and Irani (1992) for more details on eligible 
    * cut points.
    */
-  bool class_changed = false;
+  bool classChanged = false;
   bool repeat = false; 
-  bool eligible_cut = false; 
+  bool eligibleCut = false; 
 
   for (size_t index = minimum; index < data.n_elem - minimum; ++index)
   {
-    class_changed = (sortedLabels[index - 1] != sortedLabels[index]
-        || (repeat && class_changed));
+    classChanged = (sortedLabels[index - 1] != sortedLabels[index]
+        || (repeat && classChanged));
     repeat = data[sortedIndices[index - 1]] == data[sortedIndices[index]];
-    eligible_cut = !repeat && class_changed;
+    eligibleCut = !repeat && classChanged;
     
     // Update class weight sums or counts.
     if (UseWeights)
@@ -136,7 +136,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       --classCounts(sortedLabels[index - 1], 1);
       ++classCounts(sortedLabels[index - 1], 0);
     }
-    if (!eligible_cut)
+    if (!eligibleCut)
       continue;
  
     // Calculate the gain for the left and right child.  Only use weights if
