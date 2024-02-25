@@ -2,8 +2,8 @@
 	"name": "MLPACK C++ Dev Container",
 	"build": {
 		"dockerfile": "Dockerfile",
-    // Update 'VARIANT' to pick a new MLPACK base image from
-    // https://hub.docker.com/u/mlpack
+		// Update 'VARIANT' to pick a new MLPACK base image from
+		// https://hub.docker.com/u/mlpack
 		"args": { "VARIANT": "jenkins-amd64-debian" }
 	},
 	// Configure tool-specific properties.
@@ -12,16 +12,16 @@
 		"vscode": {
 			"settings": {},
 			"extensions": [
-        "twxs.cmake",
-        "ms-vscode.cpptools",
-        "ms-vscode.cmake-tools",
-        "llvm-vs-code-extensions.vscode-clangd",
+				"twxs.cmake",
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+				"llvm-vs-code-extensions.vscode-clangd",
 				"streetsidesoftware.code-spell-checker"
 			]
 		}
 	}
 
 	// Switch to using root as a remote user
-  // details: https://aka.ms/dev-containers-non-root.
+	// details: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
