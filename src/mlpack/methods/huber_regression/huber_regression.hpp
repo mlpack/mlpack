@@ -13,43 +13,9 @@
 #define MLPACK_METHODS_HUBER_REGRESSION_HUBER_REGRESSION_HPP
 
 #include <mlpack/core.hpp>
+#include "huber_regression_function.hpp"
 
 namespace mlpack {
-
-template<typename MatType = arma::mat, typename VecType = arma::vec>
-class HuberLoss
-{
- public:
-  /**
-   * Construct the Huber loss with the given data and delta value.
-   *
-   * @param X Input data (matrix).
-   * @param y Responses (vector).
-   * @param delta Delta value for Huber loss.
-   */
-  HuberLoss(const MatType& X, const VecType& y, const double delta);
-
-  /**
-   * Evaluate the Huber loss for the given parameters.
-   *
-   * @param theta Regression coefficients.
-   * @return Loss value.
-   */
-  double Evaluate(const MatType& theta);
-
-  /**
-   * Compute the gradient of the Huber loss for the given parameters.
-   *
-   * @param theta Regression coefficients.
-   * @param gradient Output gradient.
-   */
-  void Gradient(const MatType& theta, MatType& gradient);
-
- private:
-  const MatType& X;    // Input data.
-  const VecType& y;    // Responses.
-  const double delta;    // Delta value for Huber loss.
-};
 
 template<typename MatType = arma::mat, typename VecType = arma::vec>
 class HuberRegressor
@@ -58,17 +24,17 @@ class HuberRegressor
   /**
    * Construct the Huber Regressor with default parameters.
    *
-   * @param epsilon Epsilon value for the Huber Regressor.
+   * @param delta delta value for the Huber Regressor.
    * @param maxIter Maximum number of iterations for optimization.
    * @param tol Tolerance for convergence.
+   * @param X Input data (matrix).
+   * @param y Responses (vector).
    */
-  HuberRegressor(double epsilon = 1.35, size_t maxIter = 100, double tol = 1e-5);
+  HuberRegressor(const MatType& X, const VecType& y,double delta = 1.35, size_t maxIter = 100, double tol = 1e-5);
 
   /**
    * Fit the Huber Regressor to the given data.
    *
-   * @param X Input data (matrix).
-   * @param y Responses (vector).
    */
   void Train(const MatType& X, const VecType& y);
 
@@ -88,7 +54,7 @@ class HuberRegressor
   VecType getCoef() const;
 
  private:
-  double epsilon;        // Epsilon value for the Huber Regressor.
+  double delta;        // delta value for the Huber Regressor.
   size_t maxIter;        // Maximum number of iterations for optimization.
   double tol;            // Tolerance for convergence.
   VecType coef;          // Coefficients of the model.
