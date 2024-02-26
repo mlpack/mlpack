@@ -697,7 +697,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         // This is equivalent to the above 5 lines.
         arma::Col<ElemType> newGramCol = matGram->elem(
             changeInd * dataRef.n_cols +
-            arma::conv_to<arma::uvec>::from(activeSet));
+            ConvTo<arma::uvec>::From(activeSet));
 
         CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
       }
@@ -737,7 +737,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
             solve(trimatl(trans(matUtriCholFactor)), s));
 
-        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
       }
       else
@@ -758,7 +758,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
             solve(trimatl(trans(matUtriCholFactor)), s));
 
-        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
       }
     }
@@ -777,7 +777,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
       if (solvedOk)
       {
         // Ok, no singularity.
-        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }
       else
@@ -799,7 +799,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
         solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
             arma::ones<MatType>(activeSet.size(), 1));
-        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }
     }
@@ -1084,7 +1084,7 @@ inline void LARS<ModelMatType>::SelectBeta(
       // However, we may need to compute the active set.
       if (i != lambdaPath.size() - 1)
       {
-        selectedActiveSet = arma::conv_to<std::vector<size_t>>::from(
+        selectedActiveSet = ConvTo<std::vector<size_t>>::From(
             arma::find(betaPath[i] != 0));
       }
 
@@ -1136,7 +1136,7 @@ inline void LARS<ModelMatType>::SelectBeta(
   }
 
   // Compute the active set of variables.
-  selectedActiveSet = arma::conv_to<std::vector<size_t>>::from(
+  selectedActiveSet = ConvTo<std::vector<size_t>>::From(
       arma::find(selectedBeta != 0));
 }
 
@@ -1201,7 +1201,7 @@ inline void LARS<ModelMatType>::CholeskyInsert(const VecType& newX,
     matUtriCholFactor.set_size(1, 1);
 
     if (elasticNet)
-      matUtriCholFactor(0, 0) = sqrt(dot(newX, newX) + lambda2);
+      matUtriCholFactor(0, 0) = std::sqrt(dot(newX, newX) + lambda2);
     else
       matUtriCholFactor(0, 0) = norm(newX, 2);
   }
@@ -1225,9 +1225,9 @@ inline void LARS<ModelMatType>::CholeskyInsert(
     matUtriCholFactor.set_size(1, 1);
 
     if (elasticNet)
-      matUtriCholFactor(0, 0) = sqrt(sqNormNewX + lambda2);
+      matUtriCholFactor(0, 0) = std::sqrt(sqNormNewX + lambda2);
     else
-      matUtriCholFactor(0, 0) = sqrt(sqNormNewX);
+      matUtriCholFactor(0, 0) = std::sqrt(sqNormNewX);
   }
   else
   {
@@ -1242,8 +1242,8 @@ inline void LARS<ModelMatType>::CholeskyInsert(
     matNewR(arma::span(0, n - 1), arma::span(0, n - 1)) = matUtriCholFactor;
     matNewR(arma::span(0, n - 1), n) = matUtriCholFactork;
     matNewR(n, arma::span(0, n - 1)).fill(0.0);
-    matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork,
-                                          matUtriCholFactork));
+    matNewR(n, n) = std::sqrt(sqNormNewX - dot(matUtriCholFactork,
+                                               matUtriCholFactork));
 
     matUtriCholFactor = std::move(matNewR);
   }
@@ -1346,7 +1346,7 @@ void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
       // Older versions stored matGramInternal as type arma::mat.
       arma::mat matGramInternalTmp;
       ar(cereal::make_nvp("matGramInternal", matGramInternalTmp));
-      matGramInternal = arma::conv_to<ModelMatType>::from(matGramInternalTmp);
+      matGramInternal = ConvTo<ModelMatType>::From(matGramInternalTmp);
     }
     else
     {
@@ -1366,7 +1366,7 @@ void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
     // double/arma::mat and converts as needed.
     arma::mat matUtriCholFactorTmp;
     ar(cereal::make_nvp("matUtriCholFactor", matUtriCholFactorTmp));
-    matUtriCholFactor = arma::conv_to<ModelMatType>::from(matUtriCholFactorTmp);
+    matUtriCholFactor = ConvTo<ModelMatType>::From(matUtriCholFactorTmp);
 
     ar(CEREAL_NVP(useCholesky));
     ar(CEREAL_NVP(lasso));
@@ -1390,7 +1390,7 @@ void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
     ar(cereal::make_nvp("betaPath", betaPathTmp));
     betaPath.resize(betaPathTmp.size());
     for (size_t i = 0; i < betaPathTmp.size(); ++i)
-      betaPath[i] = arma::conv_to<ModelColType>::from(betaPathTmp[i]);
+      betaPath[i] = ConvTo<ModelColType>::From(betaPathTmp[i]);
 
     std::vector<double> lambdaPathTmp;
     ar(cereal::make_nvp("lambdaPath", lambdaPathTmp));

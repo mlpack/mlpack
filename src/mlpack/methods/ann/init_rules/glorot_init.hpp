@@ -137,7 +137,7 @@ inline void GlorotInitializationType<true>::Initialize(MatType& W,
     W.set_size(rows, cols);
 
   // Limit of distribution.
-  double a = sqrt(6) / sqrt(rows + cols);
+  double a = std::sqrt(6) / std::sqrt(rows + cols);
   RandomInitialization randomInit(-a, a);
   randomInit.Initialize(W, rows, cols);
 }
@@ -164,7 +164,7 @@ inline void GlorotInitializationType<true>::Initialize(MatType& W,
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
   // Limit of distribution.
-  double a = sqrt(6) / sqrt(W.n_rows + W.n_cols);
+  double a = std::sqrt(6) / std::sqrt(W.n_rows + W.n_cols);
   RandomInitialization randomInit(-a, a);
   randomInit.Initialize(W);
 }

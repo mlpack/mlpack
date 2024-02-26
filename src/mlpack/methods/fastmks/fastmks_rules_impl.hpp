@@ -36,13 +36,13 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
   // Precompute each self-kernel.
   queryKernels.set_size(querySet.n_cols);
   for (size_t i = 0; i < querySet.n_cols; ++i)
-    queryKernels[i] = sqrt(kernel.Evaluate(querySet.col(i),
-                                           querySet.col(i)));
+    queryKernels[i] = std::sqrt(kernel.Evaluate(querySet.col(i),
+                                                querySet.col(i)));
 
   referenceKernels.set_size(referenceSet.n_cols);
   for (size_t i = 0; i < referenceSet.n_cols; ++i)
-    referenceKernels[i] = sqrt(kernel.Evaluate(referenceSet.col(i),
-                                               referenceSet.col(i)));
+    referenceKernels[i] = std::sqrt(kernel.Evaluate(referenceSet.col(i),
+                                                    referenceSet.col(i)));
 
   // Set to invalid memory, so that the first node combination does not try to
   // dereference null pointers.
@@ -141,9 +141,10 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
       const double delta = (1 - 0.5 * squaredDist);
       if (lastKernel <= delta)
       {
-        const double gamma = combinedDistBound * sqrt(1 - 0.25 * squaredDist);
+        const double gamma = combinedDistBound * 
+            std::sqrt(1 - 0.25 * squaredDist);
         maxKernelBound = lastKernel * delta +
-             gamma * sqrt(1 - std::pow(lastKernel, 2.0));
+             gamma * std::sqrt(1 - std::pow(lastKernel, 2.0));
       }
       else
       {
@@ -195,9 +196,9 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
     const double delta = (1 - 0.5 * squaredDist);
     if (kernelEval <= delta)
     {
-      const double gamma = furthestDist * sqrt(1 - 0.25 * squaredDist);
+      const double gamma = furthestDist * std::sqrt(1 - 0.25 * squaredDist);
       maxKernel = kernelEval * delta +
-          gamma * sqrt(1 - std::pow(kernelEval, 2.0));
+          gamma * std::sqrt(1 - std::pow(kernelEval, 2.0));
     }
     else
     {
@@ -370,12 +371,13 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     if (kernelEval <= (1 - 0.5 * bothSqDist))
     {
       const double queryDelta = (1 - 0.5 * querySqDist);
-      const double queryGamma = queryDescDist * sqrt(1 - 0.25 * querySqDist);
+      const double queryGamma = queryDescDist * 
+          std::sqrt(1 - 0.25 * querySqDist);
       const double refDelta = (1 - 0.5 * refSqDist);
-      const double refGamma = refDescDist * sqrt(1 - 0.25 * refSqDist);
+      const double refGamma = refDescDist * std::sqrt(1 - 0.25 * refSqDist);
 
       maxKernel = kernelEval * (queryDelta * refDelta - queryGamma * refGamma) +
-          sqrt(1 - std::pow(kernelEval, 2.0)) *
+          std::sqrt(1 - std::pow(kernelEval, 2.0)) *
           (queryGamma * refDelta + queryDelta * refGamma);
     }
     else

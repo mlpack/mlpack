@@ -45,10 +45,12 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
 {
   const size_t maxNumSamples = 100;
   const size_t numSamples = std::min(maxNumSamples, count);
-  arma::uvec samples;
-
   // Get no more than numSamples distinct samples.
-  ObtainDistinctSamples(begin, begin + count, numSamples, samples);
+  arma::uvec samples;
+  if (numSamples < count)
+    samples = begin + arma::randperm(count, numSamples);
+  else
+    samples = begin + arma::linspace<arma::uvec>(0, count - 1, count);
 
   arma::Col<ElemType> values(samples.n_elem);
 

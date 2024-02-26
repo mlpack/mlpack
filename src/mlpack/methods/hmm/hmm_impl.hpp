@@ -193,7 +193,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
         // Add to list of emission observations, for Distribution::Train().
         for (size_t j = 0; j < logTransition.n_cols; ++j)
-          emissionProb[j][sumTime] = exp(stateLogProb(j, t));
+          emissionProb[j][sumTime] = std::exp(stateLogProb(j, t));
         emissionList.col(sumTime) = dataSeq[seq].col(t);
         sumTime++;
       }
@@ -226,7 +226,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       if (std::isfinite(sum))
         logTransition.col(i) -= sum;
       else
-        logTransition.col(i).fill(-log((double) logTransition.n_rows));
+        logTransition.col(i).fill(-std::log((double) logTransition.n_rows));
     }
 
     initialProxy = exp(logInitial);
@@ -463,7 +463,7 @@ void HMM<Distribution>::Generate(const size_t length,
     double probSum = 0;
     for (size_t st = 0; st < logTransition.n_rows; st++)
     {
-      probSum += exp(logTransition(st, stateSequence[t - 1]));
+      probSum += std::exp(logTransition(st, stateSequence[t - 1]));
       if (randValue <= probSum)
       {
         stateSequence[t] = st;
