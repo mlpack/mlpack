@@ -19,7 +19,7 @@ steps:
 
 # Get cereal
 - bash: |
-    curl -O -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
+    curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
     tar -xvzf cereal-1.3.2.tar.gz
   displayName: 'Download cereal'
 
