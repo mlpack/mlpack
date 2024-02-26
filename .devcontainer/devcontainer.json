@@ -2,7 +2,7 @@
 	"name": "mlpack C++ Dev Container",
 	"build": {
 		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick a new MLPACK base image from
+		// Update 'VARIANT' to pick a new mlpack base image from
 		// https://hub.docker.com/u/mlpack
 		"args": { "VARIANT": "jenkins-amd64-debian" }
 	},
