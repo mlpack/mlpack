@@ -163,10 +163,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
       timer.Start("load_responses");
       responses = params.Get<rowvec>("training_responses");
       timer.Stop("load_responses");
-
-      // Use the utility to check if regressors and responses have the same number of columns
-      util::CheckSameSizes(regressors, responses, "Linear Regression",
-                    "responses", false, true);
+    
+      if (responses.n_cols != regressors.n_cols)
+      {
+        Log::Fatal << "The responses must have the same number of columns "
+            "as the training set." << endl;
+      }
     }
 
     timer.Start("regression");
