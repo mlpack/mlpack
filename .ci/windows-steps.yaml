@@ -35,7 +35,7 @@ steps:
     -DLAPACK_LIBRARY:FILEPATH=$(Agent.ToolsDirectory)/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
     -DCMAKE_PREFIX:FILEPATH=../../armadillo \
     -DBUILD_SHARED_LIBS=OFF \
-    -DCMAKE_BUILD_TYPE=Release .
+    -DCMAKE_BUILD_TYPE=Debug .
   displayName: 'Configure armadillo'
 
 # Build armadillo
@@ -44,7 +44,7 @@ steps:
     solution: 'armadillo-9.800.6/*.sln'
     msbuildLocationMethod: 'location'
     msbuildVersion: $(MSBuildVersion)
-    configuration: 'Release'
+    configuration: 'Debug'
     msbuildArchitecture: 'x64'
     msbuildArguments: /m /p:BuildInParallel=true
     clean: false
@@ -61,11 +61,11 @@ steps:
     -DBLAS_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
-    -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
+    -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Debug\armadillo.lib" `
     -DCEREAL_INCLUDE_DIR="..\cereal-1.3.2\include" `
     -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include `
     -DBUILD_JULIA_BINDINGS=OFF `
-    -DCMAKE_BUILD_TYPE=Release ..
+    -DCMAKE_BUILD_TYPE=Debug ..
   displayName: 'Configure mlpack'
 
 # Build mlpack
@@ -84,21 +84,21 @@ steps:
 - powershell: |
     # The .dlls are stored in the bin/ directory, and those are the ones we need
     # to run with.
-    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Release\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\Debug\
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* build\
   displayName: 'Configure mlpack'
 
 # Run tests via ctest.
 - bash: |
     cd build
-    cmake --build . --target mlpack_test --config Release
-    CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
+    cmake --build . --target mlpack_test --config Debug
+    CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Debug . -j1
   displayName: 'Run tests via ctest'
 
 # Copy artifacts
 - powershell: |
     mkdir exe-archive
-    cp build\Release\*.exe exe-archive\
+    cp build\Debug\*.exe exe-archive\
   displayName: 'Copy artifacts'
 
 # Build artifacts archive
@@ -113,7 +113,7 @@ steps:
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: 'build\Release\'
+    rootFolderOrFile: 'build\Debug\'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: $(ArchiveLibs)
@@ -137,10 +137,10 @@ steps:
     catch{Write-Output "Unable to add doc to installer, skipping!"}
     # Preparing installer staging.
     mkdir dist\win-installer\mlpack-win-installer\Sources\lib
-    cp build\Release\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
-    cp build\Release\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
-    cp build\Release\*.dll dist\win-installer\mlpack-win-installer\Sources\
-    cp build\Release\*.exe dist\win-installer\mlpack-win-installer\Sources\
+    cp build\Debug\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
+    cp build\Debug\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
+    cp build\Debug\*.dll dist\win-installer\mlpack-win-installer\Sources\
+    cp build\Debug\*.exe dist\win-installer\mlpack-win-installer\Sources\
     cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
     cp src\mlpack\*.hpp dist\win-installer\mlpack-win-installer\Sources\
     cp src\mlpack\core dist\win-installer\mlpack-win-installer\Sources\ -recurse
@@ -167,7 +167,7 @@ steps:
     cd dist\win-installer\mlpack-win-installer
     & 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe' `
         -t:rebuild `
-        -p:Configuration=Release `
+        -p:Configuration=Debug `
         -p:TreatWarningsAsErrors=True `
         mlpack-win-installer.wixproj
   displayName: 'Build MSI Windows installer'
@@ -190,7 +190,7 @@ steps:
   displayName: 'Publish artifacts test results'
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: 'dist\win-installer\mlpack-win-installer\bin\Release\mlpack-windows.msi'
+    pathtoPublish: 'dist\win-installer\mlpack-win-installer\bin\Debug\mlpack-windows.msi'
     artifactName: mlpack-windows-installer
   displayName: 'Publish Windows MSI installer'
 
