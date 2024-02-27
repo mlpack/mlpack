@@ -61,4 +61,4 @@ double MDLPenalty<FitnessFunction>::operator()(
 } // namespace tree
 } // namespace mlpack
 
-#endif // MDL_PENALTY_HPP
+#endif // MDL_PENAL
