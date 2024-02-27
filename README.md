@@ -1,6 +1,5 @@
 <h2 align="center">
-  <a href="http://mlpack.org"><img
-src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a fast, header-only machine learning library"></a>
+  <a href="https://mlpack.org"><img src="https://cdn.jsdelivr.net/gh/mlpack/mlpack.org@e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a fast, header-only machine learning library"></a>
   <br>a fast, header-only machine learning library<br>
 </h2>
 
@@ -14,8 +13,8 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 
 <p align="center">
   <a href="https://dev.azure.com/mlpack/mlpack/_build?definitionId=1"><img alt="Azure DevOps builds (job)" src="https://img.shields.io/azure-devops/build/mlpack/84320e87-76e3-4b6e-8b6e-3adaf6b36eed/1/master?job=Linux&label=Linux%20Build&style=flat-square"></a>
-  <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
-  <a href="http://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
+  <a href="https://opensource.org/license/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
+  <a href="https://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
 
 <p align="center">
@@ -47,7 +46,7 @@ programs, Python bindings, Julia bindings, Go bindings and R bindings.
  - [mlpack documentation](https://www.mlpack.org/docs.html)
  - [Examples repository](https://github.com/mlpack/examples/)
  - [Tutorials](doc/tutorials/README.md)
- - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
+ - [Development Site (Github)](https://github.com/mlpack/mlpack/)
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
 
@@ -192,8 +191,8 @@ If you don't define `MLPACK_ENABLE_ANN_SERIALIZATION` and your code serializes a
 neural network, a compilation error will occur.
 
 See the [C++ quickstart](doc/quickstart/cpp.md) and the
-[examples](https://github.com/mlpack/examples) repository for some examples of
-mlpack applications in C++, with corresponding `Makefile`s.
+[examples](https://github.com/mlpack/examples) repository for some examples
+of mlpack applications in C++, with corresponding `Makefile`s.
 
 #### 3.1.a. Linking with autodownloaded Armadillo
 
@@ -291,7 +290,7 @@ build in parallel; e.g., `make -j4` will use 4 cores to build.
 *See also the [Python quickstart](doc/quickstart/python.md).*
 
 mlpack's Python bindings are available on
-[PyPI](https://pypi.org/project/mlpack) and
+[PyPI](https://pypi.org/project/mlpack/) and
 [conda-forge](https://anaconda.org/conda-forge/mlpack), and can be installed
 with either `pip install mlpack` or `conda install -c conda-forge mlpack`.
 These sources are recommended, as building the Python bindings by hand can be
@@ -467,7 +466,6 @@ More documentation is available for both users and developers.
 
 ***Developer documentation***:
 
- - [mlpack versions in code](doc/developer/version.md)
  - [Writing an mlpack binding](doc/developer/iodoc.md)
  - [mlpack Timers](doc/developer/timer.md)
  - [mlpack automatic bindings to other languages](doc/developer/bindings.md)
@@ -481,6 +479,6 @@ future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
 If you have problems, find a bug, or need help, you can try visiting
 the [mlpack help](https://www.mlpack.org/questions.html) page, or [mlpack on
-Github](https://www.github.com/mlpack/mlpack/).  Alternately, mlpack help can be
+Github](https://github.com/mlpack/mlpack/).  Alternately, mlpack help can be
 found on Matrix at `#mlpack`; see also the
 [community](https://www.mlpack.org/community.html) page.

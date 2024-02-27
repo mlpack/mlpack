@@ -68,11 +68,31 @@ run_kramdown()
   #   the link could be spread on multiple lines.
   #
   # We start by trying to catch a special case of README.md, which our
-  # documentation puts in a slightly different place.
-  sed -i "s|\]([./]*README.md)|${link_root}README.html)|g" $input_file.tmp;
-  sed -i "s|\]([./]*README.md#\([^ ]*\))|${link_root}README.html#\1)|g" $input_file.tmp;
-  sed -i 's/\](\([^ ]*\).md)/](\1.html)/g' $input_file.tmp;
-  sed -i 's/\](\([^ ]*\).md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
+  # documentation puts in a slightly different place.  In addition, because
+  # README.md is being moved to the root of the documentation, we must adjust
+  # links in that file differently.
+  if [[ $input_file != "README.md" ]];
+  then
+    sed -i "s|\]([./]*README.md)|${link_root}README.html)|g" $input_file.tmp;
+    sed -i "s|\]([./]*README.md#\([^ ]*\))|${link_root}README.html#\1)|g" $input_file.tmp;
+    sed -i 's/\](\([^ ]*\).md)/](\1.html)/g' $input_file.tmp;
+    sed -i 's/\](\([^ ]*\).md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
+  else
+    sed -i 's/\](doc\/\([^ ]*\).md)/](\1.html)/g' $input_file.tmp;
+    sed -i 's/\](doc\/\([^ ]*\).md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
+
+    # The README specifically has a link to GOVERNANCE.md, but we want to
+    # preserve that.  We're not building that file into Markdown.
+    sed -i 's|(./GOVERNANCE.md)|(https://github.com/mlpack/mlpack/blob/master/GOVERNANCE.md)|' $input_file.tmp;
+
+    # Ugh!  Github naming of anchors is different than kramdown, and so we have
+    # to adjust all the table-of-contents anchor links in the README (and in
+    # that file only).
+    sed -i 's/\](#[0-9][0-9]-\([^ ]*\))/](#\1)/g' $input_file.tmp;
+    sed -i 's/\](#[0-9]-\([^ ]*\))/](#\1)/g' $input_file.tmp;
+    sed -i 's/\](#[0-9][0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
+    sed -i 's/\](#[0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
+  fi
 
   # Replace any links to source files with a link to the current version of the
   # source file on Github.
