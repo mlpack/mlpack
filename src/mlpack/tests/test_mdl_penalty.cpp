@@ -37,4 +37,4 @@ TEST_F(DecisionTreeMDLPenaltyTest, MDLPenaltyBehavior) {
     // - Test various parameters and scenarios.
 }
 
-// Additional test cases can be added to cover other aspects of DecisionTree beha
+// Additional test cases can be added to cover other aspects of DecisionTree behavior.
