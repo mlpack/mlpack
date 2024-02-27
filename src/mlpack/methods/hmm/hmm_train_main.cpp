@@ -123,8 +123,8 @@ struct Init
          ++it)
     {
       arma::Col<size_t> maxSeqs =
-          ConvTo<arma::Col<size_t>>::From(Max(*it, 1)) + 1;
-      maxEmissions = Max(maxEmissions, maxSeqs);
+          ConvTo<arma::Col<size_t>>::From(arma::max(*it, 1)) + 1;
+      maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
     hmm = HMM<DiscreteDistribution>(size_t(states),

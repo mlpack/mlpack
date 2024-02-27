@@ -375,7 +375,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     // Log(Prob(X|Y)) + Log(Prob(Y)), so we subtract the normalization term.
     // Besides, to prevent underflow in log of sum of exp of x operation (where
     // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
-    maxValue = Max(logLikelihoods.col(j));
+    maxValue = max(logLikelihoods.col(j));
     logProbX = std::log(accu(exp(logLikelihoods.col(j) -
         maxValue))) + maxValue;
     predictionProbs.col(j) = exp(logLikelihoods.col(j) - logProbX);

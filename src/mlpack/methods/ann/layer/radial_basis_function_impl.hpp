@@ -41,7 +41,7 @@ RBFType<MatType, Activation>::RBFType(
     {
       double maxDis = 0;
       MatType temp = centres.each_col() - centres.col(i);
-      maxDis = Max(pow(sum(pow((temp), 2), 0), 0.5).t());
+      maxDis = max(pow(sum(pow((temp), 2), 0), 0.5).t());
       if (maxDis > sigmas)
         sigmas = maxDis;
     }

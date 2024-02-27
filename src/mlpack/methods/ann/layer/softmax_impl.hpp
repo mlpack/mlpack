@@ -62,7 +62,7 @@ SoftmaxType<MatType>::operator=(SoftmaxType&& other)
 template<typename MatType>
 void SoftmaxType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  MatType softmaxInput = exp(input.each_row() - Max(input, 0));
+  MatType softmaxInput = exp(input.each_row() - max(input, 0));
   output = softmaxInput.each_row() / sum(softmaxInput, 0);
 }
 
