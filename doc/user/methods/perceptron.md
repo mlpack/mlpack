@@ -9,8 +9,7 @@ control the behavior of the perceptron.
 
 Perceptrons are useful for classifying points with _discrete labels_ (i.e., `0`,
 `1`, `2`).  Because they are simple classifiers, they are also useful as _weak
-learners_ for the [`AdaBoost`](#adaboost) boosting classifier.
-<!-- TODO: fix link above -->
+learners_ for the [`AdaBoost`](adaboost.md) boosting classifier.
 
 #### Simple usage example:
 
@@ -51,11 +50,10 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 
 #### See also:
 
- * [`NaiveBayesClassifier`](#naive_bayes_classifier), another simple classifier
-   <!-- TODO: fix link -->
- * [`AdaBoost`](#adaboost) <!-- TODO: fix link! -->
- * [`FFN`](#ffn) <!-- TODO: fix link -->
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link -->
+ * [`NaiveBayesClassifier`](naive_bayes_classifier.md), another simple classifier
+ * [`AdaBoost`](adaboost.md)
+ * [`FFN`](/src/mlpack/methods/ann/ffn.hpp)
+ * [mlpack classifiers](../../index.md#classification-algorithms)
  * [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
 
 ### Constructors
@@ -88,19 +86,12 @@ section below.
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * better link for working with categorical data in straightforward terms
-    * update matrices.md to include a section on labels and NormalizeLabels()
-    * add a bit about instance weights in matrices.md 
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
-| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#mixed-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, between [`0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `dimensionality` | `size_t` | Dimensionality of data (only used if an initialized but untrained model is desired). | _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations during training.  Can also be set with `MaxIterations()`. | `1000` |
@@ -168,15 +159,13 @@ probabilities is not available.
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
- * A `Perceptron` can be serialized with [`data::Save()`](../formats.md) and
-   [`data::Load()`](../formats.md).
+ * A `Perceptron` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `p.NumClasses()` will return a `size_t` indicating the number of classes the
    perceptron was trained on.

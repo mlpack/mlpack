@@ -1,4 +1,4 @@
-# Loading and saving mlpack objects
+# Loading and saving in mlpack
 
 mlpack provides the `data::Load()` and `data::Save()` functions to load and save
 [Armadillo matrices](matrices.md) (e.g. numeric and categorical datasets) and

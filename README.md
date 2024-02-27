@@ -59,9 +59,10 @@ variety of other needs.
 
 <div align="center">
   <a href="https://numfocus.org/">
-    <img height="60px"
+    <img height="60"
          src="https://raw.githubusercontent.com/numfocus/templates/master/images/numfocus-logo.png"
-         align="center">
+         align="middle"
+         alt="NumFOCUS logo">
   </a>
 </div>
 <br>
