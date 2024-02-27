@@ -164,11 +164,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
       responses = params.Get<rowvec>("training_responses");
       timer.Stop("load_responses");
 
-      if (responses.n_cols != regressors.n_cols)
-      {
-        Log::Fatal << "The responses must have the same number of columns "
-            "as the training set." << endl;
-      }
+      // Use the utility to check if regressors and responses have the same number of columns
+      util::CheckSameSizes(regressors, responses, "Linear Regression",
+                    "responses", false, true);
     }
 
     timer.Start("regression");
@@ -198,16 +196,14 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
     mat points = std::move(params.Get<mat>("test"));
 
     // Ensure that test file data has the right number of features.
-    if ((lr->Parameters().n_elem - 1) != points.n_rows)
+    try
     {
-      // If we built the model, nothing will free it so we have to...
-      const size_t dimensions = lr->Parameters().n_elem - 1;
-      if (computeModel)
-        delete lr;
-
-      Log::Fatal << "The model was trained on " << dimensions << "-dimensional "
-          << "data, but the test points in '" << testOutput << "' are "
-          << points.n_rows << "-dimensional!" << endl;
+      util::CheckSameDimensionality(points, lr->Parameters().n_elem - 1,
+        "Linear Regression Prediction", "test points");
+    }
+    catch (std::invalid_argument& e)
+    {
+      Log::Fatal << e.what() << std::endl;
     }
 
     // Perform the predictions using our model.
