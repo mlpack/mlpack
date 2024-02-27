@@ -42,7 +42,7 @@ template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename DimensionSelectionType = AllDimensionSelect,
-         
+         typename MDLPenaltyType = NoPenalty<FitnessFunction>,
          bool NoRecursion = false>
 class DecisionTree :
     public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
