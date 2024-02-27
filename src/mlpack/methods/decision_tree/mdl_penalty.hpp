@@ -7,8 +7,6 @@
 namespace mlpack {
 namespace tree {
 
-template<typename FitnessFunction>
-class MDLPenalty {
  public:
   MDLPenalty(const FitnessFunction& fitnessFunction);
   double operator()(const arma::vec& childCounts,
