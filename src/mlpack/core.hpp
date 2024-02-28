@@ -36,7 +36,6 @@
 
 // Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
-#include <mlpack/core/util/lag.hpp>
 #include <mlpack/core/util/ens_traits.hpp>
 #include <mlpack/core/util/using.hpp>
 #include <mlpack/core/util/conv_to.hpp>
@@ -45,6 +44,7 @@
 #include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/data.hpp>
 #include <mlpack/core/math/math.hpp>
+#include <mlpack/core/util/lag.hpp>
 
 // mlpack::backtrace only for linux
 #ifdef MLPACK_HAS_BFD_DL
