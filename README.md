@@ -439,12 +439,13 @@ More documentation is available for both users and developers.
 
 ***User documentation***:
 
- - [File formats and loading data in mlpack](doc/user/formats.md)
  - [Matrices in mlpack](doc/user/matrices.md)
+ - [Loading and saving mlpack objects](doc/user/load_save.md)
  - [Cross-Validation](doc/user/cv.md)
  - [Hyper-parameter Tuning](doc/user/hpt.md)
  - [Building mlpack from source on Windows](doc/user/build_windows.md)
  - [Sample C++ ML App for Windows](doc/user/sample_ml_app.md)
+ - [mlpack core library documentation](doc/user/core.md)
  - [Examples repository](https://github.com/mlpack/examples/)
 
 ***Tutorials:***
