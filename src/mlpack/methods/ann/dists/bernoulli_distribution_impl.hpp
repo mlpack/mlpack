@@ -48,8 +48,8 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
 template<typename DataType>
 DataType BernoulliDistribution<DataType>::Sample() const
 {
-  DataType sample = arma::randu<DataType>
-      (probability.n_rows, probability.n_cols);
+  DataType sample;
+  sample.randu(probability.n_rows, probability.n_cols);
 
   for (size_t i = 0; i < sample.n_elem; ++i)
       sample(i) = sample(i) < probability(i);
