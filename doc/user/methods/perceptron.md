@@ -189,7 +189,8 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a perceptron multiple times, incrementally, with custom hyperparameters.
+Train a perceptron multiple times, incrementally, with custom hyperparameters,
+and save the resulting model to disk.
 
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
@@ -221,6 +222,9 @@ p.Classify(dataset, predictions);
 std::cout << "Training set accuracy after 350 iterations: "
     << (100.0 * double(arma::accu(labels == predictions)) / labels.n_elem)
     << "\%." << std::endl;
+
+// Save the perceptron to disk for later use.
+mlpack::data::Save("perceptron.bin", "perceptron", p);
 ```
 
 ---
@@ -257,7 +261,7 @@ else
 The `Perceptron` class also supports several template parameters, which can be
 used for custom behavior.  The full signature of the class is as follows:
 
-```c++
+```
 Perceptron<LearnPolicy,
            WeightInitializationPolicy,
            MatType>
@@ -362,7 +366,8 @@ arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
 
 // Train in the constructor.  Weights will be initialized randomly.
-mlpack::Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization> p(
+mlpack::Perceptron<mlpack::SimpleWeightUpdate,
+                   mlpack::RandomPerceptronInitialization> p(
     dataset, labels, 5);
 
 // Create test data (500 points).

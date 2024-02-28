@@ -498,7 +498,7 @@ images.push_back("armadillo-favicon.png");
 images.push_back("bandicoot-favicon.png");
 
 mlpack::data::ImageInfo info;
-info.Channels(1); // Force loading in grayscale.
+info.Channels() = 1; // Force loading in grayscale.
 
 arma::mat matrix;
 mlpack::data::Load(images, matrix, info, true);

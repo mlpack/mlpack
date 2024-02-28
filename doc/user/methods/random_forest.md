@@ -26,7 +26,7 @@ information...](#fully-custom-behavior))
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+arma::mat testData(10, 500, arma::fill::randu); // 500 test points.
 
 mlpack::RandomForest rf;            // Step 1: create model.
 rf.Train(dataset, labels, 5, 10);   // Step 2: train model.
@@ -222,7 +222,8 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a random forest incrementally on random mixed categorical data:
+Train a random forest incrementally on random mixed categorical data and save it
+to disk:
 
 ```c++
 // Load a categorical dataset.
@@ -268,6 +269,9 @@ accuracy = 100.0 * ((double) arma::accu(testPredictions == testLabels)) /
     testLabels.n_elem;
 std::cout << "After training 20 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
+
+// Save the random forest to disk.
+mlpack::data::Save("rf.bin", "rf", rf);
 ```
 
 ---
@@ -348,7 +352,7 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using 10 trees in the forest.
 // Note that `ExtraTrees` has exactly the same API as `RandomForest`.
-mlpack::ExtraTrees rf(dataset, labels, 5, 10);
+mlpack::ExtraTrees<> rf(dataset, labels, 5, 10);
 
 // Create a single test point.
 arma::vec testPoint(10, arma::fill::randu);
@@ -429,7 +433,7 @@ used as drop-in replacements throughout this documentation page:
 Fully custom classes can also be used to control the behavior of the
 `RandomForest` class.  The full signature of the class is as follows:
 
-```c++
+```
 RandomForest<FitnessFunction,
              DimensionSelectionType,
              NumericSplitType,

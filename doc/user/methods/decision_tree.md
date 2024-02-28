@@ -205,7 +205,7 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a decision tree on mixed categorical data:
+Train a decision tree on mixed categorical data and save it:
 
 ```c++
 // Load a categorical dataset.
@@ -239,6 +239,9 @@ arma::vec secondProbabilities;
 tree.Classify(testDataset.col(1), secondPrediction, secondProbabilities);
 std::cout << "Class probabilities of second test point: " <<
     secondProbabilities.t();
+
+// Save the tree to `tree.bin`.
+mlpack::data::Save("tree.bin", "tree", tree);
 ```
 
 ---
@@ -306,7 +309,7 @@ The `DecisionTree` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
 
-```c++
+```
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,

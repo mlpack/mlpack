@@ -332,7 +332,7 @@ mlpack::data::Load("covertype.train.labels.csv", labels, true);
 arma::mat testDataset;
 mlpack::data::Load("covertype.test.arff", testDataset, info, true);
 
-// See https://datasets.mlpack.org/covertype.test.labels.arff.
+// See https://datasets.mlpack.org/covertype.test.labels.csv.
 arma::Row<size_t> testLabels;
 mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
 
@@ -483,7 +483,7 @@ The `HoeffdingTree` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
 
-```c++
+```
 HoeffdingTree<FitnessFunction,
               NumericSplitType,
               CategoricalSplitType>

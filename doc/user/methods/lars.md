@@ -413,7 +413,7 @@ for (double lambda2 : lambda2Values)
 The `LARS` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 LARS<ModelMatType>
 ```
 

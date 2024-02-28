@@ -298,7 +298,7 @@ See also the following fully-working examples:
 The `AdaBoost` class has two template parameters that can be used for custom
 behavior.  The full signature of the class is:
 
-```c++
+```
 AdaBoost<WeakLearnerType, MatType>
 ```
 

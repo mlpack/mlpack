@@ -1087,7 +1087,7 @@ The `LMetric` template class implements a [generalized
 L-metric](https://en.wikipedia.org/wiki/Lp_space#Definition)
 (L1-metric, L2-metric, etc.).  The class has two template parameters:
 
-```c++
+```
 LMetric<Power, TakeRoot>
 ```
 

@@ -298,7 +298,7 @@ The `DecisionTreeRegressor` class also supports several template parameters,
 which can be used for custom behavior during learning.  The full signature of
 the class is as follows:
 
-```c++
+```
 DecisionTreeRegressor<FitnessFunction,
                       NumericSplitType,
                       CategoricalSplitType,

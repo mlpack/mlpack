@@ -369,7 +369,7 @@ std::cout << "Accuracy on second dataset after second training: "
 The `SoftmaxRegression` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 SoftmaxRegression<MatType>
 ```
 

@@ -271,7 +271,7 @@ for (size_t t = 0; t < 3; ++t)
 The `BayesianLinearRegression` class has one template parameter that can be used
 to control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 BayesianLinearRegression<ModelMatType>
 ```
 
