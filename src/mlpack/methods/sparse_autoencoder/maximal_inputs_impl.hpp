@@ -34,7 +34,7 @@ inline void NormalizeColByMax(const arma::mat &input,
     const double colMax = max(arma::abs(input.col(i)));
     if (colMax != 0.0)
     {
-      output.col(i) = input.col(i) / max_;
+      output.col(i) = input.col(i) / colMax;
     }
     else
     {
