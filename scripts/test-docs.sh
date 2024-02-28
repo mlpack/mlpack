@@ -336,6 +336,33 @@ do
         "sample_ml_app.md"
         "hpt.md"
         "cv.md"
+        "timer.md"
+        "bindings.md"
+        "iodoc.md"
+        "kernels.md"
+        "metrics.md"
+        "trees.md"
+        # The tutorials are old and are likely to be replaced, so let's not test
+        # them.
+        "amf.md"
+        "ann.md"
+        "approx_kfn.md"
+        "cf.md"
+        "datasetmapper.md"
+        "det.md"
+        "emst.md"
+        "fastmks.md"
+        "image.md"
+        "kmeans.md"
+        "linear_regression.md"
+        "neighbor_search.md"
+        "range_search.md"
+        "reinforcement_learning.md"
+        "asynchronous_learning.md"
+        "ddpg.md"
+        "q_learning.md"
+        "sac.md"
+        "td3.md"
     );
 
     skip=0;
