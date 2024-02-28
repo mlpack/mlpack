@@ -247,7 +247,7 @@ arma::mat dataset;
 mlpack::data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", dataset, true);
+mlpack::data::Load("iris.labels.csv", labels, true);
 
 mlpack::AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
@@ -388,7 +388,7 @@ arma::Row<size_t> labels =
 // hyperparameters for the decision stump (these could be omitted).  See the
 // DecisionTree documentation for more details on the ID3DecisionStump-specific
 // hyperparameters.
-mlpack::AdaBoost<ID3DecisionStump> ab(dataset, labels, 5,
+mlpack::AdaBoost<mlpack::ID3DecisionStump> ab(dataset, labels, 5,
     25 /* maximum number of decision stumps */,
     1e-6 /* tolerance for convergence of AdaBoost */,
     /** Hyperparameters specific to ID3DecisionStump: **/
@@ -420,8 +420,9 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using floating-point data.
 // The weak learner type is now a floating-point Perceptron.
-typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, arma::fmat>
-    PerceptronType;
+typedef mlpack::Perceptron<mlpack::SimpleWeightUpdate,
+                           mlpack::ZeroInitialization,
+                           arma::fmat> PerceptronType;
 mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).
