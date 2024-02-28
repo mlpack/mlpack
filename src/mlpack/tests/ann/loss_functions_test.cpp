@@ -738,7 +738,7 @@ TEST_CASE("HingeEmbeddingLossTest", "[LossFunctionsTest]")
 
   // Test the backward function
   module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(accu(output)) == Approx(0.5).epsilon(1e-3));
+  REQUIRE(accu(output) == Approx(0.5).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
