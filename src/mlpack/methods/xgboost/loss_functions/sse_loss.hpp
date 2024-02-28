@@ -89,8 +89,7 @@ class SSELoss
     gradients = (input.row(1) - input.row(0)).t();
     hessians = arma::vec(input.n_cols, arma::fill::ones);
 
-    return std::pow(ApplyL1(accu(gradients)), 2) /
-        (accu(hessians) + lambda);
+    return std::pow(ApplyL1(accu(gradients)), 2) / (accu(hessians) + lambda);
   }
  private:
   //! The L1 regularization parameter.
