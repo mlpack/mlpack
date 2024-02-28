@@ -471,8 +471,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffObjToleranceTest",
   // using two models model are different.
   REQUIRE(accu(dictionary ==
       params.Get<arma::mat>("dictionary")) < dictionary.n_elem);
-  REQUIRE(accu(codes ==
-      params.Get<arma::mat>("codes")) < codes.n_elem);
+  REQUIRE(accu(codes == params.Get<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
