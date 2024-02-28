@@ -211,7 +211,7 @@ inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
     }
     else
     {
-      sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
+      sum += std::pow((lower + std::fabs(lower)) + (higher + std::fabs(higher)),
           (ElemType) MetricType::Power);
     }
   }
@@ -232,10 +232,10 @@ inline ElemType HRectBound<MetricType, ElemType>::MinDistance(
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) sum,
+      return (ElemType) std::pow((double) sum,
           1.0 / (double) MetricType::Power) / 2.0;
     else
-      return sum / pow(2.0, MetricType::Power);
+      return sum / std::pow(2.0, MetricType::Power);
   }
 }
 
@@ -271,7 +271,7 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
     }
     else
     {
-      sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
+      sum += std::pow((lower + std::fabs(lower)) + (higher + std::fabs(higher)),
           (ElemType) MetricType::Power);
     }
 
@@ -293,10 +293,10 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) sum,
+      return (ElemType) std::pow((double) sum,
           1.0 / (double) MetricType::Power) / 2.0;
     else
-      return sum / pow(2.0, MetricType::Power);
+      return sum / std::pow(2.0, MetricType::Power);
   }
 }
 
@@ -335,7 +335,8 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
     else if (MetricType::Power == 2)
       return (ElemType) std::sqrt(sum);
     else
-      return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
+      return (ElemType) std::pow((double) sum, 1.0 /
+          (double) MetricType::Power);
   }
   else
     return sum;
@@ -376,7 +377,8 @@ inline ElemType HRectBound<MetricType, ElemType>::MaxDistance(
     else if (MetricType::Power == 2)
       return (ElemType) std::sqrt(sum);
     else
-      return (ElemType) pow((double) sum, 1.0 / (double) MetricType::Power);
+      return (ElemType) std::pow((double) sum, 1.0 /
+          (double) MetricType::Power);
   }
   else
     return sum;
@@ -440,8 +442,9 @@ HRectBound<MetricType, ElemType>::RangeDistance(
     else
     {
       return RangeType<ElemType>(
-          (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
-          (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
+          (ElemType) std::pow((double) loSum, 1.0 / (double) MetricType::Power),
+          (ElemType) std::pow((double) hiSum,
+              1.0 / (double) MetricType::Power));
     }
   }
   else
@@ -516,8 +519,9 @@ HRectBound<MetricType, ElemType>::RangeDistance(
     else
     {
       return RangeType<ElemType>(
-          (ElemType) pow((double) loSum, 1.0 / (double) MetricType::Power),
-          (ElemType) pow((double) hiSum, 1.0 / (double) MetricType::Power));
+          (ElemType) std::pow((double) loSum, 1.0 / (double) MetricType::Power),
+          (ElemType) std::pow((double) hiSum,
+              1.0 / (double) MetricType::Power));
     }
   }
   else

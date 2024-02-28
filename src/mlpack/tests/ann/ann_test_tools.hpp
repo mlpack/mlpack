@@ -74,7 +74,7 @@ double JacobianTest(ModuleType& module,
     derivTemp(i) = 1;
 
     arma::mat delta(input.n_rows, input.n_cols);
-    module.Backward(output, deriv, delta);
+    module.Backward(input, output, deriv, delta);
 
     jacobianB.col(i) = delta;
   }
@@ -125,7 +125,7 @@ double CustomJacobianTest(ModuleType& module,
     deriv(i) = 1;
 
     arma::mat delta(input.n_rows, input.n_cols);
-    module.Backward(output, deriv, delta);
+    module.Backward(input, output, deriv, delta);
 
     jacobianB.col(i) = delta;
   }
@@ -207,7 +207,7 @@ double ActivationJacobianTest(arma::mat& input,
     deriv(i) = 1;
 
     arma::mat delta(input.n_rows, input.n_cols);
-    ActivationFunction::Deriv(output, delta);
+    ActivationFunction::Deriv(input, output, delta);
     delta %= deriv;
 
     jacobianB.col(i) = delta;
@@ -217,14 +217,14 @@ double ActivationJacobianTest(arma::mat& input,
 }
 
 // Simple numerical gradient checker.
-template<class FunctionType>
+template<class FunctionType, typename MatType = arma::mat>
 double CheckGradient(FunctionType& function, const double eps = 1e-7)
 {
   // Get gradients for the current parameters.
-  arma::mat orgGradient, gradient, estGradient;
+  MatType orgGradient, gradient, estGradient;
   function.Gradient(orgGradient);
 
-  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
+  estGradient = arma::zeros<MatType>(orgGradient.n_rows, orgGradient.n_cols);
 
   // Compute numeric approximations to gradient.
   for (size_t i = 0; i < orgGradient.n_elem; ++i)
@@ -280,7 +280,7 @@ double CheckRegularizerGradient(FunctionType& function, const double eps = 1e-7)
     }
   }
 
-  estGradient = arma::vectorise(estGradient);
+  estGradient = vectorise(estGradient);
   // Estimate error of gradient.
   return arma::norm(orgGradient - estGradient) /
       arma::norm(orgGradient + estGradient);

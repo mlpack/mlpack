@@ -25,8 +25,9 @@ class RandomPerceptronInitialization
  public:
   RandomPerceptronInitialization() { }
 
-  inline static void Initialize(arma::mat& weights,
-                                arma::vec& biases,
+  template<typename eT>
+  inline static void Initialize(arma::Mat<eT>& weights,
+                                arma::Col<eT>& biases,
                                 const size_t numFeatures,
                                 const size_t numClasses)
   {

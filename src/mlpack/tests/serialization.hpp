@@ -219,6 +219,11 @@ void CheckMatrices(const arma::mat& x,
                    const arma::mat& jsonX,
                    const arma::mat& binaryX);
 
+void CheckMatrices(const arma::fmat& x,
+                   const arma::fmat& xmlX,
+                   const arma::fmat& jsonX,
+                   const arma::fmat& binaryX);
+
 void CheckMatrices(const arma::Mat<size_t>& x,
                    const arma::Mat<size_t>& xmlX,
                    const arma::Mat<size_t>& jsonX,

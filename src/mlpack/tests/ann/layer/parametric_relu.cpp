@@ -60,7 +60,9 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
                  {-0.3, 0.2, -0.5},
                  {0.1, -0.1, 0.3}};
   arma::mat predG;
-  module.Backward(input, gy, predG);
+  arma::mat output;
+  module.Forward(input, output);
+  module.Backward(input, output, gy, predG);
   arma::mat actualG = {{0.2, -0.5, 0.8},
                       {0.015, -0.006, 0.1},
                       {-0.3, 0.002, -0.5},
@@ -96,7 +98,7 @@ TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
 
 double ComputeMSRE(arma::mat input, arma::mat target)
 {
-  return std::pow(arma::accu(arma::pow(input - target, 2)) / target.n_cols, 0.5);
+  return std::pow(arma::accu(pow(input - target, 2)) / target.n_cols, 0.5);
 }
 
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
@@ -130,8 +132,6 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
     double msreTrain = ComputeMSRE(predictions, trainLabels);
     model.Predict(testData, predictions);
     double msreTest = ComputeMSRE(predictions, testLabels);
-    std::cout << "train: " << msreTrain << "\n";
-    std::cout << "test: " << msreTest << "\n";
 
     double relativeMSRE = std::abs((msreTest - msreTrain) / msreTrain);
     if (relativeMSRE <= 0.35)

@@ -17,11 +17,12 @@
 
 namespace mlpack {
 
-inline LARS::LARS(
+template<typename ModelMatType>
+inline LARS<ModelMatType>::LARS(
     const bool useCholesky,
-    const double lambda1,
-    const double lambda2,
-    const double tolerance,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2,
+    const typename LARS<ModelMatType>::ElemType tolerance,
     const bool fitIntercept,
     const bool normalizeData) :
     matGram(&matGramInternal),
@@ -32,10 +33,16 @@ inline LARS::LARS(
     lambda2(lambda2),
     tolerance(tolerance),
     fitIntercept(fitIntercept),
-    normalizeData(normalizeData)
+    normalizeData(normalizeData),
+    selectedLambda1(lambda1),
+    selectedIndex(0),
+    selectedIntercept(0.0),
+    offsetY(0.0)
 { /* Nothing left to do. */ }
 
-inline LARS::LARS(
+template<typename ModelMatType>
+mlpack_deprecated
+inline LARS<ModelMatType>::LARS(
     const bool useCholesky,
     const arma::mat& gramMatrix,
     const double lambda1,
@@ -51,43 +58,63 @@ inline LARS::LARS(
     lambda2(lambda2),
     tolerance(tolerance),
     fitIntercept(fitIntercept),
-    normalizeData(normalizeData)
+    normalizeData(normalizeData),
+    selectedLambda1(lambda1),
+    selectedIndex(0),
+    selectedIntercept(0.0),
+    offsetY(0.0)
 { /* Nothing left to do */ }
 
-inline LARS::LARS(
-    const arma::mat& data,
-    const arma::rowvec& responses,
-    const bool transposeData,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename>
+inline LARS<ModelMatType>::LARS(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
     const bool useCholesky,
-    const double lambda1,
-    const double lambda2,
-    const double tolerance,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2,
+    const typename LARS<ModelMatType>::ElemType tolerance,
     const bool fitIntercept,
     const bool normalizeData) :
     LARS(useCholesky, lambda1, lambda2, tolerance, fitIntercept, normalizeData)
 {
-  Train(data, responses, transposeData);
+  Train(data, responses, colMajor);
 }
 
-inline LARS::LARS(
-    const arma::mat& data,
-    const arma::rowvec& responses,
-    const bool transposeData,
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename>
+inline LARS<ModelMatType>::LARS(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
     const bool useCholesky,
-    const arma::mat& gramMatrix,
-    const double lambda1,
-    const double lambda2,
-    const double tolerance,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2,
+    const typename LARS<ModelMatType>::ElemType tolerance,
     const bool fitIntercept,
     const bool normalizeData) :
-    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance, fitIntercept,
-        normalizeData)
+    matGram(&gramMatrix),
+    useCholesky(useCholesky),
+    lasso((lambda1 != 0)),
+    lambda1(lambda1),
+    elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2),
+    tolerance(tolerance),
+    fitIntercept(fitIntercept),
+    normalizeData(normalizeData),
+    selectedLambda1(lambda1),
+    selectedIndex(0),
+    selectedIntercept(0.0),
+    offsetY(0.0)
 {
-  Train(data, responses, transposeData);
+  Train(data, responses, colMajor);
 }
 
 // Copy Constructor.
-inline LARS::LARS(const LARS& other) :
+template<typename ModelMatType>
+inline LARS<ModelMatType>::LARS(const LARS<ModelMatType>& other) :
     matGramInternal(other.matGramInternal),
     matGram(other.matGram != &other.matGramInternal ?
         other.matGram : &matGramInternal),
@@ -104,6 +131,12 @@ inline LARS::LARS(const LARS& other) :
     lambdaPath(other.lambdaPath),
     interceptPath(other.interceptPath),
     activeSet(other.activeSet),
+    selectedLambda1(other.selectedLambda1),
+    selectedIndex(other.selectedIndex),
+    selectedBeta(other.selectedBeta),
+    selectedIntercept(other.selectedIntercept),
+    selectedActiveSet(other.selectedActiveSet),
+    offsetY(other.offsetY),
     isActive(other.isActive),
     ignoreSet(other.ignoreSet),
     isIgnored(other.isIgnored)
@@ -112,7 +145,8 @@ inline LARS::LARS(const LARS& other) :
 }
 
 // Move constructor.
-inline LARS::LARS(LARS&& other) :
+template<typename ModelMatType>
+inline LARS<ModelMatType>::LARS(LARS<ModelMatType>&& other) :
     matGramInternal(std::move(other.matGramInternal)),
     matGram(other.matGram != &other.matGramInternal ?
         other.matGram : &matGramInternal),
@@ -129,6 +163,12 @@ inline LARS::LARS(LARS&& other) :
     lambdaPath(std::move(other.lambdaPath)),
     interceptPath(std::move(other.interceptPath)),
     activeSet(std::move(other.activeSet)),
+    selectedLambda1(std::move(other.selectedLambda1)),
+    selectedIndex(std::move(other.selectedIndex)),
+    selectedBeta(std::move(other.selectedBeta)),
+    selectedIntercept(std::move(other.selectedIntercept)),
+    selectedActiveSet(std::move(other.selectedActiveSet)),
+    offsetY(std::move(other.offsetY)),
     isActive(std::move(other.isActive)),
     ignoreSet(std::move(other.ignoreSet)),
     isIgnored(std::move(other.isIgnored))
@@ -137,7 +177,9 @@ inline LARS::LARS(LARS&& other) :
 }
 
 // Copy operator.
-inline LARS& LARS::operator=(const LARS& other)
+template<typename ModelMatType>
+inline LARS<ModelMatType>& LARS<ModelMatType>::operator=(
+    const LARS<ModelMatType>& other)
 {
   if (&other == this)
     return *this;
@@ -158,6 +200,12 @@ inline LARS& LARS::operator=(const LARS& other)
   lambdaPath = other.lambdaPath;
   interceptPath = other.interceptPath;
   activeSet = other.activeSet;
+  selectedLambda1 = other.selectedLambda1;
+  selectedIndex = other.selectedIndex;
+  selectedBeta = other.selectedBeta;
+  selectedIntercept = other.selectedIntercept;
+  selectedActiveSet = other.selectedActiveSet;
+  offsetY = other.offsetY;
   isActive = other.isActive;
   ignoreSet = other.ignoreSet;
   isIgnored = other.isIgnored;
@@ -165,7 +213,9 @@ inline LARS& LARS::operator=(const LARS& other)
 }
 
 // Move Operator.
-inline LARS& LARS::operator=(LARS&& other)
+template<typename ModelMatType>
+inline LARS<ModelMatType>& LARS<ModelMatType>::operator=(
+    LARS<ModelMatType>&& other)
 {
   if (&other == this)
     return *this;
@@ -185,6 +235,12 @@ inline LARS& LARS::operator=(LARS&& other)
   betaPath = std::move(other.betaPath);
   lambdaPath = std::move(other.lambdaPath);
   interceptPath = std::move(other.interceptPath);
+  selectedLambda1 = std::move(other.selectedLambda1);
+  selectedIndex = std::move(other.selectedIndex);
+  selectedBeta = std::move(other.selectedBeta);
+  selectedIntercept = std::move(other.selectedIntercept);
+  selectedActiveSet = std::move(other.selectedActiveSet);
+  offsetY = std::move(other.offsetY);
   activeSet = std::move(other.activeSet);
   isActive = std::move(other.isActive);
   ignoreSet = std::move(other.ignoreSet);
@@ -192,11 +248,236 @@ inline LARS& LARS::operator=(LARS&& other)
   return *this;
 }
 
-inline double LARS::Train(const arma::mat& matX,
-                          const arma::rowvec& y,
-                          arma::vec& beta,
-                          const bool transposeData)
+template<typename ModelMatType>
+mlpack_deprecated
+inline double LARS<ModelMatType>::Train(const arma::mat& matX,
+                                        const arma::rowvec& y,
+                                        arma::vec& beta,
+                                        const bool colMajor)
 {
+  const double result = Train(matX, y, colMajor);
+  beta = betaPath.back();
+  return result;
+}
+
+// Dummy overload for MetaInfoExtractor.
+template<typename ModelMatType>
+template<typename MatType>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const arma::rowvec& responses,
+                          const bool colMajor)
+{
+  return Train(data, responses, colMajor, this->useCholesky, this->lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const ResponsesType& responses,
+                          const bool colMajor)
+{
+  return Train(data, responses, colMajor, this->useCholesky, this->lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const ResponsesType& responses,
+                          const bool colMajor,
+                          const bool useCholesky)
+{
+  return Train(data, responses, colMajor, useCholesky, this->lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const ResponsesType& responses,
+                          const bool colMajor,
+                          const bool useCholesky,
+                          const typename LARS<ModelMatType>::ElemType lambda1)
+{
+  return Train(data, responses, colMajor, useCholesky, lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const ResponsesType& responses,
+                          const bool colMajor,
+                          const bool useCholesky,
+                          const typename LARS<ModelMatType>::ElemType lambda1,
+                          const typename LARS<ModelMatType>::ElemType lambda2)
+{
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
+      this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const ResponsesType& responses,
+                          const bool colMajor,
+                          const bool useCholesky,
+                          const typename LARS<ModelMatType>::ElemType lambda1,
+                          const typename LARS<ModelMatType>::ElemType lambda2,
+                          const typename LARS<ModelMatType>::ElemType tolerance)
+{
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
+      tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& data,
+                          const ResponsesType& responses,
+                          const bool colMajor,
+                          const bool useCholesky,
+                          const typename LARS<ModelMatType>::ElemType lambda1,
+                          const typename LARS<ModelMatType>::ElemType lambda2,
+                          const typename LARS<ModelMatType>::ElemType tolerance,
+                          const bool fitIntercept)
+{
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
+      tolerance, fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
+    const bool useCholesky,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix)
+{
+  return Train(data, responses, colMajor, useCholesky, gramMatrix,
+      this->lambda1, this->lambda2, this->tolerance, this->fitIntercept,
+      this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
+    const bool useCholesky,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
+    const typename LARS<ModelMatType>::ElemType lambda1)
+{
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
+      this->lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
+    const bool useCholesky,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2)
+{
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
+      lambda2, this->tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
+    const bool useCholesky,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2,
+    const typename LARS<ModelMatType>::ElemType tolerance)
+{
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
+      lambda2, tolerance, this->fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
+    const bool useCholesky,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2,
+    const typename LARS<ModelMatType>::ElemType tolerance,
+    const bool fitIntercept)
+{
+  return Train(data, responses, colMajor, useCholesky, gramMatrix, lambda1,
+      lambda2, tolerance, fitIntercept, this->normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(
+    const MatType& data,
+    const ResponsesType& responses,
+    const bool colMajor,
+    const bool useCholesky,
+    const typename LARS<ModelMatType>::DenseMatType& gramMatrix,
+    const typename LARS<ModelMatType>::ElemType lambda1,
+    const typename LARS<ModelMatType>::ElemType lambda2,
+    const typename LARS<ModelMatType>::ElemType tolerance,
+    const bool fitIntercept,
+    const bool normalizeData)
+{
+  // Set Gram matrix.
+  matGramInternal.clear();
+  matGram = &gramMatrix;
+
+  return Train(data, responses, colMajor, useCholesky, lambda1, lambda2,
+      tolerance, fitIntercept, normalizeData);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType, typename, typename>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Train(const MatType& matX,
+                          const ResponsesType& y,
+                          const bool colMajor,
+                          const bool useCholesky,
+                          const typename LARS<ModelMatType>::ElemType lambda1,
+                          const typename LARS<ModelMatType>::ElemType lambda2,
+                          const typename LARS<ModelMatType>::ElemType tolerance,
+                          const bool fitIntercept,
+                          const bool normalizeData)
+{
+  // Update hyperparameter settings.
+  this->useCholesky = useCholesky;
+  this->lambda1 = lambda1;
+  this->lambda2 = lambda2;
+  this->tolerance = tolerance;
+  this->fitIntercept = fitIntercept;
+  this->normalizeData = normalizeData;
+
   // Clear any previous solution information.
   betaPath.clear();
   lambdaPath.clear();
@@ -205,28 +486,29 @@ inline double LARS::Train(const arma::mat& matX,
   ignoreSet.clear();
   isIgnored.clear();
   matUtriCholFactor.reset();
+  selectedBeta.clear();
 
   // Update values in case lambda1 or lambda2 changed.
   lasso = (lambda1 != 0);
   elasticNet = (lambda1 != 0 && lambda2 != 0);
 
   // This matrix may end up holding the transpose -- if necessary.
-  arma::mat dataTrans;
+  MatType dataTrans;
   // This vector may hold zero-centered responses, if necessary.
-  arma::rowvec yCentered;
+  ResponsesType yCentered;
 
   // dataRef is row-major.  We can reuse the given matX, but only if we don't
   // need to do any transformations to it.
-  const arma::mat& dataRef =
-      (transposeData || fitIntercept || normalizeData) ? dataTrans : matX;
-  const arma::rowvec& yRef =
+  const MatType& dataRef =
+      (colMajor || fitIntercept || normalizeData) ? dataTrans : matX;
+  const ResponsesType& yRef =
       (fitIntercept) ? yCentered : y;
 
-  arma::vec offsetX; // used only if fitting an intercept
-  double offsetY = 0.0; // used only if fitting an intercept
-  arma::vec stdX; // used only if normalizing
+  arma::Col<ElemType> offsetX; // used only if fitting an intercept
+  this->offsetY = 0.0; // used only if fitting an intercept
+  arma::Col<ElemType> stdX; // used only if normalizing
 
-  if (transposeData)
+  if (colMajor)
   {
     if (fitIntercept)
     {
@@ -278,12 +560,12 @@ inline double LARS::Train(const arma::mat& matX,
 
   if (fitIntercept)
   {
-    offsetY = arma::mean(y);
-    yCentered = y - offsetY;
+    this->offsetY = arma::mean(y);
+    yCentered = y - this->offsetY;
   }
 
   // Compute X' * y.
-  arma::vec vecXTy = trans(yRef * dataRef);
+  arma::Col<ElemType> vecXTy = trans(yRef * dataRef);
 
   // Set up active set variables.  In the beginning, the active set has size 0
   // (all dimensions are inactive).
@@ -293,15 +575,15 @@ inline double LARS::Train(const arma::mat& matX,
   isIgnored.resize(dataRef.n_cols, false);
 
   // Initialize yHat and beta.
-  beta = arma::zeros(dataRef.n_cols);
-  arma::vec yHat = arma::zeros(dataRef.n_rows);
-  arma::vec yHatDirection(dataRef.n_rows);
+  arma::Col<ElemType> beta(dataRef.n_cols, arma::fill::zeros);
+  arma::Col<ElemType> yHat(dataRef.n_rows, arma::fill::zeros);
+  arma::Col<ElemType> yHatDirection(dataRef.n_rows, arma::fill::none);
 
   bool lassocond = false;
 
   // Compute the initial maximum correlation among all dimensions.
-  arma::vec corr = vecXTy;
-  double maxCorr = 0;
+  arma::Col<ElemType> corr = vecXTy;
+  ElemType maxCorr = 0;
   size_t changeInd = 0;
   size_t lassocondInd = dataRef.n_cols;
   for (size_t i = 0; i < vecXTy.n_elem; ++i)
@@ -322,7 +604,7 @@ inline double LARS::Train(const arma::mat& matX,
     lambdaPath[0] = lambda1;
 
     if (fitIntercept)
-      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[0]));
+      interceptPath.push_back(this->offsetY - dot(offsetX, betaPath[0]));
     else
       interceptPath.push_back(0.0);
 
@@ -337,7 +619,10 @@ inline double LARS::Train(const arma::mat& matX,
     matGramInternal = trans(dataRef) * dataRef;
 
     if (elasticNet && !useCholesky)
-      matGramInternal += lambda2 * arma::eye(dataRef.n_cols, dataRef.n_cols);
+    {
+      matGramInternal += lambda2 *
+          arma::eye<ModelMatType>(dataRef.n_cols, dataRef.n_cols);
+    }
   }
 
   // Main loop.
@@ -346,8 +631,8 @@ inline double LARS::Train(const arma::mat& matX,
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
-    double maxActiveCorr = 0;
-    double minActiveCorr = DBL_MAX;
+    ElemType maxActiveCorr = 0;
+    ElemType minActiveCorr = DBL_MAX;
     for (size_t i = 0; i < dataRef.n_cols; ++i)
     {
       if ((!isActive[i]) && (!isIgnored[i]) && (fabs(corr(i)) > maxCorr))
@@ -373,10 +658,13 @@ inline double LARS::Train(const arma::mat& matX,
     if (maxCorr < tolerance)
       break;
 
-    if ((matGram != &matGramInternal) && ((maxActiveCorr - minActiveCorr) >
-        100 * std::numeric_limits<double>::epsilon()))
+    // Floats require a really large tolerance for this condition.
+    const ElemType tol = (std::is_same<ElemType, double>::value) ? 1e-6 : 0.01;
+    if ((matGram != &matGramInternal) &&
+        ((maxActiveCorr - minActiveCorr) / maxActiveCorr) > tol)
     {
       // Construct the error message to match the user's settings.
+      std::cout << "maxActiveCorr: " << maxActiveCorr << " minActiveCorr: " << minActiveCorr << "; result " << ((maxActiveCorr - minActiveCorr) / maxActiveCorr) << "; tol " << tol << "\n";
       std::ostringstream oss;
       oss << "LARS::Train(): correlation conditions violated; check that your "
           << "given Gram matrix is properly computed on ";
@@ -388,8 +676,10 @@ inline double LARS::Train(const arma::mat& matX,
         oss << "unit-variance (normalized) ";
       else
         oss << "non-normalized ";
-      oss << "data!";
-      oss << std::endl;
+      oss << "data";
+      if (lambda2 > 0.0)
+        oss << " with lambda2 = " << lambda2 << " added to the diagonal";
+      oss << "!";
       throw std::runtime_error(oss.str());
     }
 
@@ -405,8 +695,9 @@ inline double LARS::Train(const arma::mat& matX,
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
         // This is equivalent to the above 5 lines.
-        arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
-            arma::conv_to<arma::uvec>::from(activeSet));
+        arma::Col<ElemType> newGramCol = matGram->elem(
+            changeInd * dataRef.n_cols +
+            ConvTo<arma::uvec>::From(activeSet));
 
         CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
       }
@@ -414,20 +705,20 @@ inline double LARS::Train(const arma::mat& matX,
     }
 
     // Compute signs of correlations.
-    arma::vec s = arma::vec(activeSet.size());
+    arma::Col<ElemType> s(activeSet.size());
     for (size_t i = 0; i < activeSet.size(); ++i)
       s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
 
     // Compute the "equiangular" direction in parameter space (betaDirection).
     // We use quotes because in the case of non-unit norm variables, this need
     // not be equiangular.
-    arma::vec unnormalizedBetaDirection;
-    double normalization;
-    arma::vec betaDirection;
+    arma::Col<ElemType> unnormalizedBetaDirection;
+    ElemType normalization;
+    arma::Col<ElemType> betaDirection;
     if (useCholesky)
     {
       // Check for singularity.
-      const double lastUtriElement = matUtriCholFactor(
+      const ElemType lastUtriElement = matUtriCholFactor(
           matUtriCholFactor.n_cols - 1, matUtriCholFactor.n_rows - 1);
       if (std::abs(lastUtriElement) > tolerance)
       {
@@ -446,7 +737,7 @@ inline double LARS::Train(const arma::mat& matX,
         unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
             solve(trimatl(trans(matUtriCholFactor)), s));
 
-        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
       }
       else
@@ -467,26 +758,26 @@ inline double LARS::Train(const arma::mat& matX,
         unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
             solve(trimatl(trans(matUtriCholFactor)), s));
 
-        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
       }
     }
     else
     {
-      arma::mat matGramActive = arma::mat(activeSet.size(), activeSet.size());
+      MatType matGramActive(activeSet.size(), activeSet.size());
       for (size_t i = 0; i < activeSet.size(); ++i)
         for (size_t j = 0; j < activeSet.size(); ++j)
           matGramActive(i, j) = (*matGram)(activeSet[i], activeSet[j]);
 
       // Check for singularity.
-      arma::mat matS = s * arma::ones<arma::mat>(1, activeSet.size());
+      MatType matS = s * arma::ones<MatType>(1, activeSet.size());
       const bool solvedOk = solve(unnormalizedBetaDirection,
           matGramActive % trans(matS) % matS,
-          arma::ones<arma::mat>(activeSet.size(), 1));
+          arma::ones<MatType>(activeSet.size(), 1));
       if (solvedOk)
       {
         // Ok, no singularity.
-        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }
       else
@@ -503,12 +794,12 @@ inline double LARS::Train(const arma::mat& matX,
         // need to take a step with the previous beta direction towards the next
         // variable we will add.
         s = s.subvec(0, activeSet.size() - 1); // Drop last element.
-        matS = s * arma::ones<arma::mat>(1, activeSet.size());
+        matS = s * arma::ones<MatType>(1, activeSet.size());
         // This worked last iteration, so there can't be a singularity.
         solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
-            arma::ones<arma::mat>(activeSet.size(), 1));
-        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+            arma::ones<MatType>(activeSet.size(), 1));
+        normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }
     }
@@ -516,7 +807,7 @@ inline double LARS::Train(const arma::mat& matX,
     // compute "equiangular" direction in output space
     ComputeYHatDirection(dataRef, betaDirection, yHatDirection);
 
-    double gamma = maxCorr / normalization;
+    ElemType gamma = maxCorr / normalization;
 
     // If not all variables are active.
     if ((activeSet.size() + ignoreSet.size()) < dataRef.n_cols)
@@ -527,9 +818,9 @@ inline double LARS::Train(const arma::mat& matX,
         if (isActive[ind] || isIgnored[ind])
           continue;
 
-        const double dirCorr = dot(dataRef.col(ind), yHatDirection);
-        const double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
-        const double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
+        const ElemType dirCorr = dot(dataRef.col(ind), yHatDirection);
+        const ElemType val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
+        const ElemType val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
 
         // If we kicked out a feature due to the LASSO modification last
         // iteration, then we do not allow relaxation of the step size to 0 for
@@ -556,12 +847,12 @@ inline double LARS::Train(const arma::mat& matX,
     {
       lassocond = false;
       lassocondInd = dataRef.n_cols;
-      double lassoboundOnGamma = DBL_MAX;
+      ElemType lassoboundOnGamma = DBL_MAX;
       size_t activeIndToKickOut = -1;
 
       for (size_t i = 0; i < activeSet.size(); ++i)
       {
-        double val = -beta(activeSet[i]) / betaDirection(i);
+        ElemType val = -beta(activeSet[i]) / betaDirection(i);
         if ((val > 0) && (val < lassoboundOnGamma))
         {
           lassoboundOnGamma = val;
@@ -611,7 +902,7 @@ inline double LARS::Train(const arma::mat& matX,
     if (elasticNet)
       corr -= lambda2 * beta;
 
-    double curLambda = 0;
+    ElemType curLambda = 0;
     for (size_t i = 0; i < activeSet.size(); ++i)
       curLambda += fabs(corr(activeSet[i]));
 
@@ -647,7 +938,7 @@ inline double LARS::Train(const arma::mat& matX,
   {
     interceptPath.clear();
     for (size_t i = 0; i < betaPath.size(); ++i)
-      interceptPath.push_back(offsetY - arma::dot(offsetX, betaPath[i]));
+      interceptPath.push_back(this->offsetY - dot(offsetX, betaPath[i]));
   }
   else
   {
@@ -655,71 +946,243 @@ inline double LARS::Train(const arma::mat& matX,
     interceptPath.resize(betaPath.size(), 0.0);
   }
 
-  // Unfortunate copy...
-  beta = betaPath.back();
+  // Make the model we use point to the last element in the path after
+  // interpolation.
+  selectedLambda1 = lambda1;
+  selectedIndex = betaPath.size() - 1;
 
-  return ComputeError(matX, y, !transposeData);
+  return ComputeError(matX, y, colMajor);
 }
 
-inline double LARS::Train(const arma::mat& data,
-                          const arma::rowvec& responses,
-                          const bool transposeData)
+template<typename ModelMatType>
+template<typename VecType>
+inline typename LARS<ModelMatType>::ElemType LARS<ModelMatType>::Predict(
+    const VecType& point) const
 {
-  arma::vec beta;
-  return Train(data, responses, beta, transposeData);
-}
-
-inline void LARS::Predict(const arma::mat& points,
-                          arma::rowvec& predictions,
-                          const bool rowMajor) const
-{
-  // We really only need to store beta internally...
-  if (rowMajor && !fitIntercept)
-    predictions = trans(points * betaPath.back());
-  else if (rowMajor)
-    predictions = trans(points * betaPath.back()) + interceptPath.back();
-  else if (fitIntercept)
-    predictions = betaPath.back().t() * points + interceptPath.back();
+  if (!fitIntercept)
+    return dot(Beta(), point);
   else
-    predictions = betaPath.back().t() * points;
+    return dot(Beta(), point) + Intercept();
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType>
+inline void LARS<ModelMatType>::Predict(const MatType& points,
+                                        ResponsesType& predictions,
+                                        const bool colMajor) const
+{
+  if (!colMajor && !fitIntercept)
+    predictions = trans(points * Beta());
+  else if (!colMajor)
+    predictions = trans(points * Beta()) + Intercept();
+  else if (fitIntercept)
+    predictions = Beta().t() * points + Intercept();
+  else
+    predictions = Beta().t() * points;
+}
+
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::FitIntercept(const bool newFitIntercept)
+{
+  // If we are storing a Gram matrix internally, but now will be normalizing
+  // data, then the Gram matrix we have computed is incorrect and needs to be
+  // recomputed.
+  if (fitIntercept != newFitIntercept)
+  {
+    if (matGram != &matGramInternal)
+    {
+      throw std::invalid_argument("LARS::FitIntercept(): cannot change value "
+          "when an external Gram matrix was specified!");
+    }
+
+    fitIntercept = newFitIntercept;
+    matGramInternal.clear();
+  }
+}
+
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::NormalizeData(const bool newNormalizeData)
+{
+  // If we are storing a Gram matrix internally, but now will be normalizing
+  // data, then the Gram matrix we have computed is incorrect and needs to be
+  // recomputed.
+  if (normalizeData != newNormalizeData)
+  {
+    if (matGram != &matGramInternal)
+    {
+      throw std::invalid_argument("LARS::NormalizeData(): cannot change value"
+          " when an external Gram matrix was specified!");
+    }
+
+    normalizeData = newNormalizeData;
+    matGramInternal.clear();
+  }
+}
+
+template<typename ModelMatType>
+inline const std::vector<size_t>& LARS<ModelMatType>::ActiveSet() const
+{
+  if (selectedIndex != (betaPath.size() - 1))
+    return selectedActiveSet;
+  else
+    return activeSet;
+}
+
+template<typename ModelMatType>
+inline const typename LARS<ModelMatType>::ModelColType&
+LARS<ModelMatType>::Beta() const
+{
+  if (selectedIndex < betaPath.size())
+    return betaPath[selectedIndex];
+  else
+    return selectedBeta;
+}
+
+template<typename ModelMatType>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::Intercept() const
+{
+  if (selectedIndex < betaPath.size())
+    return interceptPath[selectedIndex];
+  else
+    return selectedIntercept;
+}
+
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::SelectBeta(
+    const typename LARS<ModelMatType>::ElemType selLambda1)
+{
+  if (selLambda1 < lambda1)
+  {
+    std::ostringstream oss;
+    oss << "LARS::SelectBeta(): given lambda1 value (" << selLambda1 << ") "
+        << "cannot be less than model's Lambda1() value (" << lambda1
+        << ")!";
+    throw std::invalid_argument(oss.str());
+  }
+  else if (betaPath.size() == 0)
+  {
+    throw std::runtime_error("LARS::SelectBeta(): model must be trained "
+        "before calling SelectBeta()!");
+  }
+
+  this->selectedLambda1 = selLambda1;
+  selectedBeta.clear();
+
+  // Find which lambda values we are interpolating between.  lambdaPath is in
+  // reverse order (due to the fact that LARS is a stepwise algorithm), so the
+  // largest lambdas come first.
+  size_t i = 0;
+  while (i < lambdaPath.size())
+  {
+    if (selLambda1 == lambdaPath[i])
+    {
+      // If it's an exact match, no interpolation is necessary, and we can
+      // directly use the element from the path.
+      selectedIndex = i;
+
+      // However, we may need to compute the active set.
+      if (i != lambdaPath.size() - 1)
+      {
+        selectedActiveSet = ConvTo<std::vector<size_t>>::From(
+            arma::find(betaPath[i] != 0));
+      }
+
+      return;
+    }
+    else if (selLambda1 > lambdaPath[i])
+    {
+      // It's not an exact match, but lambdaPath[i] is the first lambda element
+      // that is smaller than the desired lambda.
+      break;
+    }
+
+    ++i;
+  }
+
+  // In the case where selLambda1 is larger than the largest lambda we have a
+  // model for, we can interpolate between the zero vector and the first model.
+  if (i == 0)
+  {
+    const ElemType interp = selLambda1 / lambdaPath[0];
+    selectedIndex = betaPath.size();
+
+    selectedLambda1 = interp * lambdaPath[0];
+    selectedBeta = interp * betaPath[0];
+    // Computing the intercept differs just a little bit from what's expected,
+    // because we have to account for the offsetY term, which is not zero even
+    // for a zero model.
+    selectedIntercept = (1 - interp) * this->offsetY +
+        interp * interceptPath[0];
+  }
+  else if (i == betaPath.size())
+  {
+    // It's possible that we fit the model perfectly with some lambda1 value
+    // less than this->lambda1.  In that case, the interpolated solution is just
+    // the last solution.
+    selectedIndex = betaPath.size() - 1;
+    return;
+  }
+  else
+  {
+    const ElemType interp = (lambdaPath[i - 1] - selLambda1) /
+        (lambdaPath[i - 1] - lambdaPath[i]);
+    selectedIndex = betaPath.size();
+
+    selectedLambda1 = (1 - interp) * lambdaPath[i - 1] + interp * lambdaPath[i];
+    selectedBeta = (1 - interp) * betaPath[i - 1] + interp * betaPath[i];
+    selectedIntercept = (1 - interp) * interceptPath[i - 1] +
+        interp * interceptPath[i];
+  }
+
+  // Compute the active set of variables.
+  selectedActiveSet = ConvTo<std::vector<size_t>>::From(
+      arma::find(selectedBeta != 0));
 }
 
 // Private functions.
-inline void LARS::Deactivate(const size_t activeVarInd)
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::Deactivate(const size_t activeVarInd)
 {
   isActive[activeSet[activeVarInd]] = false;
   activeSet.erase(activeSet.begin() + activeVarInd);
 }
 
-inline void LARS::Activate(const size_t varInd)
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::Activate(const size_t varInd)
 {
   isActive[varInd] = true;
   activeSet.push_back(varInd);
 }
 
-inline void LARS::Ignore(const size_t varInd)
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::Ignore(const size_t varInd)
 {
   isIgnored[varInd] = true;
   ignoreSet.push_back(varInd);
 }
 
-inline void LARS::ComputeYHatDirection(const arma::mat& matX,
-                                       const arma::vec& betaDirection,
-                                       arma::vec& yHatDirection)
+template<typename ModelMatType>
+template<typename MatType, typename VecType>
+inline void LARS<ModelMatType>::ComputeYHatDirection(
+    const MatType& matX,
+    const VecType& betaDirection,
+    VecType& yHatDirection)
 {
   yHatDirection.fill(0);
   for (size_t i = 0; i < activeSet.size(); ++i)
     yHatDirection += betaDirection(i) * matX.col(activeSet[i]);
 }
 
-inline void LARS::InterpolateBeta()
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::InterpolateBeta()
 {
   const size_t pathLength = betaPath.size();
 
   // interpolate beta and stop
-  double ultimateLambda = lambdaPath[pathLength - 1];
-  double penultimateLambda = lambdaPath[pathLength - 2];
-  double interp = (penultimateLambda - lambda1)
+  ElemType ultimateLambda = lambdaPath[pathLength - 1];
+  ElemType penultimateLambda = lambdaPath[pathLength - 2];
+  ElemType interp = (penultimateLambda - lambda1)
       / (penultimateLambda - ultimateLambda);
 
   betaPath[pathLength - 1] = (1 - interp) * (betaPath[pathLength - 2])
@@ -728,88 +1191,100 @@ inline void LARS::InterpolateBeta()
   lambdaPath[pathLength - 1] = lambda1;
 }
 
-inline void LARS::CholeskyInsert(const arma::vec& newX,
-                                 const arma::mat& X)
+template<typename ModelMatType>
+template<typename VecType, typename MatType>
+inline void LARS<ModelMatType>::CholeskyInsert(const VecType& newX,
+                                               const MatType& X)
 {
   if (matUtriCholFactor.n_rows == 0)
   {
-    matUtriCholFactor = arma::mat(1, 1);
+    matUtriCholFactor.set_size(1, 1);
 
     if (elasticNet)
-      matUtriCholFactor(0, 0) = sqrt(dot(newX, newX) + lambda2);
+      matUtriCholFactor(0, 0) = std::sqrt(dot(newX, newX) + lambda2);
     else
       matUtriCholFactor(0, 0) = norm(newX, 2);
   }
   else
   {
-    arma::vec newGramCol = trans(X) * newX;
+    VecType newGramCol = trans(X) * newX;
     CholeskyInsert(dot(newX, newX), newGramCol);
   }
 }
 
-inline void LARS::CholeskyInsert(double sqNormNewX,
-                                 const arma::vec& newGramCol)
+template<typename ModelMatType>
+template<typename VecType>
+inline void LARS<ModelMatType>::CholeskyInsert(
+    typename LARS<ModelMatType>::ElemType sqNormNewX,
+    const VecType& newGramCol)
 {
   int n = matUtriCholFactor.n_rows;
 
   if (n == 0)
   {
-    matUtriCholFactor = arma::mat(1, 1);
+    matUtriCholFactor.set_size(1, 1);
 
     if (elasticNet)
-      matUtriCholFactor(0, 0) = sqrt(sqNormNewX + lambda2);
+      matUtriCholFactor(0, 0) = std::sqrt(sqNormNewX + lambda2);
     else
-      matUtriCholFactor(0, 0) = sqrt(sqNormNewX);
+      matUtriCholFactor(0, 0) = std::sqrt(sqNormNewX);
   }
   else
   {
-    arma::mat matNewR = arma::mat(n + 1, n + 1);
+    DenseMatType matNewR(n + 1, n + 1);
 
     if (elasticNet)
       sqNormNewX += lambda2;
 
-    arma::vec matUtriCholFactork = solve(trimatl(trans(matUtriCholFactor)),
-        newGramCol);
+    arma::Col<ElemType> matUtriCholFactork =
+        solve(trimatl(trans(matUtriCholFactor)), newGramCol);
 
     matNewR(arma::span(0, n - 1), arma::span(0, n - 1)) = matUtriCholFactor;
     matNewR(arma::span(0, n - 1), n) = matUtriCholFactork;
     matNewR(n, arma::span(0, n - 1)).fill(0.0);
-    matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork,
-                                          matUtriCholFactork));
+    matNewR(n, n) = std::sqrt(sqNormNewX - dot(matUtriCholFactork,
+                                               matUtriCholFactork));
 
-    matUtriCholFactor = matNewR;
+    matUtriCholFactor = std::move(matNewR);
   }
 }
 
-inline void LARS::GivensRotate(const arma::vec::fixed<2>& x,
-                               arma::vec::fixed<2>& rotatedX,
-                               arma::mat& matG)
+template<typename ModelMatType>
+template<typename MatType>
+inline void LARS<ModelMatType>::GivensRotate(
+    const typename arma::Col<
+        typename LARS<ModelMatType>::ElemType
+    >::template fixed<2>& x,
+    typename arma::Col<
+        typename LARS<ModelMatType>::ElemType
+    >::template fixed<2>& rotatedX,
+    MatType& matG)
 {
   if (x(1) == 0)
   {
-    matG = arma::eye(2, 2);
+    matG = arma::eye<MatType>(2, 2);
     rotatedX = x;
   }
   else
   {
-    double r = norm(x, 2);
-    matG = arma::mat(2, 2);
+    ElemType r = norm(x, 2);
+    matG.set_size(2, 2);
 
-    double scaledX1 = x(0) / r;
-    double scaledX2 = x(1) / r;
+    ElemType scaledX1 = x(0) / r;
+    ElemType scaledX2 = x(1) / r;
 
     matG(0, 0) = scaledX1;
     matG(1, 0) = -scaledX2;
     matG(0, 1) = scaledX2;
     matG(1, 1) = scaledX1;
 
-    rotatedX = arma::vec(2);
     rotatedX(0) = r;
     rotatedX(1) = 0;
   }
 }
 
-inline void LARS::CholeskyDelete(const size_t colToKill)
+template<typename ModelMatType>
+inline void LARS<ModelMatType>::CholeskyDelete(const size_t colToKill)
 {
   size_t n = matUtriCholFactor.n_rows;
 
@@ -825,8 +1300,8 @@ inline void LARS::CholeskyDelete(const size_t colToKill)
 
     for (size_t k = colToKill; k < n; ++k)
     {
-      arma::mat matG;
-      arma::vec::fixed<2> rotatedVec;
+      DenseMatType matG;
+      typename arma::Col<ElemType>::template fixed<2> rotatedVec;
       GivensRotate(matUtriCholFactor(arma::span(k, k + 1), k), rotatedVec,
           matG);
       matUtriCholFactor(arma::span(k, k + 1), k) = rotatedVec;
@@ -842,32 +1317,41 @@ inline void LARS::CholeskyDelete(const size_t colToKill)
   }
 }
 
-inline double LARS::ComputeError(const arma::mat& matX,
-                                 const arma::rowvec& y,
-                                 const bool rowMajor)
+template<typename ModelMatType>
+template<typename MatType, typename ResponsesType>
+inline typename LARS<ModelMatType>::ElemType
+LARS<ModelMatType>::ComputeError(const MatType& matX,
+                                 const ResponsesType& y,
+                                 const bool colMajor)
 {
-  if (rowMajor)
-  {
-    return arma::accu(arma::pow(y - trans(matX * betaPath.back()), 2.0));
-  }
-
+  if (!colMajor)
+    return arma::accu(pow(y - trans(matX * Beta()) - Intercept(), 2.0));
   else
-  {
-    return arma::accu(arma::pow(y - betaPath.back().t() * matX, 2.0));
-  }
+    return arma::accu(pow(y - Beta().t() * matX - Intercept(), 2.0));
 }
 
 /**
  * Serialize the LARS model.
  */
+template<typename ModelMatType>
 template<typename Archive>
-void LARS::serialize(Archive& ar, const uint32_t /* version */)
+void LARS<ModelMatType>::serialize(Archive& ar, const uint32_t version)
 {
   // If we're loading, we have to use the internal storage.
   if (cereal::is_loading<Archive>())
   {
     matGram = &matGramInternal;
-    ar(CEREAL_NVP(matGramInternal));
+    if (version == 0)
+    {
+      // Older versions stored matGramInternal as type arma::mat.
+      arma::mat matGramInternalTmp;
+      ar(cereal::make_nvp("matGramInternal", matGramInternalTmp));
+      matGramInternal = ConvTo<ModelMatType>::From(matGramInternalTmp);
+    }
+    else
+    {
+      ar(CEREAL_NVP(matGramInternal));
+    }
   }
   else
   {
@@ -875,22 +1359,94 @@ void LARS::serialize(Archive& ar, const uint32_t /* version */)
         (const_cast<arma::mat&>(*matGram))));
   }
 
-  ar(CEREAL_NVP(matUtriCholFactor));
-  ar(CEREAL_NVP(useCholesky));
-  ar(CEREAL_NVP(lasso));
-  ar(CEREAL_NVP(lambda1));
-  ar(CEREAL_NVP(elasticNet));
-  ar(CEREAL_NVP(lambda2));
-  ar(CEREAL_NVP(tolerance));
-  ar(CEREAL_NVP(fitIntercept));
-  ar(CEREAL_NVP(normalizeData));
-  ar(CEREAL_NVP(betaPath));
-  ar(CEREAL_NVP(lambdaPath));
-  ar(CEREAL_NVP(interceptPath));
-  ar(CEREAL_NVP(activeSet));
-  ar(CEREAL_NVP(isActive));
-  ar(CEREAL_NVP(ignoreSet));
-  ar(CEREAL_NVP(isIgnored));
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // Older versions stored matUtriCholFactor as type arma::mat, and other
+    // elements as type double.  This version loads everything as
+    // double/arma::mat and converts as needed.
+    arma::mat matUtriCholFactorTmp;
+    ar(cereal::make_nvp("matUtriCholFactor", matUtriCholFactorTmp));
+    matUtriCholFactor = ConvTo<ModelMatType>::From(matUtriCholFactorTmp);
+
+    ar(CEREAL_NVP(useCholesky));
+    ar(CEREAL_NVP(lasso));
+
+    double tmp;
+    ar(cereal::make_nvp("lambda1", tmp));
+    lambda1 = tmp;
+
+    ar(CEREAL_NVP(elasticNet));
+
+    ar(cereal::make_nvp("lambda2", tmp));
+    lambda2 = tmp;
+
+    ar(cereal::make_nvp("tolerance", tmp));
+    tolerance = tmp;
+
+    ar(CEREAL_NVP(fitIntercept));
+    ar(CEREAL_NVP(normalizeData));
+
+    std::vector<arma::vec> betaPathTmp;
+    ar(cereal::make_nvp("betaPath", betaPathTmp));
+    betaPath.resize(betaPathTmp.size());
+    for (size_t i = 0; i < betaPathTmp.size(); ++i)
+      betaPath[i] = ConvTo<ModelColType>::From(betaPathTmp[i]);
+
+    std::vector<double> lambdaPathTmp;
+    ar(cereal::make_nvp("lambdaPath", lambdaPathTmp));
+    lambdaPath.resize(lambdaPathTmp.size());
+    for (size_t i = 0; i < lambdaPathTmp.size(); ++i)
+      lambdaPath[i] = (ElemType) lambdaPathTmp[i];
+
+    std::vector<double> interceptPathTmp;
+    ar(cereal::make_nvp("interceptPath", interceptPathTmp));
+    interceptPath.resize(interceptPathTmp.size());
+    for (size_t i = 0; i < interceptPathTmp.size(); ++i)
+      interceptPath[i] = (ElemType) interceptPathTmp[i];
+
+    ar(CEREAL_NVP(activeSet));
+    ar(CEREAL_NVP(isActive));
+    ar(CEREAL_NVP(ignoreSet));
+    ar(CEREAL_NVP(isIgnored));
+  }
+  else
+  {
+    ar(CEREAL_NVP(matUtriCholFactor));
+    ar(CEREAL_NVP(useCholesky));
+    ar(CEREAL_NVP(lasso));
+    ar(CEREAL_NVP(lambda1));
+    ar(CEREAL_NVP(elasticNet));
+    ar(CEREAL_NVP(lambda2));
+    ar(CEREAL_NVP(tolerance));
+    ar(CEREAL_NVP(fitIntercept));
+    ar(CEREAL_NVP(normalizeData));
+    ar(CEREAL_NVP(betaPath));
+    ar(CEREAL_NVP(lambdaPath));
+    ar(CEREAL_NVP(interceptPath));
+    ar(CEREAL_NVP(activeSet));
+    ar(CEREAL_NVP(isActive));
+    ar(CEREAL_NVP(ignoreSet));
+    ar(CEREAL_NVP(isIgnored));
+  }
+
+  if (version > 0)
+  {
+    ar(CEREAL_NVP(selectedLambda1));
+    ar(CEREAL_NVP(selectedIndex));
+    ar(CEREAL_NVP(selectedBeta));
+    ar(CEREAL_NVP(selectedIntercept));
+    ar(CEREAL_NVP(selectedActiveSet));
+    ar(CEREAL_NVP(offsetY));
+  }
+  else if (cereal::is_loading<Archive>())
+  {
+    selectedLambda1 = lambdaPath.back();
+    selectedIndex = betaPath.size() - 1;
+    selectedBeta.clear();
+    selectedIntercept = 0.0;
+    selectedActiveSet.clear();
+    offsetY = 0.0;
+  }
 }
 
 } // namespace mlpack

@@ -38,13 +38,14 @@ class OrthogonalInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
+  template<typename MatType>
+  void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
-    arma::Mat<eT> V;
-    arma::Col<eT> s;
+    MatType V;
+    typedef typename GetColType<MatType>::type ColType;
+    ColType s;
 
-    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT> >(rows, cols));
+    svd_econ(W, s, V, arma::randu<MatType>(rows, cols));
     W *= gain;
   }
 
@@ -54,13 +55,15 @@ class OrthogonalInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Mat<eT>& W)
+  template<typename MatType>
+  void Initialize(MatType& W,
+      const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    arma::Mat<eT> V;
-    arma::Col<eT> s;
+    MatType V;
+    typedef typename GetColType<MatType>::type ColType;
+    ColType s;
 
-    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT> >(W.n_rows, W.n_cols));
+    svd_econ(W, s, V, arma::randu<MatType>(W.n_rows, W.n_cols));
     W *= gain;
   }
 
@@ -73,8 +76,8 @@ class OrthogonalInitialization
    * @param cols Number of columns.
    * @param slices Number of slices.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W,
+  template<typename CubeType>
+  void Initialize(CubeType& W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)
@@ -92,8 +95,9 @@ class OrthogonalInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  template<typename eT>
-  void Initialize(arma::Cube<eT>& W)
+  template<typename CubeType>
+  void Initialize(CubeType& W,
+      const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty cube." << std::endl;

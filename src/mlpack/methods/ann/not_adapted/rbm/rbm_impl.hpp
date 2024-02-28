@@ -114,8 +114,8 @@ RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
 {
   preActivation = (weight.slice(0) * input);
   preActivation.each_col() += hiddenBias;
-  return -(arma::accu(arma::log(1 + arma::trunc_exp(preActivation))) +
-      arma::dot(input, arma::repmat(visibleBias, 1, input.n_cols)));
+  return -(arma::accu(log(1 + arma::trunc_exp(preActivation))) +
+      dot(input, repmat(visibleBias, 1, input.n_cols)));
 }
 
 template<

@@ -43,12 +43,19 @@ void VantagePointSplit<BoundType, MatType, MaxNumSamples>::
 SelectVantagePoint(const MetricType& metric, const MatType& data,
     const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu)
 {
-  arma::uvec vantagePointCandidates;
   arma::Col<ElemType> distances(MaxNumSamples);
 
   // Get no more than max(MaxNumSamples, count) vantage point candidates
-  ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
-      vantagePointCandidates);
+  arma::uvec vantagePointCandidates;
+  if (MaxNumSamples > count)
+  {
+    vantagePointCandidates = begin + arma::linspace<arma::uvec>(0, count - 1,
+        count);
+  }
+  else
+  {
+    vantagePointCandidates = begin + arma::randperm(count, MaxNumSamples);
+  }
 
   ElemType bestSpread = 0;
 
@@ -57,7 +64,10 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
   for (size_t i = 0; i < vantagePointCandidates.n_elem; ++i)
   {
     // Get no more than min(MaxNumSamples, count) random samples
-    ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
+    if (MaxNumSamples > count)
+      samples = begin + arma::linspace<arma::uvec>(0, count - 1, count);
+    else
+      samples = begin + arma::randperm(count, MaxNumSamples);
 
     // Calculate the second moment of the distance to the vantage point
     // candidate using these random samples.
@@ -67,7 +77,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
       distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
           data.col(samples[j]));
 
-    const ElemType spread = arma::sum(distances % distances) / samples.n_elem;
+    const ElemType spread = sum(distances % distances) / samples.n_elem;
 
     if (spread > bestSpread)
     {

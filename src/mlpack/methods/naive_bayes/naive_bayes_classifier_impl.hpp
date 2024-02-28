@@ -46,7 +46,8 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
   {
     probabilities.zeros(numClasses);
     means.zeros(data.n_rows, numClasses);
-    variances.zeros(data.n_rows, numClasses);
+    variances.set_size(data.n_rows, numClasses);
+    variances.fill(epsilon);
   }
   else
   {
@@ -69,7 +70,8 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
   // Initialize model to 0.
   probabilities.zeros(numClasses);
   means.zeros(dimensionality, numClasses);
-  variances.zeros(dimensionality, numClasses);
+  variances.set_size(dimensionality, numClasses);
+  variances.fill(epsilon);
 }
 
 template<typename ModelMatType>
@@ -84,30 +86,14 @@ void NaiveBayesClassifier<ModelMatType>::Train(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
-  // Do we need to resize the model?
-  if (probabilities.n_elem != numClasses)
-  {
-    // Perform training, after initializing the model to 0 (that is, if Train()
-    // won't do that for us, which it won't if we're using the incremental
-    // algorithm).
-    if (incremental)
-    {
-      probabilities.zeros(numClasses);
-      means.zeros(data.n_rows, numClasses);
-      variances.zeros(data.n_rows, numClasses);
-    }
-    else
-    {
-      probabilities.set_size(numClasses);
-      means.set_size(data.n_rows, numClasses);
-      variances.set_size(data.n_rows, numClasses);
-    }
-  }
-
   // Calculate the class probabilities as well as the sample mean and variance
   // for each of the features with respect to each of the labels.
   if (incremental)
   {
+    // Do we need to resize the model?
+    if (probabilities.n_elem != numClasses || data.n_rows != means.n_rows)
+      Reset(data.n_rows, numClasses);
+
     // Use incremental algorithm.
     // Fist, de-normalize probabilities.
     probabilities *= trainingPoints;
@@ -117,7 +103,7 @@ void NaiveBayesClassifier<ModelMatType>::Train(
       const size_t label = labels[j];
       ++probabilities[label];
 
-      arma::vec delta = data.col(j) - means.col(label);
+      arma::Col<ElemType> delta = data.col(j) - means.col(label);
       means.col(label) += delta / probabilities[label];
       variances.col(label) += delta % (data.col(j) - means.col(label));
     }
@@ -131,9 +117,9 @@ void NaiveBayesClassifier<ModelMatType>::Train(
   else
   {
     // Set all parameters to zero.
-    probabilities.zeros();
-    means.zeros();
-    variances.zeros();
+    probabilities.zeros(numClasses);
+    means.zeros(data.n_rows, numClasses);
+    variances.zeros(data.n_rows, numClasses);
 
     // Don't use incremental algorithm.  This is a two-pass algorithm.  It is
     // possible to calculate the means and variances using a faster one-pass
@@ -175,6 +161,19 @@ void NaiveBayesClassifier<ModelMatType>::Train(
 }
 
 template<typename ModelMatType>
+template<typename MatType>
+void NaiveBayesClassifier<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const bool incremental,
+    const double epsilon)
+{
+  this->epsilon = epsilon;
+  Train(data, labels, numClasses, incremental);
+}
+
+template<typename ModelMatType>
 template<typename VecType>
 void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
                                                const size_t label)
@@ -183,11 +182,20 @@ void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
+  if (point.n_elem != means.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "NaiveBayesClassifier::Train(): given point has dimensionality "
+        << point.n_elem << ", but model has dimensionality " << means.n_rows
+        << "!";
+    throw std::invalid_argument(oss.str());
+  }
+
   // We must use the incremental algorithm here.
   probabilities *= trainingPoints;
   probabilities[label]++;
 
-  arma::vec delta = point - means.col(label);
+  arma::Col<ElemType> delta = point - means.col(label);
   means.col(label) += delta / probabilities[label];
   if (probabilities[label] > 2)
     variances.col(label) *= (probabilities[label] - 2);
@@ -209,7 +217,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
-  logLikelihoods = arma::log(arma::repmat(probabilities, 1, data.n_cols));
+  logLikelihoods = log(repmat(probabilities, 1, data.n_cols));
   ModelMatType invVar = 1.0 / variances;
 
   // Calculate the joint log likelihood of point for each of the
@@ -220,12 +228,12 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   {
     // This is an adaptation of phi() for the case where the covariance is a
     // diagonal matrix.
-    ModelMatType diffs = data - arma::repmat(means.col(i), 1, data.n_cols);
+    ModelMatType diffs = data - repmat(means.col(i), 1, data.n_cols);
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
-    arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
+    arma::Mat<ElemType> exponents = sum(diffs % rhs, 0);
 
-    logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        arma::accu(arma::log(variances.col(i))) + exponents);
+    logLikelihoods.row(i) += (data.n_rows / -2.0 * std::log(2 * M_PI) - 0.5 *
+        arma::accu(log(variances.col(i))) + exponents);
   }
 }
 
@@ -236,6 +244,15 @@ size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
   static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
+
+  if (point.n_elem != means.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "NaiveBayesClassifier::Classify(): given point has dimensionality "
+        << point.n_elem << ", but model has dimensionality " << means.n_rows
+        << "!";
+    throw std::invalid_argument(oss.str());
+  }
 
   // Find the label(class) with max log likelihood.
   ModelMatType logLikelihoods;
@@ -261,6 +278,15 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
+  if (point.n_elem != means.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "NaiveBayesClassifier::Classify(): given point has dimensionality "
+        << point.n_elem << ", but model has dimensionality " << means.n_rows
+        << "!";
+    throw std::invalid_argument(oss.str());
+  }
+
   // log(Prob(Y|X)) = Log(Prob(X|Y)) + Log(Prob(Y)) - Log(Prob(X));
   // But LogLikelihood() gives us the unnormalized log likelihood which is
   // Log(Prob(X|Y)) + Log(Prob(Y)) so we need to subtract the normalization
@@ -270,9 +296,9 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   // To prevent underflow in log of sum of exp of x operation (where x is a
   // small negative value), we use logsumexp(x - max(x)) + max(x).
-  const double maxValue = arma::max(logLikelihoods);
-  const double logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
-      maxValue;
+  const ElemType maxValue = logLikelihoods.max();
+  const ElemType logProbX = std::log(arma::accu(exp(logLikelihoods - maxValue)))
+      + maxValue;
   probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
   arma::uword maxIndex = 0;
@@ -289,6 +315,15 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
+
+  if (data.n_rows != means.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "NaiveBayesClassifier::Classify(): given data has dimensionality "
+        << data.n_rows << ", but model has dimensionality " << means.n_rows
+        << "!";
+    throw std::invalid_argument(oss.str());
+  }
 
   predictions.set_size(data.n_cols);
 
@@ -318,6 +353,15 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
+  if (data.n_rows != means.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "NaiveBayesClassifier::Classify(): given data has dimensionality "
+        << data.n_rows << ", but model has dimensionality " << means.n_rows
+        << "!";
+    throw std::invalid_argument(oss.str());
+  }
+
   predictions.set_size(data.n_cols);
 
   ModelMatType logLikelihoods;
@@ -332,9 +376,9 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     // Besides, to prevent underflow in log of sum of exp of x operation (where
     // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
     maxValue = arma::max(logLikelihoods.col(j));
-    logProbX = log(arma::accu(exp(logLikelihoods.col(j) -
+    logProbX = std::log(arma::accu(exp(logLikelihoods.col(j) -
         maxValue))) + maxValue;
-    predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) - logProbX);
+    predictionProbs.col(j) = exp(logLikelihoods.col(j) - logProbX);
   }
 
   // Now calculate maximum probabilities for each point.
@@ -347,14 +391,49 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 }
 
 template<typename ModelMatType>
+void NaiveBayesClassifier<ModelMatType>::Reset()
+{
+  means.zeros();
+  probabilities.zeros();
+  variances.fill(epsilon);
+  trainingPoints = 0;
+}
+
+template<typename ModelMatType>
+void NaiveBayesClassifier<ModelMatType>::Reset(const size_t dimensionality,
+                                               const size_t numClasses,
+                                               const double epsilon)
+{
+  this->epsilon = epsilon;
+
+  probabilities.zeros(numClasses);
+  means.zeros(dimensionality, numClasses);
+  variances.set_size(dimensionality, numClasses);
+  variances.fill(epsilon);
+  trainingPoints = 0;
+}
+
+template<typename ModelMatType>
 template<typename Archive>
 void NaiveBayesClassifier<ModelMatType>::serialize(
     Archive& ar,
-    const uint32_t /* version */)
+    const uint32_t version)
 {
   ar(CEREAL_NVP(means));
   ar(CEREAL_NVP(variances));
   ar(CEREAL_NVP(probabilities));
+
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // Old versions did not serialize the trainingPoints or epsilon members.
+    trainingPoints = 0;
+    epsilon = 1e-10;
+  }
+  else
+  {
+    ar(CEREAL_NVP(trainingPoints));
+    ar(CEREAL_NVP(epsilon));
+  }
 }
 
 } // namespace mlpack

@@ -71,12 +71,13 @@ AddType<MatType>::operator=(AddType&& other)
 template<typename MatType>
 void AddType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  output = input + arma::repmat(arma::vectorise(weights), 1, input.n_cols);
+  output = input + repmat(vectorise(weights), 1, input.n_cols);
 }
 
 template<typename MatType>
 void AddType<MatType>::Backward(
     const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {

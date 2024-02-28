@@ -104,7 +104,7 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
   {
-    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
+    referenceTree = BuildTree<Tree>(std::move(MatType()),
         oldFromNewReferences);
     referenceSet = &referenceTree->Dataset();
   }
@@ -255,7 +255,7 @@ NeighborSearch<SortPolicy,
   if (!other.referenceTree)
     delete other.referenceSet;
 
-  other.referenceTree = BuildTree<Tree>(std::move(arma::mat()),
+  other.referenceTree = BuildTree<Tree>(std::move(MatType()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,
@@ -365,7 +365,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     const MatType& querySet,
     const size_t k,
     arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+    arma::Mat<ElemType>& distances)
 {
   if (k > referenceSet->n_cols)
   {
@@ -386,14 +386,14 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // To avoid an extra copy, we will store the neighbors and distances in a
   // separate matrix.
   arma::Mat<size_t>* neighborPtr = &neighbors;
-  arma::mat* distancePtr = &distances;
+  arma::Mat<ElemType>* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
   if (TreeTraits<Tree>::RearrangesDataset)
   {
     if (searchMode == DUAL_TREE_MODE)
     {
-      distancePtr = new arma::mat; // Query indices need to be mapped.
+      distancePtr = new arma::Mat<ElemType>; // Query indices need to be mapped.
       neighborPtr = new arma::Mat<size_t>;
     }
     else if (!oldFromNewReferences.empty())
@@ -570,7 +570,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     Tree& queryTree,
     const size_t k,
     arma::Mat<size_t>& neighbors,
-    arma::mat& distances,
+    arma::Mat<ElemType>& distances,
     bool sameSet)
 {
   if (k > referenceSet->n_cols)
@@ -648,7 +648,7 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::Search(
     const size_t k,
     arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+    arma::Mat<ElemType>& distances)
 {
   if (k > referenceSet->n_cols)
   {
@@ -670,12 +670,12 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   scores = 0;
 
   arma::Mat<size_t>* neighborPtr = &neighbors;
-  arma::mat* distancePtr = &distances;
+  arma::Mat<ElemType>* distancePtr = &distances;
 
   if (!oldFromNewReferences.empty() && TreeTraits<Tree>::RearrangesDataset)
   {
     // We will always need to rearrange in this case.
-    distancePtr = new arma::mat;
+    distancePtr = new MatType;
     neighborPtr = new arma::Mat<size_t>;
   }
 
@@ -825,8 +825,8 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 double NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
-    arma::mat& foundDistances,
-    arma::mat& realDistances)
+    arma::Mat<ElemType>& foundDistances,
+    arma::Mat<ElemType>& realDistances)
 {
   if (foundDistances.n_rows != realDistances.n_rows ||
       foundDistances.n_cols != realDistances.n_cols)

@@ -901,11 +901,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -916,7 +916,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // h = o * tanh(c).
@@ -983,11 +983,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -998,7 +998,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
 //       // h = o * tanh(c).
@@ -1123,36 +1123,36 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   // Compute the z_t gate output.
 //   arma::mat expectedOutput = arma::ones(3, 1);
 //   expectedOutput *= -4;
-//   expectedOutput = arma::exp(expectedOutput);
+//   expectedOutput = exp(expectedOutput);
 //   expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
 //   expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
 
 //   // For the first input the output should be equal to the output of
 //   // gate z_t as the previous output fed to the cell is all zeros.
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 
 //   expectedOutput = output;
 
 //   gru.Forward(input, output);
 
-//   double s = arma::as_scalar(arma::sum(expectedOutput));
+//   double s = arma::as_scalar(sum(expectedOutput));
 
 //   // Compute the value of z_t gate for the second input.
 //   arma::mat z_t = arma::ones(3, 1);
 //   z_t *= -(s + 4);
-//   z_t = arma::exp(z_t);
+//   z_t = exp(z_t);
 //   z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
 
 //   // Compute the value of o_t gate for the second input.
 //   arma::mat o_t = arma::ones(3, 1);
-//   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
-//   o_t = arma::exp(o_t);
+//   o_t *= -(arma::as_scalar(sum(expectedOutput % z_t)) + 4);
+//   o_t = exp(o_t);
 //   o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 
 //   // Expected output for the second input.
 //   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 
 //   LayerTypes<> layer(gruAlloc);
 //   boost::apply_visitor(DeleteVisitor(), layer);
@@ -1506,11 +1506,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -1521,7 +1521,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 //
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // h = o * tanh(c).
@@ -1588,11 +1588,11 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //       // Compute the value of cell state and output.
 //       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // z = tanh(W.dot(x) + W.dot(h) + b).
@@ -1603,7 +1603,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 //
 //       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
 //           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 //
 //       // h = o * tanh(c).
@@ -1728,36 +1728,36 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   // Compute the z_t gate output.
 //   arma::mat expectedOutput = arma::ones(3, 1);
 //   expectedOutput *= -4;
-//   expectedOutput = arma::exp(expectedOutput);
+//   expectedOutput = exp(expectedOutput);
 //   expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
 //   expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
 //
 //   // For the first input the output should be equal to the output of
 //   // gate z_t as the previous output fed to the cell is all zeros.
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 //
 //   expectedOutput = output;
 //
 //   gru.Forward(input, output);
 //
-//   double s = arma::as_scalar(arma::sum(expectedOutput));
+//   double s = arma::as_scalar(sum(expectedOutput));
 //
 //   // Compute the value of z_t gate for the second input.
 //   arma::mat z_t = arma::ones(3, 1);
 //   z_t *= -(s + 4);
-//   z_t = arma::exp(z_t);
+//   z_t = exp(z_t);
 //   z_t = arma::ones(3, 1) / (arma::ones(3, 1) + z_t);
 //
 //   // Compute the value of o_t gate for the second input.
 //   arma::mat o_t = arma::ones(3, 1);
-//   o_t *= -(arma::as_scalar(arma::sum(expectedOutput % z_t)) + 4);
-//   o_t = arma::exp(o_t);
+//   o_t *= -(arma::as_scalar(sum(expectedOutput % z_t)) + 4);
+//   o_t = exp(o_t);
 //   o_t = arma::ones(3, 1) / (arma::ones(3, 1) + o_t);
 //
 //   // Expected output for the second input.
 //   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 //
-//   REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
+//   REQUIRE(arma::as_scalar(trans(output) * expectedOutput) <= 1e-2);
 //
 //   LayerTypes<> layer(gruAlloc);
 //   boost::apply_visitor(DeleteVisitor(), layer);
@@ -1791,7 +1791,7 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   {
     // The Lookup module uses index - 1 for the cols.
     const double outputSum = arma::accu(module.Parameters().cols(
-        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
+        ConvTo<arma::uvec>::From(input.col(i)) - 1));
 
     REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
   }
@@ -2736,99 +2736,6 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
-
-/**
- * Tests the LayerNorm layer.
- *
-TEST_CASE("LayerNormTest", "[ANNLayerTest]")
-{
-  arma::mat input, output;
-  input = { { 5.1, 3.5 },
-            { 4.9, 3.0 },
-            { 4.7, 3.2 } };
-
-  LayerNorm model(input.n_rows);
-  model.Reset();
-
-  model.Forward(input, output);
-  arma::mat result;
-  result = { { 1.2247, 1.2978 },
-              { 0, -1.1355 },
-              { -1.2247, -0.1622 } };
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
-  output = model.Mean();
-  result = { 4.9000, 3.2333 };
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
-  output = model.Variance();
-  result = { 0.0267, 0.0422 };
-
-  CheckMatrices(output, result, 1e-1);
-}
-*/
-
-/**
- * LayerNorm layer numerical gradient test.
- *
-TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
-{
-  // Add function gradient instantiation.
-  struct GradientFunction
-  {
-    GradientFunction() :
-        input(arma::randn(10, 256)),
-        target(arma::zeros(1, 256))
-    {
-      model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
-      model->ResetData(input, target);
-      model->Add<IdentityLayer>();
-      model->Add<Linear>(10, 10);
-      model->Add<LayerNorm>(10);
-      model->Add<Linear>(10, 2);
-      model->Add<LogSoftMax>();
-    }
-
-    ~GradientFunction()
-    {
-      delete model;
-    }
-
-    double Gradient(arma::mat& gradient) const
-    {
-      double error = model->Evaluate(model->Parameters(), 0, 16, false);
-      model->Gradient(model->Parameters(), 0, gradient, 16);
-      return error;
-    }
-
-    arma::mat& Parameters() { return model->Parameters(); }
-
-    FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-    arma::mat input, target;
-  } function;
-
-  REQUIRE(CheckGradient(function) <= 1e-4);
-}
-*/
-
-/**
- * Test that the functions that can access the parameters of the
- * Layer Norm layer work.
- *
-TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
-{
-  // Parameter order : size, eps.
-  LayerNorm layer(5, 1e-3);
-
-  // Make sure we can get the parameters successfully.
-  REQUIRE(layer.InSize() == 5);
-  REQUIRE(layer.Epsilon() == 1e-3);
-}
-*/
 
 // /**
 //  * Test if the AddMerge layer is able to forward the
@@ -4073,206 +3980,6 @@ TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
 }
 */
 
-/**
- * Simple Multihead Attention test.
- *
-TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
-{
-  size_t tLen = 5;
-  size_t sLen = tLen;
-  size_t embedDim = 4;
-  size_t numHeads = 2;
-  size_t bsz = 3;
-
-  arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
-  arma::mat output;
-
-  arma::mat attnMask = arma::zeros(tLen, sLen);
-  for (size_t i = 0; i < tLen; ++i)
-  {
-    for (size_t j = 0; j < sLen; ++j)
-    {
-      if (i < j)
-        attnMask(i, j) = std::numeric_limits<double>::lowest();
-    }
-  }
-
-  arma::mat keyPaddingMask = arma::zeros(1, sLen);
-  keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
-
-  MultiheadAttention module(tLen, sLen, embedDim, numHeads);
-  module.AttentionMask() = attnMask;
-  module.KeyPaddingMask() = keyPaddingMask;
-  module.Reset();
-  module.Parameters().randu();
-
-  // Forward test.
-  arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
-
-  module.Forward(input, output);
-  REQUIRE(output.n_rows == embedDim * tLen);
-  REQUIRE(output.n_cols == bsz);
-
-  // Backward test.
-  arma::mat gy = 0.01 * arma::randu(embedDim * tLen, bsz);
-  arma::mat g;
-  module.Backward(input, gy, g);
-  REQUIRE(g.n_rows == input.n_rows);
-  REQUIRE(g.n_cols == input.n_cols);
-
-  // Gradient test.
-  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
-  arma::mat gradient;
-  module.Gradient(input, error, gradient);
-  REQUIRE(gradient.n_rows == module.Parameters().n_rows);
-  REQUIRE(gradient.n_cols == module.Parameters().n_cols);
-}
-*/
-
-/**
- * Jacobian MultiheadAttention module test.
- *
-TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
-{
-  // Check when query = key = value.
-  for (size_t i = 0; i < 5; ++i)
-  {
-    const size_t tgtSeqLen = 2;
-    const size_t embedDim = 4;
-    const size_t nHeads = 2;
-    const size_t batchSize = 1;
-
-    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
-    arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
-
-    MultiheadAttention module(tgtSeqLen, tgtSeqLen, embedDim, nHeads);
-    module.Parameters().randu();
-
-    double error = CustomJacobianTest(module, input);
-    REQUIRE(error <= 1e-5);
-  }
-
-  // Check when key = value.
-  for (size_t i = 0; i < 5; ++i)
-  {
-    const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = RandInt(2, 5);
-    const size_t embedDim = 4;
-    const size_t nHeads = 2;
-    const size_t batchSize = 1;
-
-    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
-    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat input = arma::join_cols(arma::join_cols(query, key), key);
-
-    MultiheadAttention module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
-    module.Parameters().randu();
-
-    double error = CustomJacobianTest(module, input);
-    REQUIRE(error <= 1e-5);
-  }
-
-  // Check when query, key and value are not same.
-  for (size_t i = 0; i < 5; ++i)
-  {
-    const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = RandInt(2, 5);
-    const size_t embedDim = 4;
-    const size_t nHeads = 2;
-    const size_t batchSize = 1;
-
-    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
-    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat input = arma::join_cols(arma::join_cols(query, key), value);
-
-    MultiheadAttention module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
-    module.Parameters().randu();
-
-    double error = JacobianTest(module, input);
-    REQUIRE(error <= 1e-5);
-  }
-}
-*/
-
-/**
- * Numerical gradient test for MultiheadAttention layer.
- *
-TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
-{
-  struct GradientFunction
-  {
-    GradientFunction() :
-        tgtSeqLen(2),
-        srcSeqLen(2),
-        embedDim(4),
-        nHeads(2),
-        vocabSize(5),
-        batchSize(2)
-    {
-      input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
-      target = arma::zeros(vocabSize, batchSize);
-      for (size_t i = 0; i < target.n_elem; ++i)
-      {
-        const size_t label = RandInt(1, vocabSize);
-        target(i) = label;
-      }
-
-      attnMask = arma::zeros(tgtSeqLen, srcSeqLen);
-      for (size_t i = 0; i < tgtSeqLen; ++i)
-      {
-        for (size_t j = 0; j < srcSeqLen; ++j)
-        {
-          if (i < j)
-            attnMask(i, j) = std::numeric_limits<double>::lowest();
-        }
-      }
-
-      keyPaddingMask = arma::zeros(1, srcSeqLen);
-      keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
-
-      model = new FFN<NegativeLogLikelihood, XavierInitialization>();
-      model->ResetData(input, target);
-      // attnModule = new MultiheadAttention(tgtSeqLen, srcSeqLen, embedDim,
-      //     nHeads);
-      // attnModule->AttentionMask() = attnMask;
-      // attnModule->KeyPaddingMask() = keyPaddingMask;
-      // model->Add(attnModule);
-      model->Add<MultiheadAttention>(tgtSeqLen, srcSeqLen, embedDim, nHeads,
-          attnMask, keyPaddingMask);
-      model->Add<Linear>(embedDim * tgtSeqLen, vocabSize);
-      model->Add<LogSoftMax>();
-    }
-
-    ~GradientFunction()
-    {
-      delete model;
-    }
-
-    double Gradient(arma::mat& gradient) const
-    {
-      double error = model->Evaluate(model->Parameters(), 0, batchSize);
-      model->Gradient(model->Parameters(), 0, gradient, batchSize);
-      return error;
-    }
-
-    arma::mat& Parameters() { return model->Parameters(); }
-
-    FFN<NegativeLogLikelihood, XavierInitialization>* model;
-    // MultiheadAttention* attnModule;
-
-    arma::mat input, target, attnMask, keyPaddingMask;
-    const size_t tgtSeqLen;
-    const size_t srcSeqLen;
-    const size_t embedDim;
-    const size_t nHeads;
-    const size_t vocabSize;
-    const size_t batchSize;
-  } function;
-
-  REQUIRE(CheckGradient(function) <= 3e-06);
-}
-*/
 
 /**
  * Simple tests for instance normalization layer.

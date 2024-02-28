@@ -13,7 +13,6 @@
 #define MLPACK_CORE_DATA_ZCA_WHITENING_SCALE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
 
 namespace mlpack {
@@ -87,7 +86,7 @@ class ZCAWhitening
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
-    output = inv(pca.EigenVectors()) * arma::diagmat(arma::sqrt(
+    output = inv(pca.EigenVectors()) * arma::diagmat(sqrt(
         pca.EigenValues())) * inv(pca.EigenVectors().t()) * input;
     output = (output.each_col() + pca.ItemMean());
   }

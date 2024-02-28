@@ -110,7 +110,7 @@ void ReparametrizationType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   OutputType tmp;
-  SoftplusFunction::Deriv(preStdDev, tmp);
+  SoftplusFunction::Deriv(preStdDev, stdDev, tmp);
 
   if (includeKl)
   {
@@ -129,8 +129,8 @@ double ReparametrizationType<InputType, OutpuType>::Loss()
   if (!includeKl)
     return 0;
 
-  return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
-      - arma::pow(mean, 2) + 1) / mean.n_cols;
+  return -0.5 * beta * arma::accu(2 * log(stdDev) - pow(stdDev, 2)
+      - pow(mean, 2) + 1) / mean.n_cols;
 }
 
 template<typename InputType, typename OutputType>

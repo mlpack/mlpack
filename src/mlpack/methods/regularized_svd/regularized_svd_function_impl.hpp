@@ -69,13 +69,13 @@ double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
 
     // Calculate the squared error in the prediction.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
+    double ratingError = rating - dot(parameters.col(user),
                                             parameters.col(item));
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(parameters.col(user), 2);
-    double itemVecNorm = arma::norm(parameters.col(item), 2);
+    double userVecNorm = norm(parameters.col(user), 2);
+    double itemVecNorm = norm(parameters.col(item), 2);
     double regularizationError = lambda * (userVecNorm * userVecNorm +
                                            itemVecNorm * itemVecNorm);
 
@@ -108,7 +108,7 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Prediction error for the example.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
+    double ratingError = rating - dot(parameters.col(user),
                                             parameters.col(item));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
@@ -137,7 +137,7 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Prediction error for the example.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
+    double ratingError = rating - dot(parameters.col(user),
                                             parameters.col(item));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
@@ -196,7 +196,7 @@ double StandardSGD::Optimize(
 
     // Prediction error for the example.
     const double rating = data(2, currentFunction);
-    double ratingError = rating - arma::dot(parameters.col(user),
+    double ratingError = rating - dot(parameters.col(user),
                                             parameters.col(item));
 
     double lambda = function.Lambda();
@@ -293,7 +293,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
         // Prediction error for the example.
         const double rating = data(2, visitationOrder[j]);
-        double ratingError = rating - arma::dot(iterate.col(user),
+        double ratingError = rating - dot(iterate.col(user),
             iterate.col(item));
 
         double lambda = function.Lambda();

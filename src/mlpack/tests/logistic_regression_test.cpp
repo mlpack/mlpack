@@ -79,7 +79,7 @@ TEST_CASE("LogisticRegressionFunctionRandomEvaluate",
     for (size_t j = 0; j < points; ++j)
     {
       const double sigmoid = (1.0 / (1.0 + exp(-parameters[0] -
-          arma::dot(data.col(j), parameters.subvec(1, dimension)))));
+          dot(data.col(j), parameters.subvec(1, dimension)))));
       if (responses[j] == 1.0)
         loglikelihood += log(std::pow(sigmoid, responses[j]));
       else
@@ -510,7 +510,7 @@ TEST_CASE("LogisticRegressionLBFGSSimpleTest", "[LogisticRegressionTest]")
   LogisticRegression<> lr(data, responses);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large 0.1% error tolerance is because the optimizer may terminate before
@@ -534,7 +534,7 @@ TEST_CASE("LogisticRegressionSGDSimpleTest", "[LogisticRegressionTest]")
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large 0.1% error tolerance is because the optimizer may terminate before
@@ -558,7 +558,7 @@ TEST_CASE("LogisticRegressionLBFGSRegularizationSimpleTest",
   LogisticRegression<> lr(data, responses, 0.001);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large error tolerance is because the optimizer may terminate before
@@ -584,7 +584,7 @@ TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest",
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Large error tolerance is because the optimizer may terminate before
@@ -706,7 +706,7 @@ TEST_CASE("LogisticRegressionInstantiatedOptimizer", "[LogisticRegressionTest]")
   LogisticRegression<> lr(data, responses, lbfgsOpt, 0.0005);
 
   // Test sigmoid function.
-  arma::rowvec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+  arma::rowvec sigmoids = 1 / (1 + exp(-lr.Parameters()[0]
       - lr.Parameters().tail_cols(lr.Parameters().n_elem - 1) * data));
 
   // Error tolerance is small because we tightened the optimizer tolerance.
@@ -721,7 +721,7 @@ TEST_CASE("LogisticRegressionInstantiatedOptimizer", "[LogisticRegressionTest]")
   LogisticRegression<> lr2(data, responses, sgdOpt, 0.0005);
 
   // Test sigmoid function.
-  sigmoids = 1 / (1 + arma::exp(-lr2.Parameters()[0]
+  sigmoids = 1 / (1 + exp(-lr2.Parameters()[0]
       - lr2.Parameters().tail_cols(lr2.Parameters().n_elem - 1) * data));
 
   // Error tolerance is small because we tightened the optimizer tolerance.
@@ -965,8 +965,9 @@ TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
     responses[i] = 1;
   }
 
+  arma::Row<size_t> predictions;
   arma::mat probabilities;
-  lr.Classify(data, probabilities);
+  lr.Classify(data, predictions, probabilities);
 
   REQUIRE(probabilities.n_cols == data.n_cols);
   REQUIRE(probabilities.n_rows == 2);
@@ -982,6 +983,16 @@ TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
     else
       REQUIRE(probabilities(1, i) == Approx(1.0).epsilon(0.10));
   }
+
+  // Classify a single point and make sure that we get reasonable probabilities.
+  arma::vec probabilities2;
+  size_t prediction;
+  lr.Classify(data.col(0), prediction, probabilities2);
+
+  REQUIRE(probabilities2.n_elem == 2);
+  REQUIRE(accu(probabilities2) == Approx(1.0));
+  REQUIRE(probabilities2[0] == Approx(probabilities(0, 0)));
+  REQUIRE(probabilities2[1] == Approx(probabilities(1, 0)));
 }
 
 /**
@@ -1077,4 +1088,174 @@ TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
   const double acc = lr.ComputeAccuracy(data, responses);
 
   REQUIRE(acc == Approx(100.0).epsilon(0.03)); // 3% error tolerance.
+}
+
+// Test all constructor variants.  This test is more about checking that all
+// variants compile correctly than anything else.
+TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
+    "[LogisticRegressionTest]", arma::mat, arma::fmat)
+{
+  typedef TestType MatType;
+
+  // Create random data.
+  MatType data(50, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  labels.subvec(500, 999).fill(1);
+
+  // Empty constructor.
+  LogisticRegression<MatType> lr1;
+
+  // Specify data and labels and lambda, and optionally callbacks.
+  LogisticRegression<MatType> lr2(data, labels, 0.1);
+  LogisticRegression<MatType> lr3(data, labels, 0.1, ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr4(data, labels, 0.1, ens::EarlyStopAtMinLoss(),
+      ens::TimerStop(1000.0));
+
+  // Specify data and labels and initial point and lambda, and optionally
+  // callbacks.
+  arma::Row<typename MatType::elem_type> initialPoint(50, arma::fill::randu);
+  LogisticRegression<MatType> lr5(data, labels, initialPoint, 0.1);
+  LogisticRegression<MatType> lr6(data, labels, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr7(data, labels, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
+
+  // Specify data, labels, optimizer, and lambda, and optionally callbacks.
+  ens::AdaDelta optimizer(0.01);
+  LogisticRegression<MatType> lr8(data, labels, optimizer, 0.1);
+  LogisticRegression<MatType> lr9(data, labels, optimizer, 0.1,
+      ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr10(data, labels, optimizer, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
+
+  // Specify data, labels, optimizer, initial point, and lambda, and optionally
+  // callbacks.
+  LogisticRegression<MatType> lr11(data, labels, optimizer, initialPoint, 0.1);
+  LogisticRegression<MatType> lr12(data, labels, optimizer, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss());
+  LogisticRegression<MatType> lr13(data, labels, optimizer, initialPoint, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1000.0));
+
+  // Now we don't care what the training actually produced, but we do care that
+  // the model trained at all and has the right size (except for the first one).
+  REQUIRE(lr1.Parameters().n_elem == 1);
+  REQUIRE(lr2.Parameters().n_elem == 51);
+  REQUIRE(lr3.Parameters().n_elem == 51);
+  REQUIRE(lr4.Parameters().n_elem == 51);
+  REQUIRE(lr5.Parameters().n_elem == 51);
+  REQUIRE(lr6.Parameters().n_elem == 51);
+  REQUIRE(lr7.Parameters().n_elem == 51);
+  REQUIRE(lr8.Parameters().n_elem == 51);
+  REQUIRE(lr9.Parameters().n_elem == 51);
+  REQUIRE(lr10.Parameters().n_elem == 51);
+  REQUIRE(lr11.Parameters().n_elem == 51);
+  REQUIRE(lr12.Parameters().n_elem == 51);
+  REQUIRE(lr13.Parameters().n_elem == 51);
+}
+
+// Test all Train() variants.  This test is more about checking that all
+// variants compile correctly than anything else.
+TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
+    arma::mat, arma::fmat)
+{
+  typedef TestType MatType;
+
+  // Create random data.
+  MatType data(50, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  labels.subvec(500, 999).fill(1);
+
+  // Construct all objects that we will use, but don't train.
+  LogisticRegression<MatType> lr1, lr2, lr3, lr4, lr5, lr6, lr7, lr8, lr9, lr10,
+      lr11, lr12, lr13, lr14, lr15, lr16, lr17, lr18;
+
+  // Specify data and labels only, and optionally callbacks.
+  lr1.Train(data, labels);
+  lr2.Train(data, labels, ens::EarlyStopAtMinLoss());
+  lr3.Train(data, labels, ens::EarlyStopAtMinLoss(), ens::TimerStop(1.0));
+
+  // Specify data and labels only, with a different optimizer, and optionally
+  // callbacks.
+  lr4.template Train<ens::GradientDescent>(data, labels);
+  lr5.template Train<ens::GradientDescent>(data, labels,
+      ens::EarlyStopAtMinLoss());
+  lr6.template Train<ens::GradientDescent>(data, labels,
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1.0));
+
+  // Specify data, labels, and lambda, and optionally callbacks.
+  lr7.Train(data, labels, 0.1);
+  lr8.Train(data, labels, 0.1, ens::EarlyStopAtMinLoss());
+  lr9.Train(data, labels, 0.1, ens::EarlyStopAtMinLoss(),
+      ens::TimerStop(1.0));
+
+  // Specify data, labels, and lambda, using a different optimizer, and
+  // optionally callbacks.
+  lr10.template Train<ens::StandardSGD>(data, labels, 0.1);
+  lr11.template Train<ens::StandardSGD>(data, labels, 0.1,
+      ens::EarlyStopAtMinLoss());
+  lr12.template Train<ens::StandardSGD>(data, labels, 0.1,
+      ens::EarlyStopAtMinLoss(), ens::TimerStop(1.0));
+
+  // Specify data, labels, and an instantiated optimizer, optionally with
+  // callbacks.
+  ens::AdaDelta optimizer(0.01);
+  lr13.Train(data, labels, optimizer);
+  lr14.Train(data, labels, optimizer, ens::EarlyStopAtMinLoss());
+  lr15.Train(data, labels, optimizer, ens::EarlyStopAtMinLoss(),
+      ens::TimerStop(1.0));
+
+  // Specify data, labels, an instantiated optimizer, and lambda, optionally
+  // with callbacks.
+  lr16.Train(data, labels, optimizer, 0.1);
+  lr17.Train(data, labels, optimizer, 0.1, ens::EarlyStopAtMinLoss());
+  lr18.Train(data, labels, optimizer, 0.1, ens::EarlyStopAtMinLoss(),
+      ens::TimerStop(1.0));
+
+  REQUIRE(lr1.Parameters().n_elem == 51);
+  REQUIRE(lr2.Parameters().n_elem == 51);
+  REQUIRE(lr3.Parameters().n_elem == 51);
+  REQUIRE(lr4.Parameters().n_elem == 51);
+  REQUIRE(lr5.Parameters().n_elem == 51);
+  REQUIRE(lr6.Parameters().n_elem == 51);
+  REQUIRE(lr7.Parameters().n_elem == 51);
+  REQUIRE(lr8.Parameters().n_elem == 51);
+  REQUIRE(lr9.Parameters().n_elem == 51);
+  REQUIRE(lr10.Parameters().n_elem == 51);
+  REQUIRE(lr11.Parameters().n_elem == 51);
+  REQUIRE(lr12.Parameters().n_elem == 51);
+  REQUIRE(lr13.Parameters().n_elem == 51);
+  REQUIRE(lr14.Parameters().n_elem == 51);
+  REQUIRE(lr15.Parameters().n_elem == 51);
+  REQUIRE(lr16.Parameters().n_elem == 51);
+  REQUIRE(lr17.Parameters().n_elem == 51);
+  REQUIRE(lr18.Parameters().n_elem == 51);
+}
+
+// Make sure resetting the model does something.
+TEST_CASE("LogisticRegressionResetTest", "[LogisticRegressionTest]")
+{
+  // Create random data.
+  arma::mat data(50, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  labels.subvec(500, 999).fill(1);
+
+  // Create two logistic regression models.
+  LogisticRegression<> lr1, lr2;
+
+  ens::L_BFGS lbfgs1(1, 1); // Use only one iteration.
+  ens::L_BFGS lbfgs2(1, 1);
+
+  lr1.Train(data, labels, lbfgs1);
+  lr2.Train(data, labels, lbfgs2);
+
+  REQUIRE(
+      arma::approx_equal(lr1.Parameters(), lr2.Parameters(), "absdiff", 1e-5));
+
+  // Now reset one model and incrementally train the other.
+  lr1.Reset();
+  lr1.Train(data, labels, lbfgs1);
+  lr2.Train(data, labels, lbfgs2);
+
+  REQUIRE(
+      !arma::approx_equal(lr1.Parameters(), lr2.Parameters(), "absdiff", 1e-5));
 }

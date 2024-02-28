@@ -35,8 +35,8 @@ inline Radical::Radical(
 inline void Radical::CopyAndPerturb(arma::mat& xNew,
                                     const arma::mat& x) const
 {
-  xNew = arma::repmat(x, replicates, 1) + noiseStdDev * arma::randn(replicates * x.n_rows,
-      x.n_cols);
+  xNew = repmat(x, replicates, 1) + noiseStdDev * arma::randn(
+      replicates * x.n_rows, x.n_cols);
 }
 
 
@@ -56,7 +56,7 @@ inline double Radical::Vasicek(arma::vec& z) const
   arma::uword range = z.n_elem - m;
   for (arma::uword i = 0; i < range; ++i)
   {
-    sum += log(std::max(z(i + m) - z(i), DBL_MIN));
+    sum += std::log(std::max(z(i + m) - z(i), DBL_MIN));
   }
 
   return sum;
@@ -114,7 +114,7 @@ inline void Radical::DoRadical(const arma::mat& matXT,
   // If m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003).
   if (m < 1)
-    m = floor(sqrt((double) matX.n_rows));
+    m = floor(std::sqrt((double) matX.n_rows));
 
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;

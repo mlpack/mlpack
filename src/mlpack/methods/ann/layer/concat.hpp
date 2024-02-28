@@ -79,11 +79,13 @@ class ConcatType : public MultiLayer<MatType>
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
+  void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 
@@ -91,12 +93,14 @@ class ConcatType : public MultiLayer<MatType>
    * This is the overload of Backward() that runs only a specific layer with
    * the given input.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    * @param index The index of the layer to run.
    */
-  void Backward(const MatType& /* input */,
+  void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g,
                 const size_t index);

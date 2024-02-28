@@ -31,11 +31,8 @@
 #include <mlpack/core/cereal/array_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
+#include <mlpack/core/cereal/template_class_version.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
-
-// All code should have access to logging.
-#include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/io.hpp>
 
 // Include ready to use utility function to check sizes of datasets.
 #include <mlpack/core/util/size_checks.hpp>

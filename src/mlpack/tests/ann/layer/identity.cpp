@@ -43,7 +43,7 @@ TEST_CASE("IdentityTestCase", "[ANNLayerTest]")
   arma::mat prevDelta = arma::mat(12, 1, arma::fill::randn);
   arma::mat delta;
   delta.set_size(12, 1);
-  module1.Backward(input, prevDelta, delta);
+  module1.Backward(input, output, prevDelta, delta);
   CheckMatrices(delta, prevDelta, 1e-1);
   REQUIRE(delta.memptr() != prevDelta.memptr());
 }

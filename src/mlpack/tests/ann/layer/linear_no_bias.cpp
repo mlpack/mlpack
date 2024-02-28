@@ -40,7 +40,7 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
   REQUIRE(0 == arma::accu(output));
 
   // Test the Backward function.
-  module.Backward(input, output, delta);
+  module.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
 

@@ -397,3 +397,104 @@ TEST_CASE("NaiveBayesClassifierHighDimensionsTest", "[NBCTest]")
   for (size_t i = 0; i < calcVec.n_cols; ++i)
     REQUIRE(calcVec(i) == testLabels(i));
 }
+
+/**
+ * Test that we can reset the model.
+ */
+TEST_CASE("NBCResetTest", "[NBCTest]")
+{
+  const char* trainFilename = "trainSet.csv";
+
+  arma::mat trainData;
+  if (!data::Load(trainFilename, trainData))
+    FAIL("Cannot load dataset");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(trainData.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    labels[i] = trainData(trainData.n_rows - 1, i);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  NaiveBayesClassifier<> nbc1, nbc2;
+
+  nbc1.Train(trainData, labels, 2);
+  nbc2.Train(trainData, labels, 2);
+
+  REQUIRE(approx_equal(nbc1.Probabilities(), nbc2.Probabilities(), "absdiff",
+      1e-5));
+  REQUIRE(approx_equal(nbc1.Means(), nbc2.Means(), "absdiff", 1e-5));
+  REQUIRE(approx_equal(nbc1.Variances(), nbc2.Variances(), "absdiff", 1e-5));
+
+  // Now reset one model but train the other.  Modify the training set slightly.
+  trainData += 0.1 * arma::randu<arma::mat>(trainData.n_rows, trainData.n_cols);
+
+  nbc1.Train(trainData, labels, 2);
+  nbc2.Reset();
+  nbc2.Train(trainData, labels, 2);
+
+  REQUIRE(!approx_equal(nbc1.Probabilities(), nbc2.Probabilities(), "absdiff",
+      1e-5));
+  REQUIRE(!approx_equal(nbc1.Means(), nbc2.Means(), "absdiff", 1e-5));
+  REQUIRE(!approx_equal(nbc1.Variances(), nbc2.Variances(), "absdiff", 1e-5));
+}
+
+/**
+ * Test that we can use a model for incremental point-by-point training.
+ */
+TEMPLATE_TEST_CASE("NBCIncrementalTest", "[NBCTest]", arma::fmat, arma::mat)
+{
+  typedef TestType MatType;
+
+  const char* trainFilename = "trainSet.csv";
+
+  MatType trainData;
+  if (!data::Load(trainFilename, trainData))
+    FAIL("Cannot load dataset");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(trainData.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    labels[i] = trainData(trainData.n_rows - 1, i);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  NaiveBayesClassifier<MatType> nbc(trainData.n_rows, 2);
+
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+  {
+    nbc.Train(trainData.col(i), labels[i]);
+  }
+
+  // We don't care what the result is, we are more concerned with the fact that
+  // training worked at all.
+  REQUIRE(nbc.Probabilities().n_elem == 2);
+  REQUIRE(nbc.Means().n_rows == trainData.n_rows);
+  REQUIRE(nbc.Means().n_cols == 2);
+  REQUIRE(nbc.Variances().n_rows == trainData.n_rows);
+  REQUIRE(nbc.Variances().n_cols == 2);
+}
+
+/**
+ * Test that we can train on sparse data with different internal model types.
+ */
+TEMPLATE_TEST_CASE("NBCModelMatTypeTest", "[NBCTest]", float, double)
+{
+  typedef TestType ElemType;
+
+  NaiveBayesClassifier<arma::Mat<ElemType>> nbc;
+
+  // Create random data; 5000 points in 4 classes.
+  arma::SpMat<ElemType> data;
+  data.sprandu(100, 5000, 0.2);
+  arma::Row<size_t> labels =
+      arma::randi<arma::Row<size_t>>(5000, arma::distr_param(0, 3));
+
+  nbc.Train(data, labels, 4);
+
+  // We don't care what the result is, we are more concerned with the fact that
+  // training worked at all.
+  REQUIRE(nbc.Probabilities().n_elem == 4);
+  REQUIRE(nbc.Means().n_rows == data.n_rows);
+  REQUIRE(nbc.Means().n_cols == 4);
+  REQUIRE(nbc.Variances().n_rows == data.n_rows);
+  REQUIRE(nbc.Variances().n_cols == 4);
+}

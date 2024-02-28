@@ -34,6 +34,9 @@ template<typename SortPolicy, typename MetricType, typename TreeType>
 class NeighborSearchRules
 {
  public:
+  //! The type of element held in MatType.
+  typedef typename TreeType::Mat::elem_type ElemType;
+
   /**
    * Construct the NeighborSearchRules object.  This is usually done from within
    * the NeighborSearch class at search time.
@@ -60,7 +63,7 @@ class NeighborSearchRules
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void GetResults(arma::Mat<size_t>& neighbors, arma::mat& distances);
+  void GetResults(arma::Mat<size_t>& neighbors, arma::Mat<ElemType>& distances);
 
   /**
    * Get the distance from the query point to the reference point.

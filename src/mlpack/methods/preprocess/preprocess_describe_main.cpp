@@ -92,7 +92,7 @@ double SumNthPowerDeviations(const arma::rowvec& input,
                              const double& fMean,
                              size_t n)
 {
-  return arma::sum(arma::pow(input - fMean, static_cast<double>(n)));
+  return sum(pow(input - fMean, static_cast<double>(n)));
 }
 
 /**
@@ -195,7 +195,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   {
     arma::rowvec feature;
     if (rowMajor)
-      feature = arma::conv_to<arma::rowvec>::from(data.col(dim));
+      feature = ConvTo<arma::rowvec>::From(data.col(dim));
     else
       feature = data.row(dim);
 

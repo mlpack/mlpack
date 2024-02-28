@@ -37,7 +37,7 @@ TEST_CASE_METHOD(LRPredictTestFixture, "LRPredictWrongDimOfDataTest1t",
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
   arma::mat testX = arma::randu<arma::mat>(D - 1, M); // Wrong dimensionality.
 
-  LinearRegression* model = new LinearRegression();
+  LinearRegression<>* model = new LinearRegression<>();
   model->Train(trainX, trainY);
 
   SetInputParam("input_model", std::move(model));
@@ -60,7 +60,7 @@ TEST_CASE_METHOD(LRPredictTestFixture, "LRPredictPredictionSizeCheck",
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
-  LinearRegression* model = new LinearRegression();
+  LinearRegression<>* model = new LinearRegression<>();
   model->Train(trainX, trainY);
 
   SetInputParam("input_model", std::move(model));

@@ -26,10 +26,13 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
 {
   const size_t maxNumSamples = 100;
   const size_t numSamples = std::min(maxNumSamples, count);
-  arma::uvec samples;
 
   // Get no more than numSamples distinct samples.
-  ObtainDistinctSamples(begin, begin + count, numSamples, samples);
+  arma::uvec samples;
+  if (numSamples < count)
+    samples = begin + arma::randperm(count, numSamples);
+  else
+    samples = begin + arma::linspace<arma::uvec>(0, count - 1, count);
 
   // Find the average distance between points.
   ElemType averageDistanceSq = GetAveragePointDistance(data, samples);
@@ -89,7 +92,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetDotMedian(
   arma::Col<ElemType> values(samples.n_elem);
 
   for (size_t k = 0; k < samples.n_elem; ++k)
-    values[k] = arma::dot(data.col(samples[k]), direction);
+    values[k] = dot(data.col(samples[k]), direction);
 
   const ElemType maximum = arma::max(values);
   const ElemType minimum = arma::min(values);
@@ -122,7 +125,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
     tmp = data.col(samples[k]);
     tmp -= mean;
 
-    values[k] = arma::dot(tmp, tmp);
+    values[k] = dot(tmp, tmp);
   }
 
   const ElemType maximum = arma::max(values);

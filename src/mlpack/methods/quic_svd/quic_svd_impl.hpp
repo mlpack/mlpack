@@ -29,8 +29,8 @@ inline QUIC_SVD::QUIC_SVD(
 }
 
 inline QUIC_SVD::QUIC_SVD(
-    const double epsilon,
-    const double delta)
+    const double /* epsilon */,
+    const double /* delta */)
 {
   /* Nothing to do here */
 }
@@ -85,7 +85,7 @@ inline void QUIC_SVD::ExtractSVD(const arma::mat& dataset,
   // Calculate the approximate SVD of the original matrix, using the SVD of the
   // squared projected matrix.
   v = basis * vBar;
-  sigma = arma::sqrt(diagmat(sigmaBar));
+  sigma = sqrt(diagmat(sigmaBar));
   u = projectedMat * vBar * sigma.i();
 
   // Since columns are sampled, the unitary matrices have to be exchanged, if

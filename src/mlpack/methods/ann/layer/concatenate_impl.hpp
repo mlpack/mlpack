@@ -82,12 +82,13 @@ void ConcatenateType<MatType>::Forward(const MatType& input, MatType& output)
 
   output.submat(0, 0, input.n_rows - 1, input.n_cols - 1) = input;
   output.submat(input.n_rows, 0, output.n_rows - 1, input.n_cols - 1) =
-      arma::repmat(arma::vectorise(concat), 1, input.n_cols);
+      repmat(vectorise(concat), 1, input.n_cols);
 }
 
 template<typename MatType>
 void ConcatenateType<MatType>::Backward(
     const MatType& /* input */,
+    const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {

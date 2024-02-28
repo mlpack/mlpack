@@ -50,7 +50,7 @@ TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
   // Test the Backward function.
   delta.set_size(input.n_rows, input.n_cols);
   output.zeros();
-  module.Backward(input, output, delta);
+  module.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == 0);
 }
 

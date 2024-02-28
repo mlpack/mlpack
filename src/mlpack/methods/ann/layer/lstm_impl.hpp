@@ -173,17 +173,17 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 
   if (this->HasPreviousStep())
   {
-    inputGate += arma::repmat(cell2GateInputWeight, 1, batchSize) %
+    inputGate += repmat(cell2GateInputWeight, 1, batchSize) %
         cell.slice(this->PreviousStep());
 
-    forgetGate += arma::repmat(cell2GateForgetWeight, 1, batchSize) %
+    forgetGate += repmat(cell2GateForgetWeight, 1, batchSize) %
         cell.slice(this->PreviousStep());
   }
 
   inputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-inputGate));
+      1.0 / (1.0 + exp(-inputGate));
   forgetGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-forgetGate));
+      1.0 / (1.0 + exp(-forgetGate));
 
   hiddenLayer = input2HiddenWeight * input;
   if (this->HasPreviousStep())
@@ -220,7 +220,7 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
   outputGate.each_col() += input2GateOutputBias;
 
   outputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + arma::exp(-outputGate));
+      1.0 / (1.0 + exp(-outputGate));
 
   cellActivation.slice(this->CurrentStep()) =
       arma::tanh(cell.slice(this->CurrentStep()));
@@ -238,7 +238,10 @@ void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void LSTMType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   MatType gyLocal;
   if (this->HasPreviousStep())
@@ -261,7 +264,7 @@ void LSTMType<MatType>::Backward(
 
   MatType cellError = gyLocal %
       outputGateActivation.slice(this->CurrentStep()) %
-      (1 - arma::pow(cellActivation.slice(this->CurrentStep()), 2)) +
+      (1 - pow(cellActivation.slice(this->CurrentStep()), 2)) +
       outputGateError.each_col() % cell2GateOutputWeight;
 
   if (this->HasPreviousStep())
@@ -286,7 +289,7 @@ void LSTMType<MatType>::Backward(
       (1.0 - inputGateActivation.slice(this->CurrentStep())));
 
   hiddenError = inputGateActivation.slice(this->CurrentStep()) % cellError %
-      (1 - arma::pow(hiddenLayerActivation.slice(this->CurrentStep()), 2));
+      (1 - pow(hiddenLayerActivation.slice(this->CurrentStep()), 2));
 
   inputCellError = forgetGateActivation.slice(this->CurrentStep()) % cellError +
       forgetGateError.each_col() % cell2GateForgetWeight +
@@ -309,73 +312,69 @@ void LSTMType<MatType>::Gradient(
 
   // Input2GateOutputWeight and input2GateOutputBias gradients.
   gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =
-      arma::vectorise(outputGateError * input.t());
+      vectorise(outputGateError * input.t());
   gradient.submat(input2GateOutputWeight.n_elem, 0,
       input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem - 1, 0) =
-      arma::sum(outputGateError, 1);
+      sum(outputGateError, 1);
   size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
 
   // input2GateForgetWeight and input2GateForgetBias gradients.
   gradient.submat(offset, 0, offset + input2GateForgetWeight.n_elem - 1, 0) =
-      arma::vectorise(forgetGateError * input.t());
+      vectorise(forgetGateError * input.t());
   gradient.submat(offset + input2GateForgetWeight.n_elem, 0,
       offset + input2GateForgetWeight.n_elem +
-      input2GateForgetBias.n_elem - 1, 0) = arma::sum(forgetGateError, 1);
+      input2GateForgetBias.n_elem - 1, 0) = sum(forgetGateError, 1);
   offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
 
   // input2GateInputWeight and input2GateInputBias gradients.
   gradient.submat(offset, 0, offset + input2GateInputWeight.n_elem - 1, 0) =
-      arma::vectorise(inputGateError * input.t());
+      vectorise(inputGateError * input.t());
   gradient.submat(offset + input2GateInputWeight.n_elem, 0,
       offset + input2GateInputWeight.n_elem +
-      input2GateInputBias.n_elem - 1, 0) = arma::sum(inputGateError, 1);
+      input2GateInputBias.n_elem - 1, 0) = sum(inputGateError, 1);
   offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
 
   // input2HiddenWeight and input2HiddenBias gradients.
   gradient.submat(offset, 0, offset + input2HiddenWeight.n_elem - 1, 0) =
-      arma::vectorise(hiddenError * input.t());
+      vectorise(hiddenError * input.t());
   gradient.submat(offset + input2HiddenWeight.n_elem, 0,
       offset + input2HiddenWeight.n_elem + input2HiddenBias.n_elem - 1, 0) =
-      arma::sum(hiddenError, 1);
+      sum(hiddenError, 1);
   offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
 
   // output2GateOutputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateOutputWeight.n_elem - 1, 0) =
-      arma::vectorise(outputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(outputGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateOutputWeight.n_elem;
 
   // output2GateForgetWeight gradients.
   gradient.submat(offset, 0, offset + output2GateForgetWeight.n_elem - 1, 0) =
-      arma::vectorise(forgetGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(forgetGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateForgetWeight.n_elem;
 
   // output2GateInputWeight gradients.
   gradient.submat(offset, 0, offset + output2GateInputWeight.n_elem - 1, 0) =
-      arma::vectorise(inputGateError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(inputGateError * outParameter.slice(this->CurrentStep()).t());
   offset += output2GateInputWeight.n_elem;
 
   // output2HiddenWeight gradients.
   gradient.submat(offset, 0, offset + output2HiddenWeight.n_elem - 1, 0) =
-      arma::vectorise(hiddenError *
-      outParameter.slice(this->CurrentStep()).t());
+      vectorise(hiddenError * outParameter.slice(this->CurrentStep()).t());
   offset += output2HiddenWeight.n_elem;
 
   // cell2GateOutputWeight gradients.
   gradient.submat(offset, 0, offset + cell2GateOutputWeight.n_elem - 1, 0) =
-      arma::sum(outputGateError % cell.slice(this->CurrentStep()), 1);
+      sum(outputGateError % cell.slice(this->CurrentStep()), 1);
   offset += cell2GateOutputWeight.n_elem;
 
   // cell2GateForgetWeight and cell2GateInputWeight gradients.
   if (this->HasPreviousStep())
   {
     gradient.submat(offset, 0, offset + cell2GateForgetWeight.n_elem - 1, 0) =
-        arma::sum(forgetGateError % cell.slice(this->PreviousStep()), 1);
+        sum(forgetGateError % cell.slice(this->PreviousStep()), 1);
     gradient.submat(offset + cell2GateForgetWeight.n_elem, 0, offset +
         cell2GateForgetWeight.n_elem + cell2GateInputWeight.n_elem - 1, 0) =
-        arma::sum(inputGateError % cell.slice(this->PreviousStep()), 1);
+        sum(inputGateError % cell.slice(this->PreviousStep()), 1);
   }
   else
   {

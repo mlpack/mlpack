@@ -10,9 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_IMPL_HPP
-#define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_IMPL_HPP
+#ifndef MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_IMPL_HPP
+#define MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_IMPL_HPP
 
 #include "regression_distribution.hpp"
 
@@ -25,7 +24,7 @@ namespace mlpack {
  */
 inline void RegressionDistribution::Train(const arma::mat& observations)
 {
-  LinearRegression lr(observations.rows(1, observations.n_rows - 1),
+  LinearRegression<> lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), 0, true);
   rf = lr;
   arma::rowvec fitted;
@@ -47,7 +46,7 @@ inline void RegressionDistribution::Train(const arma::mat& observations,
 inline void RegressionDistribution::Train(const arma::mat& observations,
                                           const arma::rowvec& weights)
 {
-  LinearRegression lr(observations.rows(1, observations.n_rows - 1),
+  LinearRegression<> lr(observations.rows(1, observations.n_rows - 1),
       arma::rowvec(observations.row(0)), weights, 0, true);
   rf = lr;
   arma::rowvec fitted;
@@ -64,8 +63,8 @@ inline double RegressionDistribution::Probability(
     const arma::vec& observation) const
 {
   arma::rowvec fitted;
-  rf.Predict(observation.rows(1, observation.n_rows-1), fitted);
-  return err.Probability(observation(0)-fitted.t());
+  rf.Predict(observation.rows(1, observation.n_rows - 1), fitted);
+  return err.Probability(observation(0) - fitted.t());
 }
 
 inline void RegressionDistribution::Predict(const arma::mat& points,

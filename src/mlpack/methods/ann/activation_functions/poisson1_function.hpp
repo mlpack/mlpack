@@ -47,30 +47,34 @@ class Poisson1Function
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = (x - 1) % arma::exp(-x);
+    y = (x - 1) % exp(-x);
   }
 
   /**
    * Computes the first derivative of the Poisson one function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return  std::exp(-y) + (1 - y) * std::exp(-y);
+    return -std::exp(-x) * (x - 2);
   }
 
   /**
    * Computes the first derivatives of the Poisson one function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& x, OutputVecType& y)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType &dy)
   {
-    y = arma::exp(-x) + (1 - x) % arma::exp(-x);
+    dy = -exp(-x) % (x - 2);
   }
 }; // class Poisson1Function
 

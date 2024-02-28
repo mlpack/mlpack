@@ -81,33 +81,37 @@ class HardSwishFunction
   /**
    * Computes the first derivative of the Hard Swish function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param * (y) Result of Fn(x).
    * @return f'(x).
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    if (y <= -3)
+    if (x <= -3)
       return 0;
-    else if (y >= 3)
+    else if (x >= 3)
       return 1;
 
-    return (2 * y + 3.0) / 6.0;
+    return (2 * x + 3.0) / 6.0;
   }
 
   /**
    * Computes the first derivatives of the Hard Swish function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template <typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &y, OutputVecType &x)
+  template <typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType &x,
+                    const OutputVecType& y,
+                    DerivVecType &dy)
   {
-    x.set_size(size(y));
+    dy.set_size(size(x));
 
     #pragma omp for
-    for (size_t i = 0; i < (size_t) y.n_elem; i++)
-      x(i) = Deriv(y(i));
+    for (size_t i = 0; i < (size_t) x.n_elem; i++)
+      dy(i) = Deriv(x(i), y(i));
   }
 }; // class HardSwishFunction
 

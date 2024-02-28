@@ -92,10 +92,10 @@ template<typename MatType>
 void NoisyLinearType<MatType>::ResetNoise()
 {
   MatType epsilonIn = arma::randn<MatType>(inSize, 1);
-  epsilonIn = arma::sign(epsilonIn) % arma::sqrt(arma::abs(epsilonIn));
+  epsilonIn = sign(epsilonIn) % sqrt(arma::abs(epsilonIn));
 
   MatType epsilonOut = arma::randn<MatType>(outSize, 1);
-  epsilonOut = arma::sign(epsilonOut) % arma::sqrt(arma::abs(epsilonOut));
+  epsilonOut = sign(epsilonOut) % sqrt(arma::abs(epsilonOut));
 
   weightEpsilon = epsilonOut * epsilonIn.t();
   biasEpsilon = epsilonOut;
@@ -124,7 +124,10 @@ void NoisyLinearType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void NoisyLinearType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = weight.t() * gy;
 }
@@ -137,15 +140,14 @@ void NoisyLinearType<MatType>::Gradient(
   MatType weightGrad = error * input.t();
 
   // Gradients for mu values.
-  gradient.rows(0, weight.n_elem - 1) = arma::vectorise(weightGrad);
-  gradient.rows(weight.n_elem, weight.n_elem + bias.n_elem - 1)
-      = arma::sum(error, 1);
+  gradient.rows(0, weight.n_elem - 1) = vectorise(weightGrad);
+  gradient.rows(weight.n_elem, weight.n_elem + bias.n_elem - 1) = sum(error, 1);
 
   // Gradients for sigma values.
   gradient.rows(weight.n_elem + bias.n_elem, gradient.n_elem - bias.n_elem - 1)
-      = arma::vectorise(weightGrad % weightEpsilon);
+      = vectorise(weightGrad % weightEpsilon);
   gradient.rows(gradient.n_elem - bias.n_elem, gradient.n_elem - 1)
-      = arma::sum(error, 1) % biasEpsilon;
+      = sum(error, 1) % biasEpsilon;
 }
 
 template<typename MatType>

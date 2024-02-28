@@ -388,14 +388,14 @@ inline void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
   {
     currentNode = *i;
 
-    double projection = arma::dot(currentNode->BasisVector(), centroid);
+    double projection = dot(currentNode->BasisVector(), centroid);
     newBasisVector -= projection * currentNode->BasisVector();
   }
 
   // If additional basis vector is passed, take it into account.
   if (addBasisVector)
   {
-    double projection = arma::dot(*addBasisVector, centroid);
+    double projection = dot(*addBasisVector, centroid);
     newBasisVector -= *addBasisVector * projection;
   }
 
@@ -414,7 +414,7 @@ inline double CosineTree::MonteCarloError(CosineTree* node,
 
   // Sample O(log m) points from the input node's distribution.
   // 'm' is the number of columns present in the node.
-  size_t numSamples = log(node->NumColumns()) + 1;
+  size_t numSamples = std::log(node->NumColumns()) + 1;
   node->ColumnSamplesLS(sampledIndices, probabilities, numSamples);
 
   // Get pointer to the original dataset.
@@ -448,15 +448,15 @@ inline double CosineTree::MonteCarloError(CosineTree* node,
     {
       currentNode = *j;
 
-      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k) = dot(dataset.col(sampledIndices[i]),
                                 currentNode->BasisVector());
     }
     // If two additional vectors are passed, take their projections.
     if (addBasisVector1 && addBasisVector2)
     {
-      projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k++) = dot(dataset.col(sampledIndices[i]),
                                   *addBasisVector1);
-      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
+      projection(k) = dot(dataset.col(sampledIndices[i]),
                                 *addBasisVector2);
     }
 

@@ -207,7 +207,7 @@ TEST_CASE("MSETest", "[CVTest]")
   arma::mat trainingData("0 1");
   arma::rowvec trainingResponses("-1 0");
 
-  LinearRegression lr(trainingData, trainingResponses);
+  LinearRegression<> lr(trainingData, trainingResponses);
 
   // Making three responses that differ from the correct ones by 0, 1, and 2
   // respectively
@@ -229,7 +229,7 @@ TEST_CASE("R2ScoreTest", "[CVTest]")
   arma::mat trainingData("0 1");
   arma::rowvec trainingResponses("-1 0");
 
-  LinearRegression lr(trainingData, trainingResponses);
+  LinearRegression<> lr(trainingData, trainingResponses);
 
   // Making five responses that are the output of regression function f(x)
   // with some responses having a slight deviation of 0.005.
@@ -256,7 +256,7 @@ TEST_CASE("AdjR2ScoreTest", "[CVTest]")
   arma::rowvec Y;
   Y = { 3, 5, 7, 9, 11, 13 };
 
-  LinearRegression lr(X, Y);
+  LinearRegression<> lr(X, Y);
 
   // Theoretically Adjusted R squared should be equal 1
   double expAdjR2 = 1;
@@ -309,11 +309,11 @@ void CheckPredictionsType()
  */
 TEST_CASE("PredictionsTypeTest", "[CVTest]")
 {
-  CheckPredictionsType<LinearRegression, arma::rowvec>();
+  CheckPredictionsType<LinearRegression<>, arma::rowvec>();
   // CheckPredictionsType<FFN<>, arma::mat>();
 
   CheckPredictionsType<LogisticRegression<>, arma::Row<size_t>>();
-  CheckPredictionsType<SoftmaxRegression, arma::Row<size_t>>();
+  CheckPredictionsType<SoftmaxRegression<>, arma::Row<size_t>>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::mat>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::imat>();
   CheckPredictionsType<DecisionTree<>, arma::Row<size_t>, arma::mat,
@@ -328,14 +328,14 @@ TEST_CASE("PredictionsTypeTest", "[CVTest]")
  */
 TEST_CASE("SupportsWeightsTest", "[CVTest]")
 {
-  static_assert(MetaInfoExtractor<LinearRegression>::SupportsWeights,
+  static_assert(MetaInfoExtractor<LinearRegression<>>::SupportsWeights,
       "Value should be true");
   static_assert(MetaInfoExtractor<DecisionTree<>>::SupportsWeights,
       "Value should be true");
   static_assert(MetaInfoExtractor<DecisionTree<>, arma::mat, arma::urowvec,
       arma::Row<float>>::SupportsWeights, "Value should be true");
 
-  static_assert(!MetaInfoExtractor<LARS>::SupportsWeights,
+  static_assert(!MetaInfoExtractor<LARS<>>::SupportsWeights,
       "Value should be false");
   static_assert(!MetaInfoExtractor<LogisticRegression<>>::SupportsWeights,
       "Value should be false");
@@ -360,7 +360,7 @@ void CheckWeightsType()
  */
 TEST_CASE("WeightsTypeTest", "[CVTest]")
 {
-  CheckWeightsType<LinearRegression, arma::rowvec>();
+  CheckWeightsType<LinearRegression<>, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::Row<float>, arma::mat,
       arma::Row<size_t>, arma::Row<float>>();
@@ -374,9 +374,9 @@ TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesDatasetInfo,
       "Value should be true");
-  static_assert(!MetaInfoExtractor<LinearRegression>::TakesDatasetInfo,
+  static_assert(!MetaInfoExtractor<LinearRegression<>>::TakesDatasetInfo,
       "Value should be false");
-  static_assert(!MetaInfoExtractor<SoftmaxRegression>::TakesDatasetInfo,
+  static_assert(!MetaInfoExtractor<SoftmaxRegression<>>::TakesDatasetInfo,
       "Value should be false");
 }
 
@@ -388,11 +388,11 @@ TEST_CASE("TakesNumClassesTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
       "Value should be true");
-  static_assert(MetaInfoExtractor<SoftmaxRegression>::TakesNumClasses,
+  static_assert(MetaInfoExtractor<SoftmaxRegression<>>::TakesNumClasses,
       "Value should be true");
-  static_assert(!MetaInfoExtractor<LinearRegression>::TakesNumClasses,
+  static_assert(!MetaInfoExtractor<LinearRegression<>>::TakesNumClasses,
       "Value should be false");
-  static_assert(!MetaInfoExtractor<LARS>::TakesNumClasses,
+  static_assert(!MetaInfoExtractor<LARS<>>::TakesNumClasses,
       "Value should be false");
 }
 
@@ -425,28 +425,28 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
 
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
-  SimpleCV<LinearRegression, MSE> cv(0.6, data, responses);
+  SimpleCV<LinearRegression<>, MSE> cv(0.6, data, responses);
 
   REQUIRE(cv.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   arma::mat noiseData("-1 -2 -3 -4 -5");
   arma::rowvec noiseResponses("10 20 30 40 50");
 
-  arma::mat allData = arma::join_rows(noiseData, data);
-  arma::rowvec allResponces = arma::join_rows(noiseResponses, responses);
+  arma::mat allData = join_rows(noiseData, data);
+  arma::rowvec allResponces = join_rows(noiseResponses, responses);
 
-  arma::rowvec weights = arma::join_rows(arma::zeros(noiseData.n_cols).t(),
+  arma::rowvec weights = join_rows(arma::zeros(noiseData.n_cols).t(),
       arma::ones(data.n_cols).t());
 
-  SimpleCV<LinearRegression, MSE> weightedCV(0.3, allData, allResponces,
+  SimpleCV<LinearRegression<>, MSE> weightedCV(0.3, allData, allResponces,
       weights);
 
   REQUIRE(weightedCV.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
-  arma::rowvec weights2 = arma::join_rows(arma::zeros(noiseData.n_cols - 1).t(),
+  arma::rowvec weights2 = join_rows(arma::zeros(noiseData.n_cols - 1).t(),
       arma::ones(data.n_cols + 1).t());
 
-  SimpleCV<LinearRegression, MSE> weightedCV2(0.3, allData, allResponces,
+  SimpleCV<LinearRegression<>, MSE> weightedCV2(0.3, allData, allResponces,
       weights2);
 
   REQUIRE(std::abs(weightedCV2.Evaluate() - expectedMSE) > 1e-5);
@@ -506,21 +506,21 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+        join_rows(trainingLabels, predictedLabels), numClasses);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, datasetInfo, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+        join_rows(trainingLabels, predictedLabels), numClasses);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, trainingLabels, numClasses, weights, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+        join_rows(trainingLabels, predictedLabels), numClasses, weights);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
@@ -528,7 +528,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
         trainingData, datasetInfo, trainingLabels, numClasses, weights,
         minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+        join_rows(trainingLabels, predictedLabels), numClasses, weights);
     REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
 }
@@ -543,7 +543,7 @@ TEST_CASE("KFoldCVMSETest", "[CVTest]")
   arma::rowvec responses("0 1  1 3");
 
   // 2-fold cross-validation, no shuffling.
-  KFoldCV<LinearRegression, MSE> cv(2, data, responses, false);
+  KFoldCV<LinearRegression<>, MSE> cv(2, data, responses, false);
 
   // In each of two validation tests the MSE value should be the same.
   double expectedMSE =
@@ -620,8 +620,8 @@ TEST_CASE("KFoldCVWithWeightedLRTest", "[CVTest]")
   arma::rowvec responses("1 2 30 40");
   arma::rowvec weights("1 1 0 0");
 
-  KFoldCV<LinearRegression, MSE> cv(2, arma::join_rows(data, data),
-      arma::join_rows(responses, responses), arma::join_rows(weights, weights),
+  KFoldCV<LinearRegression<>, MSE> cv(2, join_rows(data, data),
+      join_rows(responses, responses), join_rows(weights, weights),
       false);
   cv.Evaluate();
 
@@ -649,9 +649,9 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
   arma::Row<size_t> labels = originalLabels.cols(0, 1199);
   arma::rowvec weights(data.n_cols, arma::fill::randu);
 
-  arma::mat doubledData = arma::join_rows(data, data);
-  arma::Row<size_t> doubledLabels = arma::join_rows(labels, labels);
-  arma::rowvec doubledWeights = arma::join_rows(weights, weights);
+  arma::mat doubledData = join_rows(data, data);
+  arma::Row<size_t> doubledLabels = join_rows(labels, labels);
+  arma::rowvec doubledWeights = join_rows(weights, weights);
 
   size_t numClasses = 5;
   size_t minimumLeafSize = 8;

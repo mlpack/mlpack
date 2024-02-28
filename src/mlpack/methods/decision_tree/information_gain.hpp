@@ -55,10 +55,10 @@ class InformationGain
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights associated with labels.
    */
-  template<bool UseWeights>
+  template<bool UseWeights, typename WeightsType>
   static double Evaluate(const arma::Row<size_t>& labels,
                          const size_t numClasses,
-                         const arma::Row<double>& weights)
+                         const WeightsType& weights)
   {
      // Edge case: if there are no elements, the gain is zero.
      if (labels.n_elem == 0)

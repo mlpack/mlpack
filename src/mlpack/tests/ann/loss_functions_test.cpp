@@ -834,7 +834,7 @@ TEST_CASE("MarginRankingLossTest", "[LossFunctionsTest]")
       "-9.4886 2.2755 8.4951");
   expectedOutput = { { 0.0, 0.0,  1.0, 0.0,  1.0, -1.0, 0.0, 0.0,  1.0, -1.0 }, 
                      { 0.0, 0.0, -1.0, 0.0, -1.0,  1.0, 0.0, 0.0, -1.0,  1.0 } };
-  input = arma::join_cols(input1, input2);
+  input = join_cols(input1, input2);
   target = arma::mat("1 1 -1 1 -1 1 1 1 -1 1");
 
   // Test the forward function

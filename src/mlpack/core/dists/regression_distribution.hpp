@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
-#define MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTS_REGRESSION_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
@@ -31,7 +31,7 @@ class RegressionDistribution
 {
  private:
   //! Regression function for representing conditional mean.
-  LinearRegression rf;
+  LinearRegression<> rf;
   //! Error distribution.
   GaussianDistribution err;
 
@@ -81,9 +81,9 @@ class RegressionDistribution
   }
 
   //! Return regression function.
-  const LinearRegression& Rf() const { return rf; }
+  const LinearRegression<>& Rf() const { return rf; }
   //! Modify regression function.
-  LinearRegression& Rf() { return rf; }
+  LinearRegression<>& Rf() { return rf; }
 
   //! Return error distribution.
   const GaussianDistribution& Err() const { return err; }
@@ -128,7 +128,7 @@ class RegressionDistribution
    */
   double LogProbability(const arma::vec& observation) const
   {
-    return log(Probability(observation));
+    return std::log(Probability(observation));
   }
 
   /**

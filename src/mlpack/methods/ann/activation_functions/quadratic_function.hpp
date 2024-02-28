@@ -47,30 +47,34 @@ class QuadraticFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow(x, 2);
+    y = pow(x, 2);
   }
 
   /**
    * Computes the first derivative of the Quadratic function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return 2 * y;
+    return 2 * x;
   }
 
   /**
    * Computes the first derivatives of the Quadratic function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& x, OutputVecType& y)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
-    y = 2 * x;
+    dy = 2 * x;
   }
 }; // class QUADFunction
 

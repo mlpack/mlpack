@@ -56,38 +56,27 @@ class RectifierFunction
   }
 
   /**
-   * Computes the rectifier function using a dense matrix as input.
+   * Computes the rectifier function using a 2nd /3rd-order tensor as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename eT>
-  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  template<typename MatType>
+  static void Fn(const MatType& x, MatType& y)
   {
-    y.zeros(x.n_rows, x.n_cols);
-    y = arma::max(y, x);
-  }
-
-  /**
-   * Computes the rectifier function using a 3rd-order tensor as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  static void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
-  {
-    y.zeros(x.n_rows, x.n_cols, x.n_slices);
-    y = arma::max(y, x);
+    y.set_size(size(x));
+    y.zeros();
+    y = SafeMax(y, x);
   }
 
   /**
    * Computes the first derivative of the rectifier function.
    *
-   * @param x Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x)
+  static double Deriv(const double x, const double /* y */)
   {
     return (double)(x > 0);
   }
@@ -95,16 +84,16 @@ class RectifierFunction
   /**
    * Computes the first derivatives of the rectifier function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputType, typename OutputType>
-  static void Deriv(const InputType& y, OutputType& x)
+  template<typename InputType, typename OutputType, typename DerivType>
+  static void Deriv(const InputType& x,
+                    const OutputType& /* y */,
+                    DerivType& dy)
   {
-    x.set_size(arma::size(y));
-
-    for (size_t i = 0; i < y.n_elem; ++i)
-      x(i) = Deriv(y(i));
+    dy = ConvTo<DerivType>::From(x > 0);
   }
 }; // class RectifierFunction
 

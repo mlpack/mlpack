@@ -59,7 +59,7 @@ TEST_CASE("GroupedConvolutionLayerTest", "[ANNLayerTest]")
 
   arma::mat delta;
   delta.set_size(8, 3);
-  layer.Backward(input, output, delta);
+  layer.Backward(input, output, output, delta);
   REQUIRE(arma::accu(delta) == Approx(686.7855224609).epsilon(1e-5));
 }
 
@@ -143,8 +143,8 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   arma::mat delta, deltaG;
   delta.set_size(8, 3);
   deltaG.set_size(8, 3);
-  layer.Backward(input, output, delta);
-  layerG.Backward(input, outputG, deltaG);
+  layer.Backward(input, output, output, delta);
+  layerG.Backward(input, outputG, outputG, deltaG);
 
   CheckMatrices(delta, deltaG);
   REQUIRE(arma::accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
@@ -218,7 +218,7 @@ TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
   arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);
   REQUIRE_NOTHROW(module1.Forward(data, forwardResult));
   arma::mat backwardResult(49, 10);
-  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, backwardResult));
+  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult, backwardResult));
   arma::mat gradientResult(module1.WeightSize(), 1);
   REQUIRE_NOTHROW(module1.Gradient(data, backwardResult, gradientResult));
 }

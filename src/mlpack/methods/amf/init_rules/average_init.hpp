@@ -61,7 +61,7 @@ class AverageInitialization
         min = *it;
     }
 
-    avgV = sqrt(((avgV / (n * m)) - min) / r);
+    avgV = std::sqrt(((avgV / (n * m)) - min) / r);
 
     // Initialize to random values.
     W.randu(n, r);
@@ -113,7 +113,7 @@ class AverageInitialization
       // Initialize H to random values
       M.randu(r, m);
     }
-    M += sqrt(((avgV / (n * m)) - min) / r);
+    M += std::sqrt(((avgV / (n * m)) - min) / r);
   }
 
   //! Serialize the object (in this case, there is nothing to do).

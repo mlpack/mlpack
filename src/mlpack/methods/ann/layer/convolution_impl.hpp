@@ -313,7 +313,7 @@ void ConvolutionType<
     padding.Forward(input, inputPadded);
   }
 
-  arma::Cube<typename MatType::elem_type> inputTemp;
+  CubeType inputTemp;
   MakeAlias(inputTemp,
       const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * higherInDimensions * batchSize);
@@ -370,9 +370,12 @@ void ConvolutionType<
     GradientConvolutionRule,
     MatType
 >::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
-  arma::Cube<typename MatType::elem_type> mappedError;
+  CubeType mappedError;
   MakeAlias(mappedError, ((MatType&) gy).memptr(), this->outputDimensions[0],
       this->outputDimensions[1], higherInDimensions * maps * batchSize);
 
@@ -384,11 +387,11 @@ void ConvolutionType<
       (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
 
   // To perform the backward pass, we need to rotate all the filters.
-  arma::Cube<typename MatType::elem_type> rotatedFilters(weight.n_rows,
+  CubeType rotatedFilters(weight.n_rows,
       weight.n_cols, weight.n_slices);
 
   // To perform the backward pass, we need to dilate all the mappedError.
-  arma::Cube<typename MatType::elem_type> dilatedMappedError;
+  CubeType dilatedMappedError;
   if (strideHeight == 1 && strideWidth == 1)
   {
     MakeAlias(dilatedMappedError, mappedError.memptr(),
@@ -421,7 +424,7 @@ void ConvolutionType<
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize, arma::fill::zeros);
-  arma::Cube<typename MatType::elem_type> outputCube;
+  CubeType outputCube;
   MakeAlias(outputCube, output.memptr(), apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
 
@@ -453,7 +456,7 @@ void ConvolutionType<
   }
   MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
       inMaps * higherInDimensions, batchSize);
-  arma::Cube<typename MatType::elem_type> tempCube;
+  CubeType tempCube;
   MakeAlias(tempCube, temp.memptr(), padding.OutputDimensions()[0],
       padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
   paddingBackward.Forward(output, temp);
@@ -487,7 +490,7 @@ void ConvolutionType<
     const MatType& error,
     MatType& gradient)
 {
-  arma::Cube<typename MatType::elem_type> mappedError;
+  CubeType mappedError;
   MakeAlias(mappedError, ((MatType&) error).memptr(),
       this->outputDimensions[0], this->outputDimensions[1],
       higherInDimensions * maps * batchSize);
@@ -499,16 +502,16 @@ void ConvolutionType<
   const size_t paddedRows = this->inputDimensions[0] + padWLeft + padWRight;
   const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
 
-  arma::Cube<typename MatType::elem_type> inputTemp(
+  CubeType inputTemp(
       const_cast<MatType&>(usingPadding ? inputPadded : input).memptr(),
       paddedRows, paddedCols, inMaps * batchSize, false, false);
 
   MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
       batchSize);
-  arma::Cube<typename MatType::elem_type> tempCube;
+  CubeType tempCube;
   MakeAlias(tempCube, temp.memptr(), apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
-  paddingBackward.Backward(input, usingPadding ? inputPadded : input, temp);
+  paddingBackward.Backward(input, {} /* unused */, usingPadding ? inputPadded : input, temp);
 
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into

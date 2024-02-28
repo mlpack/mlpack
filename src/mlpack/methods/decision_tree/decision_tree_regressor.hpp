@@ -393,7 +393,7 @@ class DecisionTreeRegressor :
    * @param point Point to predict.
    */
   template<typename VecType>
-  double Predict(const VecType& point) const;
+  typename VecType::elem_type Predict(const VecType& point) const;
 
   /**
    * Make prediction for the given points, using the entire tree. The predicted
@@ -402,9 +402,9 @@ class DecisionTreeRegressor :
    * @param data Set of points to predict.
    * @param predictions This will be filled with predictions for each point.
    */
-  template<typename MatType>
+  template<typename MatType, typename PredVecType>
   void Predict(const MatType& data,
-                arma::Row<double>& predictions) const;
+               PredVecType& predictions) const;
 
   /**
    * Serialize the tree.

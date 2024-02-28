@@ -255,8 +255,8 @@ TEST_CASE("NonNegNMFDefaultTest", "[NMFTest]")
   AMF<> nmf;
   nmf.Apply(v, r, w, h);
 
-  REQUIRE((arma::all(arma::vectorise(w) >= 0)
-      && arma::all(arma::vectorise(h) >= 0)));
+  REQUIRE((arma::all(vectorise(w) >= 0)
+      && arma::all(vectorise(h) >= 0)));
 }
 
 /**
@@ -277,8 +277,8 @@ TEST_CASE("NonNegNMFRandomDivTest", "[NMFTest]")
       NMFMultiplicativeDivergenceUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  REQUIRE((arma::all(arma::vectorise(w) >= 0)
-      && arma::all(arma::vectorise(h) >= 0)));
+  REQUIRE((arma::all(vectorise(w) >= 0)
+      && arma::all(vectorise(h) >= 0)));
 }
 
 /**
@@ -298,6 +298,6 @@ TEST_CASE("NonNegNMFALSTest", "[NMFTest]")
       NMFALSUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  REQUIRE((arma::all(arma::vectorise(w) >= 0)
-      && arma::all(arma::vectorise(h) >= 0)));
+  REQUIRE((arma::all(vectorise(w) >= 0)
+      && arma::all(vectorise(h) >= 0)));
 }

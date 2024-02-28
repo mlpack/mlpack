@@ -67,7 +67,7 @@ EstimateRadius(const MatType& data, double ratio)
   arma::rowvec maxDistances = max(distances);
 
   // Calculate and return the radius.
-  return arma::sum(maxDistances) / (double) data.n_cols;
+  return sum(maxDistances) / (double) data.n_cols;
 }
 
 // Class to compare two vectors.

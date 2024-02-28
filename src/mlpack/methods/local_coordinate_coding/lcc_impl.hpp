@@ -141,14 +141,15 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
 
     bool useCholesky = false;
     // Normalization and fitting and intercept are disabled.
-    LARS lars(useCholesky, dictGramTD, 0.5 * lambda, 0,
-        1e-16 /* default tolerance */, false, false);
+    LARS<> lars(useCholesky, 0.5 * lambda, 0, 1e-16 /* default tolerance */,
+        false, false);
 
     // Run LARS for this point, by making an alias of the point and passing
     // that.
     arma::vec beta = codes.unsafe_col(i);
     arma::rowvec responses = data.unsafe_col(i).t();
-    lars.Train(dictPrime, responses, beta, false);
+    lars.Train(dictPrime, responses, false, useCholesky, dictGramTD);
+    beta = lars.Beta();
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }
@@ -200,13 +201,13 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   }
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
-  std::vector<size_t> inactiveAtoms;
+  std::vector<arma::uword> activeAtoms;
   for (size_t j = 0; j < atoms; ++j)
-    if (accu(codes.row(j) != 0) == 0)
-      inactiveAtoms.push_back(j);
+    if (accu(codes.row(j) != 0) != 0)
+      activeAtoms.push_back((arma::uword) j);
 
-  const size_t nInactiveAtoms = inactiveAtoms.size();
-  const size_t nActiveAtoms = atoms - nInactiveAtoms;
+  const size_t nActiveAtoms = activeAtoms.size();
+  const size_t nInactiveAtoms = atoms - nActiveAtoms;
 
   // Efficient construction of codes restricted to active atoms.
   arma::mat codesPrime = arma::zeros(nActiveAtoms, data.n_cols +
@@ -219,18 +220,13 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
         << " inactive atoms.  They will be re-initialized randomly.\n";
 
     // Create matrix holding only active codes.
-    arma::mat activeCodes;
-    RemoveRows(codes, inactiveAtoms, activeCodes);
+    arma::mat activeCodes = codes.rows(arma::uvec(activeAtoms));
 
     // Create reverse atom lookup for active atoms.
     arma::uvec atomReverseLookup(atoms);
-    size_t inactiveOffset = 0;
-    for (size_t i = 0; i < atoms; ++i)
+    for (size_t i = 0; i < activeAtoms.size(); ++i)
     {
-      if (inactiveAtoms[inactiveOffset] == i)
-        ++inactiveOffset;
-      else
-        atomReverseLookup(i - inactiveOffset) = i;
+      atomReverseLookup[i] = activeAtoms[i];
     }
 
     codesPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = activeCodes;
@@ -285,14 +281,15 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
     // Inactive atoms must be reinitialized randomly, so we cannot solve
     // directly for the entire dictionary estimate.
     arma::mat dictionaryActive =
-      trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
-                  codesPrime * diagmat(wSquared) * trans(dataPrime)));
+        trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
+                    codesPrime * diagmat(wSquared) * trans(dataPrime)));
 
     // Update all atoms.
-    size_t currentInactiveIndex = 0;
+    size_t currentActiveIndex = 0;
     for (size_t i = 0; i < atoms; ++i)
     {
-      if (inactiveAtoms[currentInactiveIndex] == i)
+      if (currentActiveIndex >= activeAtoms.size() ||
+          activeAtoms[currentActiveIndex] != i)
       {
         // This atom is inactive.  Reinitialize it randomly.
         dictionary.col(i) = (data.col(RandInt(data.n_cols)) +
@@ -301,14 +298,14 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
 
         // Now normalize the atom.
         dictionary.col(i) /= norm(dictionary.col(i), 2);
-
-        // Increment inactive atom counter.
-        ++currentInactiveIndex;
       }
       else
       {
         // Update estimate.
-        dictionary.col(i) = dictionaryActive.col(i - currentInactiveIndex);
+        dictionary.col(i) = dictionaryActive.col(currentActiveIndex);
+
+        // Increment active atom counter.
+        ++currentActiveIndex;
       }
     }
   }
@@ -328,7 +325,7 @@ inline double LocalCoordinateCoding::Objective(
     const size_t pointInd = (size_t) (adjacencies(l) / atoms);
 
     weightedL1NormZ += fabs(codes(atomInd, pointInd)) * arma::as_scalar(
-        arma::sum(arma::square(dictionary.col(atomInd) - data.col(pointInd))));
+        sum(square(dictionary.col(atomInd) - data.col(pointInd))));
   }
 
   double froNormResidual = norm(data - dictionary * codes, "fro");

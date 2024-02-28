@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/multi_quadratic_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of multi quadratic function.
  *
@@ -47,30 +48,37 @@ class MultiQuadFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = arma::pow((1 + arma::pow(x, 2)), 0.5);
+    y = pow((1 + pow(x, 2)), 0.5);
   }
 
   /**
    * Computes the first derivative of the Multi Quadratic function.
    *
-   * @param y Input data.
+   * Can be computed as x / sqrt(1 + x^2), but since f(x)=sqrt(1+x^2),
+   * we can also use x / f(x)
+   *
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double y)
   {
-    return  y / std::pow(1 + y * y, 0.5);
+    return x / y;
   }
 
   /**
    * Computes the first derivatives of the Multi Quadratic function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& x, OutputVecType& y)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType &dy)
   {
-    y = x / arma::pow((1 + arma::pow(x, 2)), 0.5);
+    dy = x / y;
   }
 }; // class MultiquadFunction
 

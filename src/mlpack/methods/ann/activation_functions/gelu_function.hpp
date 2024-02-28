@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/gelu_function.hpp
  * @author Himanshu Pathak
+ * @author Adam Kropp
  *
  * Definition and implementation of the Gaussian Error Linear Unit (GELU)
  * function.
@@ -22,7 +23,7 @@ namespace mlpack {
  *
  * @f{eqnarray*}{
  * f(x) = 0.5 * x * {1 + tanh[(2/pi)^(1/2) * (x + 0.044715 * x^3)]} \\
- * f'(x) = 0.5 * tanh(0.0356774 * x^3) + 0.797885 * x) + 
+ * f'(x) = 0.5 * tanh(0.0356774 * x^3 + 0.797885 * x) +
  *         (0.0535161x^3 + 0.398942 * x) * 
  *         sech^2(0.0356774 * x^3+0.797885 * x) + 0.5\\
  * @f}
@@ -52,36 +53,42 @@ class GELUFunction
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
     y = 0.5 * x % (1 + arma::tanh(std::sqrt(2 / M_PI) *
-        (x + 0.044715 * arma::pow(x, 3))));
+        (x + 0.044715 * pow(x, 3))));
   }
 
   /**
    * Computes the first derivative of the GELU function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return 0.5 * std::tanh(0.0356774 * std::pow(y, 3) + 0.797885 * y) +
-           (0.0535161 * std::pow(y, 3) + 0.398942 * y) *
-           std::pow(1 / std::cosh(0.0356774 * std::pow(y, 3) +
-           0.797885 * y), 2) + 0.5;
+    if (x < -10) return 0.0; // catch overflows
+    return 0.5 * std::tanh(0.0356774 * std::pow(x, 3) + 0.797885 * x) +
+           (0.0535161 * std::pow(x, 3) + 0.398942 * x) *
+           std::pow(1 / std::cosh(0.0356774 * std::pow(x, 3) +
+           0.797885 * x), 2) + 0.5;
   }
 
   /**
    * Computes the first derivatives of the GELU function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& /* y */,
+                    DerivVecType& dy)
   {
-    x = 0.5 * arma::tanh(0.0356774 * arma::pow(y, 3) + 0.797885 * y) +
-        (0.0535161 * arma::pow(y, 3) + 0.398942 * y) %
-        arma::pow(1 / arma::cosh(0.0356774 * arma::pow(y, 3) +
-        0.797885 * y), 2) + 0.5;
+    dy = 0.5 * arma::tanh(0.0356774 * pow(x, 3) + 0.797885 * x) +
+        (0.0535161 * pow(x, 3) + 0.398942 * x) %
+        pow(1 / arma::cosh(0.0356774 * pow(x, 3) +
+        0.797885 * x), 2) + 0.5;
+    dy(arma::find(x < -10)).fill(0); // catch overflows
   }
 }; // class GELUFunction
 

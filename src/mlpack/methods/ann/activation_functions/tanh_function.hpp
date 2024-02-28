@@ -54,10 +54,11 @@ class TanhFunction
   /**
    * Computes the first derivative of the tanh function.
    *
-   * @param y Input activation.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double /* x */, const double y)
   {
     return 1 - std::pow(y, 2);
   }
@@ -65,13 +66,16 @@ class TanhFunction
   /**
    * Computes the first derivatives of the tanh function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& /* x */,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
-    x = 1 - arma::pow(y, 2);
+    dy = 1 - pow(y, 2);
   }
 
   /**

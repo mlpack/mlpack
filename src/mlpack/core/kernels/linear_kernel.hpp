@@ -51,7 +51,7 @@ class LinearKernel
   template<typename VecTypeA, typename VecTypeB>
   static double Evaluate(const VecTypeA& a, const VecTypeB& b)
   {
-    return arma::dot(a, b);
+    return dot(a, b);
   }
 
   //! Serialize the kernel (it has no members... do nothing).

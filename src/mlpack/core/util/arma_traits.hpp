@@ -37,6 +37,18 @@ struct IsVector
   const static bool value = false;
 };
 
+template<typename MatType>
+struct IsMatrix
+{
+  const static bool value = false;
+};
+
+template<typename CubeType>
+struct IsCube
+{
+  const static bool value = false;
+};
+
 // Commenting out the first template per case, because
 // Visual Studio doesn't like this instantiaion pattern (error C2910).
 // template<>
@@ -81,6 +93,18 @@ struct IsVector<arma::subview_row<eT> >
   const static bool value = true;
 };
 
+template<typename eT>
+struct IsMatrix<arma::Mat<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCube<arma::Cube<eT> >
+{
+  const static bool value = true;
+};
+
 
 #if ((ARMA_VERSION_MAJOR >= 10) || \
     ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
@@ -110,5 +134,124 @@ struct IsVector<arma::subview_row<eT> >
   };
 
 #endif
+
+// Get the row vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetRowType
+{
+  typedef arma::Row<typename MatType::elem_type> type;
+};
+
+template<typename eT>
+struct GetRowType<arma::Mat<eT>>
+{
+  typedef arma::Row<eT> type;
+};
+
+template<typename eT>
+struct GetRowType<arma::SpMat<eT>>
+{
+  typedef arma::SpRow<eT> type;
+};
+
+// Get the column vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetColType
+{
+  typedef arma::Col<typename MatType::elem_type> type;
+};
+
+template<typename MatType>
+struct GetUColType
+{
+  typedef arma::Col<arma::uword> type;
+};
+
+template<typename eT>
+struct GetColType<arma::Mat<eT>>
+{
+  typedef arma::Col<eT> type;
+};
+
+template<typename eT>
+struct GetColType<arma::SpMat<eT>>
+{
+  typedef arma::SpCol<eT> type;
+};
+
+// Get the dense row vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetDenseRowType
+{
+  typedef typename GetRowType<MatType>::type type;
+};
+
+template<typename eT>
+struct GetDenseRowType<arma::SpMat<eT>>
+{
+  typedef arma::Row<eT> type;
+};
+
+// Get the dense column vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetDenseColType
+{
+  typedef typename GetColType<MatType>::type type;
+};
+
+template<typename eT>
+struct GetDenseColType<arma::SpMat<eT>>
+{
+  typedef arma::Col<eT> type;
+};
+
+// Get the dense matrix type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetDenseMatType
+{
+  typedef arma::Mat<typename MatType::elem_type> type;
+};
+
+template<typename MatType>
+struct GetUDenseMatType
+{
+  typedef arma::Mat<arma::uword> type;
+};
+
+template<typename eT>
+struct GetDenseMatType<arma::SpMat<eT>>
+{
+  typedef arma::Mat<eT> type;
+};
+
+// Get the cube type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetCubeType;
+
+template<typename eT>
+struct GetCubeType<arma::Mat<eT>>
+{
+  typedef arma::Cube<eT> type;
+};
+
+// Get the sparse matrix type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetSparseMatType
+{
+  typedef arma::SpMat<typename MatType::elem_type> type;
+};
+
+template<typename eT>
+struct GetSparseMatType<arma::SpMat<eT>>
+{
+  typedef arma::SpMat<eT> type;
+};
 
 #endif

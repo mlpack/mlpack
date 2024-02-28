@@ -42,20 +42,20 @@ TEST_CASE("SimpleWeightUpdateWeights", "[PerceptronTest]")
   wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
                     correctClass);
 
-  CHECK(weights(0, 0) == -1);
-  CHECK(weights(1, 0) == 0);
-  CHECK(weights(2, 0) == 1);
-  CHECK(weights(3, 0) == 2);
-  CHECK(weights(4, 0) == 3);
+  REQUIRE(weights(0, 0) == -1);
+  REQUIRE(weights(1, 0) == 0);
+  REQUIRE(weights(2, 0) == 1);
+  REQUIRE(weights(3, 0) == 2);
+  REQUIRE(weights(4, 0) == 3);
 
-  CHECK(weights(0, 2) == 7);
-  CHECK(weights(1, 2) == 8);
-  CHECK(weights(2, 2) == 9);
-  CHECK(weights(3, 2) == 10);
-  CHECK(weights(4, 2) == 11);
+  REQUIRE(weights(0, 2) == 7);
+  REQUIRE(weights(1, 2) == 8);
+  REQUIRE(weights(2, 2) == 9);
+  REQUIRE(weights(3, 2) == 10);
+  REQUIRE(weights(4, 2) == 11);
 
-  CHECK(biases(0) == 1);
-  CHECK(biases(2) == 8);
+  REQUIRE(biases(0) == 1);
+  REQUIRE(biases(2) == 8);
 }
 
 /**
@@ -85,20 +85,20 @@ TEST_CASE("SimpleWeightUpdateInstanceWeight", "[PerceptronTest]")
   wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
                     correctClass, instanceWeight);
 
-  CHECK(weights(0, 0) == -3);
-  CHECK(weights(1, 0) == -4);
-  CHECK(weights(2, 0) == -5);
-  CHECK(weights(3, 0) == -6);
-  CHECK(weights(4, 0) == -7);
+  REQUIRE(weights(0, 0) == -3);
+  REQUIRE(weights(1, 0) == -4);
+  REQUIRE(weights(2, 0) == -5);
+  REQUIRE(weights(3, 0) == -6);
+  REQUIRE(weights(4, 0) == -7);
 
-  CHECK(weights(0, 2) == 9);
-  CHECK(weights(1, 2) == 12);
-  CHECK(weights(2, 2) == 15);
-  CHECK(weights(3, 2) == 18);
-  CHECK(weights(4, 2) == 21);
+  REQUIRE(weights(0, 2) == 9);
+  REQUIRE(weights(1, 2) == 12);
+  REQUIRE(weights(2, 2) == 15);
+  REQUIRE(weights(3, 2) == 18);
+  REQUIRE(weights(4, 2) == 21);
 
-  CHECK(biases(0) == -1);
-  CHECK(biases(2) == 10);
+  REQUIRE(biases(0) == -1);
+  REQUIRE(biases(2) == 10);
 }
 
 /**
@@ -120,10 +120,21 @@ TEST_CASE("And", "[PerceptronTest]")
   Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
-  CHECK(predictedLabels(0, 0) == 0);
-  CHECK(predictedLabels(0, 1) == 0);
-  CHECK(predictedLabels(0, 2) == 1);
-  CHECK(predictedLabels(0, 3) == 0);
+  REQUIRE(predictedLabels(0) == 0);
+  REQUIRE(predictedLabels(1) == 0);
+  REQUIRE(predictedLabels(2) == 1);
+  REQUIRE(predictedLabels(3) == 0);
+
+  // Test single-point classify too.
+  predictedLabels(0) = p.Classify(testData.col(0));
+  predictedLabels(1) = p.Classify(testData.col(1));
+  predictedLabels(2) = p.Classify(testData.col(2));
+  predictedLabels(3) = p.Classify(testData.col(3));
+
+  REQUIRE(predictedLabels(0) == 0);
+  REQUIRE(predictedLabels(1) == 0);
+  REQUIRE(predictedLabels(2) == 1);
+  REQUIRE(predictedLabels(3) == 0);
 }
 
 /**
@@ -146,10 +157,10 @@ TEST_CASE("Or", "[PerceptronTest]")
   Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
-  CHECK(predictedLabels(0, 0) == 1);
-  CHECK(predictedLabels(0, 1) == 1);
-  CHECK(predictedLabels(0, 2) == 1);
-  CHECK(predictedLabels(0, 3) == 0);
+  REQUIRE(predictedLabels(0, 0) == 1);
+  REQUIRE(predictedLabels(0, 1) == 1);
+  REQUIRE(predictedLabels(0, 2) == 1);
+  REQUIRE(predictedLabels(0, 3) == 0);
 }
 
 /**
@@ -174,7 +185,7 @@ TEST_CASE("Random3", "[PerceptronTest]")
   p.Classify(testData, predictedLabels);
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
-    CHECK(predictedLabels(0, i) == 0);
+    REQUIRE(predictedLabels(0, i) == 0);
 }
 
 /**
@@ -198,35 +209,40 @@ TEST_CASE("TwoPoints", "[PerceptronTest]")
   Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
-  CHECK(predictedLabels(0, 0) == 0);
-  CHECK(predictedLabels(0, 1) == 1);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 1);
 }
 
 /**
  * This tests the convergence of the perceptron on a dataset which has a
- * non-linearly separable dataset.
+ * non-linearly separable dataset.  We test on multiple element types to ensure
+ * that MatType can be set correctly.
  */
-TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]")
+TEMPLATE_TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]", float,
+    double)
 {
-  mat trainData;
+  typedef TestType eT;
+
+  Mat<eT> trainData;
   trainData = { { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 },
                 { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2 } };
 
   Mat<size_t> labels;
   labels = { 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1 };
 
-  Perceptron<> p(trainData, labels.row(0), 2, 1000);
+  Perceptron<SimpleWeightUpdate, ZeroInitialization, Mat<eT>> p(trainData,
+      labels.row(0), 2, 1000);
 
-  mat testData;
+  Mat<eT> testData;
   testData = { { 3,   4,   5,   6 },
                { 3, 2.3, 1.7, 1.5 } };
   Row<size_t> predictedLabels;
   p.Classify(testData, predictedLabels);
 
-  CHECK(predictedLabels(0, 0) == 0);
-  CHECK(predictedLabels(0, 1) == 0);
-  CHECK(predictedLabels(0, 2) == 1);
-  CHECK(predictedLabels(0, 3) == 1);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 0);
+  REQUIRE(predictedLabels(0, 2) == 1);
+  REQUIRE(predictedLabels(0, 3) == 1);
 }
 
 TEST_CASE("SecondaryConstructor", "[PerceptronTest]")
@@ -265,4 +281,85 @@ TEST_CASE("InstanceWeightsConstructor", "[PerceptronTest]")
   Perceptron<> p(trainData, labels.row(0), 2, instanceWeights, 1000);
 
   REQUIRE(p.Weights().n_elem > 0);
+}
+
+/**
+ * This tests that incremental training can be stopped with `Reset()`.
+ */
+TEST_CASE("IncrementalTrainingTest", "[PerceptronTest]")
+{
+  mat trainData = randu<mat>(10, 1000);
+  for (size_t i = 0; i < 500; ++i)
+    trainData.col(i) += 0.6;
+  for (size_t i = 500; i < 1000; ++i)
+    trainData.col(i) += 0.8;
+  Row<size_t> labels(1000);
+  labels.subvec(0, 499).zeros();
+  labels.subvec(500, 999).ones();
+
+  Perceptron<> p1, p2;
+
+  // This should result in the same model, because the default initialization is
+  // zeros.
+  p1.Train(trainData, labels, 2, 1);
+  p2.Train(trainData, labels, 2, 1);
+
+  REQUIRE(approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
+  REQUIRE(approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
+
+  // Resetting and retraining p2 should result in the same model.
+  p2.Reset();
+  p2.Train(trainData, labels, 2);
+
+  REQUIRE(approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
+  REQUIRE(approx_equal(p1.Biases(), p2.Biases(), "absdiff", 1e-5));
+
+  // Training p1 again should result in a different model.
+  p1.Train(trainData, labels, 2);
+
+  // The biases often converge to the same -1/0/1 values, but it's sufficient
+  // to just check the weights.
+  REQUIRE(!approx_equal(p1.Weights(), p2.Weights(), "absdiff", 1e-5));
+}
+
+// Test all forms of Train().
+TEST_CASE("TrainFormTest", "[PerceptronTest]")
+{
+  mat trainData;
+  trainData = { { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2 } };
+
+  Row<size_t> labels;
+  labels = { 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1 };
+
+  rowvec weights(labels.n_elem);
+  weights.ones();
+
+  Perceptron<> p1(trainData, labels, 2);
+  Perceptron<> p2(trainData, labels, 2, weights);
+  Perceptron<> p3, p4, p5, p6;
+  p3.Train(trainData, labels, 2);
+  p4.Train(trainData, labels, 2, 50);
+  p5.Train(trainData, labels, 2, weights);
+  p6.Train(trainData, labels, 2, weights, 50);
+
+  mat testData;
+  testData = { { 3,   4,   5,   6 },
+               { 3, 2.3, 1.7, 1.5 } };
+  Row<size_t> predictions1, predictions2, predictions3, predictions4,
+      predictions5, predictions6;
+  Row<size_t> trueLabels = { 0, 0, 1, 1 };
+  p1.Classify(testData, predictions1);
+  p2.Classify(testData, predictions2);
+  p3.Classify(testData, predictions3);
+  p4.Classify(testData, predictions4);
+  p5.Classify(testData, predictions5);
+  p6.Classify(testData, predictions6);
+
+  REQUIRE(all(predictions1 == trueLabels));
+  REQUIRE(all(predictions2 == trueLabels));
+  REQUIRE(all(predictions3 == trueLabels));
+  REQUIRE(all(predictions4 == trueLabels));
+  REQUIRE(all(predictions5 == trueLabels));
+  REQUIRE(all(predictions6 == trueLabels));
 }

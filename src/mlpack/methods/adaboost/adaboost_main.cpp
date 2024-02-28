@@ -203,7 +203,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Extract the labels as the last dimension of the training data.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
-      labelsIn = conv_to<Row<size_t>>::from(
+      labelsIn = ConvTo<arma::Row<size_t>>::From(
           trainingData.row(trainingData.n_rows - 1));
       trainingData.shed_row(trainingData.n_rows - 1);
     }

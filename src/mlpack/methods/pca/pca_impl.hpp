@@ -17,7 +17,6 @@
 #define MLPACK_METHODS_PCA_PCA_IMPL_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
 #include "pca.hpp"
 
 namespace mlpack {
@@ -44,10 +43,9 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::mat& eigvec)
 {
   // Center the data into a temporary matrix.
-  arma::mat centeredData;
-  Center(data, centeredData);
+  arma::mat centeredData = data.each_col() - arma::mean(data, 1);
 
-  // Scale the data if the user ask for.
+  // Scale the data if the user asked for it.
   ScaleData(centeredData);
 
   decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
@@ -113,8 +111,7 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   arma::vec eigVal;
 
   // Center the data into a temporary matrix.
-  arma::mat centeredData;
-  Center(data, centeredData);
+  arma::mat centeredData = data.each_col() - arma::mean(data, 1);
 
   // Scale the data if the user ask for.
   ScaleData(centeredData);
@@ -163,7 +160,7 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // Calculate the dimension we should keep.
   size_t newDimension = 0;
   double varSum = 0.0;
-  eigVal /= arma::sum(eigVal); // Normalize eigenvalues.
+  eigVal /= sum(eigVal); // Normalize eigenvalues.
   while ((varSum < varRetained) && (newDimension < eigVal.n_elem))
   {
     varSum += eigVal[newDimension];

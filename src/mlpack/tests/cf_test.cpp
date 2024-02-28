@@ -277,7 +277,7 @@ void BatchPredict()
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
     const double prediction = c.Predict(combinations(0, i), combinations(1, i));
-    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10).margin(1e-15));
   }
 }
 
@@ -322,7 +322,7 @@ void Train(DecompositionPolicy& decomposition)
   {
     const double prediction = c.Predict(combinations(0, i),
       combinations(1, i));
-    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10).margin(1e-15));
   }
 }
 
@@ -405,7 +405,7 @@ void EmptyConstructorTrain()
   {
     const double prediction = c.Predict(combinations(0, i),
         combinations(1, i));
-    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10).margin(1e-15));
   }
 }
 

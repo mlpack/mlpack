@@ -143,6 +143,37 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
+   * Construct the decision tree on the given data and labels with weights,
+   * assuming that the data is all of the numeric type. Setting minimumLeafSize
+   * and minimumGainSplit too small may cause the tree to overfit, but setting
+   * them too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights The weight list of given label.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   */
+  template<typename MatType, typename LabelsType, typename WeightsType>
+  DecisionTree(
+      MatType data,
+      LabelsType labels,
+      const size_t numClasses,
+      WeightsType weights,
+      const size_t minimumLeafSize = 10,
+      const double minimumGainSplit = 1e-7,
+      const size_t maximumDepth = 0,
+      DimensionSelectionType dimensionSelector = DimensionSelectionType(),
+      const std::enable_if_t<arma::is_arma_type<
+          typename std::remove_reference<WeightsType>::type>::value>* = 0);
+
+  /**
    * Using the hyperparameters of another decision tree, train on the given data
    * and labels with weights, where the data can be both numeric and
    * categorical.  Setting minimumLeafSize and minimumGainSplit too small may
@@ -171,36 +202,6 @@ class DecisionTree :
       WeightsType weights,
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
-      const std::enable_if_t<arma::is_arma_type<
-          typename std::remove_reference<WeightsType>::type>::value>* = 0);
-  /**
-   * Construct the decision tree on the given data and labels with weights,
-   * assuming that the data is all of the numeric type. Setting minimumLeafSize
-   * and minimumGainSplit too small may cause the tree to overfit, but setting
-   * them too large may cause it to underfit.
-   *
-   * Use std::move if data, labels or weights are no longer needed to avoid
-   * copies.
-   *
-   * @param data Dataset to train on.
-   * @param labels Labels for each training point.
-   * @param numClasses Number of classes in the dataset.
-   * @param weights The Weight list of given labels.
-   * @param minimumLeafSize Minimum number of points in each leaf node.
-   * @param minimumGainSplit Minimum gain for the node to split.
-   * @param maximumDepth Maximum depth for the tree.
-   * @param dimensionSelector Instantiated dimension selection policy.
-   */
-  template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(
-      MatType data,
-      LabelsType labels,
-      const size_t numClasses,
-      WeightsType weights,
-      const size_t minimumLeafSize = 10,
-      const double minimumGainSplit = 1e-7,
-      const size_t maximumDepth = 0,
-      DimensionSelectionType dimensionSelector = DimensionSelectionType(),
       const std::enable_if_t<arma::is_arma_type<
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
@@ -546,14 +547,14 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType>
+  template<bool UseWeights, typename MatType, typename WeightsType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
                const data::DatasetInfo& datasetInfo,
                arma::Row<size_t>& labels,
                const size_t numClasses,
-               arma::rowvec& weights,
+               WeightsType& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
@@ -575,13 +576,13 @@ class DecisionTree :
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType>
+  template<bool UseWeights, typename MatType, typename WeightsType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
                arma::Row<size_t>& labels,
                const size_t numClasses,
-               arma::rowvec& weights,
+               WeightsType& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,

@@ -65,7 +65,7 @@ class DiagonalGaussianDistribution
   //! Return the probability of the given observation.
   double Probability(const arma::vec& observation) const
   {
-    return exp(LogProbability(observation));
+    return std::exp(LogProbability(observation));
   }
 
   //! Return the log probability of the given observation.
@@ -82,7 +82,7 @@ class DiagonalGaussianDistribution
   {
     arma::vec logProbabilities;
     LogProbability(x, logProbabilities);
-    probabilities = arma::exp(logProbabilities);
+    probabilities = exp(logProbabilities);
   }
 
   /**

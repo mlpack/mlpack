@@ -49,17 +49,17 @@ class NystroemKernelRule
     transformedData = G.t() * G;
 
     // Center the reconstructed approximation.
-    Center(transformedData, transformedData);
+    transformedData.each_col() -= arma::mean(transformedData, 1);
 
     // For PCA the data has to be centered, even if the data is centered. But
     // it is not guaranteed that the data, when mapped to the kernel space, is
     // also centered. Since we actually never work in the feature space we
     // cannot center the data. So, we perform a "psuedo-centering" using the
     // kernel matrix.
-    arma::colvec colMean = arma::sum(G, 1) / G.n_rows;
-    G.each_row() -= arma::sum(G, 0) / G.n_rows;
+    arma::colvec colMean = sum(G, 1) / G.n_rows;
+    G.each_row() -= sum(G, 0) / G.n_rows;
     G.each_col() -= colMean;
-    G += arma::sum(colMean) / G.n_rows;
+    G += sum(colMean) / G.n_rows;
 
     // Eigendecompose the centered kernel matrix.
     transformedData = arma::symmatu(transformedData);

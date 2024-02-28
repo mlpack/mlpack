@@ -95,7 +95,10 @@ void CELUType<MatType>::Forward(
 
 template<typename MatType>
 void CELUType<MatType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = gy % derivative;
 }

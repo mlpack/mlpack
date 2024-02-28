@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/swish_function.hpp
  * @author Vivek Pal
+ * @author Adam Kropp
  *
  * Definition and implementation of the Swish function as described by
  * Prajit Ramachandran, Barret Zoph & Quoc V. Le
@@ -46,10 +47,11 @@ class SwishFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename eT>
-  static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  template<typename MatType>
+  static void Fn(const MatType& x, MatType& y,
+     const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0) 
   {
-    y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + exp(-x));
   }
 
   /**
@@ -58,8 +60,9 @@ class SwishFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y)
+  template<typename VecType>
+  static void Fn(const VecType& x, VecType& y,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0)
   {
     y.set_size(arma::size(x));
 
@@ -70,26 +73,34 @@ class SwishFunction
   /**
    * Computes the first derivative of the swish function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double y)
   {
-    return y / (1 + std::exp(-y)) + (1 - y / (1 + std::exp(-y))) /
-                                             (1 + std::exp(-y));
+    double sigmoid = y / x; // save an exp
+    return x == 0 ? 0.5 : sigmoid * (1.0 + x * (1.0 - sigmoid));
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= 0.5)
   }
 
   /**
    * Computes the first derivatives of the swish function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
-    x = y / (1 + arma::exp(-y)) + (1 - y / (1 + arma::exp(-y))) /
-                                           (1 + arma::exp(-y));
+    dy = (y / x) % (1.0 + x - y);
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= 0.5)
+    dy(arma::find(x == 0)).fill(0.5);
   }
 }; // class SwishFunction
 

@@ -14,7 +14,7 @@
 
 namespace mlpack {
 
-// Utility function to check the equality of two Armadillo matrices.
+// Utility function to check the equality of four Armadillo matrices.
 void CheckMatrices(const arma::mat& x,
                    const arma::mat& xmlX,
                    const arma::mat& jsonX,
@@ -39,15 +39,52 @@ void CheckMatrices(const arma::mat& x,
     const double val = x[i];
     if (val == 0.0)
     {
-      REQUIRE(xmlX[i] == Approx(0.0).margin(1e-6 / 100));
-      REQUIRE(jsonX[i] == Approx(0.0).margin(1e-6 / 100));
-      REQUIRE(binaryX[i] == Approx(0.0).margin(1e-6 / 100));
+      REQUIRE(xmlX[i] == Approx(0.0).margin(1e-8));
+      REQUIRE(jsonX[i] == Approx(0.0).margin(1e-8));
+      REQUIRE(binaryX[i] == Approx(0.0).margin(1e-8));
     }
     else
     {
-      REQUIRE(val == Approx(xmlX[i]).epsilon(1e-6 / 100));
-      REQUIRE(val == Approx(jsonX[i]).epsilon(1e-6 / 100));
-      REQUIRE(val == Approx(binaryX[i]).epsilon(1e-6 / 100));
+      REQUIRE(val == Approx(xmlX[i]).epsilon(1e-8));
+      REQUIRE(val == Approx(jsonX[i]).epsilon(1e-8));
+      REQUIRE(val == Approx(binaryX[i]).epsilon(1e-8));
+    }
+  }
+}
+
+void CheckMatrices(const arma::fmat& x,
+                   const arma::fmat& xmlX,
+                   const arma::fmat& jsonX,
+                   const arma::fmat& binaryX)
+{
+  // First check dimensions.
+  REQUIRE(x.n_rows == xmlX.n_rows);
+  REQUIRE(x.n_rows == jsonX.n_rows);
+  REQUIRE(x.n_rows == binaryX.n_rows);
+
+  REQUIRE(x.n_cols == xmlX.n_cols);
+  REQUIRE(x.n_cols == jsonX.n_cols);
+  REQUIRE(x.n_cols == binaryX.n_cols);
+
+  REQUIRE(x.n_elem == xmlX.n_elem);
+  REQUIRE(x.n_elem == jsonX.n_elem);
+  REQUIRE(x.n_elem == binaryX.n_elem);
+
+  // Now check elements.
+  for (size_t i = 0; i < x.n_elem; ++i)
+  {
+    const float val = x[i];
+    if (val == 0.0)
+    {
+      REQUIRE(xmlX[i] == Approx(0.0).margin(1e-6));
+      REQUIRE(jsonX[i] == Approx(0.0).margin(1e-6));
+      REQUIRE(binaryX[i] == Approx(0.0).margin(1e-6));
+    }
+    else
+    {
+      REQUIRE(val == Approx(xmlX[i]).epsilon(1e-6));
+      REQUIRE(val == Approx(jsonX[i]).epsilon(1e-6));
+      REQUIRE(val == Approx(binaryX[i]).epsilon(1e-6));
     }
   }
 }

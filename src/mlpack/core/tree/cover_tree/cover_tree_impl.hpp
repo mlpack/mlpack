@@ -122,7 +122,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   else if (furthestDescendantDistance == 0.0)
     scale = INT_MIN + 1;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int) std::ceil(std::log(furthestDescendantDistance) /
+        std::log(base));
 
   // Initialize statistics recursively after the entire tree construction is
   // complete.
@@ -217,7 +218,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   else if (furthestDescendantDistance == 0.0)
     scale = INT_MIN + 1;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int) std::ceil(std::log(furthestDescendantDistance) /
+        std::log(base));
 
   // Initialize statistics recursively after the entire tree construction is
   // complete.
@@ -313,7 +315,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   else if (furthestDescendantDistance == 0.0)
     scale = INT_MIN + 1;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int) std::ceil(std::log(furthestDescendantDistance) /
+        std::log(base));
 
   // Initialize statistics recursively after the entire tree construction is
   // complete.
@@ -408,7 +411,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   else if (furthestDescendantDistance == 0.0)
     scale = INT_MIN + 1;
   else
-    scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+    scale = (int) std::ceil(std::log(furthestDescendantDistance) /
+        std::log(base));
 
   // Initialize statistics recursively after the entire tree construction is
   // complete.
@@ -1183,8 +1187,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   }
 
   const int nextScale = std::min(scale,
-      (int) ceil(log(maxDistance) / log(base))) - 1;
-  const ElemType bound = pow(base, nextScale);
+      (int) std::ceil(std::log(maxDistance) / std::log(base))) - 1;
+  const ElemType bound = std::pow(base, nextScale);
 
   // First, make the self child.  We must split the given near set into the near
   // set and far set for the self child.

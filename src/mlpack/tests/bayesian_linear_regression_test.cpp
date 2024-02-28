@@ -42,7 +42,7 @@ TEST_CASE("BayesianLinearRegressionRegressionTest",
   GenerateProblem(matX, y, 200, 10);
 
   // Instanciate and train the estimator.
-  BayesianLinearRegression estimator(true);
+  BayesianLinearRegression<> estimator(true);
   estimator.Train(matX, y);
   estimator.Predict(matX, predictions);
 
@@ -63,7 +63,7 @@ TEST_CASE("TestCenter0ScaleData0", "[BayesianLinearRegressionTest]")
 
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression estimator(false, false);
+  BayesianLinearRegression<> estimator(false, false);
 
   estimator.Train(matX, y);
 
@@ -85,7 +85,7 @@ TEST_CASE("TestCenterDataTrueScaleDataTrue", "[BayesianLinearRegressionTest]")
   size_t nDims = 5, nPoints = 100;
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression estimator(true, true);
+  BayesianLinearRegression<> estimator(true, true);
   estimator.Train(matX, y);
 
   arma::colvec xMean = arma::mean(matX, 1);
@@ -108,7 +108,7 @@ TEST_CASE("OptionsMakeModelDifferent", "[BayesianLinearRegressionTest]")
   size_t nDims = 10, nPoints = 100;
   GenerateProblem(matX, y, nPoints, nDims, 0.5);
 
-  BayesianLinearRegression blr(false, false), blrC(true, false),
+  BayesianLinearRegression<> blr(false, false), blrC(true, false),
       blrCS(true, true);
 
   blr.Train(matX, y);
@@ -133,7 +133,7 @@ TEST_CASE("SingularMatix", "[BayesianLinearRegressionTest]")
   // Now the first and the second rows are indentical.
   matX.row(1) = matX.row(0);
 
-  BayesianLinearRegression estimator;
+  BayesianLinearRegression<> estimator;
   estimator.Train(matX, y);
 }
 
@@ -146,7 +146,7 @@ TEST_CASE("PredictiveUncertainties", "[BayesianLinearRegressionTest]")
 
   GenerateProblem(matX, y, 100, 10, 1);
 
-  BayesianLinearRegression estimator(true, true);
+  BayesianLinearRegression<> estimator(true, true);
   estimator.Train(matX, y);
 
   arma::rowvec responses, std;
@@ -155,6 +155,15 @@ TEST_CASE("PredictiveUncertainties", "[BayesianLinearRegressionTest]")
 
   for (size_t i = 0; i < matX.n_cols; i++)
     REQUIRE(std[i] > estStd);
+
+  // Also make single-point predictions.
+  for (size_t i = 0; i < matX.n_cols; ++i)
+  {
+    double prediction, stddev;
+    estimator.Predict(matX.col(i), prediction, stddev);
+    REQUIRE(prediction == Approx(responses[i]));
+    REQUIRE(stddev > estStd);
+  }
 
   // Check that the estimated variance is close to 1.
   REQUIRE(estStd == Approx(1).epsilon(0.3));
@@ -171,10 +180,10 @@ TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
   {
     GenerateProblem(matX, y, 100, 10, 1);
 
-    BayesianLinearRegression blr(false, false);
+    BayesianLinearRegression<> blr(false, false);
     blr.Train(matX, y);
 
-    LinearRegression ridge(matX, y, blr.Alpha() / blr.Beta(), false);
+    LinearRegression<> ridge(matX, y, blr.Alpha() / blr.Beta(), false);
 
     blr.Predict(matX, blrPred);
     ridge.Predict(matX, ridgePred);
@@ -187,9 +196,120 @@ TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
     for (size_t i = 0; i < y.size(); ++i)
       REQUIRE(blrPred[i] == Approx(ridgePred[i]).epsilon(1));
 
+    // Also make single-point predictions.
+    for (size_t i = 0; i < y.n_elem; ++i)
+      REQUIRE(blr.Predict(matX.col(i)) == Approx(ridgePred[i]).epsilon(1));
+
     // Exit once a test case has completed.
     break;
   }
 
   REQUIRE(trial <= 3);
+}
+
+// Check that all constructor variants work.
+TEMPLATE_TEST_CASE("BayesianLinearRegressionConstructorVariantTest",
+    "[BayesianLinearRegressionTest]", arma::mat)
+{
+  typedef TestType MatType;
+
+  MatType matX;
+  arma::Row<typename MatType::elem_type> y;
+  size_t nDims = 5, nPoints = 100;
+  GenerateProblem(matX, y, nPoints, nDims, 0.5);
+
+  // The important thing here is that all of the inputs to the constructor are
+  // properly parsed.  The actual details of the models that are learned are
+  // less important and are checked by other tests.
+  BayesianLinearRegression<> blr1;
+  BayesianLinearRegression<> blr2(false);
+  BayesianLinearRegression<> blr3(false, true);
+  BayesianLinearRegression<> blr4(false, true, 100);
+  BayesianLinearRegression<> blr5(false, true, 110, 1e-3);
+  BayesianLinearRegression<> blr6(matX, y);
+  BayesianLinearRegression<> blr7(matX, y, false);
+  BayesianLinearRegression<> blr8(matX, y, false, true);
+  BayesianLinearRegression<> blr9(matX, y, false, true, 120);
+  BayesianLinearRegression<> blr10(matX, y, false, true, 130, 1e-2);
+
+  // Check that the hyperparameters as reported by the model are correct.
+  REQUIRE(blr1.Omega().n_elem == 0);
+
+  REQUIRE(blr2.Omega().n_elem == 0);
+  REQUIRE(blr2.CenterData() == false);
+
+  REQUIRE(blr3.Omega().n_elem == 0);
+  REQUIRE(blr3.CenterData() == false);
+  REQUIRE(blr3.ScaleData() == true);
+
+  REQUIRE(blr4.Omega().n_elem == 0);
+  REQUIRE(blr4.CenterData() == false);
+  REQUIRE(blr4.ScaleData() == true);
+  REQUIRE(blr4.MaxIterations() == 100);
+
+  REQUIRE(blr5.Omega().n_elem == 0);
+  REQUIRE(blr5.CenterData() == false);
+  REQUIRE(blr5.ScaleData() == true);
+  REQUIRE(blr5.MaxIterations() == 110);
+  REQUIRE(blr5.Tolerance() == 1e-3);
+
+  REQUIRE(blr6.Omega().n_elem == matX.n_rows);
+
+  REQUIRE(blr7.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr7.CenterData() == false);
+
+  REQUIRE(blr8.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr8.CenterData() == false);
+  REQUIRE(blr8.ScaleData() == true);
+
+  REQUIRE(blr9.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr9.CenterData() == false);
+  REQUIRE(blr9.ScaleData() == true);
+  REQUIRE(blr9.MaxIterations() == 120);
+
+  REQUIRE(blr10.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr10.CenterData() == false);
+  REQUIRE(blr10.ScaleData() == true);
+  REQUIRE(blr10.MaxIterations() == 130);
+  REQUIRE(blr10.Tolerance() == 1e-2);
+}
+
+// Test that all Train() variants work.
+TEMPLATE_TEST_CASE("BayesianLinearRegressionTrainVariantTest",
+    "[BayesianLinearRegressionTest]", arma::mat)
+{
+  typedef TestType MatType;
+
+  MatType matX;
+  arma::Row<typename MatType::elem_type> y;
+  size_t nDims = 5, nPoints = 100;
+  GenerateProblem(matX, y, nPoints, nDims, 0.5);
+
+  BayesianLinearRegression<> blr1, blr2, blr3, blr4, blr5;
+
+  blr1.Train(matX, y);
+  blr2.Train(matX, y, false);
+  blr3.Train(matX, y, false, true);
+  blr4.Train(matX, y, false, true, 100);
+  blr5.Train(matX, y, false, true, 110, 1e-3);
+
+  REQUIRE(blr1.Omega().n_elem == matX.n_rows);
+
+  REQUIRE(blr2.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr2.CenterData() == false);
+
+  REQUIRE(blr3.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr3.CenterData() == false);
+  REQUIRE(blr3.ScaleData() == true);
+
+  REQUIRE(blr4.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr4.CenterData() == false);
+  REQUIRE(blr4.ScaleData() == true);
+  REQUIRE(blr4.MaxIterations() == 100);
+
+  REQUIRE(blr5.Omega().n_elem == matX.n_rows);
+  REQUIRE(blr5.CenterData() == false);
+  REQUIRE(blr5.ScaleData() == true);
+  REQUIRE(blr5.MaxIterations() == 110);
+  REQUIRE(blr5.Tolerance() == 1e-3);
 }

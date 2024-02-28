@@ -86,9 +86,9 @@ TEST_CASE("AddMergeTestCase", "[ANNLayerTest]")
   delta2.set_size(28, 1);
   prevDelta1.reshape(8, 1);
   prevDelta2.reshape(6, 1);
-  module1.Backward(input, prevDelta1, delta1);
+  module1.Backward(input, output1, prevDelta1, delta1);
   REQUIRE(arma::accu(delta1) == Approx(21.6).epsilon(1e-3));
-  module2.Backward(input, prevDelta2, delta2);
+  module2.Backward(input, output2, prevDelta2, delta2);
   REQUIRE(arma::accu(delta2) == Approx(16.2).epsilon(1e-3));
 }
 
@@ -133,8 +133,8 @@ TEST_CASE("AddMergeAdvanceTestCase", "[ANNLayerTest]")
   arma::mat delta1, delta2;
   delta1.set_size(5, 10);
   delta2.set_size(5, 10);
-  r.Backward(input, output1, delta1);
-  l.Backward(input, output2, delta2);
+  r.Backward(input, output1, output1, delta1);
+  l.Backward(input, output2, output2, delta2);
 
   CheckMatrices(output1, output2, 1e-3);
 }

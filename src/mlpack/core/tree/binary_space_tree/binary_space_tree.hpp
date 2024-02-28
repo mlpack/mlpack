@@ -504,7 +504,7 @@ class BinarySpaceTree
   size_t& Count() { return count; }
 
   //! Store the center of the bounding region in the given vector.
-  void Center(arma::vec& center) const { bound.Center(center); }
+  void Center(arma::Col<ElemType>& center) const { bound.Center(center); }
 
  private:
   /**

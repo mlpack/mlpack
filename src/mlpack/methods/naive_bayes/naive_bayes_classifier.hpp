@@ -77,7 +77,8 @@ class NaiveBayesClassifier
    * @param incrementalVariance If true, an incremental algorithm is used to
    *     calculate the variance; this can prevent loss of precision in some
    *     cases, but will be somewhat slower to calculate.
-   * @param epsilon Small value to prevent log of zero.
+   * @param epsilon Small initialization value for variances to prevent log of
+   *     zero.
    */
   template<typename MatType>
   NaiveBayesClassifier(const MatType& data,
@@ -109,7 +110,7 @@ class NaiveBayesClassifier
    *
    * @param data The dataset to train on.
    * @param labels The labels for the dataset.
-   * @param numClasses The numbe of classes in the dataset.
+   * @param numClasses The number of classes in the dataset.
    * @param incremental Whether or not to use the incremental algorithm for
    *      training.
    */
@@ -118,6 +119,32 @@ class NaiveBayesClassifier
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const bool incremental = true);
+
+  /**
+   * Train the Naive Bayes classifier on the given dataset.  If the incremental
+   * algorithm is used, the current model is used as a starting point (this is
+   * the default).  If the incremental algorithm is not used, then the current
+   * model is ignored and the new model will be trained only on the given data.
+   * Note that even if the incremental algorithm is not used, the data must have
+   * the same dimensionality and number of classes that the model was
+   * initialized with.  If you want to change the dimensionality or number of
+   * classes, either re-initialize or call Means(), Variances(), and
+   * Probabilities() individually to set them to the right size.
+   *
+   * @param data The dataset to train on.
+   * @param labels The labels for the dataset.
+   * @param numClasses The number of classes in the dataset.
+   * @param incremental Whether or not to use the incremental algorithm for
+   *      training.
+   * @param epsilon Small reinitialization value for variances to prevent log of
+   *      zero (ignored if incremental is true).
+   */
+  template<typename MatType>
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const bool incremental,
+             const double epsilon);
 
   /**
    * Train the Naive Bayes classifier on the given point.  This will use the
@@ -198,6 +225,21 @@ class NaiveBayesClassifier
                 arma::Row<size_t>& predictions,
                 ProbabilitiesMatType& probabilities) const;
 
+  /**
+   * Reset the model to zeros, keeping the model's current dimensionality and
+   * number of classes.
+   */
+  void Reset();
+
+  /**
+   * Reset the model to zeros, with a new dimensionality and number of classes.
+   * The value epsilon specifies an initial very small value for the variances,
+   * to prevent log(0) issues.
+   */
+  void Reset(const size_t dimensionality,
+             const size_t numClasses,
+             const double epsilon = 1e-10);
+
   //! Get the sample means for each class.
   const ModelMatType& Means() const { return means; }
   //! Modify the sample means for each class.
@@ -213,9 +255,12 @@ class NaiveBayesClassifier
   //! Modify the prior probabilities for each class.
   ModelMatType& Probabilities() { return probabilities; }
 
+  //! Get the number of points the model has been trained on so far.
+  size_t TrainingPoints() const { return trainingPoints; }
+
   //! Serialize the classifier.
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! Sample mean for each class.
@@ -243,6 +288,9 @@ class NaiveBayesClassifier
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION((typename MatType),
+    (mlpack::NaiveBayesClassifier<MatType>), (1));
 
 // Include implementation.
 #include "naive_bayes_classifier_impl.hpp"

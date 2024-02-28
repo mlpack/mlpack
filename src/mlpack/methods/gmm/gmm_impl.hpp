@@ -64,7 +64,7 @@ inline double GMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; ++i)
-    sum = LogAdd(sum, log(weights[i]) +
+    sum = LogAdd(sum, std::log(weights[i]) +
         dists[i].LogProbability(observation));
 
   return sum;
@@ -94,7 +94,7 @@ inline void GMM::LogProbability(const arma::mat& observation,
   }
 
   // Save log(weights) as a vector.
-  arma::vec logWeights = arma::log(weights);
+  arma::vec logWeights = log(weights);
 
   // Compute log-probability.
   logProb += repmat(logWeights.t(), logProb.n_rows, 1);
@@ -108,7 +108,7 @@ inline void GMM::LogProbability(const arma::mat& observation,
  */
 inline double GMM::Probability(const arma::vec& observation) const
 {
-  return exp(LogProbability(observation));
+  return std::exp(LogProbability(observation));
 }
 
 /**
@@ -137,7 +137,8 @@ inline double GMM::LogProbability(const arma::vec& observation,
 {
   // We are only considering one Gaussian component -- so we only need to call
   // Probability() once.  We do consider the prior probability!
-  return log(weights[component]) + dists[component].LogProbability(observation);
+  return std::log(weights[component]) +
+      dists[component].LogProbability(observation);
 }
 
 /**
@@ -150,7 +151,7 @@ inline double GMM::LogProbability(const arma::vec& observation,
 inline double GMM::Probability(const arma::vec& observation,
                                const size_t component) const
 {
-  return exp(LogProbability(observation, component));
+  return std::exp(LogProbability(observation, component));
 }
 
 /**
@@ -236,7 +237,7 @@ inline double GMM::LogLikelihood(
   for (size_t i = 0; i < gaussians; ++i)
   {
     distsL[i].LogProbability(data, logPhis);
-    logLikelihoods.row(i) = log(weightsL(i)) + trans(logPhis);
+    logLikelihoods.row(i) = std::log(weightsL(i)) + trans(logPhis);
   }
 
   // Now sum over every point.

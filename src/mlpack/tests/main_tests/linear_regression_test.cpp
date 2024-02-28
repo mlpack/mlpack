@@ -118,7 +118,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRModelReload",
 
   RUN_BINDING();
 
-  LinearRegression* model = params.Get<LinearRegression*>("output_model");
+  LinearRegression<>* model = params.Get<LinearRegression<>*>("output_model");
   const arma::rowvec testY1 = params.Get<arma::rowvec>("output_predictions");
 
   ResetSettings();
@@ -191,7 +191,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
 
   RUN_BINDING();
 
-  LinearRegression* model = params.Get<LinearRegression*>("output_model");
+  LinearRegression<>* model = params.Get<LinearRegression<>*>("output_model");
 
   ResetSettings();
 

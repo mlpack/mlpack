@@ -37,7 +37,7 @@ TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
   // Test the backward function.
   gy = arma::zeros(input.n_rows, input.n_cols);
   gy(0) = 1;
-  module.Backward(output, gy, g);
+  module.Backward(input, output, gy, g);
   REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
       Approx(0.0).margin(1e-04));
 }

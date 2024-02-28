@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/silu_function.hpp
  * @author Fawwaz Mayda
+ * @author Adam Kropp
  *
  * Definition and implementation of the Sigmoid Weighted Linear Unit function
  * (SILU).
@@ -62,32 +63,44 @@ class SILUFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
-    y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + exp(-x));
   }
 
   /**
    * Computes the first derivative of the SILU function.
    *
-   * @param y Input activation.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x)
+  static double Deriv(const double x, const double y)
   {
-    double sigmoid = 1.0 / (1.0 + std::exp(-x));
-    return sigmoid * (1.0 + x * (1.0 - sigmoid));
+    // since y = x * sigmoid(x)
+    double sigmoid = y / x; // save an exp
+    return x == 0 ? 0.5 : sigmoid * (1.0 + x * (1.0 - sigmoid));
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= 0.5)
   }
 
   /**
    * Computes the first derivatives of the SILU function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &x, OutputVecType &y)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
-    OutputVecType sigmoid = 1.0 / (1.0 + arma::exp(-x));
-    y = sigmoid % (1.0 + x % (1.0 - sigmoid));
+    // since y = x * sigmoid(x)
+    // DerivVecType sigmoid = y / x;
+    // dy = sigmoid % (1.0 + x % (1.0 - sigmoid));
+    dy = (y / x) % (1.0 + x - y);
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= 0.5)
+    dy(arma::find(x == 0)).fill(0.5);
   }
 }; // class SILUFunction
 

@@ -34,6 +34,9 @@ template<typename LearnPolicy = SimpleWeightUpdate,
 class Perceptron
 {
  public:
+  //! The element type used in the Perceptron.
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * Constructor: create the perceptron with the given number of classes and
    * initialize the weight matrix, but do not perform any training.  (Call the
@@ -83,11 +86,14 @@ class Perceptron
    * @param maxIterations Maximum number of iterations for the perceptron
    *     learning algorithm.
    */
+  template<typename WeightsType>
   Perceptron(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const arma::rowvec& instanceWeights,
-             const size_t maxIterations = 1000);
+             const WeightsType& instanceWeights,
+             const size_t maxIterations = 1000,
+             const typename std::enable_if<
+                 arma::is_arma_type<WeightsType>::value>::type* = 0);
 
   /**
    * Alternate constructor which copies parameters from an already initiated
@@ -101,11 +107,54 @@ class Perceptron
    * @param instanceWeights Weight vector to use while training. For boosting
    *      purposes.
    */
+  template<typename WeightsType>
+  mlpack_deprecated /* was previously only used by AdaBoost */
   Perceptron(const Perceptron& other,
              const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const arma::rowvec& instanceWeights);
+             const WeightsType& instanceWeights,
+             const typename std::enable_if<
+                 arma::is_arma_type<WeightsType>::value>::type* = 0);
+
+  /**
+   * Train the perceptron on the given data for up to the maximum number of
+   * iterations (specified in the constructor or through MaxIterations()).  A
+   * single iteration corresponds to a single pass through the data, so if you
+   * want to pass through the dataset only once, set MaxIterations() to 1.
+   *
+   * This training does not reset the model weights, so you can call Train() on
+   * multiple datasets sequentially.
+   *
+   * @param data Dataset on which training should be performed.
+   * @param labels Labels of the dataset.
+   * @param numClasses Number of classes in the data.
+   */
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const size_t numClasses);
+
+  /**
+   * Train the perceptron on the given data for up to the given maximum number
+   * of iterations.  A single iteration corresponds to a single pass through the
+   * data, so if you want to pass through the dataset only once, set
+   * `maxIterations` to 1.
+   *
+   * After calling this overload, `MaxIterations()` will return whatever
+   * `maxIterations` was given to this function.
+   *
+   * This training does not reset the model weights, so you can call Train() on
+   * multiple datasets sequentially.
+   *
+   * @param data Dataset on which training should be performed.
+   * @param labels Labels of the dataset.
+   * @param numClasses Number of classes in the data.
+   * @param maxIterations Maximum number of iterations for training.
+   */
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const size_t maxIterations);
 
   /**
    * Train the perceptron on the given data for up to the maximum number of
@@ -125,7 +174,41 @@ class Perceptron
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const arma::rowvec& instanceWeights = arma::rowvec());
+             const arma::rowvec& instanceWeights);
+
+  /**
+   * Train the perceptron on the given data for up to the given maximum number
+   * of iterations.  A single iteration corresponds to a single pass through the
+   * data, so if you want to pass through the dataset only once, set
+   * `maxIterations` to 1.
+   *
+   * After calling this overload, `MaxIterations()` will return whatever
+   * `maxIterations` was given to this function.
+   *
+   * This training does not reset the model weights, so you can call Train() on
+   * multiple datasets sequentially.
+   *
+   * @param data Dataset on which training should be performed.
+   * @param labels Labels of the dataset.
+   * @param numClasses Number of classes in the data.
+   * @param instanceWeights Cost matrix. Stores the cost of mispredicting
+   *      instances.  This is useful for boosting.
+   * @param maxIterations Maximum number of iterations for training.
+   */
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const size_t numClasses,
+             const arma::rowvec& instanceWeights,
+             const size_t maxIterations);
+
+  /**
+   * After training, use the weights matrix to classify `point`, and return the
+   * predicted class.
+   *
+   * @param point Test point to classify.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
 
   /**
    * Classification function. After training, use the weights matrix to
@@ -135,7 +218,13 @@ class Perceptron
    * @param predictedLabels Vector to store the predicted classes after
    *     classifying test.
    */
-  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels) const;
+
+  /**
+   * Reset the model, so that the next call to `Train()` will not be
+   * incremental.
+   */
+  void Reset();
 
   /**
    * Serialize the perceptron.
@@ -152,16 +241,28 @@ class Perceptron
   size_t NumClasses() const { return weights.n_cols; }
 
   //! Get the weight matrix.
-  const arma::mat& Weights() const { return weights; }
+  const arma::Mat<ElemType>& Weights() const { return weights; }
   //! Modify the weight matrix.  You had better know what you are doing!
-  arma::mat& Weights() { return weights; }
+  arma::Mat<ElemType>& Weights() { return weights; }
 
   //! Get the biases.
-  const arma::vec& Biases() const { return biases; }
+  const arma::Col<ElemType>& Biases() const { return biases; }
   //! Modify the biases.  You had better know what you are doing!
-  arma::vec& Biases() { return biases; }
+  arma::Col<ElemType>& Biases() { return biases; }
 
  private:
+  /**
+   * Internal training function; this assumes that maxIterations has been set.
+   *
+   * If `HasWeights` is `false`, then `instanceWeights` is ignored (and may be
+   * left empty).
+   */
+  template<bool HasWeights, typename WeightsType>
+  void TrainInternal(const MatType& data,
+                     const arma::Row<size_t>& labels,
+                     const size_t numClasses,
+                     const WeightsType& instanceWeights = WeightsType());
+
   //! The maximum number of iterations during training.
   size_t maxIterations;
 
@@ -171,10 +272,10 @@ class Perceptron
    * the weights for one dimension of the input data.  The biases are held in a
    * separate vector.
    */
-  arma::mat weights;
+  arma::Mat<ElemType> weights;
 
   //! The biases for each class.
-  arma::vec biases;
+  arma::Col<ElemType> biases;
 };
 
 } // namespace mlpack

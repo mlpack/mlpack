@@ -62,18 +62,18 @@ SoftmaxType<MatType>::operator=(SoftmaxType&& other)
 template<typename MatType>
 void SoftmaxType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  MatType softmaxInput = arma::exp(input.each_row() -
-      arma::max(input, 0));
+  MatType softmaxInput = exp(input.each_row() - arma::max(input, 0));
   output = softmaxInput.each_row() / sum(softmaxInput, 0);
 }
 
 template<typename MatType>
 void SoftmaxType<MatType>::Backward(
-    const MatType& input,
+    const MatType& /* input */,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  g = input % (gy - arma::repmat(arma::sum(gy % input), input.n_rows, 1));
+  g = output % (gy - repmat(sum(gy % output), output.n_rows, 1));
 }
 
 template<typename MatType>

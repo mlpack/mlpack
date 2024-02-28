@@ -132,7 +132,7 @@ struct NAME                                                                    \
 <                                                                              \
   T,                                                                           \
   sig,                                                                         \
-  std::integral_constant<bool, mlpack::SigCheck<sig, &T::FUNC>::value> \
+  std::integral_constant<bool, mlpack::SigCheck<sig, &T::FUNC>::value>         \
 > : std::true_type {};
 
 /**

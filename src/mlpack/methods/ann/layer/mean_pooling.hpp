@@ -77,11 +77,13 @@ class MeanPoolingType : public Layer<MatType>
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 
@@ -146,7 +148,7 @@ class MeanPoolingType : public Layer<MatType>
    */
   typename MatType::elem_type Pooling(const MatType& input)
   {
-    return arma::mean(arma::vectorise(input));
+    return arma::mean(vectorise(input));
   }
 
   //! Locally-stored width of the pooling window.

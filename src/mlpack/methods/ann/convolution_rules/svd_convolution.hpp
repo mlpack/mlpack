@@ -49,11 +49,13 @@ class SVDConvolution
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
    */
-  template<typename eT>
-  static void Convolution(const arma::Mat<eT>& input,
-                          const arma::Mat<eT>& filter,
-                          arma::Mat<eT>& output)
+  template<typename MatType>
+  static void Convolution(const MatType& input,
+                          const MatType& filter,
+                          MatType& output,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
+    typedef typename GetColType<MatType>::type ColType;
     // Use the naive convolution in case the filter isn't two dimensional or the
     // filter is bigger than the input.
     if (filter.n_rows > input.n_rows || filter.n_cols > input.n_cols ||
@@ -63,28 +65,27 @@ class SVDConvolution
     }
     else
     {
-      arma::Mat<eT> U, V, subOutput;
-      arma::Col<eT> s;
+      MatType U, V, subOutput;
+      ColType s;
 
-      arma::svd_econ(U, s, V, filter);
+      svd_econ(U, s, V, filter);
 
       // Rank approximation using the singular values calculated with singular
       // value decomposition of dense filter matrix.
-      const size_t rank = arma::sum(s > (s.n_elem * arma::max(s) *
-          arma::datum::eps));
+      const size_t rank = sum(s > (s.n_elem * arma::max(s) * arma::datum::eps));
 
       // Test for separability based on the rank of the kernel and take
       // advantage of the low rank.
       if (rank * (filter.n_rows + filter.n_cols) < filter.n_elem)
       {
-        arma::Mat<eT> subFilter = V.unsafe_col(0) * s(0);
+        MatType subFilter = V.unsafe_col(0) * s(0);
         NaiveConvolution<BorderMode>::Convolution(input, subFilter, subOutput);
 
         subOutput = subOutput.t();
         NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(0),
             output);
 
-        arma::Mat<eT> temp;
+        MatType temp;
         for (size_t r = 1; r < rank; r++)
         {
           subFilter = V.unsafe_col(r) * s(r);
@@ -113,17 +114,18 @@ class SVDConvolution
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
    */
-  template<typename eT>
-  static void Convolution(const arma::Cube<eT>& input,
-                          const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output)
+  template<typename CubeType>
+  static void Convolution(const CubeType& input,
+                          const CubeType& filter,
+                          CubeType& output,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    arma::Mat<eT> convOutput;
+    typedef typename GetDenseMatType<CubeType>::type MatType;
+    MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; ++i)
@@ -141,16 +143,17 @@ class SVDConvolution
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
    */
-  template<typename eT>
-  static void Convolution(const arma::Mat<eT>& input,
-                          const arma::Cube<eT>& filter,
-                          arma::Cube<eT>& output)
+  template<typename MatType, typename CubeType>
+  static void Convolution(const MatType& input,
+                          const CubeType& filter,
+                          CubeType& output,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    arma::Mat<eT> convOutput;
+    MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        filter.n_slices);
+    output = CubeType(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < filter.n_slices; ++i)
@@ -168,16 +171,17 @@ class SVDConvolution
    * @param filter Filter used to perform the conolution.
    * @param output Output data that contains the results of the convolution.
    */
-  template<typename eT>
-  static void Convolution(const arma::Cube<eT>& input,
-                          const arma::Mat<eT>& filter,
-                          arma::Cube<eT>& output)
+  template<typename MatType, typename CubeType>
+  static void Convolution(const CubeType& input,
+                          const MatType& filter,
+                          CubeType& output,
+                          const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0,
+                          const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
   {
-    arma::Mat<eT> convOutput;
+    MatType convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter, convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output = CubeType(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; ++i)

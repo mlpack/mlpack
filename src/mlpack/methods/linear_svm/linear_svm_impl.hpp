@@ -17,10 +17,37 @@
 
 namespace mlpack {
 
-template <typename MatType>
-template <typename OptimizerType, typename... CallbackTypes>
-LinearSVM<MatType>::LinearSVM(
-    const MatType& data,
+template<typename ModelMatType>
+LinearSVM<ModelMatType>::LinearSVM() :
+    lambda(0.0001),
+    delta(1.0),
+    fitIntercept(false)
+{
+  // No training to do here.
+}
+
+template<typename ModelMatType>
+LinearSVM<ModelMatType>::LinearSVM(
+    const size_t dimensionality,
+    const size_t numClasses,
+    const double lambda,
+    const double delta,
+    const bool fitIntercept) :
+    numClasses(numClasses),
+    lambda(lambda),
+    delta(delta),
+    fitIntercept(fitIntercept)
+{
+  LinearSVMFunction<ModelMatType /* fake, does not matter for this call */,
+                    ModelMatType>::InitializeWeights(
+      parameters, dimensionality, numClasses, fitIntercept);
+}
+
+template<typename ModelMatType>
+template<typename OptimizerType, typename... CallbackTypes, typename, typename>
+mlpack_deprecated /** Will be removed in mlpack 5.0.0. **/
+LinearSVM<ModelMatType>::LinearSVM(
+    const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
@@ -33,13 +60,15 @@ LinearSVM<MatType>::LinearSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  Train(data, labels, numClasses, optimizer, callbacks...);
+  Train(data, labels, numClasses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
-template <typename MatType>
-template <typename OptimizerType>
-LinearSVM<MatType>::LinearSVM(
-    const MatType& data,
+template<typename ModelMatType>
+template<typename OptimizerType, typename>
+mlpack_deprecated /** Will be removed in mlpack 5.0.0. **/
+LinearSVM<ModelMatType>::LinearSVM(
+    const arma::mat& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
@@ -54,84 +83,182 @@ LinearSVM<MatType>::LinearSVM(
   Train(data, labels, numClasses, optimizer);
 }
 
-template <typename MatType>
-LinearSVM<MatType>::LinearSVM(
-    const size_t inputSize,
+template<typename ModelMatType>
+template<typename MatType, typename... CallbackTypes, typename>
+LinearSVM<ModelMatType>::LinearSVM(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
     const double delta,
-    const bool fitIntercept) :
+    const bool fitIntercept,
+    CallbackTypes&&... callbacks) :
     numClasses(numClasses),
     lambda(lambda),
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  LinearSVMFunction<MatType>::InitializeWeights(parameters, inputSize,
-      numClasses, fitIntercept);
+  // By default we use L-BFGS.
+  ens::L_BFGS optimizer;
+  Train(data, labels, numClasses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
-template <typename MatType>
-LinearSVM<MatType>::LinearSVM(
+template<typename ModelMatType>
+template<typename MatType,
+         typename OptimizerType,
+         typename... CallbackTypes,
+         typename>
+LinearSVM<ModelMatType>::LinearSVM(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
     const size_t numClasses,
+    OptimizerType& optimizer,
     const double lambda,
     const double delta,
-    const bool fitIntercept) :
+    const bool fitIntercept,
+    CallbackTypes&&... callbacks) :
     numClasses(numClasses),
     lambda(lambda),
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  // No training to do here.
+  Train(data, labels, numClasses, optimizer,
+      std::forward<CallbackTypes>(callbacks)...);
 }
 
-template <typename MatType>
-template <typename OptimizerType, typename... CallbackTypes>
-double LinearSVM<MatType>::Train(
+template<typename ModelMatType>
+template<typename MatType, typename... CallbackTypes, typename>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    CallbackTypes&&... callbacks)
+{
+  return Train(data, labels, numClasses, this->lambda, this->delta,
+      this->fitIntercept, std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename ModelMatType>
+template<typename MatType>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda)
+{
+  return Train(data, labels, numClasses, lambda, this->delta,
+      this->fitIntercept);
+}
+
+template<typename ModelMatType>
+template<typename MatType>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const double delta)
+{
+  return Train(data, labels, numClasses, lambda, delta, this->fitIntercept);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename... CallbackTypes, typename>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const double delta,
+    const bool fitIntercept,
+    CallbackTypes&&... callbacks)
+{
+  // By default, train with L-BFGS.
+  ens::L_BFGS lbfgs;
+  return Train(data, labels, numClasses, lbfgs, lambda, delta, fitIntercept,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+template<typename ModelMatType>
+template<typename MatType,
+         typename OptimizerType,
+         typename... CallbackTypes,
+         typename, typename>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     OptimizerType optimizer,
     CallbackTypes&&... callbacks)
 {
-  if (numClasses <= 1)
-  {
-    throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
-  }
-
-  LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
-      fitIntercept);
-  if (parameters.is_empty())
-    parameters = svm.InitialPoint();
-
-  // Train the model.
-  const double out = optimizer.Optimize(svm, parameters, callbacks...);
-
-  Log::Info << "LinearSVM::LinearSVM(): final objective of "
-            << "trained model is " << out << "." << std::endl;
-
-  return out;
+  return Train(data, labels, numClasses, optimizer, this->lambda, this->delta,
+      this->fitIntercept, std::forward<CallbackTypes>(callbacks)...);
 }
 
-template <typename MatType>
-template <typename OptimizerType>
-double LinearSVM<MatType>::Train(
+template<typename ModelMatType>
+template<typename MatType, typename OptimizerType, typename>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    OptimizerType optimizer)
+    OptimizerType optimizer,
+    const double lambda)
 {
+  return Train(data, labels, numClasses, optimizer, lambda, this->delta,
+      this->fitIntercept);
+}
+
+template<typename ModelMatType>
+template<typename MatType, typename OptimizerType, typename>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    OptimizerType optimizer,
+    const double lambda,
+    const double delta)
+{
+  return Train(data, labels, numClasses, optimizer, lambda, delta,
+      this->fitIntercept);
+}
+
+template<typename ModelMatType>
+template<typename MatType,
+         typename OptimizerType,
+         typename... CallbackTypes,
+         typename, typename>
+typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    OptimizerType optimizer,
+    const double lambda,
+    const double delta,
+    const bool fitIntercept,
+    CallbackTypes&&... callbacks)
+{
+  this->numClasses = numClasses;
+  this->lambda = lambda;
+  this->delta = delta;
+  this->fitIntercept = fitIntercept;
+
   if (numClasses <= 1)
   {
     throw std::invalid_argument("LinearSVM dataset has 0 number of classes!");
   }
 
-  LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
-      fitIntercept);
-  if (parameters.is_empty())
+  LinearSVMFunction<MatType, ModelMatType> svm(data, labels, numClasses, lambda,
+      delta, fitIntercept);
+  const bool needNewParameters = (parameters.is_empty() ||
+      (fitIntercept && (parameters.n_rows != data.n_rows + 1)) ||
+      (!fitIntercept && (parameters.n_rows != data.n_rows)) ||
+      (parameters.n_cols != numClasses));
+  if (needNewParameters)
     parameters = svm.InitialPoint();
 
   // Train the model.
-  const double out = optimizer.Optimize(svm, parameters);
+  const ElemType out = optimizer.Optimize(svm, parameters, callbacks...);
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;
@@ -139,33 +266,46 @@ double LinearSVM<MatType>::Train(
   return out;
 }
 
-template <typename MatType>
-void LinearSVM<MatType>::Classify(
+template<typename ModelMatType>
+template<typename MatType>
+void LinearSVM<ModelMatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& labels) const
 {
-  arma::mat scores;
+  DenseMatType scores;
   Classify(data, labels, scores);
 }
 
-template <typename MatType>
-void LinearSVM<MatType>::Classify(
+template<typename ModelMatType>
+template<typename MatType>
+void LinearSVM<ModelMatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& labels,
-    arma::mat& scores) const
+    typename LinearSVM<ModelMatType>::DenseMatType& scores) const
 {
-  Classify(data, scores);
+  util::CheckSameDimensionality(data, FeatureSize(), "LinearSVM::Classify()");
+
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * data
+        + repmat(parameters.row(parameters.n_rows - 1).t(), 1, data.n_cols);
+  }
+  else
+  {
+    scores = parameters.t() * data;
+  }
 
   // Prepare necessary data.
   labels.zeros(data.n_cols);
 
-  labels = arma::conv_to<arma::Row<size_t>>::from(
+  labels = ConvTo<arma::Row<size_t>>::From(
       arma::index_max(scores));
 }
 
-template <typename MatType>
-void LinearSVM<MatType>::Classify(
-    const MatType& data,
+template<typename ModelMatType>
+mlpack_deprecated
+void LinearSVM<ModelMatType>::Classify(
+    const arma::mat& data,
     arma::mat& scores) const
 {
   util::CheckSameDimensionality(data, FeatureSize(), "LinearSVM::Classify()");
@@ -173,8 +313,7 @@ void LinearSVM<MatType>::Classify(
   if (fitIntercept)
   {
     scores = parameters.rows(0, parameters.n_rows - 2).t() * data
-        + arma::repmat(parameters.row(parameters.n_rows - 1).t(), 1,
-        data.n_cols);
+        + repmat(parameters.row(parameters.n_rows - 1).t(), 1, data.n_cols);
   }
   else
   {
@@ -182,17 +321,30 @@ void LinearSVM<MatType>::Classify(
   }
 }
 
-template <typename MatType>
-template <typename VecType>
-size_t LinearSVM<MatType>::Classify(const VecType& point) const
+template<typename ModelMatType>
+template<typename VecType>
+size_t LinearSVM<ModelMatType>::Classify(const VecType& point) const
 {
   arma::Row<size_t> label(1);
   Classify(point, label);
   return size_t(label(0));
 }
 
-template <typename MatType>
-double LinearSVM<MatType>::ComputeAccuracy(
+template<typename ModelMatType>
+template<typename VecType>
+void LinearSVM<ModelMatType>::Classify(
+    const VecType& point,
+    size_t& label,
+    typename LinearSVM<ModelMatType>::DenseColType& probabilities) const
+{
+  arma::Row<size_t> labelRow(1);
+  Classify(point, labelRow, probabilities);
+  label = labelRow[0];
+}
+
+template<typename ModelMatType>
+template<typename MatType>
+double LinearSVM<ModelMatType>::ComputeAccuracy(
     const MatType& testData,
     const arma::Row<size_t>& testLabels) const
 {
@@ -208,7 +360,28 @@ double LinearSVM<MatType>::ComputeAccuracy(
       count++;
 
   // Return the accuracy.
-  return (double) count / labels.n_elem;
+  return (double) 100.0 * count / labels.n_elem;
+}
+
+template<typename ModelMatType>
+template<typename Archive>
+void LinearSVM<ModelMatType>::serialize(Archive& ar, const uint32_t version)
+{
+  // Old versions used `arma::mat` for the type of `parameters`.
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    arma::mat parametersTmp;
+    ar(cereal::make_nvp("parameters", parametersTmp));
+    parameters = ConvTo<arma::mat>::From(parametersTmp);
+  }
+  else
+  {
+    ar(CEREAL_NVP(parameters));
+  }
+
+  ar(CEREAL_NVP(numClasses));
+  ar(CEREAL_NVP(lambda));
+  ar(CEREAL_NVP(fitIntercept));
 }
 
 } // namespace mlpack

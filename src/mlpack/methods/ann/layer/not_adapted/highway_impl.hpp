@@ -110,7 +110,7 @@ void HighwayType<InputType, OutputType>::Forward(
 
   transformGate = transformWeight * input;
   transformGate.each_col() += transformBias;
-  transformGateActivation = 1.0 /(1 + arma::exp(-transformGate));
+  transformGateActivation = 1.0 /(1 + exp(-transformGate));
   output = (this->layerOutputs.back() % transformGateActivation) +
       (input % (1 - transformGateActivation));
 }
@@ -173,10 +173,10 @@ void HighwayType<InputType, OutputType>::Gradient(
       this->layerDeltas[1],
       this->layerGradients.front());
 
-  gradient.submat(0, 0, transformWeight.n_elem - 1, 0) = arma::vectorise(
+  gradient.submat(0, 0, transformWeight.n_elem - 1, 0) = vectorise(
       transformGateError * input.t());
   gradient.submat(transformWeight.n_elem, 0, transformWeight.n_elem +
-      transformBias.n_elem - 1, 0) = arma::sum(transformGateError, 1);
+      transformBias.n_elem - 1, 0) = sum(transformGateError, 1);
 }
 
 template<typename InputType, typename OutputType>

@@ -85,11 +85,11 @@ void BuildVanillaNetwork(MatType& trainData,
 
   // Calculating the mean squared error on the training data.
   model.Predict(trainData, prediction);
-  trainError = arma::mean(arma::mean(arma::square(prediction - trainLabels)));
+  trainError = arma::mean(arma::mean(square(prediction - trainLabels)));
 
   // Calculating the mean squared error on the test data
   model.Predict(testData, prediction);
-  testError = arma::mean(arma::mean(arma::square(prediction - testLabels)));
+  testError = arma::mean(arma::mean(square(prediction - testLabels)));
 }
 
 /**
@@ -294,7 +294,7 @@ TEST_CASE("NonLinearFunctionApproximation", "[KSInitialization]")
   dataset.row(9) /= 8;
 
   // Eqn 13.3.
-  dataset.row(10) = arma::sqrt(1 - dataset.row(0));
+  dataset.row(10) = sqrt(1 - dataset.row(0));
 
   // Counter for the number of failures.
   size_t numFails = 0;

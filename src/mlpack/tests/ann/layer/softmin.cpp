@@ -45,7 +45,7 @@ TEST_CASE("SimpleSoftminLayerTest", "[ANNLayerTest]")
   // Test the backward function.
   gy = arma::zeros(input.n_rows, input.n_cols);
   gy(1) = 1;
-  module.Backward(output, gy, g);
+  module.Backward(input, output, gy, g);
   arma::mat calculatedGradient = {{-0.1515, 0, 0},
                                   {0.1803, 0, 0},
                                   {-0.0205, 0, 0},

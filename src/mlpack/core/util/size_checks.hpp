@@ -32,13 +32,16 @@ namespace util {
  *     before size-check. Default is false.
  */
 template<typename DataType, typename LabelsType>
-inline void CheckSameSizes(const DataType& data,
-                           const LabelsType& label,
-                           const std::string& callerDescription,
-                           const std::string& addInfo = "labels",
-                           const bool& isDataTranspose = false,
-                           const bool& isLabelTranspose = false)
-{ 
+inline void CheckSameSizes(
+    const DataType& data,
+    const LabelsType& label,
+    const std::string& callerDescription,
+    const std::string& addInfo = "labels",
+    const bool& isDataTranspose = false,
+    const bool& isLabelTranspose = false,
+    const typename std::enable_if<
+        !std::is_integral<LabelsType>::value>::type* = 0)
+{
   const size_t dataPoints = (isDataTranspose == true) ? data.n_rows : data.n_cols;
   const size_t labelPoints = (isLabelTranspose == true) ? label.n_rows : label.n_cols;
   
@@ -56,11 +59,13 @@ inline void CheckSameSizes(const DataType& data,
  * An overload of CheckSameSizes() where the size to be checked is known
  * previously. The second parameter is of type unsigned int.
  */
-template<typename DataType>
-inline void CheckSameSizes(const DataType& data,
-                           const size_t& size,
-                           const std::string& callerDescription,
-                           const std::string& addInfo = "labels")
+template<typename DataType, typename SizeType>
+inline void CheckSameSizes(
+    const DataType& data,
+    const SizeType& size,
+    const std::string& callerDescription,
+    const std::string& addInfo = "labels",
+    const typename std::enable_if<std::is_integral<SizeType>::value>::type* = 0)
 {
   if (data.n_cols != size)
   {
@@ -84,10 +89,12 @@ inline void CheckSameSizes(const DataType& data,
  *     is "dataset"; for example, "weights" could also be used.
  */
 template<typename DataType, typename DimType>
-inline void CheckSameDimensionality(const DataType& data,
-                                    const DimType& dimension,
-                                    const std::string& callerDescription,
-                                    const std::string& addInfo = "dataset")
+inline void CheckSameDimensionality(
+    const DataType& data,
+    const DimType& dimension,
+    const std::string& callerDescription,
+    const std::string& addInfo = "dataset",
+    const typename std::enable_if<!std::is_integral<DimType>::value>::type* = 0)
 {
   if (data.n_rows != dimension.n_rows)
   {
@@ -104,11 +111,13 @@ inline void CheckSameDimensionality(const DataType& data,
  * An overload of CheckSameDimensionality() where the dimension to be checked
  * is known second param is unsigned long int.
  */
-template<typename DataType>
-inline void CheckSameDimensionality(const DataType& data,
-                                    const size_t& dimension,
-                                    const std::string& callerDescription,
-                                    const std::string& addInfo = "dataset")
+template<typename DataType, typename DimType>
+inline void CheckSameDimensionality(
+    const DataType& data,
+    const DimType& dimension,
+    const std::string& callerDescription,
+    const std::string& addInfo = "dataset",
+    const typename std::enable_if<std::is_integral<DimType>::value>::type* = 0)
 {
   if (data.n_rows != dimension)
   {

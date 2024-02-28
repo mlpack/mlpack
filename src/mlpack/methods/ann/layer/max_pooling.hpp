@@ -35,7 +35,7 @@ class MaxPoolingRule
   template<typename MatType>
   typename MatType::elem_type Pooling(const MatType& input)
   {
-    return arma::max(arma::vectorise(input));
+    return arma::max(vectorise(input));
   }
 
   template<typename MatType>
@@ -107,11 +107,13 @@ class MaxPoolingType : public Layer<MatType>
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& /* input */,
+  void Backward(const MatType& input,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 

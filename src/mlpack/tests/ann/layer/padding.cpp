@@ -43,7 +43,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
 
   // Test the Backward function.
   delta.set_size(input.n_rows, input.n_cols);
-  module.Backward(input, output, delta);
+  module.Backward(input, output, output, delta);
   CheckMatrices(delta, input);
 
   // Test forward function for multiple filters.

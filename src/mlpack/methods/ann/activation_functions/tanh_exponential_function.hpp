@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/activation_functions/tanh_exponential_function.hpp
  * @author Mayank Raj
+ * @author Adam Kropp
  *
  * Definition and implementation of the Tanh exponential  function.
  *
@@ -61,32 +62,40 @@ class TanhExpFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x % arma::tanh(arma::exp(x));
+    y = x % arma::tanh(exp(x));
   }
 
   /**
    * Computes the first derivative of the TanhExp function.
    *
-   * @param y Input activation.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double y)
   {
-    return std::tanh(std::exp(y)) - y * std::exp(y) *
-        (std::pow(std::tanh(std::exp(y)), 2) - 1);
+    // leverage both y and x
+    return x == 0 ? std::tanh(1) :
+        y / x + x * std::exp(x) * (1 - std::pow(y / x, 2));
   }
 
   /**
    * Computes the first derivatives of the tanh function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& x,
+                    const OutputVecType& y,
+                    DerivVecType& dy)
   {
-    x = arma::tanh(arma::exp(y)) - y % arma::exp(y) %
-        (arma::pow(arma::tanh(arma::exp(y)), 2) - 1);
+    // leverage both y and x
+    dy = y / x + x % exp(x) % (1 - pow(y / x, 2));
+    // the expression above is indeterminate at 0, even though
+    // the expression solely in terms of x is defined (= tanh(1))
+    dy(arma::find(x == 0)).fill(std::tanh(1));
   }
 }; // class TanhExpFunction
 

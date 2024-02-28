@@ -30,94 +30,304 @@
 
 namespace mlpack {
 
-/**
- * Constructor. Currently runs the AdaBoost.MH algorithm.
- *
- * @param data Input data
- * @param labels Corresponding labels
- * @param iterations Number of boosting rounds
- * @param tol Tolerance for termination of Adaboost.MH.
- * @param other Weak Learner, which has been initialized already.
- */
-template<typename WeakLearnerType, typename MatType>
-AdaBoost<WeakLearnerType, MatType>::AdaBoost(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const WeakLearnerType& other,
-    const size_t iterations,
-    const double tol)
-{
-  Train(data, labels, numClasses, other, iterations, tol);
-}
-
 // Empty constructor.
 template<typename WeakLearnerType, typename MatType>
-AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(const ElemType tolerance) :
     numClasses(0),
     tolerance(tolerance)
 {
   // Nothing to do.
 }
 
-// Train AdaBoost.
+/**
+ * Constructor. Runs the AdaBoost.MH algorithm.
+ *
+ * @param data Input data
+ * @param labels Corresponding labels
+ * @param maxIterations Number of boosting rounds
+ * @param tol Tolerance for termination of Adaboost.MH.
+ * @param other Weak Learner, which has been initialized already.
+ */
 template<typename WeakLearnerType, typename MatType>
-double AdaBoost<WeakLearnerType, MatType>::Train(
+template<typename WeakLearnerInType>
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const WeakLearnerType& other,
-    const size_t iterations,
-    const double tolerance)
+    const WeakLearnerInType& other,
+    const size_t maxIterations,
+    const typename MatType::elem_type tol,
+    const typename std::enable_if<
+        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*) :
+    maxIterations(maxIterations),
+    tolerance(tol)
 {
-  // Clear information from previous runs.
-  wl.clear();
-  alpha.clear();
+  (void) TrainInternal<true>(data, labels, numClasses, other);
+}
 
+/**
+ * Constructor. Runs the AdaBoost.MH algorithm.
+ *
+ * @param data Input data
+ * @param labels Corresponding labels
+ * @param maxIterations Number of boosting rounds
+ * @param tol Tolerance for termination of Adaboost.MH.
+ * @param other Weak Learner, which has been initialized already.
+ */
+template<typename WeakLearnerType, typename MatType>
+template<typename... WeakLearnerArgs>
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const size_t maxIterations,
+    const typename MatType::elem_type tol,
+    WeakLearnerArgs&&... weakLearnerArgs) :
+    maxIterations(maxIterations),
+    tolerance(tol)
+{
+  WeakLearnerType other; // Will not be used.
+  (void) TrainInternal<false>(data, labels, numClasses, other,
+      weakLearnerArgs...);
+}
+
+// Train AdaBoost with a given weak learner.
+template<typename WeakLearnerType, typename MatType>
+template<typename WeakLearnerInType>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const WeakLearnerInType& other,
+    const typename std::enable_if<
+        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
+{
+  return TrainInternal<true>(data, labels, numClasses, other);
+}
+
+// Train AdaBoost with a given weak learner, and set the maximum number of
+// iterations.
+template<typename WeakLearnerType, typename MatType>
+template<typename WeakLearnerInType>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const WeakLearnerInType& other,
+    const size_t maxIterations,
+    const typename std::enable_if<
+        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
+{
+  this->maxIterations = maxIterations;
+  return TrainInternal<true>(data, labels, numClasses, other);
+}
+
+// Train AdaBoost with a given weak learner, and set the maximum number of
+// iterations and tolerance.
+template<typename WeakLearnerType, typename MatType>
+template<typename WeakLearnerInType>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const WeakLearnerInType& other,
+    const size_t maxIterations,
+    const double tolerance,
+    const typename std::enable_if<
+        std::is_same<WeakLearnerType, WeakLearnerInType>::value>::type*)
+{
+  this->maxIterations = maxIterations;
   this->tolerance = tolerance;
-  this->numClasses = numClasses;
+  return TrainInternal<true>(data, labels, numClasses, other);
+}
 
-  // crt is the cumulative rt value for terminating the optimization when rt is
-  // changing by less than the tolerance.
-  double rt, crt = 0.0, alphat = 0.0, zt;
+// Train AdaBoost.
+template<typename WeakLearnerType, typename MatType>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses)
+{
+  WeakLearnerType other; // Will not be used.
+  return TrainInternal<false>(data, labels, numClasses, other);
+}
 
-  double ztProduct = 1.0;
+// Train AdaBoost, and set the maximum number of iterations.
+template<typename WeakLearnerType, typename MatType>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const size_t maxIterations)
+{
+  this->maxIterations = maxIterations;
 
-  // To be used for prediction by the weak learner.
-  arma::Row<size_t> predictedLabels(labels.n_cols);
+  WeakLearnerType other; // Will not be used.
+  return TrainInternal<false>(data, labels, numClasses, other);
+}
+// Train AdaBoost.
+template<typename WeakLearnerType, typename MatType>
+template<typename... WeakLearnerArgs>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::Train(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const size_t maxIterations,
+    const double tolerance,
+    WeakLearnerArgs&&... weakLearnerArgs)
+{
+  this->maxIterations = maxIterations;
+  this->tolerance = tolerance;
+  WeakLearnerType other; // Will not be used.
+  return TrainInternal<false>(data, labels, numClasses, other,
+      weakLearnerArgs...);
+}
 
-  // Use tempData to modify input data for incorporating weights.
-  MatType tempData(data);
+// Classify the given test point.
+template<typename WeakLearnerType, typename MatType>
+template<typename VecType>
+size_t AdaBoost<WeakLearnerType, MatType>::Classify(const VecType& point) const
+{
+  arma::Row<ElemType> probabilities;
+  size_t prediction;
+  Classify(point, prediction, probabilities);
 
-  // This matrix is a helper matrix used to calculate the final hypothesis.
-  arma::mat sumFinalH = arma::zeros<arma::mat>(numClasses,
-      predictedLabels.n_cols);
+  return prediction;
+}
 
-  // Load the initial weights into a 2-D matrix.
-  const double initWeight = 1.0 / double(data.n_cols * numClasses);
-  arma::mat D(numClasses, data.n_cols);
-  D.fill(initWeight);
-
-  // Weights are stored in this row vector.
-  arma::rowvec weights(predictedLabels.n_cols);
-
-  // This is the final hypothesis.
-  arma::Row<size_t> finalH(predictedLabels.n_cols);
-
-  // Now, start the boosting rounds.
-  for (size_t i = 0; i < iterations; ++i)
+// Classify the given test point and return class probabilities.
+template<typename WeakLearnerType, typename MatType>
+template<typename VecType>
+void AdaBoost<WeakLearnerType, MatType>::Classify(
+    const VecType& point,
+    size_t& prediction,
+    arma::Row<typename MatType::elem_type>& probabilities) const
+{
+  probabilities.zeros(numClasses);
+  for (size_t i = 0; i < wl.size(); ++i)
   {
-    // Initialized to zero in every round.  rt is used for calculation of
-    // alphat; it is the weighted error.
-    // rt = (sum) D(i) y(i) ht(xi)
-    rt = 0.0;
+    prediction = wl[i].Classify(point);
+    probabilities(prediction) += alpha[i];
+  }
 
-    // zt is used for weight normalization.
-    zt = 0.0;
+  arma::uword maxIndex = 0;
+  probabilities /= arma::accu(probabilities);
+  probabilities.max(maxIndex);
+  prediction = (size_t) maxIndex;
+}
 
-    // Build the weight vectors.
-    weights = arma::sum(D);
+// Classify the given test points.
+template<typename WeakLearnerType, typename MatType>
+void AdaBoost<WeakLearnerType, MatType>::Classify(
+    const MatType& test,
+    arma::Row<size_t>& predictedLabels) const
+{
+  arma::Row<size_t> tempPredictedLabels(test.n_cols);
+  arma::Mat<ElemType> probabilities;
 
+  Classify(test, predictedLabels, probabilities);
+}
+
+// Classify the given test points.
+template<typename WeakLearnerType, typename MatType>
+void AdaBoost<WeakLearnerType, MatType>::Classify(
+    const MatType& test,
+    arma::Row<size_t>& predictedLabels,
+    arma::Mat<typename MatType::elem_type>& probabilities) const
+{
+  probabilities.zeros(numClasses, test.n_cols);
+  predictedLabels.set_size(test.n_cols);
+
+  for (size_t i = 0; i < wl.size(); ++i)
+  {
+    wl[i].Classify(test, predictedLabels);
+
+    for (size_t j = 0; j < predictedLabels.n_cols; ++j)
+      probabilities(predictedLabels(j), j) += alpha[i];
+  }
+
+  arma::uword maxIndex = 0;
+
+  for (size_t i = 0; i < predictedLabels.n_cols; ++i)
+  {
+    probabilities.col(i) /= arma::accu(probabilities.col(i));
+    probabilities.col(i).max(maxIndex);
+    predictedLabels(i) = maxIndex;
+  }
+}
+
+/**
+ * Serialize the AdaBoost model.
+ */
+template<typename WeakLearnerType, typename MatType>
+template<typename Archive>
+void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
+                                                   const uint32_t version)
+{
+  // Between version 0 and 1, the maxIterations member was added, and `alpha`
+  // was switched to type arma::Row<ElemType> instead of arma::rowvec.  These
+  // require a little bit of special handling when loading older versions.
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // This is the legacy version.
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(tolerance));
+    ar(CEREAL_NVP(alpha));
+
+    // In earlier versions, `alpha` was a vector of doubles---but it might not
+    // be now.
+    if (std::is_same<ElemType, double>::value)
+    {
+      ar(CEREAL_NVP(alpha)); // The easy case.
+    }
+    else
+    {
+      arma::rowvec alphaTmp;
+      // Avoid CEREAL_NVP so we can specify a custom name.
+      ar(cereal::make_nvp("alpha", alphaTmp));
+      alpha.clear();
+      alpha.resize(alphaTmp.size());
+      for (size_t i = 0; i < alphaTmp.size(); ++i)
+        alpha[i] = (ElemType) alphaTmp[i];
+    }
+
+    // Now serialize each weak learner.
+    ar(CEREAL_NVP(wl));
+
+    // Attempt to set maxIterations to something reasonable.
+    maxIterations = std::max((size_t) 100, alpha.size());
+  }
+  else
+  {
+    // This is the current version.
+    // (Once there is a major version bump, we should make this version 0.)
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(tolerance));
+    ar(CEREAL_NVP(maxIterations));
+    ar(CEREAL_NVP(alpha));
+
+    // Now serialize each weak learner.
+    ar(CEREAL_NVP(wl));
+  }
+}
+
+template<
+    bool UseExistingWeakLearner,
+    typename MatType,
+    typename WeightsType,
+    typename WeakLearnerType,
+    typename... WeakLearnerArgs
+>
+struct WeakLearnerTrainer
+{
+  static WeakLearnerType Train(
+      const MatType& data,
+      const arma::Row<size_t>& labels,
+      const size_t numClasses,
+      const WeightsType& weights,
+      const WeakLearnerType& wl,
+      WeakLearnerArgs&&... /* weakLearnerArgs */)
+  {
     // Use the existing weak learner to train a new one with new weights.
     // API requirement: there is a constructor with this signature:
     //
@@ -129,19 +339,103 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     //
     // This trains the new WeakLearnerType using the hyperparameters from the
     // given WeakLearnerType.
+    return WeakLearnerType(wl, data, labels, numClasses, weights);
+  }
+};
 
-    WeakLearnerType w(other, tempData, labels, numClasses, weights);
-    // There is a bug with Adaboost!  It will not use the specified
-    // hyperparameters for the decision tree because they are not properly
-    // passed to the new weak learners!  (And: it's a hard bug, because the
-    // decision tree itself doesn't even store the hyperparameters it was
-    // trained with!)
+template<
+    typename MatType,
+    typename WeightsType,
+    typename WeakLearnerType,
+    typename... WeakLearnerArgs
+>
+struct WeakLearnerTrainer<
+    false, MatType, WeightsType, WeakLearnerType, WeakLearnerArgs...
+>
+{
+  static WeakLearnerType Train(
+      const MatType& data,
+      const arma::Row<size_t>& labels,
+      const size_t numClasses,
+      const WeightsType& weights,
+      const WeakLearnerType& /* wl */,
+      WeakLearnerArgs&&... weakLearnerArgs)
+  {
+    // When UseExistingWeakLearner is false, we use the given hyperparameters.
+    // (This is the preferred approach that supports more types of weak
+    // learners.)
+    return WeakLearnerType(data, labels, numClasses, weights,
+        weakLearnerArgs...);
+  }
+};
 
-    // DecisionTree(DecisionTree&, MatType&, LabelsType&, size_t, WeightsType&, double = 0.0, double = 0.0, ...);
+template<typename WeakLearnerType, typename MatType>
+template<bool UseExistingWeakLearner, typename... WeakLearnerArgs>
+typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const WeakLearnerType& other,
+    WeakLearnerArgs&&... weakLearnerArgs)
+{
+  // Clear information from previous runs.
+  wl.clear();
+  alpha.clear();
+
+  this->tolerance = tolerance;
+  this->numClasses = numClasses;
+
+  // crt is the cumulative rt value for terminating the optimization when rt is
+  // changing by less than the tolerance.
+  ElemType rt, crt = 0.0, alphat = 0.0, zt;
+
+  ElemType ztProduct = 1.0;
+
+  // To be used for prediction by the weak learner.
+  arma::Row<size_t> predictedLabels(labels.n_cols);
+
+  // Use tempData to modify input data for incorporating weights.
+  MatType tempData(data);
+
+  // This matrix is a helper matrix used to calculate the final hypothesis.
+  MatType sumFinalH(numClasses, predictedLabels.n_cols);
+  sumFinalH.zeros();
+
+  // Load the initial weights into a 2-D matrix.
+  const ElemType initWeight = 1.0 / ElemType(data.n_cols * numClasses);
+  MatType D(numClasses, data.n_cols);
+  D.fill(initWeight);
+
+  // Weights are stored in this row vector.
+  arma::Row<ElemType> weights(predictedLabels.n_cols);
+
+  // This is the final hypothesis.
+  arma::Row<size_t> finalH(predictedLabels.n_cols);
+
+  // Now, start the boosting rounds.
+  for (size_t i = 0; i < maxIterations; ++i)
+  {
+    // Initialized to zero in every round.  rt is used for calculation of
+    // alphat; it is the weighted error.
+    // rt = (sum) D(i) y(i) ht(xi)
+    rt = 0.0;
+
+    // zt is used for weight normalization.
+    zt = 0.0;
+
+    // Build the weight vectors.
+    weights = sum(D);
+
+    // This is split into a separate function, so that we can still call
+    // AdaBoost::Train() with extra hyperparameters, even when the weak learner
+    // type does not support the special constructor that takes another weak
+    // learner.
+    WeakLearnerType w = WeakLearnerTrainer<
+        UseExistingWeakLearner, MatType, arma::Row<ElemType>, WeakLearnerType,
+        WeakLearnerArgs...
+    >::Train(tempData, labels, numClasses, weights, other, weakLearnerArgs...);
+
     w.Classify(tempData, predictedLabels);
-
-    // Now from predictedLabels, build ht, the weak hypothesis
-    // buildClassificationMatrix(ht, predictedLabels);
 
     // Now, calculate alpha(t) using ht.
     for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
@@ -166,9 +460,9 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
 
     crt = rt;
 
-    // Our goal is to find alphat which mizimizes or approximately minimizes the
+    // Our goal is to find alphat which minimizes or approximately minimizes the
     // value of Z as a function of alpha.
-    alphat = 0.5 * log((1 + rt) / (1 - rt));
+    alphat = 0.5 * std::log((1 + rt) / (1 - rt));
 
     alpha.push_back(alphat);
     wl.push_back(w);
@@ -176,7 +470,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     // Now start modifying the weights.
     for (size_t j = 0; j < D.n_cols; ++j)
     {
-      const double expo = exp(alphat);
+      const ElemType expo = std::exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
         for (size_t k = 0; k < D.n_rows; ++k)
@@ -216,74 +510,8 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     // Accumulate the value of zt for the Hamming loss bound.
     ztProduct *= zt;
   }
+
   return ztProduct;
-}
-
-/**
- * Classify the given test points.
- */
-template<typename WeakLearnerType, typename MatType>
-void AdaBoost<WeakLearnerType, MatType>::Classify(
-    const MatType& test,
-    arma::Row<size_t>& predictedLabels)
-{
-  arma::Row<size_t> tempPredictedLabels(test.n_cols);
-  arma::mat probabilities;
-
-  Classify(test, predictedLabels, probabilities);
-}
-
-/**
- * Classify the given test points.
- */
-template<typename WeakLearnerType, typename MatType>
-void AdaBoost<WeakLearnerType, MatType>::Classify(
-    const MatType& test,
-    arma::Row<size_t>& predictedLabels,
-    arma::mat& probabilities)
-{
-  arma::Row<size_t> tempPredictedLabels(test.n_cols);
-
-  probabilities.zeros(numClasses, test.n_cols);
-  predictedLabels.set_size(test.n_cols);
-
-  for (size_t i = 0; i < wl.size(); ++i)
-  {
-    wl[i].Classify(test, tempPredictedLabels);
-
-    for (size_t j = 0; j < tempPredictedLabels.n_cols; ++j)
-      probabilities(tempPredictedLabels(j), j) += alpha[i];
-  }
-
-  arma::uword maxIndex = 0;
-
-  for (size_t i = 0; i < predictedLabels.n_cols; ++i)
-  {
-    probabilities.col(i) /= arma::accu(probabilities.col(i));
-    probabilities.col(i).max(maxIndex);
-    predictedLabels(i) = maxIndex;
-  }
-}
-
-/**
- * Serialize the AdaBoost model.
- */
-template<typename WeakLearnerType, typename MatType>
-template<typename Archive>
-void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                                   const uint32_t /* version */)
-{
-  ar(CEREAL_NVP(numClasses));
-  ar(CEREAL_NVP(tolerance));
-  ar(CEREAL_NVP(alpha));
-
-  // Now serialize each weak learner.
-  if (cereal::is_loading<Archive>())
-  {
-    wl.clear();
-    wl.resize(alpha.size());
-  }
-  ar(CEREAL_NVP(wl));
 }
 
 } // namespace mlpack

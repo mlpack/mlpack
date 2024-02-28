@@ -139,7 +139,10 @@ void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
 
 template<typename MatType>
 void MaxPoolingType<MatType>::Backward(
-    const MatType& input, const MatType& gy, MatType& g)
+    const MatType& input,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   arma::Cube<typename MatType::elem_type> mappedError =
       arma::Cube<typename MatType::elem_type>(((MatType&) gy).memptr(),

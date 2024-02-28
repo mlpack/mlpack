@@ -205,7 +205,7 @@ class CategoricalDQN
       arma::mat activationGrad;
       arma::mat lossGrad = lossGradients.rows(i, i + atomSize - 1);
       arma::mat activation = activations.rows(i, i + atomSize - 1);
-      softMax.Backward(activation, lossGrad, activationGrad);
+      softMax.Backward({} /* unused */, activation, lossGrad, activationGrad);
       activationGradients.rows(i, i + atomSize - 1) = activationGrad;
     }
     network.Backward(state, activationGradients, gradient);

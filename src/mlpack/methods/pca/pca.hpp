@@ -137,7 +137,7 @@ class PCA
         if (stdDev[i] == 0)
           stdDev[i] = 1e-50;
 
-      centeredData /= arma::repmat(stdDev, 1, centeredData.n_cols);
+      centeredData /= repmat(stdDev, 1, centeredData.n_cols);
     }
   }
 

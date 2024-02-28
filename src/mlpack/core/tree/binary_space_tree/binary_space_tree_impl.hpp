@@ -909,7 +909,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
       splitter, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
-  arma::vec center, leftCenter, rightCenter;
+  arma::Col<ElemType> center, leftCenter, rightCenter;
   Center(center);
   left->Center(leftCenter);
   right->Center(rightCenter);
@@ -977,7 +977,7 @@ SplitNode(std::vector<size_t>& oldFromNew,
       oldFromNew, splitter, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
-  arma::vec center, leftCenter, rightCenter;
+  arma::Col<ElemType> center, leftCenter, rightCenter;
   Center(center);
   left->Center(leftCenter);
   right->Center(rightCenter);

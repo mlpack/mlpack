@@ -74,24 +74,28 @@ class SoftplusFunction
   /**
    * Computes the first derivative of the softplus function.
    *
-   * @param y Input data.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x, const double /* y */)
   {
-    return 1.0 / (1 + std::exp(-y));
+    return 1.0 / (1 + std::exp(-x));
   }
 
   /**
    * Computes the first derivatives of the softplus function.
    *
-   * @param y Input data.
-   * @param x The resulting derivatives.
+   * @param x Input activation.
+   * @param y Result of Fn(x).
+   * @param dy The resulting derivatives.
    */
-  template<typename InputType, typename OutputType>
-  static void Deriv(const InputType& y, OutputType& x)
+  template<typename InputType, typename OutputType, typename DerivType>
+  static void Deriv(const InputType& x,
+                    const OutputType& /* y */,
+                    DerivType& dy)
   {
-    x = 1.0 / (1 + arma::exp(-y));
+    dy = 1.0 / (1 + exp(-x));
   }
 
   /**

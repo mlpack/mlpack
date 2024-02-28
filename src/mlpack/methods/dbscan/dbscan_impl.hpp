@@ -21,7 +21,7 @@ namespace mlpack {
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
-    const double epsilon,
+    const ElemType epsilon,
     const size_t minPoints,
     const bool batchMode,
     RangeSearchType rangeSearch,
@@ -40,10 +40,9 @@ DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
  * and also the centroid of each cluster.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
-    arma::mat& centroids)
+    MatType& centroids)
 {
   // These assignments will be thrown away, but there is no way to avoid
   // calculating them.
@@ -58,11 +57,10 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
  * the centroid of each cluster and also the list of cluster assignments.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments,
-    arma::mat& centroids)
+    MatType& centroids)
 {
   const size_t numClusters = Cluster(data, assignments);
 
@@ -94,7 +92,6 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
  * also the list of cluster assignments.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments)
@@ -146,13 +143,12 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
  * dual-tree algorithm.
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
     UnionFind& uf)
 {
   std::vector<std::vector<size_t>> neighbors;
-  std::vector<std::vector<double>> distances;
+  std::vector<std::vector<ElemType>> distances;
 
   // Note that the strategy here is somewhat different from the original DBSCAN
   // paper.  The original DBSCAN paper grows each cluster individually to its
@@ -181,8 +177,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     visited[index] = true;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(index), Range(0.0, epsilon), neighbors,
-        distances);
+    rangeSearch.Search(data.col(index), RangeType<ElemType>(ElemType(0.0), epsilon),
+        neighbors, distances);
 
     // Union to all neighbors if the point is not noise.
     //
@@ -225,17 +221,17 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
  * naive search).
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
-template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
   // For each point, find the points in epsilon-neighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;
-  std::vector<std::vector<double>> distances;
+  std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(Range(0.0, epsilon), neighbors, distances);
+  rangeSearch.Search(RangeType<ElemType>(ElemType(0.0), epsilon), neighbors,
+      distances);
   Log::Info << "Range search complete." << std::endl;
 
   // See the description of the algorithm in `PointwiseCluster()`.  The strategy

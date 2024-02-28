@@ -58,7 +58,7 @@ CubeType MultiplyCube2Cube(const CubeType& cubeA,
   if (aTranspose && bTranspose)
   {
     for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = arma::trans(cubeB.slice(i) * cubeA.slice(i));
+      z.slice(i) = trans(cubeB.slice(i) * cubeA.slice(i));
   }
   else if (bTranspose && !aTranspose)
   {
@@ -116,7 +116,7 @@ CubeType MultiplyMat2Cube(const MatType& matA,
   if (aTranspose && bTranspose)
   {
     for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = arma::trans(cubeB.slice(i) * matA);
+      z.slice(i) = trans(cubeB.slice(i) * matA);
   }
   else if (bTranspose)
   {
@@ -172,7 +172,7 @@ CubeType MultiplyCube2Mat(const CubeType& cubeA,
   if (aTranspose && bTranspose)
   {
     for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = arma::trans(matB * cubeA.slice(i));
+      z.slice(i) = trans(matB * cubeA.slice(i));
   }
   else if (bTranspose && !aTranspose)
   {

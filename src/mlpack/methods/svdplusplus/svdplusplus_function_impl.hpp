@@ -105,7 +105,7 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       if (implicitVecsNormSquare(it.row()) < 0)
       {
-        implicitVecsNormSquare(it.row()) = arma::dot(
+        implicitVecsNormSquare(it.row()) = dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
       }
@@ -120,12 +120,12 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     double ratingError = rating - userBias - itemBias -
-        arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+        dot(userVec, parameters.col(item).subvec(0, rank - 1));
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(parameters.col(user), 2);
-    double itemVecNorm = arma::norm(parameters.col(item), 2);
+    double userVecNorm = norm(parameters.col(user), 2);
+    double itemVecNorm = norm(parameters.col(item), 2);
     regularizationError += lambda * (userVecNorm * userVecNorm +
                                      itemVecNorm * itemVecNorm);
 
@@ -182,7 +182,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     double ratingError = rating - userBias - itemBias -
-        arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+        dot(userVec, parameters.col(item).subvec(0, rank - 1));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
@@ -249,7 +249,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     double ratingError = rating - userBias - itemBias -
-        arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+        dot(userVec, parameters.col(item).subvec(0, rank - 1));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
@@ -356,7 +356,7 @@ double StandardSGD::Optimize(
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     double ratingError = rating - userBias - itemBias -
-        arma::dot(userVec, parameters.col(item).subvec(0, rank - 1));
+        dot(userVec, parameters.col(item).subvec(0, rank - 1));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
@@ -492,7 +492,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         userVec += iterate.col(user).subvec(0, rank - 1);
 
         double ratingError = rating - userBias - itemBias -
-        arma::dot(userVec, iterate.col(item).subvec(0, rank - 1));
+        dot(userVec, iterate.col(item).subvec(0, rank - 1));
 
         arma::mat userVecUpdate = stepSize * 2 * (
             lambda * iterate.col(user).subvec(0, rank - 1) -

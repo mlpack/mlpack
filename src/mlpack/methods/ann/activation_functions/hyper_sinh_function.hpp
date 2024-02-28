@@ -77,7 +77,7 @@ class HyperSinhFunction
    * @param y Input activation.
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double /* x */, const double y)
   {
     if (y > 0)
       return (std::pow((1.0 / 9.0) + (y * y), 0.5));
@@ -89,22 +89,22 @@ class HyperSinhFunction
    * Computes the first derivatives of the Hyper-sinh function.
    *
    * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param dy The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
+  static void Deriv(const InputVecType& /* x */, const OutputVecType& y, DerivVecType& dy)
   {
-    x.set_size(y.size());
+    dy.set_size(size(y));
     #pragma omp for
     for(size_t i = 0; i < y.n_elem; ++i)
     {
       if (y(i) > 0)
       {
-        x(i) = (std::pow((1.0 / 9.0) + (y(i) * y(i)), 0.5));
+        dy(i) = (std::pow((1.0 / 9.0) + (y(i) * y(i)), 0.5));
       }
       else
       {
-        x(i) = (3.0 * std::pow(std::pow(y(i), 2) / 4, 1.0 / 3.0));
+        dy(i) = (3.0 * std::pow(std::pow(y(i), 2) / 4, 1.0 / 3.0));
       }
     }
   }

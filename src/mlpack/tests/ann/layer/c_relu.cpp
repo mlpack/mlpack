@@ -28,7 +28,7 @@ TEST_CASE("CReLUFunctionTest", "[ANNLayerTest]")
   const arma::colvec desiredActivations("0 3 0 6 24 \
                                          2 0 0 0 0");
 
-  const arma::colvec desiredDerivatives("0 0 0 0 0");
+  const arma::colvec desiredDerivatives("-1 1 0 1 1");
 
   const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
 
@@ -42,7 +42,7 @@ TEST_CASE("CReLUFunctionTest", "[ANNLayerTest]")
   arma::colvec derivatives(activationData.n_elem);
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
-  crelu.Backward(desiredActivations, error, derivatives);
+  crelu.Backward(activationData, desiredActivations, error, derivatives);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
     REQUIRE(activations.at(i) ==

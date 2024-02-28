@@ -143,11 +143,13 @@ class BatchNormType : public Layer<MatType>
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const MatType& input,
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
                 const MatType& gy,
                 MatType& g);
 

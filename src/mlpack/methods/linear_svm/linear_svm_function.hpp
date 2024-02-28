@@ -23,10 +23,16 @@ namespace mlpack {
  * This is used by various ensmallen optimizers to train the linear
  * SVM model.
  */
-template <typename MatType = arma::mat>
+template<typename MatType = arma::mat, typename ParametersType = arma::mat>
 class LinearSVMFunction
 {
  public:
+  typedef typename ParametersType::elem_type ElemType;
+  typedef typename GetDenseMatType<ParametersType>::type DenseMatType;
+  typedef typename GetSparseMatType<ParametersType>::type SparseMatType;
+  typedef typename GetDenseColType<SparseMatType>::type DenseColType;
+  typedef typename GetDenseRowType<ParametersType>::type DenseRowType;
+
   /**
    * Construct the Linear SVM objective function with given parameters.
    *
@@ -58,7 +64,7 @@ class LinearSVMFunction
    * @param numClasses Number of classes for classification.
    * @param fitIntercept If true, an intercept is fitted.
    */
-  static void InitializeWeights(arma::mat& weights,
+  static void InitializeWeights(ParametersType& weights,
                                 const size_t featureSize,
                                 const size_t numClasses,
                                 const bool fitIntercept = false);
@@ -67,10 +73,10 @@ class LinearSVMFunction
    * Constructs the ground truth label matrix with the passed labels.
    *
    * @param labels Labels associated with the training data.
-   * @param groundTruth Pointer to arma::mat which stores the computed matrix.
+   * @param groundTruth Reference to sparse matrix to stores the result.
    */
   void GetGroundTruthMatrix(const arma::Row<size_t>& labels,
-                            arma::sp_mat& groundTruth);
+                            SparseMatType& groundTruth) const;
 
   /**
    * Evaluate the hinge loss function for all the datapoints
@@ -78,7 +84,7 @@ class LinearSVMFunction
    * @param parameters The parameters of the SVM.
    * @return The value of the loss function for the entire dataset.
    */
-  double Evaluate(const arma::mat& parameters);
+  ElemType Evaluate(const ParametersType& parameters) const;
 
   /**
    * Evaluate the hinge loss function on the specified datapoints.
@@ -89,9 +95,9 @@ class LinearSVMFunction
    * @param batchSize Size of batch to process.
    * @return The value of the loss function for the given parameters.
    */
-  double Evaluate(const arma::mat& parameters,
-                  const size_t firstId,
-                  const size_t batchSize = 1);
+  ElemType Evaluate(const ParametersType& parameters,
+                    const size_t firstId,
+                    const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the hinge loss function following the
@@ -101,9 +107,9 @@ class LinearSVMFunction
    * @param parameters The parameters of the SVM.
    * @param gradient Linear matrix to output the gradient into.
    */
-  template <typename GradType>
-  void Gradient(const arma::mat& parameters,
-                GradType& gradient);
+  template<typename GradType>
+  void Gradient(const ParametersType& parameters,
+                GradType& gradient) const;
 
   /**
    * Evaluate the gradient of the hinge loss function, following
@@ -115,11 +121,11 @@ class LinearSVMFunction
    * @param gradient Linear matrix to output the gradient into.
    * @param batchSize Size of the batch to process.
    */
-  template <typename GradType>
-  void Gradient(const arma::mat& parameters,
+  template<typename GradType>
+  void Gradient(const ParametersType& parameters,
                 const size_t firstId,
                 GradType& gradient,
-                const size_t batchSize = 1);
+                const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the hinge loss function, following
@@ -132,9 +138,9 @@ class LinearSVMFunction
    * @param gradient Linear matrix to output the gradient into.
    * @return The value of the loss function at the given parameters.
    */
-  template <typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
-                              GradType& gradient) const;
+  template<typename GradType>
+  ElemType EvaluateWithGradient(const ParametersType& parameters,
+                                GradType& gradient) const;
 
   /**
    * Evaluate the gradient of the hinge loss function, following
@@ -150,21 +156,21 @@ class LinearSVMFunction
    * @param batchSize Size of the batch to process.
    * @return The value of the loss function at the given parameters.
    */
-  template <typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
-                              const size_t firstId,
-                              GradType& gradient,
-                              const size_t batchSize = 1) const;
+  template<typename GradType>
+  ElemType EvaluateWithGradient(const ParametersType& parameters,
+                                const size_t firstId,
+                                GradType& gradient,
+                                const size_t batchSize = 1) const;
 
   //! Return the initial point for the optimization.
-  const arma::mat& InitialPoint() const { return initialPoint; }
+  const ParametersType& InitialPoint() const { return initialPoint; }
   //! Modify the initial point for the optimization.
-  arma::mat& InitialPoint() { return initialPoint; }
+  ParametersType& InitialPoint() { return initialPoint; }
 
   //! Get the dataset.
-  const arma::sp_mat& Dataset() const { return dataset; }
+  const SparseMatType& Dataset() const { return dataset; }
   //! Modify the dataset.
-  arma::sp_mat& Dataset() { return dataset; }
+  SparseMatType& Dataset() { return dataset; }
 
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }
@@ -179,12 +185,13 @@ class LinearSVMFunction
 
  private:
   //! The initial point, from which to start the optimization.
-  arma::mat initialPoint;
+  ParametersType initialPoint;
 
   //! Label matrix for provided data
-  arma::sp_mat groundTruth;
+  SparseMatType groundTruth;
 
-  //! The datapoints for training.
+  //! The datapoints for training.  This will be an alias until Shuffle() is
+  //! called.
   MatType dataset;
 
   //! Number of Classes.

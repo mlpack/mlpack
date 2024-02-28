@@ -158,6 +158,28 @@ add_custom_command(TARGET python_copy PRE_BUILD
         ${CMAKE_CURRENT_SOURCE_DIR}/setup_readme.md
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
+# Copy all mlpack headers for inclusion in the package, but remove the bindings/
+# and tests/ directories as they should not be included.
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy_directory
+        ${CMAKE_SOURCE_DIR}/src/
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/include/)
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E rm -r
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/include/mlpack/bindings/
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/include/mlpack/tests/)
+
+# Generate pkgconfig file for easy use of included headers.
+add_custom_target(python_pkgconfig
+    COMMAND ${CMAKE_COMMAND}
+        -D GENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/mlpack.pc.in
+        -D GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/share/pkgconfig/mlpack.pc
+        -D PACKAGE_VERSION="${PACKAGE_VERSION}"
+        -P "${CMAKE_SOURCE_DIR}/CMake/ConfigureFileOnly.cmake"
+        BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/share/pkgconfig/mlpack.pc"
+        COMMENT "Configuring Python mlpack.pc...")
+add_dependencies(python_copy python_pkgconfig)
+
 if (BUILD_TESTS)
   foreach(test_file ${TEST_SOURCES})
     add_custom_command(TARGET python_copy PRE_BUILD

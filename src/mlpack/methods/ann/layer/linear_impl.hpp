@@ -114,7 +114,10 @@ void LinearType<MatType, RegularizerType>::Forward(
 
 template<typename MatType, typename RegularizerType>
 void LinearType<MatType, RegularizerType>::Backward(
-    const MatType& /* input */, const MatType& gy, MatType& g)
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = weight.t() * gy;
 }
@@ -125,11 +128,8 @@ void LinearType<MatType, RegularizerType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-      error * input.t());
-  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(error, 1);
-
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = vectorise(error * input.t());
+  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) = sum(error, 1);
   regularizer.Evaluate(weights, gradient);
 }
 
