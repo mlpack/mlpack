@@ -1118,8 +1118,7 @@ TEST_CASE("MultiLabelSoftMarginLossTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module1.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(accu(output)) ==
-      Approx(0.505909).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(0.505909).epsilon(1e-5));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
