@@ -213,8 +213,7 @@ double KNNAccuracy(const arma::mat& dataset,
           1 / std::pow(distances(j, i) + 1, 2);
     }
 
-    arma::vec index = ConvTo<arma::vec>::From(arma::find(Map
-        == max(Map)));
+    arma::vec index = ConvTo<arma::vec>::From(arma::find(Map == max(Map)));
 
     // Increase count if labels match.
     if (index(0) == labels(i))
