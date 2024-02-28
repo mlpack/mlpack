@@ -569,8 +569,7 @@ TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffL1Test",
   REQUIRE(accu(dictionary ==
       params.Get<arma::mat>("dictionary")) < dictionary.n_elem);
 
-  REQUIRE(accu(codes ==
-      params.Get<arma::mat>("codes")) < codes.n_elem);
+  REQUIRE(accu(codes == params.Get<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
