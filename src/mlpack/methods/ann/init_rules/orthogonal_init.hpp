@@ -45,7 +45,7 @@ class OrthogonalInitialization
     typedef typename GetColType<MatType>::type ColType;
     ColType s;
 
-    svd_econ(W, s, V, arma::randu<MatType>(rows, cols));
+    svd_econ(W, s, V, randu<MatType>(rows, cols));
     W *= gain;
   }
 
@@ -63,7 +63,7 @@ class OrthogonalInitialization
     typedef typename GetColType<MatType>::type ColType;
     ColType s;
 
-    svd_econ(W, s, V, arma::randu<MatType>(W.n_rows, W.n_cols));
+    svd_econ(W, s, V, randu<MatType>(W.n_rows, W.n_cols));
     W *= gain;
   }
 
