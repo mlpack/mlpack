@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME persistence_model
+#define BINDING_NAME
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "persistence.hpp"
