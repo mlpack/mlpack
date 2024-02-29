@@ -338,6 +338,7 @@ do
         "cv.md"
         "timer.md"
         "bindings.md"
+        "elemtype.md"
         "iodoc.md"
         "kernels.md"
         "metrics.md"
