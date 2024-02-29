@@ -76,7 +76,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
 
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    ElemType sum = arma::accu(square(input.t() * weight.slice(i))) /
+    ElemType sum = accu(square(input.t() * weight.slice(i))) /
         (2.0 * slabPenalty);
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }
@@ -238,7 +238,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SpikeMean(
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
-    spikeMean(i) = LogisticFunction::Fn(0.5 * (1.0 / slabPenalty) * arma::accu(
+    spikeMean(i) = LogisticFunction::Fn(0.5 * (1.0 / slabPenalty) * accu(
         visible.t() * (weight.slice(i) * weight.slice(i).t()) * visible)
         / std::pow(visible.n_cols, 2) + spikeBias(i));
   }

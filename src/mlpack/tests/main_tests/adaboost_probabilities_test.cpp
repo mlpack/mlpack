@@ -62,7 +62,7 @@ TEST_CASE_METHOD(AdaBoostPredictProbaTestFixture,
   REQUIRE(probabilities.n_cols == testSize);
 
   for (size_t i = 0; i < testSize; ++i)
-    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
+    REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
 }
 
 /**

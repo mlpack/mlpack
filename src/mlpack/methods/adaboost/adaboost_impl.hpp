@@ -211,7 +211,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   }
 
   arma::uword maxIndex = 0;
-  probabilities /= arma::accu(probabilities);
+  probabilities /= accu(probabilities);
   probabilities.max(maxIndex);
   prediction = (size_t) maxIndex;
 }
@@ -250,7 +250,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
-    probabilities.col(i) /= arma::accu(probabilities.col(i));
+    probabilities.col(i) /= accu(probabilities.col(i));
     probabilities.col(i).max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
@@ -441,9 +441,9 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
     for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
-        rt += arma::accu(D.col(j));
+        rt += accu(D.col(j));
       else
-        rt -= arma::accu(D.col(j));
+        rt -= accu(D.col(j));
     }
 
     if ((i > 0) && (std::abs(rt - crt) < tolerance))
@@ -462,7 +462,7 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
 
     // Our goal is to find alphat which minimizes or approximately minimizes the
     // value of Z as a function of alpha.
-    alphat = 0.5 * log((1 + rt) / (1 - rt));
+    alphat = 0.5 * std::log((1 + rt) / (1 - rt));
 
     alpha.push_back(alphat);
     wl.push_back(w);
@@ -470,7 +470,7 @@ typename MatType::elem_type AdaBoost<WeakLearnerType, MatType>::TrainInternal(
     // Now start modifying the weights.
     for (size_t j = 0; j < D.n_cols; ++j)
     {
-      const ElemType expo = exp(alphat);
+      const ElemType expo = std::exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
         for (size_t k = 0; k < D.n_rows; ++k)

@@ -576,7 +576,7 @@ void NSModel<SortPolicy>::BuildModel(util::Timers& timers,
       // [Q, R] = qr(randn(d, d));
       // Q = Q * diag(sign(diag(R)));
       arma::mat r;
-      if (arma::qr(q, r, arma::randn<arma::mat>(referenceSet.n_rows,
+      if (arma::qr(q, r, randn<arma::mat>(referenceSet.n_rows,
               referenceSet.n_rows)))
       {
         arma::vec rDiag(r.n_rows);

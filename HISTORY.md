@@ -9,6 +9,12 @@
 
   * Remove `round()` implementation for old MSVC compilers (#3570).
 
+  * [R] Added inline plugin to the R bindings to allow for other R packages to link to headers (#3626, h/t @cgiachalis).
+
+  * [R] Removed extra gcc-specific options from `Makevars.win`  (#3627, h/t @kalibera).
+
+  * [R] Changed roxygen package-level documentation from using `@docType package` to `"_PACKAGE"`. (#3636)
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).

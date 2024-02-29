@@ -35,7 +35,7 @@ class MaxPoolingRule
   template<typename MatType>
   typename MatType::elem_type Pooling(const MatType& input)
   {
-    return arma::max(vectorise(input));
+    return max(vectorise(input));
   }
 
   template<typename MatType>

@@ -429,7 +429,7 @@ void TransposedConvolutionType<
     }
 
     gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
-        (outMap % outSize), 0) = arma::accu(mappedError.slices(outMap, outMap));
+        (outMap % outSize), 0) = accu(mappedError.slices(outMap, outMap));
   }
 }
 

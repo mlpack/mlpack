@@ -90,10 +90,12 @@ void NoisyLinearType<MatType>::SetWeights(const MatType& weights)
 template<typename MatType>
 void NoisyLinearType<MatType>::ResetNoise()
 {
-  MatType epsilonIn = arma::randn<MatType>(inSize, 1);
+  MatType epsilonIn;
+  epsilonIn.randn(inSize, 1);
   epsilonIn = sign(epsilonIn) % sqrt(arma::abs(epsilonIn));
 
-  MatType epsilonOut = arma::randn<MatType>(outSize, 1);
+  MatType epsilonOut;
+  epsilonOut.randn(outSize, 1);
   epsilonOut = sign(epsilonOut) % sqrt(arma::abs(epsilonOut));
 
   weightEpsilon = epsilonOut * epsilonIn.t();

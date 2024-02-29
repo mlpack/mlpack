@@ -54,7 +54,7 @@ inline void AddTask::Generate(arma::field<arma::mat>& input,
     }
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+' + (binary number with sizeB bits).
-    vecInput(i) = arma::randi<arma::colvec>(
+    vecInput(i) = randi<arma::colvec>(
         sizeA + sizeB + 1, arma::distr_param(0, 1));
     // Insert special value for '+' delimiter.
     vecInput(i).at(sizeA) = 2;

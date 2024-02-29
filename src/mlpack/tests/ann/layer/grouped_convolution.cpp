@@ -55,12 +55,12 @@ TEST_CASE("GroupedConvolutionLayerTest", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Value calculated using torch.nn.Conv2d().
-  REQUIRE(arma::accu(output) == Approx(-647.6369628906).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(-647.6369628906).epsilon(1e-5));
 
   arma::mat delta;
   delta.set_size(8, 3);
   layer.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == Approx(686.7855224609).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(686.7855224609).epsilon(1e-5));
 }
 
 /**
@@ -137,8 +137,8 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
 
   // Value calculated using torch.nn.Conv2d().
   CheckMatrices(output, outputG);
-  REQUIRE(arma::accu(output) == Approx(12.6755657196).epsilon(1e-5));
-  REQUIRE(arma::accu(outputG) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(accu(output) == Approx(12.6755657196).epsilon(1e-5));
+  REQUIRE(accu(outputG) == Approx(12.6755657196).epsilon(1e-5));
 
   arma::mat delta, deltaG;
   delta.set_size(8, 3);
@@ -147,8 +147,8 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   layerG.Backward(input, outputG, outputG, deltaG);
 
   CheckMatrices(delta, deltaG);
-  REQUIRE(arma::accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
-  REQUIRE(arma::accu(deltaG) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(accu(delta) == Approx(-1.9237523079).epsilon(1e-5));
+  REQUIRE(accu(deltaG) == Approx(-1.9237523079).epsilon(1e-5));
 }
 
 TEST_CASE("EdgeCaseFailGroupedConvolutionTest", "[ANNLayerTest]")

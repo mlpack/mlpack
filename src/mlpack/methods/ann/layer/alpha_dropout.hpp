@@ -114,7 +114,7 @@ class AlphaDropoutType : public Layer<MatType>
   void Ratio(const double r)
   {
     ratio = r;
-    a = pow((1 - ratio) * (1 + ratio * pow(alphaDash, 2)), -0.5);
+    a = std::pow((1 - ratio) * (1 + ratio * std::pow(alphaDash, 2)), -0.5);
     b = -a * alphaDash * ratio;
   }
 

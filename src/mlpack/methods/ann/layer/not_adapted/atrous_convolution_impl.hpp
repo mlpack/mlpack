@@ -395,7 +395,7 @@ void AtrousConvolution<
     }
 
     gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
-        (outMap % outSize), 0) = arma::accu(mappedError.slice(outMap));
+        (outMap % outSize), 0) = accu(mappedError.slice(outMap));
   }
 }
 

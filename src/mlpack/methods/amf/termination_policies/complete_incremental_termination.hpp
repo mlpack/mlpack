@@ -49,7 +49,7 @@ class CompleteIncrementalTermination
     tPolicy.Initialize(V);
 
     // Get the number of non-zero entries.
-    incrementalIndex = arma::accu(V != 0);
+    incrementalIndex = accu(V != 0);
     iteration = 0;
   }
 

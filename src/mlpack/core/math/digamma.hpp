@@ -1,11 +1,11 @@
 /**
  * @file core/math/digamma.hpp
- * @author Gopi Tatiraju 
+ * @author Gopi Tatiraju
  *
  * Some parts of the implementation are inspired from boost.
  * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- * 
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -32,20 +32,20 @@ EvaluatePolyLarge(const T(&a)[N], const T& x)
 {
   T x2 = x * x;
   T t[2];
-  
+
   t[0] = a[7] * x2 + a[5];
   t[0] *= x2;
   t[0] += a[3];
   t[0] *= x2;
   t[0] += a[1];
   t[0] *= x;
-  
+
   t[1] = a[6] * x2 + a[4];
   t[1] *= x2;
   t[1] += a[2];
   t[1] *= x2;
   t[1] += a[0];
-  
+
   return t[0] + t[1];
 }
 
@@ -178,7 +178,7 @@ T DigammaLarge(T x)
   T result = std::log(x);
   result += 1 / (2 * x);
   const T z = 1 / (x * x);
-  result -= z * EvaluatePolyLarge(P, z); 
+  result -= z * EvaluatePolyLarge(P, z);
 
   return result;
 }
@@ -192,7 +192,7 @@ T DigammaLarge(T x)
  * For x > 2 we reduce it to the interval [1, 2].
  * For x < 1 we bring it to the interval [1, 2].
  *
- * @param x Input for which digamma will be calculated. 
+ * @param x Input for which digamma will be calculated.
  */
 template<typename T>
 T Digamma(T x)

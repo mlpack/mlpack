@@ -271,9 +271,8 @@ Search(const MatType& querySet,
     // from the reference set without replacement.
     const size_t numSamples = RAUtil::MinimumSamplesReqd(referenceSet->n_cols,
         k, tau, alpha);
-    arma::uvec distinctSamples;
-    ObtainDistinctSamples(0, referenceSet->n_cols, numSamples,
-        distinctSamples);
+    arma::uvec distinctSamples = arma::randperm(referenceSet->n_cols,
+        numSamples);
 
     // Run the base case on each combination of query point and sampled
     // reference point.
@@ -487,9 +486,8 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     // from the reference set without replacement.
     const size_t numSamples = RAUtil::MinimumSamplesReqd(referenceSet->n_cols,
         k, tau, alpha);
-    arma::uvec distinctSamples;
-    ObtainDistinctSamples(0, referenceSet->n_cols, numSamples,
-        distinctSamples);
+    arma::uvec distinctSamples = arma::randperm(referenceSet->n_cols,
+        numSamples);
 
     // The naive brute-force solution.
     for (size_t i = 0; i < referenceSet->n_cols; ++i)

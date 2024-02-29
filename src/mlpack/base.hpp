@@ -103,8 +103,6 @@
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
-// Include local armadillo safe linear algebra functions.
-#include <mlpack/core/math/safe_linalg.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because

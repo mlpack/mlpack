@@ -102,7 +102,7 @@ class SimpleToleranceTermination
     residue = sum;
     if (count > 0)
       residue /= count;
-    residue = sqrt(residue);
+    residue = std::sqrt(residue);
 
     // Increment iteration count.
     iteration++;
