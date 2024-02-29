@@ -73,7 +73,7 @@ class MinMaxScaler
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    itemMin = arma::min(input, 1);
+    itemMin = min(input, 1);
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
     // Handle zeros in scale vector.

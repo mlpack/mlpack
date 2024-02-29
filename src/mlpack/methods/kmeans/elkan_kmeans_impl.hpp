@@ -76,7 +76,7 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
 
   // Now find the closest cluster to each other cluster.  We multiply by 0.5 so
   // that this is equivalent to s(c) for each cluster c.
-  minClusterDistances = 0.5 * arma::min(clusterDistances).t();
+  minClusterDistances = 0.5 * min(clusterDistances).t();
 
   // Now loop over all points, and see which ones need to be updated.
   for (size_t i = 0; i < dataset.n_cols; ++i)

@@ -882,7 +882,7 @@ CellBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
-  arma::Col<ElemType> mins(arma::min(data, 1));
+  arma::Col<ElemType> mins(min(data, 1));
   arma::Col<ElemType> maxs(arma::max(data, 1));
 
   minWidth = std::numeric_limits<ElemType>::max();

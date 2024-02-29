@@ -26,7 +26,7 @@ Constraints<MetricType>::Constraints(
     precalculated(false)
 {
   // Ensure a valid k is passed.
-  size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
+  size_t minCount = min(arma::histc(labels, arma::unique(labels)));
 
   if (minCount < k + 1)
   {

@@ -53,7 +53,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // If each child will have the minimum number of points in it, we can split.
   // Otherwise we can't.
-  if (arma::min(counts) < minimumLeafSize)
+  if (min(counts) < minimumLeafSize)
     return DBL_MAX;
 
   // Calculate the gain of the split.  First we have to calculate the labels
@@ -150,7 +150,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // If each child will have the minimum number of points in it, we can split.
   // Otherwise we can't.
-  if (arma::min(counts) < minimumLeafSize)
+  if (min(counts) < minimumLeafSize)
     return DBL_MAX;
 
   // Calculate the gain of the split.  First we have to calculate the labels

@@ -127,7 +127,7 @@ void PReLUType<MatType>::Gradient(
 {
   MatType zeros = arma::zeros<MatType>(input.n_rows, input.n_cols);
   gradient.set_size(1, 1);
-  gradient(0) = accu(error % arma::min(zeros, input)) / input.n_cols;
+  gradient(0) = accu(error % min(zeros, input)) / input.n_cols;
 }
 
 template<typename MatType>
