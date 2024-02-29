@@ -117,7 +117,7 @@ TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
   model.Add<Linear>(3);
   model.Add<PReLU>(0.01);
   model.Add<Linear>(1);
-
+  model.InputDimensions() = std::vector<size_t>({trainData.n_rows});
   // Sometimes the model may not optimize correctly, so we allow a few trials.
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)

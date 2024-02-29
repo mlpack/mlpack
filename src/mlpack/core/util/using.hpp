@@ -20,6 +20,7 @@ namespace mlpack {
   /* using for armadillo namespace*/
   using arma::conv_to;
   using arma::exp;
+  using arma::distr_param;
   using arma::dot;
   using arma::join_cols;
   using arma::join_rows;
@@ -46,6 +47,7 @@ namespace mlpack {
   /* using for bandicoot namespace*/
   using coot::conv_to;
   using coot::exp;
+  using coot::distr_param;
   using coot::dot;
   using coot::join_cols;
   using coot::join_rows;

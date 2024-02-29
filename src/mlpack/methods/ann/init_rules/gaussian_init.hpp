@@ -52,7 +52,7 @@ class GaussianInitialization
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W = randn<MatType>(rows, cols, distr_param(0.0, std::sqrt(variance)));
   }
 
   /**
@@ -67,7 +67,8 @@ class GaussianInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W = randn<MatType>(W.n_rows, W.n_cols,
+        distr_param(mean, std::sqrt(variance)));
   }
 
   /**

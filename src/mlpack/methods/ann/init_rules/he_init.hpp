@@ -73,7 +73,7 @@ class HeInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2) * V(X).
-    W.imbue( [&]() { return std::sqrt(variance) * arma::randn(); } );
+    W = randn<MatType>(rows, cols, distr_param(0.0, std::sqrt(variance)));
   }
 
   /**
@@ -96,7 +96,8 @@ class HeInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2) * V(X).
-    W.imbue( [&]() { return std::sqrt(variance) * arma::randn(); } );
+    W = randn<MatType>(W.n_rows, W.n_cols, 
+        distr_param(0.0, std::sqrt(variance)));
   }
 
   /**
