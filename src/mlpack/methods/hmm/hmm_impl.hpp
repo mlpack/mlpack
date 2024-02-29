@@ -37,9 +37,9 @@ HMM<Distribution>::HMM(const size_t states,
     recalculateTransition(false)
 {
   // Normalize the transition probabilities and initial state probabilities.
-  initialProxy /= arma::accu(initialProxy);
+  initialProxy /= accu(initialProxy);
   for (size_t i = 0; i < transitionProxy.n_cols; ++i)
-    transitionProxy.col(i) /= arma::accu(transitionProxy.col(i));
+    transitionProxy.col(i) /= accu(transitionProxy.col(i));
 
   logTransition = log(transitionProxy);
   logInitial = log(initialProxy);

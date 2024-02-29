@@ -37,7 +37,7 @@ inline CosineTree::CosineTree(const arma::mat& dataset) :
   }
 
   // Frobenius norm of columns in the node.
-  frobNormSquared = arma::accu(l2NormsSquared);
+  frobNormSquared = accu(l2NormsSquared);
 
   // Calculate centroid of columns in the node.
   CalculateCentroid();
@@ -66,7 +66,7 @@ inline CosineTree::CosineTree(CosineTree& parentNode,
   }
 
   // Frobenius norm of columns in the node.
-  frobNormSquared = arma::accu(l2NormsSquared);
+  frobNormSquared = accu(l2NormsSquared);
 
   // Calculate centroid of columns in the node.
   CalculateCentroid();

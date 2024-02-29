@@ -29,7 +29,7 @@ typename MatType::elem_type EarthMoverDistanceType<MatType>::Forward(
     const MatType& prediction,
     const MatType& target)
 {
-  typename MatType::elem_type lossSum = -arma::accu(target % prediction);
+  typename MatType::elem_type lossSum = -accu(target % prediction);
 
   if (reduction)
     return lossSum;

@@ -59,9 +59,9 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   output1.set_size(8, 1);
   output2.set_size(6, 1);
   module1.Forward(input, output1);
-  REQUIRE(arma::accu(output1) == 25.5);
+  REQUIRE(accu(output1) == 25.5);
   module2.Forward(input, output2);
-  REQUIRE(arma::accu(output2) == 19.5);
+  REQUIRE(accu(output2) == 19.5);
   output1.reshape(4, 2);
   output2.reshape(3, 2);
   CheckMatrices(output1, result1, 1e-1);
@@ -82,7 +82,7 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   prevDelta1.reshape(8, 1);
   prevDelta2.reshape(6, 1);
   module1.Backward(input, output1, prevDelta1, delta1);
-  REQUIRE(arma::accu(delta1) == Approx(10.8).epsilon(1e-3));
+  REQUIRE(accu(delta1) == Approx(10.8).epsilon(1e-3));
   module2.Backward(input, output2, prevDelta2, delta2);
-  REQUIRE(arma::accu(delta2) == Approx(8.1).epsilon(1e-3));
+  REQUIRE(accu(delta2) == Approx(8.1).epsilon(1e-3));
 }

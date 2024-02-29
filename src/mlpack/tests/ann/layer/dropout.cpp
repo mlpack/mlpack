@@ -47,7 +47,7 @@ TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   module.Training() = false;
   module.Forward(input, output);
-  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(accu(input) == accu(output));
 }
 
 /**
@@ -97,6 +97,6 @@ TEST_CASE("NoDropoutTest", "[ANNLayerTest]")
   arma::mat output;
   module.Forward(input, output);
 
-  REQUIRE(arma::accu(output) == arma::accu(input));
+  REQUIRE(accu(output) == accu(input));
 }
 

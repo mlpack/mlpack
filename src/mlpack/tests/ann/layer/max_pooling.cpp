@@ -47,7 +47,7 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   module1.ComputeOutputDimensions();
   module1.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  REQUIRE(arma::accu(output) == 28);
+  REQUIRE(accu(output) == 28);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
 
@@ -68,7 +68,7 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
   module2.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  REQUIRE(arma::accu(output) == 12.0);
+  REQUIRE(accu(output) == 12.0);
   REQUIRE(output.n_elem == 2);
   REQUIRE(output.n_cols == 1);
 
@@ -89,7 +89,7 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   module3.ComputeOutputDimensions();
   module3.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  REQUIRE(arma::accu(output) == 30.0);
+  REQUIRE(accu(output) == 30.0);
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
 
@@ -108,7 +108,7 @@ TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
   module4.ComputeOutputDimensions();
   module4.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  REQUIRE(arma::accu(output) == 3);
+  REQUIRE(accu(output) == 3);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
 }

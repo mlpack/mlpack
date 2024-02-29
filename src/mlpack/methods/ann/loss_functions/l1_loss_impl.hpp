@@ -30,7 +30,7 @@ typename MatType::elem_type L1LossType<MatType>::Forward(
     const MatType& target)
 {
   MatType loss = arma::abs(prediction - target);
-  typename MatType::elem_type lossSum = arma::accu(loss);
+  typename MatType::elem_type lossSum = accu(loss);
 
   if (reduction)
     return lossSum;
