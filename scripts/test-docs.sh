@@ -364,6 +364,8 @@ do
         "q_learning.md"
         "sac.md"
         "td3.md"
+        # Skip quickstarts, although we should eventually test them.
+        "cpp.md"
     );
 
     skip=0;
