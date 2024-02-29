@@ -187,7 +187,7 @@ TEST_CASE("SimpleKLDivergenceTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  REQUIRE(accu(output)) == Approx(-0.484392).epsilon(1e-3);
+  REQUIRE(accu(output) == Approx(-0.484392).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -456,7 +456,7 @@ TEST_CASE("SimpleEarthMoverDistanceLayerTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module.Backward(input3, target3, output);
-  REQUIRE(accu(output)) == Approx(-0.168867).epsilon(1e-3);
+  REQUIRE(accu(output) == Approx(-0.168867).epsilon(1e-3));
   REQUIRE(output.n_rows == input3.n_rows);
   REQUIRE(output.n_cols == input3.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
