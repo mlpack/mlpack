@@ -39,6 +39,7 @@ add_executable(mlpack_test
 
   # Tests for other methods.
   adaboost_test.cpp
+  adaboost_regressor_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   armadillo_svd_test.cpp
