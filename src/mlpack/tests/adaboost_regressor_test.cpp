@@ -95,7 +95,7 @@ TEST_CASE("ExponentialLossEqualTest", "[AdaBoostRegressorTest]")
 {
   arma::rowvec values(10);
   values.fill(5);
-  arma::rowvec loss = LinearLoss::Calculate(values);
+  arma::rowvec loss = ExponentialLoss::Calculate(values);
   for(size_t i = 0; i < 10; i++)
     REQUIRE(loss[i] == Approx(0.63212).margin(1e-5));
 }
