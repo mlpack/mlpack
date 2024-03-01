@@ -2,7 +2,7 @@
  * @file tests/adaboost_regressor_test.cpp
  * @author Dinesh Kumar
  *
- * Tests for the AdaBoostRegressor class and LossFunctions.
+ * Tests for the AdaBoostRegressor<> class and LossFunctions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -173,7 +173,7 @@ TEST_CASE("EarlyTerminateTest", "[AdaBoostRegressorTest]")
 
   CreateMultiSplitData(dataset, responses, 1000, values);
 
-  AdaBoostRegressor abr(Xtrain, Ytrain, 20 /*numTrees*/, 1/*minLeaves*/, 
+  AdaBoostRegressor<> abr(dataset, responses, 20 /*numTrees*/, 1/*minLeaves*/, 
                         0/*minGainSplit*/, 0/*maxDepth*/);
   arma::rowvec preds;
   abr.Predict(dataset, preds);
@@ -192,7 +192,7 @@ TEST_CASE("EarlyTerminateTest", "[AdaBoostRegressorTest]")
  */
 TEST_CASE("EmptyPredictTest", "[AdaBoostRegressorTest]")
 {
-  AdaBoostRegressor abr; // No training.
+  AdaBoostRegressor<> abr; // No training.
 
   arma::mat points(10, 100, arma::fill::randu);
   arma::Row<double> predictions;
@@ -207,15 +207,12 @@ TEST_CASE("EmptyPredictTest", "[AdaBoostRegressorTest]")
 TEST_CASE("UnweightedLearnTest", "[AdaBoostRegressorTest]")
 {
   arma::mat dataset;
+  arma::rowvec labels;
 
-  bool loaded = mlpack::data::Load("data/lars_dependent_x.csv", dataset);
-  if(!loaded){
-      cout<<"dataset not loaded\n";
-      return -1;
-  }
-
-  arma::Row<double> labels;
-  mlpack::data::Load("data/lars_dependent_y.csv", labels);
+  if (!data::Load("lars_dependent_x.csv", dataset))
+    FAIL("Cannot load dataset lars_dependent_x.csv");
+  if (!data::Load("lars_dependent_y.csv", labels))
+    FAIL("Cannot load dataset lars_dependent_y.csv");
 
   // Loading data.
   arma::mat trainData, testData;
@@ -224,14 +221,12 @@ TEST_CASE("UnweightedLearnTest", "[AdaBoostRegressorTest]")
   mlpack::data::Split(dataset, labels, trainData, testData, 
                       trainResponses, testResponses, 0.3);
 
-  mlpack::AdaBoostRegressor<mlpack::ExponentialLoss> abr;
+  mlpack::AdaBoostRegressor<><mlpack::ExponentialLoss> abr;
   mlpack::DecisionTreeRegressor<> dtr;
 
   abr.Train(trainData, trainResponses, 20/*numTrees*/, 10/*minLeaves*/, 
             1e-7/*minGainSplit*/, 5/*maxDepth*/);
   dtr.Train(trainData, trainResponses);
-
-  double testMean = arma::mean(testResponses);
 
   arma::Row<double> abrPred;
   abr.Predict(testData, abrPred);

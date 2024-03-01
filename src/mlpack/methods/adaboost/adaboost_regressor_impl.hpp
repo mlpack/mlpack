@@ -356,11 +356,13 @@ double AdaBoostRegressor<
     // Boost weight using AdaBoost.R2 alg
     confidence.push_back(std::log(1.0 / beta));
 
+    // Update weights.
     if (i != numTrees-1){
-      arma::Row<ResponsesType> betaVec( errorVec.n_cols);
-      betaVec.fill(beta);
-      weights = weights % arma::pow(betaVec, 1.0 - errorVec);
+      #pragma omp parallel for
+      for (size_t j = 0; j<errorVec.n_cols; j++)
+        weights[j] *= std::pow(beta, 1.0 - errorVec[j]);
     }
+
 
     if(weights.has_inf()){
       Log::Warn << "Sample weights have reached infinite values,"
