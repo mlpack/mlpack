@@ -196,8 +196,8 @@ TEST_CASE("EmptyPredictTest", "[AdaBoostRegressorTest]")
 
   arma::mat points(10, 100, arma::fill::randu);
   arma::Row<double> predictions;
-  REQUIRE_THROWS_AS(rf.Predict(points, predictions), std::invalid_argument);
-  REQUIRE_THROWS_AS(rf.Predict(points.col(0)), std::invalid_argument);
+  REQUIRE_THROWS_AS(abr.Predict(points, predictions), std::invalid_argument);
+  REQUIRE_THROWS_AS(abr.Predict(points.col(0)), std::invalid_argument);
 }
 
 /**
@@ -221,7 +221,7 @@ TEST_CASE("UnweightedLearnTest", "[AdaBoostRegressorTest]")
   mlpack::data::Split(dataset, labels, trainData, testData, 
                       trainResponses, testResponses, 0.3);
 
-  mlpack::AdaBoostRegressor<><mlpack::ExponentialLoss> abr;
+  mlpack::AdaBoostRegressor<mlpack::ExponentialLoss> abr;
   mlpack::DecisionTreeRegressor<> dtr;
 
   abr.Train(trainData, trainResponses, 20/*numTrees*/, 10/*minLeaves*/, 
