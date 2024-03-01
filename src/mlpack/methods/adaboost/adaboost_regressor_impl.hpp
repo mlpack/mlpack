@@ -352,7 +352,7 @@ double AdaBoostRegressor<
     double beta = avgLoss / (1.0 - avgLoss);
 
     // Boost weight using AdaBoost.R2 alg
-    confidence.push_back(log(1.0 / beta));
+    confidence.push_back(std::log(1.0 / beta));
 
     if (i != numTrees-1){
       arma::Row<ResponsesType> betaVec( errorVec.n_cols , arma::fill::value(beta));
