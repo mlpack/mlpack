@@ -23,7 +23,7 @@ using namespace mlpack;
  * Creates dataset with 5 groups with all the points in same group have exactly
  * same responses.
  */
-void CreateMultiSplitData(arma::mat& d, arma::rowvec& r, const size_t count,
+void CreateMultipleSplitData(arma::mat& d, arma::rowvec& r, const size_t count,
     arma::rowvec& values)
 {
   d = arma::mat(10, count, arma::fill::randu);
@@ -171,7 +171,7 @@ TEST_CASE("EarlyTerminateTest", "[AdaBoostRegressorTest]")
   arma::rowvec responses;
   arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  CreateMultiSplitData(dataset, responses, 1000, values);
+  CreateMultipleSplitData(dataset, responses, 1000, values);
 
   AdaBoostRegressor<> abr(dataset, responses, 20 /*numTrees*/, 1/*minLeaves*/, 
                         0/*minGainSplit*/, 0/*maxDepth*/);
