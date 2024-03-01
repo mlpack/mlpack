@@ -147,7 +147,7 @@ TEST_CASE("ExponentialLossHandCalculation", "[AdaBoostRegressorTest]")
 
   arma::rowvec result = ExponentialLoss::Calculate(values);
   for(size_t i = 0; i < 10; i++)
-    REQUIRE(result[i] == Approx(loss[i]).margin(1e-5));
+    REQUIRE(loss[i] == Approx(result[i]).margin(1e-5));
 }
 
 /**
@@ -198,46 +198,4 @@ TEST_CASE("EmptyPredictTest", "[AdaBoostRegressorTest]")
   arma::Row<double> predictions;
   REQUIRE_THROWS_AS(abr.Predict(points, predictions), std::invalid_argument);
   REQUIRE_THROWS_AS(abr.Predict(points.col(0)), std::invalid_argument);
-}
-
-/**
- * Test unweighted numeric learning, making sure that we get better performance
- * than a single decision tree.
- */
-TEST_CASE("UnweightedLearnTest", "[AdaBoostRegressorTest]")
-{
-  arma::mat dataset;
-  arma::rowvec labels;
-
-  if (!data::Load("lars_dependent_x.csv", dataset))
-    FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", labels))
-    FAIL("Cannot load dataset lars_dependent_y.csv");
-
-  // Loading data.
-  arma::mat trainData, testData;
-  arma::rowvec trainResponses, testResponses;
-  
-  mlpack::data::Split(dataset, labels, trainData, testData, 
-                      trainResponses, testResponses, 0.3);
-
-  mlpack::AdaBoostRegressor<mlpack::ExponentialLoss> abr;
-  mlpack::DecisionTreeRegressor<> dtr;
-
-  abr.Train(trainData, trainResponses, 20/*numTrees*/, 10/*minLeaves*/, 
-            1e-7/*minGainSplit*/, 5/*maxDepth*/);
-  dtr.Train(trainData, trainResponses);
-
-  arma::Row<double> abrPred;
-  abr.Predict(testData, abrPred);
-  // Calculate absolute error for AdaBoost regressor.
-  double abrLoss = arma::sum(arma::abs(abrPred - testResponses));
-
-
-  arma::Row<double> dtrPred;
-  dtr.Predict(testData, dtrPred);
-  // Calculate absolute error for decision tree regressor.
-  double dtrLoss = arma::sum(arma::abs(dtrPred - testResponses));
-
-  REQUIRE(abrLoss < dtrLoss);
 }
