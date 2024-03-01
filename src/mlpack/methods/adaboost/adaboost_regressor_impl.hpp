@@ -304,7 +304,7 @@ double AdaBoostRegressor<
 
   // Load initial weights to 1 / n_responses.
   arma::rowvec weights(responses.n_cols);
-  weights.fill(1/(double)responses.n_cols)
+  weights.fill(1/(double)responses.n_cols);
 
 
   // To be used for prediction.
