@@ -67,7 +67,8 @@ void CreateMultiSplitData(arma::mat& d, arma::rowvec& r, const size_t count,
  */
 TEST_CASE("LinearLossEqualTest", "[AdaBoostRegressorTest]")
 {
-  arma::rowvec values(10, arma::fill::value(5));
+  arma::rowvec values(10);
+  values.fill(5);
   arma::rowvec loss = LinearLoss::Calculate(values);
   for(size_t i = 0; i < 10; i++)
     REQUIRE(loss[i] == Approx(1.0).margin(1e-5));
@@ -79,7 +80,8 @@ TEST_CASE("LinearLossEqualTest", "[AdaBoostRegressorTest]")
  */
 TEST_CASE("SquareLossEqualTest", "[AdaBoostRegressorTest]")
 {
-  arma::rowvec values(10, arma::fill::value(5));
+  arma::rowvec values(10);
+  values.fill(5);
   arma::rowvec loss = SquareLoss::Calculate(values);
   for(size_t i = 0; i < 10; i++)
     REQUIRE(loss[i] == Approx(1.0).margin(1e-5));
@@ -91,7 +93,8 @@ TEST_CASE("SquareLossEqualTest", "[AdaBoostRegressorTest]")
  */
 TEST_CASE("ExponentialLossEqualTest", "[AdaBoostRegressorTest]")
 {
-  arma::rowvec values(10, arma::fill::value(5));
+  arma::rowvec values(10);
+  values.fill(5);
   arma::rowvec loss = LinearLoss::Calculate(values);
   for(size_t i = 0; i < 10; i++)
     REQUIRE(loss[i] == Approx(0.63212).margin(1e-5));

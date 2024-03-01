@@ -303,7 +303,9 @@ double AdaBoostRegressor<
   confidence.clear();
 
   // Load initial weights to 1 / n_responses.
-  arma::rowvec weights(responses.n_cols, arma::fill::value(1/(double)responses.n_cols));
+  arma::rowvec weights(responses.n_cols);
+  weights.fill(1/(double)responses.n_cols)
+
 
   // To be used for prediction.
   arma::Row<ResponsesType> predictedValues(responses.n_cols);
@@ -355,7 +357,8 @@ double AdaBoostRegressor<
     confidence.push_back(std::log(1.0 / beta));
 
     if (i != numTrees-1){
-      arma::Row<ResponsesType> betaVec( errorVec.n_cols , arma::fill::value(beta));
+      arma::Row<ResponsesType> betaVec( errorVec.n_cols);
+      betaVec.fill(beta);
       weights = weights % arma::pow(betaVec, 1.0 - errorVec);
     }
 
