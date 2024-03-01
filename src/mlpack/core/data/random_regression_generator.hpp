@@ -1,4 +1,3 @@
-#include <mlpack.hpp>
 /**
  * @file random_regression_generator.hpp
  * @author Ali Hossam
@@ -14,6 +13,8 @@
 
 #ifndef MLPACK_CORE_DATA_RANDOM_REGRESSION_GENERATOR_HPP
 #define MLPACK_CORE_DATA_RANDOM_REGRESSION_GENERATOR_HPP
+
+#include <mlpack.hpp>
 
 namespace mlpack {
 namespace data {
