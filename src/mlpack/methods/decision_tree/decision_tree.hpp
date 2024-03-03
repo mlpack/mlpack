@@ -15,6 +15,8 @@
 
 #include <mlpack/core.hpp>
 
+#include "mdl_penalty.hpp"
+
 #include "gini_gain.hpp"
 #include "information_gain.hpp"
 #include "mad_gain.hpp"
