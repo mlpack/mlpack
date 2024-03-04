@@ -123,7 +123,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    double& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */,
     FitnessFunction& fitnessFunction)
 {
@@ -199,7 +199,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   if (overallGain > bestGain + minimumGainSplit + epsilon)
   {
     // This is better, so store it in splitInfo and return.
-    splitInfo = numCategories;
+    splitInfo.set_size(1);
+    splitInfo[0] = numCategories;
     return overallGain;
   }
 
@@ -209,20 +210,20 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
 template<typename FitnessFunction>
 size_t AllCategoricalSplit<FitnessFunction>::NumChildren(
-    const double& splitInfo,
+    const arma::vec& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  return (size_t) splitInfo;
+  return splitInfo.n_elem == 0 ? 0 : (size_t) splitInfo[0];
 }
 
 template<typename FitnessFunction>
 template<typename ElemType>
 size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const double& /* splitInfo */,
+    const arma::vec& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  return (size_t) point;
+  return splitInfo.n_elem == 0 ? SIZE_MAX : (size_t) point;
 }
 
 } // namespace mlpack

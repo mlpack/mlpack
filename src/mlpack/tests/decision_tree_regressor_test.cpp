@@ -193,7 +193,7 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
     responses[i + 1] = 100;
   }
 
-  double splitInfo;
+  arma::vec splitInfo;
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -211,7 +211,8 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
   REQUIRE(gain == weightedGain);
 
   // Make sure that splitInfo now hold the number of children.
-  REQUIRE((size_t) splitInfo == 2);
+  REQUIRE(splitInfo.n_elem == 1);
+  REQUIRE((size_t) splitInfo[0] == 2);
 }
 
 /**
@@ -225,7 +226,7 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest_", "[DecisionTreeRegressorTest]")
   arma::rowvec weights(responses.n_elem);
   weights.ones();
 
-  double splitInfo;
+  arma::vec splitInfo;
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -257,7 +258,7 @@ TEST_CASE("AllCategoricalSplitNoGainTest_", "[DecisionTreeRegressorTest]")
     responses[i + 2] = 0.5;
   }
 
-  double splitInfo;
+  arma::vec splitInfo;
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -289,7 +290,7 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_",
   arma::rowvec weights(responses.n_elem);
   weights.ones();
 
-  double splitInfo;
+  arma::vec splitInfo;
   BestBinaryNumericSplit<MADGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -309,8 +310,9 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_",
 
   // The class probabilities, for this split, hold the splitting point, which
   // should be between 4 and 5.
-  REQUIRE(splitInfo > 0.4);
-  REQUIRE(splitInfo < 0.5);
+  REQUIRE(splitInfo.n_elem == 1);
+  REQUIRE(splitInfo[0] > 0.4);
+  REQUIRE(splitInfo[0] < 0.5);
 }
 
 /**
@@ -326,7 +328,7 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest_",
       { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
   arma::rowvec weights(responses.n_elem);
 
-  double splitInfo;
+  arma::vec splitInfo;
   BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -361,7 +363,7 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
     responses[i + 1] = 1.0;
   }
 
-  double splitInfo;
+  arma::vec splitInfo;
   BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -386,7 +388,7 @@ TEST_CASE("RandomBinaryNumericSplitAlwaysSplit_",
   arma::rowvec weights;
   weights.ones(responses.n_elem);
 
-  double splitInfo;
+  arma::vec splitInfo;
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -414,7 +416,7 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest_",
   arma::rowvec responses("0 0 0 0 0 1 1 1 1 1 1");
   arma::rowvec weights(responses.n_elem);
 
-  double splitInfo;
+  arma::vec splitInfo;
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -449,7 +451,7 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
     responses[i + 1] = 1.0;
   }
 
-  double splitInfo;
+  arma::vec splitInfo;
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
@@ -460,6 +462,277 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
+}
+
+/**
+ * Check that the BestBinaryCategoricalSplit will split perfectly 
+ * when this is clearly possible. Category C₂ has response 2.0 
+ * and the rest are zero.
+ */
+TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest", 
+    "[DecisionTreeRegressorTest]")
+{
+  size_t N = 3131;
+  size_t K = 17;
+  double EPSILON = 1e-7;
+  size_t minLeaf = 10;
+
+  BestBinaryCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
+  vec splitInfo;
+  MSEGain gainFn;
+
+  vec data = randi<vec>(N, distr_param(0,K-1));
+  rowvec weights = ones<rowvec>(N); 
+  rowvec response(N);
+  for (size_t i = 0; i < N; ++i)
+    response[i] = data[i] == 2 ? 2 : 0;
+
+  // Find the best binary split of the data. 
+  double bestGain = MSEGain::Evaluate<false>(response, weights);
+  double gain = BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, data, K, response, weights, minLeaf, 
+      EPSILON, splitInfo, aux, gainFn
+  );
+  double weightedGain = 
+      BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<true>(
+          bestGain, data, K, response, weights, minLeaf, 
+          EPSILON, splitInfo, aux, gainFn
+  );
+
+  // The split into categories [(2), (0, 1, 3, ..., K-1)] would be 
+  // optimal, resulting in two pure children nodes, therefore the gain 
+  // should be zero here. Unity weights means that the gain is the same 
+  // with or without weights.
+  REQUIRE(gain > bestGain);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(gain == Approx(0.0).margin(EPSILON));
+
+  // CalculateDirection should now send all of C₂ to the 
+  // one direction and the remaining Cⱼ to the other.
+  vec class1_data = ones(N) * 2;
+  vec class1_direction(N);
+  vec class0_data= randi<vec>(N, distr_param(3, K - 1));
+  vec class0_direction(N);
+
+  for (size_t i = 0; i < N; ++i)
+  {
+    class0_direction(i) = BestBinaryCategoricalSplit<MSEGain>
+        ::CalculateDirection(
+            class0_data(i), splitInfo, aux
+    );
+    class1_direction(i) = BestBinaryCategoricalSplit<MSEGain>
+          ::CalculateDirection(
+              class1_data(i), splitInfo, aux
+    );
+  }
+  REQUIRE((all(class0_direction == LEFT) || all(class0_direction == RIGHT)));
+  REQUIRE((all(class1_direction == LEFT) || all(class1_direction == RIGHT)));
+}
+
+/**
+ * Check that no split is made when it doesn't get us anything.
+ */
+TEST_CASE("BestBinaryCategoricalSplitRegressionNoGainTest", 
+    "[DecisionTreeRegressorTest]")
+{
+  size_t N = 300;
+  size_t K = 10; 
+  double EPSILON = 1e-7;
+  size_t minLeaf = 10;
+
+  BestBinaryCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
+  MSEGain gainFn;
+  vec splitInfo;
+
+  vec data(N);
+  rowvec response(N);
+  rowvec weights = ones<rowvec>(N);
+
+  for (size_t i = 0; i < N; i += 2)
+  {
+    data[i] = i % K;
+    response[i] = 0;
+    data[i + 1] = i % K;
+    response[i + 1] = 1;
+  }
+
+  // Call the method to do the splitting.
+  double bestGain = MSEGain::Evaluate<false>(response, weights);
+  double gain = BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, data, K, response, weights, minLeaf, 
+      EPSILON, splitInfo, aux, gainFn
+  );
+  double weightedGain = 
+      BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<true>(
+          bestGain, data, K, response, weights, minLeaf, 
+          EPSILON, splitInfo, aux, gainFn
+  );
+
+  // Make sure that there was no split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(splitInfo.n_elem == 0);
+}
+
+/**
+ * Make sure that BestBinaryCategoricalSplit respects the minimum number 
+ * of samples required to split. 
+ */
+TEST_CASE("BestBinaryCategoricalSplitRegressionMinSamplesTest", 
+    "[DecisionTreeRegressorTest]")
+{
+  size_t K = 4; 
+  double EPSILON = 1e-7;
+  size_t minLeaf = 8;
+
+  BestBinaryCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
+  MSEGain gainFn;
+  vec splitInfo;
+
+  vec data("0 0 0 1 1 1 2 2 2 3 3 3");
+  vec response("0 0 0 1 1 1 0 0 0 1 1 1");
+  rowvec weights(response.n_elem, arma::fill::ones);
+
+  // Call the method to do the splitting.
+  double bestGain = MSEGain::Evaluate<false>(response, weights);
+  double gain = BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, data, K, response, weights, minLeaf, 
+      EPSILON, splitInfo, aux, gainFn
+  );
+  double weightedGain = 
+      BestBinaryCategoricalSplit<MSEGain>::SplitIfBetter<true>(
+          bestGain, data, K, response, weights, minLeaf, 
+          EPSILON, splitInfo, aux, gainFn
+  );
+
+  // Make sure it's not split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(weightedGain == DBL_MAX);
+  REQUIRE(splitInfo.n_elem == 0);
+}
+
+/**
+ * Test that we can build a decision tree on a simple categorical dataset
+ * using the BestBinaryCategoricalSplit.
+ */
+TEST_CASE("BestCategoricalBuildTest_", "[DecisionTreeRegressorTest]")
+{
+  mat d;
+  rowvec r;
+  data::DatasetInfo di;
+  MockCategoricalData(d, r, di);
+
+  // Split into a training set and a test set.
+  mat trainingData = d.cols(0, 1999);
+  mat testData = d.cols(2000, 3999);
+  rowvec trainingResponses = r.subvec(0, 1999);
+  rowvec testResponses = r.subvec(2000, 3999);
+  size_t minLeaf = 10;
+
+  // Build the tree.
+  DecisionTreeRegressor<
+      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+          tree(trainingData, di, trainingResponses, minLeaf);
+
+  // Now evaluate the quality of predictions.
+  rowvec predictions;
+  tree.Predict(testData, predictions);
+
+  // Make sure we get reasonable rmse.
+  const double rmse = RMSE(predictions, testResponses);
+  REQUIRE(predictions.n_elem == testData.n_cols);
+  REQUIRE(rmse < 1.0);
+}
+
+/**
+ * Test that we can build a decision tree with weights on a simple categorical
+ * dataset using the BestBinaryCategoricalSplit.
+ */
+TEST_CASE("BestCategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
+{
+  mat d;
+  rowvec r;
+  data::DatasetInfo di;
+  MockCategoricalData(d, r, di);
+
+  // Split into a training set and a test set.
+  mat trainingData = d.cols(0, 1999);
+  mat testData = d.cols(2000, 3999);
+  rowvec trainingResponses = r.subvec(0, 1999);
+  rowvec testResponses = r.subvec(2000, 3999);
+  rowvec weights = ones<rowvec>(trainingResponses.n_elem);
+  size_t minLeaf = 10;
+
+  // Build the tree.
+  DecisionTreeRegressor<
+      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+          tree(trainingData, di, trainingResponses, weights, minLeaf);
+
+  // Now evaluate the quality of predictions.
+  rowvec predictions;
+  tree.Predict(testData, predictions);
+
+  // Make sure we get reasonable rmse.
+  const double rmse = RMSE(predictions, testResponses);
+  REQUIRE(predictions.n_elem == testData.n_cols);
+  REQUIRE(rmse < 1.0);
+}
+
+/**
+ * Test that we can build a decision tree on a simple categorical dataset using
+ * weights, with low-weight noise added, using the BestBinaryCategoricalSplit.
+ */
+TEST_CASE("BestCategoricalNoisyWeightedBuildTest_", 
+    "[DecisionTreeRegressorTest]")
+{
+  mat d;
+  rowvec r;
+  data::DatasetInfo di;
+  MockCategoricalData(d, r, di);
+
+  // Split into a training set and a test set.
+  mat trainingData = d.cols(0, 1999);
+  mat testData = d.cols(2000, 3999);
+  rowvec trainingResponses = r.subvec(0, 1999);
+  rowvec testResponses = r.subvec(2000, 3999);
+  size_t minLeaf = 10;
+
+  // Now create random points.
+  mat randomNoise(5, 2000);
+  rowvec randomResponses(2000);
+  for (size_t i = 0; i < 2000; ++i)
+  {
+    randomNoise(0, i) = Random();
+    randomNoise(1, i) = Random(-1, 1);
+    randomNoise(2, i) = Random();
+    randomNoise(3, i) = RandInt(0, 2);
+    randomNoise(4, i) = RandInt(0, 5);
+    randomResponses[i] = Random(-10, 18);
+  }
+
+  // Generate weights.
+  rowvec weights(4000);
+  for (size_t i = 0; i < 2000; ++i)
+    weights[i] = Random(0.9, 1.0);
+  for (size_t i = 2000; i < 4000; ++i)
+    weights[i] = Random(0.0, 0.001);
+
+  mat fullData = join_rows(trainingData, randomNoise);
+  rowvec fullResponses = join_rows(trainingResponses, randomResponses);
+
+  // Build the tree.
+  DecisionTreeRegressor<
+      MSEGain, BestBinaryNumericSplit, BestBinaryCategoricalSplit> 
+          tree(fullData, di, fullResponses, weights, minLeaf);
+
+  // Now evaluate the quality of predictions.
+  rowvec predictions;
+  tree.Predict(testData, predictions);
+
+  // Make sure we get reasonable rmse.
+  const double rmse = RMSE(predictions, testResponses);
+  REQUIRE(predictions.n_elem == testData.n_cols);
+  REQUIRE(rmse < 1.5);
 }
 
 /**
