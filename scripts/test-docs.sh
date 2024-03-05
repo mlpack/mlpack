@@ -247,7 +247,7 @@ download_http_artifacts()
   # Special case: if we are looking at core.md, this has two special files we
   # need to create that is used in the example.
   f=`basename $input_dir`;
-  if [ "$f" = "core" || "$f" = "matrices" ];
+  if [[ "$f" == "core" || "$f" == "matrices" ]];
   then
     cd $output_dir;
     echo "  Creating data.csv...";
