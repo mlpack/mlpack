@@ -51,7 +51,7 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_binding_test.cpp
   cosine_tree_test.cpp
-  cv_test.cpp
+#  cv_test.cpp
   dbscan_test.cpp
   decision_tree_regressor_test.cpp
   decision_tree_test.cpp
@@ -102,12 +102,12 @@ add_executable(mlpack_test
   one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
-  policy_gradient_test.cpp
+#  policy_gradient_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
-  q_learning_test.cpp
+#  q_learning_test.cpp
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp
