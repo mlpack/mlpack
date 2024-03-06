@@ -92,7 +92,7 @@ TEST_CASE("GradientOrthogonalRegularizerTest", "[ANNRegularizerTest]")
     {
       arma::mat x = arma::abs(weight * weight.t() -
           arma::eye<arma::mat>(weight.n_rows, weight.n_cols)) * factor;
-      return arma::accu(x);
+      return accu(x);
     }
 
     void Gradient(arma::mat& weight, arma::mat& gradient)

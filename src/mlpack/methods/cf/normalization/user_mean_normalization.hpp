@@ -48,7 +48,7 @@ class UserMeanNormalization
    */
   void Normalize(arma::mat& data)
   {
-    const size_t userNum = arma::max(data.row(0)) + 1;
+    const size_t userNum = max(data.row(0)) + 1;
     userMean = arma::vec(userNum, arma::fill::zeros);
     // Number of ratings for each user.
     arma::Row<size_t> ratingNum(userNum, arma::fill::zeros);

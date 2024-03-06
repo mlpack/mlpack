@@ -74,7 +74,7 @@ class MADGain
       Sum(values, begin, end, mean);
       mean /= (double) (end - begin);
 
-      mad = arma::accu(arma::abs(values.subvec(begin, end - 1) - mean));
+      mad = accu(arma::abs(values.subvec(begin, end - 1) - mean));
       mad /= (double) (end - begin);
     }
 

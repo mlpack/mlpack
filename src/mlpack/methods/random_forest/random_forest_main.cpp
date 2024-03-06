@@ -252,7 +252,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Info << "Training random forest with " << numTrees << " trees..."
         << endl;
 
-    const size_t numClasses = arma::max(labels) + 1;
+    const size_t numClasses = max(labels) + 1;
 
     // Train the model.
     rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
@@ -267,7 +267,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> predictions;
       rfModel->rf.Classify(data, predictions);
 
-      const size_t correct = arma::accu(predictions == labels);
+      const size_t correct = accu(predictions == labels);
 
       Log::Info << correct << " of " << labels.n_elem << " correct on training"
           << " set (" << (double(correct) / double(labels.n_elem) * 100) << ")."
@@ -292,7 +292,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> testLabels =
           std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
-      const size_t correct = arma::accu(predictions == testLabels);
+      const size_t correct = accu(predictions == testLabels);
 
       Log::Info << correct << " of " << testLabels.n_elem << " correct on test"
           << " set (" << (double(correct) / double(testLabels.n_elem) * 100)

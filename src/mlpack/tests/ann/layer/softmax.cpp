@@ -31,14 +31,14 @@ TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
   // Test the forward function.
   input = arma::mat("1.7; 3.6");
   module.Forward(input, output);
-  REQUIRE(arma::accu(arma::abs(arma::mat("0.130108; 0.869892") - output)) ==
+  REQUIRE(accu(arma::abs(arma::mat("0.130108; 0.869892") - output)) ==
       Approx(0.0).margin(1e-4));
 
   // Test the backward function.
   gy = arma::zeros(input.n_rows, input.n_cols);
   gy(0) = 1;
   module.Backward(input, output, gy, g);
-  REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
+  REQUIRE(accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
       Approx(0.0).margin(1e-04));
 }
 

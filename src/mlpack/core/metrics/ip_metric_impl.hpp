@@ -76,7 +76,7 @@ inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
 {
   // This is the metric induced by the kernel function.
   // Maybe we can do better by caching some of this?
-  return sqrt(kernel->Evaluate(a, a) + kernel->Evaluate(b, b) -
+  return std::sqrt(kernel->Evaluate(a, a) + kernel->Evaluate(b, b) -
       2 * kernel->Evaluate(a, b));
 }
 

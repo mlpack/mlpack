@@ -133,7 +133,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     for (size_t k = (i + 1); k < stretchedDataset.n_cols; ++k)
     {
       // Calculate p_ik and p_ki first.
-      double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
+      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
                                          stretchedDataset.unsafe_col(k)));
       double p_ik = 0, p_ki = 0;
       p_ik = eval / denominators(i);
@@ -188,7 +188,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
         continue;
 
       // Calculate the numerator of p_ik.
-      double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
+      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
                                          stretchedDataset.unsafe_col(k)));
 
       // If the points are in the same class, we must add to the second term of
@@ -269,7 +269,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
     for (size_t j = (i + 1); j < stretchedDataset.n_cols; ++j)
     {
       // Evaluate exp(-d(x_i, x_j)).
-      double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
+      double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
                                          stretchedDataset.unsafe_col(j)));
 
       // Add this to the denominators of both p_i and p_j: K(i, j) = K(j, i).

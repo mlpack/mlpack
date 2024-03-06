@@ -90,7 +90,7 @@ double HoeffdingCategoricalSplit<FitnessFunction>::MajorityProbability() const
 {
   arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
-  return double(classCounts.max()) / double(arma::accu(classCounts));
+  return double(classCounts.max()) / double(accu(classCounts));
 }
 
 } // namespace mlpack

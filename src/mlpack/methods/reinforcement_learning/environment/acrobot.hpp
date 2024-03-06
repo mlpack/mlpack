@@ -174,10 +174,10 @@ class Acrobot
     nextState.Theta2() = Wrap(currentNextState[1], -M_PI, M_PI);
 
     //! The value of angular velocity is bounded in min and max value.
-    nextState.AngularVelocity1() = ClampRange(currentNextState[2],
-        -maxVel1, maxVel1);
-    nextState.AngularVelocity2() = ClampRange(currentNextState[3],
-        -maxVel2, maxVel2);
+    nextState.AngularVelocity1() = std::min(std::max(currentNextState[2],
+        -maxVel1), maxVel1);
+    nextState.AngularVelocity2() = std::min(std::max(currentNextState[3],
+        -maxVel2), maxVel2);
 
     // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
@@ -212,7 +212,7 @@ class Acrobot
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
+    return State((randu<arma::colvec>(4) - 0.5) / 5.0);
   }
 
   /**

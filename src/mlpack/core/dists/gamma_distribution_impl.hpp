@@ -84,7 +84,7 @@ inline void GammaDistribution::Train(const arma::mat& rdata,
     meanxVec += probabilities(i) * rdata.col(i);
   }
 
-  double totProbability = arma::accu(probabilities);
+  double totProbability = accu(probabilities);
 
   meanLogxVec /= totProbability;
   meanxVec /= totProbability;
@@ -135,8 +135,8 @@ inline void GammaDistribution::Train(const arma::vec& logMeanxVec,
       aOld = aEst;
 
       // Calculate new value for alpha.
-      double nominator = meanLogx - logMeanx + log(aEst) - Digamma(aEst);
-      double denominator = pow(aEst, 2) * (1 / aEst - Trigamma(aEst));
+      double nominator = meanLogx - logMeanx + std::log(aEst) - Digamma(aEst);
+      double denominator = std::pow(aEst, 2) * (1 / aEst - Trigamma(aEst));
 
       // Protect against division by 0.
       if (denominator == 0)

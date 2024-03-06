@@ -216,11 +216,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  REQUIRE(arma::accu(trainingSetEstimates ==
+  REQUIRE(accu(trainingSetEstimates ==
       params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  REQUIRE(arma::accu(testSetEstimates ==
+  REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
@@ -261,11 +261,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  REQUIRE(arma::accu(trainingSetEstimates ==
+  REQUIRE(accu(trainingSetEstimates ==
       params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  REQUIRE(arma::accu(testSetEstimates ==
+  REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
@@ -306,11 +306,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  REQUIRE(arma::accu(trainingSetEstimates ==
+  REQUIRE(accu(trainingSetEstimates ==
       params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  REQUIRE(arma::accu(testSetEstimates ==
+  REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
@@ -351,11 +351,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETSkipPruningTest",
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  REQUIRE(arma::accu(trainingSetEstimates ==
+  REQUIRE(accu(trainingSetEstimates ==
       params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  REQUIRE(arma::accu(testSetEstimates ==
+  REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }

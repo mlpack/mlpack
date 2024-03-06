@@ -48,8 +48,8 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
 template<typename DataType>
 DataType BernoulliDistribution<DataType>::Sample() const
 {
-  DataType sample = arma::randu<DataType>
-      (probability.n_rows, probability.n_cols);
+  DataType sample;
+  sample.randu(probability.n_rows, probability.n_cols);
 
   for (size_t i = 0; i < sample.n_elem; ++i)
       sample(i) = sample(i) < probability(i);
@@ -61,7 +61,7 @@ template<typename DataType>
 double BernoulliDistribution<DataType>::LogProbability(
     const DataType& observation) const
 {
-  return arma::accu(log(probability + eps) % observation +
+  return accu(log(probability + eps) % observation +
       log(1 - probability + eps) % (1 - observation)) /
       observation.n_cols;
 }

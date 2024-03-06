@@ -230,7 +230,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     {
       // Build the model.
       model->BuildModel(trainingSet, datasetInfo, labels,
-          arma::max(labels) + 1, batchTraining, confidence, maxSamples,
+          max(labels) + 1, batchTraining, confidence, maxSamples,
           100, minSamples, bins, observationsBeforeBinning);
       --passes; // This model-building takes one pass.
     }

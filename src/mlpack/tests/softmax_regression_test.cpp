@@ -50,7 +50,7 @@ TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
       arma::mat hypothesis, probabilities;
 
       hypothesis = exp(parameters * data.col(j));
-      probabilities = hypothesis / arma::accu(hypothesis);
+      probabilities = hypothesis / accu(hypothesis);
 
       logLikelihood += log(probabilities(labels(j), 0));
     }
@@ -92,7 +92,7 @@ TEST_CASE("SoftmaxRegressionFunctionRegularizationEvaluate",
     parameters.randu(numClasses, inputSize);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = arma::accu(parameters % parameters);
+    wL2SquaredNorm = accu(parameters % parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;

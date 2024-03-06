@@ -154,14 +154,16 @@ inline bool LoadImage(const std::string& filename,
 
   info.Width() = tempWidth;
   info.Height() = tempHeight;
-  info.Channels() = tempChannels;
+  // Only set the new number of channels if we didn't force grayscale loading.
+  if (info.Channels() != 1)
+    info.Channels() = tempChannels;
 
   // Copy image into armadillo Mat.
   matrix = arma::Mat<unsigned char>(image, info.Width() * info.Height() *
       info.Channels(), 1, true, true);
 
   // Free the image pointer.
-  free(image);
+  stbi_image_free(image);
   return true;
 }
 

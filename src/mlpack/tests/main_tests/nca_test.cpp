@@ -156,7 +156,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -198,7 +198,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -247,7 +247,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
     RUN_BINDING();
 
     // Check that the output matrices are different.
-    success = (arma::accu(params.Get<arma::mat>("output") != output) > 0);
+    success = (accu(params.Get<arma::mat>("output") != output) > 0);
     if (success)
       break;
 
@@ -298,7 +298,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentBatchSizeTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -339,7 +339,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 }
 
 /**
@@ -425,7 +425,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
     RUN_BINDING();
 
     // Check that the output matrices are different.
-    success = (arma::accu(params.Get<arma::mat>("output") != output) > 0);
+    success = (accu(params.Get<arma::mat>("output") != output) > 0);
     if (success)
       break;
 
@@ -480,7 +480,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentMaxIterationTest",
     RUN_BINDING();
 
     // Check that the output matrices are different.
-    success = (arma::accu(params.Get<arma::mat>("output") != output) > 0);
+    success = (accu(params.Get<arma::mat>("output") != output) > 0);
     if (success)
       break;
 

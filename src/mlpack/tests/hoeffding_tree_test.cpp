@@ -1832,6 +1832,6 @@ TEST_CASE("HoeffdingTreeCategoricalFloatDataTest", "[HoeffdingTreeTest]")
 
   // Make sure that the accuracy is at least reasonable.  (This is a very loose
   // test.)
-  REQUIRE(arma::accu(batchPredictions == labels) > (labels.n_elem / 2));
-  REQUIRE(arma::accu(streamPredictions == labels) > (labels.n_elem / 2));
+  REQUIRE(accu(batchPredictions == labels) > (labels.n_elem / 2));
+  REQUIRE(accu(streamPredictions == labels) > (labels.n_elem / 2));
 }

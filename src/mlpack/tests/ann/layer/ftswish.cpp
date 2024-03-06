@@ -44,7 +44,7 @@ TEST_CASE("FTSwishTest", "[ANNLayerTest]")
   layer.Forward(input, output);
 
   // Test the Forward function
-  REQUIRE(abs(arma::accu(output - actualOutput)) <= 0.0001);
+  REQUIRE(abs(accu(output - actualOutput)) <= 0.0001);
 
   arma::mat delta = {{0.615941, 0.989097, 0.0},
     {1.03315, 1.09083 ,0.0 },
@@ -58,5 +58,5 @@ TEST_CASE("FTSwishTest", "[ANNLayerTest]")
   layer.Backward(input, output, gy, g);
 
   //Test the Backward function
-  REQUIRE(abs(arma::accu(g - delta)) <= 0.0001);
+  REQUIRE(abs(accu(g - delta)) <= 0.0001);
 }

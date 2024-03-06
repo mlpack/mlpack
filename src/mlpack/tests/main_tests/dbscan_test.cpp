@@ -133,7 +133,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffEpsilonTest",
   arma::Row<size_t> output2;
   output2 = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  REQUIRE(arma::accu(output1 != output2) > 1);
+  REQUIRE(accu(output1 != output2) > 1);
 }
 
 /**
@@ -168,7 +168,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffMinSizeTest",
   arma::Row<size_t> output2;
   output2 = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  REQUIRE(arma::accu(output1 != output2) > 1);
+  REQUIRE(accu(output1 != output2) > 1);
 }
 
 /**
@@ -422,5 +422,5 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANRandomSelectionFlagTest",
   arma::Row<size_t> randomOutput;
   randomOutput = std::move(params.Get<arma::Row<size_t>>("assignments"));
 
-  REQUIRE(arma::accu(orderedOutput != randomOutput) > 0);
+  REQUIRE(accu(orderedOutput != randomOutput) > 0);
 }

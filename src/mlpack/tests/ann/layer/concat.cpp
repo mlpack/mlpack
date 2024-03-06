@@ -52,20 +52,20 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   output.set_size(module.OutputSize(), 1);
   module.Forward(input, output);
 
-  const double sumModuleA = arma::accu(
+  const double sumModuleA = accu(
       moduleA->Parameters().submat(
       100, 0, moduleA->Parameters().n_elem - 1, 0));
-  const double sumModuleB = arma::accu(
+  const double sumModuleB = accu(
       moduleB->Parameters().submat(
       100, 0, moduleB->Parameters().n_elem - 1, 0));
   REQUIRE(sumModuleA + sumModuleB ==
-      Approx(arma::accu(output.col(0))).epsilon(1e-5));
+      Approx(accu(output.col(0))).epsilon(1e-5));
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
   delta.set_size(input.n_rows, input.n_cols);
   module.Backward(input, output, error, delta);
-  REQUIRE(arma::accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 }
 
 /**

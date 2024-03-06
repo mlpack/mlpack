@@ -116,7 +116,7 @@ class RegressionInterpolation
     arma::vec constant(neighborNum);
 
     arma::vec userRating(cleanedData.col(queryUser));
-    const size_t support = arma::accu(userRating != 0);
+    const size_t support = accu(userRating != 0);
 
     // If user has no rating at all, average interpolation is used.
     if (support == 0)

@@ -213,8 +213,7 @@ double KNNAccuracy(const arma::mat& dataset,
           1 / std::pow(distances(j, i) + 1, 2);
     }
 
-    arma::vec index = ConvTo<arma::vec>::From(arma::find(Map
-        == arma::max(Map)));
+    arma::vec index = ConvTo<arma::vec>::From(arma::find(Map == max(Map)));
 
     // Increase count if labels match.
     if (index(0) == labels(i))
@@ -344,7 +343,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   else if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
-    arma::vec ranges = arma::max(data, 1) - arma::min(data, 1);
+    arma::vec ranges = max(data, 1) - arma::min(data, 1);
     for (size_t d = 0; d < ranges.n_elem; ++d)
       if (ranges[d] == 0.0)
         ranges[d] = 1; // A range of 0 produces NaN later on.
