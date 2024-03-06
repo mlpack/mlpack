@@ -5,9 +5,19 @@
 # `tidy` and `checklink` (from Debian's w3c-linkchecker package) are used to
 # test the output and must also be available and on the path.
 # Run this from the root directory of the repository.
+# The output directory can be specified as the first option.
 
-template_html_header=doc/html/template.html.header;
-template_html_footer=doc/html/template.html.footer;
+if [ "$#" -gt 1 ]; then
+  echo "Usage: $0 [output_dir/]";
+  exit 1;
+elif [ "$#" -eq 1 ]; then
+  output_dir=$1;
+else
+  output_dir=doc/html;
+fi
+
+template_html_header="${output_dir}/template.html.header";
+template_html_footer="${output_dir}/template.html.footer";
 
 if ! command -v kramdown &>/dev/null
 then
@@ -39,7 +49,7 @@ run_kramdown()
   input_file=$1;
   # This converts, e.g., ./doc/user/index.md -> doc/html/user/index.html.
   tmp=${input_file#./doc/}; # Strip leading ./doc/.
-  output_file=doc/html/${tmp%.md}.html;
+  output_file="$output_dir/${tmp%.md}.html";
 
   # Determine what the link root is.  If we're in the root directory, it's
   # nothing, otherwise it's one of more '../'s.
@@ -52,7 +62,8 @@ run_kramdown()
   fi
 
   # Make the enclosing directory if needed.
-  mkdir -p $(dirname $output_file);
+  out_dir=`dirname "$output_file"`;
+  mkdir -p "$out_dir";
 
   # Kramdown doesn't detect languages correctly with the "```" fence; instead it
   # needs the "~~~" fence.
@@ -103,27 +114,27 @@ run_kramdown()
       --syntax-highlighter rouge \
       --syntax-highlighter-opts '{ default_lang: c++ }' \
       --auto_ids \
-      $input_file.tmp > $output_file.tmp || exit 1;
-  cat $template_html_header | sed "s|LINKROOT|$link_root|" > $output_file;
+      $input_file.tmp > "$output_file.tmp" || exit 1;
+  cat "$template_html_header" | sed "s|LINKROOT|$link_root|" > "$output_file";
 
   # Add clickable anchors to h2 and h3 headers.
-  sed -E 's/<h([23]) id="([^"]*)">/<h\1 id="\2"><a href="#\2" class="pl">🔗<\/a> /' $output_file.tmp >> $output_file;
+  sed -E 's/<h([23]) id="([^"]*)">/<h\1 id="\2"><a href="#\2" class="pl">🔗<\/a> /' "$output_file.tmp" >> "$output_file";
 
   # Simple postprocessing to make tidy a little happier.
   # (Muting the warning won't change the error code!)
-  sed -i 's/<table>/<table summary="">/' $output_file;
+  sed -i 's/<table>/<table summary="">/' "$output_file";
 
-  cat $template_html_footer >> $output_file;
-  rm -f $input_file.tmp $output_file.tmp;
+  cat "$template_html_footer" >> "$output_file";
+  rm -f $input_file.tmp "$output_file.tmp";
 }
 
 # Create the template header file.
 create_template_header()
 {
-  output_file=$1;
+  output_file="$1";
 
   # Note that LINKROOT will be substituted into place by run_kramdown.
-  cat > $output_file << EOF
+  cat > "$output_file" << EOF
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -142,23 +153,23 @@ create_template_footer()
 {
   output_file=$1;
 
-  cat > $output_file << EOF
+  cat > "$output_file" << EOF
 </body>
 </html>
 EOF
 }
 
-rm -rf doc/html/;
-mkdir -p doc/html/;
-cp doc/js/* doc/html/;
-mkdir -p doc/html/user/img/;
-cp doc/img/* doc/html/user/img/;
-mkdir -p doc/html/tutorials/res/;
-cp doc/tutorials/res/* doc/html/tutorials/res/;
+rm -rf "$output_dir";
+mkdir -p "$output_dir";
+cp doc/js/* "$output_dir";
+mkdir -p "$output_dir/user/img/";
+cp doc/img/* "$output_dir/user/img/";
+mkdir -p "$output_dir/tutorials/res/";
+cp doc/tutorials/res/* "$output_dir/tutorials/res/";
 
 # Create the template files we will use.
-create_template_header $template_html_header;
-create_template_footer $template_html_footer;
+create_template_header "$template_html_header";
+create_template_footer "$template_html_footer";
 
 # Process all the .md files.
 for f in README.md `find ./doc/ -iname '*.md'`;
@@ -173,18 +184,18 @@ do
 
   # This converts, e.g., ./doc/user/index.md -> doc/html/user/index.html.
   tmp=${f#./doc/}; # Strip leading ./doc/.
-  of=doc/html/${tmp%.md}.html;
+  of="$output_dir/${tmp%.md}.html";
 
-  tidy -qe $of || exit 1;
+  tidy -qe "$of" || exit 1;
 done
 
 # Now take a second pass to check all the links.
-for f in `find ./doc/html/ -iname '*.html'`;
+find "$output_dir" -iname '*.html' -print0 | while read -d $'\0' f
 do
   echo "Checking links in $f...";
 
   # To run checklink we have to strip out some perl stderr warnings...
-  checklink -qs --follow-file-links --suppress-broken 405 $f 2>&1 |
+  checklink -qs --follow-file-links --suppress-broken 405 "$f" 2>&1 |
       grep -v 'Use of uninitialized value' > checklink_out;
   if [ -s checklink_out ];
   then
@@ -195,5 +206,5 @@ do
 done
 
 # Remove temporary files.
-rm -f $template_html_header;
-rm -f $template_html_footer;
+rm -f "$template_html_header";
+rm -f "$template_html_footer";
