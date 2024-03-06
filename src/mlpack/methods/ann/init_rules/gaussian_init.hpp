@@ -52,7 +52,7 @@ class GaussianInitialization
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W = randn<MatType>(rows, cols, distr_param(0.0, std::sqrt(variance)));
+    W = randn<MatType>(rows, cols) * std::sqrt(variance);
   }
 
   /**
@@ -67,8 +67,7 @@ class GaussianInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W = randn<MatType>(W.n_rows, W.n_cols,
-        distr_param(mean, std::sqrt(variance)));
+    W = randn<MatType>(W.n_rows, W.n_cols) * std::sqrt(variance);
   }
 
   /**
