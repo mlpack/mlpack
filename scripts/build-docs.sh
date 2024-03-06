@@ -84,8 +84,8 @@ run_kramdown()
   # links in that file differently.
   if [[ $input_file != "README.md" ]];
   then
-    sed -i "s|\]([./]*README.md)|${link_root}README.html)|g" $input_file.tmp;
-    sed -i "s|\]([./]*README.md#\([^ ]*\))|${link_root}README.html#\1)|g" $input_file.tmp;
+    sed -i "s|\]([./]*README.md)|](${link_root}README.html)|g" $input_file.tmp;
+    sed -i "s|\]([./]*README.md#[0-9]-\([^ ]*\))|](${link_root}README.html#\1)|g" $input_file.tmp;
     sed -i 's/\](\([^ ]*\).md)/](\1.html)/g' $input_file.tmp;
     sed -i 's/\](\([^ ]*\).md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
   else
