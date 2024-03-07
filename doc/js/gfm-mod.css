@@ -14,11 +14,14 @@ body {
   font-family: Helvetica, arial, sans-serif;
   font-size: 14px;
   line-height: 1.4;
+  background-color: white;
+  color: #333;
+}
+
+div#content {
   padding-top: 10px;
   padding-bottom: 10px;
-  background-color: white;
   padding: 30px;
-  color: #333;
   max-width: 920px;
   margin: auto;
 }
@@ -1051,4 +1054,70 @@ a.pl:hover {
 
 table td em {
   font-size: 85%;
+}
+
+div#sidebar {
+  float: left;
+  position: sticky;
+  top: 5px;
+  width: 200px;
+  max-width: 200px;
+  font-size: 85%;
+}
+
+div#sidebar ul {
+  border-top: 2px solid #ccc;
+  padding: 0.5em;
+  list-style-type: none;
+  padding-left: 0.5em;
+  margin-bottom: 0px;
+}
+
+div#sidebar ul ul {
+  border-top: none;
+  list-style-type: circle;
+  padding-left: 1.0em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+div#sidebar ul ul ul {
+  border-top: none;
+  padding-left: 1.5em;
+  margin-top: 2px;
+  margin-bottom: 0;
+  list-style-type: disc;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+div#sidebar details {
+  margin-bottom: 0px;
+}
+
+div#sidebar details summary {
+  list-style: none;
+}
+div#sidebar details summary::-webkit-details-marker {
+  display: none;
+}
+
+div#sidebar details summary::after {
+  content: " ►";
+}
+
+div#sidebar details[open] summary::after {
+  content: " ▼";
+}
+
+@media screen and (max-width: 1140px) {
+  div#sidebar {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1320px) and (min-width: 1140px) {
+  div#content {
+    margin-left: 200px;
+  }
 }
