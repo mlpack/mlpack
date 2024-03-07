@@ -56,7 +56,7 @@ TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
     int size = 1; 
     double mu = 0.0;
     double theta = 1.0; 
-    double sigma = 0.1;  
+    double sigma = 0.01;
 
     // Create an instance of the OUNoise class.
     OUNoise ouNoise(size, mu, theta, sigma);
@@ -108,7 +108,7 @@ TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest]")
     // Set up the GaussianNoise parameters.
     int size = 1; 
     double mu = 0.0; 
-    double sigma = 0.1; 
+    double sigma = 0.01;
 
     // Create an instance of the GaussianNoise class.
     GaussianNoise gaussianNoise(size, mu, sigma);
@@ -153,7 +153,7 @@ TEST_CASE("DDPGForMultipleActions", "[PolicyGradientTest]")
   int size = 4;
   double mu = 0.0;
   double theta = 1.0;  
-  double sigma = 0.1; 
+  double sigma = 0.01;
 
   // Create an instance of the OUNoise class.
   OUNoise ouNoise(size, mu, theta, sigma);
@@ -184,7 +184,7 @@ TEST_CASE("OUNoiseTest", "[PolicyGradientTest]")
   int size = 3;
   double mu = 0.0;
   double theta = 0.15;
-  double sigma = 0.2;
+  double sigma = 0.02;
 
   // Create an instance of the OUNoise class.
   OUNoise ouNoise(size, mu, theta, sigma);
@@ -206,7 +206,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
   // Set up the GaussianNoise parameters.
   int size = 5; 
   double mu = 0.0; 
-  double sigma = 0.1; 
+  double sigma = 0.01;
 
   // Create an instance of the GaussianNoise class.
   GaussianNoise gaussianNoise(size, mu, sigma);
