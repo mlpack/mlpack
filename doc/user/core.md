@@ -652,7 +652,7 @@ random scalar values.
  * `RandNormal()` returns a random `double` normally distributed with mean `0`
    and standard deviation `1`.
 
- * `RandNormal(mean, variance)` returns a random `double` normally distributed
+ * `RandNormal(mean, stddev)` returns a random `double` normally distributed
    with mean `mean` and standard deviation `stddev`.
 
 *Examples*:
