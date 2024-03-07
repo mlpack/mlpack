@@ -122,7 +122,7 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W,
   if (W.is_empty())
     W.set_size(rows, cols);
 
-  double stddev = 2.0 / double(rows + cols);
+  double stddev = std::sqrt(2.0 / double(rows + cols));
   GaussianInitialization normalInit(0.0, stddev);
   normalInit.Initialize(W, rows, cols);
 }
@@ -150,7 +150,7 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W,
   if (W.is_empty())
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-  double stddev = 2.0 / double(W.n_rows + W.n_cols);
+  double stddev = std::sqrt(2.0 / double(W.n_rows + W.n_cols));
   GaussianInitialization normalInit(0.0, stddev);
   normalInit.Initialize(W);
 }

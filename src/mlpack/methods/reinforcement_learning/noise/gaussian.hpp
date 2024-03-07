@@ -45,7 +45,7 @@ class GaussianNoise
    */
   arma::colvec sample()
   {
-    return randi<arma::colvec>(size, arma::distr_param(mu, sigma));
+    return randn<arma::colvec>(size, arma::distr_param(mu, sigma));
   }
 
  private:
