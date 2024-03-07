@@ -297,7 +297,7 @@ TEST_CASE("GANMemorySharingTest", "[GANNetworkTest]")
   bool shuffle = true;
 
   arma::mat trainData(1, 10000);
-  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.707));});
+  trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, std::sqrt(0.5)));});
   trainData = arma::sort(trainData);
 
   // Create the Discriminator network.
