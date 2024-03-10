@@ -1,8 +1,7 @@
 #ifndef MDL_PENALTY_HPP
 #define MDL_PENALTY_HPP
 
-#include <cmath> // Include cmath for std::log2
-#include <armadillo> // Include armadillo for arma::vec
+#include "mlpack.hpp"
 
 namespace mlpack {
 namespace tree {
