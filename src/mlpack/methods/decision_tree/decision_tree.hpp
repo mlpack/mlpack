@@ -42,8 +42,8 @@ namespace mlpack {
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         typename DimensionSelectionType = AllDimensionSelect,
-         typename MDLPenaltyType = NoPenalty<FitnessFunction>,
+         template<typename> class Penalty = NoPenalty,
+         typename ElemType = double,
          bool NoRecursion = false>
 class DecisionTree :
     public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
