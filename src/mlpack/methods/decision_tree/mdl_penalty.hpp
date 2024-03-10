@@ -23,7 +23,7 @@ class MDLPenalty {
   const FitnessFunction& fitnessFunction;
 };
 
-#include "mdl_penalty_dtimpl.hpp" // Include the implementation file at the end of the header.
+#include "mdl_penalty_dt_impl.hpp" // Include the implementation file at the end of the header.
 
 } // namespace tree
 } // namespace mlpack
