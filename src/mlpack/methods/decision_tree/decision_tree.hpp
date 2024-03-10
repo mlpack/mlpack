@@ -32,37 +32,7 @@
 
 namespace mlpack {
 
-/**
- * This class implements a generic decision tree learner.  Its behavior can be
- * controlled via its template arguments.
- *
- * The class inherits from the auxiliary split information in order to prevent
- * an empty auxiliary split information struct from taking any extra size.
- */
-template<typename FitnessFunction = GiniGain,
-         template<typename> class NumericSplitType = BestBinaryNumericSplit,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         template<typename> class Penalty = NoPenalty,
-         typename ElemType = double,
-         bool NoRecursion = false>
-class DecisionTree :
-    public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
-    public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
-{
- public:
-  //! Allow access to the numeric split type.
-  typedef NumericSplitType<FitnessFunction> NumericSplit;
-  //! Allow access to the categorical split type.
-  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
-  //! Allow access to the dimension selection type.
-  typedef DimensionSelectionType DimensionSelection;
-
-  
-  /**
-   * Construct the decision tree on the given data and label
-   */
-
-// Add the NoPenalty class definition here.
+// Declare the NoPenalty class template before its usage.
 template<typename FitnessFunction>
 class NoPenalty {
 public:
@@ -79,6 +49,31 @@ public:
   }
 };
 
+/**
+ * This class implements a generic decision tree learner.  Its behavior can be
+ * controlled via its template arguments.
+ *
+ * The class inherits from the auxiliary split information in order to prevent
+ * an empty auxiliary split information struct from taking any extra size.
+ */
+template<typename FitnessFunction = GiniGain,
+         template<typename> class NumericSplitType = BestBinaryNumericSplit,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         template<typename> class Penalty = NoPenalty,
+         typename ElemType = double,
+         typename DimensionSelectionType = AllDimensionSelect,
+         bool NoRecursion = false>
+class DecisionTree :
+    public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
+    public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
+{
+ public:
+  //! Allow access to the numeric split type.
+  typedef NumericSplitType<FitnessFunction> NumericSplit;
+  //! Allow access to the categorical split type.
+  typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  //! Allow access to the dimension selection type.
+  typedef DimensionSelectionType DimensionSelection;
 
   /**
    * Construct the decision tree on the given data and labels, where the data
