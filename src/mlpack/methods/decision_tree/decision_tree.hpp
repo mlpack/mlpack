@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_HPP
 
 #include <mlpack/core.hpp>
-
 #include "mdl_penalty.hpp"
 
 #include "gini_gain.hpp"
@@ -57,6 +56,29 @@ class DecisionTree :
   typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
   //! Allow access to the dimension selection type.
   typedef DimensionSelectionType DimensionSelection;
+
+  
+  /**
+   * Construct the decision tree on the given data and label
+   */
+
+// Add the NoPenalty class definition here.
+template<typename FitnessFunction>
+class NoPenalty {
+public:
+  NoPenalty(const FitnessFunction& /* fitnessFunction */) {}
+
+  double operator()(const arma::vec& /* childCounts */,
+                    const arma::vec& childGains,
+                    const double /* delta */,
+                    const size_t /* numClasses */,
+                    const double /* numChildren */,
+                    const double /* sumWeights */,
+                    const double /* epsilon */) const {
+    return arma::accu(childGains);
+  }
+};
+
 
   /**
    * Construct the decision tree on the given data and labels, where the data
