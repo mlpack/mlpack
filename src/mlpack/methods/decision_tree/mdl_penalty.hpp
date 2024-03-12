@@ -1,8 +1,8 @@
+// mdl_penalty.hpp
 #ifndef MDL_PENALTY_HPP
 #define MDL_PENALTY_HPP
 
-#include <cmath> 
-#include <armadillo> 
+#include <armadillo>
 
 namespace mlpack {
 namespace tree {

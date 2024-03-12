@@ -1,30 +1,10 @@
-#ifndef MDL_PENALTY_HPP
-#define MDL_PENALTY_HPP
+#ifndef MDL_PENALTY_DT_IMPL_HPP
+#define MDL_PENALTY_DT_IMPL_HPP
 
-#include "mlpack.hpp"
+#include "mdl_penalty.hpp"
 
 namespace mlpack {
 namespace tree {
-
-// Define the MDLPenalty class template.
-template<typename FitnessFunction>
-class MDLPenalty {
- public:
-  // Constructor.
-  MDLPenalty(const FitnessFunction& fitnessFunction);
-
-  // Operator overloading for calculating penalized gain.
-  double operator()(const arma::vec& childCounts,
-                    const arma::vec& childGains,
-                    const double delta,
-                    const size_t numClasses,
-                    const double numChildren,
-                    const double sumWeights,
-                    const double epsilon) const;
-
- private:
-  const FitnessFunction& fitnessFunction; // Reference to the fitness function.
-};
 
 // Define the constructor.
 template<typename FitnessFunction>
@@ -60,4 +40,4 @@ double MDLPenalty<FitnessFunction>::operator()(
 } // namespace tree
 } // namespace mlpack
 
-#endif // MDL_PENALTY_HPP
+#endif // MDL_PENALTY_DT_IMPL_HPP
