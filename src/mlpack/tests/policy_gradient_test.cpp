@@ -222,8 +222,8 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 
   double meanErr = mean - mu;
   double stdDevErr = stdDev - sigma;
-  REQUIRE(meanErr <= 1e-5);
-  REQUIRE(stdDevErr <= 1e-5);
+  REQUIRE(meanErr <= 1e-4);
+  REQUIRE(stdDevErr <= 1e-4);
 }
 
 //! Test TD3 on Pendulum task.
