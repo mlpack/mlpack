@@ -1,10 +1,11 @@
 /**
  * @file methods/ann/init_rules/gaussian_init.hpp
  * @author Kris Singh
+ * @author Omar Shrit
  *
  * Intialization rule for the neural networks. This simple initialization is
- * performed by assigning a gaussian matrix with a given mean and variance
- * to the weight matrix.
+ * performed by assigning a gaussian matrix with a given mean and standard
+ * deviation to the weight matrix.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -29,10 +30,10 @@ class GaussianInitialization
    * Initialize the gaussian with the given mean and variance.
    *
    * @param mean Mean of the gaussian.
-   * @param variance Variance of the gaussian.
+   * @param stddev Standard deviation of the gaussian.
    */
-  GaussianInitialization(const double mean = 0, const double variance = 1) :
-      mean(mean), variance(variance)
+  GaussianInitialization(const double mean = 0, const double stddev = 1) :
+      mean(mean), stddev(stddev)
   {
     // Nothing to do here.
   }
@@ -52,7 +53,7 @@ class GaussianInitialization
     if (W.is_empty())
       W.set_size(rows, cols);
 
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, stddev)); } );
   }
 
   /**
@@ -67,7 +68,7 @@ class GaussianInitialization
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
 
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, stddev)); } );
   }
 
   /**
@@ -114,15 +115,15 @@ class GaussianInitialization
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(CEREAL_NVP(mean));
-    ar(CEREAL_NVP(variance));
+    ar(CEREAL_NVP(stddev));
   }
 
  private:
   //! Mean of the gaussian.
   double mean;
 
-  //! Variance of the gaussian.
-  double variance;
+  //! Standard deviation of the gaussian.
+  double stddev;
 }; // class GaussianInitialization
 
 } // namespace mlpack

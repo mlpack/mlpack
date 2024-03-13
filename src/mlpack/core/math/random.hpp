@@ -146,7 +146,8 @@ inline int RandInt(const int lo, const int hiExclusive)
 }
 
 /**
- * Generates a normally distributed random number with mean 0 and variance 1.
+ * Generates a normally distributed random number with mean 0 and standard
+ * deviation of 1.
  */
 inline double RandNormal()
 {
@@ -155,14 +156,14 @@ inline double RandNormal()
 
 /**
  * Generates a normally distributed random number with specified mean and
- * variance.
+ * standard deviation.
  *
  * @param mean Mean of distribution.
- * @param variance Variance of distribution.
+ * @param stddev Standard deviation of distribution.
  */
-inline double RandNormal(const double mean, const double variance)
+inline double RandNormal(const double mean, const double stddev)
 {
-  return variance * RandNormalDist()(RandGen()) + mean;
+  return stddev * RandNormalDist()(RandGen()) + mean;
 }
 
 } // namespace mlpack
