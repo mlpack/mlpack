@@ -206,7 +206,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
   // Set up the GaussianNoise parameters.
   int size = 5; 
   double mu = 0.0; 
-  double sigma = 1.0;
+  double sigma = 0.00001;
 
   // Create an instance of the GaussianNoise class.
   GaussianNoise gaussianNoise(size, mu, sigma);
