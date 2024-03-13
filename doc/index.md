@@ -1,5 +1,11 @@
 # Documentation for mlpack
 
+<!--
+This file contains the landing page for mlpack documentation.  Note that if you
+change any section headers, or add any new algorithms, the sidebar in
+sidebar.html will need to be manually modified!
+-->
+
 ## A fast, flexible machine learning library
 
 mlpack is an intuitive, fast, and flexible header-only C++ machine learning

@@ -210,7 +210,6 @@ create_page_sidebar_section()
     # and then we'll construct the actual sidebar using that list.
     grep '<h[23] id=' "$input_file" |\
         sed 's/^<\(h[23]\) id="\([^"]*\)">\(.*\)<\/h[23]>/\1\t\2\t\3/' > "$output_file.side.list.tmp";
-    cat "$output_file.side.list.tmp";
     in_block=0;
     while read line; do
       # First, extract the pieces of each line.
