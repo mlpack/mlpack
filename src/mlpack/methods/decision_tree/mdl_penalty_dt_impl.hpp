@@ -6,16 +6,13 @@
 namespace mlpack {
 namespace tree {
 
-// Define the constructor.
 template<typename FitnessFunction>
-MDLPenalty<FitnessFunction>::MDLPenalty(
-    const FitnessFunction& fitnessFunction) :
+MDLPenalty<FitnessFunction>::MDLPenalty(const FitnessFunction& fitnessFunction) :
     fitnessFunction(fitnessFunction)
 {
   // Nothing to do here.
 }
 
-// Define the operator.
 template<typename FitnessFunction>
 double MDLPenalty<FitnessFunction>::operator()(
     const arma::vec& childCounts,
