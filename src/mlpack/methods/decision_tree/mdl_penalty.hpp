@@ -1,4 +1,3 @@
-// mdl_penalty.hpp
 #ifndef MDL_PENALTY_HPP
 #define MDL_PENALTY_HPP
 
@@ -10,7 +9,9 @@ namespace tree {
 template<typename FitnessFunction>
 class MDLPenalty {
  public:
-  MDLPenalty(const FitnessFunction& fitnessFunction);
+  MDLPenalty(const FitnessFunction& fitnessFunction) :
+    fitnessFunction(fitnessFunction) {}
+
   double operator()(const arma::vec& childCounts,
                     const arma::vec& childGains,
                     const double delta,

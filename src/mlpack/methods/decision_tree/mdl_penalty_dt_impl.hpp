@@ -7,13 +7,6 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction>
-MDLPenalty<FitnessFunction>::MDLPenalty(const FitnessFunction& fitnessFunction) :
-    fitnessFunction(fitnessFunction)
-{
-  // Nothing to do here.
-}
-
-template<typename FitnessFunction>
 double MDLPenalty<FitnessFunction>::operator()(
     const arma::vec& childCounts,
     const arma::vec& childGains,
