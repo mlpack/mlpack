@@ -60,7 +60,6 @@ template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          template<typename> class Penalty = NoPenalty,
-         typename ElemType = double,
          typename DimensionSelectionType = AllDimensionSelect,
          bool NoRecursion = false>
 class DecisionTree :
@@ -629,6 +628,7 @@ using DecisionStump = DecisionTree<FitnessFunction,
 typedef DecisionTree<InformationGain,
                      BestBinaryNumericSplit,
                      AllCategoricalSplit,
+                     MDLPenalty<InformationGain>,
                      AllDimensionSelect,
                      true> ID3DecisionStump;
 } // namespace mlpack
