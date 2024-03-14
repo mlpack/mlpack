@@ -630,7 +630,7 @@ typedef DecisionTree<InformationGain,
                      AllCategoricalSplit,
                      MDLPenalty<InformationGain>,
                      AllDimensionSelect,
-                     true> ID3DecisionStump;
+                     true> ID3DecisionStumpMDL;
 } // namespace mlpack
 
 // Include implementation.
