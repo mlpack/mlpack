@@ -14,6 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 #include <mlpack/core.hpp>
 
@@ -31,10 +32,10 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     lambda(lambda)
 {
   // Sanity check.
-  if (responses.n_elem != predictors.n_cols)
+  if (!util::CheckSameSizes(predictors.n_cols, responses.n_elem, "LogisticRegressionFunction::LogisticRegressionFunction()", "predictions"))
   {
-    Log::Fatal << "LogisticRegressionFunction::LogisticRegressionFunction(): "
-        << "predictors matrix has " << predictors.n_cols << " points, but "
+    // Log fatal error for dimensionality mismatch.
+    Log::Fatal << "Predictors matrix has " << predictors.n_cols << " points, but "
         << "responses vector has " << responses.n_elem << " elements (should be"
         << " " << predictors.n_cols << ")!" << std::endl;
   }
