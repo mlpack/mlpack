@@ -265,7 +265,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("training") && params.Has("labels"))
   {
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
-      util::CheckSmallSizes(responses, regressors, "LogisticRegression::Train()");
+      util::CheckSameSizes(responses, regressors, "LogisticRegression::Train()");
   }
   else if (params.Has("training"))
   {
