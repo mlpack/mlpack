@@ -15,6 +15,7 @@
 #define BINDING_NAME logistic_regression
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "logistic_regression.hpp"
 
@@ -264,15 +265,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("training") && params.Has("labels"))
   {
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
-    if (responses.n_cols != regressors.n_cols)
-    {
-      // Clean memory if needed.
-      if (!params.Has("input_model"))
-        delete model;
-
-      Log::Fatal << "The labels must have the same number of points as the "
-          << "training dataset." << endl;
-    }
+      util::CheckSmallSizes(responses, regressors, "LogisticRegression::Train()");
   }
   else if (params.Has("training"))
   {
