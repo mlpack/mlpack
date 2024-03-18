@@ -265,16 +265,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("training") && params.Has("labels"))
   {
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
-       if (!util::CheckSameSizes(testSet.n_rows, model->Parameters().n_cols - 1,"LogisticRegression::Test()", "test data"))
-                              
+       if (!util::CheckSameSizes(responses.n_cols, regressors.n_cols,
+                              "LogisticRegression::Train()", "labels"))                              
     {
         // Clean memory if needed.
-        const size_t trainingDimensionality = model->Parameters().n_cols - 1;
-        if (!params.Has("input_model"))
-            delete model;
-
         Log::Fatal << "The labels must have the same number of points as the "
-                   << "training dataset." << endl;
+                 << "training dataset." << endl;
     }
 
   }
@@ -362,7 +358,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Checking the dimensionality of the test data.
     // Check if dimensionality is not the same
-    if (!util::CheckSameDimensionality(testSet, model->Parameters(), "Test data", "training data"))
+    if (!util::CheckSameSizes(trainData.n_rows, regressors.n_cols,
+                              "LogisticRegression::Train()", "training data"))
     {
     // Clean memory if needed.
     if (!params.Has("input_model"))

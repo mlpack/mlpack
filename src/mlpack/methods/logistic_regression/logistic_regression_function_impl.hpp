@@ -36,9 +36,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
                           "predictions"))
   {
     // Log fatal error for dimensionality mismatch.
-    Log::Fatal << "Predictors matrix has " << predictors.n_cols << " points, but "
-        << "responses vector has " << responses.n_elem << " elements (should be"
-        << " " << predictors.n_cols << ")!" << std::endl;
+     Log::Fatal << "Predictors matrix has " << predictors.n_cols << " points, but "
+               << "responses vector has " << responses.n_elem << " elements (should be "
+               << predictors.n_cols << ")!" << std::endl;
   }
 }
 
