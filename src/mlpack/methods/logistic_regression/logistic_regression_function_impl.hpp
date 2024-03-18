@@ -31,8 +31,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
         false)),
     lambda(lambda)
 {
-  // Sanity check.
-  if (!util::CheckSameSizes(predictors.n_cols, responses.n_elem, "LogisticRegressionFunction::LogisticRegressionFunction()", "predictions"))
+   if (!util::CheckSameSizes(predictors.n_cols, responses.n_elem,
+                          "LogisticRegressionFunction::LogisticRegressionFunction()",
+                          "predictions"))
   {
     // Log fatal error for dimensionality mismatch.
     Log::Fatal << "Predictors matrix has " << predictors.n_cols << " points, but "
