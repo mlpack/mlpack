@@ -285,7 +285,7 @@ create_page_sidebar_section()
 
 rm -rf "$output_dir";
 mkdir -p "$output_dir";
-cp doc/js/* "$output_dir";
+cp doc/css/* "$output_dir";
 mkdir -p "$output_dir/user/img/";
 cp doc/img/* "$output_dir/user/img/";
 mkdir -p "$output_dir/tutorials/res/";

@@ -1060,9 +1060,8 @@ div#sidebar {
   float: left;
   position: sticky;
   top: 5px;
-  width: 200px;
-  max-width: 200px;
-  font-size: 85%;
+  min-width: 200px;
+  font-size: 90%;
 }
 
 div#sidebar ul {
@@ -1103,11 +1102,11 @@ div#sidebar details summary::-webkit-details-marker {
 }
 
 div#sidebar details summary::after {
-  content: " ►";
+  content: " [+]";
 }
 
 div#sidebar details[open] summary::after {
-  content: " ▼";
+  content: " [-]";
 }
 
 @media screen and (max-width: 1140px) {
@@ -1119,5 +1118,9 @@ div#sidebar details[open] summary::after {
 @media screen and (max-width: 1320px) and (min-width: 1140px) {
   div#content {
     margin-left: 200px;
+  }
+
+  div#sidebar {
+    max-width: 200px;
   }
 }
