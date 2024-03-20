@@ -99,10 +99,10 @@ template<typename MLAlgorithm,
          typename MatType = void,
          typename PredictionsType = void,
          typename WeightsType = void>
-class QuadraticFunction
+class QuadraticTestFunction
 {
  public:
-  QuadraticFunction(double a,
+  QuadraticTestFunction(double a,
                     double b,
                     double c,
                     double d,
@@ -137,7 +137,7 @@ TEST_CASE("CVFunctionGradientTest", "[HPTTest]")
   double b = -1.5;
   double c = 2.5;
   double d = 3.0;
-  QuadraticFunction<LARS<>> lf(a, b, c, d);
+  QuadraticTestFunction<LARS<>> lf(a, b, c, d);
 
   // All values are numeric.
   IncrementPolicy policy(true);
@@ -354,7 +354,7 @@ TEST_CASE("HPTMaximizationTest", "[HPTTest]")
  */
 TEST_CASE("HPTGradientDescentTest", "[HPTTest]")
 {
-  // Constructor arguments for the fake CV function (QuadraticFunction).
+  // Constructor arguments for the fake CV function (QuadraticTestFunction).
   double a = 1.0;
   double b = -1.5;
   double c = 2.5;
@@ -366,9 +366,9 @@ TEST_CASE("HPTGradientDescentTest", "[HPTTest]")
   double zMin = -2.0;
 
   // We pass LARS just because some ML algorithm should be passed. We pass MSE
-  // to tell HyperParameterTuner that the objective function (QuadraticFunction)
-  // should be minimized.
-  HyperParameterTuner<LARS<>, MSE, QuadraticFunction,
+  // to tell HyperParameterTuner that the objective function
+  // (QuadraticTestFunction) should be minimized.
+  HyperParameterTuner<LARS<>, MSE, QuadraticTestFunction,
       GradientDescent> hpt(a, b, c, d, xMin, yMin, zMin);
 
   // Setting GradientDescent to find more close solution to the optimal one.
