@@ -352,7 +352,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     // Checking the dimensionality of the test data.
     const size_t trainingDimensionality = model->Parameters().n_cols - 1;
 
-    util::CheckSameSizes(testSet, trainingDimensionality, "LogisticRegressionFunction::LogisticRegressionFunction()");
+    util::CheckSameDimensionality(testSet, trainingDimensionality, "LogisticRegressionFunction::LogisticRegressionFunction()");
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
