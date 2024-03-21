@@ -71,11 +71,17 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
  * [`AdaBoost`](user/methods/adaboost.md): Adaptive Boosting
  * [`DecisionTree`](user/methods/decision_tree.md): ID3-style decision tree
    classifier
+ * [`HoeffdingTree`](user/methods/hoeffding_tree.md): streaming/incremental
+   decision tree classifier
+ * [`LinearSVM`](user/methods/linear_svm.md): simple linear support vector
+   machine classifier
  * [`LogisticRegression`](user/methods/logistic_regression.md): L2-regularized
    logistic regression (two-class only)
  * [`NaiveBayesClassifier`](user/methods/naive_bayes_classifier.md): simple
    multi-class naive Bayes classifier
  * [`Perceptron`](user/methods/perceptron.md): simple Perceptron classifier
+ * [`RandomForest`](user/methods/random_forest.md): parallelized random forest
+   classifier
  * [`SoftmaxRegression`](user/methods/softmax_regression.md): L2-regularized
    softmax regression (i.e. multi-class logistic regression)
 
@@ -83,6 +89,8 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
 
 Predict continuous values.
 
+ * [`BayesianLinearRegression`](user/methods/bayesian_linear_regression.md):
+   Bayesian L2-penalized linear regression
  * [`DecisionTreeRegressor`](user/methods/decision_tree_regressor.md): ID3-style
    decision tree regressor
  * [`LARS`](user/methods/lars.md): Least Angle Regression (LARS), L1-regularized
