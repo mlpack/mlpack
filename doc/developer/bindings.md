@@ -31,7 +31,7 @@ tend to avoid writing native C++ and instead prefer other languages---probably
 most notably Python.
 
 In the case of Python, many projects will use tools like
-[SWIG](http://www.swig.org) to automatically generate bindings, or they might
+[SWIG](https://www.swig.org) to automatically generate bindings, or they might
 hand-write Cython.  The same types of strategies may be used for other
 languages; hand-written MEX files may be used for MATLAB, hand-written Rcpp
 bindings might be used for R bindings, and so forth.

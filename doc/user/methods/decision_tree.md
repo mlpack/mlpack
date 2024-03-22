@@ -7,7 +7,7 @@ runtime options that can be used to control the behavior of the tree.
 
 Decision trees are useful for classifying points with _discrete labels_ (i.e.
 `0`, `1`, `2`).  For predicting _continuous values_ (regression), see
-[`DecisionTreeRegressor`](#decision_tree_regressor). <!-- TODO: fix link -->
+[`DecisionTreeRegressor`](decision_tree_regressor.md).
 
 #### Simple usage example:
 
@@ -46,9 +46,9 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [`DecisionTreeRegressor`](#decision_tree_regressor) <!-- TODO: fix link! -->
- * [Random forests](#random_forests) <!-- TODO: fix link! -->
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
+ * [`DecisionTreeRegressor`](decision_tree_regressor.md)
+ * [Random forests](random_forest.md)
+ * [mlpack classifiers](../../index.md#classification-algorithms)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Decision tree learning on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
 
@@ -75,19 +75,12 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * better link for working with categorical data in straightforward terms
-    * update matrices.md to include a section on labels and NormalizeLabels()
-    * add a bit about instance weights in matrices.md
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
-| `weights` | [`arma::rowvec`]('../matrices.md') | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node. | `10` |
 | `minGainSplit` | `double` | Minimum gain for a node to split. | `1e-7` |
@@ -176,7 +169,7 @@ to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes, number of columns will be equal to `data.n_cols`). |
 
@@ -186,10 +179,8 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
- * A `DecisionTree` can be serialized with [`data::Save()`](../formats.md) and
-   [`data::Load()`](../formats.md).
+ * A `DecisionTree` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
    in the node `tree`.
@@ -214,7 +205,7 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a decision tree on mixed categorical data:
+Train a decision tree on mixed categorical data and save it:
 
 ```c++
 // Load a categorical dataset.
@@ -248,6 +239,9 @@ arma::vec secondProbabilities;
 tree.Classify(testDataset.col(1), secondPrediction, secondProbabilities);
 std::cout << "Class probabilities of second test point: " <<
     secondProbabilities.t();
+
+// Save the tree to `tree.bin`.
+mlpack::data::Save("tree.bin", "tree", tree);
 ```
 
 ---
@@ -315,7 +309,7 @@ The `DecisionTree` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
 
-```c++
+```
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -389,8 +383,8 @@ class CustomFitnessFunction
    will select a split randomly between the minimum and maximum values of a
    dimension.  It is very efficient but does not yield splits that maximize
    the gain.  (Used by the `ExtraTrees` variant of
-   [`RandomForest`](#random_forest).) <!-- TODO: fix link! -->
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+   [`RandomForest`](random_forest.md).)
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal
    structure `AuxiliarySplitInfo` that is used at classification time:
 
@@ -463,7 +457,7 @@ class CustomNumericSplit
     categorical feature.
  * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
    splits all categories into their own node.
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal structure
    `AuxiliarySplitInfo` that is used at classification time:
 

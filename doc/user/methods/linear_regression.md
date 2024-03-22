@@ -43,8 +43,8 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### See also:
 
- * [mlpack regression techniques](#mlpack_regression_techniques) <!-- TODO: fix link! -->
- * [`LARS`](lars.md) <!-- TODO: fix link -->
+ * [mlpack regression techniques](../../index.md#regression-algorithms)
+ * [`LARS`](lars.md)
  * [Linear Regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
 
 ### Constructors
@@ -64,14 +64,9 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section on labels and NormalizeLabels()
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`. | _(N/A)_ |
 | `lambda` | `double` | L2 regularization penalty parameter. | `0.0` |
@@ -83,8 +78,10 @@ the next time `Train()` is called.
 
 ***Note***: setting `lambda` too small may cause the model to overfit; however,
 setting it too large may cause the model to underfit.  [Automatic hyperparameter
-tuning](#hyperparameter-tuner) can be used to find a good value of `lambda`
-instead of a manual setting.
+tuning](../hpt.md) can be used to find a good value of `lambda` instead of a
+manual setting.
+
+<!-- TODO: update link to hyperparameter tuner -->
 
 ### Training
 
@@ -132,15 +129,13 @@ can be used to make predictions for new data.
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for prediction. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::rowvec&`](../matrices.md) | Vector of `double`s to store predictions into.  Will be set to length `data.n_cols`. |
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
  * A `LinearRegression` model can be serialized with
-   [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `lr.Intercept()` will return a `bool` indicating whether the model was
    trained with an intercept term.
@@ -243,7 +238,7 @@ See also the following fully-working examples:
 The `LinearRegression` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 LinearRegression<ModelMatType>
 ```
 

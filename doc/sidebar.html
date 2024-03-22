@@ -1,0 +1,202 @@
+<!--
+sidebar.html
+
+This file defines the documentation sidebar.  If you are adding a new
+documentation file, be sure to add the link here in the right section.
+
+This is in pure HTML due to the kramdown parser not being able to read bulleted
+lists with details.
+
+All relative links should be prefixed with "LINKROOT".  These will be replaced
+when the sidebar is built for each page.
+-->
+
+<div id="sidebar">
+<ul>
+  <li>
+  <a href="LINKROOTindex.html"><b>Docs Index</b></a>
+
+  <ul>
+    <li>
+    <a href="LINKROOTuser/core.html">Core</a>
+    </li>
+
+    <!-- Classification algorithms -->
+    <li>
+      <details>
+        <summary>
+          <a href="LINKROOTindex.html#classification-algorithms">
+            Classification
+          </a>
+        </summary>
+        <ul>
+          <li>
+            <a href="LINKROOTuser/methods/adaboost.html">
+              <code>AdaBoost</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/decision_tree.html">
+              <code>DecisionTree</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/hoeffding_tree.html">
+              <code>HoeffdingTree</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/linear_svm.html">
+              <code>LinearSVM</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/logistic_regression.html">
+              <code>LogisticRegression</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/naive_bayes_classifier.html">
+              <code>NaiveBayesClassifier</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/perceptron.html">
+              <code>Perceptron</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/random_forest.html">
+              <code>RandomForest</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/softmax_regression.html">
+              <code>SoftmaxRegression</code>
+            </a>
+          </li>
+        </ul>
+      </details>
+    </li>
+
+    <!-- Regression algorithms -->
+    <li>
+      <details>
+        <summary>
+          <a href="LINKROOTindex.html#regression-algorithms">
+            Regression
+          </a>
+        </summary>
+        <ul>
+          <li>
+            <a href="LINKROOTuser/methods/bayesian_linear_regression.html">
+              <code>BayesianLinearRegression</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/decision_tree_regressor.html">
+              <code>DecisionTreeRegressor</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/lars.html">
+              <code>LARS</code>
+            </a>
+          </li>
+          <li>
+            <a href="LINKROOTuser/methods/linear_regression.html">
+              <code>LinearRegression</code>
+            </a>
+          </li>
+        </ul>
+      </details>
+    </li>
+
+    <!-- Clustering algorithms -->
+    <li>
+      <a href="LINKROOTindex.html#clustering-algorithms">
+        Clustering
+      </a>
+    </li>
+
+    <!-- Geometric algorithms -->
+    <li>
+      <a href="LINKROOTindex.html#geometric-algorithms">
+        Geometry
+      </a>
+    </li>
+
+    <!-- Preprocessing utilities -->
+    <li>
+      <a href="LINKROOTindex.html#preprocessing-utilities">
+        Preprocessing
+      </a>
+    </li>
+
+    <!-- Transformations -->
+    <li>
+      <a href="LINKROOTindex.html#transformations">
+        Transformations
+      </a>
+    </li>
+
+    <!-- Modeling utilities -->
+    <li>
+      <a href="LINKROOTindex.html#modeling-utilities">
+        Modeling
+      </a>
+    </li>
+
+    <!-- Bindings to other languages -->
+    <li>
+      <details>
+        <summary>
+          <a href="LINKROOTindex.html#bindings-to-other-languages">
+            Bindings
+          </a>
+        </summary>
+        <ul>
+          <li>
+            <a href="https://www.mlpack.org/doc/stable/python_documentation.html">
+              Python
+            </a>
+          </li>
+          <li>
+            <a href="https://www.mlpack.org/doc/stable/julia_documentation.html">
+              Julia
+            </a>
+          </li>
+          <li>
+            <a href="https://www.mlpack.org/doc/stable/r_documentation.html">
+              R
+            </a>
+          </li>
+          <li>
+            <a href="https://www.mlpack.org/doc/stable/cli_documentation.html">
+              CLI
+            </a>
+          </li>
+          <li>
+            <a href="https://www.mlpack.org/doc/stable/go_documentation.html">
+              Go
+            </a>
+          </li>
+        </ul>
+      </details>
+    </li>
+
+    <li>
+      <a href="LINKROOTindex.html#examples-and-further-documentation">
+        Examples
+      </a>
+    </li>
+
+    <li>
+      <a href="LINKROOTindex.html#developer-documentation">
+        Developers
+      </a>
+    </li>
+  </ul>
+</ul>
+
+<!-- Page-specific sidebar section will go next, and will close the div. -->
