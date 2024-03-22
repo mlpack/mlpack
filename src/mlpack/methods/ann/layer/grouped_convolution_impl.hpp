@@ -441,7 +441,7 @@ void GroupedConvolutionType<
   }
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize, arma::fill::zeros);
+      batchSize, fill::zeros);
   CubeType outputCube;
   MakeAlias(outputCube, output.memptr(), apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);

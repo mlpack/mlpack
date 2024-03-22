@@ -20,6 +20,7 @@ namespace mlpack {
   /* using for armadillo namespace*/
   using arma::conv_to;
   using arma::exp;
+  using namespace arma::fill;
   using arma::distr_param;
   using arma::dot;
   using arma::join_cols;
