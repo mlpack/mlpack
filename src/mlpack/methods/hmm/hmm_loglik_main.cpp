@@ -83,13 +83,8 @@ struct Loglik
           << endl;
       dataSeq = dataSeq.t();
     }
-
-    if (dataSeq.n_rows != hmm.Emission()[0].Dimensionality())
-    {
-      Log::Fatal << "Dimensionality of sequence (" << dataSeq.n_rows << ") is "
-          << "not equal to the dimensionality of the HMM ("
-          << hmm.Emission()[0].Dimensionality() << ")!" << endl;
-    }
+    
+    util::CheckDimensionality(dataSeq, hmm.Emission()[0].Dimensionality(), "HMM::Train()");
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 

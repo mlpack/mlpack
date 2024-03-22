@@ -15,6 +15,7 @@
 #define BINDING_NAME hmm_train
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "hmm.hpp"
 #include "hmm_model.hpp"
@@ -144,12 +145,7 @@ struct Init
     // Verify dimensionality of data.
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-      if (trainSeq[i].n_rows != dimensionality)
-      {
-        Log::Fatal << "Observation sequence " << i << " dimensionality ("
-            << trainSeq[i].n_rows << " is incorrect (should be "
-            << dimensionality << ")!" << endl;
-      }
+        util::CheckDimensionality(trainSeq[i], dimensionality, "Dimensionality Check");
     }
 
     // Get the model and initialize it.
@@ -323,13 +319,7 @@ struct Train
     vector<mat>& trainSeq = *trainSeqPtr;
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-      if (trainSeq[i].n_rows != hmm.Emission()[0].Dimensionality())
-      {
-        Log::Fatal << "Dimensionality of training sequence " << i << " ("
-            << trainSeq[i].n_rows << ") is not equal to the dimensionality of "
-            << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
-            << endl;
-      }
+      util::CheckDimensionality(trainSeq[i], hmm.Emission()[0].Dimensionality(), "HMM::Train()");
     }
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
@@ -395,13 +385,7 @@ struct Train
           Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
         // Verify the same number of observations as the data.
-        if (label.n_elem != trainSeq[labelSeq.size()].n_cols)
-        {
-          Log::Fatal << "Label sequence " << labelSeq.size() << " does not have"
-              << " the same number of points as observation sequence "
-              << labelSeq.size() << "!" << endl;
-        }
-
+        util::CheckSameSizes(label.n_elem, trainSeq[labelSeq.size()].n_cols, "Label and observation sequence size mismatch.");
         // Check all of the labels.
         for (size_t i = 0; i < label.n_cols; ++i)
         {
