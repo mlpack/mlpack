@@ -145,7 +145,7 @@ struct Init
     // Verify dimensionality of data.
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-        util::CheckDimensionality(trainSeq[i], dimensionality, "Dimensionality Check");
+        util::CheckSameDimensionality(trainSeq[i], dimensionality, "Dimensionality Check");
     }
 
     // Get the model and initialize it.
@@ -319,7 +319,7 @@ struct Train
     vector<mat>& trainSeq = *trainSeqPtr;
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-      util::CheckDimensionality(trainSeq[i], hmm.Emission()[0].Dimensionality(), "HMM::Train()");
+      util::CheckSameDimensionality(trainSeq[i], hmm.Emission()[0].Dimensionality(), "HMM::Train()");
     }
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
@@ -385,7 +385,7 @@ struct Train
           Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
 
         // Verify the same number of observations as the data.
-        util::CheckSameSizes(label.n_elem, trainSeq[labelSeq.size()].n_cols, "Label and observation sequence size mismatch.");
+        util::CheckSameSizes(label,trainSeq[labelSeq.size()], "Label and observation sequence size mismatch.");
         // Check all of the labels.
         for (size_t i = 0; i < label.n_cols; ++i)
         {
