@@ -227,7 +227,9 @@ endif()
 target_compile_definitions(mlpack_test PUBLIC -DMLPACK_ENABLE_ANN_SERIALIZATION)
 target_precompile_headers(mlpack_test PUBLIC
     "../core.hpp"
-    "../../mlpack.hpp")
+    "../../mlpack.hpp"
+    <ensmallen.hpp>
+    <armadillo>)
 
 # Copy test data into right place.
 add_custom_command(TARGET mlpack_test
