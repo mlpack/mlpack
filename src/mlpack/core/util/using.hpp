@@ -1,6 +1,7 @@
 /**
  * @file core/util/using.hpp
  * @author Omar Shrit
+ * @author Ryan Curtin
  *
  * This is a set of `using` statements to mitigate any possible risks or
  * conflicts with local functions. The compiler is supposed to proritise the
@@ -20,7 +21,6 @@ namespace mlpack {
   /* using for armadillo namespace*/
   using arma::conv_to;
   using arma::exp;
-  using namespace arma::fill;
   using arma::distr_param;
   using arma::dot;
   using arma::join_cols;
@@ -71,6 +71,36 @@ namespace mlpack {
   using coot::vectorise;
 
 #endif
+
+  namespace fill {
+
+    #ifdef MLPACK_HAS_COOT
+    struct fill_none  : public arma::fill::fill_class<arma::fill::fill_none>,
+                        public coot::fill::fill_class<coot::fill::fill_none> { };
+
+    struct fill_zeros : public arma::fill::fill_class<arma::fill::fill_zeros>,
+                        public coot::fill::fill_class<coot::fill::fill_zeros> { };
+
+    struct fill_ones  : public arma::fill::fill_class<arma::fill::fill_ones>,
+                        public coot::fill::fill_class<coot::fill::fill_ones> { };
+
+    struct fill_randu  : public arma::fill::fill_class<arma::fill::fill_randu>,
+                        public coot::fill::fill_class<coot::fill::fill_randu> { };
+
+
+    #else
+    struct fill_none  : public arma::fill::fill_class<arma::fill::fill_none> { };
+    struct fill_zeros : public arma::fill::fill_class<arma::fill::fill_zeros> { };
+    struct fill_ones  : public arma::fill::fill_class<arma::fill::fill_ones> { };
+    struct fill_randu  : public arma::fill::fill_class<arma::fill::fill_randu> { };
+    #endif
+
+    static constexpr fill_none  none;
+    static constexpr fill_zeros zeros;
+    static constexpr fill_ones  ones;
+    static constexpr fill_randu randu;
+  } // namespace mlpack::fill
+
 
 } // namespace mlpack
 
