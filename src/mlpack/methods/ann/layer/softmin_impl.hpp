@@ -63,7 +63,7 @@ void SoftminType<MatType>::Forward(
     MatType& output)
 {
   MatType softminInput = exp(-(input.each_row() -
-      arma::min(input, 0)));
+      min(input, 0)));
   output = softminInput.each_row() / sum(softminInput, 0);
 }
 

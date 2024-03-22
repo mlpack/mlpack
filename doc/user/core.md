@@ -650,10 +650,10 @@ random scalar values.
    the range `[lo, hiExclusive)`.
 
  * `RandNormal()` returns a random `double` normally distributed with mean `0`
-   and variance `1`.
+   and standard deviation `1`.
 
- * `RandNormal(mean, variance)` returns a random `double` normally distributed
-   with mean `mean` and variance `variance`.
+ * `RandNormal(mean, stddev)` returns a random `double` normally distributed
+   with mean `mean` and standard deviation `stddev`.
 
 *Examples*:
 

@@ -520,7 +520,7 @@ inline void CosineTree::CosineNodeSplit()
   // Compute maximum and minimum cosine values.
   double cosineMax, cosineMin;
   cosineMax = arma::max(cosines % (cosines < 1));
-  cosineMin = arma::min(cosines);
+  cosineMin = min(cosines);
 
   std::vector<size_t> leftIndices, rightIndices;
 

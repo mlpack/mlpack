@@ -111,7 +111,7 @@ TEST_CASE("CosineNodeCosineSplit", "[CosineTreeTest]")
       // CosineNodeSplit may differ from cosineMax below, so we have to handle
       // minor differences.
       double cosineMax = arma::max(cosines % (cosines < 1.0 + precision));
-      double cosineMin = arma::min(cosines);
+      double cosineMin = min(cosines);
       // If max(cosines) is close to 1.0 cosineMax and cosineMax2 may
       // differ significantly.
       double cosineMax2 = arma::max(cosines % (cosines < 1.0 - precision));

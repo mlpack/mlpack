@@ -343,7 +343,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   else if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
-    arma::vec ranges = max(data, 1) - arma::min(data, 1);
+    arma::vec ranges = max(data, 1) - min(data, 1);
     for (size_t d = 0; d < ranges.n_elem; ++d)
       if (ranges[d] == 0.0)
         ranges[d] = 1; // A range of 0 produces NaN later on.
