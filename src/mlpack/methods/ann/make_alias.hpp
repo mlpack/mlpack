@@ -40,11 +40,11 @@ struct IsCootType<coot::Mat<eT>>
   constexpr static bool value = true;
 };
 
-template<typename eT>
-struct IsCootType<coot::subview_col<eT>>
-{
-  constexpr static bool value = true;
-};
+//template<typename eT>
+//struct IsCootType<coot::subview_col<eT>>
+//{
+  //constexpr static bool value = true;
+//};
 
 template<typename eT>
 struct IsCootType<coot::Cube<eT>>
@@ -115,7 +115,8 @@ void MakeAlias(OutMatType& m,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InMatType::elem_type* newMem = oldMat.get_dev_mem();
+  coot::dev_mem_t<typename InMatType::elem_type> newMem;
+  newMem = oldMat.get_dev_mem().cuda_mem_ptr;
   newMem = newMem + offset;
   m.~Mat();
   new (&m) OutMatType(newMem, numRows, numCols, false, true);
@@ -125,23 +126,23 @@ void MakeAlias(OutMatType& m,
  * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
  * `numCols` x `numSlices`.
  */
-template<typename InColType,
-         typename OutColType>
-void MakeAlias(OutColType& c,
-               const InColType& oldCol,
-               const size_t offset,
-               const size_t numRows,
-               const size_t numCols,
-               const typename std::enable_if_t<IsCootType<InColType>::value>* = 0)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  typename InColType::elem_type* newMem = oldCol.m.get_dev_mem();
-  newMem = newMem + offset;
-  c.~Col();
-  new (&c) OutColType(newMem, numRows, numCols, false, true);
-}
+//template<typename InColType,
+         //typename OutColType>
+//void MakeAlias(OutColType& c,
+               //const InColType& oldCol,
+               //const size_t offset,
+               //const size_t numRows,
+               //const size_t numCols,
+               //const typename std::enable_if_t<IsCootType<InColType>::value>* = 0)
+//{
+  //// We use placement new to reinitialize the object, since the copy and move
+  //// assignment operators in Armadillo will end up copying memory instead of
+  //// making an alias.
+  //typename InColType::elem_type* newMem = oldCol.m.get_dev_mem();
+  //newMem = newMem + offset;
+  //c.~Col();
+  //new (&c) OutColType(newMem, numRows, numCols, false, true);
+//}
 /**
  * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
  * `numCols` x `numSlices`.
@@ -159,7 +160,8 @@ void MakeAlias(OutCubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InCubeType::elem_type* newMem = oldCube.get_dev_mem();
+  coot::dev_mem_t<typename InCubeType::elem_type> newMem;
+  newMem = oldCube.get_dev_mem().cuda_mem_ptr;
   newMem = newMem + offset;
   c.~Cube();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
