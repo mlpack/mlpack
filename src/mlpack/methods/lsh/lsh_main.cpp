@@ -234,7 +234,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         std::move(params.Get<arma::Mat<size_t>>("true_neighbors"));
 
     util::CheckSameDimensionality(trueNeighbors, neighbors, "The true neighbors file must have the same number of values as the set of neighbors being queried.");
-    {
     
     // Compute recall and print it.
     double recallPercentage = 100 * allkann->ComputeRecall(neighbors,
