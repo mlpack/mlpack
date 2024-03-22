@@ -16,6 +16,7 @@
 #define BINDING_NAME lsh
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "lsh_search.hpp"
 
@@ -232,16 +233,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::Mat<size_t> trueNeighbors =
         std::move(params.Get<arma::Mat<size_t>>("true_neighbors"));
 
-    if (trueNeighbors.n_rows != neighbors.n_rows ||
-        trueNeighbors.n_cols != neighbors.n_cols)
+    util::CheckSameDimensionality(trueNeighbors, neighbors, "The true neighbors file must have the same number of values as the set of neighbors being queried.");
     {
-      // Delete the model if needed.
-      if (params.Has("reference"))
-        delete allkann;
-      Log::Fatal << "The true neighbors file must have the same number of "
-          << "values as the set of neighbors being queried!" << endl;
-    }
-
+    
     // Compute recall and print it.
     double recallPercentage = 100 * allkann->ComputeRecall(neighbors,
         trueNeighbors);

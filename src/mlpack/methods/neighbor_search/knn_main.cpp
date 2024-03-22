@@ -16,6 +16,7 @@
 #define BINDING_NAME knn
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "neighbor_search.hpp"
 #include "unmap.hpp"

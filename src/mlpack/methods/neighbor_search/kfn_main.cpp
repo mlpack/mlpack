@@ -16,6 +16,7 @@
 #define BINDING_NAME kfn
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "neighbor_search.hpp"
 #include "unmap.hpp"
@@ -333,15 +334,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::mat trueDistances =
           std::move(params.Get<arma::mat>("true_distances"));
 
-      if (trueDistances.n_rows != distances.n_rows ||
-          trueDistances.n_cols != distances.n_cols)
-      {
-        // Clean memory if needed.
-        if (params.Has("reference"))
-          delete kfn;
-        Log::Fatal << "The true distances file must have the same number of "
-            << "values than the set of distances being queried!" << endl;
-      }
+      util::CheckSameDimensionality(trueDistances, distances, "The true distances file");
+
 
       Log::Info << "Effective error: " << KFN::EffectiveError(distances,
           trueDistances) << endl;
@@ -358,15 +352,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Mat<size_t> trueNeighbors =
           std::move(params.Get<arma::Mat<size_t>>("true_neighbors"));
 
-      if (trueNeighbors.n_rows != neighbors.n_rows ||
-          trueNeighbors.n_cols != neighbors.n_cols)
-      {
-        // Clean memory if needed.
-        if (params.Has("reference"))
-          delete kfn;
-        Log::Fatal << "The true neighbors file must have the same number of "
-            << "values than the set of neighbors being queried!" << endl;
-      }
+      util::CheckSameDimensionality(trueNeighbors, neighbors, "The true neighbors file");
 
       Log::Info << "Recall: " << KFN::Recall(neighbors, trueNeighbors) << endl;
     }

@@ -1000,10 +1000,7 @@ double LSHSearch<SortPolicy, MatType>::ComputeRecall(
     const arma::Mat<size_t>& foundNeighbors,
     const arma::Mat<size_t>& realNeighbors)
 {
-  if (foundNeighbors.n_rows != realNeighbors.n_rows ||
-      foundNeighbors.n_cols != realNeighbors.n_cols)
-    throw std::invalid_argument("LSHSearch::ComputeRecall(): matrices provided"
-        " must have equal size");
+    util::CheckSameDimensionality(foundNeighbors, realNeighbors, "LSHSearch::ComputeRecall(): matrices provided must have equal size.");
 
   const size_t queries = foundNeighbors.n_cols;
   const size_t neighbors = foundNeighbors.n_rows; // Should be equal to k.
