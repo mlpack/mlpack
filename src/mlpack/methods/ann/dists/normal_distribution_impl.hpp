@@ -31,7 +31,7 @@ NormalDistribution<DataType>::NormalDistribution(
     mean(mean),
     sigma(sigma)
 {
-  // Nothing to do here.
+  
 }
 
 template<typename DataType>
