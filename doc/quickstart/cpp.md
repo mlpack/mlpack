@@ -17,7 +17,7 @@ your distribution; for instance, for Ubuntu and Debian you can simply run the
 command
 
 ```sh
-sudo apt-get install mlpack-dev
+sudo apt-get install libmlpack-dev
 ```
 
 and on Fedora or Red Hat:
