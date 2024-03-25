@@ -15,6 +15,7 @@
 #define BINDING_NAME logistic_regression
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "logistic_regression.hpp"
 
@@ -264,15 +265,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("training") && params.Has("labels"))
   {
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
-    if (responses.n_cols != regressors.n_cols)
-    {
-      // Clean memory if needed.
-      if (!params.Has("input_model"))
-        delete model;
-
-      Log::Fatal << "The labels must have the same number of points as the "
-          << "training dataset." << endl;
-    }
+     util::CheckSameSizes(responses, regressors, "LogisticRegression::Train()", "labels");
   }
   else if (params.Has("training"))
   {
@@ -357,17 +350,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const arma::mat& testSet = params.Get<arma::mat>("test");
 
     // Checking the dimensionality of the test data.
-    if (testSet.n_rows != model->Parameters().n_cols - 1)
-    {
-      // Clean memory if needed.
-      const size_t trainingDimensionality = model->Parameters().n_cols - 1;
-      if (!params.Has("input_model"))
-        delete model;
+    const size_t trainingDimensionality = model->Parameters().n_cols - 1;
 
-      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
-          << "be the same as the dimensionality of the training data ("
-          << trainingDimensionality << ")!" << endl;
-    }
+    util::CheckSameDimensionality(testSet, trainingDimensionality, "LogisticRegressionFunction::LogisticRegressionFunction()");
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
