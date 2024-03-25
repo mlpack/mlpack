@@ -52,6 +52,7 @@
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 #include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/repeat.hpp>
+#include <mlpack/methods/ann/layer/separable_convolution.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
