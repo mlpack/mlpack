@@ -289,7 +289,6 @@ LinearRegression<ModelMatType>::ComputeError(
 
   // Get the number of columns and rows of the dataset.
   const size_t nCols = predictors.n_cols;
-  const size_t nRows = predictors.n_rows;
 
   // Calculate the differences between actual responses and predicted responses.
   // We must also add the intercept (parameters(0)) to the predictions.
@@ -297,22 +296,16 @@ LinearRegression<ModelMatType>::ComputeError(
   if (intercept)
   {
     // Ensure that we have the correct number of dimensions in the dataset.
-    if (nRows != parameters.n_rows - 1)
-    {
-      Log::Fatal << "The test data must have the same number of columns as the "
-          "training file." << std::endl;
-    }
+    util::CheckSameDimensionality(predictors, parameters.n_rows - 1,
+        "LinearRegression::ComputeError()", "predictors");
     temp = responses - (parameters(0) +
         parameters.subvec(1, parameters.n_elem - 1).t() * predictors);
   }
   else
   {
     // Ensure that we have the correct number of dimensions in the dataset.
-    if (nRows != parameters.n_rows)
-    {
-      Log::Fatal << "The test data must have the same number of columns as the "
-          "training file." << std::endl;
-    }
+    util::CheckSameDimensionality(predictors, parameters.n_rows,
+        "LinearRegression::ComputeError()", "predictors");
     temp = responses - parameters.t() * predictors;
   }
   const ElemType cost = dot(temp, temp) / nCols;
