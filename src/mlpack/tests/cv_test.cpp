@@ -100,7 +100,16 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   REQUIRE(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC)
           == Approx(rocAucScore).epsilon(1e-7));
 
-  // Test - 4 (labels and scores with zero size)
+  // Test - 4 (Multiclass labels and scores)
+  arma::mat rocMatScores = {{0.3, 0.4, 0.1, 0.6, 0.2, 0.4, 0.8},
+                            {0.3, 0.4, 0.7, 0.1, 0.4, 0.4, 0.1},
+                            {0.4, 0.2, 0.2, 0.3, 0.4, 0.2, 0.1}};
+  rocTrueLabels = arma::Row<size_t>("1 0 1 2 1 0 1");
+  rocAucScore = 0.6027778;
+  REQUIRE(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocMatScores)
+          == Approx(rocAucScore).epsilon(1e-7));
+  
+  // Test - 5 (labels and scores with zero size)
   rocTrueLabels = arma::Row<size_t>();
   rocScoresOfPC = arma::Row<double>();
 
@@ -108,8 +117,8 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
                     std::invalid_argument);
   REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
-
-  // Test - 5 (labels and scores with one size)
+  
+  // Test - 6(labels and scores with one size)
   rocTrueLabels = arma::Row<size_t>("1");
   rocScoresOfPC = arma::Row<double>("0.8");
 
@@ -118,7 +127,7 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
   REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
 
-  // Test - 6 (mismatch labels and scores size)
+  // Test - 7 (mismatch labels and scores size)
   rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
   rocScoresOfPC = arma::Row<double>("0.1 0.2 0.3 0.4 0.5");
 
@@ -126,6 +135,27 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
                     std::invalid_argument);
   REQUIRE_THROWS_AS(ROCAUCScore<1>::Evaluate(rocTrueLabels, rocScoresOfPC),
                     std::invalid_argument);
+
+  // Test - 10 (No. of unique labels greater than score dimension)
+  rocTrueLabels = arma::Row<size_t>("1 3 1 2 1 0 1");
+  
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocMatScores),
+                    std::invalid_argument);
+
+  // Test - 9 (Empty scores)
+  rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
+  rocMatScores = arma::mat(arma::size(rocMatScores),arma::fill::zeros);
+
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocMatScores),
+                    std::invalid_argument);
+  
+  // Test - 10 (Empty scores)
+  rocTrueLabels = arma::Row<size_t>("1 0 1 0 1  0 1 0 1 0");
+  rocMatScores.reset();
+
+  REQUIRE_THROWS_AS(ROCAUCScore<0>::Evaluate(rocTrueLabels, rocMatScores),
+                    std::invalid_argument);
+                
 }
 
 /**
