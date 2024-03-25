@@ -17,6 +17,7 @@
 #include <mlpack/core/tree/greedy_single_tree_traverser.hpp>
 #include "neighbor_search_rules.hpp"
 #include <mlpack/core/tree/spill_tree/is_spill_tree.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 
@@ -828,9 +829,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
     arma::Mat<ElemType>& foundDistances,
     arma::Mat<ElemType>& realDistances)
 {
-  if (foundDistances.n_rows != realDistances.n_rows ||
-      foundDistances.n_cols != realDistances.n_cols)
-    throw std::invalid_argument("matrices provided must have equal size");
+    util::CheckSameDimensionality(foundDistances, realDistances, "The matrices provided");
 
   double effectiveError = 0;
   size_t numCases = 0;
@@ -866,9 +865,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Recall(
     arma::Mat<size_t>& foundNeighbors,
     arma::Mat<size_t>& realNeighbors)
 {
-  if (foundNeighbors.n_rows != realNeighbors.n_rows ||
-      foundNeighbors.n_cols != realNeighbors.n_cols)
-    throw std::invalid_argument("matrices provided must have equal size");
+   util::CheckSameDimensionality(foundNeighbors, realNeighbors, "The matrices provided must have equal size.");
 
   size_t found = 0;
   for (size_t col = 0; col < foundNeighbors.n_cols; ++col)

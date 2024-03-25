@@ -16,6 +16,7 @@
 #define BINDING_NAME knn
 
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 #include "neighbor_search.hpp"
 #include "unmap.hpp"
@@ -289,15 +290,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Info << "Using query data from "
           << params.GetPrintable<arma::mat>("query") << "." << endl;
       queryData = std::move(params.Get<arma::mat>("query"));
-      if (queryData.n_rows != knn->Dataset().n_rows)
-      {
-        // Clean memory if needed before crashing.
-        const size_t dimensions = knn->Dataset().n_rows;
-        if (params.Has("reference"))
-          delete knn;
-        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
-            "); should be " << dimensions << "!" << endl;
-      }
+      util::CheckSameDimensionality(queryData, knn->Dataset(), "Query data and reference dataset");
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
@@ -349,14 +342,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::mat trueDistances =
           std::move(params.Get<arma::mat>("true_distances"));
 
-      if (trueDistances.n_rows != distances.n_rows ||
-          trueDistances.n_cols != distances.n_cols)
-      {
-        if (params.Has("reference"))
-          delete knn;
-        Log::Fatal << "The true distances file must have the same number of "
-            << "values than the set of distances being queried!" << endl;
-      }
+      util::CheckSameDimensionality(trueDistances, distances, "The true distances file");
 
       Log::Info << "Effective error: " << KNN::EffectiveError(distances,
           trueDistances) << endl;
@@ -373,14 +359,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Mat<size_t> trueNeighbors =
           std::move(params.Get<arma::Mat<size_t>>("true_neighbors"));
 
-      if (trueNeighbors.n_rows != neighbors.n_rows ||
-          trueNeighbors.n_cols != neighbors.n_cols)
-      {
-        if (params.Has("reference"))
-          delete knn;
-        Log::Fatal << "The true neighbors file must have the same number of "
-            << "values than the set of neighbors being queried!" << endl;
-      }
+      util::CheckSameDimensionality(trueNeighbors, neighbors, "The true neighbors file");
 
       Log::Info << "Recall: " << KNN::Recall(neighbors, trueNeighbors) << endl;
     }
