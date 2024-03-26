@@ -68,7 +68,7 @@ class PReLUType : public Layer<MatType>
   PReLUType& operator=(PReLUType&& other);
 
   //! Reset the layer parameter.
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weights);
 
   /**
    * Initialize the weight matrix of the layer.

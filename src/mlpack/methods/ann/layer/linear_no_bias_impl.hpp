@@ -95,9 +95,9 @@ LinearNoBiasType<MatType, RegularizerType>::operator=(
 
 template<typename MatType, typename RegularizerType>
 void LinearNoBiasType<MatType, RegularizerType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    const MatType& weights)
 {
-  MakeAlias(weight, weightsPtr, outSize, inSize);
+  MakeAlias(weight, weights, 0, outSize, inSize);
 }
 
 template<typename MatType, typename RegularizerType>

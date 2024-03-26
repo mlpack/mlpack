@@ -155,7 +155,7 @@ class ConvolutionType : public Layer<MatType>
   /*
    * Set the weight and bias term.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weights);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

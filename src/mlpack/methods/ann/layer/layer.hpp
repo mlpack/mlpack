@@ -186,12 +186,12 @@ class Layer
    * do not respect this rule, Forward(input, output) and Backward(input, gy, g)
    * might compute incorrect results.
    *
-   * @param weightsPtr This pointer should be used as the first element of the
+   * @param weights This pointer should be used as the first element of the
    *    memory that is allocated for this layer.  In general, SetWeights()
-   *    implementations should use MakeAlias() with weightsPtr to wrap the
+   *    implementations should use MakeAlias() with weights to wrap the
    *    weights of a layer.
    */
-  virtual void SetWeights(typename MatType::elem_type* /* weightsPtr */) { }
+  virtual void SetWeights(const MatType& /* weights */) { }
 
   /**
    * Get the total number of trainable weights in the layer.

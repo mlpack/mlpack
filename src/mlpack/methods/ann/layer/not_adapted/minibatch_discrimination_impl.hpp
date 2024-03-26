@@ -43,9 +43,9 @@ MiniBatchDiscrimination<InputType, OutputType
 
 template<typename InputType, typename OutputType>
 void MiniBatchDiscrimination<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+    typename OutputType::elem_type* weights)
 {
-  weights = OutputType(weightsPtr, b * c, a, false, false);
+  weights = OutputType(weights, b * c, a, false, false);
 }
 
 template<typename InputType, typename OutputType>

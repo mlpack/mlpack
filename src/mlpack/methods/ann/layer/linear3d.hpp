@@ -68,7 +68,7 @@ class Linear3DType : public Layer<MatType>
   /*
    * Reset the layer parameter.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weights);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

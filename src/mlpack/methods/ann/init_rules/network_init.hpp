@@ -40,6 +40,7 @@ class NetworkInitialization
     // Nothing to do here.
   }
 
+
   /**
    * Initialize the specified network and store the results in the given
    * parameter.
@@ -48,9 +49,9 @@ class NetworkInitialization
    * @param parameter The network parameter.
    * @param parameterOffset Offset for network paramater, default 0.
    */
-  template <typename eT>
-  void Initialize(const std::vector<Layer<arma::Mat<eT>>*>& network,
-                  arma::Mat<eT>& parameters,
+  template <typename MatType>
+  void Initialize(const std::vector<Layer<MatType>*>& network,
+                  MatType& parameters,
                   size_t parameterOffset = 0)
   {
     // Determine the total number of parameters/weights of the given network.
@@ -71,8 +72,8 @@ class NetworkInitialization
         // Initialize the layer with the specified parameter/weight
         // initialization rule.
         const size_t weight = network[i]->WeightSize();
-        arma::Mat<eT> tmp = arma::Mat<eT>(parameters.memptr() + offset,
-            weight, 1, false, false);
+        MatType tmp;
+        MakeAlias(tmp, parameters, offset, weight, 1);
         initializeRule.Initialize(tmp, tmp.n_elem, 1);
 
         // Increase the parameter/weight offset for the next layer.

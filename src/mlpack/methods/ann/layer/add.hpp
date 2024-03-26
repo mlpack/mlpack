@@ -94,7 +94,7 @@ class AddType : public Layer<MatType>
   void ComputeOutputDimensions();
 
   //! Set the weights of the layer to use the given memory.
-  void SetWeights(typename MatType::elem_type* weightPtr);
+  void SetWeights(const MatType& weightPtr);
 
   /**
    * Serialize the layer.

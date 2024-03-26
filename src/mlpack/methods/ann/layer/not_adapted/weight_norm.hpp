@@ -81,7 +81,7 @@ class WeightNormType : public Layer<InputType, OutputType>
   /**
    * Reset the layer parameters.
    */
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename OutputType::elem_type* weights);
 
   /**
    * Forward pass of the WeightNorm layer. Calculates the weights of the

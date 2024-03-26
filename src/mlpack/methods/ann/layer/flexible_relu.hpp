@@ -83,7 +83,7 @@ class FlexibleReLUType : public Layer<MatType>
    * Reset the layer parameter (alpha). The method is called to
    * assign the allocated memory to the learnable layer parameter.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weights);
 
   /**
    * Initialize the weight matrix of the layer.

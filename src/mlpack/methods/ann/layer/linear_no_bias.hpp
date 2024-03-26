@@ -52,7 +52,7 @@ class LinearNoBiasType : public Layer<MatType>
   LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
 
   //! Reset the layer parameter.
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weights);
 
   //! Copy constructor.
   LinearNoBiasType(const LinearNoBiasType& layer);

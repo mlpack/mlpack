@@ -69,7 +69,7 @@ class HighwayType : public MultiLayer<InputType, OutputType>
   //! Take ownership of the given HighwayType (but not weights).
   HighwayType& operator=(HighwayType&& other);
 
-  void SetWeights(typename OutputType::elem_type* weightsPtr);
+  void SetWeights(typename OutputType::elem_type* weights);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function

@@ -45,10 +45,10 @@ VirtualBatchNormType<InputType, OutputType>::VirtualBatchNormType(
 
 template<typename InputType, typename OutputType>
 void VirtualBatchNormType<InputType, OutputType>::SetWeights(
-    typename OutputType::elem_type* weightsPtr)
+    typename OutputType::elem_type* weights)
 {
-  gamma = OutputType(weightsPtr, size, 1, false, false);
-  beta = OutputType(weightsPtr + gamma.n_elem, size, 1, false, false);
+  gamma = OutputType(weights, size, 1, false, false);
+  beta = OutputType(weights + gamma.n_elem, size, 1, false, false);
 
   if (!loading)
   {

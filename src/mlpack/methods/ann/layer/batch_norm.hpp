@@ -118,7 +118,7 @@ class BatchNormType : public Layer<MatType>
   /**
    * Reset the layer parameters.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weights);
 
   /**
    * Initialize the weight matrix of the layer.

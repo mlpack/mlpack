@@ -235,7 +235,7 @@ void MultiLayer<MatType>::Gradient(
 }
 
 template<typename MatType>
-void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
+void MultiLayer<MatType>::SetWeights(const MatType& weights)
 {
   size_t start = 0;
   const size_t totalWeightSize = WeightSize();
@@ -249,7 +249,7 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
         "FNN::SetLayerMemory(): parameter size does not match total layer "
         "weight size!");
 
-    network[i]->SetWeights(weightsPtr + start);
+    network[i]->SetWeights(weights + start);
     start += weightSize;
   }
 
@@ -262,7 +262,7 @@ void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 
 template<typename MatType>
 void MultiLayer<MatType>::CustomInitialize(
-    MatType& W,
+    MatType& weights,
     const size_t elements)
 {
   size_t start = 0;
@@ -278,7 +278,7 @@ void MultiLayer<MatType>::CustomInitialize(
         "weight size!");
     
     MatType WTemp;
-    MakeAlias(WTemp, W.memptr() + start, weightSize, 1);
+    MakeAlias(WTemp, weights, start, weightSize, 1);
     network[i]->CustomInitialize(WTemp, weightSize);
     
     start += weightSize;
@@ -388,7 +388,7 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   for (size_t i = 0; i < layerOutputs.size(); ++i)
   {
     const size_t layerOutputSize = network[i]->OutputSize();
-    MakeAlias(layerOutputs[i], layerOutputMatrix.colptr(start),
+    MakeAlias(layerOutputs[i], layerOutputMatrix.col(start), 0,
         layerOutputSize, batchSize);
     start += batchSize * layerOutputSize;
   }
@@ -417,7 +417,7 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
     for (size_t j = 0; j < this->network[i]->InputDimensions().size(); ++j)
       layerInputSize *= this->network[i]->InputDimensions()[j];
 
-    MakeAlias(layerDeltas[i], layerDeltaMatrix.colptr(start), layerInputSize,
+    MakeAlias(layerDeltas[i], layerDeltaMatrix.col(start), 0, layerInputSize,
         batchSize);
     start += batchSize * layerInputSize;
   }
@@ -432,8 +432,7 @@ void MultiLayer<MatType>::InitializeGradientPassMemory(MatType& gradient)
   for (size_t i = 0; i < network.size(); ++i)
   {
     const size_t weightSize = network[i]->WeightSize();
-    MakeAlias(layerGradients[i], gradient.memptr() + gradientStart,
-        weightSize, 1);
+    MakeAlias(layerGradients[i], gradient, gradientStart, weightSize, 1);
     gradientStart += weightSize;
   }
 }

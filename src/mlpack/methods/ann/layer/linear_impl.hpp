@@ -94,11 +94,11 @@ LinearType<MatType, RegularizerType>::operator=(
 
 template<typename MatType, typename RegularizerType>
 void LinearType<MatType, RegularizerType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+    const MatType& originalWeights)
 {
-  MakeAlias(weights, weightsPtr, outSize * inSize + outSize, 1);
-  MakeAlias(weight, weightsPtr, outSize, inSize);
-  MakeAlias(bias, weightsPtr + weight.n_elem, outSize, 1);
+  MakeAlias(weights, originalWeights, 0, outSize * inSize + outSize, 1);
+  MakeAlias(weight, originalWeights, 0, outSize, inSize);
+  MakeAlias(bias, originalWeights, weight.n_elem, outSize, 1);
 }
 
 template<typename MatType, typename RegularizerType>

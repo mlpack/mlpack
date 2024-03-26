@@ -74,10 +74,9 @@ FlexibleReLUType<MatType>::operator=(FlexibleReLUType&& other)
 }
 
 template<typename MatType>
-void FlexibleReLUType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+void FlexibleReLUType<MatType>::SetWeights(const MatType& weights)
 {
-  MakeAlias(alpha, weightsPtr, 1, 1);
+  MakeAlias(alpha, weights, 0, 1, 1);
 }
 
 template<typename MatType>

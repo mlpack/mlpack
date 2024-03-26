@@ -186,7 +186,7 @@ void TransposedConvolutionType<
 {
   weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
       kernelWidth, kernelHeight, outSize * inSize, false, false);
-  bias = arma::Mat<typename OutputType::elem_type>(weightsPtr +
+  bias = arma::Mat<typename OutputType::elem_type>(weights +
       weight.n_elem, outSize, 1, false, false);
 }
 

@@ -73,10 +73,9 @@ PReLUType<MatType>::operator=(PReLUType&& other)
 }
 
 template<typename MatType>
-void PReLUType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+void PReLUType<MatType>::SetWeights(const MatType& weights)
 {
-  MakeAlias(alpha, weightsPtr, 1, 1);
+  MakeAlias(alpha, weights, 0, 1, 1);
 }
 
 template<typename MatType>
@@ -94,8 +93,7 @@ void PReLUType<MatType>::CustomInitialize(
 }
 
 template<typename MatType>
-void PReLUType<MatType>::Forward(
-    const MatType& input, MatType& output)
+void PReLUType<MatType>::Forward(const MatType& input, MatType& output)
 {
   output = input;
   #pragma omp for
