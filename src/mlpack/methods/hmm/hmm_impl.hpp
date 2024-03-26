@@ -17,6 +17,7 @@
 // Just in case...
 #include "hmm.hpp"
 #include <mlpack/core/math/log_add.hpp>
+#include <mlpack/core/util/size_checks.hpp>
 
 namespace mlpack {
 
@@ -105,11 +106,8 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
   for (size_t seq = 0; seq < dataSeq.size(); seq++)
   {
     totalLength += dataSeq[seq].n_cols;
-
-    if (dataSeq[seq].n_rows != dimensionality)
-      Log::Fatal << "HMM::Train(): data sequence " << seq << " has "
-          << "dimensionality " << dataSeq[seq].n_rows << " (expected "
-          << dimensionality << " dimensions)." << std::endl;
+      
+      util::CheckSameDimensionality(dataSeq[seq], dimensionality, "HMM::Train()");
   }
 
   // These are used later for training of each distribution.  We initialize it
@@ -269,13 +267,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   for (size_t seq = 0; seq < dataSeq.size(); seq++)
   {
     // Simple error checking.
-    if (dataSeq[seq].n_cols != stateSeq[seq].n_elem)
-    {
-      Log::Fatal << "HMM::Train(): number of observations ("
-          << dataSeq[seq].n_cols << ") in sequence " << seq
-          << " not equal to number of states (" << stateSeq[seq].n_cols
-          << ") in sequence " << seq << "." << std::endl;
-    }
+   
+    util::CheckSameSizes(dataSeq[seq],stateSeq[seq],"HMM::Train()");
 
     if (dataSeq[seq].n_rows != dimensionality)
     {
