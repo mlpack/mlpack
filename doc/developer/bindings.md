@@ -664,7 +664,7 @@ parameter is required, and whether the parameter is an input or output
 parameter.  Then as arguments to the macros, the name, description, and
 sometimes the single-character alias and the default value of the parameter.
 
-To give a flavor of how these definitions look, the definition
+To give an idea of how these definitions look, the definition
 
 ```c++
 PARAM_STRING_IN("algorithm", "The algorithm to use: 'svd' or 'blah'.", "a");
@@ -724,7 +724,7 @@ And for input parameters, the parameter may also be required:
 
 See the source documentation for each macro to read further details.  Note also
 that each possible combination of `IN`, `OUT`, and `REQ` is not
-available---output options cannot be required, and some combinations simply have
+available - output options cannot be required, and some combinations simply have
 not been added because they have not been needed.
 
 The `PARAM_MODEL_IN()` and `PARAM_MODEL_OUT()` macros are used to serialize
@@ -777,8 +777,8 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "The randomly generated "
     "linear regression output model.", "M");
 ```
 
-Note that even the parameter documentation strings must be a little be agnostic
-to the binding type, because the command-line interface is so different than the
+Note that even the parameter documentation strings must be a little agnostic
+to the binding type, because the command-line interface is so different from the
 Python interface to the user.
 
 ### Using `Params` in a `BINDING_FUNCTION()` function
@@ -815,7 +815,7 @@ To access a string that a user passed in to the `string` parameter, the
 following code could be used:
 
 ```c++
-const std::string& str = params.Has<std::string>("string");
+const std::string& str = params.Get<std::string>("string");
 ```
 
 Matrix types are accessed in the same way:
@@ -943,7 +943,7 @@ populating them with the correct options for the given binding, then calls
 `BINDING_FUNCTION()` with those instantiated objects.
 
 In order to do this, each parameter and the program documentation must make
-themselves known to the IO singleton.  This is accomplished by having the @c
+themselves known to the IO singleton.  This is accomplished by having the
 `BINDING_USER_NAME()`, `BINDING_SHORT_DESC()`, `BINDING_LONG_DESC()`,
 `BINDING_EXAMPLE()`, `BINDING_SEE_ALSO()` and `PARAM_*()` macros declare global
 variables that, in their constructors, register themselves with the `IO`
