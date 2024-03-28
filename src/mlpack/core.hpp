@@ -44,6 +44,7 @@
 #include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/data.hpp>
 #include <mlpack/core/math/math.hpp>
+#include <mlpack/core/util/lag.hpp>
 
 // mlpack::backtrace only for linux
 #ifdef MLPACK_HAS_BFD_DL
