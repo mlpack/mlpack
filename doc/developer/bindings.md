@@ -664,7 +664,7 @@ parameter is required, and whether the parameter is an input or output
 parameter.  Then as arguments to the macros, the name, description, and
 sometimes the single-character alias and the default value of the parameter.
 
-To give an idea of how these definitions look, the definition
+To give a flavor of how these definitions look, the definition
 
 ```c++
 PARAM_STRING_IN("algorithm", "The algorithm to use: 'svd' or 'blah'.", "a");
@@ -724,7 +724,7 @@ And for input parameters, the parameter may also be required:
 
 See the source documentation for each macro to read further details.  Note also
 that each possible combination of `IN`, `OUT`, and `REQ` is not
-available - output options cannot be required, and some combinations simply have
+available---output options cannot be required, and some combinations simply have
 not been added because they have not been needed.
 
 The `PARAM_MODEL_IN()` and `PARAM_MODEL_OUT()` macros are used to serialize
