@@ -20,6 +20,13 @@ command
 sudo apt-get install libmlpack-dev
 ```
 
+**Note for Ubuntu LTS Users**: The libmlpack-dev version in the Ubuntu LTS 
+repositories may not always be the latest. This can lead to issues, such as
+missing header files (e.g., mlpack.hpp missing in versions prior to 4.0). To 
+ensure compatibility with the latest mlpack features and examples, we recommend
+ either building mlpack from source or using Docker, as explained in 
+ [our installation guide](../../README.md#3-installing-and-using-mlpack-in-c).
+
 and on Fedora or Red Hat:
 
 ```sh
