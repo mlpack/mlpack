@@ -46,8 +46,8 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### See also:
 
- * [`LinearRegression`](#linear_regression) <!-- TODO: fix link! -->
- * [mlpack regression techniques](#mlpack_regression_techniques) <!-- TODO: fix link! -->
+ * [`LinearRegression`](linear_regression.md)
+ * [mlpack regression techniques](../../index.md#regression-algorithms)
  * [Least-angle Regression on Wikipedia](https://en.wikipedia.org/wiki/Least-angle_regression)
 
 ### Constructors
@@ -82,16 +82,11 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section on labels and NormalizeLabels()
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | Training matrix. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
-| `colMajor` | `bool` | Should be set to `true` if `data` is [column-major](../matrices.md).  Passing row-major data can avoid a transpose operation. | `false` |
+| `colMajor` | `bool` | Should be set to `true` if `data` is [column-major](../matrices.md#representing-data-in-mlpack).  Passing row-major data can avoid a transpose operation. | `false` |
 | `useCholesky` | `bool` | If `true`, use the Cholesky decomposition of the Gram matrix to solve linear systems (as opposed to the full Gram matrix). | `false` |
 | `gramMatrix` | [`arma::mat`](../matrices.md) | Precomputed Gram matrix of `data` (i.e.  `data * data.t()` for column-major data). | _(N/A)_ |
 | `lambda1` | `double` | L1 regularization penalty parameter. | `0.0` |
@@ -126,9 +121,11 @@ with a standalone method.  The following functions can be used before calling
  - Specifying a too-small `lambda1` or `lambda2` value may cause the model to
    overfit; however, setting it too large may cause the model to underfit.
    Because LARS is a path algorithm, the
-   [`SelectBeta()`](#other_functionality) functions can be used to select models
+   [`SelectBeta()`](#other-functionality) functions can be used to select models
    with different values of `lambda1`.  For tuning `lambda2`,
-   [Automatic hyperparameter tuning](#hyperparameter-tuner) can be used.
+   [Automatic hyperparameter tuning](../hpt.md) can be used.
+
+<!-- TODO: fix the link to the hyperparameter tuner -->
 
  - `fitIntercept` and `normalizeData` are recommended to be set as `true`, in
    accordance with the original LARS algorithm.  `false` can be used for
@@ -144,9 +141,6 @@ with a standalone method.  The following functions can be used before calling
 
 If training is not done as part of the constructor call, it can be done with the
 `Train()` function:
-
-<!-- TODO: deprecate beta version -->
-<!-- TODO: implement hyperparameters versions -->
 
  * `lars.Train(data, responses, colMajor=true, useCholesky=true, lambda1=0.0, lambda2=0.0, tolerance=1e-16, fitIntercept=true, normalizeData=true)`
    - Train the model on the given data.
@@ -184,8 +178,6 @@ Types of each argument are the same as in the table for constructors
 Once a `LARS` model is trained, the `Predict()` member function
 can be used to make predictions for new data.
 
-<!-- TODO: implement single-point version -->
-
  * `double predictedValue = lars.Predict(point)`
    - ***(Single-point)***
    - Make a prediction for a single point, returning the predicted value.
@@ -211,10 +203,8 @@ can be used to make predictions for new data.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
  * A `LARS` model can be serialized with
-   [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `lars.Beta()` will return an `arma::vec` with the model parameters.  This
    will have length equal to the dimensionality of the model.  Note that
@@ -255,14 +245,12 @@ switch between them for prediction purposes:
     value corresponding to the model defined by `lars.BetaPath()[i]` and
     `lars.InterceptPath()[i]`.
 
-<!-- TODO: implement -->
  * `lars.SelectBeta(lambda1)` will set the model weights (`lars.ActiveSet()`,
    `lars.Beta()` and `lars.Intercept()`) to the path location with L1 penalty
    `lambda1`.  This is equivalent to calling `lars.Train(data, responses,
    colMajor, useCholesky, lambda1)`---but much more efficient!  `lambda1`
    cannot be less than `lars.Lambda1()`, or an exception will be thrown.
 
-<!-- TODO: implement -->
  * `lars.SelectedLambda1()` returns the currently selected L1 regularization
    penalty parameter.
 
@@ -425,7 +413,7 @@ for (double lambda2 : lambda2Values)
 The `LARS` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 LARS<ModelMatType>
 ```
 

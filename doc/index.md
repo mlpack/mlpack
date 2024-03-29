@@ -1,5 +1,11 @@
 # Documentation for mlpack
 
+<!--
+This file contains the landing page for mlpack documentation.  Note that if you
+change any section headers, or add any new algorithms, the sidebar in
+sidebar.html will need to be manually modified!
+-->
+
 ## A fast, flexible machine learning library
 
 mlpack is an intuitive, fast, and flexible header-only C++ machine learning
@@ -12,7 +18,7 @@ seen in action on mlpack's [homepage](https://www.mlpack.org/)).
 
 In addition to its [powerful C++ interface](quickstart/cpp.md), mlpack also
 provides [command-line programs](quickstart/cli.md), and bindings to the
-[Python](quickstart/python.md), [R](quickstart/r.md),
+[Python](quickstart/python.md), [R](quickstart/R.md),
 [Julia](quickstart/julia.md), and [Go](quickstart/go.md) languages.
 
 _If you use mlpack, please [cite the software](citation.md)._
@@ -65,11 +71,17 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
  * [`AdaBoost`](user/methods/adaboost.md): Adaptive Boosting
  * [`DecisionTree`](user/methods/decision_tree.md): ID3-style decision tree
    classifier
+ * [`HoeffdingTree`](user/methods/hoeffding_tree.md): streaming/incremental
+   decision tree classifier
+ * [`LinearSVM`](user/methods/linear_svm.md): simple linear support vector
+   machine classifier
  * [`LogisticRegression`](user/methods/logistic_regression.md): L2-regularized
    logistic regression (two-class only)
  * [`NaiveBayesClassifier`](user/methods/naive_bayes_classifier.md): simple
    multi-class naive Bayes classifier
  * [`Perceptron`](user/methods/perceptron.md): simple Perceptron classifier
+ * [`RandomForest`](user/methods/random_forest.md): parallelized random forest
+   classifier
  * [`SoftmaxRegression`](user/methods/softmax_regression.md): L2-regularized
    softmax regression (i.e. multi-class logistic regression)
 
@@ -77,6 +89,8 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
 
 Predict continuous values.
 
+ * [`BayesianLinearRegression`](user/methods/bayesian_linear_regression.md):
+   Bayesian L2-penalized linear regression
  * [`DecisionTreeRegressor`](user/methods/decision_tree_regressor.md): ID3-style
    decision tree regressor
  * [`LARS`](user/methods/lars.md): Least Angle Regression (LARS), L1-regularized
@@ -121,7 +135,7 @@ mlpack in C++, but almost all the same algorithms are available.
 
 | ***Python*** | -- | [quickstart](quickstart/python.md) | -- | [reference](https://www.mlpack.org/doc/python_documentation.html) |
 | ***Julia*** | -- | [quickstart](quickstart/julia.md) | -- | [reference](https://www.mlpack.org/doc/julia_documentation.html) |
-| ***R*** | -- | [quickstart](quickstart/r.md) | -- | [reference](https://www.mlpack.org/doc/r_documentation.html)
+| ***R*** | -- | [quickstart](quickstart/R.md) | -- | [reference](https://www.mlpack.org/doc/r_documentation.html)
 | ***Command-line programs*** | -- | [quickstart](quickstart/cli.md) | -- | [reference](https://www.mlpack.org/doc/cli_documentation.html) |
 | ***Go*** | -- | [quickstart](quickstart/go.md) | -- | [reference](https://www.mlpack.org/doc/go_documentation.html) |
 

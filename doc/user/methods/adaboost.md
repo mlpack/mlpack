@@ -37,7 +37,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
  * [Constructors](#constructors): create `AdaBoost` objects.
  * [`Train()`](#training): train model.
- * [`Classify()`](#classify): classify with a trained model.
+ * [`Classify()`](#classification): classify with a trained model.
  * [Other functionality](#other-functionality) for loading, saving, and
    inspecting.
  * [Examples](#simple-examples) of simple usage and links to detailed example
@@ -49,9 +49,9 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
- * [`Perceptron`](#perceptron) <!-- TODO: fix link! -->
- * [`DecisionTree`](#decision_tree) <!-- TODO: fix link! -->
+ * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [`Perceptron`](perceptron.md)
+ * [`DecisionTree`](decision_tree.md)
  * [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
  * [AdaBoost.MH paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/279943.279960)
 
@@ -75,22 +75,16 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
      learner's `Train()` function that come after `numClasses` or `weights`.
    - The only hyperparameter for the default weak learner (`Perceptron`) is
      `maxIterations`.
-   - See [examples of this constructor in use](#simple-examples). <!-- TODO:
-     better link -->
+   - See [examples of this constructor in use](#simple-examples).
 
 ---
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section of labels and NormalizeLabels()
--->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `weakLearner` | `Perceptron` | An initialized weak learner whose
 hyperparameters will be used as settings for weak learners during training. |
@@ -106,10 +100,8 @@ with a standalone method.  The following functions can be used before calling
    during training to `maxIter`.
  * `ab.Tolerance() = tol;` will set the tolerance to `tol`.
 
-<!-- TODO: fix links -->
-
 ***Note:*** different types of weak learners can be used than
-[`Perceptron`](#perceptron), by changing the [`WeakLearnerType` template
+[`Perceptron`](perceptron.md), by changing the [`WeakLearnerType` template
 parameter](#advanced-functionality-template-parameters).
 
 ### Training
@@ -129,8 +121,7 @@ named `ab`, the following functions for training are available:
      learner's `Train()` function that come after `numClasses` or `weights`.
    - The only hyperparameter for the default weak learner (`Perceptron`) is
      `maxIterations`.
-   - See [examples of this form in use](#simple-examples). <!-- TODO:
-     better link -->
+   - See [examples of this form in use](#simple-examples).
 
 ---
 
@@ -188,16 +179,14 @@ used to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes; number of columns will be equal to `data.n_cols`). |
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
- * An `AdaBoost` model can be serialized with [`data::Save()`](../formats.md)
-   and [`data::Load()`](../formats.md).
+ * An `AdaBoost` model can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `ab.NumClasses()` will return a `size_t` indicating the number of classes the
    model was trained on.
@@ -258,7 +247,7 @@ arma::mat dataset;
 mlpack::data::Load("iris.csv", dataset, true);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", dataset, true);
+mlpack::data::Load("iris.labels.csv", labels, true);
 
 mlpack::AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
@@ -309,7 +298,7 @@ See also the following fully-working examples:
 The `AdaBoost` class has two template parameters that can be used for custom
 behavior.  The full signature of the class is:
 
-```c++
+```
 AdaBoost<WeakLearnerType, MatType>
 ```
 
@@ -321,12 +310,10 @@ AdaBoost<WeakLearnerType, MatType>
 
 #### `WeakLearnerType`
 
-<!-- TODO: fix links! -->
-
  * Specifies the weak learner to use when constructing an AdaBoost model.
- * The default `WeakLearnerType` is [`Perceptron<>`](#perceptron).
+ * The default `WeakLearnerType` is [`Perceptron<>`](perceptron.md).
  * The `ID3DecisionStump` class (a custom variant of
-   [`DecisionTree`](#decision_tree)) is available for drop-in usage as a weak
+   [`DecisionTree`](decision_tree.md)) is available for drop-in usage as a weak
    learner.
  * Any custom variant of `Perceptron<>` or `DecisionTree<>` can be used; e.g.,
    `Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization>`.
@@ -401,7 +388,7 @@ arma::Row<size_t> labels =
 // hyperparameters for the decision stump (these could be omitted).  See the
 // DecisionTree documentation for more details on the ID3DecisionStump-specific
 // hyperparameters.
-mlpack::AdaBoost<ID3DecisionStump> ab(dataset, labels, 5,
+mlpack::AdaBoost<mlpack::ID3DecisionStump> ab(dataset, labels, 5,
     25 /* maximum number of decision stumps */,
     1e-6 /* tolerance for convergence of AdaBoost */,
     /** Hyperparameters specific to ID3DecisionStump: **/
@@ -433,8 +420,9 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using floating-point data.
 // The weak learner type is now a floating-point Perceptron.
-typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, arma::fmat>
-    PerceptronType;
+typedef mlpack::Perceptron<mlpack::SimpleWeightUpdate,
+                           mlpack::ZeroInitialization,
+                           arma::fmat> PerceptronType;
 mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).

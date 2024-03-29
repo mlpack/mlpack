@@ -47,9 +47,9 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [`DecisionTree`](#decision_tree) <!-- TODO: fix link! -->
- * [Random forests](#random_forests) <!-- TODO: fix link! -->
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
+ * [`DecisionTree`](decision_tree.md)
+ * [Random forests](random_forest.md)
+ * [mlpack classifiers](../../index.md#classification-algorithms)
  * [Incremental decision tree on Wikipedia](https://en.wikipedia.org/wiki/Incremental_decision_tree)
  * [Mining High-Speed Data Streams (pdf)](https://dl.acm.org/doi/pdf/10.1145/347090.347107)
 
@@ -96,18 +96,11 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * better link for working with categorical data in straightforward terms
-    * update matrices.md to include a section on labels and NormalizeLabels()
-    * add a bit about instance weights in matrices.md
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `dimensionality` | `size_t` | When using on numeric-only data, this specifies the number of dimensions in the data. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `batchTraining` | `bool` | If `true`, a batch training algorithm is used, instead of the usual incremental algorithm.  This is generally more efficient for larger datasets. | `true` |
@@ -226,7 +219,7 @@ to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probability` | `double&` | `double` to store predicted class probability into. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::rowvec&`](../matrices.md) | Vector to store probability of predicted class in for each point.  Will be set to length `data.n_cols`. |
 
@@ -236,10 +229,8 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
- * A `HoeffdingTree` can be serialized with [`data::Save()`](../formats.md) and
-   [`data::Load()`](../formats.md).
+ * A `HoeffdingTree` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
    in the node `tree`.
@@ -341,7 +332,7 @@ mlpack::data::Load("covertype.train.labels.csv", labels, true);
 arma::mat testDataset;
 mlpack::data::Load("covertype.test.arff", testDataset, info, true);
 
-// See https://datasets.mlpack.org/covertype.test.labels.arff.
+// See https://datasets.mlpack.org/covertype.test.labels.csv.
 arma::Row<size_t> testLabels;
 mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
 
@@ -492,7 +483,7 @@ The `HoeffdingTree` class also supports several template parameters, which can
 be used for custom behavior during learning.  The full signature of the class is
 as follows:
 
-```c++
+```
 HoeffdingTree<FitnessFunction,
               NumericSplitType,
               CategoricalSplitType>
@@ -564,7 +555,7 @@ class CustomFitnessFunction
     - `HoeffdingTree(data, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
     - `HoeffdingTree(data, datasetInfo, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
 
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement several functions, and have an internal
    structure `SplitInfo` that is used at classification time:
 
@@ -659,7 +650,7 @@ class CustomNumericSplit
     - `HoeffdingTree(data, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
     - `HoeffdingTree(data, datasetInfo, labels, numClasses, successProbability, maxSamples, checkInterval, minSamples, categoricalSplit, numericSplit)`
 
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement several functions, and have an internal
    structure `SplitInfo` that is used at classification time:
 

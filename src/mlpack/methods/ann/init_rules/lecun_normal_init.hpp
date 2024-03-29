@@ -69,7 +69,7 @@ class LecunNormalInitialization
                   const size_t rows,
                   const size_t cols)
   {
-    // He initialization rule says to initialize weights with random
+    // Lecun initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(1 / rows), i.e. variance = (1 / rows).
     const double variance = 1.0 / ((double) rows);
@@ -79,7 +79,7 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
-    W.imbue( [&]() { return std::sqrt(variance) * arma::randn(); } );
+    W = randn<MatType>(rows, cols) * std::sqrt(variance);
   }
 
   /**
@@ -92,7 +92,7 @@ class LecunNormalInitialization
   void Initialize(MatType& W,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    // He initialization rule says to initialize weights with random
+    // Lecun initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(1 / rows), i.e. variance = (1 / rows).
     const double variance = 1.0 / (double) W.n_rows;
@@ -102,7 +102,7 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c ^ 2) * V(X).
-    W.imbue( [&]() { return std::sqrt(variance) * arma::randn(); } );
+    W = randn<MatType>(W.n_rows, W.n_cols) * std::sqrt(variance);
   }
 
   /**

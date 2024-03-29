@@ -42,7 +42,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     return DBL_MAX; // It can't be outperformed.
 
   typename VecType::elem_type maxValue = max(data);
-  typename VecType::elem_type minValue = arma::min(data);
+  typename VecType::elem_type minValue = min(data);
 
   // Sanity check: if the maximum element is the same as the minimum, we
   // can't split in this dimension.
@@ -162,7 +162,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     return DBL_MAX; // It can't be outperformed.
 
   typename VecType::elem_type maxValue = max(data);
-  typename VecType::elem_type minValue = arma::min(data);
+  typename VecType::elem_type minValue = min(data);
 
   // Sanity check: if the maximum element is the same as the minimum, we
   // can't split in this dimension.

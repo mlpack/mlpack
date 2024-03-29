@@ -338,7 +338,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
       const double averageError = sum(exactDistances.row(0) /
           distances.row(0)) / distances.n_cols;
-      const double minError = arma::min(exactDistances.row(0) /
+      const double minError = min(exactDistances.row(0) /
           distances.row(0));
       const double maxError = max(exactDistances.row(0) /
           distances.row(0));
