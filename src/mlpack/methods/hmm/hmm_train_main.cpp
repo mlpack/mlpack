@@ -145,7 +145,7 @@ struct Init
     // Verify dimensionality of data.
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-        util::CheckSameDimensionality(trainSeq[i], dimensionality, "Dimensionality Check");
+        util::CheckDimensionality(trainSeq[i], dimensionality, "HMM::Train()", "observation sequence");
     }
 
     // Get the model and initialize it.
@@ -319,7 +319,7 @@ struct Train
     vector<mat>& trainSeq = *trainSeqPtr;
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-      util::CheckSameDimensionality(trainSeq[i], hmm.Emission()[0].Dimensionality(), "HMM::Train()");
+      util::CheckSameDimensionality(trainSeq[i], hmm.Emission()[0].Dimensionality(), "HMM::Train()","training sequence");
     }
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.

@@ -87,7 +87,7 @@ struct Viterbi
     }
 
     // Verify correct dimensionality.
-    util::CheckSameDimensionality(dataSeq, hmm.Emission()[0].Dimensionality(), "HMM::Train()");
+    util::CheckSameDimensionality(dataSeq, hmm.Emission()[0].Dimensionality(), "HMM::Train()", "observation");
     
     arma::Row<size_t> sequence;
     hmm.Predict(dataSeq, sequence);

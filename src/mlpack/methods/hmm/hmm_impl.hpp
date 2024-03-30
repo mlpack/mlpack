@@ -107,7 +107,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
   {
     totalLength += dataSeq[seq].n_cols;
       
-      util::CheckSameDimensionality(dataSeq[seq], dimensionality, "HMM::Train()");
+      util::CheckSameDimensionality(dataSeq[seq], dimensionality, "HMM::Train()","data sequence");
   }
 
   // These are used later for training of each distribution.  We initialize it
@@ -268,7 +268,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   {
     // Simple error checking.
    
-    util::CheckSameSizes(dataSeq[seq],stateSeq[seq],"HMM::Train()");
+    util::CheckSameSizes(dataSeq[seq],stateSeq[seq],"HMM::Train()","data sequence");
 
     if (dataSeq[seq].n_rows != dimensionality)
     {

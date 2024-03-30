@@ -84,7 +84,7 @@ struct Loglik
       dataSeq = dataSeq.t();
     }
     
-    util::CheckSameDimensionality(dataSeq, hmm.Emission()[0].Dimensionality(), "HMM::Train()");
+    util::CheckSameDimensionality(dataSeq, hmm.Emission()[0].Dimensionality(), "HMM::Train()","sequence");
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
