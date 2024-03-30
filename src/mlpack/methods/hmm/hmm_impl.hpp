@@ -268,7 +268,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   {
     // Simple error checking.
    
-    util::CheckSameSizes(dataSeq[seq],stateSeq[seq],"HMM::Train()","data sequence");
+    util::CheckSameSizes(dataSeq[seq],stateSeq[seq],"HMM::Train()","observations and states");
 
     if (dataSeq[seq].n_rows != dimensionality)
     {

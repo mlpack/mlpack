@@ -145,7 +145,7 @@ struct Init
     // Verify dimensionality of data.
     for (size_t i = 0; i < trainSeq.size(); ++i)
     {
-        util::CheckDimensionality(trainSeq[i], dimensionality, "HMM::Train()", "observation sequence");
+        util::CheckSameDimensionality(trainSeq[i], dimensionality, "HMM::Train()", "observation sequence");
     }
 
     // Get the model and initialize it.
