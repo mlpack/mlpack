@@ -39,4 +39,6 @@
 #include "string_algorithms.hpp"
 #include "types.hpp"
 
+#include "random_regression_generator.hpp"
+
 #endif
