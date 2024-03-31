@@ -14,49 +14,11 @@
 #ifndef MLPACK_CORE_DATA_RANDOM_REGRESSION_GENERATOR_HPP
 #define MLPACK_CORE_DATA_RANDOM_REGRESSION_GENERATOR_HPP
 
-#include <mlpack.hpp>
+#include <mlpack/core.hpp>
+#include "mlpack/core/dists/dists.hpp"
 
 namespace mlpack {
 namespace data {
-
-
-/**
- * Error distribution types.
- */
-enum class ErrorType
-{
-  NormalDist, /**< Normal distribution.  */
-  GammaDist   /**< Gamma distribution. */
-};
-
-struct NormalDistParams
-{
-  double mu;  /**< Mean. */
-  double std; /**< Standard deviation. */
-
-  NormalDistParams(double mu, double std) : mu(mu), std(std) {}
-};
-
-struct GammaDistParams
-{
-  double alpha;
-  double beta; 
-
-  GammaDistParams(double alpha, double beta) : alpha(alpha), beta(beta) {}
-};
-
-struct ErrorParams
-{
-  ErrorType type; /**< Type of error distribution. */
-
-  union
-  {
-    NormalDistParams normalParams; /**< Parameters for normal distribution. */
-    GammaDistParams gammaParams;   /**< Parameters for gamma distribution. */
-  };
-  
-  ErrorParams(ErrorType type) : type(type) {};
-};
 
 /**
  * @brief Class for generating linear regression data.
@@ -64,6 +26,7 @@ struct ErrorParams
  * This class provides a static function to generate synthetic regression data
  * with specified parameters.
  */
+template<typename NoiseDistType = GaussianDistribution>
 class RegressionDataGenerator 
 {
  public:
@@ -72,7 +35,7 @@ class RegressionDataGenerator
    *
    * @param nSamples Number of samples.
    * @param nFeatures Number of features.
-   * @param ErrorParams Error distribution parameters.
+   * @param NoiseDistRule Noise distribution rule.
    * @param nTargets Number of target variables.
    * @param intercept Bias term.
    * @param sparsity Sparsity level of coefficients.
@@ -80,18 +43,19 @@ class RegressionDataGenerator
    * @param outliersScale Scale of outliers.
    * @param randomSeed Seed for random number generation.
    */
-  RegressionDataGenerator(int nSamples,
-                          int nFeatures,
-                          const ErrorParams& errParams,
-                          int nTargets = 1,
-                          float intercept = 0.0,
-                          float sparsity = 0,
-                          float outliersFraction = 0,
-                          float outliersScale = 10,
-                          int randomSeed = 0) : 
+  RegressionDataGenerator(
+    int nSamples,
+    int nFeatures,
+    NoiseDistType NoiseDistRule = NoiseDistType(arma::vec("0"), arma::vec("1")),
+    int nTargets = 1,
+    float intercept = 0.0,
+    float sparsity = 0,
+    float outliersFraction = 0,
+    float outliersScale = 10,
+    int randomSeed = 0) : 
       nSamples(nSamples),
       nFeatures(nFeatures),
-      errParams(errParams),
+      NoiseDistRule(NoiseDistRule),
       nTargets(nTargets),
       intercept(intercept),
       sparsity(sparsity),
@@ -129,7 +93,7 @@ class RegressionDataGenerator
    * @param y Matrix to store the generated response variable.
    */
   template<typename MatType>
-  void GenerateData(MatType& X, MatType& y) const 
+  void GenerateData(MatType& X, MatType& y) 
   {
     // Set the seed if needed
     if (randomSeed)
@@ -149,27 +113,10 @@ class RegressionDataGenerator
     y = X * coeff + intercept;
 
     // Add Noise
-    MatType error;
-
-    /// Generate noise based on the specified distribution
-    if (errParams.type == ErrorType::NormalDist) 
-    {
-      error = arma::conv_to<MatType>::from(errParams.normalParams.mu + 
-          errParams.normalParams.std * arma::randn(y.n_rows, y.n_cols));
-    }
-    else if (errParams.type == ErrorType::GammaDist) 
-    {
-      error = arma::conv_to<MatType>::from(
-          arma::randg(y.n_rows, 
-                      y.n_cols, 
-                      arma::distr_param(errParams.gammaParams.alpha, 
-                                        errParams.gammaParams.beta)));
-    }
-    else
-    {
-      throw std::invalid_argument("Invalid error distribution type. "
-          "Supported types are NormalDistParams and GammaDistParams.");
-    }
+    MatType error(y.n_rows, y.n_cols);
+    for (size_t j = 0; j < y.n_rows; ++j)
+      for (size_t i = 0; i < y.n_cols; ++i)
+        error(j, i) = NoiseDistRule.Random()[0];
 
     y += error;
 
@@ -194,7 +141,7 @@ class RegressionDataGenerator
     // We just need to serialize each of the members.
     ar(CEREAL_NVP(nSamples));
     ar(CEREAL_NVP(nFeatures));
-    ar(CEREAL_NVP(errParams));
+    ar(CEREAL_NVP(NoiseDistRule));
     ar(CEREAL_NVP(nTargets));
     ar(CEREAL_NVP(intercept));
     ar(CEREAL_NVP(sparsity));
@@ -206,7 +153,7 @@ class RegressionDataGenerator
  private:
   int nSamples;
   int nFeatures;
-  const ErrorParams& errParams;
+  NoiseDistType NoiseDistRule;  
   int nTargets;
   float intercept;
   float sparsity;
