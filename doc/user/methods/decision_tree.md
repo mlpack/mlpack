@@ -325,7 +325,7 @@ DecisionTree<FitnessFunction,
    data dimensions
  * `DimensionSelectionType`: the strategy used for proposing dimensions to
    attempt to split on
- * `NoRecursion`: a boolean indicating whether or not to build a tree or a stump
+ * `NoRecursion`: a boolean indicating whether to build a tree or a stump
    (one level tree)
 
 Below, details are given for the requirements of each of these template types.
@@ -581,6 +581,6 @@ class CustomDimensionSelect
 
  * A `bool` value that indicates whether a decision tree should be
    constructed recursively.
- * If `true` _(default)_, a full decision tree will be built.
- * If `false`, only the root node will be split (producing a decision
+ * If `true`, only the root node will be split (producing a decision
    stump).
+ * If `false` _(default)_, a full decision tree will be built.
