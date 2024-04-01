@@ -18,6 +18,7 @@
 #include "replay/replay.hpp"
 #include "worker/worker.hpp"
 #include "noise/noise.hpp"
+#include "rl_default_settings.hpp"
 
 #include "training_config.hpp"
 #include "async_learning.hpp"

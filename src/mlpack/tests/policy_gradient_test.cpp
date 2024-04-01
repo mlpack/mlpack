@@ -227,6 +227,31 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 }
 
 //! Test TD3 on Pendulum task.
+TEST_CASE("PendulumWithTD3-SimplifiedConstructor", "[PolicyGradientTest]")
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations using random weights.
+  bool converged = false;
+  for (size_t trial = 0; trial < 8; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+    // Set up the replay method.
+    RandomReplay<Pendulum> replayMethod(32, 10000);
+
+    // Set up default params
+    RLdefaultParams defaultParams;
+
+    // Set up Twin Delayed Deep Deterministic policy gradient agent.
+    TD3<Pendulum>agent(replayMethod, defaultParams);
+
+    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
+}
+
+//! Test TD3 on Pendulum task.
 TEST_CASE("PendulumWithTD3", "[PolicyGradientTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number

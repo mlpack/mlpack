@@ -19,6 +19,7 @@
 
 #include "replay/replay.hpp"
 #include "training_config.hpp"
+#include "rl_default_settings.hpp"
 
 namespace mlpack {
 
@@ -47,9 +48,9 @@ namespace mlpack {
  */
 template <
   typename EnvironmentType,
-  typename QNetworkType,
-  typename PolicyNetworkType,
-  typename UpdaterType,
+  typename QNetworkType = decltype(RLdefaultParams().qNetwork),
+  typename PolicyNetworkType = decltype(RLdefaultParams().policyNetwork),
+  typename UpdaterType = decltype(RLdefaultParams().updater),
   typename ReplayType = RandomReplay<EnvironmentType>
 >
 class TD3
@@ -62,6 +63,13 @@ class TD3
   using ActionType = typename EnvironmentType::Action;
 
   /**
+   * Create the TD3 object with default settings.
+   * @param replayMethod Experience replay method.
+   * @param defaultParams Default parameters to call the other constructor.
+   */
+  TD3(ReplayType& replayMethod, RLdefaultParams& defaultParams);
+
+/**
    * Create the TD3 object with given settings.
    *
    * If you want to pass in a parameter and discard the original parameter

@@ -19,6 +19,26 @@
 
 namespace mlpack {
 
+// Empty constructor.
+template <
+  typename EnvironmentType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
+  typename UpdaterType,
+  typename ReplayType
+>
+TD3<
+  EnvironmentType,
+  QNetworkType,
+  PolicyNetworkType,
+  UpdaterType,
+  ReplayType
+>::TD3(ReplayType& replayMethod, RLdefaultParams& defaultParams):
+  TD3(defaultParams.config,
+      defaultParams.qNetwork,
+      defaultParams.policyNetwork,
+      replayMethod) { }
+
 template <
   typename EnvironmentType,
   typename QNetworkType,
