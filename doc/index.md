@@ -120,7 +120,7 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
-<!-- TODO: add some -->
+ * [`PCA`](pca.md): principal components analysis
 
 ### Modeling utilities
 
