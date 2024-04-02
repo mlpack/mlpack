@@ -28,7 +28,7 @@ sudo dnf install mlpack
 ```
 
 You can also use a Docker image from Dockerhub, 
-whihch has mlpack headers already installed:
+which has mlpack headers already installed:
 
 ```sh
 docker run -it mlpack/mlpack /bin/bash
