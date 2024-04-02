@@ -12,9 +12,10 @@ looking for, see the quickstarts for [Python](python.md),
 
 To use mlpack in C++, you only need the header files associated with the
 libraries, and the dependencies Armadillo and ensmallen (detailed in the
-[main README](../../README.md)).  The headers may already be pre-packaged for
-your distribution; for instance, for Ubuntu and Debian you can simply run the
-command
+[main README](../../README.md)).
+
+The headers may already be pre-packaged for your distribution;
+for instance, for Ubuntu and Debian you can simply run the command
 
 ```sh
 sudo apt-get install libmlpack-dev
@@ -26,16 +27,21 @@ and on Fedora or Red Hat:
 sudo dnf install mlpack
 ```
 
-If you run a different distribution, mlpack may be packaged under a different
-name.  And if it is not packaged, you can use a Docker image from Dockerhub:
+You can also use a Docker image from Dockerhub, 
+which has mlpack headers already installed:
 
 ```sh
 docker run -it mlpack/mlpack /bin/bash
 ```
 
-This Docker image has mlpack headers already installed.
-
 If you prefer to build mlpack from scratch, see the
+[main README](../../README.md).
+
+**Note for Ubuntu LTS Users**: The libmlpack-dev version in the Ubuntu LTS 
+repositories may not always be the latest. This can lead to issues, such as
+missing header files (e.g., `mlpack.hpp` missing in versions prior to 4.0).
+To ensure compatibility with the latest mlpack features and examples,
+we recommend building mlpack from source, as explained in the
 [main README](../../README.md).
 
 ## Installing mlpack from vcpkg
