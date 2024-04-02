@@ -18,16 +18,17 @@ namespace mlpack {
 
 template<typename MatType>
 inline SoftmaxRegressionFunction<MatType>::SoftmaxRegressionFunction(
-    const MatType& data,
+    const MatType& dataIn,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
     const bool fitIntercept) :
-    data(MakeAlias(const_cast<MatType&>(data), false)),
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
 {
+  MakeAlias(data, dataIn, dataIn.n_rows, dataIn.n_cols, false);
+
   // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();
 
