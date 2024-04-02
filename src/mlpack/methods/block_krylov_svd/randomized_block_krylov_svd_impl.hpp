@@ -16,11 +16,12 @@
 
 namespace mlpack {
 
+template<typename InMatType, typename MatType, typename VecType>
 inline RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(
-    const arma::mat& data,
-    arma::mat& u,
-    arma::vec& s,
-    arma::mat& v,
+    const InMatType& data,
+    MatType& u,
+    VecType& s,
+    MatType& v,
     const size_t maxIterations,
     const size_t rank,
     const size_t blockSize) :
@@ -46,13 +47,14 @@ inline RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(
   /* Nothing to do here */
 }
 
-inline void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
-                                            arma::mat& u,
-                                            arma::vec& s,
-                                            arma::mat& v,
+template<typename InMatType, typename MatType, typename VecType>
+inline void RandomizedBlockKrylovSVD::Apply(const InMatType& data,
+                                            MatType& u,
+                                            VecType& s,
+                                            MatType& v,
                                             const size_t rank)
 {
-  arma::mat Q, R, block, blockIteration;
+  MatType Q, R, block, blockIteration;
 
   if (blockSize == 0)
   {
@@ -60,28 +62,28 @@ inline void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
   }
 
   // Random block initialization.
-  arma::mat G = arma::randn(data.n_cols, blockSize);
+  MatType G = arma::randn<MatType>(data.n_cols, blockSize);
 
   // Construct and orthonormalize Krylov subspace.
-  arma::mat K(data.n_rows, blockSize * (maxIterations + 1));
+  MatType K(data.n_rows, blockSize * (maxIterations + 1));
 
   // Create a working matrix using data from writable auxiliary memory
   // (K matrix). Doing so avoids an uncessary copy in upcoming step.
-  block = arma::mat(K.memptr(), data.n_rows, blockSize, false, false);
+  MakeAlias(block, K.memptr(), data.n_rows, blockSize, false);
   arma::qr_econ(block, R, data * G);
 
   for (size_t blockOffset = block.n_elem; blockOffset < K.n_elem;
       blockOffset += block.n_elem)
   {
     // Temporary working matrix to store the result in the correct place.
-    blockIteration = arma::mat(K.memptr() + blockOffset, block.n_rows,
-        block.n_cols, false, false);
+    MakeAlias(blockIteration, K.memptr() + blockOffset, block.n_rows,
+        block.n_cols, false);
 
     arma::qr_econ(blockIteration, R, data * (data.t() * block));
 
     // Update working matrix for the next iteration.
-    block = arma::mat(K.memptr() + blockOffset, block.n_rows, block.n_cols,
-        false, false);
+    MakeAlias(block, K.memptr() + blockOffset, block.n_rows, block.n_cols,
+        false);
   }
 
   arma::qr_econ(Q, R, K);

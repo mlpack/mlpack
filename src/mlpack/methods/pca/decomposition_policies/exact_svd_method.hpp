@@ -37,19 +37,20 @@ class ExactSVDPolicy
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    * @param * (rank) Rank of the decomposition.
    */
-  void Apply(const arma::mat& data,
-             const arma::mat& centeredData,
-             arma::mat& transformedData,
-             arma::vec& eigVal,
-             arma::mat& eigvec,
+  template<typename InMatType, typename MatType, typename VecType>
+  void Apply(const InMatType& /* data */,
+             const MatType& centeredData,
+             MatType& transformedData,
+             VecType& eigVal,
+             MatType& eigvec,
              const size_t /* rank */)
   {
     // This matrix will store the right singular vectors; we do not need them.
-    arma::mat v;
+    MatType v;
 
     // Do singular value decomposition.  Use the economical singular value
     // decomposition if the columns are much larger than the rows.
-    if (data.n_rows < data.n_cols)
+    if (centeredData.n_rows < centeredData.n_cols)
     {
       // Do economical singular value decomposition and compute only the left
       // singular vectors.
@@ -63,7 +64,7 @@ class ExactSVDPolicy
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the
     // covariance matrix is X * X' / (N - 1).
-    eigVal %= eigVal / (data.n_cols - 1);
+    eigVal %= eigVal / (centeredData.n_cols - 1);
 
     // Project the samples to the principals.
     transformedData = trans(eigvec) * centeredData;

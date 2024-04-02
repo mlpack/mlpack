@@ -330,3 +330,140 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
   // The eigenvalues should sum to three.
   REQUIRE(accu(eigval) == Approx(3.0).epsilon(0.001));
 }
+
+/**
+ * Test PCA on a subview of a matrix with different decomposition strategies.
+ */
+TEMPLATE_TEST_CASE("PCASubviewTest", "[PCATest]", ExactSVDPolicy,
+    RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
+{
+  typedef TestType DecompositionPolicy;
+
+  // Generate an artifical dataset in 10 dimensions.
+  arma::mat data(3, 5000);
+
+  arma::vec mean("1.0 3.0 -12.0");
+  arma::mat cov("1.0 0.9 0.0;"
+                "0.9 1.0 0.0;"
+                "0.0 0.0 12.0");
+  GaussianDistribution g(mean, cov);
+
+  for (size_t i = 0; i < 5000; ++i)
+    data.col(i) = g.Random();
+
+  // Compute PCA on the first 2000 points.
+  arma::mat transData1, transData2, transData3, eigvec;
+  arma::vec eigval1, eigval2;
+
+  PCA<DecompositionPolicy> p;
+  p.Apply(data.cols(0, 1999), transData1);
+  p.Apply(data.cols(0, 1999), transData2, eigval1);
+  p.Apply(data.cols(0, 1999), transData3, eigval2, eigvec);
+
+  // Only check for deterministic policies.
+  if (std::is_same<DecompositionPolicy, ExactSVDPolicy>::value)
+  {
+    arma::mat trueTransData, trueEigvec;
+    arma::vec trueEigval;
+
+    arma::mat dataSub = data.cols(0, 1999);
+    p.Apply(dataSub, trueTransData, trueEigval, trueEigvec);
+
+    REQUIRE(arma::approx_equal(transData1, trueTransData, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(transData2, trueTransData, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(transData3, trueTransData, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(eigval1, trueEigval, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(eigval2, trueEigval, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(eigvec, trueEigvec, "both", 1e-5, 1e-5));
+  }
+}
+
+/**
+ * Test PCA on an input expression.
+ */
+TEMPLATE_TEST_CASE("PCAExpressionTest", "[PCATest]", ExactSVDPolicy,
+    RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
+{
+  typedef TestType DecompositionPolicy;
+
+  // Generate an artifical dataset in 10 dimensions.
+  arma::mat data(3, 5000);
+
+  arma::vec mean("1.0 3.0 -12.0");
+  arma::mat cov("1.0 0.9 0.0;"
+                "0.9 1.0 0.0;"
+                "0.0 0.0 12.0");
+  GaussianDistribution g(mean, cov);
+
+  for (size_t i = 0; i < 5000; ++i)
+    data.col(i) = g.Random();
+
+  // Compute PCA on an expression involving the input matrix.
+  arma::mat transData1, transData2, transData3, eigvec;
+  arma::vec eigval1, eigval2;
+
+  PCA<DecompositionPolicy> p;
+  p.Apply(2 * data + 1, transData1);
+  p.Apply(2 * data + 1, transData2, eigval1);
+  p.Apply(2 * data + 1, transData3, eigval2, eigvec);
+
+  // Only check for deterministic policies.
+  if (std::is_same<DecompositionPolicy, ExactSVDPolicy>::value)
+  {
+    arma::mat trueTransData, trueEigvec;
+    arma::vec trueEigval;
+
+    arma::mat dataSub = 2 * data + 1;
+    p.Apply(dataSub, trueTransData, trueEigval, trueEigvec);
+
+    REQUIRE(arma::approx_equal(transData1, trueTransData, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(transData2, trueTransData, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(transData3, trueTransData, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(eigval1, trueEigval, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(eigval2, trueEigval, "both", 1e-5, 1e-5));
+    REQUIRE(arma::approx_equal(eigvec, trueEigvec, "both", 1e-5, 1e-5));
+  }
+}
+
+/**
+ * Test PCA on 32-bit data.
+ */
+TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
+    RandomizedSVDPCAPolicy, RandomizedBlockKrylovSVDPolicy, QUICSVDPolicy)
+{
+  typedef TestType DecompositionPolicy;
+
+  // Generate an artifical dataset in 10 dimensions.
+  arma::fmat data(3, 5000);
+
+  arma::vec mean("1.0 3.0 -12.0");
+  arma::mat cov("1.0 0.9 0.0;"
+                "0.9 1.0 0.0;"
+                "0.0 0.0 12.0");
+  GaussianDistribution g(mean, cov);
+
+  for (size_t i = 0; i < 5000; ++i)
+    data.col(i) = arma::conv_to<arma::fvec>::from(g.Random());
+
+  // Compute PCA on the floating-point data.
+  arma::fmat coeff, coeff1, score, score1;
+  arma::fvec eigVal, eigVal1;
+
+  PCA<DecompositionPolicy> p;
+  p.Apply(data, score1, eigVal1, coeff1);
+
+  princomp(coeff, score, eigVal, trans(data));
+
+  // Verify the PCA results based on the eigenvalues.  We don't check for
+  // QUIC-SVD, since that method has a lot of noise.
+  if (!std::is_same<DecompositionPolicy, QUICSVDPolicy>::value)
+  {
+    for (size_t i = 0; i < eigVal.n_elem; ++i)
+    {
+      if (eigVal[i] == 0.0)
+        REQUIRE(eigVal1[i] == Approx(0.0).margin(1e-5));
+      else
+        REQUIRE(eigVal[i] == Approx(eigVal1[i]).epsilon(1e-3));
+    }
+  }
+}

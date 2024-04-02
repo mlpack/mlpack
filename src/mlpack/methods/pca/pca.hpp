@@ -52,10 +52,13 @@ class PCA
    * @param eigVal Vector to put eigenvalues into.
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigVal,
-             arma::mat& eigvec);
+  template<typename MatType = arma::mat,
+           typename OutMatType = arma::mat,
+           typename VecType = arma::vec>
+  void Apply(const MatType& data,
+             OutMatType& transformedData,
+             VecType& eigVal,
+             OutMatType& eigvec);
 
   /**
    * Apply Principal Component Analysis to the provided data set. It is safe
@@ -65,17 +68,21 @@ class PCA
    * @param transformedData Matrix to store results of PCA in.
    * @param eigVal Vector to put eigenvalues into.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigVal);
+  template<typename MatType = arma::mat,
+           typename OutMatType = arma::mat,
+           typename VecType = arma::vec>
+  void Apply(const MatType& data,
+             OutMatType& transformedData,
+             VecType& eigVal);
   /**
    * Apply Principal Component Analysis to the provided data set. It is safe
    * to pass the same matrix reference for both data and transformedData.
    * @param data Data matrix.
    * @param transformedData Matrix to store results of PCA in.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData);
+  template<typename MatType = arma::mat, typename OutMatType = arma::mat>
+  void Apply(const MatType& data,
+             OutMatType& transformedData);
 
   /**
    * Use PCA for dimensionality reduction on the given dataset. This will save
@@ -88,10 +95,12 @@ class PCA
    * @param newDimension New dimension of the data.
    * @return Amount of the variance of the data retained (between 0 and 1).
    */
-  double Apply(arma::mat& data, const size_t newDimension);
+  template<typename MatType = arma::mat>
+  double Apply(MatType& data, const size_t newDimension);
 
   //! This overload is here to make sure int gets casted right to size_t.
-  inline double Apply(arma::mat& data, const int newDimension)
+  template<typename MatType = arma::mat>
+  inline double Apply(MatType& data, const int newDimension)
   {
     return Apply(data, size_t(newDimension));
   }
@@ -111,7 +120,8 @@ class PCA
    *     between 0 and 1.
    * @return Actual amount of variance retained (between 0 and 1).
    */
-  double Apply(arma::mat& data, const double varRetained);
+  template<typename MatType>
+  double Apply(MatType& data, const double varRetained);
 
   //! Get whether or not this PCA object will scale (by standard deviation)
   //! the data when PCA is performed.
@@ -122,14 +132,15 @@ class PCA
 
  private:
   //! Scaling the data is when we reduce the variance of each dimension to 1.
-  void ScaleData(arma::mat& centeredData)
+  template<typename MatType>
+  void ScaleData(MatType& centeredData)
   {
     if (scaleData)
     {
       // Scaling the data is when we reduce the variance of each dimension
       // to 1. We do this by dividing each dimension by its standard
       // deviation.
-      arma::vec stdDev = arma::stddev(
+      arma::Col<typename MatType::elem_type> stdDev = arma::stddev(
           centeredData, 0, 1 /* for each dimension */);
 
       // If there are any zeroes, make them very small.
