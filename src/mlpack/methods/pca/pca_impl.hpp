@@ -12,7 +12,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_PCA_PCA_IMPL_HPP
 #define MLPACK_METHODS_PCA_PCA_IMPL_HPP
 
@@ -54,8 +53,8 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
       "types!");
 
   // Center the data into a temporary matrix.
-  OutMatType centeredData = data;
-  centeredData.each_col() -= arma::mean(data, 1);
+  OutMatType centeredData = arma::conv_to<OutMatType>::from(data);
+  centeredData.each_col() -= arma::mean(centeredData, 1);
 
   // Scale the data if the user asked for it.
   ScaleData(centeredData);
@@ -135,6 +134,15 @@ template<typename MatType>
 double PCA<DecompositionPolicy>::Apply(MatType& data,
                                        const size_t newDimension)
 {
+  return Apply(data, data, newDimension);
+}
+
+template<typename DecompositionPolicy>
+template<typename MatType, typename OutMatType>
+double PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                       OutMatType& transformedData,
+                                       const size_t newDimension)
+{
   // Parameter validation.
   if (newDimension == 0)
   {
@@ -151,8 +159,8 @@ double PCA<DecompositionPolicy>::Apply(MatType& data,
   BaseColType eigVal;
 
   // Center the data into a temporary matrix.
-  BaseMatType centeredData = data;
-  centeredData.each_col() -= arma::mean(data, 1);
+  BaseMatType centeredData = arma::conv_to<OutMatType>::from(data);
+  centeredData.each_col() -= arma::mean(centeredData, 1);
 
   // This check cannot happen until here, as `data` may not have a .n_rows
   // member if it is an expression.
@@ -168,11 +176,12 @@ double PCA<DecompositionPolicy>::Apply(MatType& data,
   // Scale the data if the user ask for.
   ScaleData(centeredData);
 
-  decomposition.Apply(data, centeredData, data, eigVal, eigvec, newDimension);
+  decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
+      newDimension);
 
   if (newDimension < eigvec.n_rows)
     // Drop unnecessary rows.
-    data.shed_rows(newDimension, data.n_rows - 1);
+    transformedData.shed_rows(newDimension, data.n_rows - 1);
 
   // The svd method returns only non-zero eigenvalues so we have to calculate
   // the right dimension before calculating the amount of variance retained.
@@ -195,6 +204,15 @@ double PCA<DecompositionPolicy>::Apply(MatType& data,
 template<typename DecompositionPolicy>
 template<typename MatType>
 double PCA<DecompositionPolicy>::Apply(MatType& data,
+                                       const double varRetained)
+{
+  return Apply(data, data, varRetained);
+}
+
+template<typename DecompositionPolicy>
+template<typename MatType, typename OutMatType>
+double PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                       OutMatType& transformedData,
                                        const double varRetained)
 {
   // Parameter validation.
@@ -220,8 +238,7 @@ double PCA<DecompositionPolicy>::Apply(MatType& data,
   BaseColType eigVal;
   BaseMatType out;
 
-  Apply(data, out, eigVal, eigvec);
-  data = std::move(out);
+  Apply(data, transformedData, eigVal, eigvec);
 
   // Calculate the dimension we should keep.
   size_t newDimension = 0;
@@ -235,7 +252,7 @@ double PCA<DecompositionPolicy>::Apply(MatType& data,
 
   // varSum is the actual variance we will retain.
   if (newDimension < eigVal.n_elem)
-    data.shed_rows(newDimension, data.n_rows - 1);
+    transformedData.shed_rows(newDimension, transformedData.n_rows - 1);
 
   return varSum;
 }

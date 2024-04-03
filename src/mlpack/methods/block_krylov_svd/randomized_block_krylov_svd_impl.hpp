@@ -58,7 +58,10 @@ inline void RandomizedBlockKrylovSVD::Apply(const InMatType& data,
 
   if (blockSize == 0)
   {
-    blockSize = rank + 10;
+    // The block size cannot be greater than the number of points in the
+    // dataset or the dimensionality of the dataset.
+    blockSize = std::min((size_t) data.n_rows,
+                         std::min((size_t) data.n_cols, rank + 10));
   }
 
   // Random block initialization.
@@ -68,7 +71,7 @@ inline void RandomizedBlockKrylovSVD::Apply(const InMatType& data,
   MatType K(data.n_rows, blockSize * (maxIterations + 1));
 
   // Create a working matrix using data from writable auxiliary memory
-  // (K matrix). Doing so avoids an uncessary copy in upcoming step.
+  // (K matrix). Doing so avoids an unnecessary copy in upcoming step.
   MakeAlias(block, K.memptr(), data.n_rows, blockSize, false);
   arma::qr_econ(block, R, data * G);
 

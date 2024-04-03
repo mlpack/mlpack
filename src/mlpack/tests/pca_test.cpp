@@ -467,3 +467,43 @@ TEMPLATE_TEST_CASE("PCAFloatTest", "[PCATest]", ExactSVDPolicy,
     }
   }
 }
+
+/**
+ * Test that we can convert sparse input matrices to dense output matrices.
+ * We check the general shape of the output, but not the exact details---those
+ * are handled in other tests.
+ */
+TEMPLATE_TEST_CASE("PCASparseToDenseTest", "[PCATest]", float, double)
+{
+  typedef arma::Mat<TestType> MatType;
+  typedef arma::SpMat<TestType> SpMatType;
+
+  SpMatType dataset;
+  dataset.sprandu(1000, 50000, 0.01);
+  MatType transformedDataset1, transformedDataset2;
+
+  PCA<> p;
+  const double varRetained1 = p.Apply(dataset, transformedDataset1, 5);
+  const double varRetained2 = p.Apply(dataset, transformedDataset2, 0.6);
+
+  REQUIRE(transformedDataset1.n_cols == dataset.n_cols);
+  REQUIRE(transformedDataset2.n_cols == dataset.n_cols);
+  REQUIRE(varRetained1 >= 0.0);
+  REQUIRE(varRetained1 <= 1.0);
+  REQUIRE(varRetained2 >= 0.0);
+  REQUIRE(varRetained2 <= 1.0);
+  REQUIRE(transformedDataset1.n_rows == 5);
+  REQUIRE(transformedDataset2.n_rows <= dataset.n_rows);
+
+  // Ensure we get basically the same as if we had done it to a dense matrix.
+  MatType denseData1(dataset);
+  MatType denseData2(dataset);
+
+  const double varRetained3 = p.Apply(denseData1, 5);
+  const double varRetained4 = p.Apply(denseData2, 0.6);
+
+  REQUIRE(varRetained1 == Approx(varRetained3));
+  REQUIRE(varRetained2 == Approx(varRetained4));
+
+  REQUIRE(denseData2.n_rows == transformedDataset2.n_rows);
+}
