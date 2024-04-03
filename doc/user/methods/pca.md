@@ -2,12 +2,12 @@
 
 The `PCA` class implements principal components analysis (PCA), a standard
 machine learning data preparation technique.  PCA can be used to reduce the
-number of dimensions in a dataset, or to preseve a certain percentage of the
+number of dimensions in a dataset, or to preserve a certain percentage of the
 variance of a dataset.
 
-By default, `PCA` uses the singular value decomposition (SVD), but supports the
-use of other more efficient decompositions, including approximate
-decompositions.
+By default, `PCA` uses the full exact singular value decomposition (SVD), but
+supports the use of other more efficient decompositions, including approximate
+singular value decompositions.
 
 #### Simple usage example:
 
@@ -18,12 +18,12 @@ decompositions.
 // Replace with a data::Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 
-mlpack::PCA pca;    // Step 1: create PCA object.
-pca.Apply(data, 5); // Step 2: reduce data dimension to 5.
+mlpack::PCA pca;       // Step 1: create PCA object.
+pca.Apply(dataset, 5); // Step 2: reduce data dimension to 5.
 
 // Print some information about the modified dataset.
-std::cout << "The transformed data matrix has size " << data.n_rows /* 5 */
-    << " x " << data.n_cols << "." << std::endl;
+std::cout << "The transformed data matrix has size " << dataset.n_rows /* 5 */
+    << " x " << dataset.n_cols << "." << std::endl;
 ```
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
@@ -67,8 +67,10 @@ std::cout << "The transformed data matrix has size " << data.n_rows /* 5 */
    - Transform the
      [column-major matrix](../matrices.md#representing-data-in-mlpack) `data`
      using PCA, storing the result in `transformedData`.
-   - `data` and `transformedData` should be dense floating-point matrices (e.g.,
-     `arma::mat`, `arma::fmat`, etc.).
+   - `data` should be a floating-point matrix (e.g. `arma::mat`, `arma::fmat`,
+     `arma::sp_mat`, etc.) or an expression that evaluates to one.
+   - `transformedData` should be a dense floating-point matrix (e.g.,
+     `arma::mat`, `arma::sp_mat`).
    - The size of `transformedData` will be the same as the size of `data`.
    - Dimensions in `transformedData` will be ordered decreasing in variance;
      that is, the first row of `transformedData` will correspond to the
@@ -84,31 +86,45 @@ std::cout << "The transformed data matrix has size " << data.n_rows /* 5 */
 
 ---
 
- * `double varRetained = pca.Apply(data, newDimension)`
+ * `double varRetained = pca.Apply(data, transformedData, newDimension)`
    - Use PCA to reduce the number of dimensions in the
      [column-major matrix](../matrices.md#representing-data-in-mlpack) `data`
-     to `newDimension`.
-   - `data` should be a dense floating-point matrix (e.g. `arma::mat`,
-     `arma::fmat`, etc.).
-   - `data` will be modified in-place, and will have `newDimension` rows after
-     the transformation.
+     to `newDimension`, storing the result in `transformedData`.
+   - `data` should be a floating-point matrix (e.g. `arma::mat`,
+     `arma::fmat`, `arma::sp_mat`, etc.) or an expression that evaluates to
+     one.
+   - `transformedData` should be a dense floating-point matrix with the same
+     element type as `data` (e.g. `arma::mat`, `arma::fmat`).
+   - `transformedData` will have `newDimension` rows after the transformation.
    - Returns a `double` indicating the percentage of variance retained (between
      `0.0` and `1.0`).
 
 ---
 
- * `double varRetained = pca.Apply(data, varianceToKeep)`
+ * `double varRetained = pca.Apply(data, transformedData, varianceToKeep)`
    - Use PCA to retain the dimensions of the
      [column-major matrix](../matrices.md#representing-data-in-mlpack) `data`
      that capture a factor of `varianceToKeep` of the data variance.
-   - `data` should be a dense floating-point matrix (e.g. `arma::mat`,
-     `arma::fmat`, etc.).
+   - `data` should be a floating-point matrix (e.g. `arma::mat`, `arma::fmat`,
+     `arma::sp_mat`, etc.) or an expression that evaluates to one.
+   - `transformedData` should be a dense floating-point matrix with the same
+     element type as `data` (e.g. `arma::mat`, `arma::fmat`).
+   - `transformedData` will have `newDimension` rows after the transformation.
    - `varianceToKeep` should be a floating-point value between `0.0` and `1.0`.
      If `1.0`, all of the data variance is retained, and this is equivalent to
      the first version of `Apply()` (above).
-   - `data` will be modified in-place.
    - Returns a `double` indicating the percentage of variance actually retained
      (between `0.0` and `1.0`).
+
+---
+
+ * `double varRetained = pca.Apply(data, newDimension)`
+ * `double varRetained = pca.Apply(data, varianceToKeep)`
+   - In-place versions of the two `Apply()` functions above.
+   - Equivalent to `pca.Apply(data, data, newDimension)` or
+     `pca.Apply(data, data, varianceToKeep)`.
+   - `data` should be a dense floating-point matrix (e.g. `arma::mat`,
+     `arma::fmat`, etc.).
 
 ---
 
@@ -143,8 +159,8 @@ Apply PCA to a 32-bit floating point dataset with dimension scaling, keeping all
 dimensions, and printing the 5 largest eigenvalues of the covariance matrix of
 the transformed data.
 
-```
-// See https://datasets.mlpack.org/iris.csv
+```c++
+// See https://datasets.mlpack.org/iris.csv.
 arma::fmat data;
 mlpack::data::Load("iris.csv", data, true);
 
@@ -166,9 +182,33 @@ for (size_t i = 0; i < 5; ++i)
 
 ---
 
+Apply PCA to a random sparse dataset, to reduce the dimensionality to a
+20-dimensional dense dataset.
+
+```c++
+arma::sp_mat data;
+// This dataset has 10k points in 1k dimensions, with 1% density.
+data.sprandn(1000, 10000, 0.01);
+
+mlpack::PCA pca(true /* scale data when transforming */);
+
+arma::mat transformedData;
+const double varianceRetained = pca.Apply(data, transformedData, 20);
+
+std::cout << "First point, before PCA: " << data.col(0).t();
+std::cout << "First point, after PCA: " << transformedData.col(0).t();
+
+// Note that for random uniform data, this won't capture very much of the
+// variance!  It would be much more for a real, structured dataset.
+std::cout << "50 dimensions captured " << (100.0 * varianceRetained) << "\% of "
+    << "the data variance." << std::endl;
+```
+
+---
+
 ### Advanced Functionality: Different Decomposition Strategies
 
-By default, `PCA` uses the standard singular value decomposition (SVD) to
+By default, `PCA` uses the full exact singular value decomposition (SVD) to
 transform data.  However, for very large datasets, it may be faster to use
 alternative strategies, some of which may be approximate.  The `PCA` class has
 one template parameter that allows different decomposition strategies to be
@@ -194,12 +234,12 @@ usage:
    <!-- TODO: add link to documentation -->
 
 The simple example program below uses all four decomposition types on the same
-data, timing how long each decomposition takes.
+MNIST data, timing how long each decomposition takes.
 
 ```c++
 arma::mat data;
 // See https://datasets.mlpack.org/mnist.train.csv.
-mlpack::data::Load("mnist.train.csv", true);
+mlpack::data::Load("mnist.train.csv", data, true);
 
 arma::mat output1, output2, output3, output4;
 
@@ -227,7 +267,8 @@ c.tic();
 pca4.Apply(data, output4);
 const double pca4Time = c.toc();
 
-std::cout << "PCA computation times:" << std::endl;
+std::cout << "PCA computation times for " << data.n_rows << " x " << data.n_cols
+    << " data:" << std::endl;
 std::cout << " - ExactSVDPolicy:                 " << pca1Time << "s."
     << std::endl;
 std::cout << " - RandomizedSVDPCAPolicy:         " << pca2Time << "s."
