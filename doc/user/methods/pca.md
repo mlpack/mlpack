@@ -30,7 +30,7 @@ std::cout << "The transformed data matrix has size " << dataset.n_rows /* 5 */
 #### Quick links:
 
  * [Constructors](#constructors): create `PCA` objects.
- * [`Apply()`](#applying-transformation): apply PCA transformation to data.
+ * [`Apply()`](#applying-transformations): apply PCA transformation to data.
  * [Examples](#simple-examples) of simple usage and links to detailed example
    projects.
  * [Template parameters](#advanced-functionality-different-decomposition-strategies)
@@ -38,9 +38,10 @@ std::cout << "The transformed data matrix has size " << dataset.n_rows /* 5 */
 
 #### See also:
 
- * [`RADICAL`](radical.md): independent components analysis
- * [mlpack preprocessing utilities](index.md#preprocessing-utilities)
- * [mlpack transformations](index.md#transformations)
+<!-- TODO: add link -->
+<!-- * [`RADICAL`](radical.md): independent components analysis -->
+ * [mlpack preprocessing utilities](../../index.md#preprocessing-utilities)
+ * [mlpack transformations](../../index.md#transformations)
  * [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
 
 ### Constructors
