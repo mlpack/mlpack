@@ -21,6 +21,8 @@
   * Fix floating-point accuracy issue for decision trees that sometimes caused
     crashes (#3595).
 
+  * Allow PCA to take different matrix types (#3677).
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
