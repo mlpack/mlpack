@@ -23,7 +23,7 @@ inline void RandVector(arma::vec& v)
   {
     double a = Random();
     double b = Random();
-    double first_term = sqrt(-2 * log(a));
+    double first_term = std::sqrt(-2 * std::log(a));
     double second_term = 2 * M_PI * b;
     v[i]     = first_term * cos(second_term);
     v[i + 1] = first_term * sin(second_term);
@@ -31,10 +31,10 @@ inline void RandVector(arma::vec& v)
 
   if ((v.n_elem % 2) == 1)
   {
-    v[v.n_elem - 1] = sqrt(-2 * log(Random())) * cos(2 * M_PI * Random());
+    v[v.n_elem - 1] = std::sqrt(-2 * std::log(Random())) * cos(2 * M_PI * Random());
   }
 
-  v /= sqrt(dot(v, v));
+  v /= std::sqrt(dot(v, v));
 }
 
 } // namespace mlpack

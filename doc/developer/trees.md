@@ -378,8 +378,8 @@ This section is divided into five parts, detailing each of the parts of the API
 An earlier section discussed the three different template parameters that are
 required by the `TreeType` policy.
 
-The [MetricType policy](metrictype.md) provides one method that will be useful
-for tree building and other operations:
+The [MetricType policy](metrics.md) provides one method that will be useful for
+tree building and other operations:
 
 ```c++
 // This function is required by the MetricType policy.

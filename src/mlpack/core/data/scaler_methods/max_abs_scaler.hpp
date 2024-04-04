@@ -54,7 +54,7 @@ class MaxAbsScaler
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    itemMin = arma::min(input, 1);
+    itemMin = min(input, 1);
     itemMax = arma::max(input, 1);
     scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
     // Handling zeros in scale vector.

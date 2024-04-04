@@ -121,7 +121,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffNoiseStdDevTest",
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
-  REQUIRE(arma::accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
+  REQUIRE(accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
 }
 
 /**
@@ -153,7 +153,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffReplicatesTest",
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
-  REQUIRE(arma::accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
+  REQUIRE(accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
 }
 
 /**
@@ -185,7 +185,7 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffAnglesTest",
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
-  REQUIRE(arma::accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
+  REQUIRE(accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
 }
 
 /**
@@ -218,5 +218,5 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalDiffSweepsTest",
   RUN_BINDING();
 
   // Check that initial output and final output using two models are different.
-  REQUIRE(arma::accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
+  REQUIRE(accu(Y == params.Get<arma::mat>("output_ic")) < Y.n_elem);
 }

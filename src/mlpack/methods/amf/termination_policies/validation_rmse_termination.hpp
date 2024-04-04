@@ -130,7 +130,7 @@ class ValidationRMSETermination
         rmse += temp;
       }
       rmse /= num_test_points;
-      rmse = sqrt(rmse);
+      rmse = std::sqrt(rmse);
     }
 
     // increment iteration count

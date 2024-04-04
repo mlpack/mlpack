@@ -240,7 +240,7 @@ class LpPooling
         arma::mat InputArea = input(arma::span(i, rowEnd),
             arma::span(j, colEnd));
 
-        size_t sum = pow(arma::accu(pow(InputArea, normType)),
+        size_t sum = pow(accu(pow(InputArea, normType)),
             (normType - 1) / normType);
         unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
         unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);

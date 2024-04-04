@@ -50,7 +50,7 @@ df = pd.read_csv('http://www.mlpack.org/datasets/covertype-small.csv.gz')
 
 # Split the labels.
 labels = df['label']
-dataset = df.drop('label', 1)
+dataset = df.drop('label', axis = 1)
 
 # Split the dataset using mlpack.  The output comes back as a dictionary,
 # which we'll unpack for clarity of code.

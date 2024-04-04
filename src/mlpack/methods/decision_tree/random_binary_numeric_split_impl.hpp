@@ -41,8 +41,8 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (bestGain == 0.0)
     return DBL_MAX; // It can't be outperformed.
 
-  typename VecType::elem_type maxValue = arma::max(data);
-  typename VecType::elem_type minValue = arma::min(data);
+  typename VecType::elem_type maxValue = max(data);
+  typename VecType::elem_type minValue = min(data);
 
   // Sanity check: if the maximum element is the same as the minimum, we
   // can't split in this dimension.
@@ -63,7 +63,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (UseWeights)
   {
     classWeightSums.zeros(numClasses, 2);
-    totalWeight = arma::accu(weights);
+    totalWeight = accu(weights);
     bestFoundGain *= totalWeight;
 
     for (size_t i = 0; i < data.n_elem; ++i)
@@ -161,8 +161,8 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (bestGain == 0.0)
     return DBL_MAX; // It can't be outperformed.
 
-  typename VecType::elem_type maxValue = arma::max(data);
-  typename VecType::elem_type minValue = arma::min(data);
+  typename VecType::elem_type maxValue = max(data);
+  typename VecType::elem_type minValue = min(data);
 
   // Sanity check: if the maximum element is the same as the minimum, we
   // can't split in this dimension.
@@ -174,7 +174,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   double totalRightWeight = 0.0;
   if (UseWeights)
   {
-    totalWeight = arma::accu(weights);
+    totalWeight = accu(weights);
     bestFoundGain *= totalWeight;
   }
   else

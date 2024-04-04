@@ -30,11 +30,11 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
   double meanResponses = arma::mean(responses);
 
   // Calculate the numerator i.e. residual sum of squares.
-  double residualSumSquared = arma::accu(arma::square(responses -
+  double residualSumSquared = accu(arma::square(responses -
       predictedResponses));
 
   // Calculate the denominator i.e.total sum of squares.
-  double totalSumSquared = arma::accu(arma::square(responses - meanResponses));
+  double totalSumSquared = accu(arma::square(responses - meanResponses));
 
   // Handling undefined R2 Score when both denominator and numerator is 0.0.
   if (residualSumSquared == 0.0)

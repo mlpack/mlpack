@@ -325,8 +325,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -365,11 +365,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
   SetInputParam("linear_scan",  (bool) true);
 
   RUN_BINDING();
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -408,8 +408,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -450,8 +450,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -493,8 +493,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -536,8 +536,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -578,8 +578,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -625,8 +625,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 
@@ -668,8 +668,8 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
   RUN_BINDING();
 
   // Check that the output matrices are different.
-  REQUIRE(arma::accu(params.Get<arma::mat>("output") != output) > 0);
-  REQUIRE(arma::accu(params.Get<arma::mat>("transformed_data") !=
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+  REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
 }
 

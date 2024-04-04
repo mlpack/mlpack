@@ -2,7 +2,7 @@
 #
 # Release a new version of mlpack.
 #
-# Usage: release-mlpack.sh X Y Z
+# Usage: release-mlpack.sh github_username X Y Z
 #
 # where X is the major version, Y is the minor version, and Z is the patch
 # version.  Run this from the root of the repository.

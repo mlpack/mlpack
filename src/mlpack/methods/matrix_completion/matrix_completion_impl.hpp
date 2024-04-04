@@ -27,7 +27,7 @@ inline MatrixCompletion::MatrixCompletion(
     n(n),
     indices(indices),
     values(values),
-    sdp(indices.n_cols, 0, arma::randu<arma::mat>(m + n, r))
+    sdp(indices.n_cols, 0, randu<arma::mat>(m + n, r))
 {
   CheckValues();
   InitSDP();
@@ -59,7 +59,7 @@ inline MatrixCompletion::MatrixCompletion(
     indices(indices),
     values(values),
     sdp(indices.n_cols, 0,
-        arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
+        randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
 {
   CheckValues();
   InitSDP();
@@ -119,7 +119,7 @@ inline size_t MatrixCompletion::DefaultRank(const size_t m,
   //   Pablo Moscato, Michael Norman, and Gabor Pataki.
   //   Math Oper. Res., 23(2). 1998.
   const size_t mpn = m + n;
-  float r = 0.5 + sqrt(0.25 + 2 * p);
+  float r = 0.5 + std::sqrt(0.25 + 2 * p);
   if (ceil(r) > mpn)
     r = mpn; // An upper bound on the dimension.
   return ceil(r);

@@ -164,7 +164,7 @@ template<typename FitnessFunction, typename ObservationType>
 double BinaryNumericSplit<FitnessFunction, ObservationType>::
     MajorityProbability() const
 {
-  return double(arma::max(classCounts)) / double(arma::accu(classCounts));
+  return double(max(classCounts)) / double(accu(classCounts));
 }
 
 template<typename FitnessFunction, typename ObservationType>

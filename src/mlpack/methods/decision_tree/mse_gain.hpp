@@ -70,7 +70,7 @@ class MSEGain
       Sum(values, begin, end, mean);
       mean /= (double) (end - begin);
 
-      mse = arma::accu(square(values.subvec(begin, end - 1) - mean));
+      mse = accu(square(values.subvec(begin, end - 1) - mean));
       mse /= (double) (end - begin);
     }
 
@@ -164,7 +164,7 @@ class MSEGain
 
     if (UseWeights)
     {
-      totalSumSquares = arma::accu(weights % square(responses));
+      totalSumSquares = accu(weights % square(responses));
       for (size_t i = 0; i < minimum - 1; ++i)
       {
         const WType w = weights[i];
@@ -192,7 +192,7 @@ class MSEGain
     }
     else
     {
-      totalSumSquares = arma::accu(square(responses));
+      totalSumSquares = accu(square(responses));
       for (size_t i = 0; i < minimum - 1; ++i)
       {
         const RType x = responses[i];

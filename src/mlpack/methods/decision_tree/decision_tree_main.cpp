@@ -210,7 +210,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       trainingSet.shed_row(trainingSet.n_rows - 1);
     }
 
-    const size_t numClasses = arma::max(arma::max(labels)) + 1;
+    const size_t numClasses = max(labels) + 1;
 
     // Now build the tree.
     const size_t minLeafSize = (size_t) params.Get<int>("minimum_leaf_size");

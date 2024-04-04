@@ -504,8 +504,8 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
       }
       else
       {
-        sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
-            (ElemType) MetricType::Power);
+        sum += std::pow((lower + std::fabs(lower)) +
+            (higher + std::fabs(higher)), (ElemType) MetricType::Power);
       }
 
       if (sum >= minSum)
@@ -532,10 +532,10 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) minSum,
+      return (ElemType) std::pow((double) minSum,
           1.0 / (double) MetricType::Power) / 2.0;
     else
-      return minSum / pow(2.0, MetricType::Power);
+      return minSum / std::pow(2.0, MetricType::Power);
   }
 }
 
@@ -574,8 +574,8 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
         }
         else
         {
-          sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
-              (ElemType) MetricType::Power);
+          sum += std::pow((lower + std::fabs(lower)) +
+              (higher + std::fabs(higher)), (ElemType) MetricType::Power);
         }
 
         if (sum >= minSum)
@@ -599,10 +599,10 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) minSum,
+      return (ElemType) std::pow((double) minSum,
           1.0 / (double) MetricType::Power) / 2.0;
     else
-      return minSum / pow(2.0, MetricType::Power);
+      return minSum / std::pow(2.0, MetricType::Power);
   }
 }
 
@@ -647,7 +647,8 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     else if (MetricType::Power == 2)
       return (ElemType) std::sqrt(maxSum);
     else
-      return (ElemType) pow((double) maxSum, 1.0 / (double) MetricType::Power);
+      return (ElemType) std::pow((double) maxSum, 1.0 /
+          (double) MetricType::Power);
   }
 
   return maxSum;
@@ -696,7 +697,8 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     else if (MetricType::Power == 2)
       return (ElemType) std::sqrt(maxSum);
     else
-      return (ElemType) pow((double) maxSum, 1.0 / (double) MetricType::Power);
+      return (ElemType) std::pow((double) maxSum, 1.0 /
+          (double) MetricType::Power);
   }
 
   return maxSum;
@@ -772,8 +774,10 @@ CellBound<MetricType, ElemType>::RangeDistance(
     else
     {
       return RangeType<ElemType>(
-          (ElemType) pow((double) minLoSum, 1.0 / (double) MetricType::Power),
-          (ElemType) pow((double) maxHiSum, 1.0 / (double) MetricType::Power));
+          (ElemType) std::pow((double) minLoSum, 1.0 /
+            (double) MetricType::Power),
+          (ElemType) std::pow((double) maxHiSum, 1.0 /
+            (double) MetricType::Power));
     }
   }
 
@@ -858,8 +862,10 @@ CellBound<MetricType, ElemType>::RangeDistance(
     else
     {
       return RangeType<ElemType>(
-          (ElemType) pow((double) minLoSum, 1.0 / (double) MetricType::Power),
-          (ElemType) pow((double) maxHiSum, 1.0 / (double) MetricType::Power));
+          (ElemType) std::pow((double) minLoSum, 1.0 /
+              (double) MetricType::Power),
+          (ElemType) std::pow((double) maxHiSum, 1.0 /
+              (double) MetricType::Power));
     }
   }
 
@@ -876,7 +882,7 @@ CellBound<MetricType, ElemType>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
-  arma::Col<ElemType> mins(arma::min(data, 1));
+  arma::Col<ElemType> mins(min(data, 1));
   arma::Col<ElemType> maxs(arma::max(data, 1));
 
   minWidth = std::numeric_limits<ElemType>::max();

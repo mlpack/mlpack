@@ -44,14 +44,14 @@ TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
   input = arma::zeros(inSize * nPoints, batchSize);
   output.set_size(outSize * nPoints, batchSize);
   module.Forward(input, output);
-  REQUIRE(arma::accu(module.Bias())
-      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+  REQUIRE(accu(module.Bias())
+      == Approx(accu(output) / (nPoints * batchSize)).epsilon(1e-3));
 
   // Test the Backward function.
   delta.set_size(input.n_rows, input.n_cols);
   output.zeros();
   module.Backward(input, output, output, delta);
-  REQUIRE(arma::accu(delta) == 0);
+  REQUIRE(accu(delta) == 0);
 }
 
 /**

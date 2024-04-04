@@ -502,7 +502,7 @@ TEST_CASE_METHOD(
   // the probabilities sum to 1.
   for (size_t i = 0; i < probabilities.n_cols; ++i)
   {
-    const double sum = arma::accu(probabilities.col(i));
+    const double sum = accu(probabilities.col(i));
     REQUIRE(sum == Approx(1.0));
 
     size_t classPrediction = (size_t) arma::index_max(probabilities.col(i));

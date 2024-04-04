@@ -184,7 +184,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
       - (delta * groundTruth);
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX)) / dataset.n_cols;
+  loss = accu(arma::clamp(margin, 0.0, DBL_MAX)) / dataset.n_cols;
 
   // Adding the regularization term.
   constexpr ElemType half = ((ElemType) 0.5);
@@ -226,7 +226,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
+  loss = accu(arma::clamp(margin, 0.0, DBL_MAX));
   loss /= batchSize;
 
   // Adding the regularization term.
@@ -412,7 +412,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
   gradient += lambda * parameters;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
+  loss = accu(arma::clamp(margin, 0.0, DBL_MAX));
   loss /= dataset.n_cols;
 
   // Adding the regularization term.
@@ -485,7 +485,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
   gradient += lambda * parameters;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
+  loss = accu(arma::clamp(margin, 0.0, DBL_MAX));
   loss /= batchSize;
 
   // Adding the regularization term.

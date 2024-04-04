@@ -234,7 +234,7 @@ struct Init
     for (size_t i = 0; i < e.size(); ++i)
     {
       e[i].Probabilities().randu();
-      e[i].Probabilities() /= arma::accu(e[i].Probabilities());
+      e[i].Probabilities() /= accu(e[i].Probabilities());
     }
   }
 
@@ -247,7 +247,8 @@ struct Init
       const size_t dimensionality = e[i].Mean().n_rows;
       e[i].Mean().randu();
       // Generate random covariance.
-      arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
+      arma::mat r;
+      r.randu(dimensionality, dimensionality);
       e[i].Covariance(r * r.t());
     }
   }
@@ -260,7 +261,7 @@ struct Init
     {
       // Random weights.
       e[i].Weights().randu();
-      e[i].Weights() /= arma::accu(e[i].Weights());
+      e[i].Weights() /= accu(e[i].Weights());
 
       // Random means and covariances.
       for (int g = 0; g < params.Get<int>("gaussians"); ++g)
@@ -269,8 +270,8 @@ struct Init
         e[i].Component(g).Mean().randu();
 
         // Generate random covariance.
-        arma::mat r = arma::randu<arma::mat>(dimensionality,
-            dimensionality);
+        arma::mat r;
+        r.randu(dimensionality, dimensionality);
         e[i].Component(g).Covariance(r * r.t());
       }
     }
@@ -284,7 +285,7 @@ struct Init
     {
       // Random weights.
       e[i].Weights().randu();
-      e[i].Weights() /= arma::accu(e[i].Weights());
+      e[i].Weights() /= accu(e[i].Weights());
 
       // Random means and covariances.
       for (int g = 0; g < params.Get<int>("gaussians"); ++g)
@@ -293,7 +294,8 @@ struct Init
         e[i].Component(g).Mean().randu();
 
         // Generate random diagonal covariance.
-        arma::vec r = arma::randu<arma::vec>(dimensionality);
+        arma::vec r;
+        r.randu(dimensionality);
         e[i].Component(g).Covariance(r);
       }
     }

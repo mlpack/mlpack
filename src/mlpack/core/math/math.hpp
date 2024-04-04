@@ -17,7 +17,6 @@
 #include "digamma.hpp"
 #include "log_add.hpp"
 #include "make_alias.hpp"
-#include "safe_linalg.hpp"
 #include "multiply_slices.hpp"
 #include "quantile.hpp"
 #include "random_basis.hpp"

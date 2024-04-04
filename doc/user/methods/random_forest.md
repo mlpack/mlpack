@@ -16,8 +16,6 @@ runtime parameters.  This is used to provide the additional API-compatible
 `ExtraTrees` in any of the documentation below.  ([More
 information...](#fully-custom-behavior))
 
-<!-- TODO: fix link! -->
-
 #### Simple usage example:
 
 ```c++
@@ -28,7 +26,7 @@ information...](#fully-custom-behavior))
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
-arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
+arma::mat testData(10, 500, arma::fill::randu); // 500 test points.
 
 mlpack::RandomForest rf;            // Step 1: create model.
 rf.Train(dataset, labels, 5, 10);   // Step 2: train model.
@@ -56,9 +54,9 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 #### See also:
 
- * [`DecisionTree`](#decision_tree) <!-- TODO: fix link! -->
- * [`DecisionTreeRegressor`](#decision_tree_regressor) <!-- TODO: fix link! -->
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
+ * [`DecisionTree`](decision_tree.md)
+ * [`DecisionTreeRegressor`](decision_tree_regressor.md)
+ * [mlpack classifiers](../../index.md#classification-algorithms)
  * [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Leo Breiman's Random Forests page](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm)
@@ -86,20 +84,13 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * better link for working with categorical data in straightforward terms
-    * update matrices.md to include a section on labels and NormalizeLabels()
-    * add a bit about instance weights in matrices.md
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `info` | [`data::DatasetInfo`](../../tutorials/datasetmapper.md) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `info` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `weights` | [`arma::rowvec`]('../matrices.md') | Instance weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
+| `weights` | [`arma::rowvec`](../matrices.md) | Instance weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numTrees` | `size_t` | Number of trees to train in the random forest. | `20`
 |
 | `minLeafSize` | `size_t` | Minimum number of points in each leaf node of each decision tree. | `1` |
@@ -201,7 +192,7 @@ to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into.  Will be set to length `numClasses`. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into.  Will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to number of classes, number of columns will be equal to `data.n_cols`). |
 
@@ -211,15 +202,13 @@ that is used should be the same type that was used for training.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
- * A `RandomForest` can be serialized with [`data::Save()`](../formats.md) and
-   [`data::Load()`](../formats.md).
+ * A `RandomForest` can be serialized with
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `rf.NumTrees()` will return a `size_t` indicating the number of trees in the
    random forest.
 
- * `rf.Tree(i)` will return a [`DecisionTree` object](#decision_tree)
+ * `rf.Tree(i)` will return a [`DecisionTree` object](decision_tree.md)
    representing the `i`th decision tree in the random forest.
 
 For complete functionality, the [source
@@ -233,7 +222,8 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a random forest incrementally on random mixed categorical data:
+Train a random forest incrementally on random mixed categorical data and save it
+to disk:
 
 ```c++
 // Load a categorical dataset.
@@ -279,6 +269,9 @@ accuracy = 100.0 * ((double) arma::accu(testPredictions == testLabels)) /
     testLabels.n_elem;
 std::cout << "After training 20 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
+
+// Save the random forest to disk.
+mlpack::data::Save("rf.bin", "rf", rf);
 ```
 
 ---
@@ -359,7 +352,7 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using 10 trees in the forest.
 // Note that `ExtraTrees` has exactly the same API as `RandomForest`.
-mlpack::ExtraTrees rf(dataset, labels, 5, 10);
+mlpack::ExtraTrees<> rf(dataset, labels, 5, 10);
 
 // Create a single test point.
 arma::vec testPoint(10, arma::fill::randu);
@@ -420,7 +413,7 @@ used as drop-in replacements throughout this documentation page:
     - This is an implementation of Breiman's seminal random forest algorithm
       ([website](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm),
       [paper pdf](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)).
-    - The [`DecisionTree`](#decision_tree) class is used for each individual
+    - The [`DecisionTree`](decision_tree.md) class is used for each individual
       decision tree.
     - When training each individual decision tree, bootstrapping is used to
       compute the samples given to each tree for training.
@@ -440,7 +433,7 @@ used as drop-in replacements throughout this documentation page:
 Fully custom classes can also be used to control the behavior of the
 `RandomForest` class.  The full signature of the class is as follows:
 
-```c++
+```
 RandomForest<FitnessFunction,
              DimensionSelectionType,
              NumericSplitType,
@@ -461,7 +454,7 @@ RandomForest<FitnessFunction,
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
-[`DecisionTree`](#decision_tree#fully-custom-behavior) class.
+[`DecisionTree`](decision_tree.md#fully-custom-behavior) class.
 
 Below, details are given for the requirements of each of these template types.
 
@@ -565,8 +558,8 @@ class CustomDimensionSelect
  * The `RandomBinaryNumericSplit` class is available for drop-in usage and
    will select a split randomly between the minimum and maximum values of a
    dimension.  It is very efficient but does not yield splits that maximize
-   the gain.  (Used by the `ExtraTrees` [variant](#variants).)
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+   the gain.  (Used by the `ExtraTrees` [variant](#fully-custom-behavior).)
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal
    structure `AuxiliarySplitInfo` that is used at classification time:
 
@@ -639,7 +632,7 @@ class CustomNumericSplit
     categorical feature.
  * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
    splits all categories into their own node.
- * A custom class must take a [`FitnessFunction`](#fitness-function) as a
+ * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal structure
    `AuxiliarySplitInfo` that is used at classification time:
 
@@ -717,5 +710,5 @@ class CustomCategoricalSplit
    the random forest.
  * If `true` _(default)_, a different bootstrap sample of the same size as the
    dataset will be used to train each decision tree.
- * If `false` _(default for the `ExtraTrees` [variant](#variants))_, the full
+ * If `false` _(default for the `ExtraTrees` [variant](#fully-custom-behavior))_, the full
    dataset will be used to train each decision tree.

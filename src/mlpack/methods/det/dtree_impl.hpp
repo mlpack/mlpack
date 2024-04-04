@@ -332,7 +332,7 @@ DTree<MatType, TagType>::DTree(MatType & data) :
     start(0),
     end(data.n_cols),
     maxVals(arma::max(data, 1)),
-    minVals(arma::min(data, 1)),
+    minVals(min(data, 1)),
     splitDim(size_t(-1)),
     splitValue(std::numeric_limits<ElemType>::max()),
     subtreeLeavesLogNegError(-DBL_MAX),

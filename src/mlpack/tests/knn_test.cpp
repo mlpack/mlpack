@@ -1829,11 +1829,11 @@ TEST_CASE("KNNGreedyTreeSearch", "[KNNTest]")
 
   // Check that all neighbour values are between 0 and 100, as only 100 points
   // are present in dataset.
-  REQUIRE(arma::accu(neighbors < 0 || neighbors >= 100) ==0);
+  REQUIRE(accu(neighbors < 0 || neighbors >= 100) ==0);
 
   // Check that all distances values are between 0.0 and sqrt(3) as arma::randu
   // generates a uniform distribution in [0, 1].
-  REQUIRE(arma::accu(distances < 0.0 || distances > std::sqrt(3.0)) == 0);
+  REQUIRE(accu(distances < 0.0 || distances > std::sqrt(3.0)) == 0);
 }
 
 /**
@@ -1866,16 +1866,16 @@ TEST_CASE("KNNSpillTreeSearchEnoughResults", "[KNNTest]")
 
   // Check that all neighbor values are between 0 and 100, as only 100 points
   // are present in dataset.
-  REQUIRE(arma::accu(neighborsDual < 0 || neighborsDual >= 100) == 0);
-  REQUIRE(arma::accu(neighborsSingle < 0 || neighborsSingle >= 100) == 0);
-  REQUIRE(arma::accu(neighborsGreedy < 0 || neighborsGreedy >= 100) == 0);
+  REQUIRE(accu(neighborsDual < 0 || neighborsDual >= 100) == 0);
+  REQUIRE(accu(neighborsSingle < 0 || neighborsSingle >= 100) == 0);
+  REQUIRE(accu(neighborsGreedy < 0 || neighborsGreedy >= 100) == 0);
 
   // Check that all distances values are between 0.0 and sqrt(3) as arma::randu
   // generates a uniform distribution in [0, 1].
-  REQUIRE(arma::accu(distancesDual < 0.0 || distancesDual > std::sqrt(3.0))
+  REQUIRE(accu(distancesDual < 0.0 || distancesDual > std::sqrt(3.0))
       == 0);
-  REQUIRE(arma::accu(distancesSingle < 0.0 || distancesSingle > std::sqrt(3.0))
+  REQUIRE(accu(distancesSingle < 0.0 || distancesSingle > std::sqrt(3.0))
       == 0);
-  REQUIRE(arma::accu(distancesGreedy < 0.0 || distancesGreedy > std::sqrt(3.0))
+  REQUIRE(accu(distancesGreedy < 0.0 || distancesGreedy > std::sqrt(3.0))
       == 0);
 }

@@ -70,7 +70,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (UseWeights)
   {
     classWeightSums.zeros(numClasses, 2);
-    totalWeight = arma::accu(sortedWeights);
+    totalWeight = accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
     // Initialize the counts.
@@ -158,6 +158,16 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
+      // In some very extreme cases, floating-point inaccuracies can lead to the
+      // split result being the upper bound, which is problematic for later as
+      // all the child points will be sent to the left child.  If this happens,
+      // bump it down incrementally.
+      if (splitInfo[0] == data[sortedIndices[index]])
+      {
+        splitInfo[0] = std::nexttoward(splitInfo[0],
+            data[sortedIndices[index - 1]]);
+      }
+
       return gain;
     }
     else if (gain > bestFoundGain)
@@ -168,6 +178,16 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       splitInfo[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
+
+      // In some very extreme cases, floating-point inaccuracies can lead to the
+      // split result being the upper bound, which is problematic for later as
+      // all the child points will be sent to the left child.  If this happens,
+      // bump it down incrementally.
+      if (splitInfo[0] == data[sortedIndices[index]])
+      {
+        splitInfo[0] = std::nexttoward(splitInfo[0],
+            data[sortedIndices[index - 1]]);
+      }
     }
   }
 
@@ -243,7 +263,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   if (UseWeights)
   {
-    totalWeight = arma::accu(sortedWeights);
+    totalWeight = accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
     for (size_t i = 0; i < minimum - 1; ++i)
@@ -297,6 +317,13 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       splitInfo = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
+      // In some very extreme cases, floating-point inaccuracies can lead to the
+      // split result being the upper bound, which is problematic for later as
+      // all the child points will be sent to the left child.  If this happens,
+      // bump it down incrementally.
+      if (splitInfo == data[sortedIndices[index]])
+        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+
       return gain;
     }
      if (gain > bestFoundGain)
@@ -306,6 +333,13 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       splitInfo = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
+
+      // In some very extreme cases, floating-point inaccuracies can lead to the
+      // split result being the upper bound, which is problematic for later as
+      // all the child points will be sent to the left child.  If this happens,
+      // bump it down incrementally.
+      if (splitInfo == data[sortedIndices[index]])
+        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
     }
   }
 
@@ -382,7 +416,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   if (UseWeights)
   {
-    totalWeight = arma::accu(sortedWeights);
+    totalWeight = accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
     for (size_t i = 0; i < minimum - 1; ++i)
@@ -444,6 +478,13 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       splitInfo = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
+      // In some very extreme cases, floating-point inaccuracies can lead to the
+      // split result being the upper bound, which is problematic for later as
+      // all the child points will be sent to the left child.  If this happens,
+      // bump it down incrementally.
+      if (splitInfo == data[sortedIndices[index]])
+        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+
       return gain;
     }
     if (gain > bestFoundGain)
@@ -453,6 +494,13 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       splitInfo = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
+
+      // In some very extreme cases, floating-point inaccuracies can lead to the
+      // split result being the upper bound, which is problematic for later as
+      // all the child points will be sent to the left child.  If this happens,
+      // bump it down incrementally.
+      if (splitInfo == data[sortedIndices[index]])
+        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
     }
   }
   // If we didn't improve, return the original gain exactly as we got it

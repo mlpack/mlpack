@@ -24,7 +24,7 @@ double MSE::Evaluate(MLAlgorithm& model,
 
   ResponsesType predictedResponses;
   model.Predict(data, predictedResponses);
-  double sum = arma::accu(arma::square(responses - predictedResponses));
+  double sum = accu(arma::square(responses - predictedResponses));
 
   return sum / responses.n_elem;
 }

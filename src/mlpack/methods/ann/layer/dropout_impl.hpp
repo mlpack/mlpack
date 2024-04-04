@@ -86,7 +86,7 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
   {
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
-    mask = arma::randu<MatType>(input.n_rows, input.n_cols);
+    mask.randu(input.n_rows, input.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;
   }

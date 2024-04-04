@@ -241,7 +241,7 @@ class PrioritizedReplay
     for (size_t i = 0; i < sampledIndices.n_rows; ++i)
     {
       double p_sample = idxSum.Get(sampledIndices(i)) / idxSum.Sum();
-      weights(i) = pow(numSample * p_sample, -beta);
+      weights(i) = std::pow(numSample * p_sample, -beta);
     }
     weights /= weights.max();
   }
@@ -255,7 +255,7 @@ class PrioritizedReplay
   void UpdatePriorities(arma::ucolvec& indices, arma::colvec& priorities)
   {
       arma::colvec alphaPri = alpha * priorities;
-      maxPriority = std::max(maxPriority, arma::max(priorities));
+      maxPriority = std::max(maxPriority, max(priorities));
       idxSum.BatchUpdate(indices, alphaPri);
   }
 
