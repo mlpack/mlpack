@@ -31,7 +31,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
         false)),
     lambda(lambda)
 {
-   util::CheckSameSizes(responses,predictors,"LogisticRegressionFunction::LogisticRegressionFunction()");
+   util::CheckSameSizes(responses,predictors,"LogisticRegressionFunction::LogisticRegressionFunction()","predictors and responses");
 
 }
 
