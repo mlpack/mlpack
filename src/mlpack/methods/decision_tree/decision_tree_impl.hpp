@@ -270,7 +270,6 @@ DecisionTree<FitnessFunction,
     dimensionType(0),
     classProbabilities(numClasses)
 {
-// TODO @dfs
   // Initialize utility vector.
   classProbabilities.fill(1.0 / (double) numClasses);
 }

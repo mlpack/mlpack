@@ -136,7 +136,7 @@ class RandomBinaryNumericSplit
   static size_t NumChildren(const arma::vec& splitInfo,
                             const AuxiliarySplitInfo& /* aux */)
   {
-      return splitInfo.n_elem == 0 ? 0 : 2;
+    return splitInfo.n_elem == 0 ? 0 : 2;
   }
 
   /**

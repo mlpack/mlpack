@@ -183,7 +183,7 @@ that is used should be the same type that was used for training.
    [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
-   in the node `tree`.
+   in the node `tree`. If there was no split, zero is returned. 
 
  * `tree.Child(i)` will return a `DecisionTree` object representing the `i`th
    child of the node `tree`.
@@ -426,10 +426,22 @@ class CustomNumericSplit
                        const double minGainSplit,
                        arma::vec& splitInfo,
                        AuxiliarySplitInfo& aux);
+  /**
+   * In the case that a split was found, returns the number of children
+   * of the split. Otherwise if there was not split, returns zero. A binary 
+   * split always has two children.
+   *
+   * @param splitInfo Auxiliary information for the split. A vector
+   * of size J, where J is the number of categories. splitInfo[k]
+   * is zero if category k is assigned to the left child, and otherwise
+   * it is one if assigned to the right.
+   * @param * (aux) Auxiliary information for the split (Unused).
+   */
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split, 
+  // return zero. `splitInfo` and `aux` contain the split information, as set 
+  // in `SplitIfBetter`. 
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
@@ -504,9 +516,10 @@ class CustomCategoricalSplit
       arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information

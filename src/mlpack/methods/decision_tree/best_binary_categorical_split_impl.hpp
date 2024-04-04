@@ -11,6 +11,10 @@
  */
 #ifndef MLPACK_METHODS_DECISION_TREE_BEST_BINARY_CATEGORICAL_SPLIT_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_CATEGORICAL_SPLIT_IMPL_HPP
+
+// In case it hasn't been included yet.
+#include "best_binary_categorical_split.hpp"
+
 namespace mlpack {
 
 // Overload used in classification.
@@ -26,7 +30,7 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minLeafSize,
     const double minGainSplit,
-    vec& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& aux) 
 {
   const size_t n = data.n_elem;
@@ -38,30 +42,30 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
     return DBL_MAX;
 
   // Binary classification
-  if (numClasses == 2) {
+  if (numClasses == 2)
+  {
       // Order the categories of variable vₖ by their proportion in class C₁
       // and map each categorical vₖ to its categorical rank
-      umat categoryCounts(numCategories, 2, fill::zeros);
-      vec categoryP(numCategories);
+      arma::umat categoryCounts(numCategories, 2, arma::fill::zeros);
+      arma::vec categoryP(numCategories);
       size_t totalCount;
 
       for (size_t i = 0; i < n; ++i)
-          ++categoryCounts(data[i], labels[i]);
+        ++categoryCounts(data[i], labels[i]);
       for (size_t i = 0; i < numCategories; ++i)
       {
-          totalCount = (categoryCounts(i, 0) + categoryCounts(i, 1));
-          categoryP[i] = totalCount == 0 ? 0 : (categoryCounts(i, 1)
-              /(categoryCounts(i, 0) + categoryCounts(i, 1)));
+        totalCount = (categoryCounts(i, 0) + categoryCounts(i, 1));
+        categoryP[i] = totalCount == 0 ? 0 : (categoryCounts(i, 1)
+            / (categoryCounts(i, 0) + categoryCounts(i, 1)));
       }
-
-      uvec sortedCategories = sort_index(categoryP);
-      uvec categoryRank(numCategories);
+      arma::uvec sortedCategories = sort_index(categoryP);
+      arma::uvec categoryRank(numCategories);
       for (size_t i = 0; i < numCategories; i++)
         categoryRank[sortedCategories[i]] = i;
 
-      uvec transformedData(n); 
+      arma::uvec transformedData(n);
       for (size_t i = 0; i < n; ++i)
-        transformedData[i] = categoryRank[data[i]]; 
+         transformedData[i] = categoryRank[data[i]]; 
 
       // Split the transformed vₖ as a numeric type.
       bestFoundGain = NumericSplit::template SplitIfBetter<UseWeights>(
@@ -82,13 +86,14 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
       // the number of categories, and splitInfo[k] is zero if category 
       // k is assigned to the left child, and otherwise it is one if k
       // is assigned to the right.
-      if (improved) {
+      if (improved)
+      {
         const size_t splitIndex = (size_t) std::floor((double) splitInfo[0]);
         splitInfo.set_size(numCategories);
         for (size_t c: sortedCategories.subvec(0, splitIndex))
-          splitInfo[c] = LEFT; 
+          splitInfo[c] = 0; 
         for (size_t c: sortedCategories.subvec(splitIndex+1, numCategories-1))
-          splitInfo[c] = RIGHT; 
+          splitInfo[c] = 1; 
       }
 
   } 
@@ -101,41 +106,40 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
     // A map from category Cⱼ to the samples whose categorical value
     // for variable vₖ is Cⱼ. The jth column corresponds to Cⱼ. 
-    SpMat<short> categorySamples(n, numCategories);
+    arma::SpMat<short> categorySamples(n, numCategories);
     for (size_t i = 0; i < n; ++i)
       categorySamples(i, data[i]) = 1;
 
-    uvec categories(numCategories); 
+    arma::uvec categories(numCategories); 
     if (UseWeights)
     {
         // Weight counts for computing the gain. 
         double totalWeight = accu(weights);
-        mat classWeightSums = zeros<mat>(numClasses, 2);
+        arma::mat classWeightSums = arma::zeros<arma::mat>(numClasses, 2);
         bestFoundGain *= totalWeight;
 
         // Recursively check the gain for all partitions.
         improved = PartitionSplit(
             data, labels, numCategories, numClasses, weights, 
             totalWeight, bestFoundGain, categorySamples, categories, 
-            splitInfo, classWeightSums
-        );
+            splitInfo, classWeightSums);
         bestFoundGain /= totalWeight;
     }
     else
     {
         // Class counts for computing the gain. 
-        Mat<size_t> classCounts = zeros<Mat<size_t>>(numClasses, 2);
+        arma::Mat<size_t> classCounts 
+            = arma::zeros<arma::Mat<size_t>>(numClasses, 2);
         bestFoundGain *= n; 
 
         // Recursively check the gain for all partitions.
         improved = PartitionSplit(
             data, labels, numCategories, numClasses, bestFoundGain, 
-            categorySamples, categories, splitInfo, classCounts
-        );
+            categorySamples, categories, splitInfo, classCounts);
         bestFoundGain /= n; 
     }
   }
-  return improved? bestFoundGain : DBL_MAX;
+  return improved ? bestFoundGain : DBL_MAX;
 }
 
 
@@ -151,7 +155,7 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minLeafSize,
     const double minGainSplit,
-    vec& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& aux,
     FitnessFunction& fitnessFunction)
 {
@@ -168,24 +172,26 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // Order the categories of variable vₖ by increasing mean
   // of the response y. categoryResponse[i, 0] will contain
   // the mean response for category Cᵢ.
-  vec categoryResponse(numCategories, fill::zeros);
-  uvec categoryCounts(numCategories, fill::zeros);
+  arma::vec categoryResponse(numCategories, arma::fill::zeros);
+  arma::uvec categoryCounts(numCategories, arma::fill::zeros);
 
   for (size_t i = 0; i < n; ++i)
   {
-      categoryResponse[data[i]] += responses[i];
-      ++categoryCounts[data[i]]; 
+    categoryResponse[data[i]] += responses[i];
+    ++categoryCounts[data[i]]; 
   }
   for (size_t i = 0; i < numCategories; ++i)
-      categoryResponse[i] =  categoryCounts[i] == 0 ? 0 : 
-          categoryResponse[i]/categoryCounts[i];
+  {
+    categoryResponse[i] =  categoryCounts[i] == 0 ? 0 : 
+        categoryResponse[i] / categoryCounts[i];
+  }
 
-  uvec sortedCategories = sort_index(categoryResponse);
-  uvec categoryRank(numCategories);
+  arma::uvec sortedCategories = sort_index(categoryResponse);
+  arma::uvec categoryRank(numCategories); 
   for (size_t i = 0; i < numCategories; i++)
-    categoryRank[sortedCategories[i]] = i;
+     categoryRank[sortedCategories[i]] = i;
 
-  uvec transformedData(n); 
+  arma::uvec transformedData(n); 
   for (size_t i = 0; i < n; ++i)
     transformedData[i] = categoryRank[data[i]]; 
 
@@ -213,9 +219,9 @@ double BestBinaryCategoricalSplit<FitnessFunction>::SplitIfBetter(
       size_t splitIndex = (size_t) std::floor((double) splitInfo[0]);
       splitInfo.set_size(numCategories + 1);
       for (size_t c: sortedCategories.subvec(0, splitIndex))
-        splitInfo[c] = LEFT; 
+        splitInfo[c] = 0; 
       for (size_t c: sortedCategories.subvec(splitIndex+1, numCategories-1))
-        splitInfo[c] = RIGHT; 
+        splitInfo[c] = 1; 
       return bestFoundGain;
   }
   return DBL_MAX;
@@ -229,10 +235,10 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
     const size_t numCategories,
     const size_t numClasses,
     double& bestFoundGain,
-    SpMat<short>& categorySamples,
-    uvec& categories,
-    vec& splitInfo,
-    Mat<size_t>& classCounts,
+    arma::SpMat<short>& categorySamples,
+    arma::uvec& categories,
+    arma::vec& splitInfo,
+    arma::Mat<size_t>& classCounts,
     size_t totalLeft,
     size_t totalRight,
     size_t k)
@@ -250,13 +256,11 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
 
     // The gain for children Tₗ and Tᵣ. 
     leftGain = FitnessFunction::template EvaluatePtr<false>(
-        classCounts.colptr(LEFT), numClasses, totalLeft
-    );
+        classCounts.colptr(0), numClasses, totalLeft);
     rightGain = FitnessFunction::template EvaluatePtr<false>(
-        classCounts.colptr(RIGHT), numClasses, totalRight
-    );
+        classCounts.colptr(1), numClasses, totalRight);
     // The gain for this split. 
-    gain = double(totalLeft)*leftGain + double(totalRight)*rightGain;
+    gain = double(totalLeft) * leftGain + double(totalRight) * rightGain;
 
     // This is the best split found thus far. 
     if (gain > bestFoundGain)
@@ -270,49 +274,46 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
     return false;
   }
   bool improved = false;
-  uvec samples = find(categorySamples.col(k));
+  arma::uvec samples = find(categorySamples.col(k));
 
   /**
    * Compute the gain with category Cₖ ∈ Tₗ
    */
-  categories[k] = LEFT;
-  for (auto i : samples)
+  categories[k] = 0;
+  for (arma::uword i : samples)
   {
-    ++classCounts(labels[i], LEFT);
+    ++classCounts(labels[i], 0);
   }
   totalLeft += samples.n_elem;
 
   improved = PartitionSplit(
       data, labels, numCategories, numClasses, bestFoundGain, categorySamples, 
-      categories, splitInfo, classCounts, totalLeft, totalRight, k+1
-  );
+      categories, splitInfo, classCounts, totalLeft, totalRight, k + 1);
 
   /** 
    * Compute the gain with category Cₖ ∈ Tᵣ 
    */
-  categories[k] = RIGHT;
-  for (auto i : samples)
+  categories[k] = 1;
+  for (arma::uword i : samples)
   {
-    --classCounts(labels[i], LEFT);
-    ++classCounts(labels[i], RIGHT);
+    --classCounts(labels[i], 0);
+    ++classCounts(labels[i], 1);
   }
   totalLeft -= samples.n_elem;
   totalRight += samples.n_elem;
 
   improved |= PartitionSplit(
       data, labels, numCategories, numClasses, bestFoundGain, categorySamples, 
-      categories, splitInfo, classCounts, totalLeft, totalRight, k+1
-  );
+      categories, splitInfo, classCounts, totalLeft, totalRight, k + 1);
 
   /* Unassign Cₖ and return whether a better split was found. */
-  for (auto i : samples)
+  for (arma::uword i : samples)
   {
-    --classCounts(labels[i], RIGHT);
+    --classCounts(labels[i], 1);
   }
   totalRight -= samples.n_elem;
   return improved;
 }
-
 
 // Overload used with weights.
 template<typename FitnessFunction>
@@ -325,10 +326,10 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
       const WeightVecType& weights,
       const double totalWeight,
       double& bestFoundGain,
-      SpMat<short>& categorySamples,
-      uvec& categories,
-      vec& splitInfo,
-      mat& classWeightSums,
+      arma::SpMat<short>& categorySamples,
+      arma::uvec& categories,
+      arma::vec& splitInfo,
+      arma::mat& classWeightSums,
       double totalLeftWeight,
       double totalRightWeight,
       size_t k)
@@ -346,10 +347,10 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
 
     // The gain for children Tₗ and Tᵣ. 
     leftGain = FitnessFunction::template EvaluatePtr<true>(
-        classWeightSums.colptr(LEFT), numClasses, totalLeftWeight
+        classWeightSums.colptr(0), numClasses, totalLeftWeight
     );
     rightGain = FitnessFunction::template EvaluatePtr<true>(
-        classWeightSums.colptr(RIGHT), numClasses, totalRightWeight
+        classWeightSums.colptr(1), numClasses, totalRightWeight
     );
 
     // The gain for this split. 
@@ -367,15 +368,15 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
     return false;
   }
   bool improved= false;
-  uvec samples = find(categorySamples.col(k));
+  arma::uvec samples = find(categorySamples.col(k));
 
   /**
    * Compute the gain with category Cₖ ∈ Tₗ
    */
-  categories[k] = LEFT;
-  for (auto i : samples)
+  categories[k] = 0;
+  for (arma::uword i : samples)
   {
-    classWeightSums(labels[i], LEFT) += weights[i];
+    classWeightSums(labels[i], 0) += weights[i];
     totalLeftWeight += weights[i];
   }
   improved = PartitionSplit(
@@ -387,11 +388,11 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
   /** 
    * Compute the gain with category Cₖ ∈ Tᵣ 
    */
-  categories[k] = RIGHT;
-  for (auto i : samples)
+  categories[k] = 1;
+  for (arma::uword i : samples)
   {
-    classWeightSums(labels[i], LEFT) -= weights[i];
-    classWeightSums(labels[i], RIGHT) += weights[i];
+    classWeightSums(labels[i], 0) -= weights[i];
+    classWeightSums(labels[i], 1) += weights[i];
     totalLeftWeight -= weights[i];
     totalRightWeight += weights[i];
   }
@@ -402,9 +403,9 @@ bool BestBinaryCategoricalSplit<FitnessFunction>::PartitionSplit(
   );
 
   /* Unassign Cₖ and return whether a better split was found. */
-  for (auto i : samples)
+  for (arma::uword i : samples)
   {
-    classWeightSums(labels[i], RIGHT) -= weights[i];
+    classWeightSums(labels[i], 1) -= weights[i];
     totalRightWeight -= weights[i];
   }
   return improved;

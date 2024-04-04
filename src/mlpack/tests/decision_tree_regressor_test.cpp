@@ -478,12 +478,12 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
   size_t minLeaf = 10;
 
   BestBinaryCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
-  vec splitInfo;
+  arma::vec splitInfo;
   MSEGain gainFn;
 
-  vec data = randi<vec>(N, distr_param(0,K-1));
-  rowvec weights = ones<rowvec>(N); 
-  rowvec response(N);
+  arma::vec data = randi<arma::vec>(N, arma::distr_param(0,K-1));
+  arma::rowvec weights = arma::ones<arma::rowvec>(N); 
+  arma::rowvec response(N);
   for (size_t i = 0; i < N; ++i)
     response[i] = data[i] == 2 ? 2 : 0;
 
@@ -509,24 +509,20 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionTwoPerfectTest",
 
   // CalculateDirection should now send all of C₂ to the 
   // one direction and the remaining Cⱼ to the other.
-  vec class1_data = ones(N) * 2;
-  vec class1_direction(N);
-  vec class0_data= randi<vec>(N, distr_param(3, K - 1));
-  vec class0_direction(N);
+  arma::vec class1Data = arma::ones(N) * 2;
+  arma::vec class1Direction(N);
+  arma::vec class0Data = randi<arma::vec>(N, arma::distr_param(3, K - 1));
+  arma::vec class0Direction(N);
 
   for (size_t i = 0; i < N; ++i)
   {
-    class0_direction(i) = BestBinaryCategoricalSplit<MSEGain>
-        ::CalculateDirection(
-            class0_data(i), splitInfo, aux
-    );
-    class1_direction(i) = BestBinaryCategoricalSplit<MSEGain>
-          ::CalculateDirection(
-              class1_data(i), splitInfo, aux
-    );
+    class0Direction(i) = BestBinaryCategoricalSplit<MSEGain>
+        ::CalculateDirection(class0Data(i), splitInfo, aux);
+    class1Direction(i) = BestBinaryCategoricalSplit<MSEGain>
+          ::CalculateDirection(class1Data(i), splitInfo, aux);
   }
-  REQUIRE((all(class0_direction == LEFT) || all(class0_direction == RIGHT)));
-  REQUIRE((all(class1_direction == LEFT) || all(class1_direction == RIGHT)));
+  REQUIRE((all(class0Direction == 0) || all(class0Direction == 1)));
+  REQUIRE((all(class1Direction == 0) || all(class1Direction == 1)));
 }
 
 /**
@@ -542,11 +538,11 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionNoGainTest",
 
   BestBinaryCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
   MSEGain gainFn;
-  vec splitInfo;
+  arma::vec splitInfo;
 
-  vec data(N);
-  rowvec response(N);
-  rowvec weights = ones<rowvec>(N);
+  arma::vec data(N);
+  arma::rowvec response(N);
+  arma::rowvec weights = arma::ones<arma::rowvec>(N);
 
   for (size_t i = 0; i < N; i += 2)
   {
@@ -587,11 +583,11 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionMinSamplesTest",
 
   BestBinaryCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
   MSEGain gainFn;
-  vec splitInfo;
+  arma::vec splitInfo;
 
-  vec data("0 0 0 1 1 1 2 2 2 3 3 3");
-  vec response("0 0 0 1 1 1 0 0 0 1 1 1");
-  rowvec weights(response.n_elem, arma::fill::ones);
+  arma::vec data("0 0 0 1 1 1 2 2 2 3 3 3");
+  arma::vec response("0 0 0 1 1 1 0 0 0 1 1 1");
+  arma::rowvec weights(response.n_elem, arma::fill::ones);
 
   // Call the method to do the splitting.
   double bestGain = MSEGain::Evaluate<false>(response, weights);
@@ -617,16 +613,16 @@ TEST_CASE("BestBinaryCategoricalSplitRegressionMinSamplesTest",
  */
 TEST_CASE("BestCategoricalBuildTest_", "[DecisionTreeRegressorTest]")
 {
-  mat d;
-  rowvec r;
+  arma::mat d;
+  arma::rowvec r;
   data::DatasetInfo di;
   MockCategoricalData(d, r, di);
 
   // Split into a training set and a test set.
-  mat trainingData = d.cols(0, 1999);
-  mat testData = d.cols(2000, 3999);
-  rowvec trainingResponses = r.subvec(0, 1999);
-  rowvec testResponses = r.subvec(2000, 3999);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::rowvec trainingResponses = r.subvec(0, 1999);
+  arma::rowvec testResponses = r.subvec(2000, 3999);
   size_t minLeaf = 10;
 
   // Build the tree.
@@ -635,7 +631,7 @@ TEST_CASE("BestCategoricalBuildTest_", "[DecisionTreeRegressorTest]")
           tree(trainingData, di, trainingResponses, minLeaf);
 
   // Now evaluate the quality of predictions.
-  rowvec predictions;
+  arma::rowvec predictions;
   tree.Predict(testData, predictions);
 
   // Make sure we get reasonable rmse.
@@ -650,17 +646,17 @@ TEST_CASE("BestCategoricalBuildTest_", "[DecisionTreeRegressorTest]")
  */
 TEST_CASE("BestCategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
 {
-  mat d;
-  rowvec r;
+  arma::mat d;
+  arma::rowvec r;
   data::DatasetInfo di;
   MockCategoricalData(d, r, di);
 
   // Split into a training set and a test set.
-  mat trainingData = d.cols(0, 1999);
-  mat testData = d.cols(2000, 3999);
-  rowvec trainingResponses = r.subvec(0, 1999);
-  rowvec testResponses = r.subvec(2000, 3999);
-  rowvec weights = ones<rowvec>(trainingResponses.n_elem);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::rowvec trainingResponses = r.subvec(0, 1999);
+  arma::rowvec testResponses = r.subvec(2000, 3999);
+  arma::rowvec weights = arma::ones<arma::rowvec>(trainingResponses.n_elem);
   size_t minLeaf = 10;
 
   // Build the tree.
@@ -669,7 +665,7 @@ TEST_CASE("BestCategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
           tree(trainingData, di, trainingResponses, weights, minLeaf);
 
   // Now evaluate the quality of predictions.
-  rowvec predictions;
+  arma::rowvec predictions;
   tree.Predict(testData, predictions);
 
   // Make sure we get reasonable rmse.
@@ -685,21 +681,21 @@ TEST_CASE("BestCategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
 TEST_CASE("BestCategoricalNoisyWeightedBuildTest_", 
     "[DecisionTreeRegressorTest]")
 {
-  mat d;
-  rowvec r;
+  arma::mat d;
+  arma::rowvec r;
   data::DatasetInfo di;
   MockCategoricalData(d, r, di);
 
   // Split into a training set and a test set.
-  mat trainingData = d.cols(0, 1999);
-  mat testData = d.cols(2000, 3999);
-  rowvec trainingResponses = r.subvec(0, 1999);
-  rowvec testResponses = r.subvec(2000, 3999);
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::rowvec trainingResponses = r.subvec(0, 1999);
+  arma::rowvec testResponses = r.subvec(2000, 3999);
   size_t minLeaf = 10;
 
   // Now create random points.
-  mat randomNoise(5, 2000);
-  rowvec randomResponses(2000);
+  arma::mat randomNoise(5, 2000);
+  arma::rowvec randomResponses(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
     randomNoise(0, i) = Random();
@@ -711,14 +707,14 @@ TEST_CASE("BestCategoricalNoisyWeightedBuildTest_",
   }
 
   // Generate weights.
-  rowvec weights(4000);
+  arma::rowvec weights(4000);
   for (size_t i = 0; i < 2000; ++i)
     weights[i] = Random(0.9, 1.0);
   for (size_t i = 2000; i < 4000; ++i)
     weights[i] = Random(0.0, 0.001);
 
-  mat fullData = join_rows(trainingData, randomNoise);
-  rowvec fullResponses = join_rows(trainingResponses, randomResponses);
+  arma::mat fullData = join_rows(trainingData, randomNoise);
+  arma::rowvec fullResponses = join_rows(trainingResponses, randomResponses);
 
   // Build the tree.
   DecisionTreeRegressor<
@@ -726,7 +722,7 @@ TEST_CASE("BestCategoricalNoisyWeightedBuildTest_",
           tree(fullData, di, fullResponses, weights, minLeaf);
 
   // Now evaluate the quality of predictions.
-  rowvec predictions;
+  arma::rowvec predictions;
   tree.Predict(testData, predictions);
 
   // Make sure we get reasonable rmse.

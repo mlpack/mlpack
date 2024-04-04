@@ -11,11 +11,10 @@
  */
 #ifndef MLPACK_METHODS_DECISION_TREE_BEST_BINARY_CATEGORICAL_SPLIT_HPP
 #define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_CATEGORICAL_SPLIT_HPP
-#define LEFT 0
-#define RIGHT 1
 
 #include <mlpack/prereqs.hpp>
-using namespace arma;
+
+namespace mlpack {
 
 /**
  * The BestBinaryCategoricalSplit is a splitting function for decision trees
@@ -58,10 +57,7 @@ using namespace arma;
  * }
  *
  * @tparam FitnessFunction Fitness function to use to calculate gain.
- * categorical variable in the case of binary outcomes or regression. 
  */
-namespace mlpack {
-
 template<typename FitnessFunction>
 class BestBinaryCategoricalSplit
 {
@@ -73,7 +69,7 @@ public:
   typedef BestBinaryNumericSplit<FitnessFunction> NumericSplit;
   // For calls to the numeric splitter. 
   typedef typename BestBinaryNumericSplit<FitnessFunction>
-    ::AuxiliarySplitInfo NumericAux;
+      ::AuxiliarySplitInfo NumericAux;
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
@@ -92,7 +88,7 @@ public:
    * @param minLeafSize min number of points in a leaf node for
    *      splitting.
    * @param minGainSplit min  gain split.
-   * @param splitInfo Stores split information on a succesful split. A
+   * @param splitInfo Stores split information on a successful split. A
    * vector of size J, where J is the number of categories. splitInfo[k]
    * is zero if category k is assigned to the left child, and otherwise
    * it is one if assigned to the right.
@@ -132,7 +128,7 @@ public:
    * @param minGainSplit min  gain split.
    * @param splitInfo Stores split information on a successful split.
    *
-   * @param splitInfo Stores split information on a succesful split. A
+   * @param splitInfo Stores split information on a successful split. A
    * vector of size J, where J is the number of categories. splitInfo[k]
    * is zero if category k is assigned to the left child, and otherwise
    * it is one if assigned to the right.
@@ -156,7 +152,7 @@ public:
 
   /**
    * In the case that a split was found, returns the number of children
-   * of the split. Otherwise if there was not split, returns zero. A binary 
+   * of the split. Otherwise if there was no split, returns zero. A binary 
    * split always has two children.
    *
    * @param splitInfo Auxiliary information for the split. A vector
@@ -212,7 +208,7 @@ private:
    *    categorical value for variable vₖ is Cⱼ. Column j is for Cⱼ.
    * @param categories -- J dimensional vector used to maintain the
    *    current partition of the categories.
-   * @param splitInfo -- Stores split information on a succesful split. A
+   * @param splitInfo -- Stores split information on a successful split. A
    *    vector of size J, where J is the number of categories. splitInfo[k]
    *    is zero if category k is assigned to the left child, and otherwise
    *    it is one if assigned to the right.
@@ -261,7 +257,7 @@ private:
    *    categorical value for variable vₖ is Cⱼ. Column j is for Cⱼ.
    * @param categories -- J dimensional vector used to maintain the
    *    current partition of the categories.
-   * @param splitInfo -- Stores split information on a succesful split. A
+   * @param splitInfo -- Stores split information on a successful split. A
    *    vector of size J, where J is the number of categories. splitInfo[k]
    *    is zero if category k is assigned to the left child, and otherwise
    *    it is one if assigned to the right.

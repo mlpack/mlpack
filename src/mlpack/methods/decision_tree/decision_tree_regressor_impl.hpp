@@ -27,10 +27,7 @@ DecisionTreeRegressor<FitnessFunction,
                       NumericSplitType,
                       CategoricalSplitType,
                       DimensionSelectionType,
-                      NoRecursion>::DecisionTreeRegressor() :
-    prediction(0),
-    dimensionType(0),
-    splitInfo()
+                      NoRecursion>::DecisionTreeRegressor()
 {
   // Nothing to do here.
 }
@@ -210,9 +207,9 @@ DecisionTreeRegressor<FitnessFunction,
     const double minimumGainSplit,
     const std::enable_if_t<arma::is_arma_type<
         typename std::remove_reference<WeightsType>::type>::value>*):
+        splitInfo(std::move(other.splitInfo)),
         NumericAuxiliarySplitInfo(other),
-        CategoricalAuxiliarySplitInfo(other),
-        splitInfo(std::move(other.splitInfo))
+        CategoricalAuxiliarySplitInfo(other)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueResponsesType = typename std::decay<ResponsesType>::type;
@@ -251,9 +248,9 @@ DecisionTreeRegressor<FitnessFunction,
     const std::enable_if_t<arma::is_arma_type<
         typename std::remove_reference<
         WeightsType>::type>::value>*):
+        splitInfo(std::move(other.splitInfo)),
         NumericAuxiliarySplitInfo(other),
-        CategoricalAuxiliarySplitInfo(other),  // other info does need to copy
-        splitInfo(std::move(other.splitInfo))
+        CategoricalAuxiliarySplitInfo(other)   // other info does need to copy
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueResponsesType = typename std::decay<ResponsesType>::type;
@@ -308,12 +305,12 @@ DecisionTreeRegressor<FitnessFunction,
              NoRecursion
 >::DecisionTreeRegressor(
     DecisionTreeRegressor&& other) :
-    NumericAuxiliarySplitInfo(std::move(other)),
-    CategoricalAuxiliarySplitInfo(std::move(other)),
-    children(std::move(other.children)),
     prediction(other.prediction),
     dimensionType(other.dimensionType),
-    splitInfo(other.splitInfo)
+    splitInfo(other.splitInfo),
+    NumericAuxiliarySplitInfo(std::move(other)),
+    CategoricalAuxiliarySplitInfo(std::move(other)),
+    children(std::move(other.children))
 {
 }
 
@@ -344,11 +341,10 @@ DecisionTreeRegressor<FitnessFunction,
   children.clear();
 
   // Copy everything from the other tree.
-  splitDimension = other.splitDimension;
   dimensionType = other.dimensionType;
-
+  splitInfo = other.splitInfo;
   if (other.children.size() != 0)
-    splitInfo = other.splitInfo;
+    splitDimension = other.splitDimension;
   else
     prediction = other.prediction;
 
@@ -391,11 +387,11 @@ DecisionTreeRegressor<FitnessFunction,
 
   // Take ownership of the other tree's components.
   children = std::move(other.children);
-  splitDimension = other.splitDimension;
   dimensionType = other.dimensionType;
+  splitInfo = other.splitInfo;
 
   if (children.size() != 0)
-    splitInfo = other.splitInfo;
+    splitDimension = other.splitDimension;
   else
     prediction = other.prediction;
 
@@ -1028,7 +1024,8 @@ void DecisionTreeRegressor<FitnessFunction,
   // Serialize the children first.
   ar(CEREAL_VECTOR_POINTER(children));
 
-  // Now serialize the rest of the object.
+  // Now serialize the rest of the object. Since splitDimension and 
+  // prediction are a union, we only need to serialize one of them.
   ar(CEREAL_NVP(prediction));
   ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(splitInfo));

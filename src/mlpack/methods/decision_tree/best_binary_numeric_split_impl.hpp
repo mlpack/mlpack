@@ -118,6 +118,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       --classCounts(sortedLabels[index - 1], 1);
       ++classCounts(sortedLabels[index - 1], 0);
     }
+    // Make sure that the value has changed.
     if (data[sortedIndices[index - 1]] == data[sortedIndices[index]])
       continue;
  
@@ -320,8 +321,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
       return gain;
     }
      if (gain > bestFoundGain)
@@ -337,8 +339,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
     }
   }
 
@@ -482,9 +485,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
-
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
       return gain;
     }
     if (gain > bestFoundGain)
@@ -500,8 +503,9 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // split result being the upper bound, which is problematic for later as
       // all the child points will be sent to the left child.  If this happens,
       // bump it down incrementally.
-      if (splitInfo == data[sortedIndices[index]])
-        splitInfo = std::nexttoward(splitInfo, data[sortedIndices[index - 1]]);
+      if (splitInfo[0] == data[sortedIndices[index]])
+        splitInfo[0] = std::nexttoward(
+            splitInfo[0], data[sortedIndices[index - 1]]);
     }
   }
   // If we didn't improve, return the original gain exactly as we got it
