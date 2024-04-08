@@ -220,7 +220,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
-      arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
+      arma::colvec newCentroid = zeros<arma::colvec>(pSeeds->n_rows);
 
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);

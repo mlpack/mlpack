@@ -271,7 +271,7 @@ void QLearning<
   arma::mat projDistUpper = nextDist % (u - b);
   arma::mat projDistLower = nextDist % (b - l);
 
-  arma::mat projDist = arma::zeros<arma::mat>(arma::size(nextDist));
+  arma::mat projDist = zeros<arma::mat>(arma::size(nextDist));
   for (size_t batchNo = 0; batchNo < batchSize; batchNo++)
   {
     for (size_t j = 0; j < atomSize; j++)
@@ -282,7 +282,7 @@ void QLearning<
   }
   arma::mat dists;
   learningNetwork.Forward(sampledStates, dists);
-  arma::mat lossGradients = arma::zeros<arma::mat>(arma::size(dists));
+  arma::mat lossGradients = zeros<arma::mat>(arma::size(dists));
   for (size_t i = 0; i < batchSize; ++i)
   {
     lossGradients(sampledActions[i].action * atomSize, i,

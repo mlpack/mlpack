@@ -67,7 +67,7 @@ void GlimpseType<InputType, OutputType>::Forward(
       size_t padSize = std::floor((glimpseSize - 1) / 2);
 
       arma::Cube<typename InputType::elem_type> inputPadded =
-          arma::zeros<arma::Cube<typename InputType::elem_type>>(
+          zeros<arma::Cube<typename InputType::elem_type>>(
           inputTemp.n_rows + padSize * 2, inputTemp.n_cols + padSize * 2,
           inputTemp.n_slices / inSize);
 
@@ -132,7 +132,7 @@ void GlimpseType<InputType, OutputType>::Backward(
 {
   // Generate a cube using the backpropagated error matrix.
   arma::Cube<typename OutputType::elem_type> mappedError =
-      arma::zeros<arma::Cube<typename OutputType::elem_type>>(outputWidth,
+      zeros<arma::Cube<typename OutputType::elem_type>>(outputWidth,
       outputHeight, 1);
 
   location = locationParameter.back();
@@ -147,7 +147,7 @@ void GlimpseType<InputType, OutputType>::Backward(
     }
   }
 
-  gTemp = arma::zeros<arma::Cube<typename InputType::elem_type>>(
+  gTemp = zeros<arma::Cube<typename InputType::elem_type>>(
       inputTemp.n_rows, inputTemp.n_cols, inputTemp.n_slices);
 
   for (size_t inputIdx = 0; inputIdx < inSize; inputIdx++)
@@ -158,7 +158,7 @@ void GlimpseType<InputType, OutputType>::Backward(
       size_t padSize = std::floor((glimpseSize - 1) / 2);
 
       arma::Cube<typename InputType::elem_type> inputPadded =
-          arma::zeros<arma::Cube<typename InputType::elem_type>>(
+          zeros<arma::Cube<typename InputType::elem_type>>(
           inputTemp.n_rows + padSize * 2, inputTemp.n_cols +
           padSize * 2, inputTemp.n_slices / inSize);
 

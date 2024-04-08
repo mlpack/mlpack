@@ -517,7 +517,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   arma::mat cij = pCij;
 
   // Calculate gradient due to impostors.
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
@@ -645,8 +645,8 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
-  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cij = zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {
@@ -792,7 +792,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   arma::mat cij = pCij;
 
   // Calculate gradient due to impostors.
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
@@ -927,8 +927,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
-  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cij = zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = zeros(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = begin; i < begin + batchSize; ++i)
   {

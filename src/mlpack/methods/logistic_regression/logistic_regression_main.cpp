@@ -255,9 +255,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Set the size of the parameters vector, if necessary.
     if (!params.Has("labels"))
-      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
+      model->Parameters() = zeros<arma::rowvec>(regressors.n_rows);
     else
-      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
+      model->Parameters() = zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.

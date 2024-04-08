@@ -60,9 +60,9 @@ GRU<InputType, OutputType>::GRU(
   network.push_back(hiddenStateModule);
   network.push_back(forgetGateModule);
 
-  prevError = arma::zeros<OutputType>(3 * outSize, batchSize);
+  prevError = zeros<OutputType>(3 * outSize, batchSize);
 
-  allZeros = arma::zeros<OutputType>(outSize, batchSize);
+  allZeros = zeros<OutputType>(outSize, batchSize);
 
   outParameter.emplace_back(allZeros.memptr(),
       allZeros.n_rows, allZeros.n_cols, false, true);

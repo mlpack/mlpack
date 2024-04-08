@@ -98,7 +98,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     if (parameter.is_empty())
       Reset();
-    gradient = arma::zeros<arma::mat>(parameter.n_elem, 1);
+    gradient = zeros<arma::mat>(parameter.n_elem, 1);
   }
   else
     gradient.zeros();
@@ -111,7 +111,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   if (noiseGradientDiscriminator.is_empty())
   {
-    noiseGradientDiscriminator = arma::zeros<arma::mat>(
+    noiseGradientDiscriminator = zeros<arma::mat>(
         gradientDiscriminator.n_elem, 1);
   }
   else

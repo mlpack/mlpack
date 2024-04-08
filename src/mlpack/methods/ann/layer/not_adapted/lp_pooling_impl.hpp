@@ -75,7 +75,7 @@ void LpPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelHeight) / (double) strideHeight + 1);
   }
 
-  outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
+  outputTemp = zeros<arma::Cube<eT> >(outputWidth, outputHeight,
       batchSize * inSize);
 
   for (size_t s = 0; s < inputTemp.n_slices; s++)
@@ -99,7 +99,7 @@ void LpPooling<InputDataType, OutputDataType>::Backward(
   arma::cube mappedError = arma::cube(((arma::Mat<eT>&) gy).memptr(),
       outputWidth, outputHeight, outSize, false, false);
 
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
+  gTemp = zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
 
   for (size_t s = 0; s < mappedError.n_slices; s++)
