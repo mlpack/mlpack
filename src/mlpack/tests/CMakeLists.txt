@@ -51,7 +51,7 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_binding_test.cpp
   cosine_tree_test.cpp
-#  cv_test.cpp
+  cv_test.cpp
   dbscan_test.cpp
   decision_tree_regressor_test.cpp
   decision_tree_test.cpp
