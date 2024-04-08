@@ -1,7 +1,7 @@
 # mlpack core class documentation
 
 Underlying the implementations of [mlpack's machine learning
-algorithms](index.md#mlpack-algorithm-documentation) are mlpack core support
+algorithms](../index.md#mlpack-algorithm-documentation) are mlpack core support
 classes, each of which are documented on this page.
 
  * [Core math utilities](#core-math-utilities): utility classes for mathematical
@@ -130,8 +130,8 @@ mlpack::RangeType<int> r6(3, 4); // [3, 4]
 
 `Range` is used by:
 
- * [`RangeSearch`](range_search.md)
- * [mlpack trees](#trees)
+ * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
+ * [mlpack trees](../developer/trees.md) <!-- TODO: link to local trees section -->
 
 ---
 
@@ -376,7 +376,7 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 #### See also
 
  * [Loading and saving image data](load_save.md#image-data)
- * [`SparseAutoencoder`](sparse_autoencoder.md)
+ * [`SparseAutoencoder`](/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp)
 
 ---
 
@@ -392,7 +392,7 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
     - The return type is `double`.
 
  * Both of these functions are used internally by the
-   [`GammaDistribution`](#gammadistribution) class.
+   `GammaDistribution` class. <!-- TODO: document the class! -->
 
 *Example*:
 
@@ -781,8 +781,11 @@ std::cout << "with label " << shuffledLabels[0] << " and weight "
 
 ## Distributions
 
+<!-- TODO: link to the completed HMM documentation -->
+
 mlpack has support for a number of different distributions, each supporting the
-same API.  These can be used with, for instance, the [`HMM`](hmm.md) class.
+same API.  These can be used with, for instance, the
+[`HMM`](/src/mlpack/methods/hmm/hmm.hpp) class.
 
  * [`DiscreteDistribution`](#discretedistribution): multidimensional categorical
    distribution (generalized Bernoulli distribution)
@@ -1064,13 +1067,13 @@ including:
 
 <!-- TODO: better names for each link -->
 
- * [`NeighborSearch`](neighbor_search.md)
- * [`RangeSearch`](range_search.md)
- * [`LMNN`](lmnn.md)
- * [`EMST`](emst.md)
- * [`NCA`](nca.md)
- * [`RANN`](rann.md)
- * [`KMeans`](kmeans.md)
+ * [`NeighborSearch`](/src/mlpack/methods/neighbor_search/neighbor_search.hpp)
+ * [`RangeSearch`](/src/mlpack/methods/range_search/range_search.hpp)
+ * [`LMNN`](/src/mlpack/methods/lmnn/lmnn.hpp)
+ * [`EMST`](/src/mlpack/methods/emst/emst.hpp)
+ * [`NCA`](/src/mlpack/methods/nca/nca.hpp)
+ * [`RANN`](/src/mlpack/methods/rann/rann.hpp)
+ * [`KMeans`](/src/mlpack/methods/kmeans/kmeans.hpp)
 
 Supported metrics:
 
@@ -1084,7 +1087,7 @@ The `LMetric` template class implements a [generalized
 L-metric](https://en.wikipedia.org/wiki/Lp_space#Definition)
 (L1-metric, L2-metric, etc.).  The class has two template parameters:
 
-```c++
+```
 LMetric<Power, TakeRoot>
 ```
 
@@ -1164,13 +1167,13 @@ These all implement the [same API](../developer/kernels.md), providing one
 `Evaluate()` method, and can be used with a variety of different techniques,
 including:
 
-<!-- TODO: better names for links below -->
+<!-- TODO: document everything below -->
 
- * [`KDE`](kde.md)
- * [`MeanShift`](mean_shift.md)
- * [`KernelPCA`](kernel_pca.md)
- * [`FastMKS`](fastmks.md)
- * [`NystroemMethod`](nystroem_method.md)
+ * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
+ * [`MeanShift`](/src/mlpack/methods/mean_shift/mean_shift.hpp)
+ * [`KernelPCA`](/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
+ * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
+ * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
 
 Supported kernels:
 

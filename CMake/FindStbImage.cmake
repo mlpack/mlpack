@@ -16,7 +16,6 @@ find_path(STB_IMAGE_INCLUDE_DIR_1
     PATHS ${STB_IMAGE_SEARCH_PATHS} ${STB_IMAGE_INCLUDE_DIR})
 
 if(STB_IMAGE_INCLUDE_DIR_1)
-  set(STB_IMAGE_FOUND YES)
   set(STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_INCLUDE_DIR_1}" CACHE PATH
       "stb_image include directory")
 
@@ -32,7 +31,6 @@ else ()
         PATH_SUFFIXES stb/)
 
   if(STB_IMAGE_INCLUDE_DIR_2)
-    set(STB_IMAGE_FOUND YES)
     set(STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_INCLUDE_DIR_2}" CACHE PATH
         "stb_image include directory")
 
@@ -47,7 +45,6 @@ endif ()
 
 # Checks 'REQUIRED'.
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(StbImage
-    REQUIRED_VARS STB_IMAGE_INCLUDE_DIR)
+find_package_handle_standard_args(StbImage REQUIRED_VARS STB_IMAGE_INCLUDE_DIR)
 
 mark_as_advanced(STB_IMAGE_INCLUDE_DIR)

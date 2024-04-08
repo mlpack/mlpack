@@ -7,7 +7,7 @@ optimizers can be used to learn the model.
 
 Logistic regression is useful for two-class classification (i.e. classes are `0`
 or `1`).  For multi-class logistic regression, see
-[`SoftmaxRegression`](#softmax_regression). <!-- TODO: fix link -->
+[`SoftmaxRegression`](softmax_regression.md).
 
 #### Simple usage example:
 
@@ -46,8 +46,8 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 
 #### See also:
 
- * [`SoftmaxRegression`](#softmax_regression) <!-- TODO: fix link! -->
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
+ * [`SoftmaxRegression`](softmax_regression.md)
+ * [mlpack classifiers](../../index.md#classification-algorithms)
  * [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
 
 ### Constructors
@@ -76,21 +76,14 @@ std::cout << arma::accu(predictions == 0) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section on labels and NormalizeLabels()
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, either `0` or `1`.  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, either [`0` or `1`](../load_save.md#normalizing-labels).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `initialPoint` | `arma::rowvec` | Initial model weights to start optimization from.  Should have length `data.n_rows + 1`.  The first element is the bias.  If not specified, a zero vector will be used. | zero vector |
 | `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::L_BFGS()` |
 | `lambda` | `double` | L2 regularization penalty parameter.  Must be nonnegative. | `0.0` |
 | `callbacks...` | [any set of ensmallen callbacks](https://www.ensmallen.org/docs.html#callback-documentation) | Optional callbacks for the ensmallen optimizer, such as e.g. `ens::ProgressBar()`, `ens::Report()`, or others. | _(N/A)_ |
-
-<!-- TODO: fix link -->
 
 As an alternative to passing `lambda` or `initialPoint`, these can be set with a
 standalone method.  The following functions can be used before calling
@@ -103,8 +96,10 @@ standalone method.  The following functions can be used before calling
 
 ***Note***: Setting `lambda` too small may cause the model to overfit; however,
 setting it too large may cause the model to underfit.  [Automatic hyperparameter
-tuning](#hyperparameter_tuner) can be used to find a good value of `lambda`
-instead of a manual setting.
+tuning](../hpt.md) can be used to find a good value of `lambda` instead of a
+manual setting.
+
+<!-- TODO: fix link for hyperparameter tuner -->
 
 ### Training
 
@@ -184,7 +179,7 @@ can be used to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into; will have length 2. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to 2; number of columns will be equal to `data.n_cols`). |
 ||||
@@ -192,10 +187,8 @@ can be used to make class predictions for new data.
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
  * A `LogisticRegression` model can be serialized with
-   [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `lr.Parameters()` will return an `arma::rowvec` filled with the weights of
    the model.  This vector has length equal to the dimensionality plus one, and
@@ -377,7 +370,7 @@ std::cout << "Objective on second dataset after second training: "
 The `LogisticRegression` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 LogisticRegression<MatType>
 ```
 

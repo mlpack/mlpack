@@ -484,7 +484,7 @@ $ cat dataset.csv
 The type does not necessarily need to be a CSV; it can be any supported storage
 format, assuming that it is a coordinate-format file in the format specified
 above.  For more information on mlpack file formats, see the
-[tutorial](../user/formats.md).
+[load/save documentation](../user/load_save.md).
 
 *Note*: it’s often a good idea to normalize or standardize your data, for
 example using:

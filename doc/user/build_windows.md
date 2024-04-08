@@ -94,7 +94,7 @@ OpenBLAS with LLVM's `clang-cl` and `flang` to produce the required static
 library (`.lib`) files 
 compatible with the MSVC compiler. A comprehensive guide on the
 compilation of OpenBLAS for Windows can be found
-[here](https://github.com/xianyi/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio).
+[here](https://github.com/OpenMathLib/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio).
 
 One could always download prebuilt `LAPACK` and `BLAS` libraries for Windows.
 However, there are few official sources, and some of those libraries may require
@@ -109,7 +109,7 @@ project.
 ### Armadillo Dependency
 
 - Download the newest version of Armadillo from
-  [Sourceforge](http://arma.sourceforge.net/download.html)
+  [Sourceforge](https://arma.sourceforge.net/download.html)
 - Unzip to `C:\mlpack\armadillo`
 - Create a `build` directory into `C:\mlpack\armadillo\`
 - Open the Command Prompt and navigate to `C:\mlpack\armadillo\build`
@@ -162,7 +162,7 @@ You are ready to create your first application; take a look at the
 
 This project can be directly built from the `CMakeLists.txt` with the latest
 version of MS Visual Studio, given you have CMake integration via the
-[C++ CMake tools for Windows](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-160).
+[C++ CMake tools for Windows](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-160).
 To open the CMake project with Visual Studio, select File -> Open -> CMake in
 the top menu, followed by selecting the root `CMakeLists.txt` located in
 mlpack's root directory.
