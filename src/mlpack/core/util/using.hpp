@@ -30,6 +30,7 @@ namespace mlpack {
   using arma::mean;
   using arma::norm;
   using arma::normalise;
+  using arma::ones;
   using arma::pow;
   using arma::randi;
   using arma::randn;
@@ -58,6 +59,7 @@ namespace mlpack {
   using coot::mean;
   using coot::norm;
   using coot::normalise;
+  using arma::ones;
   using coot::pow;
   using coot::randi;
   using coot::randn;

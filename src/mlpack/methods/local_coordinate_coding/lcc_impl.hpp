@@ -212,7 +212,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   // Efficient construction of codes restricted to active atoms.
   arma::mat codesPrime = zeros(nActiveAtoms, data.n_cols +
       adjacencies.n_elem);
-  arma::vec wSquared = arma::ones(data.n_cols + adjacencies.n_elem, 1);
+  arma::vec wSquared = ones(data.n_cols + adjacencies.n_elem, 1);
 
   if (nInactiveAtoms > 0)
   {

@@ -42,7 +42,7 @@ void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
   {
     arma::colvec transformedDataMean = arma::mean(transformedData, 1);
     transformedData = transformedData - (transformedDataMean *
-        arma::ones<arma::rowvec>(transformedData.n_cols));
+        ones<arma::rowvec>(transformedData.n_cols));
   }
 }
 

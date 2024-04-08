@@ -220,7 +220,7 @@ void GRU<InputType, OutputType>::Backward(
       hiddenStateModule->OutputParameter());
 
   // Delta ot.
-  OutputType dOt = gyLocal % (arma::ones<OutputType>(outSize, batchSize) -
+  OutputType dOt = gyLocal % (ones<OutputType>(outSize, batchSize) -
       inputGateModule->OutputParameter());
 
   // Delta of input gate.

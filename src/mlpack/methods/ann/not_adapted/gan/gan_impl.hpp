@@ -354,7 +354,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
-        arma::ones(1, batchSize);
+        ones(1, batchSize);
 
     discriminator.outputLayer.Backward(
         boost::apply_visitor(outputParameterVisitor,
