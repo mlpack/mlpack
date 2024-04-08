@@ -47,7 +47,7 @@ add_executable(mlpack_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
-#  callback_test.cpp
+  callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   cosine_tree_test.cpp
@@ -55,7 +55,7 @@ add_executable(mlpack_test
   dbscan_test.cpp
   decision_tree_regressor_test.cpp
   decision_tree_test.cpp
-#  det_test.cpp
+  det_test.cpp
   digamma_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
@@ -102,7 +102,7 @@ add_executable(mlpack_test
   one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
-#  policy_gradient_test.cpp
+  policy_gradient_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   qdafn_test.cpp
