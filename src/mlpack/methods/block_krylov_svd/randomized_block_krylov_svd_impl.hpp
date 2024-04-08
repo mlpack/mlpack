@@ -60,8 +60,8 @@ inline void RandomizedBlockKrylovSVD::Apply(const InMatType& data,
   {
     // The block size cannot be greater than the number of points in the
     // dataset or the dimensionality of the dataset.
-    blockSize = std::min((size_t) data.n_rows,
-                         std::min((size_t) data.n_cols, rank + 10));
+    blockSize = std::min((size_t) data.n_rows, std::min((size_t) data.n_cols,
+        rank + 10));
   }
 
   // Random block initialization.
