@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_REINFORCEMENT_LEARNING_REINFORCEMENT_LEARNING_HPP
 #define MLPACK_METHODS_REINFORCEMENT_LEARNING_REINFORCEMENT_LEARNING_HPP
 
+#include "td3_default_values.hpp"
+
 #include "environment/environment.hpp"
 #include "policy/policy.hpp"
 #include "q_networks/q_networks.hpp"

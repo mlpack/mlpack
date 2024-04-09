@@ -19,6 +19,7 @@
 
 #include "replay/replay.hpp"
 #include "training_config.hpp"
+#include "td3_default_values.hpp"
 
 namespace mlpack {
 
@@ -47,9 +48,9 @@ namespace mlpack {
  */
 template <
   typename EnvironmentType,
-  typename QNetworkType,
-  typename PolicyNetworkType,
-  typename UpdaterType,
+  typename QNetworkType=decltype(DefaultValues::qNetwork()),
+  typename PolicyNetworkType=decltype(DefaultValues::policyNetwork()),
+  typename UpdaterType=decltype(DefaultValues::default_updater),
   typename ReplayType = RandomReplay<EnvironmentType>
 >
 class TD3
