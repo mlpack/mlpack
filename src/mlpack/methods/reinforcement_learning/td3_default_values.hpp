@@ -1,3 +1,15 @@
+/**
+ * @file methods/reinforcement_learning/td3_default_values.hpp
+ * @author Advaith P
+ *
+ * This file has default values for the TD3 class,which implements the 
+ * Twin Delayed Deep Deterministic Policy Gradient algorithm.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef DEFAULT_VALUES_RL_TD3
 #define DEFAULT_VALUES_RL_TD3
 
@@ -6,7 +18,7 @@
 #include <mlpack/core.hpp>
 #include <ensmallen.hpp>
 #include <mlpack/methods/ann/ann.hpp>
-#include "/home/thor/personal_dev/mlpack/src/mlpack/methods/reinforcement_learning/training_config.hpp"
+#include "training_config.hpp"
 
 using namespace mlpack;
 using namespace ens;
