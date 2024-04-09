@@ -17,11 +17,12 @@
 
 namespace mlpack {
 
+template<typename InMatType, typename MatType, typename VecType>
 inline RandomizedSVD::RandomizedSVD(
-    const arma::mat& data,
-    arma::mat& u,
-    arma::vec& s,
-    arma::mat& v,
+    const InMatType& data,
+    MatType& u,
+    VecType& s,
+    MatType& v,
     const size_t iteratedPower,
     const size_t maxIterations,
     const size_t rank,
@@ -51,42 +52,50 @@ inline RandomizedSVD::RandomizedSVD(
   /* Nothing to do here */
 }
 
-inline void RandomizedSVD::Apply(const arma::sp_mat& data,
-                                 arma::mat& u,
-                                 arma::vec& s,
-                                 arma::mat& v,
+template<typename eT, typename MatType, typename VecType>
+inline void RandomizedSVD::Apply(const arma::SpMat<eT>& data,
+                                 MatType& u,
+                                 VecType& s,
+                                 MatType& v,
                                  const size_t rank)
 {
   // Center the data into a temporary matrix for sparse matrix.
-  arma::sp_mat rowMean = sum(data, 1) / data.n_cols;
+  arma::SpMat<eT> rowMean = sum(data, 1) / data.n_cols;
 
   Apply(data, u, s, v, rank, rowMean);
 }
 
-inline void RandomizedSVD::Apply(const arma::mat& data,
-                                 arma::mat& u,
-                                 arma::vec& s,
-                                 arma::mat& v,
+template<typename InMatType, typename MatType, typename VecType>
+inline void RandomizedSVD::Apply(const InMatType& dataIn,
+                                 MatType& u,
+                                 VecType& s,
+                                 MatType& v,
                                  const size_t rank)
 {
   // Center the data into a temporary matrix.
-  arma::mat rowMean = sum(data, 1) / data.n_cols + eps;
+  MatType data;
+  UnwrapAlias(data, dataIn);
+
+  MatType rowMean = sum(data, 1) / data.n_cols + eps;
 
   Apply(data, u, s, v, rank, rowMean);
 }
 
-template<typename MatType>
-inline void RandomizedSVD::Apply(const MatType& data,
-                                 arma::mat& u,
-                                 arma::vec& s,
-                                 arma::mat& v,
+template<typename InMatType,
+         typename MatType,
+         typename VecType,
+         typename MeanType>
+inline void RandomizedSVD::Apply(const InMatType& data,
+                                 MatType& u,
+                                 VecType& s,
+                                 MatType& v,
                                  const size_t rank,
-                                 MatType rowMean)
+                                 const MeanType& rowMean)
 {
   if (iteratedPower == 0)
       iteratedPower = rank + 2;
 
-  arma::mat R, Q, Qdata;
+  MatType R, Q, Qdata;
 
   // Apply the centered data matrix to a random matrix, obtaining Q.
   if (data.n_cols >= data.n_rows)
@@ -97,14 +106,14 @@ inline void RandomizedSVD::Apply(const MatType& data,
   else
   {
     R.randn(data.n_cols, iteratedPower);
-    Q = (data * R) - (rowMean * (arma::ones(1, data.n_cols) * R));
+    Q = (data * R) - (rowMean * (arma::ones<MatType>(1, data.n_cols) * R));
   }
 
   // Form a matrix Q whose columns constitute a
   // well-conditioned basis for the columns of the earlier Q.
   if (maxIterations == 0)
   {
-  arma::qr_econ(Q, v, Q);
+    arma::qr_econ(Q, v, Q);
   }
   else
   {
@@ -116,7 +125,7 @@ inline void RandomizedSVD::Apply(const MatType& data,
   {
     if (data.n_cols >= data.n_rows)
     {
-      Q = (data * Q) - rowMean * (arma::ones(1, data.n_cols) * Q);
+      Q = (data * Q) - rowMean * (arma::ones<MatType>(1, data.n_cols) * Q);
       arma::lu(Q, v, Q);
       Q = (data.t() * Q) - repmat(rowMean.t() * Q, data.n_cols, 1);
     }
@@ -124,7 +133,7 @@ inline void RandomizedSVD::Apply(const MatType& data,
     {
       Q = (data.t() * Q) - repmat(rowMean.t() * Q, data.n_cols, 1);
       arma::lu(Q, v, Q);
-      Q = (data * Q) - (rowMean * (arma::ones(1, data.n_cols) * Q));
+      Q = (data * Q) - (rowMean * (arma::ones<MatType>(1, data.n_cols) * Q));
     }
 
     // Computing the LU decomposition is more efficient than computing the QR
@@ -146,7 +155,7 @@ inline void RandomizedSVD::Apply(const MatType& data,
   // applied to Q.
   if (data.n_cols >= data.n_rows)
   {
-    Qdata = (data * Q) - rowMean * (arma::ones(1, data.n_cols) * Q);
+    Qdata = (data * Q) - rowMean * (arma::ones<MatType>(1, data.n_cols) * Q);
     arma::svd_econ(u, s, v, Qdata);
     v = Q * v;
   }

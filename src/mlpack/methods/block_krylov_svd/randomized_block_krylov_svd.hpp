@@ -69,10 +69,11 @@ class RandomizedBlockKrylovSVD
    * @param rank Rank of the approximation (Default: number of rows.)
    * @param blockSize The block size, must be >= rank (Default: rank + 10).
    */
-  RandomizedBlockKrylovSVD(const arma::mat& data,
-                           arma::mat& u,
-                           arma::vec& s,
-                           arma::mat& v,
+  template<typename InMatType, typename MatType, typename VecType>
+  RandomizedBlockKrylovSVD(const InMatType& data,
+                           MatType& u,
+                           VecType& s,
+                           MatType& v,
                            const size_t maxIterations = 2,
                            const size_t rank = 0,
                            const size_t blockSize = 0);
@@ -97,10 +98,11 @@ class RandomizedBlockKrylovSVD
    * @param s Diagonal matrix of singular values.
    * @param rank Rank of the approximation.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& u,
-             arma::vec& s,
-             arma::mat& v,
+  template<typename InMatType, typename MatType, typename VecType>
+  void Apply(const InMatType& data,
+             MatType& u,
+             VecType& s,
+             MatType& v,
              const size_t rank);
 
   //! Get the number of iterations for the power method.

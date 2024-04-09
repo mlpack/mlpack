@@ -22,14 +22,15 @@ namespace mlpack {
 // Initialize with the given kernel.
 template<typename MetricType>
 SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
-    const arma::mat& dataset,
-    const arma::Row<size_t>& labels,
+    const arma::mat& datasetIn,
+    const arma::Row<size_t>& labelsIn,
     MetricType metric) :
-    dataset(MakeAlias(const_cast<arma::mat&>(dataset), false)),
-    labels(MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
     metric(metric),
     precalculated(false)
-{ /* nothing to do */ }
+{
+  MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, false);
+  MakeAlias(labels, labelsIn, labelsIn.n_rows, labelsIn.n_cols, false);
+}
 
 //! Shuffle the dataset.
 template<typename MetricType>

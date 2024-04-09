@@ -49,23 +49,24 @@ class QUICSVDPolicy
    * @param eigvec Matrix to put eigenvectors (loadings) into.
    * @param * (rank) Rank of the decomposition.
    */
-  void Apply(const arma::mat& data,
-             const arma::mat& centeredData,
-             arma::mat& transformedData,
-             arma::vec& eigVal,
-             arma::mat& eigvec,
+  template<typename InMatType, typename MatType, typename VecType>
+  void Apply(const InMatType& /* data */,
+             const MatType& centeredData,
+             MatType& transformedData,
+             VecType& eigVal,
+             MatType& eigvec,
              const size_t /* rank */)
   {
     // This matrix will store the right singular vectors; we do not need them.
-    arma::mat v, sigma;
+    MatType v, sigma;
 
     // Do singular value decomposition using the QUIC-SVD algorithm.
-    QUIC_SVD quicsvd(centeredData, eigvec, v, sigma, epsilon, delta);
+    QUIC_SVD<MatType> quicsvd(centeredData, eigvec, v, sigma, epsilon, delta);
 
     // Now we must square the singular values to get the eigenvalues.
     // In addition we must divide by the number of points, because the
     // covariance matrix is X * X' / (N - 1).
-    eigVal = pow(arma::diagvec(sigma), 2) / (data.n_cols - 1);
+    eigVal = pow(arma::diagvec(sigma), 2) / (centeredData.n_cols - 1);
 
     // Project the samples to the principals.
     transformedData = trans(eigvec) * centeredData;

@@ -17,39 +17,42 @@
 
 namespace mlpack {
 
-inline QUIC_SVD::QUIC_SVD(
-    const arma::mat& dataset,
-    arma::mat& u,
-    arma::mat& v,
-    arma::mat& sigma,
+template<typename MatType>
+inline QUIC_SVD<MatType>::QUIC_SVD(
+    const MatType& dataset,
+    MatType& u,
+    MatType& v,
+    MatType& sigma,
     const double epsilon,
     const double delta)
 {
   Apply(dataset, u, v, sigma, epsilon, delta);
 }
 
-inline QUIC_SVD::QUIC_SVD(
+template<typename MatType>
+inline QUIC_SVD<MatType>::QUIC_SVD(
     const double /* epsilon */,
     const double /* delta */)
 {
   /* Nothing to do here */
 }
 
-inline void QUIC_SVD::Apply(
-    const arma::mat& dataset,
-    arma::mat& u,
-    arma::mat& v,
-    arma::mat& sigma,
+template<typename MatType>
+inline void QUIC_SVD<MatType>::Apply(
+    const MatType& dataset,
+    MatType& u,
+    MatType& v,
+    MatType& sigma,
     const double epsilon,
     const double delta)
 {
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.
-  CosineTree* ctree;
+  CosineTree<MatType>* ctree;
   if (dataset.n_cols > dataset.n_rows)
-    ctree = new CosineTree(dataset, epsilon, delta);
+    ctree = new CosineTree<MatType>(dataset, epsilon, delta);
   else
-    ctree = new CosineTree(dataset.t(), epsilon, delta);
+    ctree = new CosineTree<MatType>(dataset.t(), epsilon, delta);
 
   // Get subspace basis by creating the cosine tree.
   ctree->GetFinalBasis(basis);
@@ -62,24 +65,25 @@ inline void QUIC_SVD::Apply(
   ExtractSVD(dataset, u, v, sigma);
 }
 
-inline void QUIC_SVD::ExtractSVD(const arma::mat& dataset,
-                                 arma::mat& u,
-                                 arma::mat& v,
-                                 arma::mat& sigma)
+template<typename MatType>
+inline void QUIC_SVD<MatType>::ExtractSVD(const MatType& dataset,
+                                          MatType& u,
+                                          MatType& v,
+                                          MatType& sigma)
 {
   // Calculate A * V_hat, necessary for further calculations.
-  arma::mat projectedMat;
+  MatType projectedMat;
   if (dataset.n_cols > dataset.n_rows)
     projectedMat = dataset.t() * basis;
   else
     projectedMat = dataset * basis;
 
   // Calculate the squared projected matrix.
-  arma::mat projectedMatSquared = projectedMat.t() * projectedMat;
+  MatType projectedMatSquared = projectedMat.t() * projectedMat;
 
   // Calculate the SVD of the above matrix.
-  arma::mat uBar, vBar;
-  arma::vec sigmaBar;
+  MatType uBar, vBar;
+  arma::Col<typename MatType::elem_type> sigmaBar;
   arma::svd(uBar, sigmaBar, vBar, projectedMatSquared);
 
   // Calculate the approximate SVD of the original matrix, using the SVD of the
@@ -92,7 +96,7 @@ inline void QUIC_SVD::ExtractSVD(const arma::mat& dataset,
   // the transposed matrix is not passed.
   if (dataset.n_cols > dataset.n_rows)
   {
-    arma::mat tempMat = u;
+    MatType tempMat = u;
     u = v;
     v = tempMat;
   }
