@@ -20,10 +20,10 @@ add_executable(mlpack_test
   ann/loss_functions_test.cpp
   ann/recurrent_network_test.cpp
 
-#  ann/async_learning_test.cpp
-#  ann/augmented_rnns_tasks_test.cpp
-#  ann/reward_clipping_test.cpp
-#  ann/rl_components_test.cpp
+  ann/async_learning_test.cpp
+  ann/augmented_rnns_tasks_test.cpp
+  ann/reward_clipping_test.cpp
+  ann/rl_components_test.cpp
 
   # These tests have not yet been adapted to the new inheritance-based ANN
   # implementation.
@@ -107,7 +107,7 @@ add_executable(mlpack_test
   python_binding_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
-#  q_learning_test.cpp
+  q_learning_test.cpp
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp
