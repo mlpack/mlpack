@@ -87,7 +87,9 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
     mask.randu(input.n_rows, input.n_cols);
-    mask.transform([&](double val) { return (val > ratio); });
+    arma::uvec indices = arma::find(mask > ratio);
+    mask.zeros();
+    mask.elem(indices).fill(1);
     output = input % mask * scale;
   }
 }
