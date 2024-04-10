@@ -384,12 +384,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   if (backwardGradient.is_empty())
   {
-    backwardGradient = zeros<arma::mat>(
-        parameter.n_rows/ 2,
-        parameter.n_cols);
-    forwardGradient = zeros<arma::mat>(
-        parameter.n_rows/ 2,
-        parameter.n_cols);
+    backwardGradient = zeros<arma::mat>(parameter.n_rows/ 2, parameter.n_cols);
+    forwardGradient = zeros<arma::mat>(parameter.n_rows/ 2, parameter.n_cols);
   }
   if (this->deterministic)
   {

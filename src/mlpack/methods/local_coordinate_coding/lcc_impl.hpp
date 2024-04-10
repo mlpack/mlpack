@@ -184,8 +184,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
 
   // Build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
   // where each x^i is repeated for the number of neighbors x^i has.
-  arma::mat dataPrime = zeros(data.n_rows,
-      data.n_cols + adjacencies.n_elem);
+  arma::mat dataPrime = zeros(data.n_rows, data.n_cols + adjacencies.n_elem);
 
   dataPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = data;
 

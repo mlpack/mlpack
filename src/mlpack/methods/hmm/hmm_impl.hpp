@@ -258,8 +258,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   }
 
   arma::mat initial = zeros(logInitial.n_elem);
-  arma::mat transition = zeros(logTransition.n_rows,
-                                     logTransition.n_cols);
+  arma::mat transition = zeros(logTransition.n_rows, logTransition.n_cols);
 
   // Estimate the transition and emission matrices directly from the
   // observations.  The emission list holds the time indices for observations
