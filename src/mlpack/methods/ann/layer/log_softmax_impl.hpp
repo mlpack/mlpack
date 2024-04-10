@@ -70,12 +70,11 @@ void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
 
   // Function to calculate Padé approximant for exp(-x) for x positive
   auto padeApproximant = [](double x) {
-    static constexpr double NUM_COEFFS[] = {120, -60, 12};
-    static constexpr double DEN_COEFFS[] = {120, 60, 12};
+    static constexpr double numCoeffs[] = {120, -60, 12}; 
+    static constexpr double denCoeffs[] = {120, 60, 12}; 
 
-    double num = NUM_COEFFS[0] + x * (NUM_COEFFS[1] + x * NUM_COEFFS[2]);
-    double den = DEN_COEFFS[0] + x * (DEN_COEFFS[1] + x * DEN_COEFFS[2]);
-
+    double num = numCoeffs[0] + x * (numCoeffs[1] + x * numCoeffs[2]);
+    double den = denCoeffs[0] + x * (denCoeffs[1] + x * denCoeffs[2]);
 
     return num / den;
   };
