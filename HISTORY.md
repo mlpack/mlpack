@@ -21,41 +21,16 @@
   * Fix floating-point accuracy issue for decision trees that sometimes caused
     crashes (#3595).
 
-  * Change the centroids type to `MatType` instead of `Mat<double>` (#3568).
-
-  * Change the template type from `arma::mat` to `MatType` in `NS` (#3567).
-
-  * Add SafeMin and SafeMax functions to reduce the confusion with MSCV
-    (#3585).
-
-  * Replace `arma::repmat` and `arma::randu` to `repmat` & `randu` using ADL (#3600).
-
   * Use templates metaprog to distinguish between a matrix and a cube type
-    (#3602).
+    (#3602), (#3585).
 
-  * Remove `arma` from `arma::as_scalar`, `arma::normalise`, `arma::square`, `arma::mean`,
-    `arma::vectorise`, `arma::trans`, and `arma::dot` using ADL (#3605).
+  * Use `MatType` instead of `arma::Mat<eT>`, (#3567), (#3607), (#3608),
+    (#3609), (#3568).
 
-  * Use `MatType` instead of `arma::Mat<eT>` in `init_rules` (#3607).
-
-  * Use `MatType` instead of `arma::Mat<eT>` in `convolution_functions` (#3608).
-
-  * Use `MatType` instead of `arma::Mat<eT>` in `activation_functions` using
-    SFINAE (#3609).
-
-  * Remove `arma` from `arma::exp`, `arma::log`, `arma::sum`, `arma::sqrt`,
-    `arma::join_cols`, `arma::join_rows`, `arma::sign`, and `arma::pow`
-    using ADL (#3610).
+  * Remove `arma` from `arma::function`, (#3619), (#3617) (#3610), (#3643), (#3600),
+    (#3605), (#3629).
 
   * Change `arma::conv_to` to `ConvTo` using a local shim (#3614).
-
-  * Remove `arma` from `arma::randn`, `arma::randu` and `arma::randi` (#3617).
-
-  * Remove `arma` from `arma::accu`, `arma::max` (#3619).
-
-  * Introduce `std::` for the standard library functions (#3629).
-
-  * Remove `arma` from `arma::min` and get rid of `arma::imbue` (#3643).
 
   * Fix a bug for the stddev and mean in `RandNormal()` #(3651).
 
