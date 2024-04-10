@@ -24,18 +24,19 @@ namespace mlpack {
 
 template<typename MatType, typename ParametersType>
 LinearSVMFunction<MatType, ParametersType>::LinearSVMFunction(
-    const MatType& dataset,
+    const MatType& datasetIn,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
     const double delta,
     const bool fitIntercept) :
-    dataset(MakeAlias(const_cast<MatType&>(dataset), false)),
     numClasses(numClasses),
     lambda(lambda),
     delta(delta),
     fitIntercept(fitIntercept)
 {
+  MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, false);
+
   InitializeWeights(initialPoint, dataset.n_rows, numClasses, fitIntercept);
   initialPoint *= 0.005;
 

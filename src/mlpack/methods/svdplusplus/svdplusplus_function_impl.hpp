@@ -20,15 +20,16 @@ namespace mlpack {
 
 template <typename MatType>
 SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(
-    const MatType& data,
+    const MatType& dataIn,
     const arma::sp_mat& implicitData,
     const size_t rank,
     const double lambda) :
-    data(MakeAlias(const_cast<MatType&>(data), false)),
     implicitData(implicitData),
     rank(rank),
     lambda(lambda)
 {
+  MakeAlias(data, dataIn, dataIn.n_rows, dataIn.n_cols, false);
+
   // Number of users and items in the data.
   numUsers = max(data.row(0)) + 1;
   numItems = max(data.row(1)) + 1;

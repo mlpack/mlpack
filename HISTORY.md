@@ -34,6 +34,9 @@
 
   * Fix a bug for the stddev and mean in `RandNormal()` #(3651).
 
+  * Allow PCA to take different matrix types (#3677).
+
+>>>>>>> master
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
