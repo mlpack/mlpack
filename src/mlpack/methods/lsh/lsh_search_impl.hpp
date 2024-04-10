@@ -556,7 +556,7 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
   actions.rows(0, numProj - 1) = // First numProj rows.
     -1 * ones<arma::Col<short int>> (numProj); // -1s
   actions.rows(numProj, (2 * numProj) - 1) = // Last numProj rows.
-    ones< arma::Col<short int> > (numProj); // 1s
+    ones<arma::Col<short int>> (numProj); // 1s
 
 
   // Acting dimension vector shows which coordinate to transform according to
