@@ -30,9 +30,9 @@ following functions.
    * By default the format is auto-detected based on the file extension, but can
      be explicitly specified with `format`; see [Formats](#formats).
 
-   * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, or similar (e.g., a
-     reference to an Armadillo object that data will be loaded into or saved
-     from).
+   * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, `arma::sp_mat&`, or
+     similar (e.g., a reference to an Armadillo object that data will be loaded
+     into or saved from).
 
    * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
 
