@@ -59,7 +59,7 @@ namespace mlpack {
   using coot::mean;
   using coot::norm;
   using coot::normalise;
-  using arma::ones;
+  using coot::ones;
   using coot::pow;
   using coot::randi;
   using coot::randn;
