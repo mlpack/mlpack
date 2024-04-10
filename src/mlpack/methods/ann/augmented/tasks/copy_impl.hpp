@@ -77,7 +77,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
     if (addSeparator)
       input(i).at(vecInput.n_elem, 0) = 0.5;
     input(i).col(1).rows(addSeparator + vecInput.n_elem, totSize - 1) =
-        ones(totSize-vecInput.n_elem - addSeparator);
+        ones(totSize - vecInput.n_elem - addSeparator);
     input(i) = input(i).t();
     input(i).reshape(input(i).n_elem, 1);
     labels(i) = zeros(totSize, 1);
