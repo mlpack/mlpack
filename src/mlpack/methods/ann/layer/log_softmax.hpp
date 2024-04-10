@@ -59,8 +59,15 @@ class LogSoftMaxType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const MatType& input, MatType& output);
+  void Forward(const MatType& input, MatType& output, 
+               const typename std::enable_if_t<
+               arma::is_arma_type<MatType>::value>* = 0);
 
+#ifdef MLPACK_HAS_COOT
+  void Forward(const MatType& input, MatType& output,
+               const typename std::enable_if_t<
+               coot::is_coot_type<MatType>::value>* = 0);
+#endif
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed

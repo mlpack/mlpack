@@ -63,7 +63,9 @@ LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
 }
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
+void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output,
+                                      const typename std::enable_if_t<
+                                      arma::is_arma_type<MatType>::value>*)
 {
   MatType maxInput = repmat(max(input), input.n_rows, 1);
   output = (maxInput - input);
@@ -96,6 +98,22 @@ void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
   maxInput.each_row() += log(sum(output));
   output = input - maxInput;
 }
+
+#ifdef MLPACK_HAS_COOT
+
+template<typename MatType>
+void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output,
+                                      const typename std::enable_if_t<
+                                      coot::is_coot_type<MatType>::value>*)
+{
+  MatType maxInput = repmat(max(input), input.n_rows, 1);
+  output = (maxInput - input);
+  output = exp(output * -1);
+  maxInput.each_row() += log(sum(output));
+  output = input - maxInput;
+}
+
+#endif
 
 template<typename MatType>
 void LogSoftMaxType<MatType>::Backward(
