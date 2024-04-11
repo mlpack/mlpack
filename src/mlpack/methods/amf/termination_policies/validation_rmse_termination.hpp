@@ -183,6 +183,7 @@ class ValidationRMSETermination
 
   //! Get current value of residue
   const double& Index() const { return rmse; }
+  const double& RMSE() const { return rmse; }
 
   //! Get current iteration count
   const size_t& Iteration() const { return iteration; }
