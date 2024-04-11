@@ -70,7 +70,7 @@ class LogSoftMaxType : public Layer<MatType>
    */
   void ForwardImpl(const MatType& input, MatType& output,
                    const typename std::enable_if_t<
-                   arma::is_arma_type<MatType>::value>* = 0);
+                       arma::is_arma_type<MatType>::value>* = 0);
 
 #ifdef MLPACK_HAS_COOT
   void ForwardImpl(const MatType& input, MatType& output,
