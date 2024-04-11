@@ -18,13 +18,14 @@
 namespace mlpack {
 
 template <typename MatType>
-RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& data,
+RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& dataIn,
                                                         const size_t rank,
                                                         const double lambda) :
-    data(MakeAlias(const_cast<MatType&>(data), false)),
     rank(rank),
     lambda(lambda)
 {
+  MakeAlias(data, dataIn, dataIn.n_rows, dataIn.n_cols, false);
+
   // Number of users and items in the data.
   numUsers = max(data.row(0)) + 1;
   numItems = max(data.row(1)) + 1;

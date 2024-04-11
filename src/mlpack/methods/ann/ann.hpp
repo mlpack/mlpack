@@ -17,7 +17,6 @@
 #define MLPACK_METHODS_ANN_ANN_HPP
 
 #include "forward_decls.hpp"
-#include "make_alias.hpp"
 
 #include "activation_functions/activation_functions.hpp"
 #include "augmented/augmented.hpp"
