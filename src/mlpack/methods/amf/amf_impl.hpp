@@ -64,8 +64,8 @@ Apply(const MatType& V,
     update.WUpdate(V, W, H);
     update.HUpdate(V, W, H);
     ++iter;
-    Log::Info << "AMF::Apply(): iteration " << iter << "; residue "
-        << terminationPolicy.Index() << ".\n";
+    Log::Debug << "AMF::Apply(): iteration " << iter
+        << "; termination condition " << terminationPolicy.Index() << ".\n";
   }
 
   // get final residue and iteration count from termination policy
