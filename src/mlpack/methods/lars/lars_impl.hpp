@@ -577,7 +577,8 @@ LARS<ModelMatType>::Train(const MatType& matX,
   // Initialize yHat and beta.
   arma::Col<ElemType> beta(dataRef.n_cols, internal_compact::fill::zeros);
   arma::Col<ElemType> yHat(dataRef.n_rows, internal_compact::fill::zeros);
-  arma::Col<ElemType> yHatDirection(dataRef.n_rows, internal_compact::fill::none);
+  arma::Col<ElemType> yHatDirection(dataRef.n_rows,
+      internal_compact::fill::none);
 
   bool lassocond = false;
 

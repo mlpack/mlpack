@@ -467,7 +467,8 @@ typename MatType::elem_type FFN<
 {
   typename MatType::elem_type res = 0;
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
-  MatType tmpGradient(gradient.n_rows, gradient.n_cols, internal_compact::fill::none);
+  MatType tmpGradient(gradient.n_rows, gradient.n_cols,
+      internal_compact::fill::none);
   for (size_t i = 1; i < predictors.n_cols; ++i)
   {
     res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
