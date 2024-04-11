@@ -270,21 +270,20 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
  - The nonzero residual is defined as the root of the sum of squared elements in
    the reconstruction error matrix `(V - WH)`, limited to locations where `V` is
    nonzero.
- - Constructor: `SimpleToleranceTermination<MatType, WHMatType>(tolerance=1e-5, maxIterations=10000,
-   reverseStepTolerance=3)`
+ - Constructor: `SimpleToleranceTermination<MatType, WHMatType>(tol=1e-5, maxIter=10000, extraSteps=3)`
    * `MatType` should be set to the type of `V` (see
-     [`Apply()` Parameters](#apply-parameters).
+     [`Apply()` Parameters](#apply-parameters)).
    * `WHMatType` (default `arma::mat`) should be set to the type of `W` and `H`
      (see [`Apply()` Parameters](#apply-parameters)).
-   * `tolerance` (a `double`) specifies the relative nonzero residual tolerance
-     for convergence.
-   * `maxIterations` (a `size_t`) specifies the maximum number of iterations
+   * `tol` (a `double`) specifies the relative nonzero residual tolerance for
+     convergence.
+   * `maxIter` (a `size_t`) specifies the maximum number of iterations
      before termination.
-   * `reverseStepTolerance` (a `size_t`) specifies the number of iterations
+   * `extraSteps` (a `size_t`) specifies the number of iterations
      where the relative nonzero residual must be below the tolerance for
      convergence.
  - The best `W` and `H` matrices (according to the nonzero residual) from the
-   final `reverseStepTolerance` iterations are returned by `nmf.Apply()`.
+   final `extraSteps` iterations are returned by `nmf.Apply()`.
  - `nmf.Apply()` will return the nonzero residue of the iteration corresponding
    to the best `W` and `H` matrices.
 
@@ -299,19 +298,19 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
    iterations.
  - `MatType` should be set to the type of `V` (see
    [`Apply()` Parameters](#apply-parameters)).
- - Constructor: `ValidationRMSETermination<MatType>(V, numValPoints, tolerance=1e-5, maxIterations=10000, reverseStepTolerance=3)`
+ - Constructor: `ValidationRMSETermination<MatType>(V, numValPoints, tol=1e-5, maxIter=10000, extraSteps=3)`
    * `V` is the matrix to be decomposed by `Apply()`.  This will be modified
      (validation elements will be removed).
    * `numValPoints` (a `size_t`) specifies number of test points from `V` to be
      held out.
-   * `tolerance` (a `double`) specifies the relative tolerance for the
-     validation RMSE for termination.
-   * `maxIterations` (a `size_t`) specifies the maximum number of iterations
-     before termination.
-   * `reverseStepTolerance` (a `size_t`) specifies the number of iterations
-     where the validation RMSE must be below the tolerance for convergence.
+   * `tol` (a `double`) specifies the relative tolerance for the validation RMSE
+     for termination.
+   * `maxIter` (a `size_t`) specifies the maximum number of iterations before
+     termination.
+   * `extraSteps` (a `size_t`) specifies the number of iterations where the
+     validation RMSE must be below the tolerance for convergence.
  - The best `W` and `H` matrices (according to the validation RMSE) from the
-   final `reverseStepTolerance` iterations are returned by `nmf.Apply()`.
+   final `extraSteps` iterations are returned by `nmf.Apply()`.
  - `nmf.Apply()` will return the best validation RMSE.
 
 ---
