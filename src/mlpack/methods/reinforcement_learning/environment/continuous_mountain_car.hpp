@@ -37,7 +37,7 @@ class ContinuousMountainCar
     /**
      * Construct a state instance.
      */
-    State() : data(dimension, arma::fill::zeros)
+    State() : data(dimension, internal_compact::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**

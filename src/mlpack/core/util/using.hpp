@@ -72,36 +72,49 @@ namespace mlpack {
 
 #endif
 
-  namespace fill {
+  namespace internal_compact {
 
-    #ifdef MLPACK_HAS_COOT
-    struct fill_none  : public arma::fill::fill_class<arma::fill::fill_none>,
-                        public coot::fill::fill_class<coot::fill::fill_none> { };
+    namespace fill {
 
-    struct fill_zeros : public arma::fill::fill_class<arma::fill::fill_zeros>,
-                        public coot::fill::fill_class<coot::fill::fill_zeros> { };
+      #ifdef MLPACK_HAS_COOT
+        struct fill_none  : public arma::fill::fill_class<
+                              arma::fill::fill_none>,
+                            public coot::fill::fill_class<
+                              coot::fill::fill_none> { };
 
-    struct fill_ones  : public arma::fill::fill_class<arma::fill::fill_ones>,
-                        public coot::fill::fill_class<coot::fill::fill_ones> { };
+        struct fill_zeros : public arma::fill::fill_class<
+                              arma::fill::fill_zeros>,
+                            public coot::fill::fill_class<
+                              coot::fill::fill_zeros> { };
 
-    struct fill_randu  : public arma::fill::fill_class<arma::fill::fill_randu>,
-                        public coot::fill::fill_class<coot::fill::fill_randu> { };
+        struct fill_ones  : public arma::fill::fill_class<
+                              arma::fill::fill_ones>,
+                            public coot::fill::fill_class<
+                              coot::fill::fill_ones> { };
 
+        struct fill_randu  : public arma::fill::fill_class<
+                              arma::fill::fill_randu>,
+                            public coot::fill::fill_class<
+                              coot::fill::fill_randu> { };
 
-    #else
-    struct fill_none  : public arma::fill::fill_class<arma::fill::fill_none> { };
-    struct fill_zeros : public arma::fill::fill_class<arma::fill::fill_zeros> { };
-    struct fill_ones  : public arma::fill::fill_class<arma::fill::fill_ones> { };
-    struct fill_randu  : public arma::fill::fill_class<arma::fill::fill_randu> { };
-    #endif
+      #else
+        struct fill_none  : public arma::fill::fill_class<
+                              arma::fill::fill_none> { };
+        struct fill_zeros : public arma::fill::fill_class<
+                              arma::fill::fill_zeros> { };
+        struct fill_ones  : public arma::fill::fill_class<
+                              arma::fill::fill_ones> { };
+        struct fill_randu  : public arma::fill::fill_class<
+                              arma::fill::fill_randu> { };
+      #endif
 
-    static constexpr fill_none  none;
-    static constexpr fill_zeros zeros;
-    static constexpr fill_ones  ones;
-    static constexpr fill_randu randu;
-  } // namespace mlpack::fill
+      static constexpr fill_none  none;
+      static constexpr fill_zeros zeros;
+      static constexpr fill_ones  ones;
+      static constexpr fill_randu randu;
 
-
+    } // namespace mlpack::internal_compact::fill
+  } // namespace mlpack::internal_compact
 } // namespace mlpack
 
 #endif

@@ -32,7 +32,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
-  arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+  arma::Col<size_t> counts(numCategories, internal_compact::fill::zeros);
 
   // If we are using weighted training, split the weights for each child too.
   arma::vec childWeightSums;
@@ -58,7 +58,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
-  arma::uvec childPositions(numCategories, arma::fill::zeros);
+  arma::uvec childPositions(numCategories, internal_compact::fill::zeros);
   std::vector<arma::Row<size_t>> childLabels(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
 
@@ -129,7 +129,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
-  arma::Col<size_t> counts(numCategories, arma::fill::zeros);
+  arma::Col<size_t> counts(numCategories, internal_compact::fill::zeros);
 
   // If we are using weighted training, split the weights for each child too.
   arma::vec childWeightSums;
@@ -155,7 +155,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
-  arma::uvec childPositions(numCategories, arma::fill::zeros);
+  arma::uvec childPositions(numCategories, internal_compact::fill::zeros);
   std::vector<arma::rowvec> childResponses(numCategories);
   std::vector<arma::rowvec> childWeights(numCategories);
 

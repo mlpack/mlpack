@@ -423,7 +423,7 @@ void ConvolutionType<
   }
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize, fill::zeros);
+      batchSize, internal_compact::fill::zeros);
   CubeType outputCube;
   MakeAlias(outputCube, output.memptr(), apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);

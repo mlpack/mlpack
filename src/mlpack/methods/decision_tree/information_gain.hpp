@@ -69,7 +69,7 @@ class InformationGain
 
     // Count the number of elements in each class.  Use four auxiliary vectors
     // to exploit SIMD instructions if possible.
-    arma::vec countSpace(4 * numClasses, arma::fill::zeros);
+    arma::vec countSpace(4 * numClasses, internal_compact::fill::zeros);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
     arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
         true);

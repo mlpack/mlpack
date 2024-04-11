@@ -388,7 +388,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
     // Get estimations vector ready.
     estimations.clear();
     estimations.set_size(querySet.n_cols);
-    estimations.fill(arma::fill::zeros);
+    estimations.fill(internal_compact::fill::zeros);
 
     // Check whether has already been trained.
     if (!trained)
@@ -465,7 +465,7 @@ Evaluate(Tree* queryTree,
   // Get estimations vector ready.
   estimations.clear();
   estimations.set_size(queryTree->Dataset().n_cols);
-  estimations.fill(arma::fill::zeros);
+  estimations.fill(internal_compact::fill::zeros);
 
   // Check whether has already been trained.
   if (!trained)
@@ -559,7 +559,7 @@ Evaluate(arma::vec& estimations)
   // Get estimations vector ready.
   estimations.clear();
   estimations.set_size(referenceTree->Dataset().n_cols);
-  estimations.fill(arma::fill::zeros);
+  estimations.fill(internal_compact::fill::zeros);
 
   // Clean accumulated alpha if Monte Carlo estimations are available.
   if (monteCarlo && std::is_same<KernelType, GaussianKernel>::value)

@@ -87,7 +87,7 @@ class SSELoss
   {
     // Calculate gradients and hessians.
     gradients = (input.row(1) - input.row(0)).t();
-    hessians = arma::vec(input.n_cols, arma::fill::ones);
+    hessians = arma::vec(input.n_cols, internal_compact::fill::ones);
 
     return std::pow(ApplyL1(accu(gradients)), 2) / (accu(hessians) + lambda);
   }

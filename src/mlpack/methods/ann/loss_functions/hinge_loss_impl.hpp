@@ -31,7 +31,7 @@ typename MatType::elem_type HingeLossType<MatType>::Forward(
     const MatType& target)
 {
   MatType temp = target - (target == 0);
-  MatType temp_zeros(size(target), fill::zeros);
+  MatType temp_zeros(size(target), internal_compact::fill::zeros);
 
   MatType loss = max(temp_zeros, 1 - prediction % temp);
 
