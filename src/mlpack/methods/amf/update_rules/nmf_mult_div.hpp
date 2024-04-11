@@ -75,14 +75,14 @@ class NMFMultiplicativeDivergenceUpdate
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+                             WHMatType& W,
+                             const WHMatType& H)
   {
     // Simple implementation left in the header file.
-    arma::mat t1;
-    arma::rowvec t2;
+    WHMatType t1;
+    arma::Row<typename WHMatType::elem_type> t2;
 
     t1 = W * H;
     for (size_t i = 0; i < W.n_rows; ++i)
@@ -96,10 +96,10 @@ class NMFMultiplicativeDivergenceUpdate
         t2.set_size(H.n_cols);
         for (size_t k = 0; k < t2.n_elem; ++k)
         {
-          t2(k) = H(j, k) * V(i, k) / t1(i, k);
+          t2(k) = H(j, k) * V(i, k) / (t1(i, k) + 1e-15);
         }
 
-        W(i, j) = W(i, j) * sum(t2) / sum(H.row(j));
+        W(i, j) = W(i, j) * sum(t2) / (sum(H.row(j)) + 1e-15);
       }
     }
   }
@@ -119,14 +119,14 @@ class NMFMultiplicativeDivergenceUpdate
    * @param W Basis matrix.
    * @param H Encoding matrix to updated.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void HUpdate(const MatType& V,
-                            const arma::mat& W,
-                            arma::mat& H)
+                             const WHMatType& W,
+                             WHMatType& H)
   {
     // Simple implementation left in the header file.
-    arma::mat t1;
-    arma::colvec t2;
+    WHMatType t1;
+    arma::Col<typename WHMatType::elem_type> t2;
 
     t1 = W * H;
     for (size_t i = 0; i < H.n_rows; ++i)
@@ -140,10 +140,10 @@ class NMFMultiplicativeDivergenceUpdate
         t2.set_size(W.n_rows);
         for (size_t k = 0; k < t2.n_elem; ++k)
         {
-          t2(k) = W(k, i) * V(k, j) / t1(k, j);
+          t2(k) = W(k, i) * V(k, j) / (t1(k, j) + 1e-15);
         }
 
-        H(i, j) = H(i, j) * sum(t2) / sum(W.col(i));
+        H(i, j) = H(i, j) * sum(t2) / (sum(W.col(i)) + 1e-15);
       }
     }
   }
