@@ -8,28 +8,32 @@ of a recommender system.
 
 The `NMF` class allows fully configurable behavior via [template
 parameters](#advanced-functionality-template-parameters).  For more general
-matrix factorization strategies, see the [`AMF`](user/methods/amf.md)
-(alternating matrix factorization) class documentation.
+matrix factorization strategies, see the
+[`AMF`](/src/mlpack/methods/amf/amf.hpp) (alternating matrix factorization)
+class documentation.
+
+<!-- TODO: clean up AMF link -->
 
 #### Simple usage example:
 
 ```c++
-// Create a random sparse matrix (V) of size 10x100, with 5% nonzeros.
+// Create a random sparse matrix (V) of size 10x100, with 15% nonzeros.
 arma::sp_mat V;
-V.sprandu(100, 100, 0.05);
+V.sprandu(100, 100, 0.15);
 
 // W and H will be low-rank matrices of size 100x10 and 10x100.
 arma::mat W, H;
 
-NMF nmf;                              // Step 1: create object.
-double rmse = nmf.Apply(V, 10, W, H); // Step 2: apply NMF to decompose V.
+mlpack::NMF nmf;                         // Step 1: create object.
+double residue = nmf.Apply(V, 10, W, H); // Step 2: apply NMF to decompose V.
 
 // Now print some information about the factorized matrices.
 std::cout << "W has size: " << W.n_rows << " x " << W.n_cols << "."
     << std::endl;
 std::cout << "H has size: " << H.n_rows << " x " << H.n_cols << "."
     << std::endl;
-std::cout << "Reconstruction error (RMSE): " << rmse << "." << std::endl;
+std::cout << "RMSE of reconstructed matrix: "
+    << arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem) << "." << std::endl;
 ```
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
@@ -47,12 +51,15 @@ std::cout << "Reconstruction error (RMSE): " << rmse << "." << std::endl;
 
 #### See also:
 
+<!-- TODO: add these links
  * [`AMF`](amf.md): alternating matrix factorization
  * [`CF`](cf.md): collaborative filtering (recommender system)
  * [`SparseCoding`](sparse_coding.md)
+-->
+
  * [mlpack transformations](../../index.md#transformations)
- * [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_Matrix_Factorization)
- * [original paper](...) <!-- TODO -->
+ * [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
+ * [Learning the parts of objects by non-negative matrix factorization](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=29bae9472203546847ec1352a604566d0f602728) (original NMF paper, pdf)
 
 ### Constructors
 
@@ -74,16 +81,16 @@ std::cout << "Reconstruction error (RMSE): " << rmse << "." << std::endl;
 
 ### Applying Decompositions
 
- * `double rmse = nmf.Apply(V, rank, W, H)`
+ * `double residue = nmf.Apply(V, rank, W, H)`
    - Decompose the matrix `V` into two non-negative matrices `W` and `H` with
      rank `rank`.
    - `W` will be set to size `V.n_rows` x `rank`.
    - `H` will be set to size `rank` x `V.n_cols`.
    - `W` and `H` are initialized randomly using the
-     [Acol](#initialization-rules) initialization strategy; i.e., each column of
-     `W` is an average of 5 random columns of `V`, and `H` is initialized
-     uniformly randomly.
-   - The RMSE (root mean squared error) of the decomposition is returned.
+     [Acol](#advanced-functionality-initializationruletype) initialization
+     strategy; i.e., each column of `W` is an average of 5 random columns of
+     `V`, and `H` is initialized uniformly randomly.
+   - The residue (change in the norm of `W * H` between iterations) is returned.
 
 ---
 
@@ -100,13 +107,14 @@ std::cout << "Reconstruction error (RMSE): " << rmse << "." << std::endl;
    [advanced functionality](#advanced-functionality-template-parameters)
    section.
 
+---
+
 #### `Apply()` Parameters:
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
 | `V` | [`arma::sp_mat` or `arma::mat`](../matrices.md) | Input matrix to be factorized. |
-| `rank` | `size_t` | Rank of decomposition; lower is smaller, higher is more
-accurate. |
+| `rank` | `size_t` | Rank of decomposition; lower is smaller, higher is more accurate. |
 | `W` | [`arma::mat`](../matrices.md) | Output matrix in which `W` will be stored. |
 | `H` | [`arma::mat`](../matrices.md) | Output matrix in which `H` will be stored. |
 
@@ -124,24 +132,25 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 Decompose a dense matrix with custom termination parameters.
 
 ```c++
-// The matrix will have size 500x5000 with normally distributed elements.
-arma::mat V(500, 5000, arma::fill::randn);
+// Create a low-rank V matrix by multiplying together two random matrices.
+arma::mat V = arma::randu<arma::mat>(500, 25) *
+              arma::randn<arma::mat>(25, 5000);
 
 // Create the NMF object with a looser tolerance of 1e-3 and a maximum of 100
 // iterations only.
-mlpack::NMF nmf(mlpack::SimpleResidueTermination(1e-3, 100));
+mlpack::NMF nmf(mlpack::SimpleResidueTermination(1e-3, 500));
 
 arma::mat W, H;
 
 // Decompose with a rank of 25.
 // W will have size 500 x 25, and H will have size 25 x 5000.
-const double rmse = nmf.Apply(V, 25, W, H);
+const double residue = nmf.Apply(V, 25, W, H);
 
+std::cout << "Residue of decomposition: " << residue << "." << std::endl;
+
+// Compute RMSE of decomposition.
+const double rmse = arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem);
 std::cout << "RMSE of decomposition: " << rmse << "." << std::endl;
-
-// Compute norm of error matrix.
-const double errorNorm = arma::norm(V - W * H);
-std::cout << "Norm of error matrix: " << errorNorm << "." << std::endl;
 ```
 
 ---
@@ -160,9 +169,14 @@ mlpack::NMF nmf;
 arma::fmat W, H;
 
 // Decompose the Movielens dataset with rank 12.
-const double rmse = nmf.Apply(V, 12, W, H);
+const double residue = nmf.Apply(V, 12, W, H);
 
-std::cout << "RMSE of MovieLens decomposition: " << rmse << "." << std::endl;
+std::cout << "Residue of MovieLens decomposition: " << residue << "."
+    << std::endl;
+
+// Compute RMSE of decomposition.
+const double rmse = arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem);
+std::cout << "RMSE of decomposition: " << rmse << "." << std::endl;
 ```
 
 ---
@@ -178,11 +192,12 @@ mlpack::data::Load("movielens-100k.csv", V, true);
 mlpack::NMF nmf;
 arma::mat W, H;
 
-for (size_t rank = 10; rank < 100; rank += 5)
+for (size_t rank = 10; rank <= 100; rank += 15)
 {
   // Decompose with the given rank.
-  const double rmse = nmf.Apply(V, rank, W, H);
+  const double residue = nmf.Apply(V, rank, W, H);
 
+  const double rmse = arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem);
   std::cout << "RMSE for rank-" << rank << " decomposition: " << rmse << "."
       << std::endl;
 }
@@ -215,13 +230,15 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
 
 ---
 
-#### `TerminationPolicyType`
+### Advanced Functionality: `TerminationPolicyType`
 
  * Specifies the strategy to use to choose when to stop the NMF algorithm.
  * An instantiated `TerminationPolicyType` can be passed to the NMF constructor.
  * The following choices are available for drop-in usage:
 
-***`SimpleResidueTermination`*** (default):
+---
+
+#### ***`SimpleResidueTermination`*** (default):
 
  - Terminates when a maximum number of iterations is reached, or when the
    residue (change in norm of `W * H` between iterations) is sufficiently small.
@@ -229,19 +246,25 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
    * `minResidue` (a `double`) specifies the sufficiently small residue for
      termination.
    * `maxIterations` (a `size_t`) specifies the maximum number of iterations.
+ - `nmf.Apply()` will return the residue of the last iteration.
 
-***`MaxIterationTermination`***:
+---
+
+#### ***`MaxIterationTermination`***:
 
  - Terminates when the maximum number of iterations is reached.
  - No other condition is checked.
  - Constructor: `MaxIterationTermination(maxIterations=1000)`
+ - `nmf.Apply()` will return the number of iterations performed.
 
-***`SimpleToleranceTermination<MatType, WHMatType>`***:
+---
+
+#### ***`SimpleToleranceTermination<MatType, WHMatType>`***:
 
  - Terminates when the nonzero residual decreases a sufficiently small relative
-   amount between iterations (e.g. `(lastNonzeroResidual - nonzeroResidual) /
-   lastNonzeroResidual` is below a threshold), or when the maximum number of
-   iterations is reached.
+   amount between iterations (e.g.
+   `(lastNonzeroResidual - nonzeroResidual) / lastNonzeroResidual` is below a
+   threshold), or when the maximum number of iterations is reached.
  - The residual must remain below the threshold for a specified number of
    iterations.
  - The nonzero residual is defined as the root of the sum of squared elements in
@@ -261,9 +284,13 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
      where the relative nonzero residual must be below the tolerance for
      convergence.
  - The best `W` and `H` matrices (according to the nonzero residual) from the
-   final `reverseStepTolerance` iterations are returned by `Apply()`.
+   final `reverseStepTolerance` iterations are returned by `nmf.Apply()`.
+ - `nmf.Apply()` will return the nonzero residue of the iteration corresponding
+   to the best `W` and `H` matrices.
 
-***`ValidationRMSETermination<MatType>`***:
+---
+
+#### ***`ValidationRMSETermination<MatType>`***:
 
  - Holds out a validation set of nonzero elements from `V`, and terminates when
    the RMSE (root mean squared error) on this validation set is sufficiently
@@ -284,9 +311,12 @@ NMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>
    * `reverseStepTolerance` (a `size_t`) specifies the number of iterations
      where the validation RMSE must be below the tolerance for convergence.
  - The best `W` and `H` matrices (according to the validation RMSE) from the
-   final `reverseStepTolerance` iterations are returned by `Apply()`.
+   final `reverseStepTolerance` iterations are returned by `nmf.Apply()`.
+ - `nmf.Apply()` will return the best validation RMSE.
 
-***Custom policies***:
+---
+
+#### ***Custom policies***:
 
  - A custom class for termination behavior must implement the following
    functions.
@@ -311,12 +341,21 @@ class CustomTerminationPolicy
   // and W and H must be dense.)
   template<typename WHMatType>
   bool IsConverged(const MatType& H, const MatType& W);
+
+  // Return the value that should be returned for the `nmf.Apply()` function
+  // when convergence has been reached.  This is called at the end of
+  // `nmf.Apply()`.
+  const double Index();
+
+  // Return the number of iterations that have been completed.  This is called
+  // at the end of `nmf.Apply()`.
+  const size_t Iteration();
 };
 ```
 
 ---
 
-#### `InitializationRuleType`
+### Advanced Functionality: `InitializationRuleType`
 
  * Specifies the strategy to use to initialize `W` and `H` at the beginning of
    the NMF algorithm.
@@ -325,7 +364,9 @@ class CustomTerminationPolicy
    - `nmf = NMF(terminationPolicy, initializationRule)`
  * The following choices are available for drop-in usage:
 
-***`RandomAcolInitialization<N>`*** (default):
+---
+
+#### ***`RandomAcolInitialization<N>`*** (default):
 
  - Initialize `W` by averaging `N` randomly chosen columns of `V`.
  - Initialize `H` as uniform random in the range `[0, 1]`.
@@ -333,14 +374,18 @@ class CustomTerminationPolicy
  - See also [the paper](https://arxiv.org/abs/1407.7299) describing the
    strategy.
 
-***`NoInitialization`***:
+---
+
+#### ***`NoInitialization`***:
 
  - When `nmf.Apply(V, rank, W, H)`, the existing values of `W` and `H` will be
    used.
  - If `W` is not of size `V.n_rows` x `rank`, or if `H` is not of size `rank` x
    `V.n_cols`, a `std::invalid_argument` exception will be thrown.
 
-***`GivenInitialization<MatType>`***:
+---
+
+#### ***`GivenInitialization<MatType>`***:
 
  - Set `W` and/or `H` to the given matrices when `Apply()` is called.
  - `MatType` should be set to the type of `W` or `H` (default `arma::mat`); see
@@ -354,16 +399,22 @@ class CustomTerminationPolicy
      - This constructor is meant to only be used with `MergeInitialization`
        (below).
 
-***`RandomInit`***:
+---
+
+#### ***`RandomInit`***:
 
  - Initialize `W` and `H` as uniform random in the range `[0, 1]`.
 
-***`AverageInitialization`***:
+---
+
+#### ***`AverageInitialization`***:
 
  - Initialize each element of `W` and `H` to the square root of the average
    value of `V`, adding uniform random noise in the range `[0, 1]`.
 
-***`MergeInitialization<WRule, HRule>`***:
+---
+
+#### ***`MergeInitialization<WRule, HRule>`***:
 
  - Use two different initialization rules, one for `W` (`WRule`) and one for `H`
    (`HRule`).
@@ -377,7 +428,9 @@ class CustomTerminationPolicy
  - Any `WRule` and `HRule` classes must implement the `InitializeOne()`
    function.
 
-***Custom rules***:
+---
+
+#### ***Custom rules***:
 
  - A custom class for initializing `W` and `H` must implement the following
    functions.
@@ -432,10 +485,11 @@ arma::mat W, H;
 // H will be filled with 1s.
 W.randn(V.n_rows, 15);
 H.set_size(15, V.n_cols);
-H.fill(1.0);
+H.fill(0.2);
 
-mlpack::NMF<NoInitialization> nmf;
-const double rmse = nmf.Apply(V, 15, W, H);
+mlpack::NMF<mlpack::SimpleResidueTermination, mlpack::NoInitialization> nmf;
+const double residue = nmf.Apply(V, 15, W, H);
+const double rmse = arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem);
 
 std::cout << "RMSE of NMF decomposition with pre-specified W and H: " << rmse
     << "." << std::endl;
@@ -461,11 +515,54 @@ mlpack::ValidationRMSETermination<arma::sp_mat> t(V, 3000);
 mlpack::NMF<mlpack::ValidationRMSETermination<arma::sp_mat>> nmf(t);
 
 // Perform NMF with a rank of 20.
-// Note the RMSE returned here is the RMSE on V itself, but *not* the validation
-// set.
+// Note the RMSE returned here is the RMSE on the validation set.
 const double rmse = nmf.Apply(V, 20, W, H);
+const double rmseTrain = arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem);
 
-std::cout << "Validation RMSE: " << t.RMSE() << "." << std::endl;
+std::cout << "Training RMSE:   " << rmseTrain << "." << std::endl;
+std::cout << "Validation RMSE: " << rmse << "." << std::endl;
+```
+
+---
+
+Use all three sets of NMF update rules and compare the RMSE on a held-out
+validation set.
+
+```c++
+// See https://datasets.mlpack.org/movielens-100k.csv.
+arma::sp_mat V;
+mlpack::data::Load("movielens-100k.csv", V, true);
+
+arma::mat W1, W2, W3;
+arma::mat H1, H2, H3;
+
+// Create a ValidationRMSETermination class that will hold out 3k points from V.
+// This will remove 3000 nonzero entries from V.
+mlpack::ValidationRMSETermination<arma::sp_mat> t(V, 3000);
+
+// Multiplicative distance update rule.
+mlpack::NMF<mlpack::ValidationRMSETermination<arma::sp_mat>,
+            mlpack::RandomAcolInitialization<5>,
+            mlpack::NMFMultiplicativeDistanceUpdate> nmf1(t);
+
+// Multiplicative divergence update rule.
+mlpack::NMF<mlpack::ValidationRMSETermination<arma::sp_mat>,
+            mlpack::RandomAcolInitialization<5>,
+            mlpack::NMFMultiplicativeDivergenceUpdate> nmf2(t);
+
+// Alternating least squares update rule.
+mlpack::NMF<mlpack::ValidationRMSETermination<arma::sp_mat>,
+            mlpack::RandomAcolInitialization<5>,
+            mlpack::NMFALSUpdate> nmf3(t);
+
+const double rmse1 = nmf1.Apply(V, 15, W1, H1);
+const double rmse2 = nmf2.Apply(V, 15, W2, H2);
+const double rmse3 = nmf3.Apply(V, 15, W3, H3);
+
+// Print the RMSEs.
+std::cout << "Mult. dist. update RMSE: " << rmse1 << "." << std::endl;
+std::cout << "Mult. div. update RMSE:  " << rmse2 << "." << std::endl;
+std::cout << "ALS update RMSE:         " << rmse3 << "." << std::endl;
 ```
 
 ---
@@ -484,6 +581,7 @@ class CustomTimeTermination
   void Initialize(const MatType& /* V */)
   {
     totalTime = 0.0;
+    iteration = 0;
     c.tic();
   }
 
@@ -492,12 +590,17 @@ class CustomTimeTermination
   {
     totalTime += c.toc();
     c.tic();
+    ++iteration;
     return (totalTime > totalAllowedTime);
   }
+
+  const double Index() const { return totalTime; }
+  const size_t Iteration() const { return iteration; }
 
  private:
   double totalAllowedTime;
   double totalTime;
+  size_t iteration;
   arma::wall_clock c; // used for convenient timing
 };
 ```
@@ -513,7 +616,10 @@ CustomTimeTermination t(5 /* seconds */);
 mlpack::NMF<CustomTimeTermination> nmf(t);
 
 arma::fmat W, H;
-const double rmse = nmf.Apply(V, 10, W, H);
+const double actualTime = nmf.Apply(V, 10, W, H);
+const double rmse = arma::norm(V - W * H, "fro") / std::sqrt(V.n_elem);
 
-std::cout << "RMSE after 5 seconds: " << rmse << "." << std::endl;
+std::cout << "Actual time used for decomposition: " << actualTime << "."
+    << std::endl;
+std::cout << "RMSE after ~5 seconds: " << rmse << "." << std::endl;
 ```
