@@ -29,7 +29,7 @@ class MaxIterationTermination
    *
    * @param maxIterations Maximum number of allowed iterations.
    */
-  MaxIterationTermination(const size_t maxIterations) :
+  MaxIterationTermination(const size_t maxIterations = 1000) :
       maxIterations(maxIterations),
       iteration(0)
   {
@@ -48,7 +48,8 @@ class MaxIterationTermination
   /**
    * Check if convergence has occurred.
    */
-  bool IsConverged(const arma::mat& /* H */, const arma::mat& /* W */)
+  template<typename MatType>
+  bool IsConverged(const MatType& /* H */, const MatType& /* W */)
   {
     // Return true if we have performed the correct number of iterations.
     return (++iteration >= maxIterations);
