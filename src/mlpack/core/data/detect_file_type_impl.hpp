@@ -35,6 +35,7 @@ inline std::string GetStringType(const FileType& type)
     case FileType::ArmaBinary:  return "Armadillo binary formatted data";
     case FileType::PGMBinary:   return "PGM data";
     case FileType::HDF5Binary:  return "HDF5 data";
+    case FileType::CoordASCII:  return "ASCII formatted sparse coordinate data";
     default:                    return "";
   }
 }
@@ -264,6 +265,7 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
     // This could be raw binary or Armadillo binary (binary with header).  We
     // will check to see if it is Armadillo binary.
     const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";
+    const std::string ARMA_SPM_BIN = "ARMA_SPM_BIN";
     std::string rawHeader(ARMA_MAT_BIN.length(), '\0');
 
     std::streampos pos = stream.tellg();
@@ -272,7 +274,7 @@ inline FileType AutoDetect(std::fstream& stream, const std::string& filename)
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (rawHeader == ARMA_MAT_BIN)
+    if (rawHeader == ARMA_MAT_BIN || rawHeader == ARMA_SPM_BIN)
     {
       detectedLoadType = FileType::ArmaBinary;
     }
@@ -333,6 +335,33 @@ inline FileType DetectFromExtension(const std::string& filename)
   {
     return FileType::FileTypeUnknown;
   }
+}
+
+/**
+ * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
+ * with no header.
+ */
+inline size_t CountCols(std::fstream& f)
+{
+  f.clear();
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  std::string firstLine;
+  std::getline(f, firstLine);
+
+  // Extract tokens from the first line using whitespace.
+  std::stringstream str(firstLine);
+  size_t cols = 0;
+  std::string token;
+
+  while (str >> token)
+    ++cols;
+
+  // Reset to wherever we were.
+  f.clear();
+  f.seekg(pos1);
+
+  return cols;
 }
 
 } // namespace data

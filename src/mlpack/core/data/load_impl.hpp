@@ -123,7 +123,7 @@ bool Load(const std::string& filename,
             << "incorrect extension?" << std::endl;
       else
         Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << " failed. Incorrect extension?" << std::endl;
+            << "failed. Incorrect extension?" << std::endl;
 
       return false;
     }
@@ -160,7 +160,7 @@ bool Load(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   bool success;
   LoadCSV loader;
-  
+
   if (loadType != FileType::HDF5Binary)
   {
     if (loadType == FileType::CSVASCII)
@@ -299,7 +299,8 @@ template <typename eT>
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal,
-          const bool transpose)
+          const bool transpose,
+          const FileType inputLoadType)
 {
   Timer::Start("loading_data");
 
@@ -325,71 +326,85 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  bool unknownType = false;
-  arma::file_type loadType;
+  FileType loadType = inputLoadType;
   std::string stringType;
-
-  if (extension == "tsv" || extension == "txt")
+  if (inputLoadType == FileType::AutoDetect)
   {
-    loadType = arma::coord_ascii;
-    stringType = "Coordinate Formatted Data for Sparse Matrix";
-  }
-  else if (extension == "bin")
-  {
-    // This could be raw binary or Armadillo binary (binary with header).  We
-    // will check to see if it is Armadillo binary.
-    const std::string ARMA_SPM_BIN = "ARMA_SPM_BIN";
-    std::string rawHeader(ARMA_SPM_BIN.length(), '\0');
-
-    std::streampos pos = stream.tellg();
-
-    stream.read(&rawHeader[0], std::streamsize(ARMA_SPM_BIN.length()));
-    stream.clear();
-    stream.seekg(pos); // Reset stream position after peeking.
-
-    if (rawHeader == ARMA_SPM_BIN)
+    // Attempt to auto-detect the type from the given file.
+    loadType = AutoDetect(stream, filename);
+    // Provide an error if we don't know the type, or if the type can't be used
+    // to load sparse matrices.
+    if (loadType == FileType::FileTypeUnknown)
     {
-      stringType = "Armadillo binary formatted data for sparse matrix";
-      loadType = arma::arma_binary;
+      if (fatal)
+        Log::Fatal << "Unable to detect type of '" << filename << "'; "
+            << "incorrect extension?" << std::endl;
+      else
+        Log::Warn << "Unable to detect type of '" << filename << "'; load "
+            << "failed. Incorrect extension?" << std::endl;
+
+      return false;
     }
-    else // We can only assume it's raw binary.
+
+    // There is still a small amount of differentiation that needs to be done:
+    // if we got a text type, it could be a coordinate list.  We will make an
+    // educated guess based on the shape of the input.
+    if (loadType == FileType::RawASCII)
     {
-      stringType = "raw binary formatted data";
-      loadType = arma::raw_binary;
+      // Get the number of columns in the file.  If it is the right shape, we
+      // will assume it is sparse.
+      const size_t cols = CountCols(stream);
+      if (cols == 3)
+      {
+        // We have the right number of columns, so assume the type is a
+        // coordinate list.
+        loadType = FileType::CoordASCII;
+      }
     }
-  }
-  else // Unknown extension...
-  {
-    unknownType = true;
-    loadType = arma::raw_binary; // Won't be used; prevent a warning.
-    stringType = "";
   }
 
-  // Provide error if we don't know the type.
-  if (unknownType)
+  // Filter out invalid types.
+  if ((loadType == FileType::PGMBinary) ||
+      (loadType == FileType::PPMBinary) ||
+      (loadType == FileType::ArmaASCII) ||
+      (loadType == FileType::RawBinary))
   {
-    Timer::Stop("loading_data");
     if (fatal)
-      Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "incorrect extension?" << std::endl;
+      Log::Fatal << "Cannot load '" << filename << "' with type "
+          << GetStringType(loadType) << " into a sparse matrix; format is "
+          << "only supported for dense matrices." << std::endl;
     else
-      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
-          << " Incorrect extension?" << std::endl;
+      Log::Warn << "Cannot load '" << filename << "' with type "
+          << GetStringType(loadType) << " into a sparse matrix; format is "
+          << "only supported for dense matrices; load failed." << std::endl;
 
     return false;
   }
 
-  // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == arma::raw_binary)
-    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
-        << "but this may not be the actual filetype!" << std::endl;
-  else
-    Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
-        << std::flush;
-
   bool success;
 
-  success = matrix.load(stream, loadType);
+  if (loadType == FileType::CSVASCII)
+  {
+    // Armadillo sparse matrices can't load CSVs, so we have to load a separate
+    // matrix to do that.  If the CSV has three columns, we assume it's a
+    // coordinate list.
+    arma::Mat<eT> dense;
+    success = dense.load(stream, ToArmaFileType(loadType));
+    if (dense.n_cols == 3)
+    {
+      arma::umat locations = arma::conv_to<arma::umat>::from(
+          dense.cols(0, 1).t());
+      matrix = arma::SpMat<eT>(locations, dense.col(2));
+    }
+    else
+    {
+      matrix = arma::conv_to<arma::SpMat<eT>>::from(dense);
+    }
+  }
+  else
+  {
+    success = matrix.load(stream, ToArmaFileType(loadType));
+  }
 
   if (!success)
   {
@@ -403,8 +418,10 @@ bool Load(const std::string& filename,
     return false;
   }
   else
+  {
     Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
         << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
+  }
 
   // Now transpose the matrix, if necessary.
   if (transpose)
