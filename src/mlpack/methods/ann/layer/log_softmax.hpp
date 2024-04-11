@@ -75,7 +75,7 @@ class LogSoftMaxType : public Layer<MatType>
 #ifdef MLPACK_HAS_COOT
   void ForwardImpl(const MatType& input, MatType& output,
                    const typename std::enable_if_t<
-                   coot::is_coot_type<MatType>::value>* = 0);
+                       coot::is_coot_type<MatType>::value>* = 0);
 #endif
 
   /**
