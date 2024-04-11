@@ -161,6 +161,7 @@ using SVDIncompleteIncrementalFactorizer = AMF<
     SimpleResidueTermination,
     RandomAcolInitialization<>,
     SVDIncompleteIncrementalLearning>;
+
 /**
  * SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices
  * W and H by complete incremental gradient descent. SVD complete incremental
@@ -174,6 +175,16 @@ using SVDCompleteIncrementalFactorizer = AMF<
     SimpleResidueTermination,
     RandomAcolInitialization<>,
     SVDCompleteIncrementalLearning<MatType>>;
+
+/**
+ * Convenience typedef: NMF can be represented by the AMF class, so for
+ * usability and discoverability we make the AMF class available under both
+ * names.
+ */
+template<typename TerminationPolicyType,
+         typename InitializationRuleType,
+         typename UpdateRuleType>
+using NMF = AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>;
 
 } // namespace mlpack
 
