@@ -153,11 +153,11 @@ TEST_CASE("SparseNMFAcolDistTest", "[NMFTest]")
     // Get an initialization.
     arma::mat iw, ih;
     RandomAcolInitialization<>::Initialize(v, r, iw, ih);
-    GivenInitialization g(std::move(iw), std::move(ih));
+    GivenInitialization<> g(std::move(iw), std::move(ih));
 
     // The GivenInitialization will force the same initialization for both
     // Apply() calls.
-    AMF<SimpleResidueTermination, GivenInitialization> nmf(srt, g);
+    AMF<SimpleResidueTermination, GivenInitialization<>> nmf(srt, g);
     nmf.Apply(v, r, w, h);
     nmf.Apply(dv, r, dw, dh);
 
@@ -212,11 +212,11 @@ TEST_CASE("SparseNMFALSTest", "[NMFTest]")
       // Get an initialization.
       arma::mat iw, ih;
       RandomAcolInitialization<>::Initialize(v, r, iw, ih);
-      GivenInitialization g(std::move(iw), std::move(ih));
+      GivenInitialization<> g(std::move(iw), std::move(ih));
 
       SimpleResidueTermination srt(1e-10, 10000);
-      AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
-          g);
+      AMF<SimpleResidueTermination, GivenInitialization<>, NMFALSUpdate>
+          nmf(srt, g);
       nmf.Apply(v, r, w, h);
       nmf.Apply(dv, r, dw, dh);
 
