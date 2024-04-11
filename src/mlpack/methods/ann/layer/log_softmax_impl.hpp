@@ -108,9 +108,10 @@ void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input, MatType& output,
 #ifdef MLPACK_HAS_COOT
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input, MatType& output,
+void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
+                                          MatType& output,
                                           const typename std::enable_if_t<
-                                          coot::is_coot_type<MatType>::value>*)
+                                              coot::is_coot_type<MatType>::value>*)
 {
   MatType maxInput = repmat(max(input), input.n_rows, 1);
   output = (maxInput - input);
