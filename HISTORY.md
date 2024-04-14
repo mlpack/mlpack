@@ -21,6 +21,20 @@
   * Fix floating-point accuracy issue for decision trees that sometimes caused
     crashes (#3595).
 
+  * Use templates metaprog to distinguish between a matrix and a cube type
+    (#3602), (#3585).
+
+  * Use `MatType` instead of `arma::Mat<eT>`, (#3567), (#3607), (#3608),
+    (#3609), (#3568).
+
+  * Generalize matrix operations for armadillo and bandicoot, (#3619), (#3617),
+    (#3610), (#3643), (#3600), (#3605), (#3629).
+
+  * Change `arma::conv_to` to `ConvTo` using a local shim for bandicoot support
+    (#3614).
+
+  * Fix a bug for the stddev and mean in `RandNormal()` #(3651).
+
   * Allow PCA to take different matrix types (#3677).
 
 ### mlpack 4.3.0

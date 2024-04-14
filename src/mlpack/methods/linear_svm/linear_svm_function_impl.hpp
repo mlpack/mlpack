@@ -180,7 +180,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
   //  - Adding the margin parameter `delta`.
   //  - Removing the `delta` parameter from correct class label in each
   //    column.
-  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
@@ -222,7 +222,7 @@ LinearSVMFunction<MatType, ParametersType>::Evaluate(
         dataset.n_cols);
   }
 
-  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(ones(numClasses).t()
       * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
@@ -262,7 +262,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
         + repmat(parameters.row(dataset.n_rows).t(), 1, dataset.n_cols);
   }
 
-  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
@@ -292,7 +292,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset * difference.t();
     gradient.row(parameters.n_rows - 1) =
-        arma::ones<DenseRowType>(dataset.n_cols) * difference.t();
+        ones<DenseRowType>(dataset.n_cols) * difference.t();
   }
 
   gradient /= dataset.n_cols;
@@ -326,7 +326,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
         + repmat(parameters.row(dataset.n_rows).t(), 1, batchSize);
   }
 
-  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(ones(numClasses).t()
       * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
@@ -349,7 +349,7 @@ void LinearSVMFunction<MatType, ParametersType>::Gradient(
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =
-        arma::ones<DenseRowType>(batchSize) * difference.t();
+        ones<DenseRowType>(batchSize) * difference.t();
   }
 
   gradient /= batchSize;
@@ -382,7 +382,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
   }
 
   DenseMatType margin = scores - (repmat(
-      arma::ones<DenseColType>(numClasses).t() * (scores % groundTruth),
+      ones<DenseColType>(numClasses).t() * (scores % groundTruth),
       numClasses, 1)) + delta - (delta * groundTruth);
 
   // For each sample, find the total number of classes where
@@ -404,7 +404,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
             dataset * difference.t();
     gradient.row(parameters.n_rows - 1) =
-            arma::ones<DenseRowType>(dataset.n_cols) * difference.t();
+            ones<DenseRowType>(dataset.n_cols) * difference.t();
   }
 
   gradient /= dataset.n_cols;
@@ -453,7 +453,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
         + repmat(parameters.row(dataset.n_rows).t(), 1, (lastId - firstId + 1));
   }
 
-  DenseMatType margin = scores - (repmat(arma::ones(numClasses).t()
+  DenseMatType margin = scores - (repmat(ones(numClasses).t()
       * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
@@ -476,7 +476,7 @@ LinearSVMFunction<MatType, ParametersType>::EvaluateWithGradient(
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =
-        arma::ones<DenseRowType>(batchSize) * difference.t();
+        ones<DenseRowType>(batchSize) * difference.t();
   }
 
   gradient /= batchSize;

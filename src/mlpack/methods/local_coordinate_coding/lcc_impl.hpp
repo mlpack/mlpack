@@ -160,7 +160,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
     const arma::uvec& adjacencies)
 {
   // Count number of atomic neighbors for each point x^i.
-  arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
+  arma::uvec neighborCounts = zeros<arma::uvec>(data.n_cols, 1);
   if (adjacencies.n_elem > 0)
   {
     // This gets the column index.  Intentional integer division.
@@ -184,8 +184,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
 
   // Build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
   // where each x^i is repeated for the number of neighbors x^i has.
-  arma::mat dataPrime = arma::zeros(data.n_rows,
-      data.n_cols + adjacencies.n_elem);
+  arma::mat dataPrime = zeros(data.n_rows, data.n_cols + adjacencies.n_elem);
 
   dataPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = data;
 
@@ -210,9 +209,9 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   const size_t nInactiveAtoms = atoms - nActiveAtoms;
 
   // Efficient construction of codes restricted to active atoms.
-  arma::mat codesPrime = arma::zeros(nActiveAtoms, data.n_cols +
+  arma::mat codesPrime = zeros(nActiveAtoms, data.n_cols +
       adjacencies.n_elem);
-  arma::vec wSquared = arma::ones(data.n_cols + adjacencies.n_elem, 1);
+  arma::vec wSquared = ones(data.n_cols + adjacencies.n_elem, 1);
 
   if (nInactiveAtoms > 0)
   {

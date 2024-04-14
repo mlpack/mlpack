@@ -283,7 +283,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
     // the cost of building matrix [1; data].
     DenseMatType inner = probabilities - groundTruth;
     gradient.col(0) =
-        inner * arma::ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
+        inner * ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.t() / data.n_cols +
@@ -314,7 +314,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
     DenseMatType inner = probabilities - groundTruth.cols(start, start +
         batchSize - 1);
     gradient.col(0) =
-        inner * arma::ones<DenseMatType>(batchSize, 1) / batchSize +
+        inner * ones<DenseMatType>(batchSize, 1) / batchSize +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.cols(start, start + batchSize - 1).t() / batchSize +
@@ -347,7 +347,7 @@ inline void SoftmaxRegressionFunction<MatType>::PartialGradient(
     if (j == 0)
     {
       gradient.col(j) =
-          inner * arma::ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
+          inner * ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
           lambda * parameters.col(0);
     }
     else

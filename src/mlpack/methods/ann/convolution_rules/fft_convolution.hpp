@@ -100,8 +100,7 @@ class FFTConvolution
         outputCols++;
 
     // Pad filter and input to the working output shape.
-    MatType inputPadded = arma::zeros<MatType>(outputRows,
-        outputCols);
+    MatType inputPadded = zeros<MatType>(outputRows, outputCols);
     inputPadded.submat(filter.n_rows - 1, filter.n_cols - 1,
           filter.n_rows - 1 + input.n_rows - 1,
           filter.n_cols - 1 + input.n_cols - 1) = input;

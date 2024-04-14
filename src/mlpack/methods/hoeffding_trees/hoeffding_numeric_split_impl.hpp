@@ -26,7 +26,7 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
     bins(bins),
     observationsBeforeBinning(observationsBeforeBinning),
     samplesSeen(0),
-    sufficientStatistics(arma::zeros<arma::Mat<size_t>>(numClasses, bins))
+    sufficientStatistics(zeros<arma::Mat<size_t>>(numClasses, bins))
 {
   observations.zeros();
   labels.zeros();
@@ -41,7 +41,7 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
     bins(other.bins),
     observationsBeforeBinning(other.observationsBeforeBinning),
     samplesSeen(0),
-    sufficientStatistics(arma::zeros<arma::Mat<size_t>>(numClasses, bins))
+    sufficientStatistics(zeros<arma::Mat<size_t>>(numClasses, bins))
 {
   observations.zeros();
   labels.zeros();

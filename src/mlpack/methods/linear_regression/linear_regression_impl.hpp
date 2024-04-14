@@ -194,7 +194,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // intercept = false to get a penalized intercept.
   if (intercept)
   {
-    p.insert_rows(0, arma::ones<arma::Mat<ElemType>>(1, nCols));
+    p.insert_rows(0, ones<arma::Mat<ElemType>>(1, nCols));
   }
 
   if (weights.n_elem > 0)

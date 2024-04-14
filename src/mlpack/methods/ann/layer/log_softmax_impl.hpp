@@ -101,7 +101,6 @@ void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
 
     return 0.0;
   });
-
   maxInput.each_row() += log(sum(output));
   output = input - maxInput;
 }
