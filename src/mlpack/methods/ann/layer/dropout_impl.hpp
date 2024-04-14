@@ -77,15 +77,41 @@ DropoutType<MatType>::operator=(DropoutType&& other)
 template<typename MatType>
 void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
-  // The dropout mask will not be multiplied in testing mode.
+  ForwardImpl(input, output);
+}
+
+template<typename MatType>
+void DropoutType<MatType>::ForwardImpl(const MatType& input,
+                                       MatType& output,
+                                       const typename std::enable_if_t<
+                                           arma::is_arma_type<MatType>::value>*)
+{
   if (!this->training)
   {
     output = input;
   }
   else
   {
-    // Scale with input / (1 - ratio) and set values to zero with probability
-    // 'ratio'.
+    mask.randu(input.n_rows, input.n_cols);
+    mask.transform([&](double val) { return (val > ratio); });
+    output = input % mask * scale;
+  }
+}
+
+#ifdef MLPACK_HAS_COOT
+
+template<typename MatType>
+void DropoutType<MatType>::ForwardImpl(const MatType& input,
+                                       MatType& output,
+                                       const typename std::enable_if_t<
+                                           coot::is_coot_type<MatType>::value>*)
+{
+  if (!this->training)
+  {
+    output = input;
+  }
+  else
+  {
     mask.randu(input.n_rows, input.n_cols);
     arma::uvec indices = arma::find(mask > ratio);
     mask.zeros();
@@ -93,6 +119,8 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
     output = input % mask * scale;
   }
 }
+
+#endif
 
 template<typename MatType>
 void DropoutType<MatType>::Backward(
