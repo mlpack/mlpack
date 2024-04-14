@@ -12,7 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_MULTI_LAYER_HPP
 
-#include "../make_alias.hpp"
 #include "layer.hpp"
 
 namespace mlpack {

@@ -7,7 +7,7 @@ provide the fastest possible linear algebra operations.
 <center><p><img src="https://arma.sourceforge.net/img/armadillo_logo2.png" alt="Armadillo logo"></p></center>
 
 Detailed documentation on Armadillo can be found on [the Armadillo
-website](http://arma.sourceforge.net/docs.html).
+website](https://arma.sourceforge.net/docs.html).
 
 Nonetheless, there are a few further caveats for mlpack Armadillo usage.
 
@@ -86,8 +86,8 @@ In general, the following Armadillo types are commonly used inside mlpack:
 mlpack provides two simple functions for loading and saving data matrices in a
 column-major form:
 
- * `data::Load(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric_data))
- * `data::Save(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric_data))
+ * `data::Load(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric-data))
+ * `data::Save(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric-data))
 
 As an example, consider the following CSV file:
 
@@ -148,9 +148,9 @@ mlpack has support to load mixed categorical data:
 
  * The `data::DatasetInfo` auxiliary class stores information about whether each
    dimension is numeric or categorical.  ([full
-   documentation](load_save.md#dataset_info))
+   documentation](load_save.md#datadatasetinfo))
  * `data::Load(filename, matrix, info, fatal=false, transpose=true)` ([full
-   documentation](load_save.md#load_categorical))
+   documentation](load_save.md#loading-categorical-data))
 
 For example, consider the following CSV file that contains strings:
 
@@ -212,10 +212,10 @@ m(4, 2) = 0;
 Not every mlpack method supports categorical data.  Below are the list of
 methods that do have categorical data support:
 
- * [`DecisionTree`](decision_tree.md)
- * [`DecisionTreeRegressor`](decision_tree_regressor.md)
- * [`RandomForest`](random_forest.md)
- * [`HoeffdingTree`](hoeffding_tree.md)
+ * [`DecisionTree`](methods/decision_tree.md)
+ * [`DecisionTreeRegressor`](methods/decision_tree_regressor.md)
+ * [`RandomForest`](methods/random_forest.md)
+ * [`HoeffdingTree`](methods/hoeffding_tree.md)
 
 ## Alternate matrix types
 
@@ -225,11 +225,11 @@ floating-point.  But, many mlpack algorithms and support utilities have support
 for alternate matrix types and element types:
 
  * Many methods, such as
-   [`LogisticRegression`](logistic_regression.md#advanced-functionality-different-element-types),
+   [`LogisticRegression`](methods/logistic_regression.md#advanced-functionality-different-element-types),
    allow specifying the matrix types as a template parameter.
 
  * Some methods, such as
-   [`DecisionTree`](decision_tree.md#using-different-element-types),
+   [`DecisionTree`](methods/decision_tree.md#using-different-element-types),
    accept different matrix types to `Train()`, `Classify()`, or `Predict()`,
    without needing to specify an explicit template parameter.
 
@@ -245,7 +245,7 @@ for alternate matrix types and element types:
 ---
 
 A simple example of using single-precision floating point data to train an
-[`AdaBoost`](adaboost.md) model is below.
+[`AdaBoost`](methods/adaboost.md) model is below.
 
 ```c++
 // 1000 random points in 10 dimensions, using 32-bit precision (float).
@@ -276,7 +276,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 ---
 
 A simple example of using sparse 32-bit floating point data to train a
-[`LogisticRegression`](logistic_regression.md) model is below.
+[`LogisticRegression`](methods/logistic_regression.md) model is below.
 
 ```c++
 // Create random, sparse 100-dimensional data.
@@ -312,7 +312,8 @@ to the underlying memory.
 
 ---
 
-Copy an [Eigen](https://eigen.tuxfamily.org) matrix into an Armadillo matrix.
+Copy an [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) matrix
+into an Armadillo matrix.
 
 ```c++
 // Note: this will only work if the Eigen matrix is stored in column-major
@@ -351,8 +352,9 @@ arma::mat mCopy(m.data(), rows, cols);
 ---
 
 Make an Armadillo matrix that is an alias of an
-[Eigen](https://eigen.tuxfamily.org) matrix.  Note that changes to the Eigen
-matrix will be reflected in the Armadillo matrix, and vice versa.
+[Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) matrix.  Note
+that changes to the Eigen matrix will be reflected in the Armadillo matrix, and
+vice versa.
 
 *If the Eigen matrix is deallocated, the Armadillo matrix will become invalid.
 Be careful!  [More details

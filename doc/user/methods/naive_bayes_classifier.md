@@ -42,8 +42,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](#mlpack_classifiers) <!-- TODO: fix link! -->
- * [`GaussianDistribution`](#gaussian_distribution) <!-- TODO: fix link! -->
+ * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [`GaussianDistribution`](../core.md#gaussiandistribution)
  * [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 ### Constructors
@@ -70,15 +70,10 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section on labels and NormalizeLabels()
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`]('../matrices.md') | Training labels, between `0` and `numClasses - 1` (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `incremental` | `bool` | If `true`, then the model will not be reset before training, and will use a robust incremental algorithm for variance computation. | `true` |
 | `epsilon` | `double` | Initial small value for sample variances, to prevent underflow (via `log(0)`). | 1e-10 |
@@ -96,7 +91,7 @@ If training is not done as part of the constructor call, it can be done with the
  * `nbc.Train(data, labels, numClasses, incremental=true, epsilon=1e-10)`
    - Train model on the given data, optionally specifying whether to do
      incremental training.
-   - Arguments described in [Constructor Parameters](#constructor_parameters)
+   - Arguments described in [Constructor Parameters](#constructor-parameters)
      table above.
 
 ---
@@ -105,7 +100,7 @@ If training is not done as part of the constructor call, it can be done with the
    - Incrementally train on a single data point with the given label.
    - Ensure that the model has the right size and number of classes by using the
      appropriate constructor form to set `dimensionality`, or by calling
-     `Reset()` (see [other functionality](#other_functionality)).
+     `Reset()` (see [other functionality](#other-functionality)).
 
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
@@ -161,16 +156,14 @@ can be used to make class predictions for new data.
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
 | _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into; will have length 2. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
 | _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to 2; number of columns will be equal to `data.n_cols`). |
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
  * A `NaiveBayesClassifier` model can be serialized with
-   [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * `nbc.Probabilities()` will return a column vector of length `numClasses`
    representing the prior probability of each class.
@@ -289,7 +282,7 @@ See also the following fully-working examples:
 The `NaiveBayesClassifier` class has one template parameter that can be used to
 control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 NaiveBayesClassifier<ModelMatType>
 ```
 

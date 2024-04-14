@@ -43,9 +43,9 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### See also:
 
- * [mlpack regression techniques](#mlpack_regression_techniques) <!-- TODO: fix link! -->
- * [`LinearRegression`](linear_regression.md) <!-- TODO: fix link -->
- * [`LARS`](lars.md) <!-- TODO: fix link -->
+ * [mlpack regression techniques](../../index.md#regression-algorithms)
+ * [`LinearRegression`](linear_regression.md)
+ * [`LARS`](lars.md)
  * [Bayesian linear regression on Wikipedia](https://en.wikipedia.org/wiki/Bayesian_linear_regression)
 
 ### Constructors
@@ -65,14 +65,9 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
 #### Constructor Parameters:
 
-<!-- TODOs for table below:
-    * better link for column-major matrices
-    * update matrices.md to include a section on labels and NormalizeLabels()
- -->
-
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md) training matrix. | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `centerData` | `bool` | Whether to center the data before learning. | `true` |
 | `scaleData` | `bool` | Whether to scale the data to unit variance before learning. | `false` |
@@ -107,7 +102,7 @@ Types of each argument are the same as in the table for constructors
    model from scratch.
 
  * `Train()` returns the root mean squared error (RMSE) of the model on the
-   training set as a `double`. <!-- TODO: check this -->
+   training set as a `double`.
 
 ### Prediction
 
@@ -151,16 +146,14 @@ can be used to make predictions for new data.
 | _single-point_ | `prediction` | `double&` | `double` to store predicted value into. |
 | _single-point_ | `stddev` | `double&` | `double` to store standard deviation of predicted value into. |
 ||||
-| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
+| _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md#representing-data-in-mlpack) points for classification. |
 | _multi-point_ | `predictions` | [`arma::rowvec&`](../matrices.md) | Vector of `double`s to store predictions into.  Will be set to length `data.n_cols`. |
 | _multi-point_ | `stddevs` | [`arma::rowvec&`](../matrices.md) | Vector of `double`s to store standard deviations of predictions into.  Will be set to length `data.n_cols`. |
 
 ### Other Functionality
 
-<!-- TODO: we should point directly to the documentation of those functions -->
-
  * A `BayesianLinearRegression` model can be serialized with
-   [`data::Save()`](../formats.md) and [`data::Load()`](../formats.md).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
 
  * After training is complete, the following methods can be used to inspect the
    model:
@@ -278,7 +271,7 @@ for (size_t t = 0; t < 3; ++t)
 The `BayesianLinearRegression` class has one template parameter that can be used
 to control the element type of the model.  The full signature of the class is:
 
-```c++
+```
 BayesianLinearRegression<ModelMatType>
 ```
 

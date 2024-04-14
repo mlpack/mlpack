@@ -90,7 +90,8 @@ void AddType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  gradient = error;
+  // The gradient is the sum of the error across all input points.
+  gradient = sum(error, 1);
 }
 
 template<typename MatType>

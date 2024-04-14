@@ -74,7 +74,7 @@ class QUIC_SVDPolicy
     arma::mat data(cleanedData);
 
     // Do singular value decomposition using the quic SVD algorithm.
-    QUIC_SVD quicsvd;
+    QUIC_SVD<> quicsvd;
     quicsvd.Apply(data, w, h, sigma);
 
     // Sigma matrix is multiplied to w.

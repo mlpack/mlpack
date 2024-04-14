@@ -15,8 +15,6 @@
 // In case it hasn't been included yet.
 #include "ffn.hpp"
 
-#include "make_alias.hpp"
-
 namespace mlpack {
 
 template<typename OutputLayerType,

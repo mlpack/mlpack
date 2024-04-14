@@ -332,7 +332,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
     if (output.n_rows != input.n_rows * strideWidth - strideWidth + 1 ||
         output.n_cols != input.n_cols * strideHeight - strideHeight + 1)
     {
-      output = arma::zeros(input.n_rows * strideWidth - strideWidth + 1,
+      output = zeros(input.n_rows * strideWidth - strideWidth + 1,
           input.n_cols * strideHeight - strideHeight + 1);
     }
 
@@ -362,7 +362,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
                    const size_t strideHeight,
                    arma::Cube<eT>& output)
   {
-    output = arma::zeros(input.n_rows * strideWidth - strideWidth + 1,
+    output = zeros(input.n_rows * strideWidth - strideWidth + 1,
         input.n_cols * strideHeight - strideHeight + 1, input.n_slices);
 
     for (size_t i = 0; i < input.n_slices; ++i)

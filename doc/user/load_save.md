@@ -1,4 +1,4 @@
-# Loading and saving mlpack objects
+# Loading and saving in mlpack
 
 mlpack provides the `data::Load()` and `data::Save()` functions to load and save
 [Armadillo matrices](matrices.md) (e.g. numeric and categorical datasets) and
@@ -157,7 +157,7 @@ With a `data::DatasetInfo` object, categorical data can be loaded:
      contents of the file:
      - `.csv`, `.tsv`, or `.txt` for CSV/TSV (tab-separated)/ASCII
        (space-separated)
-     - `.arff` for [ARFF](https://www.cs.waikato.ac.nz/~ml/weka/arff.html)
+     - `.arff` for [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
 
    * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, or similar (e.g., a
      reference to an Armadillo object that data will be loaded into or saved
@@ -498,7 +498,7 @@ images.push_back("armadillo-favicon.png");
 images.push_back("bandicoot-favicon.png");
 
 mlpack::data::ImageInfo info;
-info.Channels(1); // Force loading in grayscale.
+info.Channels() = 1; // Force loading in grayscale.
 
 arma::mat matrix;
 mlpack::data::Load(images, matrix, info, true);
@@ -723,7 +723,7 @@ The format of mixed categorical data is detected automatically based on the
 file extension and inspecting the file contents:
 
  - `.csv`, `.txt`, or `.tsv` indicates CSV/TSV/ASCII format
- - `.arff` indicates [ARFF](https://www.cs.waikato.ac.nz/~ml/weka/arff.html)
+ - `.arff` indicates [ARFF](https://ml.cms.waikato.ac.nz/weka/arff.html)
 
 ---
 

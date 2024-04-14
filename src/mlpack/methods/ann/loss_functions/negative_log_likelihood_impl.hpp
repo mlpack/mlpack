@@ -51,7 +51,7 @@ void NegativeLogLikelihoodType<MatType>::Backward(
       const MatType& target,
       MatType& loss)
 {
-  loss = arma::zeros<MatType>(prediction.n_rows, prediction.n_cols);
+  loss = zeros<MatType>(prediction.n_rows, prediction.n_cols);
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,

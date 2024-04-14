@@ -30,7 +30,7 @@ class OUNoise
           double mu = 0.0,
           double theta = 0.15,
           double sigma = 0.2) :
-      mu(mu * arma::ones<arma::colvec>(size)),
+      mu(mu * ones<arma::colvec>(size)),
       theta(theta),
       sigma(sigma)
   {
