@@ -74,17 +74,17 @@ DropoutType<MatType>::operator=(DropoutType&& other)
   return *this;
 }
 
+
 template<typename MatType>
 void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
+  // The dropout mask will not be multiplied in testing mode.
   ForwardImpl(input, output);
 }
 
 template<typename MatType>
 void DropoutType<MatType>::ForwardImpl(const MatType& input,
-                                       MatType& output,
-                                       const typename std::enable_if_t<
-                                           arma::is_arma_type<MatType>::value>*)
+                                       MatType& output)
 {
   if (!this->training)
   {
@@ -92,6 +92,8 @@ void DropoutType<MatType>::ForwardImpl(const MatType& input,
   }
   else
   {
+    // Scale with input / (1 - ratio) and set values to zero with probability
+    // 'ratio'.
     mask.randu(input.n_rows, input.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;
@@ -102,9 +104,7 @@ void DropoutType<MatType>::ForwardImpl(const MatType& input,
 
 template<typename MatType>
 void DropoutType<MatType>::ForwardImpl(const MatType& input,
-                                       MatType& output,
-                                       const typename std::enable_if_t<
-                                           coot::is_coot_type<MatType>::value>*)
+                                       MatType& output)
 {
   if (!this->training)
   {

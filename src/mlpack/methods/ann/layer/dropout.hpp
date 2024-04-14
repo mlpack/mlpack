@@ -76,6 +76,20 @@ class DropoutType : public Layer<MatType>
    * @param output Resulting output activation.
    */
   void Forward(const MatType& input, MatType& output);
+  
+
+  /**
+   * Implementation of the forward pass of the dropout layer.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   */
+  void ForwardImpl(const MatType& input, MatType& output);
+
+  #ifdef MLPACK_HAS_COOT
+  void ForwardImpl(const MatType& input, MatType& output);
+  #endif
+
 
   /**
    * Ordinary feed backward pass of the dropout layer.
