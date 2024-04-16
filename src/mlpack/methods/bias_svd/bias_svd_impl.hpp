@@ -17,9 +17,9 @@
 namespace mlpack {
 
 template<typename OptimizerType, typename MatType, typename VecType>
-BiasSVD<OptimizerType>::BiasSVD(const size_t iterations,
-                                const double alpha,
-                                const double lambda) :
+BiasSVD<OptimizerType, MatType, VecType>::BiasSVD(const size_t iterations,
+                                                  const double alpha,
+                                                  const double lambda) :
     iterations(iterations),
     alpha(alpha),
     lambda(lambda)
@@ -28,12 +28,12 @@ BiasSVD<OptimizerType>::BiasSVD(const size_t iterations,
 }
 
 template<typename OptimizerType, typename MatType, typename VecType>
-void BiasSVD<OptimizerType>::Apply(const MatType& data,
-                                   const size_t rank,
-                                   MatType& u,
-                                   MatType& v,
-                                   VecType& p,
-                                   VecType& q)
+void BiasSVD<OptimizerType, MatType, VecType>::Apply(const MatType& data,
+                                                     const size_t rank,
+                                                     MatType& u,
+                                                     MatType& v,
+                                                     VecType& p,
+                                                     VecType& q)
 {
   // batchSize is 1 in our implementation of Bias SVD.
   // batchSize other than 1 has not been supported yet.
