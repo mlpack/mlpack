@@ -114,7 +114,6 @@ void MakeAlias(OutMatType& m,
   // making an alias.
   coot::dev_mem_t<typename InMatType::elem_type> newMem;
   newMem.cuda_mem_ptr = oldMat.get_dev_mem().cuda_mem_ptr + offset;
-  //newMem = newMem + offset;
   m.~Mat();
   new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
