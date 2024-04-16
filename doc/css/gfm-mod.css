@@ -1062,6 +1062,7 @@ div#sidebar {
   top: 5px;
   min-width: 200px;
   font-size: 90%;
+  max-width: 15.1515%;
 }
 
 div#sidebar ul {

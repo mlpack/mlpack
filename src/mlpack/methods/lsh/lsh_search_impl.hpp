@@ -554,9 +554,9 @@ void LSHSearch<SortPolicy, MatType>::GetAdditionalProbingBins(
   // Actions vector describes what perturbation (-1/+1) corresponds to a score.
   arma::Col<short int> actions(2 * numProj); // will be [-1 ... 1 ...]
   actions.rows(0, numProj - 1) = // First numProj rows.
-    -1 * arma::ones< arma::Col<short int> > (numProj); // -1s
+    -1 * ones<arma::Col<short int>> (numProj); // -1s
   actions.rows(numProj, (2 * numProj) - 1) = // Last numProj rows.
-    arma::ones< arma::Col<short int> > (numProj); // 1s
+    ones<arma::Col<short int>> (numProj); // 1s
 
 
   // Acting dimension vector shows which coordinate to transform according to

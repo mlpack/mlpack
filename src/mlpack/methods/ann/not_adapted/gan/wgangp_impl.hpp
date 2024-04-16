@@ -66,7 +66,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      -arma::ones(1, batchSize);
+      -ones(1, batchSize);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -80,7 +80,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       (epsilon * currentInput) + ((1.0 - epsilon) * generatedData);
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      -arma::ones(1, batchSize);
+      -ones(1, batchSize);
   discriminator.Gradient(discriminator.parameter, numFunctions,
       normGradientDiscriminator, batchSize);
   res += lambda * std::pow(norm(normGradientDiscriminator, 2) - 1, 2);
@@ -112,7 +112,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     if (parameter.is_empty())
       Reset();
-    gradient = arma::zeros<arma::mat>(parameter.n_elem, 1);
+    gradient = zeros<arma::mat>(parameter.n_elem, 1);
   }
   else
     gradient.zeros();
@@ -125,7 +125,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   if (noiseGradientDiscriminator.is_empty())
   {
-    noiseGradientDiscriminator = arma::zeros<arma::mat>(
+    noiseGradientDiscriminator = zeros<arma::mat>(
         gradientDiscriminator.n_elem, 1);
   }
   else
@@ -157,7 +157,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       (epsilon * currentInput) + ((1.0 - epsilon) * generatedData);
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      -arma::ones(1, batchSize);
+      -ones(1, batchSize);
   discriminator.Gradient(discriminator.parameter, numFunctions,
       normGradientDiscriminator, batchSize);
   res += lambda * std::pow(norm(normGradientDiscriminator, 2) - 1, 2);
@@ -173,7 +173,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Minimize -D(G(noise)).
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
-        arma::ones(1, batchSize);
+        ones(1, batchSize);
 
     discriminator.outputLayer.Backward(
         boost::apply_visitor(outputParameterVisitor,

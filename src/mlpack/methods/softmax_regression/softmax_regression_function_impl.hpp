@@ -18,16 +18,17 @@ namespace mlpack {
 
 template<typename MatType>
 inline SoftmaxRegressionFunction<MatType>::SoftmaxRegressionFunction(
-    const MatType& data,
+    const MatType& dataIn,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
     const bool fitIntercept) :
-    data(MakeAlias(const_cast<MatType&>(data), false)),
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
 {
+  MakeAlias(data, dataIn, dataIn.n_rows, dataIn.n_cols, false);
+
   // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();
 
@@ -282,7 +283,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
     // the cost of building matrix [1; data].
     DenseMatType inner = probabilities - groundTruth;
     gradient.col(0) =
-        inner * arma::ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
+        inner * ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.t() / data.n_cols +
@@ -313,7 +314,7 @@ inline void SoftmaxRegressionFunction<MatType>::Gradient(
     DenseMatType inner = probabilities - groundTruth.cols(start, start +
         batchSize - 1);
     gradient.col(0) =
-        inner * arma::ones<DenseMatType>(batchSize, 1) / batchSize +
+        inner * ones<DenseMatType>(batchSize, 1) / batchSize +
         lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
         inner * data.cols(start, start + batchSize - 1).t() / batchSize +
@@ -346,7 +347,7 @@ inline void SoftmaxRegressionFunction<MatType>::PartialGradient(
     if (j == 0)
     {
       gradient.col(j) =
-          inner * arma::ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
+          inner * ones<DenseMatType>(data.n_cols, 1) / data.n_cols +
           lambda * parameters.col(0);
     }
     else

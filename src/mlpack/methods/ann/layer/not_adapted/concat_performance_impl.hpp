@@ -78,7 +78,7 @@ void ConcatPerformance<
 
   outputLayer.Backward(subInput, target, subOutput);
 
-  output = arma::zeros(subOutput.n_elem, inputDimensions[0]);
+  output = zeros(subOutput.n_elem, inputDimensions[0]);
   output.col(0) = subOutput;
 
   for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, ++j)

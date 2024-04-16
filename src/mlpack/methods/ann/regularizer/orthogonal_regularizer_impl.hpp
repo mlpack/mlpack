@@ -26,7 +26,7 @@ inline OrthogonalRegularizer::OrthogonalRegularizer(double factor) :
 template<typename MatType>
 void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
 {
-  arma::mat grad = arma::zeros(arma::size(weight));
+  arma::mat grad = zeros(arma::size(weight));
 
   for (size_t i = 0; i < weight.n_rows; ++i)
   {
