@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_IMPL_HPP
 
 #include "bias_svd_function.hpp"
-#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
 
@@ -44,13 +43,13 @@ void BiasSVDFunction<MatType>::Shuffle()
 }
 
 template <typename MatType>
-double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters) const
+double BiasSVDFunction<MatType>::Evaluate(const MatType& parameters) const
 {
   return Evaluate(parameters, 0, data.n_cols);
 }
 
 template <typename MatType>
-double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
+double BiasSVDFunction<MatType>::Evaluate(const MatType& parameters,
                                           const size_t start,
                                           const size_t batchSize) const
 {
@@ -92,8 +91,8 @@ double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
 }
 
 template <typename MatType>
-void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
-                                        arma::mat& gradient) const
+void BiasSVDFunction<MatType>::Gradient(const MatType& parameters,
+                                        MatType& gradient) const
 {
   // For an example with rating corresponding to user 'i' and item 'j', the
   // gradients for the parameters is as follows:
@@ -139,7 +138,7 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
 template <typename MatType>
 template <typename GradType>
-void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
+void BiasSVDFunction<MatType>::Gradient(const MatType& parameters,
                                         const size_t start,
                                         GradType& gradient,
                                         const size_t batchSize) const
