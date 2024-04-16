@@ -34,8 +34,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& datasetIn,
     points(datasetIn.n_cols),
     impBounds(false)
 {
-  MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, false);
-  MakeAlias(labels, labelsIn, labelsIn.n_rows, labelsIn.n_cols, false);
+  MakeAlias(dataset, datasetIn, 0, datasetIn.n_rows, datasetIn.n_cols, false);
+  MakeAlias(labels, labelsIn, 0, labelsIn.n_rows, labelsIn.n_cols, false);
 
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);

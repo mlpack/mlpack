@@ -27,9 +27,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     lambda(lambda)
 {
   // We promise to be well-behaved... the elements won't be modified.
-  MakeAlias(this->predictors, predictorsIn, predictorsIn.n_rows,
+  MakeAlias(this->predictors, predictorsIn, 0, predictorsIn.n_rows,
       predictorsIn.n_cols, false);
-  MakeAlias(this->responses, responsesIn, responsesIn.n_rows,
+  MakeAlias(this->responses, responsesIn, 0, responsesIn.n_rows,
       responsesIn.n_cols, false);
 
   // Sanity check.

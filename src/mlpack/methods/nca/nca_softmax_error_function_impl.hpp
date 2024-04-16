@@ -28,8 +28,8 @@ SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     metric(metric),
     precalculated(false)
 {
-  MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, false);
-  MakeAlias(labels, labelsIn, labelsIn.n_rows, labelsIn.n_cols, false);
+  MakeAlias(dataset, datasetIn, 0, datasetIn.n_rows, datasetIn.n_cols, false);
+  MakeAlias(labels, labelsIn, 0, labelsIn.n_rows, labelsIn.n_cols, false);
 }
 
 //! Shuffle the dataset.
