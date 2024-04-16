@@ -51,11 +51,12 @@ struct IsCootType<coot::Cube<eT>>
  * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
  * `numCols`.
  *
- * @param tmp The constructed matrix.
- * @param Mat The original matrix we are constructing part from it.
+ * @param m The constructed matrix.
+ * @param oldMat The original matrix we are constructing part from it.
  * @param offset The Start point of the constructed matrix.
  * @param numRows The number of rows of the construced matrix.
  * @param numCols The numbers or cols of the constructed matrix.
+ * @param strict if true, be strict and use the same memory.
  */
 template<typename InMatType,
          typename OutMatType>
@@ -64,6 +65,7 @@ void MakeAlias(OutMatType& m,
                const size_t offset,
                const size_t numRows,
                const size_t numCols,
+               const bool strict = true,
                const typename std::enable_if_t<!IsCootType<InMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -71,7 +73,7 @@ void MakeAlias(OutMatType& m,
   // making an alias.
   typename InMatType::elem_type* newMem = oldMat.memptr() + offset;
   m.~Mat();
-  new (&m) OutMatType(newMem, numRows, numCols, false, true);
+  new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
 
 /**
@@ -86,6 +88,7 @@ void MakeAlias(OutCubeType& c,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices,
+               const bool strict = true,
                const typename std::enable_if_t<!IsCootType<InCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -93,7 +96,7 @@ void MakeAlias(OutCubeType& c,
   // making an alias.
   typename InCubeType::elem_type* newMem = oldCube.memptr() + offset;
   c.~Cube();
-  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
+  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, strict);
 }
 
 template<typename InMatType,
@@ -103,6 +106,7 @@ void MakeAlias(OutMatType& m,
                const size_t offset,
                const size_t numRows,
                const size_t numCols,
+               const bool strict = true,
                const typename std::enable_if_t<IsCootType<InMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -112,7 +116,7 @@ void MakeAlias(OutMatType& m,
   newMem = oldMat.get_dev_mem().cuda_mem_ptr;
   newMem = newMem + offset;
   m.~Mat();
-  new (&m) OutMatType(newMem, numRows, numCols, false, true);
+  new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
 
 /**
@@ -148,6 +152,7 @@ void MakeAlias(OutCubeType& c,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices,
+               const bool strict = true,
                const typename std::enable_if_t<IsCootType<InCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
@@ -157,46 +162,7 @@ void MakeAlias(OutCubeType& c,
   newMem = oldCube.get_dev_mem().cuda_mem_ptr;
   newMem = newMem + offset;
   c.~Cube();
-  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, true);
-}
-
-/**
- * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
- * `numCols`.
- */
-template<typename MatType>
-void MakeAlias(MatType& m,
-               typename MatType::elem_type* newMem,
-               const size_t numRows,
-               const size_t numCols,
-               const bool strict = true,
-               const typename std::enable_if_t<!IsCube<MatType>::value>* = 0)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  m.~MatType();
-  new (&m) MatType(newMem, numRows, numCols, false, strict);
-}
-
-/**
- * Reconstruct `c` as an alias around the memory` newMem`, with size `numRows` x
- * `numCols` x `numSlices`.
- */
-template<typename CubeType>
-void MakeAlias(CubeType& c,
-               typename CubeType::elem_type* newMem,
-               const size_t numRows,
-               const size_t numCols,
-               const size_t numSlices,
-               const bool strict = true,
-               const typename std::enable_if_t<IsCube<CubeType>::value>* = 0)
-{
-  // We use placement new to reinitialize the object, since the copy and move
-  // assignment operators in Armadillo will end up copying memory instead of
-  // making an alias.
-  c.~CubeType();
-  new (&c) CubeType(newMem, numRows, numCols, numSlices, false, strict);
+  new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, strict);
 }
 
 /**
