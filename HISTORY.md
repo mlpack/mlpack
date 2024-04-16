@@ -21,6 +21,8 @@
   * Fix floating-point accuracy issue for decision trees that sometimes caused
     crashes (#3595).
 
+  * Fix usage of precompiled headers; remove cotire (#3635).
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
