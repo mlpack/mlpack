@@ -97,8 +97,9 @@ std::cout << "RMSE of reconstructed matrix: "
 ***Notes***:
 
  - Low values of `rank` will give smaller matrices `W` and `H`, but the
-   decomposition will be less accurate.  Every problem is different, so `rank`
-   must be specified manually.
+   decomposition will be less accurate.  Larger values of `rank` will give more
+   accurate decompositions, but will take longer to compute.  Every problem is
+   different, so `rank` must be specified manually.
 
  - The expression `W * H` can be used to reconstruct the matrix `V`.
 
