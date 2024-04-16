@@ -71,7 +71,7 @@ void MakeAlias(OutMatType& m,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InMatType::elem_type* newMem = oldMat.memptr() + offset;
+  const typename InMatType::elem_type* newMem = oldMat.memptr() + offset;
   m.~Mat();
   new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
@@ -94,7 +94,7 @@ void MakeAlias(OutCubeType& c,
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
-  typename InCubeType::elem_type* newMem = oldCube.memptr() + offset;
+  const typename InCubeType::elem_type* newMem = oldCube.memptr() + offset;
   c.~Cube();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, strict);
 }
@@ -113,8 +113,8 @@ void MakeAlias(OutMatType& m,
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
   coot::dev_mem_t<typename InMatType::elem_type> newMem;
-  newMem = oldMat.get_dev_mem().cuda_mem_ptr;
-  newMem = newMem + offset;
+  newMem.cuda_mem_ptr = oldMat.get_dev_mem().cuda_mem_ptr + offset;
+  //newMem = newMem + offset;
   m.~Mat();
   new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
