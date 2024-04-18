@@ -39,6 +39,8 @@
 
   * Fix usage of precompiled headers; remove cotire (#3635).
 
+  * Fix non-working `verbose` option for R bindings (#3691).
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
