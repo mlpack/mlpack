@@ -278,7 +278,7 @@ void MultiLayer<MatType>::CustomInitialize(
         "weight size!");
     
     MatType WTemp;
-    MakeAlias(WTemp, W.memptr() + start, weightSize, 1);
+    MakeAlias(WTemp, W, weightSize, start, 1);
     network[i]->CustomInitialize(WTemp, weightSize);
     
     start += weightSize;
@@ -432,8 +432,7 @@ void MultiLayer<MatType>::InitializeGradientPassMemory(MatType& gradient)
   for (size_t i = 0; i < network.size(); ++i)
   {
     const size_t weightSize = network[i]->WeightSize();
-    MakeAlias(layerGradients[i], gradient.memptr() + gradientStart,
-        weightSize, 1);
+    MakeAlias(layerGradients[i], gradient, weightSize, gradientStart, 1);
     gradientStart += weightSize;
   }
 }
