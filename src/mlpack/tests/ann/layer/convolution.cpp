@@ -250,7 +250,7 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
   module.InputDimensions() = std::vector<size_t>({ 12, 13, 2 });
   module.ComputeOutputDimensions();
   arma::mat weights(module.WeightSize(), 1);
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   RandomInitialization().Initialize(module.Weight());
   module.Bias().ones();

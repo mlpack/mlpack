@@ -447,7 +447,7 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   c.InputDimensions() = std::vector<size_t>({ 6, 6 });
   c.ComputeOutputDimensions();
   arma::mat weights(c.WeightSize(), 1, arma::fill::randu);
-  c.SetWeights(weights.memptr());
+  c.SetWeights(weights);
 
   output.set_size(c.OutputSize(), 1);
   delta.set_size(input.size());
@@ -463,7 +463,7 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   c.ComputeOutputDimensions();
   weights.set_size(c.WeightSize(), 1);
   weights.randu();
-  c.SetWeights(weights.memptr());
+  c.SetWeights(weights);
 
   output.set_size(c.OutputSize(), 1);
   delta.set_size(input.size());
@@ -479,7 +479,7 @@ TEST_CASE("Issue2986", "[ConvolutionalNetworkTest]")
   c.ComputeOutputDimensions();
   weights.set_size(c.WeightSize(), 1);
   weights.randu();
-  c.SetWeights(weights.memptr());
+  c.SetWeights(weights);
 
   output.set_size(c.OutputSize(), 1);
   delta.set_size(input.size());
@@ -508,7 +508,7 @@ TEST_CASE("CustomPaddingTest", "[ConvolutionalNetworkTest]")
 
   weights.set_size(c.WeightSize(), 1);
   weights.ones();
-  c.SetWeights(weights.memptr());
+  c.SetWeights(weights);
 
   // Now make sure that the forward pass returns the correct output.
   output.set_size(c.OutputSize(), 1);
