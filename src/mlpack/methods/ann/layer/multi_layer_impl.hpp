@@ -235,7 +235,7 @@ void MultiLayer<MatType>::Gradient(
 }
 
 template<typename MatType>
-void MultiLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
+void MultiLayer<MatType>::SetWeights(const MatType& weightsIn)
 {
   size_t start = 0;
   const size_t totalWeightSize = WeightSize();
