@@ -49,7 +49,7 @@ TEST_CASE("GroupedConvolutionLayerTest", "[ANNLayerTest]")
   layerWeights(5) = -0.7586858273;
   layerWeights(6) = -0.1721059084;
   layerWeights(7) = -0.1972532272;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   layer.Forward(input, output);
@@ -104,7 +104,7 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   layerWeights(15) = -0.2283206;
   layerWeights(16) = 0.3204123974;
   layerWeights(17) = 0.2334779799;
-  layer.SetWeights(layerWeights.memptr());
+  layer.SetWeights(layerWeights);
   output.set_size(layer.OutputSize(), 3);
 
   GroupedConvolution layerG(2, 2, 2, 1, 1, 1, 0, 0);
@@ -129,7 +129,7 @@ TEST_CASE("GroupedConvolutionEquivalenceTest", "[ANNLayerTest]")
   layerWeightsG(15) = -0.2283206;
   layerWeightsG(16) = 0.3204123974;
   layerWeightsG(17) = 0.2334779799;
-  layerG.SetWeights(layerWeightsG.memptr());
+  layerG.SetWeights(layerWeightsG);
   outputG.set_size(layerG.OutputSize(), 3);
 
   layer.Forward(input, output);
