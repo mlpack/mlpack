@@ -239,10 +239,9 @@ void RNN<
         SetPreviousStep(size_t(0));
 
       // Create aliases for the input and output.
-      MakeAlias(inputAlias,
-          (typename MatType::elem_type*) predictors.slice(t).colptr(i),
-          predictors.n_rows, effectiveBatchSize);
-      MakeAlias(outputAlias, results.slice(t).colptr(i), results.n_rows,
+      MakeAlias(inputAlias, predictors.slice(t).col(i), predictors.n_rows,
+          effectiveBatchSize);
+      MakeAlias(outputAlias, results.slice(t).col(i), results.n_rows,
           effectiveBatchSize);
 
       network.Forward(inputAlias, outputAlias);
@@ -349,10 +348,10 @@ typename MatType::elem_type RNN<
 
     // Manually reset the data of the network to be an alias of the current time
     // step.
-    MakeAlias(network.predictors, predictors.slice(t).colptr(begin),
+    MakeAlias(network.predictors, predictors.slice(t).col(begin),
         predictors.n_rows, batchSize);
     const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(network.responses, responses.slice(responseStep).colptr(begin),
+    MakeAlias(network.responses, responses.slice(responseStep).col(begin),
         responses.n_rows, batchSize);
 
     loss += network.Evaluate(output, begin, batchSize);
@@ -418,14 +417,13 @@ typename MatType::elem_type RNN<
     SetCurrentStep(0);
 
     // Make an alias of the step's data.
-    MakeAlias(stepData, predictors.slice(t).colptr(begin), predictors.n_rows,
+    MakeAlias(stepData, predictors.slice(t).col(begin), predictors.n_rows,
         batchSize);
-    MakeAlias(outputData, outputs.slice(t).memptr(), outputs.n_rows,
-        outputs.n_cols);
+    MakeAlias(outputData, outputs.slice(t), outputs.n_rows, outputs.n_cols);
     network.network.Forward(stepData, outputData);
 
     const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep).colptr(begin),
+    MakeAlias(responseData, responses.slice(responseStep).col(begin),
         responses.n_rows, batchSize);
 
     loss += network.outputLayer.Forward(outputData, responseData);
@@ -440,14 +438,13 @@ typename MatType::elem_type RNN<
     SetCurrentStep(t - extraSteps + 1);
 
     // Wrap a matrix around our data to avoid a copy.
-    MakeAlias(stepData, predictors.slice(t).colptr(begin), predictors.n_rows,
+    MakeAlias(stepData, predictors.slice(t).col(begin), predictors.n_rows,
         batchSize);
-    MakeAlias(outputData, outputs.slice(t).memptr(), outputs.n_rows,
-        outputs.n_cols);
+    MakeAlias(outputData, outputs.slice(t), outputs.n_rows, outputs.n_cols);
     network.network.Forward(stepData, outputData);
 
     const size_t responseStep = (single) ? 0 : t;
-    MakeAlias(responseData, responses.slice(responseStep).colptr(begin),
+    MakeAlias(responseData, responses.slice(responseStep).col(begin),
         responses.n_rows, batchSize);
 
     loss += network.outputLayer.Forward(outputData, responseData);
@@ -484,18 +481,18 @@ typename MatType::elem_type RNN<
     }
     else
     {
-      MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
+      MakeAlias(outputData, outputs.slice(t - 1).col(0), outputs.n_rows,
           outputs.n_cols);
       const size_t respStep = (single) ? 0 : t - 1;
-      MakeAlias(responseData, responses.slice(respStep).colptr(begin),
+      MakeAlias(responseData, responses.slice(respStep).col(begin),
           responses.n_rows, batchSize);
       network.outputLayer.Backward(outputData, responseData, error);
     }
 
     // Now pass that error backwards through the network.
-    MakeAlias(stepData, predictors.slice(t - 1).colptr(begin),
+    MakeAlias(stepData, predictors.slice(t - 1).col(begin),
         predictors.n_rows, batchSize);
-    MakeAlias(outputData, outputs.slice(t - 1).colptr(0), outputs.n_rows,
+    MakeAlias(outputData, outputs.slice(t - 1).col(0), outputs.n_rows,
         outputs.n_cols);
 
     MatType networkDelta;
