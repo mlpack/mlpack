@@ -20,8 +20,8 @@ namespace mlpack {
  * `numCols`.
  */
 template<typename InVecType, typename OutVecType>
-void MakeAlias(OutVecType& m,
-               InVecType& oldVec,
+void MakeAlias(OutVecType& v,
+               const InVecType& oldVec,
                const size_t numElems,
                const size_t offset = 0,
                const bool strict = true,
@@ -32,8 +32,8 @@ void MakeAlias(OutVecType& m,
   // making an alias.
   typename InVecType::elem_type* newMem =
     const_cast<typename InVecType::elem_type*>(oldVec.memptr()) + offset;
-  m.~Vec();
-  new (&m) OutVecType(newMem, numElems, false, strict);
+  v.~OutVecType();
+  new (&v) OutVecType(newMem, numElems, false, strict);
 }
 
 /**
@@ -42,19 +42,19 @@ void MakeAlias(OutVecType& m,
  */
 template<typename InMatType, typename OutMatType>
 void MakeAlias(OutMatType& m,
-               InMatType& oldMat,
+               const InMatType& oldMat,
                const size_t numRows,
                const size_t numCols,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<!IsCube<InMatType>::value>* = 0)
+               const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
   typename InMatType::elem_type* newMem =
     const_cast<typename InMatType::elem_type*>(oldMat.memptr()) + offset;
-  m.~Mat();
+  m.~OutMatType();
   new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
 
@@ -64,7 +64,7 @@ void MakeAlias(OutMatType& m,
  */
 template<typename InCubeType, typename OutCubeType>
 void MakeAlias(OutCubeType& c,
-               InCubeType& oldCube,
+               const InCubeType& oldCube,
                const size_t numRows,
                const size_t numCols,
                const size_t numSlices,
@@ -77,7 +77,7 @@ void MakeAlias(OutCubeType& c,
   // making an alias.
   typename InCubeType::elem_type* newMem =
     const_cast<typename InCubeType::elem_type*>(oldCube.memptr()) + offset;
-  c.~Cube();
+  c.~OutCubeType();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, strict);
 }
 
