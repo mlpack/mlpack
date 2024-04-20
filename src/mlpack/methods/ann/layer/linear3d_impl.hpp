@@ -85,11 +85,12 @@ Linear3DType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::SetWeights(const MatType& weights)
+void Linear3DType<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
 {
-  MakeAlias(weights, weights, outSize * this->inputDimensions[0] + outSize, 1);
-  MakeAlias(weight, weights, outSize, this->inputDimensions[0]);
-  MakeAlias(bias, weights, outSize, 1, weight.n_elem);
+  MakeAlias(weights, weightsIn, outSize * this->inputDimensions[0] + outSize,
+      1);
+  MakeAlias(weight, weightsIn, outSize, this->inputDimensions[0]);
+  MakeAlias(bias, weightsIn, outSize, 1, weight.n_elem);
 }
 
 template<typename MatType, typename RegularizerType>

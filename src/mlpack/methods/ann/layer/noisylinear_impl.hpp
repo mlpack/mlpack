@@ -73,14 +73,14 @@ NoisyLinearType<MatType>::operator=(NoisyLinearType&& other)
 }
 
 template<typename MatType>
-void NoisyLinearType<MatType>::SetWeights(const MatType& weights)
+void NoisyLinearType<MatType>::SetWeights(const MatType& weightsIn)
 {
-  MakeAlias(weights, weights, 1, (outSize * inSize + outSize) * 2);
-  MakeAlias(weightMu, weights, outSize, inSize);
-  MakeAlias(biasMu, weights, outSize, 1, weightMu.n_elem);
-  MakeAlias(weightSigma, weights, outSize, inSize,
+  MakeAlias(weights, weightsIn, 1, (outSize * inSize + outSize) * 2);
+  MakeAlias(weightMu, weightsIn, outSize, inSize);
+  MakeAlias(biasMu, weightsIn, outSize, 1, weightMu.n_elem);
+  MakeAlias(weightSigma, weightsIn, outSize, inSize,
       weightMu.n_elem + biasMu.n_elem);
-  MakeAlias(biasSigma, weights, outSize, 1,
+  MakeAlias(biasSigma, weightsIn, outSize, 1,
       weightMu.n_elem * 2 + biasMu.n_elem);
 
   this->ResetNoise();

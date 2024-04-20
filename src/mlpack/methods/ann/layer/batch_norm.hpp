@@ -118,7 +118,7 @@ class BatchNormType : public Layer<MatType>
   /**
    * Reset the layer parameters.
    */
-  void SetWeights(typename MatType::elem_type* weightsPtr);
+  void SetWeights(const MatType& weightsIn);
 
   /**
    * Initialize the weight matrix of the layer.
@@ -126,9 +126,7 @@ class BatchNormType : public Layer<MatType>
    * @param W Weight matrix to initialize.
    * @param elements Number of elements.
    */
-  void CustomInitialize(
-      MatType& W,
-      const size_t elements);
+  void CustomInitialize(MatType& W, const size_t elements);
 
   /**
    * Forward pass of the Batch Normalization layer. Transforms the input data
@@ -160,9 +158,7 @@ class BatchNormType : public Layer<MatType>
    * @param error The calculated error
    * @param gradient The calculated gradient.
    */
-  void Gradient(const MatType& input,
-                const MatType& error,
-                MatType& gradient);
+  void Gradient(const MatType& input, const MatType& error, MatType& gradient);
 
   //! Get the parameters.
   const MatType& Parameters() const { return weights; }
