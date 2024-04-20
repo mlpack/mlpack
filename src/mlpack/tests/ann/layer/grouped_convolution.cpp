@@ -212,7 +212,7 @@ TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
   module1.InputDimensions() = std::vector<size_t>({ 7, 7 });
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
   arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);

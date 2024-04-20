@@ -77,7 +77,7 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
   REQUIRE(weights1.n_elem == 10);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 48, 49);
@@ -451,7 +451,7 @@ TEST_CASE("NonSquareConvolutionTest", "[ANNLayerTest]")
   module1.InputDimensions() = std::vector<size_t>({ 7, 7 });
   module1.ComputeOutputDimensions();
   arma::mat weights1(module1.WeightSize(), 1);
-  module1.SetWeights(weights1.memptr());
+  module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
   arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);
