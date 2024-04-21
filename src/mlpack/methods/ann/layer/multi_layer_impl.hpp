@@ -248,8 +248,9 @@ void MultiLayer<MatType>::SetWeights(const MatType& weightsIn)
     Log::Assert(start + weightSize <= totalWeightSize,
         "FNN::SetLayerMemory(): parameter size does not match total layer "
         "weight size!");
-
-    network[i]->SetWeights(weightsPtr + start);
+    MatType tmpWeights;
+    MakeAlias(tmpWeights, weightsIn, weightsIn.n_rows, weightsIn.n_cols, start);
+    network[i]->SetWeights(tmpWeights);
     start += weightSize;
   }
 
@@ -388,8 +389,8 @@ void MultiLayer<MatType>::InitializeForwardPassMemory(const size_t batchSize)
   for (size_t i = 0; i < layerOutputs.size(); ++i)
   {
     const size_t layerOutputSize = network[i]->OutputSize();
-    MakeAlias(layerOutputs[i], layerOutputMatrix.col(start),
-        layerOutputSize, batchSize);
+    MakeAlias(layerOutputs[i], layerOutputMatrix, layerOutputSize, batchSize,
+        start * layerOutputMatrix.n_rows);
     start += batchSize * layerOutputSize;
   }
 }
@@ -417,8 +418,8 @@ void MultiLayer<MatType>::InitializeBackwardPassMemory(
     for (size_t j = 0; j < this->network[i]->InputDimensions().size(); ++j)
       layerInputSize *= this->network[i]->InputDimensions()[j];
 
-    MakeAlias(layerDeltas[i], layerDeltaMatrix.col(start), layerInputSize,
-        batchSize);
+    MakeAlias(layerDeltas[i], layerDeltaMatrix, layerInputSize,
+        batchSize, start * layerDeltaMatrix.n_rows);
     start += batchSize * layerInputSize;
   }
 }
