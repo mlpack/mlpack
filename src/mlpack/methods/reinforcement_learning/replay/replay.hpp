@@ -16,4 +16,6 @@
 #include "prioritized_replay.hpp"
 #include "sumtree.hpp"
 
+#include "vec_env_replay.hpp"
+
 #endif

@@ -23,5 +23,6 @@
 #include "mountain_car.hpp"
 #include "pendulum.hpp"
 #include "reward_clipping.hpp"
+#include "vec_env.hpp"
 
 #endif
