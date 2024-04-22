@@ -128,9 +128,9 @@ class VecEnv
   {
     std::vector<double> rewards(nEnvs);
     for (size_t i = 0; i < nEnvs; i++)
-      rewards[i] = envs[i].Sample(state.data()[i], 
+      rewards[i] = envs[i].Sample(state.Encode()[i], 
                                    action.action[i],
-                                   nextState.data()[i]);
+                                   nextState.Encode()[i]);
     
     return rewards;
   }
@@ -161,7 +161,7 @@ class VecEnv
   {
     std::vector<bool> isTerminalVec(nEnvs);
     for (size_t i = 0; i < nEnvs; i++)
-      isTerminalVec[i] = envs[i].IsTerminal(state.data()[i]);
+      isTerminalVec[i] = envs[i].IsTerminal(state.Encode()[i]);
     
     return isTerminalVec;
   }
