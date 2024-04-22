@@ -24,7 +24,7 @@ add_executable(mlpack_test
   ann/augmented_rnns_tasks_test.cpp
   ann/reward_clipping_test.cpp
   ann/rl_components_test.cpp
-
+  ann/vectorized_environment_test.cpp
   # These tests have not yet been adapted to the new inheritance-based ANN
   # implementation.
 #  ann/not_adapted/activation_functions_test.cpp
