@@ -90,7 +90,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
                                                const arma::uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
-  arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
+  arma::uvec neighborCounts = zeros<arma::uvec>(data.n_cols, 1);
 
   if (adjacencies.n_elem > 0)
   {
@@ -142,7 +142,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   // multiplication with inv(A) seems to be unavoidable. Although more
   // expensive, the code written this way (we use solve()) should be more
   // numerically stable than just using inv(A) for everything.
-  arma::vec dualVars = arma::zeros<arma::vec>(nActiveAtoms);
+  arma::vec dualVars = zeros<arma::vec>(nActiveAtoms);
 
   // vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
 

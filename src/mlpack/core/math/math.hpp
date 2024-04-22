@@ -25,5 +25,6 @@
 #include "range.hpp"
 #include "shuffle_data.hpp"
 #include "trigamma.hpp"
+#include "unwrap_alias.hpp"
 
 #endif

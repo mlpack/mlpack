@@ -34,7 +34,7 @@ TEST_CASE("CosineTreeNoSplit", "[CosineTreeTest]")
 
   // Make a cosine tree, with the generated dataset and the defined constants.
   // Note that the value of epsilon is one.
-  CosineTree ctree(data, epsilon, delta);
+  CosineTree<> ctree(data, epsilon, delta);
   arma::mat basis;
   ctree.GetFinalBasis(basis);
 
@@ -57,17 +57,17 @@ TEST_CASE("CosineNodeCosineSplit", "[CosineTreeTest]")
 
   // Make a random dataset and the root object.
   arma::mat data = arma::randu(numRows, numCols);
-  CosineTree root(data);
+  CosineTree<> root(data);
 
   // Stack for depth first search of the tree.
-  std::vector<CosineTree*> nodeStack;
+  std::vector<CosineTree<>*> nodeStack;
   nodeStack.push_back(&root);
 
   // While stack is not empty.
   while (nodeStack.size())
   {
     // Pop a node from the stack and split it.
-    CosineTree *currentNode, *currentLeft, *currentRight;
+    CosineTree<> *currentNode, *currentLeft, *currentRight;
     currentNode = nodeStack.back();
     currentNode->CosineNodeSplit();
     nodeStack.pop_back();
@@ -173,14 +173,14 @@ TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
 
   // Declare a queue and a dummy CosineTree object.
   CompareCosineNode comp;
-  CosineNodeQueue basisQueue;
-  CosineTree dummyTree(data, epsilon, delta);
+  CosineNodeQueue<> basisQueue;
+  CosineTree<> dummyTree(data, epsilon, delta);
 
   for (size_t i = 0; i < numCols; ++i)
   {
     // Make a new CosineNode object.
-    CosineTree* basisNode;
-    basisNode = new CosineTree(data);
+    CosineTree<>* basisNode;
+    basisNode = new CosineTree<>(data);
 
     // Use the columns of the dataset as random centroids.
     arma::vec centroid = data.col(i);
@@ -190,8 +190,8 @@ TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
     dummyTree.ModifiedGramSchmidt(basisQueue, centroid, newBasisVector);
 
     // Check if the obtained vector is orthonormal to the basis vectors.
-    CosineNodeQueue::const_iterator j = basisQueue.cbegin();
-    CosineTree* currentNode;
+    CosineNodeQueue<>::const_iterator j = basisQueue.cbegin();
+    CosineTree<>* currentNode;
 
     for (; j != basisQueue.cend(); ++j)
     {
@@ -210,7 +210,7 @@ TEST_CASE("CosineTreeModifiedGramSchmidt", "[CosineTreeTest]")
   // Deallocate memory given to the objects.
   for (size_t i = 0; i < numCols; ++i)
   {
-    CosineTree* currentNode;
+    CosineTree<>* currentNode;
     currentNode = basisQueue.front();
     std::pop_heap(basisQueue.begin(), basisQueue.end(), comp);
     basisQueue.pop_back();
@@ -236,17 +236,17 @@ TEST_CASE("CopyConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   arma::mat* data = new arma::mat(numRows, numCols, arma::fill::randu);
 
   // Make a cosine tree, with the generated dataset.
-  CosineTree* ctree1 = new CosineTree(*data);
+  CosineTree<>* ctree1 = new CosineTree<>(*data);
 
   // Stacks for depth first search of the tree.
-  std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3;
+  std::vector<CosineTree<>*> nodeStack1, nodeStack2, nodeStack3;
   nodeStack1.push_back(ctree1);
 
   // While stack is not empty.
   while (nodeStack1.size())
   {
     // Pop a node from the stack and split it.
-    CosineTree *currentNode1, *currentLeft1, *currentRight1;
+    CosineTree<> *currentNode1, *currentLeft1, *currentRight1;
 
     currentNode1 = nodeStack1.back();
     currentNode1->CosineNodeSplit();
@@ -268,8 +268,8 @@ TEST_CASE("CopyConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   }
 
   // Copy constructor and operator.
-  CosineTree ctree2(*ctree1);
-  CosineTree ctree3 = *ctree1;
+  CosineTree<> ctree2(*ctree1);
+  CosineTree<> ctree3 = *ctree1;
 
   delete ctree1;
   delete data;
@@ -281,8 +281,8 @@ TEST_CASE("CopyConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   while (nodeStack2.size() && nodeStack3.size())
   {
     // Pop a node from the stack and split it.
-    CosineTree *currentNode2, *currentLeft2, *currentRight2;
-    CosineTree *currentNode3, *currentLeft3, *currentRight3;
+    CosineTree<> *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree<> *currentNode3, *currentLeft3, *currentRight3;
 
     currentNode2 = nodeStack2.back();
     nodeStack2.pop_back();
@@ -337,17 +337,17 @@ TEST_CASE("MoveConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   arma::mat data = arma::randu(numRows, numCols);
 
   // Make a cosine tree, with the generated dataset.
-  CosineTree ctree1(data);
+  CosineTree<> ctree1(data);
 
   // Stacks for depth first search of the tree.
-  std::vector<CosineTree*> nodeStack1, nodeStack2, nodeStack3;
+  std::vector<CosineTree<>*> nodeStack1, nodeStack2, nodeStack3;
   nodeStack1.push_back(&ctree1);
 
   // While stack is not empty.
   while (nodeStack1.size())
   {
     // Pop a node from the stack and split it.
-    CosineTree *currentNode1, *currentLeft1, *currentRight1;
+    CosineTree<> *currentNode1, *currentLeft1, *currentRight1;
 
     currentNode1 = nodeStack1.back();
     currentNode1->CosineNodeSplit();
@@ -369,7 +369,7 @@ TEST_CASE("MoveConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   }
 
   // Move constructor.
-  CosineTree ctree2(std::move(ctree1));
+  CosineTree<> ctree2(std::move(ctree1));
 
   nodeStack2.push_back(&ctree2);
 
@@ -377,7 +377,7 @@ TEST_CASE("MoveConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   while (nodeStack2.size())
   {
     // Pop a node from the stack and split it.
-    CosineTree *currentNode2, *currentLeft2, *currentRight2;
+    CosineTree<> *currentNode2, *currentLeft2, *currentRight2;
 
     currentNode2 = nodeStack2.back();
     nodeStack2.pop_back();
@@ -398,7 +398,7 @@ TEST_CASE("MoveConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   }
 
   // Move operator.
-  CosineTree ctree3 = std::move(ctree2);
+  CosineTree<> ctree3 = std::move(ctree2);
 
   nodeStack3.push_back(&ctree3);
 
@@ -406,7 +406,7 @@ TEST_CASE("MoveConstructorAndOperatorCosineTreeTest", "[CosineTreeTest]")
   while (nodeStack3.size())
   {
     // Pop a node from the stack and split it.
-    CosineTree *currentNode3, *currentLeft3, *currentRight3;
+    CosineTree<> *currentNode3, *currentLeft3, *currentRight3;
 
     currentNode3 = nodeStack3.back();
     nodeStack3.pop_back();

@@ -79,7 +79,7 @@ inline void SortTask::Generate(arma::field<arma::mat>& input,
     input(i).reshape(input(i).n_elem, 1);
     if (addSeparator)
     {
-      arma::mat sepInput = arma::zeros(input(i).n_elem + size, 1);
+      arma::mat sepInput = zeros(input(i).n_elem + size, 1);
       size_t ptr = 0, origPtr = 0;
       for (size_t j = 0; j < size; ++j)
       {
@@ -105,8 +105,8 @@ inline void SortTask::Generate(arma::mat& input,
   size_t inputRows = fieldInput(0).n_rows;
   size_t labelRows = fieldLabels(0).n_rows;
   size_t cols = batchSize;
-  input = arma::zeros(inputRows, cols);
-  labels = arma::zeros(labelRows, cols);
+  input = zeros(inputRows, cols);
+  labels = zeros(labelRows, cols);
   for (size_t i = 0; i < cols; ++i)
   {
     input.col(i) = fieldInput.at(i);

@@ -21,15 +21,17 @@ namespace mlpack {
 
 template<typename MatType>
 LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
+    const MatType& predictorsIn,
+    const arma::Row<size_t>& responsesIn,
     const double lambda) :
-    // We promise to be well-behaved... the elements won't be modified.
-    predictors(MakeAlias(const_cast<MatType&>(predictors), false)),
-    responses(MakeAlias(const_cast<arma::Row<size_t>&>(responses),
-        false)),
     lambda(lambda)
 {
+  // We promise to be well-behaved... the elements won't be modified.
+  MakeAlias(this->predictors, predictorsIn, predictorsIn.n_rows,
+      predictorsIn.n_cols, false);
+  MakeAlias(this->responses, responsesIn, responsesIn.n_rows,
+      responsesIn.n_cols, false);
+
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
   {
