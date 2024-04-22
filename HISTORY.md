@@ -37,6 +37,8 @@
 
   * Allow PCA to take different matrix types (#3677).
 
+  * Fix usage of precompiled headers; remove cotire (#3635).
+
   * Fix non-working `verbose` option for R bindings (#3691).
 
 ### mlpack 4.3.0
