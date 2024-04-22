@@ -174,7 +174,7 @@ void SAC<
   // Intialize SampledActions in both normal and vectorized environment cases.
   auto sampledActions = [&]()
   {
-    if constexpr (std::is_same_v<decltype(state.Encode()), const arma::colvec&>) 
+    if constexpr (std::is_same<decltype(state.Encode()), const arma::colvec&>::value) 
     {
       return std::vector<ActionType>{}; // normal env
     } 
