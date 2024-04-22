@@ -27,7 +27,7 @@ template<typename InputType, typename OutputType>
 void ISRLU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = arma::ones<OutputDataType>(arma::size(input));
+  output = ones<OutputDataType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : input(i) *

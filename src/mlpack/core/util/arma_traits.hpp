@@ -254,4 +254,49 @@ struct GetSparseMatType<arma::SpMat<eT>>
   typedef arma::SpMat<eT> type;
 };
 
+// Get whether or not the given type is a base matrix type (e.g. not an
+// expression).
+
+template<typename MatType>
+struct IsBaseMatType
+{
+  constexpr static bool value = false;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::Mat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::Col<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::Row<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::SpMat<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::SpCol<eT>>
+{
+  constexpr static bool value = true;
+};
+
+template<typename eT>
+struct IsBaseMatType<arma::SpRow<eT>>
+{
+  constexpr static bool value = true;
+};
+
 #endif

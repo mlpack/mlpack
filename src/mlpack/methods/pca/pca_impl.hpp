@@ -12,7 +12,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_PCA_PCA_IMPL_HPP
 #define MLPACK_METHODS_PCA_PCA_IMPL_HPP
 
@@ -37,19 +36,31 @@ PCA<DecompositionPolicy>::PCA(
  * @param eigvec - PCA Loadings/Coeffs/EigenVectors
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
-                                     arma::mat& transformedData,
-                                     arma::vec& eigVal,
-                                     arma::mat& eigvec)
+template<typename MatType, typename OutMatType, typename VecType>
+void PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                     OutMatType& transformedData,
+                                     VecType& eigVal,
+                                     OutMatType& eigvec)
 {
+  // Sanity checks on input types.
+  static_assert(IsBaseMatType<OutMatType>::value,
+      "PCA::Apply(): transformedData must be a matrix type!");
+  static_assert(IsBaseMatType<VecType>::value,
+      "PCA::Apply(): eigVal must be a vector type!");
+  static_assert(std::is_same<typename MatType::elem_type,
+                             typename OutMatType::elem_type>::value,
+      "PCA::Apply(): data and transformedData must have the same element "
+      "types!");
+
   // Center the data into a temporary matrix.
-  arma::mat centeredData = data.each_col() - arma::mean(data, 1);
+  OutMatType centeredData = arma::conv_to<OutMatType>::from(data);
+  centeredData.each_col() -= arma::mean(centeredData, 1);
 
   // Scale the data if the user asked for it.
   ScaleData(centeredData);
 
   decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
-      data.n_rows);
+      centeredData.n_rows);
 }
 
 /**
@@ -60,11 +71,22 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
  * @param eigVal - contains eigen values in a column vector
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
-                                     arma::mat& transformedData,
-                                     arma::vec& eigVal)
+template<typename MatType, typename OutMatType, typename VecType>
+void PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                     OutMatType& transformedData,
+                                     VecType& eigVal)
 {
-  arma::mat eigvec;
+  // Sanity checks on input types.
+  static_assert(IsBaseMatType<OutMatType>::value,
+      "PCA::Apply(): transformedData must be a matrix type!");
+  static_assert(IsBaseMatType<VecType>::value,
+      "PCA::Apply(): eigVal must be a vector type!");
+  static_assert(std::is_same<typename MatType::elem_type,
+                             typename OutMatType::elem_type>::value,
+      "PCA::Apply(): data and transformedData must have the same element "
+      "types!");
+
+  OutMatType eigvec;
   Apply(data, transformedData, eigVal, eigvec);
 }
 
@@ -75,11 +97,24 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
  * @param transformedData Data with PCA applied.
  */
 template<typename DecompositionPolicy>
-void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
-                                     arma::mat& transformedData)
+template<typename MatType, typename OutMatType>
+void PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                     OutMatType& transformedData)
 {
-  arma::mat eigvec;
-  arma::vec eigVal;
+  // Sanity checks on input types.
+  static_assert(IsBaseMatType<OutMatType>::value,
+      "PCA::Apply(): transformedData must be a matrix type!");
+  static_assert(std::is_same<typename MatType::elem_type,
+                             typename OutMatType::elem_type>::value,
+      "PCA::Apply(): data and transformedData must have the same element "
+      "types!");
+
+  // It's possible a user didn't pass in a matrix but instead an expression, but
+  // we need a type that we can store.
+  typedef typename GetDenseColType<MatType>::type BaseColType;
+
+  OutMatType eigvec;
+  BaseColType eigVal;
   Apply(data, transformedData, eigVal, eigvec);
 }
 
@@ -95,32 +130,58 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
  * @return Amount of the variance of the data retained (between 0 and 1).
  */
 template<typename DecompositionPolicy>
-double PCA<DecompositionPolicy>::Apply(arma::mat& data,
+template<typename MatType>
+double PCA<DecompositionPolicy>::Apply(MatType& data,
+                                       const size_t newDimension)
+{
+  return Apply(data, data, newDimension);
+}
+
+template<typename DecompositionPolicy>
+template<typename MatType, typename OutMatType>
+double PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                       OutMatType& transformedData,
                                        const size_t newDimension)
 {
   // Parameter validation.
   if (newDimension == 0)
-    Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
-        << "be zero!" << std::endl;
-  if (newDimension > data.n_rows)
-    Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
-        << "be greater than the existing dimensionality of the data ("
-        << data.n_rows << ")!" << std::endl;
+  {
+    std::ostringstream oss;
+    oss << "PCA::Apply(): newDimension (" << newDimension << ") cannot be "
+        << "zero!";
+    throw std::invalid_argument(oss.str());
+  }
 
-  arma::mat eigvec;
-  arma::vec eigVal;
+  typedef typename GetDenseMatType<MatType>::type BaseMatType;
+  typedef typename GetDenseColType<MatType>::type BaseColType;
+
+  BaseMatType eigvec;
+  BaseColType eigVal;
 
   // Center the data into a temporary matrix.
-  arma::mat centeredData = data.each_col() - arma::mean(data, 1);
+  BaseMatType centeredData = arma::conv_to<OutMatType>::from(data);
+  centeredData.each_col() -= arma::mean(centeredData, 1);
+
+  // This check cannot happen until here, as `data` may not have a .n_rows
+  // member if it is an expression.
+  if (newDimension > centeredData.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
+        << "be greater than the existing dimensionality of the data ("
+        << data.n_rows << ")!";
+    throw std::invalid_argument(oss.str());
+  }
 
   // Scale the data if the user ask for.
   ScaleData(centeredData);
 
-  decomposition.Apply(data, centeredData, data, eigVal, eigvec, newDimension);
+  decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
+      newDimension);
 
   if (newDimension < eigvec.n_rows)
     // Drop unnecessary rows.
-    data.shed_rows(newDimension, data.n_rows - 1);
+    transformedData.shed_rows(newDimension, data.n_rows - 1);
 
   // The svd method returns only non-zero eigenvalues so we have to calculate
   // the right dimension before calculating the amount of variance retained.
@@ -141,21 +202,43 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
  * always be greater than or equal to the varRetained parameter.
  */
 template<typename DecompositionPolicy>
-double PCA<DecompositionPolicy>::Apply(arma::mat& data,
+template<typename MatType>
+double PCA<DecompositionPolicy>::Apply(MatType& data,
+                                       const double varRetained)
+{
+  return Apply(data, data, varRetained);
+}
+
+template<typename DecompositionPolicy>
+template<typename MatType, typename OutMatType>
+double PCA<DecompositionPolicy>::Apply(const MatType& data,
+                                       OutMatType& transformedData,
                                        const double varRetained)
 {
   // Parameter validation.
   if (varRetained < 0)
-    Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") must be "
-        << "greater than or equal to 0." << std::endl;
-  if (varRetained > 1)
-    Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
-        << "less than or equal to 1." << std::endl;
+  {
+    std::ostringstream oss;
+    oss << "PCA::Apply(): varRetained (" << varRetained << ") must be greater "
+        << "than or equal to 0.";
+    throw std::invalid_argument(oss.str());
+  }
+  else if (varRetained > 1)
+  {
+    std::ostringstream oss;
+    oss << "PCA::Apply(): varRetained (" << varRetained << ") should be less "
+        << "than or equal to 1.";
+    throw std::invalid_argument(oss.str());
+  }
 
-  arma::mat eigvec;
-  arma::vec eigVal;
+  typedef typename GetDenseMatType<MatType>::type BaseMatType;
+  typedef typename GetDenseColType<MatType>::type BaseColType;
 
-  Apply(data, data, eigVal, eigvec);
+  BaseMatType eigvec;
+  BaseColType eigVal;
+  BaseMatType out;
+
+  Apply(data, transformedData, eigVal, eigvec);
 
   // Calculate the dimension we should keep.
   size_t newDimension = 0;
@@ -169,7 +252,7 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
 
   // varSum is the actual variance we will retain.
   if (newDimension < eigVal.n_elem)
-    data.shed_rows(newDimension, data.n_rows - 1);
+    transformedData.shed_rows(newDimension, transformedData.n_rows - 1);
 
   return varSum;
 }

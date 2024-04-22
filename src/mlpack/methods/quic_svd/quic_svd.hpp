@@ -51,6 +51,7 @@ namespace mlpack {
  * qSVD.Apply(data, u, v, sigma, epsilon, delta);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class QUIC_SVD
 {
  public:
@@ -64,10 +65,10 @@ class QUIC_SVD
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  QUIC_SVD(const arma::mat& dataset,
-           arma::mat& u,
-           arma::mat& v,
-           arma::mat& sigma,
+  QUIC_SVD(const MatType& dataset,
+           MatType& u,
+           MatType& v,
+           MatType& sigma,
            const double epsilon = 0.03,
            const double delta = 0.1);
 
@@ -93,10 +94,10 @@ class QUIC_SVD
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  void Apply(const arma::mat& dataset,
-             arma::mat& u,
-             arma::mat& v,
-             arma::mat& sigma,
+  void Apply(const MatType& dataset,
+             MatType& u,
+             MatType& v,
+             MatType& sigma,
              const double epsilon = 0.03,
              const double delta = 0.1);
 
@@ -108,14 +109,14 @@ class QUIC_SVD
    * @param v Second unitary matrix.
    * @param sigma Diagonal matrix of singular values.
    */
-  void ExtractSVD(const arma::mat& dataset,
-                  arma::mat& u, 
-                  arma::mat& v, 
-                  arma::mat& sigma);
+  void ExtractSVD(const MatType& dataset,
+                  MatType& u,
+                  MatType& v,
+                  MatType& sigma);
 
  private:
   //! Subspace basis of the input dataset.
-  arma::mat basis;
+  MatType basis;
 };
 
 } // namespace mlpack

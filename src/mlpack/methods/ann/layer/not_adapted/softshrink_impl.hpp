@@ -38,7 +38,7 @@ template<typename InputType, typename OutputType>
 void SoftShrinkType<InputType, OutputType>::Backward(
     const InputType& input, const OutputType& gy, OutputType& g)
 {
-  g = gy % (arma::ones(arma::size(input)) - (input == 0));
+  g = gy % (ones(arma::size(input)) - (input == 0));
 }
 
 template<typename InputType, typename OutputType>

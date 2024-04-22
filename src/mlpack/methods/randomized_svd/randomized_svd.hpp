@@ -80,10 +80,11 @@ class RandomizedSVD
    * @param eps The eps coefficient to avoid division by zero (numerical
    *        stability).
    */
-  RandomizedSVD(const arma::mat& data,
-                arma::mat& u,
-                arma::vec& s,
-                arma::mat& v,
+  template<typename InMatType, typename MatType, typename VecType>
+  RandomizedSVD(const InMatType& data,
+                MatType& u,
+                VecType& s,
+                MatType& v,
                 const size_t iteratedPower = 0,
                 const size_t maxIterations = 2,
                 const size_t rank = 0,
@@ -113,10 +114,11 @@ class RandomizedSVD
    * @param s Diagonal "Sigma" matrix of singular values.
    * @param rank Rank of the approximation.
    */
-  void Apply(const arma::sp_mat& data,
-             arma::mat& u,
-             arma::vec& s,
-             arma::mat& v,
+  template<typename eT, typename MatType, typename VecType>
+  void Apply(const arma::SpMat<eT>& data,
+             MatType& u,
+             VecType& s,
+             MatType& v,
              const size_t rank);
 
 /**
@@ -129,10 +131,11 @@ class RandomizedSVD
    * @param s Diagonal "Sigma" matrix of singular values.
    * @param rank Rank of the approximation.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& u,
-             arma::vec& s,
-             arma::mat& v,
+  template<typename InMatType, typename MatType, typename VecType>
+  void Apply(const InMatType& data,
+             MatType& u,
+             VecType& s,
+             MatType& v,
              const size_t rank);
 
   /**
@@ -146,13 +149,16 @@ class RandomizedSVD
    * @param rank Rank of the approximation.
    * @param rowMean Centered mean value matrix.
    */
-  template<typename MatType>
-  void Apply(const MatType& data,
-             arma::mat& u,
-             arma::vec& s,
-             arma::mat& v,
+  template<typename InMatType,
+           typename MatType,
+           typename VecType,
+           typename MeanType>
+  void Apply(const InMatType& data,
+             MatType& u,
+             VecType& s,
+             MatType& v,
              const size_t rank,
-             MatType rowMean);
+             const MeanType& rowMean);
 
   //! Get the size of the normalized power iterations.
   size_t IteratedPower() const { return iteratedPower; }

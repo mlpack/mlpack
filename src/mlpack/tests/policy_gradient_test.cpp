@@ -192,7 +192,7 @@ TEST_CASE("OUNoiseTest", "[PolicyGradientTest]")
   // Test the reset function.
   ouNoise.reset();
   arma::colvec state = ouNoise.sample();
-  REQUIRE(state.n_elem == size);
+  REQUIRE((int) state.n_elem == size);
 
   // Verify that the sample is not equal to the reset state.
   arma::colvec sample = ouNoise.sample();
@@ -213,7 +213,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 
   // Test the sample function.
   arma::colvec noise = gaussianNoise.sample();
-  REQUIRE(noise.n_elem == size);
+  REQUIRE((int) noise.n_elem == size);
 
   // Verify that the noise vector has values drawn from a 
   // Gaussian distribution with the specified mean and standard deviation.
