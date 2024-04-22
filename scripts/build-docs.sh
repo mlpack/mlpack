@@ -16,6 +16,7 @@ else
   output_dir=doc/html;
 fi
 
+# If the header and footer already exist, they will not be overwritten.
 template_html_header="${output_dir}/template.html.header";
 template_html_footer="${output_dir}/template.html.footer";
 template_html_sidebar="${output_dir}/template.html.sidebar";
@@ -283,7 +284,18 @@ create_page_sidebar_section()
   rm -f "$output_file.side.tmp";
 }
 
-rm -rf "$output_dir";
+# Save any existing template.
+if [ -f "$template_html_header" ];
+then
+  mv "$template_html_header" template.html.header.tmp;
+fi
+
+if [ -f "$template_html_footer" ];
+then
+  mv "$template_html_footer" template.html.footer.tmp;
+fi
+
+#rm -rf "$output_dir";
 mkdir -p "$output_dir";
 cp doc/css/* "$output_dir";
 mkdir -p "$output_dir/user/img/";
@@ -291,9 +303,23 @@ cp doc/img/* "$output_dir/user/img/";
 mkdir -p "$output_dir/tutorials/res/";
 cp doc/tutorials/res/* "$output_dir/tutorials/res/";
 
-# Create the template files we will use.
-create_template_header "$template_html_header";
-create_template_footer "$template_html_footer";
+# Create the template files we will use, if they don't already exist.
+if [ -f template.html.header.tmp ];
+then
+  mv template.html.header.tmp "$template_html_header";
+else
+  create_template_header "$template_html_header";
+  del_header=1;
+fi
+
+if [ -f template.html.footer.tmp ];
+then
+  mv template.html.footer.tmp "$template_html_footer";
+else
+  create_template_footer "$template_html_footer";
+  del_footer=1;
+fi
+
 cp doc/sidebar.html "$template_html_sidebar";
 
 # Process all the .md files.
@@ -331,5 +357,12 @@ do
 done
 
 # Remove temporary files.
-rm -f "$template_html_header";
-rm -f "$template_html_footer";
+if [ "a$del_header" == "a1" ];
+then
+  rm -f "$template_html_header";
+fi
+
+if [ "a$del_footer" == "a1" ];
+then
+  rm -f "$template_html_footer";
+fi
