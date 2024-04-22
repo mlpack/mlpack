@@ -51,7 +51,7 @@ SAC<
   #if ENS_VERSION_MAJOR >= 2
   policyNetworkUpdatePolicy(NULL),
   #endif
-  environment(std::move(environment)),
+  environment(environment),
   totalSteps(0),
   deterministic(false)
 {
@@ -64,7 +64,14 @@ SAC<
   // Note: the q and policy networks have an if condition before reset.
   // This is because we don't want to reset a loaded(possibly pretrained) model
   // passed using this constructor.
-  const size_t envSampleSize = environment.InitialSample().Encode().n_elem;
+  
+  size_t envSampleSize;
+  // Intialize envSampleSize in both normal and vectorized environment case.
+  if constexpr (std::is_same<decltype(state.Encode()), const arma::colvec&>::value)
+    envSampleSize = environment.InitialSample().Encode().n_elem; // normal env
+  else // vectorized env
+    envSampleSize = environment.InitialSample().Encode()[0].Encode().n_elem;
+  
   if (policyNetwork.Parameters().n_elem != envSampleSize)
     policyNetwork.Reset(envSampleSize);
 
@@ -163,7 +170,20 @@ void SAC<
 {
   // Sample from previous experience.
   arma::mat sampledStates;
-  std::vector<ActionType> sampledActions;
+  
+  // Intialize SampledActions in both normal and vectorized environment cases.
+  auto sampledActions = [&]()
+  {
+    if constexpr (std::is_same_v<decltype(state.Encode()), const arma::colvec&>) 
+    {
+      return std::vector<ActionType>{}; // normal env
+    } 
+    else 
+    {
+      return std::vector<typename EnvironmentType::EnvAction>{}; // vectorized env
+    }
+  }();
+
   arma::rowvec sampledRewards;
   arma::mat sampledNextStates;
   arma::irowvec isTerminal;
@@ -298,16 +318,37 @@ void SAC<
 {
   // Get the action at current state, from policy.
   arma::colvec outputAction;
-  policyNetwork.Predict(state.Encode(), outputAction);
+  if constexpr (!std::is_same<decltype(state.Encode()), const arma::colvec&>::value)
+  { // vectorized environment
+    for (size_t i = 0; i < environment.nEnvs; i++)
+    {
+      if (environment.IsTerminal(state)[i])   // skip if the env is terminated
+        continue;
+      policyNetwork.Predict(state.Encode()[i].Encode(), outputAction);
 
-  if (!deterministic)
-  {
-    arma::colvec noise;
-    noise.randn(outputAction.n_rows) * 0.1;
-    noise = arma::clamp(noise, -0.25, 0.25);
-    outputAction = outputAction + noise;
+      if (!deterministic)
+      {
+        arma::colvec noise;
+        noise.randn(outputAction.n_rows) * 0.1;
+        noise = arma::clamp(noise, -0.25, 0.25);
+        outputAction = outputAction + noise;
+      }
+      action.action[i].action = ConvTo<std::vector<double>>::From(outputAction);    
+    }
   }
-  action.action = ConvTo<std::vector<double>>::From(outputAction);
+  else // normal environment
+  {
+    policyNetwork.Predict(state.Encode(), outputAction);
+
+    if (!deterministic)
+    {
+      arma::colvec noise;
+      noise.randn(outputAction.n_rows) * 0.1;
+      noise = arma::clamp(noise, -0.25, 0.25);
+      outputAction = outputAction + noise;
+    }
+    action.action = ConvTo<std::vector<double>>::From(outputAction);
+  }
 }
 
 template <
@@ -335,17 +376,37 @@ double SAC<
   double totalReturn = 0.0;
 
   // Running until get to the terminal state.
-  while (!environment.IsTerminal(state))
+  while (true)  // here if any is false
   {
+    // Check terminal state in the normal and vectorized environement cases.
+    auto terminalStatus = environment.IsTerminal(state);
+    if constexpr (std::is_same<decltype(terminalStatus), bool>::value)
+    {
+      if (terminalStatus)
+        break;
+    }
+    else if constexpr (std::is_same<decltype(terminalStatus), std::vector<bool>>::value)
+    { // vectorized environment
+      for (bool isTerminal : terminalStatus)
+        if (!isTerminal)
+          break;
+    }
+
     if (config.StepLimit() && steps >= config.StepLimit())
       break;
     SelectAction();
 
     // Interact with the environment to advance to next state.
     StateType nextState;
-    double reward = environment.Sample(state, action, nextState);
-
-    totalReturn += reward;
+    auto reward = environment.Sample(state, action, nextState);
+    // If the reward is a vector of rewards (vectorized environment), add rewards
+    // mean to total return, else add the reward.
+    if constexpr (std::is_same<decltype(reward), double>::value)
+      totalReturn += reward;
+    else
+      totalReturn += std::accumulate(reward.begin(),
+                                     reward.end(),
+                                     0.0) / reward.size();
     steps++;
     totalSteps++;
 
