@@ -38,11 +38,11 @@ class AverageInitialization
    * @param W W matrix, to be initialized.
    * @param H H matrix, to be initialized.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
-                                arma::mat& W,
-                                arma::mat& H)
+                                WHMatType& W,
+                                WHMatType& H)
   {
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
@@ -81,10 +81,10 @@ class AverageInitialization
    * with uniform random noise added.
    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void InitializeOne(const MatType& V,
                                    const size_t r,
-                                   arma::mat& M,
+                                   WHMatType& M,
                                    const bool whichMatrix = true)
   {
     const size_t n = V.n_rows;

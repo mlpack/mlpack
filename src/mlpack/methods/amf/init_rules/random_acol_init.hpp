@@ -47,11 +47,11 @@ class RandomAcolInitialization
   RandomAcolInitialization()
   { }
 
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
-                                arma::mat& W,
-                                arma::mat& H)
+                                WHMatType& W,
+                                WHMatType& H)
   {
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
@@ -70,8 +70,7 @@ class RandomAcolInitialization
     {
       for (size_t randCol = 0; randCol < columnsToAverage; randCol++)
       {
-        // .col() does not work in this case, as of Armadillo 3.920.
-        W.unsafe_col(col) += V.col(RandInt(0, m));
+        W.col(col) += V.col(RandInt(0, m));
       }
     }
 

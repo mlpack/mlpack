@@ -30,9 +30,9 @@ following functions.
    * By default the format is auto-detected based on the file extension, but can
      be explicitly specified with `format`; see [Formats](#formats).
 
-   * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, or similar (e.g., a
-     reference to an Armadillo object that data will be loaded into or saved
-     from).
+   * `matrix` is an `arma::mat&`, `arma::Mat<size_t>&`, `arma::sp_mat&`, or
+     similar (e.g., a reference to an Armadillo object that data will be loaded
+     into or saved from).
 
    * If `fatal` is `true`, a `std::runtime_error` will be thrown on failure.
 
@@ -677,7 +677,9 @@ specified with the `format` parameter using one of the options below:
    contents.
 
  - `FileType::CSVASCII` (autodetect extensions `.csv`, `.tsv`): CSV format
-   with no header.
+   with no header.  If loading a sparse matrix and the CSV has three columns,
+   the data is interpreted as a
+   [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat).
 
  - `FileType::RawASCII` (autodetect extensions `.csv`, `.txt`):
    space-separated values or tab-separated values (TSV) with no header.
@@ -687,8 +689,8 @@ specified with the `format` parameter using one of the options below:
    [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)
    format.
 
- - `FileType::CoordASCII` (not autodetected, must be manually specified):
-   coordinate list format for sparse data (see
+ - `FileType::CoordASCII` (autodetect extensions `.txt`, `.tsv`; must be
+   loading a sparse matrix type): coordinate list format for sparse data (see
    [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)).
 
  - `FileType::ArmaBinary` (autodetect extension `.bin`): Armadillo's
