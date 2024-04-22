@@ -74,6 +74,7 @@ DropoutType<MatType>::operator=(DropoutType&& other)
   return *this;
 }
 
+
 template<typename MatType>
 void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
@@ -82,8 +83,8 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-std::enable_if_t<arma::is_arma_type<MatType>::value, void>
-DropoutType<MatType>::ForwardImpl(const MatType& input, MatType& output)
+template<typename T, typename std::enable_if_t<arma::is_arma_type<T>::value, int>>
+void DropoutType<MatType>::ForwardImpl(const T& input, T& output)
 {
   if (!this->training)
   {
@@ -100,8 +101,8 @@ DropoutType<MatType>::ForwardImpl(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-std::enable_if_t<!arma::is_arma_type<MatType>::value, void>
-DropoutType<MatType>::ForwardImpl(const MatType& input, MatType& output)
+template<typename T, typename std::enable_if_t<!arma::is_arma_type<T>::value, int>>
+void DropoutType<MatType>::ForwardImpl(const T& input, T& output)
 {
   if (!this->training)
   {
@@ -110,9 +111,7 @@ DropoutType<MatType>::ForwardImpl(const MatType& input, MatType& output)
   else
   {
     mask.randu(input.n_rows, input.n_cols);
-    arma::uvec indices = arma::find(mask > ratio);
-    mask.zeros();
-    mask.elem(indices).fill(1);
+    mask = (mask > ratio);
     output = input % mask * scale;
   }
 }
