@@ -74,7 +74,6 @@ DropoutType<MatType>::operator=(DropoutType&& other)
   return *this;
 }
 
-
 template<typename MatType>
 void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 {
@@ -83,8 +82,8 @@ void DropoutType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void DropoutType<MatType>::ForwardImpl(const MatType& input,
-                                       MatType& output)
+std::enable_if_t<arma::is_arma_type<MatType>::value, void>
+DropoutType<MatType>::ForwardImpl(const MatType& input, MatType& output)
 {
   if (!this->training)
   {
@@ -100,11 +99,9 @@ void DropoutType<MatType>::ForwardImpl(const MatType& input,
   }
 }
 
-#ifdef MLPACK_HAS_COOT
-
 template<typename MatType>
-void DropoutType<MatType>::ForwardImpl(const MatType& input,
-                                       MatType& output)
+std::enable_if_t<!arma::is_arma_type<MatType>::value, void>
+DropoutType<MatType>::ForwardImpl(const MatType& input, MatType& output)
 {
   if (!this->training)
   {
@@ -119,8 +116,6 @@ void DropoutType<MatType>::ForwardImpl(const MatType& input,
     output = input % mask * scale;
   }
 }
-
-#endif
 
 template<typename MatType>
 void DropoutType<MatType>::Backward(
