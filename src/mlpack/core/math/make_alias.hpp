@@ -53,7 +53,7 @@ void MakeAlias(OutMatType& m,
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
   typename InMatType::elem_type* newMem =
-    const_cast<typename InMatType::elem_type*>(oldMat.memptr()) + offset;
+      const_cast<typename InMatType::elem_type*>(oldMat.memptr()) + offset;
   m.~OutMatType();
   new (&m) OutMatType(newMem, numRows, numCols, false, strict);
 }
