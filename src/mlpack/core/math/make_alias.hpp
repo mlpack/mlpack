@@ -25,7 +25,7 @@ void MakeAlias(OutVecType& v,
                const size_t numElems,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<IsVector<InVecType>::value>* = 0)
+               const typename std::enable_if_t<IsVector<OutVecType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -47,7 +47,7 @@ void MakeAlias(OutMatType& m,
                const size_t numCols,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<IsMatrix<InMatType>::value>* = 0)
+               const typename std::enable_if_t<IsMatrix<OutMatType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
@@ -70,7 +70,7 @@ void MakeAlias(OutCubeType& c,
                const size_t numSlices,
                const size_t offset = 0,
                const bool strict = true,
-               const typename std::enable_if_t<IsCube<InCubeType>::value>* = 0)
+               const typename std::enable_if_t<IsCube<OutCubeType>::value>* = 0)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
