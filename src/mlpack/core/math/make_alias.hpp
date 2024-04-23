@@ -31,7 +31,7 @@ void MakeAlias(OutVecType& v,
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
   typename InVecType::elem_type* newMem =
-    const_cast<typename InVecType::elem_type*>(oldVec.memptr()) + offset;
+      const_cast<typename InVecType::elem_type*>(oldVec.memptr()) + offset;
   v.~OutVecType();
   new (&v) OutVecType(newMem, numElems, false, strict);
 }
