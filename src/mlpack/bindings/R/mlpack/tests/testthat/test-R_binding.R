@@ -318,7 +318,7 @@ test_that("TestSerialization", {
 
 # Make sure that the verbose argument does anything at all.
 test_that("TestVerbose", {
-  expect_output(output1 <- test_r_binding(4.0, 12, "hello",
+  expect_output(test_r_binding(4.0, 12, "hello",
                                           build_model=TRUE,
                                           verbose=TRUE))
 })
