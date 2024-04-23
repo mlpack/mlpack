@@ -76,7 +76,7 @@ void MakeAlias(OutCubeType& c,
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
   typename InCubeType::elem_type* newMem =
-    const_cast<typename InCubeType::elem_type*>(oldCube.memptr()) + offset;
+      const_cast<typename InCubeType::elem_type*>(oldCube.memptr()) + offset;
   c.~OutCubeType();
   new (&c) OutCubeType(newMem, numRows, numCols, numSlices, false, strict);
 }
