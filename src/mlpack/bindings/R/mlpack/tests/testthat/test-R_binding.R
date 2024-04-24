@@ -319,19 +319,19 @@ test_that("TestSerialization", {
 # Make sure that the verbose argument does anything at all.
 test_that("TestVerbose", {
   expect_output(test_r_binding(4.0, 12, "hello",
-                                          build_model=TRUE,
-                                          verbose=TRUE))
+                               build_model=TRUE,
+                               verbose=TRUE))
 })
 
 # Test that we get no output when verbose output is disabled.
 test_that("TestNotVerbose", {
   expect_silent(test_r_binding(4.0, 12, "hello",
-                                          build_model=TRUE))
+                               build_model=TRUE))
 })
 
 # Test that we get no output when verbose output is explicitly disabled.
 test_that("TestReallyNotVerbose", {
   expect_silent(test_r_binding(4.0, 12, "hello",
-                                          build_model=TRUE,
-                                          verbose=FALSE))
+                               build_model=TRUE,
+                               verbose=FALSE))
 })
