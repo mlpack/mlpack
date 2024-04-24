@@ -2,6 +2,7 @@
  * @file core/util/using.hpp
  * @author Omar Shrit
  * @author Ryan Curtin
+ * @author Conrad Sanderson
  *
  * This is a set of `using` statements to mitigate any possible risks or
  * conflicts with local functions. The compiler is supposed to proritise the
@@ -77,35 +78,23 @@ namespace mlpack {
     namespace fill {
 
       #ifdef MLPACK_HAS_COOT
-        struct fill_none  : public arma::fill::fill_class<
-                              arma::fill::fill_none>,
-                            public coot::fill::fill_class<
-                              coot::fill::fill_none> { };
+        struct fill_none  : public decltype(arma::fill::none),
+                            public decltype(coot::fill::none) { };
 
-        struct fill_zeros : public arma::fill::fill_class<
-                              arma::fill::fill_zeros>,
-                            public coot::fill::fill_class<
-                              coot::fill::fill_zeros> { };
+        struct fill_zeros : public decltype(arma::fill::zeros),
+                            public decltype(coot::fill::zeros) { };
 
-        struct fill_ones  : public arma::fill::fill_class<
-                              arma::fill::fill_ones>,
-                            public coot::fill::fill_class<
-                              coot::fill::fill_ones> { };
+        struct fill_ones  : public decltype(arma::fill::ones),
+                            public decltype(coot::fill::ones) { };
 
-        struct fill_randu  : public arma::fill::fill_class<
-                              arma::fill::fill_randu>,
-                            public coot::fill::fill_class<
-                              coot::fill::fill_randu> { };
+        struct fill_randu : public decltype(arma::fill::randu),
+                            public decltype(coot::fill::randu) { };
 
       #else
-        struct fill_none  : public arma::fill::fill_class<
-                              arma::fill::fill_none> { };
-        struct fill_zeros : public arma::fill::fill_class<
-                              arma::fill::fill_zeros> { };
-        struct fill_ones  : public arma::fill::fill_class<
-                              arma::fill::fill_ones> { };
-        struct fill_randu  : public arma::fill::fill_class<
-                              arma::fill::fill_randu> { };
+        struct fill_none  : public decltype(arma::fill::none) { };
+        struct fill_zeros : public decltype(arma::fill::zeros) { };
+        struct fill_ones  : public decltype(arma::fill::ones) { };
+        struct fill_randu : public decltype(arma::fill::randu) { };
       #endif
 
       static constexpr fill_none  none;
