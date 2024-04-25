@@ -67,7 +67,7 @@ Follow the instructions on [this page on how to set up Conan](https://conan.io/d
 Install mlpack:
 
 ```shell
-conan install --requires=mlpack/4.3.0 --build=missing
+conan install --requires="mlpack/[*]" --build=missing
 ```
 
 If the version is outdated or there is a new release version, please [create an issue or pull request](https://github.com/conan-io/conan-center-index) on the conan-center-index repository.
