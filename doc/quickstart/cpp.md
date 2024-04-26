@@ -58,6 +58,20 @@ cd vcpkg
 
 If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
 
+## Installing mlpack from Conan
+
+The mlpack recipe in [Conan](https://conan.io/) is kept up to date by the Conan team members and the community contributors.
+
+Follow the instructions on [this page on how to set up Conan](https://conan.io/downloads).
+
+Install mlpack:
+
+```shell
+conan install --requires="mlpack/[*]" --build=missing
+```
+
+If the version is outdated or there is a new release version, please [create an issue or pull request](https://github.com/conan-io/conan-center-index) on the conan-center-index repository.
+
 ## Simple quickstart example
 
 As a really simple example of how to use mlpack in C++, let's do some simple
