@@ -447,7 +447,8 @@ typename MatType::elem_type RNN<
 
     const size_t responseStep = (single) ? 0 : t;
     MakeAlias(responseData, responses.slice(responseStep),
-        responses.n_rows, batchSize, begin * responses.slice(responseStep).n_rows);
+        responses.n_rows, batchSize,
+        begin * responses.slice(responseStep).n_rows);
 
     loss += network.outputLayer.Forward(outputData, responseData);
 
