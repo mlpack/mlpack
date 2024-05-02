@@ -171,3 +171,8 @@ for other languages:
    bindings
  * [Automatic bindings](developer/bindings.md): details on mlpack's automatic
    binding generator system.
+
+## Changelog
+
+For a list of changes in each version of mlpack, see the
+[changelog](HISTORY.md).

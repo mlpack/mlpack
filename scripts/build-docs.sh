@@ -80,11 +80,11 @@ run_kramdown()
   # - We also only catch the second part of the link '](' because the name of
   #   the link could be spread on multiple lines.
   #
-  # We start by trying to catch a special case of README.md, which our
-  # documentation puts in a slightly different place.  In addition, because
-  # README.md is being moved to the root of the documentation, we must adjust
-  # links in that file differently.
-  if [[ $input_file != "README.md" ]];
+  # We start by trying to catch the special cases README.md and HISTORY.md,
+  # which our documentation puts in a slightly different place.  In addition,
+  # because those files are being moved to the root of the documentation, we
+  # must adjust links differently.
+  if [[ $input_file != "README.md" ]] && [[ $input_file != "HISTORY.md" ]];
   then
     sed -i "s|\]([./]*README.md)|](${link_root}README.html)|g" $input_file.tmp;
     sed -i "s|\]([./]*README.md#[0-9]-\([^ ]*\))|](${link_root}README.html#\1)|g" $input_file.tmp;
@@ -105,6 +105,15 @@ run_kramdown()
     sed -i 's/\](#[0-9]-\([^ ]*\))/](#\1)/g' $input_file.tmp;
     sed -i 's/\](#[0-9][0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
     sed -i 's/\](#[0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
+
+    # For HISTORY.md, we want to turn all references to Github issues into
+    # actual links, and all references to Github usernames into links to their
+    # profile.
+    if [[ $input_file == "HISTORY.md" ]];
+    then
+      sed -i 's/#\([0-9][0-9]*\)/[#\1](https:\/\/github.com\/mlpack\/mlpack\/issues\/\1)/g' $input_file.tmp;
+      sed -i 's/\([^`]\)@\([a-zA-Z0-9_-][a-zA-Z0-9_-]*\)/\1[@\2](https:\/\/github.com\/\2)/g' $input_file.tmp;
+    fi
   fi
 
   # Replace any links to source files with a link to the current version of the
@@ -123,6 +132,9 @@ run_kramdown()
     then
       set_lang=0;
     fi
+  elif [[ $input_file == "HISTORY.md" ]];
+  then
+    set_lang=0;
   fi
 
   if [[ "$set_lang" == "0" ]];
@@ -325,7 +337,7 @@ then
   mv "$template_html_footer" template.html.footer.tmp;
 fi
 
-#rm -rf "$output_dir";
+rm -rf "$output_dir";
 mkdir -p "$output_dir";
 cp -v doc/css/* "$output_dir";
 mkdir -p "$output_dir/img/";
@@ -353,7 +365,7 @@ fi
 cp doc/sidebar.html "$template_html_sidebar";
 
 # Process all the .md files.
-for f in README.md `find ./doc/ -iname '*.md'`;
+for f in README.md HISTORY.md `find ./doc/ -iname '*.md'`;
 do
   # Skip the JOSS paper...
   if [[ $f == *"joss_paper"* ]]; then
