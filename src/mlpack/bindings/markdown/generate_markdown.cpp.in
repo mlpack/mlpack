@@ -94,6 +94,11 @@ int main(int argc, char** argv)
     cout << "</ul>" << endl;
 
     cout << "<ul>" << endl;
+    cout << "<li class=\"page_title\">" << endl;
+    cout << "<b>mlpack " << PrintLanguage(BindingInfo::Language())
+        << " binding documentation</b>" << endl;
+    cout << "<a href=\"#\">[top]</a>" << endl;
+    cout << "<ul>" << endl;
 
     // The links to the data type sections get put here.
     cout << "<li><a href=\"#mlpack-overview\">Overview</a></li>" << endl;
@@ -104,6 +109,8 @@ int main(int argc, char** argv)
 
     ${MARKDOWN_HEADER_CODE}
 
+    cout << "</ul>" << endl;
+    cout << "</li>" << endl;
     cout << "</ul>" << endl;
     cout << "</div>" << endl;
   }
