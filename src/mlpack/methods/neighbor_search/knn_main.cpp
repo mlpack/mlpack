@@ -66,8 +66,6 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@lsh", "#lsh");
 BINDING_SEE_ALSO("@krann", "#krann");
 BINDING_SEE_ALSO("@kfn", "#kfn");
-BINDING_SEE_ALSO("NeighborSearch tutorial (k-nearest-neighbors)",
-    "@doc/tutorials/neighbor_search.md");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
     "http://proceedings.mlr.press/v28/curtin13.pdf");
 BINDING_SEE_ALSO("NeighborSearch C++ class documentation",

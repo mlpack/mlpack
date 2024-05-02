@@ -113,13 +113,13 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
-        "AdaBoost");
+    "AdaBoost");
 BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
-        "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
+    "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
 BINDING_SEE_ALSO("Perceptron", "#perceptron");
-BINDING_SEE_ALSO("Decision Stump", "#decision_stump");
-BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
-        "@src/mlpack/methods/adaboost/adaboost.hpp");
+BINDING_SEE_ALSO("Decision Trees", "#decision_tree");
+BINDING_SEE_ALSO("AdaBoost C++ class documentation",
+    "@doc/user/methods/adaboost.md");
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");

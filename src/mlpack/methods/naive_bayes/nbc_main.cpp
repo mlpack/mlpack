@@ -92,7 +92,7 @@ BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Naive Bayes classifier on Wikipedia",
     "https://en.wikipedia.org/wiki/Naive_Bayes_classifier");
 BINDING_SEE_ALSO("NaiveBayesClassifier C++ class documentation",
-    "@src/mlpack/methods/naive_bayes/naive_bayes_classifier.cpp");
+    "@src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp");
 
 // A struct for saving the model with mappings.
 struct NBCModel

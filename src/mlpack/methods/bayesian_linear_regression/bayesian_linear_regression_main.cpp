@@ -97,10 +97,11 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Bayesian Interpolation",
-    "https://authors.library.caltech.edu/13792/1/MACnc92a.pdf");
-BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3", "MLA Bishop, "
-    "Christopher M. Pattern Recognition and Machine Learning. New York: "
-    "Springer, 2006, section 3.3.");
+    "https://core.ac.uk/download/pdf/216127201.pdf");
+BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
+    // I wonder how long this full text PDF will remain available...
+    "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/"
+    "Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf");
 BINDING_SEE_ALSO("BayesianLinearRegression C++ class documentation",
     "@src/mlpack/methods/bayesian_linear_regression/"
     "bayesian_linear_regression.hpp");
