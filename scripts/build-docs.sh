@@ -151,7 +151,7 @@ run_kramdown()
     create_page_sidebar_section "$output_file.tmp" "$output_file" "$dir_name";
   elif [[ -f ${input_file/%.md/.sidebar.html} ]];
   then
-    echo "We have a custom sidebar!";
+    echo "Using custom sidebar...";
     # Some pages may have a custom sidebar HTML file.  (Specifically,
     # generated language bindings.)
     cat "${input_file/%.md/.sidebar.html}" | sed "s|LINKROOT|$link_root|" \
