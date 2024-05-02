@@ -30,7 +30,6 @@
  * @param onlyOutputParams If true, print only output-parameters.
  */
 void PrintParamTable(const std::string& bindingName,
-                     const std::string& language,
                      mlpack::util::Params& params,
                      const std::set<std::string>& headers,
                      std::unordered_set<std::string>& paramsSet,
