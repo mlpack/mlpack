@@ -6,7 +6,7 @@ gives a few examples of usage, and pointers to deeper documentation.
 Keep in mind that mlpack also has interfaces to other languages, and quickstart
 guides for those other languages are available too.  If that is what you are
 looking for, see the quickstarts for [Python](python.md),
-[the command line](cli.md), [Julia](julia.md), [R](R.md), or [Go](go.md).
+[the command line](cli.md), [Julia](julia.md), [R](r.md), or [Go](go.md).
 
 ## Installing mlpack
 
