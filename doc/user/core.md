@@ -436,13 +436,13 @@ The resulting images (before and after using `ColumnsToBlocks`) are shown below.
 *Before*:
 
 <center>
-<img src="img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
+<img src="../img/favicons-matrix.png" alt="four favicons each as a column in a matrix, unintelligible">
 </center>
 
 *After*:
 
 <center>
-<img src="img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
+<img src="../img/favicons-blocks.png" alt="four favicons each as a block in a larger image, much better">
 </center>
 
 ---

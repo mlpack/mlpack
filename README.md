@@ -270,7 +270,7 @@ bindings for many languages at once.
 
 The command-line programs have no extra dependencies.  The set of programs that
 will be compiled is detailed and documented on the [command-line program
-documentation page](https://www.mlpack.org/doc/stable/cli_documentation.html).
+documentation page](user/bindings/cli.md).
 
 From the root of the mlpack sources, run the following commands to build and
 install the command-line bindings:
