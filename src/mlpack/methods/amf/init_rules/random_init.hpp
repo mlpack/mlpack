@@ -35,11 +35,11 @@ class RandomAMFInitialization
    * @param W W matrix, to be filled with random noise.
    * @param H H matrix, to be filled with random noise.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void Initialize(const MatType& V,
                                 const size_t r,
-                                arma::mat& W,
-                                arma::mat& H)
+                                WHMatType& W,
+                                WHMatType& H)
   {
     // Simple implementation (left in the header file due to its simplicity).
     const size_t n = V.n_rows;
@@ -58,10 +58,10 @@ class RandomAMFInitialization
    * @param M W or H matrix, to be filled with random noise.
    * @param whichMatrix If true, initialize W. Otherwise, initialize H.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline void InitializeOne(const MatType& V,
                             const size_t r,
-                            arma::mat& M,
+                            WHMatType& M,
                             const bool whichMatrix = true)
   {
     // Simple implementation (left in the header file due to its simplicity).

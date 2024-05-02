@@ -97,11 +97,11 @@ class AMF
    * @param H Encoding matrix to output.
    * @param r Rank r of the factorization.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   double Apply(const MatType& V,
                const size_t r,
-               arma::mat& W,
-               arma::mat& H);
+               WHMatType& W,
+               WHMatType& H);
 
   //! Access the termination policy.
   const TerminationPolicyType& TerminationPolicy() const
@@ -161,6 +161,7 @@ using SVDIncompleteIncrementalFactorizer = AMF<
     SimpleResidueTermination,
     RandomAcolInitialization<>,
     SVDIncompleteIncrementalLearning>;
+
 /**
  * SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices
  * W and H by complete incremental gradient descent. SVD complete incremental
@@ -174,6 +175,27 @@ using SVDCompleteIncrementalFactorizer = AMF<
     SimpleResidueTermination,
     RandomAcolInitialization<>,
     SVDCompleteIncrementalLearning<MatType>>;
+
+/**
+ * Convenience typedef: NMF can be represented by the AMF class, so for
+ * usability and discoverability we make the AMF class available under both
+ * names.
+ */
+template<typename TerminationPolicyType = SimpleResidueTermination,
+         typename InitializationRuleType = RandomAcolInitialization<>,
+         typename UpdateRuleType = NMFMultiplicativeDistanceUpdate>
+class NMF : public AMF<TerminationPolicyType,
+                       InitializationRuleType,
+                       UpdateRuleType>
+{
+ public:
+  // Mirror constructor from AMF.
+  NMF(const TerminationPolicyType& terminationPolicy = TerminationPolicyType(),
+      const InitializationRuleType& initializeRule = InitializationRuleType(),
+      const UpdateRuleType& update = UpdateRuleType()) :
+      AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>(
+          terminationPolicy, initializeRule, update) { }
+};
 
 } // namespace mlpack
 
