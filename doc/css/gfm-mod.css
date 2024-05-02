@@ -1058,7 +1058,7 @@ table td em {
 
 div#sidebar {
   float: left;
-  position: sticky;
+  position: fixed;
   top: 5px;
   min-width: 200px;
   font-size: 90%;
@@ -1124,4 +1124,8 @@ div#sidebar details[open] summary::after {
   div#sidebar {
     max-width: 200px;
   }
+}
+
+div#data-formats-div li {
+  margin-bottom: 1em;
 }
