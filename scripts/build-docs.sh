@@ -111,21 +111,51 @@ run_kramdown()
   # source file on Github.
   sed -i 's/\](\/src\/\([^ ]*\)\.hpp)/](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/src\/\1.hpp)/' $input_file.tmp;
 
-  kramdown \
-      -x parser-gfm \
-      --syntax-highlighter rouge \
-      --syntax-highlighter-opts '{ default_lang: c++ }' \
-      --auto_ids \
-      $input_file.tmp > "$output_file.tmp" || exit 1;
+  # If this is binding documentation or quickstart documentation, don't set the
+  # default language to C++.
+  set_lang=1;
+  if [[ `dirname $input_file` == "./doc/user/bindings" ]];
+  then
+    set_lang=0;
+  elif [[ `dirname $input_file` == "./doc/quickstart" ]];
+  then
+    if [[ `basename $input_file .md` != "cpp" ]];
+    then
+      set_lang=0;
+    fi
+  fi
+
+  if [[ "$set_lang" == "0" ]];
+  then
+    kramdown \
+        -x parser-gfm \
+        --syntax-highlighter rouge \
+        --auto_ids \
+        $input_file.tmp > "$output_file.tmp" || exit 1;
+  else
+    kramdown \
+        -x parser-gfm \
+        --syntax-highlighter rouge \
+        --syntax-highlighter-opts '{ default_lang: c++ }' \
+        --auto_ids \
+        $input_file.tmp > "$output_file.tmp" || exit 1;
+  fi
   cat "$template_html_header" | sed "s|LINKROOT|$link_root|" > "$output_file";
 
   # Create the sidebar.  Extract anchors from the page, unless we are looking at
   # index.md, since the permanent part of the sidebar links all over index.md
   # anyway.
-  cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" >> "$output_file";
-  if [[ $input_file != "doc/index.md" ]];
+  if [[ $input_file != "doc/index.md" ]] && [[ ! -f ${input_file/%.md/.sidebar.html} ]];
   then
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" >> "$output_file";
     create_page_sidebar_section "$output_file.tmp" "$output_file" "$dir_name";
+  elif [[ -f ${input_file/%.md/.sidebar.html} ]];
+  then
+    echo "We have a custom sidebar!";
+    # Some pages may have a custom sidebar HTML file.  (Specifically,
+    # generated language bindings.)
+    cat "${input_file/%.md/.sidebar.html}" | sed "s|LINKROOT|$link_root|" \
+        >> "$output_file";
   fi
 
   # Add clickable anchors to h2 and h3 headers.
@@ -297,11 +327,11 @@ fi
 
 #rm -rf "$output_dir";
 mkdir -p "$output_dir";
-cp doc/css/* "$output_dir";
-mkdir -p "$output_dir/user/img/";
-cp doc/img/* "$output_dir/user/img/";
+cp -v doc/css/* "$output_dir";
+mkdir -p "$output_dir/img/";
+cp -v doc/img/* "$output_dir/img/";
 mkdir -p "$output_dir/tutorials/res/";
-cp doc/tutorials/res/* "$output_dir/tutorials/res/";
+cp -v doc/tutorials/res/* "$output_dir/tutorials/res/";
 
 # Create the template files we will use, if they don't already exist.
 if [ -f template.html.header.tmp ];
