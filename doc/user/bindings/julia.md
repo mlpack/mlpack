@@ -1,4 +1,4 @@
-# mlpack git-7d5dfc4592 Julia binding documentation
+# mlpack Julia binding documentation
 
 ## mlpack overview
 
@@ -50,7 +50,7 @@ julia> distances, neighbors, output_model = approx_kfn( ;
           query=zeros(0, 0), reference=zeros(0, 0), verbose=false)
 ```
 
-An implementation of two strategies for furthest neighbor search.  This can be used to compute the furthest neighbor of query point(s) from a set of points; furthest neighbor models can be saved and reused with future query point(s). [Detailed documentation](#approx_kfn_detailed-documentation)
+An implementation of two strategies for furthest neighbor search.  This can be used to compute the furthest neighbor of query point(s) from a set of points; furthest neighbor models can be saved and reused with future query point(s). [Detailed documentation](#approx_kfn_detailed-documentation).
 
 
 
@@ -148,7 +148,7 @@ julia> output_model, predictions, stds = bayesian_linear_regression( ;
           responses=Float64[], scale=false, test=zeros(0, 0), verbose=false)
 ```
 
-An implementation of the bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation)
+An implementation of the bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
 
 
 
@@ -244,7 +244,7 @@ julia> output, output_model = cf( ;
                                  verbose=false)
 ```
 
-An implementation of several collaborative filtering (CF) techniques for recommender systems.  This can be used to train a new CF model, or use an existing CF model to compute recommendations. [Detailed documentation](#cf_detailed-documentation)
+An implementation of several collaborative filtering (CF) techniques for recommender systems.  This can be used to train a new CF model, or use an existing CF model to compute recommendations. [Detailed documentation](#cf_detailed-documentation).
 
 
 
@@ -289,7 +289,8 @@ The input matrix should be a 3-dimensional matrix of ratings, where the first di
 
 A set of query users for which recommendations can be generated may be specified with the `query` parameter; alternately, recommendations may be generated for every user in the dataset by specifying the `all_user_recommendations` parameter.  In addition, the number of recommendations per user to generate can be specified with the `recommendations` parameter, and the number of similar users (the size of the neighborhood) to be considered when generating recommendations can be specified with the `neighborhood` parameter.
 
-For performing the matrix decomposition, the following optimization algorithms can be specified via the `algorithm` parameter: 
+For performing the matrix decomposition, the following optimization algorithms can be specified via the `algorithm` parameter:
+
  - 'RegSVD' -- Regularized SVD using a SGD optimizer
  - 'NMF' -- Non-negative matrix factorization with alternating least squares update rules
  - 'BatchSVD' -- SVD batch learning
@@ -303,18 +304,21 @@ For performing the matrix decomposition, the following optimization algorithms c
 
 
 The following neighbor search algorithms can be specified via the `neighbor_search` parameter:
+
  - 'cosine'  -- Cosine Search Algorithm
  - 'euclidean'  -- Euclidean Search Algorithm
  - 'pearson'  -- Pearson Search Algorithm
 
 
 The following weight interpolation algorithms can be specified via the `interpolation` parameter:
+
  - 'average'  -- Average Interpolation Algorithm
  - 'regression'  -- Regression Interpolation Algorithm
  - 'similarity'  -- Similarity Interpolation Algorithm
 
 
 The following ranking normalization algorithms can be specified via the `normalization` parameter:
+
  - 'none'  -- No Normalization
  - 'item_mean'  -- Item Mean Normalization
  - 'overall_mean'  -- Overall Mean Normalization
@@ -361,7 +365,7 @@ julia> assignments, centroids = dbscan(input; epsilon=1, min_size=5,
           tree_type="kd", verbose=false)
 ```
 
-An implementation of DBSCAN clustering.  Given a dataset, this can compute and return a clustering of that dataset. [Detailed documentation](#dbscan_detailed-documentation)
+An implementation of DBSCAN clustering.  Given a dataset, this can compute and return a clustering of that dataset. [Detailed documentation](#dbscan_detailed-documentation).
 
 
 
@@ -430,7 +434,7 @@ julia> output_model, predictions, probabilities = decision_tree( ;
           verbose=false, weights=zeros(0, 0))
 ```
 
-An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation)
+An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
 
 
 
@@ -517,7 +521,7 @@ julia> output_model, tag_counters_file, tag_file, test_set_estimates,
           verbose=false)
 ```
 
-An implementation of density estimation trees for the density estimation task.  Density estimation trees can be trained or used to predict the density at locations given by query points. [Detailed documentation](#det_detailed-documentation)
+An implementation of density estimation trees for the density estimation task.  Density estimation trees can be trained or used to predict the density at locations given by query points. [Detailed documentation](#det_detailed-documentation).
 
 
 
@@ -578,7 +582,7 @@ julia> output = emst(input; leaf_size=1, naive=false,
                      verbose=false)
 ```
 
-An implementation of the Dual-Tree Boruvka algorithm for computing the Euclidean minimum spanning tree of a set of input points. [Detailed documentation](#emst_detailed-documentation)
+An implementation of the Dual-Tree Boruvka algorithm for computing the Euclidean minimum spanning tree of a set of input points. [Detailed documentation](#emst_detailed-documentation).
 
 
 
@@ -640,7 +644,7 @@ julia> indices, kernels, output_model = fastmks( ; bandwidth=1,
           scale=1, single=false, verbose=false)
 ```
 
-An implementation of the single-tree and dual-tree fast max-kernel search (FastMKS) algorithm.  Given a set of reference points and a set of query points, this can find the reference point with maximum kernel value for each query point; trained models can be reused for future queries. [Detailed documentation](#fastmks_detailed-documentation)
+An implementation of the single-tree and dual-tree fast max-kernel search (FastMKS) algorithm.  Given a set of reference points and a set of query points, this can find the reference point with maximum kernel value for each query point; trained models can be reused for future queries. [Detailed documentation](#fastmks_detailed-documentation).
 
 
 
@@ -716,7 +720,7 @@ julia> output_model = gmm_train(gaussians,
                                 trials=1, verbose=false)
 ```
 
-An implementation of the EM algorithm for training Gaussian mixture models (GMMs).  Given a dataset, this can train a GMM for future use with other tools. [Detailed documentation](#gmm_train_detailed-documentation)
+An implementation of the EM algorithm for training Gaussian mixture models (GMMs).  Given a dataset, this can train a GMM for future use with other tools. [Detailed documentation](#gmm_train_detailed-documentation).
 
 
 
@@ -800,7 +804,7 @@ julia> output = gmm_generate(input_model, samples;
                              seed=0, verbose=false)
 ```
 
-A sample generator for pre-trained GMMs.  Given a pre-trained GMM, this can sample new points randomly from that distribution. [Detailed documentation](#gmm_generate_detailed-documentation)
+A sample generator for pre-trained GMMs.  Given a pre-trained GMM, this can sample new points randomly from that distribution. [Detailed documentation](#gmm_generate_detailed-documentation).
 
 
 
@@ -853,7 +857,7 @@ julia> output = gmm_probability(input,
                                 input_model; verbose=false)
 ```
 
-A probability calculator for GMMs.  Given a pre-trained GMM and a set of points, this can compute the probability that each point is from the given GMM. [Detailed documentation](#gmm_probability_detailed-documentation)
+A probability calculator for GMMs.  Given a pre-trained GMM and a set of points, this can compute the probability that each point is from the given GMM. [Detailed documentation](#gmm_probability_detailed-documentation).
 
 
 
@@ -910,7 +914,7 @@ julia> output_model = hmm_train(input_file;
                                 verbose=false)
 ```
 
-An implementation of training algorithms for Hidden Markov Models (HMMs). Given labeled or unlabeled data, an HMM can be trained for further use with other mlpack HMM tools. [Detailed documentation](#hmm_train_detailed-documentation)
+An implementation of training algorithms for Hidden Markov Models (HMMs). Given labeled or unlabeled data, an HMM can be trained for further use with other mlpack HMM tools. [Detailed documentation](#hmm_train_detailed-documentation).
 
 
 
@@ -969,7 +973,7 @@ julia> output, state = hmm_generate(length, model; seed=0,
           start_state=0, verbose=false)
 ```
 
-A utility to generate random sequences from a pre-trained Hidden Markov Model (HMM).  The length of the desired sequence can be specified, and a random sequence of observations is returned. [Detailed documentation](#hmm_generate_detailed-documentation)
+A utility to generate random sequences from a pre-trained Hidden Markov Model (HMM).  The length of the desired sequence can be specified, and a random sequence of observations is returned. [Detailed documentation](#hmm_generate_detailed-documentation).
 
 
 
@@ -1027,7 +1031,7 @@ julia> log_likelihood = hmm_loglik(input,
                                    input_model; verbose=false)
 ```
 
-A utility for computing the log-likelihood of a sequence for Hidden Markov Models (HMMs).  Given a pre-trained HMM and an observation sequence, this computes and returns the log-likelihood of that sequence being observed from that HMM. [Detailed documentation](#hmm_loglik_detailed-documentation)
+A utility for computing the log-likelihood of a sequence for Hidden Markov Models (HMMs).  Given a pre-trained HMM and an observation sequence, this computes and returns the log-likelihood of that sequence being observed from that HMM. [Detailed documentation](#hmm_loglik_detailed-documentation).
 
 
 
@@ -1082,7 +1086,7 @@ julia> output = hmm_viterbi(input, input_model;
                             verbose=false)
 ```
 
-A utility for computing the most probable hidden state sequence for Hidden Markov Models (HMMs).  Given a pre-trained HMM and an observed sequence, this uses the Viterbi algorithm to compute and return the most probable hidden state sequence. [Detailed documentation](#hmm_viterbi_detailed-documentation)
+A utility for computing the most probable hidden state sequence for Hidden Markov Models (HMMs).  Given a pre-trained HMM and an observed sequence, this uses the Viterbi algorithm to compute and return the most probable hidden state sequence. [Detailed documentation](#hmm_viterbi_detailed-documentation).
 
 
 
@@ -1141,7 +1145,7 @@ julia> output_model, predictions, probabilities = hoeffding_tree( ;
           verbose=false)
 ```
 
-An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation)
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
 
 
 
@@ -1231,7 +1235,7 @@ julia> output_model, predictions = kde( ; abs_error=0,
           tree="kd-tree", verbose=false)
 ```
 
-An implementation of kernel density estimation with dual-tree algorithms. Given a set of reference points and query points and a kernel function, this can estimate the density function at the location of each query point using trees; trees that are built can be saved for later use. [Detailed documentation](#kde_detailed-documentation)
+An implementation of kernel density estimation with dual-tree algorithms. Given a set of reference points and query points and a kernel function, this can estimate the density function at the location of each query point using trees; trees that are built can be saved for later use. [Detailed documentation](#kde_detailed-documentation).
 
 
 
@@ -1323,7 +1327,7 @@ julia> output = kernel_pca(input, kernel;
                            offset=0, sampling="kmeans", verbose=false)
 ```
 
-An implementation of Kernel Principal Components Analysis (KPCA).  This can be used to perform nonlinear dimensionality reduction or preprocessing on a given dataset. [Detailed documentation](#kernel_pca_detailed-documentation)
+An implementation of Kernel Principal Components Analysis (KPCA).  This can be used to perform nonlinear dimensionality reduction or preprocessing on a given dataset. [Detailed documentation](#kernel_pca_detailed-documentation).
 
 
 
@@ -1362,25 +1366,25 @@ For the case where a linear kernel is used, this reduces to regular PCA.
 The kernels that are supported are listed below:
 
  * 'linear': the standard linear dot product (same as normal PCA):
-    K(x, y) = x^T y
+    `K(x, y) = x^T y`
 
  * 'gaussian': a Gaussian kernel; requires bandwidth:
-    K(x, y) = exp(-(\|\| x - y \|\| ^ 2) / (2 * (bandwidth ^ 2)))
+    `K(x, y) = exp(-(\|\| x - y \|\| ^ 2) / (2 * (bandwidth ^ 2)))`
 
  * 'polynomial': polynomial kernel; requires offset and degree:
-    K(x, y) = (x^T y + offset) ^ degree
+    `K(x, y) = (x^T y + offset) ^ degree`
 
  * 'hyptan': hyperbolic tangent kernel; requires scale and offset:
-    K(x, y) = tanh(scale * (x^T y) + offset)
+    `K(x, y) = tanh(scale * (x^T y) + offset)`
 
  * 'laplacian': Laplacian kernel; requires bandwidth:
-    K(x, y) = exp(-(\|\| x - y \|\|) / bandwidth)
+    `K(x, y) = exp(-(\|\| x - y \|\|) / bandwidth)`
 
  * 'epanechnikov': Epanechnikov kernel; requires bandwidth:
-    K(x, y) = max(0, 1 - \|\| x - y \|\|^2 / bandwidth^2)
+    `K(x, y) = max(0, 1 - \|\| x - y \|\|^2 / bandwidth^2)`
 
  * 'cosine': cosine distance:
-    K(x, y) = 1 - (x^T y) / (\|\| x \|\| * \|\| y \|\|)
+    `K(x, y) = 1 - (x^T y) / (\|\| x \|\| * \|\| y \|\|)`
 
 The parameters for each of the kernels should be specified with the options `bandwidth`, `kernel_scale`, `offset`, or `degree` (or a combination of those parameters).
 
@@ -1420,7 +1424,7 @@ julia> centroid, output = kmeans(clusters,
                                  verbose=false)
 ```
 
-An implementation of several strategies for efficient k-means clustering. Given a dataset and a value of k, this computes and returns a k-means clustering on that data. [Detailed documentation](#kmeans_detailed-documentation)
+An implementation of several strategies for efficient k-means clustering. Given a dataset and a value of k, this computes and returns a k-means clustering on that data. [Detailed documentation](#kmeans_detailed-documentation).
 
 
 
@@ -1510,7 +1514,7 @@ julia> output_model, output_predictions = lars( ; input=zeros(0, 0),
           use_cholesky=false, verbose=false)
 ```
 
-An implementation of Least Angle Regression (Stagewise/laSso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model and use that model or a pre-trained model to output regression predictions for a test set. [Detailed documentation](#lars_detailed-documentation)
+An implementation of Least Angle Regression (Stagewise/laSso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model and use that model or a pre-trained model to output regression predictions for a test set. [Detailed documentation](#lars_detailed-documentation).
 
 
 
@@ -1606,7 +1610,7 @@ julia> output_model, predictions, probabilities = linear_svm( ;
           training=zeros(0, 0), verbose=false)
 ```
 
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation)
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
 
 
 
@@ -1699,7 +1703,7 @@ julia> centered_data, output, transformed_data = lmnn(input;
           verbose=false)
 ```
 
-An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning technique.  Given a labeled dataset, this learns a transformation of the data that improves k-nearest-neighbor performance; this can be useful as a preprocessing step. [Detailed documentation](#lmnn_detailed-documentation)
+An implementation of Large Margin Nearest Neighbors (LMNN), a distance learning technique.  Given a labeled dataset, this learns a transformation of the data that improves k-nearest-neighbor performance; this can be useful as a preprocessing step. [Detailed documentation](#lmnn_detailed-documentation).
 
 
 
@@ -1802,7 +1806,7 @@ julia> codes, dictionary, output_model = local_coordinate_coding( ;
           tolerance=0.01, training=zeros(0, 0), verbose=false)
 ```
 
-An implementation of Local Coordinate Coding (LCC), a data transformation technique.  Given input data, this transforms each point to be expressed as a linear combination of a few points in the dataset; once an LCC model is trained, it can be used to transform points later also. [Detailed documentation](#local_coordinate_coding_detailed-documentation)
+An implementation of Local Coordinate Coding (LCC), a data transformation technique.  Given input data, this transforms each point to be expressed as a linear combination of a few points in the dataset; once an LCC model is trained, it can be used to transform points later also. [Detailed documentation](#local_coordinate_coding_detailed-documentation).
 
 
 
@@ -1886,7 +1890,7 @@ julia> output_model, predictions, probabilities = logistic_regression(
           tolerance=1e-10, training=zeros(0, 0), verbose=false)
 ```
 
-An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation)
+An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
 
 
 
@@ -1981,7 +1985,7 @@ julia> distances, neighbors, output_model = lsh( ; bucket_size=500,
           seed=0, tables=30, true_neighbors=zeros(Int, 0, 0), verbose=false)
 ```
 
-An implementation of approximate k-nearest-neighbor search with locality-sensitive hashing (LSH).  Given a set of reference points and a set of query points, this will compute the k approximate nearest neighbors of each query point in the reference set; models can be saved for future use. [Detailed documentation](#lsh_detailed-documentation)
+An implementation of approximate k-nearest-neighbor search with locality-sensitive hashing (LSH).  Given a set of reference points and a set of query points, this will compute the k approximate nearest neighbors of each query point in the reference set; models can be saved for future use. [Detailed documentation](#lsh_detailed-documentation).
 
 
 
@@ -2055,7 +2059,7 @@ julia> centroid, output = mean_shift(input; force_convergence=false,
           verbose=false)
 ```
 
-A fast implementation of mean-shift clustering using dual-tree range search.  Given a dataset, this uses the mean shift algorithm to produce and return a clustering of the data. [Detailed documentation](#mean_shift_detailed-documentation)
+A fast implementation of mean-shift clustering using dual-tree range search.  Given a dataset, this uses the mean shift algorithm to produce and return a clustering of the data. [Detailed documentation](#mean_shift_detailed-documentation).
 
 
 
@@ -2120,7 +2124,7 @@ julia> output, output_model, output_probs, predictions, probabilities
           labels=Int[], test=zeros(0, 0), training=zeros(0, 0), verbose=false)
 ```
 
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation)
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
 
 
 
@@ -2207,7 +2211,7 @@ julia> output = nca(input; armijo_constant=0.0001,
                     tolerance=1e-07, verbose=false, wolfe=0.9)
 ```
 
-An implementation of neighborhood components analysis, a distance learning technique that can be used for preprocessing.  Given a labeled dataset, this uses NCA, which seeks to improve the k-nearest-neighbor classification, and returns the learned distance metric. [Detailed documentation](#nca_detailed-documentation)
+An implementation of neighborhood components analysis, a distance learning technique that can be used for preprocessing.  Given a labeled dataset, this uses NCA, which seeks to improve the k-nearest-neighbor classification, and returns the learned distance metric. [Detailed documentation](#nca_detailed-documentation).
 
 
 
@@ -2280,7 +2284,7 @@ julia> distances, neighbors, output_model = knn( ;
           verbose=false)
 ```
 
-An implementation of k-nearest-neighbor search using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#knn_detailed-documentation)
+An implementation of k-nearest-neighbor search using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#knn_detailed-documentation).
 
 
 
@@ -2354,7 +2358,7 @@ julia> distances, neighbors, output_model = kfn( ;
           0), true_neighbors=zeros(Int, 0, 0), verbose=false)
 ```
 
-An implementation of k-furthest-neighbor search using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k furthest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#kfn_detailed-documentation)
+An implementation of k-furthest-neighbor search using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k furthest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#kfn_detailed-documentation).
 
 
 
@@ -2425,7 +2429,7 @@ julia> h, w = nmf(input, rank; initial_h=zeros(0, 0),
                   verbose=false)
 ```
 
-An implementation of non-negative matrix factorization.  This can be used to decompose an input dataset into two low-rank non-negative components. [Detailed documentation](#nmf_detailed-documentation)
+An implementation of non-negative matrix factorization.  This can be used to decompose an input dataset into two low-rank non-negative components. [Detailed documentation](#nmf_detailed-documentation).
 
 
 
@@ -2499,7 +2503,7 @@ julia> output = pca(input; decomposition_method="exact",
                     verbose=false)
 ```
 
-An implementation of several strategies for principal components analysis (PCA), a common preprocessing step.  Given a dataset and a desired new dimensionality, this can reduce the dimensionality of the data using the linear transformation determined by PCA. [Detailed documentation](#pca_detailed-documentation)
+An implementation of several strategies for principal components analysis (PCA), a common preprocessing step.  Given a dataset and a desired new dimensionality, this can reduce the dimensionality of the data using the linear transformation determined by PCA. [Detailed documentation](#pca_detailed-documentation).
 
 
 
@@ -2560,7 +2564,7 @@ julia> output, output_model, predictions = perceptron( ;
           0), training=zeros(0, 0), verbose=false)
 ```
 
-An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation)
+An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
 
 
 
@@ -2640,7 +2644,7 @@ julia> test, test_labels, training, training_labels =
           verbose=false)
 ```
 
-A utility to split data into a training and testing dataset.  This can also split labels according to the same split. [Detailed documentation](#preprocess_split_detailed-documentation)
+A utility to split data into a training and testing dataset.  This can also split labels according to the same split. [Detailed documentation](#preprocess_split_detailed-documentation).
 
 
 
@@ -2731,7 +2735,7 @@ julia> output = preprocess_binarize(input; dimension=0, threshold=0,
           verbose=false)
 ```
 
-A utility to binarize a dataset.  Given a dataset, this utility converts each value in the desired dimension(s) to 0 or 1; this can be a useful preprocessing step. [Detailed documentation](#preprocess_binarize_detailed-documentation)
+A utility to binarize a dataset.  Given a dataset, this utility converts each value in the desired dimension(s) to 0 or 1; this can be a useful preprocessing step. [Detailed documentation](#preprocess_binarize_detailed-documentation).
 
 
 
@@ -2795,7 +2799,7 @@ julia> preprocess_describe(input; dimension=0,
                            verbose=false, width=8)
 ```
 
-A utility for printing descriptive statistics about a dataset.  This prints a number of details about a dataset in a tabular format. [Detailed documentation](#preprocess_describe_detailed-documentation)
+A utility for printing descriptive statistics about a dataset.  This prints a number of details about a dataset in a tabular format. [Detailed documentation](#preprocess_describe_detailed-documentation).
 
 
 
@@ -2855,7 +2859,7 @@ julia> output, output_model = preprocess_scale(input; epsilon=1e-06,
           scaler_method="standard_scaler", seed=0, verbose=false)
 ```
 
-A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation)
+A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
 
 
 
@@ -2946,7 +2950,7 @@ julia> output = preprocess_one_hot_encoding(input; dimensions=[],
           verbose=false)
 ```
 
-A utility to do one-hot encoding on features of dataset. [Detailed documentation](#preprocess_one_hot_encoding_detailed-documentation)
+A utility to do one-hot encoding on features of dataset. [Detailed documentation](#preprocess_one_hot_encoding_detailed-documentation).
 
 
 
@@ -3004,7 +3008,7 @@ julia> output_ic, output_unmixing = radical(input; angles=150,
           verbose=false)
 ```
 
-An implementation of RADICAL, a method for independent component analysis (ICA).  Given a dataset, this can decompose the dataset into an unmixing matrix and an independent component matrix; this can be useful for preprocessing. [Detailed documentation](#radical_detailed-documentation)
+An implementation of RADICAL, a method for independent component analysis (ICA).  Given a dataset, this can decompose the dataset into an unmixing matrix and an independent component matrix; this can be useful for preprocessing. [Detailed documentation](#radical_detailed-documentation).
 
 
 
@@ -3069,7 +3073,7 @@ julia> output_model, predictions, probabilities = random_forest( ;
           warm_start=false)
 ```
 
-An implementation of the standard random forest algorithm by Leo Breiman for classification.  Given labeled data, a random forest can be trained and saved for future use; or, a pre-trained random forest can be used for classification. [Detailed documentation](#random_forest_detailed-documentation)
+An implementation of the standard random forest algorithm by Leo Breiman for classification.  Given labeled data, a random forest can be trained and saved for future use; or, a pre-trained random forest can be used for classification. [Detailed documentation](#random_forest_detailed-documentation).
 
 
 
@@ -3160,7 +3164,7 @@ julia> distances, neighbors, output_model = krann( ; alpha=0.95,
           single_sample_limit=20, tau=5, tree_type="kd", verbose=false)
 ```
 
-An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation)
+An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
 
 
 
@@ -3237,7 +3241,7 @@ julia> output_model, predictions, probabilities = softmax_regression(
           verbose=false)
 ```
 
-An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation)
+An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation).
 
 
 
@@ -3320,7 +3324,7 @@ julia> codes, dictionary, output_model = sparse_coding( ; atoms=15,
           0), verbose=false)
 ```
 
-An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation)
+An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
 
 
 
@@ -3407,7 +3411,7 @@ julia> output, output_model, predictions, probabilities = adaboost( ;
           weak_learner="decision_stump")
 ```
 
-An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation)
+An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
 
 
 
@@ -3491,7 +3495,7 @@ julia> output_model, output_predictions = linear_regression( ;
           training_responses=Float64[], verbose=false)
 ```
 
-An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation)
+An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
 
 
 
@@ -3570,7 +3574,7 @@ julia> output = image_converter(input;
                                 quality=90, save=false, verbose=false, width=0)
 ```
 
-A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation)
+A utility to load an image or set of images into a single dataset that can then be used by other mlpack methods and utilities. This can also unpack an image dataset into individual files, for instance after mlpack methods have been used. [Detailed documentation](#image_converter_detailed-documentation).
 
 
 
