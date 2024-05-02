@@ -109,9 +109,8 @@ int main(int argc, char** argv)
   else if (mode == "docs")
   {
     // Create the header for the given language.
-    cout << "# " << util::GetVersion() << " "
-          << PrintLanguage(BindingInfo::Language()) << " binding documentation"
-          << endl;
+    cout << "# mlpack " << PrintLanguage(BindingInfo::Language())
+        << " binding documentation" << endl;
     cout << endl;
 
     /**
