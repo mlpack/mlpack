@@ -97,8 +97,9 @@ int main(int argc, char** argv)
 
     // The links to the data type sections get put here.
     cout << "<li><a href=\"#mlpack-overview\">Overview</a></li>" << endl;
-    cout << "<li><a href=\"../../quickstart/" << BindingInfo::Language() << ".html\">"
-        << PrintLanguage(BindingInfo::Language()) << " Quickstart</a></li>" << endl;
+    cout << "<li><a href=\"LINKROOTquickstart/" << BindingInfo::Language()
+        << ".html\">" << PrintLanguage(BindingInfo::Language())
+        << " Quickstart</a></li>" << endl;
     cout << "<li><a href=\"#data-formats\">Data Formats</a></li>" << endl;
 
     ${MARKDOWN_HEADER_CODE}
@@ -137,11 +138,12 @@ int main(int argc, char** argv)
     cout << " - [mlpack main documentation page]"
         << "(https://www.mlpack.org/docs.html)" << endl;
     cout << endl;
-    cout << "See also the quickstart guide for " << PrintLanguage(BindingInfo::Language())
-        << ":" << endl;
+    cout << "See also the quickstart guide for "
+        << PrintLanguage(BindingInfo::Language()) << ":" << endl;
     cout << endl;
-    cout << " - [" << PrintLanguage(BindingInfo::Language()) << " Quickstart](../../quickstart/"
-        << BindingInfo::Language() << ".md)" << endl;
+    cout << " - [" << PrintLanguage(BindingInfo::Language())
+        << " Quickstart](../../quickstart/" << BindingInfo::Language() << ".md)"
+        << endl;
     cout << endl;
 
     /**
