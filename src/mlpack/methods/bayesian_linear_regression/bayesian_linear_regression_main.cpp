@@ -97,7 +97,7 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Bayesian Interpolation",
-    "https://core.ac.uk/download/pdf/216127201.pdf");
+    "https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf");
 BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
     // I wonder how long this full text PDF will remain available...
     "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/"

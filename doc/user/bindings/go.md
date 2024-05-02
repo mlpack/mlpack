@@ -261,7 +261,7 @@ _, test_predictions, stds := mlpack.BayesianLinearRegression(param)
 
 ### See also
 
- - [Bayesian Interpolation](https://core.ac.uk/download/pdf/216127201.pdf)
+ - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
  - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  - [BayesianLinearRegression C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp)
 
