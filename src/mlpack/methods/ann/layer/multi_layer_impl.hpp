@@ -249,7 +249,7 @@ void MultiLayer<MatType>::SetWeights(const MatType& weightsIn)
         "FNN::SetLayerMemory(): parameter size does not match total layer "
         "weight size!");
     MatType tmpWeights;
-    MakeAlias(tmpWeights, weightsIn, weightsIn.n_rows, weightsIn.n_cols, start);
+    MakeAlias(tmpWeights, weightsIn, weightSize, 1, start);
     network[i]->SetWeights(tmpWeights);
     start += weightSize;
   }
