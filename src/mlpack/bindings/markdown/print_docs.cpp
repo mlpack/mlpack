@@ -43,8 +43,9 @@ void PrintHeaders(const string& bindingName,
   const string langBindingName = addWrapperDocs ? GetWrapperName(bindingName) :
           GetBindingName(bindingName);
 
-  cout << "<li><a href=\"#" << bindingName << "\">" << langBindingName
-      << "</a></li>" << endl;
+  cout << "<li><a href=\"LINKROOTuser/bindings/" << BindingInfo::Language()
+      << ".html#" << bindingName << "\">" << langBindingName << "</a></li>"
+      << endl;
 }
 
 void PrintDocs(const string& bindingName,

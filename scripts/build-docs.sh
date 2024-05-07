@@ -156,18 +156,32 @@ run_kramdown()
 
   # Create the sidebar.  Extract anchors from the page, unless we are looking at
   # index.md, since the permanent part of the sidebar links all over index.md
-  # anyway.
-  if [[ $input_file != "doc/index.md" ]] && [[ ! -f ${input_file/%.md/.sidebar.html} ]];
+  # anyway.  If we are looking at binding documentation, use a slightly
+  # different sidebar.
+  if { [[ $dir_name != "user/bindings" ]] && \
+       [[ $dir_name != "quickstart" ]] } ||
+     [[ $input_file == "./doc/quickstart/cpp.md" ]];
   then
-    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" >> "$output_file";
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" \
+        >> "$output_file";
     create_page_sidebar_section "$output_file.tmp" "$output_file" "$dir_name";
-  elif [[ -f ${input_file/%.md/.sidebar.html} ]];
-  then
+  else
     echo "Using custom sidebar...";
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" |\
+        sed 's|<details> <!-- default closed for non-binding pages -->|<details open="true">|' |\
+        sed 's|<details open="true"> <!-- default open for non-binding pages -->|<details>|' \
+        >> "$output_file";
     # Some pages may have a custom sidebar HTML file.  (Specifically,
     # generated language bindings.)
-    cat "${input_file/%.md/.sidebar.html}" | sed "s|LINKROOT|$link_root|" \
-        >> "$output_file";
+    if [[ $dir_name == "user/bindings" ]];
+    then
+      cat "${input_file/%.md/.sidebar.html}" | sed "s|LINKROOT|$link_root|" \
+          >> "$output_file";
+    else
+      sidebar_file=`basename $input_file .md`.sidebar.html;
+      cat "./doc/user/bindings/$sidebar_file" | sed "s|LINKROOT|$link_root|" \
+          >> "$output_file";
+    fi
   fi
 
   # Add clickable anchors to h2 and h3 headers.

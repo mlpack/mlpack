@@ -41,58 +41,6 @@ int main(int argc, char** argv)
 
   if (mode == "sidebar")
   {
-    cout << "<div id=\"sidebar\">" << endl;
-    cout << "<ul>" << endl;
-    cout << "<li><a href=\"LINKROOTindex.html\"><b>Docs Index</b></a>" << endl;
-    cout << "<ul>" << endl;
-    cout << "<li><a href=\"LINKROOTindex.html#mlpack-basics\">Basics</a></li>" << endl;
-    cout << "<li><a href=\"LINKROOTcitation.html\">Citation</a></li>" << endl;
-    cout << "<li><details open=\"true\"><summary>Quickstarts</summary>" << endl;
-    cout << "<ul>" << endl;
-    cout << "<li><a href=\"LINKROOTquickstart/cpp.html\">C++</a></li>" << endl;
-
-    // Semicolon-delimited list of all languages.
-    const std::string languages = "${MARKDOWN_ALL_LANGUAGES_LIST}";
-    size_t lastSemicolon = 0;
-    size_t semicolon = languages.find(';', 0);
-    while (semicolon != std::string::npos)
-    {
-      const std::string lang = languages.substr(lastSemicolon,
-          semicolon - lastSemicolon);
-
-      cout << "<li><a href=\"LINKROOTquickstart/" << lang << ".html\">"
-          << PrintLanguage(lang) << "</a></li>" << endl;
-
-      lastSemicolon = semicolon + 1;
-      semicolon = languages.find(';', lastSemicolon);
-    }
-    cout << "<li><a href=\"LINKROOTquickstart/" << languages.substr(lastSemicolon) << ".html\">"
-        << PrintLanguage(languages.substr(lastSemicolon)) << "</a></li>" << endl;
-    cout << "</ul></details></li>" << endl;
-
-    cout << "<li><details open=\"true\"><summary>Documentation</summary>" << endl;
-    cout << "<ul>" << endl;
-    cout << "<li><a href=\"LINKROOTindex.html\">C++</a></li>" << endl;
-    lastSemicolon = 0;
-    semicolon = languages.find(';', 0);
-    while (semicolon != std::string::npos)
-    {
-      const std::string lang = languages.substr(lastSemicolon,
-          semicolon - lastSemicolon);
-
-      cout << "<li><a href=\"LINKROOTuser/bindings/" << lang << ".html\">"
-          << PrintLanguage(lang) << " binding docs</a></li>" << endl;
-
-      lastSemicolon = semicolon + 1;
-      semicolon = languages.find(';', lastSemicolon);
-    }
-    cout << "<li><a href=\"LINKROOTuser/bindings/" << languages.substr(lastSemicolon)
-        << ".html\">" << PrintLanguage(languages.substr(lastSemicolon))
-        << " binding docs</a></li>" << endl;
-    cout << "</ul></details></li>" << endl;
-    cout << "</ul>" << endl;
-    cout << "</ul>" << endl;
-
     cout << "<ul>" << endl;
     cout << "<li class=\"page_title\">" << endl;
     cout << "<b>mlpack " << PrintLanguage(BindingInfo::Language())
@@ -101,11 +49,13 @@ int main(int argc, char** argv)
     cout << "<ul>" << endl;
 
     // The links to the data type sections get put here.
-    cout << "<li><a href=\"#mlpack-overview\">Overview</a></li>" << endl;
+    cout << "<li><a href=\"LINKROOTuser/bindings/" << BindingInfo::Language()
+        << ".html#mlpack-overview\">Overview</a></li>" << endl;
     cout << "<li><a href=\"LINKROOTquickstart/" << BindingInfo::Language()
         << ".html\">" << PrintLanguage(BindingInfo::Language())
         << " Quickstart</a></li>" << endl;
-    cout << "<li><a href=\"#data-formats\">Data Formats</a></li>" << endl;
+    cout << "<li><a href=\"LINKROOTuser/bindings/" << BindingInfo::Language()
+        << ".html#data-formats\">Data Formats</a></li>" << endl;
 
     ${MARKDOWN_HEADER_CODE}
 
