@@ -682,7 +682,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
     // Compute signs of correlations.
     arma::Col<ElemType> s(activeSet.size());
     for (size_t i = 0; i < activeSet.size(); ++i)
-      s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
+      s(i) = corr(activeSet[i]) / (fabs(corr(activeSet[i])) + 1e-10);
 
     // Compute the "equiangular" direction in parameter space (betaDirection).
     // We use quotes because in the case of non-unit norm variables, this need
@@ -769,9 +769,11 @@ LARS<ModelMatType>::Train(const MatType& matX,
         // need to take a step with the previous beta direction towards the next
         // variable we will add.
         s = s.subvec(0, activeSet.size() - 1); // Drop last element.
+        matGramActive = matGramActive.submat(0, 0, activeSet.size() - 1,
+            activeSet.size() - 1);
         matS = s * ones<MatType>(1, activeSet.size());
         // This worked last iteration, so there can't be a singularity.
-        solve(unnormalizedBetaDirection,
+        const bool status2 = solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
             ones<MatType>(activeSet.size(), 1));
         normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
