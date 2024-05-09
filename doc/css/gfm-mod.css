@@ -1149,3 +1149,7 @@ li.bottom-space {
 a.textlink {
   color: #333;
 }
+
+ul#binding_sidebar {
+  background: #eee;
+}
