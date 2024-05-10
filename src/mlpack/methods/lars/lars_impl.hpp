@@ -682,7 +682,10 @@ LARS<ModelMatType>::Train(const MatType& matX,
     // Compute signs of correlations.
     arma::Col<ElemType> s(activeSet.size());
     for (size_t i = 0; i < activeSet.size(); ++i)
-      s(i) = corr(activeSet[i]) / (fabs(corr(activeSet[i])) + 1e-10);
+    {
+      const size_t j = activeSet[i];
+      s[i] = (ElemType) (corr(j) == 0.0 ? 0.0 : (corr(j) > 0) ? 1.0 : -1.0);
+    }
 
     // Compute the "equiangular" direction in parameter space (betaDirection).
     // We use quotes because in the case of non-unit norm variables, this need
