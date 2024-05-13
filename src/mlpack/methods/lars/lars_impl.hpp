@@ -664,7 +664,6 @@ LARS<ModelMatType>::Train(const MatType& matX,
         ((maxActiveCorr - minActiveCorr) / maxActiveCorr) > tol)
     {
       // Construct the error message to match the user's settings.
-      std::cout << "maxActiveCorr: " << maxActiveCorr << " minActiveCorr: " << minActiveCorr << "; result " << ((maxActiveCorr - minActiveCorr) / maxActiveCorr) << "; tol " << tol << "\n";
       std::ostringstream oss;
       oss << "LARS::Train(): correlation conditions violated; check that your "
           << "given Gram matrix is properly computed on ";
