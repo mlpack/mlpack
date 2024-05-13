@@ -776,7 +776,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
             activeSet.size() - 1);
         matS = s * ones<MatType>(1, activeSet.size());
         // This worked last iteration, so there can't be a singularity.
-        const bool status2 = solve(unnormalizedBetaDirection,
+        solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
             ones<MatType>(activeSet.size(), 1));
         normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
