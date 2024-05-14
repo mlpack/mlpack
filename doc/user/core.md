@@ -66,40 +66,24 @@ avoid copies.
 
 ---
 
- * `MakeAlias(a, mat, rows, cols, strict=true)`
+ * `MakeAlias(a, mat, rows, cols, offset=0, strict=true)`
    - Make `a` into an alias of `mat` with the given size.
+   - If `offset` is `0` then make an identical alias, otherwise start making an
+     alias from a specific matrix location added to `offset`.
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
      `arma::fmat`, `arma::sp_mat`).
    - If an alias cannot be created, the matrix will be copied.  Sparse types
      cannot have aliases and will be copied.
 
- * `MakeAlias(a, cube, rows, cols, slices, strict=true)`
+ * `MakeAlias(a, cube, rows, cols, slices, offset=0, strict=true)`
    - Make `a` into an alias of `cube` with the given size.
+   - If `offset` is `0` then make an identical alias, otherwise start making an
+     alias from a specific matrix location added to `offset`.
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `cube` and `a` should have the same matrix type (e.g. `arma::cube`,
      `arma::fcube`).
    - If an alias cannot be created, the matrix will be copied.
-
- * `MakeAlias(a, memptr, rows, cols, strict=true)`
-   - Make `a` into an alias of the memory block starting at `memptr` of size
-     `rows` by `cols`.
-   - The memory at `memptr` should be arranged in a [column-major
-     ordering](matrices.md#representing-data-in-mlpack).
-   - If `strict` is `true`, the size of `a` cannot be changed.
-   - `a` should be a dense matrix type (e.g. `arma::mat`, `arma::fmat`), and
-     `memptr` should be a non-const pointer of the matrix's element type (e.g.
-     `double*`, `float*`).
-
- * `MakeAlias(a, memptr, rows, cols, slices, strict=true)`
-   - Make `a` into an alias of the memory block starting at `memptr` of size
-     `rows` by `cols` by `slices`.
-   - The memory at `memptr` should be arranged in a [column-major
-     ordering](matrices.md#representing-data-in-mlpack).
-   - If `strict` is `true`, the size of `a` cannot be changed.
-   - `a` should be a cube type (e.g. `arma::cube`, `arma::fcube`), and `memptr`
-     should be a non-const pointer of the matrix's element type (e.g. `double*`,
-     `float*`).
 
 ---
 
