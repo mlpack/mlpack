@@ -66,10 +66,23 @@ avoid copies.
 
 ---
 
+ * `MakeAlias(a, vector, rows, cols, offset=0, strict=true)`
+   - Make `a` into an alias of `vector` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `vector`. Otherwise, the first element of `a`
+     is the `offset`'th element of `vector`; elements in `vector` are ordered in
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `vector` and `a` should have the same vector type (e.g. `arma::vec`,
+     `arma::fvec`).
+   - If an alias cannot be created, the vector will be copied.
+
  * `MakeAlias(a, mat, rows, cols, offset=0, strict=true)`
    - Make `a` into an alias of `mat` with the given size.
-   - If `offset` is `0` then make an identical alias, otherwise start making an
-     alias from a specific matrix location added to `offset`.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `mat`. Otherwise, the first element of `a`
+     is the `offset`'th element of `mat`; elements in `mat` are ordered in
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
      `arma::fmat`, `arma::sp_mat`).
@@ -78,12 +91,14 @@ avoid copies.
 
  * `MakeAlias(a, cube, rows, cols, slices, offset=0, strict=true)`
    - Make `a` into an alias of `cube` with the given size.
-   - If `offset` is `0` then make an identical alias, otherwise start making an
-     alias from a specific matrix location added to `offset`.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `cube`. Otherwise, the first element of `a`
+     is the `offset`'th element of `cube`; elements in `cube` are ordered in
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
-   - `cube` and `a` should have the same matrix type (e.g. `arma::cube`,
+   - `cube` and `a` should have the same cube type (e.g. `arma::cube`,
      `arma::fcube`).
-   - If an alias cannot be created, the matrix will be copied.
+   - If an alias cannot be created, the cube will be copied.
 
 ---
 

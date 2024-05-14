@@ -16,7 +16,7 @@
 namespace mlpack {
 
 /**
- * Reconstruct `m` as an alias around the memory `newMem`, with size `numRows` x
+ * Reconstruct `v` as an alias around the memory `newMem`, with size `numRows` x
  * `numCols`.
  */
 template<typename InVecType, typename OutVecType>
