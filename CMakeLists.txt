@@ -106,8 +106,8 @@ option(MATHJAX
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Set required standard to C++14.
-set(CMAKE_CXX_STANDARD 14)
+# Set required standard to C++17.
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that GCC is new enough, if the compiler is GCC.
