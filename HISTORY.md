@@ -39,7 +39,8 @@
 
   * Fix usage of precompiled headers; remove cotire (#3635).
 
-  * Fix non-working `verbose` option for R bindings (#3691).
+  * Fix non-working `verbose` option for R bindings (#3691), and add global
+    `mlpack.verbose` option (#3706).
 
 ### mlpack 4.3.0
 ###### 2023-11-27
