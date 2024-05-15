@@ -34,7 +34,7 @@ void SetParam(
     const typename std::enable_if<!std::is_same<T, bool>::value>::type* = 0)
 {
   // No mapping is needed.
-  d.value = *MLPACK_ANY_CAST<T>(&value);
+  d.value = *std::any_cast<T>(&value);
 }
 
 /**
@@ -64,8 +64,8 @@ void SetParam(
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&d.value);
-  std::get<0>(std::get<1>(tuple)) = MLPACK_ANY_CAST<std::string>(value);
+  TupleType& tuple = *std::any_cast<TupleType>(&d.value);
+  std::get<0>(std::get<1>(tuple)) = std::any_cast<std::string>(value);
 }
 
 /**
@@ -81,8 +81,8 @@ void SetParam(
 {
   // We're setting the string filename.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&d.value);
-  std::get<1>(tuple) = MLPACK_ANY_CAST<std::string>(value);
+  TupleType& tuple = *std::any_cast<TupleType>(&d.value);
+  std::get<1>(tuple) = std::any_cast<std::string>(value);
 }
 
 /**

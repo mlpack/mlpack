@@ -398,7 +398,7 @@ inline std::string PrintTypeDocs()
       << "_model }: " << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
 
   // Clean up memory.
-  delete MLPACK_ANY_CAST<priv::mlpackModel*>(data.value);
+  delete std::any_cast<priv::mlpackModel*>(data.value);
 
   oss << std::endl << "</div>" << std::endl;
 
