@@ -52,8 +52,8 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputDimensionTest",
   RUN_BINDING();
 
   // Check that number of predicted labels is equal to the input test points.
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
 }
 
 /**
@@ -120,7 +120,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostModelReuseTest",
   RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   AdaBoostModel* model = params.Get<AdaBoostModel*>("output_model");
   ResetSettings();
@@ -131,7 +131,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostModelReuseTest",
   RUN_BINDING();
 
   // Check that initial output and output using saved model are same.
-  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -182,7 +182,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWithoutLabelTest",
   RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   CleanMemory();
   ResetSettings();
@@ -197,7 +197,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWithoutLabelTest",
   RUN_BINDING();
 
   // Check that initial output and final output matrix are same.
-  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -218,30 +218,6 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostTrainingDataOrModelTest",
                 params.Get<AdaBoostModel*>("output_model"));
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-}
-
-/**
- * This test can be removed in mlpack 4.0.0.  This tests that the output and
- * predictions outputs are the same.
- */
-TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputPredictionsTest",
-                 "[AdaBoostMainTest][BindingTests]")
-{
-  arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
-    FAIL("Unable to load train dataset vc2.csv!");
-
-  arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
-    FAIL("Unable to load label dataset vc2_labels.txt!");
-
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
-
-  RUN_BINDING();
-
-  CheckMatrices(params.Get<arma::Row<size_t>>("output"),
-                params.Get<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -285,7 +261,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
   RUN_BINDING();
 
   arma::Row<size_t> output;
-  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   CleanMemory();
   ResetSettings();
@@ -298,7 +274,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
   RUN_BINDING();
 
   arma::Row<size_t> outputPerceptron;
-  outputPerceptron = std::move(params.Get<arma::Row<size_t>>("output"));
+  outputPerceptron = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   REQUIRE(accu(output != outputPerceptron) > 1);
 }
