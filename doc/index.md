@@ -120,13 +120,17 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
-<!-- TODO: add some -->
+ * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
+ * [`PCA`](user/methods/pca.md): principal components analysis
 
 ### Modeling utilities
 
-Cross-validation, hyperparameter tuning, etc.
+Tools for assembling a full data science pipeline.
 
-<!-- TODO: add some -->
+ * [Cross-validation](user/cv.md): k-fold cross-validation tools for any mlpack
+   algorithm
+ * [Hyperparameter tuning](user/hpt.md): generic hyperparameter tuner to find
+   good hyperparameters for any mlpack algorithm
 
 ## Bindings to other languages
 

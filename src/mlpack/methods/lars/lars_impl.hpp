@@ -770,10 +770,10 @@ LARS<ModelMatType>::Train(const MatType& matX,
           matGramActive(i, j) = (*matGram)(activeSet[i], activeSet[j]);
 
       // Check for singularity.
-      MatType matS = s * arma::ones<MatType>(1, activeSet.size());
+      MatType matS = s * ones<MatType>(1, activeSet.size());
       const bool solvedOk = solve(unnormalizedBetaDirection,
           matGramActive % trans(matS) % matS,
-          arma::ones<MatType>(activeSet.size(), 1));
+          ones<MatType>(activeSet.size(), 1));
       if (solvedOk)
       {
         // Ok, no singularity.
@@ -794,11 +794,11 @@ LARS<ModelMatType>::Train(const MatType& matX,
         // need to take a step with the previous beta direction towards the next
         // variable we will add.
         s = s.subvec(0, activeSet.size() - 1); // Drop last element.
-        matS = s * arma::ones<MatType>(1, activeSet.size());
+        matS = s * ones<MatType>(1, activeSet.size());
         // This worked last iteration, so there can't be a singularity.
         solve(unnormalizedBetaDirection,
             matGramActive % trans(matS) % matS,
-            arma::ones<MatType>(activeSet.size(), 1));
+            ones<MatType>(activeSet.size(), 1));
         normalization = 1.0 / std::sqrt(sum(unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection % s;
       }

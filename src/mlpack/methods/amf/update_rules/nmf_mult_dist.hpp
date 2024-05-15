@@ -65,12 +65,13 @@ class NMFMultiplicativeDistanceUpdate
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+                             WHMatType& W,
+                             const WHMatType& H)
   {
-    W = (W % (V * H.t())) / (W * H * H.t());
+    WHMatType zz = W * H * H.t();
+    W = (W % (V * H.t())) / (W * H * H.t() + 1e-15);
   }
 
   /**
@@ -87,12 +88,13 @@ class NMFMultiplicativeDistanceUpdate
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
-  template<typename MatType>
+  template<typename MatType, typename WHMatType>
   inline static void HUpdate(const MatType& V,
-                             const arma::mat& W,
-                             arma::mat& H)
+                             const WHMatType& W,
+                             WHMatType& H)
   {
-    H = (H % (W.t() * V)) / (W.t() * W * H);
+    WHMatType zz = W.t() * W * H;
+    H = (H % (W.t() * V)) / (W.t() * W * H + 1e-15);
   }
 
   //! Serialize the object (in this case, there is nothing to serialize).

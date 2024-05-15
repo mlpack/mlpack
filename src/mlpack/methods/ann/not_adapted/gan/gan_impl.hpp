@@ -158,7 +158,7 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
 
   responses.ones(1, numFunctions + batchSize);
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+      zeros(1, batchSize);
   this->discriminator.responses = arma::mat(this->responses.memptr(),
       this->responses.n_rows, this->responses.n_cols, false, false);
 
@@ -270,7 +270,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   discriminator.Forward(predictors.cols(numFunctions,
       numFunctions + batchSize - 1));
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+      zeros(1, batchSize);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -305,7 +305,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     if (parameter.is_empty())
       Reset();
-    gradient = arma::zeros<arma::mat>(parameter.n_elem, 1);
+    gradient = zeros<arma::mat>(parameter.n_elem, 1);
   }
   else
     gradient.zeros();
@@ -318,7 +318,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   if (noiseGradientDiscriminator.is_empty())
   {
-    noiseGradientDiscriminator = arma::zeros<arma::mat>(
+    noiseGradientDiscriminator = zeros<arma::mat>(
         gradientDiscriminator.n_elem, 1);
   }
   else
@@ -342,7 +342,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+      zeros(1, batchSize);
 
   // Get the gradients of the Generator.
   res += discriminator.EvaluateWithGradient(discriminator.parameter,
@@ -354,7 +354,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
-        arma::ones(1, batchSize);
+        ones(1, batchSize);
 
     discriminator.outputLayer.Backward(
         boost::apply_visitor(outputParameterVisitor,

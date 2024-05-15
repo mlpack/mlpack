@@ -1305,7 +1305,7 @@ void HoeffdingTree<
       // allocated, and then pass subvectors to the submat() function.
       std::vector<arma::uvec> indices(children.size(), arma::uvec(data.n_cols));
       arma::Col<size_t> counts =
-          arma::zeros<arma::Col<size_t>>(children.size());
+          zeros<arma::Col<size_t>>(children.size());
 
       for (size_t i = 0; i < data.n_cols; ++i)
       {

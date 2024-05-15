@@ -15,6 +15,9 @@ classes, each of which are documented on this page.
 mlpack provides a number of additional mathematical utility classes and
 functions on top of Armadillo.
 
+ * [Aliases](#aliases): utilities to create and manage aliases (`MakeAlias()`,
+   `ClearAlias()`, `UnwrapAlias()`).
+
  * [`Range`](#range): simple mathematical range (i.e. `[0, 3]`)
 
  * [`ColumnCovariance()`](#columncovariance): compute covariance of
@@ -31,9 +34,6 @@ functions on top of Armadillo.
  * [Logarithmic utilities](#logarithmic-utilities): `LogAdd()`, `AccuLog()`,
    `LogSumExp()`, `LogSumExpT()`.
 
-<!-- TODO: do something with MakeAlias(); but it needs to be refactored first
--->
-
  * [`MultiplyCube2Cube()`](#multiplycube2cube): multiply each slice in a cube by each slice in another cube
  * [`MultiplyMat2Cube()`](#multiplymat2cube): multiply a matrix by each slice in a cube
  * [`MultiplyCube2Mat()`](#multiplycube2mat): multiply each slice in a cube by a matrix
@@ -44,6 +44,80 @@ functions on top of Armadillo.
    scalar random number generation functions
  * [`RandomBasis()`](#randombasis): generate a random orthogonal basis
  * [`ShuffleData()`](#shuffledata): shuffle a dataset and associated labels
+
+---
+
+### Aliases
+
+Aliases are matrix, vector, or cube objects that share memory with another
+matrix, vector, or cube.  They are often used internally inside of mlpack to
+avoid copies.
+
+***Important caveats about aliases***:
+
+ - An alias represents the same memory block as the input.  As such, changes to
+   the alias object will also be reflected in the original object.
+
+ - The `MakeAlias()` function is not guaranteed to return an alias; it only
+   returns an alias *if possible*, and makes a copy otherwise.
+
+ - If `mat` goes out of scope or is destructed, then `a` ***becomes invalid***.
+   _You are responsible for ensuring an invalid alias is not used!_
+
+---
+
+ * `MakeAlias(a, mat, rows, cols, strict=true)`
+   - Make `a` into an alias of `mat` with the given size.
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
+     `arma::fmat`, `arma::sp_mat`).
+   - If an alias cannot be created, the matrix will be copied.  Sparse types
+     cannot have aliases and will be copied.
+
+ * `MakeAlias(a, cube, rows, cols, slices, strict=true)`
+   - Make `a` into an alias of `cube` with the given size.
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `cube` and `a` should have the same matrix type (e.g. `arma::cube`,
+     `arma::fcube`).
+   - If an alias cannot be created, the matrix will be copied.
+
+ * `MakeAlias(a, memptr, rows, cols, strict=true)`
+   - Make `a` into an alias of the memory block starting at `memptr` of size
+     `rows` by `cols`.
+   - The memory at `memptr` should be arranged in a [column-major
+     ordering](matrices.md#representing-data-in-mlpack).
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `a` should be a dense matrix type (e.g. `arma::mat`, `arma::fmat`), and
+     `memptr` should be a non-const pointer of the matrix's element type (e.g.
+     `double*`, `float*`).
+
+ * `MakeAlias(a, memptr, rows, cols, slices, strict=true)`
+   - Make `a` into an alias of the memory block starting at `memptr` of size
+     `rows` by `cols` by `slices`.
+   - The memory at `memptr` should be arranged in a [column-major
+     ordering](matrices.md#representing-data-in-mlpack).
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `a` should be a cube type (e.g. `arma::cube`, `arma::fcube`), and `memptr`
+     should be a non-const pointer of the matrix's element type (e.g. `double*`,
+     `float*`).
+
+---
+
+ * `ClearAlias(a)`
+   - If `a` is an alias, reset `a` to an empty matrix, without modifying the
+     aliased memory.  `a` is no longer an alias after this call.
+
+---
+
+ * `UnwrapAlias(a, in)`
+   - If `in` is a matrix type (e.g. `arma::mat`), make `a` into an alias of
+     `in`.
+   - If `in` is not a matrix type, but instead, e.g., an Armadillo expression,
+     fill `a` with the results of the evaluated expression `in`.
+   - This can be used in place of, e.g., `a = in`, to avoid a copy when
+     possible.
+   - `a` should be a matrix type that matches the type of the expression or
+     matrix `in`.
 
 ---
 

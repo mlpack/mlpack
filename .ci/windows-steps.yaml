@@ -9,7 +9,6 @@ steps:
 # Fetch build dependencies
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
     nuget install ensmallen -o $(Agent.ToolsDirectory) -Version 2.17.0
     ## Delete all ensmallen dependencies including armadillo headers, we do not need them here
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
@@ -17,6 +16,12 @@ steps:
     Remove-Item $(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include\armadillo -Force
 
   displayName: 'Fetch build dependencies'
+
+# Get cereal
+- bash: |
+    curl -L https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.tar.gz -o cereal-1.3.2.tar.gz
+    tar -xvzf cereal-1.3.2.tar.gz
+  displayName: 'Download cereal'
 
 # Configure armadillo
 - bash: |
@@ -57,7 +62,7 @@ steps:
     -DLAPACK_LIBRARIES:FILEPATH=$(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\lib\x64\libopenblas.dll.a `
     -DARMADILLO_INCLUDE_DIR="..\armadillo-9.800.6\tmp\include" `
     -DARMADILLO_LIBRARY="..\armadillo-9.800.6\Release\armadillo.lib" `
-    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
+    -DCEREAL_INCLUDE_DIR="..\cereal-1.3.2\include" `
     -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.17.0\installed\x64-linux\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
