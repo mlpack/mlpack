@@ -70,8 +70,7 @@ avoid copies.
    - Make `a` into an alias of `vector` with the given size.
    - If `offset` is `0`, then the alias is identical: the first element of
      `a` is the first element of `vector`. Otherwise, the first element of `a`
-     is the `offset`'th element of `vector`; elements in `vector` are ordered in
-     a [column-major way](../matrices.md#representing-data-in-mlpack).
+     is the `offset`'th element of `vector`.
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `vector` and `a` should have the same vector type (e.g. `arma::vec`,
      `arma::fvec`).
