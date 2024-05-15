@@ -78,8 +78,8 @@ BINDING_EXAMPLE(
     "classes to " + PRINT_DATASET("predictions") + ", the following command "
     "may be used:"
     "\n\n" +
-    PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set", "output",
-        "predictions"));
+    PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set",
+        "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
