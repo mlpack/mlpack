@@ -24,6 +24,7 @@
 #include <cmath>
 
 // Next, standard includes.
+#include <any>
 #include <cctype>
 #include <cfloat>
 #include <climits>
@@ -32,6 +33,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <numeric>
@@ -66,29 +68,6 @@
 #elif defined(_MSC_VER) && !defined(DEBUG)
   #undef mlpack_force_inline
   #define mlpack_force_inline __forceinline
-#endif
-
-// detect C++17 mode
-#if (__cplusplus >= 201703L)
-  #undef  MLPACK_HAVE_CXX17
-  #define MLPACK_HAVE_CXX17
-#endif
-
-#if defined(_MSVC_LANG)
-  #if (_MSVC_LANG >= 201703L)
-    #undef  MLPACK_HAVE_CXX17
-    #define MLPACK_HAVE_CXX17
-  #endif
-#endif
-
-#if defined(MLPACK_HAVE_CXX17)
-  #include <any>
-  #include <string_view>
-  #define MLPACK_ANY std::any
-  #define MLPACK_ANY_CAST std::any_cast
-  #define MLPACK_STRING_VIEW std::string_view
-#elif defined(_MSC_VER)
-  #error "When using Visual Studio, mlpack should be compiled with /std:c++17 or newer."
 #endif
 
 // Now include Armadillo through the special mlpack extensions.
