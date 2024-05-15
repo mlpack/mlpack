@@ -45,6 +45,8 @@ _????-??-??_
 
   * Fix non-working `verbose` option for R bindings (#3691).
 
+  * Fix divide-by-zero edge case for LARS (#3701).
+
 ## mlpack 4.3.0
 
 _2023-11-27_
