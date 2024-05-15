@@ -41,6 +41,8 @@
 
   * Fix non-working `verbose` option for R bindings (#3691).
 
+  * Fix divide-by-zero edge case for LARS (#3701).
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
