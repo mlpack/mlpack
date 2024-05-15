@@ -155,6 +155,12 @@ the source code should be consulted.  Each method is fully documented.
 
 ## Developer documentation
 
+The following general documentation can be useful if you are interested in
+contributing to mlpack:
+
+ * [The mlpack community](developer/community.md)
+ * [mlpack and Google Summer of Code](developer/gsoc.md)
+
 Throughout the codebase, mlpack uses some common template parameter policies.
 These are documented below.
 
