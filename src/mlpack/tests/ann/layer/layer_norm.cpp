@@ -36,7 +36,7 @@ TEST_CASE("LayerNormTest", "[ANNLayerTest]")
   model.InputDimensions() = std::vector<size_t>({ 3 });
   model.ComputeOutputDimensions();
   arma::mat weights(model.WeightSize(), 1);
-  model.SetWeights(weights.memptr());
+  model.SetWeights(weights);
   model.CustomInitialize(weights, model.WeightSize());
 
   model.Forward(input, output);

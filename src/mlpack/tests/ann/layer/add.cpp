@@ -32,7 +32,7 @@ TEST_CASE("AddManualWeightTestCase", "[ANNLayerTest]")
   Add module;
   module.InputDimensions() = std::vector<size_t>({ 1 });
   module.ComputeOutputDimensions();
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
   module.Parameters()[0] = 3.0;
 
   arma::mat output(1, 1);
@@ -67,7 +67,7 @@ TEST_CASE("AddManualWeightBatchTestCase", "[ANNLayerTest]")
   Add module;
   module.InputDimensions() = std::vector<size_t>({ 1 });
   module.ComputeOutputDimensions();
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
   module.Parameters()[0] = 3.0;
 
   arma::mat output(1, 5);

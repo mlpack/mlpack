@@ -30,7 +30,7 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
   arma::mat weights(10 * 10, 1);
   module.InputDimensions() = std::vector<size_t>({ 10 });
   module.ComputeOutputDimensions();
-  module.SetWeights(weights.memptr());
+  module.SetWeights(weights);
 
   module.Parameters().randu();
 
@@ -61,7 +61,7 @@ TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
     arma::mat weights(inputElements * outputElements, 1);
     module.InputDimensions() = std::vector<size_t>({ inputElements });
     module.ComputeOutputDimensions();
-    module.SetWeights(weights.memptr());
+    module.SetWeights(weights);
 
     module.Parameters().randu();
 
