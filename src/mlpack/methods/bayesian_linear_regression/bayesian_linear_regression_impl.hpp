@@ -67,57 +67,37 @@ BayesianLinearRegression<ModelMatType>::Train(
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename, typename>
+template<typename MatType, typename ResponsesType, typename, typename>
 inline
 typename BayesianLinearRegression<ModelMatType>::ElemType
 BayesianLinearRegression<ModelMatType>::Train(
     const MatType& data,
-    const ResponsesType& responses)
+    const ResponsesType& responses,
+    const std::optional<bool> centerData,
+    const std::optional<bool> scaleData,
+    const std::optional<size_t> maxIterations)
 {
-  return Train(data, responses, this->centerData, this->scaleData,
+  if (centerData.has_value())
+  {
+    return Train(data, responses, centerData.value(), this->scaleData,
+        this->maxIterations, this->tolerance);
+  }
+  else if (centerData.has_value() && scaleData.has_value())
+  {
+    return Train(data, responses, centerData.value(), scaleData.value(),
+        this->maxIterations, this->tolerance);
+  }
+  else if (centerData.has_value() && scaleData.has_value() &&
+      maxIterations.has_value())
+  {
+    return Train(data, responses, centerData.value(), scaleData.value(),
+        maxIterations.value(), this->tolerance);
+  }
+  else
+  {
+    return Train(data, responses, this->centerData, this->scaleData,
       this->maxIterations, this->tolerance);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename BayesianLinearRegression<ModelMatType>::ElemType
-BayesianLinearRegression<ModelMatType>::Train(
-    const MatType& data,
-    const ResponsesType& responses,
-    const bool centerData)
-{
-  return Train(data, responses, centerData, this->scaleData,
-      this->maxIterations, this->tolerance);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename BayesianLinearRegression<ModelMatType>::ElemType
-BayesianLinearRegression<ModelMatType>::Train(
-    const MatType& data,
-    const ResponsesType& responses,
-    const bool centerData,
-    const bool scaleData)
-{
-  return Train(data, responses, centerData, scaleData, this->maxIterations,
-      this->tolerance);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename BayesianLinearRegression<ModelMatType>::ElemType
-BayesianLinearRegression<ModelMatType>::Train(
-    const MatType& data,
-    const ResponsesType& responses,
-    const bool centerData,
-    const bool scaleData,
-    const size_t maxIterations)
-{
-  return Train(data, responses, centerData, scaleData, maxIterations,
-      this->tolerance);
+  }
 }
 
 template<typename ModelMatType>
