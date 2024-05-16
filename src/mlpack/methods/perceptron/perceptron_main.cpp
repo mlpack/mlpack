@@ -56,14 +56,7 @@ BINDING_LONG_DESC(
     "on the test set may be saved with the " +
     PRINT_PARAM_STRING("predictions") +
     " output parameter.  The perceptron model may be saved with the " +
-    PRINT_PARAM_STRING("output_model") + " output parameter."
-    "\n\n"
-    "Note: the following parameter is deprecated and "
-    "will be removed in mlpack 4.0.0: " + PRINT_PARAM_STRING("output") +
-    "."
-    "\n"
-    "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + '.');
+    PRINT_PARAM_STRING("output_model") + " output parameter.");
 
 // Example.
 BINDING_EXAMPLE(
@@ -144,9 +137,6 @@ PARAM_MODEL_OUT(PerceptronModel, "output_model", "Output for trained perceptron"
 
 // Testing/classification parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-// PARAM_UROW_OUT("output") is deprecated and will be removed in
-PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
-    " test set will be written.", "o");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "P");
 
@@ -160,9 +150,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  RequireAtLeastOnePassed(params, { "output_model", "output", "predictions" },
-      false, "no output will be saved");
-  // "output" will be removed in mlpack 4.0.0.
+  RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
+      "no output will be saved");
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
   // Check parameter validity.
@@ -320,8 +309,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     data::RevertLabels(predictedLabels, p->Map(), results);
 
     // Save the predicted labels.
-    if (params.Has("output"))
-      params.Get<arma::Row<size_t>>("output") = results;
     if (params.Has("predictions"))
       params.Get<arma::Row<size_t>>("predictions") = std::move(results);
   }

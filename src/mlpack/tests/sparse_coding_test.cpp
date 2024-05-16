@@ -8,10 +8,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-// Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
-// to use FPC_WEAK, and it's not at all intuitive how to do that.
-
 #include <mlpack/core.hpp>
 #include <mlpack/methods/sparse_coding.hpp>
 
