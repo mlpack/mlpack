@@ -21,7 +21,8 @@ sc.Encode(testData, codes);        // Step 3: encode new data.
 
 // Print some information about the test encoding.
 std::cout << "Average sparsity of encoded test data: "
-    << 100.0 * arma::mean(arma::sum(codes != 0)) << "\%." << std::endl;
+    << 100.0 * arma::mean(arma::sum(codes != 0)) / codes.n_elem << "\%."
+    << std::endl;
 ```
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
@@ -172,18 +173,19 @@ of the `SparseCoding` class.
 
 ---
 
-Train a sparse coding model on the MNIST dataset and print the reconstruction
+Train a sparse coding model on the cloud dataset and print the reconstruction
 error.
 
 ```c++
-// See https://datasets.mlpack.org/mnist.train.csv.
+// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("mnist.train.csv", dataset, true);
+mlpack::data::Load("cloud.csv", dataset, true);
 
 mlpack::SparseCoding sc;
 sc.Atoms() = 50;
 sc.Lambda1() = 0.1;
 sc.Lambda2() = 0.001;
+sc.MaxIterations() = 25;
 sc.Train(dataset);
 
 // Encode the training dataset.
@@ -203,15 +205,15 @@ std::cout << "RMSE of reconstructed matrix: " << error << "." << std::endl;
 
 ---
 
-Train a sparse coding model on the covertype dataset and save the model to disk.
+Train a sparse coding model on the iris dataset and save the model to disk.
 
 ```c++
-// See https://datasets.mlpack.org/covertype.train.csv.
+// See https://datasets.mlpack.org/iris.train.csv.
 arma::mat dataset;
-mlpack::data::Load("covertype.train.csv", dataset, true);
+mlpack::data::Load("iris.train.csv", dataset, true);
 
 // Train the model in the constructor.
-mlpack::SparseCoding sc(dataset, 100 /* atoms */, 0.1 /* L1 penalty */);
+mlpack::SparseCoding sc(dataset, 10 /* atoms */, 0.1 /* L1 penalty */);
 
 // Save the model to disk.
 mlpack::data::Save("sc.bin", "sc", sc);
@@ -220,16 +222,16 @@ mlpack::data::Save("sc.bin", "sc", sc);
 ---
 
 Load a sparse coding model from disk and encode some new points from the
-covertype dataset.
+iris dataset.
 
 ```c++
 // Load model from disk.
 mlpack::SparseCoding sc;
 mlpack::data::Load("sc.bin", "sc", sc);
 
-// See https://datasets.mlpack.org/covertype.test.csv.
+// See https://datasets.mlpack.org/iris.test.csv.
 arma::mat dataset;
-mlpack::data::Load("covertype.test.csv", dataset, true);
+mlpack::data::Load("iris.test.csv", dataset, true);
 
 // Encode the test points.
 arma::mat codes;
@@ -253,11 +255,11 @@ mlpack::data::Load("satellite.train.csv", trainData, true);
 arma::mat testData;
 mlpack::data::Load("satellite.test.csv", testData, true);
 
-for (size_t atoms = 20; atoms < 200; atoms += 10)
+for (size_t atoms = 20; atoms < 100; atoms += 10)
 {
   mlpack::SparseCoding sc(atoms);
   sc.Lambda1() = 0.1;
-  sc.MaxIterations() = 100;
+  sc.MaxIterations() = 20; // Keep iterations low so this runs relatively fast.
 
   const double trainObj = sc.Train(trainData);
 
@@ -303,9 +305,9 @@ API can be used.  The example below trains a sparse coding model on 32-bit
 floating point data.
 
 ```c++
-// See https://datasets.mlpack.org/mnist.train.csv.
+// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::data::Load("mnist.train.csv", dataset, true);
+mlpack::data::Load("cloud.csv", dataset, true);
 
 mlpack::SparseCoding<arma::fmat> sc;
 sc.Atoms() = 30;
@@ -365,14 +367,17 @@ arma::mat trainData;
 mlpack::data::Load("satellite.train.csv", trainData, true);
 
 const size_t atoms = 25;
+const double lambda1 = 0.1;
+const double lambda2 = 0.0;
+const size_t maxIterations = 50;
 
 // Use a uniform random matrix as the initial dictionary.
-arma::mat initialDictionary(data.n_rows, atoms, arma::fill::randu);
+arma::mat initialDictionary(trainData.n_rows, atoms, arma::fill::randu);
 
-SparseCoding(atoms);
+mlpack::SparseCoding sc(atoms, lambda1, lambda2, maxIterations);
 sc.Dictionary() = initialDictionary;
 
-const double obj = sc.Train<NothingInitializer>(trainData);
+const double obj = sc.Train<mlpack::NothingInitializer>(trainData);
 std::cout << "Training set objective: " << obj << "." << std::endl;
 ```
 
