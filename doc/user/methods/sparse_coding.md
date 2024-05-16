@@ -42,7 +42,7 @@ std::cout << "Average sparsity of encoded test data: "
 
 <!-- TODO: add LCC link -->
 
- * [`LARS`](lars.md)
+ * [`LARS`](lars.md) (used internally by `SparseCoding`)
  * [mlpack transformations](../../index.md#transformations)
  * [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
  * [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
@@ -53,8 +53,8 @@ std::cout << "Average sparsity of encoded test data: "
  * `sc = SparseCoding(atoms=0, lambda1=0.0, lambda2=0.0, maxIter=0, objTol=0.01, newtonTol=1e-6)`
    - Create a `SparseCoding` object without learning a dictionary on data.
    - If `atoms` is set to `0` (the default), it will need to be set to a value
-     greater than 0 before `Train()` is called (`sc.Atoms() = atoms` can be used
-     for this).
+     greater than `0` before `Train()` is called (`sc.Atoms() = atoms` can be
+     used for this).
 
  * `sc = SparseCoding(data, atoms, lambda1=0.0, lambda2=0.0, maxIter=0, objTol=0.01, newtonTol=1e-6)`
    - Create a `SparseCoding` object and train the dictionary on the given
@@ -62,8 +62,8 @@ std::cout << "Average sparsity of encoded test data: "
    - The dictionary will contain `atoms` elements.
 
  * `sc = SparseCoding(data, atoms, lambda1, lambda2, maxIter, objTol, newtonTol, initializer)`
-   - Advanced constructor: create a `SparseCoding` object that will use a custom
-     dictionary initializer and train on the given `data`.
+   - *Advanced constructor*: create a `SparseCoding` object that will use a
+     custom dictionary initializer and train on the given `data`.
    - The dictionary will contain `atoms` elements.
    - `initializer` will be used to initialize the dictionary; see [Advanced
      Functionality: Different Dictionary Initialization
@@ -76,8 +76,7 @@ std::cout << "Average sparsity of encoded test data: "
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `atoms` | `size_t` | Number of atoms in dictionary. | _(N/A)_ |
-| `lambda1` | `double` | L1 regularization penalty.  Used in both `Train()` and
-`Encode()` steps. | `0.0` |
+| `lambda1` | `double` | L1 regularization penalty.  Used in both `Train()` and `Encode()` steps. | `0.0` |
 | `lambda2` | `double` | L2 regularization penalty (for elastic net regularization).  Used in both `Train()` and `Encode()` steps. | `0.0` |
 | `maxIter` | `size_t` | Maximum number of iterations for dictionary learning.  `0` means no limit. | `0` |
 | `objTol` | `double` | Objective function tolerance for terminating dictionary learning. | `0.01` |
