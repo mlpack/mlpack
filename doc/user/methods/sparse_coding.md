@@ -276,12 +276,16 @@ for (size_t atoms = 20; atoms < 200; atoms += 10)
 
 ### Advanced Functionality: Template Parameters
 
-The `SparseCoding` class has two template parameters that can be used for custom
-behavior.  The full signature of the class is:
+The `SparseCoding` class has one class template parameter that can be used for
+custom behavior.  The full signature of the class is:
 
 ```
-SparseCoding<MatType, DictionaryInitializer>
+SparseCoding<MatType>
 ```
+
+In addition, the [constructors](#constructors) and
+[`Train()` functions](#training) have a template parameter
+`DictionaryInitializer` that can be used for custom behavior.
 
 <!-- TODO: check whether it works on sparse data -->
 
@@ -309,6 +313,9 @@ sc.Atoms() = 30;
 sc.Lambda1() = 0.15;
 sc.Lambda2() = 0.001;
 sc.MaxIterations() = 100;
+// Note: a looser tolerance is often required when using floats instead of
+// doubles.
+sc.ObjTolerance() = 0.01;
 sc.Train(dataset);
 
 // Encode the training dataset.
@@ -363,10 +370,10 @@ const size_t atoms = 25;
 // Use a uniform random matrix as the initial dictionary.
 arma::mat initialDictionary(data.n_rows, atoms, arma::fill::randu);
 
-SparseCoding<arma::mat, NothingInitializer>(atoms);
+SparseCoding(atoms);
 sc.Dictionary() = initialDictionary;
 
-const double obj = sc.Train(trainData);
+const double obj = sc.Train<NothingInitializer>(trainData);
 std::cout << "Training set objective: " << obj << "." << std::endl;
 ```
 
