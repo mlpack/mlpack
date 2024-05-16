@@ -104,11 +104,6 @@ inline void PrintHelp(util::Params& params, const std::string& param)
       if ((pass == 2) && data.input) // Output options only (always optional).
         continue;
 
-      // For reverse compatibility: this can be removed when these options are
-      // gone in mlpack 3.0.0.  We don't want to print the deprecated options.
-      if (data.name == "inputFile")
-        continue;
-
       if (!printedHeader)
       {
         printedHeader = true;
