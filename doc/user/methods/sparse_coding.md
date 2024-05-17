@@ -13,15 +13,15 @@ dataset as a sparse combination of *atoms* in the dictionary.
 arma::mat data(40, 100, arma::fill::randu);
 arma::mat testData(40, 50, arma::fill::randu);
 
-// Perform sparse coding with 20 atoms and an L1 penalty of 0.1.
-mlpack::SparseCoding sc(20, 0.1);  // Step 1: create object.
+// Perform sparse coding with 20 atoms and an L1 penalty of 0.5.
+mlpack::SparseCoding sc(20, 0.5);  // Step 1: create object.
 double objective = sc.Train(data); // Step 2: learn dictionary.
 arma::mat codes;
 sc.Encode(testData, codes);        // Step 3: encode new data.
 
 // Print some information about the test encoding.
-std::cout << "Average sparsity of encoded test data: "
-    << 100.0 * arma::mean(arma::sum(codes != 0)) / codes.n_elem << "\%."
+std::cout << "Average density of encoded test data: "
+    << 100.0 * arma::mean(arma::sum(codes != 0)) / codes.n_rows << "\%."
     << std::endl;
 ```
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
