@@ -17,9 +17,10 @@
 
 namespace mlpack {
 
+template<typename MatType>
 template<typename DictionaryInitializer>
-LocalCoordinateCoding::LocalCoordinateCoding(
-    const arma::mat& data,
+LocalCoordinateCoding<MatType>::LocalCoordinateCoding(
+    const MatType& data,
     const size_t atoms,
     const double lambda,
     const size_t maxIterations,
@@ -34,7 +35,8 @@ LocalCoordinateCoding::LocalCoordinateCoding(
   Train(data, initializer);
 }
 
-inline LocalCoordinateCoding::LocalCoordinateCoding(
+template<typename MatType>
+inline LocalCoordinateCoding<MatType>::LocalCoordinateCoding(
     const size_t atoms,
     const double lambda,
     const size_t maxIterations,
@@ -47,9 +49,10 @@ inline LocalCoordinateCoding::LocalCoordinateCoding(
   // Nothing to do.
 }
 
+template<typename MatType>
 template<typename DictionaryInitializer>
-double LocalCoordinateCoding::Train(
-    const arma::mat& data,
+double LocalCoordinateCoding<MatType>::Train(
+    const MatType& data,
     const DictionaryInitializer& initializer)
 {
   // Initialize the dictionary.
@@ -61,7 +64,7 @@ double LocalCoordinateCoding::Train(
   // loop.
   Log::Info << "Initial Coding Step." << std::endl;
 
-  arma::mat codes;
+  MatType codes;
   Encode(data, codes);
   arma::uvec adjacencies = find(codes);
 
@@ -115,15 +118,16 @@ double LocalCoordinateCoding::Train(
   return lastObjVal;
 }
 
-inline void LocalCoordinateCoding::Encode(const arma::mat& data,
-                                          arma::mat& codes)
+template<typename MatType>
+inline void LocalCoordinateCoding<MatType>::Encode(const MatType& data,
+                                                   MatType& codes)
 {
-  arma::mat invSqDists = 1.0 / (repmat(trans(sum(square(dictionary))), 1,
+  MatType invSqDists = 1.0 / (repmat(trans(sum(square(dictionary))), 1,
       data.n_cols) + repmat(sum(square(data)), atoms, 1) - 2 * trans(dictionary)
       * data);
 
-  arma::mat dictGram = trans(dictionary) * dictionary;
-  arma::mat dictGramTD(dictGram.n_rows, dictGram.n_cols);
+  MatType dictGram = trans(dictionary) * dictionary;
+  MatType dictGramTD(dictGram.n_rows, dictGram.n_cols);
 
   codes.set_size(atoms, data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -134,29 +138,31 @@ inline void LocalCoordinateCoding::Encode(const arma::mat& data,
       Log::Debug << "Optimization at point " << i << "." << std::endl;
     }
 
-    arma::vec invW = invSqDists.unsafe_col(i);
-    arma::mat dictPrime = dictionary * diagmat(invW);
+    ColType invW = invSqDists.unsafe_col(i);
+    MatType dictPrime = dictionary * diagmat(invW);
 
-    arma::mat dictGramTD = diagmat(invW) * dictGram * diagmat(invW);
+    MatType dictGramTD = diagmat(invW) * dictGram * diagmat(invW);
 
     bool useCholesky = false;
     // Normalization and fitting and intercept are disabled.
-    LARS<> lars(useCholesky, 0.5 * lambda, 0, 1e-16 /* default tolerance */,
-        false, false);
+    const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+        1e-8 : 1e-16;
+    LARS<MatType> lars(useCholesky, 0.5 * lambda, 0, tol, false, false);
 
     // Run LARS for this point, by making an alias of the point and passing
     // that.
-    arma::vec beta = codes.unsafe_col(i);
-    arma::rowvec responses = data.unsafe_col(i).t();
+    ColType beta = codes.unsafe_col(i);
+    RowType responses = data.unsafe_col(i).t();
     lars.Train(dictPrime, responses, false, useCholesky, dictGramTD);
     beta = lars.Beta();
     beta %= invW; // Remember, beta is an alias of codes.col(i).
   }
 }
 
-inline void LocalCoordinateCoding::OptimizeDictionary(
-    const arma::mat& data,
-    const arma::mat& codes,
+template<typename MatType>
+inline void LocalCoordinateCoding<MatType>::OptimizeDictionary(
+    const MatType& data,
+    const MatType& codes,
     const arma::uvec& adjacencies)
 {
   // Count number of atomic neighbors for each point x^i.
@@ -184,7 +190,8 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
 
   // Build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
   // where each x^i is repeated for the number of neighbors x^i has.
-  arma::mat dataPrime = zeros(data.n_rows, data.n_cols + adjacencies.n_elem);
+  MatType dataPrime = zeros<MatType>(data.n_rows,
+      data.n_cols + adjacencies.n_elem);
 
   dataPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = data;
 
@@ -209,9 +216,9 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   const size_t nInactiveAtoms = atoms - nActiveAtoms;
 
   // Efficient construction of codes restricted to active atoms.
-  arma::mat codesPrime = zeros(nActiveAtoms, data.n_cols +
+  MatType codesPrime = zeros<MatType>(nActiveAtoms, data.n_cols +
       adjacencies.n_elem);
-  arma::vec wSquared = ones(data.n_cols + adjacencies.n_elem, 1);
+  ColType wSquared = ones<ColType>(data.n_cols + adjacencies.n_elem, 1);
 
   if (nInactiveAtoms > 0)
   {
@@ -219,7 +226,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
         << " inactive atoms.  They will be re-initialized randomly.\n";
 
     // Create matrix holding only active codes.
-    arma::mat activeCodes = codes.rows(arma::uvec(activeAtoms));
+    MatType activeCodes = codes.rows(arma::uvec(activeAtoms));
 
     // Create reverse atom lookup for active atoms.
     arma::uvec atomReverseLookup(atoms);
@@ -266,8 +273,8 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   if (nInactiveAtoms == 0)
   {
     // No inactive atoms.  We can solve directly.
-    arma::mat A = codesPrime * diagmat(wSquared) * trans(codesPrime);
-    arma::mat B = codesPrime * diagmat(wSquared) * trans(dataPrime);
+    MatType A = codesPrime * diagmat(wSquared) * trans(codesPrime);
+    MatType B = codesPrime * diagmat(wSquared) * trans(dataPrime);
 
     dictionary = trans(solve(A, B));
     /*
@@ -279,7 +286,7 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   {
     // Inactive atoms must be reinitialized randomly, so we cannot solve
     // directly for the entire dictionary estimate.
-    arma::mat dictionaryActive =
+    MatType dictionaryActive =
         trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
                     codesPrime * diagmat(wSquared) * trans(dataPrime)));
 
@@ -310,9 +317,19 @@ inline void LocalCoordinateCoding::OptimizeDictionary(
   }
 }
 
-inline double LocalCoordinateCoding::Objective(
-    const arma::mat& data,
-    const arma::mat& codes,
+template<typename MatType>
+inline double LocalCoordinateCoding<MatType>::Objective(
+    const MatType& data,
+    const MatType& codes) const
+{
+  // Compute adjacencies and pass off to other overload.
+  return Objective(data, codes, find(codes));
+}
+
+template<typename MatType>
+inline double LocalCoordinateCoding<MatType>::Objective(
+    const MatType& data,
+    const MatType& codes,
     const arma::uvec& adjacencies) const
 {
   double weightedL1NormZ = 0;
@@ -331,11 +348,26 @@ inline double LocalCoordinateCoding::Objective(
   return std::pow(froNormResidual, 2.0) + lambda * weightedL1NormZ;
 }
 
+template<typename MatType>
 template<typename Archive>
-void LocalCoordinateCoding::serialize(Archive& ar,
-                                      const uint32_t /* version */)
+void LocalCoordinateCoding<MatType>::serialize(Archive& ar,
+                                               const uint32_t version)
 {
   ar(CEREAL_NVP(atoms));
+
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // Older versions of LocalCoordinateCoding always stored dictionary as an
+    // arma::mat.
+    arma::mat dictionaryTmp;
+    ar(cereal::make_nvp("dictionary", dictionaryTmp));
+    dictionary = ConvTo<MatType>::From(dictionaryTmp);
+  }
+  else
+  {
+    ar(CEREAL_NVP(dictionary));
+  }
+
   ar(CEREAL_NVP(dictionary));
   ar(CEREAL_NVP(lambda));
   ar(CEREAL_NVP(maxIterations));

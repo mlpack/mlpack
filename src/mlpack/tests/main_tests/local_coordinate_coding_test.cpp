@@ -71,8 +71,8 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCOutputModelTest",
   // Get the encoded output and dictionary after training.
   arma::mat initCodes = std::move(params.Get<arma::mat>("codes"));
   arma::mat initDict = std::move(params.Get<arma::mat>("dictionary"));
-  LocalCoordinateCoding* outputModel =
-      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding<>* outputModel =
+      std::move(params.Get<LocalCoordinateCoding<>*>("output_model"));
 
   ResetSettings();
 
@@ -158,8 +158,8 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainAndInputModelTest",
 
   RUN_BINDING();
 
-  LocalCoordinateCoding* outputModel =
-      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding<>* outputModel =
+      std::move(params.Get<LocalCoordinateCoding<>*>("output_model"));
 
   // No need to input training data again.
   SetInputParam("input_model", std::move(outputModel));
@@ -185,8 +185,8 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCTrainedModelDimTest",
 
   RUN_BINDING();
 
-  LocalCoordinateCoding* outputModel =
-      std::move(params.Get<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding<>* outputModel =
+      std::move(params.Get<LocalCoordinateCoding<>*>("output_model"));
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
