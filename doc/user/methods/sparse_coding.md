@@ -149,7 +149,8 @@ function can be used to encode new data points.
      of `data`.  Each row represents the weight associated with each atom in
      the dictionary.
 
-After encoding, the original data can be recovered as `sc.Dictionary() * data`.
+After encoding, the original data can be recovered (approximately) as
+`sc.Dictionary() * data`.
 
 ### Other Functionality
 

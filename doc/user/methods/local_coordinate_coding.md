@@ -138,7 +138,7 @@ member function can be used to encode new data points.
  * `lcc.Encode(data, codes)`
    - Encode `data` (a [column-major data
      matrix](../matrices.md#representing-data-in-mlpack)) as a sparse set of
-     local atoms of the dictionary, storing hte result in `codes`.
+     local atoms of the dictionary, storing the result in `codes`.
    - Both `data` and `codes` should be the same matrix type (e.g. `arma::mat`);
      see [Different Element Types](#mattype-different-element-types) for more
      details.
@@ -147,7 +147,8 @@ member function can be used to encode new data points.
      `data`.  Each row represents the weight associated with each atom in the
      dictionary.
 
-After encoding, the original data can be recovered as `lcc.Dictionary() * data`.
+After encoding, the original data can be recovered (approximately) as
+`lcc.Dictionary() * data`.
 
 ### Other Functionality
 
@@ -364,8 +365,8 @@ class CustomDictionaryInitializer
 {
  public:
   // Initialize the dictionary to have the given number of atoms, given the
-  // dataset.  MatType will be the matrix type used by the sparse coding model
-  // (e.g. `arma::mat`, `arma::fmat`, etc.).
+  // dataset.  MatType will be the matrix type used by the local coordinate
+  // coding model (e.g. `arma::mat`, `arma::fmat`, etc.).
   template<typename MatType>
   void Initialize(const MatType& data,
                   const size_t atoms,
