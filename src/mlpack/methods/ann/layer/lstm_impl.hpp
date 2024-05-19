@@ -93,59 +93,58 @@ void LSTMType<MatType>::ClearRecurrentState(
 }
 
 template<typename MatType>
-void LSTMType<MatType>::SetWeights(
-    typename MatType::elem_type* weightsPtr)
+void LSTMType<MatType>::SetWeights(const MatType& weights)
 {
   // Set the weight parameter for the output gate.
-  MakeAlias(input2GateOutputWeight, weightsPtr, outSize, inSize);
+  MakeAlias(input2GateOutputWeight, weights, outSize, inSize);
   size_t offset = input2GateOutputWeight.n_elem;
-  MakeAlias(input2GateOutputBias, weightsPtr + offset, outSize, 1);
+  MakeAlias(input2GateOutputBias, weights, outSize, 1, offset);
   offset += input2GateOutputBias.n_elem;
 
   // Set the weight parameter for the forget gate.
-  MakeAlias(input2GateForgetWeight, weightsPtr + offset, outSize, inSize);
+  MakeAlias(input2GateForgetWeight, weights, outSize, inSize, offset);
   offset += input2GateForgetWeight.n_elem;
-  MakeAlias(input2GateForgetBias, weightsPtr + offset, outSize, 1);
+  MakeAlias(input2GateForgetBias, weights, outSize, 1, offset);
   offset += input2GateForgetBias.n_elem;
 
   // Set the weight parameter for the input gate.
-  MakeAlias(input2GateInputWeight, weightsPtr + offset, outSize, inSize);
+  MakeAlias(input2GateInputWeight, weights, outSize, inSize, offset);
   offset += input2GateInputWeight.n_elem;
-  MakeAlias(input2GateInputBias, weightsPtr + offset, outSize, 1);
+  MakeAlias(input2GateInputBias, weights, outSize, 1, offset);
   offset += input2GateInputBias.n_elem;
 
   // Set the weight parameter for the hidden gate.
-  MakeAlias(input2HiddenWeight, weightsPtr + offset, outSize, inSize);
+  MakeAlias(input2HiddenWeight, weights, outSize, inSize, offset);
   offset += input2HiddenWeight.n_elem;
-  MakeAlias(input2HiddenBias, weightsPtr + offset, outSize, 1);
+  MakeAlias(input2HiddenBias, weights, outSize, 1, offset);
   offset += input2HiddenBias.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  MakeAlias(output2GateOutputWeight, weightsPtr + offset, outSize, outSize);
+  MakeAlias(output2GateOutputWeight, weights, outSize, outSize, offset);
   offset += output2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the output multiplication.
-  MakeAlias(output2GateForgetWeight, weightsPtr + offset, outSize, outSize);
+  MakeAlias(output2GateForgetWeight, weights, outSize, outSize, offset);
   offset += output2GateForgetWeight.n_elem;
 
   // Set the weight parameter for the input multiplication.
-  MakeAlias(output2GateInputWeight, weightsPtr + offset, outSize, outSize);
+  MakeAlias(output2GateInputWeight, weights, outSize, outSize, offset);
   offset += output2GateInputWeight.n_elem;
 
   // Set the weight parameter for the hidden multiplication.
-  MakeAlias(output2HiddenWeight, weightsPtr + offset, outSize, outSize);
+  MakeAlias(output2HiddenWeight, weights, outSize, outSize, offset);
   offset += output2HiddenWeight.n_elem;
 
   // Set the weight parameter for the cell multiplication.
-  MakeAlias(cell2GateOutputWeight, weightsPtr + offset, outSize, 1);
+  MakeAlias(cell2GateOutputWeight, weights, outSize, 1, offset);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - forget gate multiplication.
-  MakeAlias(cell2GateForgetWeight, weightsPtr + offset, outSize, 1);
+  MakeAlias(cell2GateForgetWeight, weights, outSize, 1, offset);
   offset += cell2GateOutputWeight.n_elem;
 
   // Set the weight parameter for the cell - input gate multiplication.
-  MakeAlias(cell2GateInputWeight, weightsPtr + offset, outSize, 1);
+  MakeAlias(cell2GateInputWeight, weights, outSize, 1, offset);
 }
 
 // Forward when cellState is not needed.

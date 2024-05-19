@@ -27,7 +27,7 @@ inline SoftmaxRegressionFunction<MatType>::SoftmaxRegressionFunction(
     lambda(lambda),
     fitIntercept(fitIntercept)
 {
-  MakeAlias(data, dataIn, dataIn.n_rows, dataIn.n_cols, false);
+  MakeAlias(data, dataIn, dataIn.n_rows, dataIn.n_cols, 0, false);
 
   // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();

@@ -34,10 +34,22 @@ std::string DefaultParamImpl(
 {
   std::ostringstream oss;
   if (std::is_same<T, bool>::value)
-    oss << "FALSE";
+  {
+    // If this is the verbose option, print the default that uses the global
+    // package option.
+    if (data.name == "verbose")
+    {
+      oss << "getOption(\"mlpack.verbose\", FALSE)";
+    }
+    else
+    {
+      oss << "FALSE";
+    }
+  }
   else
+  {
     oss << std::any_cast<T>(data.value);
-
+  }
   return oss.str();
 }
 

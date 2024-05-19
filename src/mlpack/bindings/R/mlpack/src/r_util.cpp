@@ -363,20 +363,6 @@ List IO_GetParamMatWithInfo(SEXP params, const std::string& paramName)
                       Rcpp::Named("Data") = std::move(m));
 }
 
-// Enable verbose output.
-// [[Rcpp::export]]
-void EnableVerbose()
-{
-  Log::Info.ignoreInput = false;
-}
-
-// Disable verbose output.
-// [[Rcpp::export]]
-void DisableVerbose()
-{
-  Log::Info.ignoreInput = true;
-}
-
 // Reset the state of all timers.
 // [[Rcpp::export]]
 void ResetTimers()

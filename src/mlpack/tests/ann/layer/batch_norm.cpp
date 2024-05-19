@@ -44,7 +44,7 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   module1.ComputeOutputDimensions();
   arma::mat moduleParams(module1.WeightSize(), 1);
   module1.CustomInitialize(moduleParams, module1.WeightSize());
-  module1.SetWeights((double*) moduleParams.memptr());
+  module1.SetWeights(moduleParams);
 
   // BatchNorm layer with average parameter set to false (using momentum).
   BatchNorm module2(2, 2, 1e-5, false);
@@ -53,7 +53,7 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
   arma::mat moduleParams2(module2.WeightSize(), 1);
   module2.CustomInitialize(moduleParams2, module2.WeightSize());
-  module2.SetWeights((double*) moduleParams2.memptr());
+  module2.SetWeights(moduleParams2);
 
   // Training Forward Pass Test.
   output.set_size(module1.OutputSize(), 1);
@@ -250,7 +250,7 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   module1.ComputeOutputDimensions();
   arma::mat moduleParams(module1.WeightSize(), 1);
   module1.CustomInitialize(moduleParams, module1.WeightSize());
-  module1.SetWeights((double*) moduleParams.memptr());
+  module1.SetWeights(moduleParams);
   output.set_size(8, 3);
   module1.Forward(input, output);
   CheckMatrices(output, result, 1e-1);
@@ -275,7 +275,7 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   module2.ComputeOutputDimensions();
   arma::mat moduleParams2(module2.WeightSize(), 1);
   module2.CustomInitialize(moduleParams2, module2.WeightSize());
-  module2.SetWeights((double*) moduleParams2.memptr());
+  module2.SetWeights(moduleParams2);
   output.set_size(8, 3);
   module2.Forward(input, output);
   CheckMatrices(output, result, 1e-1);

@@ -67,7 +67,16 @@ void PrintDoc(util::ParamData& d,
       }
       else if (d.cppType == "bool")
       {
-        oss << (std::any_cast<bool>(d.value) ? "TRUE" : "FALSE");
+        // If the option is `verbose`, be sure to print the use of the global
+        // mlpack package option as a default.
+        if (d.name == "verbose")
+        {
+          oss << "getOption(\"mlpack.verbose\", FALSE)";
+        }
+        else
+        {
+          oss << (std::any_cast<bool>(d.value) ? "TRUE" : "FALSE");
+        }
       }
       oss << "\"";
     }
