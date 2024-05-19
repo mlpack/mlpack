@@ -232,7 +232,7 @@ inline void LocalCoordinateCoding<MatType>::OptimizeDictionary(
     arma::uvec atomReverseLookup(atoms);
     for (size_t i = 0; i < activeAtoms.size(); ++i)
     {
-      atomReverseLookup[i] = activeAtoms[i];
+      atomReverseLookup[activeAtoms[i]] = i;
     }
 
     codesPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = activeCodes;
@@ -266,8 +266,11 @@ inline void LocalCoordinateCoding<MatType>::OptimizeDictionary(
     }
   }
 
-  wSquared.subvec(data.n_cols, wSquared.n_elem - 1) = lambda *
-      abs(wSquared.subvec(data.n_cols, wSquared.n_elem - 1));
+  if (adjacencies.n_elem > 0)
+  {
+    wSquared.subvec(data.n_cols, wSquared.n_elem - 1) = lambda *
+        abs(wSquared.subvec(data.n_cols, wSquared.n_elem - 1));
+  }
 
   // Solve system.
   if (nInactiveAtoms == 0)
