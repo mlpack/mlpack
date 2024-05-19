@@ -537,31 +537,11 @@ void HoeffdingTree<
          const std::optional<size_t> maxSamples,
          const std::optional<size_t> checkInterval)
 {
-
-  if (successProbability.has_value())
-  {
-    Train(data, info, labels, numClasses, batchTraining,
-        successProbability.value(), this->maxSamples, this->checkInterval,
-        this->minSamples);
-  }
-  else if (successProbability.has_value() && maxSamples.has_value())
-  {
-    Train(data, info, labels, numClasses, batchTraining,
-        successProbability.value(), maxSamples.value(), this->checkInterval,
-        this->minSamples);
-  }
-  else if (successProbability.has_value() && maxSamples.has_value() &&
-      checkInterval.has_value())
-  {
-    Train(data, info, labels, numClasses, batchTraining,
-        successProbability.value(), maxSamples.value(), checkInterval.value(),
-        this->minSamples);
-  }
-  else
-  {
-    Train(data, info, labels, numClasses, batchTraining, this->successProbability,
-        this->maxSamples, this->checkInterval, this->minSamples);
-  }
+  Train(data, info, labels, numClasses, batchTraining,
+      (successProbability.has_value()) ? successProbability.value() : this->successProbability,
+      (maxSamples.has_value()) ? maxSamples.value() : this->maxSamples,
+      (checkInterval.has_value()) ? checkInterval.value() : this->checkInterval,
+      this->minSamples);
 }
 
 template<typename FitnessFunction,
