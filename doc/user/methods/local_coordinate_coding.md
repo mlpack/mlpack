@@ -110,6 +110,11 @@ calling `Train()`:
    called, but when `lambda` is too large, the codings may be inaccurate
    representations of the original points.
 
+<!-- TODO: indicate that you can get this info with MLPACK_PRINT_INFO and
+MLPACK_PRINT_WARN---once those are documented -->
+
+ * If `lambda` is set too large, encodings may be empty (e.g. all zeros).
+
  * Training is not incremental; a second call to `Train()` will reinitialize the
    dictionary and restart the learning process.
 
@@ -176,7 +181,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 
 mlpack::LocalCoordinateCoding lcc;
 lcc.Atoms() = 50;
-lcc.Lambda() = 0.1;
+lcc.Lambda() = 1e-5;
 lcc.MaxIterations() = 25;
 lcc.Train(dataset);
 
@@ -228,11 +233,12 @@ mlpack::data::Load("satellite.train.csv", trainData, true);
 arma::mat testData;
 mlpack::data::Load("satellite.test.csv", testData, true);
 
-for (double lambda = 0.1; lambda <= 0.5; lambda += 0.1)
+for (double lambdaPow = -6; lambdaPow <= -2; lambdaPow += 1)
 {
-  mlpack::LocalCoordinateCoding lcc(25 /* atoms */);
+  const double lambda = std::pow(10.0, lambdaPow);
+  mlpack::LocalCoordinateCoding lcc(50 /* atoms */);
   lcc.Lambda() = lambda;
-  lcc.MaxIterations() = 20; // Keep iterations low so this runs relatively fast.
+  lcc.MaxIterations() = 25; // Keep iterations low so this runs relatively fast.
 
   const double trainObj = lcc.Train(trainData);
 
@@ -283,7 +289,7 @@ mlpack::data::Load("cloud.csv", dataset, true);
 
 mlpack::LocalCoordinateCoding<arma::fmat> lcc;
 lcc.Atoms() = 30;
-lcc.Lambda() = 0.15;
+lcc.Lambda() = 1e-5;
 lcc.MaxIterations() = 100;
 lcc.Train(dataset);
 
@@ -334,7 +340,7 @@ arma::mat trainData;
 mlpack::data::Load("satellite.train.csv", trainData, true);
 
 const size_t atoms = 25;
-const double lambda = 0.1;
+const double lambda = 1e-5;
 const size_t maxIterations = 50;
 
 // Use a uniform random matrix as the initial dictionary.
