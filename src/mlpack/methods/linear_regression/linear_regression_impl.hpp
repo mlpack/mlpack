@@ -78,40 +78,18 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses)
-{
-  return Train(predictors, responses,
-      arma::Row<typename ResponsesType::elem_type>(), this->lambda,
-      this->intercept);
-}
-
-template<typename ModelMatType>
 template<typename MatType, typename ResponsesType, typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
-                                      const double lambda)
+                                      const std::optional<double> lambda,
+                                      const std::optional<bool> intercept)
 {
   return Train(predictors, responses,
-      arma::Row<typename ResponsesType::elem_type>(), lambda, this->intercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const double lambda,
-                                      const bool intercept)
-{
-  return Train(predictors, responses,
-      arma::Row<typename ResponsesType::elem_type>(), lambda, intercept);
+      arma::Row<typename ResponsesType::elem_type>(),
+      (lambda.has_value()) ? lambda.value() : this->lambda,
+      (intercept.has_value()) ? intercept.value() : this->intercept);
 }
 
 template<typename ModelMatType>
@@ -129,29 +107,16 @@ template<typename ModelMatType>
 template<typename MatType,
          typename ResponsesType,
          typename WeightsType,
-         typename, typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const WeightsType& weights)
-{
-  return Train(predictors, responses, weights, this->lambda, this->intercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType,
-         typename ResponsesType,
-         typename WeightsType,
          typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
                                       const WeightsType& weights,
-                                      const double lambda)
+                                      const std::optional<double> lambda)
 {
-  return Train(predictors, responses, weights, lambda, this->intercept);
+  return Train(predictors, responses, weights,
+      (lambda.has_value()) ? lambda.value() : this->lambda, this->intercept);
 }
 
 template<typename ModelMatType>

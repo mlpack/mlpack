@@ -144,51 +144,6 @@ class LinearRegression
    *
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
-   * @return The least squares error after training.
-   */
-  template<typename MatType,
-           typename ResponsesType,
-           typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type,
-           typename = typename std::enable_if<
-               !std::is_same<ResponsesType, arma::rowvec>::value
-           >::type>
-  ElemType Train(const MatType& predictors,
-                 const ResponsesType& responses);
-
-  /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the responses to the data points.
-   * @param lambda L2 regularization penalty parameter to use.
-   * @return The least squares error after training.
-   */
-  template<typename MatType,
-           typename ResponsesType,
-           typename = void, /* so MetaInfoExtractor does not get confused */
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type>
-  ElemType Train(const MatType& predictors,
-                 const ResponsesType& responses,
-                 const double lambda);
-
-  /**
-   * Train the LinearRegression model on the given data and weights. Careful!
-   * This will completely ignore and overwrite the existing model. This
-   * particular implementation does not have an incremental training algorithm.
-   * To set the regularization parameter lambda, call Lambda() or set a
-   * different value in the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the responses to the data points.
    * @param lambda L2 regularization penalty parameter to use.
    * @param intercept Whether or not to fit an intercept term.
    * @return The least squares error after training.
@@ -201,8 +156,8 @@ class LinearRegression
            >::type>
   ElemType Train(const MatType& predictors,
                  const ResponsesType& responses,
-                 const double lambda,
-                 const bool intercept);
+                 const std::optional<double> lambda = std::nullopt,
+                 const std::optional<bool> intercept = std::nullopt);
 
   /**
    * Train the LinearRegression model.  This is a dummy overload so that
@@ -213,35 +168,6 @@ class LinearRegression
   ElemType Train(const MatType& predictors,
                  const arma::rowvec& responses,
                  const arma::rowvec& weights);
-
-  /**
-   * Train the LinearRegression model on the given data and instance weights.
-   * Careful!  This will completely ignore and overwrite the existing model.
-   * This particular implementation does not have an incremental training
-   * algorithm.  To set the regularization parameter lambda, call Lambda() or
-   * set a different value in the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the responses to the data points.
-   * @param weights Instance weights (for boosting).
-   * @return The least squares error after training.
-   */
-  template<typename MatType,
-           typename ResponsesType,
-           typename WeightsType,
-           typename = typename std::enable_if<
-               std::is_same<typename ResponsesType::elem_type, ElemType>::value
-           >::type,
-           typename = typename std::enable_if<
-               !std::is_same<ResponsesType, arma::rowvec>::value ||
-               !std::is_same<WeightsType, arma::rowvec>::value
-           >::type,
-           typename = typename std::enable_if<
-               std::is_same<typename WeightsType::elem_type, ElemType>::value
-           >::type>
-  ElemType Train(const MatType& predictors,
-                 const ResponsesType& responses,
-                 const WeightsType& weights);
 
   /**
    * Train the LinearRegression model on the given data and instance weights.
@@ -268,7 +194,7 @@ class LinearRegression
   ElemType Train(const MatType& predictors,
                  const ResponsesType& responses,
                  const WeightsType& weights,
-                 const double lambda);
+                 const std::optional<double> lambda = std::nullopt);
 
   /**
    * Train the LinearRegression model on the given data and instance weights.
