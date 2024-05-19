@@ -145,22 +145,12 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double lambda)
+    const std::optional<double> lambda,
+    const std::optional<double> delta)
 {
-  return Train(data, labels, numClasses, lambda, this->delta,
-      this->fitIntercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType>
-typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double lambda,
-    const double delta)
-{
-  return Train(data, labels, numClasses, lambda, delta, this->fitIntercept);
+  return Train(data, labels, numClasses,
+      (lambda.has_value()) ? lambda.value() : this->lambda,
+      (delta.has_value()) ? delta.value() : this->delta, this->fitIntercept);
 }
 
 template<typename ModelMatType>
@@ -203,24 +193,12 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     OptimizerType optimizer,
-    const double lambda)
+    const std::optional<double> lambda,
+    const std::optional<double> delta)
 {
-  return Train(data, labels, numClasses, optimizer, lambda, this->delta,
-      this->fitIntercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename OptimizerType, typename>
-typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    OptimizerType optimizer,
-    const double lambda,
-    const double delta)
-{
-  return Train(data, labels, numClasses, optimizer, lambda, delta,
-      this->fitIntercept);
+  return Train(data, labels, numClasses, optimizer, 
+      (lambda.has_value()) ? lambda.value() : this->lambda,
+      (delta.has_value()) ? delta.value() : this->delta, this->fitIntercept);
 }
 
 template<typename ModelMatType>
