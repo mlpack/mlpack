@@ -81,7 +81,7 @@ avoid copies.
    - If `offset` is `0`, then the alias is identical: the first element of
      `a` is the first element of `mat`. Otherwise, the first element of `a`
      is the `offset`'th element of `mat`; elements in `mat` are ordered in
-     a [column-major way](../matrices.md#representing-data-in-mlpack).
+     a [column-major way](matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
      `arma::fmat`, `arma::sp_mat`).
@@ -93,7 +93,7 @@ avoid copies.
    - If `offset` is `0`, then the alias is identical: the first element of
      `a` is the first element of `cube`. Otherwise, the first element of `a`
      is the `offset`'th element of `cube`; elements in `cube` are ordered in
-     a [column-major way](../matrices.md#representing-data-in-mlpack).
+     a [column-major way](matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `cube` and `a` should have the same cube type (e.g. `arma::cube`,
      `arma::fcube`).
