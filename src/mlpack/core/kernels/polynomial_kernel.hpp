@@ -59,12 +59,12 @@ class PolynomialKernel
   //! Get the degree of the polynomial.
   const double& Degree() const { return degree; }
   //! Modify the degree of the polynomial.
-  double& Degree() { return degree; }
+  void Degree(const double degree) { this->degree = degree; }
 
   //! Get the offset of the dot product of the arguments.
   const double& Offset() const { return offset; }
   //! Modify the offset of the dot product of the arguments.
-  double& Offset() { return offset; }
+  void Offset(const double offset) { this->offset = offset; }
 
   //! Serialize the kernel.
   template<typename Archive>
