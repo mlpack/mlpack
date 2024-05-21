@@ -71,6 +71,10 @@
   #define mlpack_force_inline __forceinline
 #endif
 
+#if !defined(MLPACK_HAVE_CXX17)
+  #error "Need to enable C++17 mode in your compiler"
+#endif
+
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
