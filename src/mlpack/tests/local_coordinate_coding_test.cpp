@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingTestCodingStep",
   uword nAtoms = 10;
 
   mat inX; // The .arm file is saved as an arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
@@ -98,7 +98,7 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
   uword nAtoms = 10;
 
   mat inX; // File is saved as an arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
@@ -189,7 +189,7 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
   uword nAtoms = 10;
 
   mat inX; // File is saved as arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 

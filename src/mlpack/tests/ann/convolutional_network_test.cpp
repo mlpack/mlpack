@@ -71,7 +71,7 @@ void CheckMoveFunction(ModelType* network1,
 TEST_CASE("PaddingTest", "[ConvolutionalNetworktest]")
 {
   arma::mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.csv");
 
   // Create the network.
   FFN<NegativeLogLikelihood, RandomInitialization> model;
@@ -148,7 +148,7 @@ TEST_CASE("MaxPoolingTest", "[ConvolutionalNetworkTest]")
 TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
 {
   arma::mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;
@@ -264,7 +264,7 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
   model.InputDimensions() = std::vector<size_t>({ 28, 28 });
 
   arma::mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;
@@ -347,7 +347,7 @@ TEST_CASE("VanillaNetworkBatchSizeTest", "[ConvolutionalNetworkTest]")
 TEST_CASE("CheckCopyVanillaNetworkTest", "[ConvolutionalNetworkTest]")
 {
   arma::mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   arma::uword nPoints = X.n_cols;
