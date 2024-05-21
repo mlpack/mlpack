@@ -9,7 +9,7 @@ Description: A fast, flexible machine learning library, written in C++, that
              <doi:10.21105/joss.05026>.
 SystemRequirements: A C++17 compiler. Version 5 or later of GCC will be fine.
 License: BSD_3_clause + file LICENSE
-Depends: R (>= 4.0.0)
+Depends: R (>= 4.3.0)
 Imports: Rcpp (>= 0.12.12)
 LinkingTo: Rcpp,
            RcppArmadillo (>= @RcppArmadillo_Version@),

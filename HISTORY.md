@@ -44,7 +44,7 @@
 
   * Fix divide-by-zero edge case for LARS (#3701).
 
-  * Move from C++14 to C++17 (#3704)
+  * Move minimum required C++ version from C++14 to C++17 (#3704).
 
 ### mlpack 4.3.0
 ###### 2023-11-27
