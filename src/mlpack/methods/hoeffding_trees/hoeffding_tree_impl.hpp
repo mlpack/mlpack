@@ -538,7 +538,8 @@ void HoeffdingTree<
          const std::optional<size_t> checkInterval)
 {
   Train(data, info, labels, numClasses, batchTraining,
-      (successProbability.has_value()) ? successProbability.value() : this->successProbability,
+      (successProbability.has_value()) ? successProbability.value() :
+          this->successProbability,
       (maxSamples.has_value()) ? maxSamples.value() : this->maxSamples,
       (checkInterval.has_value()) ? checkInterval.value() : this->checkInterval,
       this->minSamples);
