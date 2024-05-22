@@ -333,4 +333,3 @@ done
 # Remove temporary files.
 rm -f "$template_html_header";
 rm -f "$template_html_footer";
-exit 0;
