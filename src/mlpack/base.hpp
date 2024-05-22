@@ -77,6 +77,13 @@
   #define MLPACK_HAVE_CXX17
 #endif
 
+#if defined(_MSVC_LANG)
+  #if (_MSVC_LANG >= 201703L)
+    #undef  MLPACK_HAVE_CXX17
+    #define MLPACK_HAVE_CXX17
+  #endif
+#endif
+
 #if !defined(MLPACK_HAVE_CXX17)
   #error "Need to enable C++17 mode in your compiler"
 #endif
