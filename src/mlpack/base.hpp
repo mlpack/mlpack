@@ -71,6 +71,12 @@
   #define mlpack_force_inline __forceinline
 #endif
 
+// detect C++17 mode
+#if (__cplusplus >= 201703L)
+  #undef  MLPACK_HAVE_CXX17
+  #define MLPACK_HAVE_CXX17
+#endif
+
 #if !defined(MLPACK_HAVE_CXX17)
   #error "Need to enable C++17 mode in your compiler"
 #endif
