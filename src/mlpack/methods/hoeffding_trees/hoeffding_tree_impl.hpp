@@ -522,7 +522,7 @@ void HoeffdingTree<
           this->successProbability,
       (maxSamples.has_value()) ? maxSamples.value() : this->maxSamples,
       (checkInterval.has_value()) ? checkInterval.value() : this->checkInterval,
-      this->minSamples);
+          this->minSamples);
 }
 
 template<typename FitnessFunction,
