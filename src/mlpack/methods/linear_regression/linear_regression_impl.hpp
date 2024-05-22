@@ -113,27 +113,14 @@ typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
                                       const WeightsType& weights,
-                                      const std::optional<double> lambda)
+                                      const std::optional<double> lambda,
+                                      const std::optional<bool> intercept)
 {
-  return Train(predictors, responses, weights,
-      (lambda.has_value()) ? lambda.value() : this->lambda, this->intercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType,
-         typename ResponsesType,
-         typename WeightsType,
-         typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const WeightsType& weights,
-                                      const double lambda,
-                                      const bool intercept)
-{
-  this->lambda = lambda;
-  this->intercept = intercept;
+  if (lambda.has_value())
+    this->lambda = lambda.value();
+  
+  if (intercept.has_value())
+    this->intercept = intercept.value();
 
   /*
    * We want to calculate the a_i coefficients of:
@@ -174,7 +161,8 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
   // (assuming the SVD is used to solve it)
   arma::Mat<ElemType> cov = p * p.t() +
-      ((ElemType) lambda) * arma::eye<arma::Mat<ElemType>>(p.n_rows, p.n_rows);
+      ((ElemType) lambda.value()) *
+      arma::eye<arma::Mat<ElemType>>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());
   return ComputeError(predictors, responses);
