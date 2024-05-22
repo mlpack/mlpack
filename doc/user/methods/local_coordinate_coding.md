@@ -111,7 +111,7 @@ calling `Train()`:
    representations of the original points.
 
 <!-- TODO: indicate that you can get this info with MLPACK_PRINT_INFO and
-MLPACK_PRINT_WARN---once those are documented -->
+MLPACK_PRINT_WARN, once those are documented -->
 
  * If `lambda` is set too large, encodings may be empty (e.g. all zeros).
 
