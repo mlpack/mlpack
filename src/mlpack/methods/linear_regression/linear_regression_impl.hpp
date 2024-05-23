@@ -144,7 +144,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // Here we add the row of ones to the predictors.
   // The intercept is not penalized. Add an "all ones" row to design and set
   // intercept = false to get a penalized intercept.
-  if (intercept)
+  if (this->intercept)
   {
     p.insert_rows(0, ones<arma::Mat<ElemType>>(1, nCols));
   }
@@ -161,7 +161,7 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
   // (assuming the SVD is used to solve it)
   arma::Mat<ElemType> cov = p * p.t() +
-      ((ElemType) lambda.value()) *
+      ((ElemType) this->lambda) *
       arma::eye<arma::Mat<ElemType>>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());

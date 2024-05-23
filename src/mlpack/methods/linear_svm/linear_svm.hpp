@@ -267,13 +267,6 @@ class LinearSVM
                  const size_t numClasses,
                  CallbackTypes&&... callbackTypes);
 
-  template<typename MatType>
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 const std::optional<double> lambda = std::nullopt,
-                 const std::optional<double> delta = std::nullopt);
-
   template<typename MatType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsCallbackTypes<
@@ -282,9 +275,9 @@ class LinearSVM
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
-                 const double lambda,
-                 const double delta,
-                 const bool fitIntercept,
+                 const std::optional<double> lambda = std::nullopt,
+                 const std::optional<double> delta = std::nullopt,
+                 const std::optional<bool> fitIntercept = std::nullopt,
                  CallbackTypes&&... callbacks);
 
   /**
@@ -322,20 +315,6 @@ class LinearSVM
 
   template<typename MatType,
            typename OptimizerType = ens::L_BFGS,
-           typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType,
-               LinearSVMFunction<MatType, ModelMatType>,
-               ModelMatType
-           >::value>::type>
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 OptimizerType optimizer,
-                 const std::optional<double> lambda = std::nullopt,
-                 const std::optional<double> delta = std::nullopt);
-
-  template<typename MatType,
-           typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
                OptimizerType,
@@ -349,9 +328,9 @@ class LinearSVM
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
                  OptimizerType optimizer,
-                 const double lambda,
-                 const double delta,
-                 const bool fitIntercept,
+                 const std::optional<double> lambda = std::nullopt,
+                 const std::optional<double> delta = std::nullopt,
+                 const std::optional<bool> fitIntercept = std::nullopt,
                  CallbackTypes&&... callbacks);
 
   /**
