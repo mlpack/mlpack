@@ -145,7 +145,7 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const std::optional<double> lambda,
+    const double lambda,
     const std::optional<double> delta,
     const std::optional<bool> fitIntercept,
     CallbackTypes&&... callbacks)
