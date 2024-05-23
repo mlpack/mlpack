@@ -328,7 +328,7 @@ class LinearSVM
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
                  OptimizerType optimizer,
-                 const std::optional<double> lambda = std::nullopt,
+                 const double lambda,
                  const std::optional<double> delta = std::nullopt,
                  const std::optional<bool> fitIntercept = std::nullopt,
                  CallbackTypes&&... callbacks);
