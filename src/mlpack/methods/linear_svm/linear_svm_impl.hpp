@@ -190,8 +190,7 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
     CallbackTypes&&... callbacks)
 {
   this->numClasses = numClasses;
-  if (lambda.has_value())
-    this->lambda = lambda.value();
+  this->lambda = lambda;
   
   if (delta.has_value())
     this->delta = delta.value();
