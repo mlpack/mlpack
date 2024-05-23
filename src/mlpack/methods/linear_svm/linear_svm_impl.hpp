@@ -152,8 +152,7 @@ typename LinearSVM<ModelMatType>::ElemType LinearSVM<ModelMatType>::Train(
 {
   // By default, train with L-BFGS.
   ens::L_BFGS lbfgs;
-  return Train(data, labels, numClasses, lbfgs,
-      (lambda.has_value()) ? lambda.value() : this->lambda,
+  return Train(data, labels, numClasses, lbfgs, lambda,
       (delta.has_value()) ? delta.value() : this->delta,
       (fitIntercept.has_value()) ? fitIntercept.value() : this->fitIntercept,
       std::forward<CallbackTypes>(callbacks)...);
