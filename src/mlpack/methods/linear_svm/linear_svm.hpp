@@ -257,8 +257,6 @@ class LinearSVM
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return Objective value of the final point.
    */
-  // Many overloads are necessary because we don't yet require C++17, which
-  // would give std::optional support.
   template<typename MatType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsCallbackTypes<
@@ -269,19 +267,6 @@ class LinearSVM
                  const size_t numClasses,
                  CallbackTypes&&... callbackTypes);
 
-  template<typename MatType>
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 const double lambda);
-
-  template<typename MatType>
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 const double lambda,
-                 const double delta);
-
   template<typename MatType,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsCallbackTypes<
@@ -291,8 +276,8 @@ class LinearSVM
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
                  const double lambda,
-                 const double delta,
-                 const bool fitIntercept,
+                 const std::optional<double> delta = std::nullopt,
+                 const std::optional<bool> fitIntercept = std::nullopt,
                  CallbackTypes&&... callbacks);
 
   /**
@@ -311,8 +296,6 @@ class LinearSVM
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return Objective value of the final point.
    */
-  // Many overloads are necessary because we don't yet require C++17, which
-  // would give std::optional support.
   template<typename MatType,
            typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
@@ -332,33 +315,6 @@ class LinearSVM
 
   template<typename MatType,
            typename OptimizerType = ens::L_BFGS,
-           typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType,
-               LinearSVMFunction<MatType, ModelMatType>,
-               ModelMatType
-           >::value>::type>
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 OptimizerType optimizer,
-                 const double lambda);
-
-  template<typename MatType,
-           typename OptimizerType = ens::L_BFGS,
-           typename = typename std::enable_if<IsEnsOptimizer<
-               OptimizerType,
-               LinearSVMFunction<MatType, ModelMatType>,
-               ModelMatType
-           >::value>::type>
-  ElemType Train(const MatType& data,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses,
-                 OptimizerType optimizer,
-                 const double lambda,
-                 const double delta);
-
-  template<typename MatType,
-           typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
            typename = typename std::enable_if<IsEnsOptimizer<
                OptimizerType,
@@ -373,8 +329,8 @@ class LinearSVM
                  const size_t numClasses,
                  OptimizerType optimizer,
                  const double lambda,
-                 const double delta,
-                 const bool fitIntercept,
+                 const std::optional<double> delta = std::nullopt,
+                 const std::optional<bool> fitIntercept = std::nullopt,
                  CallbackTypes&&... callbacks);
 
   /**

@@ -15,6 +15,7 @@
 #include "average_init.hpp"
 #include "given_init.hpp"
 #include "merge_init.hpp"
+#include "no_init.hpp"
 #include "random_acol_init.hpp"
 #include "random_init.hpp"
 

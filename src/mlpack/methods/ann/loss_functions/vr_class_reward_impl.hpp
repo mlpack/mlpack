@@ -65,7 +65,7 @@ void VRClassRewardType<MatType>::Backward(
     const MatType& target,
     MatType& output)
 {
-  output = arma::zeros<MatType>(input.n_rows, input.n_cols);
+  output = zeros<MatType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < (input.n_cols - 1); ++i)
   {
     const size_t currentTarget = target(i);

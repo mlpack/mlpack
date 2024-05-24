@@ -43,7 +43,7 @@ void DeleteAllocatedMemoryImpl(
 {
   // Delete the allocated memory (hopefully we actually own it).
   typedef std::tuple<T*, std::string> TupleType;
-  delete std::get<0>(*MLPACK_ANY_CAST<TupleType>(&d.value));
+  delete std::get<0>(*std::any_cast<TupleType>(&d.value));
 }
 
 template<typename T>

@@ -320,7 +320,7 @@ do
   echo "Checking links in $f...";
 
   # To run checklink we have to strip out some perl stderr warnings...
-  checklink -qs --follow-file-links --suppress-broken 405 --suppress-broken 301 "$f" 2>&1 |
+  checklink -qs --follow-file-links --suppress-broken 405 --suppress-broken 301  -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" "$f" 2>&1 |
       grep -v 'Use of uninitialized value' > checklink_out;
   if [ -s checklink_out ];
   then

@@ -31,7 +31,7 @@ TEST_CASE("PReLUFORWARDTest", "[ANNLayerTest]")
   PReLU module(0.01);
   arma::mat moduleParams(module.WeightSize(), 1);
   module.CustomInitialize(moduleParams, module.WeightSize());
-  module.SetWeights((double*) moduleParams.memptr());
+  module.SetWeights(moduleParams);
   arma::mat predOutput;
   module.Forward(input, predOutput);
   arma::mat actualOutput = {{0.5, 1.2, 3.1},
@@ -54,7 +54,7 @@ TEST_CASE("PReLUBACKWARDTest", "[ANNLayerTest]")
   PReLU module(0.01);
   arma::mat moduleParams(module.WeightSize(), 1);
   module.CustomInitialize(moduleParams, module.WeightSize());
-  module.SetWeights((double*) moduleParams.memptr());
+  module.SetWeights(moduleParams);
   arma::mat gy = {{0.2, -0.5, 0.8},
                  {1.5, -0.6, 0.1},
                  {-0.3, 0.2, -0.5},
@@ -84,7 +84,7 @@ TEST_CASE("PReLUGRADIENTTest", "[ANNLayerTest]")
   PReLU module(0.01);
   arma::mat moduleParams(module.WeightSize(), 1);
   module.CustomInitialize(moduleParams, module.WeightSize());
-  module.SetWeights((double*) moduleParams.memptr());
+  module.SetWeights(moduleParams);
   arma::mat error = {{0.2, -0.5,  0.8},
                     {-0.015, -0.006, 0.001},
                     {-0.3,  0.002, -0.005},

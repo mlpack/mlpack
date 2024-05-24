@@ -476,7 +476,7 @@ TEST_CASE("SetParamDoubleTest", "[CLIOptionTest]")
 
   // Now create second value.
   double dd2 = 1.0;
-  MLPACK_ANY a = dd2;
+  std::any a = dd2;
   SetParam<double>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
   // Make sure it's the right thing.
@@ -499,10 +499,10 @@ TEST_CASE("SetParamBoolTest", "[CLIOptionTest]")
 
   // Now create second value.
   bool b2 = true;
-  MLPACK_ANY a = b2;
+  std::any a = b2;
   SetParam<bool>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
-  REQUIRE(MLPACK_ANY_CAST<bool>(d.value) == true);
+  REQUIRE(std::any_cast<bool>(d.value) == true);
 }
 
 // Test that calling SetParam on a matrix sets the string correctly.
@@ -519,14 +519,14 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
 
   // Get a new string.
   string newFilename = "new.csv";
-  MLPACK_ANY a2 = newFilename;
+  std::any a2 = newFilename;
 
   SetParam<arma::mat>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
 
   // Make sure the change went through.
   tuple<arma::mat, TupleType>& t =
-      *MLPACK_ANY_CAST<tuple<arma::mat, TupleType>>(&d.value);
+      *std::any_cast<tuple<arma::mat, TupleType>>(&d.value);
   REQUIRE(get<0>(get<1>(t)) == "new.csv");
 }
 
@@ -542,14 +542,14 @@ TEST_CASE("SetParamModelTest", "[CLIOptionTest]")
 
   // Get a new string.
   string newFilename = "new_kernel.bin";
-  MLPACK_ANY a2 = newFilename;
+  std::any a2 = newFilename;
 
   SetParam<GaussianKernel>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
 
   // Make sure the change went through.
   tuple<GaussianKernel*, string>& t =
-      *MLPACK_ANY_CAST<tuple<GaussianKernel*, string>>(&d.value);
+      *std::any_cast<tuple<GaussianKernel*, string>>(&d.value);
 
   REQUIRE(get<1>(t) == "new_kernel.bin");
 }
@@ -575,14 +575,14 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
 
   // Now get new filename.
   string newFilename = "new_filename.csv";
-  MLPACK_ANY a2 = newFilename;
+  std::any a2 = newFilename;
 
   SetParam<tuple<DatasetInfo, arma::mat>>((util::ParamData&) d,
       (const void*) &a2, (void*) NULL);
 
   // Check that the name is right.
   tuple<tuple<DatasetInfo, arma::mat>, TupleType>& t3 =
-      *MLPACK_ANY_CAST<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(
+      *std::any_cast<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(
       &d.value);
 
   REQUIRE(get<0>(get<1>(t3)) == "new_filename.csv");

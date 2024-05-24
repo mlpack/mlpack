@@ -401,7 +401,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
     // Auxiliary variables.
     arma::vec sample;
-    arma::vec means = arma::zeros(queryNode.NumDescendants());
+    arma::vec means = zeros(queryNode.NumDescendants());
     size_t m;
     double meanSample = 0;
     bool useMonteCarloPredictions = true;

@@ -47,8 +47,8 @@ void AddToCLI11(const std::string& cliName,
       [&param](const std::string& value)
       {
         using TupleType = std::tuple<T, typename ParameterType<T>::type>;
-        TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&param.value);
-        std::get<0>(std::get<1>(tuple)) = MLPACK_ANY_CAST<std::string>(value);
+        TupleType& tuple = *std::any_cast<TupleType>(&param.value);
+        std::get<0>(std::get<1>(tuple)) = std::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());
@@ -79,8 +79,8 @@ void AddToCLI11(const std::string& cliName,
       [&param](const std::string& value)
       {
         using TupleType = std::tuple<T*, typename ParameterType<T>::type>;
-        TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&param.value);
-        std::get<1>(tuple) = MLPACK_ANY_CAST<std::string>(value);
+        TupleType& tuple = *std::any_cast<TupleType>(&param.value);
+        std::get<1>(tuple) = std::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());
@@ -109,8 +109,8 @@ void AddToCLI11(const std::string& cliName,
       [&param](const std::string& value)
       {
         using TupleType = std::tuple<T, typename ParameterType<T>::type>;
-        TupleType& tuple = *MLPACK_ANY_CAST<TupleType>(&param.value);
-        std::get<0>(std::get<1>(tuple)) = MLPACK_ANY_CAST<std::string>(value);
+        TupleType& tuple = *std::any_cast<TupleType>(&param.value);
+        std::get<0>(std::get<1>(tuple)) = std::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());

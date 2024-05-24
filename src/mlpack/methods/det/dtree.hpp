@@ -222,7 +222,7 @@ class DTree
    */
   bool WithinRange(const VecType& query) const;
 
- private:
+ protected: /* these are checked in the tests */
   // The indices in the complete set of points
   // (after all forms of swapping in the original data
   // matrix to align all the points in a node
@@ -331,7 +331,7 @@ class DTree
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
- private:
+ protected: /* these are checked in the tests */
   // Utility methods.
 
   /**

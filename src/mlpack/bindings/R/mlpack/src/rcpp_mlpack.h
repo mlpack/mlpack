@@ -15,9 +15,6 @@
 
 #include <Rcpp.h>
 
-// To suppress Found '__assert_fail', possibly from 'assert' (C).
-#define BOOST_DISABLE_ASSERTS
-
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
 // And as of armadillo and mlpack, we can use this stream object as well.
 #if !defined(ARMA_COUT_STREAM)

@@ -158,9 +158,9 @@ void ApplyFactorization(util::Params& params,
   if (params.Has("initial_w") && params.Has("initial_h"))
   {
     // Initialize W and H with given matrices
-    GivenInitialization ginit = GivenInitialization(initialW, initialH);
+    GivenInitialization<> ginit = GivenInitialization<>(initialW, initialH);
     AMF<SimpleResidueTermination,
-        GivenInitialization,
+        GivenInitialization<>,
         UpdateRuleType> amf(srt, ginit);
     amf.Apply(V, r, W, H);
   }
@@ -168,13 +168,13 @@ void ApplyFactorization(util::Params& params,
   {
     // Merge GivenInitialization and RandomAMFInitialization rules
     // to initialize W with the given matrix, and H with random noise
-    GivenInitialization ginit = GivenInitialization(initialW);
+    GivenInitialization<> ginit = GivenInitialization<>(initialW);
     RandomAMFInitialization rinit = RandomAMFInitialization();
-    MergeInitialization<GivenInitialization, RandomAMFInitialization> minit =
-        MergeInitialization<GivenInitialization, RandomAMFInitialization>
+    MergeInitialization<GivenInitialization<>, RandomAMFInitialization> minit =
+        MergeInitialization<GivenInitialization<>, RandomAMFInitialization>
         (ginit, rinit);
     AMF<SimpleResidueTermination,
-        MergeInitialization<GivenInitialization, RandomAMFInitialization>,
+        MergeInitialization<GivenInitialization<>, RandomAMFInitialization>,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }
@@ -182,13 +182,13 @@ void ApplyFactorization(util::Params& params,
   {
     // Merge GivenInitialization and RandomAMFInitialization rules
     // to initialize H with the given matrix, and W with random noise
-    GivenInitialization ginit = GivenInitialization(initialH, false);
+    GivenInitialization<> ginit = GivenInitialization<>(initialH, false);
     RandomAMFInitialization rinit = RandomAMFInitialization();
-    MergeInitialization<RandomAMFInitialization, GivenInitialization> minit =
-        MergeInitialization<RandomAMFInitialization, GivenInitialization>
+    MergeInitialization<RandomAMFInitialization, GivenInitialization<>> minit =
+        MergeInitialization<RandomAMFInitialization, GivenInitialization<>>
         (rinit, ginit);
     AMF<SimpleResidueTermination,
-        MergeInitialization<RandomAMFInitialization, GivenInitialization>,
+        MergeInitialization<RandomAMFInitialization, GivenInitialization<>>,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }

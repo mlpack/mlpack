@@ -71,16 +71,16 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
     arma::colvec vecLabel = ConvTo<arma::colvec>::From(
         repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + addSeparator + vecLabel.n_elem;
-    input(i) = arma::zeros(totSize, 2);
+    input(i) = zeros(totSize, 2);
     input(i).col(0).rows(0, vecInput.n_elem - 1) =
         vecInput;
     if (addSeparator)
       input(i).at(vecInput.n_elem, 0) = 0.5;
     input(i).col(1).rows(addSeparator + vecInput.n_elem, totSize - 1) =
-        arma::ones(totSize-vecInput.n_elem - addSeparator);
+        ones(totSize - vecInput.n_elem - addSeparator);
     input(i) = input(i).t();
     input(i).reshape(input(i).n_elem, 1);
-    labels(i) = arma::zeros(totSize, 1);
+    labels(i) = zeros(totSize, 1);
     labels(i).col(0).rows(addSeparator + vecInput.n_elem, totSize - 1) =
         vecLabel;
   }
@@ -93,8 +93,8 @@ inline void CopyTask::Generate(arma::mat& input,
   arma::field<arma::mat> fieldInput, fieldLabels;
   Generate(fieldInput, fieldLabels, batchSize, true);
   size_t cols = batchSize;
-  input = arma::zeros(fieldInput(0).n_rows, cols);
-  labels = arma::zeros(fieldLabels(0).n_rows, cols);
+  input = zeros(fieldInput(0).n_rows, cols);
+  labels = zeros(fieldLabels(0).n_rows, cols);
   for (size_t i = 0; i < cols; ++i)
   {
     input.col(i) = fieldInput.at(i);

@@ -18,19 +18,21 @@ namespace mlpack {
 
 /**
  * This class implements validation termination policy based on RMSE index.
- * The input data matrix is divided into 2 sets, training set and validation set.
+ * The input data matrix is divided into 2 sets, training set and validation
+ * set.
+ *
  * Entries of validation set are nullifed in the input matrix. Termination
  * criterion is met when increase in validation set RMSe value drops below the
- * given tolerance. To accommodate spikes certain number of successive validation
- * RMSE drops are accepted. This upper imit on successive drops can be adjusted
- * with reverseStepCount. Secondary termination criterion terminates algorithm
- * when iteration count goes above the threshold.
+ * given tolerance. To accommodate spikes certain number of successive
+ * validation RMSE drops are accepted. This upper imit on successive drops can
+ * be adjusted with reverseStepCount. Secondary termination criterion terminates
+ * algorithm when iteration count goes above the threshold.
  *
  * @note The input matrix is modified by this termination policy.
  *
  * @see AMF
  */
-template <class MatType>
+template<typename MatType, typename WHMatType = arma::mat>
 class ValidationRMSETermination
 {
  public:
@@ -39,29 +41,29 @@ class ValidationRMSETermination
    * set in data matrix(training set).
    *
    * @param V Input matrix to be factorized.
-   * @param num_test_points number of validation test points
+   * @param numTestPoints number of validation test points
    * @param tolerance the tolerance value to compare RMSe against
    * @param maxIterations max iteration count before termination
    * @param reverseStepTolerance max successive RMSE drops allowed
    */
   ValidationRMSETermination(MatType& V,
-                            size_t num_test_points,
+                            size_t numTestPoints,
                             double tolerance = 1e-5,
                             size_t maxIterations = 10000,
                             size_t reverseStepTolerance = 3)
         : tolerance(tolerance),
           maxIterations(maxIterations),
-          num_test_points(num_test_points),
+          numTestPoints(numTestPoints),
           reverseStepTolerance(reverseStepTolerance)
   {
     size_t n = V.n_rows;
     size_t m = V.n_cols;
 
     // initialize validation set matrix
-    test_points.zeros(num_test_points, 3);
+    testPoints.zeros(numTestPoints, 3);
 
     // fill validation set matrix with random chosen entries
-    for (size_t i = 0; i < num_test_points; ++i)
+    for (size_t i = 0; i < numTestPoints; ++i)
     {
       double t_val;
       size_t t_row;
@@ -75,9 +77,9 @@ class ValidationRMSETermination
       } while ((t_val = V(t_row, t_col)) == 0);
 
       // add the entry to the validation set
-      test_points(i, 0) = t_row;
-      test_points(i, 1) = t_col;
-      test_points(i, 2) = t_val;
+      testPoints(i, 0) = t_row;
+      testPoints(i, 1) = t_col;
+      testPoints(i, 2) = t_val;
 
       // nullify the added entry from data matrix (training set)
       V(t_row, t_col) = 0;
@@ -96,8 +98,8 @@ class ValidationRMSETermination
     rmse = DBL_MAX;
     rmseOld = DBL_MAX;
 
-    c_index = 0;
-    c_indexOld = 0;
+    cIndex = 0;
+    cIndexOld = 0;
 
     reverseStepCount = 0;
     isCopy = false;
@@ -109,27 +111,25 @@ class ValidationRMSETermination
    * @param W Basis matrix of output.
    * @param H Encoding matrix of output.
    */
-  bool IsConverged(arma::mat& W, arma::mat& H)
+  bool IsConverged(WHMatType& W, WHMatType& H)
   {
-    arma::mat WH;
-
-    WH = W * H;
+    WHMatType WH = W * H;
 
     // compute validation RMSE
     if (iteration != 0)
     {
       rmseOld = rmse;
       rmse = 0;
-      for (size_t i = 0; i < num_test_points; ++i)
+      for (size_t i = 0; i < numTestPoints; ++i)
       {
-        size_t t_row = test_points(i, 0);
-        size_t t_col = test_points(i, 1);
-        double t_val = test_points(i, 2);
+        size_t t_row = testPoints(i, 0);
+        size_t t_col = testPoints(i, 1);
+        double t_val = testPoints(i, 2);
         double temp = (t_val - WH(t_row, t_col));
         temp *= temp;
         rmse += temp;
       }
-      rmse /= num_test_points;
+      rmse /= numTestPoints;
       rmse = std::sqrt(rmse);
     }
 
@@ -147,8 +147,8 @@ class ValidationRMSETermination
         this->W = W;
         this->H = H;
         // store residue values
-        c_indexOld = rmseOld;
-        c_index = rmse;
+        cIndexOld = rmseOld;
+        cIndex = rmse;
       }
       // increase successive drop count
       reverseStepCount++;
@@ -159,7 +159,7 @@ class ValidationRMSETermination
       // initialize successive drop count
       reverseStepCount = 0;
       // if residue is droped below minimum scrap stored values
-      if (rmse <= c_indexOld && isCopy == true)
+      if (rmse <= cIndexOld && isCopy == true)
       {
         isCopy = false;
       }
@@ -174,7 +174,7 @@ class ValidationRMSETermination
       {
         W = this->W;
         H = this->H;
-        rmse = c_index;
+        rmse = cIndex;
       }
       return true;
     }
@@ -183,12 +183,13 @@ class ValidationRMSETermination
 
   //! Get current value of residue
   const double& Index() const { return rmse; }
+  const double& RMSE() const { return rmse; }
 
   //! Get current iteration count
   const size_t& Iteration() const { return iteration; }
 
   //! Get number of validation points
-  const size_t& NumTestPoints() const { return num_test_points; }
+  const size_t& NumTestPoints() const { return numTestPoints; }
 
   //! Access upper limit of iteration count
   const size_t& MaxIterations() const { return maxIterations; }
@@ -204,13 +205,13 @@ class ValidationRMSETermination
   //! max iteration limit
   size_t maxIterations;
   //! number of validation test points
-  size_t num_test_points;
+  size_t numTestPoints;
 
   //! current iteration count
   size_t iteration;
 
   //! validation point matrix
-  arma::mat test_points;
+  WHMatType testPoints;
 
   //! rmse values
   double rmseOld;
@@ -226,10 +227,10 @@ class ValidationRMSETermination
   bool isCopy;
 
   //! variables to store information of minimum residue point
-  arma::mat W;
-  arma::mat H;
-  double c_indexOld;
-  double c_index;
+  WHMatType W;
+  WHMatType H;
+  double cIndexOld;
+  double cIndex;
 }; // class ValidationRMSETermination
 
 } // namespace mlpack

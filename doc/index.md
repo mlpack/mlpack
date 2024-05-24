@@ -120,7 +120,10 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
+ * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
+ * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with
+   dictionary learning
 
 ### Modeling utilities
 

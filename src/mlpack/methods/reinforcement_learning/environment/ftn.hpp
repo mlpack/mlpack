@@ -141,7 +141,7 @@ class FruitTreeNavigation
 
     // Do not reward the agent if time ran out.
     if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
-      return arma::zeros(rewardSize);
+      return zeros(rewardSize);
 
     return fruitTree.GetReward(state);
   };
@@ -168,7 +168,7 @@ class FruitTreeNavigation
   State InitialSample()
   {
     stepsPerformed = 0;
-    return State(arma::zeros<arma::vec>(2));
+    return State(zeros<arma::vec>(2));
   }
 
   /**
@@ -223,7 +223,7 @@ class FruitTreeNavigation
                                  "Only depth values of: 5, 6, 7 are allowed.");
         }
 
-        arma::mat branches = arma::zeros(rewardSize, (size_t) std::pow(2, depth - 1));
+        arma::mat branches = zeros(rewardSize, (size_t) std::pow(2, depth - 1));
         tree = join_rows(branches, Fruits());
       }
 

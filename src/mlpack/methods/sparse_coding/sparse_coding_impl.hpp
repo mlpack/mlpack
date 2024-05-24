@@ -18,9 +18,10 @@
 
 namespace mlpack {
 
+template<typename MatType>
 template<typename DictionaryInitializer>
-SparseCoding::SparseCoding(
-    const arma::mat& data,
+SparseCoding<MatType>::SparseCoding(
+    const MatType& data,
     const size_t atoms,
     const double lambda1,
     const double lambda2,
@@ -38,7 +39,8 @@ SparseCoding::SparseCoding(
   Train(data, initializer);
 }
 
-inline SparseCoding::SparseCoding(
+template<typename MatType>
+inline SparseCoding<MatType>::SparseCoding(
     const size_t atoms,
     const double lambda1,
     const double lambda2,
@@ -55,12 +57,13 @@ inline SparseCoding::SparseCoding(
   // Nothing to do.
 }
 
-inline void SparseCoding::Encode(const arma::mat& data,
-                                 arma::mat& codes)
+template<typename MatType>
+inline void SparseCoding<MatType>::Encode(const MatType& data,
+                                          MatType& codes)
 {
   // When using the Cholesky version of LARS, this is correct even if
   // lambda2 > 0.
-  arma::mat matGram = trans(dictionary) * dictionary;
+  MatType matGram = trans(dictionary) * dictionary;
 
   codes.set_size(atoms, data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -71,26 +74,28 @@ inline void SparseCoding::Encode(const arma::mat& data,
 
     bool useCholesky = true;
     // Intercept fitting and data normalization is disabled.
-    LARS<> lars(useCholesky, lambda1, lambda2, 1e-16 /* default tolerance */,
-        false, false);
+    LARS<MatType> lars(useCholesky, lambda1, lambda2,
+        1e-16 /* default tolerance */, false, false);
 
     // Create an alias of the code (using the same memory), and then LARS will
     // place the result directly into that; then we will not need to have an
     // extra copy.
-    arma::vec code = codes.unsafe_col(i);
-    arma::rowvec responses = data.unsafe_col(i).t();
+    ColType code = codes.unsafe_col(i);
+    RowType responses = data.unsafe_col(i).t();
     lars.Train(dictionary, responses, false, useCholesky, matGram);
     code = lars.Beta();
   }
 }
 
 // Dictionary step for optimization.
-inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
-                                               const arma::mat& codes,
-                                               const arma::uvec& adjacencies)
+template<typename MatType>
+inline double SparseCoding<MatType>::OptimizeDictionary(
+    const MatType& data,
+    const MatType& codes,
+    const arma::uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
-  arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
+  arma::uvec neighborCounts = zeros<arma::uvec>(data.n_cols, 1);
 
   if (adjacencies.n_elem > 0)
   {
@@ -124,7 +129,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   const size_t nInactiveAtoms = atoms - nActiveAtoms;
 
   // Efficient construction of Z restricted to active atoms.
-  arma::mat matActiveZ;
+  MatType matActiveZ;
   if (nInactiveAtoms > 0)
   {
     matActiveZ = codes.rows(arma::uvec(activeAtoms));
@@ -142,7 +147,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   // multiplication with inv(A) seems to be unavoidable. Although more
   // expensive, the code written this way (we use solve()) should be more
   // numerically stable than just using inv(A) for everything.
-  arma::vec dualVars = arma::zeros<arma::vec>(nActiveAtoms);
+  ColType dualVars = zeros<ColType>(nActiveAtoms);
 
   // vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
 
@@ -159,8 +164,8 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   bool converged = false;
 
   // If we have any inactive atoms, we must construct these differently.
-  arma::mat codesXT;
-  arma::mat codesZT;
+  MatType codesXT;
+  MatType codesZT;
 
   if (nInactiveAtoms == 0)
   {
@@ -177,16 +182,15 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   double improvement = 0;
   for (size_t t = 1; (t != maxIterations) && !converged; ++t)
   {
-    arma::mat A = codesZT + diagmat(dualVars);
+    MatType A = codesZT + diagmat(dualVars);
 
-    arma::mat matAInvZXT = solve(A, codesXT);
+    MatType matAInvZXT = solve(A, codesXT);
 
-    arma::vec gradient = -sum(square(matAInvZXT), 1);
-    gradient += 1;
+    ColType gradient = -sum(square(matAInvZXT), 1) + 1;
 
-    arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
+    MatType hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
-    arma::vec searchDirection = -solve(hessian, gradient);
+    ColType searchDirection = -solve(hessian, gradient);
 
     // Armijo line search.
     const double c = 1e-4;
@@ -234,7 +238,7 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
   }
   else
   {
-    arma::mat activeDictionary = trans(solve(codesZT +
+    MatType activeDictionary = trans(solve(codesZT +
         diagmat(dualVars), codesXT));
 
     // Update all atoms.
@@ -266,7 +270,8 @@ inline double SparseCoding::OptimizeDictionary(const arma::mat& data,
 }
 
 // Project each atom of the dictionary back into the unit ball (if necessary).
-inline void SparseCoding::ProjectDictionary()
+template<typename MatType>
+inline void SparseCoding<MatType>::ProjectDictionary()
 {
   for (size_t j = 0; j < atoms; ++j)
   {
@@ -281,8 +286,9 @@ inline void SparseCoding::ProjectDictionary()
 }
 
 // Compute the objective function.
-inline double SparseCoding::Objective(const arma::mat& data, 
-                                      const arma::mat& codes)
+template<typename MatType>
+inline double SparseCoding<MatType>::Objective(const MatType& data,
+                                               const MatType& codes)
     const
 {
   double l11NormZ = sum(sum(arma::abs(codes)));
@@ -300,9 +306,10 @@ inline double SparseCoding::Objective(const arma::mat& data,
   }
 }
 
+template<typename MatType>
 template<typename DictionaryInitializer>
-double SparseCoding::Train(
-    const arma::mat& data,
+double SparseCoding<MatType>::Train(
+    const MatType& data,
     const DictionaryInitializer& initializer)
 {
   // Now, train.
@@ -316,7 +323,7 @@ double SparseCoding::Train(
   // optimization loop.
   Log::Info << "Initial coding step." << std::endl;
 
-  arma::mat codes(atoms, data.n_cols);
+  MatType codes(atoms, data.n_cols);
   Encode(data, codes);
   arma::uvec adjacencies = find(codes);
 
@@ -368,11 +375,24 @@ double SparseCoding::Train(
   return lastObjVal;
 }
 
+template<typename MatType>
 template<typename Archive>
-void SparseCoding::serialize(Archive& ar, const uint32_t /* version */)
+void SparseCoding<MatType>::serialize(Archive& ar, const uint32_t version)
 {
   ar(CEREAL_NVP(atoms));
-  ar(CEREAL_NVP(dictionary));
+
+  if (cereal::is_loading<Archive>() && version == 0)
+  {
+    // Older versions of SparseCoding always stored dictionary as an arma::mat.
+    arma::mat dictionaryTmp;
+    ar(cereal::make_nvp("dictionary", dictionaryTmp));
+    dictionary = ConvTo<MatType>::From(dictionaryTmp);
+  }
+  else
+  {
+    ar(CEREAL_NVP(dictionary));
+  }
+
   ar(CEREAL_NVP(lambda1));
   ar(CEREAL_NVP(lambda2));
   ar(CEREAL_NVP(maxIterations));

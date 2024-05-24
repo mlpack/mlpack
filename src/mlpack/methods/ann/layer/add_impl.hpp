@@ -90,14 +90,15 @@ void AddType<MatType>::Gradient(
     const MatType& error,
     MatType& gradient)
 {
-  gradient = error;
+  // The gradient is the sum of the error across all input points.
+  gradient = sum(error, 1);
 }
 
 template<typename MatType>
-void AddType<MatType>::SetWeights(typename MatType::elem_type* weightPtr)
+void AddType<MatType>::SetWeights(const MatType& weightsIn)
 {
   // Set the weights to wrap the given memory.
-  MakeAlias(weights, weightPtr, 1, outSize);
+  MakeAlias(weights, weightsIn, 1, outSize);
 }
 
 template<typename MatType>

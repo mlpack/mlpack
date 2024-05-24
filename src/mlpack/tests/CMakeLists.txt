@@ -225,12 +225,13 @@ endif()
 # This has to be added here so that cotire picks it up (even though it is in
 # individual tests).
 target_compile_definitions(mlpack_test PUBLIC -DMLPACK_ENABLE_ANN_SERIALIZATION)
-set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT
-    "../core.hpp")
-# TODO: use the source below, but this requires the DET test to be refactored
-# and cleaned up.
-#    "../../mlpack.hpp")
-cotire(mlpack_test)
+if (CMAKE_VERSION VERSION_GREATER "3.16.0" AND USE_PRECOMPILED_HEADERS)
+  target_precompile_headers(mlpack_test PUBLIC
+      "../core.hpp"
+      "../../mlpack.hpp"
+      <ensmallen.hpp>
+      <armadillo>)
+endif ()
 
 # Copy test data into right place.
 add_custom_command(TARGET mlpack_test

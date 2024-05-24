@@ -46,22 +46,26 @@ inline LinearRegression<ModelMatType>::LinearRegression(
 }
 
 template<typename ModelMatType>
+template<typename T>
 mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
 inline double LinearRegression<ModelMatType>::Train(
     const arma::mat& predictors,
     const arma::rowvec& responses,
-    const bool intercept)
+    const T intercept,
+    const typename std::enable_if<std::is_same<T, bool>::value>::type*)
 {
   return Train(predictors, responses, arma::rowvec(), this->lambda, intercept);
 }
 
 template<typename ModelMatType>
+template<typename T>
 mlpack_deprecated /** Will be removed in mlpack 5.0.0. */
 inline double LinearRegression<ModelMatType>::Train(
     const arma::mat& predictors,
     const arma::rowvec& responses,
     const arma::rowvec& weights,
-    const bool intercept)
+    const T intercept,
+    const typename std::enable_if<std::is_same<T, bool>::value>::type*)
 {
   return Train(predictors, responses, weights, this->lambda, intercept);
 }
@@ -78,40 +82,18 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 }
 
 template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses)
-{
-  return Train(predictors, responses,
-      arma::Row<typename ResponsesType::elem_type>(), this->lambda,
-      this->intercept);
-}
-
-template<typename ModelMatType>
 template<typename MatType, typename ResponsesType, typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
-                                      const double lambda)
+                                      const std::optional<double> lambda,
+                                      const std::optional<bool> intercept)
 {
   return Train(predictors, responses,
-      arma::Row<typename ResponsesType::elem_type>(), lambda, this->intercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType, typename ResponsesType, typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const double lambda,
-                                      const bool intercept)
-{
-  return Train(predictors, responses,
-      arma::Row<typename ResponsesType::elem_type>(), lambda, intercept);
+      arma::Row<typename ResponsesType::elem_type>(),
+      (lambda.has_value()) ? lambda.value() : this->lambda,
+      (intercept.has_value()) ? intercept.value() : this->intercept);
 }
 
 template<typename ModelMatType>
@@ -129,46 +111,20 @@ template<typename ModelMatType>
 template<typename MatType,
          typename ResponsesType,
          typename WeightsType,
-         typename, typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const WeightsType& weights)
-{
-  return Train(predictors, responses, weights, this->lambda, this->intercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType,
-         typename ResponsesType,
-         typename WeightsType,
          typename, typename>
 inline
 typename LinearRegression<ModelMatType>::ElemType
 LinearRegression<ModelMatType>::Train(const MatType& predictors,
                                       const ResponsesType& responses,
                                       const WeightsType& weights,
-                                      const double lambda)
+                                      const std::optional<double> lambda,
+                                      const std::optional<bool> intercept)
 {
-  return Train(predictors, responses, weights, lambda, this->intercept);
-}
-
-template<typename ModelMatType>
-template<typename MatType,
-         typename ResponsesType,
-         typename WeightsType,
-         typename, typename>
-inline
-typename LinearRegression<ModelMatType>::ElemType
-LinearRegression<ModelMatType>::Train(const MatType& predictors,
-                                      const ResponsesType& responses,
-                                      const WeightsType& weights,
-                                      const double lambda,
-                                      const bool intercept)
-{
-  this->lambda = lambda;
-  this->intercept = intercept;
+  if (lambda.has_value())
+    this->lambda = lambda.value();
+  
+  if (intercept.has_value())
+    this->intercept = intercept.value();
 
   /*
    * We want to calculate the a_i coefficients of:
@@ -192,9 +148,9 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // Here we add the row of ones to the predictors.
   // The intercept is not penalized. Add an "all ones" row to design and set
   // intercept = false to get a penalized intercept.
-  if (intercept)
+  if (this->intercept)
   {
-    p.insert_rows(0, arma::ones<arma::Mat<ElemType>>(1, nCols));
+    p.insert_rows(0, ones<arma::Mat<ElemType>>(1, nCols));
   }
 
   if (weights.n_elem > 0)
@@ -209,7 +165,8 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
   // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
   // (assuming the SVD is used to solve it)
   arma::Mat<ElemType> cov = p * p.t() +
-      ((ElemType) lambda) * arma::eye<arma::Mat<ElemType>>(p.n_rows, p.n_rows);
+      ((ElemType) this->lambda) *
+      arma::eye<arma::Mat<ElemType>>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());
   return ComputeError(predictors, responses);

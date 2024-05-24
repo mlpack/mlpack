@@ -66,40 +66,38 @@ avoid copies.
 
 ---
 
- * `MakeAlias(a, mat, rows, cols, strict=true)`
+ * `MakeAlias(a, vector, rows, cols, offset=0, strict=true)`
+   - Make `a` into an alias of `vector` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `vector`. Otherwise, the first element of `a`
+     is the `offset`'th element of `vector`.
+   - If `strict` is `true`, the size of `a` cannot be changed.
+   - `vector` and `a` should have the same vector type (e.g. `arma::vec`,
+     `arma::fvec`).
+   - If an alias cannot be created, the vector will be copied.
+
+ * `MakeAlias(a, mat, rows, cols, offset=0, strict=true)`
    - Make `a` into an alias of `mat` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `mat`. Otherwise, the first element of `a`
+     is the `offset`'th element of `mat`; elements in `mat` are ordered in
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
    - `mat` and `a` should have the same matrix type (e.g. `arma::mat`,
      `arma::fmat`, `arma::sp_mat`).
    - If an alias cannot be created, the matrix will be copied.  Sparse types
      cannot have aliases and will be copied.
 
- * `MakeAlias(a, cube, rows, cols, slices, strict=true)`
+ * `MakeAlias(a, cube, rows, cols, slices, offset=0, strict=true)`
    - Make `a` into an alias of `cube` with the given size.
+   - If `offset` is `0`, then the alias is identical: the first element of
+     `a` is the first element of `cube`. Otherwise, the first element of `a`
+     is the `offset`'th element of `cube`; elements in `cube` are ordered in
+     a [column-major way](../matrices.md#representing-data-in-mlpack).
    - If `strict` is `true`, the size of `a` cannot be changed.
-   - `cube` and `a` should have the same matrix type (e.g. `arma::cube`,
+   - `cube` and `a` should have the same cube type (e.g. `arma::cube`,
      `arma::fcube`).
-   - If an alias cannot be created, the matrix will be copied.
-
- * `MakeAlias(a, memptr, rows, cols, strict=true)`
-   - Make `a` into an alias of the memory block starting at `memptr` of size
-     `rows` by `cols`.
-   - The memory at `memptr` should be arranged in a [column-major
-     ordering](matrices.md#representing-data-in-mlpack).
-   - If `strict` is `true`, the size of `a` cannot be changed.
-   - `a` should be a dense matrix type (e.g. `arma::mat`, `arma::fmat`), and
-     `memptr` should be a non-const pointer of the matrix's element type (e.g.
-     `double*`, `float*`).
-
- * `MakeAlias(a, memptr, rows, cols, slices, strict=true)`
-   - Make `a` into an alias of the memory block starting at `memptr` of size
-     `rows` by `cols` by `slices`.
-   - The memory at `memptr` should be arranged in a [column-major
-     ordering](matrices.md#representing-data-in-mlpack).
-   - If `strict` is `true`, the size of `a` cannot be changed.
-   - `a` should be a cube type (e.g. `arma::cube`, `arma::fcube`), and `memptr`
-     should be a non-const pointer of the matrix's element type (e.g. `double*`,
-     `float*`).
+   - If an alias cannot be created, the cube will be copied.
 
 ---
 
