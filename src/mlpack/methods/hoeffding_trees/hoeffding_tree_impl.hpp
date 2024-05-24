@@ -439,67 +439,17 @@ void HoeffdingTree<
 >::Train(const MatType& data,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
-         const bool batchTraining)
-{
-  Train(data, labels, numClasses, batchTraining, this->successProbability,
-      this->maxSamples, this->checkInterval, this->minSamples);
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-template<typename MatType>
-void HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::Train(const MatType& data,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
          const bool batchTraining,
-         const double successProbability)
+         const std::optional<double> successProbability,
+         const std::optional<size_t> maxSamples,
+         const std::optional<size_t> checkInterval)
 {
-  Train(data, labels, numClasses, batchTraining, successProbability,
-      this->maxSamples, this->checkInterval, this->minSamples);
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-template<typename MatType>
-void HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::Train(const MatType& data,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
-         const bool batchTraining,
-         const double successProbability,
-         const size_t maxSamples)
-{
-  Train(data, labels, numClasses, batchTraining, successProbability, maxSamples,
-      this->checkInterval, this->minSamples);
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-template<typename MatType>
-void HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::Train(const MatType& data,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
-         const bool batchTraining,
-         const double successProbability,
-         const size_t maxSamples,
-         const size_t checkInterval)
-{
-  Train(data, labels, numClasses, batchTraining, successProbability, maxSamples,
-      checkInterval, this->minSamples);
+  Train(data, labels, numClasses, batchTraining,
+      (successProbability.has_value()) ? successProbability.value() :
+          this->successProbability,
+      (maxSamples.has_value()) ? maxSamples.value() : this->maxSamples,
+      (checkInterval.has_value()) ? checkInterval.value() : this->checkInterval,
+          this->minSamples);
 }
 
 template<typename FitnessFunction,
@@ -563,70 +513,17 @@ void HoeffdingTree<
          const data::DatasetInfo& info,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
-         const bool batchTraining)
-{
-  Train(data, info, labels, numClasses, batchTraining, this->successProbability,
-      this->maxSamples, this->checkInterval, this->minSamples);
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-template<typename MatType>
-void HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::Train(const MatType& data,
-         const data::DatasetInfo& info,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
          const bool batchTraining,
-         const double successProbability)
+         const std::optional<double> successProbability,
+         const std::optional<size_t> maxSamples,
+         const std::optional<size_t> checkInterval)
 {
-  Train(data, info, labels, numClasses, batchTraining, successProbability,
-      this->maxSamples, this->checkInterval, this->minSamples);
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-template<typename MatType>
-void HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::Train(const MatType& data,
-         const data::DatasetInfo& info,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
-         const bool batchTraining,
-         const double successProbability,
-         const size_t maxSamples)
-{
-  Train(data, info, labels, numClasses, batchTraining, successProbability,
-      maxSamples, this->checkInterval, this->minSamples);
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType>
-template<typename MatType>
-void HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::Train(const MatType& data,
-         const data::DatasetInfo& info,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
-         const bool batchTraining,
-         const double successProbability,
-         const size_t maxSamples,
-         const size_t checkInterval)
-{
-  Train(data, info, labels, numClasses, batchTraining, successProbability,
-      maxSamples, checkInterval, this->minSamples);
+  Train(data, info, labels, numClasses, batchTraining,
+      (successProbability.has_value()) ? successProbability.value() :
+          this->successProbability,
+      (maxSamples.has_value()) ? maxSamples.value() : this->maxSamples,
+      (checkInterval.has_value()) ? checkInterval.value() : this->checkInterval,
+          this->minSamples);
 }
 
 template<typename FitnessFunction,

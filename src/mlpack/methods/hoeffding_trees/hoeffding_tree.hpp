@@ -283,36 +283,14 @@ class HoeffdingTree
    * @param minSamples If the node has seen this many points or fewer, no split
    *      will be allowed.
    */
-  // Many overloads needed here until we have std::optional.
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses = 0,
-             const bool batchTraining = true);
-
-  template<typename MatType>
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const bool batchTraining,
-             const double successProbability);
-
-  template<typename MatType>
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const bool batchTraining,
-             const double successProbability,
-             const size_t maxSamples);
-
-  template<typename MatType>
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const bool batchTraining,
-             const double successProbability,
-             const size_t maxSamples,
-             const size_t checkInterval);
+             const bool batchTraining = true,
+             const std::optional<double> successProbability = std::nullopt,
+             const std::optional<size_t> maxSamples = std::nullopt,
+             const std::optional<size_t> checkInterval = std::nullopt);
 
   template<typename MatType>
   void Train(const MatType& data,
@@ -350,40 +328,15 @@ class HoeffdingTree
    * @param minSamples If the node has seen this many points or fewer, no split
    *      will be allowed.
    */
-  // Many overloads needed here until we have std::optional.
   template<typename MatType>
   void Train(const MatType& data,
              const data::DatasetInfo& info,
              const arma::Row<size_t>& labels,
              const size_t numClasses = 0,
-             const bool batchTraining = true);
-
-  template<typename MatType>
-  void Train(const MatType& data,
-             const data::DatasetInfo& info,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const bool batchTraining,
-             const double successProbability);
-
-  template<typename MatType>
-  void Train(const MatType& data,
-             const data::DatasetInfo& info,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const bool batchTraining,
-             const double successProbability,
-             const size_t maxSamples);
-
-  template<typename MatType>
-  void Train(const MatType& data,
-             const data::DatasetInfo& info,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const bool batchTraining,
-             const double successProbability,
-             const size_t maxSamples,
-             const size_t checkInterval);
+             const bool batchTraining = true,
+             const std::optional<double> successProbability = std::nullopt,
+             const std::optional<size_t> maxSamples = std::nullopt,
+             const std::optional<size_t> checkInterval = std::nullopt);
 
   template<typename MatType>
   void Train(const MatType& data,

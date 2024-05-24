@@ -49,6 +49,8 @@
 
   * Fix handling of unused atoms in `LocalCoordinateCoding` (#3711).
 
+  * Move minimum required C++ version from C++14 to C++17 (#3704).
+
 ### mlpack 4.3.0
 ###### 2023-11-27
   * Fix include ordering issue for `LinearRegression` (#3541).
