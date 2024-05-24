@@ -203,38 +203,38 @@ TEST_CASE("MDFullCovarianceTest", "[KernelTest]")
 /**
  * Simple test case for the cosine distance.
  */
-TEST_CASE("CosineDistanceSameAngleTest", "[KernelTest]")
+TEST_CASE("CosineSimilaritySameAngleTest", "[KernelTest]")
 {
   arma::vec a = "1.0 2.0 3.0";
   arma::vec b = "2.0 4.0 6.0";
 
-  REQUIRE(CosineDistance::Evaluate(a, b) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(CosineDistance::Evaluate(b, a) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(CosineSimilarity::Evaluate(a, b) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(CosineSimilarity::Evaluate(b, a) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Now let's have them be orthogonal.
  */
-TEST_CASE("CosineDistanceOrthogonalTest", "[KernelTest]")
+TEST_CASE("CosineSimilarityOrthogonalTest", "[KernelTest]")
 {
   arma::vec a = "0.0 1.0";
   arma::vec b = "1.0 0.0";
 
-  REQUIRE(CosineDistance::Evaluate(a, b) == Approx(0.0).margin(1e-5));
-  REQUIRE(CosineDistance::Evaluate(b, a) == Approx(0.0).margin(1e-5));
+  REQUIRE(CosineSimilarity::Evaluate(a, b) == Approx(0.0).margin(1e-5));
+  REQUIRE(CosineSimilarity::Evaluate(b, a) == Approx(0.0).margin(1e-5));
 }
 
 /**
  * Some random angle test.
  */
-TEST_CASE("CosineDistanceRandomTest", "[KernelTest]")
+TEST_CASE("CosineSimilarityRandomTest", "[KernelTest]")
 {
   arma::vec a = "0.1 0.2 0.3 0.4 0.5";
   arma::vec b = "1.2 1.0 0.8 -0.3 -0.5";
 
-  REQUIRE(CosineDistance::Evaluate(a, b) ==
+  REQUIRE(CosineSimilarity::Evaluate(a, b) ==
       Approx(0.1385349024).epsilon(1e-7));
-  REQUIRE(CosineDistance::Evaluate(b, a) ==
+  REQUIRE(CosineSimilarity::Evaluate(b, a) ==
       Approx(0.1385349024).epsilon(1e-7));
 }
 
