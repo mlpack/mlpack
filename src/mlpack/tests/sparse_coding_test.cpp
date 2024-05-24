@@ -57,7 +57,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
   uword nAtoms = 25;
 
   arma::mat inX; // The .arm file contains an arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
@@ -92,7 +92,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
   uword nAtoms = 25;
 
   arma::mat inX; // The .arm file contains an arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
@@ -129,7 +129,7 @@ TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
   uword nAtoms = 25;
 
   arma::mat inX; // The .arm file contains an arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 
@@ -222,7 +222,7 @@ TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
   uword nAtoms = 25;
 
   arma::mat inX; // The .arm file contains an arma::mat.
-  inX.load("mnist_first250_training_4s_and_9s.arm");
+  inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
 

@@ -120,6 +120,8 @@ Prepare data for machine learning algorithms.
 
 Transform data from one space to another.
 
+ * [`LocalCoordinateCoding`](user/methods/local_coordinate_coding.md): local
+   coordinate coding with dictionary learning
  * [`NMF`](user/methods/nmf.md): non-negative matrix factorization
  * [`PCA`](user/methods/pca.md): principal components analysis
  * [`SparseCoding`](user/methods/sparse_coding.md): sparse coding with

@@ -60,7 +60,7 @@ TEST_CASE("WGANMNISTTest", "[WGANNetworkTest]")
       << " shuffle = " << shuffle << std::endl;
 
   arma::mat trainData;
-  trainData.load("mnist_first250_training_4s_and_9s.arm");
+  trainData.load("mnist_first250_training_4s_and_9s.csv");
   Log::Info << arma::size(trainData) << std::endl;
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
@@ -222,7 +222,7 @@ TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
       << " shuffle = " << shuffle << std::endl;
 
   arma::mat trainData;
-  trainData.load("mnist_first250_training_4s_and_9s.arm");
+  trainData.load("mnist_first250_training_4s_and_9s.csv");
   Log::Info << arma::size(trainData) << std::endl;
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
