@@ -108,7 +108,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 ## 2. Dependencies
 
 **mlpack** requires the following additional dependencies:
- - C++14 compiler
+ - C++17 compiler
  - [Armadillo](https://arma.sourceforge.net)      &nbsp;&emsp;>= 9.800
  - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
  - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
@@ -182,7 +182,7 @@ is `my_program.cpp`, your compiler is GCC, and you would like to compile with
 OpenMP support (recommended) and optimizations, compile like this:
 
 ```sh
-g++ -O3 -std=c++14 -o my_program my_program.cpp -larmadillo -fopenmp
+g++ -O3 -std=c++17 -o my_program my_program.cpp -larmadillo -fopenmp
 ```
 
 Note that if you want to serialize (save or load) neural networks, you should
@@ -217,7 +217,7 @@ dependencies of Armadillo.  For example, on a system that has OpenBLAS
 available, compilation can be done like this:
 
 ```sh
-g++ -O3 -std=c++14 -o my_program my_program.cpp -lopenblas -fopenmp
+g++ -O3 -std=c++17 -o my_program my_program.cpp -lopenblas -fopenmp
 ```
 
 See [the Armadillo documentation](https://arma.sourceforge.net/faq.html#linking)
