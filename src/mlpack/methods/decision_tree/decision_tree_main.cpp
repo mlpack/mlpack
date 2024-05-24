@@ -57,8 +57,8 @@ BINDING_LONG_DESC(
     "the minimum gain that is needed for the node to split.  The " +
     PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
     "the maximum depth of the tree.  If " +
-    PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
-    "error will be printed."
+    PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
+    "training accuracy will be printed."
     "\n\n"
     "Test data may be specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter, and if performance numbers are desired for that test set, "
@@ -114,9 +114,6 @@ PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
 PARAM_INT_IN("maximum_depth", "Maximum depth of the tree (0 means no limit).",
     "D", 0);
-// This is deprecated and should be removed in mlpack 4.0.0.
-PARAM_FLAG("print_training_error", "Print the training error (deprecated; will "
-      "be removed in mlpack 4.0.0).", "e");
 PARAM_FLAG("print_training_accuracy", "Print the training accuracy.", "a");
 
 // Output parameters.
@@ -179,12 +176,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       [](double x) { return (x > 0.0 && x < 1.0); }, true,
       "gain split must be a fraction in range [0,1]");
 
-  if (params.Has("print_training_error"))
-  {
-    Log::Warn << "The option " << PRINT_PARAM_STRING("print_training_error")
-        << " is deprecated and will be removed in mlpack 4.0.0." << std::endl;
-  }
-
   // Load the model or build the tree.
   DecisionTreeModel* model;
   arma::mat trainingSet;
@@ -222,8 +213,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     {
       arma::Row<double> weights =
           std::move(params.Get<arma::Mat<double>>("weights"));
-      if (params.Has("print_training_error") ||
-          params.Has("print_training_accuracy"))
+      if (params.Has("print_training_accuracy"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, std::move(weights), minLeafSize, minimumGainSplit,
@@ -238,7 +228,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     }
     else
     {
-      if (params.Has("print_training_error"))
+      if (params.Has("print_training_accuracy"))
       {
         model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, minLeafSize, minimumGainSplit, maxDepth);
@@ -252,8 +242,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     }
 
     // Do we need to print training error?
-    if (params.Has("print_training_error") ||
-        params.Has("print_training_accuracy"))
+    if (params.Has("print_training_accuracy"))
     {
       arma::Row<size_t> predictions;
       arma::mat probabilities;

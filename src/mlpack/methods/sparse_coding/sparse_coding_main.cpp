@@ -113,9 +113,9 @@ PARAM_DOUBLE_IN("newton_tolerance", "Tolerance for convergence of Newton "
     "method.", "w", 1e-6);
 
 // Load/save a model.
-PARAM_MODEL_IN(SparseCoding, "input_model", "File containing input sparse "
+PARAM_MODEL_IN(SparseCoding<>, "input_model", "File containing input sparse "
     "coding model.", "m");
-PARAM_MODEL_OUT(SparseCoding, "output_model", "File to save trained sparse "
+PARAM_MODEL_OUT(SparseCoding<>, "output_model", "File to save trained sparse "
     "coding model to.", "M");
 
 PARAM_MATRIX_OUT("dictionary", "Matrix to save the output dictionary to.", "d");
@@ -177,11 +177,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       "Newton method tolerance must be nonnegative");
 
   // Do we have an existing model?
-  SparseCoding* sc;
+  SparseCoding<>* sc;
   if (params.Has("input_model"))
-    sc = params.Get<SparseCoding*>("input_model");
+    sc = params.Get<SparseCoding<>*>("input_model");
   else
-    sc = new SparseCoding(0, 0.0);
+    sc = new SparseCoding<>(0, 0.0);
 
   if (params.Has("training"))
   {
@@ -207,7 +207,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     if (params.Has("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << params.GetPrintable<SparseCoding>("input_model")
+          << params.GetPrintable<SparseCoding<>>("input_model")
           << "' as initial dictionary for training." << endl;
       sc->Train<NothingInitializer>(matX);
     }
@@ -286,5 +286,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       sc->Dictionary().n_rows, sc->Dictionary().n_cols, false, false);
 
   // Save the model.
-  params.Get<SparseCoding*>("output_model") = sc;
+  params.Get<SparseCoding<>*>("output_model") = sc;
 }

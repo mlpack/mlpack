@@ -123,33 +123,6 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 }
 
 /**
- * Train the perceptron on the given data for up to the maximum number of
- * iterations (specified in the constructor or through MaxIterations()).  A
- * single iteration corresponds to a single pass through the data, so if you
- * want to pass through the dataset only once, set MaxIterations() to 1.
- *
- * This training does not reset the model weights, so you can call Train() on
- * multiple datasets sequentially.
- *
- * @param data Dataset on which training should be performed.
- * @param labels Labels of the dataset.
- * @param numClasses Number of classes in the data.
- */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
-void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses)
-{
-  TrainInternal<false, arma::Row<typename MatType::elem_type>>(data, labels,
-      numClasses);
-}
-
-/**
  * Train the perceptron on the given data for up to the given maximum number
  * of iterations.  A single iteration corresponds to a single pass through the
  * data, so if you want to pass through the dataset only once, set
@@ -175,35 +148,14 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const size_t maxIterations)
+    const std::optional<size_t> maxIterations)
 {
   // Set the maximum number of iterations and call unweighted Train().
-  this->maxIterations = maxIterations;
+  if (maxIterations.has_value())
+    this->maxIterations = maxIterations.value();
+
   TrainInternal<false, arma::Row<typename MatType::elem_type>>(data, labels,
       numClasses);
-}
-
-/**
- * Training function.  It trains on trainData using the cost matrix
- * instanceWeights.
- *
- * @param data Data to train on.
- * @param labels Labels of data.
- * @param instanceWeights Cost matrix. Stores the cost of mispredicting
- *      instances.  This is useful for boosting.
- */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
-void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const arma::rowvec& instanceWeights)
-{
-  TrainInternal<true>(data, labels, numClasses, instanceWeights);
 }
 
 /**
@@ -235,10 +187,12 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const arma::rowvec& instanceWeights,
-    const size_t maxIterations)
+    const std::optional<size_t> maxIterations)
 {
   // Set the maximum number of iterations and call weighted training.
-  this->maxIterations = maxIterations;
+  if (maxIterations.has_value())
+    this->maxIterations = maxIterations.value();
+
   TrainInternal<true>(data, labels, numClasses, instanceWeights);
 }
 

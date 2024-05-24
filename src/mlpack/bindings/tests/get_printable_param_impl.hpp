@@ -29,7 +29,7 @@ std::string GetPrintableParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   std::ostringstream oss;
-  oss << MLPACK_ANY_CAST<T>(data.value);
+  oss << std::any_cast<T>(data.value);
   return oss.str();
 }
 
@@ -39,7 +39,7 @@ std::string GetPrintableParam(
     util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
 {
-  const T& t = MLPACK_ANY_CAST<T>(data.value);
+  const T& t = std::any_cast<T>(data.value);
 
   std::ostringstream oss;
   for (size_t i = 0; i < t.size(); ++i)

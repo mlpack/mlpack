@@ -28,9 +28,8 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 {
   // We promise to be well-behaved... the elements won't be modified.
   MakeAlias(this->predictors, predictorsIn, predictorsIn.n_rows,
-      predictorsIn.n_cols, false);
-  MakeAlias(this->responses, responsesIn, responsesIn.n_rows,
-      responsesIn.n_cols, false);
+      predictorsIn.n_cols, 0, false);
+  MakeAlias(this->responses, responsesIn, responsesIn.n_elem, 0, false);
 
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)

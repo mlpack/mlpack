@@ -233,26 +233,26 @@ EOF
 # appends a sidebar list to the output HTML.
 create_page_sidebar_section()
 {
-  input_file="$1";
-  output_file="$2";
-  dir_name="$3"; # The directory containing the documentation.
-  input_file_base=`basename "$input_file" .html.tmp`;
+  sb_input_file="$1";
+  sb_output_file="$2";
+  sb_dir_name="$3"; # The directory containing the documentation.
+  sb_input_file_base=`basename "$sb_input_file" .html.tmp`;
 
   # Extract h2/h3 anchors into a list.  For individual method documentation, we
   # only extract h3 anchors because those use h2s as their headings.  And, for
   # core.md, we want to extract both h2 and h3 anchors.
-  if [[ "$dir_name" == "user/methods" ]];
+  if [[ "$sb_dir_name" == "user/methods" ]];
   then
     # The page title on individual methods is encoded as an h2.
-    page_title=`grep '<h2 id=' "$input_file" |\
+    page_title=`grep '<h2 id=' "$sb_input_file" |\
         head -1 |\
         sed 's/^<h2 id="[^"]*">\(.*\)<\/h2>/\1/'`;
 
-    grep '<h3 id=' "$input_file" | sed 's/<h3 id="\([^"]*\)">\(.*\)<\/h3>/<li><a href="#\1">\2<\/a><\/li>/' > "$output_file.side.tmp";
-  elif [[ "$input_file_base" == "core" ]];
+    grep '<h3 id=' "$sb_input_file" | sed 's/<h3 id="\([^"]*\)">\(.*\)<\/h3>/<li><a href="#\1">\2<\/a><\/li>/' > "$sb_output_file.side.tmp";
+  elif [[ "$sb_input_file_base" == "core" ]];
   then
     # The page title on the core class documentation page is encoded as an h1.
-    page_title=`grep '<h1 id=' "$input_file" |\
+    page_title=`grep '<h1 id=' "$sb_input_file" |\
         head -1 |\
         sed 's/^<h1 id="[^"]*">\(.*\)<\/h1>/\1/'`;
 
@@ -265,8 +265,9 @@ create_page_sidebar_section()
     # ...
     #
     # and then we'll construct the actual sidebar using that list.
-    grep '<h[23] id=' "$input_file" |\
-        sed 's/^<\(h[23]\) id="\([^"]*\)">\(.*\)<\/h[23]>/\1\t\2\t\3/' > "$output_file.side.list.tmp";
+    grep '<h[23] id=' "$sb_input_file" |\
+        sed 's/^<\(h[23]\) id="\([^"]*\)">\(.*\)<\/h[23]>/\1\t\2\t\3/' \
+        > "$sb_output_file.side.list.tmp";
     in_block=0;
     while read line; do
       # First, extract the pieces of each line.
@@ -282,62 +283,64 @@ create_page_sidebar_section()
         if [ "$in_block" = "1" ];
         then
           # We have to close the previous block.
-          echo "</ul></details></li>" >> "$output_file.side.tmp";
+          echo "</ul></details></li>" >> "$sb_output_file.side.tmp";
         fi
 
         # Create the new details block.
-        echo "<li><details><summary>" >> "$output_file.side.tmp";
-        echo "<a href=\"#$anchor_name\">" >> "$output_file.side.tmp";
-        echo "$anchor_title" >> "$output_file.side.tmp";
-        echo "</a>" >> "$output_file.side.tmp";
-        echo "</summary>" >> "$output_file.side.tmp";
-        echo "<ul>" >> "$output_file.side.tmp";
+        echo "<li><details><summary>" >> "$sb_output_file.side.tmp";
+        echo "<a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
+        echo "$anchor_title" >> "$sb_output_file.side.tmp";
+        echo "</a>" >> "$sb_output_file.side.tmp";
+        echo "</summary>" >> "$sb_output_file.side.tmp";
+        echo "<ul>" >> "$sb_output_file.side.tmp";
         in_block=1;
       else
-        echo "  <li><a href=\"#$anchor_name\">" >> "$output_file.side.tmp";
-        echo "  $anchor_title" >> "$output_file.side.tmp";
-        echo "  </a></li>" >> "$output_file.side.tmp";
+        echo "  <li><a href=\"#$anchor_name\">" >> "$sb_output_file.side.tmp";
+        echo "  $anchor_title" >> "$sb_output_file.side.tmp";
+        echo "  </a></li>" >> "$sb_output_file.side.tmp";
       fi
-    done < "$output_file.side.list.tmp";
+    done < "$sb_output_file.side.list.tmp";
 
     # Close the last h2 block, if we need to.
     if [ "$in_block" = "1" ];
     then
-      echo "</ul></details></li>" >> "$output_file.side.tmp";
+      echo "</ul></details></li>" >> "$sb_output_file.side.tmp";
     fi
 
-    rm -f "$output_file.side.list.tmp";
+    rm -f "$sb_output_file.side.list.tmp";
   else
     # On other pages, the page title is encoded as an h1.
-    page_title=`grep '<h1 id=' "$input_file" |\
+    page_title=`grep '<h1 id=' "$sb_input_file" |\
         head -1 |\
         sed 's/^<h1 id="[^"]*">\(.*\)<\/h1>/\1/'`;
 
-    grep '<h2 id=' "$input_file" | sed 's/<h2 id="\([^"]*\)">\(.*\)<\/h2>/<li><a href="#\1">\2<\/a><\/li>/' > "$output_file.side.tmp";
+    grep '<h2 id=' "$sb_input_file" |\
+        sed 's/<h2 id="\([^"]*\)">\(.*\)<\/h2>/<li><a href="#\1">\2<\/a><\/li>/' \
+        > "$sb_output_file.side.tmp";
   fi
-  lines=`cat "$output_file.side.tmp" | wc -l`;
+  lines=`cat "$sb_output_file.side.tmp" | wc -l`;
 
-  echo "<ul>" >> "$output_file";
+  echo "<ul>" >> "$sb_output_file";
 
   # Make the top of the sidebar.
   if [ -n "$page_title" ];
   then
-    echo "<li class=\"page_title\"><b>$page_title</b> <a href=\"#\">[top]</a>" >> "$output_file";
+    echo "<li class=\"page_title\"><b>$page_title</b> <a href=\"#\">[top]</a>" >> "$sb_output_file";
   else
-    echo "<li><a href=\"#\">[top of page]</a>" >> "$output_file";
+    echo "<li><a href=\"#\">[top of page]</a>" >> "$sb_output_file";
   fi
 
   if [[ "$lines" -gt 0 ]];
   then
-    echo "<ul>" >> "$output_file";
-    cat "$output_file.side.tmp" >> "$output_file";
-    echo "</ul>" >> "$output_file";
+    echo "<ul>" >> "$sb_output_file";
+    cat "$sb_output_file.side.tmp" >> "$sb_output_file";
+    echo "</ul>" >> "$sb_output_file";
   fi
-  echo "</li>" >> "$output_file";
-  echo "</ul>" >> "$output_file";
-  echo "</div>" >> "$output_file";
+  echo "</li>" >> "$sb_output_file";
+  echo "</ul>" >> "$sb_output_file";
+  echo "</div>" >> "$sb_output_file";
 
-  rm -f "$output_file.side.tmp";
+  rm -f "$sb_output_file.side.tmp";
 }
 
 # Save any existing template.

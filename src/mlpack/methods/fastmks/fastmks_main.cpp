@@ -184,7 +184,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
-      model->KernelType() = FastMKSModel::COSINE_DISTANCE;
+      model->KernelType() = FastMKSModel::COSINE_SIMILARITY;
       model->BuildModel(timers, std::move(referenceData), cd, single, naive,
           base);
     }

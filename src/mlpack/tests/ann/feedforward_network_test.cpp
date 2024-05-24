@@ -400,7 +400,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -421,7 +421,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -548,7 +548,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // network must be significant better than 92%.
   TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -627,7 +627,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -952,7 +952,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
+  dataset.load("mnist_first250_training_4s_and_9s.csv");
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)

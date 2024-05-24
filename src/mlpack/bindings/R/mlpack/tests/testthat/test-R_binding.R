@@ -335,3 +335,25 @@ test_that("TestReallyNotVerbose", {
                                build_model=TRUE,
                                verbose=FALSE))
 })
+
+# Make sure that the mlpack verbose global option does anything at all.
+test_that("TestGlobalVerbose", {
+  options(mlpack.verbose = TRUE)
+  expect_output(test_r_binding(4.0, 12, "hello",
+                               build_model=TRUE))
+})
+
+# Test that we get no output when the global verbose option is set to false.
+test_that("TestGlobalNotVerbose", {
+  options(mlpack.verbose = FALSE)
+  expect_silent(test_r_binding(4.0, 12, "hello",
+                               build_model=TRUE))
+})
+
+# Test that we can override the global verbose option.
+test_that("TestGlobalVerboseOverride", {
+  options(mlpack.verbose = TRUE)
+  expect_silent(test_r_binding(4.0, 12, "hello",
+                               build_model=TRUE,
+                               verbose=FALSE))
+})

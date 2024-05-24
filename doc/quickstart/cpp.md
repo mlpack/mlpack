@@ -152,7 +152,7 @@ example command that uses `g++`, and assumes the file above is saved as
 `cpp_quickstart_1.cpp`.
 
 ```sh
-g++ -O3 -std=c++14 -o cpp_quickstart_1 cpp_quickstart_1.cpp -larmadillo -fopenmp
+g++ -O3 -std=c++17 -o cpp_quickstart_1 cpp_quickstart_1.cpp -larmadillo -fopenmp
 ```
 
 Then, you can run the program easily:
@@ -259,7 +259,7 @@ This can be compiled the same way as before, assuming the code is saved as
 `cpp_quickstart_2.cpp`:
 
 ```sh
-g++ -O3 -std=c++14 -o cpp_quickstart_2 cpp_quickstart_2.cpp -fopenmp -larmadillo
+g++ -O3 -std=c++17 -o cpp_quickstart_2 cpp_quickstart_2.cpp -fopenmp -larmadillo
 ```
 
 And then it can be easily run:

@@ -106,7 +106,7 @@ T& Params::Get(const std::string& identifier)
   }
   else
   {
-    return *MLPACK_ANY_CAST<T>(&d.value);
+    return *std::any_cast<T>(&d.value);
   }
 }
 

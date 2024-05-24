@@ -35,7 +35,7 @@ LinearSVMFunction<MatType, ParametersType>::LinearSVMFunction(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, false);
+  MakeAlias(dataset, datasetIn, datasetIn.n_rows, datasetIn.n_cols, 0, false);
 
   InitializeWeights(initialPoint, dataset.n_rows, numClasses, fitIntercept);
   initialPoint *= 0.005;
