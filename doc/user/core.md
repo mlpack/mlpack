@@ -2000,7 +2000,8 @@ std::cout << "Kernel values: " << k1 << " (p=2), " << k2 << " (p=3)."
 The `SphericalKernel` class implements the simple spherical kernel, also known
 as the uniform kernel, or rectangular window kernel.  The value of the
 `SphericalKernel` is `1` when the Euclidean distance between two points `x1` and
-`x2` is less than the bandwidth `bw`, and `0` otherwise.
+`x2` is less than the bandwidth `bw`, and `0` otherwise:
+`k(x1, x2) = 1(|| x1 - x2 || <= bw)`.
 
 ---
 
