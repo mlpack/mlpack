@@ -56,7 +56,7 @@ contains many examples you can build and play around with.
 Once you have an idea of what's included in mlpack and how a user might use it,
 then a good next step would be to set up a development environment.  Once you
 have that set up, you can
-[build mlpack from source](../index.md#3-installing-and-using-mlpack-in-c),
+[build mlpack from source](../README.md#3-installing-and-using-mlpack-in-c),
 and explore the codebase to see how it's organized.
 
 Try making small changes to the code, or adding new tests to the test suite, and

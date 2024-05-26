@@ -30,13 +30,13 @@ project. A student should ideally be familiar with
 
  - *open source software development*: opening pull requests, using git, opening
    issues. mlpack uses Github, which has great documentation. You can learn
-   about the workflow using [this link](https://guides.github.com), if you are
+   about the workflow using [this link](https://docs.github.com/en), if you are
    not already familiar.
 
  - *using the development toolchain on your computer*: you should be able to
    download and compile mlpack, make changes to the code, and recompile with the
    new changes. There is a
-   [section in the README](../../index.md#3-installing-and-using-mlpack-in-c)
+   [section in the README](../README.md#3-installing-and-using-mlpack-in-c)
    for how to build mlpack and would be a great place to get started. If you’re
    on Windows, then the [Windows build guide](../user/build_windows.md) could be
    very useful. See also the [Community page](community.md) for more information
@@ -48,8 +48,8 @@ project. A student should ideally be familiar with
    be at least familiar with some of these language features and what templates
    are, even if you have not used them in-depth, so that you can understand the
    mlpack codebase. Some examples of patterns that are often used inside of
-   mlpack are SFINAE ([example in mlpack](https://github.com/mlpack/mlpack/blob/565cfd3aad22deec0656b86e801052593a937723/src/mlpack/methods/mean_shift/mean_shift.hpp#L123)),
-   [policy-based design](http://www.drdobbs.com/policy-based-design-in-the-real-world/184401861),
+   mlpack are SFINAE ([example in mlpack, see std::enable_if usages](https://github.com/mlpack/mlpack/blob/565cfd3aad22deec0656b86e801052593a937723/src/mlpack/methods/mean_shift/mean_shift.hpp)),
+   [policy-based design](https://www.drdobbs.com/policy-based-design-in-the-real-world/184401861),
    and [compile-time class traits](https://accu.org/index.php/journals/442).
    Here are some [other useful resources](https://www.codeproject.com/Articles/3743/A-gentle-introduction-to-Template-Metaprogramming)
    for learning template metaprogramming, and some useful
