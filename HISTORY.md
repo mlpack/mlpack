@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.4.0
 
-_????-??-??_
+_2024-05-26_
 
   * Add `print_training_accuracy` option to LogisticRegression bindings (#3552).
 
