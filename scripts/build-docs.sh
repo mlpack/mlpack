@@ -16,6 +16,7 @@ else
   output_dir=doc/html;
 fi
 
+# If the header and footer already exist, they will not be overwritten.
 template_html_header="${output_dir}/template.html.header";
 template_html_footer="${output_dir}/template.html.footer";
 template_html_sidebar="${output_dir}/template.html.sidebar";
@@ -79,11 +80,11 @@ run_kramdown()
   # - We also only catch the second part of the link '](' because the name of
   #   the link could be spread on multiple lines.
   #
-  # We start by trying to catch a special case of README.md, which our
-  # documentation puts in a slightly different place.  In addition, because
-  # README.md is being moved to the root of the documentation, we must adjust
-  # links in that file differently.
-  if [[ $input_file != "README.md" ]];
+  # We start by trying to catch the special cases README.md and HISTORY.md,
+  # which our documentation puts in a slightly different place.  In addition,
+  # because those files are being moved to the root of the documentation, we
+  # must adjust links differently.
+  if [[ $input_file != "README.md" ]] && [[ $input_file != "HISTORY.md" ]];
   then
     sed -i "s|\]([./]*README.md)|](${link_root}README.html)|g" $input_file.tmp;
     sed -i "s|\]([./]*README.md#[0-9]-\([^ ]*\))|](${link_root}README.html#\1)|g" $input_file.tmp;
@@ -104,27 +105,83 @@ run_kramdown()
     sed -i 's/\](#[0-9]-\([^ ]*\))/](#\1)/g' $input_file.tmp;
     sed -i 's/\](#[0-9][0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
     sed -i 's/\](#[0-9]\([^ ]*\))/](#\1)/g' $input_file.tmp;
+
+    # For HISTORY.md, we want to turn all references to Github issues into
+    # actual links, and all references to Github usernames into links to their
+    # profile.
+    if [[ $input_file == "HISTORY.md" ]];
+    then
+      sed -i 's/#\([0-9][0-9]*\)/[#\1](https:\/\/github.com\/mlpack\/mlpack\/issues\/\1)/g' $input_file.tmp;
+      sed -i 's/\([^`]\)@\([a-zA-Z0-9_-][a-zA-Z0-9_-]*\)/\1[@\2](https:\/\/github.com\/\2)/g' $input_file.tmp;
+    fi
   fi
 
   # Replace any links to source files with a link to the current version of the
   # source file on Github.
   sed -i 's/\](\/src\/\([^ ]*\)\.hpp)/](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/src\/\1.hpp)/' $input_file.tmp;
 
-  kramdown \
-      -x parser-gfm \
-      --syntax-highlighter rouge \
-      --syntax-highlighter-opts '{ default_lang: c++ }' \
-      --auto_ids \
-      $input_file.tmp > "$output_file.tmp" || exit 1;
+  # If this is binding documentation or quickstart documentation, don't set the
+  # default language to C++.
+  set_lang=1;
+  if [[ `dirname $input_file` == "./doc/user/bindings" ]];
+  then
+    set_lang=0;
+  elif [[ `dirname $input_file` == "./doc/quickstart" ]];
+  then
+    if [[ `basename $input_file .md` != "cpp" ]];
+    then
+      set_lang=0;
+    fi
+  elif [[ $input_file == "HISTORY.md" ]];
+  then
+    set_lang=0;
+  fi
+
+  if [[ "$set_lang" == "0" ]];
+  then
+    kramdown \
+        -x parser-gfm \
+        --syntax-highlighter rouge \
+        --auto_ids \
+        $input_file.tmp > "$output_file.tmp" || exit 1;
+  else
+    kramdown \
+        -x parser-gfm \
+        --syntax-highlighter rouge \
+        --syntax-highlighter-opts '{ default_lang: c++ }' \
+        --auto_ids \
+        $input_file.tmp > "$output_file.tmp" || exit 1;
+  fi
   cat "$template_html_header" | sed "s|LINKROOT|$link_root|" > "$output_file";
 
   # Create the sidebar.  Extract anchors from the page, unless we are looking at
   # index.md, since the permanent part of the sidebar links all over index.md
-  # anyway.
-  cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" >> "$output_file";
-  if [[ $input_file != "doc/index.md" ]];
+  # anyway.  If we are looking at binding documentation, use a slightly
+  # different sidebar.
+  if { [[ $dir_name != "user/bindings" ]] && \
+       [[ $dir_name != "quickstart" ]] } ||
+     [[ $input_file == "./doc/quickstart/cpp.md" ]];
   then
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" \
+        >> "$output_file";
     create_page_sidebar_section "$output_file.tmp" "$output_file" "$dir_name";
+  else
+    echo "Using custom sidebar...";
+    cat "$template_html_sidebar" | sed "s|LINKROOT|$link_root|" |\
+        sed 's|<details> <!-- default closed for non-binding pages -->|<details open="true">|' |\
+        sed 's|<details open="true"> <!-- default open for non-binding pages -->|<details>|' \
+        >> "$output_file";
+    # Some pages may have a custom sidebar HTML file.  (Specifically,
+    # generated language bindings.)
+    if [[ $dir_name == "user/bindings" ]];
+    then
+      cat "${input_file/%.md/.sidebar.html}" | sed "s|LINKROOT|$link_root|" \
+          >> "$output_file";
+    else
+      sidebar_file=`basename $input_file .md`.sidebar.html;
+      cat "./doc/user/bindings/$sidebar_file" | sed "s|LINKROOT|$link_root|" \
+          >> "$output_file";
+    fi
   fi
 
   # Add clickable anchors to h2 and h3 headers.
@@ -286,21 +343,46 @@ create_page_sidebar_section()
   rm -f "$sb_output_file.side.tmp";
 }
 
+# Save any existing template.
+if [ -f "$template_html_header" ];
+then
+  mv "$template_html_header" template.html.header.tmp;
+fi
+
+if [ -f "$template_html_footer" ];
+then
+  mv "$template_html_footer" template.html.footer.tmp;
+fi
+
 rm -rf "$output_dir";
 mkdir -p "$output_dir";
-cp doc/css/* "$output_dir";
-mkdir -p "$output_dir/user/img/";
-cp doc/img/* "$output_dir/user/img/";
+cp -v doc/css/* "$output_dir";
+mkdir -p "$output_dir/img/";
+cp -v doc/img/* "$output_dir/img/";
 mkdir -p "$output_dir/tutorials/res/";
-cp doc/tutorials/res/* "$output_dir/tutorials/res/";
+cp -v doc/tutorials/res/* "$output_dir/tutorials/res/";
 
-# Create the template files we will use.
-create_template_header "$template_html_header";
-create_template_footer "$template_html_footer";
+# Create the template files we will use, if they don't already exist.
+if [ -f template.html.header.tmp ];
+then
+  mv template.html.header.tmp "$template_html_header";
+else
+  create_template_header "$template_html_header";
+  del_header=1;
+fi
+
+if [ -f template.html.footer.tmp ];
+then
+  mv template.html.footer.tmp "$template_html_footer";
+else
+  create_template_footer "$template_html_footer";
+  del_footer=1;
+fi
+
 cp doc/sidebar.html "$template_html_sidebar";
 
 # Process all the .md files.
-for f in README.md `find ./doc/ -iname '*.md'`;
+for f in README.md HISTORY.md `find ./doc/ -iname '*.md'`;
 do
   # Skip the JOSS paper...
   if [[ $f == *"joss_paper"* ]]; then
@@ -323,7 +405,12 @@ do
   echo "Checking links in $f...";
 
   # To run checklink we have to strip out some perl stderr warnings...
-  checklink -qs --follow-file-links --suppress-broken 405 --suppress-broken 301  -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" "$f" 2>&1 |
+  checklink -qs \
+      --follow-file-links \
+      --suppress-broken 405 \
+      --suppress-broken 301 \
+      -X "https://eigen.tuxfamily.org/index.php\?title=Main_Page" \
+      -X "https://mlpack.slack.com/" "$f" 2>&1 |
       grep -v 'Use of uninitialized value' > checklink_out;
   if [ -s checklink_out ];
   then
@@ -334,5 +421,12 @@ do
 done
 
 # Remove temporary files.
-rm -f "$template_html_header";
-rm -f "$template_html_footer";
+if [ "a$del_header" == "a1" ];
+then
+  rm -f "$template_html_header";
+fi
+
+if [ "a$del_footer" == "a1" ];
+then
+  rm -f "$template_html_footer";
+fi

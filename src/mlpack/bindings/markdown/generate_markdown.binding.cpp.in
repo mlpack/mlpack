@@ -26,7 +26,7 @@ namespace markdown {
 
 void Print${BINDING}Headers()
 {
-  // Fill the vector of languages for which we want to print.
+  // Stores the names of languages this binding works with.
   vector<string> languages;
 
   // Stores if a wrapper is added for a particular language.
@@ -35,12 +35,27 @@ void Print${BINDING}Headers()
   ${LANGUAGES_PUSH_BACK_CODE}
   ${WRAPPER_PUSH_BACK_CODE}
 
-  PrintHeaders("${BINDING}", languages, addWrapperDocs);
+  // Find whether or not we print anything for the current language.
+  size_t langIndex = languages.size();
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    if (languages[i] == BindingInfo::Language())
+    {
+      langIndex = i;
+      break;
+    }
+  }
+
+  // Don't do anything if we didn't find the language.
+  if (langIndex == languages.size())
+    return;
+
+  PrintHeaders("${BINDING}", addWrapperDocs[langIndex]);
 }
 
 void Print${BINDING}Docs()
 {
-  // Fill the vector of languages for which we want to print.
+  // Stores the names of languages this binding works with.
   vector<string> languages;
 
   // Stores the names of all methods in a vector.
@@ -53,7 +68,22 @@ void Print${BINDING}Docs()
   ${WRAPPER_PUSH_BACK_CODE}
   ${VALID_METHODS_PUSH_BACK_CODE}
 
-  PrintDocs("${BINDING}", languages, validMethods, addWrapperDocs);
+  // Find whether or not we print anything for the current language.
+  size_t langIndex = languages.size();
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    if (languages[i] == BindingInfo::Language())
+    {
+      langIndex = i;
+      break;
+    }
+  }
+
+  // Don't do anything if we didn't find the language.
+  if (langIndex == languages.size())
+    return;
+
+  PrintDocs("${BINDING}", validMethods, addWrapperDocs[langIndex]);
 }
 
 } // namespace markdown

@@ -1058,11 +1058,13 @@ table td em {
 
 div#sidebar {
   float: left;
-  position: sticky;
-  top: 5px;
-  min-width: 200px;
+  position: fixed;
+  top: 55px;
+  min-width: calc(50% - 460px);
   font-size: 90%;
-  max-width: 15.1515%;
+  max-width: calc(50% - 460px);
+  overflow-y: scroll;
+  bottom: 0;
 }
 
 div#sidebar ul {
@@ -1110,6 +1112,14 @@ div#sidebar details[open] summary::after {
   content: " [-]";
 }
 
+div#sidebar details[open] details summary::after {
+  content: " [+]";
+}
+
+div#sidebar details[open] details[open] summary::after {
+  content: " [-]";
+}
+
 @media screen and (max-width: 1140px) {
   div#sidebar {
     display: none;
@@ -1124,4 +1134,22 @@ div#sidebar details[open] summary::after {
   div#sidebar {
     max-width: 200px;
   }
+}
+
+div#data-formats-div li {
+  margin-bottom: 1em;
+}
+
+li.bottom-space {
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid #aaa;
+}
+
+a.textlink {
+  color: #333;
+}
+
+ul#binding_sidebar {
+  background: #eee;
 }

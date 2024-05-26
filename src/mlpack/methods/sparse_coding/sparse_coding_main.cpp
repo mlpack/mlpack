@@ -87,8 +87,8 @@ BINDING_SEE_ALSO("Sparse dictionary learning on Wikipedia",
 BINDING_SEE_ALSO("Efficient sparse coding algorithms (pdf)",
     "http://papers.nips.cc/paper/2979-efficient-sparse-coding-algorithms.pdf");
 BINDING_SEE_ALSO("Regularization and variable selection via the elastic net",
-    "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.124.4696&rep=rep1"
-    "&type=pdf");
+    "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
+    "&doi=46217f372a75dddc2254fdbc6b9418ba3554e453");
 BINDING_SEE_ALSO("SparseCoding C++ class documentation",
     "@src/mlpack/methods/sparse_coding/sparse_coding.hpp");
 

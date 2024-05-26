@@ -81,8 +81,6 @@ BINDING_EXAMPLE(
         "output_predictions", "X_test_responses"));
 
 // See also...
-BINDING_SEE_ALSO("Linear/ridge regression tutorial",
-    "@doc/tutorials/linear_regression.md");
 BINDING_SEE_ALSO("@lars", "#lars");
 BINDING_SEE_ALSO("Linear regression on Wikipedia",
     "https://en.wikipedia.org/wiki/Linear_regression");

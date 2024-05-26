@@ -73,11 +73,10 @@ BINDING_EXAMPLE(
     "the third column corresponds to the distance between the two points.");
 
 // See also...
-BINDING_SEE_ALSO("EMST Tutorial", "@doc/tutorials/emst.md");
 BINDING_SEE_ALSO("Minimum spanning tree on Wikipedia",
         "https://en.wikipedia.org/wiki/Minimum_spanning_tree");
 BINDING_SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,"
-        " and Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf");
+        " and Applications (pdf)", "https://www.mlpack.org/papers/emst.pdf");
 BINDING_SEE_ALSO("DualTreeBoruvka class documentation",
         "@src/mlpack/methods/emst/dtb.hpp");
 

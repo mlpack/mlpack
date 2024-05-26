@@ -62,7 +62,7 @@ BINDING_LONG_DESC(
     "\n\n"
     "For performing the matrix decomposition, the following optimization "
     "algorithms can be specified via the " + PRINT_PARAM_STRING("algorithm") +
-    " parameter: "
+    " parameter:\n"
     "\n"
     " - 'RegSVD' -- Regularized SVD using a SGD optimizer\n"
     " - 'NMF' -- Non-negative matrix factorization with alternating least "
@@ -77,21 +77,21 @@ BINDING_LONG_DESC(
     " - 'BKSVD' -- Block Krylov SVD learning\n"
     "\n\n"
     "The following neighbor search algorithms can be specified via" +
-    " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
+    " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:\n"
     "\n"
     " - 'cosine'  -- Cosine Search Algorithm\n"
     " - 'euclidean'  -- Euclidean Search Algorithm\n"
     " - 'pearson'  -- Pearson Search Algorithm\n"
     "\n\n"
     "The following weight interpolation algorithms can be specified via" +
-    " the " + PRINT_PARAM_STRING("interpolation") + " parameter:"
+    " the " + PRINT_PARAM_STRING("interpolation") + " parameter:\n"
     "\n"
     " - 'average'  -- Average Interpolation Algorithm\n"
     " - 'regression'  -- Regression Interpolation Algorithm\n"
     " - 'similarity'  -- Similarity Interpolation Algorithm\n"
     "\n\n"
     "The following ranking normalization algorithms can be specified via" +
-    " the " + PRINT_PARAM_STRING("normalization") + " parameter:"
+    " the " + PRINT_PARAM_STRING("normalization") + " parameter:\n"
     "\n"
     " - 'none'  -- No Normalization\n"
     " - 'item_mean'  -- Item Mean Normalization\n"
@@ -120,18 +120,14 @@ BINDING_EXAMPLE(
         "recommendations", 5, "output", "recommendations"));
 
 // See also...
-BINDING_SEE_ALSO("Collaborative filtering tutorial",
-        "@doc/tutorials/cf.md");
-BINDING_SEE_ALSO("Alternating Matrix Factorization tutorial",
-        "@doc/tutorials/amf.md");
 BINDING_SEE_ALSO("Collaborative Filtering on Wikipedia",
         "https://en.wikipedia.org/wiki/Collaborative_filtering");
 BINDING_SEE_ALSO("Matrix factorization on Wikipedia",
         "https://en.wikipedia.org/wiki/Matrix_factorization_"
         "(recommender_systems)");
 BINDING_SEE_ALSO("Matrix factorization techniques for recommender systems"
-        " (pdf)", "http://citeseerx.ist.psu.edu/viewdoc/download?doi="
-        "10.1.1.441.3234&rep=rep1&type=pdf");
+        " (pdf)", "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
+        "&doi=cf17f85a0a7991fa01dbfb3e5878fbf71ea4bdc5");
 BINDING_SEE_ALSO("CFType class documentation", "@src/mlpack/methods/cf/cf.hpp");
 
 // Parameters for training a model.

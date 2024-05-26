@@ -70,8 +70,6 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@cf", "#cf");
-BINDING_SEE_ALSO("Alternating matrix factorization tutorial",
-    "@doc/tutorials/amf.md");
 BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
     "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
 BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",

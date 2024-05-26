@@ -4,7 +4,7 @@ This page describes how you can quickly get started using mlpack from Julia and
 gives a few examples of usage, and pointers to deeper documentation.
 
 This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
-[the command line](cli.md), [R](R.md), and [Go](go.md).
+[the command line](cli.md), [R](r.md), and [Go](go.md).
 
 ## Installing mlpack
 
@@ -81,7 +81,7 @@ different mlpack learners, or to interface with other machine learning toolkits.
 ## Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-[`cf()`](https://www.mlpack.org/doc/stable/julia_documentation.html#cf) method.
+[`cf()`](../user/bindings/julia.md#cf) method.
 We'll train this on the
 [MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
 use the model that we train to give recommendations.
@@ -151,7 +151,7 @@ have only shown a little bit of the functionality of mlpack.  Lots of other
 functions are available with different functionality.  A full list of each of
 these commands and full documentation can be found on the following page:
 
- - [Julia documentation](https://www.mlpack.org/doc/stable/julia_documentation.html)
+ - [Julia documentation](../user/bindings/julia.md)
 
 You can also use the Julia REPL to explore the `mlpack` module and its
 functions; every function comes with comprehensive documentation.
