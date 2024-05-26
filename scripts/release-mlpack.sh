@@ -205,7 +205,6 @@ hub pull-request \
     -m "Release version $MAJOR.$MINOR.$PATCH" \
     -m "This automatically-generated pull request adds the commits necessary to make the $MAJOR.$MINOR.$PATCH release." \
     -m "Once the PR is merged, mlpack-bot will tag the release as HEAD~1 (so that it doesn't include the new HISTORY block) and publish it." \
-    -m "Or, well, hopefully that will happen someday." \
     -m "When you merge this PR, be sure to merge it using a *rebase*." \
     -m "### Changelog" \
     -m "$changelog_str" \
