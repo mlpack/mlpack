@@ -198,6 +198,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       labels = ConvTo<arma::Row<size_t>>::From(
           trainingSet.row(trainingSet.n_rows - 1));
       trainingSet.shed_row(trainingSet.n_rows - 1);
+
+      // Create new DatasetInfo object without the last row
+      DatasetInfo newModelInfo(model -> info.Dimensionality() - 1);
+      for (size_t i = 0; i < model -> info.Dimensionality() - 1; ++i) {
+        // Check if dimension is categorical
+        if (model -> info.NumMappings(i) > 0) {
+          // If so, first set the dimention to categorical
+          newModelInfo.MapFirstPass<int>(model -> info.UnmapString(0, i), i);
+          // Then replicate the mappings from the original info object
+          for (size_t j = 0; j < model -> info.NumMappings(i); ++j) {
+            newModelInfo.MapString<int>(model -> info.UnmapString(j, i), i);
+          }
+        }
+      }
+      model -> info = std::move(newModelInfo);
     }
 
     const size_t numClasses = max(labels) + 1;
