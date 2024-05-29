@@ -76,38 +76,63 @@ namespace mlpack {
   using coot::zeros;
 
 #endif
+  
+// By default, assume that we are using an Armadillo object.
+  template<typename MatType>
+  struct GetFillType
+  {
+    static constexpr decltype(arma::fill::none) none = arma::fill::none;
+    static constexpr decltype(arma::fill::zeros) zeros = arma::fill::zeros;
+    static constexpr decltype(arma::fill::ones) ones = arma::fill::ones;
+    static constexpr decltype(arma::fill::randu) randu = arma::fill::randu;
+    static constexpr decltype(arma::fill::randn) randn = arma::fill::randn;
+  };
 
-  namespace internal_compact {
+#ifdef MLPACK_HAS_COOT
+  // If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
+  template<typename MatType,
+           typename = typename std::enable_if<is_coot_type<MatType>::value>::type*>
+  struct GetFillType
+  {
+    static constexpr decltype(coot::fill::none) none = coot::fill::none;
+    static constexpr decltype(coot::fill::zeros) zeros = coot::fill::zeros;
+    static constexpr decltype(coot::fill::ones) ones = coot::fill::ones;
+    static constexpr decltype(coot::fill::randu) randu = coot::fill::randu;
+    static constexpr decltype(coot::fill::randn) randn = coot::fill::randn;
+  };
+#endif
 
-    namespace fill {
+  //namespace internal_compat {
 
-      #ifdef MLPACK_HAS_COOT
-        struct fill_none  : public decltype(arma::fill::none),
-                            public decltype(coot::fill::none) { };
+    //namespace fill {
 
-        struct fill_zeros : public decltype(arma::fill::zeros),
-                            public decltype(coot::fill::zeros) { };
+      //#ifdef MLPACK_HAS_COOT
+        //struct fill_none  : public decltype(arma::fill::none),
+                            //public decltype(coot::fill::none) { };
 
-        struct fill_ones  : public decltype(arma::fill::ones),
-                            public decltype(coot::fill::ones) { };
+        //struct fill_zeros : public decltype(arma::fill::zeros),
+                            //public decltype(coot::fill::zeros) { };
 
-        struct fill_randu : public decltype(arma::fill::randu),
-                            public decltype(coot::fill::randu) { };
+        //struct fill_ones  : public decltype(arma::fill::ones),
+                            //public decltype(coot::fill::ones) { };
 
-      #else
-        struct fill_none  : public decltype(arma::fill::none) { };
-        struct fill_zeros : public decltype(arma::fill::zeros) { };
-        struct fill_ones  : public decltype(arma::fill::ones) { };
-        struct fill_randu : public decltype(arma::fill::randu) { };
-      #endif
+        //struct fill_randu : public decltype(arma::fill::randu),
+                            //public decltype(coot::fill::randu) { };
 
-      static constexpr fill_none  none;
-      static constexpr fill_zeros zeros;
-      static constexpr fill_ones  ones;
-      static constexpr fill_randu randu;
+      //#else
+        //struct fill_none  : public decltype(arma::fill::none) { };
+        //struct fill_zeros : public decltype(arma::fill::zeros) { };
+        //struct fill_ones  : public decltype(arma::fill::ones) { };
+        //struct fill_randu : public decltype(arma::fill::randu) { };
+      //#endif
 
-    } // namespace mlpack::internal_compact::fill
-  } // namespace mlpack::internal_compact
+      //static constexpr fill_none  none;
+      //static constexpr fill_zeros zeros;
+      //static constexpr fill_ones  ones;
+      //static constexpr fill_randu randu;
+
+    //} // namespace mlpack::GetFillType<MatType>
+  //} // namespace mlpack::internal_compat
 } // namespace mlpack
 
 #endif
