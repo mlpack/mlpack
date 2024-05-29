@@ -56,11 +56,11 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     scores(0)
 {
   // Initialize accumError.
-  accumError = arma::vec(querySet.n_cols, internal_compact::fill::zeros);
+  accumError = arma::vec(querySet.n_cols, arma::fill::zeros);
 
   // Initialize accumMCAlpha only if Monte Carlo estimations are available.
   if (monteCarlo && kernelIsGaussian)
-    accumMCAlpha = arma::vec(querySet.n_cols, internal_compact::fill::zeros);
+    accumMCAlpha = arma::vec(querySet.n_cols, arma::fill::zeros);
 }
 
 //! The base case.

@@ -402,7 +402,7 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
   TargetNeighbors(targetNeighbors, dataset, labels, norms);
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N ,
-      internal_compact::fill::zeros);
+      arma::fill::zeros);
 
   for (size_t i = 0, r = 0; i < N; ++i)
   {

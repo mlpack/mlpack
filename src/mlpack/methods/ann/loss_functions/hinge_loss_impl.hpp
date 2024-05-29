@@ -31,9 +31,9 @@ typename MatType::elem_type HingeLossType<MatType>::Forward(
     const MatType& target)
 {
   MatType temp = target - (target == 0);
-  MatType tempZeros(size(target), internal_compact::fill::zeros);
+  MatType tempZeros(size(target), arma::fill::zeros);
 
-  MatType loss = max(temp_zeros, 1 - prediction % temp);
+  MatType loss = max(tempZeros, 1 - prediction % temp);
 
   typename MatType::elem_type lossSum = accu(loss);
 

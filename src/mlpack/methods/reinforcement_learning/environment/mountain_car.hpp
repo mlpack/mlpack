@@ -36,7 +36,7 @@ class MountainCar
     /**
      * Construct a state instance.
      */
-    State(): data(dimension, internal_compact::fill::zeros)
+    State(): data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**

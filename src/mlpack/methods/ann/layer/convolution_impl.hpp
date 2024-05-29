@@ -422,7 +422,7 @@ void ConvolutionType<
   }
 
   MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize, internal_compact::fill::zeros);
+      batchSize, arma::fill::zeros);
   CubeType outputCube;
   MakeAlias(outputCube, output, apparentWidth, apparentHeight,
       inMaps * higherInDimensions * batchSize);
